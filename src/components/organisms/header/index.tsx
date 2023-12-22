@@ -5,6 +5,8 @@ import Typography from '@/components/atoms/Typography';
 import { WalletIcon } from '@/assets/icons';
 
 import './header.scss';
+import { StyledHeader } from './header.style';
+import Container from '@/components/atoms/Container';
 
 const navLinks: NavigationProps['links'] = [
     {
@@ -31,8 +33,8 @@ const navLinks: NavigationProps['links'] = [
 
 const Header = () => {
     return (
-        <header>
-            <div className='container'>
+        <StyledHeader>
+            <Container>
                 <HeaderLogo />
                 <Navigation links={navLinks} />
                 <ConnectWalletModal
@@ -43,8 +45,8 @@ const Header = () => {
                         </>
                     }
                 />
-            </div>
-        </header>
+            </Container>
+        </StyledHeader>
     );
 };
 

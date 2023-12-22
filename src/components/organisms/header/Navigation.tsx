@@ -4,6 +4,13 @@ import Typography from '@/components/atoms/Typography';
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import styled from 'styled-components';
+import {
+    StyledNavItem,
+    StyledNavLink,
+    StyledNavList,
+    StyledNavRoot,
+} from './header.style';
 
 export type NavigationProps = {
     links: {
@@ -12,23 +19,25 @@ export type NavigationProps = {
     }[];
 };
 
+styled;
+
 const Navigation: React.FC<NavigationProps> = ({ links }) => {
     const pathName = usePathname();
 
     return (
-        <NavigationMenu.Root className='nav-menu'>
-            <NavigationMenu.List className='nav-list'>
+        <StyledNavRoot>
+            <StyledNavList>
                 {links.map(({ to, label }, index) => (
-                    <NavigationMenu.Item key={index}>
+                    <StyledNavItem key={index}>
                         <NavigationMenu.Link active={pathName === to} asChild>
-                            <Link href={to}>
+                            <StyledNavLink href={to}>
                                 <Typography variant='span'>{label}</Typography>
-                            </Link>
+                            </StyledNavLink>
                         </NavigationMenu.Link>
-                    </NavigationMenu.Item>
+                    </StyledNavItem>
                 ))}
-            </NavigationMenu.List>
-        </NavigationMenu.Root>
+            </StyledNavList>
+        </StyledNavRoot>
     );
 };
 

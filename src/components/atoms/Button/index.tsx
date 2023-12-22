@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, forwardRef } from 'react';
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
     variant?: 'primary' | 'secondary';
@@ -6,8 +6,14 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
     children?: ReactNode;
 };
 
-const Button: React.FC<ButtonProps> = ({ children, className, ...rest }) => {
-    return <button {...rest}>{children}</button>;
-};
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+    ({ children, className, ...rest }, ref) => {
+        return (
+            <button {...rest} ref={ref}>
+                {children}
+            </button>
+        );
+    }
+);
 
 export default Button;
