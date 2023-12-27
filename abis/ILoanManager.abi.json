@@ -1,0 +1,183 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "interestRate",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct Loan[]",
+        "name": "loans",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "addLoans",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "loanlID",
+        "type": "uint256"
+      }
+    ],
+    "name": "lendingPoolLoan",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "interestRate",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct Loan",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      }
+    ],
+    "name": "lendingPoolLoans",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "interestRate",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct Loan[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "lendingPool",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "loanID",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amountPrincipal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amountYield",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct LoanPayment[]",
+        "name": "payments",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "makePayment",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "loanIDs",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "removeLoans",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "lendingPool",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "loanID",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct Loss[]",
+        "name": "loss",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "reportLoss",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

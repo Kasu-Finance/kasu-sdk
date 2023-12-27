@@ -1,0 +1,18 @@
+{
+  "name": "kasu-sdk",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build-tc": "typechain --target ethers-v6 --out-dir src/contracts './abis/*.json'"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typechain": "^8.3.2"
+  },
+  "dependencies": {
+    "@typechain/ethers-v6": "^0.5.1"
+  }
+}

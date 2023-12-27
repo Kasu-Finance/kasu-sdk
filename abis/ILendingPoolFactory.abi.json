@@ -1,0 +1,38 @@
+[
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "maxDepositAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "poolCap",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "trancheRatio",
+            "type": "uint256[]"
+          }
+        ],
+        "internalType": "struct PoolConfiguration",
+        "name": "poolConfiguration",
+        "type": "tuple"
+      }
+    ],
+    "name": "createPool",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
