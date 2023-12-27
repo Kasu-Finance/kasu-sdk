@@ -10,9 +10,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "typechain": "^8.3.2"
+    "typechain": "^8.3.2",
+    "typescript": "^5.3.3"
   },
   "dependencies": {
-    "@typechain/ethers-v6": "^0.5.1"
+    "@typechain/ethers-v6": "^0.5.1",
+    "ethers": "^6.9.1"
   }
 }
