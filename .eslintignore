@@ -1,0 +1,12 @@
+# types
+/src/@types
+
+# commitling 
+commitlint.config.cjs
+
+# git
+.gitattributes
+
+
+# Storybook
+#stories/
