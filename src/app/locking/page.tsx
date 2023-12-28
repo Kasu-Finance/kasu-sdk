@@ -1,5 +1,5 @@
 const Locking = () => {
-    return 'Locking';
-};
+  return 'Locking'
+}
 
-export default Locking;
+export default Locking

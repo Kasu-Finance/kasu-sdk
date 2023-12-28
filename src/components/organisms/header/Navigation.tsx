@@ -1,44 +1,45 @@
-'use client';
+'use client'
 
-import Typography from '@/components/atoms/Typography';
-import * as NavigationMenu from '@radix-ui/react-navigation-menu';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import styled from 'styled-components';
+import * as NavigationMenu from '@radix-ui/react-navigation-menu'
+import { usePathname } from 'next/navigation'
+import styled from 'styled-components'
+
+import Typography from '@/components/atoms/Typography'
+
 import {
-    StyledNavItem,
-    StyledNavLink,
-    StyledNavList,
-    StyledNavRoot,
-} from './header.style';
+  StyledNavItem,
+  StyledNavLink,
+  StyledNavList,
+  StyledNavRoot,
+} from './header.style'
 
 export type NavigationProps = {
-    links: {
-        to: string;
-        label: string;
-    }[];
-};
+  links: {
+    to: string
+    label: string
+  }[]
+}
 
-styled;
+styled
 
 const Navigation: React.FC<NavigationProps> = ({ links }) => {
-    const pathName = usePathname();
+  const pathName = usePathname()
 
-    return (
-        <StyledNavRoot>
-            <StyledNavList>
-                {links.map(({ to, label }, index) => (
-                    <StyledNavItem key={index}>
-                        <NavigationMenu.Link active={pathName === to} asChild>
-                            <StyledNavLink href={to}>
-                                <Typography variant='span'>{label}</Typography>
-                            </StyledNavLink>
-                        </NavigationMenu.Link>
-                    </StyledNavItem>
-                ))}
-            </StyledNavList>
-        </StyledNavRoot>
-    );
-};
+  return (
+    <StyledNavRoot>
+      <StyledNavList>
+        {links.map(({ to, label }, index) => (
+          <StyledNavItem key={index}>
+            <NavigationMenu.Link active={pathName === to} asChild>
+              <StyledNavLink href={to}>
+                <Typography variant='span'>{label}</Typography>
+              </StyledNavLink>
+            </NavigationMenu.Link>
+          </StyledNavItem>
+        ))}
+      </StyledNavList>
+    </StyledNavRoot>
+  )
+}
 
-export default Navigation;
+export default Navigation

@@ -1,12 +1,13 @@
-import Modal from '@/components/atoms/Modal';
-import { ReactNode } from 'react';
+import { ReactNode } from 'react'
+
+import Modal from '@/components/atoms/Modal'
 
 type ConnectWalletModalProps = {
-    trigger: ReactNode;
-};
+  trigger: ReactNode
+}
 
 const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({ trigger }) => {
-    return <Modal trigger={trigger}>lol</Modal>;
-};
+  return <Modal trigger={trigger}>lol</Modal>
+}
 
-export default ConnectWalletModal;
+export default ConnectWalletModal

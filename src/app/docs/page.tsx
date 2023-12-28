@@ -1,5 +1,5 @@
 const Docs = () => {
-    return 'docs';
-};
+  return 'docs'
+}
 
-export default Docs;
+export default Docs

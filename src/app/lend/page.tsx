@@ -1,7 +1,5 @@
-import { Metadata } from 'next';
-
 const Lend = () => {
-    return 'home';
-};
+  return 'home'
+}
 
-export default Lend;
+export default Lend
