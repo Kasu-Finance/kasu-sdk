@@ -10,7 +10,7 @@
     "lint": "next lint",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "prepare": "husky install",
-    "prettier": "prettier --config .prettierrc --write ."
+    "format": "prettier -w ."
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
