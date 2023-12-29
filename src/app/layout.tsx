@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 
 import './globals.css';
 import Header from '@/components/organisms/header';
+import Web3Provider from '@/context/web3provider/web3.provider';
 
 type RootLayoutProps = {
     children: ReactNode;
@@ -20,8 +21,10 @@ export default function RootLayout({ children }: RootLayoutProps) {
     return (
         <html lang='en'>
             <body className={inter.className}>
-                <Header />
-                <main>{children}</main>
+                <Web3Provider>
+                    <Header />
+                    <main>{children}</main>
+                </Web3Provider>
             </body>
         </html>
     );
