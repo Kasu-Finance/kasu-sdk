@@ -8,38 +8,16 @@ import { StyledHeader } from '@/components/organisms/header/header.style'
 import { WalletIcon } from '@/assets/icons'
 import HeaderLogo from '@/assets/logo/HeaderLogo'
 
-// import { StyledHeader } from './header.style'
-import Navigation, { NavigationProps } from './Navigation'
+import { MENU_ITEMS } from '@/config/navigation'
 
-const navLinks: NavigationProps['links'] = [
-  {
-    label: 'Lend',
-    to: '/lend',
-  },
-  {
-    label: 'Borrow',
-    to: '/borrow',
-  },
-  {
-    label: 'Docs',
-    to: '/docs',
-  },
-  {
-    label: 'Locking',
-    to: '/locking',
-  },
-  {
-    label: 'Account',
-    to: '/account',
-  },
-]
+import Navigation from './Navigation'
 
 const Header = () => {
   return (
     <StyledHeader>
       <Container>
         <HeaderLogo />
-        <Navigation links={navLinks} />
+        <Navigation nav={MENU_ITEMS} />
         <ConnectWalletModal
           trigger={
             <>

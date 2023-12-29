@@ -13,26 +13,23 @@ import {
   StyledNavRoot,
 } from './header.style'
 
-export type NavigationProps = {
-  links: {
-    to: string
-    label: string
-  }[]
-}
+import { MenuItem } from '@/types/menu.items'
 
 styled
 
-const Navigation: React.FC<NavigationProps> = ({ links }) => {
+const Navigation: React.FC<{ nav: MenuItem[] }> = (props) => {
   const pathName = usePathname()
+
+  const { nav } = props
 
   return (
     <StyledNavRoot>
       <StyledNavList>
-        {links.map(({ to, label }, index) => (
+        {nav.map(({ title, href }, index) => (
           <StyledNavItem key={index}>
-            <NavigationMenu.Link active={pathName === to} asChild>
-              <StyledNavLink href={to}>
-                <Typography variant='span'>{label}</Typography>
+            <NavigationMenu.Link active={pathName === href} asChild>
+              <StyledNavLink href={href}>
+                <Typography variant='span'>{title}</Typography>
               </StyledNavLink>
             </NavigationMenu.Link>
           </StyledNavItem>
