@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react';
+'use client';
 
 import {
     EIP6963AnnounceProviderEvent,
@@ -9,23 +9,26 @@ import {
     applyOverrideIcon,
     isCoinbaseProviderDetail,
     isEIP6963ProviderDetail,
-} from './eip6963.helper';
+} from '../providers.helper';
 
 // TODO(WEB-3241) - Once Mutable<T> utility type is consolidated, use it here
 type MutableInjectedProviderMap = Map<string, EIP6963ProviderDetail>;
 type InjectedProviderMap = ReadonlyMap<string, EIP6963ProviderDetail>;
 
-class EIP6963ProviderManager {
+// https://eips.ethereum.org/EIPS/eip-6963
+export class EIP6963ProviderManager {
     public listeners = new Set<() => void>();
     private _map: MutableInjectedProviderMap = new Map();
     private _list: EIP6963ProviderDetail[] = [];
 
     constructor() {
-        window.addEventListener(
-            EIP6963Event.ANNOUNCE_PROVIDER,
-            this.onAnnounceProvider.bind(this) as EventListener
-        );
-        window.dispatchEvent(new Event(EIP6963Event.REQUEST_PROVIDER));
+        if (typeof window !== 'undefined') {
+            window.addEventListener(
+                EIP6963Event.ANNOUNCE_PROVIDER,
+                this.onAnnounceProvider.bind(this) as EventListener
+            );
+            window.dispatchEvent(new Event(EIP6963Event.REQUEST_PROVIDER));
+        }
     }
 
     private onAnnounceProvider(event: EIP6963AnnounceProviderEvent) {
@@ -48,6 +51,7 @@ class EIP6963ProviderManager {
 
         this._map.set(detail.info.rdns, detail);
         this._list = [...this._list, detail]; // re-create array to trigger re-render from useInjectedProviderDetails
+
         this.listeners.forEach((listener) => listener());
     }
 
@@ -62,16 +66,11 @@ class EIP6963ProviderManager {
 
 export const EIP6963_PROVIDER_MANAGER = new EIP6963ProviderManager();
 
-function subscribeToProviderMap(listener: () => void): () => void {
+export const subscribeToProviderMap = (listener: () => void): (() => void) => {
     EIP6963_PROVIDER_MANAGER.listeners.add(listener);
     return () => EIP6963_PROVIDER_MANAGER.listeners.delete(listener);
-}
+};
 
-function getProviderMapSnapshot(): readonly EIP6963ProviderDetail[] {
+export const getProviderMapSnapshot = (): readonly EIP6963ProviderDetail[] => {
     return EIP6963_PROVIDER_MANAGER.list;
-}
-
-/** Returns an up-to-date map of announced eip6963 providers */
-export function useInjectedProviderDetails(): readonly EIP6963ProviderDetail[] {
-    return useSyncExternalStore(subscribeToProviderMap, getProviderMapSnapshot);
-}
+};

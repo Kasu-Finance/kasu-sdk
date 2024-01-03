@@ -1,5 +1,6 @@
-import { SupportedChainIds } from './chains';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
+
+import { SupportedChainIds } from './chains';
 import AppStaticJsonRpcProvider from './rpc/StaticJsonRpcProvider';
 import AppRpcProvider from './rpc/AppJsonRpcProvider';
 import { RPC_URLS } from './networks';

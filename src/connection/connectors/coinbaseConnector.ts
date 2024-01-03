@@ -4,6 +4,7 @@ import { RPC_URLS } from '../networks';
 import { SupportedChainIds } from '../chains';
 import { web3reactError } from '@/utils';
 import { Connection, ConnectionType } from '@/types/connectors';
+import { CoinbaseIcon } from '@/assets/icons';
 
 const [web3CoinbaseWallet, web3CoinbaseWalletHooks] = initializeConnector<CoinbaseWallet>(
     (actions) =>
@@ -21,4 +22,6 @@ export const coinbaseWalletConnection: Connection = {
     connector: web3CoinbaseWallet,
     hooks: web3CoinbaseWalletHooks,
     type: ConnectionType.COINBASE_WALLET,
+    shouldDisplay: () => true,
+    getProviderInfo: () => ({ name: 'Coinbase Wallet', icon: CoinbaseIcon() }),
 };

@@ -30,7 +30,9 @@ export const walletConnectConnection: Connection = {
     connector: walletConnectV2,
     hooks: walletConnectV2hooks,
     type: ConnectionType.WALLET_CONNECT_V2,
-    getName: () => 'Wallet Connect V2',
     shouldDisplay: () => true,
-    getIcon: WalletConnectIcon,
+    getProviderInfo: () => ({
+        name: 'Wallet Connect V2',
+        icon: WalletConnectIcon(),
+    }),
 };

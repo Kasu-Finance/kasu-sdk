@@ -11,6 +11,6 @@ export const networkConnection: Connection = {
     connector: web3Network,
     hooks: web3NetworkHooks,
     type: ConnectionType.NETWORK,
-    getName: () => 'Network',
     shouldDisplay: () => false,
+    getProviderInfo: () => ({ name: 'Network' }),
 };
