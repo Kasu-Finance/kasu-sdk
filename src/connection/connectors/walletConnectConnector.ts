@@ -2,6 +2,7 @@ import { initializeConnector } from '@web3-react/core';
 import { WalletConnect as WalletConnectV2 } from '@web3-react/walletconnect-v2';
 import { SupportedChainIds } from '../chains';
 import { Connection, ConnectionType } from '@/types/connectors';
+import { WalletConnectIcon } from '@/assets/icons';
 
 const WALLET_CONNECT_V2_PROJECT_ID = process.env.NEXT_PUBLIC_WALLET_CONNECT_V2_PROJECT_ID;
 
@@ -29,4 +30,7 @@ export const walletConnectConnection: Connection = {
     connector: walletConnectV2,
     hooks: walletConnectV2hooks,
     type: ConnectionType.WALLET_CONNECT_V2,
+    getName: () => 'Wallet Connect V2',
+    shouldDisplay: () => true,
+    getIcon: WalletConnectIcon,
 };

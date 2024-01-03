@@ -11,4 +11,5 @@ export const injectedConnection: Connection = {
     connector: web3Injected,
     hooks: web3InjectedHooks,
     type: ConnectionType.INJECTED,
+    // getName:
 };
