@@ -25,8 +25,6 @@ const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({ trigger }) => {
 
     const tryActivation = useCallback(
         async (connection: Connection) => {
-            const arb: AddEthereumChainParameter =
-                networks[SupportedChainIds.ARBITRUM_ONE];
             try {
                 if (connection.overrideActivate?.()) return;
 
