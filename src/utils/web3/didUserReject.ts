@@ -1,7 +1,7 @@
 import { ErrorCode } from '@/constants';
 import { Connection, ConnectionType } from '@/types/connectors';
 
-export function didUserReject(connection: Connection, error: any): boolean {
+const didUserReject = (connection: Connection, error: any): boolean => {
     return (
         error?.code === ErrorCode.USER_REJECTED_REQUEST ||
         (connection.type === ConnectionType.WALLET_CONNECT_V2 &&
@@ -9,4 +9,6 @@ export function didUserReject(connection: Connection, error: any): boolean {
         (connection.type === ConnectionType.COINBASE_WALLET &&
             error?.toString?.() === ErrorCode.CB_REJECTED_REQUEST)
     );
-}
+};
+
+export default didUserReject;

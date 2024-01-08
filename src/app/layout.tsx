@@ -5,6 +5,7 @@ import './normalize.css';
 import Header from '@/components/organisms/header';
 import Web3Provider from '@/context/web3provider/web3.provider';
 import StyledComponentsRegistry from '@/lib/registry';
+import '@/connection/eagerlyConnect';
 
 type RootLayoutProps = {
     children: ReactNode;

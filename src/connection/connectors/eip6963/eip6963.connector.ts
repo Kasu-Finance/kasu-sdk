@@ -64,9 +64,11 @@ export class EIP6963 extends Connector {
 
             // Wallets may resolve eth_chainId and hang on eth_accounts pending user interaction, which may include changing
             // chains; they should be requested serially, with accounts first, so that the chainId can settle.
+
             const accounts = (await this.provider.request({
                 method: 'eth_accounts',
             })) as string[];
+
             if (!accounts.length) throw new Error('No accounts returned');
             const chainId = (await this.provider.request({
                 method: 'eth_chainId',

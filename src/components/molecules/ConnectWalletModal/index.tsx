@@ -2,15 +2,16 @@
 
 import Modal from '@/components/atoms/Modal';
 import { SupportedChainIds } from '@/connection/chains';
+import { setRecentWeb3Connection } from '@/connection/connection.helper';
+import { getConnection } from '@/connection/connectors';
 import { networks } from '@/connection/networks';
 import { useOrderedConnections } from '@/hooks/web3/useOrderedConnections';
 import useSwitchChain from '@/hooks/web3/useSwitchChain';
 import { Connection } from '@/types/connectors';
-import { web3reactError } from '@/utils';
-import { didUserReject } from '@/utils/didUserReject';
+import { web3reactError, didUserReject } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
 import { AddEthereumChainParameter, Connector } from '@web3-react/types';
-import { ReactNode, useCallback } from 'react';
+import { ReactNode, useCallback, useEffect } from 'react';
 
 type ConnectWalletModalProps = {
     trigger: ReactNode;
@@ -19,7 +20,9 @@ type ConnectWalletModalProps = {
 const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({ trigger }) => {
     const connections = useOrderedConnections();
 
-    const { chainId, account, connector } = useWeb3React();
+    const { chainId, account, connector, ENSName } = useWeb3React();
+
+    const connection = getConnection(connector);
 
     const switchChain = useSwitchChain();
 
@@ -54,7 +57,21 @@ const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({ trigger }) => {
             connector.deactivate();
         }
         connector.resetState();
+
+        setRecentWeb3Connection(undefined);
     }, [connector]);
+
+    useEffect(() => {
+        if (account || ENSName) {
+            setRecentWeb3Connection({
+                type: connection.type,
+                address: account,
+                disconnected: false,
+                ENSName: ENSName ?? undefined,
+                rdns: connection.getProviderInfo().rdns,
+            });
+        }
+    }, [ENSName, account, connection]);
 
     return (
         <Modal trigger={trigger}>

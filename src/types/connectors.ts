@@ -11,6 +11,14 @@ export enum ConnectionType {
     EIP_6963_INJECTED = 'EIP_6963_INJECTED',
 }
 
+export type RecentConnection = {
+    type: ConnectionType;
+    rdns?: string;
+    address?: string;
+    ENSName?: string;
+    disconnected?: boolean;
+};
+
 export type ProviderInfo = {
     name: string;
     icon?: ReactNode;

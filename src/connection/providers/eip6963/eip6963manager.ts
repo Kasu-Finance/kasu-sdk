@@ -36,9 +36,6 @@ export class EIP6963ProviderManager {
 
         const detail = applyOverrideIcon(event.detail);
 
-        // TODO(WEB-3225): update coinbase to display via eip6963 once we move coinbase wallet-link behind the fold
-        if (isCoinbaseProviderDetail(detail)) return;
-
         // Ignore duplicate announcements if we've already stored a provider detail for the given rdns
         if (this._map.get(detail.info.rdns)) {
             if (this._map.get(detail.info.rdns)?.provider !== detail.provider) {

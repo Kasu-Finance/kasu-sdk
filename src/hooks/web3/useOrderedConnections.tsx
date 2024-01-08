@@ -31,7 +31,12 @@ function mergeConnections(connections: Connection[], eip6963Connections: Connect
 
     const allConnections = [
         ...eip6963Connections,
-        ...displayedConnections.filter((c) => c.type !== ConnectionType.INJECTED),
+        ...displayedConnections.filter(
+            (c) =>
+                ![ConnectionType.INJECTED, ConnectionType.COINBASE_WALLET].includes(
+                    c.type
+                )
+        ),
     ];
     // By default, injected options should appear second in the list (below Uniswap wallet)
     // allConnections.splice(1, 0, ...eip6963Connections);

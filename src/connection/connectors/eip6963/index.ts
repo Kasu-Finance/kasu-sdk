@@ -25,6 +25,8 @@ export const eip6963Connection: InjectedConnection = {
             ...this,
             getProviderInfo: () => providerInfo,
             overrideActivate() {
+                console.log('hello');
+
                 eip6963.selectProvider(rdns); // Select the specific eip6963 provider before activating
                 return false;
             },
