@@ -2,7 +2,9 @@
 
 import Modal from '@/components/atoms/Modal';
 import { SupportedChainIds } from '@/connection/chains';
-import { useOrderedConnections } from '@/hooks/useOrderedConnections';
+import { networks } from '@/connection/networks';
+import { useOrderedConnections } from '@/hooks/web3/useOrderedConnections';
+import useSwitchChain from '@/hooks/web3/useSwitchChain';
 import { Connection } from '@/types/connectors';
 import { web3reactError } from '@/utils';
 import { didUserReject } from '@/utils/didUserReject';
@@ -19,38 +21,16 @@ const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({ trigger }) => {
 
     const { chainId, account, connector } = useWeb3React();
 
+    const switchChain = useSwitchChain();
+
     const tryActivation = useCallback(
         async (connection: Connection) => {
-            const polygon: AddEthereumChainParameter = {
-                chainId: 137,
-                chainName: 'Polygon',
-                nativeCurrency: {
-                    decimals: 18,
-                    name: 'Matic Token',
-                    symbol: 'MATIC',
-                },
-                rpcUrls: ['https://polygon-rpc.com/'],
-                blockExplorerUrls: ['https://polygonscan.com'],
-            };
+            const arb: AddEthereumChainParameter =
+                networks[SupportedChainIds.ARBITRUM_ONE];
             try {
                 if (connection.overrideActivate?.()) return;
 
-                await connection.connector.activate(
-                    chainId === SupportedChainIds.MAINNET
-                        ? polygon
-                        : SupportedChainIds.MAINNET
-                );
-
-                // if (connector instanceof GnosisSafe) {
-                //     await void connector.activate();
-                // } else if (
-                //     connector instanceof WalletConnect ||
-                //     connector instanceof Network
-                // ) {
-                //     await connector.activate(chain);
-                // } else {
-                //     await connector.activate(getAddChainParameters(chain));
-                // }
+                await connection.connector.activate();
             } catch (error) {
                 // Ideally set to setError global context.
                 web3reactError(error as Error);
@@ -62,6 +42,14 @@ const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({ trigger }) => {
         },
         [chainId]
     );
+
+    const selectChain = async () => {
+        try {
+            await switchChain(SupportedChainIds.ARBITRUM_ONE);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     const disconnect = useCallback(() => {
         if (connector && connector.deactivate) {
@@ -84,6 +72,7 @@ const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({ trigger }) => {
                     </div>
                 );
             })}
+            <button onClick={selectChain}>switch chain</button>
             <button onClick={disconnect}>disconnect</button>
         </Modal>
     );

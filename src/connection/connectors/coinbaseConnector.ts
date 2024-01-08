@@ -1,6 +1,6 @@
 import { initializeConnector } from '@web3-react/core';
 import { CoinbaseWallet } from '@web3-react/coinbase-wallet';
-import { RPC_URLS } from '../networks';
+import { RPC_URLS } from '../rpc';
 import { SupportedChainIds } from '../chains';
 import { web3reactError } from '@/utils';
 import { Connection, ConnectionType } from '@/types/connectors';

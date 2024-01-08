@@ -1,5 +1,6 @@
 import { MetamaskIcon } from '@/assets/icons';
 import { EIP6963ProviderDetail } from '@/types/eip6963';
+import { Network } from '@ethersproject/networks';
 import { Provider } from '@web3-react/types';
 
 /**
@@ -48,4 +49,35 @@ export const isCoinbaseProviderDetail = (
     providerDetail: EIP6963ProviderDetail
 ): boolean => {
     return providerDetail.info.rdns === 'com.coinbase.wallet';
+};
+
+export const checkNetworks = (networks: Array<Network>): Network | null => {
+    let result: Network | null = null;
+
+    for (let i = 0; i < networks.length; i++) {
+        const network = networks[i];
+
+        // Null! We do not know our network; bail.
+        if (network == null) {
+            throw new Error('unknown network');
+        }
+
+        if (result) {
+            // Make sure the network matches the previous networks
+            if (
+                !(
+                    result.name === network.name &&
+                    result.chainId === network.chainId &&
+                    (result.ensAddress === network.ensAddress ||
+                        (result.ensAddress == null && network.ensAddress == null))
+                )
+            ) {
+                throw new Error('networks mismatch');
+            }
+        } else {
+            result = network;
+        }
+    }
+
+    return result;
 };

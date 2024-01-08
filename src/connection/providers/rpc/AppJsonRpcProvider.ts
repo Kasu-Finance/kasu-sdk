@@ -1,39 +1,8 @@
-import { Network } from '@ethersproject/networks';
 import { JsonRpcProvider, Provider } from '@ethersproject/providers';
 
 import AppStaticJsonRpcProvider from './StaticJsonRpcProvider';
-import { SupportedChainIds } from '../chains';
-
-function checkNetworks(networks: Array<Network>): Network | null {
-    let result: Network | null = null;
-
-    for (let i = 0; i < networks.length; i++) {
-        const network = networks[i];
-
-        // Null! We do not know our network; bail.
-        if (network == null) {
-            throw new Error('unknown network');
-        }
-
-        if (result) {
-            // Make sure the network matches the previous networks
-            if (
-                !(
-                    result.name === network.name &&
-                    result.chainId === network.chainId &&
-                    (result.ensAddress === network.ensAddress ||
-                        (result.ensAddress == null && network.ensAddress == null))
-                )
-            ) {
-                throw new Error('networks mismatch');
-            }
-        } else {
-            result = network;
-        }
-    }
-
-    return result;
-}
+import { SupportedChainIds } from '../../chains';
+import { checkNetworks } from '../providers.helper';
 
 interface ProviderPerformance {
     callCount: number;

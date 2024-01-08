@@ -4,7 +4,11 @@ import { deepCopy } from '@ethersproject/properties';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 
 import { isPlain } from '@/utils';
-import { AVERAGE_L1_BLOCK_TIME, CHAIN_IDS_TO_NAMES, SupportedChainIds } from '../chains';
+import {
+    AVERAGE_L1_BLOCK_TIME,
+    CHAIN_IDS_TO_NAMES,
+    SupportedChainIds,
+} from '../../chains';
 
 export default class AppStaticJsonRpcProvider extends StaticJsonRpcProvider {
     private _blockCache = new Map<string, Promise<any>>();
