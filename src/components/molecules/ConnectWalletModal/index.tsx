@@ -2,11 +2,14 @@
 
 import Modal from '@/components/atoms/Modal';
 import { SupportedChainIds } from '@/connection/chains';
-import { useOrderedConnections } from '@/hooks/useOrderedConnections';
+import { networks } from '@/connection/networks';
+import { useOrderedConnections } from '@/hooks/web3/useOrderedConnections';
+import useSwitchChain from '@/hooks/web3/useSwitchChain';
 import { Connection } from '@/types/connectors';
 import { web3reactError } from '@/utils';
+import { didUserReject } from '@/utils/didUserReject';
 import { useWeb3React } from '@web3-react/core';
-import { Connector } from '@web3-react/types';
+import { AddEthereumChainParameter, Connector } from '@web3-react/types';
 import { ReactNode, useCallback } from 'react';
 
 type ConnectWalletModalProps = {
@@ -18,36 +21,33 @@ const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({ trigger }) => {
 
     const { chainId, account, connector } = useWeb3React();
 
+    const switchChain = useSwitchChain();
+
     const tryActivation = useCallback(
         async (connection: Connection) => {
             try {
                 if (connection.overrideActivate?.()) return;
 
-                await connection.connector.activate(
-                    chainId === SupportedChainIds.MAINNET
-                        ? SupportedChainIds.ARBITRUM_ONE
-                        : SupportedChainIds.MAINNET
-                );
-
-                // if (connector instanceof GnosisSafe) {
-                //     await void connector.activate();
-                // } else if (
-                //     connector instanceof WalletConnect ||
-                //     connector instanceof Network
-                // ) {
-                //     await connector.activate(chain);
-                // } else {
-                //     await connector.activate(getAddChainParameters(chain));
-                // }
+                await connection.connector.activate();
             } catch (error) {
                 // Ideally set to setError global context.
                 web3reactError(error as Error);
-            } finally {
-                // setActivatingWallet(undefined);
+
+                if (didUserReject(connection, error)) {
+                    console.log('user rejected');
+                }
             }
         },
         [chainId]
     );
+
+    const selectChain = async () => {
+        try {
+            await switchChain(SupportedChainIds.ARBITRUM_ONE);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     const disconnect = useCallback(() => {
         if (connector && connector.deactivate) {
@@ -59,6 +59,7 @@ const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({ trigger }) => {
     return (
         <Modal trigger={trigger}>
             <div>Connected : {account ?? 'not connected'}</div>
+            <div>ChainID : {chainId ?? 'not connected'}</div>
             {connections.orderedConnections.map((connection) => {
                 return (
                     <div
@@ -69,6 +70,7 @@ const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({ trigger }) => {
                     </div>
                 );
             })}
+            <button onClick={selectChain}>switch chain</button>
             <button onClick={disconnect}>disconnect</button>
         </Modal>
     );
