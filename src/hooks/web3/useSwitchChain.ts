@@ -20,8 +20,6 @@ const useSwitchChain = () => {
                     (error as ProviderRpcError).code;
 
                 if (errorCode === ErrorCode.CHAIN_NOT_ADDED) {
-                    console.log(networks[chainId]);
-
                     // label cannot be present ( look at AddEthereumChainParameter type )
                     delete networks[chainId].label;
 

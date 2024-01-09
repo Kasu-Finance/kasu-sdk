@@ -1,12 +1,10 @@
 import HeaderLogo from '@/assets/logo/HeaderLogo';
 import Navigation, { NavigationProps } from './Navigation';
-import ConnectWalletModal from '@/components/molecules/ConnectWalletModal';
-import Typography from '@/components/atoms/Typography';
-import { WalletIcon } from '@/assets/icons';
 
 import './header.scss';
 import { StyledHeader } from './header.style';
 import Container from '@/components/atoms/Container';
+import ConnectWallet from './ConnectWallet';
 
 const navLinks: NavigationProps['links'] = [
     {
@@ -37,14 +35,7 @@ const Header = () => {
             <Container>
                 <HeaderLogo />
                 <Navigation links={navLinks} />
-                <ConnectWalletModal
-                    trigger={
-                        <>
-                            <WalletIcon />
-                            <Typography variant='span'>Connect Wallet</Typography>
-                        </>
-                    }
-                />
+                <ConnectWallet />
             </Container>
         </StyledHeader>
     );

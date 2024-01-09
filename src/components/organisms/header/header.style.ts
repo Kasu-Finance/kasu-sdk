@@ -1,5 +1,6 @@
 'use client';
 
+import Button from '@/components/atoms/Button';
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import Link from 'next/link';
 import styled from 'styled-components';
@@ -58,5 +59,21 @@ export const StyledNavLink = styled(Link)`
     }
     &[data-active]::after {
         width: 100%;
+    }
+`;
+
+export const StyledConnectWalletButton = styled(Button)`
+    background-color: #3276cf;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 187px;
+    height: 48px;
+    border-radius: 4px;
+    border: none;
+
+    svg {
+        margin-right: 0.5rem;
     }
 `;

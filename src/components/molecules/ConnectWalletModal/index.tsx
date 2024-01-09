@@ -2,15 +2,17 @@
 
 import Modal from '@/components/atoms/Modal';
 import { SupportedChainIds } from '@/connection/chains';
-import { setRecentWeb3Connection } from '@/connection/connection.helper';
+import {
+    setRecentWeb3Connection,
+    setRecentWeb3ConnectionDisconnected,
+} from '@/connection/connection.helper';
 import { getConnection } from '@/connection/connectors';
-import { networks } from '@/connection/networks';
+import { networkConnection } from '@/connection/connectors/networkConnector';
 import { useOrderedConnections } from '@/hooks/web3/useOrderedConnections';
 import useSwitchChain from '@/hooks/web3/useSwitchChain';
 import { Connection } from '@/types/connectors';
 import { web3reactError, didUserReject } from '@/utils';
 import { useWeb3React } from '@web3-react/core';
-import { AddEthereumChainParameter, Connector } from '@web3-react/types';
 import { ReactNode, useCallback, useEffect } from 'react';
 
 type ConnectWalletModalProps = {
@@ -46,7 +48,11 @@ const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({ trigger }) => {
 
     const selectChain = async () => {
         try {
-            await switchChain(SupportedChainIds.ARBITRUM_ONE);
+            await switchChain(
+                chainId === SupportedChainIds.MAINNET
+                    ? SupportedChainIds.ARBITRUM_ONE
+                    : SupportedChainIds.MAINNET
+            );
         } catch (error) {
             console.log(error);
         }
@@ -58,7 +64,7 @@ const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({ trigger }) => {
         }
         connector.resetState();
 
-        setRecentWeb3Connection(undefined);
+        setRecentWeb3ConnectionDisconnected();
     }, [connector]);
 
     useEffect(() => {
@@ -75,7 +81,8 @@ const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({ trigger }) => {
 
     return (
         <Modal trigger={trigger}>
-            <div>Connected : {account ?? 'not connected'}</div>
+            <div>Connector : {getConnection(connector).getProviderInfo().name}</div>
+            <div>Account : {account ?? 'not connected'}</div>
             <div>ChainID : {chainId ?? 'not connected'}</div>
             {connections.orderedConnections.map((connection) => {
                 return (
@@ -88,7 +95,9 @@ const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({ trigger }) => {
                 );
             })}
             <button onClick={selectChain}>switch chain</button>
-            <button onClick={disconnect}>disconnect</button>
+            {connector !== networkConnection.connector && (
+                <button onClick={disconnect}>disconnect</button>
+            )}
         </Modal>
     );
 };

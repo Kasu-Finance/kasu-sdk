@@ -22,6 +22,14 @@ export const getRecentWeb3Connection = (): RecentConnection | undefined => {
     }
 };
 
+export const setRecentWeb3ConnectionDisconnected = () => {
+    const recentConnection = getRecentWeb3Connection();
+
+    if (!recentConnection) return;
+
+    setRecentWeb3Connection({ ...recentConnection, disconnected: true });
+};
+
 export const setRecentWeb3Connection = (connection: RecentConnection | undefined) => {
     if (!connection) return localStorage.removeItem(RECENT_CONNECTION_KEY);
 
