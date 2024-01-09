@@ -9,7 +9,7 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ({ children, className, ...rest }, ref) => {
         return (
-            <button {...rest} ref={ref}>
+            <button className={className} {...rest} ref={ref}>
                 {children}
             </button>
         );
