@@ -6,6 +6,12 @@ import './globals.css'
 
 import Header from '@/components/organisms/header'
 
+import ThemeRegistry from '@/themes/ThemeRegistry'
+
+// const Header = dynamic(() => import('@/components/organisms/header'), {
+//   ssr: false,
+// })
+
 type RootLayoutProps = {
   children: ReactNode
 }
@@ -20,10 +26,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang='en'>
-      <body className={inter.className}>
-        <Header />
-        <main>{children}</main>
-      </body>
+      <ThemeRegistry>
+        <body>
+          <Header />
+          {children}
+        </body>
+      </ThemeRegistry>
+      <body className={inter.className}></body>
     </html>
   )
 }
