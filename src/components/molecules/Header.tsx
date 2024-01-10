@@ -30,22 +30,26 @@ const Header = () => {
             <KasuLogo color={theme.palette.primary.main} />
           </Box>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          <Box sx={{ flexGrow: 1, ml: 4, display: { xs: 'none', md: 'flex' } }}>
             {MENU_ITEMS.map((page) => (
-              <Link key={page.href} href={page.href}>
-                <Button
-                  variant='text'
-                  sx={{
-                    color: isLinkActive(page.href) ? 'primary.main' : 'inherit',
-                    // Additional styling for active link
-                    borderBottom: isLinkActive(page.href)
-                      ? '2px solid currentColor'
-                      : 'none',
-                  }}
-                >
-                  {page.title}
-                </Button>
-              </Link>
+              // <Link key={page.href} href={page.href}>
+              <Button
+                disableElevation
+                key={page.href}
+                href={page.href}
+                component={Link}
+                variant='text'
+                sx={{
+                  color: isLinkActive(page.href) ? 'primary.main' : 'inherit',
+                  // Additional styling for active link
+                  borderBottom: isLinkActive(page.href)
+                    ? '2px solid currentColor'
+                    : 'none',
+                }}
+              >
+                {page.title}
+              </Button>
+              // </Link>
             ))}
           </Box>
 
