@@ -4,7 +4,7 @@ import { ReactNode } from 'react'
 
 import './globals.css'
 
-import Header from '@/components/organisms/header'
+import Header from '@/components/molecules/Header'
 
 import ThemeRegistry from '@/themes/ThemeRegistry'
 
