@@ -1,11 +1,17 @@
-import Header from '@/components/organisms/header'
 import '@/connection/eagerlyConnect'
-import Web3Provider from '@/context/web3provider/web3.provider'
-import StyledComponentsRegistry from '@/lib/registry'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { ReactNode } from 'react'
-import './normalize.css'
+
+import './globals.css'
+
+import Header from '@/components/molecules/Header'
+
+import ThemeRegistry from '@/themes/ThemeRegistry'
+
+// const Header = dynamic(() => import('@/components/organisms/header'), {
+//   ssr: false,
+// })
 
 type RootLayoutProps = {
   children: ReactNode
@@ -22,14 +28,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang='en'>
-      <body className={inter.className}>
-        <StyledComponentsRegistry>
-          <Web3Provider>
-            <Header />
-            <main>{children}</main>
-          </Web3Provider>
-        </StyledComponentsRegistry>
-      </body>
+      <ThemeRegistry>
+        <body>
+          <Header />
+          {children}
+        </body>
+      </ThemeRegistry>
+      <body className={inter.className}></body>
     </html>
   )
 }
