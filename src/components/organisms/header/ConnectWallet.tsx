@@ -1,9 +1,9 @@
 'use client'
 
+import Typography from '@mui/material/Typography'
 import { useWeb3React } from '@web3-react/core'
 import { useEffect, useState } from 'react'
 
-import Typography from '@/components/atoms/Typography'
 import ConnectWalletModal from '@/components/molecules/ConnectWalletModal'
 
 import { WalletIcon } from '@/assets/icons'
@@ -39,7 +39,7 @@ const ConnectWallet = () => {
       trigger={
         <StyledConnectWalletButton>
           <WalletIcon />
-          <Typography variant='span'>{text}</Typography>
+          <Typography variant='body2'>{text}</Typography>
         </StyledConnectWalletButton>
       }
     />

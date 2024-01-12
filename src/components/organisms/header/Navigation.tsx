@@ -1,10 +1,9 @@
 'use client'
 
+import Typography from '@mui/material/Typography'
 import * as NavigationMenu from '@radix-ui/react-navigation-menu'
 import { usePathname } from 'next/navigation'
 import styled from 'styled-components'
-
-import Typography from '@/components/atoms/Typography'
 
 import {
   StyledNavItem,
@@ -32,7 +31,7 @@ const Navigation: React.FC<NavigationProps> = ({ links }) => {
           <StyledNavItem key={index}>
             <NavigationMenu.Link active={pathName === to} asChild>
               <StyledNavLink href={to}>
-                <Typography variant='span'>{label}</Typography>
+                <Typography variant='body2'>{label}</Typography>
               </StyledNavLink>
             </NavigationMenu.Link>
           </StyledNavItem>
