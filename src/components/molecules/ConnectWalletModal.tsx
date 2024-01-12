@@ -43,10 +43,11 @@ const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({ trigger }) => {
         web3reactError(error as Error)
 
         if (didUserReject(connection, error)) {
-          console.log('user rejected')
+          console.warn('user rejected')
         }
       }
     },
+    // eslint-disable-next-line
     [chainId]
   )
 
@@ -58,7 +59,7 @@ const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({ trigger }) => {
           : SupportedChainIds.MAINNET
       )
     } catch (error) {
-      console.log(error)
+      console.warn(error)
     }
   }
 
