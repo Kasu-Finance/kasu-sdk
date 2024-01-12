@@ -1,0 +1,42 @@
+{
+  "emmet.excludeLanguages": [],
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true,
+    "source.fixAll.eslint": true,
+    "source.organizeImports": true
+  },
+
+  "emmet.includeLanguages": {
+    "markdown": "html",
+    "javascript": "javascriptreact",
+    "typescript": "typescriptreact"
+  },
+
+  "emmet.showSuggestionsAsSnippets": true,
+  "emmet.triggerExpansionOnTab": true,
+  "files.exclude": {
+    "**/*.js.map": {
+      "when": "$(basename)"
+    },
+    "**/node_modules": true
+  },
+
+  "html.autoClosingTags": true,
+  "javascript.autoClosingTags": true,
+  "javascript.suggest.completeFunctionCalls": true,
+  "typescript.suggest.completeFunctionCalls": true,
+  "javascript.inlayHints.functionLikeReturnTypes.enabled": false,
+  "typescript.inlayHints.functionLikeReturnTypes.enabled": false,
+  "javascript.inlayHints.parameterNames.enabled": "none",
+  "typescript.inlayHints.parameterNames.enabled": "none",
+  "javascript.suggest.autoImports": true,
+  "search.exclude": {
+    "**/coverage": true,
+    "**/node_modules": true
+  },
+
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": false
+}
