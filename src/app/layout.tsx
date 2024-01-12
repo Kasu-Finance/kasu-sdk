@@ -5,6 +5,7 @@ import '@/connection/eagerlyConnect'
 
 import Header from '@/components/molecules/Header'
 
+import Web3Provider from '@/context/web3provider/web3.provider'
 import ThemeRegistry from '@/themes/ThemeRegistry'
 
 // const Header = dynamic(() => import('@/components/organisms/header'), {
@@ -28,8 +29,10 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang='en'>
       <ThemeRegistry>
         <body>
-          <Header />
-          {children}
+          <Web3Provider>
+            <Header />
+            {children}
+          </Web3Provider>
         </body>
       </ThemeRegistry>
       <body className={inter.className}></body>
