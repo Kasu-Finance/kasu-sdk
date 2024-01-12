@@ -1,10 +1,12 @@
 'use client';
 
 import { useMemo } from 'react';
-import { eip6963Connection } from '@/connection/connectors/eip6963';
-import { Connection, ConnectionType } from '@/types/connectors';
+
 import { connections } from '@/connection/connectors';
+import { eip6963Connection } from '@/connection/connectors/eip6963';
 import { EIP6963_PROVIDER_MANAGER } from '@/connection/providers/eip6963/eip6963manager';
+
+import { Connection, ConnectionType } from '@/types/connectors';
 
 function useEIP6963Connections() {
     const eip6963Injectors = EIP6963_PROVIDER_MANAGER.list;

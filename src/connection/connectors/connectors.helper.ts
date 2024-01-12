@@ -1,4 +1,5 @@
 import { MetamaskIcon } from '@/assets/icons';
+
 import { ProviderInfo } from '@/types/connectors';
 
 type InjectedWalletKey = keyof NonNullable<Window['ethereum']>;

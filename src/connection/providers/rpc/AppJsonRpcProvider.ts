@@ -1,8 +1,8 @@
 import { JsonRpcProvider, Provider } from '@ethersproject/providers';
 
 import AppStaticJsonRpcProvider from './StaticJsonRpcProvider';
-import { SupportedChainIds } from '../../chains';
 import { checkNetworks } from '../providers.helper';
+import { SupportedChainIds } from '../../chains';
 
 interface ProviderPerformance {
     callCount: number;

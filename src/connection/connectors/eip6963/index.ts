@@ -1,7 +1,10 @@
 import { initializeConnector } from '@web3-react/core';
+
 import { web3reactError } from '@/utils';
-import { ConnectionType, InjectedConnection, ProviderInfo } from '@/types/connectors';
+
 import { EIP6963 } from './eip6963.connector';
+
+import { ConnectionType, InjectedConnection, ProviderInfo } from '@/types/connectors';
 
 const [eip6963, eip6963hooks] = initializeConnector<EIP6963>(
     (actions) => new EIP6963({ actions, onError: web3reactError })

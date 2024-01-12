@@ -1,9 +1,10 @@
-import { SupportedChainIds } from '@/connection/chains';
-import { networks } from '@/connection/networks';
-import { ErrorCode } from '@/constants';
 import { useWeb3React } from '@web3-react/core';
 import { ProviderRpcError } from '@web3-react/types';
 import { useCallback } from 'react';
+
+import { SupportedChainIds } from '@/connection/chains';
+import { networks } from '@/connection/networks';
+import { ErrorCode } from '@/constants';
 
 const useSwitchChain = () => {
     const { connector } = useWeb3React();

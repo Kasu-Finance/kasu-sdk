@@ -1,15 +1,18 @@
 'use client';
 
-import { WalletIcon } from '@/assets/icons';
-import Button from '@/components/atoms/Button';
-import Typography from '@/components/atoms/Typography';
-import ConnectWalletModal from '@/components/molecules/ConnectWalletModal';
-import formatAccount from '@/utils/formats/formatAccount';
 import { useWeb3React } from '@web3-react/core';
 import { useEffect, useState } from 'react';
-import { StyledConnectWalletButton } from './header.style';
-import { isSupportedChain } from '@/utils';
+
+import Typography from '@/components/atoms/Typography';
+import ConnectWalletModal from '@/components/molecules/ConnectWalletModal';
+
+import { WalletIcon } from '@/assets/icons';
+
 import { networkConnection } from '@/connection/connectors/networkConnector';
+import { isSupportedChain } from '@/utils';
+import formatAccount from '@/utils/formats/formatAccount';
+
+import { StyledConnectWalletButton } from './header.style';
 
 const ConnectWallet = () => {
     const { account, connector, chainId } = useWeb3React();

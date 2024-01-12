@@ -1,6 +1,13 @@
 'use client'
 
+import { useWeb3React } from '@web3-react/core'
+import { ReactNode, useCallback, useEffect } from 'react'
+
+import { useOrderedConnections } from '@/hooks/web3/useOrderedConnections'
+import useSwitchChain from '@/hooks/web3/useSwitchChain'
+
 import Modal from '@/components/atoms/Modal'
+
 import { SupportedChainIds } from '@/connection/chains'
 import {
   setRecentWeb3Connection,
@@ -8,12 +15,9 @@ import {
 } from '@/connection/connection.helper'
 import { getConnection } from '@/connection/connectors'
 import { networkConnection } from '@/connection/connectors/networkConnector'
-import { useOrderedConnections } from '@/hooks/web3/useOrderedConnections'
-import useSwitchChain from '@/hooks/web3/useSwitchChain'
-import { Connection } from '@/types/connectors'
 import { didUserReject, web3reactError } from '@/utils'
-import { useWeb3React } from '@web3-react/core'
-import { ReactNode, useCallback, useEffect } from 'react'
+
+import { Connection } from '@/types/connectors'
 
 type ConnectWalletModalProps = {
   trigger: ReactNode

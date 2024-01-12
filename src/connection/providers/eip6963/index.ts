@@ -1,6 +1,8 @@
-import { EIP6963ProviderDetail } from '@/types/eip6963';
 import { Provider } from '@web3-react/types';
+
 import { EIP6963_PROVIDER_MANAGER } from './eip6963manager';
+
+import { EIP6963ProviderDetail } from '@/types/eip6963';
 
 type Listener = (...args: any[]) => void;
 

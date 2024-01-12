@@ -1,11 +1,13 @@
 import { Connector } from '@web3-react/types';
+
 import { coinbaseWalletConnection } from './coinbaseConnector';
+import { deprecatedInjectedConnection } from './deprecatedInjectedConnector';
+import { eip6963Connection } from './eip6963';
 import { gnosisSafeConnection } from './gnosisSafeConnector';
 import { networkConnection } from './networkConnector';
 import { walletConnectConnection } from './walletConnectConnector';
+
 import { ConnectionType } from '@/types/connectors';
-import { deprecatedInjectedConnection } from './deprecatedInjectedConnector';
-import { eip6963Connection } from './eip6963';
 
 export const connections = [
     gnosisSafeConnection,

@@ -1,15 +1,15 @@
 'use client';
 
 import {
+    applyOverrideIcon,
+    isEIP6963ProviderDetail,
+} from '../providers.helper';
+
+import {
     EIP6963AnnounceProviderEvent,
     EIP6963Event,
     EIP6963ProviderDetail,
 } from '@/types/eip6963';
-import {
-    applyOverrideIcon,
-    isCoinbaseProviderDetail,
-    isEIP6963ProviderDetail,
-} from '../providers.helper';
 
 // TODO(WEB-3241) - Once Mutable<T> utility type is consolidated, use it here
 type MutableInjectedProviderMap = Map<string, EIP6963ProviderDetail>;

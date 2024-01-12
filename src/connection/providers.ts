@@ -1,8 +1,8 @@
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 
 import { SupportedChainIds } from './chains';
-import AppStaticJsonRpcProvider from './providers/rpc/StaticJsonRpcProvider';
 import AppRpcProvider from './providers/rpc/AppJsonRpcProvider';
+import AppStaticJsonRpcProvider from './providers/rpc/StaticJsonRpcProvider';
 import { RPC_URLS } from './rpc';
 
 const providerFactory = (chainId: SupportedChainIds, i = 0) =>

@@ -1,10 +1,14 @@
-import { initializeConnector } from '@web3-react/core';
 import { CoinbaseWallet } from '@web3-react/coinbase-wallet';
-import { RPC_URLS } from '../rpc';
-import { SupportedChainIds } from '../chains';
-import { web3reactError } from '@/utils';
-import { Connection, ConnectionType } from '@/types/connectors';
+import { initializeConnector } from '@web3-react/core';
+
 import { CoinbaseIcon } from '@/assets/icons';
+
+import { web3reactError } from '@/utils';
+
+import { SupportedChainIds } from '../chains';
+import { RPC_URLS } from '../rpc';
+
+import { Connection, ConnectionType } from '@/types/connectors';
 
 const [web3CoinbaseWallet, web3CoinbaseWalletHooks] = initializeConnector<CoinbaseWallet>(
     (actions) =>

@@ -1,9 +1,7 @@
-import '@/connection/eagerlyConnect'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { ReactNode } from 'react'
-
-import './globals.css'
+import '@/connection/eagerlyConnect'
 
 import Header from '@/components/molecules/Header'
 

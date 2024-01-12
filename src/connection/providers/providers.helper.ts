@@ -1,7 +1,9 @@
-import { MetamaskIcon } from '@/assets/icons';
-import { EIP6963ProviderDetail } from '@/types/eip6963';
 import { Network } from '@ethersproject/networks';
 import { Provider } from '@web3-react/types';
+
+import { MetamaskIcon } from '@/assets/icons';
+
+import { EIP6963ProviderDetail } from '@/types/eip6963';
 
 /**
  * Returns true if the string is a RFC2397-compliant data URI

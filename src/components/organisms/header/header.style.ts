@@ -1,9 +1,10 @@
 'use client'
 
-import Button from '@/components/atoms/Button'
 import * as NavigationMenu from '@radix-ui/react-navigation-menu'
 import Link from 'next/link'
 import styled from 'styled-components'
+
+import Button from '@/components/atoms/Button'
 
 export const StyledHeader = styled.header`
   background: black;

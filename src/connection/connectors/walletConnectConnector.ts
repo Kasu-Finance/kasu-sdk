@@ -1,8 +1,11 @@
 import { initializeConnector } from '@web3-react/core';
 import { WalletConnect as WalletConnectV2 } from '@web3-react/walletconnect-v2';
-import { SupportedChainIds } from '../chains';
-import { Connection, ConnectionType } from '@/types/connectors';
+
 import { WalletConnectIcon } from '@/assets/icons';
+
+import { SupportedChainIds } from '../chains';
+
+import { Connection, ConnectionType } from '@/types/connectors';
 
 const WALLET_CONNECT_V2_PROJECT_ID = process.env.NEXT_PUBLIC_WALLET_CONNECT_V2_PROJECT_ID;
 

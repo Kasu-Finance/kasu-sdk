@@ -7,8 +7,9 @@ import {
 } from '@web3-react/types';
 
 import { EIP6963Provider } from '@/connection/providers/eip6963';
-import { EIP6963ProviderInfo } from '@/types/eip6963';
 import { EIP6963_PROVIDER_MANAGER } from '@/connection/providers/eip6963/eip6963manager';
+
+import { EIP6963ProviderInfo } from '@/types/eip6963';
 
 interface EIP6963ConstructorArgs {
     actions: Actions;

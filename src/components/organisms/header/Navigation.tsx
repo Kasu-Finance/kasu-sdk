@@ -1,9 +1,11 @@
 'use client'
 
-import Typography from '@/components/atoms/Typography'
 import * as NavigationMenu from '@radix-ui/react-navigation-menu'
 import { usePathname } from 'next/navigation'
 import styled from 'styled-components'
+
+import Typography from '@/components/atoms/Typography'
+
 import {
   StyledNavItem,
   StyledNavLink,

@@ -1,4 +1,5 @@
 import { ErrorCode } from '@/constants';
+
 import { Connection, ConnectionType } from '@/types/connectors';
 
 const didUserReject = (connection: Connection, error: any): boolean => {
