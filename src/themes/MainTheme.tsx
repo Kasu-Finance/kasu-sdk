@@ -37,7 +37,7 @@ const fontFamily = [
   'sans-serif',
 ].join(',')
 
-const primaryColor = '#3276cf'
+const primaryColor = '#1976D2'
 
 export const theme = createTheme({
   palette: {
@@ -50,7 +50,7 @@ export const theme = createTheme({
       contrastText: '#ffffff',
     },
     error: {
-      main: '#D32F2F',
+      main: '#000000',
       contrastText: '#ffffff',
     },
     highlight: {
@@ -59,6 +59,10 @@ export const theme = createTheme({
     },
     icon: {
       primary: 'rgba(0, 0, 0, 0.54)',
+    },
+    text: {
+      primary: 'rgba(0, 0, 0, 0.87)',
+      secondary: 'rgba(0,0,0, 0.6)',
     },
   },
   typography: {
@@ -109,6 +113,13 @@ export const theme = createTheme({
     },
   },
   components: {
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          background: '#ffffff',
+        },
+      },
+    },
     MuiPaper: {
       styleOverrides: {
         root: {},

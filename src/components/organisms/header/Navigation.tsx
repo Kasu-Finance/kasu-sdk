@@ -1,43 +1,31 @@
 'use client'
 
-import Typography from '@mui/material/Typography'
-import * as NavigationMenu from '@radix-ui/react-navigation-menu'
+import { Box, useTheme } from '@mui/material'
 import { usePathname } from 'next/navigation'
-import styled from 'styled-components'
 
-import {
-  StyledNavItem,
-  StyledNavLink,
-  StyledNavList,
-  StyledNavRoot,
-} from './header.style'
+import { NAV_ITEMS } from '@/config/navigation'
 
-export type NavigationProps = {
-  links: {
-    to: string
-    label: string
-  }[]
-}
+import NavItem from './header.style'
 
-styled
-
-const Navigation: React.FC<NavigationProps> = ({ links }) => {
+const Navigation: React.FC = () => {
   const pathName = usePathname()
 
+  const theme = useTheme()
+
+  const isActiveLink = (href: string) => pathName === href
+
   return (
-    <StyledNavRoot>
-      <StyledNavList>
-        {links.map(({ to, label }, index) => (
-          <StyledNavItem key={index}>
-            <NavigationMenu.Link active={pathName === to} asChild>
-              <StyledNavLink href={to}>
-                <Typography variant='body2'>{label}</Typography>
-              </StyledNavLink>
-            </NavigationMenu.Link>
-          </StyledNavItem>
-        ))}
-      </StyledNavList>
-    </StyledNavRoot>
+    <Box sx={{ display: 'flex', ml: theme.spacing(3) }}>
+      {NAV_ITEMS.map((link) => (
+        <NavItem
+          key={link.label}
+          isActive={isActiveLink(link.to)}
+          href={link.to}
+        >
+          {link.label}
+        </NavItem>
+      ))}
+    </Box>
   )
 }
 
