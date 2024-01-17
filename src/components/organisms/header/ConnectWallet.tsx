@@ -4,7 +4,7 @@ import { Button } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { useEffect, useState } from 'react'
 
-import { WalletIcon } from '@/assets/icons'
+import { ArrowRightIcon, WalletIcon } from '@/assets/icons'
 
 import { networkConnection } from '@/connection/connectors/networkConnector'
 import useModalState from '@/context/modal/useModalState'
@@ -40,8 +40,9 @@ const ConnectWallet = () => {
   return (
     <Button
       variant='contained'
-      sx={{ pl: 2, pr: 2, ml: 'auto' }}
+      sx={{ pl: 2, pr: 2, ml: 'auto', height: 36, width: 206 }}
       startIcon={<WalletIcon />}
+      endIcon={<ArrowRightIcon />}
       onClick={handleOpen}
     >
       {text}

@@ -1,3 +1,4 @@
+import Box from '@mui/material/Box'
 import type { Metadata } from 'next'
 import { Roboto } from 'next/font/google'
 import { ReactNode } from 'react'
@@ -9,10 +10,6 @@ import ModalsContainer from '@/components/organisms/modals/ModalsContainer'
 import ModalState from '@/context/modal/ModalState'
 import Web3Provider from '@/context/web3provider/web3.provider'
 import ThemeRegistry from '@/themes/ThemeRegistry'
-
-// const Header = dynamic(() => import('@/components/organisms/header'), {
-//   ssr: false,
-// })
 
 type RootLayoutProps = {
   children: ReactNode
@@ -37,7 +34,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <Web3Provider>
             <ModalState>
               <Header />
-              <main style={{ height: '200vh' }}>{children}</main>
+              <Box component='main' paddingTop={3} paddingBottom={3}>
+                {children}
+              </Box>
               <ModalsContainer />
             </ModalState>
           </Web3Provider>

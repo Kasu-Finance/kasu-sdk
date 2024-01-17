@@ -43,6 +43,7 @@
     "@web3-react/types": "^8.2.3",
     "@web3-react/url": "^8.2.3",
     "@web3-react/walletconnect-v2": "^8.5.1",
+    "dayjs": "^1.11.10",
     "ethers": "^5.7.2",
     "next": "14.0.4",
     "react": "^18",

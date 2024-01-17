@@ -1,6 +1,7 @@
 'use client'
 
 import { Box, useTheme } from '@mui/material'
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 import { NAV_ITEMS } from '@/config/navigation'
@@ -21,6 +22,9 @@ const Navigation: React.FC = () => {
           key={link.label}
           isActive={isActiveLink(link.to)}
           href={link.to}
+          disableElevation
+          variant='text'
+          component={Link}
         >
           {link.label}
         </NavItem>

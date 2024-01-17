@@ -71,10 +71,15 @@ export const theme = createTheme({
       fontFamily: fontFamily,
       fontWeight: 400,
     },
+    h5: {
+      fontFamily: fontFamily,
+      fontSize: 24,
+      fontWeight: 400,
+    },
     h6: {
       fontFamily: fontFamily,
       fontSize: 20,
-      fontWeight: 300,
+      fontWeight: 500,
     },
     body1: {
       fontFamily: fontFamily,
@@ -99,6 +104,7 @@ export const theme = createTheme({
       fontFamily: fontFamily,
       fontSize: 14,
       fontWeight: 500,
+      lineHeight: '24px',
       letterSpacing: '0.1px',
     },
   },
@@ -342,14 +348,11 @@ export const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
+          height: '42px',
+          padding: '8px 22px',
           textTransform: 'inherit',
-          // letterSpacing: '0.46px',
           fontWeight: 500,
           minWidth: 0,
-          '&.connect-wallet-button': {
-            height: '55px',
-            width: '100%',
-          },
           '&.disabled': {
             backgroundColor: '#006BA6a7',
             borderColor: '#008fbe',

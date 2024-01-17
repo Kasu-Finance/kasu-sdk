@@ -1,7 +1,6 @@
 'use client'
 
 import { Button, ButtonProps, styled } from '@mui/material'
-import Link from 'next/link'
 
 type NavItemProps = ButtonProps & {
   isActive: boolean
@@ -19,11 +18,5 @@ const NavItem = styled(Button, {
   padding: props.theme.spacing(1, 2),
   textTransform: 'uppercase',
 }))
-
-NavItem.defaultProps = {
-  disableElevation: true,
-  variant: 'text',
-  component: Link,
-}
 
 export default NavItem
