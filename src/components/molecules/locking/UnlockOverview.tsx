@@ -17,15 +17,34 @@ const UNLOCKS = [
 ]
 
 const UnlockOverview = () => {
+  const hasLockedTokens = Boolean(UNLOCKS.length)
+
   return (
     <>
       <Typography variant='h6' component='span' display='block' mt={1} mb={2}>
         Time until KASU unlock
       </Typography>
-      <ColoredBox mt={2} mb={1} display='grid' rowGap={1}>
-        {UNLOCKS.map((unlock) => (
-          <UnlockRow key={unlock.date} unlockDetail={unlock} />
-        ))}
+      <ColoredBox
+        mt={hasLockedTokens ? 2 : 1.5}
+        mb={1}
+        display='grid'
+        rowGap={1}
+      >
+        {hasLockedTokens ? (
+          UNLOCKS.map((unlock) => (
+            <UnlockRow key={unlock.date} unlockDetail={unlock} />
+          ))
+        ) : (
+          <Typography
+            variant='subtitle2'
+            component='span'
+            mx='6px'
+            my={1}
+            display='block'
+          >
+            Currently no locked KASU
+          </Typography>
+        )}
       </ColoredBox>
     </>
   )
