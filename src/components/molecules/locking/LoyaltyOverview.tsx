@@ -2,7 +2,13 @@
 
 import { Box, Button, Divider, Typography } from '@mui/material'
 
+import useModalState from '@/context/modal/useModalState'
+
 const LoyaltyOverview = () => {
+  const { openModal } = useModalState()
+
+  const handleOpen = () => openModal({ name: 'loyaltyLevelsModal' })
+
   return (
     <>
       <Typography variant='h6' component='span' mt={1} mb={2} display='block'>
@@ -32,6 +38,7 @@ const LoyaltyOverview = () => {
       <Button
         variant='contained'
         sx={{ width: 351, margin: '8px auto 0 auto', display: 'block' }}
+        onClick={handleOpen}
       >
         How to increase your loyalty level?
       </Button>

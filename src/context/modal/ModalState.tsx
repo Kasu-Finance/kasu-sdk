@@ -15,6 +15,7 @@ const initialState: Modals = {
   warningModal: { isOpen: false },
   successModal: { isOpen: false, txHash: undefined },
   connectWalletModal: { isOpen: false },
+  loyaltyLevelsModal: { isOpen: false },
 }
 
 const ModalState: React.FC<Props> = ({ children }) => {

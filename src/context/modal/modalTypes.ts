@@ -12,6 +12,7 @@ export type Modals = {
     txHash?: string
   }>
   connectWalletModal: ModalData
+  loyaltyLevelsModal: ModalData
 }
 
 export type ModalWithProps = Extract<keyof Modals, 'successModal'>

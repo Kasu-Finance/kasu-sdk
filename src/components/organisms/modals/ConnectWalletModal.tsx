@@ -1,11 +1,13 @@
 'use client'
 
-import { Box, Modal } from '@mui/material'
+import { Modal } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { useCallback, useEffect } from 'react'
 
 import { useOrderedConnections } from '@/hooks/web3/useOrderedConnections'
 import useSwitchChain from '@/hooks/web3/useSwitchChain'
+
+import ModalBody from '@/components/atoms/ModalBody'
 
 import { SupportedChainIds } from '@/connection/chains'
 import {
@@ -18,18 +20,6 @@ import useModalState from '@/context/modal/useModalState'
 import { didUserReject, formatAccount, web3reactError } from '@/utils'
 
 import { Connection } from '@/types/connectors'
-
-const style = {
-  position: 'absolute' as const,
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-}
 
 const ConnectWalletModal: React.FC = () => {
   const connections = useOrderedConnections()
@@ -102,13 +92,8 @@ const ConnectWalletModal: React.FC = () => {
       onClose={handleClose}
       aria-labelledby='Connect Wallet Modal'
       aria-describedby='List of available web3 wallet connections'
-      slotProps={{
-        backdrop: {
-          color: 'red',
-        },
-      }}
     >
-      <Box sx={style}>
+      <ModalBody>
         <div>Connector : {getConnection(connector).getProviderInfo().name}</div>
         <div>Account : {formatAccount(account) ?? 'not connected'}</div>
         <div>ChainID : {chainId ?? 'not connected'}</div>
@@ -126,7 +111,7 @@ const ConnectWalletModal: React.FC = () => {
         {connector !== networkConnection.connector && (
           <button onClick={disconnect}>disconnect</button>
         )}
-      </Box>
+      </ModalBody>
     </Modal>
   )
 }
