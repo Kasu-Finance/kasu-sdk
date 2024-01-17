@@ -1,5 +1,7 @@
 import { Box, Tooltip, Typography } from '@mui/material'
 
+import TooltipTrigger from '@/components/atoms/TooltipTrigger'
+
 import { InfoIcon } from '@/assets/icons'
 
 type RewardRowProps = {
@@ -21,9 +23,9 @@ const RewardRow: React.FC<RewardRowProps> = ({ title, info, amount }) => {
           {title}
         </Typography>
         <Tooltip disableFocusListener disableTouchListener title={info}>
-          <Box display='flex' alignItems='center'>
+          <TooltipTrigger>
             <InfoIcon />
-          </Box>
+          </TooltipTrigger>
         </Tooltip>
       </Box>
       <Typography variant='body2' component='span'>
