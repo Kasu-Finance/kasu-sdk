@@ -405,19 +405,23 @@ export const theme = createTheme({
       },
     },
     MuiTooltip: {
+      defaultProps: {
+        placement: 'right',
+        arrow: true,
+      },
       styleOverrides: {
         tooltip: {
           maxWidth: '350px',
-          padding: '16px',
-          backgroundColor: '#ffffff',
-          color: 'rgba(0, 0, 0, 0.87)',
+          padding: '4px 8px',
+          backgroundColor: 'rgba(97, 97, 97, 0.9)',
+          color: '#ffffff',
           borderRadius: '4px',
           boxShadow: '0px 3px 5px -1px rgba(0, 0, 0, 0.2)',
           filter:
             'drop-shadow(0px 6px 10px rgba(0, 0, 0, 0.14)) drop-shadow(0px 1px 18px rgba(0, 0, 0, 0.12))',
         },
         arrow: {
-          color: '#ffffff',
+          color: 'rgba(97, 97, 97, 0.9)',
         },
       },
     },

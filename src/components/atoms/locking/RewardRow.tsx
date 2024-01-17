@@ -20,12 +20,7 @@ const RewardRow: React.FC<RewardRowProps> = ({ title, info, amount }) => {
         >
           {title}
         </Typography>
-        <Tooltip
-          disableFocusListener
-          disableTouchListener
-          title={info}
-          placement='top'
-        >
+        <Tooltip disableFocusListener disableTouchListener title={info}>
           <Box display='flex' alignItems='center'>
             <InfoIcon />
           </Box>
