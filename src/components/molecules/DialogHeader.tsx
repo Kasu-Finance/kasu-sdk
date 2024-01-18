@@ -1,24 +1,25 @@
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Button, DialogTitle } from '@mui/material'
 import React from 'react'
 
 import { CrossIcon } from '@/assets/icons'
 
-type ModalHeaderProps = {
+type DialogHeaderProps = {
   title: string
   onClose: () => void
 }
 
-const ModalHeader: React.FC<ModalHeaderProps> = ({ title, onClose }) => {
+const DialogHeader: React.FC<DialogHeaderProps> = ({ title, onClose }) => {
   return (
     <Box
       display='flex'
       justifyContent='space-between'
       alignItems='center'
       py={1}
+      px={3}
     >
-      <Typography variant='h5' component='span'>
+      <DialogTitle sx={{ p: 0 }} variant='h5' component='span'>
         {title}
-      </Typography>
+      </DialogTitle>
       <Button
         variant='text'
         onClick={onClose}
@@ -30,4 +31,4 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({ title, onClose }) => {
   )
 }
 
-export default ModalHeader
+export default DialogHeader

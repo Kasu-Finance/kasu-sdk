@@ -1,30 +1,30 @@
 'use client'
 
-import { Box, Button, Modal, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  DialogActions,
+  DialogContent,
+  Typography,
+} from '@mui/material'
 
 import List from '@/components/atoms/List'
-import ModalBody from '@/components/atoms/ModalBody'
-import ModalHeader from '@/components/molecules/ModalHeader'
+import DialogHeader from '@/components/molecules/DialogHeader'
 
 import { VerifiedIcon } from '@/assets/icons'
 
 import useModalState from '@/context/modal/useModalState'
 
 const LoyaltyLevelsModal = () => {
-  const { modal, closeModal } = useModalState()
+  const { closeModal } = useModalState()
 
   const handleClose = () => closeModal('loyaltyLevelsModal')
 
   return (
-    <Modal
-      open={modal['loyaltyLevelsModal'].isOpen}
-      onClose={handleClose}
-      aria-labelledby='Connect Wallet Modal'
-      aria-describedby='List of available web3 wallet connections'
-    >
-      <ModalBody>
-        <ModalHeader title='Loyalty levels' onClose={handleClose} />
-        <Box display='grid' gap={2} my={1}>
+    <>
+      <DialogHeader title='Loyalty levels' onClose={handleClose} />
+      <DialogContent sx={{ px: 3, py: 1 }}>
+        <Box display='grid' gap={2}>
           <Typography variant='h5' component='span' display='block'>
             About the loyalty program
           </Typography>
@@ -116,15 +116,13 @@ const LoyaltyLevelsModal = () => {
             </li>
           </List>
         </Box>
-        <Button
-          variant='contained'
-          onClick={handleClose}
-          sx={{ my: 1, mx: 'auto', display: 'block' }}
-        >
+      </DialogContent>
+      <DialogActions sx={{ justifyContent: 'center' }}>
+        <Button variant='contained' onClick={handleClose}>
           Close
         </Button>
-      </ModalBody>
-    </Modal>
+      </DialogActions>
+    </>
   )
 }
 

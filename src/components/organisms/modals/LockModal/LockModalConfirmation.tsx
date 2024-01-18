@@ -1,8 +1,6 @@
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
-
-import { ChevronRightIcon } from '@/assets/icons'
 
 const LockModalConfirmation = () => {
   return (
@@ -10,7 +8,6 @@ const LockModalConfirmation = () => {
       <ColoredBox
         display='grid'
         gridTemplateColumns='repeat(2, minmax(0, 1fr))'
-        mt={1}
       >
         <Box px={2}>
           <Typography
@@ -78,12 +75,6 @@ const LockModalConfirmation = () => {
           6 days 11 hours 6 minutes.
         </Typography>
       </Typography>
-      <Box mt={1} p={1} display='flex' justifyContent='center' gap={1}>
-        <Button variant='outlined'>ADJUST</Button>
-        <Button variant='contained' endIcon={<ChevronRightIcon />}>
-          CONFIRM
-        </Button>
-      </Box>
     </>
   )
 }

@@ -1,21 +1,22 @@
 'use client'
 
-import { Box, Button, Modal } from '@mui/material'
+import { Box, Button, DialogActions, DialogContent } from '@mui/material'
 import { useState } from 'react'
 
-import ModalBody from '@/components/atoms/ModalBody'
+import DialogHeader from '@/components/molecules/DialogHeader'
 import DepositInput from '@/components/molecules/lockModal/DepositInput'
 import EstimatedReturns from '@/components/molecules/lockModal/EstimatedReturns'
 import LockDurationInput from '@/components/molecules/lockModal/LockDurationInput'
 import LockModalOverview from '@/components/molecules/lockModal/LockModalOverview'
-import ModalHeader from '@/components/molecules/ModalHeader'
 import LockModalConfirmation from '@/components/organisms/modals/LockModal/LockModalConfirmation'
+
+import { ChevronRightIcon } from '@/assets/icons'
 
 import LOCK_PERIODS from '@/config/lockPeriod'
 import useModalState from '@/context/modal/useModalState'
 
 const LockModal = () => {
-  const { modal, closeModal } = useModalState()
+  const { closeModal } = useModalState()
 
   const [amount, setAmount] = useState('')
   const [duration, setDuration] = useState<number>(LOCK_PERIODS[2])
@@ -26,14 +27,9 @@ const LockModal = () => {
   }
 
   return (
-    <Modal
-      open={modal['lockModal'].isOpen}
-      onClose={handleClose}
-      aria-labelledby='Connect Wallet Modal'
-      aria-describedby='List of available web3 wallet connections'
-    >
-      <ModalBody>
-        <ModalHeader title='Lock' onClose={handleClose} />
+    <>
+      <DialogHeader title='Lock' onClose={handleClose} />
+      <DialogContent sx={{ px: 3, py: 1 }}>
         {isFinalized ? (
           <LockModalConfirmation />
         ) : (
@@ -47,17 +43,30 @@ const LockModal = () => {
               />
               <EstimatedReturns />
             </Box>
-            <Button
-              variant='contained'
-              sx={{ width: 157, display: 'block', mx: 'auto', mt: 2, mb: 1 }}
-              onClick={() => setIsFinalized(true)}
-            >
-              APPROVE LOCK
-            </Button>
           </>
         )}
-      </ModalBody>
-    </Modal>
+      </DialogContent>
+      <DialogActions sx={{ justifyContent: 'center' }}>
+        {isFinalized ? (
+          <>
+            <Button variant='outlined' onClick={() => setIsFinalized(false)}>
+              ADJUST
+            </Button>
+            <Button variant='contained' endIcon={<ChevronRightIcon />}>
+              CONFIRM
+            </Button>
+          </>
+        ) : (
+          <Button
+            variant='contained'
+            sx={{ width: 157, display: 'block' }}
+            onClick={() => setIsFinalized(true)}
+          >
+            APPROVE LOCK
+          </Button>
+        )}
+      </DialogActions>
+    </>
   )
 }
 
