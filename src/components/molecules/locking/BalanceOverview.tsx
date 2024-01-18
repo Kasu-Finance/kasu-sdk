@@ -4,7 +4,13 @@ import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
 
+import useModalState from '@/context/modal/useModalState'
+
 const BalanceOverview = () => {
+  const { openModal } = useModalState()
+
+  const handleOpen = () => openModal({ name: 'lockModal' })
+
   return (
     <>
       <Typography
@@ -32,6 +38,7 @@ const BalanceOverview = () => {
           margin: '24px auto 0 auto',
           display: 'block',
         }}
+        onClick={handleOpen}
       >
         LOCK
       </Button>

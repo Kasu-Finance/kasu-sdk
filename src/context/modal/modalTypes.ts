@@ -13,6 +13,7 @@ export type Modals = {
   }>
   connectWalletModal: ModalData
   loyaltyLevelsModal: ModalData
+  lockModal: ModalData
 }
 
 export type ModalWithProps = Extract<keyof Modals, 'successModal'>
