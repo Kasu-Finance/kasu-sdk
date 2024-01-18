@@ -7,6 +7,7 @@ import { useCallback, useEffect } from 'react'
 import { useOrderedConnections } from '@/hooks/web3/useOrderedConnections'
 import useSwitchChain from '@/hooks/web3/useSwitchChain'
 
+import { DialogChildProps } from '@/components/atoms/DialogWrapper'
 import ModalBody from '@/components/atoms/ModalBody'
 
 import { SupportedChainIds } from '@/connection/chains'
@@ -21,14 +22,14 @@ import { didUserReject, formatAccount, web3reactError } from '@/utils'
 
 import { Connection } from '@/types/connectors'
 
-const ConnectWalletModal: React.FC = () => {
+const ConnectWalletModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const connections = useOrderedConnections()
 
   const { chainId, account, connector, ENSName } = useWeb3React()
 
   const connection = getConnection(connector)
 
-  const { modal, closeModal } = useModalState()
+  const { modal } = useModalState()
 
   const switchChain = useSwitchChain()
 
@@ -83,8 +84,6 @@ const ConnectWalletModal: React.FC = () => {
       })
     }
   }, [ENSName, account, connection])
-
-  const handleClose = () => closeModal('connectWalletModal')
 
   return (
     <Modal

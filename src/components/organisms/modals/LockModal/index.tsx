@@ -1,8 +1,9 @@
 'use client'
 
 import { Box, Button, DialogActions, DialogContent } from '@mui/material'
-import { useState } from 'react'
+import React, { useState } from 'react'
 
+import { DialogChildProps } from '@/components/atoms/DialogWrapper'
 import DialogHeader from '@/components/molecules/DialogHeader'
 import DepositInput from '@/components/molecules/lockModal/DepositInput'
 import EstimatedReturns from '@/components/molecules/lockModal/EstimatedReturns'
@@ -13,18 +14,11 @@ import LockModalConfirmation from '@/components/organisms/modals/LockModal/LockM
 import { ChevronRightIcon } from '@/assets/icons'
 
 import LOCK_PERIODS from '@/config/lockPeriod'
-import useModalState from '@/context/modal/useModalState'
 
-const LockModal = () => {
-  const { closeModal } = useModalState()
-
+const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const [amount, setAmount] = useState('')
   const [duration, setDuration] = useState<number>(LOCK_PERIODS[2])
   const [isFinalized, setIsFinalized] = useState(false)
-
-  const handleClose = () => {
-    closeModal('lockModal')
-  }
 
   return (
     <>

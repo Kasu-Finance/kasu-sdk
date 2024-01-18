@@ -8,18 +8,13 @@ import {
   Typography,
 } from '@mui/material'
 
+import { DialogChildProps } from '@/components/atoms/DialogWrapper'
 import List from '@/components/atoms/List'
 import DialogHeader from '@/components/molecules/DialogHeader'
 
 import { VerifiedIcon } from '@/assets/icons'
 
-import useModalState from '@/context/modal/useModalState'
-
-const LoyaltyLevelsModal = () => {
-  const { closeModal } = useModalState()
-
-  const handleClose = () => closeModal('loyaltyLevelsModal')
-
+const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   return (
     <>
       <DialogHeader title='Loyalty levels' onClose={handleClose} />

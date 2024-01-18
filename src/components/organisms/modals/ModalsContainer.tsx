@@ -15,23 +15,26 @@ type ModalDetails = {
   ariaDescription?: string
 }
 
-export const getModal = (modalName: keyof Modals): ModalDetails | null => {
+export const getModal = (
+  modalName: keyof Modals,
+  handleClose: () => void
+): ModalDetails | null => {
   switch (modalName) {
     case 'connectWalletModal':
       return {
-        component: <ConnectWalletModal />,
+        component: <ConnectWalletModal handleClose={handleClose} />,
         ariaLabel: 'Connect Wallet Modal',
         ariaDescription: 'List of available web3 wallet connections',
       }
     case 'loyaltyLevelsModal':
       return {
-        component: <LoyaltyLevelsModal />,
+        component: <LoyaltyLevelsModal handleClose={handleClose} />,
         ariaLabel: 'Loyalty Levels',
         ariaDescription: 'Information about loyalty levels',
       }
     case 'lockModal':
       return {
-        component: <LockModal />,
+        component: <LockModal handleClose={handleClose} />,
       }
     default:
       return null
