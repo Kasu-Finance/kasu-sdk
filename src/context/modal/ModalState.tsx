@@ -10,10 +10,6 @@ type Props = {
 }
 
 const initialState: Modals = {
-  waitingModal: { isOpen: false },
-  errorModal: { isOpen: false },
-  warningModal: { isOpen: false },
-  successModal: { isOpen: false, txHash: undefined },
   connectWalletModal: { isOpen: false },
   loyaltyLevelsModal: { isOpen: false },
   lockModal: { isOpen: false },

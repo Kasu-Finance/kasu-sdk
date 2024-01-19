@@ -5,12 +5,6 @@ export type ModalBase = {
 export type ModalData<T = void> = T extends void ? ModalBase : T & ModalBase
 
 export type Modals = {
-  waitingModal: ModalData
-  errorModal: ModalData
-  warningModal: ModalData
-  successModal: ModalData<{
-    txHash?: string
-  }>
   connectWalletModal: ModalData
   loyaltyLevelsModal: ModalData
   lockModal: ModalData
