@@ -1,15 +1,15 @@
-import { Provider, Signer } from "ethers";
-import { SdkConfig } from "./sdk-config";
+import { Provider } from '@ethersproject/providers';
+import { Signer } from 'ethers';
+import { GraphQLClient } from 'graphql-request';
+
 import { KSULocking } from "./locking";
-import { IKSULockingAbi__factory } from "./contracts/factories/IKSULockingAbi__factory";
+import { SdkConfig } from "./sdk-config";
 
 export class KasuSdk {
-    public Locking : KSULocking;
+    private readonly _graphClient: GraphQLClient;
+    public readonly Locking : KSULocking;
     constructor(config: SdkConfig, signerOrProvider: Provider | Signer) {
-
-
-        const ksuLocking = IKSULockingAbi__factory.connect(config.contracts.IKSULocking, signerOrProvider);
-        this.Locking = new KSULocking();
+        this._graphClient = new GraphQLClient(config.subgraphUrl);
+        this.Locking = new KSULocking(config, signerOrProvider);
     }
- 
 }

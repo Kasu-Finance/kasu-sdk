@@ -1,0 +1,74 @@
+{
+    "extends": [
+        "plugin:@typescript-eslint/strict-type-checked",
+        "plugin:@typescript-eslint/stylistic-type-checked",
+        "plugin:import/errors",
+        "plugin:import/warnings",
+        "plugin:import/typescript",
+        "prettier"
+    ],
+    "settings": {
+        "import/resolver": {
+            "node": {
+                "extensions": [".js", ".jsx", ".ts", ".tsx", ".d.ts"], // add .d.ts here
+                "moduleDirectory": ["src", "node_modules"]
+            }
+        }
+    },
+    "parserOptions": {
+        "project": ["./tsconfig.json"] // Specify it only for TypeScript files
+    },
+    "ignorePatterns": ["node_modules", "src/contracts"],
+    "rules": {
+        "@typescript-eslint/no-explicit-any": "error",
+        "testing-library/prefer-screen-queries": "off",
+        "@typescript-eslint/no-unused-vars": [
+            "warn",
+            {
+                "argsIgnorePattern": "^_",
+                "varsIgnorePattern": "^_"
+            }
+        ],
+        "sort-imports": [
+            "warn",
+            {
+                "ignoreCase": true,
+                "ignoreDeclarationSort": true
+            }
+        ],
+        "import/order": [
+            "error",
+            {
+                "groups": [
+                    "builtin",
+                    "external",
+                    "internal",
+                    "parent",
+                    "sibling",
+                    "index"
+                ],
+                "pathGroups": [
+                    {
+                        "pattern": "src/**",
+                        "group": "internal",
+                        "position": "before"
+                    },
+                    {
+                        "pattern": "test/**",
+                        "group": "internal",
+                        "position": "before"
+                    }
+                ],
+                "pathGroupsExcludedImportTypes": ["builtin", "external"],
+                "newlines-between": "always",
+                "alphabetize": {
+                    "order": "asc",
+                    "caseInsensitive": true
+                }
+            }
+        ],
+        "@typescript-eslint/explicit-function-return-type": "error",
+        "@typescript-eslint/explicit-module-boundary-types": "error"
+    },
+    "plugins": ["@typescript-eslint", "import"]
+}
