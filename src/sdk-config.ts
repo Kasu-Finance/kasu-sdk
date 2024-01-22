@@ -1,5 +1,7 @@
 export interface ContractAddresses {
+    KSUToken: string;
     IKSULocking: string;
+    IKSULockBonus: string;
 }
 export class SdkConfig {
     subgraphUrl: string;
