@@ -6,8 +6,9 @@ import useSWR from 'swr'
 
 import useTokenDetails from '@/hooks/web3/useTokenDetails'
 
+import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import useToastState from '@/context/toast/useToastState'
-import { sleep } from '@/utils'
+import { sleep, userRejectedTransaction } from '@/utils'
 
 const useApproveToken = (
   tokenAddress: string | undefined,
@@ -58,8 +59,8 @@ const useApproveToken = (
 
       setToast({
         type: 'info',
-        title: 'Processing',
-        message: 'Your transaction request is being processed...',
+        title: ActionStatus.PROCESSING,
+        message: ACTION_MESSAGES[ActionStatus.PROCESSING],
         isClosable: false,
       })
 
@@ -74,10 +75,20 @@ const useApproveToken = (
       removeToast()
       setIsApproved(true)
     } catch (error) {
+      let title: string, message: string
+
+      if (userRejectedTransaction(error)) {
+        message = ACTION_MESSAGES[ActionStatus.REJECTED]
+        title = `${ActionType.APPROVE} ${ActionStatus.REJECTED}`
+      } else {
+        message = ACTION_MESSAGES[ActionType.APPROVE][ActionStatus.ERROR]
+        title = `${ActionType.APPROVE} ${ActionStatus.ERROR}`
+      }
+
       setToast({
         type: 'error',
-        title: 'Approval Rejected',
-        message: 'The transaction has been rejected.',
+        title,
+        message,
       })
     }
   }

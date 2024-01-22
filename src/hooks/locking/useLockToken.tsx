@@ -1,3 +1,4 @@
+import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import useToastState from '@/context/toast/useToastState'
 import { sleep } from '@/utils'
 
@@ -8,8 +9,8 @@ const useLockToken = () => {
     try {
       setToast({
         type: 'info',
-        title: 'Processing',
-        message: 'Your transaction request is being processed...',
+        title: ActionStatus.PROCESSING,
+        message: ACTION_MESSAGES[ActionStatus.PROCESSING],
         isClosable: false,
       })
 
@@ -23,16 +24,15 @@ const useLockToken = () => {
 
       setToast({
         type: 'success',
-        title: 'Lock Successful',
-        message: 'Lock request has been successfull.',
+        title: `${ActionType.LOCK} ${ActionStatus.SUCCESS}`,
+        message: ACTION_MESSAGES[ActionType.LOCK][ActionStatus.SUCCESS],
         txHash: 'https://www.google.com',
       })
     } catch (error) {
       setToast({
         type: 'error',
-        title: 'Lock Error',
-        message:
-          'An error has occurred in the lock request. Please review log for more details.',
+        title: `${ActionType.LOCK} ${ActionStatus.ERROR}`,
+        message: ACTION_MESSAGES[ActionType.LOCK][ActionStatus.ERROR],
         txHash: 'https://www.google.com',
       })
     }
