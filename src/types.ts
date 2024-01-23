@@ -16,8 +16,9 @@ export interface LockPeriodInterface {
 
 export interface LockPeriod {
     rKsuMultiplier: number,
-    lockPeriod: number,
-    ksuBonusMultiplier: number
+    lockPeriod: BigNumber,
+    ksuBonusMultiplier: number,
+    id: BigNumber
 }
 
 export interface UserLock {
@@ -30,8 +31,14 @@ export interface UserLock {
 
 export interface GQLGetLockingPeriods{
     lockPeriods: {
-        rKSUMultiplier: any,
-        ksuBonusMultiplier: any,
-        
-    }
+        rKSUMultiplier: string,
+        ksuBonusMultiplier: string,
+        lockPeriod: string,
+        id: string
+    }[]
+}
+export interface GQLClaimedFeesForAddress {
+    userLockDepositsInfos: {
+        feesClaimed: string
+    }[]
 }

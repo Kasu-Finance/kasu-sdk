@@ -22,5 +22,5 @@
       ]
     },
     "include": ["src/**/*.ts", "src/*.ts", "index.d.ts"],
-    "exclude": ["*.js"]
+    "exclude": ["*.js", "jest-config.ts"]
   }
