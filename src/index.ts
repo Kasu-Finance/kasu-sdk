@@ -2,8 +2,8 @@ import { Provider } from '@ethersproject/providers';
 import { Signer } from 'ethers';
 import { GraphQLClient } from 'graphql-request';
 
-import { KSULocking } from './services/Locking/locking';
 import { SdkConfig } from './sdk-config';
+import { KSULocking } from './services/Locking/locking';
 
 export class KasuSdk {
     private readonly _graphClient: GraphQLClient;

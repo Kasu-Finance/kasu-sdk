@@ -1,5 +1,6 @@
 import { Provider } from '@ethersproject/providers';
 import { BigNumber, ContractTransaction, Signer, ethers } from 'ethers';
+import { formatEther } from 'ethers/lib/utils';
 import { GraphQLClient, gql } from 'graphql-request';
 
 import {
@@ -19,12 +20,12 @@ import {
     RSVDeadlineValue,
     UserLock,
 } from '../../types';
+
 import {
     claimedFeesQuery,
     userLocksQuery,
     userStakedKsuQuery,
 } from './locking.query';
-import { formatEther } from 'ethers/lib/utils';
 
 export class KSULocking {
     private readonly _contractAbi: IKSULockingAbi;
