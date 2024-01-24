@@ -2,23 +2,15 @@
 
 import { Typography } from '@mui/material'
 
+import useUserLocks from '@/hooks/locking/useUserLocks'
+
 import ColoredBox from '@/components/atoms/ColoredBox'
 import UnlockRow from '@/components/atoms/locking/UnlockRow'
 
-const UNLOCKS = [
-  {
-    amount: '5000',
-    date: 1737044680,
-  },
-  {
-    amount: '6000',
-    date: 1705767903,
-  },
-]
-
 const UnlockOverview = () => {
-  const hasLockedTokens = Boolean(UNLOCKS.length)
+  const { userLocks } = useUserLocks()
 
+  const hasLockedTokens = userLocks && Boolean(userLocks.length)
   return (
     <>
       <Typography variant='h6' component='span' display='block' mt={1} mb={2}>
@@ -31,8 +23,8 @@ const UnlockOverview = () => {
         rowGap={1}
       >
         {hasLockedTokens ? (
-          UNLOCKS.map((unlock) => (
-            <UnlockRow key={unlock.date} unlockDetail={unlock} />
+          userLocks.map((unlock) => (
+            <UnlockRow key={unlock.startTime} unlockDetail={unlock} />
           ))
         ) : (
           <Typography

@@ -1,6 +1,7 @@
 export { default as formatAccount } from './formats/formatAccount'
 export { default as isSupportedChain } from './isSupportedChain'
 export { default as sleep } from './sleep'
+export { default as calculateMargin } from './web3/calculateMargin'
 export { default as isPlain } from './web3/isPlain'
 export { default as userRejectedConnection } from './web3/userRejectConnection'
 export { default as userRejectedTransaction } from './web3/userRejectedTransaction'

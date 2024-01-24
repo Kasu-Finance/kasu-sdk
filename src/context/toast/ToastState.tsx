@@ -6,6 +6,8 @@ import { ReactNode, useReducer } from 'react'
 import { CrossIcon } from '@/assets/icons'
 import SuccessIcon from '@/assets/icons/general/SuccessIcon'
 
+import { SupportedChainIds } from '@/connection/chains'
+import { networks } from '@/connection/networks'
 import ToastContext from '@/context/toast/toastContext'
 import toastReducer from '@/context/toast/toastReducer'
 import { ToastStateType } from '@/context/toast/toastTypes'
@@ -41,7 +43,10 @@ const ToastState: React.FC<ToastStateProps> = ({ children }) => {
               <>
                 {state.toast.txHash && (
                   <Button
-                    href={state.toast.txHash}
+                    href={`${
+                      networks[SupportedChainIds.BASE_GOERLI]
+                        .blockExplorerUrls[0]
+                    }/tx/${state.toast.txHash}`}
                     target='_blank'
                     sx={{ width: 57, height: 30, px: 0.5, py: '5px', mt: -0.1 }}
                   >

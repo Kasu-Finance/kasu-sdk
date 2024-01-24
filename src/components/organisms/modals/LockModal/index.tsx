@@ -1,10 +1,12 @@
 'use client'
 
 import { Box, Button, DialogActions, DialogContent } from '@mui/material'
+import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import React, { useState } from 'react'
 
 import useLockToken from '@/hooks/locking/useLockToken'
 import useApproveToken from '@/hooks/web3/useApproveToken'
+import useUserBalance from '@/hooks/web3/useUserBalance'
 
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
 import DialogHeader from '@/components/molecules/DialogHeader'
@@ -17,6 +19,7 @@ import LockModalConfirmation from '@/components/organisms/modals/LockModal/LockM
 import { ChevronLeftIcon, ChevronRightIcon } from '@/assets/icons'
 
 import LOCK_PERIODS from '@/config/lockPeriod'
+import sdkConfig from '@/config/sdk'
 
 const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const [amount, setAmount] = useState('')
@@ -24,10 +27,14 @@ const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const [isFinalized, setIsFinalized] = useState(false)
 
   const { isApproved, approve } = useApproveToken(
-    'tokenAddress',
-    'spender',
-    '10'
+    sdkConfig.contracts.KSUToken,
+    sdkConfig.contracts.IKSULocking,
+    amount
   )
+
+  const { balance, decimals } = useUserBalance(sdkConfig.contracts.KSUToken)
+
+  const userBalance = formatUnits(balance ?? '0', decimals)
 
   const lockToken = useLockToken()
 
@@ -36,17 +43,21 @@ const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
       <DialogHeader title='Lock' onClose={handleClose} />
       <DialogContent sx={{ px: 3, py: 1 }}>
         {isFinalized ? (
-          <LockModalConfirmation />
+          <LockModalConfirmation lockAmount={amount} />
         ) : (
           <>
             <Box display='grid' gap={2}>
-              <LockModalOverview />
-              <DepositInput amount={amount} setAmount={setAmount} />
+              <LockModalOverview balance={userBalance} />
+              <DepositInput
+                balance={userBalance}
+                amount={amount}
+                setAmount={setAmount}
+              />
               <LockDurationInput
                 duration={duration}
                 setDuration={setDuration}
               />
-              <EstimatedReturns />
+              <EstimatedReturns amount={amount} />
             </Box>
           </>
         )}
@@ -66,7 +77,7 @@ const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               endIcon={<ChevronRightIcon />}
               onClick={() =>
                 isApproved
-                  ? lockToken(amount, duration.toString())
+                  ? lockToken(parseUnits(amount, decimals), duration.toString())
                   : approve('')
               }
             >

@@ -1,11 +1,16 @@
+import { BigNumber } from 'ethers'
+
+import useKasuSDK from '@/hooks/useKasuSDK'
+
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import useToastState from '@/context/toast/useToastState'
-import { sleep } from '@/utils'
 
 const useLockToken = () => {
+  const sdk = useKasuSDK()
+
   const { setToast } = useToastState()
 
-  return async (amount: string, duration: string) => {
+  return async (amount: BigNumber, duration: string) => {
     try {
       setToast({
         type: 'info',
@@ -14,21 +19,21 @@ const useLockToken = () => {
         isClosable: false,
       })
 
-      await sleep(3000)
+      const lock = await sdk.Locking.lockKSUTokens(
+        amount,
+        BigNumber.from(duration)
+      )
 
-      const random = Math.random() * 2
-
-      if (Math.floor(random)) {
-        throw new Error(JSON.stringify({ amount, duration }))
-      }
+      const receipt = await lock.wait()
 
       setToast({
         type: 'success',
         title: `${ActionType.LOCK} ${ActionStatus.SUCCESS}`,
         message: ACTION_MESSAGES[ActionType.LOCK][ActionStatus.SUCCESS],
-        txHash: 'https://www.google.com',
+        txHash: receipt.transactionHash,
       })
     } catch (error) {
+      // Logger.errors.CALL_EXCEPTION
       setToast({
         type: 'error',
         title: `${ActionType.LOCK} ${ActionStatus.ERROR}`,

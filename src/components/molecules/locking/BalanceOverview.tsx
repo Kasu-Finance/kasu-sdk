@@ -3,13 +3,21 @@
 import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
+import { formatUnits } from 'ethers/lib/utils'
 
+import useUserBalance from '@/hooks/web3/useUserBalance'
+
+import sdkConfig from '@/config/sdk'
 import useModalState from '@/context/modal/useModalState'
 
 const BalanceOverview = () => {
   const { openModal } = useModalState()
 
   const handleOpen = () => openModal({ name: 'lockModal' })
+
+  const { balance, symbol, decimals } = useUserBalance(
+    sdkConfig.contracts.KSUToken
+  )
 
   return (
     <>
@@ -29,7 +37,7 @@ const BalanceOverview = () => {
         component='span'
         display='block'
       >
-        0.00 KSU
+        {formatUnits(balance || '0', decimals)} {symbol ?? 'KSU'}
       </Typography>
       <Button
         variant='contained'
