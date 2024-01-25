@@ -2,6 +2,15 @@ export type ModalBase = {
   isOpen: boolean
 }
 
+export enum ModalsActionTypes {
+  OPEN_MODAL = 'OPEN_MODAL',
+  CLOSE_MODAL = 'CLOSE_MODAL',
+}
+
+export type ModalAction =
+  | { type: ModalsActionTypes.OPEN_MODAL; name: keyof Modals; content?: any }
+  | { type: ModalsActionTypes.CLOSE_MODAL; name: keyof Modals }
+
 export type ModalData<T = void> = T extends void ? ModalBase : T & ModalBase
 
 export type Modals = {
