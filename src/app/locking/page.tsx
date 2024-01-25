@@ -1,6 +1,5 @@
-import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
-import Paper from '@mui/material/Paper'
+import Grid from '@mui/material/Grid'
 
 import BalanceOverview from '@/components/molecules/locking/BalanceOverview'
 import EpochOverview from '@/components/molecules/locking/EpochOverview'
@@ -13,66 +12,17 @@ const Locking = () => {
   return (
     <Container maxWidth='lg'>
       <PageHeader title='Locking' />
-      <Box
-        mt={3}
-        display='grid'
-        gridTemplateColumns='repeat(2, minmax(0, 1fr))'
-        gap={3}
-      >
-        <Box display='grid' gap={3}>
-          <Box
-            component={Paper}
-            px={2}
-            py={1}
-            display='flex'
-            flexDirection='column'
-          >
-            <BalanceOverview />
-          </Box>
-          <Box
-            component={Paper}
-            px={2}
-            py={1}
-            display='flex'
-            flexDirection='column'
-          >
-            <UnlockOverview />
-          </Box>
-          <Box
-            component={Paper}
-            px={2}
-            py={1}
-            display='flex'
-            flexDirection='column'
-          >
-            <RewardsOverview />
-          </Box>
-        </Box>
-        <Box
-          display='grid'
-          gridTemplateRows='repeat(2, minmax(0, max-content))'
-          gap={3}
-        >
-          <Box
-            component={Paper}
-            px={2}
-            py={1}
-            display='flex'
-            flexDirection='column'
-          >
-            <LoyaltyOverview />
-          </Box>
-          <Box
-            component={Paper}
-            px={2}
-            py={1}
-            display='flex'
-            flexDirection='column'
-          >
-            <EpochOverview />
-          </Box>
-        </Box>
-      </Box>
+      <Grid container spacing={3} mt={3}>
+        <Grid item xs={12} md={6}>
+          <BalanceOverview />
+          <UnlockOverview />
+          <RewardsOverview />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <LoyaltyOverview />
+          <EpochOverview />
+        </Grid>
+      </Grid>
     </Container>
   )
 }

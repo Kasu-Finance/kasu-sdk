@@ -2,6 +2,7 @@
 
 import { Typography } from '@mui/material'
 
+import CardWidget from '@/components/atoms/CardWidget'
 import ColoredBox from '@/components/atoms/ColoredBox'
 import UnlockRow from '@/components/atoms/locking/UnlockRow'
 
@@ -20,16 +21,8 @@ const UnlockOverview = () => {
   const hasLockedTokens = Boolean(UNLOCKS.length)
 
   return (
-    <>
-      <Typography variant='h6' component='span' display='block' mt={1} mb={2}>
-        Time until KASU unlock
-      </Typography>
-      <ColoredBox
-        mt={hasLockedTokens ? 2 : 1.5}
-        mb={1}
-        display='grid'
-        rowGap={1}
-      >
+    <CardWidget title='Time until KASU unlock'>
+      <ColoredBox display='grid' rowGap={1}>
         {hasLockedTokens ? (
           UNLOCKS.map((unlock) => (
             <UnlockRow key={unlock.date} unlockDetail={unlock} />
@@ -46,7 +39,7 @@ const UnlockOverview = () => {
           </Typography>
         )}
       </ColoredBox>
-    </>
+    </CardWidget>
   )
 }
 

@@ -6,13 +6,21 @@ import Typography from '@mui/material/Typography'
 
 import useModalState from '@/hooks/modals/useModalState'
 
+import CardWidget from '@/components/atoms/CardWidget'
+
 const BalanceOverview = () => {
   const { openModal } = useModalState()
 
   const handleOpen = () => openModal({ name: 'lockModal' })
 
   return (
-    <>
+    <CardWidget
+      cardAction={
+        <Button variant='contained' onClick={handleOpen}>
+          LOCK
+        </Button>
+      }
+    >
       <Typography
         p={(theme) => theme.spacing('6px', 2)}
         variant='subtitle2'
@@ -31,18 +39,7 @@ const BalanceOverview = () => {
       >
         0.00 KSU
       </Typography>
-      <Button
-        variant='contained'
-        sx={{
-          width: 83,
-          margin: '24px auto 0 auto',
-          display: 'block',
-        }}
-        onClick={handleOpen}
-      >
-        LOCK
-      </Button>
-    </>
+    </CardWidget>
   )
 }
 
