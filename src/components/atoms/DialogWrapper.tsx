@@ -1,9 +1,10 @@
 import { Dialog } from '@mui/material'
 
+import useModalState from '@/hooks/modals/useModalState'
+
 import { getModal } from '@/components/organisms/modals/ModalsContainer'
 
-import { Modals } from '@/context/modal/modalTypes'
-import useModalState from '@/context/modal/useModalState'
+import { Modals } from '@/context/modal/modal.types'
 
 // this component is used to separate dialog and child component
 // if not separated, theres an unmounting issue which causes state

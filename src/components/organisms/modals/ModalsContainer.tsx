@@ -1,11 +1,12 @@
 'use client'
 
+import useModalState from '@/hooks/modals/useModalState'
+
 import DialogWrapper from '@/components/atoms/DialogWrapper'
 import LockModal from '@/components/organisms/modals/LockModal'
 import LoyaltyLevelsModal from '@/components/organisms/modals/LoyaltyLevelsModal'
 
-import { Modals } from '@/context/modal/modalTypes'
-import useModalState from '@/context/modal/useModalState'
+import { Modals } from '@/context/modal/modal.types'
 
 import ConnectWalletModal from './ConnectWalletModal'
 

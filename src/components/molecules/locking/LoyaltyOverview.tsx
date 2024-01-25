@@ -2,7 +2,7 @@
 
 import { Box, Button, Divider, Typography } from '@mui/material'
 
-import useModalState from '@/context/modal/useModalState'
+import useModalState from '@/hooks/modals/useModalState'
 
 const LoyaltyOverview = () => {
   const { openModal } = useModalState()

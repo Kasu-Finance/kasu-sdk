@@ -3,12 +3,12 @@
 import { Alert, AlertTitle, Button, Modal, Typography } from '@mui/material'
 import { ReactNode, useReducer } from 'react'
 
-import { CrossIcon } from '@/assets/icons'
-import SuccessIcon from '@/assets/icons/general/SuccessIcon'
-
 import ToastContext from '@/context/toast/toastContext'
 import toastReducer from '@/context/toast/toastReducer'
 import { ToastStateType } from '@/context/toast/toastTypes'
+
+import { CrossIcon } from '@/assets/icons'
+import SuccessIcon from '@/assets/icons/general/SuccessIcon'
 
 type ToastStateProps = {
   children: ReactNode

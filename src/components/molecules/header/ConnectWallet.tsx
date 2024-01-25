@@ -4,10 +4,11 @@ import { Button } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { useEffect, useState } from 'react'
 
+import useModalState from '@/hooks/modals/useModalState'
+
 import { ArrowRightIcon, WalletIcon } from '@/assets/icons'
 
 import { networkConnection } from '@/connection/connectors/networkConnector'
-import useModalState from '@/context/modal/useModalState'
 import { isSupportedChain } from '@/utils'
 import formatAccount from '@/utils/formats/formatAccount'
 

@@ -6,8 +6,9 @@ import useSWR from 'swr'
 
 import useTokenDetails from '@/hooks/web3/useTokenDetails'
 
-import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import useToastState from '@/context/toast/useToastState'
+
+import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { sleep, userRejectedTransaction } from '@/utils'
 
 const useApproveToken = (
