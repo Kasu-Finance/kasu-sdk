@@ -1,7 +1,7 @@
 import Container from '@mui/material/Container'
 import Toolbar from '@mui/material/Toolbar'
 
-import HeaderBar from '@/components/atoms/header/HeaderBar'
+import HeaderBar from '@/components/atoms/HeaderBar'
 import ConnectWallet from '@/components/molecules/header/ConnectWallet'
 import Navigation from '@/components/molecules/header/Navigation'
 
