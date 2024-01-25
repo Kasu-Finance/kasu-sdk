@@ -1,11 +1,10 @@
 'use client'
 
-import { Divider, Typography } from '@mui/material'
-import { Fragment } from 'react'
+import { Typography } from '@mui/material'
 
 import CardWidget from '@/components/atoms/CardWidget'
 import ColoredBox from '@/components/atoms/ColoredBox'
-import EpochRow from '@/components/atoms/locking/EpochRow'
+import InfoRow from '@/components/atoms/InfoRow'
 
 const EPOCHS = [
   {
@@ -39,10 +38,12 @@ const EpochOverview = () => {
       </Typography>
       <ColoredBox mt={1}>
         {EPOCHS.map((epoch, index) => (
-          <Fragment key={epoch.title}>
-            {index !== 0 && <Divider />}
-            <EpochRow {...epoch} />
-          </Fragment>
+          <InfoRow
+            key={epoch.title}
+            {...epoch}
+            showDivider={index !== EPOCHS.length - 1}
+            metricInfo={epoch.amount + ' KASU'}
+          />
         ))}
       </ColoredBox>
     </CardWidget>

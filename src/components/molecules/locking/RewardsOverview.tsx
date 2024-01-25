@@ -1,11 +1,10 @@
 'use client'
 
-import { Button, Divider, Typography } from '@mui/material'
-import { Fragment } from 'react'
+import { Button, Typography } from '@mui/material'
 
 import CardWidget from '@/components/atoms/CardWidget'
 import ColoredBox from '@/components/atoms/ColoredBox'
-import RewardRow from '@/components/atoms/locking/RewardRow'
+import InfoRow from '@/components/atoms/InfoRow'
 
 const REWARDS = [
   {
@@ -42,10 +41,12 @@ const RewardsOverview = () => {
 
       <ColoredBox mt={1}>
         {REWARDS.map((reward, index) => (
-          <Fragment key={reward.title}>
-            {index !== 0 && <Divider />}
-            <RewardRow {...reward} />
-          </Fragment>
+          <InfoRow
+            key={reward.title}
+            showDivider={index !== REWARDS.length - 1}
+            {...reward}
+            metricInfo={reward.amount + ' USDC'}
+          />
         ))}
       </ColoredBox>
     </CardWidget>

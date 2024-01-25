@@ -1,10 +1,11 @@
 'use client'
 
 import { Typography } from '@mui/material'
+import { unix } from 'dayjs'
 
 import CardWidget from '@/components/atoms/CardWidget'
 import ColoredBox from '@/components/atoms/ColoredBox'
-import UnlockRow from '@/components/atoms/locking/UnlockRow'
+import InfoRow from '@/components/atoms/InfoRow'
 
 const UNLOCKS = [
   {
@@ -25,7 +26,16 @@ const UnlockOverview = () => {
       <ColoredBox display='grid' rowGap={1}>
         {hasLockedTokens ? (
           UNLOCKS.map((unlock) => (
-            <UnlockRow key={unlock.date} unlockDetail={unlock} />
+            <div key={unlock.date}>
+              {/* <UnlockRow key={unlock.date} unlockDetail={unlock} /> */}
+              <InfoRow
+                title={unlock.amount + ' KSU unlocks on'}
+                tooltip={false}
+                info='date'
+                metricStyle='subtitle2'
+                metricInfo={unix(unlock.date).format('Do MMM YYYY') + ''}
+              />
+            </div>
           ))
         ) : (
           <Typography
