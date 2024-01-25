@@ -4,6 +4,7 @@ import { Modal } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { useCallback, useEffect } from 'react'
 
+import useModalState from '@/hooks/modals/useModalState'
 import { useOrderedConnections } from '@/hooks/web3/useOrderedConnections'
 import useSwitchChain from '@/hooks/web3/useSwitchChain'
 
@@ -17,7 +18,6 @@ import {
 } from '@/connection/connection.helper'
 import { getConnection } from '@/connection/connectors'
 import { networkConnection } from '@/connection/connectors/networkConnector'
-import useModalState from '@/context/modal/useModalState'
 import { didUserReject, formatAccount, web3reactError } from '@/utils'
 
 import { Connection } from '@/types/connectors'

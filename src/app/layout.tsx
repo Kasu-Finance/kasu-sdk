@@ -4,12 +4,13 @@ import { Roboto } from 'next/font/google'
 import { ReactNode } from 'react'
 import '@/connection/eagerlyConnect'
 
-import Header from '@/components/organisms/header'
+import Header from '@/components/organisms/Header'
 import ModalsContainer from '@/components/organisms/modals/ModalsContainer'
 
-import ModalState from '@/context/modal/ModalState'
+import ModalState from '@/context/modal/modal.provider'
 import ToastState from '@/context/toast/ToastState'
 import Web3Provider from '@/context/web3provider/web3.provider'
+
 import ThemeRegistry from '@/themes/ThemeRegistry'
 
 type RootLayoutProps = {
