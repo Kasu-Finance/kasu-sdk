@@ -213,42 +213,42 @@ export const theme = createTheme({
     },
     MuiCardContent: {
       styleOverrides: {
-        root: {
-          ':last-child': {
-            padding: '0px',
-          },
-          '&.section-card-content': {
-            display: 'flex',
-            flexDirection: 'column',
-          },
-          '&.section-item-card-content': {
-            width: '100%',
-          },
-          '> .section-item-header': {
-            display: 'flex',
-            alignItems: 'baseline',
-            padding: '6px 16px',
-            whiteSpace: 'pre',
-            '&.darker': {
-              backgroundColor: 'rgba(0, 0, 0, 0.08)',
-            },
-          },
-          '> .section-item-header-column': {
-            flexDirection: 'column',
-          },
-          '> .section-item-content': {
-            padding: '6px 16px',
-            backgroundColor: '#fff',
-          },
-          '> .section-content': {
-            display: 'flex',
-            flexDirection: 'row',
-            width: '100%',
-          },
-          '.primary-background-color': {
-            backgroundColor: alpha(primaryColor, 0.04),
-          },
-        },
+        // root: {
+        //   ':last-child': {
+        //     padding: '0px',
+        //   },
+        //   '&.section-card-content': {
+        //     display: 'flex',
+        //     flexDirection: 'column',
+        //   },
+        //   '&.section-item-card-content': {
+        //     width: '100%',
+        //   },
+        //   '> .section-item-header': {
+        //     display: 'flex',
+        //     alignItems: 'baseline',
+        //     padding: '6px 16px',
+        //     whiteSpace: 'pre',
+        //     '&.darker': {
+        //       backgroundColor: 'rgba(0, 0, 0, 0.08)',
+        //     },
+        //   },
+        //   '> .section-item-header-column': {
+        //     flexDirection: 'column',
+        //   },
+        //   '> .section-item-content': {
+        //     padding: '6px 16px',
+        //     backgroundColor: '#fff',
+        //   },
+        //   '> .section-content': {
+        //     display: 'flex',
+        //     flexDirection: 'row',
+        //     width: '100%',
+        //   },
+        //   '.primary-background-color': {
+        //     backgroundColor: alpha(primaryColor, 0.04),
+        //   },
+        // },
       },
     },
     MuiTextField: {
@@ -373,7 +373,7 @@ export const theme = createTheme({
         root: {
           height: '42px',
           padding: '8px 22px',
-          textTransform: 'inherit',
+          // textTransform: 'inherit',
           fontWeight: 500,
           minWidth: 0,
           '&.disabled': {
