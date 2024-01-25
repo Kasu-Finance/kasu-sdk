@@ -82,7 +82,7 @@
           ["^@/data", "@/locales"],
           ["^@/api"],
           ["^@/components", "^@/container", "^@/connectors"],
-          ["^@/store"],
+          ["^@/store", "^@/context"],
           ["^@/pages"],
           ["^@/assets"],
           ["^@/*"],
