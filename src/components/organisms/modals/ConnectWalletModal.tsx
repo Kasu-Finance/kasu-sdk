@@ -18,7 +18,7 @@ import {
 } from '@/connection/connection.helper'
 import { getConnection } from '@/connection/connectors'
 import { networkConnection } from '@/connection/connectors/networkConnector'
-import { didUserReject, formatAccount, web3reactError } from '@/utils'
+import { formatAccount, userRejectedConnection, web3reactError } from '@/utils'
 
 import { Connection } from '@/types/connectors'
 
@@ -43,7 +43,7 @@ const ConnectWalletModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         // Ideally set to setError global context.
         web3reactError(error as Error)
 
-        if (didUserReject(connection, error)) {
+        if (userRejectedConnection(connection, error)) {
           console.warn('user rejected')
         }
       }
