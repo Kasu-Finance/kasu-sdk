@@ -1,6 +1,8 @@
 import { useWeb3React } from '@web3-react/core'
 import useSWR from 'swr'
 
+import { IERC20__factory } from '@/contracts/output'
+
 const useTokenDetails = (tokenAddress: string | undefined) => {
   const { provider } = useWeb3React()
 
@@ -8,25 +10,23 @@ const useTokenDetails = (tokenAddress: string | undefined) => {
     ? new Error('useTokenDetails: tokenAddress is not defined')
     : undefined
 
-  const { data: symbol, error: symbolError } = useSWR<string, Error>(
-    provider && tokenAddress ? [tokenAddress, 'symbol'] : null,
-    async () => {
-      return 'ETH'
-    }
-  )
+  const { data, error: rpcError } = useSWR(
+    provider && tokenAddress ? ['symbol', tokenAddress, provider] : null,
+    async ([_, tokenAddress, provider]) => {
+      const erc20 = IERC20__factory.connect(tokenAddress, provider)
 
-  const { data: decimals, error: decimalsError } = useSWR<number, Error>(
-    provider && tokenAddress ? [tokenAddress, 'decimals'] : null,
-    async () => {
-      return 18
+      const symbol = await erc20.symbol()
+      const decimals = await erc20.decimals()
+
+      return { symbol, decimals }
     }
   )
 
   return {
-    symbol,
-    decimals,
-    isLoading: !symbol && !decimals && !symbolError && !decimalsError,
-    error: symbolError || decimalsError || error,
+    symbol: data?.symbol,
+    decimals: data?.decimals,
+    isLoading: !data && !error,
+    error: rpcError || error,
   }
 }
 

@@ -1,8 +1,15 @@
 import { Box, Typography } from '@mui/material'
+import React from 'react'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 
-const LockModalConfirmation = () => {
+type LockModalConfirmationProps = {
+  lockAmount: string
+}
+
+const LockModalConfirmation: React.FC<LockModalConfirmationProps> = ({
+  lockAmount,
+}) => {
   return (
     <>
       <ColoredBox
@@ -34,7 +41,7 @@ const LockModalConfirmation = () => {
             Lock Amount
           </Typography>
           <Typography variant='h6' component='span' display='block'>
-            1000.00 USDC
+            {lockAmount} USDC
           </Typography>
         </Box>
       </ColoredBox>

@@ -1,5 +1,5 @@
 import { useWeb3React } from '@web3-react/core'
-import { BigNumber } from 'ethers'
+import { ethers } from 'ethers'
 import { parseEther, parseUnits } from 'ethers/lib/utils'
 import { useEffect, useState } from 'react'
 import useSWR from 'swr'
@@ -8,7 +8,8 @@ import useToastState from '@/hooks/context/useToastState'
 import useTokenDetails from '@/hooks/web3/useTokenDetails'
 
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
-import { sleep, userRejectedTransaction } from '@/utils'
+import { IERC20__factory } from '@/contracts/output'
+import { calculateMargin, userRejectedTransaction } from '@/utils'
 
 const useApproveToken = (
   tokenAddress: string | undefined,
@@ -23,17 +24,25 @@ const useApproveToken = (
 
   const { setToast, removeToast } = useToastState()
 
-  const { data: allowance, mutate } = useSWR<BigNumber>(
+  const { data: allowance, mutate } = useSWR(
     provider && account && tokenAddress && spender
-      ? [tokenAddress, 'allowance', account, spender]
+      ? [
+          `allowance-${tokenAddress}-${spender}-${account}`,
+          tokenAddress,
+          account,
+          spender,
+          provider,
+        ]
       : null,
-    () => {
-      return BigNumber.from(0)
+    async ([_, token, userAddress, spender, library]) => {
+      const erc20 = IERC20__factory.connect(token, library)
+
+      const allowance = await erc20.allowance(userAddress, spender)
+
+      return allowance
     },
     {
       fallbackData: parseEther('0'),
-      dedupingInterval: undefined,
-      refreshInterval: undefined,
     }
   )
 
@@ -56,6 +65,7 @@ const useApproveToken = (
       if (!tokenAddress)
         throw new Error('useApproveToken: tokenAddress not specified')
       if (!spender) throw new Error('useApproveToken: spender not specified')
+      if (!provider) throw new Error('userApproveToken: provider is undefined')
 
       setToast({
         type: 'info',
@@ -64,13 +74,38 @@ const useApproveToken = (
         isClosable: false,
       })
 
-      await sleep(3000)
+      const erc20contract = IERC20__factory.connect(
+        tokenAddress,
+        provider.getSigner()
+      )
 
-      const random = Math.random() * 2
+      let useExact = false
 
-      if (Math.floor(random)) {
-        throw new Error(approveAmount)
-      }
+      const estimatedGas = await erc20contract.estimateGas
+        .approve(spender, ethers.constants.MaxUint256)
+        .catch(() => {
+          // general fallback for tokens who restrict approval amounts
+          useExact = true
+
+          return erc20contract.estimateGas.approve(
+            spender,
+            parseUnits(approveAmount, decimals)
+          )
+        })
+
+      const approve = await erc20contract.approve(
+        spender,
+        useExact
+          ? parseUnits(approveAmount, decimals)
+          : ethers.constants.MaxUint256,
+        {
+          gasLimit: calculateMargin(estimatedGas),
+        }
+      )
+
+      await approve.wait()
+
+      await mutate()
 
       removeToast()
       setIsApproved(true)

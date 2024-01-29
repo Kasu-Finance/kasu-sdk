@@ -10,7 +10,8 @@
     "lint": "next lint",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "prepare": "husky install",
-    "format": "prettier -w ."
+    "format": "prettier -w .",
+    "generate-types": "typechain --target=ethers-v5 --always-generate-overloads --out-dir=src/contracts/output src/contracts/abis/*.json"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
@@ -56,6 +57,7 @@
     "@commitlint/cli": "^18.4.3",
     "@commitlint/config-conventional": "^18.4.3",
     "@next/eslint-plugin-next": "^14.0.4",
+    "@typechain/ethers-v5": "^11.1.2",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -72,6 +74,7 @@
     "husky": "^8.0.3",
     "lint-staged": "^15.2.0",
     "prettier": "^3.1.1",
+    "typechain": "^8.3.2",
     "typescript": "^5"
   }
 }

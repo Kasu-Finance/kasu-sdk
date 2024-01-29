@@ -1,43 +1,32 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  InputLabel,
-  OutlinedInput,
-  Typography,
-} from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { Dispatch, SetStateAction } from 'react'
 
+import TextInput from '@/components/molecules/TextInput'
+
 type DepositInputProps = {
+  balance: string
   amount: string
   setAmount: Dispatch<SetStateAction<string>>
 }
 
-const DepositInput: React.FC<DepositInputProps> = ({ amount, setAmount }) => {
-  const handleMax = () => {
-    setAmount('')
-  }
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAmount(e.target.value)
-  }
+const DepositInput: React.FC<DepositInputProps> = ({
+  balance,
+  amount,
+  setAmount,
+}) => {
+  const handleMax = () => setAmount(balance)
 
   return (
     <Box>
       <Typography variant='subtitle1' component='span' display='block'>
         Deposit
       </Typography>
-      <FormControl fullWidth variant='outlined' sx={{ mt: 1 }}>
-        <InputLabel htmlFor='deposit-input'>Amount</InputLabel>
-        <OutlinedInput
-          label='Amount'
-          id='deposit-input'
-          value={amount}
-          onChange={handleChange}
-          endAdornment={<Button onClick={handleMax}>Max</Button>}
-          sx={{ pr: 0 }}
-        />
-      </FormControl>
+      <TextInput
+        amount={amount}
+        setAmount={setAmount}
+        formControlProps={{ sx: { mt: 1 } }}
+        handleMax={handleMax}
+      />
       <Typography
         mt='3px'
         ml={1.5}
@@ -45,7 +34,7 @@ const DepositInput: React.FC<DepositInputProps> = ({ amount, setAmount }) => {
         component='span'
         display='block'
       >
-        Balance: 120.00 KSU
+        Balance: {balance} KSU
       </Typography>
     </Box>
   )

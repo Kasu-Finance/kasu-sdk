@@ -1,9 +1,18 @@
 import { Box, Typography, useTheme } from '@mui/material'
+import React from 'react'
+
+import useStakedKSU from '@/hooks/locking/useStakedKSU'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 
-const LockModalOverview = () => {
+type LockModalOverviewProps = {
+  balance: string
+}
+
+const LockModalOverview: React.FC<LockModalOverviewProps> = ({ balance }) => {
   const theme = useTheme()
+
+  const { stakedKSU } = useStakedKSU()
 
   return (
     <Box>
@@ -31,7 +40,7 @@ const LockModalOverview = () => {
             Wallet Balance
           </Typography>
           <Typography variant='body2' component='span' display='block'>
-            0.00 KSU
+            {balance} KSU
           </Typography>
         </Box>
         <Box
@@ -49,7 +58,7 @@ const LockModalOverview = () => {
             Total KSU locked
           </Typography>
           <Typography variant='body2' component='span' display='block'>
-            0.00 KSU
+            {stakedKSU?.toString()} KSU
           </Typography>
         </Box>
       </ColoredBox>
