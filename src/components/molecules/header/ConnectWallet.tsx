@@ -4,7 +4,7 @@ import { Button } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { useEffect, useState } from 'react'
 
-import useModalState from '@/hooks/modals/useModalState'
+import useModalState from '@/hooks/context/useModalState'
 
 import { ArrowRightIcon, WalletIcon } from '@/assets/icons'
 

@@ -1,7 +1,8 @@
 import { Box, Divider, Typography } from '@mui/material'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
-import EstimatesRow from '@/components/atoms/lockModal/EstimatesRow'
+
+import EstimatesRow from './EstimatesRow'
 
 const EstimatedReturns = () => {
   return (

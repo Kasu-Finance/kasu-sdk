@@ -1,9 +1,9 @@
 import Container from '@mui/material/Container'
 import Toolbar from '@mui/material/Toolbar'
 
-import HeaderBar from '@/components/atoms/HeaderBar'
 import ConnectWallet from '@/components/molecules/header/ConnectWallet'
 import Navigation from '@/components/molecules/header/Navigation'
+import HeaderBar from '@/components/organisms/header/HeaderBar'
 
 import KasuLogo from '@/assets/logo/Kasu'
 

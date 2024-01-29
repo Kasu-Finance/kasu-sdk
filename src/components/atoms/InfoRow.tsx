@@ -1,18 +1,14 @@
-import { Box, Divider, Tooltip, Typography } from '@mui/material'
+import {
+  Box,
+  Divider,
+  Tooltip,
+  Typography,
+  TypographyProps,
+} from '@mui/material'
 
 import TooltipTrigger from '@/components/atoms/TooltipTrigger'
 
 import { InfoIcon } from '@/assets/icons'
-
-type TypographyVariant =
-  | 'inherit'
-  | 'button'
-  | 'overline'
-  | 'caption'
-  | 'subtitle1'
-  | 'subtitle2'
-  | 'body1'
-  | 'body2'
 
 type InfoRowProps = {
   title: string
@@ -20,7 +16,7 @@ type InfoRowProps = {
   info: string
   showDivider?: boolean
   metricInfo: string
-  metricStyle?: TypographyVariant
+  metricStyle?: TypographyProps['variant']
   tooltip?: boolean
 }
 

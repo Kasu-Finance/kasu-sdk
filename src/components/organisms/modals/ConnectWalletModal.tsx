@@ -4,7 +4,7 @@ import { Button, CircularProgress, Modal } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { useCallback, useEffect, useState } from 'react'
 
-import useModalState from '@/hooks/modals/useModalState'
+import useModalState from '@/hooks/context/useModalState'
 import { useOrderedConnections } from '@/hooks/web3/useOrderedConnections'
 import useSwitchChain from '@/hooks/web3/useSwitchChain'
 

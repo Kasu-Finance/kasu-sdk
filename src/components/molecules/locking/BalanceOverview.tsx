@@ -4,7 +4,7 @@ import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
 
-import useModalState from '@/hooks/modals/useModalState'
+import useModalState from '@/hooks/context/useModalState'
 
 import CardWidget from '@/components/atoms/CardWidget'
 

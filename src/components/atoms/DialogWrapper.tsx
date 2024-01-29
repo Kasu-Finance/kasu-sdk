@@ -1,6 +1,6 @@
 import { Dialog } from '@mui/material'
 
-import useModalState from '@/hooks/modals/useModalState'
+import useModalState from '@/hooks/context/useModalState'
 
 import { getModal } from '@/components/organisms/modals/ModalsContainer'
 

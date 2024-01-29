@@ -4,9 +4,8 @@ import { parseEther, parseUnits } from 'ethers/lib/utils'
 import { useEffect, useState } from 'react'
 import useSWR from 'swr'
 
+import useToastState from '@/hooks/context/useToastState'
 import useTokenDetails from '@/hooks/web3/useTokenDetails'
-
-import useToastState from '@/context/toast/useToastState'
 
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { sleep, userRejectedTransaction } from '@/utils'

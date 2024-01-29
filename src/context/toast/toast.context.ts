@@ -1,6 +1,6 @@
 import { createContext } from 'react'
 
-import { ToastActions, ToastStateType } from '@/context/toast/toastTypes'
+import { ToastActions, ToastStateType } from '@/context/toast/toast.types'
 
 import { ContextWrapper } from '@/types/utils'
 

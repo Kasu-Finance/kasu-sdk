@@ -1,4 +1,4 @@
-import { ToastActions, ToastStateType } from '@/context/toast/toastTypes'
+import { ToastActions, ToastStateType } from '@/context/toast/toast.types'
 
 const toastReducer = (
   state: ToastStateType,

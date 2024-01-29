@@ -1,6 +1,6 @@
 'use client'
 
-import useModalState from '@/hooks/modals/useModalState'
+import useModalState from '@/hooks/context/useModalState'
 
 import DialogWrapper from '@/components/atoms/DialogWrapper'
 import LockModal from '@/components/organisms/modals/LockModal'

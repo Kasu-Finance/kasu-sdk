@@ -1,8 +1,7 @@
 import { useCallback, useContext } from 'react'
 
-import { Toast, ToastTypes } from '@/context/toast/toastTypes'
-
-import toastContext from './toastContext'
+import toastContext from '@/context/toast/toast.context'
+import { Toast, ToastTypes } from '@/context/toast/toast.types'
 
 const useToastState = (): ToastTypes => {
   const context = useContext(toastContext)

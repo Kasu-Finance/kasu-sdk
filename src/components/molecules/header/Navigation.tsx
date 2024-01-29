@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 
 import { NAV_ITEMS } from '@/config/navigation'
 
-import NavItem from '../../atoms/NavItem'
+import NavItem from '../../organisms/header/NavItem'
 
 const Navigation: React.FC = () => {
   const pathName = usePathname()

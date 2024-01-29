@@ -3,9 +3,9 @@
 import { Alert, AlertTitle, Button, Modal, Typography } from '@mui/material'
 import { ReactNode, useReducer } from 'react'
 
-import ToastContext from '@/context/toast/toastContext'
-import toastReducer from '@/context/toast/toastReducer'
-import { ToastStateType } from '@/context/toast/toastTypes'
+import ToastContext from '@/context/toast/toast.context'
+import toastReducer from '@/context/toast/toast.reducer'
+import { ToastStateType } from '@/context/toast/toast.types'
 
 import { CrossIcon } from '@/assets/icons'
 import SuccessIcon from '@/assets/icons/general/SuccessIcon'

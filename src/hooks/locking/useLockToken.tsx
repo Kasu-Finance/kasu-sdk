@@ -1,4 +1,4 @@
-import useToastState from '@/context/toast/useToastState'
+import useToastState from '@/hooks/context/useToastState'
 
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { sleep } from '@/utils'

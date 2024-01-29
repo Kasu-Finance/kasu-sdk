@@ -2,7 +2,7 @@
 
 import { Button, Divider, Typography } from '@mui/material'
 
-import useModalState from '@/hooks/modals/useModalState'
+import useModalState from '@/hooks/context/useModalState'
 
 import CardWidget from '@/components/atoms/CardWidget'
 
