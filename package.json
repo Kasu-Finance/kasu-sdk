@@ -10,7 +10,8 @@
     "lint": "next lint",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "prepare": "husky install",
-    "format": "prettier -w ."
+    "format": "prettier -w .",
+    "generate-types": "typechain --target=ethers-v5 --always-generate-overloads --out-dir=src/contracts/output src/contracts/abis/*.json"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
@@ -43,17 +44,20 @@
     "@web3-react/types": "^8.2.3",
     "@web3-react/url": "^8.2.3",
     "@web3-react/walletconnect-v2": "^8.5.1",
+    "dayjs": "^1.11.10",
     "ethers": "^5.7.2",
     "next": "14.0.4",
     "react": "^18",
     "react-dom": "^18",
     "sass": "^1.69.5",
-    "styled-components": "^6.1.2"
+    "styled-components": "^6.1.2",
+    "swr": "^2.2.4"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",
     "@commitlint/config-conventional": "^18.4.3",
     "@next/eslint-plugin-next": "^14.0.4",
+    "@typechain/ethers-v5": "^11.1.2",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -70,6 +74,7 @@
     "husky": "^8.0.3",
     "lint-staged": "^15.2.0",
     "prettier": "^3.1.1",
+    "typechain": "^8.3.2",
     "typescript": "^5"
   }
 }

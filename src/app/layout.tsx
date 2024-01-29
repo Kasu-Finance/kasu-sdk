@@ -1,22 +1,25 @@
+import Box from '@mui/material/Box'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Roboto } from 'next/font/google'
 import { ReactNode } from 'react'
 import '@/connection/eagerlyConnect'
 
-import Header from '@/components/molecules/Header'
+import Header from '@/components/organisms/header'
+import ModalsContainer from '@/components/organisms/modals/ModalsContainer'
 
+import ModalState from '@/context/modal/ModalState'
+import ToastState from '@/context/toast/ToastState'
 import Web3Provider from '@/context/web3provider/web3.provider'
 import ThemeRegistry from '@/themes/ThemeRegistry'
-
-// const Header = dynamic(() => import('@/components/organisms/header'), {
-//   ssr: false,
-// })
 
 type RootLayoutProps = {
   children: ReactNode
 }
 
-const inter = Inter({ subsets: ['latin'] })
+const roboto = Roboto({
+  weight: ['100', '300', '400', '500', '700', '900'],
+  subsets: ['latin'],
+})
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -27,15 +30,21 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang='en'>
-      <ThemeRegistry>
-        <body>
+      <body className={roboto.className}>
+        <ThemeRegistry>
           <Web3Provider>
-            <Header />
-            {children}
+            <ModalState>
+              <ToastState>
+                <Header />
+                <Box component='main' paddingTop={3} paddingBottom={3}>
+                  {children}
+                </Box>
+                <ModalsContainer />
+              </ToastState>
+            </ModalState>
           </Web3Provider>
-        </body>
-      </ThemeRegistry>
-      <body className={inter.className}></body>
+        </ThemeRegistry>
+      </body>
     </html>
   )
 }

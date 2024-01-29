@@ -37,7 +37,7 @@ const fontFamily = [
   'sans-serif',
 ].join(',')
 
-const primaryColor = '#3276cf'
+const primaryColor = '#1976D2'
 
 export const theme = createTheme({
   palette: {
@@ -46,12 +46,12 @@ export const theme = createTheme({
       contrastText: '#ffffff',
     },
     success: {
-      main: '#2E7D32',
-      contrastText: '#ffffff',
+      main: 'rgba(46, 125, 50, 1)',
+      contrastText: 'rgba(255,255,255,0.9)',
     },
     error: {
-      main: '#D32F2F',
-      contrastText: '#ffffff',
+      main: 'rgba(211, 47, 47, 1)',
+      contrastText: 'rgba(255,255,255, 0.9)',
     },
     highlight: {
       background: 'rgba(42, 162, 202, 0.08)',
@@ -60,6 +60,10 @@ export const theme = createTheme({
     icon: {
       primary: 'rgba(0, 0, 0, 0.54)',
     },
+    text: {
+      primary: 'rgba(0, 0, 0, 0.87)',
+      secondary: 'rgba(0,0,0, 0.6)',
+    },
   },
   typography: {
     fontFamily: fontFamily,
@@ -67,10 +71,15 @@ export const theme = createTheme({
       fontFamily: fontFamily,
       fontWeight: 400,
     },
+    h5: {
+      fontFamily: fontFamily,
+      fontSize: 24,
+      fontWeight: 400,
+    },
     h6: {
       fontFamily: fontFamily,
       fontSize: 20,
-      fontWeight: 300,
+      fontWeight: 500,
     },
     body1: {
       fontFamily: fontFamily,
@@ -90,11 +99,18 @@ export const theme = createTheme({
       fontFamily: fontFamily,
       letterSpacing: '1px',
     },
+    button: {
+      fontFamily: fontFamily,
+      fontSize: 13,
+      fontWeight: 500,
+      lineHeight: '22px',
+    },
 
     subtitle2: {
       fontFamily: fontFamily,
       fontSize: 14,
       fontWeight: 500,
+      lineHeight: '24px',
       letterSpacing: '0.1px',
     },
   },
@@ -109,6 +125,13 @@ export const theme = createTheme({
     },
   },
   components: {
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          background: '#ffffff',
+        },
+      },
+    },
     MuiPaper: {
       styleOverrides: {
         root: {},
@@ -142,16 +165,33 @@ export const theme = createTheme({
     MuiAlert: {
       styleOverrides: {
         root: {
-          position: 'absolute',
-          width: '100%',
-          padding: '16px',
-          marginTop: '8px',
-          backgroundColor: '#ffffff',
-          color: '#000000',
-          border: '1px solid rgba(0, 0, 0, 0.12)',
+          width: 444,
         },
-        message: {
-          width: '100%',
+        standardError: {
+          '& .MuiAlert-action > .MuiButton-root': {
+            '.MuiTouchRipple-child': {
+              backgroundColor: 'rgba(211, 47, 47, 1)',
+            },
+            '& > .MuiTypography-root': {
+              color: 'rgba(211, 47, 47, 1)',
+            },
+            '& > svg > path': {
+              fill: 'rgba(211, 47, 47, 1)',
+            },
+          },
+        },
+        standardSuccess: {
+          '& .MuiAlert-action > .MuiButton-root': {
+            '.MuiTouchRipple-child': {
+              backgroundColor: 'rgba(46, 125, 50, 1)',
+            },
+            '& > .MuiTypography-root': {
+              color: 'rgba(46, 125, 50, 1)',
+            },
+            '& > svg > path': {
+              fill: 'rgba(46, 125, 50, 1)',
+            },
+          },
         },
       },
     },
@@ -331,14 +371,11 @@ export const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
+          height: '42px',
+          padding: '8px 22px',
           textTransform: 'inherit',
-          // letterSpacing: '0.46px',
           fontWeight: 500,
           minWidth: 0,
-          '&.connect-wallet-button': {
-            height: '55px',
-            width: '100%',
-          },
           '&.disabled': {
             backgroundColor: '#006BA6a7',
             borderColor: '#008fbe',
@@ -391,19 +428,24 @@ export const theme = createTheme({
       },
     },
     MuiTooltip: {
+      defaultProps: {
+        placement: 'right',
+        arrow: true,
+      },
       styleOverrides: {
         tooltip: {
           maxWidth: '350px',
-          padding: '16px',
-          backgroundColor: '#ffffff',
-          color: 'rgba(0, 0, 0, 0.87)',
+          padding: '4px 8px',
+          backgroundColor: 'rgba(97, 97, 97, 0.9)',
+          color: '#ffffff',
           borderRadius: '4px',
           boxShadow: '0px 3px 5px -1px rgba(0, 0, 0, 0.2)',
           filter:
             'drop-shadow(0px 6px 10px rgba(0, 0, 0, 0.14)) drop-shadow(0px 1px 18px rgba(0, 0, 0, 0.12))',
         },
+
         arrow: {
-          color: '#ffffff',
+          color: 'rgba(97, 97, 97, 0.9)',
         },
       },
     },

@@ -2,7 +2,7 @@ interface KasuLogoProps {
   color?: string
 }
 
-const KasuLogo: React.FC<KasuLogoProps> = ({ color = 'white' }) => (
+const KasuLogo: React.FC<KasuLogoProps> = ({ color = '#1976D2' }) => (
   <svg
     width='130'
     height='40'
