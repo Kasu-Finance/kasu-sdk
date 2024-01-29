@@ -3,23 +3,33 @@
 import { Box, Button, Divider, Typography } from '@mui/material'
 import { Fragment } from 'react'
 
+import useClaimLockingRewards from '@/hooks/locking/useClaimLockingRewards'
+import useLockingRewards from '@/hooks/locking/useLockingRewards'
+
 import ColoredBox from '@/components/atoms/ColoredBox'
 import RewardRow from '@/components/atoms/locking/RewardRow'
 
-const REWARDS = [
+const REWARDS = (lockingRewards: {
+  claimableRewards: string
+  lifeTimeRewards: string
+}) => [
   {
     title: 'Your claimable locking rewards',
-    amount: '8.27',
+    amount: lockingRewards.claimableRewards,
     info: 'info',
   },
   {
     title: 'Your lifetime locking rewards',
-    amount: '1250.00',
+    amount: lockingRewards.claimableRewards,
     info: 'info',
   },
 ]
 
 const RewardsOverview = () => {
+  const { lockingRewards, isLoading } = useLockingRewards()
+
+  const claimRewards = useClaimLockingRewards()
+
   return (
     <>
       <Typography variant='h6' component='span' display='block' my={2}>
@@ -47,18 +57,22 @@ const RewardsOverview = () => {
             0.00 USDC
           </Typography>
         </Box>
-        <ColoredBox mt={1}>
-          {REWARDS.map((reward, index) => (
-            <Fragment key={reward.title}>
-              {index !== 0 && <Divider />}
-              <RewardRow {...reward} />
-            </Fragment>
-          ))}
-        </ColoredBox>
+
+        {isLoading ? null : lockingRewards ? (
+          <ColoredBox mt={1}>
+            {REWARDS(lockingRewards).map((reward, index) => (
+              <Fragment key={reward.title}>
+                {index !== 0 && <Divider />}
+                <RewardRow {...reward} />
+              </Fragment>
+            ))}
+          </ColoredBox>
+        ) : null}
       </Box>
       <Button
         variant='contained'
         sx={{ width: 168, margin: '8px auto 0 auto', display: 'block' }}
+        onClick={claimRewards}
       >
         Claim Rewards
       </Button>

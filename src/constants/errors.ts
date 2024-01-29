@@ -1,4 +1,6 @@
-enum ErrorCode {
+import { ContractTransaction } from 'ethers'
+
+export enum ErrorCode {
   USER_REJECTED_REQUEST = 4001,
   UNAUTHORIZED = 4100,
   UNSUPPORTED_METHOD = 4200,
@@ -14,4 +16,31 @@ enum ErrorCode {
   CB_REJECTED_REQUEST = 'Error: User denied account authorization',
 }
 
-export default ErrorCode
+export enum ErrorTypes {
+  TRANSACTION_REVERTED = 'Transaction Reverted',
+  INSUFFICIENT_BALANCE = 'Insufficient Balance',
+  TRANSACTION_REPLACED = 'Transaction Replaced',
+  UNEXPECTED_ERROR = 'Unexpected Error',
+}
+
+export const ERROR_MESSAGES = {
+  [ErrorTypes.TRANSACTION_REVERTED]: 'Check log for more details',
+  [ErrorTypes.INSUFFICIENT_BALANCE]: 'Check log for more details',
+  [ErrorTypes.UNEXPECTED_ERROR]: 'Check log for more details',
+} as const
+
+export class TransactionError extends Error {
+  public transaction: ContractTransaction
+
+  constructor(
+    transaction: ContractTransaction,
+    code?: string,
+    message?: string,
+    options?: ErrorOptions
+  ) {
+    super(message, options)
+    this.transaction = transaction
+
+    this.name = code ?? this.constructor.name
+  }
+}

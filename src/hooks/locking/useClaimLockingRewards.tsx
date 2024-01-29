@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers'
-
 import useKasuSDK from '@/hooks/useKasuSDK'
 import useHandleError from '@/hooks/web3/useHandleError'
 
@@ -7,14 +5,14 @@ import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import useToastState from '@/context/toast/useToastState'
 import { waitForReceipt } from '@/utils'
 
-const useLockToken = () => {
+const useClaimLockingRewards = () => {
   const sdk = useKasuSDK()
 
   const handleError = useHandleError()
 
   const { setToast } = useToastState()
 
-  return async (amount: BigNumber, duration: string) => {
+  return async () => {
     try {
       setToast({
         type: 'info',
@@ -23,27 +21,26 @@ const useLockToken = () => {
         isClosable: false,
       })
 
-      const lock = await sdk.Locking.lockKSUTokens(
-        amount,
-        BigNumber.from(duration)
-      )
+      const claim = await sdk.Locking.claimFees()
 
-      const receipt = await waitForReceipt(lock)
+      const receipt = await waitForReceipt(claim)
 
       setToast({
         type: 'success',
-        title: `${ActionType.LOCK} ${ActionStatus.SUCCESS}`,
-        message: ACTION_MESSAGES[ActionType.LOCK][ActionStatus.SUCCESS],
+        title: `${ActionType.CLAIM_REWARDS} ${ActionStatus.SUCCESS}`,
+        message:
+          ACTION_MESSAGES[ActionType.CLAIM_REWARDS][ActionStatus.SUCCESS],
         txHash: receipt.transactionHash,
       })
     } catch (error) {
       handleError(
         error,
-        `${ActionType.LOCK} ${ActionStatus.ERROR}`,
-        ACTION_MESSAGES[ActionType.LOCK][ActionStatus.ERROR]
+        `${ActionType.CLAIM_REWARDS} ${ActionStatus.ERROR}`,
+        ACTION_MESSAGES[ActionType.CLAIM_REWARDS][ActionStatus.ERROR]
       )
     }
+    sdk.Locking.claimFees()
   }
 }
 
-export default useLockToken
+export default useClaimLockingRewards

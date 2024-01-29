@@ -10,7 +10,7 @@ const useStakedKSU = () => {
 
   const { data, error } = useSWR(
     account ? ['stakedKasu', account] : null,
-    async () => sdk.Locking.getTotalKsuStaked()
+    async ([_, userAddress]) => sdk.Locking.getUserStakedKsu(userAddress)
   )
 
   return {

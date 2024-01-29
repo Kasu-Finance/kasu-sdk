@@ -1,5 +1,4 @@
 import { useWeb3React } from '@web3-react/core'
-import { BigNumber } from 'ethers'
 import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
@@ -10,11 +9,7 @@ const useUserLocks = () => {
 
   const { data, error, mutate } = useSWR(
     account ? ['userLocks', account] : null,
-    async ([_, userAddress]) => {
-      const lock = await sdk.Locking.userLocks(userAddress, BigNumber.from('0'))
-
-      return [lock]
-    }
+    async ([_, userAddress]) => sdk.Locking.getUserLocks(userAddress)
   )
 
   return {
