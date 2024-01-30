@@ -1,7 +1,10 @@
 import { Box, Typography } from '@mui/material'
 import React from 'react'
 
+import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
+
 import ColoredBox from '@/components/atoms/ColoredBox'
+import Countdown from '@/components/atoms/Countdown'
 
 type LockModalConfirmationProps = {
   lockAmount: string
@@ -10,6 +13,8 @@ type LockModalConfirmationProps = {
 const LockModalConfirmation: React.FC<LockModalConfirmationProps> = ({
   lockAmount,
 }) => {
+  const { nextEpochTime } = useNextEpochTime()
+
   return (
     <>
       <ColoredBox
@@ -56,7 +61,15 @@ const LockModalConfirmation: React.FC<LockModalConfirmationProps> = ({
           Epoch ends in
         </Typography>
         <Typography variant='h6' component='span' display='block'>
-          2 days • 3 hours • 2 minutes
+          <Countdown
+            endTime={nextEpochTime ?? 0}
+            format='D:HH:mm'
+            render={(countDown) => {
+              const parts = countDown.split(':')
+
+              return `${parts[0]} days • ${parts[1]} hours • ${parts[2]} minutes`
+            }}
+          />
         </Typography>
       </Box>
       <Typography
