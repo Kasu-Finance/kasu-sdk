@@ -138,7 +138,7 @@ export class KSULocking {
         const result: GQLClaimedFeesForAddress = await this._graph.request(
             claimedFeesQuery,
             {
-                address: userAddress.toLowerCase(),
+                userAddress: userAddress.toLowerCase(),
             },
         );
 
@@ -180,7 +180,7 @@ export class KSULocking {
         const result: GQLUserLockDepositsInfo = await this._graph.request(
             userStakedKsuQuery,
             {
-                address: userAddress.toLowerCase(),
+                userAddress: userAddress.toLowerCase(),
             },
         );
 

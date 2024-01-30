@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request';
 
 export const claimedFeesQuery = gql`
-    query getClaimedFeesForAddress($address: String!) {
+    query getClaimedFeesForAddress($userAddress: String!) {
         userLockDepositsInfos(where: { id: $address }) {
             feesClaimed
         }
