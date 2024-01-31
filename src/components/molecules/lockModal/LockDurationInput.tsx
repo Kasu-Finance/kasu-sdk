@@ -1,4 +1,5 @@
 import { Box, Slider, Typography } from '@mui/material'
+import { LockPeriod } from 'kasu-sdk/src/types'
 import { Dispatch, SetStateAction } from 'react'
 
 import useLockPeriods from '@/hooks/locking/useLockPeriods'
@@ -8,21 +9,21 @@ import ColoredBox from '@/components/atoms/ColoredBox'
 import dayjs from '@/dayjs'
 
 type LockDurationInputProps = {
-  duration: string
-  setDuration: Dispatch<SetStateAction<string>>
+  selectedLockPeriod: LockPeriod
+  setSelectedLockPeriod: Dispatch<SetStateAction<LockPeriod>>
 }
 
 const LockDurationInput: React.FC<LockDurationInputProps> = ({
-  duration,
-  setDuration,
+  selectedLockPeriod,
+  setSelectedLockPeriod,
 }) => {
   const { lockPeriods } = useLockPeriods()
 
   const handleChange = (_: Event, value: number | number[]) => {
-    setDuration(lockPeriods[value as number].lockPeriod)
+    setSelectedLockPeriod(lockPeriods[value as number])
   }
 
-  const unlockTime = dayjs().add(Number(duration), 'days')
+  const unlockTime = dayjs().add(Number(selectedLockPeriod.lockPeriod), 'days')
 
   return (
     <Box>
@@ -53,7 +54,7 @@ const LockDurationInput: React.FC<LockDurationInputProps> = ({
           }))}
           max={lockPeriods.length - 1}
           value={lockPeriods.findIndex(
-            ({ lockPeriod }) => lockPeriod === duration
+            ({ lockPeriod }) => lockPeriod === selectedLockPeriod.lockPeriod
           )}
           onChange={handleChange}
         />

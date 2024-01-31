@@ -1,7 +1,12 @@
 import { Box, Divider, Typography } from '@mui/material'
+import { LockPeriod } from 'kasu-sdk/src/types'
 import React from 'react'
 
+import useAvailableKsuBonus from '@/hooks/locking/useAvailableKsuBonus'
+import useCalculateLaunchBonusAmount from '@/hooks/locking/useCalculateLaunchBonusAmount'
 import useEstimatedDepositValue from '@/hooks/locking/useEstimatedDepositValue'
+import useProjectedApy from '@/hooks/locking/useProjectedApy'
+import useProjectedUsdcEarning from '@/hooks/locking/useProjectedUsdcEarning'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 
@@ -9,10 +14,25 @@ import EstimatesRow from './EstimatesRow'
 
 type EstimatedReturnsProps = {
   amount: string
+  lockPeriod: LockPeriod
 }
 
-const EstimatedReturns: React.FC<EstimatedReturnsProps> = ({ amount }) => {
+const EstimatedReturns: React.FC<EstimatedReturnsProps> = ({
+  amount,
+  lockPeriod,
+}) => {
   const estimatedDepositValueUSD = useEstimatedDepositValue(amount)
+
+  const { availableKsuBonus } = useAvailableKsuBonus()
+
+  const estimatedLaunchBonus = useCalculateLaunchBonusAmount(
+    amount || '0',
+    Number(lockPeriod.ksuBonusMultiplier),
+    availableKsuBonus ?? '0'
+  )
+
+  const projectedApy = useProjectedApy()
+  const projectedUsdcEarning = useProjectedUsdcEarning()
 
   return (
     <Box>
@@ -29,15 +49,19 @@ const EstimatedReturns: React.FC<EstimatedReturnsProps> = ({ amount }) => {
         <EstimatesRow
           title='Launch Bonus KASU from locking'
           info='info'
-          value='0.00 KSU'
+          value={`${estimatedLaunchBonus} KSU`}
         />
         <Divider />
-        <EstimatesRow title='Projected APY' info='info' value='0.00 %' />
+        <EstimatesRow
+          title='Projected APY'
+          info='info'
+          value={`${projectedApy} %`}
+        />
         <Divider />
         <EstimatesRow
           title='Projected USDC earning at current APY'
           info='info'
-          value='0.00 USDC'
+          value={`${projectedUsdcEarning} USDC`}
         />
       </ColoredBox>
     </Box>

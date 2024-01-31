@@ -2,6 +2,7 @@
 
 import { Box, Button, DialogActions, DialogContent } from '@mui/material'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
+import { LockPeriod } from 'kasu-sdk/src/types'
 import React, { useState } from 'react'
 
 import useLockPeriods from '@/hooks/locking/useLockPeriods'
@@ -25,7 +26,9 @@ const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { lockPeriods } = useLockPeriods()
 
   const [amount, setAmount] = useState('')
-  const [duration, setDuration] = useState<string>(lockPeriods[2].lockPeriod)
+  const [selectedLockPeriod, setSelectedLockPeriod] = useState<LockPeriod>(
+    lockPeriods[2]
+  )
   const [isFinalized, setIsFinalized] = useState(false)
 
   const { isApproved, approve } = useApproveToken(
@@ -56,10 +59,13 @@ const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                 setAmount={setAmount}
               />
               <LockDurationInput
-                duration={duration}
-                setDuration={setDuration}
+                selectedLockPeriod={selectedLockPeriod}
+                setSelectedLockPeriod={setSelectedLockPeriod}
               />
-              <EstimatedReturns amount={amount} />
+              <EstimatedReturns
+                amount={amount}
+                lockPeriod={selectedLockPeriod}
+              />
             </Box>
           </>
         )}
@@ -79,7 +85,10 @@ const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               endIcon={<ChevronRightIcon />}
               onClick={() =>
                 isApproved
-                  ? lockToken(parseUnits(amount, decimals), duration)
+                  ? lockToken(
+                      parseUnits(amount, decimals),
+                      selectedLockPeriod.lockPeriod
+                    )
                   : approve('')
               }
             >

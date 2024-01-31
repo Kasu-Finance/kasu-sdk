@@ -6,7 +6,6 @@ import Typography from '@mui/material/Typography'
 import { formatUnits } from 'ethers/lib/utils'
 
 import useModalState from '@/hooks/context/useModalState'
-import useLockPeriods from '@/hooks/locking/useLockPeriods'
 import useUserBalance from '@/hooks/web3/useUserBalance'
 
 import CardWidget from '@/components/atoms/CardWidget'
@@ -21,8 +20,6 @@ const BalanceOverview = () => {
   const { balance, symbol, decimals } = useUserBalance(
     sdkConfig.contracts.KSUToken
   )
-
-  useLockPeriods()
 
   return (
     <CardWidget
