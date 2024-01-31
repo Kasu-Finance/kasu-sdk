@@ -1,30 +1,28 @@
 import { Box, Slider, Typography } from '@mui/material'
 import { Dispatch, SetStateAction } from 'react'
 
+import useLockPeriods from '@/hooks/locking/useLockPeriods'
+
 import ColoredBox from '@/components/atoms/ColoredBox'
 
-import LOCK_PERIODS from '@/config/lockPeriod'
 import dayjs from '@/dayjs'
 
-const MARKS = LOCK_PERIODS.map((period, index) => ({
-  value: index,
-  label: period,
-}))
-
 type LockDurationInputProps = {
-  duration: number
-  setDuration: Dispatch<SetStateAction<number>>
+  duration: string
+  setDuration: Dispatch<SetStateAction<string>>
 }
 
 const LockDurationInput: React.FC<LockDurationInputProps> = ({
   duration,
   setDuration,
 }) => {
+  const { lockPeriods } = useLockPeriods()
+
   const handleChange = (_: Event, value: number | number[]) => {
-    setDuration(LOCK_PERIODS[value as number])
+    setDuration(lockPeriods[value as number].lockPeriod)
   }
 
-  const unlockTime = dayjs().add(duration, 'days')
+  const unlockTime = dayjs().add(Number(duration), 'days')
 
   return (
     <Box>
@@ -49,9 +47,14 @@ const LockDurationInput: React.FC<LockDurationInputProps> = ({
           }}
           getAriaValueText={(val) => val.toString()}
           step={null}
-          marks={MARKS}
-          max={LOCK_PERIODS.length - 1}
-          value={LOCK_PERIODS.indexOf(duration)}
+          marks={lockPeriods.map((period, index) => ({
+            value: index,
+            label: period.lockPeriod.toString(),
+          }))}
+          max={lockPeriods.length - 1}
+          value={lockPeriods.findIndex(
+            ({ lockPeriod }) => lockPeriod === duration
+          )}
           onChange={handleChange}
         />
         <Typography
