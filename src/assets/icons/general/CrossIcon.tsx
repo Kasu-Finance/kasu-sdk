@@ -1,7 +1,14 @@
-const CrossIcon = () => (
+import React from 'react'
+
+type CrossIconProps = {
+  width?: string
+  height?: string
+}
+
+const CrossIcon: React.FC<CrossIconProps> = ({ height, width }) => (
   <svg
-    width='14'
-    height='14'
+    width={width ?? '14'}
+    height={height ?? '14'}
     viewBox='0 0 14 14'
     fill='none'
     xmlns='http://www.w3.org/2000/svg'
