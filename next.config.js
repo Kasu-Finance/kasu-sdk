@@ -1,9 +1,21 @@
 /** @type {import('next').NextConfig} */
+
+// eslint-disable-next-line
+const path = require('path')
+
 const nextConfig = {
+  experimental: {
+    // needed for turbo dev mode for locally linked packages
+    outputFileTracingRoot: path.join(__dirname, '../../'),
+  },
+  i18n: {
+    locales: ['en'],
+    defaultLocale: 'en',
+  },
   compiler: {
     styledComponents: true,
   },
-  reactStrictMode: true,
+  reactStrictMode: false,
   async headers() {
     return [
       {
