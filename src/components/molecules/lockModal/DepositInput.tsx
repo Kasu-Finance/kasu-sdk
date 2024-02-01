@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material'
 import { Dispatch, SetStateAction } from 'react'
 
-import TextInput from '@/components/molecules/TextInput'
+import NumericalInput from '@/components/molecules/NumericalInput'
 
 type DepositInputProps = {
   balance: string
@@ -21,7 +21,7 @@ const DepositInput: React.FC<DepositInputProps> = ({
       <Typography variant='subtitle1' component='span' display='block'>
         Deposit
       </Typography>
-      <TextInput
+      <NumericalInput
         amount={amount}
         setAmount={setAmount}
         formControlProps={{ sx: { mt: 1 } }}

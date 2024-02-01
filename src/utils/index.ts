@@ -1,3 +1,4 @@
+export { default as escapeRegExp } from './escapeRegExp'
 export { default as formatAccount } from './formats/formatAccount'
 export { default as isSupportedChain } from './isSupportedChain'
 export { default as sleep } from './sleep'
