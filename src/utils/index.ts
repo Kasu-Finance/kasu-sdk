@@ -1,5 +1,6 @@
 export { default as escapeRegExp } from './escapeRegExp'
 export { default as formatAccount } from './formats/formatAccount'
+export { default as formatAmount } from './formats/formatAmount'
 export { default as isSupportedChain } from './isSupportedChain'
 export { default as sleep } from './sleep'
 export { default as calculateMargin } from './web3/calculateMargin'
