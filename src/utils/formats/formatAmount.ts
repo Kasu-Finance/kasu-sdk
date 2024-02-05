@@ -3,34 +3,20 @@ type OptionsParam = {
   maxDecimals?: number
   minValue?: number
   currency?: 'USD' | ''
+  symbol?: string
   useGrouping?: boolean
 }
 
-// important:: sort by number value desc
-const FORMATS = [
-  {
-    number: 1_000_000_000,
-    formatLabel: 'B',
-  },
-  {
-    number: 1_000_000,
-    formatLabel: 'M',
-  },
-  {
-    number: 1000,
-    formatLabel: 'K',
-  },
-] as const
-
 const formatAmount = (
   value: number | string,
-  options: OptionsParam
+  options: OptionsParam = {}
 ): string => {
   const {
     minDecimals = 0,
     minValue,
     currency = '',
     useGrouping = true,
+    symbol,
   } = options
 
   let { maxDecimals = 2 } = options
@@ -52,26 +38,27 @@ const formatAmount = (
     maxDecimals = minDecimals
   }
 
-  let parsedValue = Number(value)
+  const formatWithSuffix = Boolean(minValue && minValue > +value)
 
-  let format: (typeof FORMATS)[number] | undefined
-
-  if (minValue && parsedValue > minValue) {
-    format = FORMATS.find((format) => Math.abs(parsedValue) > format.number)
-
-    if (format) {
-      parsedValue = parsedValue / format.number
-    }
-  }
-
-  const output = parsedValue.toLocaleString('en-US', {
-    minimumFractionDigits: minDecimals,
-    maximumFractionDigits: maxDecimals,
+  const format = new Intl.NumberFormat('en-US', {
     ...(currency && { style: 'currency', currency }),
+    ...(formatWithSuffix && { notation: 'compact', compactDisplay: 'short' }),
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 4,
     useGrouping,
   })
 
-  return `${output}${format?.formatLabel ?? ''}`
+  if (!formatWithSuffix) return `${format.format(+value)} ${symbol ?? ''}`
+
+  // adds spacing to "compact part" e.g "K" -> " K"
+  const joinedFormat = format
+    .formatToParts(+value)
+    .map((parts) =>
+      parts.type === 'compact' ? ` ${parts.value}` : parts.value
+    )
+    .reduce((string, part) => `${string}${part}`)
+
+  return `${joinedFormat} ${symbol ?? ''}`
 }
 
 export default formatAmount
