@@ -9,18 +9,20 @@ import CardWidget from '@/components/atoms/CardWidget'
 import ColoredBox from '@/components/atoms/ColoredBox'
 import InfoRow from '@/components/atoms/InfoRow'
 
+import { formatAmount } from '@/utils'
+
 const REWARDS = (lockingRewards: {
   claimableRewards: string
   lifeTimeRewards: string
 }) => [
   {
     title: 'Your claimable locking rewards',
-    amount: lockingRewards.claimableRewards,
+    amount: formatAmount(lockingRewards.claimableRewards, { minDecimals: 2 }),
     info: 'info',
   },
   {
     title: 'Your lifetime locking rewards',
-    amount: lockingRewards.claimableRewards,
+    amount: formatAmount(lockingRewards.lifeTimeRewards, { minDecimals: 2 }),
     info: 'info',
   },
 ]
@@ -51,10 +53,6 @@ const RewardsOverview = () => {
               metricInfo={reward.amount + ' USDC'}
               {...reward}
             />
-            // <Fragment key={reward.title}>
-            //   {index !== 0 && <Divider />}
-            //   <RewardRow {...reward} />
-            // </Fragment>
           ))}
         </ColoredBox>
       ) : null}

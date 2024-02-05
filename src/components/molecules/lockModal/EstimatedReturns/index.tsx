@@ -10,6 +10,8 @@ import useProjectedUsdcEarning from '@/hooks/locking/useProjectedUsdcEarning'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 
+import { formatAmount } from '@/utils'
+
 import EstimatesRow from './EstimatesRow'
 
 type EstimatedReturnsProps = {
@@ -43,13 +45,18 @@ const EstimatedReturns: React.FC<EstimatedReturnsProps> = ({
         <EstimatesRow
           title='Deposit value in USD at current exchange rate'
           info='info'
-          value={`$ ${estimatedDepositValueUSD}`}
+          value={formatAmount(estimatedDepositValueUSD, {
+            currency: 'USD',
+            minDecimals: 2,
+          })}
         />
         <Divider />
         <EstimatesRow
           title='Launch Bonus KASU from locking'
           info='info'
-          value={`${estimatedLaunchBonus} KSU`}
+          value={`${formatAmount(estimatedLaunchBonus, {
+            minDecimals: 2,
+          })} KSU`}
         />
         <Divider />
         <EstimatesRow
