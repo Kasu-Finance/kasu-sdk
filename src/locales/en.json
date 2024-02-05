@@ -1,0 +1,99 @@
+{
+  "general": {
+    "approve": "approve",
+    "amount": "amount",
+    "balance": "balance",
+    "basic": "basic",
+    "claim": "claim",
+    "confirm": "confirm",
+    "close": "close",
+    "info": "info",
+    "lock": "lock",
+    "loyality": "loyalty",
+    "max": "max",
+    "nextEpoch": "next epoch",
+    "rewards": "rewards",
+    "to": "to",
+    "wallet": "wallet"
+  },
+  "time": {
+    "days": "days",
+    "hours": "hours",
+    "minutes": "minutes"
+  },
+  "locking": {
+    "widgets": {
+      "loyality": {
+        "description": "Current loyalty level if Epoch ended today",
+        "button": "  How to increase your loyalty level?"
+      },
+      "epoch": {
+        "description": "Next xKASU epoch",
+        "table": {
+          "1": "Your next rewards",
+          "2": "KASU per rKSU"
+        }
+      },
+      "unlock": { "noLockedKasu": "    Currently no locked KASU" }
+    }
+  },
+  "modals": {
+    "loyalityLevels": {
+      "title": "Loyalty levels",
+      "subtitle-1": "About the loyalty program",
+      "description-1": "KSU Token Loyalty Locked KSU tokens provide additional benefits at various loyalty levels. These are as follows:",
+      "subtitle-2": "Regular/No KSU tokens locked:",
+      "description-2": "Normal yields stated in each pool are received, and deposit/withdrawal requests are processed after Loyalty level 1 and 2 stakers.",
+      "level": "Loyalty level",
+      "level-1": {
+        "description": "Locking at least 1% of the user’s deposit balance on the platform in KSU Tokens provides:",
+        "prop-1": "Second priority for deposits into pools.",
+        "prop-2": "Second priority for capital withdrawals at the end of each Epoch.",
+        "prop-3": "Launch bonus: 0.1% extra yield in all pools, paid in KSU tokens."
+      },
+      "level-2": {
+        "description": "Locking at least 5% of the user’s deposit balance on the platform in KSU Tokens provides:",
+        "prop-1": " First priority for deposits into pools.",
+        "prop-2": " First priority for capital withdrawals at the end of each Epoch.",
+        "prop-3": "Launch bonus: 0.2% extra yield in all pools, paid in KSU tokens"
+      }
+    },
+    "lock": {
+      "buttons": {
+        "adjustLock": "Adjust Lock",
+        "reviewLock": "Review Lock"
+      },
+      "overview": {
+        "title": "Overview",
+        "balance": "Wallet balance",
+        "total": " Total KSU locked"
+      },
+      "deposit": {
+        "title": "Deposit"
+      },
+      "duration": {
+        "title": "Locking Duration",
+        "duration": "Duration in Days",
+        "unlocking": "Unlocking Date"
+      },
+      "estimates": {
+        "title": "Estimates",
+        "est-1": "Deposit value in USD at current exchange rate",
+        "tooltip-1": "info",
+        "est-2": "Launch Bonus KASU from locking",
+        "tooltip-2": "info",
+        "est-3": "Projected APY",
+        "tooltip-3": "info",
+        "est-4": "Projected USDC earning at current APY",
+        "tooltip-4": "info"
+      },
+      "reviewLock": {
+        "cashPool": "Cash management pool",
+        "lockAmount": "Lock Amount",
+        "epochEnds": "Epoch ends in",
+        "depositSchedule": "Deposit will be scheduled to the end of the current epoch",
+        "nextClearing": "Next clearing day commences in"
+      }
+    }
+  }
+}
