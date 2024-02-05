@@ -1,6 +1,8 @@
 import { Box, Typography } from '@mui/material'
 import { Dispatch, SetStateAction } from 'react'
 
+import useTranslation from '@/hooks/useTranslation'
+
 import TextInput from '@/components/molecules/TextInput'
 
 type DepositInputProps = {
@@ -15,11 +17,12 @@ const DepositInput: React.FC<DepositInputProps> = ({
   setAmount,
 }) => {
   const handleMax = () => setAmount(balance)
+  const { t } = useTranslation()
 
   return (
     <Box>
       <Typography variant='subtitle1' component='span' display='block'>
-        Deposit
+        {t('modals.lock.deposit.title')}
       </Typography>
       <TextInput
         amount={amount}
@@ -33,8 +36,9 @@ const DepositInput: React.FC<DepositInputProps> = ({
         variant='caption'
         component='span'
         display='block'
+        sx={{ textTransform: 'capitalize' }}
       >
-        Balance: {balance} KSU
+        {`${t('general.balance')} ${balance} KSU`}
       </Typography>
     </Box>
   )

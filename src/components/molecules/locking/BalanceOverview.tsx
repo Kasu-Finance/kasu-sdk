@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography'
 import { formatUnits } from 'ethers/lib/utils'
 
 import useModalState from '@/hooks/context/useModalState'
+import useTranslation from '@/hooks/useTranslation'
 import useUserBalance from '@/hooks/web3/useUserBalance'
 
 import CardWidget from '@/components/atoms/CardWidget'
@@ -14,7 +15,7 @@ import sdkConfig from '@/config/sdk'
 
 const BalanceOverview = () => {
   const { openModal } = useModalState()
-
+  const { t } = useTranslation()
   const handleOpen = () => openModal({ name: 'lockModal' })
 
   const { balance, symbol, decimals } = useUserBalance(
@@ -25,7 +26,7 @@ const BalanceOverview = () => {
     <CardWidget
       cardAction={
         <Button variant='contained' onClick={handleOpen}>
-          LOCK
+          {t('general.lock')}
         </Button>
       }
     >
@@ -35,8 +36,9 @@ const BalanceOverview = () => {
         component='span'
         display='block'
         mt={1}
+        sx={{ textTransform: 'capitalize' }}
       >
-        Wallet Balance
+        {`${t('general.wallet')} ${t('general.balance')}`}
       </Typography>
       <Divider />
       <Typography

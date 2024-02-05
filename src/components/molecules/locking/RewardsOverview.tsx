@@ -4,6 +4,7 @@ import { Button, Typography } from '@mui/material'
 
 import useClaimLockingRewards from '@/hooks/locking/useClaimLockingRewards'
 import useLockingRewards from '@/hooks/locking/useLockingRewards'
+import useTranslation from '@/hooks/useTranslation'
 
 import CardWidget from '@/components/atoms/CardWidget'
 import ColoredBox from '@/components/atoms/ColoredBox'
@@ -27,7 +28,7 @@ const REWARDS = (lockingRewards: {
 
 const RewardsOverview = () => {
   const { lockingRewards, isLoading } = useLockingRewards()
-
+  const { t } = useTranslation()
   const claimRewards = useClaimLockingRewards()
 
   return (
@@ -35,7 +36,7 @@ const RewardsOverview = () => {
       title='Locking Rewards'
       cardAction={
         <Button sx={{ width: 168 }} onClick={claimRewards} variant='contained'>
-          Claim Rewards
+          {t('general.claim') + ' ' + t('general.rewards')}
         </Button>
       }
     >

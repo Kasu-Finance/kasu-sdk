@@ -1,6 +1,8 @@
 import { Box, Typography } from '@mui/material'
 import React from 'react'
 
+import useTranslation from '@/hooks/useTranslation'
+
 import ColoredBox from '@/components/atoms/ColoredBox'
 
 type LockModalConfirmationProps = {
@@ -10,6 +12,8 @@ type LockModalConfirmationProps = {
 const LockModalConfirmation: React.FC<LockModalConfirmationProps> = ({
   lockAmount,
 }) => {
+  const { t } = useTranslation()
+
   return (
     <>
       <ColoredBox
@@ -23,11 +27,12 @@ const LockModalConfirmation: React.FC<LockModalConfirmationProps> = ({
             color='text.secondary'
             display='block'
             my='6px'
+            sx={{ textTransform: 'capitalize' }}
           >
-            To
+            {t('general.to')}
           </Typography>
           <Typography variant='h6' component='span' display='block'>
-            Cash management pool
+            {t('modals.lock.reviewLock.cashPool')}
           </Typography>
         </Box>
         <Box px={2}>
@@ -38,7 +43,7 @@ const LockModalConfirmation: React.FC<LockModalConfirmationProps> = ({
             display='block'
             my='6px'
           >
-            Lock Amount
+            {t('modals.lock.reviewLock.lockAmount')}
           </Typography>
           <Typography variant='h6' component='span' display='block'>
             {lockAmount} USDC
@@ -53,10 +58,10 @@ const LockModalConfirmation: React.FC<LockModalConfirmationProps> = ({
           display='block'
           my='6px'
         >
-          Epoch ends in
+          {t('modals.lock.reviewLock.epochEnds')}
         </Typography>
         <Typography variant='h6' component='span' display='block'>
-          2 days • 3 hours • 2 minutes
+          {`2 ${t('time.days')} • 3 ${t('time.hours')} • 2 ${t('time.minutes')} `}
         </Typography>
       </Box>
       <Typography
@@ -67,7 +72,7 @@ const LockModalConfirmation: React.FC<LockModalConfirmationProps> = ({
         display='block'
         width='max-content'
       >
-        Deposit will be scheduled to the end of the current epoch.
+        {t('modals.lock.reviewLock.depositSchedule')}
       </Typography>
       <Typography
         variant='body1'
@@ -77,9 +82,9 @@ const LockModalConfirmation: React.FC<LockModalConfirmationProps> = ({
         display='block'
         width='max-content'
       >
-        Next clearing day commences in{' '}
+        {t('modals.lock.reviewLock.nextClearing') + ' '}
         <Typography variant='h6' component='span'>
-          6 days 11 hours 6 minutes.
+          {`6 ${t('time.days')} • 11 ${t('time.hours')} • 6 ${t('time.minutes')} `}
         </Typography>
       </Typography>
     </>

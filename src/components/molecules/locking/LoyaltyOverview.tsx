@@ -3,12 +3,13 @@
 import { Button, Divider, Typography } from '@mui/material'
 
 import useModalState from '@/hooks/context/useModalState'
+import useTranslation from '@/hooks/useTranslation'
 
 import CardWidget from '@/components/atoms/CardWidget'
 
 const LoyaltyOverview = () => {
   const { openModal } = useModalState()
-
+  const { t } = useTranslation()
   const handleOpen = () => openModal({ name: 'loyaltyLevelsModal' })
 
   return (
@@ -16,7 +17,7 @@ const LoyaltyOverview = () => {
       title='Loyalty'
       cardAction={
         <Button variant='contained' onClick={handleOpen}>
-          How to increase your loyalty level?
+          {t('locking.widgets.loyality.button')}
         </Button>
       }
     >
@@ -27,11 +28,18 @@ const LoyaltyOverview = () => {
         mx={2}
         display='block'
       >
-        Current loyalty level if Epoch ended today
+        {t('locking.widgets.loyality.description')}
       </Typography>
       <Divider />
-      <Typography variant='h6' component='span' my='6px' mx={2} display='block'>
-        Basic
+      <Typography
+        variant='h6'
+        component='span'
+        my='6px'
+        mx={2}
+        display='block'
+        sx={{ textTransform: 'capitalize' }}
+      >
+        {t('general.basic')}
       </Typography>
     </CardWidget>
   )

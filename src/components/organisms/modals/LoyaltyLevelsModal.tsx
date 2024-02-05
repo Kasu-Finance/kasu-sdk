@@ -8,6 +8,8 @@ import {
   Typography,
 } from '@mui/material'
 
+import useTranslation from '@/hooks/useTranslation'
+
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
 import List from '@/components/atoms/List'
 import DialogHeader from '@/components/molecules/DialogHeader'
@@ -15,17 +17,19 @@ import DialogHeader from '@/components/molecules/DialogHeader'
 import { VerifiedIcon } from '@/assets/icons'
 
 const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
+  const { t } = useTranslation()
+  const tBase = 'modals.loyalityLevels.'
+
   return (
     <>
-      <DialogHeader title='Loyalty levels' onClose={handleClose} />
+      <DialogHeader title={t(tBase + 'title')} onClose={handleClose} />
       <DialogContent sx={{ px: 3, py: 1 }}>
         <Box display='grid' gap={2}>
           <Typography variant='h5' component='span' display='block'>
-            About the loyalty program
+            {t(tBase + 'subtitle-1')}
           </Typography>
           <Typography variant='body1' component='p'>
-            KSU Token Loyalty Locked KSU tokens provide additional benefits at
-            various loyalty levels. These are as follows:
+            {t(tBase + 'description-1')}
           </Typography>
           <Box
             display='grid'
@@ -37,13 +41,11 @@ const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               <VerifiedIcon />
             </Box>
             <Typography variant='h6' component='span'>
-              Regular/No KSU tokens locked:
+              {t(tBase + 'subtitle-2')}
             </Typography>
           </Box>
           <Typography variant='body1' component='p'>
-            Normal yields stated in each pool are received, and
-            deposit/withdrawal requests are processed after Loyalty level 1 and
-            2 stakers.
+            {t(tBase + 'description-2')}
           </Typography>
           <Box
             display='grid'
@@ -55,26 +57,24 @@ const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               <VerifiedIcon />
             </Box>
             <Typography variant='h6' component='span'>
-              Loyalty Level 1 <br />
-              Locking at least 1% of the user’s deposit balance on the platform
-              in KSU Tokens provides:
+              {t(tBase + 'level')} 1 <br />
+              {t(tBase + 'level-1.description')}
             </Typography>
           </Box>
           <List>
             <li>
               <Typography variant='body1' component='p'>
-                Second priority for deposits into pools.
+                {t(tBase + 'level-1.prop-1')}
               </Typography>
             </li>
             <li>
               <Typography variant='body1' component='p'>
-                Second priority for capital withdrawals at the end of each
-                Epoch.
+                {t(tBase + 'level-1.prop-2')}
               </Typography>
             </li>
             <li>
               <Typography variant='body1' component='p'>
-                Launch bonus: 0.1% extra yield in all pools, paid in KSU tokens.
+                {t(tBase + 'level-1.prop-3')}
               </Typography>
             </li>
           </List>
@@ -88,25 +88,24 @@ const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               <VerifiedIcon />
             </Box>
             <Typography variant='h6' component='span'>
-              Loyalty Level 2 <br />
-              Locking at least 5% of the user’s deposit balance on the platform
-              in KSU Tokens provides:
+              {t(tBase + 'level')} 2 <br />
+              {t(tBase + 'level-2.description')}
             </Typography>
           </Box>
           <List>
             <li>
               <Typography variant='body1' component='p'>
-                First priority for deposits into pools.
+                {t(tBase + 'level-2.prop-1')}
               </Typography>
             </li>
             <li>
               <Typography variant='body1' component='p'>
-                First priority for capital withdrawals at the end of each Epoch.
+                {t(tBase + 'level-2.prop-2')}
               </Typography>
             </li>
             <li>
               <Typography variant='body1' component='p'>
-                Launch bonus: 0.2% extra yield in all pools, paid in KSU tokens
+                {t(tBase + 'level-2.prop-3')}
               </Typography>
             </li>
           </List>
@@ -114,7 +113,7 @@ const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
       </DialogContent>
       <DialogActions sx={{ justifyContent: 'center' }}>
         <Button variant='contained' onClick={handleClose}>
-          Close
+          {t('general.close')}
         </Button>
       </DialogActions>
     </>
