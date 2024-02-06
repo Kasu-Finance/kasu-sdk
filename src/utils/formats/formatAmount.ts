@@ -45,6 +45,8 @@ const formatAmount = (
     ...(formatWithSuffix && { notation: 'compact', compactDisplay: 'short' }),
     minimumFractionDigits: 2,
     maximumFractionDigits: 4,
+    // @ts-ignore typescript hasn't added this
+    trailingZeroDisplay: 'stripIfInteger',
     useGrouping,
   })
 
