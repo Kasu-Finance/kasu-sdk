@@ -37,9 +37,9 @@ export interface GQLGetLockingPeriods {
     }[];
 }
 export interface GQLClaimedFeesForAddress {
-    userLockDepositsInfos: {
+    userLockDepositsInfo: {
         feesClaimed: string;
-    }[];
+    };
 }
 export interface GQLUserLockDepositsInfo {
     userLockDepositsInfo: {

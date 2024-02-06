@@ -1,6 +1,6 @@
 import { Provider } from '@ethersproject/providers';
 import { BigNumber, ContractTransaction, Signer, ethers } from 'ethers';
-import { formatEther } from 'ethers/lib/utils';
+import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils';
 import { GraphQLClient, gql } from 'graphql-request';
 
 import {
@@ -133,6 +133,7 @@ export class KSULocking {
 
     async getLifetimeRewards(
         userAddress: string,
+        rewardDecimals: number,
         claimableRewards?: BigNumber,
     ): Promise<BigNumber> {
         const result: GQLClaimedFeesForAddress = await this._graph.request(
@@ -142,20 +143,13 @@ export class KSULocking {
             },
         );
 
-        let sumAlreadyClaimed = ethers.constants.Zero;
-
-        const mappedToBigNumber = result.userLockDepositsInfos.map((m) =>
-            BigNumber.from(m.feesClaimed),
-        );
-        mappedToBigNumber.forEach((element) => {
-            sumAlreadyClaimed = sumAlreadyClaimed.add(element);
-        });
+        const claimedRewards = result?.userLockDepositsInfo?.feesClaimed ?? '0';
 
         if (!claimableRewards) {
             claimableRewards = await this.getClaimableRewards(userAddress);
         }
 
-        return claimableRewards.add(sumAlreadyClaimed);
+        return claimableRewards.add(parseUnits(claimedRewards, rewardDecimals));
     }
 
     getLaunchBonusAmount(
@@ -190,16 +184,19 @@ export class KSULocking {
     async getLockingRewards(
         userAddress: string,
     ): Promise<{ claimableRewards: string; lifeTimeRewards: string }> {
+        const rewardDecimals = 6;
+
         const claimableRewards = await this.getClaimableRewards(userAddress);
 
         const lifeTimeRewards = await this.getLifetimeRewards(
             userAddress,
+            rewardDecimals,
             claimableRewards,
         );
 
         return {
-            claimableRewards: claimableRewards.toString(),
-            lifeTimeRewards: lifeTimeRewards.toString(),
+            claimableRewards: formatUnits(claimableRewards, rewardDecimals),
+            lifeTimeRewards: formatUnits(lifeTimeRewards, rewardDecimals),
         };
     }
 
