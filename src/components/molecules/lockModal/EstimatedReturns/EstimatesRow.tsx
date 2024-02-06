@@ -6,11 +6,15 @@ import { InfoIcon } from '@/assets/icons'
 
 type EstimatesRowProps = {
   title: string
-  info: string
   value: string
+  toolTipInfo?: string
 }
 
-const EstimatesRow: React.FC<EstimatesRowProps> = ({ title, info, value }) => (
+const EstimatesRow: React.FC<EstimatesRowProps> = ({
+  title,
+  toolTipInfo,
+  value,
+}) => (
   <Box display='flex' justifyContent='space-between' px={2} py='6px'>
     <Box display='flex' alignItems='center'>
       <Typography
@@ -21,11 +25,13 @@ const EstimatesRow: React.FC<EstimatesRowProps> = ({ title, info, value }) => (
       >
         {title}
       </Typography>
-      <Tooltip disableFocusListener disableTouchListener title={info}>
-        <TooltipTrigger>
-          <InfoIcon />
-        </TooltipTrigger>
-      </Tooltip>
+      {toolTipInfo && (
+        <Tooltip disableFocusListener disableTouchListener title={toolTipInfo}>
+          <TooltipTrigger>
+            <InfoIcon />
+          </TooltipTrigger>
+        </Tooltip>
+      )}
     </Box>
     <Typography variant='body2' component='span'>
       {value}

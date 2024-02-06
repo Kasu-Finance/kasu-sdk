@@ -13,13 +13,13 @@ const EPOCHS = [
   {
     title: 'Your next rewards',
     amount: '820.00',
-    info: 'info',
+    toolTipInfo: 'info',
   },
   {
     title: 'KASU per rKSU',
     subtitle: '(next epoch)',
     amount: '100.21',
-    info: 'info',
+    toolTipInfo: 'info',
   },
 ]
 
@@ -55,7 +55,11 @@ const EpochOverview = () => {
             key={epoch.title}
             {...epoch}
             showDivider={index !== EPOCHS.length - 1}
-            metricInfo={epoch.amount + ' KASU'}
+            metric={
+              <Typography variant='body2' component='span'>
+                {epoch.amount + ' KASU'}
+              </Typography>
+            }
           />
         ))}
       </ColoredBox>

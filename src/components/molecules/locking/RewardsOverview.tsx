@@ -18,12 +18,13 @@ const REWARDS = (lockingRewards: {
   {
     title: 'Your claimable locking rewards',
     amount: formatAmount(lockingRewards.claimableRewards, { minDecimals: 2 }),
-    info: 'info',
+    toolTipInfo:
+      'The amount KSU rewards that can be claimed upon the conclusion of the current Epoch.​',
   },
   {
     title: 'Your lifetime locking rewards',
     amount: formatAmount(lockingRewards.lifeTimeRewards, { minDecimals: 2 }),
-    info: 'info',
+    toolTipInfo: 'info',
   },
 ]
 
@@ -50,7 +51,7 @@ const RewardsOverview = () => {
             <InfoRow
               key={reward.title}
               showDivider={index !== REWARDS.length}
-              metricInfo={reward.amount + ' USDC'}
+              metric={reward.amount + ' USDC'}
               {...reward}
             />
           ))}

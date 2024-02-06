@@ -44,7 +44,6 @@ const EstimatedReturns: React.FC<EstimatedReturnsProps> = ({
       <ColoredBox mt={1}>
         <EstimatesRow
           title='Deposit value in USD at current exchange rate'
-          info='info'
           value={formatAmount(estimatedDepositValueUSD, {
             currency: 'USD',
             minDecimals: 2,
@@ -53,7 +52,7 @@ const EstimatedReturns: React.FC<EstimatedReturnsProps> = ({
         <Divider />
         <EstimatesRow
           title='Launch Bonus KASU from locking'
-          info='info'
+          toolTipInfo='Your additional KSU bonus based on the amount and duration of locked KSU upon launch.'
           value={`${formatAmount(estimatedLaunchBonus, {
             minDecimals: 2,
           })} KSU`}
@@ -61,13 +60,13 @@ const EstimatedReturns: React.FC<EstimatedReturnsProps> = ({
         <Divider />
         <EstimatesRow
           title='Projected APY'
-          info='info'
+          toolTipInfo='The projected KSU rewards from your KSU launch bonus plus your KSU multiplier, based on your locking duration, expressed as a percentage of locked KSU on an annualised basis.​'
           value={`${projectedApy} %`}
         />
         <Divider />
         <EstimatesRow
           title='Projected USDC earning at current APY'
-          info='info'
+          toolTipInfo='Your projected KSU rewards based on the projected APY​.'
           value={`${projectedUsdcEarning} USDC`}
         />
       </ColoredBox>

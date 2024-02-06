@@ -5,6 +5,7 @@ import {
   Typography,
   TypographyProps,
 } from '@mui/material'
+import React, { ReactNode } from 'react'
 
 import TooltipTrigger from '@/components/atoms/TooltipTrigger'
 
@@ -13,21 +14,21 @@ import { InfoIcon } from '@/assets/icons'
 type InfoRowProps = {
   title: string
   subtitle?: string
-  info: string
+  toolTipInfo?: string
   showDivider?: boolean
-  metricInfo: string
-  metricStyle?: TypographyProps['variant']
-  tooltip?: boolean
+  metric: ReactNode
+  titleStyle?: TypographyProps
+  subtitleStyle?: TypographyProps
 }
 
 const InfoRow: React.FC<InfoRowProps> = ({
   title,
   subtitle,
-  info,
+  toolTipInfo,
   showDivider = false,
-  metricStyle = 'body2',
-  tooltip = true,
-  metricInfo,
+  metric,
+  titleStyle,
+  subtitleStyle,
 }) => {
   return (
     <>
@@ -39,6 +40,7 @@ const InfoRow: React.FC<InfoRowProps> = ({
               component='span'
               color='text.primary'
               mr='4px'
+              {...titleStyle}
             >
               {title}
             </Typography>
@@ -48,22 +50,25 @@ const InfoRow: React.FC<InfoRowProps> = ({
                 component='span'
                 color='text.primary'
                 mr='4px'
+                {...subtitleStyle}
               >
                 {subtitle}
               </Typography>
             )}
           </Box>
-          {tooltip && (
-            <Tooltip disableFocusListener disableTouchListener title={info}>
+          {toolTipInfo && (
+            <Tooltip
+              disableFocusListener
+              disableTouchListener
+              title={toolTipInfo}
+            >
               <TooltipTrigger>
                 <InfoIcon />
               </TooltipTrigger>
             </Tooltip>
           )}
         </Box>
-        <Typography variant={metricStyle} component='span'>
-          {metricInfo}
-        </Typography>
+        {metric}
       </Box>
       {showDivider && <Divider />}
     </>
