@@ -244,16 +244,7 @@ export class KSULocking {
         const data: GQLGetLockingPeriods =
             await this._graph.request(getLockingPeriods);
 
-        const results: LockPeriod[] = data.lockPeriods.map((m) => {
-            return {
-                rKsuMultiplier: new Number(m.ksuBonusMultiplier),
-                lockPeriod: BigNumber.from(m.lockPeriod),
-                ksuBonusMultiplier: new Number(m.ksuBonusMultiplier),
-                id: BigNumber.from(m.id),
-            } as LockPeriod;
-        });
-
-        return results;
+        return data.lockPeriods;
     }
 
     getProjectedApy(): string {

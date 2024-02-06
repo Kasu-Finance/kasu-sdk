@@ -15,10 +15,10 @@ export interface LockPeriodInterface {
 }
 
 export interface LockPeriod {
-    rKsuMultiplier: number;
-    lockPeriod: BigNumber;
-    ksuBonusMultiplier: number;
-    id: BigNumber;
+    rKSUMultiplier: string;
+    lockPeriod: string;
+    ksuBonusMultiplier: string;
+    id: string;
 }
 
 export interface UserLock {
