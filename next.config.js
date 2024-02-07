@@ -4,6 +4,15 @@
 const path = require('path')
 
 const nextConfig = {
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/lending',
+        permanent: true,
+      },
+    ]
+  },
   experimental: {
     // needed for turbo dev mode for locally linked packages
     outputFileTracingRoot: path.join(__dirname, '../../'),
