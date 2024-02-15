@@ -3,6 +3,7 @@ import { LockPeriod } from 'kasu-sdk/src/types'
 import { Dispatch, SetStateAction } from 'react'
 
 import useLockPeriods from '@/hooks/locking/useLockPeriods'
+import useTranslation from '@/hooks/useTranslation'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 
@@ -22,13 +23,14 @@ const LockDurationInput: React.FC<LockDurationInputProps> = ({
   const handleChange = (_: Event, value: number | number[]) => {
     setSelectedLockPeriod(lockPeriods[value as number])
   }
+  const { t } = useTranslation()
 
   const unlockTime = dayjs().add(Number(selectedLockPeriod.lockPeriod), 'days')
 
   return (
     <Box>
       <Typography variant='subtitle1' component='span' display='block'>
-        Locking Duration
+        {t('modals.lock.duration.title')}
       </Typography>
       <Box>
         <Slider
@@ -66,7 +68,7 @@ const LockDurationInput: React.FC<LockDurationInputProps> = ({
           width='max-content'
           mt={1}
         >
-          Duration in Days
+          {t('modals.lock.duration.duration')}
         </Typography>
       </Box>
       <ColoredBox
@@ -80,7 +82,7 @@ const LockDurationInput: React.FC<LockDurationInputProps> = ({
         }}
       >
         <Typography variant='subtitle2' component='span'>
-          Unlocking Date
+          {t('modals.lock.duration.unlocking')}
         </Typography>
         <Box textAlign='right'>
           <Typography variant='body2' component='span'>

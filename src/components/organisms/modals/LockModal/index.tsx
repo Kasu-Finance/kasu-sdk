@@ -7,6 +7,7 @@ import React, { useState } from 'react'
 
 import useLockPeriods from '@/hooks/locking/useLockPeriods'
 import useLockToken from '@/hooks/locking/useLockToken'
+import useTranslation from '@/hooks/useTranslation'
 import useApproveToken from '@/hooks/web3/useApproveToken'
 import useUserBalance from '@/hooks/web3/useUserBalance'
 
@@ -38,10 +39,9 @@ const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   )
 
   const { balance, decimals } = useUserBalance(sdkConfig.contracts.KSUToken)
-
   const userBalance = formatUnits(balance ?? '0', decimals)
-
   const lockToken = useLockToken()
+  const { t } = useTranslation()
 
   return (
     <>
@@ -78,7 +78,7 @@ const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               startIcon={<ChevronLeftIcon />}
               onClick={() => setIsFinalized(false)}
             >
-              ADJUST LOCK
+              {t('modals.lock.buttons.adjustLock')}
             </Button>
             <Button
               variant='contained'
@@ -92,7 +92,7 @@ const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                   : approve('')
               }
             >
-              {isApproved ? 'CONFIRM' : 'APPROVE'}
+              {isApproved ? t('general.confirm') : t('general.approve')}
             </Button>
           </>
         ) : (
@@ -101,7 +101,7 @@ const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             sx={{ width: 157, display: 'block', textTransform: 'uppercase' }}
             onClick={() => setIsFinalized(true)}
           >
-            Review Lock
+            {t('modals.lock.buttons.reviewLock')}
           </Button>
         )}
       </DialogActions>

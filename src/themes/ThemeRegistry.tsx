@@ -1,8 +1,7 @@
 'use client'
 import createCache from '@emotion/cache'
 import { CacheProvider } from '@emotion/react'
-import CssBaseline from '@mui/material/CssBaseline'
-import { ThemeProvider } from '@mui/material/styles'
+import { CssBaseline, ThemeProvider } from '@mui/material'
 import { useServerInsertedHTML } from 'next/navigation'
 import React, { useState } from 'react'
 

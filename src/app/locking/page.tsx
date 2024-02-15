@@ -1,5 +1,4 @@
-import Container from '@mui/material/Container'
-import Grid from '@mui/material/Grid'
+import { Container, Grid } from '@mui/material'
 
 import BalanceOverview from '@/components/molecules/locking/BalanceOverview'
 import EpochOverview from '@/components/molecules/locking/EpochOverview'

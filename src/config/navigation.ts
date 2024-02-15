@@ -8,7 +8,7 @@ type NavItemType = {
 export const NAV_ITEMS: NavItemType[] = [
   {
     label: 'Lending',
-    to: Routes.lend.root.url,
+    to: Routes.lending.root.url,
   },
 
   {

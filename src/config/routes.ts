@@ -1,6 +1,6 @@
 export enum BaseRoutesPaths {
   HOME = '/',
-  LEND = '/lend',
+  LENDING = '/lending',
   BORROW = '/borrow',
   DOCS = '/docs',
   LOCKING = '/locking',
@@ -21,8 +21,8 @@ export const Routes: RouteGroup = {
   home: {
     root: { url: BaseRoutesPaths.HOME },
   },
-  lend: {
-    root: { url: BaseRoutesPaths.LEND },
+  lending: {
+    root: { url: BaseRoutesPaths.LENDING },
   },
   borrow: {
     root: { url: BaseRoutesPaths.BORROW },

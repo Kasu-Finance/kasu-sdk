@@ -9,6 +9,8 @@ import {
 } from '@mui/material'
 import { useId } from 'react'
 
+import useTranslation from '@/hooks/useTranslation'
+
 import { escapeRegExp } from '@/utils'
 
 type NumericalInputProps = {
@@ -43,7 +45,9 @@ const NumericalInput: React.FC<NumericalInputProps> = ({
   handleMax,
 }) => {
   const uuid = useId()
-
+  const { t } = useTranslation()
+  const tAmount =
+    t('general.amount').charAt(0).toUpperCase() + t('general.amount').slice(1)
   const id = `deposit-input-${uuid}`
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,7 +59,9 @@ const NumericalInput: React.FC<NumericalInputProps> = ({
   }
 
   const endAdornment = handleMax ? (
-    <Button onClick={handleMax}>Max</Button>
+    <Button sx={{ textTransform: 'capitalize' }} onClick={handleMax}>
+      {t('general.max')}
+    </Button>
   ) : undefined
 
   const inputPropsBase = {
@@ -75,13 +81,13 @@ const NumericalInput: React.FC<NumericalInputProps> = ({
       variant={formControlProps.variant ?? 'outlined'}
       {...formControlProps}
     >
-      <InputLabel htmlFor={id}>Amount</InputLabel>
+      <InputLabel htmlFor={id}> {tAmount}</InputLabel>
       {formControlProps.variant === 'standard' ? (
         <Input {...inputPropsBase} />
       ) : formControlProps.variant === 'filled' ? (
         <FilledInput {...inputPropsBase} />
       ) : (
-        <OutlinedInput label='Amount' {...inputPropsBase} />
+        <OutlinedInput label={tAmount} {...inputPropsBase} />
       )}
     </FormControl>
   )

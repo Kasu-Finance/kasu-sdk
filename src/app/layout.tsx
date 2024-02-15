@@ -1,4 +1,4 @@
-import Box from '@mui/material/Box'
+import { Box } from '@mui/material'
 import type { Metadata } from 'next'
 import { Roboto } from 'next/font/google'
 import { ReactNode } from 'react'

@@ -1,5 +1,4 @@
-import Container from '@mui/material/Container'
-import Toolbar from '@mui/material/Toolbar'
+import { Container, Toolbar } from '@mui/material'
 
 import ConnectWallet from '@/components/molecules/header/ConnectWallet'
 import Navigation from '@/components/molecules/header/Navigation'

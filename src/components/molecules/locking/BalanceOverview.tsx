@@ -1,12 +1,10 @@
 'use client'
 
-import { Grid } from '@mui/material'
-import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
-import Typography from '@mui/material/Typography'
+import { Button, Divider, Grid, Typography } from '@mui/material'
 import { formatUnits } from 'ethers/lib/utils'
 
 import useModalState from '@/hooks/context/useModalState'
+import useTranslation from '@/hooks/useTranslation'
 import useUserBalance from '@/hooks/web3/useUserBalance'
 
 import CardWidget from '@/components/atoms/CardWidget'
@@ -15,7 +13,7 @@ import sdkConfig from '@/config/sdk'
 
 const BalanceOverview = () => {
   const { openModal } = useModalState()
-
+  const { t } = useTranslation()
   const handleOpen = () => openModal({ name: 'lockModal' })
 
   const { balance, symbol, decimals } = useUserBalance(
@@ -32,10 +30,10 @@ const BalanceOverview = () => {
             href='https://www.google.com'
             target='_blank'
           >
-            BUY KSU
+            {t('general.buy')}
           </Button>
           <Button sx={{ wixth: 117 }} variant='contained' onClick={handleOpen}>
-            LOCK KSU
+            {t('general.lock')}
           </Button>
         </>
       }
@@ -48,8 +46,9 @@ const BalanceOverview = () => {
             component='span'
             display='block'
             mt={1}
+            sx={{ textTransform: 'capitalize' }}
           >
-            Wallet Balance
+            {`${t('general.wallet')} ${t('general.balance')}`}
           </Typography>
 
           <Divider />

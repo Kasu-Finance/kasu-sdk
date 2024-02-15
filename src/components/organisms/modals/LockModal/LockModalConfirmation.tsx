@@ -2,6 +2,7 @@ import { Box, Typography } from '@mui/material'
 import React from 'react'
 
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
+import useTranslation from '@/hooks/useTranslation'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import Countdown from '@/components/atoms/Countdown'
@@ -14,6 +15,7 @@ const LockModalConfirmation: React.FC<LockModalConfirmationProps> = ({
   lockAmount,
 }) => {
   const { nextEpochTime } = useNextEpochTime()
+  const { t } = useTranslation()
 
   return (
     <>
@@ -28,11 +30,12 @@ const LockModalConfirmation: React.FC<LockModalConfirmationProps> = ({
             color='text.secondary'
             display='block'
             my='6px'
+            sx={{ textTransform: 'capitalize' }}
           >
-            To
+            {t('general.to')}
           </Typography>
           <Typography variant='h6' component='span' display='block'>
-            Cash management pool
+            {t('modals.lock.reviewLock.cashPool')}
           </Typography>
         </Box>
         <Box px={2}>
@@ -43,7 +46,7 @@ const LockModalConfirmation: React.FC<LockModalConfirmationProps> = ({
             display='block'
             my='6px'
           >
-            Lock Amount
+            {t('modals.lock.reviewLock.lockAmount')}
           </Typography>
           <Typography variant='h6' component='span' display='block'>
             {lockAmount} USDC
@@ -58,7 +61,7 @@ const LockModalConfirmation: React.FC<LockModalConfirmationProps> = ({
           display='block'
           my='6px'
         >
-          Epoch ends in
+          {t('modals.lock.reviewLock.epochEnds')}
         </Typography>
         <Typography variant='h6' component='span' display='block'>
           <Countdown
@@ -67,7 +70,9 @@ const LockModalConfirmation: React.FC<LockModalConfirmationProps> = ({
             render={(countDown) => {
               const parts = countDown.split(':')
 
-              return `${parts[0]} days • ${parts[1]} hours • ${parts[2]} minutes`
+              return `${parts[0]} ${t('time.days')} • ${parts[1]} ${t(
+                'time.hours'
+              )} • ${parts[2]} ${t('time.minutes')}`
             }}
           />
         </Typography>
@@ -80,7 +85,7 @@ const LockModalConfirmation: React.FC<LockModalConfirmationProps> = ({
         display='block'
         width='max-content'
       >
-        Deposit will be scheduled to the end of the current epoch.
+        {t('modals.lock.reviewLock.depositSchedule')}
       </Typography>
       <Typography
         variant='body1'
@@ -90,9 +95,11 @@ const LockModalConfirmation: React.FC<LockModalConfirmationProps> = ({
         display='block'
         width='max-content'
       >
-        Next clearing day commences in{' '}
+        {t('modals.lock.reviewLock.nextClearing') + ' '}
         <Typography variant='h6' component='span'>
-          6 days 11 hours 6 minutes.
+          {`6 ${t('time.days')} • 11 ${t('time.hours')} • 6 ${t(
+            'time.minutes'
+          )} `}
         </Typography>
       </Typography>
     </>

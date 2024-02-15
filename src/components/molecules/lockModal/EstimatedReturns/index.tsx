@@ -7,6 +7,7 @@ import useCalculateLaunchBonusAmount from '@/hooks/locking/useCalculateLaunchBon
 import useEstimatedDepositValue from '@/hooks/locking/useEstimatedDepositValue'
 import useProjectedApy from '@/hooks/locking/useProjectedApy'
 import useProjectedUsdcEarning from '@/hooks/locking/useProjectedUsdcEarning'
+import useTranslation from '@/hooks/useTranslation'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 
@@ -24,6 +25,7 @@ const EstimatedReturns: React.FC<EstimatedReturnsProps> = ({
   lockPeriod,
 }) => {
   const estimatedDepositValueUSD = useEstimatedDepositValue(amount)
+  const { t } = useTranslation()
 
   const { availableKsuBonus } = useAvailableKsuBonus()
 
@@ -38,12 +40,18 @@ const EstimatedReturns: React.FC<EstimatedReturnsProps> = ({
 
   return (
     <Box>
-      <Typography variant='subtitle1' component='span' display='block'>
-        Estimates
+      <Typography
+        variant='subtitle1'
+        component='span'
+        display='block'
+        sx={{ textTransform: 'capitalize' }}
+      >
+        {t('modals.lock.estimates.title')}
       </Typography>
       <ColoredBox mt={1}>
         <EstimatesRow
-          title='Deposit value in USD at current exchange rate'
+          title={t('modals.lock.estimates.est-1')}
+          toolTipInfo={t('modals.lock.estimates.tooltip-1')}
           value={formatAmount(estimatedDepositValueUSD, {
             currency: 'USD',
             minDecimals: 2,
@@ -51,22 +59,22 @@ const EstimatedReturns: React.FC<EstimatedReturnsProps> = ({
         />
         <Divider />
         <EstimatesRow
-          title='Launch Bonus KASU from locking'
-          toolTipInfo='Your additional KSU bonus based on the amount and duration of locked KSU upon launch.'
+          title={t('modals.lock.estimates.est-2')}
+          toolTipInfo={t('modals.lock.estimates.tooltip-2')}
           value={`${formatAmount(estimatedLaunchBonus, {
             minDecimals: 2,
           })} KSU`}
         />
         <Divider />
         <EstimatesRow
-          title='Projected APY'
-          toolTipInfo='The projected KSU rewards from your KSU launch bonus plus your KSU multiplier, based on your locking duration, expressed as a percentage of locked KSU on an annualised basis.​'
+          title={t('modals.lock.estimates.est-3')}
+          toolTipInfo={t('modals.lock.estimates.tooltip-3')}
           value={`${projectedApy} %`}
         />
         <Divider />
         <EstimatesRow
-          title='Projected USDC earning at current APY'
-          toolTipInfo='Your projected KSU rewards based on the projected APY​.'
+          title={t('modals.lock.estimates.est-4')}
+          toolTipInfo={t('modals.lock.estimates.tooltip-4')}
           value={`${projectedUsdcEarning} USDC`}
         />
       </ColoredBox>

@@ -4,6 +4,7 @@ import { Box, Typography } from '@mui/material'
 import { Fragment } from 'react'
 
 import useUserLocks from '@/hooks/locking/useUserLocks'
+import useTranslation from '@/hooks/useTranslation'
 
 import CardWidget from '@/components/atoms/CardWidget'
 import ColoredBox from '@/components/atoms/ColoredBox'
@@ -13,6 +14,7 @@ import dayjs from '@/dayjs'
 
 const UnlockOverview = () => {
   const { userLocks } = useUserLocks()
+  const { t } = useTranslation()
 
   const hasLockedTokens = userLocks && Boolean(userLocks.length)
   return (
@@ -50,7 +52,7 @@ const UnlockOverview = () => {
             my={1}
             display='block'
           >
-            Currently no locked KASU
+            {t('locking.widgets.unlock.noLockedKasu')}
           </Typography>
         )}
       </ColoredBox>
