@@ -1,5 +1,4 @@
 'use client'
-
 import { Box, Grid, Pagination } from '@mui/material'
 import { Children, ReactElement, useState } from 'react'
 
