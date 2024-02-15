@@ -1,4 +1,4 @@
-import Container from '@mui/material/Container'
+import { Container } from '@mui/material'
 
 import BackButton from '@/components/atoms/BackButton'
 import PageHeader from '@/components/molecules/PageHeader'

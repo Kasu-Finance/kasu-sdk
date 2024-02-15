@@ -8,7 +8,7 @@ export enum ActionStatus {
 export enum ActionType {
   APPROVE = 'APPROVAL',
   KYC = 'IDENTITY VERIFICATION',
-  CLAIM_REWARDS = 'CLAIM_REWARDS',
+  CLAIM_REWARDS = 'CLAIM REWARDS',
   LOCK = 'LOCK',
   LENDING = 'LENDING',
   WITHDRAW = 'WITHDRAW',

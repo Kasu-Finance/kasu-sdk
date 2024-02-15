@@ -1,12 +1,10 @@
 'use client'
 
-import Button, { ButtonProps } from '@mui/material/Button'
+import { Button, ButtonProps } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
-interface BackButtonProps extends ButtonProps {}
-
-const BackButton: React.FC<BackButtonProps> = (props) => {
+const BackButton: React.FC<ButtonProps> = (props) => {
   const router = useRouter()
 
   const handleBack = () => {

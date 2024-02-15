@@ -1,5 +1,4 @@
-import Container from '@mui/material/Container'
-import Grid from '@mui/material/Grid'
+import { Container, Grid } from '@mui/material'
 
 import BalanceOverview from '@/components/molecules/locking/BalanceOverview'
 import EpochOverview from '@/components/molecules/locking/EpochOverview'
@@ -8,7 +7,7 @@ import RewardsOverview from '@/components/molecules/locking/RewardsOverview'
 import UnlockOverview from '@/components/molecules/locking/UnlockOverview'
 import PageHeader from '@/components/molecules/PageHeader'
 
-const Locking = () => {
+const Locking = async () => {
   return (
     <Container maxWidth='lg'>
       <PageHeader title='Locking' />

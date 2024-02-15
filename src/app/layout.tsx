@@ -1,4 +1,4 @@
-import Box from '@mui/material/Box'
+import { Box } from '@mui/material'
 import type { Metadata } from 'next'
 import { Roboto } from 'next/font/google'
 import { ReactNode } from 'react'
@@ -8,9 +8,11 @@ import Header from '@/components/organisms/header'
 import ModalsContainer from '@/components/organisms/modals/ModalsContainer'
 
 import ModalState from '@/context/modal/modal.provider'
+import { SWRProvider } from '@/context/swrProvider/swr.provider'
 import ToastState from '@/context/toast/toast.provider'
 import Web3Provider from '@/context/web3provider/web3.provider'
 
+import { getLockPeriods } from '@/config/lockPeriod'
 import ThemeRegistry from '@/themes/ThemeRegistry'
 
 type RootLayoutProps = {
@@ -28,23 +30,27 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
 }
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default async function RootLayout({ children }: RootLayoutProps) {
+  const lockPeriods = await getLockPeriods()
+
   return (
     <html lang='en'>
       <body className={roboto.className}>
-        <ThemeRegistry>
-          <Web3Provider>
-            <ModalState>
-              <ToastState>
-                <Header />
-                <Box component='main' paddingTop={3} paddingBottom={3}>
-                  {children}
-                </Box>
-                <ModalsContainer />
-              </ToastState>
-            </ModalState>
-          </Web3Provider>
-        </ThemeRegistry>
+        <SWRProvider lockPeriods={lockPeriods}>
+          <ThemeRegistry>
+            <Web3Provider>
+              <ModalState>
+                <ToastState>
+                  <Header />
+                  <Box component='main' paddingTop={3} paddingBottom={3}>
+                    {children}
+                  </Box>
+                  <ModalsContainer />
+                </ToastState>
+              </ModalState>
+            </Web3Provider>
+          </ThemeRegistry>
+        </SWRProvider>
       </body>
     </html>
   )

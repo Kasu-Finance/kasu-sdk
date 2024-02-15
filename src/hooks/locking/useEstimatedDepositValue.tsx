@@ -1,6 +1,6 @@
 import { formatEther, parseEther } from 'ethers/lib/utils'
 
-import useKsuPrice from '@/hooks/useKsuPrice'
+import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
 const useEstimatedDepositValue = (amount: string) => {
   const { ksuPrice } = useKsuPrice()

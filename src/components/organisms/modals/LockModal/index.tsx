@@ -2,8 +2,10 @@
 
 import { Box, Button, DialogActions, DialogContent } from '@mui/material'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
+import { LockPeriod } from 'kasu-sdk/src/types'
 import React, { useState } from 'react'
 
+import useLockPeriods from '@/hooks/locking/useLockPeriods'
 import useLockToken from '@/hooks/locking/useLockToken'
 import useTranslation from '@/hooks/useTranslation'
 import useApproveToken from '@/hooks/web3/useApproveToken'
@@ -19,12 +21,15 @@ import LockModalConfirmation from '@/components/organisms/modals/LockModal/LockM
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@/assets/icons'
 
-import LOCK_PERIODS from '@/config/lockPeriod'
 import sdkConfig from '@/config/sdk'
 
 const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
+  const { lockPeriods } = useLockPeriods()
+
   const [amount, setAmount] = useState('')
-  const [duration, setDuration] = useState<number>(LOCK_PERIODS[2])
+  const [selectedLockPeriod, setSelectedLockPeriod] = useState<LockPeriod>(
+    lockPeriods[2]
+  )
   const [isFinalized, setIsFinalized] = useState(false)
 
   const { isApproved, approve } = useApproveToken(
@@ -54,10 +59,13 @@ const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                 setAmount={setAmount}
               />
               <LockDurationInput
-                duration={duration}
-                setDuration={setDuration}
+                selectedLockPeriod={selectedLockPeriod}
+                setSelectedLockPeriod={setSelectedLockPeriod}
               />
-              <EstimatedReturns amount={amount} />
+              <EstimatedReturns
+                amount={amount}
+                lockPeriod={selectedLockPeriod}
+              />
             </Box>
           </>
         )}
@@ -77,7 +85,10 @@ const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               endIcon={<ChevronRightIcon />}
               onClick={() =>
                 isApproved
-                  ? lockToken(parseUnits(amount, decimals), duration.toString())
+                  ? lockToken(
+                      parseUnits(amount, decimals),
+                      selectedLockPeriod.lockPeriod
+                    )
                   : approve('')
               }
             >

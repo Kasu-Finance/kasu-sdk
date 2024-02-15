@@ -10,19 +10,22 @@ import CardWidget from '@/components/atoms/CardWidget'
 import ColoredBox from '@/components/atoms/ColoredBox'
 import InfoRow from '@/components/atoms/InfoRow'
 
+import { formatAmount } from '@/utils'
+
 const REWARDS = (lockingRewards: {
   claimableRewards: string
   lifeTimeRewards: string
 }) => [
   {
     title: 'Your claimable locking rewards',
-    amount: lockingRewards.claimableRewards,
-    info: 'info',
+    amount: formatAmount(lockingRewards.claimableRewards, { minDecimals: 2 }),
+    toolTipInfo:
+      'The amount KSU rewards that can be claimed upon the conclusion of the current Epoch.​',
   },
   {
     title: 'Your lifetime locking rewards',
-    amount: lockingRewards.claimableRewards,
-    info: 'info',
+    amount: formatAmount(lockingRewards.lifeTimeRewards, { minDecimals: 2 }),
+    toolTipInfo: 'info',
   },
 ]
 
@@ -49,13 +52,9 @@ const RewardsOverview = () => {
             <InfoRow
               key={reward.title}
               showDivider={index !== REWARDS.length}
-              metricInfo={reward.amount + ' USDC'}
+              metric={reward.amount + ' USDC'}
               {...reward}
             />
-            // <Fragment key={reward.title}>
-            //   {index !== 0 && <Divider />}
-            //   <RewardRow {...reward} />
-            // </Fragment>
           ))}
         </ColoredBox>
       ) : null}

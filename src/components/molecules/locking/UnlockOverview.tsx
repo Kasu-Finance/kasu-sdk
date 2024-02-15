@@ -1,7 +1,6 @@
 'use client'
 
-import { Typography } from '@mui/material'
-import { unix } from 'dayjs'
+import { Box, Typography } from '@mui/material'
 import { Fragment } from 'react'
 
 import useUserLocks from '@/hooks/locking/useUserLocks'
@@ -10,6 +9,8 @@ import useTranslation from '@/hooks/useTranslation'
 import CardWidget from '@/components/atoms/CardWidget'
 import ColoredBox from '@/components/atoms/ColoredBox'
 import InfoRow from '@/components/atoms/InfoRow'
+
+import dayjs from '@/dayjs'
 
 const UnlockOverview = () => {
   const { userLocks } = useUserLocks()
@@ -20,14 +21,26 @@ const UnlockOverview = () => {
     <CardWidget title='Time until KASU unlock'>
       <ColoredBox display='grid' rowGap={1}>
         {hasLockedTokens ? (
-          userLocks.map(({ lockedAmount, endTime }) => (
+          userLocks.map(({ lockedAmount, endTime }, index) => (
             <Fragment key={endTime}>
               <InfoRow
                 title={lockedAmount + ' KSU unlocks on'}
-                tooltip={false}
-                info='date'
-                metricStyle='subtitle2'
-                metricInfo={unix(endTime).format('Do MMM YYYY') + ''}
+                titleStyle={{ color: 'text.secondary' }}
+                showDivider={index !== userLocks.length - 1}
+                metric={
+                  <Box textAlign='right'>
+                    <Typography variant='body2' component='span'>
+                      {dayjs.unix(endTime).format('DD.MM.YYYY')}
+                    </Typography>
+                    <Typography
+                      variant='caption'
+                      component='span'
+                      display='block'
+                    >
+                      {dayjs.unix(endTime).format('HH:mm:ss UTCZZ')}
+                    </Typography>
+                  </Box>
+                }
               />
             </Fragment>
           ))

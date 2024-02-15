@@ -1,4 +1,4 @@
-import Container from '@mui/material/Container'
+import { Container } from '@mui/material'
 
 import Carousel from '@/components/molecules/Carousel'
 import PageHeader from '@/components/molecules/PageHeader'
@@ -31,7 +31,7 @@ const LENDING_POOLS = [
   },
 ]
 
-const Lend = () => {
+const Lending = () => {
   return (
     <Container maxWidth='lg'>
       <PageHeader title='Lending' />
@@ -45,4 +45,4 @@ const Lend = () => {
   )
 }
 
-export default Lend
+export default Lending

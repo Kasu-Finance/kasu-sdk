@@ -39,7 +39,6 @@ const useClaimLockingRewards = () => {
         ACTION_MESSAGES[ActionType.CLAIM_REWARDS][ActionStatus.ERROR]
       )
     }
-    sdk.Locking.claimFees()
   }
 }
 

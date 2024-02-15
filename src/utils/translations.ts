@@ -1,23 +1,19 @@
-import { Translations, TranslationValue } from '@/types/locales'
+import { Leaves } from '@/types/utils'
 
-const getNestedTranslation = (
-  path: string,
-  translations: Translations
-): string | null => {
+const getNestedTranslation = <T extends Record<string, any>>(
+  path: Leaves<T, 5>,
+  translations: T
+): string => {
   const keys = path.split('.')
-  // Start with a broad type that can be narrowed down as we progress through the keys.
-  let result: TranslationValue | null = translations
 
-  for (const key of keys) {
-    // If result is no longer an object (or it's null), break early.
-    if (result === null || typeof result !== 'object' || !(key in result)) {
-      return null
-    }
-    result = result[key]
+  let result: any
+
+  for (const key in keys) {
+    // we know for sure that key is a valid key because of type-safety
+    result = translations[key as keyof typeof translations]
   }
 
-  // Ensure the final result is a string, otherwise return null.
-  return typeof result === 'string' ? result : null
+  return typeof result === 'string' ? result : path
 }
 
 export default getNestedTranslation

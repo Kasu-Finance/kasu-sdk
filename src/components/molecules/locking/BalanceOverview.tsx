@@ -1,8 +1,6 @@
 'use client'
 
-import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
-import Typography from '@mui/material/Typography'
+import { Button, Divider, Grid, Typography } from '@mui/material'
 import { formatUnits } from 'ethers/lib/utils'
 
 import useModalState from '@/hooks/context/useModalState'
@@ -25,30 +23,80 @@ const BalanceOverview = () => {
   return (
     <CardWidget
       cardAction={
-        <Button variant='contained' onClick={handleOpen}>
-          {t('general.lock')}
-        </Button>
+        <>
+          <Button
+            sx={{ width: 108 }}
+            variant='outlined'
+            href='https://www.google.com'
+            target='_blank'
+          >
+            {t('general.buy')}
+          </Button>
+          <Button sx={{ wixth: 117 }} variant='contained' onClick={handleOpen}>
+            {t('general.lock')}
+          </Button>
+        </>
       }
     >
-      <Typography
-        p={(theme) => theme.spacing('6px', 2)}
-        variant='subtitle2'
-        component='span'
-        display='block'
-        mt={1}
-        sx={{ textTransform: 'capitalize' }}
-      >
-        {`${t('general.wallet')} ${t('general.balance')}`}
-      </Typography>
-      <Divider />
-      <Typography
-        p={(theme) => theme.spacing('6px', 2)}
-        variant='h6'
-        component='span'
-        display='block'
-      >
-        {formatUnits(balance || '0', decimals)} {symbol ?? 'KSU'}
-      </Typography>
+      <Grid container spacing={1.25}>
+        <Grid item xs={5}>
+          <Typography
+            p={(theme) => theme.spacing('6px', 2)}
+            variant='subtitle2'
+            component='span'
+            display='block'
+            mt={1}
+            sx={{ textTransform: 'capitalize' }}
+          >
+            {`${t('general.wallet')} ${t('general.balance')}`}
+          </Typography>
+
+          <Divider />
+          <Typography
+            p={(theme) => theme.spacing('6px', 0, '6px', 2)}
+            variant='h6'
+            component='span'
+            display='inline-block'
+          >
+            {formatUnits(balance || '0', decimals)}
+          </Typography>
+          <Typography
+            p={(theme) => theme.spacing('6px', 2, '6px', 1)}
+            variant='body1'
+            component='span'
+          >
+            {symbol ?? 'KSU'}
+          </Typography>
+        </Grid>
+        <Grid item xs={7}>
+          <Typography
+            p={(theme) => theme.spacing('6px', 2)}
+            variant='subtitle2'
+            component='span'
+            display='block'
+            mt={1}
+          >
+            Available Funds
+          </Typography>
+
+          <Divider />
+          <Typography
+            p={(theme) => theme.spacing('6px', 0, '6px', 2)}
+            variant='h6'
+            component='span'
+            display='inline-block'
+          >
+            9000
+          </Typography>
+          <Typography
+            p={(theme) => theme.spacing('6px', 2, '6px', 1)}
+            variant='body1'
+            component='span'
+          >
+            USDC
+          </Typography>
+        </Grid>
+      </Grid>
     </CardWidget>
   )
 }

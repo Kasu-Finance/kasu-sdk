@@ -1,21 +1,42 @@
 import { Box, Divider, Typography } from '@mui/material'
+import { LockPeriod } from 'kasu-sdk/src/types'
 import React from 'react'
 
+import useAvailableKsuBonus from '@/hooks/locking/useAvailableKsuBonus'
+import useCalculateLaunchBonusAmount from '@/hooks/locking/useCalculateLaunchBonusAmount'
 import useEstimatedDepositValue from '@/hooks/locking/useEstimatedDepositValue'
+import useProjectedApy from '@/hooks/locking/useProjectedApy'
+import useProjectedUsdcEarning from '@/hooks/locking/useProjectedUsdcEarning'
 import useTranslation from '@/hooks/useTranslation'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
+
+import { formatAmount } from '@/utils'
 
 import EstimatesRow from './EstimatesRow'
 
 type EstimatedReturnsProps = {
   amount: string
+  lockPeriod: LockPeriod
 }
 
-const EstimatedReturns: React.FC<EstimatedReturnsProps> = ({ amount }) => {
+const EstimatedReturns: React.FC<EstimatedReturnsProps> = ({
+  amount,
+  lockPeriod,
+}) => {
   const estimatedDepositValueUSD = useEstimatedDepositValue(amount)
   const { t } = useTranslation()
-  const tBase = 'modals.lock.estimates.'
+
+  const { availableKsuBonus } = useAvailableKsuBonus()
+
+  const estimatedLaunchBonus = useCalculateLaunchBonusAmount(
+    amount || '0',
+    Number(lockPeriod.ksuBonusMultiplier),
+    availableKsuBonus ?? '0'
+  )
+
+  const projectedApy = useProjectedApy()
+  const projectedUsdcEarning = useProjectedUsdcEarning()
 
   return (
     <Box>
@@ -25,31 +46,36 @@ const EstimatedReturns: React.FC<EstimatedReturnsProps> = ({ amount }) => {
         display='block'
         sx={{ textTransform: 'capitalize' }}
       >
-        {t(tBase + 'title')}
+        {t('modals.lock.estimates.title')}
       </Typography>
       <ColoredBox mt={1}>
         <EstimatesRow
-          title={t(tBase + 'est-1')}
-          info={t(tBase + 'tooltip-1')}
-          value={`$ ${estimatedDepositValueUSD}`}
+          title={t('modals.lock.estimates.est-1')}
+          toolTipInfo={t('modals.lock.estimates.tooltip-1')}
+          value={formatAmount(estimatedDepositValueUSD, {
+            currency: 'USD',
+            minDecimals: 2,
+          })}
         />
         <Divider />
         <EstimatesRow
-          title={t(tBase + 'est-2')}
-          info={t(tBase + 'tooltip-2')}
-          value='0.00 KSU'
+          title={t('modals.lock.estimates.est-2')}
+          toolTipInfo={t('modals.lock.estimates.tooltip-2')}
+          value={`${formatAmount(estimatedLaunchBonus, {
+            minDecimals: 2,
+          })} KSU`}
         />
         <Divider />
         <EstimatesRow
-          title={t(tBase + 'est-3')}
-          info={t(tBase + 'tooltip-3')}
-          value='0.00 %'
+          title={t('modals.lock.estimates.est-3')}
+          toolTipInfo={t('modals.lock.estimates.tooltip-3')}
+          value={`${projectedApy} %`}
         />
         <Divider />
         <EstimatesRow
-          title={t(tBase + 'est-4')}
-          info={t(tBase + 'tooltip-4')}
-          value='0.00 USDC'
+          title={t('modals.lock.estimates.est-4')}
+          toolTipInfo={t('modals.lock.estimates.tooltip-4')}
+          value={`${projectedUsdcEarning} USDC`}
         />
       </ColoredBox>
     </Box>
