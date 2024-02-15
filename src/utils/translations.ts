@@ -6,11 +6,11 @@ const getNestedTranslation = <T extends Record<string, any>>(
 ): string => {
   const keys = path.split('.')
 
-  let result: any
+  let result: any = translations
 
-  for (const key in keys) {
+  for (const key of keys) {
     // we know for sure that key is a valid key because of type-safety
-    result = translations[key as keyof typeof translations]
+    result = result[key as keyof typeof translations]
   }
 
   return typeof result === 'string' ? result : path
