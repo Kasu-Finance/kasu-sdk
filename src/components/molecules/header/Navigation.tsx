@@ -13,7 +13,8 @@ const Navigation: React.FC = () => {
 
   const theme = useTheme()
 
-  const isActiveLink = (href: string) => pathName === href
+  const isActiveLink = (href: string) =>
+    pathName === href || pathName.includes(href)
 
   return (
     <Box sx={{ display: 'flex', ml: theme.spacing(3) }}>

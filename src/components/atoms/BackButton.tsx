@@ -4,8 +4,11 @@ import { Button, ButtonProps } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
+import useTranslation from '@/hooks/useTranslation'
+
 const BackButton: React.FC<ButtonProps> = (props) => {
   const router = useRouter()
+  const { t } = useTranslation()
 
   const handleBack = () => {
     router.back()
@@ -13,7 +16,7 @@ const BackButton: React.FC<ButtonProps> = (props) => {
 
   return (
     <Button {...props} onClick={handleBack}>
-      {props.children || 'Go Back'}
+      {props.children || t('general.goBack')}
     </Button>
   )
 }
