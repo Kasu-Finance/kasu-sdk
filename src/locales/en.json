@@ -28,7 +28,7 @@
     "widgets": {
       "loyality": {
         "description": "Current loyalty level if Epoch ended today",
-        "button": "  How to increase your loyalty level?"
+        "button": "HOW TO/WHY INCREASE LOYALTY LEVEL?"
       },
       "epoch": {
         "description": "Next xKASU epoch",
@@ -56,8 +56,8 @@
       },
       "level-2": {
         "description": "Locking at least 5% of the user’s deposit balance on the platform in KSU Tokens provides:",
-        "prop-1": " First priority for deposits into pools.",
-        "prop-2": " First priority for capital withdrawals at the end of each Epoch.",
+        "prop-1": "First priority for deposits into pools.",
+        "prop-2": "First priority for capital withdrawals at the end of each Epoch.",
         "prop-3": "Launch bonus: 0.2% extra yield in all pools, paid in KSU tokens"
       }
     },
