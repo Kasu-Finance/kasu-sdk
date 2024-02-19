@@ -23,6 +23,12 @@ export const userLocksQuery = gql`
             endTimestamp
             startTimestamp
             rKSUAmount
+            lockPeriod {
+                rKSUMultiplier
+                lockPeriod
+                ksuBonusMultiplier
+                id
+            }
         }
     }
 `;

@@ -1,4 +1,4 @@
-import { BigNumber, Bytes } from 'ethers';
+import { Bytes } from 'ethers';
 
 export interface RSVDeadlineValue {
     value: number;
@@ -26,15 +26,11 @@ export interface UserLock {
     rKSUAmount: string;
     startTime: EpochTimeStamp;
     endTime: EpochTimeStamp;
+    lockPeriod: LockPeriod;
 }
 
 export interface GQLGetLockingPeriods {
-    lockPeriods: {
-        rKSUMultiplier: string;
-        ksuBonusMultiplier: string;
-        lockPeriod: string;
-        id: string;
-    }[];
+    lockPeriods: LockPeriod[];
 }
 export interface GQLClaimedFeesForAddress {
     userLockDepositsInfo: {
@@ -53,5 +49,6 @@ export interface GQLUserLocks {
         endTimestamp: string;
         startTimestamp: string;
         rKSUAmount: string;
+        lockPeriod: LockPeriod;
     }[];
 }

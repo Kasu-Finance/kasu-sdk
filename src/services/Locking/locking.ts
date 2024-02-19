@@ -113,6 +113,7 @@ export class KSULocking {
                 rKSUAmount: userLock.rKSUAmount,
                 startTime: Number(userLock.startTimestamp),
                 endTime: Number(userLock.endTimestamp),
+                lockPeriod: userLock.lockPeriod,
             }))
             .sort((a, b) => a.endTime - b.endTime);
     }
