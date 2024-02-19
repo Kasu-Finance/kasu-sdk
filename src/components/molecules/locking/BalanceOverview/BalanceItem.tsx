@@ -35,24 +35,15 @@ const BalanceItem: React.FC<BalanceItemProps> = ({
         <ToolTip title={toolTipInfo} />
       </Box>
       <Divider />
-      <Box pt='6px'>
+      <Box pt='6px' pl={2}>
         <TokenAmount amount={value[0]} symbol={value[1]} />
       </Box>
       {subValue && (
-        <Box>
-          <Typography
-            pl={2}
-            variant='body1'
-            component='span'
-            display='inline-block'
-          >
+        <Box pl={2}>
+          <Typography variant='body1' component='span' display='inline-block'>
             {subValue[0]}
           </Typography>
-          <Typography
-            p={(theme) => theme.spacing(0, 2, 0, 1)}
-            variant='caption'
-            component='span'
-          >
+          <Typography pl={0.5} variant='caption' component='span'>
             {subValue[1]}
           </Typography>
         </Box>

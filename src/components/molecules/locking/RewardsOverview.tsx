@@ -50,7 +50,7 @@ const RewardsOverview = () => {
         <ToolTip title='The amount KSU rewards that can be claimed upon the conclusion of the current Epoch.​' />
       </Box>
       <Divider />
-      <Box pt='6px'>
+      <Box pt='6px' pl={2}>
         <TokenAmount
           amount={lockingRewards?.claimableRewards ?? '0'}
           symbol='USDC'
