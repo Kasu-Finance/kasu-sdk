@@ -17,7 +17,7 @@ const StyledBox = styled(Box)({
 
 const TooltipTrigger = forwardRef<HTMLDivElement, TooltipTriggerProps>(
   ({ children, ...rest }, ref) => (
-    <StyledBox display='flex' alignItems='center' {...rest} ref={ref}>
+    <StyledBox ml={0.5} display='flex' alignItems='center' {...rest} ref={ref}>
       {children}
     </StyledBox>
   )

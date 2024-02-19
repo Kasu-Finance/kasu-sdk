@@ -1,6 +1,6 @@
 import { Box, Tooltip, Typography } from '@mui/material'
 
-import TooltipTrigger from '@/components/atoms/TooltipTrigger'
+import TooltipTrigger from '@/components/atoms/ToolTip/TooltipTrigger'
 
 import { InfoIcon } from '@/assets/icons'
 
