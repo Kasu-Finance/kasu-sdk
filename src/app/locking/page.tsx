@@ -14,8 +14,8 @@ const Locking = async () => {
       <Grid container spacing={3} mt={3}>
         <Grid item xs={12} md={6}>
           <BalanceOverview />
-          <UnlockOverview />
           <RewardsOverview />
+          <UnlockOverview />
         </Grid>
         <Grid item xs={12} md={6}>
           <LoyaltyOverview />

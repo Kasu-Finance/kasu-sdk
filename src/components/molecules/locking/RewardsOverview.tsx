@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, Typography } from '@mui/material'
+import { Box, Button, Divider, Typography } from '@mui/material'
 
 import useClaimLockingRewards from '@/hooks/locking/useClaimLockingRewards'
 import useLockingRewards from '@/hooks/locking/useLockingRewards'
@@ -9,55 +9,67 @@ import useTranslation from '@/hooks/useTranslation'
 import CardWidget from '@/components/atoms/CardWidget'
 import ColoredBox from '@/components/atoms/ColoredBox'
 import InfoRow from '@/components/atoms/InfoRow'
+import TokenAmount from '@/components/atoms/TokenAmount'
+import ToolTip from '@/components/atoms/ToolTip'
 
-import { formatAmount } from '@/utils'
-
-const REWARDS = (lockingRewards: {
-  claimableRewards: string
-  lifeTimeRewards: string
-}) => [
-  {
-    title: 'Your claimable locking rewards',
-    amount: formatAmount(lockingRewards.claimableRewards, { minDecimals: 2 }),
-    toolTipInfo:
-      'The amount KSU rewards that can be claimed upon the conclusion of the current Epoch.​',
-  },
-  {
-    title: 'Your lifetime locking rewards',
-    amount: formatAmount(lockingRewards.lifeTimeRewards, { minDecimals: 2 }),
-    toolTipInfo: 'info',
-  },
-]
+import { VerifiedIcon } from '@/assets/icons'
 
 const RewardsOverview = () => {
-  const { lockingRewards, isLoading } = useLockingRewards()
+  const { lockingRewards } = useLockingRewards()
   const { t } = useTranslation()
   const claimRewards = useClaimLockingRewards()
 
   return (
     <CardWidget
-      title='Locking Rewards'
+      title='Your Rewards • Claimable & Lifetime'
       cardAction={
-        <Button sx={{ width: 168 }} onClick={claimRewards} variant='contained'>
-          {t('general.claim') + ' ' + t('general.rewards')}
+        <Button
+          sx={{
+            width: 194,
+            '& .MuiButton-startIcon > svg > path': {
+              fill: 'white',
+              fillOpacity: 1,
+            },
+          }}
+          onClick={claimRewards}
+          variant='contained'
+          startIcon={<VerifiedIcon />}
+        >
+          {t('general.claim')} {t('general.rewards')}
         </Button>
       }
     >
-      <Typography variant='h6' component='span' mx={1} my='6px' display='block'>
-        0.00 USDC
-      </Typography>
-      {isLoading ? null : lockingRewards ? (
-        <ColoredBox mt={1}>
-          {REWARDS(lockingRewards).map((reward, index) => (
-            <InfoRow
-              key={reward.title}
-              showDivider={index !== REWARDS.length}
-              metric={reward.amount + ' USDC'}
-              {...reward}
-            />
-          ))}
-        </ColoredBox>
-      ) : null}
+      <Box
+        p={(theme) => theme.spacing('6px', 2)}
+        display='flex'
+        alignItems='center'
+      >
+        <Typography variant='subtitle2' component='span'>
+          Your Claimable Protocol Fee Rewards
+        </Typography>
+        <ToolTip title='The amount KSU rewards that can be claimed upon the conclusion of the current Epoch.​' />
+      </Box>
+      <Divider />
+      <Box pt='6px'>
+        <TokenAmount
+          amount={lockingRewards?.claimableRewards ?? '0'}
+          symbol='USDC'
+        />
+      </Box>
+      <ColoredBox mt={2}>
+        <InfoRow
+          title='Your Lifetime Protocol Fee Rewards'
+          toolTipInfo='info'
+          metric={
+            <Box>
+              <TokenAmount
+                amount={lockingRewards?.lifeTimeRewards ?? '0'}
+                symbol='USDC'
+              />
+            </Box>
+          }
+        />
+      </ColoredBox>
     </CardWidget>
   )
 }

@@ -1,6 +1,7 @@
 import { Box, Divider, Grid, Typography } from '@mui/material'
 import React from 'react'
 
+import TokenAmount from '@/components/atoms/TokenAmount'
 import ToolTip from '@/components/atoms/ToolTip'
 
 type BalanceItemProps = {
@@ -35,16 +36,7 @@ const BalanceItem: React.FC<BalanceItemProps> = ({
       </Box>
       <Divider />
       <Box pt='6px'>
-        <Typography pl={2} variant='h6' component='span' display='inline-block'>
-          {value[0]}
-        </Typography>
-        <Typography
-          p={(theme) => theme.spacing(0, 2, 0, 1)}
-          variant='body1'
-          component='span'
-        >
-          {value[1]}
-        </Typography>
+        <TokenAmount amount={value[0]} symbol={value[1]} />
       </Box>
       {subValue && (
         <Box>
