@@ -1,13 +1,15 @@
 'use client'
 
-import { Box, Button, Divider, Typography } from '@mui/material'
+import { Box, Button, Divider } from '@mui/material'
 
 import useModalState from '@/hooks/context/useModalState'
-import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
 import useTranslation from '@/hooks/useTranslation'
 
 import CardWidget from '@/components/atoms/CardWidget'
-import ToolTip from '@/components/atoms/ToolTip'
+import InfoRow from '@/components/atoms/InfoRow'
+import TokenAmount from '@/components/atoms/TokenAmount'
+import CurrentLoyaltyRatio from '@/components/molecules/locking/LoyaltyOverview/CurrentLoyaltyRatio'
+import LoyaltyLevelInfo from '@/components/molecules/locking/LoyaltyOverview/LoyaltyLevelInfo'
 import LoyaltyProgress from '@/components/molecules/locking/LoyaltyOverview/LoyaltyProgress'
 
 import { ArrowRightIcon } from '@/assets/icons'
@@ -18,8 +20,6 @@ const LoyaltyOverview = () => {
   const { openModal } = useModalState()
   const { t } = useTranslation()
   const handleOpen = () => openModal({ name: 'loyaltyLevelsModal' })
-
-  const { level_2, getCurrentLevel } = useLoyaltyLevel()
 
   return (
     <CardWidget
@@ -38,32 +38,39 @@ const LoyaltyOverview = () => {
         </Button>
       }
     >
-      <Box
-        display='flex'
-        justifyContent='space-between'
-        alignItems='center'
-        p={(theme) => theme.spacing('6px', 2)}
-      >
-        <Box display='flex' alignItems='center'>
-          <Typography variant='subtitle2'>Current Loyalty Ratio</Typography>
-          <ToolTip title='info' />
-        </Box>
-        <Typography
-          variant='h6'
-          component='span'
-          color={(theme) =>
-            getCurrentLevel(stakedPercentage) === undefined
-              ? theme.palette.text.disabled
-              : undefined
-          }
-        >
-          {getCurrentLevel(stakedPercentage) === undefined
-            ? 'None'
-            : `${Math.min(stakedPercentage, level_2)}%`}
-        </Typography>
-      </Box>
+      <CurrentLoyaltyRatio stakedPercentage={stakedPercentage} />
       <Divider />
       <LoyaltyProgress stakedPercentage={stakedPercentage} />
+      <InfoRow
+        title='rKSU Balance'
+        toolTipInfo='info'
+        metric={
+          <Box>
+            <TokenAmount amount='15,000.00' symbol='rKSU' />
+          </Box>
+        }
+      />
+      <Divider />
+      <InfoRow
+        title='Total Deposited'
+        toolTipInfo='info'
+        metric={
+          <Box>
+            <TokenAmount amount='650,000.00' symbol='USDC' />
+          </Box>
+        }
+      />
+      <Divider />
+      <LoyaltyLevelInfo
+        rootStyles={{ mt: 2 }}
+        title={`${t('modals.loyalityLevels.level')} 1`}
+        subtitle={t('modals.loyalityLevels.level-1.description')}
+        list={[
+          'Second order priority access to lending pools (behind Loyalty Level 2).',
+          'Second order priority for capital withdrawals from lending pools (behind Loyalty Level 2).',
+          '0.1% additional APY from your deposits in all lending pools, awarded in KSU.',
+        ]}
+      />
     </CardWidget>
   )
 }

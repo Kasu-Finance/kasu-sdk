@@ -8,6 +8,7 @@
     "confirm": "confirm",
     "goBack": "go back",
     "close": "close",
+    "return": "return",
     "info": "info",
     "buy": "buy",
     "lock": "lock",
@@ -44,7 +45,7 @@
     "loyalityLevels": {
       "title": "Loyalty levels",
       "subtitle-1": "About the loyalty program",
-      "description-1": "KSU Token Loyalty Locked KSU tokens provide additional benefits at various loyalty levels. These are as follows:",
+      "description-1": "The more you lock, the higher your loyalty level and the more benefits you receive.",
       "subtitle-2": "Regular/No KSU tokens locked:",
       "description-2": "Normal yields stated in each pool are received, and deposit/withdrawal requests are processed after Loyalty level 1 and 2 stakers.",
       "level": "Loyalty level",

@@ -88,12 +88,12 @@ export const theme = createTheme({
       fontSize: 16,
     },
     body2: {
-      fontFamily: fontFamily,
+      fontFamily,
       fontSize: 14,
       lineHeight: '20px',
     },
     caption: {
-      fontFamily: fontFamily,
+      fontFamily,
       fontSize: 12,
       lineHeight: '20px',
     },
@@ -102,14 +102,20 @@ export const theme = createTheme({
       letterSpacing: '1px',
     },
     button: {
-      fontFamily: fontFamily,
+      fontFamily,
       fontSize: 13,
       fontWeight: 500,
       lineHeight: '22px',
     },
-
+    subtitle1: {
+      fontFamily,
+      fontSize: 16,
+      fontWeight: 700,
+      lineHeight: '28px',
+      letterSpacing: '0.15px',
+    },
     subtitle2: {
-      fontFamily: fontFamily,
+      fontFamily,
       fontSize: 14,
       fontWeight: 500,
       lineHeight: '24px',
