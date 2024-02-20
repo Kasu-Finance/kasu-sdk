@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material'
+import { Box, SxProps, Theme, Typography } from '@mui/material'
 import React from 'react'
 
 import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
@@ -31,6 +31,21 @@ const calculateValue = (
   }
 }
 
+const getLabelStyle =
+  (enabled: boolean): SxProps<Theme> =>
+  (theme) =>
+    enabled
+      ? {
+          '& svg > path': {
+            fill: theme.palette.primary.main,
+            fillOpacity: 1,
+          },
+          color: theme.palette.text.primary,
+        }
+      : {
+          color: theme.palette.text.disabled,
+        }
+
 type LoyaltyProgressProps = {
   stakedPercentage: number
 }
@@ -51,50 +66,27 @@ const LoyaltyProgress: React.FC<LoyaltyProgressProps> = ({
         <Box
           display='flex'
           alignItems='center'
-          gap='7px'
-          sx={(theme) =>
-            stakedPercentage !== 0
-              ? {
-                  '& svg > path': {
-                    fill: theme.palette.primary.main,
-                    fillOpacity: 1,
-                  },
-                  color: theme.palette.text.primary,
-                }
-              : {
-                  color: theme.palette.text.disabled,
-                }
-          }
+          sx={getLabelStyle(stakedPercentage !== 0)}
         >
           <ChevronDownIcon />
-          <Typography variant='subtitle2' component='span'>
+          <Typography variant='subtitle2' component='span' ml='7px'>
             No Loyalty Status
           </Typography>
         </Box>
         <Box
           display='flex'
           alignItems='center'
-          gap='7px'
           justifyContent='end'
           mr='-5px' // half of chevron width to make sure arrow is pointing correctly
-          sx={(theme) =>
-            getCurrentLevel(stakedPercentage) !== undefined
-              ? {
-                  '& svg > path': {
-                    fill: theme.palette.primary.main,
-                    fillOpacity: 1,
-                  },
-                  color: theme.palette.text.primary,
-                }
-              : {
-                  color: theme.palette.text.disabled,
-                }
-          }
+          sx={getLabelStyle(
+            getCurrentLevel(stakedPercentage) !== undefined &&
+              getCurrentLevel(stakedPercentage) !== 'LEVEL_0'
+          )}
         >
           <Typography variant='body2' component='span'>
-            Loyalty
+            Loyalty&nbsp;
           </Typography>
-          <Typography variant='subtitle2' component='span'>
+          <Typography variant='subtitle2' component='span' mr='7px'>
             Level 1
           </Typography>
           <ChevronDownIcon />
@@ -102,26 +94,13 @@ const LoyaltyProgress: React.FC<LoyaltyProgressProps> = ({
         <Box
           display='flex'
           alignItems='center'
-          gap='7px'
           justifyContent='end'
-          sx={(theme) =>
-            getCurrentLevel(stakedPercentage) === 'LEVEL_2'
-              ? {
-                  '& svg > path': {
-                    fill: theme.palette.primary.main,
-                    fillOpacity: 1,
-                  },
-                  color: theme.palette.text.primary,
-                }
-              : {
-                  color: theme.palette.text.disabled,
-                }
-          }
+          sx={getLabelStyle(getCurrentLevel(stakedPercentage) === 'LEVEL_2')}
         >
           <Typography variant='body2' component='span'>
-            Loyalty
+            Loyalty&nbsp;
           </Typography>
-          <Typography variant='subtitle2' component='span'>
+          <Typography variant='subtitle2' component='span' mr='7px'>
             Level 2
           </Typography>
           <ChevronDownIcon />

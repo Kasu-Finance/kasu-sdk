@@ -3,6 +3,7 @@
 import { Box, Button, Divider, Typography } from '@mui/material'
 
 import useModalState from '@/hooks/context/useModalState'
+import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
 import useTranslation from '@/hooks/useTranslation'
 
 import CardWidget from '@/components/atoms/CardWidget'
@@ -11,14 +12,14 @@ import LoyaltyProgress from '@/components/molecules/locking/LoyaltyOverview/Loya
 
 import { ArrowRightIcon } from '@/assets/icons'
 
-const stakedPercentage = 0.8
+const stakedPercentage: number = 2
 
 const LoyaltyOverview = () => {
   const { openModal } = useModalState()
   const { t } = useTranslation()
   const handleOpen = () => openModal({ name: 'loyaltyLevelsModal' })
 
-  const isRegular = true
+  const { level_2, getCurrentLevel } = useLoyaltyLevel()
 
   return (
     <CardWidget
@@ -51,10 +52,14 @@ const LoyaltyOverview = () => {
           variant='h6'
           component='span'
           color={(theme) =>
-            isRegular ? theme.palette.text.disabled : undefined
+            getCurrentLevel(stakedPercentage) === undefined
+              ? theme.palette.text.disabled
+              : undefined
           }
         >
-          None
+          {getCurrentLevel(stakedPercentage) === undefined
+            ? 'None'
+            : `${Math.min(stakedPercentage, level_2)}%`}
         </Typography>
       </Box>
       <Divider />
