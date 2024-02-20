@@ -11,6 +11,8 @@ import LoyaltyProgress from '@/components/molecules/locking/LoyaltyOverview/Loya
 
 import { ArrowRightIcon } from '@/assets/icons'
 
+const stakedPercentage = 0.8
+
 const LoyaltyOverview = () => {
   const { openModal } = useModalState()
   const { t } = useTranslation()
@@ -56,7 +58,7 @@ const LoyaltyOverview = () => {
         </Typography>
       </Box>
       <Divider />
-      <LoyaltyProgress />
+      <LoyaltyProgress stakedPercentage={stakedPercentage} />
     </CardWidget>
   )
 }

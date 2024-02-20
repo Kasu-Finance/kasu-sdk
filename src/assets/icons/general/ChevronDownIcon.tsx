@@ -6,7 +6,7 @@ const ChevronDownIcon = () => (
     fill='none'
     xmlns='http://www.w3.org/2000/svg'
   >
-    <path d='M0 0.5L5 5.5L10 0.5H0Z' fill='black' fill-opacity='0.38' />
+    <path d='M0 0.5L5 5.5L10 0.5H0Z' fill='black' fillOpacity='0.38' />
   </svg>
 )
 
