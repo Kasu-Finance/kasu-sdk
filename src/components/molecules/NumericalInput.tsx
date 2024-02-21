@@ -11,7 +11,7 @@ import { useId } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
-import { escapeRegExp } from '@/utils'
+import { capitalize, escapeRegExp } from '@/utils'
 
 type NumericalInputProps = {
   formControlProps: FormControlProps
@@ -46,8 +46,7 @@ const NumericalInput: React.FC<NumericalInputProps> = ({
 }) => {
   const uuid = useId()
   const { t } = useTranslation()
-  const tAmount =
-    t('general.amount').charAt(0).toUpperCase() + t('general.amount').slice(1)
+  const tAmount = capitalize(t('general.amount'))
   const id = `deposit-input-${uuid}`
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

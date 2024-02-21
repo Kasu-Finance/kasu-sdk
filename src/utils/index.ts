@@ -1,3 +1,4 @@
+export { default as capitalize } from '@/utils/capitalize'
 export { default as escapeRegExp } from '@/utils/escapeRegExp'
 export { default as formatAccount } from '@/utils/formats/formatAccount'
 export { default as formatAmount } from '@/utils/formats/formatAmount'

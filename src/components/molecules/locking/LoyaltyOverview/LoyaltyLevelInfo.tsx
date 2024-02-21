@@ -14,7 +14,7 @@ import { VerifiedIcon } from '@/assets/icons'
 
 type LoyaltyLevelInfoProps = {
   title: string
-  subtitle: string
+  subtitle?: string
   description?: string
   list?: string[]
   rootStyles?: SxProps<Theme>
@@ -51,7 +51,7 @@ const LoyaltyLevelInfo: React.FC<LoyaltyLevelInfoProps> = ({
         alignItems='start'
         gap={1}
       >
-        <Box pt='10px'>
+        <Box pt='7px'>
           <VerifiedIcon />
         </Box>
         <Box>
@@ -71,7 +71,7 @@ const LoyaltyLevelInfo: React.FC<LoyaltyLevelInfoProps> = ({
         </Box>
       </Box>
       {description && (
-        <Typography variant='subtitle1' component='p' {...descriptionProps}>
+        <Typography variant='body2' component='p' {...descriptionProps}>
           {description}
         </Typography>
       )}

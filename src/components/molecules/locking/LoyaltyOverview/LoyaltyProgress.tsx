@@ -2,6 +2,7 @@ import { Box, SxProps, Theme, Typography } from '@mui/material'
 import React from 'react'
 
 import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
+import useTranslation from '@/hooks/useTranslation'
 
 import ProgressBar from '@/components/atoms/ProgressBar'
 
@@ -53,7 +54,11 @@ type LoyaltyProgressProps = {
 const LoyaltyProgress: React.FC<LoyaltyProgressProps> = ({
   stakedPercentage,
 }) => {
+  const { t } = useTranslation()
+
   const { level_1, level_2, getCurrentLevel } = useLoyaltyLevel()
+
+  const currentLevel = getCurrentLevel(stakedPercentage)
 
   return (
     <Box mt={1}>
@@ -70,7 +75,7 @@ const LoyaltyProgress: React.FC<LoyaltyProgressProps> = ({
         >
           <ChevronDownIcon />
           <Typography variant='subtitle2' component='span' ml='7px'>
-            No Loyalty Status
+            {t('locking.widgets.loyalty.level.level-0.title')}
           </Typography>
         </Box>
         <Box
@@ -78,16 +83,17 @@ const LoyaltyProgress: React.FC<LoyaltyProgressProps> = ({
           alignItems='center'
           justifyContent='end'
           mr='-5px' // half of chevron width to make sure arrow is pointing correctly
-          sx={getLabelStyle(
-            getCurrentLevel(stakedPercentage) !== undefined &&
-              getCurrentLevel(stakedPercentage) !== 'LEVEL_0'
-          )}
+          sx={getLabelStyle([1, 2].includes(currentLevel))}
         >
-          <Typography variant='body2' component='span'>
-            Loyalty&nbsp;
+          <Typography
+            variant='body2'
+            component='span'
+            textTransform='capitalize'
+          >
+            {t('general.loyalty')}&nbsp;
           </Typography>
           <Typography variant='subtitle2' component='span' mr='7px'>
-            Level 1
+            {t('locking.widgets.loyalty.level.level-1.level')}
           </Typography>
           <ChevronDownIcon />
         </Box>
@@ -95,13 +101,17 @@ const LoyaltyProgress: React.FC<LoyaltyProgressProps> = ({
           display='flex'
           alignItems='center'
           justifyContent='end'
-          sx={getLabelStyle(getCurrentLevel(stakedPercentage) === 'LEVEL_2')}
+          sx={getLabelStyle(currentLevel === 2)}
         >
-          <Typography variant='body2' component='span'>
-            Loyalty&nbsp;
+          <Typography
+            variant='body2'
+            component='span'
+            textTransform='capitalize'
+          >
+            {t('general.loyalty')}&nbsp;
           </Typography>
           <Typography variant='subtitle2' component='span' mr='7px'>
-            Level 2
+            {t('locking.widgets.loyalty.level.level-2.level')}
           </Typography>
           <ChevronDownIcon />
         </Box>

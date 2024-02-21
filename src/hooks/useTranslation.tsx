@@ -9,7 +9,7 @@ export const TRANSLATIONS = {
   en,
 } as const
 
-export type TranslationKeys = Leaves<(typeof TRANSLATIONS)['en'], 5>
+export type TranslationKeys = Leaves<(typeof TRANSLATIONS)['en']>
 
 export default function useTranslation() {
   const currentLocale = defaultLocale

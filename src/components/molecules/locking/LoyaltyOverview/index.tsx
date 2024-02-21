@@ -3,6 +3,7 @@
 import { Box, Button, Divider } from '@mui/material'
 
 import useModalState from '@/hooks/context/useModalState'
+import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
 import useTranslation from '@/hooks/useTranslation'
 
 import CardWidget from '@/components/atoms/CardWidget'
@@ -14,12 +15,18 @@ import LoyaltyProgress from '@/components/molecules/locking/LoyaltyOverview/Loya
 
 import { ArrowRightIcon } from '@/assets/icons'
 
-const stakedPercentage: number = 2
+import { capitalize } from '@/utils'
+
+const stakedPercentage: number = 15
 
 const LoyaltyOverview = () => {
   const { openModal } = useModalState()
   const { t } = useTranslation()
   const handleOpen = () => openModal({ name: 'loyaltyLevelsModal' })
+
+  const { currentLevel } = useLoyaltyLevel(stakedPercentage)
+
+  const isLoyal = currentLevel === 1 || currentLevel === 2
 
   return (
     <CardWidget
@@ -34,7 +41,7 @@ const LoyaltyOverview = () => {
           variant='outlined'
           onClick={handleOpen}
         >
-          {t('locking.widgets.loyality.button')}
+          {t('locking.widgets.loyalty.button')}
         </Button>
       }
     >
@@ -42,7 +49,7 @@ const LoyaltyOverview = () => {
       <Divider />
       <LoyaltyProgress stakedPercentage={stakedPercentage} />
       <InfoRow
-        title='rKSU Balance'
+        title={`rKSU ${capitalize(t('general.balance'))}`}
         toolTipInfo='info'
         metric={
           <Box>
@@ -52,7 +59,7 @@ const LoyaltyOverview = () => {
       />
       <Divider />
       <InfoRow
-        title='Total Deposited'
+        title={t('locking.widgets.loyalty.metric-2')}
         toolTipInfo='info'
         metric={
           <Box>
@@ -63,13 +70,36 @@ const LoyaltyOverview = () => {
       <Divider />
       <LoyaltyLevelInfo
         rootStyles={{ mt: 2 }}
-        title={`${t('modals.loyalityLevels.level')} 1`}
-        subtitle={t('modals.loyalityLevels.level-1.description')}
-        list={[
-          'Second order priority access to lending pools (behind Loyalty Level 2).',
-          'Second order priority for capital withdrawals from lending pools (behind Loyalty Level 2).',
-          '0.1% additional APY from your deposits in all lending pools, awarded in KSU.',
-        ]}
+        title={t(
+          `locking.widgets.loyalty.level.level-${
+            isLoyal ? currentLevel : 0
+          }.title`
+        )}
+        subtitle={
+          isLoyal
+            ? t(`locking.widgets.loyalty.level.level-${currentLevel}.subtitle`)
+            : undefined
+        }
+        list={
+          isLoyal
+            ? [
+                t(
+                  `locking.widgets.loyalty.level.level-${currentLevel}.list.list-0`
+                ),
+                t(
+                  `locking.widgets.loyalty.level.level-${currentLevel}.list.list-1`
+                ),
+                t(
+                  `locking.widgets.loyalty.level.level-${currentLevel}.list.list-2`
+                ),
+              ]
+            : undefined
+        }
+        description={
+          isLoyal
+            ? undefined
+            : t('locking.widgets.loyalty.level.level-0.description')
+        }
       />
     </CardWidget>
   )
