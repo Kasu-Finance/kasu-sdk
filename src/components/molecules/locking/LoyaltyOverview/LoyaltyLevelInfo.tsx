@@ -1,13 +1,7 @@
-import {
-  Box,
-  lighten,
-  SxProps,
-  Theme,
-  Typography,
-  TypographyProps,
-} from '@mui/material'
+import { Box, SxProps, Theme, Typography, TypographyProps } from '@mui/material'
 import React from 'react'
 
+import ColoredBox from '@/components/atoms/ColoredBox'
 import List from '@/components/atoms/List'
 
 import { VerifiedIcon } from '@/assets/icons'
@@ -38,13 +32,7 @@ const LoyaltyLevelInfo: React.FC<LoyaltyLevelInfoProps> = ({
   listLabelProps,
 }) => {
   return (
-    <Box
-      display='grid'
-      p={[1, 2]}
-      gap={2}
-      bgcolor={(theme) => lighten(theme.palette.primary.main, 0.96)}
-      sx={rootStyles}
-    >
+    <ColoredBox display='grid' p={[1, 2]} gap={2} sx={rootStyles}>
       <Box
         display='grid'
         gridTemplateColumns='max-content minmax(0, 1fr)'
@@ -86,7 +74,7 @@ const LoyaltyLevelInfo: React.FC<LoyaltyLevelInfoProps> = ({
           ))}
         </List>
       )}
-    </Box>
+    </ColoredBox>
   )
 }
 

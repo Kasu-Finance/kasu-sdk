@@ -59,11 +59,21 @@
           }
         }
       },
-      "epoch": {
-        "description": "Next xKASU epoch",
-        "table": {
-          "1": "Your next rewards",
-          "2": "KASU per rKSU"
+      "totalRewards": {
+        "title": "Your Total Rewards",
+        "metric-1": "Epoch ends in",
+        "rewards-1": {
+          "title": "Reward 1 • KSU Earnings Multiplier",
+          "metric-1": "Your Weighted Average Locking Period",
+          "metric-2": "Your Weighted Average Rewards Multiplier"
+        },
+        "rewards-2": {
+          "title": "Reward 2 • KSU Launch Bonus",
+          "metric": "Your Total Launch Bonus Rewards"
+        },
+        "rewards-3": {
+          "title": "Reward 3 • Protocol Fee Sharing",
+          "metric": "Your Protocol Fees Earned"
         }
       },
       "unlock": { "noLockedKasu": "Currently no locked KASU" }
