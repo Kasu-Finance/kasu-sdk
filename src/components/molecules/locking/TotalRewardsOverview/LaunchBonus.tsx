@@ -20,7 +20,7 @@ const LaunchBonus = () => {
         title={t('locking.widgets.totalRewards.rewards-2.metric')}
         toolTipInfo='info'
         metric={
-          <Box>
+          <Box color={(theme) => theme.palette.text.disabled}>
             <TokenAmount amount='0.00' symbol='KSU' />
           </Box>
         }

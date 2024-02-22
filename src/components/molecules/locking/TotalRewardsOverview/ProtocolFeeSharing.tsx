@@ -20,7 +20,7 @@ const ProtocolFeeSharing = () => {
         title={t('locking.widgets.totalRewards.rewards-3.metric')}
         toolTipInfo='info'
         metric={
-          <Box>
+          <Box color={(theme) => theme.palette.text.disabled}>
             <TokenAmount amount='0.00' symbol='USDC' />
           </Box>
         }

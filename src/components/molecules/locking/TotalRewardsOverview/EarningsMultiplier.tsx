@@ -20,7 +20,11 @@ const EarningsMultiplier = () => {
         title={t('locking.widgets.totalRewards.rewards-1.metric-1')}
         toolTipInfo='info'
         metric={
-          <Typography variant='h6' component='span'>
+          <Typography
+            variant='h6'
+            component='span'
+            color={(theme) => theme.palette.text.disabled}
+          >
             0 {t('time.days')}
           </Typography>
         }
@@ -30,7 +34,11 @@ const EarningsMultiplier = () => {
         title={t('locking.widgets.totalRewards.rewards-1.metric-2')}
         toolTipInfo='info'
         metric={
-          <Typography variant='h6' component='span'>
+          <Typography
+            variant='h6'
+            component='span'
+            color={(theme) => theme.palette.text.disabled}
+          >
             0.00 ✕
           </Typography>
         }
