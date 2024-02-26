@@ -1,15 +1,7 @@
-import {
-  Box,
-  Divider,
-  Tooltip,
-  Typography,
-  TypographyProps,
-} from '@mui/material'
+import { Box, Divider, Typography, TypographyProps } from '@mui/material'
 import React, { ReactNode } from 'react'
 
-import TooltipTrigger from '@/components/atoms/TooltipTrigger'
-
-import { InfoIcon } from '@/assets/icons'
+import InfoTooltip from '@/components/atoms/InfoTooltip'
 
 type InfoRowProps = {
   title: string
@@ -56,17 +48,7 @@ const InfoRow: React.FC<InfoRowProps> = ({
               </Typography>
             )}
           </Box>
-          {toolTipInfo && (
-            <Tooltip
-              disableFocusListener
-              disableTouchListener
-              title={toolTipInfo}
-            >
-              <TooltipTrigger>
-                <InfoIcon />
-              </TooltipTrigger>
-            </Tooltip>
-          )}
+          <InfoTooltip title={toolTipInfo} />
         </Box>
         {metric}
       </Box>

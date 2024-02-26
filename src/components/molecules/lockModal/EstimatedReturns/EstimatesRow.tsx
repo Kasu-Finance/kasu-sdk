@@ -1,8 +1,6 @@
-import { Box, Tooltip, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 
-import TooltipTrigger from '@/components/atoms/TooltipTrigger'
-
-import { InfoIcon } from '@/assets/icons'
+import InfoTooltip from '@/components/atoms/InfoTooltip'
 
 type EstimatesRowProps = {
   title: string
@@ -25,13 +23,7 @@ const EstimatesRow: React.FC<EstimatesRowProps> = ({
       >
         {title}
       </Typography>
-      {toolTipInfo && (
-        <Tooltip disableFocusListener disableTouchListener title={toolTipInfo}>
-          <TooltipTrigger>
-            <InfoIcon />
-          </TooltipTrigger>
-        </Tooltip>
-      )}
+      <InfoTooltip title={toolTipInfo} />
     </Box>
     <Typography variant='body2' component='span'>
       {value}

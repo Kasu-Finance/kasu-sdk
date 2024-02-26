@@ -1,14 +1,16 @@
 import { IconButton, Tooltip } from '@mui/material'
 
-import { InfoIcon } from '@/assets/icons'
+import { InfoIcon } from '@/assets/icons' // Adjust the import based on your
 
-interface InfoTooltip {
-  title: string
+interface InfoTooltipProps {
+  title: string | null | undefined
 }
 
-const InfoTooltip: React.FC<InfoTooltip> = ({ title }) => {
+const InfoTooltip: React.FC<InfoTooltipProps> = ({ title, ...rest }) => {
+  if (!title) return null
+
   return (
-    <Tooltip title={title} placement='right'>
+    <Tooltip title={title} placement='right' {...rest}>
       <IconButton
         disableFocusRipple
         disableTouchRipple
