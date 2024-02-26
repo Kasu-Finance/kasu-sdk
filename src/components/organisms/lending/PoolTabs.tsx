@@ -8,7 +8,7 @@ import { memo, useCallback, useState } from 'react'
 import OverviewCard from '@/components/molecules/lending/OverviewCard'
 import TabPanel from '@/components/molecules/tabs/TabPanel'
 
-const LendingTabs: React.FC = () => {
+const PoolTabs: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0)
   const panelsId = 'lending'
 
@@ -53,4 +53,4 @@ const LendingTabs: React.FC = () => {
   )
 }
 
-export default memo(LendingTabs)
+export default memo(PoolTabs)
