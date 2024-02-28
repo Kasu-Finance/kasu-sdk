@@ -64,6 +64,9 @@ export const theme = createTheme({
       primary: 'rgba(0, 0, 0, 0.87)',
       secondary: 'rgba(0,0,0, 0.6)',
     },
+    grey: {
+      300: 'rgba(0, 0, 0, 0.04)',
+    },
   },
   typography: {
     fontFamily: fontFamily,

@@ -16,7 +16,8 @@
     "nextEpoch": "next epoch",
     "rewards": "rewards",
     "to": "to",
-    "wallet": "wallet"
+    "wallet": "wallet",
+    "pools": "pools"
   },
   "time": {
     "days": "days",
@@ -97,5 +98,8 @@
         "nextClearing": "Next clearing day commences in"
       }
     }
+  },
+  "poolDetails": {
+    "title": "Pool Delegate Profile and History​"
   }
 }
