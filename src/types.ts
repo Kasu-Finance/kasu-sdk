@@ -52,3 +52,18 @@ export interface GQLUserLocks {
         lockPeriod: LockPeriod;
     }[];
 }
+
+export interface PoolData {
+    id: string;
+    poolName: string;
+    details: string;
+    tranches: TranchData[];
+}
+
+export interface TranchData {
+    id: string;
+    apy: number;
+    maximumDeposit: number;
+    minimumDeposit: number;
+    poolCapacity: number
+}
