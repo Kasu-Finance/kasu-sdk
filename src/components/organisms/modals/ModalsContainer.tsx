@@ -3,7 +3,7 @@
 import useModalState from '@/hooks/context/useModalState'
 
 import DialogWrapper from '@/components/atoms/DialogWrapper'
-import LockModal from '@/components/organisms/modals/LockModal'
+import LockModalWrapper from '@/components/organisms/modals/LockModal/LockModalWrapper'
 import LoyaltyLevelsModal from '@/components/organisms/modals/LoyaltyLevelsModal'
 
 import { Modals } from '@/context/modal/modal.types'
@@ -35,7 +35,7 @@ export const getModal = (
       }
     case 'lockModal':
       return {
-        component: <LockModal handleClose={handleClose} />,
+        component: <LockModalWrapper handleClose={handleClose} />,
       }
     default:
       return null

@@ -1,8 +1,11 @@
 import { BigNumber } from 'ethers'
 
+import useLockModalState from '@/hooks/context/useLockModalState'
 import useToastState from '@/hooks/context/useToastState'
 import useKasuSDK from '@/hooks/useKasuSDK'
 import useHandleError from '@/hooks/web3/useHandleError'
+
+import { LockProgress } from '@/context/lockModal/lockModal.types'
 
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { waitForReceipt } from '@/utils'
@@ -11,6 +14,8 @@ const useLockToken = () => {
   const sdk = useKasuSDK()
 
   const handleError = useHandleError()
+
+  const { setLockProgress } = useLockModalState()
 
   const { setToast } = useToastState()
 
@@ -28,14 +33,9 @@ const useLockToken = () => {
         BigNumber.from(duration)
       )
 
-      const receipt = await waitForReceipt(lock)
+      await waitForReceipt(lock)
 
-      setToast({
-        type: 'success',
-        title: `${ActionType.LOCK} ${ActionStatus.SUCCESS}`,
-        message: ACTION_MESSAGES[ActionType.LOCK][ActionStatus.SUCCESS],
-        txHash: receipt.transactionHash,
-      })
+      setLockProgress(LockProgress.COMPLETED)
     } catch (error) {
       handleError(
         error,

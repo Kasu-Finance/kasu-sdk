@@ -38,7 +38,7 @@ const formatAmount = (
     maxDecimals = minDecimals
   }
 
-  const formatWithSuffix = Boolean(minValue && minValue > +value)
+  const formatWithSuffix = Boolean(minValue && +value > minValue)
 
   const format = new Intl.NumberFormat('en-US', {
     ...(currency && { style: 'currency', currency }),

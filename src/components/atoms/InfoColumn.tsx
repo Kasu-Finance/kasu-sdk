@@ -3,7 +3,7 @@ import React, { ReactNode } from 'react'
 
 import ToolTip from '@/components/atoms/ToolTip'
 
-type InfoRowProps = {
+type InfoColumnProps = {
   title: string
   subtitle?: string
   toolTipInfo?: string
@@ -13,7 +13,7 @@ type InfoRowProps = {
   subtitleStyle?: TypographyProps
 }
 
-const InfoRow: React.FC<InfoRowProps> = ({
+const InfoColumn: React.FC<InfoColumnProps> = ({
   title,
   subtitle,
   toolTipInfo,
@@ -23,7 +23,7 @@ const InfoRow: React.FC<InfoRowProps> = ({
   subtitleStyle,
 }) => {
   return (
-    <>
+    <Box>
       <Box
         display='flex'
         justifyContent='space-between'
@@ -55,11 +55,11 @@ const InfoRow: React.FC<InfoRowProps> = ({
           </Box>
           {toolTipInfo && <ToolTip title={toolTipInfo} />}
         </Box>
-        {metric}
       </Box>
       {showDivider && <Divider />}
-    </>
+      {metric}
+    </Box>
   )
 }
 
-export default InfoRow
+export default InfoColumn

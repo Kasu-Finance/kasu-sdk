@@ -19,7 +19,8 @@
     "rewards": "rewards",
     "to": "to",
     "wallet": "wallet",
-    "none": "none"
+    "none": "none",
+    "pool": "pool"
   },
   "time": {
     "days": "days",
@@ -98,7 +99,9 @@
         "total": " Total KSU locked"
       },
       "deposit": {
-        "title": "Deposit"
+        "title": "Locked Deposit",
+        "input-label": "Lock Amount",
+        "metric": "Locking Amount at Current Exchange Rate"
       },
       "duration": {
         "title": "Locking Duration",
@@ -107,20 +110,19 @@
       },
       "estimates": {
         "title": "Estimates",
-        "est-1": "Deposit value in USD at current exchange rate",
+        "est-1": "Your Average Rewards Multiplier",
         "tooltip-1": "info",
-        "est-2": "Launch Bonus KASU from locking",
+        "est-2": "Your Protocol Fee Rewards",
         "tooltip-2": "info",
-        "est-3": "Projected APY",
-        "tooltip-3": "info",
-        "est-4": "Projected USDC earning at current APY",
-        "tooltip-4": "info"
+        "est-3": "Projected KSU Yield Earnings",
+        "tooltip-3": "info"
       },
       "reviewLock": {
-        "cashPool": "Cash management pool",
+        "cashPool": "Apxium Invoice Standard Financing Pool",
         "lockAmount": "Lock Amount",
+        "lockingDuration": "Locking Duration",
         "epochEnds": "Epoch ends in",
-        "depositSchedule": "Deposit will be scheduled to the end of the current epoch",
+        "depositSchedule": "Locking request will be scheduled to the end of the current Epoch.",
         "nextClearing": "Next clearing day commences in"
       }
     }

@@ -1,0 +1,124 @@
+import { Box, Grid, Typography } from '@mui/material'
+import React from 'react'
+
+import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
+import useTranslation from '@/hooks/useTranslation'
+
+import ColoredBox from '@/components/atoms/ColoredBox'
+import Countdown from '@/components/atoms/Countdown'
+import InfoColumn from '@/components/atoms/InfoColumn'
+import TokenAmount from '@/components/atoms/TokenAmount'
+
+import dayjs from '@/dayjs'
+
+type LockModalReviewProps = {
+  lockAmount: string
+}
+
+const LockModalReview: React.FC<LockModalReviewProps> = ({ lockAmount }) => {
+  const { nextEpochTime } = useNextEpochTime()
+  const { t } = useTranslation()
+
+  return (
+    <>
+      <ColoredBox>
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+            <InfoColumn
+              title={`${t('general.to')} ${t('general.pool')}`}
+              showDivider
+              titleStyle={{ textTransform: 'capitalize' }}
+              metric={
+                <Typography
+                  component='span'
+                  variant='h6'
+                  py='6px'
+                  px={2}
+                  display='block'
+                >
+                  {t('modals.lock.reviewLock.cashPool')}
+                </Typography>
+              }
+            />
+          </Grid>
+          <Grid item container xs={6} spacing={2}>
+            <Grid item xs={12}>
+              <InfoColumn
+                title={t('modals.lock.reviewLock.lockAmount')}
+                toolTipInfo='info'
+                showDivider
+                metric={
+                  <Box px={2}>
+                    <TokenAmount amount={lockAmount} symbol='KSU' />
+                  </Box>
+                }
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <InfoColumn
+                title={t('modals.lock.reviewLock.lockingDuration')}
+                toolTipInfo='info'
+                showDivider
+                metric={
+                  <Typography
+                    variant='h6'
+                    component='span'
+                    py='6px'
+                    px={2}
+                    display='block'
+                  >
+                    200 {t('time.days')}
+                  </Typography>
+                }
+              />
+            </Grid>
+          </Grid>
+        </Grid>
+      </ColoredBox>
+      <Box mt={2}>
+        <InfoColumn
+          title={t('modals.lock.reviewLock.epochEnds')}
+          showDivider
+          metric={
+            <Box px={2} py='6px'>
+              <Typography variant='h6' component='span' display='block'>
+                <Countdown
+                  endTime={nextEpochTime ?? 0}
+                  format='D:HH:mm'
+                  render={(countDown) => {
+                    const parts = countDown.split(':')
+
+                    return `${parts[0]} ${t('time.days')} • ${parts[1]} ${t(
+                      'time.hours'
+                    )} • ${parts[2]} ${t('time.minutes')}`
+                  }}
+                />
+              </Typography>
+              <Typography
+                variant='body1'
+                component='span'
+                color={(theme) => theme.palette.text.secondary}
+              >
+                {dayjs
+                  .unix(nextEpochTime ?? 0)
+                  .format('DD.MM.YYYY • HH:mm:ss UTCZZ')}
+              </Typography>
+            </Box>
+          }
+        />
+      </Box>
+      <Typography
+        variant='body2'
+        component='p'
+        mt={2}
+        mx='auto'
+        display='block'
+        width='max-content'
+      >
+        {t('modals.lock.reviewLock.depositSchedule')}
+      </Typography>
+    </>
+  )
+}
+
+export default LockModalReview

@@ -69,7 +69,7 @@ const LockPeriodInfo: React.FC<LockPeriodInfoProps> = ({ activePeriod }) => {
                 display='block'
                 p={(theme) => theme.spacing('6px', 2)}
               >
-                0.05 ✕
+                {period.ksuBonusMultiplier} ✕
                 <br />
                 <Typography variant='caption' component='span'>
                   multiplier

@@ -1,12 +1,4 @@
-import {
-  Button,
-  FilledInput,
-  FormControl,
-  FormControlProps,
-  Input,
-  InputLabel,
-  OutlinedInput,
-} from '@mui/material'
+import { Box, Button, TextField, TextFieldProps } from '@mui/material'
 import { useId } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
@@ -14,9 +6,11 @@ import useTranslation from '@/hooks/useTranslation'
 import { capitalize, escapeRegExp } from '@/utils'
 
 type NumericalInputProps = {
-  formControlProps: FormControlProps
+  rootProps?: TextFieldProps
+  label?: string
   decimals?: number
   amount: string
+  placeholder?: string
   setAmount: (amount: string) => void
   handleMax?: () => void
 }
@@ -38,57 +32,50 @@ const INPUT_REGEX = (decimals?: number) => {
 }
 
 const NumericalInput: React.FC<NumericalInputProps> = ({
-  formControlProps,
+  rootProps,
+  label,
   decimals = 18,
   amount,
+  placeholder = '0.00',
   setAmount,
   handleMax,
 }) => {
   const uuid = useId()
   const { t } = useTranslation()
-  const tAmount = capitalize(t('general.amount'))
+  const inputLabel = label ?? capitalize(t('general.amount'))
   const id = `deposit-input-${uuid}`
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
 
     if (value === '' || INPUT_REGEX(decimals).test(escapeRegExp(value))) {
-      setAmount(e.target.value)
+      setAmount(value)
     }
   }
 
-  const endAdornment = handleMax ? (
-    <Button sx={{ textTransform: 'capitalize' }} onClick={handleMax}>
+  const maxButton = handleMax ? (
+    <Button
+      variant='outlined'
+      sx={{ textTransform: 'uppercase', height: '56px', width: '56px' }}
+      onClick={handleMax}
+    >
       {t('general.max')}
     </Button>
   ) : undefined
 
-  const inputPropsBase = {
-    id,
-    value: amount,
-    endAdornment,
-    onChange: handleChange,
-    sx: {
-      pr:
-        endAdornment && formControlProps.variant === 'outlined' ? 0 : undefined,
-    },
-  }
-
   return (
-    <FormControl
-      fullWidth={formControlProps.fullWidth ?? true}
-      variant={formControlProps.variant ?? 'outlined'}
-      {...formControlProps}
-    >
-      <InputLabel htmlFor={id}> {tAmount}</InputLabel>
-      {formControlProps.variant === 'standard' ? (
-        <Input {...inputPropsBase} />
-      ) : formControlProps.variant === 'filled' ? (
-        <FilledInput {...inputPropsBase} />
-      ) : (
-        <OutlinedInput label={tAmount} {...inputPropsBase} />
-      )}
-    </FormControl>
+    <Box display='flex' gap={1} alignItems='end'>
+      <TextField
+        value={amount}
+        onChange={handleChange}
+        fullWidth
+        label={inputLabel}
+        id={id}
+        placeholder={placeholder}
+        {...rootProps}
+      />
+      {maxButton}
+    </Box>
   )
 }
 

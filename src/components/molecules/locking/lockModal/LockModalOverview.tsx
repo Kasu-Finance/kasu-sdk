@@ -1,69 +1,49 @@
-import { Box, Typography, useTheme } from '@mui/material'
+import { Grid } from '@mui/material'
+import { formatUnits } from 'ethers/lib/utils'
 import React from 'react'
 
+import useLockModalState from '@/hooks/context/useLockModalState'
 import useStakedKSU from '@/hooks/locking/useStakedKSU'
 import useTranslation from '@/hooks/useTranslation'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
+import BalanceItem from '@/components/molecules/locking/BalanceOverview/BalanceItem'
 
 type LockModalOverviewProps = {
   balance: string
 }
 
 const LockModalOverview: React.FC<LockModalOverviewProps> = ({ balance }) => {
-  const theme = useTheme()
   const { t } = useTranslation()
   const { stakedKSU } = useStakedKSU()
 
+  const { lockState } = useLockModalState()
+
   return (
-    <Box>
-      <Typography variant='subtitle1' component='span' display='block'>
-        {t('modals.lock.overview.title')}
-      </Typography>
-      <ColoredBox
-        mt={1}
-        display='grid'
-        gridTemplateColumns='repeat(2, minmax(0, 1fr))'
-      >
-        <Box
-          p={theme.spacing('2px', 2)}
-          display='flex'
-          flexDirection='column'
-          justifyContent='space-between'
-          gap='12px'
-        >
-          <Typography
-            variant='subtitle2'
-            component='span'
-            color='text.secondary'
-            display='block'
-          >
-            {t('modals.lock.overview.balance')}
-          </Typography>
-          <Typography variant='body2' component='span' display='block'>
-            {balance} KSU
-          </Typography>
-        </Box>
-        <Box
-          p={theme.spacing('2px', 2)}
-          display='flex'
-          flexDirection='column'
-          justifyContent='space-between'
-        >
-          <Typography
-            variant='subtitle2'
-            component='span'
-            color='text.secondary'
-            display='block'
-          >
-            {t('modals.lock.overview.total')}
-          </Typography>
-          <Typography variant='body2' component='span' display='block'>
-            {stakedKSU?.toString()} KSU
-          </Typography>
-        </Box>
-      </ColoredBox>
-    </Box>
+    <ColoredBox sx={{ bgcolor: lockState.bgColor }}>
+      <Grid container spacing={2}>
+        <Grid item container xs={6}>
+          <BalanceItem
+            title={`${t('general.wallet')} ${t('general.balance')}`}
+            toolTipInfo='info'
+            value={[balance, 'KSU']}
+            subValue={[formatUnits('100000000000000000000000', 18), 'USDC']}
+          />
+          <BalanceItem
+            title='Available Funds'
+            toolTipInfo='info'
+            value={[formatUnits('100000000000000000000000', 18), 'USDC']}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <BalanceItem
+            title='Total KSU Locked'
+            toolTipInfo='info'
+            value={[stakedKSU?.toString() ?? '0.00', 'KSU']}
+          />
+        </Grid>
+      </Grid>
+    </ColoredBox>
   )
 }
 

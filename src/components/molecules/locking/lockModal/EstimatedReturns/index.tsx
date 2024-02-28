@@ -1,42 +1,36 @@
-import { Box, Divider, Typography } from '@mui/material'
-import { LockPeriod } from 'kasu-sdk/src/types'
-import React from 'react'
+import { alpha, Box, Theme, Typography } from '@mui/material'
 
+import useLockModalState from '@/hooks/context/useLockModalState'
 import useAvailableKsuBonus from '@/hooks/locking/useAvailableKsuBonus'
 import useCalculateLaunchBonusAmount from '@/hooks/locking/useCalculateLaunchBonusAmount'
-import useEstimatedDepositValue from '@/hooks/locking/useEstimatedDepositValue'
-import useProjectedApy from '@/hooks/locking/useProjectedApy'
 import useProjectedUsdcEarning from '@/hooks/locking/useProjectedUsdcEarning'
 import useTranslation from '@/hooks/useTranslation'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
+import InfoRow from '@/components/atoms/InfoRow'
+import TokenAmount from '@/components/atoms/TokenAmount'
 
 import { formatAmount } from '@/utils'
 
-import EstimatesRow from './EstimatesRow'
-
-type EstimatedReturnsProps = {
-  amount: string
-  lockPeriod: LockPeriod
-}
-
-const EstimatedReturns: React.FC<EstimatedReturnsProps> = ({
-  amount,
-  lockPeriod,
-}) => {
-  const estimatedDepositValueUSD = useEstimatedDepositValue(amount)
+const EstimatedReturns = () => {
   const { t } = useTranslation()
+
+  const { amount, selectedLockPeriod, lockState } = useLockModalState()
 
   const { availableKsuBonus } = useAvailableKsuBonus()
 
   const estimatedLaunchBonus = useCalculateLaunchBonusAmount(
     amount || '0',
-    Number(lockPeriod.ksuBonusMultiplier),
+    Number(selectedLockPeriod.ksuBonusMultiplier),
     availableKsuBonus ?? '0'
   )
 
-  const projectedApy = useProjectedApy()
   const projectedUsdcEarning = useProjectedUsdcEarning()
+
+  const disabled = lockState.type === 'error'
+
+  const getTextColor = (theme: Theme) =>
+    disabled ? theme.palette.text.disabled : undefined
 
   return (
     <Box>
@@ -48,34 +42,52 @@ const EstimatedReturns: React.FC<EstimatedReturnsProps> = ({
       >
         {t('modals.lock.estimates.title')}
       </Typography>
-      <ColoredBox mt={1}>
-        <EstimatesRow
+      <ColoredBox
+        mt={1}
+        sx={(theme) => ({
+          bgcolor: disabled ? alpha(theme.palette.error.main, 0.04) : undefined,
+        })}
+      >
+        <InfoRow
           title={t('modals.lock.estimates.est-1')}
           toolTipInfo={t('modals.lock.estimates.tooltip-1')}
-          value={formatAmount(estimatedDepositValueUSD, {
-            currency: 'USD',
-            minDecimals: 2,
-          })}
+          metric={
+            <Typography variant='h6' component='span' color={getTextColor}>
+              {disabled ? '0.00' : '0.15'} ✕
+            </Typography>
+          }
+          showDivider
         />
-        <Divider />
-        <EstimatesRow
+        <InfoRow
           title={t('modals.lock.estimates.est-2')}
           toolTipInfo={t('modals.lock.estimates.tooltip-2')}
-          value={`${formatAmount(estimatedLaunchBonus, {
-            minDecimals: 2,
-          })} KSU`}
+          metric={
+            <Box color={getTextColor}>
+              <TokenAmount
+                amount={formatAmount(disabled ? '0' : projectedUsdcEarning, {
+                  minDecimals: 2,
+                  minValue: 100_000_000_000,
+                })}
+                symbol='USDC'
+              />
+            </Box>
+          }
+          showDivider
         />
-        <Divider />
-        <EstimatesRow
+        <InfoRow
           title={t('modals.lock.estimates.est-3')}
           toolTipInfo={t('modals.lock.estimates.tooltip-3')}
-          value={`${projectedApy} %`}
-        />
-        <Divider />
-        <EstimatesRow
-          title={t('modals.lock.estimates.est-4')}
-          toolTipInfo={t('modals.lock.estimates.tooltip-4')}
-          value={`${projectedUsdcEarning} USDC`}
+          metric={
+            <Box color={getTextColor}>
+              <TokenAmount
+                amount={formatAmount(disabled ? '0' : estimatedLaunchBonus, {
+                  minDecimals: 2,
+                  minValue: 100_000_000_000,
+                })}
+                symbol='KSU'
+              />
+            </Box>
+          }
         />
       </ColoredBox>
     </Box>
