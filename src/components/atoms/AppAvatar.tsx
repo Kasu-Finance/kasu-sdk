@@ -1,10 +1,11 @@
 'use client'
+
 import { Avatar, AvatarProps } from '@mui/material'
 import { FC } from 'react'
 
 import useImageError from '@/hooks/useImageError'
 
-import createNameInitials from '@/utils/createNameInitials'
+import createTwoInitials from '@/utils/createTwoInitials'
 
 interface AppAvatarProps extends AvatarProps {
   src?: string
@@ -13,7 +14,7 @@ interface AppAvatarProps extends AvatarProps {
 
 const AppAvatar: FC<AppAvatarProps> = ({ src, name, ...props }) => {
   const imgError = useImageError(src)
-  const initials: string = name ? createNameInitials(name) : ''
+  const initials: string = name ? createTwoInitials(name) : ''
 
   return (
     <Avatar {...props} src={!imgError ? src : undefined}>

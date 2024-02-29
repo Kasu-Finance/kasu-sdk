@@ -3,17 +3,18 @@ import { Box, Card, Typography } from '@mui/material'
 import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
-import mockData from '@/components/molecules/details/mock-dummy-data'
+
+import poolDelegateMock from '@/mock-data/pool-details/poolDelegateMock'
 
 const PoolDelegateCard = () => {
   const { t } = useTranslation()
 
-  const data = mockData
+  const data = poolDelegateMock
 
   return (
     <Card sx={{ minWidth: 275, boxShadow: 3, padding: 2 }} elevation={1}>
       <Typography variant='h6' mb={2}>
-        {t('poolDetails.title')}
+        {t('details.poolDelegate.title')}
       </Typography>
 
       <Box display='flex'>
@@ -63,7 +64,7 @@ const PoolDelegateCard = () => {
               showDivider
               metric={
                 <Typography variant='body2' component='span' pr={2}>
-                  {row.metric}
+                  <b>{row.metric}</b> {row?.unit || ''}
                 </Typography>
               }
             />

@@ -7,8 +7,8 @@ interface ImageProps extends NextImageProps {
   style?: CSSProperties
 }
 
-const AppImage: FC<ImageProps> = ({ src, alt, style, ...props }) => (
+const NextImage: FC<ImageProps> = ({ src, alt, style, ...props }) => (
   <Image src={src} alt={alt} style={style} {...props} />
 )
 
-export default AppImage
+export default NextImage

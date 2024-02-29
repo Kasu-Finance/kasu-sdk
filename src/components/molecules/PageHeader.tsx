@@ -1,11 +1,12 @@
 'use client'
+
 import { Box, Paper, styled, Typography } from '@mui/material'
 
 import useTranslation from '@/hooks/useTranslation'
 
 import AppAvatar from '@/components/atoms/AppAvatar'
-import AppImage from '@/components/atoms/AppImage'
 import BackButton from '@/components/atoms/BackButton'
+import NextImage from '@/components/atoms/NextImage'
 
 import ArrowLeftIcon from '@/assets/icons/general/ArrowLeftIcon'
 import ImagePlaceholderIcon from '@/assets/icons/general/ImagePlaceholderIcon'
@@ -23,7 +24,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title }) => {
     <Paper sx={{ borderRadius: '4px' }}>
       <ImageContainer>
         {poolAvatarImg ? (
-          <AppImage
+          <NextImage
             fill
             src={poolAvatarImg}
             alt="Pool's image"

@@ -1,17 +1,16 @@
-
-  
   type ColumnItem = {
     title: string;
     toolTipInfo: string;
     metric: string | string[];
+    unit?: string;
   };
   
-  type MockData = {
+  type PoolDelegateData = {
     leftColumn: ColumnItem[];
     rightColumn: ColumnItem[];
   };
   
-const mockData: MockData = {
+const poolDelegateMock: PoolDelegateData = {
     "leftColumn": [
       {
         "title": "Lending History",
@@ -37,25 +36,29 @@ const mockData: MockData = {
       {
         "title": "Total Loan Funds Originated​",
         "toolTipInfo": "toolTipInfo",
-        "metric": "10.00 M USDC"
+        "metric": "10.00 M",
+        "unit": "USDC"
       },
       {
         "title": "Total Loans Originated",
         "toolTipInfo": "toolTipInfo",
-        "metric": "1.00 M USDC"
+        "metric": "1.00 M",
+        "unit": "USDC"
       },
       {
         "title": "Loans Under Management",
         "toolTipInfo": "toolTipInfo",
-        "metric": "1.00 M USDC"
+        "metric": "1.00 M",
+        "unit": "USDC"
       },
       {
         "title": "Historical Loss Rate",
         "toolTipInfo": "toolTipInfo",
-        "metric": "1.00 %"
+        "metric": "1.00 %",
+        "unit": ""
       }
     ]
   }
   
-  export default mockData;
+  export default poolDelegateMock;
   
