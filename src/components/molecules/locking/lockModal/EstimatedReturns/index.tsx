@@ -1,4 +1,4 @@
-import { alpha, Box, Theme, Typography } from '@mui/material'
+import { Box, Theme, Typography } from '@mui/material'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
 import useAvailableKsuBonus from '@/hooks/locking/useAvailableKsuBonus'
@@ -44,9 +44,9 @@ const EstimatedReturns = () => {
       </Typography>
       <ColoredBox
         mt={1}
-        sx={(theme) => ({
-          bgcolor: disabled ? alpha(theme.palette.error.main, 0.04) : undefined,
-        })}
+        sx={{
+          bgcolor: lockState.bgColor,
+        }}
       >
         <InfoRow
           title={t('modals.lock.estimates.est-1')}

@@ -16,6 +16,10 @@ export type LockState =
       bgColor: string
       errorMessage: string
     }
+  | {
+      type: 'success'
+      bgColor: string
+    }
   | { type: 'default'; bgColor: undefined }
 
 export type LockStateParam =
@@ -27,6 +31,7 @@ export type LockStateParam =
       errorMessage: string
     }
   | { type: 'default' }
+  | { type: 'success' }
 
 export type LockModalActions =
   | {

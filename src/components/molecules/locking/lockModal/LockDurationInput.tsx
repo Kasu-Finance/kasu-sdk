@@ -36,7 +36,7 @@ const LockDurationInput = () => {
         disabled={disabled}
         sx={{
           height: 4,
-          maxWidth: 450,
+          maxWidth: 430,
           mt: 2,
           mx: 'auto',
           display: 'block',
@@ -55,6 +55,10 @@ const LockDurationInput = () => {
           },
         }}
         getAriaValueText={(val) => val.toString()}
+        valueLabelFormat={(val) =>
+          `${lockPeriods[val].lockPeriod} ${t('time.days')}`
+        }
+        valueLabelDisplay='auto'
         step={null}
         marks={
           disabled

@@ -2,6 +2,7 @@ import { alpha, Box, Typography } from '@mui/material'
 import { useState } from 'react'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
+import useEstimatedDepositValue from '@/hooks/locking/useEstimatedDepositValue'
 import useTranslation from '@/hooks/useTranslation'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
@@ -11,7 +12,7 @@ import NumericalInput from '@/components/molecules/NumericalInput'
 
 import { LockIcon } from '@/assets/icons'
 
-import { toBigNumber } from '@/utils'
+import { formatAmount, toBigNumber } from '@/utils'
 
 type LockAmountInputProps = {
   balance: string
@@ -21,6 +22,8 @@ const LockAmountInput: React.FC<LockAmountInputProps> = ({ balance }) => {
   const { amount, setAmount, lockState, setLockState } = useLockModalState()
 
   const [focused, setFocused] = useState(false)
+
+  const estimatedDepositValue = useEstimatedDepositValue(amount)
 
   const showSuccess =
     !toBigNumber(amount).isZero() && !focused && lockState.type !== 'error'
@@ -45,7 +48,7 @@ const LockAmountInput: React.FC<LockAmountInputProps> = ({ balance }) => {
       return
     }
 
-    setLockState({ type: 'default' })
+    setLockState({ type: amount ? 'success' : 'default' })
   }
 
   const handleFocusState = (state: boolean) => {
@@ -123,21 +126,36 @@ const LockAmountInput: React.FC<LockAmountInputProps> = ({ balance }) => {
           </Typography>
         </ColoredBox>
       )}
-      <ColoredBox
-        mt={1.5}
-        sx={{
-          bgcolor: lockState.bgColor,
-        }}
+      <Typography
+        variant='caption'
+        component='span'
+        display='block'
+        mt='3px'
+        mx={1.5}
+        mb={1}
       >
-        <InfoRow
-          title={t('modals.lock.deposit.metric')}
-          metric={
-            <Box>
-              <TokenAmount amount='5,000.00' symbol='USDC' />
-            </Box>
-          }
-        />
-      </ColoredBox>
+        {formatAmount(estimatedDepositValue, { minDecimals: 2 })} USDC
+      </Typography>
+      <InfoRow
+        title='Minimum KSU Lock Amount for Loyalty 1'
+        toolTipInfo='info'
+        showDivider
+        metric={
+          <Box>
+            <TokenAmount amount='500.00' symbol='KSU' />
+          </Box>
+        }
+      />
+      <InfoRow
+        title='Minimum KSU Lock Amount for Loyalty 2'
+        toolTipInfo='info'
+        showDivider
+        metric={
+          <Box>
+            <TokenAmount amount='1,000.00' symbol='KSU' />
+          </Box>
+        }
+      />
     </Box>
   )
 }

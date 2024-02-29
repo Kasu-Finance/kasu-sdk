@@ -49,8 +49,11 @@ const useLockModalState = (): LockModalTypes => {
         newLockState = {
           ...lockState,
           bgColor: alpha(
-            theme.palette[lockState.type === 'error' ? 'error' : 'primary']
-              .main,
+            theme.palette[
+              ['error', 'success'].includes(lockState.type)
+                ? (lockState.type as 'success' | 'error')
+                : 'primary'
+            ].main,
             0.04
           ),
         }

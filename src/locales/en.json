@@ -99,7 +99,7 @@
         "total": " Total KSU locked"
       },
       "deposit": {
-        "title": "Locked Deposit",
+        "title": "KSU Locking",
         "input-label": "Lock Amount",
         "metric": "Locking Amount at Current Exchange Rate"
       },
