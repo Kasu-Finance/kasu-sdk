@@ -5,7 +5,7 @@ import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import React from 'react'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
-import useLockToken from '@/hooks/locking/useLockToken'
+import useLockKSU from '@/hooks/locking/useLockKSU'
 import useTranslation from '@/hooks/useTranslation'
 import useApproveToken from '@/hooks/web3/useApproveToken'
 import useUserBalance from '@/hooks/web3/useUserBalance'
@@ -35,16 +35,12 @@ const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { balance, decimals } = useUserBalance(sdkConfig.contracts.KSUToken)
 
-  const lockToken = useLockToken()
+  const lockKSU = useLockKSU()
 
   return (
     <>
       <DialogHeader title='Lock' onClose={handleClose} />
-      <DialogContent
-        sx={{
-          p: 2,
-        }}
-      >
+      <DialogContent>
         {lockProgress === LockProgress.REVIEWING ? (
           <LockModalReview lockAmount={amount} />
         ) : lockProgress === LockProgress.EDITING ? (
@@ -67,14 +63,14 @@ const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               startIcon={<EditIcon />}
               onClick={() => setLockProgress(LockProgress.EDITING)}
             >
-              {t('modals.lock.buttons.adjustLock')}
+              {t('general.adjust')}
             </Button>
             <Button
               variant='contained'
               endIcon={<ChevronRightIcon />}
               onClick={() =>
                 isApproved
-                  ? lockToken(
+                  ? lockKSU(
                       parseUnits(amount, decimals),
                       selectedLockPeriod.lockPeriod
                     )

@@ -1,4 +1,4 @@
-import { alpha, Box, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { useState } from 'react'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
@@ -25,8 +25,7 @@ const LockAmountInput: React.FC<LockAmountInputProps> = ({ balance }) => {
 
   const estimatedDepositValue = useEstimatedDepositValue(amount)
 
-  const showSuccess =
-    !toBigNumber(amount).isZero() && !focused && lockState.type !== 'error'
+  const showSuccess = !focused && lockState.type === 'success'
 
   const handleMax = () => {
     setAmount(balance)
@@ -108,14 +107,16 @@ const LockAmountInput: React.FC<LockAmountInputProps> = ({ balance }) => {
           },
         }}
       />
-      {lockState.type === 'error' && (
+      {lockState.type === 'error' ? (
         <ColoredBox
           mt='3px'
-          sx={(theme) => ({
+          mb={1}
+          sx={{
             px: 1.5,
             py: 0,
-            background: alpha(theme.palette.error.main, 0.04),
-          })}
+            background: lockState.bgColor,
+            maxWidth: 'calc(100% - 64px)',
+          }}
         >
           <Typography
             variant='caption'
@@ -125,17 +126,18 @@ const LockAmountInput: React.FC<LockAmountInputProps> = ({ balance }) => {
             {lockState.errorMessage}
           </Typography>
         </ColoredBox>
+      ) : (
+        <Typography
+          variant='caption'
+          component='span'
+          display='block'
+          mt='3px'
+          mx={1.5}
+          mb={1.5}
+        >
+          {formatAmount(estimatedDepositValue, { minDecimals: 2 })} USDC
+        </Typography>
       )}
-      <Typography
-        variant='caption'
-        component='span'
-        display='block'
-        mt='3px'
-        mx={1.5}
-        mb={1}
-      >
-        {formatAmount(estimatedDepositValue, { minDecimals: 2 })} USDC
-      </Typography>
       <InfoRow
         title='Minimum KSU Lock Amount for Loyalty 1'
         toolTipInfo='info'

@@ -257,6 +257,13 @@ export const theme = createTheme({
         },
       },
     },
+    MuiDialogContent: {
+      styleOverrides: {
+        root: {
+          padding: '16px',
+        },
+      },
+    },
     MuiTableHead: {
       styleOverrides: {
         root: {

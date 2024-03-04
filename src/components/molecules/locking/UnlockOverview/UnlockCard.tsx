@@ -8,6 +8,7 @@ import {
 } from '@mui/material'
 import { UserLock } from 'kasu-sdk/src/types'
 
+import useModalState from '@/hooks/context/useModalState'
 import useTranslation from '@/hooks/useTranslation'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
@@ -26,11 +27,17 @@ type UnlockCardProps = {
 const UnlockCard: React.FC<UnlockCardProps> = ({ userLock }) => {
   const { t } = useTranslation()
 
+  const { openModal } = useModalState()
+
   const hasUnlocked = dayjs().isAfter(dayjs.unix(userLock.endTime))
 
   const remainingLockingPeriod = hasUnlocked
     ? 0
     : (userLock.endTime - userLock.startTime) / TimeConversions.SECONDS_PER_DAY
+
+  const handleOpen = () => {
+    openModal({ name: 'unlockModal', userLock })
+  }
 
   return (
     <Card elevation={0}>
@@ -108,6 +115,7 @@ const UnlockCard: React.FC<UnlockCardProps> = ({ userLock }) => {
           }}
           startIcon={<UnlockIcon />}
           disabled={!hasUnlocked}
+          onClick={handleOpen}
         >
           {t('general.unlock')}
         </Button>

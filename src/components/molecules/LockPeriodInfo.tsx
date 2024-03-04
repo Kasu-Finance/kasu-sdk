@@ -7,6 +7,8 @@ import useTranslation from '@/hooks/useTranslation'
 
 import { ArrowRightIcon } from '@/assets/icons'
 
+import { formatAmount } from '@/utils'
+
 type LockPeriodInfoProps = {
   activePeriod?: LockPeriod
 }
@@ -69,7 +71,11 @@ const LockPeriodInfo: React.FC<LockPeriodInfoProps> = ({ activePeriod }) => {
                 display='block'
                 p={(theme) => theme.spacing('6px', 2)}
               >
-                {period.ksuBonusMultiplier} ✕
+                {formatAmount(period.rKSUMultiplier, {
+                  minDecimals: 2,
+                  hideTrailingZero: false,
+                })}{' '}
+                ✕
                 <br />
                 <Typography variant='caption' component='span'>
                   multiplier

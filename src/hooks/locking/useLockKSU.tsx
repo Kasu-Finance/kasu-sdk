@@ -10,7 +10,7 @@ import { LockProgress } from '@/context/lockModal/lockModal.types'
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { waitForReceipt } from '@/utils'
 
-const useLockToken = () => {
+const useLockKSU = () => {
   const sdk = useKasuSDK()
 
   const handleError = useHandleError()
@@ -46,4 +46,4 @@ const useLockToken = () => {
   }
 }
 
-export default useLockToken
+export default useLockKSU

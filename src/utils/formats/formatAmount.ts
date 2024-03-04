@@ -5,6 +5,7 @@ type OptionsParam = {
   currency?: 'USD' | ''
   symbol?: string
   useGrouping?: boolean
+  hideTrailingZero?: boolean
 }
 
 const formatAmount = (
@@ -16,6 +17,7 @@ const formatAmount = (
     minValue,
     currency = '',
     useGrouping = true,
+    hideTrailingZero = true,
     symbol,
   } = options
 
@@ -43,10 +45,10 @@ const formatAmount = (
   const format = new Intl.NumberFormat('en-US', {
     ...(currency && { style: 'currency', currency }),
     ...(formatWithSuffix && { notation: 'compact', compactDisplay: 'short' }),
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 4,
+    minimumFractionDigits: minDecimals,
+    maximumFractionDigits: maxDecimals,
     // @ts-ignore typescript hasn't added this
-    trailingZeroDisplay: 'stripIfInteger',
+    trailingZeroDisplay: hideTrailingZero ? 'stripIfInteger' : 'auto',
     useGrouping,
   })
 
