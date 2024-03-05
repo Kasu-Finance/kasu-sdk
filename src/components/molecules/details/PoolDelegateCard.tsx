@@ -1,15 +1,40 @@
-import { Box, Card, Typography } from '@mui/material'
+'use client'
 
-import useTranslation from '@/hooks/useTranslation'
+import { Box, Card, Typography } from '@mui/material'
+import styled from 'styled-components'
+
+import useTranslation, { TranslationKeys } from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
+import NextLink from '@/components/atoms/NextLink'
 
-import poolDelegateMock from '@/mock-data/pool-details/poolDelegateMock'
+import mockResponseWithId from '@/mock-data/pool-details/mockResponse'
+
+export const BluedBgBox = styled(Box)(() => ({
+  display: 'flex',
+  width: '100%',
+  background: '#1976D20A',
+}))
 
 const PoolDelegateCard = () => {
   const { t } = useTranslation()
+  const metrics = mockResponseWithId.poolDelegate.data.metrics
 
-  const data = poolDelegateMock
+  const firstArray = metrics.filter(
+    (metric) =>
+      metric.id === 'lendingHistory' ||
+      metric.id === 'totalLoanFunds' ||
+      metric.id === 'totalLoansOriginated'
+  )
+
+  const secondArray = metrics.filter(
+    (metric) => metric.id === 'assetClasses' || metric.id === 'otherKasuPools'
+  )
+
+  const thirdArray = metrics.filter(
+    (metric) =>
+      metric.id === 'loansUnderManagement' || metric.id === 'historicalLossRate'
+  )
 
   return (
     <Card sx={{ minWidth: 275, boxShadow: 3, padding: 2 }} elevation={1}>
@@ -17,54 +42,77 @@ const PoolDelegateCard = () => {
         {t('details.poolDelegate.title')}
       </Typography>
 
-      <Box display='flex'>
-        <Box width='50%' p={2}>
-          {data.leftColumn.map((row, index) => (
+      <BluedBgBox justifyContent='space-between'>
+        {firstArray.map(({ id, metric, unit }) => (
+          <Box key={id} width='33%' flexDirection='column' sx={{ pb: 1 }}>
             <InfoRow
-              key={index}
-              title={row.title}
-              toolTipInfo={row.toolTipInfo}
-              titleStyle={{ pl: 2, mt: 1 }}
+              title={t(`details.poolDelegate.${id}` as TranslationKeys)}
+              toolTipInfo={t(
+                `details.poolDelegate.${id}Tooltip` as TranslationKeys
+              )}
               showDivider
+              metric={<></>}
+            />
+            <Typography variant='h6' sx={{ pl: 2 }}>
+              {metric}{' '}
+              <Typography variant='body1' component='span'>
+                {unit}
+              </Typography>
+            </Typography>
+          </Box>
+        ))}
+      </BluedBgBox>
+
+      <Box display='flex' justifyContent='space-between' width='100%' mt={2}>
+        <Box display='flex' flexDirection='column' width='50%'>
+          {secondArray.map(({ id, metric }) => (
+            <InfoRow
+              key={id}
+              title={t(`details.poolDelegate.${id}` as TranslationKeys)}
+              toolTipInfo={t(
+                `details.poolDelegate.${id}Tooltip` as TranslationKeys
+              )}
+              showDivider={id === 'assetClasses'}
               metric={
-                Array.isArray(row.metric) ? (
+                Array.isArray(metric) ? (
                   <Box
                     display='flex'
                     flexDirection='column'
                     alignItems='flex-end'
                   >
-                    {row.metric.map((item, itemIndex) => (
-                      <Typography
-                        key={itemIndex}
-                        variant='body2'
-                        component='span'
+                    {metric.map((item, itemIndex) => (
+                      <NextLink
+                        key={`${id}_${itemIndex}`}
+                        href='#'
                         color='primary'
-                        sx={{ cursor: 'pointer', pr: 2 }}
+                        variant='body2'
                       >
                         {item}
-                      </Typography>
+                      </NextLink>
                     ))}
                   </Box>
                 ) : (
-                  <Typography variant='body2' component='span' pr={2}>
-                    {row.metric}
+                  <Typography variant='body2' component='span'>
+                    {metric}
                   </Typography>
                 )
               }
             />
           ))}
         </Box>
-        <Box width='50%' p={2}>
-          {data.rightColumn.map((row, index) => (
+
+        <Box width='50%'>
+          {thirdArray.map(({ id, metric, unit }, index) => (
             <InfoRow
-              key={index}
-              title={row.title}
-              toolTipInfo={row.toolTipInfo}
-              titleStyle={{ pl: 2, mt: 1 }}
-              showDivider
+              key={id}
+              title={t(`details.poolDelegate.${id}` as TranslationKeys)}
+              toolTipInfo={t(
+                `details.poolDelegate.${id}Tooltip` as TranslationKeys
+              )}
+              showDivider={thirdArray.length - 1 !== index}
               metric={
-                <Typography variant='body2' component='span' pr={2}>
-                  <b>{row.metric}</b> {row?.unit || ''}
+                <Typography variant='h6'>
+                  {metric} {unit}
                 </Typography>
               }
             />

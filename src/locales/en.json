@@ -99,7 +99,75 @@
       }
     }
   },
-  "poolDetails": {
-    "title": "Pool Delegate Profile and History​"
+  "details": {
+    "poolDelegate" : {
+      "title": "Pool Delegate Profile and History​",
+      "lendingHistory": "Lending History",
+      "lendingHistoryTooltip": "lendingHistoryTooltip",
+      "assetClasses": "Asset Class(es)",
+      "assetClassesTooltip": "assetClassesTooltip",
+      "otherKasuPools": "Other KASU Pools",
+      "otherKasuPoolsTooltip": "otherKasuPoolsTooltip",
+      "totalLoanFunds": "Total Loan Funds Originated",
+      "totalLoanFundsTooltip": "TotalLoanFundsTooltip",
+      "totalLoansOriginated": "Total Loans Originated",
+      "totalLoansOriginatedTooltip": "totalLoansOriginatedTooltip",
+      "loansUnderManagement": "Loans Under Management",
+      "loansUnderManagementTooltip": "loansUnderManagementTooltip",
+      "historicalLossRate": "Historical Loss Rate",
+      "historicalLossRateTooltip": "historicalLossRateTooltip"
+    },
+    "poolDetails": {
+      "title": "Pool Details",
+      "apy": "APY",
+      "apyTooltip": "apyTooltip",
+      "assetClass": "Asset Class",
+      "assetClassTooltip": "assetClassTooltip",
+      "industryExposure": "Industry Exposure",
+      "industryExposureTooltip": "industryExposureTooltip",
+      "poolApyStructure": "Pool APY Structure",
+      "poolApyStructureTooltip": "poolApyStructureTooltip",
+      "poolInvestmentTerm": "Pool Investment Term",
+      "poolInvestmentTermTooltip": "poolInvestmentTermTooltip",
+      "loanStructure": "Loan Structure (End Borrowers)",
+      "loanStructureTooltip": "loanStructureTooltip"
+    },
+    "poolTraction": {
+      "title": "Pool Traction",
+      "totalValueLocked": "Total Value Locked (TVL)",
+      "totalValueLockedTooltip": "totalValueLockedTooltip",
+      "loansUnderManagement": "Loans Under Management",
+      "loansUnderManagementTooltip": "loansUnderManagementTooltip",
+      "yieldEarned": "Yield Earned",
+      "yieldEarnedTooltip": "yieldEarnedTooltip",
+      "poolCapacity": "Pool Capacity",
+      "poolCapacityTooltip": "poolCapacityTooltip",
+      "activeLoans": "Active Loans",
+      "activeLoansTooltip": "activeLoansTooltip"
+    },
+    "riskManagement": {
+      "title": "Risk Management",
+      "firstLossCapital": "First Loss Capital",
+      "firstLossCapitalTooltip": "firstLossCapitalTooltip",
+      "securityStructureBorrowers": "Security Structure over End Borrowers",
+      "directorsGuarantees": "Director(s) Guarantees",
+      "directorsGuaranteesTooltip": "directorsGuaranteesTooltip",
+      "chargeBusinessAssets": "Charge over Business Assets",
+      "chargeBusinessAssetsTooltip": "chargeBusinessAssetsTooltip",
+      "controlBankAccounts": "Control over Bank Accounts",
+      "controlBankAccountsTooltip": "controlBankAccountsTooltip",
+      "borrowerCriteria": "Minimum Criteria for End Borrowers",
+      "minimum3yearsInBusiness": "Minimum 3 years in Business",
+      "minimum3yearsInBusinessTooltip": "minimum3yearsInBusinessTooltip",
+      "directorsPropertyOwners": "Directors must be property owners",
+      "directorsPropertyOwnersTooltip": "directorsPropertyOwnersTooltip",
+      "riskPerformance": "Risk Performance",
+      "poolLossRate": "Pool Loss Rate",
+      "poolLossRateTooltip": "poolLossRateTooltip",
+      "independentRiskScore": "Independent Risk Score",
+      "independentRiskScoreTooltip": "independentRiskScoreTooltip",
+      "communityRating": "KASU Community Rating",
+      "communityRatingTooltip": "CommunityRatingTooltip"
+    }
   }
 }

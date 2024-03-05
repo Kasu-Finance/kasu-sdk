@@ -66,6 +66,8 @@ export const theme = createTheme({
     },
     grey: {
       300: 'rgba(0, 0, 0, 0.04)',
+      400: 'rgba(0, 0, 0, 0.38)',
+      900: 'rgba(117, 117, 117, 1)',
     },
   },
   typography: {
@@ -108,7 +110,13 @@ export const theme = createTheme({
       fontWeight: 500,
       lineHeight: '22px',
     },
-
+    subtitle1: {
+      fontFamily: fontFamily,
+      fontSize: 16,
+      fontWeight: 700,
+      lineHeight: '28px',
+      letterSpacing: '0.15px',
+    },
     subtitle2: {
       fontFamily: fontFamily,
       fontSize: 14,

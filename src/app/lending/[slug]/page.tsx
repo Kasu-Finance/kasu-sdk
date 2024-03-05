@@ -6,7 +6,7 @@ import PoolTabs from '@/components/organisms/lending/PoolTabs'
 const SinglePoolPage = ({ params }: { params: { slug: string } }) => {
   return (
     <Container maxWidth='lg'>
-      <PageHeader title={'Pool: ' + params.slug} />
+      <PageHeader title={'Pool: ' + params.slug} loading={false} />
       <PoolTabs />
     </Container>
   )
