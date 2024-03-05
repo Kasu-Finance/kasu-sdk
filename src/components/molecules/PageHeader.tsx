@@ -1,24 +1,31 @@
 'use client'
 
 import { Box, Paper, styled, Typography } from '@mui/material'
+import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
-import AppAvatar from '@/components/atoms/AppAvatar'
+import Avatar from '@/components/atoms/Avatar'
 import BackButton from '@/components/atoms/BackButton'
 import NextImage from '@/components/atoms/NextImage'
+import PageHeaderSkeleton from '@/components/molecules/loaders/PageHeaderSkeleton'
 
 import ArrowLeftIcon from '@/assets/icons/general/ArrowLeftIcon'
 import ImagePlaceholderIcon from '@/assets/icons/general/ImagePlaceholderIcon'
 
 type PageHeaderProps = {
   title: string
+  loading?: boolean
 }
 
-const PageHeader: React.FC<PageHeaderProps> = ({ title }) => {
+const PageHeader: React.FC<PageHeaderProps> = ({ title, loading = false }) => {
   const { t } = useTranslation()
 
   const poolAvatarImg = ''
+
+  if (loading) {
+    return <PageHeaderSkeleton />
+  }
 
   return (
     <Paper sx={{ borderRadius: '4px' }}>
@@ -42,7 +49,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title }) => {
         p={2}
       >
         <Box display='flex' alignItems='center'>
-          <AppAvatar src={poolAvatarImg} name='Pool Name' />
+          <Avatar src={poolAvatarImg} name='Pool Name' />
           <Typography variant='h6' component='h1' sx={{ ml: 2 }}>
             {title}
           </Typography>
