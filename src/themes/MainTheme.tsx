@@ -353,9 +353,9 @@ export const theme = createTheme({
           // textTransform: 'inherit',
           fontWeight: 500,
           minWidth: 0,
-          '&.disabled': {
-            backgroundColor: '#006BA6a7',
-            borderColor: '#008fbe',
+          '&.Mui-disabled': {
+            pointerEvents: 'visible',
+            cursor: 'not-allowed',
           },
         },
       },
