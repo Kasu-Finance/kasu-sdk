@@ -1,5 +1,5 @@
 import Image, { ImageProps as NextImageProps } from 'next/image'
-import { CSSProperties, FC } from 'react'
+import React, { CSSProperties } from 'react'
 
 interface ImageProps extends NextImageProps {
   src: string
@@ -7,7 +7,7 @@ interface ImageProps extends NextImageProps {
   style?: CSSProperties
 }
 
-const NextImage: FC<ImageProps> = ({ src, alt, style, ...props }) => (
+const NextImage: React.FC<ImageProps> = ({ src, alt, style, ...props }) => (
   <Image src={src} alt={alt} style={style} {...props} />
 )
 
