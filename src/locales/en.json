@@ -115,11 +115,11 @@
       },
       "estimates": {
         "title": "Estimates",
-        "est-1": "Your Average Rewards Multiplier",
+        "est-1": "Your Protocol Fee Rewards",
         "tooltip-1": "info",
-        "est-2": "Your Protocol Fee Rewards",
+        "est-2": "APY Bonus (Paid in KSU)",
         "tooltip-2": "info",
-        "est-3": "Projected KSU Yield Earnings",
+        "est-3": "Launch Bonus",
         "tooltip-3": "info"
       },
       "reviewLock": {

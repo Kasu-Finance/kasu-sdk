@@ -52,9 +52,15 @@ const EstimatedReturns = () => {
           title={t('modals.lock.estimates.est-1')}
           toolTipInfo={t('modals.lock.estimates.tooltip-1')}
           metric={
-            <Typography variant='h6' component='span' color={getTextColor}>
-              {disabled ? '0.00' : '0.15'} ✕
-            </Typography>
+            <Box color={getTextColor}>
+              <TokenAmount
+                amount={formatAmount(disabled ? '0' : projectedUsdcEarning, {
+                  minDecimals: 2,
+                  minValue: 100_000_000_000,
+                })}
+                symbol='USDC'
+              />
+            </Box>
           }
           showDivider
         />
@@ -64,11 +70,11 @@ const EstimatedReturns = () => {
           metric={
             <Box color={getTextColor}>
               <TokenAmount
-                amount={formatAmount(disabled ? '0' : projectedUsdcEarning, {
+                amount={formatAmount('0', {
                   minDecimals: 2,
                   minValue: 100_000_000_000,
                 })}
-                symbol='USDC'
+                symbol='KSU'
               />
             </Box>
           }
