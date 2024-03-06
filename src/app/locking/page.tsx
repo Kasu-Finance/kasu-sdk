@@ -2,8 +2,8 @@ import { Container, Grid } from '@mui/material'
 
 import BalanceOverview from '@/components/molecules/locking/BalanceOverview'
 import LoyaltyOverview from '@/components/molecules/locking/LoyaltyOverview'
+import RewardsBreakdown from '@/components/molecules/locking/RewardsBreakdown'
 import RewardSummary from '@/components/molecules/locking/RewardSummary'
-import TotalRewardsOverview from '@/components/molecules/locking/TotalRewardsOverview'
 import UnlockOverview from '@/components/molecules/locking/UnlockOverview'
 import PageHeader from '@/components/molecules/PageHeader'
 
@@ -15,11 +15,13 @@ const Locking = async () => {
         <Grid item xs={12} md={6}>
           <BalanceOverview />
           <RewardSummary />
-          <UnlockOverview />
         </Grid>
         <Grid item xs={12} md={6}>
           <LoyaltyOverview />
-          <TotalRewardsOverview />
+        </Grid>
+        <Grid item xs={12}>
+          <RewardsBreakdown />
+          <UnlockOverview />
         </Grid>
       </Grid>
     </Container>

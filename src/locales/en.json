@@ -62,7 +62,7 @@
         }
       },
       "totalRewards": {
-        "title": "Your Total Rewards",
+        "title": "Bonus & Rewards Breakdown",
         "metric-1": "Epoch ends in",
         "rewards-1": {
           "title": "Reward 1 • KSU Earnings Multiplier",
