@@ -19,6 +19,7 @@ export const userStakedKsuQuery = gql`
 export const userLocksQuery = gql`
     query getUserLocks($userAddress: String!) {
         userLocks(where: { userLockDepositsInfo: $userAddress }) {
+            id
             ksuAmount
             endTimestamp
             startTimestamp

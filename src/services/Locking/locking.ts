@@ -108,13 +108,18 @@ export class KSULocking {
         });
 
         return result.userLocks
-            .map((userLock) => ({
-                lockedAmount: userLock.ksuAmount,
-                rKSUAmount: userLock.rKSUAmount,
-                startTime: Number(userLock.startTimestamp),
-                endTime: Number(userLock.endTimestamp),
-                lockPeriod: userLock.lockPeriod,
-            }))
+            .map((userLock) => {
+                const [, id] = userLock.id.split('-');
+
+                return {
+                    id: BigNumber.from(id),
+                    lockedAmount: userLock.ksuAmount,
+                    rKSUAmount: userLock.rKSUAmount,
+                    startTime: Number(userLock.startTimestamp),
+                    endTime: Number(userLock.endTimestamp),
+                    lockPeriod: userLock.lockPeriod,
+                };
+            })
             .sort((a, b) => a.endTime - b.endTime);
     }
 
