@@ -32,7 +32,11 @@ const LoyaltyLevelInfo: React.FC<LoyaltyLevelInfoProps> = ({
   listLabelProps,
 }) => {
   return (
-    <ColoredBox display='grid' p={[1, 2]} gap={2} sx={rootStyles}>
+    <ColoredBox
+      display='grid'
+      gap={2}
+      sx={{ px: 2, pt: 1, pb: 2, ...rootStyles }}
+    >
       <Box
         display='grid'
         gridTemplateColumns='max-content minmax(0, 1fr)'

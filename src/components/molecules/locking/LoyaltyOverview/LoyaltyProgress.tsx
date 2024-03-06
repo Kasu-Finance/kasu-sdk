@@ -61,7 +61,7 @@ const LoyaltyProgress: React.FC<LoyaltyProgressProps> = ({
   const currentLevel = getCurrentLevel(stakedPercentage)
 
   return (
-    <Box mt={1}>
+    <Box my={1} px='7px'>
       <Box
         display='grid'
         alignItems='center'
