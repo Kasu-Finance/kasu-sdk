@@ -1,3 +1,5 @@
+import { UserLock } from 'kasu-sdk/src/types'
+
 export type ModalBase = {
   isOpen: boolean
 }
@@ -17,9 +19,10 @@ export type Modals = {
   connectWalletModal: ModalData
   loyaltyLevelsModal: ModalData
   lockModal: ModalData
+  unlockModal: ModalData<{ userLock: UserLock }>
 }
 
-export type ModalWithProps = Extract<keyof Modals, 'successModal'>
+export type ModalWithProps = Extract<keyof Modals, 'unlockModal'>
 
 export type OpenModalWithProps<T extends keyof Modals> = Omit<
   Modals[T],

@@ -63,6 +63,7 @@ export const theme = createTheme({
     text: {
       primary: 'rgba(0, 0, 0, 0.87)',
       secondary: 'rgba(0,0,0, 0.6)',
+      disabled: 'rgba(0, 0, 0, 0.38)',
     },
   },
   typography: {
@@ -86,12 +87,12 @@ export const theme = createTheme({
       fontSize: 16,
     },
     body2: {
-      fontFamily: fontFamily,
+      fontFamily,
       fontSize: 14,
       lineHeight: '20px',
     },
     caption: {
-      fontFamily: fontFamily,
+      fontFamily,
       fontSize: 12,
       lineHeight: '20px',
     },
@@ -100,14 +101,20 @@ export const theme = createTheme({
       letterSpacing: '1px',
     },
     button: {
-      fontFamily: fontFamily,
+      fontFamily,
       fontSize: 13,
       fontWeight: 500,
       lineHeight: '22px',
     },
-
+    subtitle1: {
+      fontFamily,
+      fontSize: 16,
+      fontWeight: 700,
+      lineHeight: '28px',
+      letterSpacing: '0.15px',
+    },
     subtitle2: {
-      fontFamily: fontFamily,
+      fontFamily,
       fontSize: 14,
       fontWeight: 500,
       lineHeight: '24px',
@@ -212,44 +219,7 @@ export const theme = createTheme({
       },
     },
     MuiCardContent: {
-      styleOverrides: {
-        // root: {
-        //   ':last-child': {
-        //     padding: '0px',
-        //   },
-        //   '&.section-card-content': {
-        //     display: 'flex',
-        //     flexDirection: 'column',
-        //   },
-        //   '&.section-item-card-content': {
-        //     width: '100%',
-        //   },
-        //   '> .section-item-header': {
-        //     display: 'flex',
-        //     alignItems: 'baseline',
-        //     padding: '6px 16px',
-        //     whiteSpace: 'pre',
-        //     '&.darker': {
-        //       backgroundColor: 'rgba(0, 0, 0, 0.08)',
-        //     },
-        //   },
-        //   '> .section-item-header-column': {
-        //     flexDirection: 'column',
-        //   },
-        //   '> .section-item-content': {
-        //     padding: '6px 16px',
-        //     backgroundColor: '#fff',
-        //   },
-        //   '> .section-content': {
-        //     display: 'flex',
-        //     flexDirection: 'row',
-        //     width: '100%',
-        //   },
-        //   '.primary-background-color': {
-        //     backgroundColor: alpha(primaryColor, 0.04),
-        //   },
-        // },
-      },
+      styleOverrides: {},
     },
     MuiTextField: {
       styleOverrides: {
@@ -284,6 +254,13 @@ export const theme = createTheme({
           borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
           borderBottomLeftRadius: 0,
           borderBottomRightRadius: 0,
+        },
+      },
+    },
+    MuiDialogContent: {
+      styleOverrides: {
+        root: {
+          padding: '16px',
         },
       },
     },
@@ -376,9 +353,9 @@ export const theme = createTheme({
           // textTransform: 'inherit',
           fontWeight: 500,
           minWidth: 0,
-          '&.disabled': {
-            backgroundColor: '#006BA6a7',
-            borderColor: '#008fbe',
+          '&.Mui-disabled': {
+            pointerEvents: 'visible',
+            cursor: 'not-allowed',
           },
         },
       },
