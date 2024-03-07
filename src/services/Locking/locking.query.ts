@@ -8,6 +8,14 @@ export const claimedFeesQuery = gql`
     }
 `;
 
+export const userEarnedrKsuQuery = gql`
+    query getClaimedFeesForAddress($userAddress: String!) {
+        userLockDepositsInfo(id: $userAddress) {
+            rKSUAmount
+        }
+    }
+`;
+
 export const userStakedKsuQuery = gql`
     query getUserLockDepositsInfo($userAddress: String!) {
         userLockDepositsInfo(id: $userAddress) {

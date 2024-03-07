@@ -38,9 +38,15 @@ export interface GQLClaimedFeesForAddress {
         feesClaimed: string;
     };
 }
-export interface GQLUserLockDepositsInfo {
+export interface GQLStakedAmountForAddress {
     userLockDepositsInfo: {
         ksuLockedAmount: string;
+    };
+}
+
+export interface GQLEarnedRKsuForAddress {
+    userLockDepositsInfo: {
+        rKSUAmount: string;
     };
 }
 

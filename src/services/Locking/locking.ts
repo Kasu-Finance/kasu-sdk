@@ -12,8 +12,9 @@ import { IKSULockingAbi__factory } from '../../contracts/factories/IKSULockingAb
 import { SdkConfig } from '../../sdk-config';
 import {
     GQLClaimedFeesForAddress,
+    GQLEarnedRKsuForAddress,
     GQLGetLockingPeriods,
-    GQLUserLockDepositsInfo,
+    GQLStakedAmountForAddress,
     GQLUserLocks,
     LockPeriod,
     LockPeriodInterface,
@@ -23,6 +24,7 @@ import {
 
 import {
     claimedFeesQuery,
+    userEarnedrKsuQuery,
     userLocksQuery,
     userStakedKsuQuery,
 } from './locking.query';
@@ -177,7 +179,7 @@ export class KSULocking {
     }
 
     async getUserStakedKsu(userAddress: string): Promise<string> {
-        const result: GQLUserLockDepositsInfo = await this._graph.request(
+        const result: GQLStakedAmountForAddress = await this._graph.request(
             userStakedKsuQuery,
             {
                 userAddress: userAddress.toLowerCase(),
@@ -185,6 +187,17 @@ export class KSULocking {
         );
 
         return result.userLockDepositsInfo.ksuLockedAmount;
+    }
+
+    async getUserEarnedrKsu(userAddress: string): Promise<string> {
+        const result: GQLEarnedRKsuForAddress = await this._graph.request(
+            userEarnedrKsuQuery,
+            {
+                userAddress: userAddress.toLowerCase(),
+            },
+        );
+
+        return result.userLockDepositsInfo.rKSUAmount;
     }
 
     async getLockingRewards(
