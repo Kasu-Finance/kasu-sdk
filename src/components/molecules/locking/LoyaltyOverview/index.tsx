@@ -1,10 +1,13 @@
 'use client'
 
-import { Box, Button, Divider, Typography } from '@mui/material'
+import { Button, Divider, Typography } from '@mui/material'
 
 import useModalState from '@/hooks/context/useModalState'
 import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
 import useTranslation from '@/hooks/useTranslation'
+import useEarnedRKsu from '@/hooks/web3/useEarnedRKsu'
+import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
+import useTotalLendingPoolDeposits from '@/hooks/web3/useTotalLendingPoolDeposits'
 
 import CardWidget from '@/components/atoms/CardWidget'
 import InfoRow from '@/components/atoms/InfoRow'
@@ -14,14 +17,18 @@ import LoyaltyProgress from '@/components/molecules/locking/LoyaltyOverview/Loya
 
 import { ArrowRightIcon } from '@/assets/icons'
 
-import { capitalize } from '@/utils'
-
-const stakedPercentage: number = 3
+import { capitalize, formatAmount } from '@/utils'
 
 const LoyaltyOverview = () => {
   const { openModal } = useModalState()
   const { t } = useTranslation()
   const handleOpen = () => openModal({ name: 'loyaltyLevelsModal' })
+
+  const { totalDeposits } = useTotalLendingPoolDeposits()
+
+  const { rKsuAmount } = useEarnedRKsu()
+
+  const stakedPercentage = useLockingPercentage()
 
   const { currentLevel } = useLoyaltyLevel(stakedPercentage)
 
@@ -77,9 +84,10 @@ const LoyaltyOverview = () => {
         title={`rKSU ${capitalize(t('general.balance'))}`}
         toolTipInfo='info'
         metric={
-          <Box>
-            <TokenAmount amount='15,000.00' symbol='rKSU' />
-          </Box>
+          <TokenAmount
+            amount={formatAmount(rKsuAmount ?? '0', { minDecimals: 2 })}
+            symbol='rKSU'
+          />
         }
       />
       <Divider />
@@ -87,9 +95,10 @@ const LoyaltyOverview = () => {
         title={t('locking.widgets.loyalty.metric-2')}
         toolTipInfo='info'
         metric={
-          <Box>
-            <TokenAmount amount='650,000.00' symbol='USDC' />
-          </Box>
+          <TokenAmount
+            amount={formatAmount(totalDeposits ?? '0', { minDecimals: 2 })}
+            symbol='USDC'
+          />
         }
       />
       <Divider />
@@ -98,7 +107,10 @@ const LoyaltyOverview = () => {
         toolTipInfo='info'
         metric={
           <Typography variant='h6' component='span'>
-            1.15%
+            {formatAmount(stakedPercentage, {
+              maxDecimals: 2,
+            })}
+            %
           </Typography>
         }
       />

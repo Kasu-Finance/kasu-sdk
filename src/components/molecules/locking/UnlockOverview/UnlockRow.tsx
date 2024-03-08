@@ -1,4 +1,4 @@
-import { Box, Button, TableCell, TableRow, Typography } from '@mui/material'
+import { Button, TableCell, TableRow, Typography } from '@mui/material'
 import { UserLock } from 'kasu-sdk/src/types'
 
 import useModalState from '@/hooks/context/useModalState'
@@ -28,9 +28,7 @@ const UnlockRow: React.FC<UnlockRowProps> = ({ userLock }) => {
   return (
     <TableRow>
       <TableCell>
-        <Box>
-          <TokenAmount amount={lockedAmount} symbol='KSU' />
-        </Box>
+        <TokenAmount amount={lockedAmount} symbol='KSU' />
         <Typography variant='caption' component='span' display='block'>
           {dayjs.unix(startTime).format('DD.MM.YYYY • HH:mm:ss UTCZZ')}
         </Typography>

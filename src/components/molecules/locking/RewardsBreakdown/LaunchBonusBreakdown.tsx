@@ -1,9 +1,18 @@
+import useLaunchBonusBreakdown from '@/hooks/locking/useLaunchBonusBreakdown'
 import useTranslation from '@/hooks/useTranslation'
 
 import RewardsBreakdownCard from '@/components/molecules/locking/RewardsBreakdown/RewardsBreakdownCard'
 
+import { formatAmount } from '@/utils'
+
 const LaunchBonusBreakdown = () => {
   const { t } = useTranslation()
+
+  const {
+    totalLaunchBonus,
+    weightedAverageDaysLeft,
+    weightedAverageDaysLocked,
+  } = useLaunchBonusBreakdown()
 
   return (
     <RewardsBreakdownCard
@@ -12,17 +21,32 @@ const LaunchBonusBreakdown = () => {
         {
           title: 'Your Total Launch Bonus',
           toolTipInfo: 'info',
-          metric: ['500.00', 'KSU'],
+          metric: [
+            formatAmount(totalLaunchBonus ?? '0', { minDecimals: 2 }),
+            'KSU',
+          ],
         },
         {
           title: 'Weighted Average Days Locked',
           toolTipInfo: 'info',
-          metric: ['270', t('time.days')],
+          metric: [
+            formatAmount(weightedAverageDaysLocked ?? '0', {
+              minDecimals: 2,
+              hideTrailingZero: true,
+            }),
+            t('time.days'),
+          ],
         },
         {
           title: 'Weighted Average Lock Days Left',
           toolTipInfo: 'info',
-          metric: ['100', t('time.days')],
+          metric: [
+            formatAmount(weightedAverageDaysLeft ?? '0', {
+              minDecimals: 2,
+              hideTrailingZero: true,
+            }),
+            t('time.days'),
+          ],
         },
       ]}
     />

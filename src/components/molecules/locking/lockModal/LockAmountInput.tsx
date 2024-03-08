@@ -34,7 +34,7 @@ const LockAmountInput: React.FC<LockAmountInputProps> = ({ balance }) => {
   const { t } = useTranslation()
 
   const validate = (amount: string) => {
-    if (amount && toBigNumber(amount).gt(toBigNumber('100'))) {
+    if (amount && toBigNumber(amount).gt(toBigNumber(balance))) {
       setLockState({
         type: 'error',
         errorMessage: 'insufficient balance',
@@ -142,21 +142,13 @@ const LockAmountInput: React.FC<LockAmountInputProps> = ({ balance }) => {
         title='Minimum KSU Lock Amount for Loyalty 1'
         toolTipInfo='info'
         showDivider
-        metric={
-          <Box>
-            <TokenAmount amount='500.00' symbol='KSU' />
-          </Box>
-        }
+        metric={<TokenAmount amount='500.00' symbol='KSU' />}
       />
       <InfoRow
         title='Minimum KSU Lock Amount for Loyalty 2'
         toolTipInfo='info'
         showDivider
-        metric={
-          <Box>
-            <TokenAmount amount='1,000.00' symbol='KSU' />
-          </Box>
-        }
+        metric={<TokenAmount amount='1,000.00' symbol='KSU' />}
       />
     </Box>
   )
