@@ -53,14 +53,63 @@ export interface GQLUserLocks {
     }[];
 }
 
-export interface PoolData {
-    id: string;
+export interface PoolOverview {
     poolName: string;
-    details: string;
-    tranches: TranchData[];
+    id: string;
+    apy: number;
+    description: string;
+    bannerImageUrl: string;
+    thumbnailImageUrl: string;
+    strategyDeckUrl: string;
+    tranches: TrancheData[];
+    totalValueLocked: number;
+    loansUnderManagement: number;
+    yieldEarned: number;
+    poolCapacity: number;
+    activeLoans: number;
+    assetClass: string;
+    industryExposure: string;
+    poolApyStructure: string;
+    poolInvestmentTerm: string;
+    loanStructure: string;
 }
 
-export interface TranchData {
+export interface PoolDelegateProfileAndHistory {
+    id: string;
+    poolIdFK: string;
+    delegateLendingHistory: string;
+    assetClass: string;
+    otherKASUPools: string[];
+    totalLoanFundsOriginated: number;
+    totalLoansOriginated: number;
+    loansUnderManagement: number;
+    historicLossRate: number;
+}
+
+export interface PoolTranches {
+    id: string;
+    poolIdFK: string;
+    apy: number;
+    remainingCapacity: number;
+    minimalDepositThreshold: number;
+    maximalDepositThreshold: number;
+}
+
+export interface RiskManagement {
+    id: string;
+    securityStructureEndBorrowers: string;
+    minimumCriteriaEndBorrowers: string;
+    riskPerformance: RiskPerformance;
+}
+
+export interface RiskPerformance {
+    id: string;
+    poolLossRate: number;
+    independentRiskScore: number;
+    communityRating: number;
+}
+
+export interface TrancheData {
     id: string;
     apy: number;
     maximumDeposit: number;
