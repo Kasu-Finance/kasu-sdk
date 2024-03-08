@@ -2,7 +2,7 @@ import { Box, Card, Typography } from '@mui/material'
 
 import useTranslation, { TranslationKeys } from '@/hooks/useTranslation'
 
-import InfoRow from '@/components/atoms/InfoRow'
+import MetricTextUnit from '@/components/molecules/details/MetricTextUnit'
 
 import mockResponseWithId from '@/mock-data/pool-details/mockResponse'
 
@@ -17,28 +17,25 @@ const PoolTractionCard = () => {
       </Typography>
 
       <Box display='flex' alignItems='center'>
-        {metrics.map(({ metric, unit, id }, index) => (
+        {metrics.map((metric, index) => (
           <Box
-            key={id}
+            key={metric.id}
             display='flex'
             width='100%'
             flexDirection='column'
             pl={index > 0 ? 1 : 0}
           >
-            <InfoRow
-              title={t(`details.poolTraction.${id}` as TranslationKeys)}
-              toolTipInfo={t(
-                `details.poolTraction.${id}Tooltip` as TranslationKeys
-              )}
-              showDivider
-              metric={<></>}
+            <MetricTextUnit
+              metric={metric}
+              containerSx={{ pr: index === metrics.length - 1 ? 0 : 0.5 }}
+              typographySx={{ pb: 1 }}
+              titleKey={
+                `details.poolTraction.${metric.id}.label` as TranslationKeys
+              }
+              tooltipKey={
+                `details.poolTraction.${metric.id}.label` as TranslationKeys
+              }
             />
-            <Typography variant='h6' component='span' sx={{ pl: 2 }}>
-              {metric}{' '}
-              <Typography variant='body1' component='span'>
-                {unit}
-              </Typography>
-            </Typography>
           </Box>
         ))}
       </Box>

@@ -1,10 +1,10 @@
 import { Box } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 
-import PoolDelegateCard from '@/components/molecules/details/PoolDelegateCard'
-import PoolDetailsCard from '@/components/molecules/details/PoolDetailsCard'
+import PoolDelegateCard from '@/components/molecules/details/poolDelegateCard/index'
+import PoolDetailsCard from '@/components/molecules/details/poolDetailsCard'
 import PoolTractionCard from '@/components/molecules/details/PoolTractionCard'
-import RiskManagementCard from '@/components/molecules/details/RiskManagementCard'
+import RiskManagementCard from '@/components/molecules/details/riskManagementCard'
 import CardSkeleton from '@/components/molecules/loaders/CardSkeleton'
 
 const PoodDetails: React.FC = () => {

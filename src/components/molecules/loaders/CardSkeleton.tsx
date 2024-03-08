@@ -6,6 +6,25 @@ interface CardSkeletonProps {
   rightRowNumbers: number
 }
 
+interface SkeletonRowsProps {
+  count: number
+  [key: string]: any
+}
+
+const SkeletonRows: React.FC<SkeletonRowsProps> = ({ count, ...props }) => (
+  <>
+    {Array.from({ length: count }).map((_, index) => (
+      <Skeleton
+        key={index}
+        variant='rectangular'
+        height={35}
+        sx={{ mb: 1 }}
+        {...props}
+      />
+    ))}
+  </>
+)
+
 const CardSkeleton: React.FC<CardSkeletonProps> = ({
   leftRowNumbers,
   rightRowNumbers,
@@ -15,24 +34,10 @@ const CardSkeleton: React.FC<CardSkeletonProps> = ({
       <Skeleton variant='text' width='40%' height={50} />
       <Box display='flex'>
         <Box width='50%'>
-          {[...Array(leftRowNumbers)].map((_, index) => (
-            <Skeleton
-              key={`left-${index}`}
-              variant='rectangular'
-              height={35}
-              sx={{ mb: 1 }}
-            />
-          ))}
+          <SkeletonRows count={leftRowNumbers} />
         </Box>
         <Box width='50%'>
-          {[...Array(rightRowNumbers)].map((_, index) => (
-            <Skeleton
-              key={`right-${index}`}
-              variant='rectangular'
-              height={35}
-              sx={{ mb: 1 }}
-            />
-          ))}
+          <SkeletonRows count={rightRowNumbers} />
         </Box>
       </Box>
     </Card>

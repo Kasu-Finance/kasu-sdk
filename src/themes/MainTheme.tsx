@@ -482,5 +482,12 @@ export const theme = createTheme({
         },
       },
     },
+    MuiCssBaseline: {
+      styleOverrides: `
+          .light-blue-background {
+            background-color: #1976D20A;
+          }
+        `,
+    },
   },
 })

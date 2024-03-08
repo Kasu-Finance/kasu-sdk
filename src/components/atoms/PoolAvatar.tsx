@@ -5,16 +5,16 @@ import React from 'react'
 
 import useImageError from '@/hooks/useImageError'
 
-import createTwoInitials from '@/utils/createTwoInitials'
+import getInitials from '@/utils/getInitials'
 
 interface AvatarProps extends MUIAvatarProps {
   src?: string
   name?: string
 }
 
-const Avatar: React.FC<AvatarProps> = ({ src, name, ...props }) => {
+const PoolAvatar: React.FC<AvatarProps> = ({ src, name, ...props }) => {
   const imgError = useImageError(src)
-  const initials: string = name ? createTwoInitials(name) : ''
+  const initials: string = name ? getInitials(name) : ''
 
   return (
     <MUIAvatar {...props} src={!imgError ? src : undefined}>
@@ -23,4 +23,4 @@ const Avatar: React.FC<AvatarProps> = ({ src, name, ...props }) => {
   )
 }
 
-export default Avatar
+export default PoolAvatar

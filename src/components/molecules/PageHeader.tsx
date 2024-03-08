@@ -5,9 +5,9 @@ import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
-import Avatar from '@/components/atoms/Avatar'
 import BackButton from '@/components/atoms/BackButton'
 import NextImage from '@/components/atoms/NextImage'
+import PoolAvatar from '@/components/atoms/PoolAvatar'
 import PageHeaderSkeleton from '@/components/molecules/loaders/PageHeaderSkeleton'
 
 import ArrowLeftIcon from '@/assets/icons/general/ArrowLeftIcon'
@@ -49,7 +49,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, loading = false }) => {
         p={2}
       >
         <Box display='flex' alignItems='center'>
-          <Avatar src={poolAvatarImg} name='Pool Name' />
+          <PoolAvatar src={poolAvatarImg} name='Pool Name' />
           <Typography variant='h6' component='h1' sx={{ ml: 2 }}>
             {title}
           </Typography>
