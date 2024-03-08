@@ -18,6 +18,7 @@ export class DataService {
             {
                 id: "1",
                 apy: 10,
+                poolAddress: "0x0",
                 poolName: "Fake Pool",
                 description: "This is a fake pool for testing",
                 bannerImageUrl: "https://example.com/banner.jpg",
@@ -38,6 +39,7 @@ export class DataService {
             {
                 id: "2",
                 apy: 20,
+                poolAddress: "0x1",
                 poolName: "Second Fake Pool",
                 description: "This is another fake pool for testing",
                 bannerImageUrl: "https://example2.com/banner.jpg",

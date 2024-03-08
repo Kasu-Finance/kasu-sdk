@@ -56,6 +56,7 @@ export interface GQLUserLocks {
 export interface PoolOverview {
     poolName: string;
     id: string;
+    poolAddress: string;
     apy: number;
     description: string;
     bannerImageUrl: string;
