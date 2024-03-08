@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material'
-import React from 'react'
+import React, { useMemo } from 'react'
 
-import useTranslation, { TranslationKeys } from '@/hooks/useTranslation'
+import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import Rating from '@/components/atoms/Rating'
@@ -17,17 +17,63 @@ interface RiskStatusProps {
 const RiskStatus: React.FC<RiskStatusProps> = ({ metrics }) => {
   const { t } = useTranslation()
 
-  const firstArray = metrics.filter(
-    (metric) =>
-      metric.id === PoolMetricIds.FirstLoss ||
-      metric.id === PoolMetricIds.LossRate
+  const { firstArray, secondArray } = useMemo(() => {
+    const firstArray: PoolMetric[] = metrics.filter((metric) =>
+      [PoolMetricIds.FirstLoss, PoolMetricIds.LossRate].includes(
+        metric.id as PoolMetricIds
+      )
+    )
+
+    const secondArray: PoolMetric[] = metrics.filter((metric) =>
+      [PoolMetricIds.RiskScore, PoolMetricIds.KasuRating].includes(
+        metric.id as PoolMetricIds
+      )
+    )
+
+    return { firstArray, secondArray }
+  }, [metrics])
+
+  const renderMetricTextUnit = (metric: PoolMetric) => (
+    <MetricTextUnit
+      key={metric.id}
+      metric={metric}
+      titleKey={`details.riskManagement.riskStatus.${metric.id}.label`}
+      tooltipKey={`details.riskManagement.riskStatus.${metric.id}.tooltip`}
+      typographyColor='grey.400'
+      typographySx={{ pb: 0.5 }}
+    />
   )
 
-  const secondArray = metrics.filter(
-    (metric) =>
-      metric.id === PoolMetricIds.RiskScore ||
-      metric.id === PoolMetricIds.KasuRating
-  )
+  const renderInfoRow = (metric: PoolMetric) => {
+    const title = t(`details.riskManagement.riskStatus.${metric.id}.label`)
+    const tooltip = t(`details.riskManagement.riskStatus.${metric.id}.tooltip`)
+
+    return (
+      <Box key={metric.id}>
+        <InfoRow
+          title={title}
+          toolTipInfo={tooltip}
+          metric={<></>}
+          showDivider
+        />
+        {metric.isRating ? (
+          <Rating
+            value={Number(metric.content)}
+            precision={0.5}
+            readOnly
+            sx={{ pl: 2, mt: 0.5 }}
+          />
+        ) : (
+          <Typography variant='h6' sx={{ pl: 2, mt: 0.5 }}>
+            {metric.content}{' '}
+            <Typography variant='body2' component='span'>
+              {metric.unit}
+            </Typography>
+          </Typography>
+        )}
+      </Box>
+    )
+  }
 
   return (
     <Box>
@@ -42,62 +88,11 @@ const RiskStatus: React.FC<RiskStatusProps> = ({ metrics }) => {
         pb={0.5}
       >
         <Box width='50%' display='flex' flexDirection='column' pr={2}>
-          {firstArray.map((metric) => {
-            const titleKey =
-              `details.riskManagement.riskStatus.${metric.id}.label` as TranslationKeys
-
-            const tooltipKey =
-              `details.riskManagement.riskStatus.${metric.id}.tooltip` as TranslationKeys
-
-            return (
-              <MetricTextUnit
-                key={metric.id}
-                metric={metric}
-                titleKey={titleKey}
-                tooltipKey={tooltipKey}
-                typographyColor='grey.400'
-                typographySx={{ pb: 0.5 }}
-              />
-            )
-          })}
+          {firstArray.map(renderMetricTextUnit)}
         </Box>
 
         <Box width='50%' display='flex' flexDirection='column'>
-          {secondArray.map((metric, index) => {
-            const { value, unit, isRating } = metric
-            const titleKey = t(
-              `details.riskManagement.riskStatus.${metric.id}.label` as TranslationKeys
-            )
-            const tooltipKey = t(
-              `details.riskManagement.riskStatus.${metric.id}.tooltip` as TranslationKeys
-            )
-
-            return (
-              <Box key={index}>
-                <InfoRow
-                  title={titleKey}
-                  toolTipInfo={tooltipKey}
-                  metric={<></>}
-                  showDivider
-                />
-                {isRating ? (
-                  <Rating
-                    value={Number(value)}
-                    precision={0.5}
-                    readOnly
-                    sx={{ pl: 2, mt: 0.5 }}
-                  />
-                ) : (
-                  <Typography variant='h6' sx={{ pl: 2, mt: 0.5 }}>
-                    {value}{' '}
-                    <Typography variant='body2' component='span'>
-                      {unit}
-                    </Typography>
-                  </Typography>
-                )}
-              </Box>
-            )
-          })}
+          {secondArray.map(renderInfoRow)}
         </Box>
       </Box>
     </Box>

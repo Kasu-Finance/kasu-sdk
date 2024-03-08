@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material'
 import React from 'react'
 
-import useTranslation, { TranslationKeys } from '@/hooks/useTranslation'
+import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import NextLink from '@/components/atoms/NextLink'
@@ -24,21 +24,19 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
     index: number,
     arrayLength: number
   ) => {
-    const titleKey =
-      `details.poolDelegate.${metric.id}.label` as TranslationKeys
-    const tooltipKey =
-      `details.poolDelegate.${metric.id}.tooltip` as TranslationKeys
+    const titleKey = `details.poolDelegate.${metric.id}.label`
+    const tooltipKey = `details.poolDelegate.${metric.id}.tooltip`
 
     const textDate =
       metric.id === PoolMetricIds.History
-        ? formatDuration(Number(metric.value))
-        : metric.value
+        ? formatDuration(Number(metric.content))
+        : metric.content
 
     switch (type) {
       case MetricGroupType.First:
         return (
           <MetricTextUnit
-            metric={{ ...metric, value: textDate }}
+            metric={{ ...metric, content: textDate }}
             titleKey={titleKey}
             tooltipKey={tooltipKey}
             containerSx={{ width: '33%', pb: 1, pr: 1 }}
@@ -53,13 +51,13 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
               toolTipInfo={t(tooltipKey)}
               showDivider={metric.id === PoolMetricIds.AssetClasses}
               metric={
-                Array.isArray(metric.value) ? (
+                Array.isArray(metric.content) ? (
                   <Box
                     display='flex'
                     flexDirection='column'
                     alignItems='flex-end'
                   >
-                    {metric.value.map((item, itemIndex) => (
+                    {metric.content.map((item, itemIndex) => (
                       <NextLink
                         key={`${metric.id}_${itemIndex}`}
                         href='#'
@@ -72,7 +70,7 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
                   </Box>
                 ) : (
                   <Typography variant='body2' component='span'>
-                    {metric.value}
+                    {metric.content}
                   </Typography>
                 )
               }
@@ -86,7 +84,7 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
             title={t(titleKey)}
             toolTipInfo={t(tooltipKey)}
             showDivider={index !== arrayLength - 1}
-            metric={<Typography variant='h6'>{metric.value}</Typography>}
+            metric={<Typography variant='h6'>{metric.content}</Typography>}
           />
         )
       default:

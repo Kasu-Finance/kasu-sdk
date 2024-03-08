@@ -1,9 +1,10 @@
-import { Card, Typography } from '@mui/material'
+import { Box, Card, Typography } from '@mui/material'
 
 import useTranslation from '@/hooks/useTranslation'
 
+import CriteriaSection from '@/components/molecules/details/riskManagementCard/CriteriaSection'
 import RiskStatus from '@/components/molecules/details/riskManagementCard/RiskStatus'
-import SecurityAndCriteria from '@/components/molecules/details/riskManagementCard/SecurityAndCriteria'
+import SecuritySection from '@/components/molecules/details/riskManagementCard/SecuritySection'
 
 import mockResponseWithId from '@/mock-data/pool-details/mockResponse'
 
@@ -19,10 +20,10 @@ const RiskManagementCard = () => {
 
       <RiskStatus metrics={riskStatus.metrics} />
 
-      <SecurityAndCriteria
-        securityMetrics={security.metrics}
-        criteriaMetrics={criteria.metrics}
-      />
+      <Box display='flex'>
+        <SecuritySection securityMetrics={security.metrics} />
+        <CriteriaSection criteriaMetrics={criteria.metrics} />
+      </Box>
     </Card>
   )
 }

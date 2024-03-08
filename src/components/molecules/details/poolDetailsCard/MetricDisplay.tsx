@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material'
 
-import useTranslation, { TranslationKeys } from '@/hooks/useTranslation'
+import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import MetricTextUnit from '@/components/molecules/details/MetricTextUnit'
@@ -20,9 +20,8 @@ const MetricDisplay: React.FC<MetricDisplayProps> = ({
   isLastItem,
 }) => {
   const { t } = useTranslation()
-  const titleKey = `details.poolDetails.${metric.id}.label` as TranslationKeys
-  const tooltipKey =
-    `details.poolDetails.${metric.id}.tooltip` as TranslationKeys
+  const titleKey = `details.poolDetails.${metric.id}.label`
+  const tooltipKey = `details.poolDetails.${metric.id}.tooltip`
 
   return (
     <>
@@ -40,7 +39,7 @@ const MetricDisplay: React.FC<MetricDisplayProps> = ({
             showDivider
             title={t(titleKey)}
             toolTipInfo={t(tooltipKey)}
-            metric={<Typography variant='body2'>{metric.value}</Typography>}
+            metric={<Typography variant='body2'>{metric.content}</Typography>}
           />
         </Box>
       )}

@@ -1,31 +1,42 @@
 import { Box, Card, Typography } from '@mui/material'
+import { useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
 import MetricGroup from '@/components/molecules/details/poolDelegateCard/MetricGroup'
 
 import { MetricGroupType, PoolMetricIds } from '@/constants'
-import mockResponseWithId from '@/mock-data/pool-details/mockResponse'
+import mockResponseWithId, {
+  PoolMetric,
+} from '@/mock-data/pool-details/mockResponse'
 
 const PoolDelegateCard = () => {
   const { t } = useTranslation()
   const metrics = mockResponseWithId.poolDelegate.data.metrics
 
-  const firstArray = metrics.filter(
-    (metric) =>
-      metric.id === PoolMetricIds.History ||
-      metric.id === PoolMetricIds.TotalFunds ||
-      metric.id === PoolMetricIds.Loans
-  )
-  const secondArray = metrics.filter(
-    (metric) =>
-      metric.id === PoolMetricIds.AssetClasses ||
-      metric.id === PoolMetricIds.OtherPools
-  )
-  const thirdArray = metrics.filter(
-    (metric) =>
-      metric.id === PoolMetricIds.TotalLoans || metric.id === PoolMetricIds.Loss
-  )
+  const { firstArray, secondArray, thirdArray } = useMemo(() => {
+    const firstArray: PoolMetric[] = metrics.filter((metric) =>
+      [
+        PoolMetricIds.History,
+        PoolMetricIds.TotalFunds,
+        PoolMetricIds.Loans,
+      ].includes(metric.id as PoolMetricIds)
+    )
+
+    const secondArray: PoolMetric[] = metrics.filter((metric) =>
+      [PoolMetricIds.AssetClasses, PoolMetricIds.OtherPools].includes(
+        metric.id as PoolMetricIds
+      )
+    )
+
+    const thirdArray: PoolMetric[] = metrics.filter((metric) =>
+      [PoolMetricIds.TotalLoans, PoolMetricIds.Loss].includes(
+        metric.id as PoolMetricIds
+      )
+    )
+
+    return { firstArray, secondArray, thirdArray }
+  }, [metrics])
 
   return (
     <Card sx={{ minWidth: 275, boxShadow: 3, padding: 2 }} elevation={1}>

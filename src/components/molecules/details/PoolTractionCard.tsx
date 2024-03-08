@@ -1,6 +1,6 @@
 import { Box, Card, Typography } from '@mui/material'
 
-import useTranslation, { TranslationKeys } from '@/hooks/useTranslation'
+import useTranslation from '@/hooks/useTranslation'
 
 import MetricTextUnit from '@/components/molecules/details/MetricTextUnit'
 
@@ -29,12 +29,8 @@ const PoolTractionCard = () => {
               metric={metric}
               containerSx={{ pr: index === metrics.length - 1 ? 0 : 0.5 }}
               typographySx={{ pb: 1 }}
-              titleKey={
-                `details.poolTraction.${metric.id}.label` as TranslationKeys
-              }
-              tooltipKey={
-                `details.poolTraction.${metric.id}.label` as TranslationKeys
-              }
+              titleKey={`details.poolTraction.${metric.id}.label`}
+              tooltipKey={`details.poolTraction.${metric.id}.tooltip`}
             />
           </Box>
         ))}

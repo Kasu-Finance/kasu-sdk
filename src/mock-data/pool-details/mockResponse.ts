@@ -1,6 +1,6 @@
 export interface PoolMetric {
   id: string
-  value: string | number | string[]
+  content: string | number | string[]
   unit?: string
   isRating?: boolean
 }
@@ -36,27 +36,27 @@ const mockResponseWithId: MockResponseWithId = {
       metrics: [
         {
           id: 'history',
-          value: 1653303878,
+          content: 1653303878,
           unit: '',
         },
         {
           id: 'totalFunds',
-          value: '10.00 M',
+          content: '10.00 M',
           unit: 'USDC',
         },
         {
           id: 'totalLoans',
-          value: '11',
+          content: '11',
           unit: '',
         },
         {
           id: 'assetClasses',
-          value: 'Invoice Financing • Lorem Ipsum',
+          content: 'Invoice Financing • Lorem Ipsum',
           unit: '',
         },
         {
           id: 'otherPools',
-          value: [
+          content: [
             'Apxium Invoice Standard Financing Pool',
             'Apxium Tax Funding Pool',
             'XYZ Trade Finance Pool',
@@ -64,12 +64,12 @@ const mockResponseWithId: MockResponseWithId = {
         },
         {
           id: 'loans',
-          value: '10.00 M',
+          content: '10.00 M',
           unit: 'USDC',
         },
         {
           id: 'loss',
-          value: '10.00 %',
+          content: '10.00 %',
           unit: '',
         },
       ],
@@ -81,27 +81,27 @@ const mockResponseWithId: MockResponseWithId = {
       metrics: [
         {
           id: 'apy',
-          value: '12.50 %',
+          content: '12.50 %',
         },
         {
           id: 'assetClass',
-          value: 'Invoice Financing',
+          content: 'Invoice Financing',
         },
         {
           id: 'exposureIndustry',
-          value: 'Accounting Firms',
+          content: 'Accounting Firms',
         },
         {
           id: 'structureApy',
-          value: 'Fixed/Variable',
+          content: 'Fixed/Variable',
         },
         {
           id: 'term',
-          value: 'Open-ended • 10 years',
+          content: 'Open-ended • 10 years',
         },
         {
           id: 'loan',
-          value: 'Amortising',
+          content: 'Amortising',
         },
       ],
     },
@@ -112,25 +112,25 @@ const mockResponseWithId: MockResponseWithId = {
       metrics: [
         {
           id: 'valueLocked',
-          value: '11.00 M',
+          content: '11.00 M',
           unit: 'USDC',
         },
         {
           id: 'management',
-          value: '10,000.00',
+          content: '10,000.00',
           unit: 'USDC',
         },
         {
           id: 'yield',
-          value: '15.00 %',
+          content: '15.00 %',
         },
         {
           id: 'capacity',
-          value: 'Maximum capacity',
+          content: 'Maximum capacity',
         },
         {
           id: 'activeLoans',
-          value: '10',
+          content: '10',
         },
       ],
     },
@@ -141,24 +141,24 @@ const mockResponseWithId: MockResponseWithId = {
       metrics: [
         {
           id: 'firstLoss',
-          value: '0.00',
+          content: '0.00',
           unit: 'USDC',
           isRating: false,
         },
         {
           id: 'lossRate',
-          value: '0.00%',
+          content: '0.00%',
           isRating: false,
         },
         {
           id: 'riskScore',
-          value: '4.00',
+          content: '4.00',
           unit: '/ 5.00',
           isRating: false,
         },
         {
           id: 'kasuRating',
-          value: 5,
+          content: 5,
           isRating: true,
         },
       ],
@@ -168,18 +168,18 @@ const mockResponseWithId: MockResponseWithId = {
       metrics: [
         {
           id: 'guarantees',
-          value: [
+          content: [
             'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nulla, eos?',
             'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nulla, eos?',
           ],
         },
         {
           id: 'chargeAssets',
-          value: 'Charge over Business Assets',
+          content: 'Charge over Business Assets',
         },
         {
           id: 'bankControl',
-          value: 'Charge over Bank Accounts',
+          content: 'Charge over Bank Accounts',
         },
       ],
     },
@@ -188,11 +188,11 @@ const mockResponseWithId: MockResponseWithId = {
       metrics: [
         {
           id: 'yearsBusiness',
-          value: 'Minimum 3 years in Business',
+          content: 'Minimum 3 years in Business',
         },
         {
           id: 'propertyOwners',
-          value: 'Directors must be property owners',
+          content: 'Directors must be property owners',
         },
       ],
     },

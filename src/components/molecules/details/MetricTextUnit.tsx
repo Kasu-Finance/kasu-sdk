@@ -1,7 +1,7 @@
 import { Box, SxProps, Theme, Typography } from '@mui/material'
 import React from 'react'
 
-import useTranslation, { TranslationKeys } from '@/hooks/useTranslation'
+import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 
@@ -9,8 +9,8 @@ import { PoolMetric } from '@/mock-data/pool-details/mockResponse'
 
 export interface MetricProps {
   metric: PoolMetric
-  titleKey: TranslationKeys
-  tooltipKey: TranslationKeys
+  titleKey: string
+  tooltipKey: string
   containerSx?: SxProps<Theme>
   typographySx?: SxProps<Theme>
   typographyVariant?:
@@ -57,7 +57,7 @@ const MetricTextUnit: React.FC<MetricProps> = ({
         color={typographyColor}
         sx={{ pl: 2, ...typographySx }}
       >
-        {metric.value}{' '}
+        {metric.content}{' '}
         <Typography variant='body1' component='span'>
           {metric.unit}
         </Typography>
