@@ -10,7 +10,7 @@ import ColoredBox from '@/components/atoms/ColoredBox'
 import InfoRow from '@/components/atoms/InfoRow'
 import TokenAmount from '@/components/atoms/TokenAmount'
 
-import { formatAmount } from '@/utils'
+import { formatAmount, toBigNumber } from '@/utils'
 
 const EstimatedReturns = () => {
   const { t } = useTranslation()
@@ -29,8 +29,8 @@ const EstimatedReturns = () => {
 
   const disabled = lockState.type === 'error'
 
-  const getTextColor = (theme: Theme) =>
-    disabled ? theme.palette.text.disabled : undefined
+  const getTextColor = (theme: Theme, state?: boolean) =>
+    disabled || state ? theme.palette.text.disabled : undefined
 
   return (
     <Box>
@@ -52,15 +52,16 @@ const EstimatedReturns = () => {
           title={t('modals.lock.estimates.est-1')}
           toolTipInfo={t('modals.lock.estimates.tooltip-1')}
           metric={
-            <Box color={getTextColor}>
-              <TokenAmount
-                amount={formatAmount(disabled ? '0' : projectedUsdcEarning, {
-                  minDecimals: 2,
-                  minValue: 100_000_000_000,
-                })}
-                symbol='USDC'
-              />
-            </Box>
+            <TokenAmount
+              color={(theme) =>
+                getTextColor(theme, toBigNumber(projectedUsdcEarning).isZero())
+              }
+              amount={formatAmount(disabled ? '0' : projectedUsdcEarning, {
+                minDecimals: 2,
+                minValue: 100_000_000_000,
+              })}
+              symbol='USDC'
+            />
           }
           showDivider
         />
@@ -68,15 +69,14 @@ const EstimatedReturns = () => {
           title={t('modals.lock.estimates.est-2')}
           toolTipInfo={t('modals.lock.estimates.tooltip-2')}
           metric={
-            <Box color={getTextColor}>
-              <TokenAmount
-                amount={formatAmount('0', {
-                  minDecimals: 2,
-                  minValue: 100_000_000_000,
-                })}
-                symbol='KSU'
-              />
-            </Box>
+            <TokenAmount
+              color={(theme) => getTextColor(theme, true)}
+              amount={formatAmount('0', {
+                minDecimals: 2,
+                minValue: 100_000_000_000,
+              })}
+              symbol='KSU'
+            />
           }
           showDivider
         />
@@ -84,15 +84,16 @@ const EstimatedReturns = () => {
           title={t('modals.lock.estimates.est-3')}
           toolTipInfo={t('modals.lock.estimates.tooltip-3')}
           metric={
-            <Box color={getTextColor}>
-              <TokenAmount
-                amount={formatAmount(disabled ? '0' : estimatedLaunchBonus, {
-                  minDecimals: 2,
-                  minValue: 100_000_000_000,
-                })}
-                symbol='KSU'
-              />
-            </Box>
+            <TokenAmount
+              color={(theme) =>
+                getTextColor(theme, toBigNumber(estimatedLaunchBonus).isZero())
+              }
+              amount={formatAmount(disabled ? '0' : estimatedLaunchBonus, {
+                minDecimals: 2,
+                minValue: 100_000_000_000,
+              })}
+              symbol='KSU'
+            />
           }
         />
       </ColoredBox>

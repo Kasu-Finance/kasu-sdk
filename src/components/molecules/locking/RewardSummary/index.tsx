@@ -1,10 +1,12 @@
 'use client'
 
-import { Box, Grid, Typography } from '@mui/material'
+import { Grid } from '@mui/material'
+import { formatEther } from 'ethers/lib/utils'
 
 import useClaimLockingRewards from '@/hooks/locking/useClaimLockingRewards'
 import useLockingRewards from '@/hooks/locking/useLockingRewards'
 import useTranslation from '@/hooks/useTranslation'
+import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
 import CardWidget from '@/components/atoms/CardWidget'
 import ColoredBox from '@/components/atoms/ColoredBox'
@@ -12,33 +14,24 @@ import InfoColumn from '@/components/atoms/InfoColumn'
 import TokenAmount from '@/components/atoms/TokenAmount'
 import ClaimButton from '@/components/molecules/locking/RewardSummary/ClaimButton'
 
-import { formatAmount } from '@/utils'
+import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
+
+const ksuBonus = '100'
 
 const RewardSummary = () => {
   const { lockingRewards } = useLockingRewards()
   const { t } = useTranslation()
   const claimRewards = useClaimLockingRewards()
 
+  const { ksuPrice } = useKsuPrice()
+
+  const rewardsInUSD = convertToUSD(
+    toBigNumber(ksuBonus || '0'),
+    toBigNumber(ksuPrice || '0')
+  )
+
   return (
-    <CardWidget
-      title='Bonus & Rewards Summary​​'
-      // cardAction={
-      //   <Button
-      //     sx={{
-      //       width: 194,
-      //       '& .MuiButton-startIcon > svg > path': {
-      //         fill: 'white',
-      //         fillOpacity: 1,
-      //       },
-      //     }}
-      //     onClick={claimRewards}
-      //     variant='contained'
-      //     startIcon={<VerifiedIcon />}
-      //   >
-      //     {t('general.claim')} {t('general.rewards')}
-      //   </Button>
-      // }
-    >
+    <CardWidget title='Bonus & Rewards Summary​​'>
       <Grid container spacing={3}>
         <Grid
           item
@@ -52,15 +45,15 @@ const RewardSummary = () => {
             toolTipInfo='The amount KSU rewards that can be claimed upon the conclusion of the current Epoch.​'
             showDivider
             metric={
-              <Box py='6px' px={2}>
-                <TokenAmount
-                  amount={formatAmount(
-                    lockingRewards?.claimableRewards ?? '0',
-                    { minDecimals: 2, hideTrailingZero: false }
-                  )}
-                  symbol='USDC'
-                />
-              </Box>
+              <TokenAmount
+                py='6px'
+                px={2}
+                amount={formatAmount(lockingRewards?.claimableRewards ?? '0', {
+                  minDecimals: 2,
+                  hideTrailingZero: false,
+                })}
+                symbol='USDC'
+              />
             }
           />
           <ClaimButton onClick={claimRewards}>{t('general.claim')}</ClaimButton>
@@ -72,30 +65,17 @@ const RewardSummary = () => {
               toolTipInfo='info'
               showDivider
               metric={
-                <Box py='6px' px={2} textAlign='right' width='max-content'>
-                  <TokenAmount
-                    amount={formatAmount(
-                      lockingRewards?.lifeTimeRewards ?? '0.00',
-                      {
-                        minDecimals: 2,
-                        hideTrailingZero: false,
-                      }
-                    )}
-                    symbol='KSU'
-                  />
-                  <Box>
-                    <Typography
-                      variant='body1'
-                      component='span'
-                      display='inline-block'
-                    >
-                      0.00
-                    </Typography>
-                    <Typography pl={0.5} variant='caption' component='span'>
-                      USDC
-                    </Typography>
-                  </Box>
-                </Box>
+                <TokenAmount
+                  py='6px'
+                  px={2}
+                  amount={formatAmount(ksuBonus, {
+                    minDecimals: 2,
+                  })}
+                  symbol='KSU'
+                  usdValue={formatAmount(formatEther(rewardsInUSD), {
+                    minDecimals: 2,
+                  })}
+                />
               }
             />
           </ColoredBox>

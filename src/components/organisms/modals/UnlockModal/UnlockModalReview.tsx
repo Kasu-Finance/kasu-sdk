@@ -33,11 +33,7 @@ const UnlockModalReview: React.FC<UnlockModalReviewProps> = ({
               title='Total KSU Locked'
               toolTipInfo='info'
               showDivider
-              metric={
-                <Box px={2}>
-                  <TokenAmount amount={lockedAmount} symbol='KSU' />
-                </Box>
-              }
+              metric={<TokenAmount px={2} amount={lockedAmount} symbol='KSU' />}
             />
           </Grid>
           <Grid item xs={6}>
@@ -45,11 +41,7 @@ const UnlockModalReview: React.FC<UnlockModalReviewProps> = ({
               title='Available KSU to Unlock'
               toolTipInfo='info'
               showDivider
-              metric={
-                <Box px={2}>
-                  <TokenAmount amount={unlockAmount} symbol='KSU' />
-                </Box>
-              }
+              metric={<TokenAmount px={2} amount={unlockAmount} symbol='KSU' />}
             />
           </Grid>
         </Grid>

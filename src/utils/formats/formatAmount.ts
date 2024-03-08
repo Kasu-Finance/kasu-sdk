@@ -17,7 +17,7 @@ const formatAmount = (
     minValue,
     currency = '',
     useGrouping = true,
-    hideTrailingZero = true,
+    hideTrailingZero = false,
     symbol,
   } = options
 

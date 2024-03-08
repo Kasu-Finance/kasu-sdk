@@ -1,10 +1,12 @@
 'use client'
 
 import { Button, Grid } from '@mui/material'
-import { formatUnits } from 'ethers/lib/utils'
+import { formatEther, formatUnits, parseEther } from 'ethers/lib/utils'
 
 import useModalState from '@/hooks/context/useModalState'
+import useStakedKSU from '@/hooks/locking/useStakedKSU'
 import useTranslation from '@/hooks/useTranslation'
+import useKsuPrice from '@/hooks/web3/useKsuPrice'
 import useUserBalance from '@/hooks/web3/useUserBalance'
 
 import CardWidget from '@/components/atoms/CardWidget'
@@ -13,16 +15,25 @@ import BalanceItem from '@/components/molecules/locking/BalanceOverview/BalanceI
 
 import { LockIcon, WalletIcon } from '@/assets/icons'
 
-import sdkConfig from '@/config/sdk'
+import sdkConfig, { USDC } from '@/config/sdk'
+import { convertToUSD, formatAmount } from '@/utils'
 
 const BalanceOverview = () => {
   const { openModal } = useModalState()
   const { t } = useTranslation()
   const handleOpen = () => openModal({ name: 'lockModal' })
 
-  const { balance, symbol, decimals } = useUserBalance(
+  const { balance: ksuBalance, decimals: ksuDecimals } = useUserBalance(
     sdkConfig.contracts.KSUToken
   )
+
+  const { balance: usdcBalance, decimals: usdcDecimals } = useUserBalance(USDC)
+
+  const { stakedKSU } = useStakedKSU()
+
+  const { ksuPrice } = useKsuPrice()
+
+  const ksuInUSD = convertToUSD(ksuBalance, parseEther(ksuPrice || '0'))
 
   return (
     <CardWidget
@@ -54,17 +65,21 @@ const BalanceOverview = () => {
             <BalanceItem
               title={`${t('general.wallet')} ${t('general.balance')}`}
               toolTipInfo='info'
-              value={[formatUnits(balance || '0', decimals), symbol ?? 'KSU']}
-              subValue={[
-                formatUnits('100000000000000000000000', decimals),
-                'USDC',
+              value={[
+                formatAmount(formatUnits(ksuBalance || '0', ksuDecimals), {
+                  minDecimals: 2,
+                }),
+                'KSU',
               ]}
+              usdValue={formatAmount(formatEther(ksuInUSD), { minDecimals: 2 })}
             />
             <BalanceItem
               title='Available Funds'
               toolTipInfo='info'
               value={[
-                formatUnits('100000000000000000000000', decimals),
+                formatAmount(formatUnits(usdcBalance || '0', usdcDecimals), {
+                  minDecimals: 2,
+                }),
                 'USDC',
               ]}
             />
@@ -73,7 +88,10 @@ const BalanceOverview = () => {
             <BalanceItem
               title='Total KSU Locked'
               toolTipInfo='info'
-              value={['100,000.00', 'KSU']}
+              value={[
+                formatAmount(stakedKSU || '0', { minDecimals: 2 }),
+                'KSU',
+              ]}
             />
           </Grid>
         </Grid>

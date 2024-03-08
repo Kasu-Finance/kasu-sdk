@@ -47,11 +47,7 @@ const LockModalReview: React.FC<LockModalReviewProps> = ({ lockAmount }) => {
                 title={t('modals.lock.reviewLock.lockAmount')}
                 toolTipInfo='info'
                 showDivider
-                metric={
-                  <Box px={2}>
-                    <TokenAmount amount={lockAmount} symbol='KSU' />
-                  </Box>
-                }
+                metric={<TokenAmount px={2} amount={lockAmount} symbol='KSU' />}
               />
             </Grid>
             <Grid item xs={12}>

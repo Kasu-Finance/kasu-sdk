@@ -51,14 +51,12 @@ const LockedDetails: React.FC<LockedDetailsProps> = ({ userLock }) => {
             metric={
               <>
                 <Box pt='6px' pl={2} width='max-content' textAlign='right'>
-                  <Box>
-                    <TokenAmount
-                      amount={
-                        isValidAmount ? ksuRemaining : userLock.lockedAmount
-                      }
-                      symbol='KSU'
-                    />
-                  </Box>
+                  <TokenAmount
+                    amount={
+                      isValidAmount ? ksuRemaining : userLock.lockedAmount
+                    }
+                    symbol='KSU'
+                  />
                   <Typography variant='caption' component='span'>
                     {percentage} %
                   </Typography>
@@ -75,14 +73,10 @@ const LockedDetails: React.FC<LockedDetailsProps> = ({ userLock }) => {
             metric={
               <>
                 <Box pt='6px' pl={2} width='max-content' textAlign='right'>
-                  <Box>
-                    <TokenAmount
-                      amount={
-                        isValidAmount ? rKsuRemaining : userLock.rKSUAmount
-                      }
-                      symbol='rKSU'
-                    />
-                  </Box>
+                  <TokenAmount
+                    amount={isValidAmount ? rKsuRemaining : userLock.rKSUAmount}
+                    symbol='rKSU'
+                  />
                   <Typography variant='caption' component='span'>
                     {percentage} %
                   </Typography>
