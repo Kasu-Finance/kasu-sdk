@@ -9,6 +9,7 @@ import MetricTextUnit from '@/components/molecules/details/MetricTextUnit'
 
 import { MetricGroupType, PoolMetricIds } from '@/constants'
 import { PoolMetric } from '@/mock-data/pool-details/mockResponse'
+import formatDuration from '@/utils/formats/formatDuration'
 
 interface MetricGroupProps {
   metrics: PoolMetric[]
@@ -28,11 +29,16 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
     const tooltipKey =
       `details.poolDelegate.${metric.id}.tooltip` as TranslationKeys
 
+    const textDate =
+      metric.id === PoolMetricIds.History
+        ? formatDuration(Number(metric.value))
+        : metric.value
+
     switch (type) {
       case MetricGroupType.First:
         return (
           <MetricTextUnit
-            metric={metric}
+            metric={{ ...metric, value: textDate }}
             titleKey={titleKey}
             tooltipKey={tooltipKey}
             containerSx={{ width: '33%', pb: 1, pr: 1 }}

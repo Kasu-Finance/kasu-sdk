@@ -36,7 +36,7 @@ const mockResponseWithId: MockResponseWithId = {
       metrics: [
         {
           id: 'history',
-          value: '2 years • 3 months',
+          value: 1653303878,
           unit: '',
         },
         {
