@@ -1,36 +1,31 @@
 'use client'
 
-import { Box, Button, DialogActions, DialogContent } from '@mui/material'
+import { Button, DialogActions, DialogContent, Typography } from '@mui/material'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
-import { LockPeriod } from 'kasu-sdk/src/types'
-import React, { useState } from 'react'
+import React from 'react'
 
-import useLockPeriods from '@/hooks/locking/useLockPeriods'
-import useLockToken from '@/hooks/locking/useLockToken'
+import useLockModalState from '@/hooks/context/useLockModalState'
+import useLockKSU from '@/hooks/locking/useLockKSU'
 import useTranslation from '@/hooks/useTranslation'
 import useApproveToken from '@/hooks/web3/useApproveToken'
 import useUserBalance from '@/hooks/web3/useUserBalance'
 
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
 import DialogHeader from '@/components/molecules/DialogHeader'
-import DepositInput from '@/components/molecules/lockModal/DepositInput'
-import EstimatedReturns from '@/components/molecules/lockModal/EstimatedReturns'
-import LockDurationInput from '@/components/molecules/lockModal/LockDurationInput'
-import LockModalOverview from '@/components/molecules/lockModal/LockModalOverview'
-import LockModalConfirmation from '@/components/organisms/modals/LockModal/LockModalConfirmation'
+import LockModalEdit from '@/components/organisms/modals/LockModal/LockModalEdit'
+import LockModalReview from '@/components/organisms/modals/LockModal/LockModalReview'
 
-import { ChevronLeftIcon, ChevronRightIcon } from '@/assets/icons'
+import { LockProgress } from '@/context/lockModal/lockModal.types'
+
+import { ChevronRightIcon, EditIcon } from '@/assets/icons'
 
 import sdkConfig from '@/config/sdk'
 
 const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
-  const { lockPeriods } = useLockPeriods()
+  const { t } = useTranslation()
 
-  const [amount, setAmount] = useState('')
-  const [selectedLockPeriod, setSelectedLockPeriod] = useState<LockPeriod>(
-    lockPeriods[2]
-  )
-  const [isFinalized, setIsFinalized] = useState(false)
+  const { amount, selectedLockPeriod, lockProgress, setLockProgress } =
+    useLockModalState()
 
   const { isApproved, approve } = useApproveToken(
     sdkConfig.contracts.KSUToken,
@@ -39,71 +34,57 @@ const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   )
 
   const { balance, decimals } = useUserBalance(sdkConfig.contracts.KSUToken)
-  const userBalance = formatUnits(balance ?? '0', decimals)
-  const lockToken = useLockToken()
-  const { t } = useTranslation()
+
+  const lockKSU = useLockKSU()
 
   return (
     <>
       <DialogHeader title='Lock' onClose={handleClose} />
-      <DialogContent sx={{ px: 3, py: 1 }}>
-        {isFinalized ? (
-          <LockModalConfirmation lockAmount={amount} />
+      <DialogContent>
+        {lockProgress === LockProgress.REVIEWING ? (
+          <LockModalReview lockAmount={amount} />
+        ) : lockProgress === LockProgress.EDITING ? (
+          <LockModalEdit userBalance={formatUnits(balance ?? '0', decimals)} />
         ) : (
-          <>
-            <Box display='grid' gap={2}>
-              <LockModalOverview balance={userBalance} />
-              <DepositInput
-                balance={userBalance}
-                amount={amount}
-                setAmount={setAmount}
-              />
-              <LockDurationInput
-                selectedLockPeriod={selectedLockPeriod}
-                setSelectedLockPeriod={setSelectedLockPeriod}
-              />
-              <EstimatedReturns
-                amount={amount}
-                lockPeriod={selectedLockPeriod}
-              />
-            </Box>
-          </>
+          <Typography variant='body1' component='p' display='block' px={1}>
+            You have successfully queued{' '}
+            <Typography variant='h6' component='span'>
+              {amount} KSU
+            </Typography>{' '}
+            to be locked in the next Epoch.
+          </Typography>
         )}
       </DialogContent>
-      <DialogActions sx={{ justifyContent: 'center' }}>
-        {isFinalized ? (
+      <DialogActions sx={{ justifyContent: 'center', pb: 3 }}>
+        {lockProgress === LockProgress.REVIEWING ? (
           <>
             <Button
               variant='outlined'
-              startIcon={<ChevronLeftIcon />}
-              onClick={() => setIsFinalized(false)}
+              startIcon={<EditIcon />}
+              onClick={() => setLockProgress(LockProgress.EDITING)}
             >
-              {t('modals.lock.buttons.adjustLock')}
+              {t('general.adjust')}
             </Button>
             <Button
               variant='contained'
               endIcon={<ChevronRightIcon />}
               onClick={() =>
                 isApproved
-                  ? lockToken(
+                  ? lockKSU(
                       parseUnits(amount, decimals),
                       selectedLockPeriod.lockPeriod
                     )
-                  : approve('')
+                  : approve(amount)
               }
             >
               {isApproved ? t('general.confirm') : t('general.approve')}
             </Button>
           </>
-        ) : (
-          <Button
-            variant='contained'
-            sx={{ width: 157, display: 'block', textTransform: 'uppercase' }}
-            onClick={() => setIsFinalized(true)}
-          >
-            {t('modals.lock.buttons.reviewLock')}
+        ) : lockProgress === LockProgress.COMPLETED ? (
+          <Button variant='contained' sx={{ width: 191 }} onClick={handleClose}>
+            LOCKING OVERVIEW
           </Button>
-        )}
+        ) : null}
       </DialogActions>
     </>
   )

@@ -1,10 +1,10 @@
 import React from 'react'
 
 type WalletIconProps = {
-  fill: string
+  fill?: string
 }
 
-const WalletIcon: React.FC<WalletIconProps> = ({ fill }) => (
+const WalletIcon: React.FC<WalletIconProps> = ({ fill = '#ffffff' }) => (
   <svg
     width='20'
     height='20'

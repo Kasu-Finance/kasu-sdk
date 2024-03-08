@@ -14,8 +14,8 @@ const DialogHeader: React.FC<DialogHeaderProps> = ({ title, onClose }) => {
       display='flex'
       justifyContent='space-between'
       alignItems='center'
+      px={2}
       py={1}
-      px={3}
     >
       <DialogTitle sx={{ p: 0 }} variant='h5' component='span'>
         {title}

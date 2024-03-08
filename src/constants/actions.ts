@@ -10,6 +10,7 @@ export enum ActionType {
   KYC = 'IDENTITY VERIFICATION',
   CLAIM_REWARDS = 'CLAIM REWARDS',
   LOCK = 'LOCK',
+  UNLOCK = 'UNLOCK',
   LENDING = 'LENDING',
   WITHDRAW = 'WITHDRAW',
 }
@@ -35,6 +36,10 @@ export const ACTION_MESSAGES = {
     [ActionStatus.SUCCESS]: 'Lock request has been successfull.',
     [ActionStatus.ERROR]:
       'An error has occurred in the lock request. Please review log for more details.',
+  },
+  [ActionType.UNLOCK]: {
+    [ActionStatus.ERROR]:
+      'An error has occurred during the unlock request. Please review log for more details.',
   },
   [ActionType.CLAIM_REWARDS]: {
     [ActionStatus.SUCCESS]: 'Claim request has been successfull.',
