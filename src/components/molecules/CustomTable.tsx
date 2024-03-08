@@ -27,11 +27,11 @@ export type Sort<T> = {
   direction: 'asc' | 'desc'
 }
 
-type CustomTableProps<T> = {
-  headers: CustomTableHeader<T>[]
+type CustomTableProps<T, U> = {
+  headers: CustomTableHeader<U>[]
   data: T[]
-  defaultSortKey: keyof T
-  handleSort: (a: T, b: T, sort: Sort<T>) => number
+  defaultSortKey: keyof U
+  handleSort: (a: T, b: T, sort: Sort<U>) => number
   children: (data: T[]) => ReactNode
   pagination?: boolean
   ariaLabel?: string
@@ -42,7 +42,7 @@ type CustomTableProps<T> = {
   tableStyles?: SxProps<Theme>
 }
 
-const CustomTable = <T,>({
+const CustomTable = <T, U>({
   ariaLabel = 'Table',
   headers,
   data,
@@ -55,8 +55,8 @@ const CustomTable = <T,>({
   rowPerPageOptions = [5, 10, 25],
   tableContainerStyles,
   tableStyles,
-}: CustomTableProps<T>) => {
-  const [sort, setSort] = useState<Sort<T>>({
+}: CustomTableProps<T, U>) => {
+  const [sort, setSort] = useState<Sort<U>>({
     key: defaultSortKey,
     direction: 'desc',
   })
@@ -73,7 +73,7 @@ const CustomTable = <T,>({
       ? Math.max(0, (1 + currentPage) * rowsPerPage - data.length)
       : 0
 
-  const handleSortChange = (newKey: keyof T) => {
+  const handleSortChange = (newKey: keyof U) => {
     setSort((prev) => ({
       key: newKey,
       direction:
