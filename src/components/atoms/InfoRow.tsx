@@ -1,15 +1,7 @@
-import {
-  Box,
-  Divider,
-  Tooltip,
-  Typography,
-  TypographyProps,
-} from '@mui/material'
+import { Box, Divider, Typography, TypographyProps } from '@mui/material'
 import React, { ReactNode } from 'react'
 
-import TooltipTrigger from '@/components/atoms/TooltipTrigger'
-
-import { InfoIcon } from '@/assets/icons'
+import ToolTip from '@/components/atoms/ToolTip'
 
 type InfoRowProps = {
   title: string
@@ -32,14 +24,19 @@ const InfoRow: React.FC<InfoRowProps> = ({
 }) => {
   return (
     <>
-      <Box display='flex' justifyContent='space-between' px={2} py='6px'>
+      <Box
+        display='flex'
+        justifyContent='space-between'
+        px={2}
+        py='6px'
+        width='100%'
+      >
         <Box display='flex' alignItems='center'>
           <Box>
             <Typography
               variant='subtitle2'
               component='span'
               color='text.primary'
-              mr='4px'
               {...titleStyle}
             >
               {title}
@@ -49,24 +46,14 @@ const InfoRow: React.FC<InfoRowProps> = ({
                 variant='body2'
                 component='span'
                 color='text.primary'
-                mr='4px'
+                ml='4px'
                 {...subtitleStyle}
               >
                 {subtitle}
               </Typography>
             )}
           </Box>
-          {toolTipInfo && (
-            <Tooltip
-              disableFocusListener
-              disableTouchListener
-              title={toolTipInfo}
-            >
-              <TooltipTrigger>
-                <InfoIcon />
-              </TooltipTrigger>
-            </Tooltip>
-          )}
+          {toolTipInfo && <ToolTip title={toolTipInfo} />}
         </Box>
         {metric}
       </Box>

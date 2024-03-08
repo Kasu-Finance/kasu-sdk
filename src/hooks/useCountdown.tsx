@@ -19,16 +19,23 @@ const useCountdown = (
   const [timeLeft, setTimeLeft] = useState(initialState)
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const updateTime = (clearInterval?: () => void) => {
       const milliSecondDiff = dayjs.unix(futureTimestamp).diff()
 
       if (milliSecondDiff <= 0) {
         setTimeLeft(initialState)
-        clearInterval(interval)
+        clearInterval && clearInterval()
         return
       }
 
       setTimeLeft(dayjs.duration(milliSecondDiff).format(format))
+    }
+
+    updateTime()
+
+    const interval = setInterval(() => {
+      updateTime(() => clearInterval(interval))
+      return
     }, intervalMs)
 
     return () => clearInterval(interval)
