@@ -1,4 +1,4 @@
-import { Box, SxProps, Theme, Typography } from '@mui/material'
+import { Box, SxProps, Theme, Typography, TypographyProps } from '@mui/material'
 import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
@@ -7,24 +7,11 @@ import InfoRow from '@/components/atoms/InfoRow'
 
 import { PoolMetric } from '@/mock-data/pool-details/mockResponse'
 
-export interface MetricProps {
+export interface MetricProps extends Partial<TypographyProps> {
   metric: PoolMetric
   titleKey: string
   tooltipKey: string
   containerSx?: SxProps<Theme>
-  typographySx?: SxProps<Theme>
-  typographyVariant?:
-    | 'body2'
-    | 'body1'
-    | 'subtitle2'
-    | 'subtitle1'
-    | 'h6'
-    | 'h5'
-    | 'h4'
-    | 'h3'
-    | 'h2'
-    | 'h1'
-  typographyColor?: string
 }
 
 const MetricTextUnit: React.FC<MetricProps> = ({
@@ -32,9 +19,7 @@ const MetricTextUnit: React.FC<MetricProps> = ({
   titleKey,
   tooltipKey,
   containerSx,
-  typographySx,
-  typographyVariant = 'h6',
-  typographyColor = 'text.primary',
+  ...typographyProps
 }) => {
   const { t } = useTranslation()
 
@@ -52,11 +37,7 @@ const MetricTextUnit: React.FC<MetricProps> = ({
         showDivider
         metric={<></>}
       />
-      <Typography
-        variant={typographyVariant}
-        color={typographyColor}
-        sx={{ pl: 2, ...typographySx }}
-      >
+      <Typography variant='h6' {...typographyProps} sx={{ pl: 2 }}>
         {metric.content}{' '}
         <Typography variant='body1' component='span'>
           {metric.unit}

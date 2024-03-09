@@ -31,7 +31,7 @@ const MetricDisplay: React.FC<MetricDisplayProps> = ({
           titleKey={titleKey}
           tooltipKey={tooltipKey}
           containerSx={{ pr: isLastItem ? 0 : 2 }}
-          typographySx={{ pb: 1 }}
+          sx={{ pb: 1 }}
         />
       ) : (
         <Box width='100%' pr={2}>

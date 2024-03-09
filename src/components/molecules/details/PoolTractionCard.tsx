@@ -28,7 +28,7 @@ const PoolTractionCard = () => {
             <MetricTextUnit
               metric={metric}
               containerSx={{ pr: index === metrics.length - 1 ? 0 : 0.5 }}
-              typographySx={{ pb: 1 }}
+              sx={{ pb: 1 }}
               titleKey={`details.poolTraction.${metric.id}.label`}
               tooltipKey={`details.poolTraction.${metric.id}.tooltip`}
             />

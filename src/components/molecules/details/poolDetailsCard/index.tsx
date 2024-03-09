@@ -1,40 +1,41 @@
 import { Box, Card, Typography } from '@mui/material'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
 import MetricDisplay from '@/components/molecules/details/poolDetailsCard/MetricDisplay'
 
 import { MetricGroupType, PoolMetricIds } from '@/constants'
-import mockResponseWithId, {
-  PoolMetric,
-} from '@/mock-data/pool-details/mockResponse'
+import mockResponseWithId from '@/mock-data/pool-details/mockResponse'
 
 const PoolDetailsCard = () => {
   const { t } = useTranslation()
   const metrics = mockResponseWithId.poolDetails.data.metrics
 
-  const { firstArray, secondArray, thirdArray } = useMemo(() => {
-    const firstArray: PoolMetric[] = metrics.filter((metric) =>
-      [PoolMetricIds.APY, PoolMetricIds.AssetClass].includes(
-        metric.id as PoolMetricIds
+  const filterMetrics = useCallback(
+    (ids: PoolMetricIds[]) => {
+      return metrics.filter((metric) =>
+        ids.includes(metric.id as PoolMetricIds)
       )
-    )
+    },
+    [metrics]
+  )
 
-    const secondArray: PoolMetric[] = metrics.filter((metric) =>
-      [PoolMetricIds.ExposureIndustry, PoolMetricIds.StructureApy].includes(
-        metric.id as PoolMetricIds
-      )
-    )
+  const { firstArray, secondArray, thirdArray } = useMemo(
+    () => ({
+      firstArray: filterMetrics([PoolMetricIds.APY, PoolMetricIds.AssetClass]),
 
-    const thirdArray: PoolMetric[] = metrics.filter((metric) =>
-      [PoolMetricIds.Term, PoolMetricIds.Loan].includes(
-        metric.id as PoolMetricIds
-      )
-    )
-
-    return { firstArray, secondArray, thirdArray }
-  }, [metrics])
+      secondArray: filterMetrics([
+        PoolMetricIds.StructureApy,
+        PoolMetricIds.Term,
+      ]),
+      thirdArray: filterMetrics([
+        PoolMetricIds.ExposureIndustry,
+        PoolMetricIds.Loan,
+      ]),
+    }),
+    [filterMetrics]
+  )
 
   return (
     <Card sx={{ minWidth: 275, boxShadow: 3, padding: 2, mt: 3 }} elevation={1}>

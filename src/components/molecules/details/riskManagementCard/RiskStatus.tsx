@@ -39,8 +39,8 @@ const RiskStatus: React.FC<RiskStatusProps> = ({ metrics }) => {
       metric={metric}
       titleKey={`details.riskManagement.riskStatus.${metric.id}.label`}
       tooltipKey={`details.riskManagement.riskStatus.${metric.id}.tooltip`}
-      typographyColor='grey.400'
-      typographySx={{ pb: 0.5 }}
+      color='grey.400'
+      sx={{ pb: 0.5 }}
     />
   )
 
@@ -64,7 +64,7 @@ const RiskStatus: React.FC<RiskStatusProps> = ({ metrics }) => {
             sx={{ pl: 2, mt: 0.5 }}
           />
         ) : (
-          <Typography variant='h6' sx={{ pl: 2, mt: 0.5 }}>
+          <Typography variant='h6' sx={{ pl: 2 }}>
             {metric.content}{' '}
             <Typography variant='body2' component='span'>
               {metric.unit}
