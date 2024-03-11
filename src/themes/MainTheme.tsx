@@ -139,7 +139,11 @@ export const theme = createTheme({
 
   components: {
     MuiCssBaseline: {
-      styleOverrides: ``,
+      styleOverrides: `
+      .light-blue-background {
+        background-color: #1976D20A;
+      }
+    `,
     },
     MuiAppBar: {
       styleOverrides: {
@@ -457,13 +461,6 @@ export const theme = createTheme({
           },
         },
       },
-    },
-    MuiCssBaseline: {
-      styleOverrides: `
-          .light-blue-background {
-            background-color: #1976D20A;
-          }
-        `,
     },
   },
 })
