@@ -9,6 +9,7 @@ import OverviewCard from '@/components/molecules/lending/OverviewCard'
 import TabPanel from '@/components/molecules/tabs/TabPanel'
 import PoolDetails from '@/components/organisms/details/PoolDetails'
 import RepaymentsTable from '@/components/organisms/repayments/repaymentsTable'
+import RiskReporting from '@/components/organisms/risk/RiskReporting'
 
 import repaymentsMock from '@/app/mock-data/repayments-data'
 
@@ -48,7 +49,7 @@ const PoolTabs: React.FC = () => {
         <RepaymentsTable data={repaymentsMock} />
       </TabPanel>
       <TabPanel value={activeTab} index={3} id={panelsId}>
-        Risk Reporting
+        <RiskReporting />
       </TabPanel>
       <TabPanel value={activeTab} index={4} id={panelsId}>
         Support
