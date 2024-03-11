@@ -10,16 +10,11 @@ import {
   StyledTableCell,
   StyledTablePagination,
   StyledTableSortLabel,
-} from '@/components/organisms/repayments/repaymentsTable/styled'
+} from '@/components/molecules/repayments/styled'
 
 import { RepaymentsData } from '@/app/mock-data/repayments-data'
+import { RepaymentTableSortKey } from '@/constants'
 import { sortByDate, sortByNumber, sortByString } from '@/utils'
-
-enum RepaymentTableSortKey {
-  SOURCE = 'source',
-  REPAYMENT_DATE = 'repaymentDate',
-  REPAYMENT_AMOUNT = 'repaymentAmount',
-}
 
 const headers: CustomTableHeader<RepaymentsData>[] = [
   { label: 'Source', value: 'source' },
