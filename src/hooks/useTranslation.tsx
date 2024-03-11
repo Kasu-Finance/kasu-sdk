@@ -14,9 +14,10 @@ export type TranslationKeys = Leaves<(typeof TRANSLATIONS)['en']>
 export default function useTranslation() {
   const currentLocale = defaultLocale
 
-  const t = (key: TranslationKeys): string => {
+  const t = <K extends string>(key: K): string => {
     const translation = getNestedTranslation(key, TRANSLATIONS[currentLocale])
-    return translation
+
+    return translation || key
   }
 
   return { t }

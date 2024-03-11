@@ -15,7 +15,7 @@ export const BorderTableCell = styled(TableCell)(({ theme }) => ({
       top: '1.5rem',
       bottom: '1.2rem',
       width: '2px',
-      backgroundColor: theme.palette.grey[300],
+      backgroundColor: theme.palette.grey[200],
     },
   },
 }))
@@ -54,7 +54,7 @@ export const StyledTablePagination = styled(TablePagination)(({ theme }) => ({
   '.MuiTablePagination-selectLabel': {
     marginTop: '0.5em',
     marginRight: '-0.5em',
-    color: theme.palette.grey[400],
+    color: theme.palette.grey[500],
   },
   '.MuiSelect-icon': {
     marginTop: '-2px',
