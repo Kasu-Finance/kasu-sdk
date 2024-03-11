@@ -2,6 +2,7 @@ import { BigNumber } from 'ethers'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
 import useToastState from '@/hooks/context/useToastState'
+import useEarnedBonusLockingAmount from '@/hooks/locking/useEarnedBonusLockingAmount'
 import useUserLocks from '@/hooks/locking/useUserLocks'
 import useKasuSDK from '@/hooks/useKasuSDK'
 import useEarnedRKsu from '@/hooks/web3/useEarnedRKsu'
@@ -20,6 +21,8 @@ const useLockKSU = () => {
   const { updateUserLocks } = useUserLocks()
 
   const { updateEarnedRKsu } = useEarnedRKsu()
+
+  const { updateEarnedBonusLockingAmount } = useEarnedBonusLockingAmount()
 
   const { setLockProgress } = useLockModalState()
 
@@ -41,7 +44,11 @@ const useLockKSU = () => {
 
       await waitForReceipt(lock)
 
-      await Promise.all([updateUserLocks(), updateEarnedRKsu()])
+      await Promise.all([
+        updateUserLocks(),
+        updateEarnedRKsu(),
+        updateEarnedBonusLockingAmount(),
+      ])
 
       setLockProgress(LockProgress.COMPLETED)
 
