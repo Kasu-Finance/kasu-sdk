@@ -15,6 +15,7 @@ import {
     GQLEarnedRKsuForAddress,
     GQLGetLockingPeriods,
     GQLStakedAmountForAddress,
+    GQLTotalBonusAmountForAddress,
     GQLUserLocks,
     LockPeriod,
     LockPeriodInterface,
@@ -27,6 +28,7 @@ import {
     userEarnedrKsuQuery,
     userLocksQuery,
     userStakedKsuQuery,
+    userTotalBonusAmountQuery,
 } from './locking.query';
 
 export class KSULocking {
@@ -198,6 +200,17 @@ export class KSULocking {
         );
 
         return result.userLockDepositsInfo.rKSUAmount;
+    }
+
+    async getUserTotalBonusAmount(userAddress: string): Promise<string> {
+        const result: GQLTotalBonusAmountForAddress = await this._graph.request(
+            userTotalBonusAmountQuery,
+            {
+                userAddress: userAddress.toLowerCase(),
+            },
+        );
+
+        return result.userLockDepositsInfo.totalKsuBonusAmount;
     }
 
     async getLockingRewards(

@@ -50,6 +50,12 @@ export interface GQLEarnedRKsuForAddress {
     };
 }
 
+export interface GQLTotalBonusAmountForAddress {
+    userLockDepositsInfo: {
+        totalKsuBonusAmount: string;
+    };
+}
+
 export interface GQLUserLocks {
     userLocks: {
         id: string;
