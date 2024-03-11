@@ -2,8 +2,9 @@ import { GraphQLClient } from 'graphql-request';
 
 import { SdkConfig } from '../../sdk-config';
 import {
+    MinimumCriteriaEndBorrower,
     PoolDelegateProfileAndHistory, PoolOverview, PoolTranches,
-    RiskManagement, RiskPerformance, TrancheData
+    RiskManagement, RiskPerformance, SecurityStructureEndBorrower, TrancheData
 } from '../../types';
 
 export class DataService {
@@ -66,21 +67,45 @@ export class DataService {
 
     getRiskManagement(id_in: string[]): RiskManagement[]{
         const fakeRiskPerformanceData: RiskPerformance[] = [
-            { id: '1', poolLossRate: 5, independentRiskScore: 8, communityRating: 7},
-            { id: '2', poolLossRate: 7, independentRiskScore: 6, communityRating: 8},
+            { id: '1', firstLossCapital: 0.00, poolLossRate: 5, independentRiskScore: 8, communityRating: 7 },
+            { id: '2', firstLossCapital: 0.00, poolLossRate: 7, independentRiskScore: 6, communityRating: 8 },
         ];
+
+        const fakeSecurityStructureEndBorrowers: SecurityStructureEndBorrower[] = [{
+            id: "1",
+            directorsGuarantees: ['fake director guarantee 1', 'fake director guarantee 2'],
+            chargeOverBusinessAsset: 'fake charge over business asset 1',
+            controlOverBankAccounts: 'fake control over bank accounts 1',
+          },
+          {
+            id: "2",
+            directorsGuarantees: ['fake director guarantee 3', 'fake director guarantee 4'],
+            chargeOverBusinessAsset: 'fake charge over business asset 2',
+            controlOverBankAccounts: 'fake control over bank accounts 2',
+          }];
+          
+          const fakeMinimumCriteriaEndBorrowers: MinimumCriteriaEndBorrower[] = [{
+            id: "1",
+            minimumYearsInBusiness: 'fake minimum years 1',
+            propertyOwners: 'fake property owners 1',
+          },
+          {
+            id: "2",
+            minimumYearsInBusiness: 'fake minimum years 2',
+            propertyOwners: 'fake property owners 2',
+          }];
 
         const fakeData: RiskManagement[] = [
             {
                 id: "1",
-                securityStructureEndBorrowers: "securityStructureEndBorrowers1",
-                minimumCriteriaEndBorrowers: "minimumCriteriaEndBorrowers1",
+                securityStructureEndBorrowers: fakeSecurityStructureEndBorrowers[0],
+                minimumCriteriaEndBorrowers: fakeMinimumCriteriaEndBorrowers[0],
                 riskPerformance: fakeRiskPerformanceData[0],
             },
             {
                 id: "2",
-                securityStructureEndBorrowers: "securityStructureEndBorrowers2",
-                minimumCriteriaEndBorrowers: "minimumCriteriaEndBorrowers2",
+                securityStructureEndBorrowers: fakeSecurityStructureEndBorrowers[1],
+                minimumCriteriaEndBorrowers: fakeMinimumCriteriaEndBorrowers[1],
                 riskPerformance: fakeRiskPerformanceData[1],
             },
         ];

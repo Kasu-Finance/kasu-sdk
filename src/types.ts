@@ -98,13 +98,27 @@ export interface PoolTranches {
 
 export interface RiskManagement {
     id: string;
-    securityStructureEndBorrowers: string;
-    minimumCriteriaEndBorrowers: string;
+    securityStructureEndBorrowers: SecurityStructureEndBorrower;
+    minimumCriteriaEndBorrowers: MinimumCriteriaEndBorrower;
     riskPerformance: RiskPerformance;
+}
+
+export interface SecurityStructureEndBorrower {
+    id: string;
+    directorsGuarantees: string[];
+    chargeOverBusinessAsset: string;
+    controlOverBankAccounts: string;
+}
+
+export interface MinimumCriteriaEndBorrower {
+    id: string;
+    minimumYearsInBusiness: string;
+    propertyOwners: string;
 }
 
 export interface RiskPerformance {
     id: string;
+    firstLossCapital: number
     poolLossRate: number;
     independentRiskScore: number;
     communityRating: number;
