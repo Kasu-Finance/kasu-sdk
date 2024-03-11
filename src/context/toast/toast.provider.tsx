@@ -30,7 +30,11 @@ const ToastState: React.FC<ToastStateProps> = ({ children }) => {
       {state.toast && (
         <Modal
           open={true}
-          onClose={() => {}}
+          onClose={
+            state.toast.isClosable
+              ? () => dispatch({ type: 'REMOVE_TOAST' })
+              : undefined
+          }
           sx={{
             display: 'flex',
             justifyContent: 'center',
@@ -45,7 +49,7 @@ const ToastState: React.FC<ToastStateProps> = ({ children }) => {
                 {state.toast.txHash && (
                   <Button
                     href={`${
-                      networks[SupportedChainIds.BASE_GOERLI]
+                      networks[SupportedChainIds.BASE_SEPOLIA]
                         .blockExplorerUrls[0]
                     }/tx/${state.toast.txHash}`}
                     target='_blank'

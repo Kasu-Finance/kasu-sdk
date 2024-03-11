@@ -2,7 +2,9 @@ import { BigNumber } from 'ethers'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
 import useToastState from '@/hooks/context/useToastState'
+import useUserLocks from '@/hooks/locking/useUserLocks'
 import useKasuSDK from '@/hooks/useKasuSDK'
+import useEarnedRKsu from '@/hooks/web3/useEarnedRKsu'
 import useHandleError from '@/hooks/web3/useHandleError'
 
 import { LockProgress } from '@/context/lockModal/lockModal.types'
@@ -15,9 +17,13 @@ const useLockKSU = () => {
 
   const handleError = useHandleError()
 
+  const { updateUserLocks } = useUserLocks()
+
+  const { updateEarnedRKsu } = useEarnedRKsu()
+
   const { setLockProgress } = useLockModalState()
 
-  const { setToast } = useToastState()
+  const { setToast, removeToast } = useToastState()
 
   return async (amount: BigNumber, duration: string) => {
     try {
@@ -35,7 +41,11 @@ const useLockKSU = () => {
 
       await waitForReceipt(lock)
 
+      await Promise.all([updateUserLocks(), updateEarnedRKsu()])
+
       setLockProgress(LockProgress.COMPLETED)
+
+      removeToast()
     } catch (error) {
       handleError(
         error,

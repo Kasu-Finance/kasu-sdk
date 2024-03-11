@@ -17,8 +17,6 @@ const useLaunchBonusBreakdown = () => {
 
   return {
     totalLaunchBonus,
-    weightedAverageDaysLocked: '270' as string | undefined,
-    weightedAverageDaysLeft: '100' as string | undefined,
     error,
     isLoading,
   }
