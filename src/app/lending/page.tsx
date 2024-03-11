@@ -1,7 +1,6 @@
 import { Container } from '@mui/material'
 
 import Carousel from '@/components/molecules/Carousel'
-import PageHeader from '@/components/molecules/PageHeader'
 import PoolCard from '@/components/molecules/PoolCard'
 
 const LENDING_POOLS = [
@@ -34,8 +33,6 @@ const LENDING_POOLS = [
 const Lending = () => {
   return (
     <Container maxWidth='lg'>
-      <PageHeader title='Lending' />
-
       <Carousel slidesPerPage={3}>
         {LENDING_POOLS.map((pool, index) => (
           <PoolCard name={pool.name} link={pool.link} key={index} />
