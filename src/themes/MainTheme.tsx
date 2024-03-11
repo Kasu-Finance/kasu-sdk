@@ -124,7 +124,11 @@ export const theme = createTheme({
       xxl: 1921,
     },
   },
+
   components: {
+    MuiCssBaseline: {
+      styleOverrides: ``,
+    },
     MuiAppBar: {
       styleOverrides: {
         root: {
@@ -137,6 +141,7 @@ export const theme = createTheme({
         root: {},
       },
     },
+
     MuiCheckbox: {
       styleOverrides: {
         root: {

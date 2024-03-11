@@ -5,7 +5,7 @@ import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import { memo, useCallback, useState } from 'react'
 
-import OverviewCard from '@/components/molecules/lending/OverviewCard'
+import OverviewCard from '@/components/molecules/lending/overview/OverviewCard'
 import TabPanel from '@/components/molecules/tabs/TabPanel'
 
 const PoolTabs: React.FC = () => {

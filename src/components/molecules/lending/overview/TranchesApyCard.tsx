@@ -1,56 +1,42 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  CardHeader,
-  Divider,
-  Grid,
-  Typography,
-} from '@mui/material'
+'use client'
+
+import { Box, Button, Divider, Grid, Typography } from '@mui/material'
+import { useRef } from 'react'
+
+import useIsSticky from '@/hooks/useIsSticky'
 
 import InfoTooltip from '@/components/atoms/InfoTooltip'
 
-const OverviewTitle = () => (
-  <CardHeader
-    title=' Pool Overview'
-    titleTypographyProps={{
-      variant: 'h6',
-      component: 'h6',
-      m: 0,
-    }}
-    action={
-      <Button
-        variant='contained'
-        sx={{ height: '30px', top: 4, right: 8 }}
-        size='small'
-      >
-        Strategy deck
-      </Button>
-    }
-  />
-)
+const TranchesApyCard = () => {
+  const divRef = useRef<HTMLDivElement>(null)
 
-const OverviewCard = () => {
+  const { isSticky } = useIsSticky({
+    elementRef: divRef,
+    threshold: 64,
+  })
+
   return (
-    <Card sx={{ minWidth: 275, boxShadow: 3 }} elevation={1}>
-      <OverviewTitle />
-
-      <CardContent>
-        <Typography variant='body1'>
-          By engaging in Cash Management, companies can extend runway, hedge
-          against inflation, and manage cash flows. The Pool is designed to meet
-          the conservative risk profile and daily liquidity needs of DAOs,
-          Offshore Companies and Web3 Treasuries. The pool passes yield sourced
-          from US Treasury bills and reverse repurchase agreements, less fees of
-          0.5% of yield, to Lenders.
-        </Typography>
-      </CardContent>
+    <Box
+      ref={divRef}
+      sx={{
+        pt: 2,
+        boxShadow: isSticky ? 12 : 0,
+        position: isSticky ? 'sticky' : 'relative',
+        top: isSticky ? 64 : 0,
+        background: isSticky ? '#fff' : 'inherit',
+        zIndex: 1200,
+        transition: 'all .25s ease-in-out',
+        width: isSticky ? 'calc(100% + 32px)' : '100%',
+        ml: isSticky ? -2 : 0,
+        pl: isSticky ? 2 : 0,
+        pr: isSticky ? 2 : 0,
+      }}
+    >
       <Box
         sx={{
           flexGrow: 1,
-          m: 2,
+          mt: 2,
+          mb: 2,
           background: '#1976D20A',
           borderRadius: '8px',
         }}
@@ -96,14 +82,22 @@ const OverviewCard = () => {
             </Box>
           </Grid>
         </Grid>
-      </Box>
-      <CardActions
-        sx={{ pt: 0, pl: 0, pr: 0, pb: 2, justifyContent: 'center' }}
+      </Box>{' '}
+      <Box
+        display='flex'
+        justifyContent='center'
+        width='100%'
+        sx={{
+          pt: 0,
+          pl: 0,
+          pr: 0,
+          pb: 2,
+        }}
       >
         <Button variant='contained'>Deposit</Button>
-      </CardActions>
-    </Card>
+      </Box>
+    </Box>
   )
 }
 
-export default OverviewCard
+export default TranchesApyCard
