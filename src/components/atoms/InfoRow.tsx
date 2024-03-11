@@ -1,7 +1,7 @@
 import { Box, Divider, Typography, TypographyProps } from '@mui/material'
 import React, { ReactNode } from 'react'
 
-import InfoTooltip from '@/components/atoms/InfoTooltip'
+import ToolTip from '@/components/atoms/ToolTip'
 
 type InfoRowProps = {
   title: string
@@ -53,7 +53,7 @@ const InfoRow: React.FC<InfoRowProps> = ({
               </Typography>
             )}
           </Box>
-          <InfoTooltip title={toolTipInfo} />
+          {toolTipInfo && <ToolTip title={toolTipInfo} />}
         </Box>
         {metric}
       </Box>
