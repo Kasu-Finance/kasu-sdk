@@ -1,11 +1,11 @@
-import useLaunchBonusBreakdown from '@/hooks/locking/useLaunchBonusBreakdown'
+import useEarnedBonusLockingAmount from '@/hooks/locking/useEarnedBonusLockingAmount'
 
 import RewardsBreakdownCard from '@/components/molecules/locking/RewardsBreakdown/RewardsBreakdownCard'
 
 import { formatAmount } from '@/utils'
 
 const LaunchBonusBreakdown = () => {
-  const { totalLaunchBonus } = useLaunchBonusBreakdown()
+  const { totalLaunchBonus } = useEarnedBonusLockingAmount()
 
   return (
     <RewardsBreakdownCard
