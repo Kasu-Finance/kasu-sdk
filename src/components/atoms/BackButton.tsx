@@ -6,7 +6,7 @@ import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
-const BackButton: React.FC<ButtonProps> = (props) => {
+const BackButton: React.FC<ButtonProps> = ({ startIcon, ...props }) => {
   const router = useRouter()
   const { t } = useTranslation()
 
@@ -15,7 +15,7 @@ const BackButton: React.FC<ButtonProps> = (props) => {
   }
 
   return (
-    <Button {...props} onClick={handleBack}>
+    <Button {...props} onClick={handleBack} startIcon={startIcon}>
       {props.children || t('general.goBack')}
     </Button>
   )

@@ -65,6 +65,11 @@ export const theme = createTheme({
       secondary: 'rgba(0,0,0, 0.6)',
       disabled: 'rgba(0, 0, 0, 0.38)',
     },
+    grey: {
+      300: 'rgba(0, 0, 0, 0.04)',
+      400: 'rgba(0, 0, 0, 0.38)',
+      900: 'rgba(117, 117, 117, 1)',
+    },
   },
   typography: {
     fontFamily: fontFamily,
@@ -447,6 +452,13 @@ export const theme = createTheme({
           },
         },
       },
+    },
+    MuiCssBaseline: {
+      styleOverrides: `
+          .light-blue-background {
+            background-color: #1976D20A;
+          }
+        `,
     },
   },
 })
