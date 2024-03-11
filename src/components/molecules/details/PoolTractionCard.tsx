@@ -2,7 +2,7 @@ import { Box, Card, Typography } from '@mui/material'
 
 import useTranslation from '@/hooks/useTranslation'
 
-import MetricTextUnit from '@/components/molecules/details/MetricTextUnit'
+import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
 import mockResponseWithId from '@/mock-data/pool-details/mockResponse'
 
@@ -17,20 +17,21 @@ const PoolTractionCard = () => {
       </Typography>
 
       <Box display='flex' alignItems='center'>
-        {metrics.map((metric, index) => (
+        {metrics.map(({ id, content, unit = '' }, index) => (
           <Box
-            key={metric.id}
+            key={id}
             display='flex'
             width='100%'
             flexDirection='column'
             pl={index > 0 ? 1 : 0}
           >
-            <MetricTextUnit
-              metric={metric}
+            <MetricWithSuffix
+              content={String(content)}
+              suffix={unit}
               containerSx={{ pr: index === metrics.length - 1 ? 0 : 0.5 }}
               sx={{ pb: 1 }}
-              titleKey={`details.poolTraction.${metric.id}.label`}
-              tooltipKey={`details.poolTraction.${metric.id}.tooltip`}
+              titleKey={`details.poolTraction.${id}.label`}
+              tooltipKey={`details.poolTraction.${id}.tooltip`}
             />
           </Box>
         ))}
