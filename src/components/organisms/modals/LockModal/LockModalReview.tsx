@@ -1,4 +1,5 @@
 import { Box, Grid, Typography } from '@mui/material'
+import { LockPeriod } from 'kasu-sdk/src/types'
 import React from 'react'
 
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
@@ -13,9 +14,13 @@ import dayjs from '@/dayjs'
 
 type LockModalReviewProps = {
   lockAmount: string
+  selectedLockPeriod: LockPeriod
 }
 
-const LockModalReview: React.FC<LockModalReviewProps> = ({ lockAmount }) => {
+const LockModalReview: React.FC<LockModalReviewProps> = ({
+  lockAmount,
+  selectedLockPeriod,
+}) => {
   const { nextEpochTime } = useNextEpochTime()
   const { t } = useTranslation()
 
@@ -63,7 +68,7 @@ const LockModalReview: React.FC<LockModalReviewProps> = ({ lockAmount }) => {
                     px={2}
                     display='block'
                   >
-                    200 {t('time.days')}
+                    {selectedLockPeriod.lockPeriod} {t('time.days')}
                   </Typography>
                 }
               />

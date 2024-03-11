@@ -113,7 +113,7 @@ const CustomTable = <T, U>({
 
                 return (
                   <TableCell
-                    key={value.toString()}
+                    key={index}
                     sx={{
                       textAlign: index === 0 ? 'left' : 'right',
                     }}

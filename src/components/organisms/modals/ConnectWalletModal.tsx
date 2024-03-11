@@ -1,24 +1,18 @@
 'use client'
 
-import { Button, CircularProgress, Modal } from '@mui/material'
+import { Box, Button, CircularProgress, DialogContent } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
-import { useCallback, useEffect, useState } from 'react'
+import Image from 'next/image'
+import { isValidElement, useCallback, useEffect, useState } from 'react'
 
-import useModalState from '@/hooks/context/useModalState'
 import { useOrderedConnections } from '@/hooks/web3/useOrderedConnections'
-import useSwitchChain from '@/hooks/web3/useSwitchChain'
 
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
-import ModalBody from '@/components/atoms/ModalBody'
+import DialogHeader from '@/components/molecules/DialogHeader'
 
-import { SupportedChainIds } from '@/connection/chains'
-import {
-  setRecentWeb3Connection,
-  setRecentWeb3ConnectionDisconnected,
-} from '@/connection/connection.helper'
+import { setRecentWeb3Connection } from '@/connection/connection.helper'
 import { getConnection } from '@/connection/connectors'
-import { networkConnection } from '@/connection/connectors/networkConnector'
-import { formatAccount, userRejectedConnection, web3reactError } from '@/utils'
+import { userRejectedConnection, web3reactError } from '@/utils'
 
 import { Connection } from '@/types/connectors'
 
@@ -30,8 +24,6 @@ const ConnectWalletModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const connections = useOrderedConnections()
   const { chainId, account, connector, ENSName } = useWeb3React()
   const connection = getConnection(connector)
-  const { modal } = useModalState()
-  const switchChain = useSwitchChain()
 
   const [loading, setLoading] = useState<LoadingState>({})
 
@@ -53,32 +45,12 @@ const ConnectWalletModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         }
       } finally {
         setLoading((prev) => ({ ...prev, [providerName]: false }))
+        handleClose()
       }
     },
     // eslint-disable-next-line
     [chainId]
   )
-
-  const selectChain = async () => {
-    try {
-      await switchChain(
-        chainId === SupportedChainIds.MAINNET
-          ? SupportedChainIds.ARBITRUM_ONE
-          : SupportedChainIds.MAINNET
-      )
-    } catch (error) {
-      console.warn(error)
-    }
-  }
-
-  const disconnect = useCallback(() => {
-    if (connector && connector.deactivate) {
-      connector.deactivate()
-    }
-    connector.resetState()
-
-    setRecentWeb3ConnectionDisconnected()
-  }, [connector])
 
   useEffect(() => {
     if (account || ENSName) {
@@ -93,43 +65,48 @@ const ConnectWalletModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   }, [ENSName, account, connection])
 
   return (
-    <Modal
-      open={modal['connectWalletModal'].isOpen}
-      onClose={handleClose}
-      aria-labelledby='Connect Wallet Modal'
-      aria-describedby='List of available web3 wallet connections'
-    >
-      <ModalBody>
-        <div>Connector : {getConnection(connector).getProviderInfo().name}</div>
-        <div>Account : {formatAccount(account) ?? 'not connected'}</div>
-        <div>ChainID : {chainId ?? 'not connected'}</div>
+    <>
+      <DialogHeader title='Connect wallet' onClose={handleClose} />
+      <DialogContent>
         {connections.orderedConnections.map((connection) => {
-          const providerName = connection.getProviderInfo().name
-          const isLoading = loading[providerName]
+          const providerInfo = connection.getProviderInfo()
+
+          const isLoading = loading[providerInfo.name]
+
+          const icon = providerInfo.icon
 
           return (
             <Button
               variant='contained'
               fullWidth
-              sx={{ mb: 2 }}
-              key={connection.getProviderInfo().name}
+              sx={{ mb: 2, height: 55 }}
+              key={providerInfo.name}
               onClick={() => tryActivation(connection)}
               disabled={isLoading}
             >
               {isLoading ? (
                 <CircularProgress size={24} />
+              ) : isValidElement(icon) ? (
+                <>{icon}</>
               ) : (
-                connection.getProviderInfo().name
+                <Box gap={1} display='flex' alignItems='center'>
+                  {icon && typeof icon === 'string' && (
+                    <Image
+                      width={30}
+                      height={30}
+                      src={icon}
+                      alt={providerInfo.name}
+                    />
+                  )}
+
+                  {providerInfo.name}
+                </Box>
               )}
             </Button>
           )
         })}
-        <button onClick={selectChain}>switch chain</button>
-        {connector !== networkConnection.connector && (
-          <button onClick={disconnect}>disconnect</button>
-        )}
-      </ModalBody>
-    </Modal>
+      </DialogContent>
+    </>
   )
 }
 
