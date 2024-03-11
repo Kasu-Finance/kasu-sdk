@@ -28,6 +28,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 export type CustomTableHeader<T> = {
   label: ReactNode
   value: keyof T
+  disableSort?: boolean
 }
 
 export type Sort<T> = {
@@ -120,8 +121,19 @@ const CustomTable = <T, U>({
         >
           <TableHead>
             <StyledTableRow sx={tableRowStyle}>
-              {headers.map(({ label, value }, index) => {
+              {headers.map(({ label, value, disableSort }, index) => {
                 const isActive = sort.key === value
+
+                if (disableSort) {
+                  return (
+                    <TableCellComp
+                      key={index}
+                      sx={{ textAlign: index === 0 ? 'left' : 'right' }}
+                    >
+                      {label}
+                    </TableCellComp>
+                  )
+                }
 
                 return (
                   <TableCellComp
