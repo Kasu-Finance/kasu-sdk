@@ -8,7 +8,7 @@ const useLockingRewards = () => {
 
   const { account } = useWeb3React()
 
-  const { data, error } = useSWR(
+  const { data, error, mutate } = useSWR(
     account ? ['lockingRewards', account] : null,
     async ([_, userAddress]) => sdk.Locking.getLockingRewards(userAddress)
   )
@@ -17,6 +17,7 @@ const useLockingRewards = () => {
     lockingRewards: data,
     error,
     isLoading: !data && !error,
+    updateLockingRewards: mutate,
   }
 }
 

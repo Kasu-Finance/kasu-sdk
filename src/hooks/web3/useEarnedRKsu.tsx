@@ -8,8 +8,8 @@ const useEarnedRKsu = () => {
 
   const sdk = useKasuSDK()
 
-  const { data, error } = useSWR(
-    account ? ['stakedKasu', account] : null,
+  const { data, error, mutate } = useSWR(
+    account ? ['earnedRKsu', account] : null,
     async ([_, userAddress]) => sdk.Locking.getUserEarnedrKsu(userAddress)
   )
 
@@ -17,6 +17,7 @@ const useEarnedRKsu = () => {
     rKsuAmount: data,
     error,
     isLoading: !data && !error,
+    updateEarnedRKsu: mutate,
   }
 }
 

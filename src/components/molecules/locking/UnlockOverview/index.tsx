@@ -15,7 +15,7 @@ import { toBigNumber } from '@/utils'
 const handleSort = (
   a: UserLock,
   b: UserLock,
-  sort: Sort<Omit<UserLock, 'id' | 'launchBonus'>>
+  sort: Sort<Omit<UserLock, 'launchBonus'>>
 ) => {
   const direction = sort.direction === 'asc' ? 1 : -1
 
@@ -37,8 +37,14 @@ const handleSort = (
       .div(toBigNumber('1'))
       .toNumber()
   } else {
-    aValue = a[sort.key]
-    bValue = b[sort.key]
+    let sortKey = sort.key
+
+    if (sortKey === 'id') {
+      sortKey = 'endTime'
+    }
+
+    aValue = a[sortKey]
+    bValue = b[sortKey]
   }
 
   return (aValue - bValue) * direction

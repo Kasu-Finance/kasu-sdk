@@ -34,12 +34,12 @@ export const networks: Record<SupportedChainIds, ChainDetails> = {
     blockExplorerUrls: ['https://arbiscan.io'],
     rpcUrls: RPC_URLS[SupportedChainIds.ARBITRUM_ONE],
   },
-  [SupportedChainIds.BASE_GOERLI]: {
-    chainId: SupportedChainIds.BASE_GOERLI,
-    chainName: 'Base Goerli',
-    label: 'Base Goerli',
+  [SupportedChainIds.BASE_SEPOLIA]: {
+    chainId: SupportedChainIds.BASE_SEPOLIA,
+    chainName: 'Base Sepolia',
+    label: 'Base Sepolia',
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-    blockExplorerUrls: ['https://goerli.basescan.org'],
-    rpcUrls: RPC_URLS[SupportedChainIds.BASE_GOERLI],
+    blockExplorerUrls: ['https://sepolia.basescan.org'],
+    rpcUrls: RPC_URLS[SupportedChainIds.BASE_SEPOLIA],
   },
 }

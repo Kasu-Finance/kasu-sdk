@@ -8,7 +8,7 @@ import { SupportedChainIds } from '@/connection/chains'
 import { RPC_URLS } from '@/connection/rpc'
 
 const fallbackProvider = new JsonRpcProvider(
-  RPC_URLS[SupportedChainIds.BASE_GOERLI][0]
+  RPC_URLS[SupportedChainIds.BASE_SEPOLIA][0]
 )
 
 const useKasuSDK = () => {
