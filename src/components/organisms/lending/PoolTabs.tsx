@@ -7,6 +7,7 @@ import { memo, useCallback, useState } from 'react'
 
 import OverviewCard from '@/components/molecules/lending/overview/OverviewCard'
 import TabPanel from '@/components/molecules/tabs/TabPanel'
+import PoolDetails from '@/components/organisms/details/PoolDetails'
 
 const PoolTabs: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0)
@@ -38,7 +39,7 @@ const PoolTabs: React.FC = () => {
         <OverviewCard />
       </TabPanel>
       <TabPanel value={activeTab} index={1} id={panelsId}>
-        Pool Details
+        <PoolDetails />
       </TabPanel>
       <TabPanel value={activeTab} index={2} id={panelsId}>
         Item Repayments

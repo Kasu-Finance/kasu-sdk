@@ -24,14 +24,19 @@ const InfoRow: React.FC<InfoRowProps> = ({
 }) => {
   return (
     <>
-      <Box display='flex' justifyContent='space-between' px={2} py='6px'>
+      <Box
+        display='flex'
+        justifyContent='space-between'
+        px={2}
+        py='6px'
+        width='100%'
+      >
         <Box display='flex' alignItems='center'>
           <Box>
             <Typography
               variant='subtitle2'
               component='span'
               color='text.primary'
-              mr='4px'
               {...titleStyle}
             >
               {title}
@@ -41,7 +46,7 @@ const InfoRow: React.FC<InfoRowProps> = ({
                 variant='body2'
                 component='span'
                 color='text.primary'
-                mr='4px'
+                ml='4px'
                 {...subtitleStyle}
               >
                 {subtitle}

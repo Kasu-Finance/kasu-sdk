@@ -22,7 +22,7 @@ const DialogWrapper: React.FC<{
 
   const modalDetails = getModal(modalName, handleClose)
 
-  if (!modalDetails) return
+  if (!modalDetails || !modal[modalName].isOpen) return
 
   return (
     <Dialog

@@ -1,4 +1,5 @@
 import { useWeb3React } from '@web3-react/core'
+import { BigNumber } from 'ethers'
 import useSWR from 'swr'
 
 import useTokenDetails from '@/hooks/web3/useTokenDetails'
@@ -20,7 +21,8 @@ const useUserBalance = (tokenAddress: string | undefined) => {
       const balance = await erc20.balanceOf(userAddress)
 
       return balance
-    }
+    },
+    { fallbackData: BigNumber.from(0) }
   )
 
   return { balance, decimals, symbol }

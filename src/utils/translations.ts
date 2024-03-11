@@ -1,7 +1,7 @@
 import { Leaves } from '@/types/utils'
 
 const getNestedTranslation = <T extends Record<string, any>>(
-  path: Leaves<T, 5>,
+  path: Leaves<T> | string,
   translations: T
 ): string => {
   const keys = path.split('.')

@@ -42,7 +42,6 @@ export const getLockPeriods = async (): Promise<LockPeriod[]> => {
                       rKSUMultiplier
                       lockPeriod
                       ksuBonusMultiplier
-                      isActive
                       id
                   }
               }`,

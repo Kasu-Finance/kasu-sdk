@@ -8,15 +8,21 @@
     "confirm": "confirm",
     "goBack": "go back",
     "close": "close",
+    "return": "return",
     "info": "info",
     "buy": "buy",
     "lock": "lock",
-    "loyality": "loyalty",
+    "unlock": "unlock",
+    "loyalty": "loyalty",
     "max": "max",
     "nextEpoch": "next epoch",
     "rewards": "rewards",
     "to": "to",
-    "wallet": "wallet"
+    "wallet": "wallet",
+    "pools": "pools",
+    "none": "none",
+    "pool": "pool",
+    "adjust": "adjust"
   },
   "time": {
     "days": "days",
@@ -25,44 +31,72 @@
   },
   "locking": {
     "widgets": {
-      "loyality": {
-        "description": "Current loyalty level if Epoch ended today",
-        "button": "  How to increase your loyalty level?"
-      },
-      "epoch": {
-        "description": "Next xKASU epoch",
-        "table": {
-          "1": "Your next rewards",
-          "2": "KASU per rKSU"
+      "loyalty": {
+        "metric-1": "Current Loyalty Ratio",
+        "metric-2": "Total Deposited",
+        "button": "HOW TO/WHY INCREASE LOYALTY LEVEL?",
+        "level": {
+          "level-0": {
+            "title": "No Loyalty Status",
+            "description": "If your ratio of accumulated rKSU to USDC deposits is less than 1%, then you are not entitled to any privileges."
+          },
+          "level-1": {
+            "level": "Level 1",
+            "title": "Loyalty Level 1",
+            "subtitle": "If your ratio of accumulated rKSU to USDC deposits is between 1% - 5%, then you can enjoy the following benefits:",
+            "list": {
+              "list-0": "Second order priority access to lending pools (behind Loyalty Level 2).",
+              "list-1": "Second order priority for capital withdrawals from lending pools (behind Loyalty Level 2).",
+              "list-2": "0.1% additional APY from your deposits in all lending pools, awarded in KSU."
+            }
+          },
+          "level-2": {
+            "level": "Level 2",
+            "title": "Loyalty Level 2",
+            "subtitle": "If your ratio of accumulated rKSU to USDC deposits is 5% or more, then you can enjoy the following benefits:",
+            "list": {
+              "list-0": "First order priority access to lending pools.",
+              "list-1": "Firstly order priority for capital withdrawals from lending pools.",
+              "list-2": "0.2% additional APY from your deposits in all lending pools, awarded in KSU."
+            }
+          }
         }
       },
-      "unlock": { "noLockedKasu": "    Currently no locked KASU" }
+      "totalRewards": {
+        "title": "Bonus & Rewards Breakdown",
+        "metric-1": "Epoch ends in",
+        "rewards-1": {
+          "title": "Reward 1 • KSU Earnings Multiplier",
+          "metric-1": "Your Weighted Average Locking Period",
+          "metric-2": "Your Weighted Average Rewards Multiplier"
+        },
+        "rewards-2": {
+          "title": "Reward 2 • KSU Launch Bonus",
+          "metric": "Your Total Launch Bonus Rewards"
+        },
+        "rewards-3": {
+          "title": "Reward 3 • Protocol Fee Sharing",
+          "metric": "Your Protocol Fees Earned"
+        }
+      },
+      "unlock": { "noLockedKasu": "Currently no locked KASU" }
     }
   },
   "modals": {
-    "loyalityLevels": {
+    "loyaltyLevels": {
       "title": "Loyalty levels",
-      "subtitle-1": "About the loyalty program",
-      "description-1": "KSU Token Loyalty Locked KSU tokens provide additional benefits at various loyalty levels. These are as follows:",
-      "subtitle-2": "Regular/No KSU tokens locked:",
-      "description-2": "Normal yields stated in each pool are received, and deposit/withdrawal requests are processed after Loyalty level 1 and 2 stakers.",
-      "level": "Loyalty level",
-      "level-1": {
-        "description": "Locking at least 1% of the user’s deposit balance on the platform in KSU Tokens provides:",
-        "prop-1": "Second priority for deposits into pools.",
-        "prop-2": "Second priority for capital withdrawals at the end of each Epoch.",
-        "prop-3": "Launch bonus: 0.1% extra yield in all pools, paid in KSU tokens."
-      },
-      "level-2": {
-        "description": "Locking at least 5% of the user’s deposit balance on the platform in KSU Tokens provides:",
-        "prop-1": " First priority for deposits into pools.",
-        "prop-2": " First priority for capital withdrawals at the end of each Epoch.",
-        "prop-3": "Launch bonus: 0.2% extra yield in all pools, paid in KSU tokens"
+      "subtitle": "About the loyalty program",
+      "description-1": "The more you lock, the higher your loyalty level and the more benefits you receive.",
+      "description-2": "If you do not wish to lock KSU tokens, then you are can still participate in lending pools to earn APY. However, you will not receive any bonus APY, and any deposit/withdrawal request will be processed after Loyalty 1 and 2 Token Lockers.",
+      "description-3": "Each KSU token that you unlock will burn a proportionate amount of rKSU. In order to maintain your loyalty level and associated privileges, be sure to maintain an amount of locked KSU to avoid burning rKSU to the point that it falls below the above minimum ratio of USDC deposits."
+    },
+    "unlock": {
+      "reviewLock": {
+        "unlockingSchedule": "Unlocking request will be scheduled to the end of the current Epoch."
       }
     },
     "lock": {
       "buttons": {
-        "adjustLock": "Adjust Lock",
         "reviewLock": "Review Lock"
       },
       "overview": {
@@ -71,7 +105,9 @@
         "total": " Total KSU locked"
       },
       "deposit": {
-        "title": "Deposit"
+        "title": "KSU Locking",
+        "input-label": "Lock Amount",
+        "metric": "Locking Amount at Current Exchange Rate"
       },
       "duration": {
         "title": "Locking Duration",
@@ -80,21 +116,151 @@
       },
       "estimates": {
         "title": "Estimates",
-        "est-1": "Deposit value in USD at current exchange rate",
+        "est-1": "Your Protocol Fee Rewards",
         "tooltip-1": "info",
-        "est-2": "Launch Bonus KASU from locking",
+        "est-2": "APY Bonus (Paid in KSU)",
         "tooltip-2": "info",
-        "est-3": "Projected APY",
-        "tooltip-3": "info",
-        "est-4": "Projected USDC earning at current APY",
-        "tooltip-4": "info"
+        "est-3": "Launch Bonus",
+        "tooltip-3": "info"
       },
       "reviewLock": {
-        "cashPool": "Cash management pool",
+        "cashPool": "Apxium Invoice Standard Financing Pool",
         "lockAmount": "Lock Amount",
+        "lockingDuration": "Locking Duration",
         "epochEnds": "Epoch ends in",
-        "depositSchedule": "Deposit will be scheduled to the end of the current epoch",
+        "depositSchedule": "Locking request will be scheduled to the end of the current Epoch.",
         "nextClearing": "Next clearing day commences in"
+      }
+    }
+  },
+  "details": {
+    "poolDelegate": {
+      "title": "Pool Delegate Profile and History",
+      "history": {
+        "label": "Lending History",
+        "tooltip": "The total length of time the Pool Delegate has been operating as a lending business."
+      },
+      "totalFunds": {
+        "label": "Total Loan Funds Originated",
+        "tooltip": "​Total USDC equivalent amount of loans that the Pool Delegate has deployed since its inception, regardless of whether they have been made available on Kasu or not. ​"
+      },
+      "totalLoans": {
+        "label": "Total Loans Originated",
+        "tooltip": "​Total number of individual loans that the Pool Delegate has deployed since its inception, regardless of whether they have been made available on Kasu or not.​"
+      },
+      "assetClasses": {
+        "label": "Asset Class(es)",
+        "tooltip": "All lending specialisations, types or categories in which the Pool Delegate has a track record and expertise, regardless of the Pools available on Kasu by the Pool Delegate.​"
+      },
+      "otherPools": {
+        "label": "Other KASU Pools",
+        "tooltip": "​Other Lending Pools that the Pool Delegate has made available on Kasu.​"
+      },
+      "loans": {
+        "label": "Loans Under Management",
+        "tooltip": "Total USDC equivalent amount within this Lending Pool that is deployed into loans to end borrowers.​"
+      },
+      "loss": {
+        "label": "Historical Loss Rate",
+        "tooltip": "​Total losses expressed percentage of total loans originated by the Pool Delegate since its inception, regardless of whether they relate to Lending Pools made available on Kasu or not. ​"
+      }
+    },
+    "poolDetails": {
+      "title": "Pool Details",
+      "apy": {
+        "label": "APY",
+        "tooltip": "The current Annual Percentage Yield offered by the Pool Delegate within this Tranche (in the case that there are multiple Tranches within this Pool). In the absence of multiple Tranches, then this reflects the APY that Liquidity Providers are currently earning within this Lending Pool. This assumes all repayments will be made as expected. "
+      },
+      "assetClass": {
+        "label": "Asset Class",
+        "tooltip": "The lending specialisation, type or category related to this Lending Pool."
+      },
+      "exposureIndustry": {
+        "label": "Industry Exposure",
+        "tooltip": "​Industry and/or business category in which the Pool Delegates customers (end borrowers) operate.​"
+      },
+      "structureApy": {
+        "label": "Pool APY Structure",
+        "tooltip": "Indicates whether the APY earned by Liquidity Providers is fixed for a specified period of time, or variable.​"
+      },
+      "term": {
+        "label": "Pool Investment Term",
+        "tooltip": "The duration of the Lending Pool. 'Open Ended' has no fixed term or duration and is considered ongoing. A fixed term or duration has an end date, at which time it is intended that the Liquidity Pool will reach maturity and all Liquidity Providers will be fully repaid (subject to losses)."
+      },
+      "loan": {
+        "label": "Loan Structure (End Borrowers)",
+        "tooltip": "​The structure of each loan provided by the Pool Delegate to its customers (end borrowers). A Revolving Loan refers to a loan structure that that has no defined end date as it is utilised to fund ongoing operations (akin to a Line of Credit, Working Capital Loan or Evergreen Facility). An Amortising loan refers to a loan structure that has defined Principal and Interest repayment periods until it is fully repaid upon a specific end/maturity date. "
+      }
+    },
+    "poolTraction": {
+      "title": "Pool Traction",
+      "valueLocked": {
+        "label": "Total Value Locked (TVL)",
+        "tooltip": "Total USDC equivalent amount deposited into this Lending Pools.​"
+      },
+      "management": {
+        "label": "Loan Funds under Management",
+        "tooltip": "Total USDC equivalent amount within this Lending Pool that is deployed into loans to end borrowers.​"
+      },
+      "yield": {
+        "label": "Total Yield Earned",
+        "tooltip": "Total yield you have earned on your USDC investment(s) whilst you remain active in this Lending Pool. For example, if you withdraw your total investment from this Lending Pool (and are therefore no longer active in this Lending Pool), then your total yield earned will be displayed as zero. To view a breakdown of your total yield earned across all Lenidng Pools, please click on the 'My Portfolio' tab."
+      },
+      "activeLoans": {
+        "label": "Active Loans",
+        "tooltip": "Total number of loans that the Pool Delegate currently has deployed within this Lending Pool.  "
+      },
+      "capacity": {
+        "label": "Pool Capacity",
+        "tooltip": "​Amount of additional funds the Lending Pool can accept in USDC, also represented as a percentage of the maximum Pool target amount.​"
+      }
+    },
+    "riskManagement": {
+      "title": "Risk Management",
+      "riskStatus": {
+        "title": "Risk Status",
+        "firstLoss": {
+          "label": "First Loss Capital",
+          "tooltip": "​The amount of capital contributed by the Pool Delegate that will be absorbed first in the event of any losses, prior to losses being absorbed by Liquidity Providers, thereby providing a degree of loss protection to Liquidity Providers.​"
+        },
+        "lossRate": {
+          "label": "Pool Loss Rate",
+          "tooltip": "​Total losses expressed percentage of total loans originated by the Pool Delegate within this Lending Pool. ​"
+        },
+        "riskScore": {
+          "label": "Independent Risk Score",
+          "tooltip": "tooltip content missing"
+        },
+        "kasuRating": {
+          "label": "KASU Community Rating",
+          "tooltip": "tooltip content missing."
+        }
+      },
+      "security": {
+        "title": "Security Structure over End Borrowers",
+        "guarantees": {
+          "label": "Director(s) Guarantees",
+          "tooltip": "​A legal undertaking enforced by the Pool Delegate over the Director(s) of its customer(s) (end borrowers) that places liability into the hands of the Director(s), where in the case that the business cannot repay its loans, the Director(s) is/are personally liable for this debt."
+        },
+        "chargeAssets": {
+          "label": "Charge over Business Assets",
+          "tooltip": "​A legal security interest held by the Pool Delegate  over the assets of its business customer, providing the Pool Delegate with the right to enforce its interest in the event of default or insolvency."
+        },
+        "bankControl": {
+          "label": "Control over Bank Accounts",
+          "tooltip": "Whether the Pool Delegate has auto/direct debit over its customers' (end borrowers) bank accounts with the right to automatically draw cash funds to recover any loans in default."
+        }
+      },
+      "criteria": {
+        "title": "Minimum Criteria for End Borrowers",
+        "yearsBusiness": {
+          "label": "Minimum 3 years in Business",
+          "tooltip": "A condition which requires a Pool Delegate's customer (end borrower) to prove that it has been operating for at least 3 years with adequate financial reporting history."
+        },
+        "propertyOwners": {
+          "label": "Directors must be property owners",
+          "tooltip": "​A condition enforced by the Pool Delegate which requires at least one Director of Pool Delegate's customer (end borrower) to be a property owner to confirm a minimum level of wealth in order to provide comfort the event that a Director may become personally liability for its business loan(s) where recovery action may be required."
+        }
       }
     }
   }
