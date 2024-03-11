@@ -5,17 +5,17 @@ import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 
-import { PoolMetric } from '@/mock-data/pool-details/mockResponse'
-
-export interface MetricProps extends Partial<TypographyProps> {
-  metric: PoolMetric
+interface MetricWithSuffixProps extends Partial<TypographyProps> {
+  content: string
+  suffix?: string
   titleKey: string
   tooltipKey: string
   containerSx?: SxProps<Theme>
 }
 
-const MetricTextUnit: React.FC<MetricProps> = ({
-  metric,
+const MetricWithSuffix: React.FC<MetricWithSuffixProps> = ({
+  content = '',
+  suffix = '',
   titleKey,
   tooltipKey,
   containerSx,
@@ -38,13 +38,13 @@ const MetricTextUnit: React.FC<MetricProps> = ({
         metric={<></>}
       />
       <Typography variant='h6' {...typographyProps} sx={{ pl: 2 }}>
-        {metric.content}{' '}
+        {content}{' '}
         <Typography variant='body1' component='span'>
-          {metric.unit}
+          {suffix}
         </Typography>
       </Typography>
     </Box>
   )
 }
 
-export default MetricTextUnit
+export default MetricWithSuffix
