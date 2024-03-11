@@ -2,6 +2,7 @@ import { Button, TableCell, TableRow, Typography } from '@mui/material'
 import { UserLock } from 'kasu-sdk/src/types'
 
 import useModalState from '@/hooks/context/useModalState'
+import useCountdown from '@/hooks/useCountdown'
 import useTranslation from '@/hooks/useTranslation'
 
 import TokenAmount from '@/components/atoms/TokenAmount'
@@ -25,6 +26,12 @@ const UnlockRow: React.FC<UnlockRowProps> = ({ userLock }) => {
     openModal({ name: 'unlockModal', userLock })
   }
 
+  const isUnlocked = dayjs.unix(endTime).isBefore()
+
+  const [timeLeft, timeUnit] = useCountdown(endTime, {
+    toNearestUnit: true,
+  }).split(' ')
+
   return (
     <TableRow>
       <TableCell>
@@ -35,8 +42,16 @@ const UnlockRow: React.FC<UnlockRowProps> = ({ userLock }) => {
         <Button
           variant='contained'
           startIcon={<UnlockIcon />}
-          sx={{ mt: 1 }}
+          sx={{
+            mt: 1,
+            '& .MuiButton-startIcon > svg > path': isUnlocked
+              ? undefined
+              : {
+                  fill: 'rgba(0,0,0,0.26)',
+                },
+          }}
           onClick={handleOpen}
+          disabled={!isUnlocked}
         >
           {t('general.unlock')}
         </Button>
@@ -48,10 +63,10 @@ const UnlockRow: React.FC<UnlockRowProps> = ({ userLock }) => {
       </TableCell>
       <TableCell align='right'>
         <Typography variant='body1' component='span'>
-          {dayjs.unix(endTime).diff(dayjs.unix(startTime), 'days')}{' '}
+          {timeLeft}&nbsp;
         </Typography>
         <Typography variant='caption' component='span'>
-          {t('time.days')}
+          {timeUnit}
         </Typography>
       </TableCell>
       <TableCell align='right'>

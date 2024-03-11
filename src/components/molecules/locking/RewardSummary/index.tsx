@@ -30,6 +30,10 @@ const RewardSummary = () => {
     toBigNumber(ksuPrice || '0')
   )
 
+  const isFeesClaimable = Boolean(
+    lockingRewards && !toBigNumber(lockingRewards.claimableRewards).isZero()
+  )
+
   return (
     <CardWidget title='Bonus & Rewards Summary​​'>
       <Grid container spacing={3}>
@@ -56,7 +60,9 @@ const RewardSummary = () => {
               />
             }
           />
-          <ClaimButton onClick={claimRewards}>{t('general.claim')}</ClaimButton>
+          <ClaimButton onClick={claimRewards} disabled={!isFeesClaimable}>
+            {t('general.claim')}
+          </ClaimButton>
         </Grid>
         <Grid item xs={6}>
           <ColoredBox sx={{ p: 0 }}>

@@ -42,7 +42,10 @@ const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
       <DialogHeader title='Lock' onClose={handleClose} />
       <DialogContent>
         {lockProgress === LockProgress.REVIEWING ? (
-          <LockModalReview lockAmount={amount} />
+          <LockModalReview
+            lockAmount={amount}
+            selectedLockPeriod={selectedLockPeriod}
+          />
         ) : lockProgress === LockProgress.EDITING ? (
           <LockModalEdit userBalance={formatUnits(balance ?? '0', decimals)} />
         ) : (

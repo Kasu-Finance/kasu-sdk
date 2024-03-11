@@ -28,8 +28,8 @@ const useHandleError = () => {
       case userRejectedTransaction(error):
         setToast({
           type: 'error',
-          title: title ?? ActionStatus.REJECTED,
-          message: message ?? ACTION_MESSAGES[ActionStatus.REJECTED],
+          title: ActionStatus.REJECTED,
+          message: ACTION_MESSAGES[ActionStatus.REJECTED],
         })
         break
       case error.name === Logger.errors.CALL_EXCEPTION:

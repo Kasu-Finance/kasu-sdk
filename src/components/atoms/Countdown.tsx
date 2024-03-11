@@ -15,7 +15,10 @@ const Countdown: React.FC<CountdownProps> = ({
   intervalMs,
   render,
 }) => {
-  const countDown = useCountdown(endTime, format, intervalMs)
+  const countDown = useCountdown(endTime, {
+    format,
+    intervalMs,
+  })
 
   return render?.(countDown) ?? countDown
 }

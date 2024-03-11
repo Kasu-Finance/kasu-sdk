@@ -1,4 +1,5 @@
 import useToastState from '@/hooks/context/useToastState'
+import useLockingRewards from '@/hooks/locking/useLockingRewards'
 import useKasuSDK from '@/hooks/useKasuSDK'
 import useHandleError from '@/hooks/web3/useHandleError'
 
@@ -9,6 +10,8 @@ const useClaimLockingRewards = () => {
   const sdk = useKasuSDK()
 
   const handleError = useHandleError()
+
+  const { updateLockingRewards } = useLockingRewards()
 
   const { setToast } = useToastState()
 
@@ -24,6 +27,8 @@ const useClaimLockingRewards = () => {
       const claim = await sdk.Locking.claimFees()
 
       const receipt = await waitForReceipt(claim)
+
+      await updateLockingRewards()
 
       setToast({
         type: 'success',
