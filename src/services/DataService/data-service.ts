@@ -120,7 +120,7 @@ export class DataService {
             {
                 id: "1",
                 poolIdFK: "1",
-                delegateLendingHistory: "Fake lending history 1",
+                delegateLendingHistory: 1653303878,
                 assetClass: "assetClass1",
                 otherKASUPools: ["Fake KASU pool 1", "Fake KASU pool 2"],
                 totalLoanFundsOriginated: 10000,
@@ -131,7 +131,7 @@ export class DataService {
             {
                 id: "2",
                 poolIdFK: "2",
-                delegateLendingHistory: "Fake lending history 2",
+                delegateLendingHistory: 1653303878,
                 assetClass: "assetClass2",
                 otherKASUPools: ["Fake KASU pool 3", "Fake KASU pool 4"],
                 totalLoanFundsOriginated: 20000,

@@ -78,7 +78,7 @@ export interface PoolOverview {
 export interface PoolDelegateProfileAndHistory {
     id: string;
     poolIdFK: string;
-    delegateLendingHistory: string;
+    delegateLendingHistory: number;
     assetClass: string;
     otherKASUPools: string[];
     totalLoanFundsOriginated: number;
@@ -118,7 +118,7 @@ export interface MinimumCriteriaEndBorrower {
 
 export interface RiskPerformance {
     id: string;
-    firstLossCapital: number
+    firstLossCapital: number;
     poolLossRate: number;
     independentRiskScore: number;
     communityRating: number;
@@ -129,5 +129,5 @@ export interface TrancheData {
     apy: number;
     maximumDeposit: number;
     minimumDeposit: number;
-    poolCapacity: number
+    poolCapacity: number;
 }
