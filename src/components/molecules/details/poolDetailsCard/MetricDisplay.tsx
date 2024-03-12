@@ -6,7 +6,8 @@ import InfoRow from '@/components/atoms/InfoRow'
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
 import { MetricGroupType } from '@/constants'
-import { PoolMetric } from '@/mock-data/pool-details/mockResponse'
+
+import { PoolMetric } from '@/types/poolDetails'
 
 interface MetricDisplayProps {
   metric: PoolMetric
@@ -37,7 +38,7 @@ const MetricDisplay: React.FC<MetricDisplayProps> = ({
       ) : (
         <Box width='100%' pr={2}>
           <InfoRow
-            showDivider
+            showDivider={!isLastItem}
             title={t(titleKey)}
             toolTipInfo={t(tooltipKey)}
             metric={<Typography variant='body2'>{metric.content}</Typography>}

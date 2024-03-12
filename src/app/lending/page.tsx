@@ -7,11 +7,11 @@ import PoolCard from '@/components/molecules/PoolCard'
 const LENDING_POOLS = [
   {
     name: 'Pool 1',
-    link: 'lending/pool-1',
+    link: 'lending/1',
   },
   {
     name: 'Pool 2',
-    link: 'lending/pool-2',
+    link: 'lending/2',
   },
   {
     name: 'Pool 3',

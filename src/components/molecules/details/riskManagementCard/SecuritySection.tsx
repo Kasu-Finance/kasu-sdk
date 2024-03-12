@@ -4,9 +4,9 @@ import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
-import { PoolMetric } from '@/mock-data/pool-details/mockResponse'
-
 import MetricsSection from './MetricsSection'
+
+import { PoolMetric } from '@/types/poolDetails'
 
 interface SecuritySectionProps {
   securityMetrics: PoolMetric[]

@@ -5,7 +5,7 @@ import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 
-import { PoolMetric } from '@/mock-data/pool-details/mockResponse'
+import { PoolMetric } from '@/types/poolDetails'
 
 interface MetricsSectionProps {
   metrics: PoolMetric[]
