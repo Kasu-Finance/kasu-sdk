@@ -79,7 +79,7 @@ export interface PoolDelegateProfileAndHistory {
     id: string;
     poolIdFK: string;
     delegateLendingHistory: number;
-    assetClass: string;
+    assetClasses: string;
     otherKASUPools: string[];
     totalLoanFundsOriginated: number;
     totalLoansOriginated: number;
