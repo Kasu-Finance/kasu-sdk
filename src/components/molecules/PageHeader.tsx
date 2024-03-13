@@ -16,7 +16,7 @@ import ImagePlaceholderIcon from '@/assets/icons/general/ImagePlaceholderIcon'
 type PageHeaderProps = {
   title: string
   loading?: boolean
-  variant?: 'title' | 'header'
+  variant?: 'title' | 'hero'
 }
 
 const PageHeader: React.FC<PageHeaderProps> = ({
