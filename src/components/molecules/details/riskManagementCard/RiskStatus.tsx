@@ -4,8 +4,8 @@ import React, { useMemo } from 'react'
 import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
+import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 import Rating from '@/components/atoms/Rating'
-import MetricTextUnit from '@/components/molecules/details/MetricTextUnit'
 
 import { PoolMetricIds } from '@/constants'
 import { PoolMetric } from '@/mock-data/pool-details/mockResponse'
@@ -33,10 +33,11 @@ const RiskStatus: React.FC<RiskStatusProps> = ({ metrics }) => {
     return { firstArray, secondArray }
   }, [metrics])
 
-  const renderMetricTextUnit = (metric: PoolMetric) => (
-    <MetricTextUnit
+  const renderMetricWithSuffix = (metric: PoolMetric) => (
+    <MetricWithSuffix
       key={metric.id}
-      metric={metric}
+      content={String(metric.content)}
+      suffix={metric.unit || ''}
       titleKey={`details.riskManagement.riskStatus.${metric.id}.label`}
       tooltipKey={`details.riskManagement.riskStatus.${metric.id}.tooltip`}
       color='grey.400'
@@ -88,7 +89,7 @@ const RiskStatus: React.FC<RiskStatusProps> = ({ metrics }) => {
         pb={0.5}
       >
         <Box width='50%' display='flex' flexDirection='column' pr={2}>
-          {firstArray.map(renderMetricTextUnit)}
+          {firstArray.map(renderMetricWithSuffix)}
         </Box>
 
         <Box width='50%' display='flex' flexDirection='column'>

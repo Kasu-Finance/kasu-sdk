@@ -4,8 +4,8 @@ import React from 'react'
 import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
+import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 import NextLink from '@/components/atoms/NextLink'
-import MetricTextUnit from '@/components/molecules/details/MetricTextUnit'
 
 import { MetricGroupType, PoolMetricIds } from '@/constants'
 import { PoolMetric } from '@/mock-data/pool-details/mockResponse'
@@ -27,16 +27,18 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
     const titleKey = `details.poolDelegate.${metric.id}.label`
     const tooltipKey = `details.poolDelegate.${metric.id}.tooltip`
 
-    const textDate =
+    const metricContent =
       metric.id === PoolMetricIds.History
         ? formatDuration(Number(metric.content))
-        : metric.content
+        : metric.content || ''
 
     switch (type) {
       case MetricGroupType.First:
         return (
-          <MetricTextUnit
-            metric={{ ...metric, content: textDate }}
+          <MetricWithSuffix
+            key={`${type}_${metric.id}`}
+            content={String(metricContent)}
+            suffix={metric?.unit || ''}
             titleKey={titleKey}
             tooltipKey={tooltipKey}
             containerSx={{ width: '33%', pb: 1, pr: 1 }}
@@ -44,9 +46,8 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
         )
       case MetricGroupType.Second:
         return (
-          <Box width='100%' pr={2}>
+          <Box key={`${type}_${metric.id}`} width='100%' pr={2}>
             <InfoRow
-              key={metric.id}
               title={t(titleKey)}
               toolTipInfo={t(tooltipKey)}
               showDivider={metric.id === PoolMetricIds.AssetClasses}
@@ -80,7 +81,7 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
       case MetricGroupType.Third:
         return (
           <InfoRow
-            key={metric.id}
+            key={`${type}_${metric.id}_${index}`}
             title={t(titleKey)}
             toolTipInfo={t(tooltipKey)}
             showDivider={index !== arrayLength - 1}
