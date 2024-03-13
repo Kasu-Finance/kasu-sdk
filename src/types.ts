@@ -144,3 +144,7 @@ export interface PoolMetric {
     metrics: PoolMetric[]
   }
   
+  export interface Pool {
+    name: string;
+    link: string;
+  }

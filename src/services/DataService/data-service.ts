@@ -3,6 +3,7 @@ import { GraphQLClient } from 'graphql-request';
 import { SdkConfig } from '../../sdk-config';
 import {
     MinimumCriteriaEndBorrower,
+    Pool,
     PoolDelegateProfileAndHistory, PoolOverview, PoolTranches,
     RiskManagement, RiskPerformance, SecurityStructureEndBorrower, TrancheData
 } from '../../types';
@@ -169,5 +170,35 @@ export class DataService {
             return fakeData;
         }
         return fakeData.filter(data => id_in.includes(data.id));
+    }
+
+    getAllPools(): Pool[] {
+        const fakeData = [
+            {
+              name: 'Pool 1',
+              link: 'lending/1',
+            },
+            {
+              name: 'Pool 2',
+              link: 'lending/2',
+            },
+            {
+              name: 'Pool 3',
+              link: 'lending/pool-3',
+            },
+            {
+              name: 'Pool 4',
+              link: 'lending/pool-4',
+            },
+            {
+              name: 'Pool 5',
+              link: 'lending/pool-5',
+            },
+            {
+              name: 'Pool 6',
+              link: 'lending/pool-6',
+            },
+        ];
+        return fakeData;
     }
 }
