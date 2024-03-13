@@ -4,11 +4,13 @@ import { Box, Button, Divider, Grid, Typography } from '@mui/material'
 import { useRef } from 'react'
 
 import useIsSticky from '@/hooks/useIsSticky'
+import useTranslation from '@/hooks/useTranslation'
 
 import InfoTooltip from '@/components/atoms/InfoTooltip'
 
 const TranchesApyCard = () => {
   const divRef = useRef<HTMLDivElement>(null)
+  const { t } = useTranslation()
 
   const { isSticky } = useIsSticky({
     elementRef: divRef,
@@ -19,17 +21,17 @@ const TranchesApyCard = () => {
     <Box
       ref={divRef}
       sx={{
-        pt: 2,
         boxShadow: isSticky ? 12 : 0,
         position: isSticky ? 'sticky' : 'relative',
         top: isSticky ? 64 : 0,
         background: isSticky ? '#fff' : 'inherit',
         zIndex: 1200,
         transition: 'all .25s ease-in-out',
-        width: isSticky ? 'calc(100% + 32px)' : '100%',
-        ml: isSticky ? -2 : 0,
-        pl: isSticky ? 2 : 0,
-        pr: isSticky ? 2 : 0,
+        width: '100%',
+        ml: 0,
+        pt: 2,
+        pl: 2,
+        pr: 2,
       }}
     >
       <Box
@@ -51,7 +53,7 @@ const TranchesApyCard = () => {
           <Grid item xs={4}>
             <Box>
               <Typography variant='subtitle2' sx={{ pl: 2, pb: 1 }}>
-                Senior Tranche APY <InfoTooltip title='test' />
+                {t('lending.tranche.senior')} <InfoTooltip title='test' />
               </Typography>
               <Divider />
               <Typography variant='h5' sx={{ pl: 2, pb: 1, pt: 0.5 }}>
@@ -62,7 +64,7 @@ const TranchesApyCard = () => {
           <Grid item xs={4}>
             <Box>
               <Typography variant='subtitle2' sx={{ pl: 2, pb: 1 }}>
-                Mezzanine Tranche <InfoTooltip title='test' />
+                {t('lending.')} <InfoTooltip title='test' />
               </Typography>
               <Divider />
               <Typography variant='h5' sx={{ pl: 2, pb: 1, pt: 0.5 }}>
@@ -73,7 +75,7 @@ const TranchesApyCard = () => {
           <Grid item xs={4}>
             <Box>
               <Typography variant='subtitle2' sx={{ pl: 2, pb: 1 }}>
-                Junior Tranche <InfoTooltip title='test' />
+                {t('lending.tranche.junior')} <InfoTooltip title='test' />
               </Typography>
               <Divider />
               <Typography variant='h5' sx={{ pl: 2, pb: 1, pt: 0.5 }}>
