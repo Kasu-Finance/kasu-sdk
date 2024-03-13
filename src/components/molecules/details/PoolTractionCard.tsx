@@ -1,10 +1,9 @@
 import { Box, Card, Typography } from '@mui/material'
+import { PoolMetric } from 'kasu-sdk/src/types'
 
 import useTranslation from '@/hooks/useTranslation'
 
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
-
-import { PoolMetric } from '@/types/poolDetails'
 
 interface PoolTractionCardProps {
   metrics: PoolMetric[]

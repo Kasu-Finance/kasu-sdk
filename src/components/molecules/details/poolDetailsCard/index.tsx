@@ -1,4 +1,5 @@
 import { Box, Card, Typography } from '@mui/material'
+import { PoolMetric } from 'kasu-sdk/src/types'
 import { useCallback, useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
@@ -6,8 +7,6 @@ import useTranslation from '@/hooks/useTranslation'
 import MetricDisplay from '@/components/molecules/details/poolDetailsCard/MetricDisplay'
 
 import { MetricGroupType, PoolDetailsMetricIds } from '@/constants'
-
-import { PoolMetric } from '@/types/poolDetails'
 
 interface PoolDetailsCardProps {
   metrics: PoolMetric[]

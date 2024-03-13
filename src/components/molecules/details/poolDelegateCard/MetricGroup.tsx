@@ -1,4 +1,5 @@
 import { Box, Typography } from '@mui/material'
+import { PoolMetric } from 'kasu-sdk/src/types'
 import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
@@ -9,8 +10,6 @@ import NextLink from '@/components/atoms/NextLink'
 
 import { MetricGroupType, PoolDelegateMetricIds } from '@/constants'
 import formatDuration from '@/utils/formats/formatDuration'
-
-import { PoolMetric } from '@/types/poolDetails'
 
 interface MetricGroupProps {
   metrics: PoolMetric[]

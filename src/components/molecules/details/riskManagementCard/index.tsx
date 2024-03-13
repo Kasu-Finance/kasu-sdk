@@ -1,4 +1,5 @@
 import { Box, Card, Typography } from '@mui/material'
+import { PoolDetailSection } from 'kasu-sdk/src/types'
 
 import useTranslation from '@/hooks/useTranslation'
 
@@ -6,7 +7,11 @@ import CriteriaSection from '@/components/molecules/details/riskManagementCard/C
 import RiskStatus from '@/components/molecules/details/riskManagementCard/RiskStatus'
 import SecuritySection from '@/components/molecules/details/riskManagementCard/SecuritySection'
 
-import { RiskManagementSection } from '@/types/poolDetails'
+export interface RiskManagementSection {
+  riskStatus: PoolDetailSection
+  security: PoolDetailSection
+  criteria: PoolDetailSection
+}
 
 interface RiskManagementCardProps {
   riskManagementData: RiskManagementSection

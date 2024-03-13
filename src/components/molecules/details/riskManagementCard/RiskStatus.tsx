@@ -1,4 +1,5 @@
 import { Box, Typography } from '@mui/material'
+import { PoolMetric } from 'kasu-sdk/src/types'
 import React, { useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
@@ -8,8 +9,6 @@ import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 import Rating from '@/components/atoms/Rating'
 
 import { RiskMetricIds } from '@/constants'
-
-import { PoolMetric } from '@/types/poolDetails'
 
 interface RiskStatusProps {
   metrics: PoolMetric[]

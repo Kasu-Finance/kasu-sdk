@@ -1,12 +1,11 @@
 import { Box } from '@mui/material'
 import Typography from '@mui/material/Typography'
+import { PoolMetric } from 'kasu-sdk/src/types'
 import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
 import MetricsSection from './MetricsSection'
-
-import { PoolMetric } from '@/types/poolDetails'
 
 interface CriteriaSectionProps {
   criteriaMetrics: PoolMetric[]

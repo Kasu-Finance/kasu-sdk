@@ -6,7 +6,7 @@ import usePoolDelegate from '@/hooks/lending/usePoolDelegate'
 import usePoolOverview from '@/hooks/lending/usePoolOverview'
 import useRiskManagement from '@/hooks/lending/useRiskManagement'
 
-import EmptyState from '@/components/atoms/EmptyState'
+import EmptyCardState from '@/components/atoms/EmptyCardState'
 import PoolDelegateCard from '@/components/molecules/details/poolDelegateCard/index'
 import PoolDetailsCard from '@/components/molecules/details/poolDetailsCard'
 import PoolTractionCard from '@/components/molecules/details/PoolTractionCard'
@@ -38,7 +38,7 @@ const PoolDetails: React.FC = () => {
   }
 
   if (noData) {
-    return <EmptyState message='No data available for this pool.' />
+    return <EmptyCardState message='No data available for this pool.' />
   }
 
   return (

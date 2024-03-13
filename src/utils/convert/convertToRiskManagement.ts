@@ -1,8 +1,8 @@
-import { RiskManagement } from 'kasu-sdk/src/types'
+import { PoolDetailSection, RiskManagement } from 'kasu-sdk/src/types'
+
+import { RiskManagementSection } from '@/components/molecules/details/riskManagementCard'
 
 import { PoolDetailsSectionIds, RiskMetricIds } from '@/constants'
-
-import { PoolDetailSection, RiskManagementSection } from '@/types/poolDetails'
 
 const convertRiskManagement = (
   riskData: RiskManagement

@@ -7,18 +7,14 @@ import {
 } from '@mui/material'
 import React from 'react'
 
-interface EmptyStateProps extends Partial<TypographyProps> {
+interface EmptyCardStateProps extends Partial<TypographyProps> {
   message: string
   sx?: SxProps<Theme>
-  typographyColor?: string
 }
 
-const EmptyState: React.FC<EmptyStateProps> = ({
-  message,
-  sx,
-  variant = 'h6',
-  color = 'grey.400',
-}) => {
+const EmptyCardState: React.FC<EmptyCardStateProps> = (props) => {
+  const { message, sx, variant = 'h6', color = 'text.secondary' } = props
+
   const combinedSx: SxProps<Theme> = {
     width: '100%',
     height: '300px',
@@ -38,4 +34,4 @@ const EmptyState: React.FC<EmptyStateProps> = ({
   )
 }
 
-export default EmptyState
+export default EmptyCardState

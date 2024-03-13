@@ -1,8 +1,6 @@
-import { PoolOverview } from 'kasu-sdk/src/types'
+import { PoolDetailSection, PoolMetric, PoolOverview } from 'kasu-sdk/src/types'
 
 import { PoolDetailsMetricIds, PoolDetailsSectionIds } from '@/constants'
-
-import { PoolDetailSection, PoolMetric } from '@/types/poolDetails'
 
 const convertToPoolDetails = (overview: PoolOverview): PoolDetailSection => {
   const metrics: PoolMetric[] = [
