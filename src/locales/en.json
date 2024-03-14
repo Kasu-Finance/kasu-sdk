@@ -263,5 +263,16 @@
         }
       }
     }
+  },
+  "risk": {
+    "poolCredit": {
+      "title": "Pool Credit Metrics",
+      "metrics": {
+        "metric-1": "Key Credit Metrics",
+        "metric-2": "Previous Fiscal Year",
+        "metric-3": "Most Recent Quarter",
+        "metric-4": "Prior Month"
+      }
+    }
   }
 }

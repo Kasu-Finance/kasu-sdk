@@ -9,6 +9,7 @@ import OverviewCard from '@/components/molecules/lending/OverviewCard'
 import TabPanel from '@/components/molecules/tabs/TabPanel'
 import PoolDetails from '@/components/organisms/details/PoolDetails'
 import Repayments from '@/components/organisms/repayments/Repayments'
+import RiskReporting from '@/components/organisms/risk/RiskReporting'
 
 const PoolTabs: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0)
