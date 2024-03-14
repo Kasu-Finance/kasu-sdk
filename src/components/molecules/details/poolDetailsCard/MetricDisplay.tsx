@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material'
 import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
-import MetricTextUnit from '@/components/molecules/details/MetricTextUnit'
+import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
 import { MetricGroupType } from '@/constants'
 import { PoolMetric } from '@/mock-data/pool-details/mockResponse'
@@ -26,8 +26,9 @@ const MetricDisplay: React.FC<MetricDisplayProps> = ({
   return (
     <>
       {type === MetricGroupType.First ? (
-        <MetricTextUnit
-          metric={metric}
+        <MetricWithSuffix
+          content={String(metric.content)}
+          suffix={metric.unit || ''}
           titleKey={titleKey}
           tooltipKey={tooltipKey}
           containerSx={{ pr: isLastItem ? 0 : 2 }}

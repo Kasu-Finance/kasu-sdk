@@ -1,8 +1,12 @@
-import { SxProps, Typography, TypographyProps } from '@mui/material'
+import {
+  Link as MuiLink,
+  LinkProps as MUILinkProps,
+  SxProps,
+} from '@mui/material'
 import Link from 'next/link'
 import React from 'react'
 
-interface NextLinkProps extends TypographyProps {
+interface NextLinkProps extends MUILinkProps {
   href: string
   asPath?: string
   sx?: SxProps
@@ -10,16 +14,19 @@ interface NextLinkProps extends TypographyProps {
 
 const NextLink: React.FC<NextLinkProps> = ({
   href,
-  asPath,
   children,
   sx,
-  ...typographyProps
+  ...linkProps
 }) => (
-  <Link href={href} as={asPath} passHref style={{ textDecoration: 'none' }}>
-    <Typography component='a' variant='body2' sx={sx} {...typographyProps}>
-      {children}
-    </Typography>
-  </Link>
+  <MuiLink
+    href={href}
+    variant='body2'
+    component={Link}
+    sx={{ textDecoration: 'none', ...sx }}
+    {...linkProps}
+  >
+    {children}
+  </MuiLink>
 )
 
 export default NextLink
