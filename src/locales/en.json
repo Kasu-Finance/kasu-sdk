@@ -273,6 +273,12 @@
         "metric-3": "Most Recent Quarter",
         "metric-4": "Prior Month"
       }
+    },
+    "badDebts": {
+      "title": "Bad Debts Metrics",
+      "totalAmount": "Total (Lifetime)",
+      "monthlyAverage": "Monthly Average (Last 12 Months)",
+      "currentStatus": "Current Status"
     }
   }
 }
