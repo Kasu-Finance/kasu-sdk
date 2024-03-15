@@ -1,7 +1,6 @@
 import {
   alpha,
   Box,
-  styled,
   SxProps,
   Table,
   TableBody,
@@ -21,15 +20,9 @@ import React, { ComponentType, ReactNode, useState } from 'react'
 
 import usePagination from '@/hooks/usePagination'
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  background: alpha(theme.palette.primary.main, 0.08),
-}))
-
-export type CustomTableHeader<T> = {
-  label: ReactNode
-  value: keyof T
-  disableSort?: boolean
-}
+import TableHeaders, {
+  CustomTableHeader,
+} from '@/components/molecules/customTable/TableHeaders'
 
 export type Sort<T> = {
   key: keyof T
@@ -38,6 +31,8 @@ export type Sort<T> = {
 
 type CustomTableProps<T, U> = {
   headers: CustomTableHeader<U>[]
+  additionalHeaders?: CustomTableHeader<U>[]
+  additionalHeadersStyle?: SxProps<Theme>
   data: T[]
   defaultSortKey: keyof U
   handleSort: (a: T, b: T, sort: Sort<U>) => number
@@ -58,6 +53,7 @@ type CustomTableProps<T, U> = {
 const CustomTable = <T, U>({
   ariaLabel = 'Table',
   headers,
+  additionalHeaders,
   data,
   defaultSortKey,
   handleSort,
@@ -69,6 +65,7 @@ const CustomTable = <T, U>({
   tableContainerStyles,
   tableStyles,
   tableRowStyle,
+  additionalHeadersStyle,
   TableCellComp = TableCell,
   SortLabelComp = TableSortLabel,
   PaginationComp = TablePagination,
@@ -78,7 +75,7 @@ const CustomTable = <T, U>({
     direction: 'desc',
   })
 
-  const [rowsPerPage, setRowsPerpage] = useState(rowPerPage)
+  const [rowsPerPage, setRowsPerPage] = useState(rowPerPage)
 
   const { currentPage, setPage, paginateData } = usePagination(
     rowsPerPage,
@@ -108,7 +105,7 @@ const CustomTable = <T, U>({
   const handleRowsPerPageChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setRowsPerpage(parseInt(event.target.value, 10))
+    setRowsPerPage(parseInt(event.target.value, 10))
     setPage(0)
   }
 
@@ -120,39 +117,16 @@ const CustomTable = <T, U>({
           aria-labelledby={ariaLabel}
         >
           <TableHead>
-            <StyledTableRow sx={tableRowStyle}>
-              {headers.map(({ label, value, disableSort }, index) => {
-                const isActive = sort.key === value
-
-                if (disableSort) {
-                  return (
-                    <TableCellComp
-                      key={index}
-                      sx={{ textAlign: index === 0 ? 'left' : 'right' }}
-                    >
-                      {label}
-                    </TableCellComp>
-                  )
-                }
-
-                return (
-                  <TableCellComp
-                    key={index}
-                    sx={{
-                      textAlign: index === 0 ? 'left' : 'right',
-                    }}
-                  >
-                    <SortLabelComp
-                      active={isActive}
-                      direction={isActive ? sort.direction : 'desc'}
-                      onClick={() => handleSortChange(value)}
-                    >
-                      {label}
-                    </SortLabelComp>
-                  </TableCellComp>
-                )
-              })}
-            </StyledTableRow>
+            <TableHeaders
+              headers={headers}
+              sort={sort}
+              handleSortChange={handleSortChange}
+              TableCellComp={TableCellComp}
+              SortLabelComp={SortLabelComp}
+              additionalHeaders={additionalHeaders}
+              headersRowStyle={tableRowStyle}
+              additionalHeadersStyle={additionalHeadersStyle}
+            />
           </TableHead>
           <TableBody>
             {children(
