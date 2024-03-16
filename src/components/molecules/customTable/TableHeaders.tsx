@@ -11,7 +11,7 @@ import {
 } from '@mui/material'
 import React, { ReactNode } from 'react'
 
-import { Sort } from '@/components/molecules/CustomTable'
+import { Sort } from '@/components/molecules/customTable'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   background: alpha(theme.palette.primary.main, 0.08),
@@ -29,7 +29,7 @@ type TableHeadersProps<U> = {
   handleSortChange: (newKey: keyof U) => void
   TableCellComp?: React.ComponentType<TableCellProps>
   SortLabelComp?: React.ComponentType<TableSortLabelProps>
-  headersRowStyle?: SxProps<Theme>
+  headersStyle?: SxProps<Theme>
   additionalHeaders?: CustomTableHeader<U>[]
   additionalHeadersStyle?: SxProps<Theme>
 }
@@ -40,7 +40,7 @@ const TableHeaders = <U,>({
   handleSortChange,
   TableCellComp = TableCell,
   SortLabelComp = TableSortLabel,
-  headersRowStyle,
+  headersStyle,
   additionalHeaders,
   additionalHeadersStyle,
 }: TableHeadersProps<U>) => {
@@ -80,7 +80,7 @@ const TableHeaders = <U,>({
 
   return (
     <>
-      {renderHeaderRow(headers, headersRowStyle)}
+      {renderHeaderRow(headers, headersStyle)}
       {additionalHeaders &&
         renderHeaderRow(additionalHeaders, additionalHeadersStyle)}
     </>

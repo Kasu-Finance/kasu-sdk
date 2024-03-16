@@ -6,6 +6,7 @@ export enum PoolCreditTableKeys {
 }
 
 export enum BadDebtsTableKeys {
+  CATEGORY = 'category',
   EMPTY = 'empty',
   TOTAL_AMOUNT = 'totalAmount',
   TOTAL_AMOUNT_SUFFIX = 'totalAmountSuffix',

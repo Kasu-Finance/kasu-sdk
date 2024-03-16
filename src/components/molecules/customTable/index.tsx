@@ -31,8 +31,6 @@ export type Sort<T> = {
 
 type CustomTableProps<T, U> = {
   headers: CustomTableHeader<U>[]
-  additionalHeaders?: CustomTableHeader<U>[]
-  additionalHeadersStyle?: SxProps<Theme>
   data: T[]
   defaultSortKey: keyof U
   handleSort: (a: T, b: T, sort: Sort<U>) => number
@@ -44,7 +42,9 @@ type CustomTableProps<T, U> = {
   rowPerPageOptions?: number[]
   tableContainerStyles?: SxProps<Theme>
   tableStyles?: SxProps<Theme>
-  tableRowStyle?: SxProps<Theme>
+  headersStyle?: SxProps<Theme>
+  additionalHeaders?: CustomTableHeader<U>[]
+  additionalHeadersStyle?: SxProps<Theme>
   TableCellComp?: ComponentType<TableCellProps>
   SortLabelComp?: ComponentType<TableSortLabelProps>
   PaginationComp?: ComponentType<TablePaginationProps>
@@ -64,7 +64,7 @@ const CustomTable = <T, U>({
   rowPerPageOptions = [5, 10, 25],
   tableContainerStyles,
   tableStyles,
-  tableRowStyle,
+  headersStyle,
   additionalHeadersStyle,
   TableCellComp = TableCell,
   SortLabelComp = TableSortLabel,
@@ -124,7 +124,7 @@ const CustomTable = <T, U>({
               TableCellComp={TableCellComp}
               SortLabelComp={SortLabelComp}
               additionalHeaders={additionalHeaders}
-              headersRowStyle={tableRowStyle}
+              headersStyle={headersStyle}
               additionalHeadersStyle={additionalHeadersStyle}
             />
           </TableHead>

@@ -18,7 +18,7 @@ const Repayments: React.FC = () => {
   }, [])
 
   return (
-    <Box>
+    <Box mt={3}>
       {loading ? (
         <TableSkeleton columns={3} rows={5} />
       ) : (

@@ -19,7 +19,7 @@ const PoodDetails: React.FC = () => {
   }, [])
 
   return (
-    <Box>
+    <Box mt={3}>
       {loading ? (
         <>
           <CardSkeleton leftRowNumbers={3} rightRowNumbers={3} />

@@ -1,10 +1,8 @@
 import { Box, SxProps, TableRow, Theme } from '@mui/material'
 import React from 'react'
 
-import CustomTable, {
-  CustomTableHeader,
-  Sort,
-} from '@/components/molecules/CustomTable'
+import CustomTable, { Sort } from '@/components/molecules/customTable'
+import { CustomTableHeader } from '@/components/molecules/customTable/TableHeaders'
 import {
   BorderTableCell,
   StyledTableCell,
@@ -62,7 +60,7 @@ const RepaymentsTable: React.FC<RepaymentsTableProps> = ({ data }) => {
         headers={headers}
         defaultSortKey={RepaymentTableSortKey.SOURCE}
         handleSort={handleSort}
-        tableRowStyle={tableRowStyle}
+        headersStyle={tableRowStyle}
         TableCellComp={BorderTableCell}
         SortLabelComp={StyledTableSortLabel}
         PaginationComp={StyledTablePagination}

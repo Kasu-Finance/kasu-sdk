@@ -5,7 +5,7 @@ import { UserLock } from 'kasu-sdk/src/types'
 import useUserLocks from '@/hooks/locking/useUserLocks'
 
 import CardWidget from '@/components/atoms/CardWidget'
-import CustomTable, { Sort } from '@/components/molecules/CustomTable'
+import CustomTable, { Sort } from '@/components/molecules/customTable'
 import UnlockFooter from '@/components/molecules/locking/UnlockOverview/UnlockFooter'
 import UnlockHeader from '@/components/molecules/locking/UnlockOverview/UnlockHeader'
 import UnlockRow from '@/components/molecules/locking/UnlockOverview/UnlockRow'

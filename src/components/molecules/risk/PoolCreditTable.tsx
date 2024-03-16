@@ -3,11 +3,10 @@ import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
-import CustomTable, {
-  CustomTableHeader,
-  Sort,
-} from '@/components/molecules/CustomTable'
+import CustomTable, { Sort } from '@/components/molecules/customTable'
+import { CustomTableHeader } from '@/components/molecules/customTable/TableHeaders'
 
+import { PoolCreditTableKeys } from '@/constants/riskReporting'
 import { sortByString } from '@/utils'
 
 type PoolCreditData = {
@@ -44,22 +43,22 @@ const PoolCreditTable: React.FC = () => {
   const headers: CustomTableHeader<PoolCreditData>[] = [
     {
       label: t('risk.poolCredit.metrics.metric-1'),
-      value: 'keyMetric',
+      value: PoolCreditTableKeys.KEY_METRIC,
       disableSort: true,
     },
     {
       label: t('risk.poolCredit.metrics.metric-2'),
-      value: 'previousFiscalYear',
+      value: PoolCreditTableKeys.PREVIOUS_FISCAL_YEAR,
       disableSort: true,
     },
     {
       label: t('risk.poolCredit.metrics.metric-3'),
-      value: 'mostRecentQuarter',
+      value: PoolCreditTableKeys.RECENT_QUARTER,
       disableSort: true,
     },
     {
       label: t('risk.poolCredit.metrics.metric-4'),
-      value: 'priorMonth',
+      value: PoolCreditTableKeys.PRIOR_MONTH,
       disableSort: true,
     },
   ]
@@ -85,9 +84,9 @@ const PoolCreditTable: React.FC = () => {
         headers={headers}
         data={mockData}
         pagination={false}
-        defaultSortKey='keyMetric'
+        defaultSortKey={PoolCreditTableKeys.KEY_METRIC}
         handleSort={handleSort}
-        tableRowStyle={{
+        headersStyle={{
           '& > *': {
             p: 1,
             pl: 2,

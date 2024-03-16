@@ -1,14 +1,37 @@
-import { Card, TableCell, TableRow, Typography } from '@mui/material'
+import { Theme } from '@emotion/react'
+import { Card, SxProps, TableCell, TableRow, Typography } from '@mui/material'
 import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
-import CustomTable, { Sort } from '@/components/molecules/CustomTable'
+import CustomTable, { Sort } from '@/components/molecules/customTable'
 import { CustomTableHeader } from '@/components/molecules/customTable/TableHeaders'
 
+import { mockBadDebtData } from '@/app/mock-data/risk-data'
+import { BadDebtsTableKeys } from '@/constants/riskReporting'
 import { sortByString } from '@/utils'
 
-type BadDebtData = {
+const headersStyles: SxProps<Theme> = {
+  '& > *': {
+    pt: 1.5,
+    pb: 1,
+    textAlign: 'center',
+    '&:first-child': {
+      borderBottom: 'none',
+    },
+  },
+}
+
+const additionalHeadersStyles: SxProps<Theme> = {
+  '& > *': {
+    textAlign: 'center',
+    width: '40%',
+    p: 1,
+  },
+}
+
+export type BadDebtTableData = {
+  category: string
   empty: string
   totalAmount: number
   totalAmountSuffix: string
@@ -18,132 +41,92 @@ type BadDebtData = {
   currentStatusSuffix: string
 }
 
-const mockBadDebtData: BadDebtData[] = [
-  {
-    empty: 'Arrears',
-    totalAmount: 11,
-    totalAmountSuffix: 'totalAmountSuffix',
-    monthlyAverage: 200,
-    monthlyAverageSuffix: 'N/A',
-    currentStatus: 'Low',
-    currentStatusSuffix: 'N/A',
-  },
-  {
-    empty: 'Defaults',
-    totalAmount: 11,
-    totalAmountSuffix: 'totalAmountSuffix',
-    monthlyAverage: 200,
-    monthlyAverageSuffix: 'N/A',
-    currentStatus: 'Low',
-    currentStatusSuffix: 'N/A',
-  },
-  {
-    empty: 'Recovery Action - Unrealised Losses',
-    totalAmount: 11,
-    totalAmountSuffix: 'totalAmountSuffix',
-    monthlyAverage: 200,
-    monthlyAverageSuffix: 'N/A',
-    currentStatus: 'Low',
-    currentStatusSuffix: 'N/A',
-  },
-  {
-    empty: 'Realised Losses',
-    totalAmount: 11,
-    totalAmountSuffix: 'totalAmountSuffix',
-    monthlyAverage: 200,
-    monthlyAverageSuffix: 'N/A',
-    currentStatus: 'Low',
-    currentStatusSuffix: 'N/A',
-  },
-]
-
 const BadDebtsTable: React.FC = () => {
   const { t } = useTranslation()
 
-  const headers: CustomTableHeader<BadDebtData>[] = [
+  const headers: CustomTableHeader<BadDebtTableData>[] = [
     {
       label: '',
-      value: 'empty',
+      value: BadDebtsTableKeys.CATEGORY,
       disableSort: true,
     },
     {
       label: t('risk.badDebts.totalAmount'),
-      value: 'totalAmount',
+      value: BadDebtsTableKeys.TOTAL_AMOUNT,
       disableSort: true,
     },
     {
       label: '',
-      value: 'empty',
+      value: BadDebtsTableKeys.EMPTY,
       disableSort: true,
     },
     {
       label: t('risk.badDebts.monthlyAverage'),
-      value: 'monthlyAverage',
+      value: BadDebtsTableKeys.MONTHLY_AVERAGE,
       disableSort: true,
     },
     {
       label: '',
-      value: 'empty',
+      value: BadDebtsTableKeys.EMPTY,
       disableSort: true,
     },
-
     {
       label: t('risk.badDebts.currentStatus'),
-      value: 'currentStatus',
+      value: BadDebtsTableKeys.CURRENT_STATUS,
       disableSort: true,
     },
     {
       label: '',
-      value: 'empty',
+      value: BadDebtsTableKeys.EMPTY,
       disableSort: true,
     },
   ]
 
-  const additionalHeaders: CustomTableHeader<BadDebtData>[] = [
+  const additionalHeaders: CustomTableHeader<BadDebtTableData>[] = [
     {
       label: '',
-      value: 'empty',
+      value: BadDebtsTableKeys.CATEGORY,
       disableSort: true,
     },
     {
       label: 'Amount',
-      value: 'totalAmount',
+      value: BadDebtsTableKeys.TOTAL_AMOUNT,
       disableSort: true,
     },
     {
       label: '%',
-      value: 'totalAmountSuffix',
+      value: BadDebtsTableKeys.TOTAL_AMOUNT_SUFFIX,
       disableSort: true,
     },
     {
       label: 'Amount',
-      value: 'monthlyAverage',
+      value: BadDebtsTableKeys.MONTHLY_AVERAGE,
       disableSort: true,
     },
     {
       label: '%',
-      value: 'monthlyAverageSuffix',
+      value: BadDebtsTableKeys.MONTHLY_AVERAGE_SUFFIX,
       disableSort: true,
     },
     {
       label: 'Amount',
-      value: 'currentStatus',
+      value: BadDebtsTableKeys.CURRENT_STATUS,
       disableSort: true,
     },
     {
       label: '%',
-      value: 'currentStatusSuffix',
+      value: BadDebtsTableKeys.CURRENT_STATUS_SUFFIX,
       disableSort: true,
     },
   ]
 
   const handleSort = (
-    a: BadDebtData,
-    b: BadDebtData,
-    sort: Sort<BadDebtData>
+    a: BadDebtTableData,
+    b: BadDebtTableData,
+    sort: Sort<BadDebtTableData>
   ): number => {
     if (typeof a[sort.key] === 'string' && typeof b[sort.key] === 'string') {
-      return sortByString<BadDebtData>(sort.key, sort.direction)(a, b)
+      return sortByString<BadDebtTableData>(sort.key, sort.direction)(a, b)
     }
     return 0
   }
@@ -159,24 +142,17 @@ const BadDebtsTable: React.FC = () => {
         additionalHeaders={additionalHeaders}
         data={mockBadDebtData}
         pagination={false}
-        defaultSortKey='empty'
+        defaultSortKey={BadDebtsTableKeys.CATEGORY}
         handleSort={handleSort}
-        tableRowStyle={{
-          '& > *': {
-            textAlign: 'center',
-          },
-        }}
-        additionalHeadersStyle={{
-          '& > *': {
-            textAlign: 'center',
-            width: '100%',
-          },
-        }}
+        headersStyle={headersStyles}
+        additionalHeadersStyle={additionalHeadersStyles}
       >
         {(sortedData) =>
           sortedData.map((data, index) => (
             <TableRow key={index}>
-              <TableCell align='left'>{data.empty}</TableCell>
+              <TableCell align='left' width='10%'>
+                {data.category}
+              </TableCell>
               <TableCell align='center'>{data.totalAmount}</TableCell>
               <TableCell align='center'>{data.totalAmountSuffix}</TableCell>
               <TableCell align='center'>{data.monthlyAverage}</TableCell>
