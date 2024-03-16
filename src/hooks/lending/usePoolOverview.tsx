@@ -17,27 +17,33 @@ interface UsePoolOverviewReturn {
 const usePoolOverview = (poolId: string): UsePoolOverviewReturn => {
   const sdk = useKasuSDK()
 
+  const fetchPoolOverview = async (): Promise<{
+    poolDetails: PoolDetailSection
+    poolTraction: PoolDetailSection
+  } | null> => {
+    const result = await sdk.DataService.getPoolOverview(poolId)
+
+    if (!result.length) {
+      console.warn('Received empty data for poolOverview')
+      return null
+    }
+
+    const poolOverviewData = result[0]
+    const poolDetails = convertToPoolDetails(poolOverviewData)
+    const poolTraction = convertToPoolTraction(poolOverviewData)
+
+    return { poolDetails, poolTraction }
+  }
+
   const { data, error } = useSWR(
     poolId ? `poolOverview/${poolId}` : null,
-    async () => {
-      const result = await sdk.DataService.getPoolOverview(poolId)
-
-      if (!result?.length) {
-        throw new Error('Received empty data')
-      }
-
-      const poolOverviewData = result[0]
-      const poolDetails = convertToPoolDetails(poolOverviewData)
-      const poolTraction = convertToPoolTraction(poolOverviewData)
-
-      return { poolDetails, poolTraction }
-    }
+    fetchPoolOverview
   )
 
   return {
     data: data || null,
     error,
-    isLoading: !data && !error,
+    isLoading: !data && !error && data !== null,
   }
 }
 

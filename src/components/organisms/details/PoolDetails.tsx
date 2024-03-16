@@ -14,17 +14,18 @@ import RiskManagementCard from '@/components/molecules/details/riskManagementCar
 import CardSkeleton from '@/components/molecules/loaders/CardSkeleton'
 
 const PoolDetails: React.FC = () => {
-  const { slug: poolId = '' } = useParams()
+  const { slug } = useParams()
+  const poolId = slug as string
 
-  const delegateHook = usePoolDelegate(poolId as string)
-  const overviewHook = usePoolOverview(poolId as string)
-  const riskHook = useRiskManagement(poolId as string)
+  const delegateHook = usePoolDelegate(poolId)
+  const overviewHook = usePoolOverview(poolId)
+  const riskHook = useRiskManagement(poolId)
 
   const isLoading =
     delegateHook.isLoading || overviewHook.isLoading || riskHook.isLoading
 
-  const noData = !isLoading && !delegateHook.data && !overviewHook.data
-  !riskHook.data
+  const noData =
+    !isLoading && !delegateHook.data && !overviewHook.data && !riskHook.data
 
   if (isLoading) {
     return (

@@ -27,6 +27,8 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
     const titleKey = `details.poolDelegate.${metric.id}.label`
     const tooltipKey = `details.poolDelegate.${metric.id}.tooltip`
 
+    const uniqueKey = `${type}-${metric.id}-${index}`
+
     const metricContent =
       metric.id === PoolDelegateMetricIds.History
         ? formatDuration(Number(metric.content))
@@ -36,7 +38,7 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
       case MetricGroupType.First:
         return (
           <MetricWithSuffix
-            key={`${type}_${metric.id}`}
+            key={uniqueKey}
             content={String(metricContent)}
             suffix={metric?.unit || ''}
             titleKey={titleKey}
@@ -46,7 +48,7 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
         )
       case MetricGroupType.Second:
         return (
-          <Box key={`${type}_${metric.id}`} width='100%' pr={2}>
+          <Box key={uniqueKey} width='100%' pr={2}>
             <InfoRow
               title={t(titleKey)}
               toolTipInfo={t(tooltipKey)}
@@ -81,7 +83,7 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
       case MetricGroupType.Third:
         return (
           <InfoRow
-            key={`${type}_${metric.id}_${index}`}
+            key={uniqueKey}
             title={t(titleKey)}
             toolTipInfo={t(tooltipKey)}
             showDivider={index !== arrayLength - 1}

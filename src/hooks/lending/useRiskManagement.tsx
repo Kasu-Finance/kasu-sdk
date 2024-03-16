@@ -9,23 +9,28 @@ import { convertToRiskManagement } from '@/utils'
 const useRiskManagement = (poolId: string) => {
   const sdk = useKasuSDK()
 
-  const { data, error } = useSWR<RiskManagementSection | null>(
-    poolId ? `riskManagement/${poolId}` : null,
-    async () => {
+  const fetchRiskManagement =
+    async (): Promise<RiskManagementSection | null> => {
       const result = await sdk.DataService.getRiskManagement([poolId])
 
-      if (!result?.length) {
-        throw new Error('Received empty data')
+      if (!result.length) {
+        console.warn('Received empty data for riskManagement')
+        return null
       }
-      const riskData = result[0]
-      return convertToRiskManagement(riskData)
+
+      const riskManagementData = convertToRiskManagement(result[0])
+      return riskManagementData
     }
+
+  const { data, error } = useSWR<RiskManagementSection | null>(
+    poolId ? `riskManagement/${poolId}` : null,
+    fetchRiskManagement
   )
 
   return {
-    data: data || null,
+    data,
     error,
-    isLoading: !data && !error,
+    isLoading: !data && !error && data !== null,
   }
 }
 

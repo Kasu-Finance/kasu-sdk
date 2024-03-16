@@ -5,34 +5,38 @@ import useKasuSDK from '@/hooks/useKasuSDK'
 
 import { convertToPoolDelegate } from '@/utils'
 
-const usePoolDelegate = (poolId: string) => {
+interface UsePoolDelegateReturnType {
+  data: PoolMetric[] | null
+  error: any
+  isLoading: boolean
+}
+
+const usePoolDelegate = (poolId: string): UsePoolDelegateReturnType => {
   const sdk = useKasuSDK()
+
+  const fetchPoolDelegate = async (): Promise<PoolMetric[] | null> => {
+    const result = await sdk.DataService.getPoolDelegateProfileAndHistory([
+      poolId,
+    ])
+
+    if (!result?.length) {
+      console.warn('Received empty data for poolDelegateProfileAndHistory')
+      return null
+    }
+
+    const delegateData = convertToPoolDelegate(result[0])
+    return delegateData
+  }
 
   const { data, error } = useSWR<PoolMetric[] | null>(
     poolId ? `poolDelegateProfileAndHistory/${poolId}` : null,
-    async () => {
-      try {
-        const result = await sdk.DataService.getPoolDelegateProfileAndHistory([
-          poolId,
-        ])
-
-        if (!result?.length) {
-          throw new Error('Received empty data')
-        }
-
-        const delegateData = result[0]
-        return convertToPoolDelegate(delegateData)
-      } catch (error) {
-        console.error('Failed to fetch PoolDelegateProfileAndHistory', error)
-        throw error
-      }
-    }
+    fetchPoolDelegate
   )
 
   return {
     data: data || null,
     error,
-    isLoading: !data && !error,
+    isLoading: !data && !error && data !== null,
   }
 }
 

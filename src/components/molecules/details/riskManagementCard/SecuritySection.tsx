@@ -5,7 +5,7 @@ import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
-import MetricsSection from './MetricsSection'
+import MetricsSection from '@/components/molecules/details/riskManagementCard/MetricsSection'
 
 interface SecuritySectionProps {
   securityMetrics: PoolMetric[]
