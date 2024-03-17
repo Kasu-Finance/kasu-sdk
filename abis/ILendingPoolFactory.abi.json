@@ -4,32 +4,101 @@
       {
         "components": [
           {
-            "internalType": "uint256",
-            "name": "maxDepositAmount",
-            "type": "uint256"
+            "internalType": "string",
+            "name": "poolName",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "poolSymbol",
+            "type": "string"
           },
           {
             "internalType": "uint256",
-            "name": "poolCap",
+            "name": "targetExcessLiquidityPercentage",
             "type": "uint256"
           },
           {
-            "internalType": "uint256[]",
-            "name": "trancheRatio",
-            "type": "uint256[]"
+            "components": [
+              {
+                "internalType": "string",
+                "name": "trancheName",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "trancheSymbol",
+                "type": "string"
+              },
+              {
+                "internalType": "uint256",
+                "name": "ratio",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "interestRate",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "minDepositAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "maxDepositAmount",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct CreateTrancheConfig[]",
+            "name": "tranches",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "address",
+            "name": "poolAdmin",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "borrowRecipient",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalDesiredLoanAmount",
+            "type": "uint256"
           }
         ],
-        "internalType": "struct PoolConfiguration",
-        "name": "poolConfiguration",
+        "internalType": "struct CreatePoolConfig",
+        "name": "createPoolConfig",
         "type": "tuple"
       }
     ],
     "name": "createPool",
     "outputs": [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
+        "components": [
+          {
+            "internalType": "address",
+            "name": "lendingPool",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "pendingPool",
+            "type": "address"
+          },
+          {
+            "internalType": "address[]",
+            "name": "tranches",
+            "type": "address[]"
+          }
+        ],
+        "internalType": "struct LendingPoolDeployment",
+        "name": "lendingPoolDeployment",
+        "type": "tuple"
       }
     ],
     "stateMutability": "nonpayable",
