@@ -1,21 +1,24 @@
 import { Box, Card, Typography } from '@mui/material'
+import { PoolMetric } from 'kasu-sdk/src/types'
 import { useCallback, useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
 import MetricGroup from '@/components/molecules/details/poolDelegateCard/MetricGroup'
 
-import { MetricGroupType, PoolMetricIds } from '@/constants'
-import mockResponseWithId from '@/mock-data/pool-details/mockResponse'
+import { MetricGroupType, PoolDelegateMetricIds } from '@/constants'
 
-const PoolDelegateCard = () => {
+interface PoolDelegateCardProps {
+  metrics: PoolMetric[]
+}
+
+const PoolDelegateCard: React.FC<PoolDelegateCardProps> = ({ metrics }) => {
   const { t } = useTranslation()
-  const metrics = mockResponseWithId.poolDelegate.data.metrics
 
   const filterMetrics = useCallback(
-    (ids: PoolMetricIds[]) => {
-      return metrics.filter((metric) =>
-        ids.includes(metric.id as PoolMetricIds)
+    (ids: PoolDelegateMetricIds[]) => {
+      return metrics?.filter((metric) =>
+        ids.includes(metric.id as PoolDelegateMetricIds)
       )
     },
     [metrics]
@@ -24,15 +27,18 @@ const PoolDelegateCard = () => {
   const { firstArray, secondArray, thirdArray } = useMemo(
     () => ({
       firstArray: filterMetrics([
-        PoolMetricIds.History,
-        PoolMetricIds.TotalFunds,
-        PoolMetricIds.Loans,
+        PoolDelegateMetricIds.History,
+        PoolDelegateMetricIds.TotalFunds,
+        PoolDelegateMetricIds.Loans,
       ]),
       secondArray: filterMetrics([
-        PoolMetricIds.AssetClasses,
-        PoolMetricIds.OtherPools,
+        PoolDelegateMetricIds.AssetClasses,
+        PoolDelegateMetricIds.OtherPools,
       ]),
-      thirdArray: filterMetrics([PoolMetricIds.TotalLoans, PoolMetricIds.Loss]),
+      thirdArray: filterMetrics([
+        PoolDelegateMetricIds.TotalLoans,
+        PoolDelegateMetricIds.Loss,
+      ]),
     }),
     [filterMetrics]
   )
