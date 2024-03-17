@@ -7,17 +7,34 @@
         "type": "address"
       },
       {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
+        "components": [
+          {
+            "internalType": "address",
+            "name": "tranche",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "user",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "sharesToWithdraw",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ForceWithdrawalInput[]",
+        "name": "input",
+        "type": "tuple[]"
       }
     ],
-    "name": "applyYield",
+    "name": "batchForceWithdrawals",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "uint256[]",
         "name": "",
-        "type": "uint256"
+        "type": "uint256[]"
       }
     ],
     "stateMutability": "nonpayable",
@@ -36,14 +53,8 @@
         "type": "uint256"
       }
     ],
-    "name": "borrowFunds",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "nftID",
-        "type": "uint256"
-      }
-    ],
+    "name": "borrowLoan",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -53,14 +64,165 @@
         "internalType": "address",
         "name": "lendingPool",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "dNftID",
+        "type": "uint256"
       }
     ],
-    "name": "registerPool",
+    "name": "cancelDepositRequest",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "wNftID",
+        "type": "uint256"
+      }
+    ],
+    "name": "cancelWithdrawalRequest",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "tranche",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lossId",
+        "type": "uint256"
+      }
+    ],
+    "name": "claimRepaidLoss",
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "poolID",
+        "name": "claimedAmount",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "poolName",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "poolSymbol",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "targetExcessLiquidityPercentage",
+            "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "internalType": "string",
+                "name": "trancheName",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "trancheSymbol",
+                "type": "string"
+              },
+              {
+                "internalType": "uint256",
+                "name": "ratio",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "interestRate",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "minDepositAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "maxDepositAmount",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct CreateTrancheConfig[]",
+            "name": "tranches",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "address",
+            "name": "poolAdmin",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "borrowRecipient",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalDesiredLoanAmount",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct CreatePoolConfig",
+        "name": "createPoolConfig",
+        "type": "tuple"
+      }
+    ],
+    "name": "createPool",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "lendingPool",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "pendingPool",
+            "type": "address"
+          },
+          {
+            "internalType": "address[]",
+            "name": "tranches",
+            "type": "address[]"
+          }
+        ],
+        "internalType": "struct LendingPoolDeployment",
+        "name": "lendingPoolDeployment",
+        "type": "tuple"
       }
     ],
     "stateMutability": "nonpayable",
@@ -79,11 +241,168 @@
         "type": "uint256"
       }
     ],
-    "name": "repayFunds",
+    "name": "depositFirstLossCapital",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "dNftID",
+        "type": "uint256"
+      }
+    ],
+    "name": "forceCancelDepositRequest",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "wNftID",
+        "type": "uint256"
+      }
+    ],
+    "name": "forceCancelWithdrawalRequest",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "tranche",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "sharesToWithdraw",
+        "type": "uint256"
+      }
+    ],
+    "name": "forceImmediateWithdrawal",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "contractAddress",
+        "type": "address"
+      }
+    ],
+    "name": "ownLendingPool",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "repaymentAddress",
+        "type": "address"
+      }
+    ],
+    "name": "repayLoan",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "tranche",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lossId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "repayLoss",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "doMintLossTokens",
+        "type": "bool"
+      }
+    ],
+    "name": "reportLoss",
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "nftID",
+        "name": "lossId",
         "type": "uint256"
       }
     ],
@@ -112,7 +431,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "nftID",
+        "name": "dNftID",
         "type": "uint256"
       }
     ],
@@ -141,10 +460,228 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "nftID",
+        "name": "wNftID",
         "type": "uint256"
       }
     ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "firstLossCapitalReceiver",
+        "type": "address"
+      }
+    ],
+    "name": "stopLendingPool",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "borrowRecipient",
+        "type": "address"
+      }
+    ],
+    "name": "updateBorrowRecipient",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "tranche",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maximumDepositAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "updateMaximumDepositAmount",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "tranche",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minimumDepositAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "updateMinimumDepositAmount",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minumumExcessLiquidityPercentage",
+        "type": "uint256"
+      }
+    ],
+    "name": "updateMinimumExcessLiquidityPercentage",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "targetExcessLiquidityPercentage",
+        "type": "uint256"
+      }
+    ],
+    "name": "updateTargetExcessLiquidityPercentage",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "updateTotalDesiredLoanAmount",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "ratios",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "updateTrancheDesiredRatios",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "tranche",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "interestRate",
+        "type": "uint256"
+      }
+    ],
+    "name": "updateTrancheInterestRate",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "epochDelay",
+        "type": "uint256"
+      }
+    ],
+    "name": "updateTrancheInterestRateChangeEpochDelay",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "withdrawAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "withdrawAddress",
+        "type": "address"
+      }
+    ],
+    "name": "withdrawFirstLossCapital",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   }
