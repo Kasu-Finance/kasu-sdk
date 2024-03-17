@@ -11,7 +11,7 @@ const Locking = async () => {
   return (
     <Container maxWidth='lg'>
       <PageHeader title='Locking' />
-      <Grid container spacing={3} mt={3}>
+      <Grid container spacing={3} mt={0}>
         <Grid item xs={12} md={6}>
           <BalanceOverview />
           <RewardSummary />

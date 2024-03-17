@@ -1,21 +1,29 @@
 import {
   alpha,
   Box,
+  styled,
   SxProps,
   Table,
   TableBody,
   TableCell,
+  TableCellProps,
   TableContainer,
   TableFooter,
   TableHead,
   TablePagination,
+  TablePaginationProps,
   TableRow,
   TableSortLabel,
+  TableSortLabelProps,
   Theme,
 } from '@mui/material'
-import React, { ReactNode, useState } from 'react'
+import React, { ComponentType, ReactNode, useState } from 'react'
 
 import usePagination from '@/hooks/usePagination'
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  background: alpha(theme.palette.primary.main, 0.08),
+}))
 
 export type CustomTableHeader<T> = {
   label: ReactNode
@@ -40,6 +48,10 @@ type CustomTableProps<T, U> = {
   rowPerPageOptions?: number[]
   tableContainerStyles?: SxProps<Theme>
   tableStyles?: SxProps<Theme>
+  tableRowStyle?: SxProps<Theme>
+  TableCellComp?: ComponentType<TableCellProps>
+  SortLabelComp?: ComponentType<TableSortLabelProps>
+  PaginationComp?: ComponentType<TablePaginationProps>
 }
 
 const CustomTable = <T, U>({
@@ -55,6 +67,10 @@ const CustomTable = <T, U>({
   rowPerPageOptions = [5, 10, 25],
   tableContainerStyles,
   tableStyles,
+  tableRowStyle,
+  TableCellComp = TableCell,
+  SortLabelComp = TableSortLabel,
+  PaginationComp = TablePagination,
 }: CustomTableProps<T, U>) => {
   const [sort, setSort] = useState<Sort<U>>({
     key: defaultSortKey,
@@ -103,32 +119,28 @@ const CustomTable = <T, U>({
           aria-labelledby={ariaLabel}
         >
           <TableHead>
-            <TableRow
-              sx={(theme) => ({
-                background: alpha(theme.palette.primary.main, 0.08),
-              })}
-            >
+            <StyledTableRow sx={tableRowStyle}>
               {headers.map(({ label, value }, index) => {
                 const isActive = sort.key === value
 
                 return (
-                  <TableCell
+                  <TableCellComp
                     key={index}
                     sx={{
                       textAlign: index === 0 ? 'left' : 'right',
                     }}
                   >
-                    <TableSortLabel
+                    <SortLabelComp
                       active={isActive}
                       direction={isActive ? sort.direction : 'desc'}
                       onClick={() => handleSortChange(value)}
                     >
                       {label}
-                    </TableSortLabel>
-                  </TableCell>
+                    </SortLabelComp>
+                  </TableCellComp>
                 )
               })}
-            </TableRow>
+            </StyledTableRow>
           </TableHead>
           <TableBody>
             {children(
@@ -156,7 +168,7 @@ const CustomTable = <T, U>({
         </Table>
       </TableContainer>
       {pagination && (
-        <TablePagination
+        <PaginationComp
           rowsPerPageOptions={rowPerPageOptions}
           component='div'
           count={data.length}

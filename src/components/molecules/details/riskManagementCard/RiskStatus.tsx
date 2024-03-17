@@ -1,4 +1,5 @@
 import { Box, Typography } from '@mui/material'
+import { PoolMetric } from 'kasu-sdk/src/types'
 import React, { useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
@@ -7,8 +8,7 @@ import InfoRow from '@/components/atoms/InfoRow'
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 import Rating from '@/components/atoms/Rating'
 
-import { PoolMetricIds } from '@/constants'
-import { PoolMetric } from '@/mock-data/pool-details/mockResponse'
+import { RiskMetricIds } from '@/constants'
 
 interface RiskStatusProps {
   metrics: PoolMetric[]
@@ -19,14 +19,14 @@ const RiskStatus: React.FC<RiskStatusProps> = ({ metrics }) => {
 
   const { firstArray, secondArray } = useMemo(() => {
     const firstArray: PoolMetric[] = metrics.filter((metric) =>
-      [PoolMetricIds.FirstLoss, PoolMetricIds.LossRate].includes(
-        metric.id as PoolMetricIds
+      [RiskMetricIds.FirstLoss, RiskMetricIds.LossRate].includes(
+        metric.id as RiskMetricIds
       )
     )
 
     const secondArray: PoolMetric[] = metrics.filter((metric) =>
-      [PoolMetricIds.RiskScore, PoolMetricIds.KasuRating].includes(
-        metric.id as PoolMetricIds
+      [RiskMetricIds.RiskScore, RiskMetricIds.KasuRating].includes(
+        metric.id as RiskMetricIds
       )
     )
 
