@@ -15,7 +15,7 @@ export class DataService {
         this._graph = new GraphQLClient(kasuConfig.subgraphUrl);
     }
 
-    getPoolOverview(id_in: string): PoolOverview[] {
+    getPoolOverview(id_in?: string): PoolOverview[] {
         const fakeData: PoolOverview[] = [
             {
                 id: "1",
@@ -60,7 +60,7 @@ export class DataService {
                 activeLoans: 3,
             },
         ];
-        if(!id_in.length){
+        if(!id_in){
             return fakeData;
         }
         return fakeData.filter(data => id_in.includes(data.id));
