@@ -1,12 +1,10 @@
-import { PoolMetric } from 'kasu-sdk/src/types'
+import { PoolDelegateProfileAndHistory } from 'kasu-sdk/src/types'
 import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
-import { convertToPoolDelegate } from '@/utils'
-
 interface UsePoolDelegateReturnType {
-  data: PoolMetric[] | null
+  data: PoolDelegateProfileAndHistory[] | null
   error: any
   isLoading: boolean
 }
@@ -14,7 +12,9 @@ interface UsePoolDelegateReturnType {
 const usePoolDelegate = (poolId: string): UsePoolDelegateReturnType => {
   const sdk = useKasuSDK()
 
-  const fetchPoolDelegate = async (): Promise<PoolMetric[] | null> => {
+  const fetchPoolDelegate = async (): Promise<
+    PoolDelegateProfileAndHistory[] | null
+  > => {
     const result = await sdk.DataService.getPoolDelegateProfileAndHistory([
       poolId,
     ])
@@ -24,11 +24,10 @@ const usePoolDelegate = (poolId: string): UsePoolDelegateReturnType => {
       return null
     }
 
-    const delegateData = convertToPoolDelegate(result[0])
-    return delegateData
+    return result
   }
 
-  const { data, error } = useSWR<PoolMetric[] | null>(
+  const { data, error } = useSWR<PoolDelegateProfileAndHistory[] | null>(
     poolId ? `poolDelegateProfileAndHistory/${poolId}` : null,
     fetchPoolDelegate
   )

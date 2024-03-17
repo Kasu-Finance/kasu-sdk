@@ -2,7 +2,7 @@
 
 import { Box, Container, Typography } from '@mui/material'
 
-import useAllPools from '@/hooks/lending/useAllPools'
+import usePoolOverview from '@/hooks/lending/usePoolOverview'
 
 import EmptyCardState from '@/components/atoms/EmptyCardState'
 import Carousel from '@/components/molecules/Carousel'
@@ -10,7 +10,7 @@ import PageHeader from '@/components/molecules/PageHeader'
 import PoolCard from '@/components/molecules/PoolCard'
 
 const Lending = () => {
-  const { data: pools, isLoading } = useAllPools()
+  const { data: pools, isLoading } = usePoolOverview()
 
   if (isLoading) {
     return (
@@ -27,7 +27,7 @@ const Lending = () => {
 
   const poolsContent = hasPools ? (
     pools.map((pool, index) => (
-      <PoolCard name={pool.name} link={pool.link} key={index} />
+      <PoolCard name={pool.poolName} link={`lending/${pool.id}`} key={index} />
     ))
   ) : (
     <EmptyCardState message='No pools available.' />
