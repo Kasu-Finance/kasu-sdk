@@ -1,12 +1,12 @@
 'use client'
 
 import { Box, Paper, styled, Typography } from '@mui/material'
+import Image from 'next/image'
 import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
 import BackButton from '@/components/atoms/BackButton'
-import NextImage from '@/components/atoms/NextImage'
 import PoolAvatar from '@/components/atoms/PoolAvatar'
 import PageHeaderSkeleton from '@/components/molecules/loaders/PageHeaderSkeleton'
 
@@ -16,12 +16,25 @@ import ImagePlaceholderIcon from '@/assets/icons/general/ImagePlaceholderIcon'
 type PageHeaderProps = {
   title: string
   loading?: boolean
+  variant?: 'title' | 'hero'
 }
 
-const PageHeader: React.FC<PageHeaderProps> = ({ title, loading = false }) => {
+const PageHeader: React.FC<PageHeaderProps> = ({
+  title,
+  variant = 'title',
+  loading = false,
+}) => {
   const { t } = useTranslation()
 
   const poolAvatarImg = ''
+
+  if (variant === 'title') {
+    return (
+      <Typography variant='h6' component='h1'>
+        {title}
+      </Typography>
+    )
+  }
 
   if (loading) {
     return <PageHeaderSkeleton />
@@ -31,7 +44,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, loading = false }) => {
     <Paper sx={{ borderRadius: '4px' }}>
       <ImageContainer>
         {poolAvatarImg ? (
-          <NextImage
+          <Image
             fill
             src={poolAvatarImg}
             alt="Pool's image"

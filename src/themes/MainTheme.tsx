@@ -69,8 +69,10 @@ export const theme = createTheme({
       disabled: 'rgba(0, 0, 0, 0.38)',
     },
     grey: {
+      200: 'rgba(224, 224, 224, 1)',
       300: 'rgba(0, 0, 0, 0.04)',
       400: 'rgba(0, 0, 0, 0.38)',
+      500: 'rgba(0, 0, 0, 0.6)',
       900: 'rgba(117, 117, 117, 1)',
     },
   },

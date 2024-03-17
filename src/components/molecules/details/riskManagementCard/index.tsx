@@ -1,4 +1,5 @@
 import { Box, Card, Typography } from '@mui/material'
+import { PoolDetailSection } from 'kasu-sdk/src/types'
 
 import useTranslation from '@/hooks/useTranslation'
 
@@ -6,11 +7,21 @@ import CriteriaSection from '@/components/molecules/details/riskManagementCard/C
 import RiskStatus from '@/components/molecules/details/riskManagementCard/RiskStatus'
 import SecuritySection from '@/components/molecules/details/riskManagementCard/SecuritySection'
 
-import mockResponseWithId from '@/mock-data/pool-details/mockResponse'
+export interface RiskManagementSection {
+  riskStatus: PoolDetailSection
+  security: PoolDetailSection
+  criteria: PoolDetailSection
+}
 
-const RiskManagementCard = () => {
+interface RiskManagementCardProps {
+  riskManagementData: RiskManagementSection
+}
+
+const RiskManagementCard: React.FC<RiskManagementCardProps> = ({
+  riskManagementData,
+}) => {
   const { t } = useTranslation()
-  const { riskStatus, security, criteria } = mockResponseWithId.riskManagement
+  const { riskStatus, security, criteria } = riskManagementData
 
   return (
     <Card sx={{ minWidth: 275, boxShadow: 3, padding: 2, mt: 3 }} elevation={1}>
