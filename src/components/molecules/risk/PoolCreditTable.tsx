@@ -6,36 +6,16 @@ import useTranslation from '@/hooks/useTranslation'
 import CustomTable, { Sort } from '@/components/molecules/customTable'
 import { CustomTableHeader } from '@/components/molecules/customTable/TableHeaders'
 
+import { poolCreditMock } from '@/app/mock-data/risk-data'
 import { PoolCreditTableKeys } from '@/constants/riskReporting'
 import { sortByString } from '@/utils'
 
-type PoolCreditData = {
+export type PoolCreditData = {
   keyMetric: string
   previousFiscalYear: number
   mostRecentQuarter: number
   priorMonth: number
 }
-
-const mockData: PoolCreditData[] = [
-  {
-    keyMetric: 'Net Income',
-    previousFiscalYear: 0.5,
-    mostRecentQuarter: 25000,
-    priorMonth: 5000,
-  },
-  {
-    keyMetric: 'Net Income 2',
-    previousFiscalYear: 2.5,
-    mostRecentQuarter: 2,
-    priorMonth: 12,
-  },
-  {
-    keyMetric: 'Net Income 3',
-    previousFiscalYear: 1.5,
-    mostRecentQuarter: 132,
-    priorMonth: 4353,
-  },
-]
 
 const PoolCreditTable: React.FC = () => {
   const { t } = useTranslation()
@@ -82,7 +62,7 @@ const PoolCreditTable: React.FC = () => {
 
       <CustomTable
         headers={headers}
-        data={mockData}
+        data={poolCreditMock}
         pagination={false}
         defaultSortKey={PoolCreditTableKeys.KEY_METRIC}
         handleSort={handleSort}

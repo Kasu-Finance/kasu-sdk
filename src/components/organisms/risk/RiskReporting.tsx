@@ -1,7 +1,7 @@
 import { Box } from '@mui/material'
 import React from 'react'
 
-import BadDebtsTable from '@/components/molecules/risk/BadDebtsTable'
+import BadDebtsTable from '@/components/molecules/risk/badDebtsTable'
 import PoolCreditTable from '@/components/molecules/risk/PoolCreditTable'
 
 const RiskReporting: React.FC = () => {

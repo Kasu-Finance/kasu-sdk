@@ -6,6 +6,7 @@ import useTranslation from '@/hooks/useTranslation'
 
 import CustomTable, { Sort } from '@/components/molecules/customTable'
 import { CustomTableHeader } from '@/components/molecules/customTable/TableHeaders'
+import DataTypography from '@/components/molecules/risk/badDebtsTable/DataTypography'
 
 import { mockBadDebtData } from '@/app/mock-data/risk-data'
 import { BadDebtsTableKeys } from '@/constants/riskReporting'
@@ -151,14 +152,26 @@ const BadDebtsTable: React.FC = () => {
           sortedData.map((data, index) => (
             <TableRow key={index}>
               <TableCell align='left' width='10%'>
-                {data.category}
+                <DataTypography data={data.category} />
               </TableCell>
-              <TableCell align='center'>{data.totalAmount}</TableCell>
-              <TableCell align='center'>{data.totalAmountSuffix}</TableCell>
-              <TableCell align='center'>{data.monthlyAverage}</TableCell>
-              <TableCell align='center'>{data.monthlyAverageSuffix}</TableCell>
-              <TableCell align='center'>{data.currentStatus}</TableCell>
-              <TableCell align='center'>{data.currentStatusSuffix}</TableCell>
+              <TableCell align='center'>
+                <DataTypography data={data.totalAmount} />
+              </TableCell>
+              <TableCell align='center'>
+                <DataTypography data={data.totalAmountSuffix} />
+              </TableCell>
+              <TableCell align='center'>
+                <DataTypography data={data.monthlyAverage} />
+              </TableCell>
+              <TableCell align='center'>
+                <DataTypography data={data.monthlyAverageSuffix} />
+              </TableCell>
+              <TableCell align='center'>
+                <DataTypography data={data.currentStatus} />
+              </TableCell>
+              <TableCell align='center'>
+                <DataTypography data={data.currentStatusSuffix} />
+              </TableCell>
             </TableRow>
           ))
         }
