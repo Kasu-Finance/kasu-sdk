@@ -1,21 +1,24 @@
 import { Box, Card, Typography } from '@mui/material'
+import { PoolMetric } from 'kasu-sdk/src/types'
 import { useCallback, useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
 import MetricDisplay from '@/components/molecules/details/poolDetailsCard/MetricDisplay'
 
-import { MetricGroupType, PoolMetricIds } from '@/constants'
-import mockResponseWithId from '@/mock-data/pool-details/mockResponse'
+import { MetricGroupType, PoolDetailsMetricIds } from '@/constants'
 
-const PoolDetailsCard = () => {
+interface PoolDetailsCardProps {
+  metrics: PoolMetric[]
+}
+
+const PoolDetailsCard: React.FC<PoolDetailsCardProps> = ({ metrics }) => {
   const { t } = useTranslation()
-  const metrics = mockResponseWithId.poolDetails.data.metrics
 
   const filterMetrics = useCallback(
-    (ids: PoolMetricIds[]) => {
+    (ids: PoolDetailsMetricIds[]) => {
       return metrics.filter((metric) =>
-        ids.includes(metric.id as PoolMetricIds)
+        ids.includes(metric.id as PoolDetailsMetricIds)
       )
     },
     [metrics]
@@ -23,15 +26,18 @@ const PoolDetailsCard = () => {
 
   const { firstArray, secondArray, thirdArray } = useMemo(
     () => ({
-      firstArray: filterMetrics([PoolMetricIds.APY, PoolMetricIds.AssetClass]),
+      firstArray: filterMetrics([
+        PoolDetailsMetricIds.APY,
+        PoolDetailsMetricIds.AssetClass,
+      ]),
 
       secondArray: filterMetrics([
-        PoolMetricIds.StructureApy,
-        PoolMetricIds.Term,
+        PoolDetailsMetricIds.StructureApy,
+        PoolDetailsMetricIds.Term,
       ]),
       thirdArray: filterMetrics([
-        PoolMetricIds.ExposureIndustry,
-        PoolMetricIds.Loan,
+        PoolDetailsMetricIds.ExposureIndustry,
+        PoolDetailsMetricIds.Loan,
       ]),
     }),
     [filterMetrics]
@@ -74,9 +80,7 @@ const PoolDetailsCard = () => {
               metric={metric}
               key={metric.id}
               type={MetricGroupType.Second}
-              isLastItem={
-                secondArray.indexOf(metric) === secondArray.length - 1
-              }
+              isLastItem={thirdArray.indexOf(metric) === secondArray.length - 1}
             />
           ))}
         </Box>

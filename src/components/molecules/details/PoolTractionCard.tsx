@@ -1,14 +1,16 @@
 import { Box, Card, Typography } from '@mui/material'
+import { PoolMetric } from 'kasu-sdk/src/types'
 
 import useTranslation from '@/hooks/useTranslation'
 
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
-import mockResponseWithId from '@/mock-data/pool-details/mockResponse'
+interface PoolTractionCardProps {
+  metrics: PoolMetric[]
+}
 
-const PoolTractionCard = () => {
+const PoolTractionCard: React.FC<PoolTractionCardProps> = ({ metrics }) => {
   const { t } = useTranslation()
-  const { metrics } = mockResponseWithId.poolTraction.data
 
   return (
     <Card sx={{ minWidth: 275, boxShadow: 3, padding: 2, mt: 3 }} elevation={1}>

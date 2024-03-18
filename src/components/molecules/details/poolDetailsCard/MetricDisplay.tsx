@@ -1,4 +1,5 @@
 import { Box, Typography } from '@mui/material'
+import { PoolMetric } from 'kasu-sdk/src/types'
 
 import useTranslation from '@/hooks/useTranslation'
 
@@ -6,7 +7,6 @@ import InfoRow from '@/components/atoms/InfoRow'
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
 import { MetricGroupType } from '@/constants'
-import { PoolMetric } from '@/mock-data/pool-details/mockResponse'
 
 interface MetricDisplayProps {
   metric: PoolMetric
@@ -37,7 +37,7 @@ const MetricDisplay: React.FC<MetricDisplayProps> = ({
       ) : (
         <Box width='100%' pr={2}>
           <InfoRow
-            showDivider
+            showDivider={!isLastItem}
             title={t(titleKey)}
             toolTipInfo={t(tooltipKey)}
             metric={<Typography variant='body2'>{metric.content}</Typography>}
