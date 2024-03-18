@@ -8,7 +8,14 @@ import { CustomTableHeader } from '@/components/molecules/customTable/TableHeade
 
 import { poolCreditMock } from '@/app/mock-data/risk-data'
 import { PoolCreditTableKeys } from '@/constants/riskReporting'
-import { sortByString } from '@/utils'
+
+const handleSort = (
+  _a: PoolCreditData,
+  _b: PoolCreditData,
+  _sort: Sort<PoolCreditData>
+): number => {
+  return 0
+}
 
 export type PoolCreditData = {
   keyMetric: string
@@ -22,37 +29,26 @@ const PoolCreditTable: React.FC = () => {
 
   const headers: CustomTableHeader<PoolCreditData>[] = [
     {
-      label: t('risk.poolCredit.metrics.metric-1'),
+      label: t('risk.poolCredit.headers.column-1'),
       value: PoolCreditTableKeys.KEY_METRIC,
       disableSort: true,
     },
     {
-      label: t('risk.poolCredit.metrics.metric-2'),
+      label: t('risk.poolCredit.headers.column-2'),
       value: PoolCreditTableKeys.PREVIOUS_FISCAL_YEAR,
       disableSort: true,
     },
     {
-      label: t('risk.poolCredit.metrics.metric-3'),
+      label: t('risk.poolCredit.headers.column-3'),
       value: PoolCreditTableKeys.RECENT_QUARTER,
       disableSort: true,
     },
     {
-      label: t('risk.poolCredit.metrics.metric-4'),
+      label: t('risk.poolCredit.headers.column-4'),
       value: PoolCreditTableKeys.PRIOR_MONTH,
       disableSort: true,
     },
   ]
-
-  const handleSort = (
-    a: PoolCreditData,
-    b: PoolCreditData,
-    sort: Sort<PoolCreditData>
-  ): number => {
-    if (typeof a[sort.key] === 'string' && typeof b[sort.key] === 'string') {
-      return sortByString<PoolCreditData>(sort.key, sort.direction)(a, b)
-    }
-    return 0
-  }
 
   return (
     <Card sx={{ minWidth: 275, boxShadow: 1, padding: 2 }} elevation={1}>
@@ -87,12 +83,12 @@ const PoolCreditTable: React.FC = () => {
               </TableCell>
               <TableCell align='right'>
                 <Typography variant='body1'>
-                  {`${data.previousFiscalYear} ${index < 2 ? 'x' : '%'}`}
+                  {`${data.mostRecentQuarter} ${index < 2 ? 'x' : '%'}`}
                 </Typography>
               </TableCell>
               <TableCell align='right'>
                 <Typography variant='body1'>
-                  {`${data.previousFiscalYear} ${index < 2 ? 'x' : '%'}`}
+                  {`${data.priorMonth} ${index < 2 ? 'x' : '%'}`}
                 </Typography>
               </TableCell>
             </TableRow>

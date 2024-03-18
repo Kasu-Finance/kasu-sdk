@@ -1,5 +1,6 @@
 import { BadDebtTableData } from '@/components/molecules/risk/badDebtsTable'
 import { PoolCreditData } from '@/components/molecules/risk/PoolCreditTable'
+import { ReportingData } from '@/components/molecules/risk/reportingTable'
 
 export const mockBadDebtData: BadDebtTableData[] = [
   {
@@ -38,7 +39,7 @@ export const mockBadDebtData: BadDebtTableData[] = [
     totalAmount: 11,
     totalAmountSuffix: '',
     monthlyAverage: 200,
-    monthlyAverageSuffix: '',
+    monthlyAverageSuffix: '%',
     currentStatus: '',
     currentStatusSuffix: '',
   },
@@ -62,5 +63,34 @@ export const poolCreditMock: PoolCreditData[] = [
     previousFiscalYear: 1.5,
     mostRecentQuarter: 132,
     priorMonth: 4353,
+  },
+]
+
+export const reportingMock: ReportingData[] = [
+  {
+    category: 'United States Economic Forecast',
+    description:
+      'The Q4 2023 forecast explores how the US economy managed to continue to grow amid challenges, including a runup in interest rates to fight inflation, federal budget policy volatility, and growing geopolitical tensions.',
+
+    uploadDate: 1708261283,
+    version: '1.0',
+    actionUrl: '/path/to/document.pdf',
+  },
+  {
+    category: 'United States Economic Forecast',
+    description:
+      'The Q4 2023 forecast explores how the US economy managed to continue to grow amid challenges, including a runup in interest rates to fight inflation, federal budget policy volatility, and growing geopolitical tensions.',
+
+    uploadDate: 1708261283,
+    version: '1.0',
+    actionUrl: '/path/to/document.pdf',
+  },
+  {
+    category: 'United States Economic Forecast',
+    description:
+      'The Q4 2023 forecast explores how the US economy managed to continue to grow amid challenges, including a runup in interest rates to fight inflation, federal budget policy volatility, and growing geopolitical tensions.',
+    uploadDate: 1708261283,
+    version: '1.0',
+    actionUrl: '/path/to/document.pdf',
   },
 ]

@@ -10,7 +10,6 @@ import DataTypography from '@/components/molecules/risk/badDebtsTable/DataTypogr
 
 import { mockBadDebtData } from '@/app/mock-data/risk-data'
 import { BadDebtsTableKeys } from '@/constants/riskReporting'
-import { sortByString } from '@/utils'
 
 const headersStyles: SxProps<Theme> = {
   '& > *': {
@@ -29,6 +28,14 @@ const additionalHeadersStyles: SxProps<Theme> = {
     width: '40%',
     p: 1,
   },
+}
+
+const handleSort = (
+  _a: BadDebtTableData,
+  _b: BadDebtTableData,
+  _sort: Sort<BadDebtTableData>
+): number => {
+  return 0
 }
 
 export type BadDebtTableData = {
@@ -52,7 +59,7 @@ const BadDebtsTable: React.FC = () => {
       disableSort: true,
     },
     {
-      label: t('risk.badDebts.totalAmount'),
+      label: t('risk.badDebts.headers.column-1'),
       value: BadDebtsTableKeys.TOTAL_AMOUNT,
       disableSort: true,
     },
@@ -62,7 +69,7 @@ const BadDebtsTable: React.FC = () => {
       disableSort: true,
     },
     {
-      label: t('risk.badDebts.monthlyAverage'),
+      label: t('risk.badDebts.headers.column-2'),
       value: BadDebtsTableKeys.MONTHLY_AVERAGE,
       disableSort: true,
     },
@@ -72,7 +79,7 @@ const BadDebtsTable: React.FC = () => {
       disableSort: true,
     },
     {
-      label: t('risk.badDebts.currentStatus'),
+      label: t('risk.badDebts.headers.column-3'),
       value: BadDebtsTableKeys.CURRENT_STATUS,
       disableSort: true,
     },
@@ -120,17 +127,6 @@ const BadDebtsTable: React.FC = () => {
       disableSort: true,
     },
   ]
-
-  const handleSort = (
-    a: BadDebtTableData,
-    b: BadDebtTableData,
-    sort: Sort<BadDebtTableData>
-  ): number => {
-    if (typeof a[sort.key] === 'string' && typeof b[sort.key] === 'string') {
-      return sortByString<BadDebtTableData>(sort.key, sort.direction)(a, b)
-    }
-    return 0
-  }
 
   return (
     <Card sx={{ minWidth: 275, boxShadow: 1, padding: 2, mt: 3 }} elevation={1}>

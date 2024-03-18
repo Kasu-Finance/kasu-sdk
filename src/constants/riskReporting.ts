@@ -16,8 +16,10 @@ export enum BadDebtsTableKeys {
   CURRENT_STATUS_SUFFIX = 'currentStatusSuffix',
 }
 
-export enum FinancialReportingTableKeys {
-  SOURCE = 'source',
-  REPAYMENT_DATE = 'repaymentDate',
-  REPAYMENT_AMOUNT = 'repaymentAmount',
+export enum ReportingTableKeys {
+  CATEGORY = 'category',
+  DESCRIPTION = 'description',
+  UPLOAD_DATE = 'uploadDate',
+  VERSION = 'version',
+  ACTION_URL = 'actionUrl',
 }

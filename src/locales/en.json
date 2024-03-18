@@ -267,18 +267,29 @@
   "risk": {
     "poolCredit": {
       "title": "Pool Credit Metrics",
-      "metrics": {
-        "metric-1": "Key Credit Metrics",
-        "metric-2": "Previous Fiscal Year",
-        "metric-3": "Most Recent Quarter",
-        "metric-4": "Prior Month"
+      "headers": {
+        "column-1": "Key Credit Metrics",
+        "column-2": "Previous Fiscal Year",
+        "column-3": "Most Recent Quarter",
+        "column-4": "Prior Month"
       }
     },
     "badDebts": {
       "title": "Bad Debts Metrics",
-      "totalAmount": "Total (Lifetime)",
-      "monthlyAverage": "Monthly Average (Last 12 Months)",
-      "currentStatus": "Current Status"
+      "headers": {
+        "column-1": "Total (Lifetime)",
+        "column-2": "Monthly Average (Last 12 Months)",
+        "column-3": "Current Status"
+      }
+    },
+    "reporting": {
+      "title": "Financial Reporting Documents",
+      "headers": {
+        "column-1": "Report Description",
+        "column-2": "Upload Date",
+        "column-3": "Version",
+        "column-4": "Actions"
+      }
     }
   }
 }

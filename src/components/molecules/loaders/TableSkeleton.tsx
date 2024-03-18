@@ -1,5 +1,6 @@
 import {
   Box,
+  Card,
   Skeleton,
   Table,
   TableBody,
@@ -16,14 +17,18 @@ interface TableSkeletonProps {
 
 const TableSkeleton: React.FC<TableSkeletonProps> = ({ rows, columns }) => {
   return (
-    <Box>
+    <Card sx={{ minWidth: 275, boxShadow: 3, padding: 2, mb: 2 }} elevation={1}>
+      <Box pl={2}>
+        <Skeleton variant='text' width='40%' height={35} />
+      </Box>
+
       <TableContainer>
         <Table aria-label='skeleton table'>
           <TableHead>
             <TableRow>
               {Array.from({ length: columns }, (_, index) => (
                 <TableCell key={index}>
-                  <Skeleton variant='text' />
+                  <Skeleton variant='text' height={35} />
                 </TableCell>
               ))}
             </TableRow>
@@ -33,7 +38,7 @@ const TableSkeleton: React.FC<TableSkeletonProps> = ({ rows, columns }) => {
               <TableRow key={rowIndex}>
                 {Array.from({ length: columns }, (_, colIndex) => (
                   <TableCell key={colIndex}>
-                    <Skeleton variant='text' />
+                    <Skeleton variant='text' height={35} />
                   </TableCell>
                 ))}
               </TableRow>
@@ -41,7 +46,7 @@ const TableSkeleton: React.FC<TableSkeletonProps> = ({ rows, columns }) => {
           </TableBody>
         </Table>
       </TableContainer>
-    </Box>
+    </Card>
   )
 }
 
