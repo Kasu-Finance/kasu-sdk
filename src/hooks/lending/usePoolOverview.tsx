@@ -1,44 +1,29 @@
-import { PoolDetailSection } from 'kasu-sdk/src/types'
+import { PoolOverview } from 'kasu-sdk/src/types'
 import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
-import { convertToPoolDetails, convertToPoolTraction } from '@/utils'
-
 interface UsePoolOverviewReturn {
-  data: {
-    poolDetails: PoolDetailSection
-    poolTraction: PoolDetailSection
-  } | null
+  data: PoolOverview[] | null
   error: any
   isLoading: boolean
 }
 
-const usePoolOverview = (poolId: string): UsePoolOverviewReturn => {
+const usePoolOverview = (poolId?: string): UsePoolOverviewReturn => {
   const sdk = useKasuSDK()
 
-  const fetchPoolOverview = async (): Promise<{
-    poolDetails: PoolDetailSection
-    poolTraction: PoolDetailSection
-  } | null> => {
-    const result = await sdk.DataService.getPoolOverview(poolId)
+  const fetchPoolOverview = async (): Promise<PoolOverview[] | null> => {
+    const poolOverviewData = await sdk.DataService.getPoolOverview(poolId)
 
-    if (!result.length) {
+    if (!poolOverviewData.length) {
       console.warn('Received empty data for poolOverview')
       return null
     }
 
-    const poolOverviewData = result[0]
-    const poolDetails = convertToPoolDetails(poolOverviewData)
-    const poolTraction = convertToPoolTraction(poolOverviewData)
-
-    return { poolDetails, poolTraction }
+    return poolOverviewData
   }
 
-  const { data, error } = useSWR(
-    poolId ? `poolOverview/${poolId}` : null,
-    fetchPoolOverview
-  )
+  const { data, error } = useSWR(`poolOverview/${poolId}`, fetchPoolOverview)
 
   return {
     data: data || null,

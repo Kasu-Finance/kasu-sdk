@@ -1,5 +1,6 @@
 import { Box, Card, Typography } from '@mui/material'
-import { PoolDetailSection } from 'kasu-sdk/src/types'
+import { RiskManagement } from 'kasu-sdk/src/types'
+import { useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
@@ -7,21 +8,19 @@ import CriteriaSection from '@/components/molecules/details/RiskManagementCard/C
 import RiskStatus from '@/components/molecules/details/RiskManagementCard/RiskStatus'
 import SecuritySection from '@/components/molecules/details/RiskManagementCard/SecuritySection'
 
-export interface RiskManagementSection {
-  riskStatus: PoolDetailSection
-  security: PoolDetailSection
-  criteria: PoolDetailSection
-}
+import { convertToRiskManagement } from '@/utils'
 
 interface RiskManagementCardProps {
-  riskManagementData: RiskManagementSection
+  data: RiskManagement
 }
 
-const RiskManagementCard: React.FC<RiskManagementCardProps> = ({
-  riskManagementData,
-}) => {
+const RiskManagementCard: React.FC<RiskManagementCardProps> = ({ data }) => {
   const { t } = useTranslation()
-  const { riskStatus, security, criteria } = riskManagementData
+
+  const { riskStatus, security, criteria } = useMemo(
+    () => convertToRiskManagement(data),
+    [data]
+  )
 
   return (
     <Card sx={{ minWidth: 275, boxShadow: 3, padding: 2, mt: 3 }} elevation={1}>

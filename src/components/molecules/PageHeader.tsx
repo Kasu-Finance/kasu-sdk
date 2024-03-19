@@ -1,9 +1,11 @@
 'use client'
 
 import { Box, Paper, styled, Typography } from '@mui/material'
+import { PoolOverview } from 'kasu-sdk/src/types'
 import Image from 'next/image'
-import React from 'react'
+import React, { useMemo } from 'react'
 
+import usePoolOverview from '@/hooks/lending/usePoolOverview'
 import useTranslation from '@/hooks/useTranslation'
 
 import BackButton from '@/components/atoms/BackButton'
@@ -15,18 +17,28 @@ import ImagePlaceholderIcon from '@/assets/icons/general/ImagePlaceholderIcon'
 
 type PageHeaderProps = {
   title: string
+  poolId?: string
   loading?: boolean
   variant?: 'title' | 'hero'
 }
 
 const PageHeader: React.FC<PageHeaderProps> = ({
   title,
+  poolId,
   variant = 'title',
   loading = false,
 }) => {
   const { t } = useTranslation()
+  const { data } = usePoolOverview(poolId)
 
-  const poolAvatarImg = ''
+  const { poolName, poolAvatarImg, poolBannerImg } = useMemo(() => {
+    const pool: PoolOverview | null = data?.length ? data[0] : null
+    return {
+      poolName: pool?.poolName || '',
+      poolAvatarImg: pool?.thumbnailImageUrl || '',
+      poolBannerImg: pool?.bannerImageUrl || '',
+    }
+  }, [data])
 
   if (variant === 'title') {
     return (
@@ -43,10 +55,10 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   return (
     <Paper sx={{ borderRadius: '4px' }}>
       <ImageContainer>
-        {poolAvatarImg ? (
+        {poolBannerImg ? (
           <Image
             fill
-            src={poolAvatarImg}
+            src={poolBannerImg}
             alt="Pool's image"
             style={{ objectFit: 'cover' }}
           />
@@ -62,9 +74,9 @@ const PageHeader: React.FC<PageHeaderProps> = ({
         p={2}
       >
         <Box display='flex' alignItems='center'>
-          <PoolAvatar src={poolAvatarImg} name='Pool Name' />
+          <PoolAvatar src={poolAvatarImg} name={poolName} />
           <Typography variant='h6' component='h1' sx={{ ml: 2 }}>
-            {title}
+            {poolName || title}
           </Typography>
         </Box>
 
