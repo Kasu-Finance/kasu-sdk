@@ -1,4 +1,14 @@
-const DownloadIcon = () => (
+import React from 'react'
+
+interface DownloadIconProps {
+  color?: string
+  opacity?: string
+}
+
+const DownloadIcon: React.FC<DownloadIconProps> = ({
+  color = 'black',
+  opacity = '0.57',
+}) => (
   <svg
     width='14'
     height='17'
@@ -8,8 +18,8 @@ const DownloadIcon = () => (
   >
     <path
       d='M0 17H14V15H0V17ZM14 6H10V0H4V6H0L7 13L14 6Z'
-      fill='black'
-      fillOpacity='0.54'
+      fill={color}
+      fillOpacity={opacity}
     />
   </svg>
 )

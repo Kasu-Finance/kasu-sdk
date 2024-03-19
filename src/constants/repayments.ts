@@ -1,5 +1,1 @@
-export enum RepaymentTableSortKey {
-  SOURCE = 'source',
-  REPAYMENT_DATE = 'repaymentDate',
-  REPAYMENT_AMOUNT = 'repaymentAmount',
-}
+export const FIAT_LOAN_MODEL_DESCRIPTION = `This Pool Delegate's lending model is to facilitate Fiat currency loans to real world businesses off-chain. The Asset Class and Loan Structure outlined in the 'Pool Details' screen indicates that these loans are 'Revolving/Evergreen' Loan Facilities, with fluctuating loan balances, being a function of ongoing and simultaneous loan repayments and loan redraws in Fiat currency off-chain. Accordingly, these Fiat currency transactions can only be viewed via CSV download at this current point in time.`

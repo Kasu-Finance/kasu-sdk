@@ -32,7 +32,7 @@ const PoolTabs: React.FC = () => {
         >
           <Tab label='Overview' />
           <Tab label='Pool Details' />
-          <Tab label='Item Repayments' />
+          <Tab label='Repayments' />
           <Tab label='Risk Reporting' />
           <Tab label='Support' />
         </Tabs>

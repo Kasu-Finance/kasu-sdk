@@ -264,6 +264,24 @@
       }
     }
   },
+  "repayments": {
+    "title": "Repayments",
+    "downloadBtn": "DOWNLOAD AS CSV",
+    "metrics": {
+      "closingCash": {
+        "label": "Closing Cash at Bank (Excess Cash)",
+        "tooltip": "content is missing​"
+      },
+      "totalLoans": {
+        "label": "Closing Total Loans",
+        "tooltip": "content is missing"
+      },
+      "totalBalance": {
+        "label": "Total Pool Balance (inc. cap int)",
+        "tooltip": "content is missing"
+      }
+    }
+  },
   "risk": {
     "poolCredit": {
       "title": "Pool Credit Metrics",
