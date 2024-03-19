@@ -44,19 +44,19 @@ const PoolDetails: React.FC = () => {
 
   return (
     <Box>
-      {delegateHook.data && <PoolDelegateCard metrics={delegateHook.data} />}
-
-      {overviewHook.data?.poolDetails && (
-        <PoolDetailsCard metrics={overviewHook.data.poolDetails.metrics} />
+      {delegateHook.data?.length && (
+        <PoolDelegateCard data={delegateHook.data[0]} />
       )}
 
-      {overviewHook.data?.poolTraction && (
-        <PoolTractionCard metrics={overviewHook.data.poolTraction.metrics} />
+      {overviewHook.data?.length && (
+        <PoolDetailsCard data={overviewHook.data[0]} />
       )}
 
-      {riskHook.data && (
-        <RiskManagementCard riskManagementData={riskHook.data} />
+      {overviewHook.data?.length && (
+        <PoolTractionCard data={overviewHook.data[0]} />
       )}
+
+      {riskHook.data?.length && <RiskManagementCard data={riskHook.data[0]} />}
     </Box>
   )
 }

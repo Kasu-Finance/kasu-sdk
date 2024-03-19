@@ -8,6 +8,7 @@ const SinglePoolPage = ({ params }: { params: { slug: string } }) => {
     <Container maxWidth='lg'>
       <PageHeader
         title={'Pool: ' + params.slug}
+        poolId={params.slug}
         variant='hero'
         loading={false}
       />
