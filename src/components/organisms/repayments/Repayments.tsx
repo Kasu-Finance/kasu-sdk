@@ -1,7 +1,7 @@
 import { Box } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 
-import TableSkeleton from '@/components/molecules/loaders/TableSkeleton'
+import CardSkeleton from '@/components/molecules/loaders/CardSkeleton'
 import RepaymentsCard from '@/components/molecules/repayments/RepaymentsCard'
 
 const Repayments: React.FC = () => {
@@ -17,7 +17,17 @@ const Repayments: React.FC = () => {
 
   return (
     <Box mt={3}>
-      {loading ? <TableSkeleton columns={3} rows={5} /> : <RepaymentsCard />}
+      {loading ? (
+        <CardSkeleton
+          leftRowNumbers={3}
+          rightRowNumbers={3}
+          showSubtitle
+          titleStyle={{ width: '15%' }}
+          subtitleStyle={{ width: '20%' }}
+        />
+      ) : (
+        <RepaymentsCard />
+      )}
     </Box>
   )
 }
