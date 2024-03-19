@@ -7,8 +7,6 @@ import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
 import { DownloadIcon } from '@/assets/icons'
 
-import { FIAT_LOAN_MODEL_DESCRIPTION } from '@/constants'
-
 const metrics = [
   {
     id: 'closingCash',
@@ -66,7 +64,9 @@ const RepaymentsCard: React.FC = () => {
       </Box>
 
       <Box mt={2}>
-        <Typography variant='body2'>{FIAT_LOAN_MODEL_DESCRIPTION}</Typography>
+        <Typography variant='body2'>
+          {t('repayments.loadModelDescription')}
+        </Typography>
       </Box>
     </Card>
   )

@@ -9,9 +9,9 @@ import {
   TableSortLabelProps,
   Theme,
 } from '@mui/material'
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useCallback, useMemo } from 'react'
 
-import { Sort } from '@/components/molecules/customTable'
+import { Sort } from '@/components/molecules/CustomTable'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   background: alpha(theme.palette.primary.main, 0.08),
@@ -44,45 +44,59 @@ const TableHeaders = <U,>({
   additionalHeaders,
   additionalHeadersStyle,
 }: TableHeadersProps<U>) => {
-  const renderHeaderCell = (
-    header: CustomTableHeader<U>,
-    index: number,
-    isActive: boolean
-  ) => (
-    <TableCellComp
-      key={index}
-      sx={{ textAlign: index === 0 ? 'left' : 'right' }}
-    >
-      {header.disableSort ? (
-        header.label
-      ) : (
-        <SortLabelComp
-          active={isActive}
-          direction={isActive ? sort.direction : 'desc'}
-          onClick={() => handleSortChange(header.value)}
-        >
-          {header.label}
-        </SortLabelComp>
-      )}
-    </TableCellComp>
+  const renderHeaderCell = useCallback(
+    (header: CustomTableHeader<U>, index: number, isActive: boolean) => (
+      <TableCellComp
+        key={`${String(header.value)}-${index}`}
+        sx={{ textAlign: index === 0 ? 'left' : 'right' }}
+      >
+        {header.disableSort ? (
+          header.label
+        ) : (
+          <SortLabelComp
+            active={isActive}
+            direction={isActive ? sort.direction : 'desc'}
+            onClick={() => handleSortChange(header.value)}
+          >
+            {header.label}
+          </SortLabelComp>
+        )}
+      </TableCellComp>
+    ),
+    [sort.direction, handleSortChange, TableCellComp, SortLabelComp]
   )
 
-  const renderHeaderRow = (
-    headersData: CustomTableHeader<U>[],
-    style?: SxProps<Theme>
-  ) => (
-    <StyledTableRow sx={style}>
-      {headersData.map((header, index) =>
-        renderHeaderCell(header, index, sort.key === header.value)
-      )}
-    </StyledTableRow>
+  const headerRows = useMemo(
+    () => ({
+      main: (
+        <StyledTableRow sx={headersStyle}>
+          {headers.map((header, index) =>
+            renderHeaderCell(header, index, sort.key === header.value)
+          )}
+        </StyledTableRow>
+      ),
+      additional: additionalHeaders && (
+        <StyledTableRow sx={additionalHeadersStyle}>
+          {additionalHeaders.map((header, index) =>
+            renderHeaderCell(header, index, sort.key === header.value)
+          )}
+        </StyledTableRow>
+      ),
+    }),
+    [
+      headers,
+      additionalHeaders,
+      headersStyle,
+      additionalHeadersStyle,
+      sort,
+      renderHeaderCell,
+    ]
   )
 
   return (
     <>
-      {renderHeaderRow(headers, headersStyle)}
-      {additionalHeaders &&
-        renderHeaderRow(additionalHeaders, additionalHeadersStyle)}
+      {headerRows.main}
+      {headerRows.additional}
     </>
   )
 }

@@ -2,7 +2,7 @@ import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
-import { RiskManagementSection } from '@/components/molecules/details/riskManagementCard'
+import { RiskManagementSection } from '@/components/molecules/details/RiskManagementCard'
 
 import { convertToRiskManagement } from '@/utils'
 

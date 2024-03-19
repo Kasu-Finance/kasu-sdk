@@ -1,6 +1,6 @@
 import { PoolDetailSection, RiskManagement } from 'kasu-sdk/src/types'
 
-import { RiskManagementSection } from '@/components/molecules/details/riskManagementCard'
+import { RiskManagementSection } from '@/components/molecules/details/RiskManagementCard'
 
 import { PoolDetailsSectionIds, RiskMetricIds } from '@/constants'
 

@@ -1,6 +1,6 @@
 import { UserLock } from 'kasu-sdk/src/types'
 
-import { CustomTableHeader } from '@/components/molecules/customTable/TableHeaders'
+import { CustomTableHeader } from '@/components/molecules/CustomTable/TableHeaders'
 
 const UnlockHeader: CustomTableHeader<Omit<UserLock, 'launchBonus'>>[] = [
   {

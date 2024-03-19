@@ -1,4 +1,4 @@
-import { Box, Link } from '@mui/material'
+import { Box, IconButton } from '@mui/material'
 import React from 'react'
 
 import { DownloadIcon } from '@/assets/icons'
@@ -9,9 +9,14 @@ interface ActionCellProps {
 
 const ActionCell: React.FC<ActionCellProps> = ({ actionUrl }) => (
   <Box pr={1}>
-    <Link href={actionUrl} target='_blank'>
+    <IconButton
+      component='a'
+      href={actionUrl}
+      target='_blank'
+      aria-label='download'
+    >
       <DownloadIcon />
-    </Link>
+    </IconButton>
   </Box>
 )
 

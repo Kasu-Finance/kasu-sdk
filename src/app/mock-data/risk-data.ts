@@ -1,6 +1,6 @@
-import { BadDebtTableData } from '@/components/molecules/risk/badDebtsTable'
+import { BadDebtTableData } from '@/components/molecules/risk/BadDebtsTable'
 import { PoolCreditData } from '@/components/molecules/risk/PoolCreditTable'
-import { ReportingData } from '@/components/molecules/risk/reportingTable'
+import { ReportingData } from '@/components/molecules/risk/ReportingTable'
 
 export const mockBadDebtData: BadDebtTableData[] = [
   {

@@ -9,7 +9,7 @@ const DataTypography: React.FC<DataTypographyProps> = ({
   data,
   ...typographyProps
 }) => {
-  const isValidData = !!data || data === 0
+  const isValidData = data !== null && data !== undefined && data !== ''
   const content = isValidData ? data : 'N/A'
   const color = isValidData ? 'inherit' : 'grey.400'
 

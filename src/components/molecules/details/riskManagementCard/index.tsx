@@ -3,9 +3,9 @@ import { PoolDetailSection } from 'kasu-sdk/src/types'
 
 import useTranslation from '@/hooks/useTranslation'
 
-import CriteriaSection from '@/components/molecules/details/riskManagementCard/CriteriaSection'
-import RiskStatus from '@/components/molecules/details/riskManagementCard/RiskStatus'
-import SecuritySection from '@/components/molecules/details/riskManagementCard/SecuritySection'
+import CriteriaSection from '@/components/molecules/details/RiskManagementCard/CriteriaSection'
+import RiskStatus from '@/components/molecules/details/RiskManagementCard/RiskStatus'
+import SecuritySection from '@/components/molecules/details/RiskManagementCard/SecuritySection'
 
 export interface RiskManagementSection {
   riskStatus: PoolDetailSection

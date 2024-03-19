@@ -7,10 +7,10 @@ import usePoolOverview from '@/hooks/lending/usePoolOverview'
 import useRiskManagement from '@/hooks/lending/useRiskManagement'
 
 import EmptyCardState from '@/components/atoms/EmptyCardState'
-import PoolDelegateCard from '@/components/molecules/details/poolDelegateCard/index'
-import PoolDetailsCard from '@/components/molecules/details/poolDetailsCard'
+import PoolDelegateCard from '@/components/molecules/details/PoolDelegateCard'
+import PoolDetailsCard from '@/components/molecules/details/PoolDetailsCard'
 import PoolTractionCard from '@/components/molecules/details/PoolTractionCard'
-import RiskManagementCard from '@/components/molecules/details/riskManagementCard'
+import RiskManagementCard from '@/components/molecules/details/RiskManagementCard'
 import CardSkeleton from '@/components/molecules/loaders/CardSkeleton'
 
 const PoolDetails: React.FC = () => {

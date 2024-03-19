@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
-import MetricDisplay from '@/components/molecules/details/poolDetailsCard/MetricDisplay'
+import MetricDisplay from '@/components/molecules/details/PoolDetailsCard/MetricDisplay'
 
 import { MetricGroupType, PoolDetailsMetricIds } from '@/constants'
 

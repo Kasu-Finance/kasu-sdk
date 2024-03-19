@@ -4,9 +4,9 @@ import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
-import CustomTable, { Sort } from '@/components/molecules/customTable'
-import { CustomTableHeader } from '@/components/molecules/customTable/TableHeaders'
-import DataTypography from '@/components/molecules/risk/badDebtsTable/DataTypography'
+import CustomTable, { Sort } from '@/components/molecules/CustomTable'
+import { CustomTableHeader } from '@/components/molecules/CustomTable/TableHeaders'
+import DataTypography from '@/components/molecules/risk/BadDebtsTable/DataTypography'
 
 import { mockBadDebtData } from '@/app/mock-data/risk-data'
 import { BadDebtsTableKeys } from '@/constants/riskReporting'

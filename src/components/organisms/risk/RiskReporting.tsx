@@ -2,9 +2,9 @@ import { Box } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 
 import TableSkeleton from '@/components/molecules/loaders/TableSkeleton'
-import BadDebtsTable from '@/components/molecules/risk/badDebtsTable'
+import BadDebtsTable from '@/components/molecules/risk/BadDebtsTable'
 import PoolCreditTable from '@/components/molecules/risk/PoolCreditTable'
-import ReportingTable from '@/components/molecules/risk/reportingTable'
+import ReportingTable from '@/components/molecules/risk/ReportingTable'
 
 const RiskReporting: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)

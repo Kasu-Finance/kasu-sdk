@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
-import MetricGroup from '@/components/molecules/details/poolDelegateCard/MetricGroup'
+import MetricGroup from '@/components/molecules/details/PoolDelegateCard/MetricGroup'
 
 import { MetricGroupType, PoolDelegateMetricIds } from '@/constants'
 

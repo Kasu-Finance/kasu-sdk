@@ -3,11 +3,11 @@ import React from 'react'
 
 import { splitTextIntoRows } from '@/utils'
 
-interface TextContentProps {
+interface TableTextContentProps {
   text: string
 }
 
-const TextContent: React.FC<TextContentProps> = ({ text }) => {
+const TableTextContent: React.FC<TableTextContentProps> = ({ text }) => {
   const charsPerRow = 90
   const rows = splitTextIntoRows(text, charsPerRow)
 
@@ -22,4 +22,4 @@ const TextContent: React.FC<TextContentProps> = ({ text }) => {
   )
 }
 
-export default TextContent
+export default TableTextContent

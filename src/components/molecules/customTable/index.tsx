@@ -22,7 +22,7 @@ import usePagination from '@/hooks/usePagination'
 
 import TableHeaders, {
   CustomTableHeader,
-} from '@/components/molecules/customTable/TableHeaders'
+} from '@/components/molecules/CustomTable/TableHeaders'
 
 export type Sort<T> = {
   key: keyof T

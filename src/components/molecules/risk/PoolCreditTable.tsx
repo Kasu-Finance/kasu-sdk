@@ -1,10 +1,10 @@
 import { Card, TableCell, TableRow, Typography } from '@mui/material'
-import React from 'react'
+import React, { useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
-import CustomTable, { Sort } from '@/components/molecules/customTable'
-import { CustomTableHeader } from '@/components/molecules/customTable/TableHeaders'
+import CustomTable, { Sort } from '@/components/molecules/CustomTable'
+import { CustomTableHeader } from '@/components/molecules/CustomTable/TableHeaders'
 
 import { poolCreditMock } from '@/app/mock-data/risk-data'
 import { PoolCreditTableKeys } from '@/constants/riskReporting'
@@ -27,28 +27,31 @@ export type PoolCreditData = {
 const PoolCreditTable: React.FC = () => {
   const { t } = useTranslation()
 
-  const headers: CustomTableHeader<PoolCreditData>[] = [
-    {
-      label: t('risk.poolCredit.headers.column-1'),
-      value: PoolCreditTableKeys.KEY_METRIC,
-      disableSort: true,
-    },
-    {
-      label: t('risk.poolCredit.headers.column-2'),
-      value: PoolCreditTableKeys.PREVIOUS_FISCAL_YEAR,
-      disableSort: true,
-    },
-    {
-      label: t('risk.poolCredit.headers.column-3'),
-      value: PoolCreditTableKeys.RECENT_QUARTER,
-      disableSort: true,
-    },
-    {
-      label: t('risk.poolCredit.headers.column-4'),
-      value: PoolCreditTableKeys.PRIOR_MONTH,
-      disableSort: true,
-    },
-  ]
+  const headers: CustomTableHeader<PoolCreditData>[] = useMemo(
+    () => [
+      {
+        label: t('risk.poolCredit.headers.column-1'),
+        value: PoolCreditTableKeys.KEY_METRIC,
+        disableSort: true,
+      },
+      {
+        label: t('risk.poolCredit.headers.column-2'),
+        value: PoolCreditTableKeys.PREVIOUS_FISCAL_YEAR,
+        disableSort: true,
+      },
+      {
+        label: t('risk.poolCredit.headers.column-3'),
+        value: PoolCreditTableKeys.RECENT_QUARTER,
+        disableSort: true,
+      },
+      {
+        label: t('risk.poolCredit.headers.column-4'),
+        value: PoolCreditTableKeys.PRIOR_MONTH,
+        disableSort: true,
+      },
+    ],
+    [t]
+  )
 
   return (
     <Card sx={{ minWidth: 275, boxShadow: 1, padding: 2 }} elevation={1}>
