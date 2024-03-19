@@ -1,5 +1,5 @@
 import { Box, Card, Typography } from '@mui/material'
-import { PoolMetric } from 'kasu-sdk/src/types'
+import { PoolDelegateProfileAndHistory } from 'kasu-sdk/src/types'
 import { useCallback, useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
@@ -7,13 +7,19 @@ import useTranslation from '@/hooks/useTranslation'
 import MetricGroup from '@/components/molecules/details/poolDelegateCard/MetricGroup'
 
 import { MetricGroupType, PoolDelegateMetricIds } from '@/constants'
+import { convertToPoolDelegate } from '@/utils'
 
 interface PoolDelegateCardProps {
-  metrics: PoolMetric[]
+  data: PoolDelegateProfileAndHistory
 }
 
-const PoolDelegateCard: React.FC<PoolDelegateCardProps> = ({ metrics }) => {
+const PoolDelegateCard: React.FC<PoolDelegateCardProps> = ({ data }) => {
   const { t } = useTranslation()
+
+  const metrics = useMemo(
+    () => (data ? convertToPoolDelegate(data) : []),
+    [data]
+  )
 
   const filterMetrics = useCallback(
     (ids: PoolDelegateMetricIds[]) => {

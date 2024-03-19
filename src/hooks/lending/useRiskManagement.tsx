@@ -1,28 +1,23 @@
+import { RiskManagement } from 'kasu-sdk/src/types'
 import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
-import { RiskManagementSection } from '@/components/molecules/details/riskManagementCard'
-
-import { convertToRiskManagement } from '@/utils'
-
 const useRiskManagement = (poolId: string) => {
   const sdk = useKasuSDK()
 
-  const fetchRiskManagement =
-    async (): Promise<RiskManagementSection | null> => {
-      const result = await sdk.DataService.getRiskManagement([poolId])
+  const fetchRiskManagement = async (): Promise<RiskManagement[] | null> => {
+    const riskManagementData = await sdk.DataService.getRiskManagement([poolId])
 
-      if (!result.length) {
-        console.warn('Received empty data for riskManagement')
-        return null
-      }
-
-      const riskManagementData = convertToRiskManagement(result[0])
-      return riskManagementData
+    if (!riskManagementData.length) {
+      console.warn('Received empty data for riskManagement')
+      return null
     }
 
-  const { data, error } = useSWR<RiskManagementSection | null>(
+    return riskManagementData
+  }
+
+  const { data, error } = useSWR<RiskManagement[] | null>(
     poolId ? `riskManagement/${poolId}` : null,
     fetchRiskManagement
   )

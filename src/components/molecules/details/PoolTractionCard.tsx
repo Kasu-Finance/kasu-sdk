@@ -1,16 +1,20 @@
 import { Box, Card, Typography } from '@mui/material'
-import { PoolMetric } from 'kasu-sdk/src/types'
+import { PoolOverview } from 'kasu-sdk/src/types'
+import { useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
+import { convertToPoolTraction } from '@/utils'
+
 interface PoolTractionCardProps {
-  metrics: PoolMetric[]
+  data: PoolOverview
 }
 
-const PoolTractionCard: React.FC<PoolTractionCardProps> = ({ metrics }) => {
+const PoolTractionCard: React.FC<PoolTractionCardProps> = ({ data }) => {
   const { t } = useTranslation()
+  const { metrics } = useMemo(() => convertToPoolTraction(data), [data])
 
   return (
     <Card sx={{ minWidth: 275, boxShadow: 3, padding: 2, mt: 3 }} elevation={1}>
