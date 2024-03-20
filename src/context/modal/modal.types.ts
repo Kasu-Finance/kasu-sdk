@@ -9,6 +9,14 @@ export enum ModalsActionTypes {
   CLOSE_MODAL = 'CLOSE_MODAL',
 }
 
+export enum ModalsKeys {
+  CONNECT_WALLET = 'connectWalletModal',
+  LOYALTY_LEVELS = 'loyaltyLevelsModal',
+  LOCK = 'lockModal',
+  UNLOCK = 'unlockModal',
+  WITHDRAW = 'withdrawModal',
+}
+
 export type ModalAction =
   | { type: ModalsActionTypes.OPEN_MODAL; name: keyof Modals; content?: any }
   | { type: ModalsActionTypes.CLOSE_MODAL; name: keyof Modals }
@@ -20,6 +28,7 @@ export type Modals = {
   loyaltyLevelsModal: ModalData
   lockModal: ModalData
   unlockModal: ModalData<{ userLock: UserLock }>
+  withdrawModal: ModalData
 }
 
 export type ModalWithProps = Extract<keyof Modals, 'unlockModal'>
