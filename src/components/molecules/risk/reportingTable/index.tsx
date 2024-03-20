@@ -15,7 +15,6 @@ import CustomTable, { Sort } from '@/components/molecules/CustomTable'
 import { CustomTableHeader } from '@/components/molecules/CustomTable/TableHeaders'
 import ActionCell from '@/components/molecules/risk/ReportingTable/ActionCell'
 import DateDisplay from '@/components/molecules/risk/ReportingTable/DateDisplay'
-import TableTextContent from '@/components/molecules/risk/ReportingTable/TableTextContent'
 
 import { reportingMock } from '@/app/mock-data/risk-data'
 import { ReportingTableKeys } from '@/constants/riskReporting'
@@ -32,10 +31,12 @@ const CircularTypography = styled(Typography)(({ theme }) => ({
   justifyContent: 'center',
   alignItems: 'center',
   borderRadius: '50%',
-  width: '1.3rem',
-  height: '1.3rem',
+  width: '19.2px',
+  height: '19.2px',
   color: theme.palette.primary.contrastText,
-  fontSize: '0.6rem',
+  fontSize: '9.6px',
+  padding: '8px',
+  lineHeight: 26,
 }))
 
 export type ReportingData = {
@@ -112,7 +113,19 @@ const ReportingTable: React.FC = () => {
                       {data.category}
                     </Typography>
                     <Divider />
-                    <TableTextContent text={data.description} />
+                    <Box
+                      mt={1}
+                      sx={{
+                        width: '100%',
+                        whiteSpace: 'pre-wrap',
+                        wordWrap: 'break-word',
+                        overflowWrap: 'break-word',
+                      }}
+                    >
+                      <Typography variant='body2'>
+                        {data.description}
+                      </Typography>
+                    </Box>
                   </Box>
                 </Box>
               </TableCell>
