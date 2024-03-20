@@ -1,16 +1,32 @@
 'use client'
 
 import { Box, Container, Typography } from '@mui/material'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
+import useModalState from '@/hooks/context/useModalState'
 import usePoolOverview from '@/hooks/lending/usePoolOverview'
 
 import EmptyCardState from '@/components/atoms/EmptyCardState'
 import Carousel from '@/components/molecules/Carousel'
 import PageHeader from '@/components/molecules/PageHeader'
 import PoolCard from '@/components/molecules/PoolCard'
+import WithdrawModal from '@/components/organisms/lending/WithdrawModal'
+
+import { ModalsKeys } from '@/context/modal/modal.types'
 
 const Lending = () => {
   const { data: pools, isLoading } = usePoolOverview()
+  const [selectedPool, setSelectedPool] = useState(null)
+  const router = useRouter()
+
+  const { openModal } = useModalState()
+
+  const handleWithdrawClick = (pool: any) => {
+    setSelectedPool(pool)
+    openModal({ name: ModalsKeys.WITHDRAW })
+    router.push('/lending?step=1')
+  }
 
   if (isLoading) {
     return (
@@ -27,7 +43,12 @@ const Lending = () => {
 
   const poolsContent = hasPools ? (
     pools.map((pool, index) => (
-      <PoolCard name={pool.poolName} link={`lending/${pool.id}`} key={index} />
+      <PoolCard
+        poolName={pool.poolName}
+        link={`lending/${pool.id}`}
+        key={index}
+        handleWithdrawClick={() => handleWithdrawClick(pool)}
+      />
     ))
   ) : (
     <EmptyCardState message='No pools available.' />
@@ -37,6 +58,8 @@ const Lending = () => {
     <Container maxWidth='lg'>
       <PageHeader title='Lending' />
       <Carousel slidesPerPage={3}>{poolsContent}</Carousel>
+
+      <WithdrawModal key={selectedPool?.id} pool={selectedPool} />
     </Container>
   )
 }

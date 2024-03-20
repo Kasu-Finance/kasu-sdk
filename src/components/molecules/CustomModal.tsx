@@ -24,18 +24,25 @@ interface CustomModalProps {
   modalKey: keyof Modals
   title?: string
   children?: ReactNode
+  onClose?: () => void
 }
 
 const CustomModal: React.FC<CustomModalProps> = ({
   modalKey,
   title,
   children,
+  onClose,
 }) => {
   const { modal, closeModal } = useModalState()
   const isOpen = modal[modalKey].isOpen
 
+  const onCloseModal = () => {
+    closeModal(modalKey)
+    onClose?.()
+  }
+
   return (
-    <Modal open={isOpen} onClose={() => closeModal(modalKey)}>
+    <Modal open={isOpen} onClose={onCloseModal}>
       <StyledModalBox>
         <Box
           display='flex'
