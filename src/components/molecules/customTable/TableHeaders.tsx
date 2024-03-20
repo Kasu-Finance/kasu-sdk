@@ -27,8 +27,8 @@ type TableHeadersProps<U> = {
   headers: CustomTableHeader<U>[]
   sort: Sort<U>
   handleSortChange: (newKey: keyof U) => void
-  TableCellComp?: React.ComponentType<TableCellProps>
-  SortLabelComp?: React.ComponentType<TableSortLabelProps>
+  tableCellComp?: React.ComponentType<TableCellProps>
+  sortLabelComp?: React.ComponentType<TableSortLabelProps>
   headersStyle?: SxProps<Theme>
   additionalHeaders?: CustomTableHeader<U>[]
   additionalHeadersStyle?: SxProps<Theme>
@@ -38,12 +38,15 @@ const TableHeaders = <U,>({
   headers,
   sort,
   handleSortChange,
-  TableCellComp = TableCell,
-  SortLabelComp = TableSortLabel,
+  tableCellComp = TableCell,
+  sortLabelComp = TableSortLabel,
   headersStyle,
   additionalHeaders,
   additionalHeadersStyle,
 }: TableHeadersProps<U>) => {
+  const TableCellComp = tableCellComp
+  const SortLabelComp = sortLabelComp
+
   const renderHeaderCell = useCallback(
     (header: CustomTableHeader<U>, index: number, isActive: boolean) => (
       <TableCellComp

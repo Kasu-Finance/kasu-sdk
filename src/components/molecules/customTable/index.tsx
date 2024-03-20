@@ -12,7 +12,6 @@ import {
   TablePagination,
   TablePaginationProps,
   TableRow,
-  TableSortLabel,
   TableSortLabelProps,
   Theme,
 } from '@mui/material'
@@ -45,9 +44,9 @@ type CustomTableProps<T, U> = {
   headersStyle?: SxProps<Theme>
   additionalHeaders?: CustomTableHeader<U>[]
   additionalHeadersStyle?: SxProps<Theme>
-  TableCellComp?: ComponentType<TableCellProps>
-  SortLabelComp?: ComponentType<TableSortLabelProps>
-  PaginationComp?: ComponentType<TablePaginationProps>
+  tableCellComp?: ComponentType<TableCellProps>
+  sortLabelComp?: ComponentType<TableSortLabelProps>
+  paginationComp?: ComponentType<TablePaginationProps>
 }
 
 const CustomTable = <T, U>({
@@ -66,9 +65,9 @@ const CustomTable = <T, U>({
   tableStyles,
   headersStyle,
   additionalHeadersStyle,
-  TableCellComp = TableCell,
-  SortLabelComp = TableSortLabel,
-  PaginationComp = TablePagination,
+  tableCellComp,
+  sortLabelComp,
+  paginationComp = TablePagination,
 }: CustomTableProps<T, U>) => {
   const [sort, setSort] = useState<Sort<U>>({
     key: defaultSortKey,
@@ -109,6 +108,8 @@ const CustomTable = <T, U>({
     setPage(0)
   }
 
+  const PaginationComponent = paginationComp
+
   return (
     <Box>
       <TableContainer sx={{ borderBottom: 'none', ...tableContainerStyles }}>
@@ -121,8 +122,8 @@ const CustomTable = <T, U>({
               headers={headers}
               sort={sort}
               handleSortChange={handleSortChange}
-              TableCellComp={TableCellComp}
-              SortLabelComp={SortLabelComp}
+              tableCellComp={tableCellComp}
+              sortLabelComp={sortLabelComp}
               additionalHeaders={additionalHeaders}
               headersStyle={headersStyle}
               additionalHeadersStyle={additionalHeadersStyle}
@@ -154,7 +155,7 @@ const CustomTable = <T, U>({
         </Table>
       </TableContainer>
       {pagination && (
-        <PaginationComp
+        <PaginationComponent
           rowsPerPageOptions={rowPerPageOptions}
           component='div'
           count={data.length}

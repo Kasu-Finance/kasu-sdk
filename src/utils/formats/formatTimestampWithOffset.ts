@@ -1,6 +1,8 @@
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 
+import { FULL_DATE_WITH_TIME } from '@/constants'
+
 dayjs.extend(utc)
 
 const formatTimestampWithOffset = (
@@ -14,7 +16,7 @@ const formatTimestampWithOffset = (
   }
 
   const utcPart = offset === 0 ? 'UTC' : `UTC${offset > 0 ? '+' : ''}${offset}`
-  const formattedDate = date.format(`DD.MM.YYYY HH:mm:ss [${utcPart}]`)
+  const formattedDate = date.format(`${FULL_DATE_WITH_TIME} [${utcPart}]`)
 
   return formattedDate
 }
