@@ -3,6 +3,8 @@ export interface DirectusSchema {
     poolDelegateProfileAndHistory: PoolDelegateProfileAndHistoryDirectus[];
     riskManagement: RiskManagementDirectus[];
     riskManagementItem: RiskManagementItemDirectus[];
+    poolCreditMetrics: PoolCreditMetricsDirectus[];
+    badAndDoubtfulDebts: BadAndDoubtfulDebtsDirectus[];
 }
 
 
@@ -18,6 +20,8 @@ export interface PoolOverviewDirectus {
     poolApyStructure: string;
     poolInvestmentTerm: string;
     loanStructure: string;
+    loansUnderManagement: string;
+    activeLoans: string;
 }
 
 export interface PoolDelegateProfileAndHistoryDirectus {
@@ -49,4 +53,32 @@ export interface RiskManagementItemDirectus {
     group: string;
     priority: number;
     fkRiskManagement: string;
+}
+
+export interface PoolCreditMetricsDirectus {
+    id: string;
+    poolIdFK: string;
+    icrPreviousFiscalYear: number;
+    icrRecentQuarter: number;
+    icrPriorMonth: number;
+    dscrPreviousFiscalYear: number;
+    dscrRecentQuarter: number;
+    dscrPriorMonth: number;
+    ltvrPreviousFiscalYear: number;
+    ltvrRecentQuarter: number;
+    ltvrPriorMonth: number;
+}
+
+export interface BadAndDoubtfulDebtsDirectus {
+    id: string;
+    poolIdFK: string;
+    arrearsMonthlyAverage: string;
+    defaultsMonthlyAverage: string;
+    recoveryActionMonthlyAverage: string;
+    lossesMonthlyAverage: string;
+    arrearsCurrentStatus: string;
+    defaultsCurrentStatus: string;
+    recoveryActionCurrentStatus: string;
+    lossesCurrentStatus: string;
+    lossesLifetime: string;
 }

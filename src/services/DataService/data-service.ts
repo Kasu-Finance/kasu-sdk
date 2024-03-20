@@ -13,18 +13,19 @@ import { SdkConfig } from '../../sdk-config';
 
 import { getAllLendingPoolsQuery, getAllTrancheConfigurationsQuery, getAllTranchesQuery } from './data-service.query';
 import {
-    DirectusSchema, PoolDelegateProfileAndHistoryDirectus,
+    BadAndDoubtfulDebtsDirectus,
+    DirectusSchema, PoolCreditMetricsDirectus, PoolDelegateProfileAndHistoryDirectus,
     PoolOverviewDirectus,
     RiskManagementDirectus,
     RiskManagementItemDirectus,
 } from './directus-types';
 import { LendingPoolSubgraph, TrancheConfigurationSubgraph, TrancheSubgraph } from './subgraph-types';
 import {
+    BadAndDoubtfulDebts, PoolCreditMetrics,
     PoolDelegateProfileAndHistory,
-    PoolOverview,
-    PoolTranches,
+    PoolOverview, PoolTranche,
     RiskManagement,
-    RiskManagementItem,
+    RiskManagementItem, TrancheData,
 } from './types';
 
 export class DataService {
@@ -35,16 +36,31 @@ export class DataService {
         this._graph = new GraphQLClient(kasuConfig.subgraphUrl);
         this._directus = createDirectus<DirectusSchema>('https://kasu-finance.directus.app').with(authentication()).with(rest());
     }
-    async getPoolOverview(id_in: string): Promise<PoolOverview[]> {
-
+    async getPoolOverview(id_in?: string[]): Promise<PoolOverview[]> {
+        const subgraphTrancheConfigurationResults: TrancheConfigurationSubgraph[] = await this._graph.request(getAllTrancheConfigurationsQuery);
         const subgraphResults: LendingPoolSubgraph[] = await this._graph.request(getAllLendingPoolsQuery);
         const directusResults: PoolOverviewDirectus[] = await this._directus.request(readItems('PoolOverview'));
         const retn: PoolOverview[] = [];
         for (const lendingPoolSubgraph of subgraphResults) {
             const lendingPoolDirectus = directusResults.find(r => r.id == lendingPoolSubgraph.id);
+            const tranches: TrancheData[] = [];
             if(!lendingPoolDirectus) {
                 console.log("Couldn't find directus pool for id: ", lendingPoolSubgraph.id);
                 continue;
+            }
+            for (const tranche of lendingPoolSubgraph.tranches) {
+                const trancheConfig = subgraphTrancheConfigurationResults.find(r => r.id == tranche.id);
+                if(!trancheConfig) {
+                    console.log("Couldn't find tranche config for id: ", tranche.id);
+                    continue;
+                }
+                tranches.push({
+                    id: tranche.id,
+                    apy: trancheConfig.interestRate,
+                    maximumDeposit: trancheConfig.maxDepositAmount,
+                    minimumDeposit: trancheConfig.minDepositAmount,
+                    poolCapacity: "placeholder", // need formula for calculation
+                });
             }
             const poolOverview: PoolOverview = {
                 id: lendingPoolSubgraph.id,
@@ -60,22 +76,22 @@ export class DataService {
                 poolInvestmentTerm: lendingPoolDirectus.poolInvestmentTerm,
                 loanStructure: lendingPoolDirectus.loanStructure,
                 poolName: lendingPoolSubgraph.name,
-                totalValueLocked: lendingPoolSubgraph.totalValueLocked,
-                loansUnderManagement: lendingPoolSubgraph.loansUnderManagement,
-                yieldEarned: lendingPoolSubgraph.yieldEarned,
-                poolCapacity: lendingPoolSubgraph.poolCapacity,
-                activeLoans: lendingPoolSubgraph.activeLoans,
-                tranches: lendingPoolSubgraph.tranches
+                totalValueLocked: lendingPoolSubgraph.balance,
+                loansUnderManagement: lendingPoolDirectus.loansUnderManagement,
+                yieldEarned: lendingPoolSubgraph.totalYieldAmount,
+                poolCapacity: "placeholder", // need formula for calculation
+                activeLoans: lendingPoolDirectus.activeLoans,
+                tranches: tranches,
             }
             retn.push(poolOverview);
         }
-        if(!id_in.length){
+        if(!id_in){
             return retn;
         }
         return retn.filter(data => id_in.includes(data.id));
     }
 
-    async getRiskManagement(id_in: string[]): Promise<RiskManagement[]>{
+    async getRiskManagement(id_in?: string[]): Promise<RiskManagement[]>{
         const resultDirectusRiskManagement: RiskManagementDirectus[] = await this._directus.request(readItems('riskManagement'));
         const resultDirectusRiskManagementItem: RiskManagementItemDirectus[] = await this._directus.request(readItems('riskManagementItem'));
         const retn: RiskManagement[] = [];
@@ -95,13 +111,13 @@ export class DataService {
                 },
             });
         }
-        if(!id_in.length){
+        if(!id_in){
             return retn;
         }
         return retn.filter(data => id_in.includes(data.id));
     }
 
-    async getPoolDelegateProfileAndHistory(id_in: string[]): Promise<PoolDelegateProfileAndHistory[]> {
+    async getPoolDelegateProfileAndHistory(id_in?: string[]): Promise<PoolDelegateProfileAndHistory[]> {
         const poolDelegateProfileAndHistoryDirectus: PoolDelegateProfileAndHistoryDirectus[] = await this._directus.request(readItems('poolDelegateProfileAndHistory'));
         const retn: PoolDelegateProfileAndHistory[] = [];
         for(const data of poolDelegateProfileAndHistoryDirectus){
@@ -117,20 +133,53 @@ export class DataService {
                 historicLossRate: data.historicLossRate
             });
         }
-        if(!id_in.length){
+        if(!id_in){
             return retn;
         }
         return retn.filter(data => id_in.includes(data.id));
     }
 
-    async getPoolTranches(id_in: string[]): Promise<PoolTranches[]> {
+    async getPoolTranches(id_in?: string[]): Promise<PoolTranche[]> {
         const subgraphResults: TrancheSubgraph[] = await this._graph.request(getAllTranchesQuery);
         const subgraphConfigurationResults: TrancheConfigurationSubgraph[] = await this._graph.request(getAllTrancheConfigurationsQuery);
-        const retn: PoolTranches[] = [];
+        const retn: PoolTranche[] = [];
+        for (const trancheSubgraph of subgraphResults) {
+            const configuration = subgraphConfigurationResults.find(r => r.id == trancheSubgraph.id);
+            if(!configuration) {
+                console.log("Couldn't find tranche configuration for id: ", trancheSubgraph.id);
+                continue;
+            }
 
-        if(!id_in.length){
+            const tranche: PoolTranche = {
+                id: trancheSubgraph.id,
+                poolIdFK: trancheSubgraph.lendingPool.id,
+                apy: configuration.interestRate,
+                remainingCapacity: "placeholder", // need formula for calculation
+                minimalDepositThreshold: configuration.minDepositAmount,
+                maximalDepositThreshold: configuration.maxDepositAmount
+            }
+        }
+
+        if(!id_in){
             return retn;
         }
         return retn.filter(data => id_in.includes(data.id));
     }
+
+    async getBadAndDoubtfulDebts(id_in?: string[]): Promise<BadAndDoubtfulDebts[]> {
+        const badAndDoubtfulDebtsDirectus: BadAndDoubtfulDebtsDirectus[] = await this._directus.request(readItems('badAndDoubtfulDebts'));
+        if(!id_in){
+            return badAndDoubtfulDebtsDirectus;
+        }
+        return badAndDoubtfulDebtsDirectus.filter(data => id_in.includes(data.id));
+    }
+
+    async getPoolCreditMetrics(id_in?: string[]): Promise<PoolCreditMetrics[]> {
+        const poolCreditMetricsDirectus: PoolCreditMetricsDirectus[] = await this._directus.request(readItems('poolCreditMetrics'));
+        if(!id_in){
+            return poolCreditMetricsDirectus;
+        }
+        return poolCreditMetricsDirectus.filter(data => id_in.includes(data.id));
+    }
+
 }

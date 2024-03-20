@@ -9,11 +9,11 @@ export interface PoolOverview {
     thumbnailImageUrl: string; // CMS
     strategyDeckUrl: string; // CMS
     tranches: TrancheData[]; // SUBGRAPH
-    totalValueLocked: number; // SUBGRAPH
-    loansUnderManagement: number; // SUBGRAPH
-    yieldEarned: number; // SUBGRAPH
-    poolCapacity: number; // SUBGRAPH
-    activeLoans: number; // SUBGRAPH
+    totalValueLocked: string; // SUBGRAPH
+    loansUnderManagement: string; // SUBGRAPH
+    yieldEarned: string; // SUBGRAPH
+    poolCapacity: string; // SUBGRAPH
+    activeLoans: string; // SUBGRAPH
     assetClass: string; // CMS
     industryExposure: string; // CMS
     poolApyStructure: string; // CMS
@@ -33,13 +33,13 @@ export interface PoolDelegateProfileAndHistory {
     historicLossRate: number; // CMS
 }
 
-export interface PoolTranches {
+export interface PoolTranche {
     id: string; // subgraph
     poolIdFK: string; // subgraph
-    apy: number; // subgraph
-    remainingCapacity: number; // subgraph
-    minimalDepositThreshold: number; // subgraph
-    maximalDepositThreshold: number; // subgraph
+    apy: string; // subgraph
+    remainingCapacity: string; // subgraph
+    minimalDepositThreshold: string; // subgraph
+    maximalDepositThreshold: string; // subgraph
 }
 
 export interface RiskManagement {
@@ -69,8 +69,36 @@ export interface RiskPerformance {
 
 export interface TrancheData {
     id: string;
-    apy: number;
-    maximumDeposit: number;
-    minimumDeposit: number;
-    poolCapacity: number;
+    apy: string;
+    maximumDeposit: string;
+    minimumDeposit: string;
+    poolCapacity: string;
+}
+
+export interface PoolCreditMetrics {
+    id: string;
+    poolIdFK: string;
+    icrPreviousFiscalYear: number;
+    icrRecentQuarter: number;
+    icrPriorMonth: number;
+    dscrPreviousFiscalYear: number;
+    dscrRecentQuarter: number;
+    dscrPriorMonth: number;
+    ltvrPreviousFiscalYear: number;
+    ltvrRecentQuarter: number;
+    ltvrPriorMonth: number;
+}
+
+export interface BadAndDoubtfulDebts {
+    id: string;
+    poolIdFK: string;
+    arrearsMonthlyAverage: string;
+    defaultsMonthlyAverage: string;
+    recoveryActionMonthlyAverage: string;
+    lossesMonthlyAverage: string;
+    arrearsCurrentStatus: string;
+    defaultsCurrentStatus: string;
+    recoveryActionCurrentStatus: string;
+    lossesCurrentStatus: string;
+    lossesLifetime: string;
 }

@@ -27,6 +27,9 @@ export const getAllTranchesQuery = gql`
         orderId
         totalYieldAmount
         balance
+        lendingPool {
+          id
+        }
       }
 }
 `;

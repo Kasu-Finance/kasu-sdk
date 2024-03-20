@@ -14,6 +14,9 @@ export interface TrancheSubgraph {
     id: string;
     totalYieldAmount: string;
     orderId: string;
+    lendingPool: {
+        id: string;
+    }
 }
 
 export interface TrancheConfigurationSubgraph {
