@@ -1,12 +1,12 @@
 'use client'
 
-import { Box, Button, Divider, Grid, Typography } from '@mui/material'
+import { Box, Button, Grid } from '@mui/material'
 import { useRef } from 'react'
 
 import useIsSticky from '@/hooks/useIsSticky'
 import useTranslation from '@/hooks/useTranslation'
 
-import InfoTooltip from '@/components/atoms/InfoTooltip'
+import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
 const TranchesApyCard = () => {
   const divRef = useRef<HTMLDivElement>(null)
@@ -35,12 +35,12 @@ const TranchesApyCard = () => {
       }}
     >
       <Box
+        borderRadius={2}
+        className='light-blue-background'
         sx={{
           flexGrow: 1,
           mt: 2,
           mb: 2,
-          background: '#1976D20A',
-          borderRadius: '8px',
         }}
       >
         <Grid
@@ -51,37 +51,25 @@ const TranchesApyCard = () => {
           columnSpacing={{ xs: 1, sm: 2, md: 3 }}
         >
           <Grid item xs={4}>
-            <Box>
-              <Typography variant='subtitle2' sx={{ pl: 2, pb: 1 }}>
-                {t('lending.tranche.senior')} <InfoTooltip title='test' />
-              </Typography>
-              <Divider />
-              <Typography variant='h5' sx={{ pl: 2, pb: 1, pt: 0.5 }}>
-                12.50 %
-              </Typography>
-            </Box>
+            <MetricWithSuffix
+              content='12.50 %'
+              tooltipKey='01'
+              titleKey={t('lending.tranche.senior')}
+            />
           </Grid>
           <Grid item xs={4}>
-            <Box>
-              <Typography variant='subtitle2' sx={{ pl: 2, pb: 1 }}>
-                {t('lending.')} <InfoTooltip title='test' />
-              </Typography>
-              <Divider />
-              <Typography variant='h5' sx={{ pl: 2, pb: 1, pt: 0.5 }}>
-                5.50 %
-              </Typography>
-            </Box>
+            <MetricWithSuffix
+              content='5.50 %'
+              tooltipKey='01'
+              titleKey={t('lending.tranche.mezzanine')}
+            />
           </Grid>
           <Grid item xs={4}>
-            <Box>
-              <Typography variant='subtitle2' sx={{ pl: 2, pb: 1 }}>
-                {t('lending.tranche.junior')} <InfoTooltip title='test' />
-              </Typography>
-              <Divider />
-              <Typography variant='h5' sx={{ pl: 2, pb: 1, pt: 0.5 }}>
-                2.4 %
-              </Typography>
-            </Box>
+            <MetricWithSuffix
+              content=' 2.4 %'
+              tooltipKey='01'
+              titleKey={t('lending.tranche.junior')}
+            />
           </Grid>
         </Grid>
       </Box>{' '}

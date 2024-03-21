@@ -1,8 +1,9 @@
-import { Box, SxProps, Theme, Typography, TypographyProps } from '@mui/material'
+import { Box, SxProps, Theme, TypographyProps } from '@mui/material'
 import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
+import ContentWithSuffix from '@/components/atoms/ContentWithSuffix'
 import InfoRow from '@/components/atoms/InfoRow'
 
 interface MetricWithSuffixProps extends Partial<TypographyProps> {
@@ -31,18 +32,12 @@ const MetricWithSuffix: React.FC<MetricWithSuffixProps> = ({
         ...containerSx,
       }}
     >
-      <InfoRow
-        title={t(titleKey)}
-        toolTipInfo={t(tooltipKey)}
-        showDivider
-        metric={<></>}
+      <InfoRow title={t(titleKey)} toolTipInfo={t(tooltipKey)} showDivider />
+      <ContentWithSuffix
+        content={content}
+        suffix={suffix}
+        {...typographyProps}
       />
-      <Typography variant='h6' {...typographyProps} sx={{ pl: 2 }}>
-        {content}{' '}
-        <Typography variant='body1' component='span'>
-          {suffix}
-        </Typography>
-      </Typography>
     </Box>
   )
 }

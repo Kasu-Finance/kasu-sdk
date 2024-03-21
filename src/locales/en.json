@@ -133,6 +133,15 @@
       }
     }
   },
+  "lending": {
+    "poolOverview": "Pool overview",
+    "strategyDeck": "Strategy deck",
+    "tranche": {
+      "senior": "Senior Tranche APY",
+      "mezzanine": "Mezzanine Tranche APY",
+      "junior": "Junior Tranche APY"
+    }
+  },
   "details": {
     "poolDelegate": {
       "title": "Pool Delegate Profile and History",

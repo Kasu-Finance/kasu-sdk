@@ -8,7 +8,7 @@ type InfoRowProps = {
   subtitle?: string
   toolTipInfo?: string
   showDivider?: boolean
-  metric?: ReactNode
+  metric?: ReactNode | number | string
   titleStyle?: TypographyProps
   subtitleStyle?: TypographyProps
 }
