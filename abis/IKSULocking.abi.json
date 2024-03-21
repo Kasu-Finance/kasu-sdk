@@ -22,6 +22,11 @@
     "type": "error"
   },
   {
+    "inputs": [],
+    "name": "LockAmountShouldBeMoreThanZero",
+    "type": "error"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -41,6 +46,11 @@
       }
     ],
     "name": "LockPeriodNotSupported",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "UnlockAmountShouldBeMoreThanZero",
     "type": "error"
   },
   {

@@ -12,8 +12,10 @@ import { IKSULockingAbi__factory } from '../../contracts/factories/IKSULockingAb
 import { SdkConfig } from '../../sdk-config';
 import {
     GQLClaimedFeesForAddress,
+    GQLEarnedRKsuForAddress,
     GQLGetLockingPeriods,
-    GQLUserLockDepositsInfo,
+    GQLStakedAmountForAddress,
+    GQLTotalBonusAmountForAddress,
     GQLUserLocks,
     LockPeriod,
     LockPeriodInterface,
@@ -23,8 +25,10 @@ import {
 
 import {
     claimedFeesQuery,
+    userEarnedrKsuQuery,
     userLocksQuery,
     userStakedKsuQuery,
+    userTotalBonusAmountQuery,
 } from './locking.query';
 
 export class KSULocking {
@@ -108,13 +112,18 @@ export class KSULocking {
         });
 
         return result.userLocks
-            .map((userLock) => ({
-                lockedAmount: userLock.ksuAmount,
-                rKSUAmount: userLock.rKSUAmount,
-                startTime: Number(userLock.startTimestamp),
-                endTime: Number(userLock.endTimestamp),
-                lockPeriod: userLock.lockPeriod,
-            }))
+            .map((userLock) => {
+                const [, id] = userLock.id.split('-');
+
+                return {
+                    id: BigNumber.from(id),
+                    lockedAmount: userLock.ksuAmount,
+                    rKSUAmount: userLock.rKSUAmount,
+                    startTime: Number(userLock.startTimestamp),
+                    endTime: Number(userLock.endTimestamp),
+                    lockPeriod: userLock.lockPeriod,
+                };
+            })
             .sort((a, b) => a.endTime - b.endTime);
     }
 
@@ -172,7 +181,7 @@ export class KSULocking {
     }
 
     async getUserStakedKsu(userAddress: string): Promise<string> {
-        const result: GQLUserLockDepositsInfo = await this._graph.request(
+        const result: GQLStakedAmountForAddress = await this._graph.request(
             userStakedKsuQuery,
             {
                 userAddress: userAddress.toLowerCase(),
@@ -180,6 +189,28 @@ export class KSULocking {
         );
 
         return result.userLockDepositsInfo.ksuLockedAmount;
+    }
+
+    async getUserEarnedrKsu(userAddress: string): Promise<string> {
+        const result: GQLEarnedRKsuForAddress = await this._graph.request(
+            userEarnedrKsuQuery,
+            {
+                userAddress: userAddress.toLowerCase(),
+            },
+        );
+
+        return result.userLockDepositsInfo.rKSUAmount;
+    }
+
+    async getUserTotalBonusAmount(userAddress: string): Promise<string> {
+        const result: GQLTotalBonusAmountForAddress = await this._graph.request(
+            userTotalBonusAmountQuery,
+            {
+                userAddress: userAddress.toLowerCase(),
+            },
+        );
+
+        return result.userLockDepositsInfo.totalKsuBonusAmount;
     }
 
     async getLockingRewards(

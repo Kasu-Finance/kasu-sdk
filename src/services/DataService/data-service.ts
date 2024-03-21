@@ -28,6 +28,7 @@ import {
     RiskManagementItem, TrancheData,
 } from './types';
 
+
 export class DataService {
     private readonly _graph: GraphQLClient;
     private readonly _directus: DirectusClient<DirectusSchema> & AuthenticationClient<DirectusSchema> & RestClient<DirectusSchema>;
@@ -181,5 +182,4 @@ export class DataService {
         }
         return poolCreditMetricsDirectus.filter(data => id_in.includes(data.id));
     }
-
 }
