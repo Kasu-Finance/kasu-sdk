@@ -133,6 +133,45 @@
       }
     }
   },
+  "lending": {
+    "withdraw": {
+      "title": "Withdraw Funds",
+      "subtitle": "Total Withdrawal Request Amount",
+      "fromPool": "From Pool",
+      "toWallet": "To Wallet",
+      "epochEnds": "Epoch ends in",
+      "withdrawalSchedule": "Withdrawal will be scheduled for the end of the current Epoch. The final Withdrawal Amount may vary due to Pool conditions.",
+      "inputLabel": "Withdraw Request Amount",
+      "button": {
+        "review": "REVIEW WITHDRAWAL",
+        "adjust": "ADJUST",
+        "confirm": "CONFIRM",
+        "poolOverview": "LENDING POOL OVERVIEW"
+      },
+      "dropdown": {
+        "label": "Tranche",
+        "option-1": "Senior Tranche",
+        "option-2": "Mezzanine Tranche",
+        "option-3": "Junior Tranche"
+      },
+      "metrics": {
+        "totalInvestment": {
+          "label": "Total Investment",
+          "tooltip": "content is missing"
+        },
+        "trancheInvestment": {
+          "label": "Tranche Investment",
+          "tooltip": "content is missing"
+        }
+      },
+      "confirmStep": {
+        "withdrawInfo": "Your withdrawal has been successfully queued:​",
+        "amountLabel": "to be withdrawn in the next Epoch from",
+        "subjectLiquidity": "(subject to available liquidity)",
+        "depositedLabel": "to be deposited to the wallet address"
+      }
+    }
+  },
   "details": {
     "poolDelegate": {
       "title": "Pool Delegate Profile and History",
