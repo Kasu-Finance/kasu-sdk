@@ -263,5 +263,52 @@
         }
       }
     }
+  },
+  "repayments": {
+    "title": "Repayments",
+    "downloadBtn": "DOWNLOAD AS CSV",
+    "metrics": {
+      "closingCash": {
+        "label": "Closing Cash at Bank (Excess Cash)",
+        "tooltip": "content is missing​"
+      },
+      "totalLoans": {
+        "label": "Closing Total Loans",
+        "tooltip": "content is missing"
+      },
+      "totalBalance": {
+        "label": "Total Pool Balance (inc. cap int)",
+        "tooltip": "content is missing"
+      }
+    },
+    "loadModelDescription": "This Pool Delegate's lending model is to facilitate Fiat currency loans to real world businesses off-chain. The Asset Class and Loan Structure outlined in the 'Pool Details' screen indicates that these loans are 'Revolving/Evergreen' Loan Facilities, with fluctuating loan balances, being a function of ongoing and simultaneous loan repayments and loan redraws in Fiat currency off-chain. Accordingly, these Fiat currency transactions can only be viewed via CSV download at this current point in time."
+  },
+  "risk": {
+    "poolCredit": {
+      "title": "Pool Credit Metrics",
+      "headers": {
+        "column-1": "Key Credit Metrics",
+        "column-2": "Previous Fiscal Year",
+        "column-3": "Most Recent Quarter",
+        "column-4": "Prior Month"
+      }
+    },
+    "badDebts": {
+      "title": "Bad Debts Metrics",
+      "headers": {
+        "column-1": "Total (Lifetime)",
+        "column-2": "Monthly Average (Last 12 Months)",
+        "column-3": "Current Status"
+      }
+    },
+    "reporting": {
+      "title": "Financial Reporting Documents",
+      "headers": {
+        "column-1": "Report Description",
+        "column-2": "Upload Date",
+        "column-3": "Version",
+        "column-4": "Actions"
+      }
+    }
   }
 }
