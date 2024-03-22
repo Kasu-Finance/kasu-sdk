@@ -31,6 +31,7 @@ import {
     RiskManagementItem, TrancheData,
 } from './types';
 
+
 export class DataService {
     private readonly _graph: GraphQLClient;
     private readonly _directus: DirectusClient<DirectusSchema> & AuthenticationClient<DirectusSchema> & RestClient<DirectusSchema>;
@@ -82,7 +83,7 @@ export class DataService {
                 totalValueLocked: lendingPoolSubgraph.balance,
                 loansUnderManagement: lendingPoolDirectus.loansUnderManagement,
                 yieldEarned: lendingPoolSubgraph.totalYieldAmount,
-                poolCapacity: "10", // need formula for calculation
+                poolCapacity: "placeholder", // need formula for calculation
                 activeLoans: lendingPoolDirectus.activeLoans,
                 tranches: tranches,
             }

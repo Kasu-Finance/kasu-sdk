@@ -8,6 +8,22 @@ export const claimedFeesQuery = gql`
     }
 `;
 
+export const userEarnedrKsuQuery = gql`
+    query getClaimedFeesForAddress($userAddress: String!) {
+        userLockDepositsInfo(id: $userAddress) {
+            rKSUAmount
+        }
+    }
+`;
+
+export const userTotalBonusAmountQuery = gql`
+    query getClaimedFeesForAddress($userAddress: String!) {
+        userLockDepositsInfo(id: $userAddress) {
+            totalKsuBonusAmount
+        }
+    }
+`;
+
 export const userStakedKsuQuery = gql`
     query getUserLockDepositsInfo($userAddress: String!) {
         userLockDepositsInfo(id: $userAddress) {
@@ -18,7 +34,10 @@ export const userStakedKsuQuery = gql`
 
 export const userLocksQuery = gql`
     query getUserLocks($userAddress: String!) {
-        userLocks(where: { userLockDepositsInfo: $userAddress }) {
+        userLocks(
+            where: { userLockDepositsInfo: $userAddress, ksuAmount_gt: 0 }
+        ) {
+            id
             ksuAmount
             endTimestamp
             startTimestamp
