@@ -11,6 +11,24 @@ import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 const TranchesApyCard = () => {
   const divRef = useRef<HTMLDivElement>(null)
   const { t } = useTranslation()
+  const COLS = 12
+  const tranches = [
+    {
+      content: '12.50 %',
+      tooltip: '01',
+      title: t('lending.tranche.senior'),
+    },
+    {
+      content: '12.50 %',
+      tooltip: '01',
+      title: t('lending.tranche.mezzanine'),
+    },
+    {
+      content: '2.4 %',
+      tooltip: '01',
+      title: t('lending.tranche.junior'),
+    },
+  ]
 
   const { isSticky } = useIsSticky({
     elementRef: divRef,
@@ -50,27 +68,18 @@ const TranchesApyCard = () => {
           m={0}
           columnSpacing={{ xs: 1, sm: 2, md: 3 }}
         >
-          <Grid item xs={4}>
-            <MetricWithSuffix
-              content='12.50 %'
-              tooltipKey='01'
-              titleKey={t('lending.tranche.senior')}
-            />
-          </Grid>
-          <Grid item xs={4}>
-            <MetricWithSuffix
-              content='5.50 %'
-              tooltipKey='01'
-              titleKey={t('lending.tranche.mezzanine')}
-            />
-          </Grid>
-          <Grid item xs={4}>
-            <MetricWithSuffix
-              content=' 2.4 %'
-              tooltipKey='01'
-              titleKey={t('lending.tranche.junior')}
-            />
-          </Grid>
+          {tranches.length > 0 &&
+            tranches.map((tranche, index) => {
+              return (
+                <Grid item xs={COLS / tranches.length} key={index}>
+                  <MetricWithSuffix
+                    content={tranche.content}
+                    tooltipKey={tranche.tooltip}
+                    titleKey={t(tranche.title)}
+                  />
+                </Grid>
+              )
+            })}
         </Grid>
       </Box>{' '}
       <Box

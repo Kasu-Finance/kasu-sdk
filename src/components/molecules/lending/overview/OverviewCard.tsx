@@ -14,8 +14,9 @@ import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
-import InvestmentPortfolio from '@/components/molecules/lending/InvestmentCard'
+import InvestmentPortfolio from '@/components/molecules/lending/overview/InvestmentCard'
 import TranchesApyCard from '@/components/molecules/lending/overview/TranchesApyCard'
+import TranchesDetailsCard from '@/components/molecules/lending/overview/TranchesDetails'
 
 const OverviewTitle = () => {
   const { t } = useTranslation()
@@ -42,8 +43,6 @@ const OverviewTitle = () => {
 }
 
 const PoolOverview = () => {
-  const { t } = useTranslation()
-
   return (
     <>
       <Card
@@ -142,7 +141,10 @@ const PoolOverview = () => {
                   />
                 </Grid>
               </Grid>
-              <Box className='light-blue-background' sx={{ mt: 1 }}>
+              <Box
+                className='light-blue-background'
+                sx={{ mt: 1, borderRadius: 1 }}
+              >
                 <InfoRow
                   title='Industry Exposure'
                   toolTipInfo='info'
@@ -165,42 +167,8 @@ const PoolOverview = () => {
           </Grid>
         </Grid>
       </Box>
-
+      <TranchesDetailsCard />
       <InvestmentPortfolio />
-
-      <Card sx={{ mt: 3, p: 2 }}>
-        <CardContent sx={{ p: 0 }} className='light-blue-background'>
-          <Grid
-            container
-            rowSpacing={1}
-            width='100%'
-            m={0}
-            columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-          >
-            <Grid item xs={4}>
-              <MetricWithSuffix
-                content='12.50 %'
-                tooltipKey='01'
-                titleKey={t('lending.tranche.senior')}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <MetricWithSuffix
-                content='5.50 %'
-                tooltipKey='01'
-                titleKey={t('lending.tranche.mezzanine')}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <MetricWithSuffix
-                content=' 2.4 %'
-                tooltipKey='01'
-                titleKey={t('lending.tranche.junior')}
-              />
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Card>
     </>
   )
 }

@@ -1,58 +1,10 @@
-import { Card, CardContent, CardHeader, Typography } from '@mui/material'
+import { Card, CardContent, CardHeader } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 
-import ContentWithSuffix from '@/components/atoms/ContentWithSuffix'
-import InfoRow from '@/components/atoms/InfoRow'
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
-
-interface InvestmentCardProps {
-  title: string
-  amount: string
-  apy: string
-  yieldEarned: string
-}
-
-const InvestmentCard: React.FC<InvestmentCardProps> = ({
-  title,
-  amount,
-  apy,
-  yieldEarned,
-}) => {
-  return (
-    <Box
-      className='light-blue-background'
-      sx={{ minWidth: 275, margin: 0, p: 0, borderRadius: '8px' }}
-    >
-      <Typography
-        sx={{ pl: 2, pt: 2, pb: 1 }}
-        variant='subtitle1'
-        component='h6'
-      >
-        {title}
-      </Typography>
-      <InfoRow
-        title='Amount invested'
-        toolTipInfo='01'
-        showDivider
-        metric={<ContentWithSuffix content={amount} suffix='USDC' />}
-      />
-
-      <InfoRow
-        title='Tranch APY'
-        toolTipInfo='02'
-        showDivider
-        metric={<ContentWithSuffix content={apy + ' %'} />}
-      />
-      <InfoRow
-        title='Yield Earned'
-        toolTipInfo='03'
-        metric={<ContentWithSuffix content={yieldEarned} suffix='USDC' />}
-      />
-    </Box>
-  )
-}
+import TranchInvestmentCard from '@/components/molecules/TranchInvestmentCard'
 
 const InvestmentPortfolio = () => {
   return (
@@ -117,7 +69,7 @@ const InvestmentPortfolio = () => {
           </Box>{' '}
         </Grid>
         <Grid item xs={4}>
-          <InvestmentCard
+          <TranchInvestmentCard
             title='Senior Tranche'
             amount='10,000.00'
             apy='4.50'
@@ -125,7 +77,7 @@ const InvestmentPortfolio = () => {
           />
         </Grid>
         <Grid item xs={4}>
-          <InvestmentCard
+          <TranchInvestmentCard
             title='Mezzanine Tranche'
             amount='10,000.00'
             apy='4.50'
@@ -133,7 +85,7 @@ const InvestmentPortfolio = () => {
           />
         </Grid>
         <Grid item xs={4}>
-          <InvestmentCard
+          <TranchInvestmentCard
             title='Junior Tranche'
             amount='10,000.00'
             apy='4.50'

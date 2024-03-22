@@ -1,11 +1,11 @@
-import { Typography } from '@mui/material'
+import { Typography, TypographyProps } from '@mui/material'
 
 interface ContentWithSuffixProps {
   content: string | number
   suffix?: string
 }
 
-const ContentWithSuffix: React.FC<ContentWithSuffixProps> = ({
+const ContentWithSuffix: React.FC<ContentWithSuffixProps & TypographyProps> = ({
   content = '',
   suffix = '',
   ...typographyProps
