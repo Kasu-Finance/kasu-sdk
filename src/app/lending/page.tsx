@@ -1,6 +1,7 @@
 'use client'
 
 import { Box, Container, Typography } from '@mui/material'
+import { PoolOverview } from 'kasu-sdk/src/types'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -9,15 +10,15 @@ import usePoolOverview from '@/hooks/lending/usePoolOverview'
 
 import EmptyCardState from '@/components/atoms/EmptyCardState'
 import Carousel from '@/components/molecules/Carousel'
+import WithdrawModal from '@/components/molecules/lending/WithdrawModal'
 import PageHeader from '@/components/molecules/PageHeader'
 import PoolCard from '@/components/molecules/PoolCard'
-import WithdrawModal from '@/components/organisms/lending/WithdrawModal'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 const Lending = () => {
   const { data: pools, isLoading } = usePoolOverview()
-  const [selectedPool, setSelectedPool] = useState(null)
+  const [selectedPool, setSelectedPool] = useState<PoolOverview | null>(null)
   const router = useRouter()
 
   const { openModal } = useModalState()
@@ -59,7 +60,9 @@ const Lending = () => {
       <PageHeader title='Lending' />
       <Carousel slidesPerPage={3}>{poolsContent}</Carousel>
 
-      <WithdrawModal key={selectedPool?.id} pool={selectedPool} />
+      {selectedPool && (
+        <WithdrawModal key={selectedPool?.id} pool={selectedPool} />
+      )}
     </Container>
   )
 }

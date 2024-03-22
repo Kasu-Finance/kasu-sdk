@@ -64,7 +64,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
               {title}
             </Typography>
           )}
-          <IconButton aria-label='close' onClick={() => closeModal(modalKey)}>
+          <IconButton aria-label='close' onClick={onCloseModal}>
             <CrossIcon />
           </IconButton>
         </Box>

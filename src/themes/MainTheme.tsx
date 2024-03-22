@@ -464,6 +464,9 @@ export const theme = createTheme({
           .light-blue-background {
             background-color: #1976D20A;
           }
+          .light-error-background {
+            background-color: #d32f2f0a;
+          }
         `,
     },
   },

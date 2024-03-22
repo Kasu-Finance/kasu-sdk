@@ -150,9 +150,11 @@
       },
       "dropdown": {
         "label": "Tranche",
-        "option-1": "Senior Tranche",
-        "option-2": "Mezzanine Tranche",
-        "option-3": "Junior Tranche"
+        "option": {
+          "senior": "Senior Tranche",
+          "mezzanine": "Mezzanine Tranche",
+          "junior": "Junior Tranche"
+        }
       },
       "metrics": {
         "totalInvestment": {
