@@ -1,7 +1,6 @@
 import {
   alpha,
   Box,
-  styled,
   SxProps,
   Table,
   TableBody,
@@ -13,7 +12,6 @@ import {
   TablePagination,
   TablePaginationProps,
   TableRow,
-  TableSortLabel,
   TableSortLabelProps,
   Theme,
 } from '@mui/material'
@@ -21,14 +19,9 @@ import React, { ComponentType, ReactNode, useState } from 'react'
 
 import usePagination from '@/hooks/usePagination'
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  background: alpha(theme.palette.primary.main, 0.08),
-}))
-
-export type CustomTableHeader<T> = {
-  label: ReactNode
-  value: keyof T
-}
+import TableHeaders, {
+  CustomTableHeader,
+} from '@/components/molecules/CustomTable/TableHeaders'
 
 export type Sort<T> = {
   key: keyof T
@@ -48,15 +41,18 @@ type CustomTableProps<T, U> = {
   rowPerPageOptions?: number[]
   tableContainerStyles?: SxProps<Theme>
   tableStyles?: SxProps<Theme>
-  tableRowStyle?: SxProps<Theme>
-  TableCellComp?: ComponentType<TableCellProps>
-  SortLabelComp?: ComponentType<TableSortLabelProps>
-  PaginationComp?: ComponentType<TablePaginationProps>
+  headersStyle?: SxProps<Theme>
+  additionalHeaders?: CustomTableHeader<U>[]
+  additionalHeadersStyle?: SxProps<Theme>
+  tableCellComp?: ComponentType<TableCellProps>
+  sortLabelComp?: ComponentType<TableSortLabelProps>
+  paginationComp?: ComponentType<TablePaginationProps>
 }
 
 const CustomTable = <T, U>({
   ariaLabel = 'Table',
   headers,
+  additionalHeaders,
   data,
   defaultSortKey,
   handleSort,
@@ -67,17 +63,18 @@ const CustomTable = <T, U>({
   rowPerPageOptions = [5, 10, 25],
   tableContainerStyles,
   tableStyles,
-  tableRowStyle,
-  TableCellComp = TableCell,
-  SortLabelComp = TableSortLabel,
-  PaginationComp = TablePagination,
+  headersStyle,
+  additionalHeadersStyle,
+  tableCellComp,
+  sortLabelComp,
+  paginationComp = TablePagination,
 }: CustomTableProps<T, U>) => {
   const [sort, setSort] = useState<Sort<U>>({
     key: defaultSortKey,
     direction: 'desc',
   })
 
-  const [rowsPerPage, setRowsPerpage] = useState(rowPerPage)
+  const [rowsPerPage, setRowsPerPage] = useState(rowPerPage)
 
   const { currentPage, setPage, paginateData } = usePagination(
     rowsPerPage,
@@ -107,9 +104,11 @@ const CustomTable = <T, U>({
   const handleRowsPerPageChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setRowsPerpage(parseInt(event.target.value, 10))
+    setRowsPerPage(parseInt(event.target.value, 10))
     setPage(0)
   }
+
+  const PaginationComponent = paginationComp
 
   return (
     <Box>
@@ -119,28 +118,16 @@ const CustomTable = <T, U>({
           aria-labelledby={ariaLabel}
         >
           <TableHead>
-            <StyledTableRow sx={tableRowStyle}>
-              {headers.map(({ label, value }, index) => {
-                const isActive = sort.key === value
-
-                return (
-                  <TableCellComp
-                    key={index}
-                    sx={{
-                      textAlign: index === 0 ? 'left' : 'right',
-                    }}
-                  >
-                    <SortLabelComp
-                      active={isActive}
-                      direction={isActive ? sort.direction : 'desc'}
-                      onClick={() => handleSortChange(value)}
-                    >
-                      {label}
-                    </SortLabelComp>
-                  </TableCellComp>
-                )
-              })}
-            </StyledTableRow>
+            <TableHeaders
+              headers={headers}
+              sort={sort}
+              handleSortChange={handleSortChange}
+              tableCellComp={tableCellComp}
+              sortLabelComp={sortLabelComp}
+              additionalHeaders={additionalHeaders}
+              headersStyle={headersStyle}
+              additionalHeadersStyle={additionalHeadersStyle}
+            />
           </TableHead>
           <TableBody>
             {children(
@@ -168,7 +155,7 @@ const CustomTable = <T, U>({
         </Table>
       </TableContainer>
       {pagination && (
-        <PaginationComp
+        <PaginationComponent
           rowsPerPageOptions={rowPerPageOptions}
           component='div'
           count={data.length}

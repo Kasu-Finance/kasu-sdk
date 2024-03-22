@@ -1,10 +1,8 @@
 import { Box } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 
-import TableSkeleton from '@/components/molecules/loaders/TableSkeleton'
-import RepaymentsTable from '@/components/molecules/repayments/RepaymentsTable'
-
-import repayments from '@/app/mock-data/repayments-data'
+import CardSkeleton from '@/components/molecules/loaders/CardSkeleton'
+import RepaymentsCard from '@/components/molecules/repayments/RepaymentsCard'
 
 const Repayments: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -18,11 +16,17 @@ const Repayments: React.FC = () => {
   }, [])
 
   return (
-    <Box>
+    <Box mt={3}>
       {loading ? (
-        <TableSkeleton columns={3} rows={5} />
+        <CardSkeleton
+          leftRowNumbers={3}
+          rightRowNumbers={3}
+          showSubtitle
+          titleStyle={{ width: '15%' }}
+          subtitleStyle={{ width: '20%' }}
+        />
       ) : (
-        <RepaymentsTable data={repayments} />
+        <RepaymentsCard />
       )}
     </Box>
   )

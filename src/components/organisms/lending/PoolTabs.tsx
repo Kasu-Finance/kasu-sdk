@@ -9,6 +9,7 @@ import PoolOverview from '@/components/molecules/lending/overview/OverviewCard'
 import TabPanel from '@/components/molecules/tabs/TabPanel'
 import PoolDetails from '@/components/organisms/details/PoolDetails'
 import Repayments from '@/components/organisms/repayments/Repayments'
+import RiskReporting from '@/components/organisms/risk/RiskReporting'
 
 const PoolTabs: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0)
@@ -31,7 +32,7 @@ const PoolTabs: React.FC = () => {
         >
           <Tab label='Overview' />
           <Tab label='Pool Details' />
-          <Tab label='Item Repayments' />
+          <Tab label='Repayments' />
           <Tab label='Risk Reporting' />
           <Tab label='Support' />
         </Tabs>
@@ -46,7 +47,7 @@ const PoolTabs: React.FC = () => {
         <Repayments />
       </TabPanel>
       <TabPanel value={activeTab} index={3} id={panelsId}>
-        Risk Reporting
+        <RiskReporting />
       </TabPanel>
       <TabPanel value={activeTab} index={4} id={panelsId}>
         Support

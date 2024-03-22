@@ -1,9 +1,13 @@
-import { Box, Card, Skeleton } from '@mui/material'
+import { Theme } from '@emotion/react'
+import { Box, Card, Skeleton, SxProps } from '@mui/material'
 import React from 'react'
 
 interface CardSkeletonProps {
   leftRowNumbers: number
   rightRowNumbers: number
+  showSubtitle?: boolean
+  titleStyle?: SxProps<Theme>
+  subtitleStyle?: SxProps<Theme>
 }
 
 interface SkeletonRowsProps {
@@ -28,10 +32,21 @@ const SkeletonRows: React.FC<SkeletonRowsProps> = ({ count, ...props }) => (
 const CardSkeleton: React.FC<CardSkeletonProps> = ({
   leftRowNumbers,
   rightRowNumbers,
+  showSubtitle = false,
+  titleStyle,
+  subtitleStyle,
 }) => {
   return (
     <Card sx={{ minWidth: 275, boxShadow: 3, padding: 2, mb: 2 }} elevation={1}>
-      <Skeleton variant='text' width='40%' height={50} />
+      <Box sx={titleStyle}>
+        <Skeleton variant='text' width='100%' height={50} />
+      </Box>
+
+      {showSubtitle && (
+        <Box mb={2} sx={subtitleStyle}>
+          <Skeleton variant='text' width='100%' height={50} />
+        </Box>
+      )}
       <Box display='flex'>
         <Box width='50%'>
           <SkeletonRows count={leftRowNumbers} />
