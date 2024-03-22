@@ -14,7 +14,10 @@ import { SdkConfig } from '../../sdk-config';
 import { getAllLendingPoolsQuery, getAllTrancheConfigurationsQuery, getAllTranchesQuery } from './data-service.query';
 import {
     BadAndDoubtfulDebtsDirectus,
-    DirectusSchema, PoolCreditMetricsDirectus, PoolDelegateProfileAndHistoryDirectus,
+    DirectusSchema,
+    FinancialReportingDocumentsDirectus,
+    PoolCreditMetricsDirectus,
+    PoolDelegateProfileAndHistoryDirectus,
     PoolOverviewDirectus,
     RiskManagementDirectus,
     RiskManagementItemDirectus,
@@ -34,7 +37,7 @@ export class DataService {
 
     constructor(kasuConfig: SdkConfig) {
         this._graph = new GraphQLClient(kasuConfig.subgraphUrl);
-        this._directus = createDirectus<DirectusSchema>('https://kasu-finance.directus.app').with(authentication()).with(rest());
+        this._directus = createDirectus<DirectusSchema>(kasuConfig.directusUrl).with(authentication()).with(rest());
     }
     async getPoolOverview(id_in?: string[]): Promise<PoolOverview[]> {
         const subgraphTrancheConfigurationResults: TrancheConfigurationSubgraph[] = await this._graph.request(getAllTrancheConfigurationsQuery);
@@ -59,7 +62,7 @@ export class DataService {
                     apy: trancheConfig.interestRate,
                     maximumDeposit: trancheConfig.maxDepositAmount,
                     minimumDeposit: trancheConfig.minDepositAmount,
-                    poolCapacity: "placeholder", // need formula for calculation
+                    poolCapacity: "10", // need formula for calculation
                 });
             }
             const poolOverview: PoolOverview = {
@@ -79,7 +82,7 @@ export class DataService {
                 totalValueLocked: lendingPoolSubgraph.balance,
                 loansUnderManagement: lendingPoolDirectus.loansUnderManagement,
                 yieldEarned: lendingPoolSubgraph.totalYieldAmount,
-                poolCapacity: "placeholder", // need formula for calculation
+                poolCapacity: "10", // need formula for calculation
                 activeLoans: lendingPoolDirectus.activeLoans,
                 tranches: tranches,
             }
@@ -154,7 +157,7 @@ export class DataService {
                 id: trancheSubgraph.id,
                 poolIdFK: trancheSubgraph.lendingPool.id,
                 apy: configuration.interestRate,
-                remainingCapacity: "placeholder", // need formula for calculation
+                remainingCapacity: "10", // need formula for calculation
                 minimalDepositThreshold: configuration.minDepositAmount,
                 maximalDepositThreshold: configuration.maxDepositAmount
             }
@@ -182,4 +185,11 @@ export class DataService {
         return poolCreditMetricsDirectus.filter(data => id_in.includes(data.id));
     }
 
+    async getFinancialReportingDocuments(id_in?: string[]): Promise<FinancialReportingDocumentsDirectus[]> {
+        const financialReportingDocumentsDirectus: FinancialReportingDocumentsDirectus[] = await this._directus.request(readItems('financialReportingDocuments'));
+        if(!id_in){
+            return financialReportingDocumentsDirectus;
+        }
+        return financialReportingDocumentsDirectus.filter(data => id_in.includes(data.id));
+    }
 }

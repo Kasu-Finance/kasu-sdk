@@ -5,6 +5,7 @@ export interface DirectusSchema {
     riskManagementItem: RiskManagementItemDirectus[];
     poolCreditMetrics: PoolCreditMetricsDirectus[];
     badAndDoubtfulDebts: BadAndDoubtfulDebtsDirectus[];
+    financialReportingDocuments: FinancialReportingDocumentsDirectus[];
 }
 
 
@@ -81,4 +82,14 @@ export interface BadAndDoubtfulDebtsDirectus {
     recoveryActionCurrentStatus: string;
     lossesCurrentStatus: string;
     lossesLifetime: string;
+}
+
+export interface FinancialReportingDocumentsDirectus {
+    id: string;
+    name: string;
+    description: string;
+    uploadTimestamp: number;
+    version: number;
+    documentUrl: string;
+    poolIdFK: string;
 }
