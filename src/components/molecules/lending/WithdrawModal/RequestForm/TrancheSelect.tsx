@@ -18,10 +18,16 @@ const TrancheSelect: React.FC<TrancheSelectProps> = ({
   return (
     <Box mt={3}>
       <FormControl fullWidth>
-        <InputLabel>{t('lending.withdraw.dropdown.label')}</InputLabel>
+        <InputLabel id='tranche-select-label'>
+          {t('lending.withdraw.dropdown.label')}
+        </InputLabel>
         <Select
+          size='small'
+          id='tranche'
+          labelId='tranche-select-label'
           value={selectedTranche}
           onChange={(e) => setSelectedTranche(e.target.value as Tranche)}
+          label={t('lending.withdraw.dropdown.label')}
         >
           <MenuItem value={Tranche.SENIOR_TRANCHE}>
             {t('lending.withdraw.dropdown.option.senior')}

@@ -85,7 +85,7 @@ const AmountInput: React.FC<AmountInputProps> = ({
         amount={amount}
         handleMax={handleMax}
         setAmount={handleAmountChange}
-        label={t('lending.withdraw.amountLabel')}
+        label={t('lending.withdraw.inputLabel')}
         rootProps={numericalInputRootProps}
       />
       {errorMsg && (
