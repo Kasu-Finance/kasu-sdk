@@ -175,8 +175,8 @@
         }
       },
       "confirmStep": {
-        "withdrawInfo": "Your withdrawal has been successfully queued:​",
-        "amountLabel": "to be withdrawn in the next Epoch from",
+        "withdrawInfo": "You have successfully queued:​",
+        "amountLabel": "to be withdrawn in the next Epoch",
         "subjectLiquidity": "(subject to available liquidity)",
         "depositedLabel": "to be deposited to the wallet address"
       },

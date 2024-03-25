@@ -55,26 +55,21 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ pool }) => {
     ? 'light-error-background'
     : 'light-blue-background'
 
-  const handleSubmit = () => {
-    if (activeStep === WithdrawSteps.REQUEST) {
-      router.push('/lending?step-2')
-      setActiveStep(WithdrawSteps.APPROVE)
-    } else if (activeStep === WithdrawSteps.APPROVE) {
-      setActiveStep(WithdrawSteps.CONFIRM)
-      router.push('/lending?step-3')
-    }
+  const handleSubmitRequest = () => {
+    router.push('/lending?step-2')
+    setActiveStep(WithdrawSteps.APPROVE)
   }
 
-  const onClose = () => {
+  const onModalClose = () => {
     setAmount('')
     setErrorMsg('')
-    router.push('/lending')
     closeModal(ModalsKeys.WITHDRAW)
     setActiveStep(WithdrawSteps.REQUEST)
     setSelectedTranche(Tranche.SENIOR_TRANCHE)
+    router.push('/lending')
   }
 
-  const handleConfirm = () => {
+  const handleSubmitConfirm = () => {
     setProcessing(true)
     openModal({ name: ModalsKeys.TRANSACTION_PROCESSING })
 
@@ -98,7 +93,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ pool }) => {
     <CustomModal
       modalKey={ModalsKeys.WITHDRAW}
       title={t('lending.withdraw.title')}
-      onAction={onClose}
+      onAction={onModalClose}
       modalStyles={{ top: '50%', width: '60%' }}
       actionIcon={
         activeStep === WithdrawSteps.CONFIRM ? (
@@ -142,7 +137,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ pool }) => {
           containerClassName={validationStyle}
           setAmount={setAmount}
           setErrorMsg={setErrorMsg}
-          handleSubmit={handleSubmit}
+          onSubmit={handleSubmitRequest}
           setSelectedTranche={setSelectedTranche}
         />
       )}
@@ -150,15 +145,16 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ pool }) => {
       {activeStep === WithdrawSteps.APPROVE && (
         <ApproveForm
           handleAdjust={handleAdjust}
-          handleConfirm={handleConfirm}
+          onSubmit={handleSubmitConfirm}
         />
       )}
 
       {activeStep === WithdrawSteps.CONFIRM && (
         <ConfirmForm
+          amount={amount}
           poolName={pool?.poolName || ''}
           trancheName={selectedTranche}
-          onSubmit={onClose}
+          onSubmit={onModalClose}
         />
       )}
     </CustomModal>

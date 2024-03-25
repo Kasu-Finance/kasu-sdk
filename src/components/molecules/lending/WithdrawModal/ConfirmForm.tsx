@@ -1,18 +1,20 @@
 import { Box, Button, Typography } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
-import React, { memo, useMemo } from 'react'
+import React, { useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
 import { formatAccount } from '@/utils'
 
 interface ConfirmFormProps {
+  amount: string
   poolName: string
   trancheName: string
   onSubmit: () => void
 }
 
 const ConfirmForm: React.FC<ConfirmFormProps> = ({
+  amount,
   poolName,
   trancheName,
   onSubmit,
@@ -21,49 +23,39 @@ const ConfirmForm: React.FC<ConfirmFormProps> = ({
   const { account } = useWeb3React()
 
   const userAddress = useMemo(() => formatAccount(account), [account])
-  const amount = '10,000.00'
 
   return (
     <Box width='100%' mt={3}>
-      <Typography variant='subtitle2' color='textPrimary'>
-        You have successfully queued:
+      {/* Withdrawal Information Section */}
+      <Typography variant='subtitle2'>
+        {t('lending.withdraw.confirmStep.withdrawInfo')}
+      </Typography>
+      <Typography variant='subtitle2'>
+        <b>• {amount} KSU •</b> {t('lending.withdraw.confirmStep.amountLabel')}
       </Typography>
 
-      <Typography variant='subtitle2' color='textPrimary'>
-        <b>• {amount} KSU •</b> to be withdrawn in the next Epoch
-      </Typography>
-
-      <Typography variant='subtitle2' color='textPrimary' ml={1.5}>
+      {/* Pool and Tranche Information */}
+      <Typography variant='subtitle2' ml={1.5}>
         from <b>{poolName} </b>
       </Typography>
-      <Typography
-        variant='body2'
-        color='textPrimary'
-        fontSize={12}
-        mt={-0.5}
-        ml={1.5}
-      >
-        (subject to available liquidity)
+      <Typography variant='body2' fontSize={12} mt={-0.5} ml={1.5}>
+        {t('lending.withdraw.confirmStep.subjectLiquidity')}
       </Typography>
-
-      <Typography variant='subtitle2' color='textPrimary' ml={1.5}>
+      <Typography variant='subtitle2' ml={1.5}>
         Tranche <b>• {trancheName}</b>
       </Typography>
-      <Typography variant='subtitle2' color='textPrimary'>
-        <b>• {amount} KSU •</b> to be deposited to to wallet address
+
+      {/* User Address Display */}
+      <Typography variant='subtitle2'>
+        <b>• {amount} KSU •</b>{' '}
+        {t('lending.withdraw.confirmStep.depositedLabel')}
         <b style={{ textTransform: 'uppercase' }}> {userAddress}</b>
       </Typography>
-
-      <Typography
-        variant='body2'
-        color='textPrimary'
-        fontSize={12}
-        mt={-0.5}
-        ml={1.5}
-      >
-        (subject to available liquidity)
+      <Typography variant='body2' fontSize={12} mt={-0.5} ml={1.5}>
+        {t('lending.withdraw.confirmStep.subjectLiquidity')}
       </Typography>
 
+      {/* Action Button */}
       <Box display='flex' justifyContent='center' width='100%' mt={3}>
         <Button variant='contained' onClick={onSubmit}>
           {t('lending.withdraw.button.poolOverview')}
@@ -73,4 +65,4 @@ const ConfirmForm: React.FC<ConfirmFormProps> = ({
   )
 }
 
-export default memo(ConfirmForm)
+export default ConfirmForm

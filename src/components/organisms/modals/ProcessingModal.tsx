@@ -19,13 +19,16 @@ import { InfoIcon } from '@/assets/icons'
 
 import { ACTION_MESSAGES, ActionStatus } from '@/constants'
 
-// TODO: add title and message props
 interface ProcessingModalProps {
+  title?: string
+  message?: string
   onClose?: () => void
   modalStyles?: SxProps<Theme>
 }
 
 const ProcessingModal: React.FC<ProcessingModalProps> = ({
+  title,
+  message,
   onClose,
   modalStyles,
 }) => {
@@ -56,13 +59,13 @@ const ProcessingModal: React.FC<ProcessingModalProps> = ({
         <Box display='flex' alignItems='center'>
           <InfoIcon />
           <Typography variant='subtitle1' ml={1}>
-            {t('modals.lock.processing.title')}
+            {title || t('modals.lock.processing.title')}
           </Typography>
         </Box>
 
         <Box sx={{ width: '100%', mt: 1 }}>
           <Typography variant='body2' mb={1}>
-            {ACTION_MESSAGES[ActionStatus.PROCESSING]}
+            {message || ACTION_MESSAGES[ActionStatus.PROCESSING]}
           </Typography>
           <LinearProgress />
         </Box>

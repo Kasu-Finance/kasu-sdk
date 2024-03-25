@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { PoolMetric } from 'kasu-sdk/src/types'
-import React, { memo, useMemo } from 'react'
+import React, { useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
@@ -74,10 +74,8 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
         {totalInvestment && (
           <MetricWithSuffix
             key={totalInvestment.id}
-            titleKey={t(`lending.withdraw.metrics.${totalInvestment.id}.label`)}
-            tooltipKey={t(
-              `lending.withdraw.metrics.${totalInvestment.id}.tooltip`
-            )}
+            titleKey={t('lending.withdraw.metrics.totalInvestment.label')}
+            tooltipKey={t('lending.withdraw.metrics.totalInvestment.tooltip')}
             suffix={totalInvestment.unit}
             content={String(totalInvestment.content)}
             containerSx={{ width: '50%' }}
@@ -91,12 +89,8 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
           <Box flex={1} /> {/* Empty space for alignment */}
           <MetricWithSuffix
             key={trancheInvestment.id}
-            titleKey={t(
-              `lending.withdraw.metrics.${trancheInvestment.id}.label`
-            )}
-            tooltipKey={t(
-              `lending.withdraw.metrics.${trancheInvestment.id}.tooltip`
-            )}
+            titleKey={t('lending.withdraw.metrics.trancheInvestment.label')}
+            tooltipKey={t('lending.withdraw.metrics.trancheInvestment.tooltip')}
             content={String(trancheInvestment.content)}
             suffix={trancheInvestment.unit}
             containerSx={{ width: '50%', pb: 1 }}
@@ -110,8 +104,8 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
           {isMultiTranche ? (
             <MetricWithSuffix
               key={tranche.id}
-              titleKey={t(`lending.withdraw.metrics.${tranche.id}.label`)}
-              tooltipKey={t(`lending.withdraw.metrics.${tranche.id}.tooltip`)}
+              titleKey={t('lending.withdraw.metrics.tranche.label')}
+              tooltipKey={t('lending.withdraw.metrics.tranche.tooltip')}
               content={String(tranche.content)}
               containerSx={{ width: '50%', pb: 1 }}
               sx={{ mt: 0.5 }}
@@ -122,7 +116,7 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
 
           <MetricWithSuffix
             key={toWallet.id}
-            titleKey={t(`lending.withdraw.${toWallet.id}`)}
+            titleKey={t('lending.withdraw.toWallet')}
             tooltipKey=''
             content={toWallet.content}
             containerSx={{ width: '50%', pb: 1 }}
@@ -134,4 +128,4 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
   )
 }
 
-export default memo(MetricsSection)
+export default MetricsSection
