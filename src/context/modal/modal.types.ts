@@ -15,6 +15,7 @@ export enum ModalsKeys {
   LOCK = 'lockModal',
   UNLOCK = 'unlockModal',
   WITHDRAW = 'withdrawModal',
+  TRANSACTION_PROCESSING = 'transactionProcessingModal',
 }
 
 export type ModalAction =
@@ -29,6 +30,7 @@ export type Modals = {
   lockModal: ModalData
   unlockModal: ModalData<{ userLock: UserLock }>
   withdrawModal: ModalData
+  transactionProcessingModal: ModalData
 }
 
 export type ModalWithProps = Extract<keyof Modals, 'unlockModal'>

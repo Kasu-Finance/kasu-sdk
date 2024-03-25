@@ -130,6 +130,9 @@
         "epochEnds": "Epoch ends in",
         "depositSchedule": "Locking request will be scheduled to the end of the current Epoch.",
         "nextClearing": "Next clearing day commences in"
+      },
+      "processing": {
+        "title": "Processing..."
       }
     }
   },
@@ -146,7 +149,8 @@
         "review": "REVIEW WITHDRAWAL",
         "adjust": "ADJUST",
         "confirm": "CONFIRM",
-        "poolOverview": "LENDING POOL OVERVIEW"
+        "poolOverview": "LENDING POOL OVERVIEW",
+        "viewTx": "VIEW TX"
       },
       "dropdown": {
         "label": "Tranche",
@@ -164,6 +168,10 @@
         "trancheInvestment": {
           "label": "Tranche Investment",
           "tooltip": "content is missing"
+        },
+        "tranche": {
+          "label": "Tranche",
+          "tooltip": "content is missing"
         }
       },
       "confirmStep": {
@@ -171,6 +179,9 @@
         "amountLabel": "to be withdrawn in the next Epoch from",
         "subjectLiquidity": "(subject to available liquidity)",
         "depositedLabel": "to be deposited to the wallet address"
+      },
+      "errors": {
+        "invalidCriteria": "The value entered does not meet the criteria required for this field."
       }
     }
   },

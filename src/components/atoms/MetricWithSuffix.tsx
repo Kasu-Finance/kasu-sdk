@@ -19,6 +19,7 @@ const MetricWithSuffix: React.FC<MetricWithSuffixProps> = ({
   titleKey,
   tooltipKey,
   containerSx,
+  sx,
   ...typographyProps
 }) => {
   const { t } = useTranslation()
@@ -37,7 +38,7 @@ const MetricWithSuffix: React.FC<MetricWithSuffixProps> = ({
         showDivider
         metric={<></>}
       />
-      <Typography variant='h6' {...typographyProps} sx={{ pl: 2 }}>
+      <Typography variant='h6' {...typographyProps} sx={{ pl: 2, ...sx }}>
         {content}{' '}
         <Typography variant='body1' component='span'>
           {suffix}

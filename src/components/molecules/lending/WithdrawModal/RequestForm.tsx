@@ -9,7 +9,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
-import React, { memo, useCallback, useMemo, useState } from 'react'
+import React, { memo, useCallback, useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
@@ -17,43 +17,47 @@ import NumericalInput from '@/components/molecules/NumericalInput'
 
 import { ChevronRightIcon, ExitIcon } from '@/assets/icons'
 
-import { Tranche, WithdrawErrors } from '@/constants'
+import { Tranche } from '@/constants'
 
-interface WithdrawFormProps {
+interface RequestFormProps {
   amount: string
+  selectedTranche: Tranche
   errorMsg: string
   isMultiTranche: boolean
   containerClassName?: string
   handleSubmit: () => void
   setErrorMsg: (msg: string) => void
   setAmount: (amount: string) => void
+  setSelectedTranche: (tranche: Tranche) => void
 }
 
-const WithdrawForm: React.FC<WithdrawFormProps> = ({
+const RequestForm: React.FC<RequestFormProps> = ({
   amount,
+  selectedTranche,
   errorMsg,
   isMultiTranche,
   containerClassName,
   handleSubmit,
   setErrorMsg,
   setAmount,
+  setSelectedTranche,
 }) => {
-  const [tranche, setTranche] = useState<Tranche>(Tranche.SENIOR_TRANCHE)
   const { t } = useTranslation()
   const theme = useTheme()
+  const disabledButton = !amount || !!errorMsg
 
   const validateAmount = useCallback(
     (input: string) => {
       if (input === '123') {
         // TODO - change this to a valid condition
-        setErrorMsg(WithdrawErrors.INVALID_CRITERIA)
+        setErrorMsg(t('lending.withdraw.errors.invalidCriteria'))
         return false
       } else {
         setErrorMsg('')
         return true
       }
     },
-    [setErrorMsg]
+    [t, setErrorMsg]
   )
 
   const handleAmount = (value: string) => {
@@ -68,7 +72,7 @@ const WithdrawForm: React.FC<WithdrawFormProps> = ({
   }
 
   const handleSelectTranche = (event: SelectChangeEvent) => {
-    setTranche(event.target.value as Tranche)
+    setSelectedTranche(event.target.value as Tranche)
   }
 
   const isAmountValid = useMemo(
@@ -94,8 +98,6 @@ const WithdrawForm: React.FC<WithdrawFormProps> = ({
         pl: 1,
       },
     },
-    onFocus: () => validateAmount(amount),
-    onBlur: () => validateAmount(amount),
     error: !!errorMsg,
     InputProps: {
       startAdornment: <ExitIcon />,
@@ -126,14 +128,14 @@ const WithdrawForm: React.FC<WithdrawFormProps> = ({
         </Typography>
       </Box>
 
-      {isMultiTranche && (
+      {!isMultiTranche && (
         <Box mt={3}>
           <FormControl fullWidth>
             <InputLabel id='tranche-select'>
               {t('lending.withdraw.dropdown.label')}
             </InputLabel>
             <Select
-              value={tranche}
+              value={selectedTranche}
               onChange={handleSelectTranche}
               size='small'
               id='tranche'
@@ -163,9 +165,17 @@ const WithdrawForm: React.FC<WithdrawFormProps> = ({
       >
         <Button
           variant='contained'
-          endIcon={<ChevronRightIcon />}
+          endIcon={
+            <ChevronRightIcon
+              color={
+                disabledButton
+                  ? 'rgba(0, 0, 0, 0.26)'
+                  : theme.palette.common.white
+              }
+            />
+          }
           onClick={handleSubmit}
-          disabled={!amount || !!errorMsg}
+          disabled={disabledButton}
         >
           {t('lending.withdraw.button.review')}
         </Button>
@@ -174,4 +184,4 @@ const WithdrawForm: React.FC<WithdrawFormProps> = ({
   )
 }
 
-export default memo(WithdrawForm)
+export default memo(RequestForm)

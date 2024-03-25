@@ -15,8 +15,8 @@ const formatTimestampWithOffset = (
     date = date.add(offset, 'hour')
   }
 
-  const utcPart = offset === 0 ? 'UTC' : `UTC${offset > 0 ? '+' : ''}${offset}`
-  const formattedDate = date.format(`${FULL_DATE_WITH_TIME} [${utcPart}]`)
+  const utcPart = ` UTC${offset >= 0 ? '+' : ''}${offset}`
+  const formattedDate = date.format(`${FULL_DATE_WITH_TIME}${utcPart}`)
 
   return formattedDate
 }

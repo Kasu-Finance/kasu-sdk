@@ -32,27 +32,31 @@ interface CustomModalProps {
   modalKey: keyof Modals
   title?: string
   children?: ReactNode
-  onClose?: () => void
+  onAction?: () => void
   modalStyles?: SxProps<Theme>
+  actionIcon?: ReactNode
+  hideActionIcon?: boolean
 }
 
 const CustomModal: React.FC<CustomModalProps> = ({
   modalKey,
   title,
   children,
-  onClose,
+  onAction,
   modalStyles,
+  actionIcon,
+  hideActionIcon,
 }) => {
   const { modal, closeModal } = useModalState()
   const isOpen = modal[modalKey].isOpen
 
-  const onCloseModal = () => {
+  const onActionModal = () => {
     closeModal(modalKey)
-    onClose?.()
+    onAction?.()
   }
 
   return (
-    <Modal open={isOpen} onClose={onCloseModal}>
+    <Modal open={isOpen} onClose={onActionModal}>
       <StyledModalBox sx={modalStyles}>
         <Box
           display='flex'
@@ -64,14 +68,14 @@ const CustomModal: React.FC<CustomModalProps> = ({
               {title}
             </Typography>
           )}
-          <IconButton aria-label='close' onClick={onCloseModal}>
-            <CrossIcon />
-          </IconButton>
+          {!hideActionIcon &&
+            (actionIcon || (
+              <IconButton aria-label='action' onClick={onActionModal}>
+                <CrossIcon />
+              </IconButton>
+            ))}
         </Box>
-
-        <Box id='modal-content' sx={{ mt: 2 }}>
-          {children}
-        </Box>
+        <Box sx={{ mt: 2 }}>{children}</Box>
       </StyledModalBox>
     </Modal>
   )

@@ -76,6 +76,9 @@ export const theme = createTheme({
       600: 'rgba(0, 0, 0, 0.12)',
       900: 'rgba(117, 117, 117, 1)',
     },
+    info: {
+      main: '#e5f3fa',
+    },
   },
   typography: {
     fontFamily: fontFamily,

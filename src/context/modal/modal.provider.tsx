@@ -15,6 +15,7 @@ const initialState: Modals = {
   loyaltyLevelsModal: { isOpen: false },
   lockModal: { isOpen: false },
   withdrawModal: { isOpen: false },
+  transactionProcessingModal: { isOpen: false },
 }
 
 const ModalState: React.FC<{ children: ReactNode }> = ({ children }) => {
