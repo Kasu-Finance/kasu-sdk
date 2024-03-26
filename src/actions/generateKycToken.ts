@@ -1,5 +1,7 @@
 'use server'
 
+import NEXERA_API_BASE_URL from '@/config/api.nexera'
+
 type ApiRes =
   | {
       accessToken: string
@@ -18,13 +20,13 @@ type ApiRes =
       ]
     }
 
-export async function generateKycToken(userAddress: string) {
-  const response = await fetch('https://api.nexera.id/kyc/auth/access-token', {
+const generateKycToken = async (userAddress: string) => {
+  const response = await fetch(`${NEXERA_API_BASE_URL}/kyc/auth/access-token`, {
     body: JSON.stringify({ address: userAddress.toLowerCase() }),
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      Authorization: 'Bearer 77fd5cc3-a752-4b4e-a772-553a28bcfbba',
+      Authorization: `Bearer ${process.env.NEXERA_API_KEY}`,
     },
     method: 'POST',
   })
@@ -36,3 +38,5 @@ export async function generateKycToken(userAddress: string) {
 
   console.error(data)
 }
+
+export default generateKycToken

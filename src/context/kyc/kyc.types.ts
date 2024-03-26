@@ -1,4 +1,4 @@
-import { Web3Provider } from '@ethersproject/providers'
+import { JsonRpcSigner } from '@ethersproject/providers'
 import { IdentityClient } from '@nexeraid/identity-sdk'
 
 export type IdentityClientData = {
@@ -11,7 +11,7 @@ export type IdentityClientData = {
 export type KycActions =
   | {
       type: 'AUTHENTICATE'
-      payload: IdentityClientData
+      payload: string
     }
   | {
       type: 'RESET_AUTHENTICATION'
@@ -23,13 +23,22 @@ export type KycActions =
 
 export type KycStateType = {
   isAuthenticated: boolean
+  authenticatedUser: string | undefined
   identityClient: IdentityClient
-  identityClientData: IdentityClientData | undefined
   kycCompleted: boolean
 }
 
 export type KycFunctions = {
-  authenticate(provider: Web3Provider): void
+  authenticate: (
+    signer: JsonRpcSigner,
+    callback: () => void
+  ) => Promise<IdentityClientData>
+  initializeClient: (
+    signer: JsonRpcSigner,
+    initData: IdentityClientData,
+    sdkReadyCallback: () => void,
+    closeScreenCallback: (kycCompleted: boolean) => void
+  ) => void
 }
 
 export type KycTypes = KycStateType & KycFunctions

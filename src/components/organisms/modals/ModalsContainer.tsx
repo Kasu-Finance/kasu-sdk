@@ -3,6 +3,7 @@
 import useModalState from '@/hooks/context/useModalState'
 
 import DialogWrapper from '@/components/atoms/DialogWrapper'
+import KycModal from '@/components/organisms/modals/KycModal'
 import LockModalWrapper from '@/components/organisms/modals/LockModal/LockModalWrapper'
 import LoyaltyLevelsModal from '@/components/organisms/modals/LoyaltyLevelsModal'
 import UnlockModalWrapper from '@/components/organisms/modals/UnlockModal/UnlockModalWrapper'
@@ -41,6 +42,10 @@ export const getModal = (
     case 'unlockModal':
       return {
         component: <UnlockModalWrapper handleClose={handleClose} />,
+      }
+    case 'kycModal':
+      return {
+        component: <KycModal handleClose={handleClose} />,
       }
     default:
       return null

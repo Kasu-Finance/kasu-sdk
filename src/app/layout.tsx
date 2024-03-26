@@ -13,7 +13,7 @@ import { SWRProvider } from '@/context/swrProvider/swr.provider'
 import ToastState from '@/context/toast/toast.provider'
 import Web3Provider from '@/context/web3provider/web3.provider'
 
-import { getLockPeriods } from '@/config/lockPeriod'
+import getLockPeriods from '@/actions/getLockPeriods'
 import ThemeRegistry from '@/themes/ThemeRegistry'
 
 type RootLayoutProps = {

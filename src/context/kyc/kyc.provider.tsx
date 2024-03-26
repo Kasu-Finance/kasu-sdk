@@ -8,12 +8,14 @@ import KycContext from '@/context/kyc/kyc.context'
 import kycReducer from '@/context/kyc/kyc.reducer'
 import { KycStateType } from '@/context/kyc/kyc.types'
 
+import checkUserKycState from '@/actions/checkUserKycState'
+
 type KycStateProps = {
   children: ReactNode
 }
 
 const initialState: KycStateType = {
-  identityClientData: undefined,
+  authenticatedUser: undefined,
   isAuthenticated: false,
   kycCompleted: false,
   identityClient: new IdentityClient(),
@@ -25,14 +27,27 @@ const KycState: React.FC<KycStateProps> = ({ children }) => {
   const [state, dispatch] = useReducer(kycReducer, initialState)
 
   useEffect(() => {
-    if (
-      account &&
-      state.identityClientData &&
-      account.toLowerCase() !== state.identityClientData.userAddress
-    ) {
+    if (account && account.toLowerCase() !== state.authenticatedUser) {
       dispatch({ type: 'RESET_AUTHENTICATION' })
     }
-  }, [account, state.identityClientData])
+  }, [account, state.authenticatedUser])
+
+  useEffect(() => {
+    if (account) {
+      ;(async () => {
+        try {
+          const status = await checkUserKycState(account)
+
+          dispatch({
+            type: 'SET_KYC_COMPLETED',
+            payload: status === 'Active',
+          })
+        } catch (error) {
+          console.error(error)
+        }
+      })()
+    }
+  }, [account])
 
   return (
     <KycContext.Provider value={{ ...state, dispatch }}>

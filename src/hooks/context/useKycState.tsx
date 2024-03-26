@@ -1,15 +1,12 @@
-import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
+import { JsonRpcSigner } from '@ethersproject/providers'
 import { buildSignatureMessage } from '@nexeraid/identity-sdk'
-import { NEXERA_CHAINS } from '@nexeraprotocol/nexera-id-schemas'
-import { useContext } from 'react'
+import { useCallback, useContext } from 'react'
 
 import kycContext from '@/context/kyc/kyc.context'
 import { IdentityClientData, KycTypes } from '@/context/kyc/kyc.types'
 
-import { generateKycToken } from '@/actions/generateKycToken'
-
-// prettier-ignore
-const ABI = [   {     inputs: [       { internalType: 'address', name: 'signerAddress', type: 'address' },     ],     stateMutability: 'nonpayable',     type: 'constructor',   },   { inputs: [], name: 'BlockExpired', type: 'error' },   { inputs: [], name: 'InvalidSignature', type: 'error' },   {     anonymous: false,     inputs: [       {         indexed: false,         internalType: 'uint256',         name: 'chainID',         type: 'uint256',       },       {         indexed: false,         internalType: 'uint256',         name: 'nonce',         type: 'uint256',       },       {         indexed: false,         internalType: 'uint256',         name: 'blockExpiration',         type: 'uint256',       },       {         indexed: false,         internalType: 'address',         name: 'contractAddress',         type: 'address',       },       {         indexed: false,         internalType: 'address',         name: 'userAddress',         type: 'address',       },       {         indexed: false,         internalType: 'bytes',         name: 'functionCallData',         type: 'bytes',       },     ],     name: 'NexeraIDSignatureVerified',     type: 'event',   },   {     anonymous: false,     inputs: [       {         indexed: true,         internalType: 'address',         name: 'previousOwner',         type: 'address',       },       {         indexed: true,         internalType: 'address',         name: 'newOwner',         type: 'address',       },     ],     name: 'OwnershipTransferred',     type: 'event',   },   {     inputs: [       { internalType: 'uint256', name: 'input1', type: 'uint256' },       {         internalType: 'uint256',         name: '_blockExpiration',         type: 'uint256',       },       { internalType: 'bytes', name: '_signature', type: 'bytes' },     ],     name: 'gated',     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],     stateMutability: 'nonpayable',     type: 'function',   },   {     inputs: [       {         components: [           { internalType: 'uint256', name: 'chainID', type: 'uint256' },           { internalType: 'uint256', name: 'nonce', type: 'uint256' },           {             internalType: 'uint256',             name: 'blockExpiration',             type: 'uint256',           },           {             internalType: 'address',             name: 'contractAddress',             type: 'address',           },           {             internalType: 'address',             name: 'userAddress',             type: 'address',           },           {             internalType: 'bytes',             name: 'functionCallData',             type: 'bytes',           },         ],         internalType: 'struct BaseTxAuthDataVerifier.TxAuthData',         name: '_txAuthData',         type: 'tuple',       },     ],     name: 'getMessageHash',     outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],     stateMutability: 'pure',     type: 'function',   },   {     inputs: [],     name: 'getSignerAddress',     outputs: [{ internalType: 'address', name: '', type: 'address' }],     stateMutability: 'view',     type: 'function',   },   {     inputs: [{ internalType: 'address', name: 'user', type: 'address' }],     name: 'getUserNonce',     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],     stateMutability: 'view',     type: 'function',   },   {     inputs: [{ internalType: 'address', name: '', type: 'address' }],     name: 'nonces',     outputs: [{ internalType: 'uint256', name: '_value', type: 'uint256' }],     stateMutability: 'view',     type: 'function',   },   {     inputs: [],     name: 'owner',     outputs: [{ internalType: 'address', name: '', type: 'address' }],     stateMutability: 'view',     type: 'function',   },   {     inputs: [],     name: 'renounceOwnership',     outputs: [],     stateMutability: 'nonpayable',     type: 'function',   },   {     inputs: [{ internalType: 'address', name: '_signer', type: 'address' }],     name: 'setSigner',     outputs: [],     stateMutability: 'nonpayable',     type: 'function',   },   {     inputs: [{ internalType: 'address', name: 'newOwner', type: 'address' }],     name: 'transferOwnership',     outputs: [],     stateMutability: 'nonpayable',     type: 'function',   }, ]
+import checkUserKycState from '@/actions/checkUserKycState'
+import generateKycToken from '@/actions/generateKycToken'
 
 const useKycState = (): KycTypes => {
   const context = useContext(kycContext)
@@ -20,46 +17,49 @@ const useKycState = (): KycTypes => {
 
   const { identityClient, dispatch } = context
 
-  const initClient = async (
-    signer: JsonRpcSigner,
-    initData: Omit<IdentityClientData, 'userAddress'>
-  ) => {
-    identityClient.onSignMessage(async (data) => {
-      return (await signer.signMessage(data.message)) as `0x${string}`
-    })
+  const verifyUserKyc = useCallback(
+    async (userAddress: string) => {
+      const status = await checkUserKycState(userAddress)
 
-    identityClient.onSdkReady(async () => {
-      const result = await identityClient.getTxAuthSignature({
-        chainId: NEXERA_CHAINS.POLYGON_MUMBAI,
-        contractAbi: ABI,
-        contractAddress:
-          '0x0b956cB485798a4EC3f4E58C608Bb832190Cf7eA'.toLowerCase() as `0x${string}`,
-        functionName: 'gated',
-        args: [1],
+      dispatch({
+        type: 'SET_KYC_COMPLETED',
+        payload: status === 'Active',
       })
 
-      if (result.isAuthorized) {
-        dispatch({
-          type: 'SET_KYC_COMPLETED',
-          payload: true,
-        })
-      }
+      return status
+    },
+    [dispatch]
+  )
+
+  const initializeClient = async (
+    signer: JsonRpcSigner,
+    initData: IdentityClientData,
+    sdkReadyCallback: () => void,
+    closeScreenCallback: (kycCompleted: boolean) => void
+  ) => {
+    const { userAddress, ...authInput } = initData
+
+    identityClient.onSignMessage(async (data) => {
+      const signedMessage = await signer.signMessage(data.message)
+      return signedMessage as `0x${string}`
     })
+
+    identityClient.onSdkReady(sdkReadyCallback)
 
     identityClient.onCloseScreen(async () => {
-      return new Promise((resolve) => {
-        // eslint-disable-next-line
-        console.log('On Close Screen callback')
-        resolve('')
-      })
+      const status = await verifyUserKyc(userAddress)
+
+      closeScreenCallback(status === 'Active')
+
+      return new Promise((resolve) => resolve(''))
     })
 
-    await identityClient.init(initData)
+    await identityClient.init(authInput)
   }
 
-  const authenticate = async (provider: Web3Provider) => {
-    const signer = provider.getSigner()
-
+  const authenticate = async (
+    signer: JsonRpcSigner
+  ): Promise<IdentityClientData> => {
     const account = (await signer.getAddress()).toLowerCase()
 
     const signingMessage = buildSignatureMessage(account as `0x${string}`)
@@ -68,24 +68,25 @@ const useKycState = (): KycTypes => {
 
     const accessToken = await generateKycToken(account)
 
-    if (!accessToken) return
-
-    await initClient(signer, { accessToken, signature, signingMessage })
+    if (!accessToken) throw new Error('Error getting access token')
 
     dispatch({
       type: 'AUTHENTICATE',
-      payload: {
-        accessToken,
-        signature,
-        signingMessage,
-        userAddress: account,
-      },
+      payload: account,
     })
+
+    return {
+      accessToken,
+      signature,
+      signingMessage,
+      userAddress: account,
+    }
   }
 
   return {
     ...context,
     authenticate,
+    initializeClient,
   }
 }
 

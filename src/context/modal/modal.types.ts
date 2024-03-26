@@ -20,9 +20,10 @@ export type Modals = {
   loyaltyLevelsModal: ModalData
   lockModal: ModalData
   unlockModal: ModalData<{ userLock: UserLock }>
+  kycModal: ModalData<{ callback: () => void }>
 }
 
-export type ModalWithProps = Extract<keyof Modals, 'unlockModal'>
+export type ModalWithProps = Extract<keyof Modals, 'unlockModal' | 'kycModal'>
 
 export type OpenModalWithProps<T extends keyof Modals> = Omit<
   Modals[T],
