@@ -1,4 +1,4 @@
-import { PoolDetailSection } from 'kasu-sdk/src/types'
+import { PoolDetailSection, PoolOverview } from 'kasu-sdk/src/types'
 import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
@@ -20,6 +20,7 @@ const usePoolOverview = (poolId: string): UsePoolOverviewReturn => {
   const fetchPoolOverview = async (): Promise<{
     poolDetails: PoolDetailSection
     poolTraction: PoolDetailSection
+    pools: PoolOverview[]
   } | null> => {
     const result = await sdk.DataService.getPoolOverview(poolId)
 
@@ -32,13 +33,10 @@ const usePoolOverview = (poolId: string): UsePoolOverviewReturn => {
     const poolDetails = convertToPoolDetails(poolOverviewData)
     const poolTraction = convertToPoolTraction(poolOverviewData)
 
-    return { poolDetails, poolTraction }
+    return { poolDetails, poolTraction, pools: result }
   }
 
-  const { data, error } = useSWR(
-    poolId ? `poolOverview/${poolId}` : null,
-    fetchPoolOverview
-  )
+  const { data, error } = useSWR('pools', fetchPoolOverview)
 
   return {
     data: data || null,

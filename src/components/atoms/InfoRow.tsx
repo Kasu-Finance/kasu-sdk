@@ -8,7 +8,7 @@ type InfoRowProps = {
   subtitle?: string
   toolTipInfo?: string
   showDivider?: boolean
-  metric: ReactNode
+  metric?: ReactNode | number | string
   titleStyle?: TypographyProps
   subtitleStyle?: TypographyProps
 }
@@ -55,7 +55,7 @@ const InfoRow: React.FC<InfoRowProps> = ({
           </Box>
           {toolTipInfo && <ToolTip title={toolTipInfo} />}
         </Box>
-        {metric}
+        {metric && metric}
       </Box>
       {showDivider && <Divider />}
     </>

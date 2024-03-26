@@ -44,6 +44,7 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
             titleKey={titleKey}
             tooltipKey={tooltipKey}
             containerSx={{ width: '33%', pb: 1, pr: 1 }}
+            sx={{ border: '1px solid red' }}
           />
         )
       case MetricGroupType.Second:
@@ -59,6 +60,7 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
                     display='flex'
                     flexDirection='column'
                     alignItems='flex-end'
+                    sx={{ border: '1px solid red' }}
                   >
                     {metric.content.map((item, itemIndex) => (
                       <NextLink

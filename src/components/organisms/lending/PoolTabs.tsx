@@ -5,7 +5,7 @@ import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import { memo, useCallback, useState } from 'react'
 
-import OverviewCard from '@/components/molecules/lending/OverviewCard'
+import PoolOverview from '@/components/molecules/lending/overview/OverviewCard'
 import TabPanel from '@/components/molecules/tabs/TabPanel'
 import PoolDetails from '@/components/organisms/details/PoolDetails'
 import Repayments from '@/components/organisms/repayments/Repayments'
@@ -38,7 +38,7 @@ const PoolTabs: React.FC = () => {
         </Tabs>
       </Box>
       <TabPanel value={activeTab} index={0} id={panelsId}>
-        <OverviewCard />
+        <PoolOverview />
       </TabPanel>
       <TabPanel value={activeTab} index={1} id={panelsId}>
         <PoolDetails />

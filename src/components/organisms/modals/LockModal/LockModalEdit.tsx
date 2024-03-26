@@ -4,10 +4,10 @@ import React from 'react'
 import useLockModalState from '@/hooks/context/useLockModalState'
 import useTranslation from '@/hooks/useTranslation'
 
-import EstimatedReturns from '@/components/molecules/locking/LockModal/EstimatedReturns'
-import LockAmountInput from '@/components/molecules/locking/LockModal/LockAmountInput'
-import LockDurationInput from '@/components/molecules/locking/LockModal/LockDurationInput'
-import LockModalOverview from '@/components/molecules/locking/LockModal/LockModalOverview'
+import EstimatedReturns from '@/components/molecules/locking/lockModal/EstimatedReturns'
+import LockAmountInput from '@/components/molecules/locking/lockModal/LockAmountInput'
+import LockDurationInput from '@/components/molecules/locking/lockModal/LockDurationInput'
+import LockModalOverview from '@/components/molecules/locking/lockModal/LockModalOverview'
 
 import { LockProgress } from '@/context/lockModal/lockModal.types'
 

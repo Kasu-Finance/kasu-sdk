@@ -5,6 +5,7 @@
     "balance": "balance",
     "basic": "basic",
     "claim": "claim",
+    "deposit": "deposit",
     "confirm": "confirm",
     "goBack": "go back",
     "close": "close",
@@ -183,6 +184,15 @@
       "errors": {
         "invalidCriteria": "The value entered does not meet the criteria required for this field."
       }
+    }
+  },
+  "lending": {
+    "poolOverview": { "title": "Pool Overview" },
+    "strategyDeck": "Strategy deck",
+    "tranche": {
+      "senior": "Senior Tranche APY",
+      "mezzanine": "Mezzanine Tranche APY",
+      "junior": "Junior Tranche APY"
     }
   },
   "details": {

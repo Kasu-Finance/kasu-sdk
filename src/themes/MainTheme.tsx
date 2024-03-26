@@ -145,7 +145,18 @@ export const theme = createTheme({
       xxl: 1921,
     },
   },
+
   components: {
+    MuiCssBaseline: {
+      styleOverrides: `
+      .light-blue-background {
+        background-color: #1976D20A;
+      }
+      .light-error-background {
+        background-color: #d32f2f0a;
+      }
+    `,
+    },
     MuiAppBar: {
       styleOverrides: {
         root: {
@@ -158,6 +169,7 @@ export const theme = createTheme({
         root: {},
       },
     },
+
     MuiCheckbox: {
       styleOverrides: {
         root: {
@@ -461,16 +473,6 @@ export const theme = createTheme({
           },
         },
       },
-    },
-    MuiCssBaseline: {
-      styleOverrides: `
-          .light-blue-background {
-            background-color: #1976D20A;
-          }
-          .light-error-background {
-            background-color: #d32f2f0a;
-          }
-        `,
     },
   },
 })
