@@ -5,6 +5,7 @@
     "balance": "balance",
     "basic": "basic",
     "claim": "claim",
+    "deposit": "deposit",
     "confirm": "confirm",
     "goBack": "go back",
     "close": "close",
@@ -134,7 +135,7 @@
     }
   },
   "lending": {
-    "poolOverview": "Pool overview",
+    "poolOverview": { "title": "Pool Overview" },
     "strategyDeck": "Strategy deck",
     "tranche": {
       "senior": "Senior Tranche APY",

@@ -1,5 +1,6 @@
 'use client'
 
+import LoginIcon from '@mui/icons-material/Login'
 import { Box, Button, Grid } from '@mui/material'
 import { useRef } from 'react'
 
@@ -8,10 +9,12 @@ import useTranslation from '@/hooks/useTranslation'
 
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
+import { COLS } from '@/constants'
+
 const TranchesApyCard = () => {
   const divRef = useRef<HTMLDivElement>(null)
   const { t } = useTranslation()
-  const COLS = 12
+
   const tranches = [
     {
       content: '12.50 %',
@@ -42,10 +45,13 @@ const TranchesApyCard = () => {
         boxShadow: isSticky ? 12 : 0,
         position: isSticky ? 'sticky' : 'relative',
         top: isSticky ? 64 : 0,
+        transform: `translate3d(0, 0px, 0)`,
+        transformOrigin: '0% 0%',
         background: isSticky ? '#fff' : 'inherit',
         zIndex: 1200,
-        transition: 'all .25s ease-in-out',
-        width: '100%',
+        transition: 'box-shadow .25s ease-in-out, top .05s ease',
+        width: '1152px',
+        backfaceVisibility: 'hidden',
         ml: 0,
         pt: 2,
         pl: 2,
@@ -64,9 +70,9 @@ const TranchesApyCard = () => {
         <Grid
           container
           rowSpacing={1}
-          width='100%'
           m={0}
           columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+          maxWidth='lg'
         >
           {tranches.length > 0 &&
             tranches.map((tranche, index) => {
@@ -93,7 +99,13 @@ const TranchesApyCard = () => {
           pb: 2,
         }}
       >
-        <Button variant='contained'>Deposit</Button>
+        <Button
+          variant='contained'
+          sx={{ pl: 2.25, pr: 2.25 }}
+          startIcon={<LoginIcon />}
+        >
+          {t('general.deposit')}
+        </Button>
       </Box>
     </Box>
   )
