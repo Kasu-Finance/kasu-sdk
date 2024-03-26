@@ -57,7 +57,11 @@ const ConfirmForm: React.FC<ConfirmFormProps> = ({
 
       {/* Action Button */}
       <Box display='flex' justifyContent='center' width='100%' mt={3}>
-        <Button variant='contained' onClick={onSubmit}>
+        <Button
+          variant='contained'
+          onClick={onSubmit}
+          sx={{ fontSize: '15px' }}
+        >
           {t('lending.withdraw.button.poolOverview')}
         </Button>
       </Box>

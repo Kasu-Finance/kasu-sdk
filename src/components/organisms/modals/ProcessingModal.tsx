@@ -1,4 +1,5 @@
 import { Theme } from '@emotion/react'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import {
   Box,
   LinearProgress,
@@ -14,8 +15,6 @@ import useTranslation from '@/hooks/useTranslation'
 import CustomModal from '@/components/molecules/CustomModal'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
-
-import { InfoIcon } from '@/assets/icons'
 
 import { ACTION_MESSAGES, ActionStatus } from '@/constants'
 
@@ -57,7 +56,7 @@ const ProcessingModal: React.FC<ProcessingModalProps> = ({
     >
       <Box display='flex' flexDirection='column' pl={1}>
         <Box display='flex' alignItems='center'>
-          <InfoIcon />
+          <InfoOutlinedIcon color='primary' />
           <Typography variant='subtitle1' ml={1}>
             {title || t('modals.lock.processing.title')}
           </Typography>

@@ -9,30 +9,28 @@ import { extractDateAndUtcOffset, formatTimestampWithOffset } from '@/utils'
 
 const CountdownSection = () => {
   const { t } = useTranslation()
+  const { nextEpochTime = 0 } = useNextEpochTime()
 
-  const { nextEpochTime } = useNextEpochTime()
-
-  const formattedDate = formatTimestampWithOffset(nextEpochTime || 0, 1)
+  const formattedDate = formatTimestampWithOffset(nextEpochTime, 1)
   const { date, time, format, offset } = extractDateAndUtcOffset(formattedDate)
 
   return (
     <Box mt={0.5}>
       <Typography variant='h6' component='span' display='block'>
         <Countdown
-          endTime={nextEpochTime ?? 0}
+          endTime={nextEpochTime}
           format='D:HH:mm'
           render={(countDown) => {
-            const parts = countDown.split(':')
-
-            return `${parts[0]} ${t('time.days')} • ${parts[1]} ${t(
+            const [days, hours, minutes] = countDown.split(':')
+            return `${days} ${t('time.days')} • ${hours} ${t(
               'time.hours'
-            )} • ${parts[2]} ${t('time.minutes')}`
+            )} • ${minutes} ${t('time.minutes')}`
           }}
         />
       </Typography>
       <Typography variant='body1' color='grey.500'>
         {date} • {time}{' '}
-        <span style={{ fontSize: 12 }}>
+        <span style={{ fontSize: '0.75rem' }}>
           {format}
           {offset}
         </span>
@@ -40,4 +38,5 @@ const CountdownSection = () => {
     </Box>
   )
 }
+
 export default CountdownSection

@@ -3,30 +3,28 @@
 import { Box, Container, Typography } from '@mui/material'
 import { PoolOverview } from 'kasu-sdk/src/types'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import usePoolOverview from '@/hooks/lending/usePoolOverview'
 
 import EmptyCardState from '@/components/atoms/EmptyCardState'
 import Carousel from '@/components/molecules/Carousel'
-import WithdrawModal from '@/components/molecules/lending/WithdrawModal'
 import PageHeader from '@/components/molecules/PageHeader'
 import PoolCard from '@/components/molecules/PoolCard'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
+import { Routes } from '@/config/routes'
+
 const Lending = () => {
   const { data: pools, isLoading } = usePoolOverview()
-  const [selectedPool, setSelectedPool] = useState<PoolOverview | null>(null)
   const router = useRouter()
 
   const { openModal } = useModalState()
 
-  const handleWithdrawClick = (pool: any) => {
-    setSelectedPool(pool)
+  const handleWithdrawClick = (pool: PoolOverview) => {
     openModal({ name: ModalsKeys.WITHDRAW })
-    router.push('/lending?step=1')
+    router.push(`${Routes.lending.root.url}?poolId=${pool.id}&step=1`)
   }
 
   if (isLoading) {
@@ -59,10 +57,6 @@ const Lending = () => {
     <Container maxWidth='lg'>
       <PageHeader title='Lending' />
       <Carousel slidesPerPage={3}>{poolsContent}</Carousel>
-
-      {selectedPool && (
-        <WithdrawModal key={selectedPool?.id} pool={selectedPool} />
-      )}
     </Container>
   )
 }

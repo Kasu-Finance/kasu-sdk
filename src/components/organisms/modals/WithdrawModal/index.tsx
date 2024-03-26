@@ -1,23 +1,26 @@
+'use client'
+
+import ReceiptIcon from '@mui/icons-material/Receipt'
 import { Box, Button } from '@mui/material'
-import { PoolMetric, PoolOverview } from 'kasu-sdk/src/types'
-import { useRouter } from 'next/navigation'
-import React, { useMemo, useState } from 'react'
+import { PoolMetric } from 'kasu-sdk/src/types'
+import { useRouter, useSearchParams } from 'next/navigation'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
+import usePoolOverview from '@/hooks/lending/usePoolOverview'
 import useTranslation from '@/hooks/useTranslation'
 
 import CustomModal from '@/components/molecules/CustomModal'
 import HorizontalStepper from '@/components/molecules/HorizontalStepper'
-import ApproveForm from '@/components/molecules/lending/WithdrawModal/ApproveForm'
-import ConfirmForm from '@/components/molecules/lending/WithdrawModal/ConfirmForm'
-import MetricsSection from '@/components/molecules/lending/WithdrawModal/MetricsSection'
-import RequestForm from '@/components/molecules/lending/WithdrawModal/RequestForm'
 import ProcessingModal from '@/components/organisms/modals/ProcessingModal'
+import ApproveForm from '@/components/organisms/modals/WithdrawModal/ApproveForm'
+import ConfirmForm from '@/components/organisms/modals/WithdrawModal/ConfirmForm'
+import MetricsSection from '@/components/organisms/modals/WithdrawModal/MetricsSection'
+import RequestForm from '@/components/organisms/modals/WithdrawModal/RequestForm'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import { TransactionListIcon } from '@/assets/icons'
-
+import { Routes } from '@/config/routes'
 import { Tranche, WithdrawMetrics, WithdrawSteps } from '@/constants'
 
 const metrics: PoolMetric[] = [
@@ -34,10 +37,10 @@ const metrics: PoolMetric[] = [
 ]
 
 interface WithdrawModalProps {
-  pool: PoolOverview
+  handleClose: () => void
 }
 
-const WithdrawModal: React.FC<WithdrawModalProps> = ({ pool }) => {
+const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
   const [amount, setAmount] = useState<string>('')
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [activeStep, setActiveStep] = useState<number>(WithdrawSteps.REQUEST)
@@ -45,28 +48,49 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ pool }) => {
   const [selectedTranche, setSelectedTranche] = useState<Tranche>(
     Tranche.SENIOR_TRANCHE
   )
-  const { openModal, closeModal } = useModalState()
-  const { t } = useTranslation()
-  const router = useRouter()
+  const [poolId, setPoolId] = useState<string>('')
 
-  const isMultiTranche = useMemo(() => pool?.tranches?.length > 1, [pool])
+  const { openModal } = useModalState()
+  const { t } = useTranslation()
+
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const id = searchParams.get('poolId')
+    if (id) {
+      setPoolId(id)
+    }
+  }, [searchParams])
+
+  const { data: pool } = usePoolOverview(poolId)
+
+  const selectedPool = useMemo(
+    () => pool?.find((p) => p.id === poolId),
+    [poolId, pool]
+  )
+
+  const isMultiTranche = useMemo(
+    () => selectedPool?.tranches?.length === 0,
+    [selectedPool]
+  )
 
   const validationStyle = errorMsg
     ? 'light-error-background'
     : 'light-blue-background'
 
   const handleSubmitRequest = () => {
-    router.push('/lending?step-2')
+    router.push(`${Routes.lending.root.url}?poolId=${selectedPool?.id}&step=2`)
     setActiveStep(WithdrawSteps.APPROVE)
   }
 
   const onModalClose = () => {
     setAmount('')
     setErrorMsg('')
-    closeModal(ModalsKeys.WITHDRAW)
     setActiveStep(WithdrawSteps.REQUEST)
     setSelectedTranche(Tranche.SENIOR_TRANCHE)
-    router.push('/lending')
+    handleClose()
+    router.push(Routes.lending.root.url)
   }
 
   const handleSubmitConfirm = () => {
@@ -76,13 +100,15 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ pool }) => {
     setTimeout(() => {
       setProcessing(false)
       setActiveStep(WithdrawSteps.CONFIRM)
-      router.push('/lending?step-3')
+      router.push(
+        `${Routes.lending.root.url}?poolId=${selectedPool?.id}&step=3`
+      )
     }, 2000)
   }
 
   const handleAdjust = () => {
     setActiveStep(WithdrawSteps.REQUEST)
-    router.push('/lending?step-1')
+    router.push(`${Routes.lending.root.url}?poolId=${selectedPool?.id}&step=1`)
   }
 
   if (processing) {
@@ -94,7 +120,12 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ pool }) => {
       modalKey={ModalsKeys.WITHDRAW}
       title={t('lending.withdraw.title')}
       onAction={onModalClose}
-      modalStyles={{ top: '50%', width: '60%' }}
+      modalStyles={{
+        py: 2,
+        top: '50%',
+        width: '60%',
+        borderRadius: 1,
+      }}
       actionIcon={
         activeStep === WithdrawSteps.CONFIRM ? (
           <Button
@@ -103,7 +134,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ pool }) => {
             target='_blank'
             rel='noopener noreferrer'
             variant='outlined'
-            startIcon={<TransactionListIcon />}
+            startIcon={<ReceiptIcon />}
           >
             {t('lending.withdraw.button.viewTx')}
           </Button>
@@ -120,7 +151,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ pool }) => {
       {activeStep !== WithdrawSteps.CONFIRM && (
         <MetricsSection
           metrics={metrics}
-          poolName={pool.poolName}
+          poolName={selectedPool?.poolName || ''}
           selectedTranche={selectedTranche}
           activeStep={activeStep}
           isMultiTranche={isMultiTranche}
@@ -152,7 +183,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ pool }) => {
       {activeStep === WithdrawSteps.CONFIRM && (
         <ConfirmForm
           amount={amount}
-          poolName={pool?.poolName || ''}
+          poolName={selectedPool?.poolName || ''}
           trancheName={selectedTranche}
           onSubmit={onModalClose}
         />

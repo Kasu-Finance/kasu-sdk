@@ -3,6 +3,7 @@ import { useWeb3React } from '@web3-react/core'
 import { PoolMetric } from 'kasu-sdk/src/types'
 import React, { useMemo } from 'react'
 
+import useMetricValues from '@/hooks/useMetricValues'
 import useTranslation from '@/hooks/useTranslation'
 
 import InfoColumn from '@/components/atoms/InfoColumn'
@@ -32,25 +33,18 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
   const { account } = useWeb3React()
   const userAddress = useMemo(() => formatAccount(account), [account])
 
-  const totalInvestment = useMemo(
-    () =>
-      metrics.find((metric) => metric.id === WithdrawMetrics.TOTAL_INVESTMENT),
-    [metrics]
-  )
+  const metricValues = useMetricValues(metrics, [
+    WithdrawMetrics.TOTAL_INVESTMENT,
+    WithdrawMetrics.TRANCHE_INVESTMENT,
+  ])
 
-  const trancheInvestment = useMemo(
-    () =>
-      metrics.find(
-        (metric) => metric.id === WithdrawMetrics.TRANCHE_INVESTMENT
-      ),
-    [metrics]
-  )
+  const totalInvestment = metricValues[WithdrawMetrics.TOTAL_INVESTMENT]
+  const trancheInvestment = metricValues[WithdrawMetrics.TRANCHE_INVESTMENT]
 
   const tranche = {
     id: WithdrawMetrics.TRANCHE,
     content: selectedTranche || '',
   }
-
   const toWallet = { id: WithdrawMetrics.TO_WALLET, content: userAddress || '' }
 
   const showTrancheInvestment =

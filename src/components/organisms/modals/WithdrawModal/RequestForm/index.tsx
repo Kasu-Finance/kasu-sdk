@@ -1,12 +1,11 @@
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import { Box, Button, Typography, useTheme } from '@mui/material'
 import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
-import AmountInput from '@/components/molecules/lending/WithdrawModal/RequestForm/AmountInput'
-import TrancheSelect from '@/components/molecules/lending/WithdrawModal/RequestForm/TrancheSelect'
-
-import { ChevronRightIcon } from '@/assets/icons'
+import AmountInput from '@/components/organisms/modals/WithdrawModal/RequestForm/AmountInput'
+import TrancheSelect from '@/components/organisms/modals/WithdrawModal/RequestForm/TrancheSelect'
 
 import { Tranche } from '@/constants'
 
@@ -66,13 +65,17 @@ const RequestForm: React.FC<RequestFormProps> = ({
       >
         <Button
           variant='contained'
+          sx={{ fontSize: '15px' }}
           endIcon={
             <ChevronRightIcon
-              color={
-                disabledButton
+              sx={{
+                mt: '2px',
+                width: '24px',
+                height: '24px',
+                color: disabledButton
                   ? 'rgba(0, 0, 0, 0.26)'
-                  : theme.palette.common.white
-              }
+                  : theme.palette.common.white,
+              }}
             />
           }
           onClick={onSubmit}

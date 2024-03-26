@@ -1,32 +1,14 @@
 import { Theme } from '@emotion/react'
-import {
-  Box,
-  IconButton,
-  Modal,
-  styled,
-  SxProps,
-  Typography,
-} from '@mui/material'
+import { Box, IconButton, Modal, SxProps, Typography } from '@mui/material'
 import React, { ReactNode } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 
+import ModalBody from '@/components/atoms/ModalBody'
+
 import { Modals } from '@/context/modal/modal.types'
 
 import { CrossIcon } from '@/assets/icons'
-
-const StyledModalBox = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  top: '20%',
-  left: '50%',
-  width: '40%',
-  zIndex: 9999,
-  borderRadius: 8,
-  backgroundColor: 'white',
-  padding: theme.spacing(2),
-  boxShadow: theme.shadows[24],
-  transform: 'translate(-50%, -50%)',
-}))
 
 interface CustomModalProps {
   modalKey: keyof Modals
@@ -57,7 +39,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
 
   return (
     <Modal open={isOpen} onClose={onActionModal}>
-      <StyledModalBox sx={modalStyles}>
+      <ModalBody sx={modalStyles}>
         <Box
           display='flex'
           justifyContent='space-between'
@@ -76,7 +58,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
             ))}
         </Box>
         <Box sx={{ mt: 2 }}>{children}</Box>
-      </StyledModalBox>
+      </ModalBody>
     </Modal>
   )
 }
