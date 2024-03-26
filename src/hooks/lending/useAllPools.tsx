@@ -5,16 +5,7 @@ import useKasuSDK from '@/hooks/useKasuSDK'
 
 import { convertToPoolDetails, convertToPoolTraction } from '@/utils'
 
-interface UsePoolOverviewReturn {
-  data: {
-    poolDetails: PoolDetailSection
-    poolTraction: PoolDetailSection
-  } | null
-  error: any
-  isLoading: boolean
-}
-
-const usePoolOverview = (poolId: string): UsePoolOverviewReturn => {
+const usePoolOverview = (poolId: string) => {
   const sdk = useKasuSDK()
 
   const fetchPoolOverview = async (): Promise<{

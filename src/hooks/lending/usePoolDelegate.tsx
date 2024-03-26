@@ -3,13 +3,7 @@ import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
-interface UsePoolDelegateReturnType {
-  data: PoolDelegateProfileAndHistory[] | null
-  error: any
-  isLoading: boolean
-}
-
-const usePoolDelegate = (poolId: string): UsePoolDelegateReturnType => {
+const usePoolDelegate = (poolId: string) => {
   const sdk = useKasuSDK()
 
   const fetchPoolDelegate = async (): Promise<
