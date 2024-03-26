@@ -21,7 +21,11 @@ import RequestForm from '@/components/organisms/modals/WithdrawModal/RequestForm
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { Routes } from '@/config/routes'
-import { Tranche, WithdrawMetrics, WithdrawSteps } from '@/constants'
+import {
+  Tranche,
+  WithdrawMetrics,
+  WithdrawSteps,
+} from '@/constants/lending/withdraw'
 
 const metrics: PoolMetric[] = [
   {
