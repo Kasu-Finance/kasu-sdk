@@ -1,19 +1,18 @@
 'use client'
 
-import { Box, Paper, styled, Typography } from '@mui/material'
+import { Box, Paper, Typography } from '@mui/material'
 import { PoolOverview } from 'kasu-sdk/src/types'
-import Image from 'next/image'
 import React, { useMemo } from 'react'
 
 import usePoolOverview from '@/hooks/lending/usePoolOverview'
 import useTranslation from '@/hooks/useTranslation'
 
 import BackButton from '@/components/atoms/BackButton'
+import ImageWithFallback from '@/components/atoms/ImageWithFallback'
 import PoolAvatar from '@/components/atoms/PoolAvatar'
 import PageHeaderSkeleton from '@/components/molecules/loaders/PageHeaderSkeleton'
 
 import ArrowLeftIcon from '@/assets/icons/general/ArrowLeftIcon'
-import ImagePlaceholderIcon from '@/assets/icons/general/ImagePlaceholderIcon'
 
 type PageHeaderProps = {
   title: string
@@ -54,18 +53,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
 
   return (
     <Paper sx={{ borderRadius: '4px' }}>
-      <ImageContainer>
-        {poolBannerImg ? (
-          <Image
-            fill
-            src={poolBannerImg}
-            alt="Pool's image"
-            style={{ objectFit: 'cover' }}
-          />
-        ) : (
-          <ImagePlaceholderIcon />
-        )}
-      </ImageContainer>
+      <ImageWithFallback src={poolBannerImg} />
 
       <Box
         display='flex'
@@ -94,16 +82,3 @@ const PageHeader: React.FC<PageHeaderProps> = ({
 }
 
 export default PageHeader
-
-const ImageContainer = styled(Box)((props) => ({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  position: 'relative',
-  width: '100%',
-  height: '100px',
-  overflow: 'hidden',
-  background: props.theme.palette.grey[300],
-  borderTopRightRadius: '4px',
-  borderTopLeftRadius: '4px',
-}))
