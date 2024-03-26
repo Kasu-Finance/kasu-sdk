@@ -1,6 +1,7 @@
 import { Box, Theme, Typography } from '@mui/material'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
+import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useAvailableKsuBonus from '@/hooks/locking/useAvailableKsuBonus'
 import useCalculateLaunchBonusAmount from '@/hooks/locking/useCalculateLaunchBonusAmount'
 import useProjectedUsdcEarning from '@/hooks/locking/useProjectedUsdcEarning'
@@ -15,7 +16,9 @@ import { formatAmount, toBigNumber } from '@/utils'
 const EstimatedReturns = () => {
   const { t } = useTranslation()
 
-  const { amount, selectedLockPeriod, lockState } = useLockModalState()
+  const { amount, selectedLockPeriod } = useLockModalState()
+
+  const { modalStatus } = useModalStatusState()
 
   const { availableKsuBonus } = useAvailableKsuBonus()
 
@@ -27,7 +30,7 @@ const EstimatedReturns = () => {
 
   const projectedUsdcEarning = useProjectedUsdcEarning()
 
-  const disabled = lockState.type === 'error'
+  const disabled = modalStatus.type === 'error'
 
   const getTextColor = (theme: Theme, state?: boolean) =>
     disabled || state ? theme.palette.text.disabled : undefined
@@ -45,7 +48,7 @@ const EstimatedReturns = () => {
       <ColoredBox
         mt={1}
         sx={{
-          bgcolor: lockState.bgColor,
+          bgcolor: modalStatus.bgColor,
         }}
       >
         <InfoRow

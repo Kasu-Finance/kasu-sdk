@@ -3,6 +3,7 @@ import { parseUnits } from 'ethers/lib/utils'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalState from '@/hooks/context/useModalState'
+import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useUnlockKSU from '@/hooks/locking/useUnlockKSU'
 import useTranslation from '@/hooks/useTranslation'
 import useUserBalance from '@/hooks/web3/useUserBalance'
@@ -13,7 +14,7 @@ import UnlockModalCompleted from '@/components/organisms/modals/UnlockModal/Unlo
 import UnlockModalEdit from '@/components/organisms/modals/UnlockModal/UnlockModalEdit'
 import UnlockModalReview from '@/components/organisms/modals/UnlockModal/UnlockModalReview'
 
-import { LockProgress } from '@/context/lockModal/lockModal.types'
+import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
 import { ChevronRightIcon, EditIcon } from '@/assets/icons'
 
@@ -24,8 +25,10 @@ const UnlockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { modal } = useModalState()
 
-  const { amount, lockState, lockProgress, setLockProgress } =
-    useLockModalState()
+  const { amount } = useLockModalState()
+
+  const { modalStatus, modalStatusAction, setModalStatusAction } =
+    useModalStatusState()
 
   const { decimals } = useUserBalance(sdkConfig.contracts.KSUToken)
 
@@ -37,24 +40,24 @@ const UnlockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
     <>
       <DialogHeader title='Unlock' onClose={handleClose} />
       <DialogContent>
-        {lockProgress === LockProgress.REVIEWING ? (
+        {modalStatusAction === ModalStatusAction.REVIEWING ? (
           <UnlockModalReview
             lockedAmount={userLock.lockedAmount}
             unlockAmount={amount}
           />
-        ) : lockProgress === LockProgress.EDITING ? (
+        ) : modalStatusAction === ModalStatusAction.EDITING ? (
           <UnlockModalEdit userLock={userLock} />
         ) : (
           <UnlockModalCompleted userLock={userLock} />
         )}
       </DialogContent>
       <DialogActions sx={{ justifyContent: 'center', pb: 3 }}>
-        {lockProgress === LockProgress.REVIEWING ? (
+        {modalStatusAction === ModalStatusAction.REVIEWING ? (
           <>
             <Button
               variant='outlined'
               startIcon={<EditIcon />}
-              onClick={() => setLockProgress(LockProgress.EDITING)}
+              onClick={() => setModalStatusAction(ModalStatusAction.EDITING)}
             >
               {t('general.adjust')}
             </Button>
@@ -68,7 +71,7 @@ const UnlockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               {t('general.confirm')}
             </Button>
           </>
-        ) : lockProgress === LockProgress.EDITING ? (
+        ) : modalStatusAction === ModalStatusAction.EDITING ? (
           <Button
             sx={{
               width: 191,
@@ -83,8 +86,8 @@ const UnlockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             }}
             variant='contained'
             endIcon={<ChevronRightIcon />}
-            onClick={() => setLockProgress(LockProgress.REVIEWING)}
-            disabled={lockState.type === 'error'}
+            onClick={() => setModalStatusAction(ModalStatusAction.REVIEWING)}
+            disabled={modalStatus.type === 'error'}
           >
             Review Unlock
           </Button>

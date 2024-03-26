@@ -18,16 +18,6 @@ const lockModalReducer = (
         ...state,
         selectedLockPeriod: action.payload,
       }
-    case 'SET_LOCK_STATE':
-      return {
-        ...state,
-        lockState: action.payload,
-      }
-    case 'SET_LOCK_PROGRESS':
-      return {
-        ...state,
-        lockProgress: action.payload,
-      }
     default:
       return state
   }

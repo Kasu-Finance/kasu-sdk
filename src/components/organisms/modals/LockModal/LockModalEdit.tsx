@@ -2,14 +2,15 @@ import { Box, Button } from '@mui/material'
 import React from 'react'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
+import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useTranslation from '@/hooks/useTranslation'
 
-import EstimatedReturns from '@/components/molecules/locking/lockModal/EstimatedReturns'
-import LockAmountInput from '@/components/molecules/locking/lockModal/LockAmountInput'
-import LockDurationInput from '@/components/molecules/locking/lockModal/LockDurationInput'
-import LockModalOverview from '@/components/molecules/locking/lockModal/LockModalOverview'
+import EstimatedReturns from '@/components/molecules/locking/LockModal/EstimatedReturns'
+import LockAmountInput from '@/components/molecules/locking/LockModal/LockAmountInput'
+import LockDurationInput from '@/components/molecules/locking/LockModal/LockDurationInput'
+import LockModalOverview from '@/components/molecules/locking/LockModal/LockModalOverview'
 
-import { LockProgress } from '@/context/lockModal/lockModal.types'
+import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
 import { ChevronRightIcon } from '@/assets/icons'
 
@@ -20,12 +21,14 @@ type LockModalEditProps = {
 const LockModalEdit: React.FC<LockModalEditProps> = ({ userBalance }) => {
   const { t } = useTranslation()
 
-  const { lockState, setLockProgress } = useLockModalState()
+  const { amount } = useLockModalState()
+
+  const { modalStatus, setModalStatusAction } = useModalStatusState()
 
   return (
     <Box
       sx={{
-        backgroundColor: lockState.bgColor,
+        backgroundColor: modalStatus.bgColor,
         transition: 'background-color 0.3s ease',
         p: 1,
       }}
@@ -48,8 +51,8 @@ const LockModalEdit: React.FC<LockModalEditProps> = ({ userBalance }) => {
             },
           }}
           endIcon={<ChevronRightIcon />}
-          onClick={() => setLockProgress(LockProgress.REVIEWING)}
-          disabled={lockState.type === 'error'}
+          onClick={() => setModalStatusAction(ModalStatusAction.REVIEWING)}
+          disabled={Boolean(!amount || modalStatus.type === 'error')}
         >
           {t('modals.lock.buttons.reviewLock')}
         </Button>
