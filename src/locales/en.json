@@ -137,7 +137,15 @@
       }
     }
   },
+
   "lending": {
+    "poolOverview": { "title": "Pool Overview" },
+    "strategyDeck": "Strategy deck",
+    "tranche": {
+      "senior": "Senior Tranche APY",
+      "mezzanine": "Mezzanine Tranche APY",
+      "junior": "Junior Tranche APY"
+    },
     "withdraw": {
       "title": "Withdraw Funds",
       "subtitle": "Total Withdrawal Request Amount",
@@ -184,15 +192,6 @@
       "errors": {
         "invalidCriteria": "The value entered does not meet the criteria required for this field."
       }
-    }
-  },
-  "lending": {
-    "poolOverview": { "title": "Pool Overview" },
-    "strategyDeck": "Strategy deck",
-    "tranche": {
-      "senior": "Senior Tranche APY",
-      "mezzanine": "Mezzanine Tranche APY",
-      "junior": "Junior Tranche APY"
     }
   },
   "details": {

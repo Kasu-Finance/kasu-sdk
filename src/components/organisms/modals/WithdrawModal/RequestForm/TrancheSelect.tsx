@@ -2,7 +2,7 @@ import { Box, FormControl, InputLabel, MenuItem, Select } from '@mui/material'
 
 import useTranslation from '@/hooks/useTranslation'
 
-import { Tranche } from '@/constants'
+import { Tranche } from '@/context/withdrawModal/withdrawModal.types'
 
 interface TrancheSelectProps {
   selectedTranche: Tranche
@@ -32,7 +32,7 @@ const TrancheSelect: React.FC<TrancheSelectProps> = ({
           <MenuItem value={Tranche.SENIOR_TRANCHE}>
             {t('lending.withdraw.dropdown.option.senior')}
           </MenuItem>
-          <MenuItem value={Tranche.MEZZANINE_TRANCE}>
+          <MenuItem value={Tranche.MEZZANINE_TRANCHE}>
             {t('lending.withdraw.dropdown.option.mezzanine')}
           </MenuItem>
           <MenuItem value={Tranche.JUNIOR_TRANCHE}>

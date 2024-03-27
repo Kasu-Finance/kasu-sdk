@@ -1,6 +1,5 @@
 import { Box, Typography } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
-import { PoolMetric } from 'kasu-sdk/src/types'
 import React, { useMemo } from 'react'
 
 import useMetricValues from '@/hooks/useMetricValues'
@@ -9,13 +8,19 @@ import useTranslation from '@/hooks/useTranslation'
 import InfoColumn from '@/components/atoms/InfoColumn'
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
-import { WithdrawMetrics, WithdrawSteps } from '@/constants'
+import {
+  WithdrawMetrics,
+  WithdrawProgress,
+} from '@/context/withdrawModal/withdrawModal.types'
+
 import { formatAccount } from '@/utils'
+
+import { PoolMetric } from '@/types/lending'
 
 interface MetricsSectionProps {
   poolName: string
   metrics: PoolMetric[]
-  activeStep: number
+  withdrawProgress: number
   selectedTranche: string
   isMultiTranche: boolean
   metricsRowClassName?: string
@@ -24,7 +29,7 @@ interface MetricsSectionProps {
 const MetricsSection: React.FC<MetricsSectionProps> = ({
   poolName,
   metrics,
-  activeStep,
+  withdrawProgress,
   selectedTranche,
   isMultiTranche,
   metricsRowClassName,
@@ -48,7 +53,9 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
   const toWallet = { id: WithdrawMetrics.TO_WALLET, content: userAddress || '' }
 
   const showTrancheInvestment =
-    activeStep === WithdrawSteps.REQUEST && isMultiTranche && trancheInvestment
+    withdrawProgress === WithdrawProgress.REQUEST &&
+    isMultiTranche &&
+    trancheInvestment
 
   return (
     <>
@@ -93,7 +100,7 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
         </Box>
       )}
 
-      {activeStep === WithdrawSteps.APPROVE && (
+      {withdrawProgress === WithdrawProgress.APPROVE && (
         <Box display='flex' className={metricsRowClassName} pt={2}>
           {isMultiTranche ? (
             <MetricWithSuffix

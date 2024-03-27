@@ -68,10 +68,10 @@ const Lending = () => {
   const hasPools = fakePools && fakePools.length > 0
 
   const poolsContent = hasPools ? (
-    pools.map((pool, index) => (
+    fakePools.map((pool, index) => (
       <PoolCard
-        poolName={pool.poolName}
-        link={`lending/${pool.id}`}
+        poolName={pool.name}
+        link={pool.link}
         key={index}
         handleWithdrawClick={() => handleWithdrawClick(pool)}
       />

@@ -1,22 +1,46 @@
 import { Box, Button, Divider, Typography } from '@mui/material'
+import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
+import useModalState from '@/hooks/context/useModalState'
+import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import useTranslation from '@/hooks/useTranslation'
 
 import CountdownSection from '@/components/organisms/modals/WithdrawModal/ApproveForm/CountdownSection'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+import { WithdrawProgress } from '@/context/withdrawModal/withdrawModal.types'
+
 import { ChevronRightIcon, EditIcon } from '@/assets/icons'
 
+import { Routes } from '@/config/routes'
+
 interface ApproveFormProps {
-  handleAdjust: () => void
-  onSubmit: () => void
+  pool: PoolOverview
 }
 
-const ApproveForm: React.FC<ApproveFormProps> = ({
-  handleAdjust,
-  onSubmit,
-}) => {
+const ApproveForm: React.FC<ApproveFormProps> = ({ pool }) => {
+  const { setWithdrawProgress, setProcessing } = useWithdrawModalState()
+  const { openModal } = useModalState()
   const { t } = useTranslation()
+  const router = useRouter()
+
+  const onSubmit = () => {
+    setProcessing(true)
+    openModal({ name: ModalsKeys.TRANSACTION_PROCESSING })
+
+    setTimeout(() => {
+      setProcessing(false)
+      setWithdrawProgress(WithdrawProgress.CONFIRM)
+      router.push(`${Routes.lending.root.url}?poolId=${pool?.id}&step=3`)
+    }, 2000)
+  }
+
+  const handleAdjust = () => {
+    setWithdrawProgress(WithdrawProgress.REQUEST)
+    router.push(`${Routes.lending.root.url}?poolId=${pool?.id}&step=1`)
+  }
 
   return (
     <Box mt={3} px={1}>

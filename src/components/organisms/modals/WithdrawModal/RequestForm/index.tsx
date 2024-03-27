@@ -1,39 +1,49 @@
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import { Box, Button, Typography, useTheme } from '@mui/material'
+import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
+import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import useTranslation from '@/hooks/useTranslation'
 
 import AmountInput from '@/components/organisms/modals/WithdrawModal/RequestForm/AmountInput'
 import TrancheSelect from '@/components/organisms/modals/WithdrawModal/RequestForm/TrancheSelect'
 
-import { Tranche } from '@/constants'
+import { WithdrawProgress } from '@/context/withdrawModal/withdrawModal.types'
+
+import { Routes } from '@/config/routes'
 
 interface RequestFormProps {
-  amount: string
-  selectedTranche: Tranche
-  errorMsg: string
+  pool: PoolOverview
   isMultiTranche: boolean
   containerClassName?: string
-  onSubmit: () => void
-  setErrorMsg: (msg: string) => void
-  setAmount: (amount: string) => void
-  setSelectedTranche: (tranche: Tranche) => void
 }
 
 const RequestForm: React.FC<RequestFormProps> = ({
-  amount,
-  selectedTranche,
-  errorMsg,
+  pool,
   isMultiTranche,
   containerClassName,
-  onSubmit,
-  setErrorMsg,
-  setAmount,
-  setSelectedTranche,
 }) => {
+  const {
+    amount,
+    errorMsg,
+    selectedTranche,
+    setAmount,
+    setErrorMsg,
+    setSelectedTranche,
+    setWithdrawProgress,
+  } = useWithdrawModalState()
+
   const { t } = useTranslation()
   const theme = useTheme()
+  const router = useRouter()
+
+  const handleSubmit = () => {
+    setWithdrawProgress(WithdrawProgress.APPROVE)
+    router.push(`${Routes.lending.root.url}?poolId=${pool?.id}&step=2`)
+  }
+
   const disabledButton = !amount || !!errorMsg
 
   return (
@@ -78,7 +88,7 @@ const RequestForm: React.FC<RequestFormProps> = ({
               }}
             />
           }
-          onClick={onSubmit}
+          onClick={handleSubmit}
           disabled={disabledButton}
         >
           {t('lending.withdraw.button.review')}

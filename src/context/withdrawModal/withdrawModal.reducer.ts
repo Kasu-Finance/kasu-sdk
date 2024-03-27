@@ -1,0 +1,42 @@
+import {
+  WithdrawActionTypes,
+  WithdrawModalActions,
+  WithdrawModalStateType,
+} from './withdrawModal.types'
+
+const withdrawModalReducer = (
+  state: WithdrawModalStateType,
+  action: WithdrawModalActions
+): WithdrawModalStateType => {
+  switch (action.type) {
+    case WithdrawActionTypes.SET_AMOUNT:
+      return {
+        ...state,
+        amount: action.payload,
+      }
+    case WithdrawActionTypes.SET_SELECTED_TRANCHE:
+      return {
+        ...state,
+        selectedTranche: action.payload,
+      }
+    case WithdrawActionTypes.SET_WITHDRAW_PROGRESS:
+      return {
+        ...state,
+        withdrawProgress: action.payload,
+      }
+    case WithdrawActionTypes.SET_ERROR_MSG:
+      return {
+        ...state,
+        errorMsg: action.payload,
+      }
+    case WithdrawActionTypes.SET_PROCESSING:
+      return {
+        ...state,
+        processing: action.payload,
+      }
+    default:
+      return state
+  }
+}
+
+export default withdrawModalReducer
