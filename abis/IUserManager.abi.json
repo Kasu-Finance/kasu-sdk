@@ -1,5 +1,10 @@
 [
   {
+    "inputs": [],
+    "name": "BadUserIndex",
+    "type": "error"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
@@ -25,6 +30,57 @@
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "epoch",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "userCount",
+        "type": "uint256"
+      }
+    ],
+    "name": "UserLoyaltyLevelsForEpochProcessed",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "epoch",
+        "type": "uint256"
+      }
+    ],
+    "name": "areUserEpochLoyaltyLevelProcessed",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "batchSize",
+        "type": "uint256"
+      }
+    ],
+    "name": "batchCalculateUserLoyaltyLevels",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -38,6 +94,79 @@
         "internalType": "bool",
         "name": "",
         "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAllUsers",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "epoch",
+        "type": "uint256"
+      }
+    ],
+    "name": "getCalculatedUserEpochLoyaltyLevel",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "loyaltyLevel",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "epoch",
+        "type": "uint256"
+      }
+    ],
+    "name": "getEpochUserLoyaltyProcessing",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bool",
+            "name": "didStart",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "userCount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "processedUsersCount",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct EpochUserLoyaltyProcessing",
+        "name": "",
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",
@@ -94,6 +223,44 @@
         "type": "address"
       }
     ],
+    "name": "getUserTotalPendingAndActiveDepositedAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "getUserTotalPendingAndActiveDepositedAmountForCurrentEpoch",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
     "name": "hasUserRKSU",
     "outputs": [
       {
@@ -103,6 +270,42 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "fromIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "toIndex",
+        "type": "uint256"
+      }
+    ],
+    "name": "updateUserLendingPools",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      }
+    ],
+    "name": "userRequestedDeposit",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]
