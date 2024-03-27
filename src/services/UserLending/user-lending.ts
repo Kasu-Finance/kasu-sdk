@@ -13,7 +13,7 @@ import { SdkConfig } from '../../sdk-config';
 
 
 
-export class UserActions {
+export class UserLending {
     private readonly _graph: GraphQLClient;
     private readonly _userManagerAbi: IUserManagerAbi;
     private readonly _lendingPoolManagerAbi: ILendingPoolManagerAbi;
@@ -48,4 +48,23 @@ export class UserActions {
         return await this._lendingPoolManagerAbi.requestDepositWithKyc(lendingPool, tranche, amount, blockExpiration, signature);
     }
 
+    async requestDeposit(lendingPool: string, tranche: string, amount: BigNumberish): Promise<ContractTransaction> {
+        return await this._lendingPoolManagerAbi.requestDeposit(lendingPool, tranche, amount);
+    }
+
+    async cancelDepositRequest(lendingPool: string, dNftID: BigNumberish): Promise<ContractTransaction> {
+        return await this._lendingPoolManagerAbi.cancelDepositRequest(lendingPool, dNftID);
+    }
+
+    async requestWithdrawal(lendingPool: string, tranche: string, amount: BigNumberish): Promise<ContractTransaction> {
+        return await this._lendingPoolManagerAbi.requestWithdrawal(lendingPool, tranche, amount);
+    }
+
+    async cancelWithdrawalRequest(lendingPool: string, dNftID: BigNumberish): Promise<ContractTransaction> {
+        return await this._lendingPoolManagerAbi.cancelWithdrawalRequest(lendingPool, dNftID);
+    }
+
+    async claimRepaidLoss(lendingPool: string, tranche: string, lossId: BigNumberish): Promise<ContractTransaction> {
+        return await this._lendingPoolManagerAbi.claimRepaidLoss(lendingPool, tranche, lossId);
+    }
 }
