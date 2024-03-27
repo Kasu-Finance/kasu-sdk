@@ -2,6 +2,8 @@ export interface ContractAddresses {
     KSUToken: string;
     IKSULocking: string;
     IKSULockBonus: string;
+    UserManager: string;
+    LendingPoolManager: string;
 }
 export class SdkConfig {
     subgraphUrl: string;

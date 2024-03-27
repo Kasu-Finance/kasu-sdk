@@ -53,7 +53,7 @@
         "type": "uint256"
       }
     ],
-    "name": "borrowLoan",
+    "name": "borrowLoanImmediate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -250,6 +250,34 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "lendingPoolAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "targetEpoch",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "pendingRequestsPriorityCalculationBatchSize",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "acceptedRequestsExecutionBatchSize",
+        "type": "uint256"
+      }
+    ],
+    "name": "doClearing",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "lendingPool",
         "type": "address"
       },
@@ -327,6 +355,56 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "epoch",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "borrowAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "trancheDesiredRatios",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxExcessPercentage",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "minExcessPercentage",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "isOverridden",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct ClearingConfiguration",
+        "name": "clearingConfig",
+        "type": "tuple"
+      }
+    ],
+    "name": "registerClearingConfig",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -428,6 +506,45 @@
       }
     ],
     "name": "requestDeposit",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "dNftID",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "tranche",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "blockExpiration",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "signature",
+        "type": "bytes"
+      }
+    ],
+    "name": "requestDepositWithKyc",
     "outputs": [
       {
         "internalType": "uint256",
