@@ -1,47 +1,60 @@
-import VerifiedIcon from '@mui/icons-material/VerifiedSharp'
-import {
-  Box,
-  Button,
-  DialogActions,
-  DialogContent,
-  Divider,
-  Step,
-  StepLabel,
-  Stepper,
-} from '@mui/material'
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import EditIcon from '@mui/icons-material/Edit'
+import ReceiptIcon from '@mui/icons-material/Receipt'
+import { Box, Button, DialogActions, DialogContent } from '@mui/material'
 
+import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
+import useTranslation from '@/hooks/useTranslation'
+import useApproveToken from '@/hooks/web3/useApproveToken'
 
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
 import DialogHeader from '@/components/molecules/DialogHeader'
+import DepositModalCompleted from '@/components/organisms/modals/DepositModal/DepositModalCompleted'
 import DepositModalEdit from '@/components/organisms/modals/DepositModal/DepositModalEdit'
+import DepositModalReview from '@/components/organisms/modals/DepositModal/DepositModalReview'
+import DepositModalStepper from '@/components/organisms/modals/DepositModal/DepositModalStepper'
 
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
-import { ChevronRightIcon } from '@/assets/icons'
-
-const STEPS = ['Deposit', 'Approval', 'Confirmation']
-
-const getActiveStep = (modalStatusAction: ModalStatusAction) => {
-  switch (modalStatusAction) {
-    case ModalStatusAction.EDITING:
-      return 0
-    case ModalStatusAction.REVIEWING:
-      return 1
-    case ModalStatusAction.COMPLETED:
-      return 2
-  }
-}
+import sdkConfig, { USDC } from '@/config/sdk'
 
 const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
+  const { t } = useTranslation()
+
   const { modal } = useModalState()
 
-  const { modalStatus, modalStatusAction } = useModalStatusState()
+  const { amount, txHash } = useDepositModalState()
+
+  const { modalStatus, modalStatusAction, setModalStatusAction } =
+    useModalStatusState()
+
+  const { isApproved, approve } = useApproveToken(
+    USDC,
+    sdkConfig.contracts.IKSULocking,
+    amount
+  )
 
   return (
     <>
-      <DialogHeader title='Deposit Funds' onClose={handleClose} />
+      <DialogHeader
+        title='Deposit Funds'
+        showClose={!txHash}
+        onClose={handleClose}
+      >
+        {txHash && (
+          <Button
+            sx={{ height: 30, width: 97, p: '4px 10px' }}
+            variant='outlined'
+            startIcon={<ReceiptIcon />}
+            href={txHash}
+            target='_blank'
+          >
+            VIEW TX
+          </Button>
+        )}
+      </DialogHeader>
       <DialogContent>
         <Box
           sx={{
@@ -50,40 +63,53 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             p: 1,
           }}
         >
-          <Stepper
-            activeStep={getActiveStep(modalStatusAction)}
-            alternativeLabel
-            connector={null}
-            sx={{
-              display: 'grid',
-              gridTemplateColumns:
-                'max-content minmax(0,1fr) max-content minmax(0,1fr) max-content',
-            }}
-          >
-            {STEPS.map((label, index) => (
-              <Step sx={{ display: 'contents' }} key={label}>
-                {index !== 0 && (
-                  <Divider
-                    sx={{ mt: 1.5, borderColor: 'rgba(189, 189, 189, 1)' }}
-                  />
-                )}
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-          <DepositModalEdit poolData={modal.depositModal.poolData} />
+          <DepositModalStepper />
+          {modalStatusAction === ModalStatusAction.REVIEWING ? (
+            <DepositModalReview poolData={modal.depositModal.poolData} />
+          ) : modalStatusAction === ModalStatusAction.EDITING ? (
+            <DepositModalEdit poolData={modal.depositModal.poolData} />
+          ) : (
+            <DepositModalCompleted poolData={modal.depositModal.poolData} />
+          )}
         </Box>
       </DialogContent>
-      <DialogActions sx={{ justifyContent: 'center', pb: 3 }}>
-        <>
-          <Button variant='outlined' startIcon={<VerifiedIcon />}>
-            INCREASE/ESTABLISH LOYALTY LEVEL
-          </Button>
-          <Button variant='contained' endIcon={<ChevronRightIcon />}>
-            REVIEW DEPOSIT
-          </Button>
-        </>
-      </DialogActions>
+      {modalStatusAction !== ModalStatusAction.EDITING && (
+        <DialogActions
+          disableSpacing
+          sx={{ justifyContent: 'center', pt: 0, pb: 3, gap: 2 }}
+        >
+          {modalStatusAction === ModalStatusAction.REVIEWING ? (
+            <>
+              <Button
+                variant='outlined'
+                startIcon={<EditIcon />}
+                onClick={() => setModalStatusAction(ModalStatusAction.EDITING)}
+              >
+                {t('general.adjust')}
+              </Button>
+              <Button
+                variant='contained'
+                endIcon={<ChevronRightIcon />}
+                onClick={() =>
+                  isApproved
+                    ? setModalStatusAction(ModalStatusAction.COMPLETED)
+                    : approve(amount)
+                }
+              >
+                {isApproved ? t('general.confirm') : t('general.approve')}
+              </Button>
+            </>
+          ) : (
+            <Button
+              variant='contained'
+              sx={{ width: 235 }}
+              onClick={handleClose}
+            >
+              LENDING POOL OVERVIEW
+            </Button>
+          )}
+        </DialogActions>
+      )}
     </>
   )
 }

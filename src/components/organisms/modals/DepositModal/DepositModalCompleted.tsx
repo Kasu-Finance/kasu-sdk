@@ -1,0 +1,82 @@
+import { Box, Button, Typography } from '@mui/material'
+
+import useDepositModalState from '@/hooks/context/useDepositModalState'
+import useModalState from '@/hooks/context/useModalState'
+
+import List from '@/components/atoms/List'
+import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
+
+type DepositModalCompletedProps = {
+  poolData: PoolData
+}
+
+const DepositModalCompleted: React.FC<DepositModalCompletedProps> = ({
+  poolData,
+}) => {
+  const { openModal } = useModalState()
+
+  const { trancheId } = useDepositModalState()
+
+  const handleOpen = () => openModal({ name: 'loyaltyLevelsModal' })
+
+  return (
+    <Box px={1} pt={1} mt={2}>
+      <Box width={413}>
+        <Typography variant='subtitle1' component='p'>
+          You have successfully queued:
+        </Typography>
+        <List>
+          <li>
+            <Typography variant='subtitle1' component='p'>
+              100,000.00 USDC •{' '}
+              <Typography variant='subtitle2' component='span'>
+                to be deposited in the next Epoch to
+              </Typography>{' '}
+              {poolData.poolName}
+            </Typography>
+          </li>
+          {poolData.tranches.length > 1 && (
+            <li>
+              <Typography variant='subtitle2' component='p'>
+                Tranches
+                <Typography variant='subtitle1' component='span'>
+                  {' '}
+                  •{' '}
+                  {poolData.tranches.find(
+                    (tranche) => tranche.trancheId === trancheId
+                  )?.title || 'Tranche'}
+                </Typography>{' '}
+              </Typography>
+            </li>
+          )}
+        </List>
+      </Box>
+      <Typography
+        display='block'
+        mt={2}
+        variant='body2'
+        component='p'
+        textAlign='center'
+      >
+        By depositing funds to this Lending Pool, you accept the{' '}
+        <Button
+          onClick={handleOpen}
+          variant='text'
+          sx={{
+            height: 'auto',
+            display: 'inline',
+            p: 0,
+            fontSize: 'inherit',
+            fontWeight: 'inherit',
+            fontFamily: 'inherit',
+            textTransform: 'inherit',
+          }}
+        >
+          Terms and Conditions.
+        </Button>
+      </Typography>
+    </Box>
+  )
+}
+
+export default DepositModalCompleted

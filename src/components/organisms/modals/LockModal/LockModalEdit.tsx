@@ -1,3 +1,4 @@
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import { Box, Button } from '@mui/material'
 import React from 'react'
 
@@ -11,8 +12,6 @@ import LockDurationInput from '@/components/molecules/locking/LockModal/LockDura
 import LockModalOverview from '@/components/molecules/locking/LockModal/LockModalOverview'
 
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
-
-import { ChevronRightIcon } from '@/assets/icons'
 
 type LockModalEditProps = {
   userBalance: string
@@ -43,12 +42,6 @@ const LockModalEdit: React.FC<LockModalEditProps> = ({ userBalance }) => {
             width: 170,
             textTransform: 'uppercase',
             mx: 'auto',
-            '& .MuiButton-endIcon': {
-              ml: 1.5,
-            },
-            '&:disabled .MuiButton-endIcon svg path': {
-              fill: 'rgba(0, 0, 0, 0.26)',
-            },
           }}
           endIcon={<ChevronRightIcon />}
           onClick={() => setModalStatusAction(ModalStatusAction.REVIEWING)}

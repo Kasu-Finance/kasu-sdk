@@ -14,6 +14,7 @@ import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 import { COLS } from '@/constants'
 
 export type PoolData = {
+  poolName: string
   lendingPoolId: `0x${string}`
   totalUserInvestment: string
   tranches: {
@@ -39,6 +40,7 @@ const TranchesApyCard = () => {
     openModal({ name: 'depositModal', poolData: POOL_DATA })
 
   const POOL_DATA: PoolData = {
+    poolName: 'Apxium Invoice Standard Financing Pool',
     lendingPoolId: ethers.constants.AddressZero,
     totalUserInvestment: '200000',
     tranches: [
@@ -105,7 +107,7 @@ const TranchesApyCard = () => {
                 <MetricWithSuffix
                   content={tranche.content}
                   tooltipKey={tranche.toolTip}
-                  titleKey={t(tranche.title)}
+                  titleKey={`${tranche.title} APY`}
                 />
               </Grid>
             )

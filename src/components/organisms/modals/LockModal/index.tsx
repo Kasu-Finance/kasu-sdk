@@ -60,37 +60,43 @@ const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           </Typography>
         )}
       </DialogContent>
-      <DialogActions sx={{ justifyContent: 'center', pb: 3 }}>
-        {modalStatusAction === ModalStatusAction.REVIEWING ? (
-          <>
-            <Button
-              variant='outlined'
-              startIcon={<EditIcon />}
-              onClick={() => setModalStatusAction(ModalStatusAction.EDITING)}
-            >
-              {t('general.adjust')}
-            </Button>
+      {modalStatusAction !== ModalStatusAction.EDITING && (
+        <DialogActions sx={{ justifyContent: 'center', pb: 3 }}>
+          {modalStatusAction === ModalStatusAction.REVIEWING ? (
+            <>
+              <Button
+                variant='outlined'
+                startIcon={<EditIcon />}
+                onClick={() => setModalStatusAction(ModalStatusAction.EDITING)}
+              >
+                {t('general.adjust')}
+              </Button>
+              <Button
+                variant='contained'
+                endIcon={<ChevronRightIcon />}
+                onClick={() =>
+                  isApproved
+                    ? lockKSU(
+                        parseUnits(amount, decimals),
+                        selectedLockPeriod.lockPeriod
+                      )
+                    : approve(amount)
+                }
+              >
+                {isApproved ? t('general.confirm') : t('general.approve')}
+              </Button>
+            </>
+          ) : (
             <Button
               variant='contained'
-              endIcon={<ChevronRightIcon />}
-              onClick={() =>
-                isApproved
-                  ? lockKSU(
-                      parseUnits(amount, decimals),
-                      selectedLockPeriod.lockPeriod
-                    )
-                  : approve(amount)
-              }
+              sx={{ width: 191 }}
+              onClick={handleClose}
             >
-              {isApproved ? t('general.confirm') : t('general.approve')}
+              LOCKING OVERVIEW
             </Button>
-          </>
-        ) : modalStatusAction === ModalStatusAction.COMPLETED ? (
-          <Button variant='contained' sx={{ width: 191 }} onClick={handleClose}>
-            LOCKING OVERVIEW
-          </Button>
-        ) : null}
-      </DialogActions>
+          )}
+        </DialogActions>
+      )}
     </>
   )
 }
