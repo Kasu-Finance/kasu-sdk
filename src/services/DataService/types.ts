@@ -73,6 +73,7 @@ export interface TrancheData {
     maximumDeposit: string;
     minimumDeposit: string;
     poolCapacity: string;
+    name: string;
 }
 
 export interface PoolCreditMetrics {

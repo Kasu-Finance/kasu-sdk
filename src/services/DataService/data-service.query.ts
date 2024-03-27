@@ -10,7 +10,7 @@ export const getAllLendingPoolsQuery = gql`
         balance
         borrowedAmount
         firstLostCapital
-        tranches {
+        tranches(orderBy: orderId) {
           balance
           id
           totalYieldAmount
