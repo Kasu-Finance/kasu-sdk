@@ -1,11 +1,11 @@
 import { alpha, useTheme } from '@mui/material'
 import { useCallback, useContext } from 'react'
 
-import { LockState } from '@/context/lockModal/lockModal.types'
 import modalStatusContext from '@/context/modalStatus/modalStatus.context'
 import {
   ModalStatusAction,
   ModalStatusParam,
+  ModalStatusState,
   ModalStatusTypes,
 } from '@/context/modalStatus/modalStatus.types'
 
@@ -21,16 +21,19 @@ const useModalStatusState = (): ModalStatusTypes => {
   const { dispatch } = context
 
   const setModalStatus = useCallback(
-    (lockState: ModalStatusParam) => {
-      let newLockState: LockState = { type: 'default', bgColor: undefined }
+    (modalStatus: ModalStatusParam) => {
+      let newLockState: ModalStatusState = {
+        type: 'default',
+        bgColor: undefined,
+      }
 
-      if (lockState.type !== 'default') {
+      if (modalStatus.type !== 'default') {
         newLockState = {
-          ...lockState,
+          ...modalStatus,
           bgColor: alpha(
             theme.palette[
-              ['error', 'success'].includes(lockState.type)
-                ? (lockState.type as 'success' | 'error')
+              ['error', 'success'].includes(modalStatus.type)
+                ? (modalStatus.type as 'success' | 'error')
                 : 'primary'
             ].main,
             0.04

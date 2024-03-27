@@ -2,8 +2,10 @@
 
 import LoginIcon from '@mui/icons-material/Login'
 import { Box, Button, Grid } from '@mui/material'
+import { ethers } from 'ethers'
 import { useRef } from 'react'
 
+import useModalState from '@/hooks/context/useModalState'
 import useIsSticky from '@/hooks/useIsSticky'
 import useTranslation from '@/hooks/useTranslation'
 
@@ -11,32 +13,55 @@ import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
 import { COLS } from '@/constants'
 
+export type PoolData = {
+  lendingPoolId: `0x${string}`
+  totalUserInvestment: string
+  tranches: {
+    content: string
+    toolTip: string
+    title: string
+    trancheId: string
+  }[]
+}
+
 const TranchesApyCard = () => {
   const divRef = useRef<HTMLDivElement>(null)
   const { t } = useTranslation()
 
-  const tranches = [
-    {
-      content: '12.50 %',
-      tooltip: '01',
-      title: t('lending.tranche.senior'),
-    },
-    {
-      content: '12.50 %',
-      tooltip: '01',
-      title: t('lending.tranche.mezzanine'),
-    },
-    {
-      content: '2.4 %',
-      tooltip: '01',
-      title: t('lending.tranche.junior'),
-    },
-  ]
+  const { openModal } = useModalState()
 
   const { isSticky } = useIsSticky({
     elementRef: divRef,
     threshold: 64,
   })
+
+  const handleOpen = () =>
+    openModal({ name: 'depositModal', poolData: POOL_DATA })
+
+  const POOL_DATA: PoolData = {
+    lendingPoolId: ethers.constants.AddressZero,
+    totalUserInvestment: '200000',
+    tranches: [
+      {
+        content: '12.50 %',
+        toolTip: '01',
+        title: t('lending.tranche.senior'),
+        trancheId: 'senior',
+      },
+      {
+        content: '12.50 %',
+        toolTip: '01',
+        title: t('lending.tranche.mezzanine'),
+        trancheId: 'mezzanine',
+      },
+      {
+        content: '2.4 %',
+        toolTip: '01',
+        title: t('lending.tranche.junior'),
+        trancheId: 'junior',
+      },
+    ],
+  }
 
   return (
     <Box
@@ -74,18 +99,17 @@ const TranchesApyCard = () => {
           columnSpacing={{ xs: 1, sm: 2, md: 3 }}
           maxWidth='lg'
         >
-          {tranches.length > 0 &&
-            tranches.map((tranche, index) => {
-              return (
-                <Grid item xs={COLS / tranches.length} key={index}>
-                  <MetricWithSuffix
-                    content={tranche.content}
-                    tooltipKey={tranche.tooltip}
-                    titleKey={t(tranche.title)}
-                  />
-                </Grid>
-              )
-            })}
+          {POOL_DATA.tranches.map((tranche, index) => {
+            return (
+              <Grid item xs={COLS / POOL_DATA.tranches.length} key={index}>
+                <MetricWithSuffix
+                  content={tranche.content}
+                  tooltipKey={tranche.toolTip}
+                  titleKey={t(tranche.title)}
+                />
+              </Grid>
+            )
+          })}
         </Grid>
       </Box>{' '}
       <Box
@@ -103,6 +127,7 @@ const TranchesApyCard = () => {
           variant='contained'
           sx={{ pl: 2.25, pr: 2.25 }}
           startIcon={<LoginIcon />}
+          onClick={handleOpen}
         >
           {t('general.deposit')}
         </Button>

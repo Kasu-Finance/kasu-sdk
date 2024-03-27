@@ -8,6 +8,7 @@ export const sdkConfig: SdkConfig = {
     IKSULocking: '0x2235E1389cC37bdC8086Faeb3abEa3d206fe8E3d',
     KSUToken: '0x97EC1504E3a92BfAff98D25fE11F0fa4Ae08533b',
   },
+  directusUrl: 'https://kasu-finance.directus.app/',
   subgraphUrl:
     'https://api.studio.thegraph.com/query/63245/kasu-wip-sepolia/version/latest',
 }
