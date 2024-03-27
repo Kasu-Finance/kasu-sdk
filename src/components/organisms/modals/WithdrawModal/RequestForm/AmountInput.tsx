@@ -1,11 +1,10 @@
+import LogoutIcon from '@mui/icons-material/Logout'
 import { Box, Typography, useTheme } from '@mui/material'
 import React, { useCallback, useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
 import NumericalInput from '@/components/molecules/NumericalInput'
-
-import { ExitIcon } from '@/assets/icons'
 
 interface AmountInputProps {
   amount: string
@@ -74,7 +73,7 @@ const AmountInput: React.FC<AmountInputProps> = ({
     },
     error: !!errorMsg,
     InputProps: {
-      startAdornment: <ExitIcon />,
+      startAdornment: <LogoutIcon sx={{ color: theme.palette.icon.primary }} />,
       endAdornment: 'USDC',
     },
   }
