@@ -1,6 +1,8 @@
-import { PoolDetailSection, PoolMetric, PoolOverview } from 'kasu-sdk/src/types'
+import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
 
 import { PoolDetailsSectionIds, PoolTractionMetricIds } from '@/constants'
+
+import { PoolDetailSection, PoolMetric } from '@/types/lending'
 
 const convertToPoolTraction = (overview: PoolOverview): PoolDetailSection => {
   const metrics: PoolMetric[] = [

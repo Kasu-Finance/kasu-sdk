@@ -53,8 +53,8 @@ const Lending = () => {
   const hasPools = fakePools && fakePools.length > 0
 
   const poolsContent = hasPools ? (
-    pools.map((pool, index) => (
-      <PoolCard name={pool.poolName} link={`lending/${pool.id}`} key={index} />
+    fakePools.map((pool, index) => (
+      <PoolCard name={pool.name} link={pool.link} key={index} />
     ))
   ) : (
     <EmptyCardState message='No pools available.' />

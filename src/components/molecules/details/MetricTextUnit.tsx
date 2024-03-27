@@ -1,10 +1,11 @@
 import { Box, SxProps, Theme, Typography, TypographyProps } from '@mui/material'
-import { PoolMetric } from 'kasu-sdk/src/types'
 import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
+
+import { PoolMetric } from '@/types/lending'
 
 export interface MetricProps extends Partial<TypographyProps> {
   metric: PoolMetric

@@ -1,5 +1,4 @@
 import { Box, Typography } from '@mui/material'
-import { PoolMetric } from 'kasu-sdk/src/types'
 
 import useTranslation from '@/hooks/useTranslation'
 
@@ -7,6 +6,8 @@ import InfoRow from '@/components/atoms/InfoRow'
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
 import { MetricGroupType } from '@/constants'
+
+import { PoolMetric } from '@/types/lending'
 
 interface MetricDisplayProps {
   metric: PoolMetric

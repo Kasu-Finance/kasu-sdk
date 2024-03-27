@@ -1,6 +1,8 @@
-import { PoolDetailSection, RiskManagement } from 'kasu-sdk/src/types'
+import { RiskManagement } from 'kasu-sdk/src/services/DataService/types'
 
 import { PoolDetailsSectionIds, RiskMetricIds } from '@/constants'
+
+import { PoolDetailSection } from '@/types/lending'
 
 interface RiskManagementSection {
   riskStatus: PoolDetailSection
@@ -39,34 +41,38 @@ const convertRiskManagement = (
     ],
   }
 
+  // TODO: Add the correct content for the security and criteria metrics
   const security: PoolDetailSection = {
     id: PoolDetailsSectionIds.Security,
     metrics: [
       {
         id: RiskMetricIds.Guarantees,
-        content: riskData.securityStructureEndBorrowers.directorsGuarantees,
+        content: 'riskData.securityStructureEndBorrowers.directorsGuarantees',
       },
       {
         id: RiskMetricIds.ChargeAssets,
-        content: riskData.securityStructureEndBorrowers.chargeOverBusinessAsset,
+        content:
+          'riskData.securityStructureEndBorrowers.chargeOverBusinessAsset',
       },
       {
         id: RiskMetricIds.BankControl,
-        content: riskData.securityStructureEndBorrowers.controlOverBankAccounts,
+        content:
+          'riskData.securityStructureEndBorrowers.controlOverBankAccounts',
       },
     ],
   }
 
+  // TODO: Add the correct content for the security and criteria metrics
   const criteria: PoolDetailSection = {
     id: PoolDetailsSectionIds.Criteria,
     metrics: [
       {
         id: RiskMetricIds.YearsBusiness,
-        content: riskData.minimumCriteriaEndBorrowers.minimumYearsInBusiness,
+        content: 'riskData.minimumCriteriaEndBorrowers.minimumYearsInBusiness',
       },
       {
         id: RiskMetricIds.PropertyOwners,
-        content: riskData.minimumCriteriaEndBorrowers.propertyOwners,
+        content: 'riskData.minimumCriteriaEndBorrowers.propertyOwners',
       },
     ],
   }

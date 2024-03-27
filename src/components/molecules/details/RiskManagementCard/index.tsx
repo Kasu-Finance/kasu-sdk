@@ -1,5 +1,5 @@
 import { Box, Card, Typography } from '@mui/material'
-import { RiskManagement } from 'kasu-sdk/src/types'
+import { RiskManagement } from 'kasu-sdk/src/services/DataService/types'
 import { useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
