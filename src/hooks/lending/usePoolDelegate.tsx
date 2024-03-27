@@ -1,4 +1,4 @@
-import { PoolDelegateProfileAndHistory } from 'kasu-sdk/src/types'
+import { PoolDelegateProfileAndHistory } from 'kasu-sdk/src/services/DataService/types'
 import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'

@@ -1,4 +1,4 @@
-import { RiskManagement } from 'kasu-sdk/src/types'
+import { RiskManagement } from 'kasu-sdk/src/services/DataService/types'
 import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
