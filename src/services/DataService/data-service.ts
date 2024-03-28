@@ -41,6 +41,7 @@ export class DataService {
         this._directus = createDirectus<DirectusSchema>(kasuConfig.directusUrl).with(authentication()).with(rest());
     }
     async getPoolOverview(id_in?: string[]): Promise<PoolOverview[]> {
+        const trancheNames: string[][] = [["Senior"], ["Junior", "Senior"], ["Junior", "Mezzanine", "Senior"]];
         const subgraphTrancheConfigurationResults: TrancheConfigurationSubgraph[] = await this._graph.request(getAllTrancheConfigurationsQuery);
         const subgraphResults: LendingPoolSubgraph[] = await this._graph.request(getAllLendingPoolsQuery);
         const directusResults: PoolOverviewDirectus[] = await this._directus.request(readItems('PoolOverview'));
@@ -64,6 +65,7 @@ export class DataService {
                     maximumDeposit: trancheConfig.maxDepositAmount,
                     minimumDeposit: trancheConfig.minDepositAmount,
                     poolCapacity: "10", // need formula for calculation
+                    name: (trancheNames[tranches.length-1][tranche.orderId] || "N/A") as string,
                 });
             }
             const poolOverview: PoolOverview = {
