@@ -80,12 +80,6 @@ export class UserLending {
         blockExpiration: BigNumberish,
         signature: BytesLike,
     ): Promise<ContractTransaction> {
-        console.log({ lendingPool });
-        console.log({ tranche });
-        console.log({ amount });
-        console.log({ blockExpiration });
-        console.log({ signature });
-
         return await this._lendingPoolManagerAbi.requestDepositWithKyc(
             lendingPool,
             tranche,
