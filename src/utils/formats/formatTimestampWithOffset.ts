@@ -1,9 +1,5 @@
-import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
-
 import { FULL_DATE_WITH_TIME } from '@/constants'
-
-dayjs.extend(utc)
+import dayjs from '@/dayjs'
 
 const formatTimestampWithOffset = (
   timestamp: number,

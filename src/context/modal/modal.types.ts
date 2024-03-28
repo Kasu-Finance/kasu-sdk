@@ -1,5 +1,7 @@
 import { UserLock } from 'kasu-sdk/src/types'
 
+import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
+
 export type ModalBase = {
   isOpen: boolean
 }
@@ -31,9 +33,14 @@ export type Modals = {
   unlockModal: ModalData<{ userLock: UserLock }>
   withdrawModal: ModalData
   transactionProcessingModal: ModalData
+  depositModal: ModalData<{ poolData: PoolData }>
+  kycModal: ModalData<{ callback: () => void }>
 }
 
-export type ModalWithProps = Extract<keyof Modals, 'unlockModal'>
+export type ModalWithProps = Extract<
+  keyof Modals,
+  'unlockModal' | 'depositModal' | 'kycModal'
+>
 
 export type OpenModalWithProps<T extends keyof Modals> = Omit<
   Modals[T],

@@ -7,12 +7,13 @@ import '@/connection/eagerlyConnect'
 import Header from '@/components/organisms/header'
 import ModalsContainer from '@/components/organisms/modals/ModalsContainer'
 
+import KycState from '@/context/kyc/kyc.provider'
 import ModalState from '@/context/modal/modal.provider'
 import { SWRProvider } from '@/context/swrProvider/swr.provider'
 import ToastState from '@/context/toast/toast.provider'
 import Web3Provider from '@/context/web3provider/web3.provider'
 
-import { getLockPeriods } from '@/config/lockPeriod'
+import getLockPeriods from '@/actions/getLockPeriods'
 import ThemeRegistry from '@/themes/ThemeRegistry'
 
 type RootLayoutProps = {
@@ -39,15 +40,17 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <SWRProvider lockPeriods={lockPeriods}>
           <ThemeRegistry>
             <Web3Provider>
-              <ModalState>
-                <ToastState>
-                  <Header />
-                  <Box component='main' paddingTop={3} paddingBottom={3}>
-                    {children}
-                  </Box>
-                  <ModalsContainer />
-                </ToastState>
-              </ModalState>
+              <KycState>
+                <ModalState>
+                  <ToastState>
+                    <Header />
+                    <Box component='main' paddingTop={3} paddingBottom={3}>
+                      {children}
+                    </Box>
+                    <ModalsContainer />
+                  </ToastState>
+                </ModalState>
+              </KycState>
             </Web3Provider>
           </ThemeRegistry>
         </SWRProvider>

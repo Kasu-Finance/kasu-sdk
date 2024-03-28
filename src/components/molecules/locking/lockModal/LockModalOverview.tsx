@@ -2,7 +2,7 @@ import { Grid } from '@mui/material'
 import { formatEther, formatUnits } from 'ethers/lib/utils'
 import React from 'react'
 
-import useLockModalState from '@/hooks/context/useLockModalState'
+import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useStakedKSU from '@/hooks/locking/useStakedKSU'
 import useTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
@@ -21,7 +21,7 @@ type LockModalOverviewProps = {
 const LockModalOverview: React.FC<LockModalOverviewProps> = ({ balance }) => {
   const { t } = useTranslation()
 
-  const { lockState } = useLockModalState()
+  const { modalStatus } = useModalStatusState()
 
   const { balance: usdcBalance, decimals: usdcDecimals } = useUserBalance(USDC)
 
@@ -35,7 +35,7 @@ const LockModalOverview: React.FC<LockModalOverviewProps> = ({ balance }) => {
   )
 
   return (
-    <ColoredBox sx={{ bgcolor: lockState.bgColor }}>
+    <ColoredBox sx={{ bgcolor: modalStatus.bgColor }}>
       <Grid container spacing={2}>
         <Grid item container xs={6}>
           <BalanceItem

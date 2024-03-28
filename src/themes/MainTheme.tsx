@@ -189,10 +189,7 @@ export const theme = createTheme({
     },
     MuiList: {
       styleOverrides: {
-        root: {
-          paddingTop: 0,
-          paddingBottom: 0,
-        },
+        root: {},
       },
     },
     MuiAlert: {

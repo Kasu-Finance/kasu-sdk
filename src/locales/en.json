@@ -142,9 +142,9 @@
     "poolOverview": { "title": "Pool Overview" },
     "strategyDeck": "Strategy deck",
     "tranche": {
-      "senior": "Senior Tranche APY",
-      "mezzanine": "Mezzanine Tranche APY",
-      "junior": "Junior Tranche APY"
+      "senior": "Senior Tranche",
+      "mezzanine": "Mezzanine Tranche",
+      "junior": "Junior Tranche"
     },
     "withdraw": {
       "title": "Withdraw Funds",

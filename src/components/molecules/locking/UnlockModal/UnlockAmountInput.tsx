@@ -3,6 +3,7 @@ import { UserLock } from 'kasu-sdk/src/types'
 import { useState } from 'react'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
+import useModalStatusState from '@/hooks/context/useModalStatusState'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import BalanceItem from '@/components/molecules/locking/BalanceOverview/BalanceItem'
@@ -17,11 +18,13 @@ type UnlockAmountInputProps = {
 }
 
 const UnlockAmountInput: React.FC<UnlockAmountInputProps> = ({ userLock }) => {
-  const { amount, lockState, setAmount, setLockState } = useLockModalState()
+  const { amount, setAmount } = useLockModalState()
+
+  const { modalStatus, setModalStatus } = useModalStatusState()
 
   const [focused, setFocused] = useState(false)
 
-  const showSuccess = !focused && lockState.type === 'success'
+  const showSuccess = !focused && modalStatus.type === 'success'
 
   const { lockedAmount } = userLock
 
@@ -32,7 +35,7 @@ const UnlockAmountInput: React.FC<UnlockAmountInputProps> = ({ userLock }) => {
 
   const validate = (amount: string) => {
     if (amount && toBigNumber(amount).gt(toBigNumber(userLock.lockedAmount))) {
-      setLockState({
+      setModalStatus({
         type: 'error',
         errorMessage: 'insufficient balance',
       })
@@ -40,17 +43,17 @@ const UnlockAmountInput: React.FC<UnlockAmountInputProps> = ({ userLock }) => {
     }
 
     if (amount && toBigNumber(amount).isZero()) {
-      setLockState({ type: 'error', errorMessage: 'invalid amount' })
+      setModalStatus({ type: 'error', errorMessage: 'invalid amount' })
       return
     }
 
-    setLockState({ type: amount ? 'success' : 'default' })
+    setModalStatus({ type: amount ? 'success' : 'default' })
   }
 
   const handleFocusState = (state: boolean) => {
     if (state) {
       setFocused(true)
-      setLockState({ type: 'focused' })
+      setModalStatus({ type: 'focused' })
     } else {
       validate(amount)
       setFocused(false)
@@ -87,7 +90,7 @@ const UnlockAmountInput: React.FC<UnlockAmountInputProps> = ({ userLock }) => {
             }),
             onFocus: () => handleFocusState(true),
             onBlur: () => handleFocusState(false),
-            error: lockState.type === 'error',
+            error: modalStatus.type === 'error',
             InputLabelProps: {
               shrink: true,
             },
@@ -109,13 +112,13 @@ const UnlockAmountInput: React.FC<UnlockAmountInputProps> = ({ userLock }) => {
           }}
         />
 
-        {lockState.type === 'error' ? (
+        {modalStatus.type === 'error' ? (
           <ColoredBox
             mt='3px'
             sx={{
               px: 1.5,
               py: 0,
-              background: lockState.bgColor,
+              background: modalStatus.bgColor,
               maxWidth: 'calc(100% - 64px)',
             }}
           >
@@ -124,7 +127,7 @@ const UnlockAmountInput: React.FC<UnlockAmountInputProps> = ({ userLock }) => {
               component='span'
               color={(theme) => theme.palette.error.main}
             >
-              {lockState.errorMessage}
+              {modalStatus.errorMessage}
             </Typography>
           </ColoredBox>
         ) : (

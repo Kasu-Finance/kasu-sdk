@@ -5,10 +5,7 @@ import { ReactNode, useReducer } from 'react'
 
 import LockModalContext from '@/context/lockModal/lockModal.context'
 import lockModalReducer from '@/context/lockModal/lockModal.reducer'
-import {
-  LockModalStateType,
-  LockProgress,
-} from '@/context/lockModal/lockModal.types'
+import { LockModalStateType } from '@/context/lockModal/lockModal.types'
 
 type LockModalStateProps = {
   children: ReactNode
@@ -17,11 +14,6 @@ type LockModalStateProps = {
 
 const initialState: Omit<LockModalStateType, 'selectedLockPeriod'> = {
   amount: '',
-  lockState: {
-    type: 'default',
-    bgColor: undefined,
-  },
-  lockProgress: LockProgress.EDITING,
 }
 
 const LockModalState: React.FC<LockModalStateProps> = ({

@@ -2,6 +2,7 @@ import { Box, Typography } from '@mui/material'
 import { useState } from 'react'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
+import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useEstimatedDepositValue from '@/hooks/locking/useEstimatedDepositValue'
 import useTranslation from '@/hooks/useTranslation'
 
@@ -10,7 +11,7 @@ import InfoRow from '@/components/atoms/InfoRow'
 import TokenAmount from '@/components/atoms/TokenAmount'
 import NumericalInput from '@/components/molecules/NumericalInput'
 
-import { LockIcon } from '@/assets/icons'
+import { TimedLockIcon } from '@/assets/icons'
 
 import { formatAmount, toBigNumber } from '@/utils'
 
@@ -19,13 +20,15 @@ type LockAmountInputProps = {
 }
 
 const LockAmountInput: React.FC<LockAmountInputProps> = ({ balance }) => {
-  const { amount, setAmount, lockState, setLockState } = useLockModalState()
+  const { amount, setAmount } = useLockModalState()
+
+  const { modalStatus, setModalStatus } = useModalStatusState()
 
   const [focused, setFocused] = useState(false)
 
   const estimatedDepositValue = useEstimatedDepositValue(amount)
 
-  const showSuccess = !focused && lockState.type === 'success'
+  const showSuccess = !focused && modalStatus.type === 'success'
 
   const handleMax = () => {
     setAmount(balance)
@@ -35,7 +38,7 @@ const LockAmountInput: React.FC<LockAmountInputProps> = ({ balance }) => {
 
   const validate = (amount: string) => {
     if (amount && toBigNumber(amount).gt(toBigNumber(balance))) {
-      setLockState({
+      setModalStatus({
         type: 'error',
         errorMessage: 'insufficient balance',
       })
@@ -43,18 +46,18 @@ const LockAmountInput: React.FC<LockAmountInputProps> = ({ balance }) => {
     }
 
     if (amount && toBigNumber(amount).isZero()) {
-      setLockState({ type: 'error', errorMessage: 'invalid amount' })
+      setModalStatus({ type: 'error', errorMessage: 'invalid amount' })
       return
     }
 
-    setLockState({ type: amount ? 'success' : 'default' })
+    setModalStatus({ type: amount ? 'success' : 'default' })
   }
 
   const handleFocusState = (state: boolean) => {
     if (state) {
       setFocused(true)
 
-      setLockState({ type: 'focused' })
+      setModalStatus({ type: 'focused' })
     } else {
       validate(amount)
       setFocused(false)
@@ -89,12 +92,12 @@ const LockAmountInput: React.FC<LockAmountInputProps> = ({ balance }) => {
           }),
           onFocus: () => handleFocusState(true),
           onBlur: () => handleFocusState(false),
-          error: lockState.type === 'error',
+          error: modalStatus.type === 'error',
           InputLabelProps: {
             shrink: true,
           },
           InputProps: {
-            startAdornment: <LockIcon />,
+            startAdornment: <TimedLockIcon />,
             endAdornment: 'KSU',
             sx: (theme) => ({
               '& .MuiInputBase-input': {
@@ -107,14 +110,14 @@ const LockAmountInput: React.FC<LockAmountInputProps> = ({ balance }) => {
           },
         }}
       />
-      {lockState.type === 'error' ? (
+      {modalStatus.type === 'error' ? (
         <ColoredBox
           mt='3px'
           mb={1}
           sx={{
             px: 1.5,
             py: 0,
-            background: lockState.bgColor,
+            background: modalStatus.bgColor,
             maxWidth: 'calc(100% - 64px)',
           }}
         >
@@ -123,7 +126,7 @@ const LockAmountInput: React.FC<LockAmountInputProps> = ({ balance }) => {
             component='span'
             color={(theme) => theme.palette.error.main}
           >
-            {lockState.errorMessage}
+            {modalStatus.errorMessage}
           </Typography>
         </ColoredBox>
       ) : (

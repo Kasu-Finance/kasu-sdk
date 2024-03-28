@@ -1,6 +1,4 @@
-import { GQLGetLockingPeriods, LockPeriod } from 'kasu-sdk/src/types'
-
-import sdkConfig from '@/config/sdk'
+import { LockPeriod } from 'kasu-sdk/src/types'
 
 const FALLBACK_LOCK_PERIODS: LockPeriod[] = [
   {
@@ -29,29 +27,4 @@ const FALLBACK_LOCK_PERIODS: LockPeriod[] = [
   },
 ]
 
-export const getLockPeriods = async (): Promise<LockPeriod[]> => {
-  try {
-    const res = await fetch(sdkConfig.subgraphUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query: `{
-                  lockPeriods(orderBy: lockPeriod, where: { isActive: true }) {
-                      rKSUMultiplier
-                      lockPeriod
-                      ksuBonusMultiplier
-                      id
-                  }
-              }`,
-      }),
-    })
-
-    const data: { data: GQLGetLockingPeriods } = await res.json()
-
-    return data.data.lockPeriods
-  } catch (error) {
-    return FALLBACK_LOCK_PERIODS
-  }
-}
+export default FALLBACK_LOCK_PERIODS
