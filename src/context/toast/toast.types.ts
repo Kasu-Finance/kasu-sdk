@@ -6,6 +6,7 @@ export type Toast = {
   message: string
   txHash?: string
   isClosable?: boolean
+  onCloseCallback?: () => void
 }
 
 export type ToastActions =

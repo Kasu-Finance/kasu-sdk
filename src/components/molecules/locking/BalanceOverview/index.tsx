@@ -11,9 +11,10 @@ import useUserBalance from '@/hooks/web3/useUserBalance'
 
 import CardWidget from '@/components/atoms/CardWidget'
 import ColoredBox from '@/components/atoms/ColoredBox'
+import KycButton from '@/components/atoms/KycButton'
 import BalanceItem from '@/components/molecules/locking/BalanceOverview/BalanceItem'
 
-import { LockIcon, WalletIcon } from '@/assets/icons'
+import { TimedLockIcon, WalletIcon } from '@/assets/icons'
 
 import sdkConfig, { USDC } from '@/config/sdk'
 import { convertToUSD, formatAmount } from '@/utils'
@@ -39,6 +40,7 @@ const BalanceOverview = () => {
     <CardWidget
       cardAction={
         <>
+          <KycButton onClick={handleOpen}>deposit</KycButton>
           <Button
             variant='contained'
             sx={{ width: 134 }}
@@ -52,7 +54,7 @@ const BalanceOverview = () => {
             sx={{ wixth: 143 }}
             variant='contained'
             onClick={handleOpen}
-            startIcon={<LockIcon />}
+            startIcon={<TimedLockIcon />}
           >
             {t('general.lock')} KSU
           </Button>

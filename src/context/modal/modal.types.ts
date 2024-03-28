@@ -23,11 +23,12 @@ export type Modals = {
   lockModal: ModalData
   unlockModal: ModalData<{ userLock: UserLock }>
   depositModal: ModalData<{ poolData: PoolData }>
+  kycModal: ModalData<{ callback: () => void }>
 }
 
 export type ModalWithProps = Extract<
   keyof Modals,
-  'unlockModal' | 'depositModal'
+  'unlockModal' | 'depositModal' | 'kycModal'
 >
 
 export type OpenModalWithProps<T extends keyof Modals> = Omit<

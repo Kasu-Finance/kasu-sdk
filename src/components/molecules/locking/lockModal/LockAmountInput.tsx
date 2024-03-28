@@ -11,7 +11,7 @@ import InfoRow from '@/components/atoms/InfoRow'
 import TokenAmount from '@/components/atoms/TokenAmount'
 import NumericalInput from '@/components/molecules/NumericalInput'
 
-import { LockIcon } from '@/assets/icons'
+import { TimedLockIcon } from '@/assets/icons'
 
 import { formatAmount, toBigNumber } from '@/utils'
 
@@ -97,7 +97,7 @@ const LockAmountInput: React.FC<LockAmountInputProps> = ({ balance }) => {
             shrink: true,
           },
           InputProps: {
-            startAdornment: <LockIcon />,
+            startAdornment: <TimedLockIcon />,
             endAdornment: 'KSU',
             sx: (theme) => ({
               '& .MuiInputBase-input': {
