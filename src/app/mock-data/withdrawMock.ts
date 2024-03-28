@@ -34,6 +34,7 @@ export const mockedPoolOverview: PoolOverview = {
       poolCapacity: '5000000',
       maximumDeposit: '1000000',
       minimumDeposit: '1000',
+      name: 'Junior Tranche',
     },
     {
       id: 'tranche-2',
@@ -41,6 +42,7 @@ export const mockedPoolOverview: PoolOverview = {
       poolCapacity: '2000000',
       maximumDeposit: '1000000',
       minimumDeposit: '1000',
+      name: 'Senior Tranche',
     },
   ],
   totalValueLocked: '1500000',

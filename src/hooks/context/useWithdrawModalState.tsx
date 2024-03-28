@@ -2,10 +2,8 @@ import { useCallback, useContext } from 'react'
 
 import WithdrawModalContext from '@/context/withdrawModal/withdrawModal.context'
 import {
-  Tranche,
   WithdrawActionTypes,
   WithdrawModalTypes,
-  WithdrawProgress,
 } from '@/context/withdrawModal/withdrawModal.types'
 
 const useWithdrawModalState = (): WithdrawModalTypes => {
@@ -30,22 +28,11 @@ const useWithdrawModalState = (): WithdrawModalTypes => {
   )
 
   const setSelectedTranche = useCallback(
-    (selectedTranche: Tranche) => {
+    (selectedTranche: `0x${string}`) =>
       dispatch({
         type: WithdrawActionTypes.SET_SELECTED_TRANCHE,
         payload: selectedTranche,
-      })
-    },
-    [dispatch]
-  )
-
-  const setWithdrawProgress = useCallback(
-    (withdrawProgress: WithdrawProgress) => {
-      dispatch({
-        type: WithdrawActionTypes.SET_WITHDRAW_PROGRESS,
-        payload: withdrawProgress,
-      })
-    },
+      }),
     [dispatch]
   )
 
@@ -73,7 +60,6 @@ const useWithdrawModalState = (): WithdrawModalTypes => {
     ...context,
     setAmount,
     setSelectedTranche,
-    setWithdrawProgress,
     setErrorMsg,
     setProcessing,
   }

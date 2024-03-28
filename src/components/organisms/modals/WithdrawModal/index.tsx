@@ -2,11 +2,12 @@
 
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import { Box, Button } from '@mui/material'
-import { useRouter, useSearchParams } from 'next/navigation'
-import React, { useEffect, useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import React, { useMemo } from 'react'
 
+import useModalState from '@/hooks/context/useModalState'
+import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
-import usePoolOverview from '@/hooks/lending/usePoolOverview'
 import useTranslation from '@/hooks/useTranslation'
 
 import CustomModal from '@/components/molecules/CustomModal'
@@ -18,12 +19,9 @@ import MetricsSection from '@/components/organisms/modals/WithdrawModal/MetricsS
 import RequestForm from '@/components/organisms/modals/WithdrawModal/RequestForm'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
-import {
-  Tranche,
-  WithdrawProgress,
-} from '@/context/withdrawModal/withdrawModal.types'
+import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
-import { metricsMock, mockedPoolOverview } from '@/app/mock-data/withdrawMock'
+import { metricsMock } from '@/app/mock-data/withdrawMock'
 import { Routes } from '@/config/routes'
 
 interface WithdrawModalProps {
@@ -34,39 +32,24 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
   const {
     amount,
     selectedTranche,
-    withdrawProgress,
     errorMsg,
     processing,
     setAmount,
     setSelectedTranche,
-    setWithdrawProgress,
     setErrorMsg,
   } = useWithdrawModalState()
-
-  const [poolId, setPoolId] = useState<string>('')
-
-  const { t } = useTranslation()
-
   const router = useRouter()
-  const searchParams = useSearchParams()
+  const { t } = useTranslation()
+  const { modal } = useModalState()
+  const { modalStatusAction, setModalStatusAction } = useModalStatusState()
 
-  useEffect(() => {
-    const id = searchParams.get('poolId')
-    if (id) {
-      setPoolId(id)
-    }
-  }, [searchParams])
+  console.warn('modalStatusAction', modalStatusAction)
 
-  const { data: pool } = usePoolOverview(poolId)
-
-  const selectedPool = useMemo(
-    () => pool?.find((p) => p.id === poolId) || mockedPoolOverview, // TODO: remove mocked data
-    [poolId, pool]
-  )
+  const poolData = modal.withdrawModal.poolData
 
   const isMultiTranche = useMemo(
-    () => selectedPool?.tranches?.length > 1,
-    [selectedPool]
+    () => poolData?.tranches?.length > 1,
+    [poolData]
   )
 
   const validationStyle = errorMsg
@@ -76,8 +59,8 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
   const onModalClose = () => {
     setAmount('')
     setErrorMsg('')
-    setWithdrawProgress(WithdrawProgress.REQUEST)
-    setSelectedTranche(Tranche.SENIOR_TRANCHE)
+    setModalStatusAction(ModalStatusAction.REQUEST)
+    setSelectedTranche('0x0')
     handleClose()
     router.push(Routes.lending.root.url)
   }
@@ -98,7 +81,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
         borderRadius: 1,
       }}
       actionIcon={
-        withdrawProgress === WithdrawProgress.CONFIRM ? (
+        modalStatusAction === ModalStatusAction.CONFIRM ? (
           <Button
             component='a'
             href='https://www.newwebsite.com'
@@ -114,38 +97,38 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
     >
       <Box mt={3} width='100%'>
         <HorizontalStepper
-          activeStep={withdrawProgress}
+          activeStep={modalStatusAction as number}
           steps={['Request', 'Approve', 'Confirm']}
         />
       </Box>
 
-      {withdrawProgress !== WithdrawProgress.CONFIRM && (
+      {modalStatusAction !== ModalStatusAction.CONFIRM && (
         <MetricsSection
           metrics={metricsMock}
-          poolName={selectedPool?.poolName || ''}
+          poolName={poolData?.poolName || ''}
           selectedTranche={selectedTranche}
-          withdrawProgress={withdrawProgress}
+          modalStatusAction={modalStatusAction as number}
           isMultiTranche={isMultiTranche}
           metricsRowClassName={validationStyle}
         />
       )}
 
-      {withdrawProgress === WithdrawProgress.REQUEST && (
+      {modalStatusAction === ModalStatusAction.REQUEST && (
         <RequestForm
-          pool={selectedPool}
+          poolData={poolData}
           isMultiTranche={isMultiTranche}
           containerClassName={validationStyle}
         />
       )}
 
-      {withdrawProgress === WithdrawProgress.APPROVE && (
-        <ApproveForm pool={selectedPool} />
+      {modalStatusAction === ModalStatusAction.APPROVE && (
+        <ApproveForm pool={poolData} />
       )}
 
-      {withdrawProgress === WithdrawProgress.CONFIRM && (
+      {modalStatusAction === ModalStatusAction.CONFIRM && (
         <ConfirmForm
           amount={amount}
-          poolName={selectedPool?.poolName || ''}
+          poolName={poolData?.poolName || ''}
           trancheName={selectedTranche}
           onSubmit={onModalClose}
         />

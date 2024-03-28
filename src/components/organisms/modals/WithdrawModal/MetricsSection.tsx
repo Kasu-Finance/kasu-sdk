@@ -8,10 +8,8 @@ import useTranslation from '@/hooks/useTranslation'
 import InfoColumn from '@/components/atoms/InfoColumn'
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
-import {
-  WithdrawMetrics,
-  WithdrawProgress,
-} from '@/context/withdrawModal/withdrawModal.types'
+import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
+import { WithdrawMetrics } from '@/context/withdrawModal/withdrawModal.types'
 
 import { formatAccount } from '@/utils'
 
@@ -20,7 +18,7 @@ import { PoolMetric } from '@/types/lending'
 interface MetricsSectionProps {
   poolName: string
   metrics: PoolMetric[]
-  withdrawProgress: number
+  modalStatusAction: number
   selectedTranche: string
   isMultiTranche: boolean
   metricsRowClassName?: string
@@ -29,7 +27,7 @@ interface MetricsSectionProps {
 const MetricsSection: React.FC<MetricsSectionProps> = ({
   poolName,
   metrics,
-  withdrawProgress,
+  modalStatusAction,
   selectedTranche,
   isMultiTranche,
   metricsRowClassName,
@@ -53,7 +51,7 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
   const toWallet = { id: WithdrawMetrics.TO_WALLET, content: userAddress || '' }
 
   const showTrancheInvestment =
-    withdrawProgress === WithdrawProgress.REQUEST &&
+    modalStatusAction === ModalStatusAction.REQUEST &&
     isMultiTranche &&
     trancheInvestment
 
@@ -100,7 +98,7 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
         </Box>
       )}
 
-      {withdrawProgress === WithdrawProgress.APPROVE && (
+      {modalStatusAction === ModalStatusAction.APPROVE && (
         <Box display='flex' className={metricsRowClassName} pt={2}>
           {isMultiTranche ? (
             <MetricWithSuffix

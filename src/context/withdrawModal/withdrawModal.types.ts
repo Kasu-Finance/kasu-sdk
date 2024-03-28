@@ -19,12 +19,6 @@ export enum Tranche {
   SENIOR_TRANCHE = 'Senior Tranche',
 }
 
-export enum WithdrawProgress {
-  REQUEST = 0,
-  APPROVE = 1,
-  CONFIRM = 3,
-}
-
 export type WithdrawModalActions =
   | {
       type: WithdrawActionTypes.SET_AMOUNT
@@ -32,11 +26,7 @@ export type WithdrawModalActions =
     }
   | {
       type: WithdrawActionTypes.SET_SELECTED_TRANCHE
-      payload: Tranche
-    }
-  | {
-      type: WithdrawActionTypes.SET_WITHDRAW_PROGRESS
-      payload: WithdrawProgress
+      payload: `0x${string}`
     }
   | {
       type: WithdrawActionTypes.SET_ERROR_MSG
@@ -49,16 +39,14 @@ export type WithdrawModalActions =
 
 export type WithdrawModalStateType = {
   amount: string
-  selectedTranche: Tranche
-  withdrawProgress: WithdrawProgress
+  selectedTranche: `0x${string}`
   errorMsg: string
   processing: boolean
 }
 
 export type WithdrawModalFunctions = {
   setAmount: (amount: string) => void
-  setSelectedTranche: (selectedTranche: Tranche) => void
-  setWithdrawProgress: (withdrawProgress: WithdrawProgress) => void
+  setSelectedTranche: (selectedTranche: `0x${string}`) => void
   setErrorMsg: (errorMsg: string) => void
   setProcessing: (processing: boolean) => void
 }

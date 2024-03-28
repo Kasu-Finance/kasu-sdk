@@ -1,7 +1,7 @@
 'use client'
 
 import { Box, Container, Typography } from '@mui/material'
-import { PoolOverview } from 'kasu-sdk/src/types'
+import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
 import { useRouter } from 'next/navigation'
 
 import useModalState from '@/hooks/context/useModalState'
@@ -14,6 +14,7 @@ import PoolCard from '@/components/molecules/PoolCard'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
+import { mockedPoolOverview } from '@/app/mock-data/withdrawMock'
 import { Routes } from '@/config/routes'
 
 const Lending = () => {
@@ -23,7 +24,8 @@ const Lending = () => {
   const { openModal } = useModalState()
 
   const handleWithdrawClick = (pool: PoolOverview) => {
-    openModal({ name: ModalsKeys.WITHDRAW })
+    openModal({ name: ModalsKeys.WITHDRAW, poolData: mockedPoolOverview })
+
     router.push(`${Routes.lending.root.url}?poolId=${pool.id}&step=1`)
   }
 

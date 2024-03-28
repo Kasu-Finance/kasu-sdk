@@ -2,6 +2,9 @@ export enum ModalStatusAction {
   EDITING = 'EDITING',
   REVIEWING = 'REVIEWING',
   COMPLETED = 'COMPLETED',
+  REQUEST = 0,
+  APPROVE = 1,
+  CONFIRM = 3,
 }
 
 export type ModalStatusState =

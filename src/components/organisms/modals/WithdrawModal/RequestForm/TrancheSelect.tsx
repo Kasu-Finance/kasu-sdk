@@ -1,19 +1,21 @@
 import { Box, FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
 
+import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import useTranslation from '@/hooks/useTranslation'
 
 import { Tranche } from '@/context/withdrawModal/withdrawModal.types'
 
 interface TrancheSelectProps {
-  selectedTranche: Tranche
-  setSelectedTranche: (tranche: Tranche) => void
+  poolData: PoolOverview
 }
 
-const TrancheSelect: React.FC<TrancheSelectProps> = ({
-  selectedTranche,
-  setSelectedTranche,
-}) => {
+const TrancheSelect: React.FC<TrancheSelectProps> = ({ poolData }) => {
   const { t } = useTranslation()
+  const { selectedTranche, setSelectedTranche } = useWithdrawModalState()
+  console.warn('poolData', poolData)
+
+  if (poolData.tranches.length <= 1) return null
 
   return (
     <Box mt={3}>
@@ -29,15 +31,11 @@ const TrancheSelect: React.FC<TrancheSelectProps> = ({
           onChange={(e) => setSelectedTranche(e.target.value as Tranche)}
           label={t('lending.withdraw.dropdown.label')}
         >
-          <MenuItem value={Tranche.SENIOR_TRANCHE}>
-            {t('lending.withdraw.dropdown.option.senior')}
-          </MenuItem>
-          <MenuItem value={Tranche.MEZZANINE_TRANCHE}>
-            {t('lending.withdraw.dropdown.option.mezzanine')}
-          </MenuItem>
-          <MenuItem value={Tranche.JUNIOR_TRANCHE}>
-            {t('lending.withdraw.dropdown.option.junior')}
-          </MenuItem>
+          {poolData.tranches.map(({ id: trancheId, name }) => (
+            <MenuItem key={trancheId} value={name}>
+              {name}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
     </Box>

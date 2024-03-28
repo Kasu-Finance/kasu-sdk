@@ -1,3 +1,4 @@
+import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
 import { UserLock } from 'kasu-sdk/src/types'
 
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
@@ -31,7 +32,7 @@ export type Modals = {
   loyaltyLevelsModal: ModalData
   lockModal: ModalData
   unlockModal: ModalData<{ userLock: UserLock }>
-  withdrawModal: ModalData
+  withdrawModal: ModalData<{ poolData: PoolOverview }>
   transactionProcessingModal: ModalData
   depositModal: ModalData<{ poolData: PoolData }>
   kycModal: ModalData<{ callback: () => void }>
@@ -39,7 +40,7 @@ export type Modals = {
 
 export type ModalWithProps = Extract<
   keyof Modals,
-  'unlockModal' | 'depositModal' | 'kycModal'
+  'unlockModal' | 'depositModal' | 'kycModal' | 'withdrawModal'
 >
 
 export type OpenModalWithProps<T extends keyof Modals> = Omit<

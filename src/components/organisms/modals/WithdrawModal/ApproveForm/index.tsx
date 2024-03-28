@@ -4,13 +4,14 @@ import { useRouter } from 'next/navigation'
 import React from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
+import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import useTranslation from '@/hooks/useTranslation'
 
 import CountdownSection from '@/components/organisms/modals/WithdrawModal/ApproveForm/CountdownSection'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
-import { WithdrawProgress } from '@/context/withdrawModal/withdrawModal.types'
+import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
 import { ChevronRightIcon, EditIcon } from '@/assets/icons'
 
@@ -21,7 +22,9 @@ interface ApproveFormProps {
 }
 
 const ApproveForm: React.FC<ApproveFormProps> = ({ pool }) => {
-  const { setWithdrawProgress, setProcessing } = useWithdrawModalState()
+  const { setProcessing } = useWithdrawModalState()
+  const { setModalStatusAction } = useModalStatusState()
+
   const { openModal } = useModalState()
   const { t } = useTranslation()
   const router = useRouter()
@@ -32,13 +35,13 @@ const ApproveForm: React.FC<ApproveFormProps> = ({ pool }) => {
 
     setTimeout(() => {
       setProcessing(false)
-      setWithdrawProgress(WithdrawProgress.CONFIRM)
+      setModalStatusAction(ModalStatusAction.CONFIRM)
       router.push(`${Routes.lending.root.url}?poolId=${pool?.id}&step=3`)
     }, 2000)
   }
 
   const handleAdjust = () => {
-    setWithdrawProgress(WithdrawProgress.REQUEST)
+    setModalStatusAction(ModalStatusAction.REQUEST)
     router.push(`${Routes.lending.root.url}?poolId=${pool?.id}&step=1`)
   }
 

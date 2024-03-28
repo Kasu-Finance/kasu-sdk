@@ -4,44 +4,38 @@ import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
+import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import useTranslation from '@/hooks/useTranslation'
 
 import AmountInput from '@/components/organisms/modals/WithdrawModal/RequestForm/AmountInput'
 import TrancheSelect from '@/components/organisms/modals/WithdrawModal/RequestForm/TrancheSelect'
 
-import { WithdrawProgress } from '@/context/withdrawModal/withdrawModal.types'
+import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
 import { Routes } from '@/config/routes'
 
 interface RequestFormProps {
-  pool: PoolOverview
+  poolData: PoolOverview
   isMultiTranche: boolean
   containerClassName?: string
 }
 
 const RequestForm: React.FC<RequestFormProps> = ({
-  pool,
+  poolData,
   isMultiTranche,
   containerClassName,
 }) => {
-  const {
-    amount,
-    errorMsg,
-    selectedTranche,
-    setAmount,
-    setErrorMsg,
-    setSelectedTranche,
-    setWithdrawProgress,
-  } = useWithdrawModalState()
+  const { amount, errorMsg, setAmount, setErrorMsg } = useWithdrawModalState()
+  const { setModalStatusAction } = useModalStatusState()
 
   const { t } = useTranslation()
   const theme = useTheme()
   const router = useRouter()
 
   const handleSubmit = () => {
-    setWithdrawProgress(WithdrawProgress.APPROVE)
-    router.push(`${Routes.lending.root.url}?poolId=${pool?.id}&step=2`)
+    setModalStatusAction(ModalStatusAction.APPROVE)
+    router.push(`${Routes.lending.root.url}?poolId=${poolData?.id}&step=2`)
   }
 
   const disabledButton = !amount || !!errorMsg
@@ -59,12 +53,7 @@ const RequestForm: React.FC<RequestFormProps> = ({
         setAmount={setAmount}
       />
 
-      {isMultiTranche && (
-        <TrancheSelect
-          selectedTranche={selectedTranche}
-          setSelectedTranche={setSelectedTranche}
-        />
-      )}
+      {isMultiTranche && <TrancheSelect poolData={poolData} />}
 
       <Box
         display='flex'
