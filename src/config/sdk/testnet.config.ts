@@ -9,9 +9,9 @@ export const sdkConfig: SdkConfig = {
     KSUToken: '0xE381591805f9AD4E8dCc5D932e57C4773629eB47',
     LendingPoolManager: '0x86A57D35bB265cE833e4E131A39672dCBD1Db798',
     UserManager: '0x743ad4f80dfa699C8650eF60eB087E4347e5F7Ea',
+    KasuAllowList: '0x63c995fbcf2bb911dc3f0bcaf25d6ec1b465ddda',
   },
   directusUrl: 'https://kasu-finance.directus.app/',
   subgraphUrl:
     'https://api.studio.thegraph.com/query/63245/kasu-wip-sepolia/version/latest',
-  directusUrl: 'https://kasu-finance.directus.app/',
 }

@@ -49,7 +49,6 @@ const useRequestDeposit = () => {
 
       const kycSignatureParams = await sdk.UserLending.buildKycSignatureParams(
         account as `0x${string}`,
-        [lendingPoolId, trancheId, parseUnits(amount, 6).toString()],
         chainId.toString()
       )
 
@@ -62,7 +61,7 @@ const useRequestDeposit = () => {
       const deposit = await sdk.UserLending.requestDepositWithKyc(
         lendingPoolId,
         trancheId,
-        amount,
+        parseUnits(amount, 6).toString(),
         kycData.blockExpiration,
         kycData.signature
       )
