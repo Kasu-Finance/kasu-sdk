@@ -4,6 +4,7 @@ export interface ContractAddresses {
     IKSULockBonus: string;
     UserManager: string;
     LendingPoolManager: string;
+    KasuAllowList: string;
 }
 export class SdkConfig {
     subgraphUrl: string;
@@ -14,10 +15,9 @@ export class SdkConfig {
         subgraphUrl: string,
         contracts: ContractAddresses,
         directusUrl: string,
-      ) {
+    ) {
         this.subgraphUrl = subgraphUrl;
         this.contracts = contracts;
         this.directusUrl = directusUrl;
-      }
+    }
 }
-
