@@ -2,7 +2,7 @@ import { Box, Grid, Typography } from '@mui/material'
 import { UserLock } from 'kasu-sdk/src/types'
 import React from 'react'
 
-import useLockModalState from '@/hooks/context/useLockModalState'
+import useModalStatusState from '@/hooks/context/useModalStatusState'
 
 import LockedDetails from '@/components/molecules/locking/UnlockModal/LockedDetails'
 import UnlockAmountInput from '@/components/molecules/locking/UnlockModal/UnlockAmountInput'
@@ -13,12 +13,12 @@ type UnlockModalEditProps = {
 }
 
 const UnlockModalEdit: React.FC<UnlockModalEditProps> = ({ userLock }) => {
-  const { lockState } = useLockModalState()
+  const { modalStatus } = useModalStatusState()
 
   return (
     <Box
       sx={{
-        backgroundColor: lockState.bgColor,
+        backgroundColor: modalStatus.bgColor,
         transition: 'background-color 0.3s ease',
         p: 1,
       }}

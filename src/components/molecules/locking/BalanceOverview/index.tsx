@@ -13,7 +13,7 @@ import CardWidget from '@/components/atoms/CardWidget'
 import ColoredBox from '@/components/atoms/ColoredBox'
 import BalanceItem from '@/components/molecules/locking/BalanceOverview/BalanceItem'
 
-import { LockIcon, WalletIcon } from '@/assets/icons'
+import { TimedLockIcon, WalletIcon } from '@/assets/icons'
 
 import sdkConfig, { USDC } from '@/config/sdk'
 import { convertToUSD, formatAmount } from '@/utils'
@@ -21,6 +21,7 @@ import { convertToUSD, formatAmount } from '@/utils'
 const BalanceOverview = () => {
   const { openModal } = useModalState()
   const { t } = useTranslation()
+
   const handleOpen = () => openModal({ name: 'lockModal' })
 
   const { balance: ksuBalance, decimals: ksuDecimals } = useUserBalance(
@@ -52,7 +53,7 @@ const BalanceOverview = () => {
             sx={{ wixth: 143 }}
             variant='contained'
             onClick={handleOpen}
-            startIcon={<LockIcon />}
+            startIcon={<TimedLockIcon />}
           >
             {t('general.lock')} KSU
           </Button>

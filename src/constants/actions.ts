@@ -7,11 +7,12 @@ export enum ActionStatus {
 
 export enum ActionType {
   APPROVE = 'APPROVAL',
+  KYC_AUTH = 'KYC Authorisation',
   KYC = 'IDENTITY VERIFICATION',
   CLAIM_REWARDS = 'CLAIM REWARDS',
   LOCK = 'LOCK',
   UNLOCK = 'UNLOCK',
-  LENDING = 'LENDING',
+  DEPOSIT = 'DEPOSIT',
   WITHDRAW = 'WITHDRAW',
 }
 
@@ -22,15 +23,22 @@ export const ACTION_MESSAGES = {
     [ActionStatus.ERROR]:
       'An error has occurred in the approval request. Please review log for more details.',
   },
+  [ActionType.KYC_AUTH]: {
+    [ActionStatus.PROCESSING]:
+      'Your authorisation request is being processed...',
+    [ActionStatus.ERROR]:
+      'An error has occurred during obtaining the authorisation token required during KYC process.',
+  },
   [ActionType.KYC]: {
     [ActionStatus.SUCCESS]: (countDown: number) =>
       `Identity verification process was successful. In ${countDown} seconds you will be redirected to the previous process.`,
-    [ActionStatus.ERROR]: (name: string) =>
-      `An error has occurred during the identity verification process provided by ${name}. Please review log for more details.`,
-  },
-  [ActionType.LENDING]: {
+
     [ActionStatus.ERROR]:
-      'An error has occurred in the lending request. Please review log for more details.',
+      'An error has occurred during the identity verification process provided by Nexera.',
+  },
+  [ActionType.DEPOSIT]: {
+    [ActionStatus.ERROR]:
+      'An error has occurred in the deposit request. Please review log for more details.',
   },
   [ActionType.LOCK]: {
     [ActionStatus.SUCCESS]: 'Lock request has been successfull.',

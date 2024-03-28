@@ -3,6 +3,7 @@ import { formatEther } from 'ethers/lib/utils'
 import { UserLock } from 'kasu-sdk/src/types'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
+import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useRatio from '@/hooks/useRatio'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
@@ -16,7 +17,9 @@ type LockedDetailsProps = {
 }
 
 const LockedDetails: React.FC<LockedDetailsProps> = ({ userLock }) => {
-  const { lockState, amount } = useLockModalState()
+  const { amount } = useLockModalState()
+
+  const { modalStatus } = useModalStatusState()
 
   const ratio = useRatio(amount, userLock.lockedAmount)
 
@@ -41,7 +44,7 @@ const LockedDetails: React.FC<LockedDetailsProps> = ({ userLock }) => {
   )
 
   return (
-    <ColoredBox sx={{ bgcolor: lockState.bgColor, mt: 1 }}>
+    <ColoredBox sx={{ bgcolor: modalStatus.bgColor, mt: 1 }}>
       <Grid container spacing={2}>
         <Grid item xs={6}>
           <InfoColumn

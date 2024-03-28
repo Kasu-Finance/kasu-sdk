@@ -1,6 +1,7 @@
 import { Box, lighten, Slider, Typography } from '@mui/material'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
+import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useLockPeriods from '@/hooks/locking/useLockPeriods'
 import useTranslation from '@/hooks/useTranslation'
 
@@ -13,19 +14,19 @@ import dayjs from '@/dayjs'
 const LockDurationInput = () => {
   const { lockPeriods } = useLockPeriods()
 
-  const { selectedLockPeriod, setSelectedLockPeriod, lockState, setLockState } =
-    useLockModalState()
+  const { selectedLockPeriod, setSelectedLockPeriod } = useLockModalState()
+
+  const { modalStatus, setModalStatus } = useModalStatusState()
 
   const { t } = useTranslation()
 
   const handleChange = (_: Event, value: number | number[]) => {
-    setLockState
     setSelectedLockPeriod(lockPeriods[value as number])
   }
 
   const unlockTime = dayjs().add(Number(selectedLockPeriod.lockPeriod), 'days')
 
-  const disabled = lockState.type === 'error'
+  const disabled = modalStatus.type === 'error'
 
   return (
     <Box>
@@ -72,7 +73,7 @@ const LockDurationInput = () => {
           ({ lockPeriod }) => lockPeriod === selectedLockPeriod.lockPeriod
         )}
         onChange={handleChange}
-        onChangeCommitted={() => setLockState({ type: 'default' })}
+        onChangeCommitted={() => setModalStatus({ type: 'default' })}
       />
 
       <LockPeriodInfo
@@ -87,7 +88,7 @@ const LockDurationInput = () => {
         alignItems='center'
         mt={1}
         sx={{
-          bgcolor: lockState.bgColor,
+          bgcolor: modalStatus.bgColor,
         }}
       >
         <InfoRow

@@ -2,7 +2,7 @@ import { Grid } from '@mui/material'
 import { UserLock } from 'kasu-sdk/src/types'
 import React from 'react'
 
-import useLockModalState from '@/hooks/context/useLockModalState'
+import useModalStatusState from '@/hooks/context/useModalStatusState'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import BalanceItem from '@/components/molecules/locking/BalanceOverview/BalanceItem'
@@ -16,13 +16,13 @@ type UnlockModalOverviewProps = {
 const UnlockModalOverview: React.FC<UnlockModalOverviewProps> = ({
   userLock,
 }) => {
-  const { lockState } = useLockModalState()
+  const { modalStatus } = useModalStatusState()
 
   const startTime = dayjs.unix(userLock.startTime)
 
   return (
     <Grid item xs={1}>
-      <ColoredBox sx={{ bgcolor: lockState.bgColor }}>
+      <ColoredBox sx={{ bgcolor: modalStatus.bgColor }}>
         <Grid container spacing={2}>
           <Grid item container xs={6}>
             <BalanceItem
@@ -41,10 +41,10 @@ const UnlockModalOverview: React.FC<UnlockModalOverviewProps> = ({
               title='Locked Date'
               toolTipInfo='info'
               value={[startTime.format('DD.MM.YYYY'), '']}
-              subValue={[
-                startTime.format('HH:mm:ss'),
-                startTime.format('UTCZZ'),
-              ]}
+              // subValue={[
+              //   startTime.format('HH:mm:ss'),
+              //   startTime.format('UTCZZ'),
+              // ]}
             />
           </Grid>
         </Grid>

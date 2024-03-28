@@ -1,42 +1,69 @@
 'use client'
 
 import LoginIcon from '@mui/icons-material/Login'
-import { Box, Button, Grid } from '@mui/material'
+import { Box, Grid } from '@mui/material'
 import { useRef } from 'react'
 
+import useModalState from '@/hooks/context/useModalState'
 import useIsSticky from '@/hooks/useIsSticky'
 import useTranslation from '@/hooks/useTranslation'
 
+import KycButton from '@/components/atoms/KycButton'
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
 import { COLS } from '@/constants'
+
+export type PoolData = {
+  poolName: string
+  lendingPoolId: `0x${string}`
+  totalUserInvestment: string
+  tranches: {
+    content: string
+    toolTip: string
+    title: string
+    trancheId: `0x${string}`
+  }[]
+}
 
 const TranchesApyCard = () => {
   const divRef = useRef<HTMLDivElement>(null)
   const { t } = useTranslation()
 
-  const tranches = [
-    {
-      content: '12.50 %',
-      tooltip: '01',
-      title: t('lending.tranche.senior'),
-    },
-    {
-      content: '12.50 %',
-      tooltip: '01',
-      title: t('lending.tranche.mezzanine'),
-    },
-    {
-      content: '2.4 %',
-      tooltip: '01',
-      title: t('lending.tranche.junior'),
-    },
-  ]
+  const { openModal } = useModalState()
 
   const { isSticky } = useIsSticky({
     elementRef: divRef,
     threshold: 64,
   })
+
+  const handleOpen = () =>
+    openModal({ name: 'depositModal', poolData: POOL_DATA })
+
+  const POOL_DATA: PoolData = {
+    poolName: 'Apxium Invoice Standard Financing Pool',
+    lendingPoolId: '0xd63541135Be7f482f0A337553E8E40a871019895',
+    totalUserInvestment: '200000',
+    tranches: [
+      {
+        content: '12.50 %',
+        toolTip: '01',
+        title: t('lending.tranche.senior'),
+        trancheId: '0xe840a390756cb7c18b6102457f81803fb63635d9',
+      },
+      {
+        content: '12.50 %',
+        toolTip: '01',
+        title: t('lending.tranche.mezzanine'),
+        trancheId: '0x90adcd57397133c6ce6078dbc70143b7acbc2670',
+      },
+      {
+        content: '2.4 %',
+        toolTip: '01',
+        title: t('lending.tranche.junior'),
+        trancheId: '0xf73306c30023538d588cca69f347b136d52f374f',
+      },
+    ],
+  }
 
   return (
     <Box
@@ -74,18 +101,17 @@ const TranchesApyCard = () => {
           columnSpacing={{ xs: 1, sm: 2, md: 3 }}
           maxWidth='lg'
         >
-          {tranches.length > 0 &&
-            tranches.map((tranche, index) => {
-              return (
-                <Grid item xs={COLS / tranches.length} key={index}>
-                  <MetricWithSuffix
-                    content={tranche.content}
-                    tooltipKey={tranche.tooltip}
-                    titleKey={t(tranche.title)}
-                  />
-                </Grid>
-              )
-            })}
+          {POOL_DATA.tranches.map((tranche, index) => {
+            return (
+              <Grid item xs={COLS / POOL_DATA.tranches.length} key={index}>
+                <MetricWithSuffix
+                  content={tranche.content}
+                  tooltipKey={tranche.toolTip}
+                  titleKey={`${tranche.title} APY`}
+                />
+              </Grid>
+            )
+          })}
         </Grid>
       </Box>{' '}
       <Box
@@ -99,13 +125,14 @@ const TranchesApyCard = () => {
           pb: 2,
         }}
       >
-        <Button
+        <KycButton
           variant='contained'
           sx={{ pl: 2.25, pr: 2.25 }}
           startIcon={<LoginIcon />}
+          onClick={handleOpen}
         >
           {t('general.deposit')}
-        </Button>
+        </KycButton>
       </Box>
     </Box>
   )
