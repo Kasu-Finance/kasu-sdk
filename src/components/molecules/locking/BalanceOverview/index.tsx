@@ -11,7 +11,6 @@ import useUserBalance from '@/hooks/web3/useUserBalance'
 
 import CardWidget from '@/components/atoms/CardWidget'
 import ColoredBox from '@/components/atoms/ColoredBox'
-import KycButton from '@/components/atoms/KycButton'
 import BalanceItem from '@/components/molecules/locking/BalanceOverview/BalanceItem'
 
 import { TimedLockIcon, WalletIcon } from '@/assets/icons'
@@ -22,6 +21,7 @@ import { convertToUSD, formatAmount } from '@/utils'
 const BalanceOverview = () => {
   const { openModal } = useModalState()
   const { t } = useTranslation()
+
   const handleOpen = () => openModal({ name: 'lockModal' })
 
   const { balance: ksuBalance, decimals: ksuDecimals } = useUserBalance(
@@ -40,7 +40,6 @@ const BalanceOverview = () => {
     <CardWidget
       cardAction={
         <>
-          <KycButton onClick={handleOpen}>deposit</KycButton>
           <Button
             variant='contained'
             sx={{ width: 134 }}
