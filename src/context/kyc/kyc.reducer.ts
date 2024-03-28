@@ -2,6 +2,11 @@ import { KycActions, KycStateType } from '@/context/kyc/kyc.types'
 
 const kycReducer = (state: KycStateType, action: KycActions): KycStateType => {
   switch (action.type) {
+    case 'SET_IS_VERIFYING':
+      return {
+        ...state,
+        isVerifying: action.payload,
+      }
     case 'AUTHENTICATE':
       return {
         ...state,
@@ -13,11 +18,14 @@ const kycReducer = (state: KycStateType, action: KycActions): KycStateType => {
         ...state,
         isAuthenticated: false,
         kycCompleted: false,
+        authenticatedUser: undefined,
       }
     case 'SET_KYC_COMPLETED':
       return {
         ...state,
-        kycCompleted: action.payload,
+        isAuthenticated: true,
+        kycCompleted: true,
+        authenticatedUser: action.payload,
       }
     default:
       return state

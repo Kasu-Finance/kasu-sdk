@@ -18,10 +18,15 @@ export type KycActions =
     }
   | {
       type: 'SET_KYC_COMPLETED'
+      payload: string
+    }
+  | {
+      type: 'SET_IS_VERIFYING'
       payload: boolean
     }
 
 export type KycStateType = {
+  isVerifying: boolean
   isAuthenticated: boolean
   authenticatedUser: string | undefined
   identityClient: IdentityClient

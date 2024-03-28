@@ -16,32 +16,42 @@ type ApiRes =
       status: NexeraCustomerStatus
     }
   | {
-      message: 'string'
-      code: 'string'
+      message: string
+      code: string
       issues: [
         {
-          message: 'string'
+          message: string
         },
       ]
     }
 
 const checkUserKycState = async (
   userAddress: string
-): Promise<NexeraCustomerStatus> => {
-  const response = await fetch(
-    `${NEXERA_API_BASE_URL}/customers/project/${NEXERA_PROJECT_ID}/wallet-address/${userAddress.toLowerCase()}`,
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.NEXERA_API_KEY}`,
-      },
+): Promise<NexeraCustomerStatus | undefined> => {
+  try {
+    const response = await fetch(
+      `${NEXERA_API_BASE_URL}/customers/project/${NEXERA_PROJECT_ID}/wallet-address/${userAddress.toLowerCase()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.NEXERA_API_KEY}`,
+        },
+      }
+    )
+
+    const data: ApiRes = await response.json()
+
+    if (!('status' in data)) {
+      if (data.message !== 'Customer not found.') {
+        throw new Error(data.message, { cause: data })
+      }
+
+      return undefined
     }
-  )
 
-  const data: ApiRes = await response.json()
-
-  if (!('status' in data)) throw new Error(data.message, { cause: data })
-
-  return data.status
+    return data.status
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 export default checkUserKycState

@@ -21,10 +21,12 @@ const useKycState = (): KycTypes => {
     async (userAddress: string) => {
       const status = await checkUserKycState(userAddress)
 
-      dispatch({
-        type: 'SET_KYC_COMPLETED',
-        payload: status === 'Active',
-      })
+      if (status === 'Active') {
+        dispatch({
+          type: 'SET_KYC_COMPLETED',
+          payload: userAddress.toLowerCase(),
+        })
+      }
 
       return status
     },

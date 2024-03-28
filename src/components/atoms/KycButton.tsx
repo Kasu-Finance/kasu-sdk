@@ -18,11 +18,12 @@ const KycButton: React.FC<KycButtonProps> = (props) => {
 
   const { openModal } = useModalState()
 
-  const { isAuthenticated, kycCompleted } = useKycState()
+  const { isVerifying, isAuthenticated, kycCompleted } = useKycState()
 
   const getButtonState = (): {
     children: ReactNode
     onClick: React.MouseEventHandler<HTMLButtonElement> | undefined
+    disabled: boolean
   } => {
     const { defaultText } = props
 
@@ -30,6 +31,7 @@ const KycButton: React.FC<KycButtonProps> = (props) => {
       return {
         children: defaultText?.connectWallet ?? 'Connect Wallet',
         onClick: () => openModal({ name: 'connectWalletModal' }),
+        disabled: false,
       }
     }
 
@@ -45,6 +47,7 @@ const KycButton: React.FC<KycButtonProps> = (props) => {
                   props.onClick?.(e)
                 },
               }),
+      disabled: isVerifying,
     }
   }
 

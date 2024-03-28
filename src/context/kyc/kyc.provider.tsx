@@ -15,6 +15,7 @@ type KycStateProps = {
 }
 
 const initialState: KycStateType = {
+  isVerifying: false,
   authenticatedUser: undefined,
   isAuthenticated: false,
   kycCompleted: false,
@@ -36,14 +37,26 @@ const KycState: React.FC<KycStateProps> = ({ children }) => {
     if (account) {
       ;(async () => {
         try {
+          dispatch({
+            type: 'SET_IS_VERIFYING',
+            payload: true,
+          })
+
           const status = await checkUserKycState(account)
 
-          dispatch({
-            type: 'SET_KYC_COMPLETED',
-            payload: status === 'Active',
-          })
+          if (status === 'Active') {
+            dispatch({
+              type: 'SET_KYC_COMPLETED',
+              payload: account.toLowerCase(),
+            })
+          }
         } catch (error) {
           console.error(error)
+        } finally {
+          dispatch({
+            type: 'SET_IS_VERIFYING',
+            payload: false,
+          })
         }
       })()
     }
