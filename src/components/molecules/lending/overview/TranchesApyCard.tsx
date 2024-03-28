@@ -41,26 +41,26 @@ const TranchesApyCard = () => {
 
   const POOL_DATA: PoolData = {
     poolName: 'Apxium Invoice Standard Financing Pool',
-    lendingPoolId: '0x1e870492b6abcf7efca6c8ff10ae6426b5fb51a5',
+    lendingPoolId: '0xd63541135Be7f482f0A337553E8E40a871019895',
     totalUserInvestment: '200000',
     tranches: [
       {
         content: '12.50 %',
         toolTip: '01',
         title: t('lending.tranche.senior'),
-        trancheId: '0x3b7264cc166c0d88cae8acf0668e260c11d58f04',
+        trancheId: '0xe840a390756cb7c18b6102457f81803fb63635d9',
       },
       {
         content: '12.50 %',
         toolTip: '01',
         title: t('lending.tranche.mezzanine'),
-        trancheId: '0x08a0a6c2ba4452b40cf657cd32f00d601a1f609e',
+        trancheId: '0x90adcd57397133c6ce6078dbc70143b7acbc2670',
       },
       {
         content: '2.4 %',
         toolTip: '01',
         title: t('lending.tranche.junior'),
-        trancheId: '0x832e347083ed6283ae325e5dd8f67032a5cb7644',
+        trancheId: '0xf73306c30023538d588cca69f347b136d52f374f',
       },
     ],
   }
