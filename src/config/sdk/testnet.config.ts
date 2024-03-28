@@ -1,15 +1,15 @@
 import { SdkConfig } from 'kasu-sdk/src/sdk-config'
 
-export const USDC = '0x052CC9939E9845ae2B0228047F95c647c8050896'
+export const USDC = '0x1d3c92431588B97270b75a05C61635E2B610fe79'
 
 export const sdkConfig: SdkConfig = {
   contracts: {
-    IKSULockBonus: '0xfb6bd945A4eB3b25F857302fB091a962b8ddF395',
-    IKSULocking: '0x90BDD195c0EB715D4Fb2359500f55eCac1EfD364',
-    KSUToken: '0xE381591805f9AD4E8dCc5D932e57C4773629eB47',
-    LendingPoolManager: '0x86A57D35bB265cE833e4E131A39672dCBD1Db798',
-    UserManager: '0x743ad4f80dfa699C8650eF60eB087E4347e5F7Ea',
-    KasuAllowList: '0x63c995fbcf2bb911dc3f0bcaf25d6ec1b465ddda',
+    IKSULockBonus: '0x1CB17c6C9CaFF60296fb92C17651839ae1964d0A',
+    IKSULocking: '0x58E41447cd0e9f73f23e6a355D4788edB98CEC1b',
+    KSUToken: '0x86a06FF8373Bb5b26f9E4C3E93aEEA9f7F1438cC',
+    LendingPoolManager: '0x2C0068dc279Dc6459988523513EF722602566710',
+    UserManager: '0x735AAA920725395E224e7d4e9524B5bcF5C59eEE',
+    KasuAllowList: '0x66E4a81F7f9eef1713b0f51e868baE15955B1dF0',
   },
   directusUrl: 'https://kasu-finance.directus.app/',
   subgraphUrl:

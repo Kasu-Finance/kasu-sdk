@@ -15,7 +15,7 @@ const DepositModalCompleted: React.FC<DepositModalCompletedProps> = ({
 }) => {
   const { openModal } = useModalState()
 
-  const { trancheId } = useDepositModalState()
+  const { amount, trancheId } = useDepositModalState()
 
   const handleOpen = () => openModal({ name: 'loyaltyLevelsModal' })
 
@@ -28,7 +28,7 @@ const DepositModalCompleted: React.FC<DepositModalCompletedProps> = ({
         <List>
           <li>
             <Typography variant='subtitle1' component='p'>
-              100,000.00 USDC •{' '}
+              {amount} USDC •{' '}
               <Typography variant='subtitle2' component='span'>
                 to be deposited in the next Epoch to
               </Typography>{' '}
@@ -38,9 +38,8 @@ const DepositModalCompleted: React.FC<DepositModalCompletedProps> = ({
           {poolData.tranches.length > 1 && (
             <li>
               <Typography variant='subtitle2' component='p'>
-                Tranches
+                Tranches{' '}
                 <Typography variant='subtitle1' component='span'>
-                  {' '}
                   •{' '}
                   {poolData.tranches.find(
                     (tranche) => tranche.trancheId === trancheId
@@ -63,13 +62,13 @@ const DepositModalCompleted: React.FC<DepositModalCompletedProps> = ({
           onClick={handleOpen}
           variant='text'
           sx={{
-            height: 'auto',
             display: 'inline',
             p: 0,
             fontSize: 'inherit',
             fontWeight: 'inherit',
             fontFamily: 'inherit',
             textTransform: 'inherit',
+            lineHeight: 'inherit',
           }}
         >
           Terms and Conditions.

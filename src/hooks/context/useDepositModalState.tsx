@@ -13,22 +13,25 @@ const useDepositModalState = (): DepositModalTypes => {
   const { dispatch } = context
 
   const setAmount = useCallback(
-    (amount: string) => {
+    (amount: string) =>
       dispatch({
         type: 'SET_AMOUNT',
         payload: amount,
-      })
-    },
+      }),
     [dispatch]
   )
 
   const setSelectedTranche = useCallback(
-    (selectedTranche: string) => {
+    (selectedTranche: `0x${string}`) =>
       dispatch({
         type: 'SET_SELECTED_TRANCHE',
         payload: selectedTranche,
-      })
-    },
+      }),
+    [dispatch]
+  )
+
+  const setTxHash = useCallback(
+    (txHash: string) => dispatch({ type: 'SET_TX_HASH', payload: txHash }),
     [dispatch]
   )
 
@@ -36,6 +39,7 @@ const useDepositModalState = (): DepositModalTypes => {
     ...context,
     setAmount,
     setSelectedTranche,
+    setTxHash,
   }
 }
 
