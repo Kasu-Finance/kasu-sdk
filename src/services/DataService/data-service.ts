@@ -42,11 +42,11 @@ export class DataService {
     }
     async getPoolOverview(id_in?: string[]): Promise<PoolOverview[]> {
         const trancheNames: string[][] = [["Senior"], ["Junior", "Senior"], ["Junior", "Mezzanine", "Senior"]];
-        const subgraphTrancheConfigurationResults: TrancheConfigurationSubgraph[] = await this._graph.request(getAllTrancheConfigurationsQuery);
-        const subgraphResults: LendingPoolSubgraph[] = await this._graph.request(getAllLendingPoolsQuery);
+        const subgraphTrancheConfigurationResults: TrancheConfigurationSubgraph = await this._graph.request(getAllTrancheConfigurationsQuery);
+        const subgraphResults: LendingPoolSubgraph = await this._graph.request(getAllLendingPoolsQuery);
         const directusResults: PoolOverviewDirectus[] = await this._directus.request(readItems('PoolOverview'));
         const retn: PoolOverview[] = [];
-        for (const lendingPoolSubgraph of subgraphResults) {
+        for (const lendingPoolSubgraph of subgraphResults.lendingPools) {
             const lendingPoolDirectus = directusResults.find(r => r.id == lendingPoolSubgraph.id);
             const tranches: TrancheData[] = [];
             if(!lendingPoolDirectus) {
@@ -54,7 +54,7 @@ export class DataService {
                 continue;
             }
             for (const tranche of lendingPoolSubgraph.tranches) {
-                const trancheConfig = subgraphTrancheConfigurationResults.find(r => r.id == tranche.id);
+                const trancheConfig = subgraphTrancheConfigurationResults.lendingPoolTrancheConfigurations.find(r => r.id == tranche.id);
                 if(!trancheConfig) {
                     console.log("Couldn't find tranche config for id: ", tranche.id);
                     continue;
@@ -65,7 +65,7 @@ export class DataService {
                     maximumDeposit: trancheConfig.maxDepositAmount,
                     minimumDeposit: trancheConfig.minDepositAmount,
                     poolCapacity: "10", // need formula for calculation
-                    name: (trancheNames[tranches.length-1][tranche.orderId] || "N/A") as string,
+                    name: trancheNames[lendingPoolSubgraph.tranches.length-1][parseInt(tranche.orderId)]
                 });
             }
             const poolOverview: PoolOverview = {
@@ -147,10 +147,10 @@ export class DataService {
 
     async getPoolTranches(id_in?: string[]): Promise<PoolTranche[]> {
         const subgraphResults: TrancheSubgraph[] = await this._graph.request(getAllTranchesQuery);
-        const subgraphConfigurationResults: TrancheConfigurationSubgraph[] = await this._graph.request(getAllTrancheConfigurationsQuery);
+        const subgraphConfigurationResults: TrancheConfigurationSubgraph = await this._graph.request(getAllTrancheConfigurationsQuery);
         const retn: PoolTranche[] = [];
         for (const trancheSubgraph of subgraphResults) {
-            const configuration = subgraphConfigurationResults.find(r => r.id == trancheSubgraph.id);
+            const configuration = subgraphConfigurationResults.lendingPoolTrancheConfigurations.find(r => r.id == trancheSubgraph.id);
             if(!configuration) {
                 console.log("Couldn't find tranche configuration for id: ", trancheSubgraph.id);
                 continue;
