@@ -63,6 +63,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({ balance }) => {
         label='Deposit Amount'
         setAmount={setAmount}
         handleMax={handleMax}
+        decimals={6}
         rootProps={{
           sx: (theme) => ({
             mt: 1,

@@ -6,6 +6,7 @@ import { Box, Button, DialogActions, DialogContent } from '@mui/material'
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
+import useRequestDeposit from '@/hooks/lending/useRequestDeposit'
 import useTranslation from '@/hooks/useTranslation'
 import useApproveToken from '@/hooks/web3/useApproveToken'
 
@@ -25,16 +26,20 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { modal } = useModalState()
 
-  const { amount, txHash } = useDepositModalState()
+  const { amount, trancheId, txHash } = useDepositModalState()
 
   const { modalStatus, modalStatusAction, setModalStatusAction } =
     useModalStatusState()
 
   const { isApproved, approve } = useApproveToken(
     USDC,
-    sdkConfig.contracts.IKSULocking,
+    sdkConfig.contracts.LendingPoolManager,
     amount
   )
+
+  const requestDeposit = useRequestDeposit()
+
+  const poolData = modal.depositModal.poolData
 
   return (
     <>
@@ -65,11 +70,11 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         >
           <DepositModalStepper />
           {modalStatusAction === ModalStatusAction.REVIEWING ? (
-            <DepositModalReview poolData={modal.depositModal.poolData} />
+            <DepositModalReview poolData={poolData} />
           ) : modalStatusAction === ModalStatusAction.EDITING ? (
-            <DepositModalEdit poolData={modal.depositModal.poolData} />
+            <DepositModalEdit poolData={poolData} />
           ) : (
-            <DepositModalCompleted poolData={modal.depositModal.poolData} />
+            <DepositModalCompleted poolData={poolData} />
           )}
         </Box>
       </DialogContent>
@@ -92,7 +97,7 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                 endIcon={<ChevronRightIcon />}
                 onClick={() =>
                   isApproved
-                    ? setModalStatusAction(ModalStatusAction.COMPLETED)
+                    ? requestDeposit(poolData.lendingPoolId, trancheId, amount)
                     : approve(amount)
                 }
               >

@@ -20,7 +20,7 @@ type ApiRes =
 
 const generateKycSignature = async (params: {
   contractAbi: readonly unknown[]
-  contractAddress: string
+  contractAddress: `0x${string}`
   functionName: string
   args: unknown[]
   userAddress: `0x${string}`

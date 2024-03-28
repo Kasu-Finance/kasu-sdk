@@ -12,7 +12,7 @@ export enum ActionType {
   CLAIM_REWARDS = 'CLAIM REWARDS',
   LOCK = 'LOCK',
   UNLOCK = 'UNLOCK',
-  LENDING = 'LENDING',
+  DEPOSIT = 'DEPOSIT',
   WITHDRAW = 'WITHDRAW',
 }
 
@@ -36,9 +36,9 @@ export const ACTION_MESSAGES = {
     [ActionStatus.ERROR]:
       'An error has occurred during the identity verification process provided by Nexera.',
   },
-  [ActionType.LENDING]: {
+  [ActionType.DEPOSIT]: {
     [ActionStatus.ERROR]:
-      'An error has occurred in the lending request. Please review log for more details.',
+      'An error has occurred in the deposit request. Please review log for more details.',
   },
   [ActionType.LOCK]: {
     [ActionStatus.SUCCESS]: 'Lock request has been successfull.',

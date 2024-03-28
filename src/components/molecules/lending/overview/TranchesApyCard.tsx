@@ -1,14 +1,14 @@
 'use client'
 
 import LoginIcon from '@mui/icons-material/Login'
-import { Box, Button, Grid } from '@mui/material'
-import { ethers } from 'ethers'
+import { Box, Grid } from '@mui/material'
 import { useRef } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useIsSticky from '@/hooks/useIsSticky'
 import useTranslation from '@/hooks/useTranslation'
 
+import KycButton from '@/components/atoms/KycButton'
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
 import { COLS } from '@/constants'
@@ -21,7 +21,7 @@ export type PoolData = {
     content: string
     toolTip: string
     title: string
-    trancheId: string
+    trancheId: `0x${string}`
   }[]
 }
 
@@ -41,26 +41,26 @@ const TranchesApyCard = () => {
 
   const POOL_DATA: PoolData = {
     poolName: 'Apxium Invoice Standard Financing Pool',
-    lendingPoolId: ethers.constants.AddressZero,
+    lendingPoolId: '0x1e870492b6abcf7efca6c8ff10ae6426b5fb51a5',
     totalUserInvestment: '200000',
     tranches: [
       {
         content: '12.50 %',
         toolTip: '01',
         title: t('lending.tranche.senior'),
-        trancheId: 'senior',
+        trancheId: '0x3b7264cc166c0d88cae8acf0668e260c11d58f04',
       },
       {
         content: '12.50 %',
         toolTip: '01',
         title: t('lending.tranche.mezzanine'),
-        trancheId: 'mezzanine',
+        trancheId: '0x08a0a6c2ba4452b40cf657cd32f00d601a1f609e',
       },
       {
         content: '2.4 %',
         toolTip: '01',
         title: t('lending.tranche.junior'),
-        trancheId: 'junior',
+        trancheId: '0x832e347083ed6283ae325e5dd8f67032a5cb7644',
       },
     ],
   }
@@ -125,14 +125,14 @@ const TranchesApyCard = () => {
           pb: 2,
         }}
       >
-        <Button
+        <KycButton
           variant='contained'
           sx={{ pl: 2.25, pr: 2.25 }}
           startIcon={<LoginIcon />}
           onClick={handleOpen}
         >
           {t('general.deposit')}
-        </Button>
+        </KycButton>
       </Box>
     </Box>
   )

@@ -5,7 +5,7 @@ export type DepositModalActions =
     }
   | {
       type: 'SET_SELECTED_TRANCHE'
-      payload: string
+      payload: `0x${string}`
     }
   | {
       type: 'SET_TX_HASH'
@@ -14,13 +14,13 @@ export type DepositModalActions =
 
 export type DepositModalStateType = {
   amount: string
-  trancheId: string
+  trancheId: `0x${string}`
   txHash: string | undefined
 }
 
 export type DepositModalFunctions = {
   setAmount: (amount: string) => void
-  setSelectedTranche: (selectedTranche: string) => void
+  setSelectedTranche: (selectedTranche: `0x${string}`) => void
   setTxHash: (txHash: string) => void
 }
 
