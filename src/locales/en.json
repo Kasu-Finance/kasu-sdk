@@ -15,6 +15,7 @@
     "lock": "lock",
     "unlock": "unlock",
     "loyalty": "loyalty",
+    "loyaltyLevel": "loyalty level",
     "max": "max",
     "nextEpoch": "next epoch",
     "rewards": "rewards",
