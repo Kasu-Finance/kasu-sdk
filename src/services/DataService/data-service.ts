@@ -98,8 +98,8 @@ export class DataService {
     }
 
     async getRiskManagement(id_in?: string[]): Promise<RiskManagement[]>{
-        const resultDirectusRiskManagement: RiskManagementDirectus[] = await this._directus.request(readItems('riskManagement'));
-        const resultDirectusRiskManagementItem: RiskManagementItemDirectus[] = await this._directus.request(readItems('riskManagementItem'));
+        const resultDirectusRiskManagement: RiskManagementDirectus[] = await this._directus.request(readItems('RiskManagement'));
+        const resultDirectusRiskManagementItem: RiskManagementItemDirectus[] = await this._directus.request(readItems('RiskManagementItem'));
         const retn: RiskManagement[] = [];
         for(const riskManagementDirectus of resultDirectusRiskManagement){
             const items = resultDirectusRiskManagementItem.filter(r => r.fkRiskManagement == riskManagementDirectus.id);
@@ -124,7 +124,7 @@ export class DataService {
     }
 
     async getPoolDelegateProfileAndHistory(id_in?: string[]): Promise<PoolDelegateProfileAndHistory[]> {
-        const poolDelegateProfileAndHistoryDirectus: PoolDelegateProfileAndHistoryDirectus[] = await this._directus.request(readItems('poolDelegateProfileAndHistory'));
+        const poolDelegateProfileAndHistoryDirectus: PoolDelegateProfileAndHistoryDirectus[] = await this._directus.request(readItems('PoolDelegateProfileAndHistory'));
         const retn: PoolDelegateProfileAndHistory[] = [];
         for(const data of poolDelegateProfileAndHistoryDirectus){
             retn.push({
@@ -173,7 +173,7 @@ export class DataService {
     }
 
     async getBadAndDoubtfulDebts(id_in?: string[]): Promise<BadAndDoubtfulDebts[]> {
-        const badAndDoubtfulDebtsDirectus: BadAndDoubtfulDebtsDirectus[] = await this._directus.request(readItems('badAndDoubtfulDebts'));
+        const badAndDoubtfulDebtsDirectus: BadAndDoubtfulDebtsDirectus[] = await this._directus.request(readItems('BadAndDoubtfulDebts'));
         if(!id_in){
             return badAndDoubtfulDebtsDirectus;
         }
@@ -181,7 +181,7 @@ export class DataService {
     }
 
     async getPoolCreditMetrics(id_in?: string[]): Promise<PoolCreditMetrics[]> {
-        const poolCreditMetricsDirectus: PoolCreditMetricsDirectus[] = await this._directus.request(readItems('poolCreditMetrics'));
+        const poolCreditMetricsDirectus: PoolCreditMetricsDirectus[] = await this._directus.request(readItems('PoolCreditMetrics'));
         if(!id_in){
             return poolCreditMetricsDirectus;
         }
@@ -189,7 +189,7 @@ export class DataService {
     }
 
     async getFinancialReportingDocuments(id_in?: string[]): Promise<FinancialReportingDocumentsDirectus[]> {
-        const financialReportingDocumentsDirectus: FinancialReportingDocumentsDirectus[] = await this._directus.request(readItems('financialReportingDocuments'));
+        const financialReportingDocumentsDirectus: FinancialReportingDocumentsDirectus[] = await this._directus.request(readItems('FinancialReportingDocuments'));
         if(!id_in){
             return financialReportingDocumentsDirectus;
         }
