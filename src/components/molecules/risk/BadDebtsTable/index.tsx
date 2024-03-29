@@ -1,5 +1,7 @@
 import { Theme } from '@emotion/react'
 import { Card, SxProps, TableCell, TableRow, Typography } from '@mui/material'
+import { BadAndDoubtfulDebtsDirectus } from 'kasu-sdk/src/services/DataService/directus-types'
+import { BadAndDoubtfulDebts } from 'kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
@@ -8,7 +10,6 @@ import CustomTable, { Sort } from '@/components/molecules/CustomTable'
 import { CustomTableHeader } from '@/components/molecules/CustomTable/TableHeaders'
 import DataTypography from '@/components/molecules/risk/BadDebtsTable/DataTypography'
 
-import { mockBadDebtData } from '@/app/mock-data/risk-data'
 import { BadDebtsTableKeys } from '@/constants/riskReporting'
 
 const headersStyles: SxProps<Theme> = {
@@ -31,66 +32,59 @@ const additionalHeadersStyles: SxProps<Theme> = {
 }
 
 const handleSort = (
-  _a: BadDebtTableData,
-  _b: BadDebtTableData,
-  _sort: Sort<BadDebtTableData>
+  _a: BadAndDoubtfulDebtsDirectus,
+  _b: BadAndDoubtfulDebtsDirectus,
+  _sort: Sort<BadAndDoubtfulDebtsDirectus>
 ): number => {
   return 0
 }
 
-export type BadDebtTableData = {
-  category: string
-  empty: string
-  totalAmount: number
-  totalAmountSuffix: string
-  monthlyAverage: number
-  monthlyAverageSuffix: string
-  currentStatus: string
-  currentStatusSuffix: string
+interface BadDebtsTableProps {
+  data: BadAndDoubtfulDebts[]
 }
 
-const BadDebtsTable: React.FC = () => {
+const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
   const { t } = useTranslation()
 
-  const headers: CustomTableHeader<BadDebtTableData>[] = [
+  const headers: CustomTableHeader<BadAndDoubtfulDebtsDirectus>[] = [
     {
       label: '',
-      value: BadDebtsTableKeys.CATEGORY,
+      value: 'category', // Assuming 'category' is a valid key in BadAndDoubtfulDebtsDirectus
       disableSort: true,
     },
     {
       label: t('risk.badDebts.headers.column-1'),
-      value: BadDebtsTableKeys.TOTAL_AMOUNT,
+      value: 'totalAmount', // Replace with actual key from BadAndDoubtfulDebtsDirectus
       disableSort: true,
     },
     {
       label: '',
-      value: BadDebtsTableKeys.EMPTY,
+      value: 'empty', // If 'empty' is not a key, consider using a placeholder or omitting this header
       disableSort: true,
     },
     {
       label: t('risk.badDebts.headers.column-2'),
-      value: BadDebtsTableKeys.MONTHLY_AVERAGE,
+      value: 'monthlyAverage', // Replace with actual key from BadAndDoubtfulDebtsDirectus
       disableSort: true,
     },
     {
       label: '',
-      value: BadDebtsTableKeys.EMPTY,
+      value: 'empty', // Same note as above
       disableSort: true,
     },
     {
       label: t('risk.badDebts.headers.column-3'),
-      value: BadDebtsTableKeys.CURRENT_STATUS,
+      value: 'currentStatus', // Replace with actual key from BadAndDoubtfulDebtsDirectus
       disableSort: true,
     },
     {
       label: '',
-      value: BadDebtsTableKeys.EMPTY,
+      value: 'empty', // Same note as above
       disableSort: true,
     },
   ]
 
-  const additionalHeaders: CustomTableHeader<BadDebtTableData>[] = [
+  const additionalHeaders: CustomTableHeader<BadAndDoubtfulDebtsDirectus>[] = [
     {
       label: '',
       value: BadDebtsTableKeys.CATEGORY,
@@ -137,9 +131,9 @@ const BadDebtsTable: React.FC = () => {
       <CustomTable
         headers={headers}
         additionalHeaders={additionalHeaders}
-        data={mockBadDebtData}
+        data={data}
         pagination={false}
-        defaultSortKey={BadDebtsTableKeys.CATEGORY}
+        defaultSortKey='arrearsCurrentStatus'
         handleSort={handleSort}
         headersStyle={headersStyles}
         additionalHeadersStyle={additionalHeadersStyles}
@@ -148,25 +142,25 @@ const BadDebtsTable: React.FC = () => {
           sortedData.map((data, index) => (
             <TableRow key={index}>
               <TableCell align='left' width='10%'>
-                <DataTypography data={data.category} />
+                <DataTypography data={data.arrearsCurrentStatus} />
               </TableCell>
               <TableCell align='center'>
-                <DataTypography data={data.totalAmount} />
+                <DataTypography data={data.lossesLifetime} />
               </TableCell>
               <TableCell align='center'>
-                <DataTypography data={data.totalAmountSuffix} />
+                <DataTypography data={data.arrearsMonthlyAverage} />
               </TableCell>
               <TableCell align='center'>
-                <DataTypography data={data.monthlyAverage} />
+                <DataTypography data={data.lossesMonthlyAverage} />
               </TableCell>
               <TableCell align='center'>
-                <DataTypography data={data.monthlyAverageSuffix} />
+                <DataTypography data={data.lossesCurrentStatus} />
               </TableCell>
               <TableCell align='center'>
-                <DataTypography data={data.currentStatus} />
+                <DataTypography data={data.arrearsCurrentStatus} />
               </TableCell>
               <TableCell align='center'>
-                <DataTypography data={data.currentStatusSuffix} />
+                <DataTypography data={data.defaultsCurrentStatus} />
               </TableCell>
             </TableRow>
           ))

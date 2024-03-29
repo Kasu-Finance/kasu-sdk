@@ -7,7 +7,6 @@ import CustomTable, { Sort } from '@/components/molecules/CustomTable'
 import { CustomTableHeader } from '@/components/molecules/CustomTable/TableHeaders'
 import ReportingTableRow from '@/components/molecules/risk/ReportingTable/ReportingTableRow'
 
-import { reportingMock } from '@/app/mock-data/risk-data'
 import { ReportingTableKeys } from '@/constants/riskReporting'
 
 export type ReportingData = {
