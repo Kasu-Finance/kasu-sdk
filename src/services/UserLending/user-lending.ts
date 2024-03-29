@@ -9,13 +9,17 @@ import {
 import { GraphQLClient } from 'graphql-request';
 
 import {
-    IKasuAllowListAbi__factory,
+    IKasuAllowListAbi__factory, ILendingPoolAbi__factory,
     ILendingPoolManagerAbi,
-    ILendingPoolManagerAbi__factory,
+    ILendingPoolManagerAbi__factory, ILendingPoolTrancheAbi__factory,
     IUserManagerAbi,
     IUserManagerAbi__factory,
 } from '../../contracts';
 import { SdkConfig } from '../../sdk-config';
+
+import { UserRequestsSubgraphResponse } from './subgraph-types';
+import { UserRequest } from './types';
+import { userRequestsQuery } from './user-lending.query';
 
 export class UserLending {
     private readonly _graph: GraphQLClient;
@@ -143,5 +147,26 @@ export class UserLending {
             tranche,
             lossId,
         );
+    }
+
+    async getUserRequests(): Promise<UserRequest[]> {
+        const subgraphResult: UserRequestsSubgraphResponse = await this._graph.request(userRequestsQuery);
+        return subgraphResult.userRequests;
+    }
+
+    async getUserPoolBalance(user: string, poolId: string): Promise<BigNumber> {
+        const lendingPool = ILendingPoolAbi__factory.connect(
+            poolId,
+            this._signerOrProvider
+        )
+        return await lendingPool.getUserBalance(user);
+    }
+
+    async getUserTrancheBalance(user: string, trancheId: string): Promise<BigNumber> {
+        const tranche = ILendingPoolTrancheAbi__factory.connect(
+            trancheId,
+            this._signerOrProvider
+        )
+        return await tranche.getUserActiveAssets(user);
     }
 }
