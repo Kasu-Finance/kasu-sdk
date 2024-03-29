@@ -49,11 +49,11 @@ export const getModal = (
       return {
         component: <WithdrawModalWrapper handleClose={handleClose} />,
       }
-    case 'depositModal':
+    case ModalsKeys.DEPOSIT:
       return {
         component: <DepositModalWrapper handleClose={handleClose} />,
       }
-    case 'kycModal':
+    case ModalsKeys.KYC:
       return {
         component: <KycModal handleClose={handleClose} />,
       }

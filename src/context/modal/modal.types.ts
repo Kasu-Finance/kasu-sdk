@@ -19,6 +19,8 @@ export enum ModalsKeys {
   UNLOCK = 'unlockModal',
   WITHDRAW = 'withdrawModal',
   TRANSACTION_PROCESSING = 'transactionProcessingModal',
+  DEPOSIT = 'depositModal',
+  KYC = 'kycModal',
 }
 
 export type ModalAction =
