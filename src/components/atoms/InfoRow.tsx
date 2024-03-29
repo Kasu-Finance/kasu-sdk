@@ -1,4 +1,11 @@
-import { Box, Divider, Typography, TypographyProps } from '@mui/material'
+import { Theme } from '@emotion/react'
+import {
+  Box,
+  Divider,
+  SxProps,
+  Typography,
+  TypographyProps,
+} from '@mui/material'
 import React, { ReactNode } from 'react'
 
 import ToolTip from '@/components/atoms/ToolTip'
@@ -11,6 +18,7 @@ type InfoRowProps = {
   metric?: ReactNode | number | string
   titleStyle?: TypographyProps
   subtitleStyle?: TypographyProps
+  sx?: SxProps<Theme>
 }
 
 const InfoRow: React.FC<InfoRowProps> = ({
@@ -21,16 +29,19 @@ const InfoRow: React.FC<InfoRowProps> = ({
   metric,
   titleStyle,
   subtitleStyle,
+  sx,
 }) => {
+  const defaultSx = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    px: 2,
+    py: '6px',
+    width: '100%',
+  }
+
   return (
     <>
-      <Box
-        display='flex'
-        justifyContent='space-between'
-        px={2}
-        py='6px'
-        width='100%'
-      >
+      <Box sx={{ ...defaultSx, ...sx }}>
         <Box display='flex' alignItems='center'>
           <Box>
             <Typography
