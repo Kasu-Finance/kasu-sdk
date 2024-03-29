@@ -1,4 +1,3 @@
-import { RiskManagement } from 'kasu-sdk/src/services/DataService/types'
 import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
@@ -6,18 +5,19 @@ import useKasuSDK from '@/hooks/useKasuSDK'
 const useRiskManagement = (poolId: string) => {
   const sdk = useKasuSDK()
 
-  const fetchRiskManagement = async (): Promise<RiskManagement[] | null> => {
+  const fetchRiskManagement = async () => {
     const riskManagementData = await sdk.DataService.getRiskManagement([poolId])
 
-    if (!riskManagementData.length) {
-      console.warn('Received empty data for riskManagement')
-      return null
+    console.warn('riskManagementData', riskManagementData)
+
+    if (!riskManagementData?.length) {
+      throw new Error('No data available for this pool.')
     }
 
     return riskManagementData
   }
 
-  const { data, error } = useSWR<RiskManagement[] | null>(
+  const { data, error } = useSWR(
     poolId ? `riskManagement/${poolId}` : null,
     fetchRiskManagement
   )
@@ -25,7 +25,7 @@ const useRiskManagement = (poolId: string) => {
   return {
     data,
     error,
-    isLoading: !data && !error && data !== null,
+    isLoading: !data && !error,
   }
 }
 

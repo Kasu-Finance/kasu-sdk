@@ -9,6 +9,8 @@ import Carousel from '@/components/molecules/Carousel'
 import PageHeader from '@/components/molecules/PageHeader'
 import PoolCard from '@/components/molecules/PoolCard'
 
+import { Routes } from '@/config/routes'
+
 const Lending = () => {
   const { data: pools, isLoading } = usePoolOverview()
 
@@ -23,38 +25,15 @@ const Lending = () => {
     )
   }
 
-  const fakePools = [
-    {
-      name: 'Pool 1',
-      link: 'lending/1',
-    },
-    {
-      name: 'Pool 2',
-      link: 'lending/2',
-    },
-    {
-      name: 'Pool 3',
-      link: 'lending/pool-3',
-    },
-    {
-      name: 'Pool 4',
-      link: 'lending/pool-4',
-    },
-    {
-      name: 'Pool 5',
-      link: 'lending/pool-5',
-    },
-    {
-      name: 'Pool 6',
-      link: 'lending/pool-6',
-    },
-  ]
-
-  const hasPools = fakePools && fakePools.length > 0
+  const hasPools = pools && pools.length > 0
 
   const poolsContent = hasPools ? (
-    fakePools.map((pool, index) => (
-      <PoolCard name={pool.name} link={pool.link} key={index} />
+    pools.map((pool, index) => (
+      <PoolCard
+        name={pool.poolName}
+        link={`${Routes.lending.root.url}/${pool.id}`}
+        key={index}
+      />
     ))
   ) : (
     <EmptyCardState message='No pools available.' />

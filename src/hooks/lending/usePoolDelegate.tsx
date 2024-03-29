@@ -1,33 +1,25 @@
-import { PoolDelegateProfileAndHistory } from 'kasu-sdk/src/services/DataService/types'
 import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
-interface UsePoolDelegateReturnType {
-  data: PoolDelegateProfileAndHistory[] | null
-  error: any
-  isLoading: boolean
-}
-
-const usePoolDelegate = (poolId: string): UsePoolDelegateReturnType => {
+const usePoolDelegate = (poolId: string) => {
   const sdk = useKasuSDK()
 
-  const fetchPoolDelegate = async (): Promise<
-    PoolDelegateProfileAndHistory[] | null
-  > => {
+  const fetchPoolDelegate = async () => {
     const result = await sdk.DataService.getPoolDelegateProfileAndHistory([
       poolId,
     ])
 
+    console.warn('fetchPoolDelegate', result)
+
     if (!result?.length) {
-      console.warn('Received empty data for poolDelegateProfileAndHistory')
-      return null
+      throw new Error('No data available for this pool.')
     }
 
     return result
   }
 
-  const { data, error } = useSWR<PoolDelegateProfileAndHistory[] | null>(
+  const { data, error } = useSWR(
     poolId ? `poolDelegateProfileAndHistory/${poolId}` : null,
     fetchPoolDelegate
   )
