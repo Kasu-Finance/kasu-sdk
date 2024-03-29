@@ -8,7 +8,6 @@ const usePoolOverview = (poolId?: string) => {
   const fetchPoolOverview = async () => {
     const argument = poolId ? [poolId] : undefined
     const poolOverview = await sdk.DataService.getPoolOverview(argument)
-    console.log('poolOverview', poolOverview)
 
     if (!poolOverview?.length) {
       throw new Error('No pool overview data found')

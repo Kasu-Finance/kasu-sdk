@@ -8,8 +8,6 @@ const useRiskManagement = (poolId: string) => {
   const fetchRiskManagement = async () => {
     const riskManagementData = await sdk.DataService.getRiskManagement([poolId])
 
-    console.warn('riskManagementData', riskManagementData)
-
     if (!riskManagementData?.length) {
       throw new Error('No data available for this pool.')
     }
