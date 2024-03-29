@@ -158,7 +158,7 @@
         "label": "Total Loans Originated",
         "tooltip": "​Total number of individual loans that the Pool Delegate has deployed since its inception, regardless of whether they have been made available on Kasu or not.​"
       },
-      "assetClasses": {
+      "assetClass": {
         "label": "Asset Class(es)",
         "tooltip": "All lending specialisations, types or categories in which the Pool Delegate has a track record and expertise, regardless of the Pools available on Kasu by the Pool Delegate.​"
       },

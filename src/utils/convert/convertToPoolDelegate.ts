@@ -1,7 +1,8 @@
 import { PoolDelegateProfileAndHistory } from 'kasu-sdk/src/services/DataService/types'
-import { PoolMetric } from 'kasu-sdk/src/types'
 
 import { PoolDelegateMetricIds } from '@/constants'
+
+import { PoolMetric } from '@/types/lending'
 
 const convertToPoolDelegate = (
   delegateProfile: PoolDelegateProfileAndHistory
