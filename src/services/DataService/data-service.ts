@@ -99,7 +99,7 @@ export class DataService {
 
     async getRiskManagement(id_in?: string[]): Promise<RiskManagement[]>{
         const resultDirectusRiskManagement: RiskManagementDirectus[] = await this._directus.request(readItems('RiskManagement'));
-        const resultDirectusRiskManagementItem: RiskManagementItemDirectus[] = await this._directus.request(readItems('RiskManagementItem'));
+        const resultDirectusRiskManagementItem: RiskManagementItemDirectus[] = await this._directus.request(readItems('RiskManagementItems'));
         const retn: RiskManagement[] = [];
         for(const riskManagementDirectus of resultDirectusRiskManagement){
             const items = resultDirectusRiskManagementItem.filter(r => r.fkRiskManagement == riskManagementDirectus.id);

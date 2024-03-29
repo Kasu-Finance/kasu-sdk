@@ -2,7 +2,7 @@ export interface DirectusSchema {
     PoolOverview: PoolOverviewDirectus[];
     PoolDelegateProfileAndHistory: PoolDelegateProfileAndHistoryDirectus[];
     RiskManagement: RiskManagementDirectus[];
-    RiskManagementItem: RiskManagementItemDirectus[];
+    RiskManagementItems: RiskManagementItemDirectus[];
     PoolCreditMetrics: PoolCreditMetricsDirectus[];
     BadAndDoubtfulDebts: BadAndDoubtfulDebtsDirectus[];
     FinancialReportingDocuments: FinancialReportingDocumentsDirectus[];
