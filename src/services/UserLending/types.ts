@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers';
 
 export interface UserInvestment {
     id: string;
@@ -59,4 +60,11 @@ export interface UserRequest {
             transactionHash: string;
         }
         userRequestEventsCount: string;
+}
+
+export interface UserBalance {
+    userId: string;
+    address: string;
+    yieldEarned: number;
+    balance: BigNumber;
 }

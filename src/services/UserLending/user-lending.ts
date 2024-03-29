@@ -18,7 +18,7 @@ import {
 import { SdkConfig } from '../../sdk-config';
 
 import { UserRequestsSubgraphResponse } from './subgraph-types';
-import { UserRequest } from './types';
+import { UserBalance, UserRequest } from './types';
 import { userRequestsQuery } from './user-lending.query';
 
 export class UserLending {
@@ -154,19 +154,29 @@ export class UserLending {
         return subgraphResult.userRequests;
     }
 
-    async getUserPoolBalance(user: string, poolId: string): Promise<BigNumber> {
+    async getUserPoolBalance(user: string, poolId: string): Promise<UserBalance> {
         const lendingPool = ILendingPoolAbi__factory.connect(
             poolId,
             this._signerOrProvider
         )
-        return await lendingPool.getUserBalance(user);
+        return {
+            userId: user,
+            address: poolId,
+            yieldEarned: 0, // TODO do this calculation
+            balance: await lendingPool.getUserBalance(user),
+        }
     }
 
-    async getUserTrancheBalance(user: string, trancheId: string): Promise<BigNumber> {
+    async getUserTrancheBalance(user: string, trancheId: string): Promise<UserBalance> {
         const tranche = ILendingPoolTrancheAbi__factory.connect(
             trancheId,
             this._signerOrProvider
         )
-        return await tranche.getUserActiveAssets(user);
+        return {
+            userId: user,
+            address: trancheId,
+            yieldEarned: 0, // TODO do this calculation
+            balance: await tranche.getUserActiveAssets(user),
+        }
     }
 }
