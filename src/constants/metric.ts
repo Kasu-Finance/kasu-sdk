@@ -12,7 +12,7 @@ export enum PoolDelegateMetricIds {
   History = 'history',
   TotalFunds = 'totalFunds',
   TotalLoans = 'totalLoans',
-  AssetClasses = 'assetClasses',
+  AssetClasses = 'assetClass',
   OtherPools = 'otherPools',
   Loans = 'loans',
   Loss = 'loss',

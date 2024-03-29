@@ -14,5 +14,4 @@ export const sdkConfig: SdkConfig = {
   directusUrl: 'https://kasu-finance.directus.app/',
   subgraphUrl:
     'https://api.studio.thegraph.com/query/63245/kasu-wip-sepolia/version/latest',
-  directusUrl: 'https://kasu-finance.directus.app/',
 }

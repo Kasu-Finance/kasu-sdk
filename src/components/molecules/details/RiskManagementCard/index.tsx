@@ -4,11 +4,10 @@ import { useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
-import CriteriaSection from '@/components/molecules/details/RiskManagementCard/CriteriaSection'
+import InfoColumn from '@/components/atoms/InfoColumn'
 import RiskStatus from '@/components/molecules/details/RiskManagementCard/RiskStatus'
-import SecuritySection from '@/components/molecules/details/RiskManagementCard/SecuritySection'
 
-import { convertToRiskManagement } from '@/utils'
+import { convertToRiskStatus } from '@/utils'
 
 interface RiskManagementCardProps {
   data: RiskManagement
@@ -17,8 +16,8 @@ interface RiskManagementCardProps {
 const RiskManagementCard: React.FC<RiskManagementCardProps> = ({ data }) => {
   const { t } = useTranslation()
 
-  const { riskStatus, security, criteria } = useMemo(
-    () => convertToRiskManagement(data),
+  const { riskStatus } = useMemo(
+    () => convertToRiskStatus(data.riskPerformance),
     [data]
   )
 
@@ -30,9 +29,34 @@ const RiskManagementCard: React.FC<RiskManagementCardProps> = ({ data }) => {
 
       <RiskStatus metrics={riskStatus.metrics} />
 
+      {/* Dynamic sections as items */}
       <Box display='flex'>
-        <SecuritySection securityMetrics={security.metrics} />
-        <CriteriaSection criteriaMetrics={criteria.metrics} />
+        {data.items.map((item, index) => (
+          <Box
+            key={item.id}
+            display='flex'
+            width='100%'
+            flexDirection='column'
+            sx={{
+              pr: index % 2 === 0 ? 2 : 0,
+            }}
+          >
+            <Typography variant='subtitle1' sx={{ mt: 3 }}>
+              {item.group}
+            </Typography>
+
+            <InfoColumn
+              title={item.title}
+              toolTipInfo={item.tooltip}
+              showDivider
+              metric={
+                <Typography variant='body2' sx={{ pl: 2, mt: 0.5 }}>
+                  {item.title}
+                </Typography>
+              }
+            />
+          </Box>
+        ))}
       </Box>
     </Card>
   )

@@ -8,17 +8,26 @@ const convertToPoolTraction = (overview: PoolOverview): PoolDetailSection => {
   const metrics: PoolMetric[] = [
     {
       id: PoolTractionMetricIds.ValueLocked,
-      content: `${overview.totalValueLocked} M`,
+      content: `${overview.totalValueLocked || 'N/A'} M`,
       unit: 'USDC',
     },
     {
       id: PoolTractionMetricIds.Management,
-      content: `${overview.loansUnderManagement}`,
+      content: `${overview.loansUnderManagement || 'N/A'}`,
       unit: 'USDC',
     },
-    { id: PoolTractionMetricIds.Yield, content: `${overview.yieldEarned} %` },
-    { id: PoolTractionMetricIds.Capacity, content: overview.poolCapacity },
-    { id: PoolTractionMetricIds.ActiveLoans, content: overview.activeLoans },
+    {
+      id: PoolTractionMetricIds.Yield,
+      content: `${overview.yieldEarned || 'N/A'} %`,
+    },
+    {
+      id: PoolTractionMetricIds.Capacity,
+      content: overview.poolCapacity || 'N/A',
+    },
+    {
+      id: PoolTractionMetricIds.ActiveLoans,
+      content: overview.activeLoans || 'N/A',
+    },
   ]
 
   return { id: PoolDetailsSectionIds.PoolTraction, metrics }
