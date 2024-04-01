@@ -1,8 +1,10 @@
 import { Card, CardContent, Typography } from '@mui/material'
 import { useParams } from 'next/navigation'
 
+import usePoolDelegate from '@/hooks/lending/usePoolDelegate'
 import usePoolOverview from '@/hooks/lending/usePoolOverview'
 
+import EmptyCardState from '@/components/atoms/EmptyCardState'
 import OverviewTitle from '@/components/molecules/details/OverviewTitle'
 import InvestmentPortfolio from '@/components/molecules/lending/overview/InvestmentCard'
 import LoyaltyCard from '@/components/molecules/lending/overview/LoyaltyCard'
@@ -17,17 +19,17 @@ const PoolOverview = () => {
   const { slug } = useParams()
   const poolId = slug as string
   const overviewPools = usePoolOverview(poolId)
-  // const delegateHook = usePoolDelegate(poolId)
+  const delegatePool = usePoolDelegate(poolId)
 
-  let currentPool = undefined
-  const isLoading = overviewPools.isLoading
+  const isLoading = overviewPools.isLoading || delegatePool.isLoading
+  const hasData = overviewPools.data && delegatePool.data
 
-  if (!isLoading) {
+  let currentPool, currentPoolDelegate
+
+  if (!isLoading && hasData) {
     currentPool = getObjectById(overviewPools.data, poolId)
-    // console.log('current pool', currentPool)
+    currentPoolDelegate = delegatePool.data
   }
-
-  // console.log('delegate', delegateHook.data)
 
   if (isLoading) {
     return (
@@ -41,33 +43,37 @@ const PoolOverview = () => {
     )
   }
 
-  return (
-    <>
-      <Card
-        sx={{
-          minWidth: 275,
-          height: 352,
-          boxShadow: 3,
-          overflow: 'inherit',
-        }}
-        elevation={1}
-      >
-        <OverviewTitle />
+  if (!hasData) {
+    return (
+      <EmptyCardState message={'No data available for this pool: ' + poolId} />
+    )
+  }
 
-        <CardContent>
-          <Typography variant='body1'>
-            {currentPool && currentPool.description}
-          </Typography>
-        </CardContent>
-        {currentPool && <TranchesApyCard pool={currentPool} />}
-      </Card>
+  if (currentPool && currentPoolDelegate) {
+    return (
+      <>
+        <Card
+          sx={{ minWidth: 275, height: 352, boxShadow: 3, overflow: 'inherit' }}
+          elevation={1}
+        >
+          <OverviewTitle />
+          <CardContent>
+            <Typography variant='body1'>{currentPool.description}</Typography>
+          </CardContent>
+          <TranchesApyCard pool={currentPool} />
+        </Card>
+        <OverviewDetails
+          pool={currentPool}
+          poolDelegate={currentPoolDelegate}
+        />
+        <TranchesDetailsCard pool={currentPool} />
+        <InvestmentPortfolio />
+        <LoyaltyCard />
+      </>
+    )
+  }
 
-      {currentPool && <OverviewDetails pool={currentPool} />}
-      <TranchesDetailsCard />
-      <InvestmentPortfolio />
-      <LoyaltyCard />
-    </>
-  )
+  return null
 }
 
 export default PoolOverview
