@@ -27,7 +27,7 @@ const PoolOverview = () => {
     // console.log('current pool', currentPool)
   }
 
-  // console.log(delegateHook)
+  // console.log('delegate', delegateHook.data)
 
   if (isLoading) {
     return (

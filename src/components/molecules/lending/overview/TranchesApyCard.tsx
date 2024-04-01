@@ -48,24 +48,33 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
     tranches: [
       {
         content: '12.50 %',
-        toolTip: '01',
-        title: t('lending.tranche.senior'),
+        toolTip: 'lending.tranche.senior.tooltip',
+        title: t('lending.tranche.senior.title'),
         trancheId: '0xe840a390756cb7c18b6102457f81803fb63635d9',
       },
       {
         content: '12.50 %',
-        toolTip: '01',
-        title: t('lending.tranche.mezzanine'),
+        toolTip: 'lending.tranche.mezzanine.tooltip',
+        title: t('lending.tranche.mezzanine.title'),
         trancheId: '0x90adcd57397133c6ce6078dbc70143b7acbc2670',
       },
       {
         content: '2.4 %',
-        toolTip: '01',
-        title: t('lending.tranche.junior'),
+        toolTip: 'lending.tranche.junior.tooltip',
+        title: t('lending.tranche.junior.title'),
         trancheId: '0xf73306c30023538d588cca69f347b136d52f374f',
       },
     ],
   }
+
+  const tranches = pool.tranches.map((item) => {
+    const key = item.name.toLowerCase()
+
+    return {
+      ...item,
+      tooltip: `lending.tranche.${key}.tooltip`,
+    }
+  })
 
   return (
     <Box
@@ -104,12 +113,12 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
           columnSpacing={{ xs: 1, sm: 2, md: 3 }}
           maxWidth='lg'
         >
-          {pool.tranches.map((tranche, index) => {
+          {tranches.map((tranche, index) => {
             return (
               <Grid item xs={COLS / pool.tranches.length} key={index}>
                 <MetricWithSuffix
                   content={+tranche.apy * 100 + ' %'}
-                  tooltipKey='general.info'
+                  tooltipKey={tranche.tooltip}
                   titleKey={`${tranche.name} APY`}
                 />
               </Grid>

@@ -182,9 +182,18 @@
     "poolRisk": {},
     "strategyDeck": "Strategy deck",
     "tranche": {
-      "senior": "Senior Tranche",
-      "mezzanine": "Mezzanine Tranche",
-      "junior": "Junior Tranche"
+      "senior": {
+        "title": "Senior Tranche",
+        "tooltip": "The current Annual Percentage Yield offered by the Pool Delegate for the Senior Tranche within this Lending Pool, assuming all repayments will be made as expected."
+      },
+      "mezzanine": {
+        "title": "Mezzanine Tranche",
+        "tooltip": "The current Annual Percentage Yield offered by the Pool Delegate for the Mezzanine Tranche within this Lending Pool, assuming all repayments will be made as expected."
+      },
+      "junior": {
+        "title": "Junior Tranche",
+        "tooltip": "The current Annual Percentage Yield offered by the Pool Delegate for the Junior Tranche within this Lending Pool, assuming all repayments will be made as expected. "
+      }
     }
   },
   "details": {
