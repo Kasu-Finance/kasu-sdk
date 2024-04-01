@@ -79,27 +79,19 @@ export interface TrancheData {
 export interface PoolCreditMetrics {
     id: string;
     poolIdFK: string;
-    icrPreviousFiscalYear: number;
-    icrRecentQuarter: number;
-    icrPriorMonth: number;
-    dscrPreviousFiscalYear: number;
-    dscrRecentQuarter: number;
-    dscrPriorMonth: number;
-    ltvrPreviousFiscalYear: number;
-    ltvrRecentQuarter: number;
-    ltvrPriorMonth: number;
+    keyCreditMetric: string;
+    previousFiscalYear: number;
+    mostRecentQuarter: number;
+    priorMonth: number;
 }
 
 export interface BadAndDoubtfulDebts {
     id: string;
     poolIdFK: string;
-    arrearsMonthlyAverage: string;
-    defaultsMonthlyAverage: string;
-    recoveryActionMonthlyAverage: string;
-    lossesMonthlyAverage: string;
-    arrearsCurrentStatus: string;
-    defaultsCurrentStatus: string;
-    recoveryActionCurrentStatus: string;
-    lossesCurrentStatus: string;
-    lossesLifetime: string;
+    totalAmount: number;
+    totalPercentage: number;
+    monthlyAverageAmount: number;
+    monthlyAveragePercentage: number;
+    currentStatusAmount: number;
+    currentStatusPercentage: number;
 }
