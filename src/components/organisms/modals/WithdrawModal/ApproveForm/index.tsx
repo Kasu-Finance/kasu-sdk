@@ -3,14 +3,12 @@ import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
-import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import useTranslation from '@/hooks/useTranslation'
 
 import CountdownSection from '@/components/organisms/modals/WithdrawModal/ApproveForm/CountdownSection'
 
-import { ModalsKeys } from '@/context/modal/modal.types'
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
 import { ChevronRightIcon, EditIcon } from '@/assets/icons'
@@ -25,13 +23,11 @@ const ApproveForm: React.FC<ApproveFormProps> = ({ pool }) => {
   const { setProcessing } = useWithdrawModalState()
   const { setModalStatusAction } = useModalStatusState()
 
-  const { openModal } = useModalState()
   const { t } = useTranslation()
   const router = useRouter()
 
   const onSubmit = () => {
     setProcessing(true)
-    openModal({ name: ModalsKeys.TRANSACTION_PROCESSING })
 
     setTimeout(() => {
       setProcessing(false)

@@ -7,6 +7,7 @@ import DepositModalWrapper from '@/components/organisms/modals/DepositModal/Depo
 import KycModal from '@/components/organisms/modals/KycModal'
 import LockModalWrapper from '@/components/organisms/modals/LockModal/LockModalWrapper'
 import LoyaltyLevelsModal from '@/components/organisms/modals/LoyaltyLevelsModal'
+import ProcessingModal from '@/components/organisms/modals/ProcessingModal'
 import UnlockModalWrapper from '@/components/organisms/modals/UnlockModal/UnlockModalWrapper'
 import WithdrawModalWrapper from '@/components/organisms/modals/WithdrawModal/WithdrawModalWrapper'
 
@@ -56,6 +57,10 @@ export const getModal = (
     case ModalsKeys.KYC:
       return {
         component: <KycModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.TRANSACTION_PROCESSING:
+      return {
+        component: <ProcessingModal handleClose={handleClose} />,
       }
     default:
       return null

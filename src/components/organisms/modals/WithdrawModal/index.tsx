@@ -1,7 +1,7 @@
 'use client'
 
 import ReceiptIcon from '@mui/icons-material/Receipt'
-import { Box, Button } from '@mui/material'
+import { Box, Button, DialogContent } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import React, { useMemo } from 'react'
 
@@ -10,7 +10,7 @@ import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import useTranslation from '@/hooks/useTranslation'
 
-import CustomModal from '@/components/molecules/CustomModal'
+import DialogHeader from '@/components/molecules/DialogHeader'
 import HorizontalStepper from '@/components/molecules/HorizontalStepper'
 import ProcessingModal from '@/components/organisms/modals/ProcessingModal'
 import ApproveForm from '@/components/organisms/modals/WithdrawModal/ApproveForm'
@@ -18,7 +18,6 @@ import ConfirmForm from '@/components/organisms/modals/WithdrawModal/ConfirmForm
 import MetricsSection from '@/components/organisms/modals/WithdrawModal/MetricsSection'
 import RequestForm from '@/components/organisms/modals/WithdrawModal/RequestForm'
 
-import { ModalsKeys } from '@/context/modal/modal.types'
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
 import { metricsMock } from '@/app/mock-data/withdrawMock'
@@ -37,13 +36,12 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
     setAmount,
     setSelectedTranche,
     setErrorMsg,
+    setProcessing,
   } = useWithdrawModalState()
   const router = useRouter()
   const { t } = useTranslation()
   const { modal } = useModalState()
   const { modalStatusAction, setModalStatusAction } = useModalStatusState()
-
-  console.warn('modalStatusAction', modalStatusAction)
 
   const poolData = modal.withdrawModal.poolData
 
@@ -61,79 +59,79 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
     setErrorMsg('')
     setModalStatusAction(ModalStatusAction.REQUEST)
     setSelectedTranche('0x0')
+    setProcessing(false)
     handleClose()
     router.push(Routes.lending.root.url)
   }
 
   if (processing) {
-    return <ProcessingModal />
+    return <ProcessingModal handleClose={onModalClose} />
   }
 
+  // TODO: Replace with real tx hash
+  const txHash =
+    modalStatusAction === ModalStatusAction.CONFIRM ? 'test-tx-hash' : ''
+
   return (
-    <CustomModal
-      modalKey={ModalsKeys.WITHDRAW}
-      title={t('lending.withdraw.title')}
-      onAction={onModalClose}
-      modalStyles={{
-        py: 2,
-        top: '50%',
-        width: '60%',
-        borderRadius: 1,
-      }}
-      actionIcon={
-        modalStatusAction === ModalStatusAction.CONFIRM ? (
+    <>
+      <DialogHeader
+        title={t('lending.withdraw.title')}
+        showClose={!txHash}
+        onClose={onModalClose}
+      >
+        {txHash && (
           <Button
-            component='a'
-            href='https://www.newwebsite.com'
-            target='_blank'
-            rel='noopener noreferrer'
+            sx={{ height: 30, width: 97, p: '4px 10px' }}
             variant='outlined'
             startIcon={<ReceiptIcon />}
+            href={txHash}
+            target='_blank'
           >
             {t('lending.withdraw.button.viewTx')}
           </Button>
-        ) : null
-      }
-    >
-      <Box mt={3} width='100%'>
-        <HorizontalStepper
-          activeStep={modalStatusAction as number}
-          steps={['Request', 'Approve', 'Confirm']}
-        />
-      </Box>
+        )}
+      </DialogHeader>
+      <DialogContent>
+        <Box mt={3} width='100%'>
+          <HorizontalStepper
+            activeStep={modalStatusAction as number}
+            steps={['Request', 'Approve', 'Confirm']}
+          />
+        </Box>
 
-      {modalStatusAction !== ModalStatusAction.CONFIRM && (
-        <MetricsSection
-          metrics={metricsMock}
-          poolName={poolData?.poolName || ''}
-          selectedTranche={selectedTranche}
-          modalStatusAction={modalStatusAction as number}
-          isMultiTranche={isMultiTranche}
-          metricsRowClassName={validationStyle}
-        />
-      )}
+        {modalStatusAction !== ModalStatusAction.CONFIRM && (
+          <MetricsSection
+            metrics={metricsMock}
+            poolName={poolData?.poolName || ''}
+            selectedTranche={selectedTranche}
+            modalStatusAction={modalStatusAction as number}
+            isMultiTranche={isMultiTranche}
+            metricsRowClassName={validationStyle}
+          />
+        )}
 
-      {modalStatusAction === ModalStatusAction.REQUEST && (
-        <RequestForm
-          poolData={poolData}
-          isMultiTranche={isMultiTranche}
-          containerClassName={validationStyle}
-        />
-      )}
+        {modalStatusAction === ModalStatusAction.REQUEST && (
+          <RequestForm
+            poolData={poolData}
+            isMultiTranche={isMultiTranche}
+            containerClassName={validationStyle}
+          />
+        )}
 
-      {modalStatusAction === ModalStatusAction.APPROVE && (
-        <ApproveForm pool={poolData} />
-      )}
+        {modalStatusAction === ModalStatusAction.APPROVE && (
+          <ApproveForm pool={poolData} />
+        )}
 
-      {modalStatusAction === ModalStatusAction.CONFIRM && (
-        <ConfirmForm
-          amount={amount}
-          poolName={poolData?.poolName || ''}
-          trancheName={selectedTranche}
-          onSubmit={onModalClose}
-        />
-      )}
-    </CustomModal>
+        {modalStatusAction === ModalStatusAction.CONFIRM && (
+          <ConfirmForm
+            amount={amount}
+            poolName={poolData?.poolName || ''}
+            trancheName={selectedTranche}
+            onSubmit={onModalClose}
+          />
+        )}
+      </DialogContent>
+    </>
   )
 }
 
