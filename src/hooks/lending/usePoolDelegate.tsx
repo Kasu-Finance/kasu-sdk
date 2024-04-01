@@ -6,28 +6,39 @@ const usePoolDelegate = (poolId: string) => {
   const sdk = useKasuSDK()
 
   const fetchPoolDelegate = async () => {
-    const result = await sdk.DataService.getPoolDelegateProfileAndHistory([
-      poolId,
-    ])
-
-    console.warn('fetchPoolDelegate', result)
+    const result = await sdk.DataService.getPoolDelegateProfileAndHistory()
 
     if (!result?.length) {
-      throw new Error('No data available for this pool.')
+      throw new Error('No data available.')
     }
 
     return result
   }
 
-  const { data, error } = useSWR(
-    poolId ? `poolDelegateProfileAndHistory/${poolId}` : null,
+  const { data, error, mutate } = useSWR(
+    'poolDelegateProfileAndHistory',
     fetchPoolDelegate
   )
 
+  let customError = error
+  let filteredPoolDelegate = data
+    ? data.find((item) => item.poolIdFK === poolId)
+    : null
+
+  filteredPoolDelegate =
+    filteredPoolDelegate === undefined ? null : filteredPoolDelegate
+
+  if (data && !filteredPoolDelegate) {
+    customError = new Error(`No data available for pool ID: ${poolId}`)
+    console.error(`No data available for pool ID: ${poolId}`)
+  }
+
   return {
-    data: data || null,
-    error,
-    isLoading: !data && !error && data !== null,
+    data: filteredPoolDelegate,
+    error: customError,
+    isLoading: !filteredPoolDelegate && !customError,
+    // Expose mutate for refetching or cache updating if needed
+    mutate,
   }
 }
 
