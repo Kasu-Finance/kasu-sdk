@@ -1,6 +1,6 @@
 import ChevronRight from '@mui/icons-material/ChevronRight'
 import EditIcon from '@mui/icons-material/Edit'
-import { Box, Button, DialogActions, useTheme } from '@mui/material'
+import { Button, DialogActions, useTheme } from '@mui/material'
 import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
 import { useRouter } from 'next/navigation'
 
@@ -50,7 +50,9 @@ const WithdrawModalActions: React.FC<WithdrawModalActionsProps> = ({
   }
 
   return (
-    <DialogActions>
+    <DialogActions
+      sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}
+    >
       {modalStatusAction === ModalStatusAction.REQUEST && (
         <Button
           variant='contained'
@@ -72,7 +74,7 @@ const WithdrawModalActions: React.FC<WithdrawModalActionsProps> = ({
       )}
 
       {modalStatusAction === ModalStatusAction.APPROVE && (
-        <Box display='flex' justifyContent='center' width='100%'>
+        <>
           <Button
             variant='outlined'
             startIcon={<EditIcon />}
@@ -89,7 +91,7 @@ const WithdrawModalActions: React.FC<WithdrawModalActionsProps> = ({
           >
             {t('lending.withdraw.button.confirm')}
           </Button>
-        </Box>
+        </>
       )}
 
       {modalStatusAction === ModalStatusAction.CONFIRM && (
