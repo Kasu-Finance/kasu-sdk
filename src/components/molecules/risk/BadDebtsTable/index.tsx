@@ -144,8 +144,7 @@ const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
           sortedData.map((data, index) => (
             <TableRow key={index}>
               <TableCell align='left' width='10%'>
-                {/* TODO: add here right param instead of totalAmount */}
-                <DataTypography data={data.totalAmount} />
+                <DataTypography data={data.name} />
               </TableCell>
               <TableCell align='center'>
                 <DataTypography data={data.totalAmount} />
