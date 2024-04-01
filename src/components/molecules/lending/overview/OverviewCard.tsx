@@ -9,12 +9,37 @@ import LoyaltyCard from '@/components/molecules/lending/overview/LoyaltyCard'
 import OverviewDetails from '@/components/molecules/lending/overview/OverviewDetails'
 import TranchesApyCard from '@/components/molecules/lending/overview/TranchesApyCard'
 import TranchesDetailsCard from '@/components/molecules/lending/overview/TranchesDetails'
+import CardSkeleton from '@/components/molecules/loaders/CardSkeleton'
+
+import { getObjectById } from '@/utils'
 
 const PoolOverview = () => {
-  const { slug: poolId } = useParams()
-  const { data, isLoading } = usePoolOverview(poolId as string)
+  const { slug } = useParams()
+  const poolId = slug as string
+  const overviewPools = usePoolOverview(poolId)
+  // const delegateHook = usePoolDelegate(poolId)
 
-  console.warn(data, isLoading)
+  let currentPool = undefined
+  const isLoading = overviewPools.isLoading
+
+  if (!isLoading) {
+    currentPool = getObjectById(overviewPools.data, poolId)
+    // console.log('current pool', currentPool)
+  }
+
+  // console.log(delegateHook)
+
+  if (isLoading) {
+    return (
+      <>
+        <CardSkeleton leftRowNumbers={4} rightRowNumbers={4} />
+        <CardSkeleton leftRowNumbers={3} rightRowNumbers={3} />
+        <CardSkeleton leftRowNumbers={3} rightRowNumbers={3} />
+        <CardSkeleton leftRowNumbers={3} rightRowNumbers={3} />
+        <CardSkeleton leftRowNumbers={5} rightRowNumbers={5} />
+      </>
+    )
+  }
 
   return (
     <>
@@ -31,18 +56,13 @@ const PoolOverview = () => {
 
         <CardContent>
           <Typography variant='body1'>
-            By engaging in Cash Management, companies can extend runway, hedge
-            against inflation, and manage cash flows. The Pool is designed to
-            meet the conservative risk profile and daily liquidity needs of
-            DAOs, Offshore Companies and Web3 Treasuries. The pool passes yield
-            sourced from US Treasury bills and reverse repurchase agreements,
-            less fees of 0.5% of yield, to Lenders.
+            {currentPool && currentPool.description}
           </Typography>
         </CardContent>
-        <TranchesApyCard />
+        {currentPool && <TranchesApyCard pool={currentPool} />}
       </Card>
 
-      <OverviewDetails />
+      {currentPool && <OverviewDetails pool={currentPool} />}
       <TranchesDetailsCard />
       <InvestmentPortfolio />
       <LoyaltyCard />
