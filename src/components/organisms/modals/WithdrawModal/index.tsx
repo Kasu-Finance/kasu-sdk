@@ -1,7 +1,7 @@
 'use client'
 
 import ReceiptIcon from '@mui/icons-material/Receipt'
-import { Box, Button, DialogContent } from '@mui/material'
+import { Box, Button, DialogActions, DialogContent } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import React, { useMemo } from 'react'
 
@@ -13,10 +13,11 @@ import useTranslation from '@/hooks/useTranslation'
 import DialogHeader from '@/components/molecules/DialogHeader'
 import HorizontalStepper from '@/components/molecules/HorizontalStepper'
 import ProcessingModal from '@/components/organisms/modals/ProcessingModal'
-import ApproveForm from '@/components/organisms/modals/WithdrawModal/ApproveForm'
-import ConfirmForm from '@/components/organisms/modals/WithdrawModal/ConfirmForm'
-import MetricsSection from '@/components/organisms/modals/WithdrawModal/MetricsSection'
-import RequestForm from '@/components/organisms/modals/WithdrawModal/RequestForm'
+import WithdrawModalActions from '@/components/organisms/modals/WithdrawModal/WithdrawModalActions'
+import WithdrawModalApprove from '@/components/organisms/modals/WithdrawModal/WithdrawModalApprove'
+import WithdrawModalConfirm from '@/components/organisms/modals/WithdrawModal/WithdrawModalConfirm'
+import WithdrawModalMetrics from '@/components/organisms/modals/WithdrawModal/WithdrawModalMetrics'
+import WithdrawModalRequest from '@/components/organisms/modals/WithdrawModal/WithdrawModalRequest'
 
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
@@ -40,19 +41,21 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
   } = useWithdrawModalState()
   const router = useRouter()
   const { t } = useTranslation()
+
   const { modal } = useModalState()
   const { modalStatusAction, setModalStatusAction } = useModalStatusState()
 
   const poolData = modal.withdrawModal.poolData
+  const disabledButton = !amount || !!errorMsg
+
+  const validationStyle = errorMsg
+    ? 'light-error-background'
+    : 'light-blue-background'
 
   const isMultiTranche = useMemo(
     () => poolData?.tranches?.length > 1,
     [poolData]
   )
-
-  const validationStyle = errorMsg
-    ? 'light-error-background'
-    : 'light-blue-background'
 
   const onModalClose = () => {
     setAmount('')
@@ -100,7 +103,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
         </Box>
 
         {modalStatusAction !== ModalStatusAction.CONFIRM && (
-          <MetricsSection
+          <WithdrawModalMetrics
             metrics={metricsMock}
             poolName={poolData?.poolName || ''}
             selectedTranche={selectedTranche}
@@ -111,7 +114,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
         )}
 
         {modalStatusAction === ModalStatusAction.REQUEST && (
-          <RequestForm
+          <WithdrawModalRequest
             poolData={poolData}
             isMultiTranche={isMultiTranche}
             containerClassName={validationStyle}
@@ -119,17 +122,21 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
         )}
 
         {modalStatusAction === ModalStatusAction.APPROVE && (
-          <ApproveForm pool={poolData} />
+          <WithdrawModalApprove />
         )}
 
         {modalStatusAction === ModalStatusAction.CONFIRM && (
-          <ConfirmForm
-            amount={amount}
-            poolData={poolData}
-            onSubmit={onModalClose}
-          />
+          <WithdrawModalConfirm amount={amount} poolData={poolData} />
         )}
       </DialogContent>
+
+      <DialogActions>
+        <WithdrawModalActions
+          poolData={poolData}
+          onModalClose={onModalClose}
+          disabledButton={disabledButton}
+        />
+      </DialogActions>
     </>
   )
 }

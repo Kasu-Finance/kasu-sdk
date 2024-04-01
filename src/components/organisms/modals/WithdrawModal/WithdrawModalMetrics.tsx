@@ -15,7 +15,7 @@ import { formatAccount } from '@/utils'
 
 import { PoolMetric } from '@/types/lending'
 
-interface MetricsSectionProps {
+interface WithdrawModalMetricsProps {
   poolName: string
   metrics: PoolMetric[]
   modalStatusAction: number
@@ -24,7 +24,7 @@ interface MetricsSectionProps {
   metricsRowClassName?: string
 }
 
-const MetricsSection: React.FC<MetricsSectionProps> = ({
+const WithdrawModalMetrics: React.FC<WithdrawModalMetricsProps> = ({
   poolName,
   metrics,
   modalStatusAction,
@@ -127,4 +127,4 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
   )
 }
 
-export default MetricsSection
+export default WithdrawModalMetrics

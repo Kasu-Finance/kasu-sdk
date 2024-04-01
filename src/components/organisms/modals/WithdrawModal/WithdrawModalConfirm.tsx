@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
 import React, { useMemo } from 'react'
@@ -8,13 +8,12 @@ import useTranslation from '@/hooks/useTranslation'
 
 import { formatAccount } from '@/utils'
 
-interface ConfirmFormProps {
+interface ConfirmContentProps {
   amount: string
   poolData: PoolOverview
-  onSubmit: () => void
 }
 
-const ConfirmForm: React.FC<ConfirmFormProps> = ({ poolData, onSubmit }) => {
+const ConfirmContent: React.FC<ConfirmContentProps> = ({ poolData }) => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
   const { amount, selectedTranche } = useWithdrawModalState()
@@ -47,7 +46,7 @@ const ConfirmForm: React.FC<ConfirmFormProps> = ({ poolData, onSubmit }) => {
         Tranche <b>• {tranche?.name}</b>
       </Typography>
 
-      {/* User Address Display */}
+      {/*Token amount and User Address */}
       <Typography variant='subtitle2'>
         <b>• {amount} KSU •</b>{' '}
         {t('lending.withdraw.confirmStep.depositedLabel')}
@@ -56,19 +55,8 @@ const ConfirmForm: React.FC<ConfirmFormProps> = ({ poolData, onSubmit }) => {
       <Typography variant='body2' fontSize={12} mt={-0.5} ml={1.5}>
         {t('lending.withdraw.confirmStep.subjectLiquidity')}
       </Typography>
-
-      {/* Action Button */}
-      <Box display='flex' justifyContent='center' width='100%' mt={3}>
-        <Button
-          variant='contained'
-          onClick={onSubmit}
-          sx={{ fontSize: '15px' }}
-        >
-          {t('lending.withdraw.button.poolOverview')}
-        </Button>
-      </Box>
     </Box>
   )
 }
 
-export default ConfirmForm
+export default ConfirmContent
