@@ -18,7 +18,7 @@ const usePoolCreditMetric = (poolId: string) => {
   }
 
   const { data, error } = useSWR(
-    poolId ? `getPoolCreditMetrics/${poolId}` : null,
+    `getPoolCreditMetrics/${poolId}`,
     fetchPoolCreditMetric,
     { dedupingInterval: FIVE_MINUTES }
   )

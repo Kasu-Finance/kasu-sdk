@@ -18,7 +18,7 @@ const useDoubtfulDebts = (poolId: string) => {
   }
 
   const { data, error } = useSWR(
-    poolId ? `getBadAndDoubtfulDebts/${poolId}` : null,
+    `getBadAndDoubtfulDebts/${poolId}`,
     fetchDoubtfulDebts,
     {
       dedupingInterval: FIVE_MINUTES,

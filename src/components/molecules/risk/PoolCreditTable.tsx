@@ -26,22 +26,22 @@ const PoolCreditTable: React.FC<PoolCreditTableProps> = ({ data }) => {
     () => [
       {
         label: t('risk.poolCredit.headers.column-1'),
-        value: 'poolIdFK',
+        value: 'keyCreditMetric',
         disableSort: true,
       },
       {
         label: t('risk.poolCredit.headers.column-2'),
-        value: 'icrPreviousFiscalYear',
+        value: 'previousFiscalYear',
         disableSort: true,
       },
       {
         label: t('risk.poolCredit.headers.column-3'),
-        value: 'icrRecentQuarter',
+        value: 'mostRecentQuarter',
         disableSort: true,
       },
       {
         label: t('risk.poolCredit.headers.column-4'),
-        value: 'icrPriorMonth',
+        value: 'priorMonth',
         disableSort: true,
       },
     ],
@@ -72,21 +72,21 @@ const PoolCreditTable: React.FC<PoolCreditTableProps> = ({ data }) => {
           sortedData.map((data, index) => (
             <TableRow key={index}>
               <TableCell width='30%' align='left'>
-                {data.poolIdFK}
+                {data.keyCreditMetric}
               </TableCell>
               <TableCell align='right'>
                 <Typography variant='body1'>
-                  {`${data.icrPreviousFiscalYear} ${index < 2 ? 'x' : '%'}`}
+                  {`${data.previousFiscalYear} ${index < 2 ? 'x' : '%'}`}
                 </Typography>
               </TableCell>
               <TableCell align='right'>
                 <Typography variant='body1'>
-                  {`${data.icrRecentQuarter} ${index < 2 ? 'x' : '%'}`}
+                  {`${data.mostRecentQuarter} ${index < 2 ? 'x' : '%'}`}
                 </Typography>
               </TableCell>
               <TableCell align='right'>
                 <Typography variant='body1'>
-                  {`${data.icrPriorMonth} ${index < 2 ? 'x' : '%'}`}
+                  {`${data.priorMonth} ${index < 2 ? 'x' : '%'}`}
                 </Typography>
               </TableCell>
             </TableRow>

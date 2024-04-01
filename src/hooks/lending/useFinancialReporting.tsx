@@ -21,7 +21,7 @@ const useFinancialReporting = (poolId: string) => {
   }
 
   const { data, error } = useSWR(
-    poolId ? `getFinancialReportingDocuments/${poolId}` : null,
+    `getFinancialReportingDocuments/${poolId}`,
     fetchFinancialReporting,
     {
       dedupingInterval: FIVE_MINUTES,
