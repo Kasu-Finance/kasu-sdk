@@ -136,7 +136,50 @@
     }
   },
   "lending": {
-    "poolOverview": { "title": "Pool Overview" },
+    "poolOverview": {
+      "title": "Pool Overview",
+      "detailCard": {
+        "apyStructure": {
+          "title": "Pool APY Structure",
+          "tooltip": "Indicates whether the APY earned by Liquidity Providers is fixed for a specified period of time, or variable."
+        },
+        "assetClass": {
+          "title": "Asset class",
+          "tooltip": "The lending specialisation, type or category related to this Lending Pool."
+        },
+        "industry": {
+          "title": "Industry Exposure",
+          "tooltip": "Industry and/or business category in which the Pool Delegate's customer (end borrowers) operate."
+        },
+        "lendingHistory": {
+          "title": "Lending History",
+          "tooltip": "Total length of time the Pool Delegate has been operating as a lending business."
+        },
+        "loansUnder": {
+          "title": "Loans Under Management",
+          "tooltip": "Total USDC equivalent amount within this Lending Pool that is deployed into loans to end borrowers."
+        },
+        "tvl": {
+          "title": "Total Value Locked (TVL)",
+          "tooltip": "Aggregate USDC equivalent amount deposited into Lending Pools, combined with locked KSU."
+        },
+        "terms": {
+          "title": "Term & Structure",
+          "tooltip": "The structure of each loan provided by the Pool Delegate to its customers (end borrowers). A Revolving Loan refers to a loan structure that that has no defined end date as it is utilised to fund ongoing operations (akin to a Line of Credit, Working Capital Loan or Evergreen Facility). An Amortising loan refers to a loan structure that has defined Principal and Interest repayment periods until it is fully repaid upon a specific end/maturity date. "
+        },
+        "totalPoolYieldEarnings": {
+          "title": "Total Pool Yield Earned",
+          "tooltip": "Total yield earned by (paid to) Liquidity Providers since the inception of the Lending Pool. "
+        },
+        "totalLossRate": {
+          "title": "Total Loss Rate",
+          "tooltip": "Total unrecoverable losses that expressed as a percentage of total loans associated with this Lending Pool."
+        }
+      }
+    },
+    "poolDetails": {},
+    "poolRepayments": {},
+    "poolRisk": {},
     "strategyDeck": "Strategy deck",
     "tranche": {
       "senior": "Senior Tranche",

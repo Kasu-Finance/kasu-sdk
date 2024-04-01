@@ -2,7 +2,7 @@
 
 import LoginIcon from '@mui/icons-material/Login'
 import { Box, Grid } from '@mui/material'
-import { useRef } from 'react'
+import React, { useRef } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useIsSticky from '@/hooks/useIsSticky'
@@ -25,7 +25,9 @@ export type PoolData = {
   }[]
 }
 
-const TranchesApyCard = () => {
+import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
+
+const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
   const divRef = useRef<HTMLDivElement>(null)
   const { t } = useTranslation()
 
@@ -102,13 +104,13 @@ const TranchesApyCard = () => {
           columnSpacing={{ xs: 1, sm: 2, md: 3 }}
           maxWidth='lg'
         >
-          {POOL_DATA.tranches.map((tranche, index) => {
+          {pool.tranches.map((tranche, index) => {
             return (
-              <Grid item xs={COLS / POOL_DATA.tranches.length} key={index}>
+              <Grid item xs={COLS / pool.tranches.length} key={index}>
                 <MetricWithSuffix
-                  content={tranche.content}
-                  tooltipKey={tranche.toolTip}
-                  titleKey={`${tranche.title} APY`}
+                  content={+tranche.apy * 100 + ' %'}
+                  tooltipKey='general.info'
+                  titleKey={`${tranche.name} APY`}
                 />
               </Grid>
             )
