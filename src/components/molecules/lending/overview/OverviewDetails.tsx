@@ -1,7 +1,10 @@
 'use client'
 
 import { Box, Card, Grid } from '@mui/material'
-import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
+import {
+  PoolDelegateProfileAndHistory,
+  PoolOverview,
+} from 'kasu-sdk/src/services/DataService/types'
 
 import useTranslation from '@/hooks/useTranslation'
 
@@ -9,9 +12,18 @@ import InfoRow from '@/components/atoms/InfoRow'
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
 import { formatAmount } from '@/utils'
+import formatDuration from '@/utils/formats/formatDuration'
 
-const OverviewDetails: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
+const OverviewDetails: React.FC<{
+  pool: PoolOverview
+  poolDelegate: PoolDelegateProfileAndHistory
+}> = ({ pool, poolDelegate }) => {
   const { t } = useTranslation()
+
+  const lendingDuration = formatDuration(poolDelegate.delegateLendingHistory, {
+    months: true,
+    days: true,
+  })
 
   return (
     <Box sx={{ mt: 3 }}>
@@ -60,7 +72,7 @@ const OverviewDetails: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
                 </Grid>
                 <Grid item xs={6}>
                   <MetricWithSuffix
-                    content='TODO'
+                    content={formatAmount(+poolDelegate.historicLossRate)}
                     suffix='USDC'
                     tooltipKey='lending.poolOverview.detailCard.totalLossRate.tooltip'
                     titleKey='lending.poolOverview.detailCard.totalLossRate.title'
@@ -75,7 +87,7 @@ const OverviewDetails: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
             <Grid container columnSpacing={2} sx={{ pb: 3 }}>
               <Grid item xs={6}>
                 <MetricWithSuffix
-                  content='2 years • 3 months TODO'
+                  content={lendingDuration}
                   tooltipKey='lending.poolOverview.detailCard.lendingHistory.tooltip'
                   titleKey='lending.poolOverview.detailCard.lendingHistory.title'
                 />
