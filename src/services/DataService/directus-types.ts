@@ -73,6 +73,7 @@ export interface PoolCreditMetricsDirectus {
 export interface BadAndDoubtfulDebtsDirectus {
     id: string;
     poolIdFK: string;
+    name: string;
     arrearsMonthlyAverage: string;
     defaultsMonthlyAverage: string;
     recoveryActionMonthlyAverage: string;
