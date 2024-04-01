@@ -1,10 +1,18 @@
-import { Box, FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+} from '@mui/material'
 import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
+import { useMemo } from 'react'
 
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import useTranslation from '@/hooks/useTranslation'
 
-import { Tranche } from '@/context/withdrawModal/withdrawModal.types'
+import { HexString } from '@/types/lending'
 
 interface TrancheSelectProps {
   poolData: PoolOverview
@@ -12,10 +20,34 @@ interface TrancheSelectProps {
 
 const TrancheSelect: React.FC<TrancheSelectProps> = ({ poolData }) => {
   const { t } = useTranslation()
-  const { selectedTranche, setSelectedTranche } = useWithdrawModalState()
-  console.warn('poolData', poolData)
+  const { setSelectedTranche } = useWithdrawModalState()
+
+  const defaultTranche = useMemo(() => {
+    if (poolData.tranches && poolData.tranches.length > 0) {
+      return (
+        poolData.tranches.find(
+          (tranche) => tranche.name === 'Senior Tranche'
+        ) ||
+        poolData.tranches.find(
+          (tranche) => tranche.name === 'Mezzanine Tranche'
+        ) ||
+        poolData.tranches[0]
+      )
+    }
+    return ''
+  }, [poolData.tranches])
 
   if (poolData.tranches.length <= 1) return null
+
+  const handleTrancheChange = (event: SelectChangeEvent) => {
+    const selectedName = event.target.value as string
+    const selectedTranche = poolData.tranches.find(
+      (tranche) => tranche.name === selectedName
+    )
+    if (selectedTranche) {
+      setSelectedTranche(selectedTranche.id as HexString)
+    }
+  }
 
   return (
     <Box mt={3}>
@@ -27,8 +59,8 @@ const TrancheSelect: React.FC<TrancheSelectProps> = ({ poolData }) => {
           size='small'
           id='tranche'
           labelId='tranche-select-label'
-          value={selectedTranche}
-          onChange={(e) => setSelectedTranche(e.target.value as Tranche)}
+          value={defaultTranche ? defaultTranche.name : ''}
+          onChange={handleTrancheChange}
           label={t('lending.withdraw.dropdown.label')}
         >
           {poolData.tranches.map(({ id: trancheId, name }) => (

@@ -6,6 +6,8 @@ import {
   WithdrawModalTypes,
 } from '@/context/withdrawModal/withdrawModal.types'
 
+import { HexString } from '@/types/lending'
+
 const useWithdrawModalState = (): WithdrawModalTypes => {
   const context = useContext(WithdrawModalContext)
 
@@ -28,7 +30,7 @@ const useWithdrawModalState = (): WithdrawModalTypes => {
   )
 
   const setSelectedTranche = useCallback(
-    (selectedTranche: `0x${string}`) =>
+    (selectedTranche: HexString) =>
       dispatch({
         type: WithdrawActionTypes.SET_SELECTED_TRANCHE,
         payload: selectedTranche,

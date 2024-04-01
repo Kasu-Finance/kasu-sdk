@@ -1,28 +1,30 @@
 import { Box, Button, Typography } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
+import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
 import React, { useMemo } from 'react'
 
+import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import useTranslation from '@/hooks/useTranslation'
 
 import { formatAccount } from '@/utils'
 
 interface ConfirmFormProps {
   amount: string
-  poolName: string
-  trancheName: string
+  poolData: PoolOverview
   onSubmit: () => void
 }
 
-const ConfirmForm: React.FC<ConfirmFormProps> = ({
-  amount,
-  poolName,
-  trancheName,
-  onSubmit,
-}) => {
+const ConfirmForm: React.FC<ConfirmFormProps> = ({ poolData, onSubmit }) => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
+  const { amount, selectedTranche } = useWithdrawModalState()
 
   const userAddress = useMemo(() => formatAccount(account), [account])
+  const tranche = useMemo(
+    () => poolData?.tranches.find((_) => _.id === selectedTranche),
+    [poolData, selectedTranche]
+  )
+  const poolName = poolData?.poolName || ''
 
   return (
     <Box width='100%' mt={3}>
@@ -42,7 +44,7 @@ const ConfirmForm: React.FC<ConfirmFormProps> = ({
         {t('lending.withdraw.confirmStep.subjectLiquidity')}
       </Typography>
       <Typography variant='subtitle2' ml={1.5}>
-        Tranche <b>• {trancheName}</b>
+        Tranche <b>• {tranche?.name}</b>
       </Typography>
 
       {/* User Address Display */}

@@ -125,8 +125,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
         {modalStatusAction === ModalStatusAction.CONFIRM && (
           <ConfirmForm
             amount={amount}
-            poolName={poolData?.poolName || ''}
-            trancheName={selectedTranche}
+            poolData={poolData}
             onSubmit={onModalClose}
           />
         )}

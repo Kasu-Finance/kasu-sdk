@@ -2,20 +2,18 @@ import React, { ReactNode, useReducer } from 'react'
 
 import WithdrawModalContext from '@/context/withdrawModal/withdrawModal.context'
 import withdrawModalReducer from '@/context/withdrawModal/withdrawModal.reducer'
-import {
-  Tranche,
-  WithdrawModalStateType,
-} from '@/context/withdrawModal/withdrawModal.types'
+import { WithdrawModalStateType } from '@/context/withdrawModal/withdrawModal.types'
+
+import { HexString } from '@/types/lending'
 
 type WithdrawModalProviderProps = {
   children: ReactNode
-  defaultTrancheId: `0x${string}`
+  defaultTrancheId: HexString
 }
 
 const initialState: WithdrawModalStateType = {
   amount: '',
-  selectedTranche: Tranche.SENIOR_TRANCHE,
-  trancheId: '0x0',
+  selectedTranche: '0x0',
   errorMsg: '',
   processing: false,
 }
@@ -26,7 +24,7 @@ const WithdrawModalProvider: React.FC<WithdrawModalProviderProps> = ({
 }) => {
   const [state, dispatch] = useReducer(withdrawModalReducer, {
     ...initialState,
-    trancheId: defaultTrancheId,
+    selectedTranche: defaultTrancheId,
   })
 
   return (

@@ -1,3 +1,5 @@
+import { HexString } from '@/types/lending'
+
 export enum WithdrawActionTypes {
   SET_AMOUNT = 'SET_AMOUNT',
   SET_SELECTED_TRANCHE = 'SET_SELECTED_TRANCHE',
@@ -26,7 +28,7 @@ export type WithdrawModalActions =
     }
   | {
       type: WithdrawActionTypes.SET_SELECTED_TRANCHE
-      payload: `0x${string}`
+      payload: HexString
     }
   | {
       type: WithdrawActionTypes.SET_ERROR_MSG
@@ -39,14 +41,14 @@ export type WithdrawModalActions =
 
 export type WithdrawModalStateType = {
   amount: string
-  selectedTranche: `0x${string}`
+  selectedTranche: HexString
   errorMsg: string
   processing: boolean
 }
 
 export type WithdrawModalFunctions = {
   setAmount: (amount: string) => void
-  setSelectedTranche: (selectedTranche: `0x${string}`) => void
+  setSelectedTranche: (selectedTranche: HexString) => void
   setErrorMsg: (errorMsg: string) => void
   setProcessing: (processing: boolean) => void
 }
