@@ -4,8 +4,9 @@ import { Card, CardContent, Grid } from '@mui/material'
 
 import TranchDetailCard from '@/components/molecules/TranchDetailCard'
 
+import { COLS } from '@/constants'
+
 const TranchesDetails = () => {
-  const COLS = 12
   const tranches = [
     {
       title: 'Senior Tranche',

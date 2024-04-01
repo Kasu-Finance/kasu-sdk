@@ -2,13 +2,7 @@ import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
-interface UsePoolOverviewReturn {
-  data: PoolOverview[] | null
-  error: any
-  isLoading: boolean
-}
-
-const usePoolOverview = (poolId?: string): UsePoolOverviewReturn => {
+const usePoolOverview = (poolId?: string) => {
   const sdk = useKasuSDK()
 
   const fetchPoolOverview = async () => {

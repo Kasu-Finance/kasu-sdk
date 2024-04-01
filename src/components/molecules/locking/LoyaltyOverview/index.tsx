@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, Divider, Typography } from '@mui/material'
+import { Button, Typography } from '@mui/material'
 
 import useModalState from '@/hooks/context/useModalState'
 import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
@@ -25,13 +25,9 @@ const LoyaltyOverview = () => {
   const handleOpen = () => openModal({ name: 'loyaltyLevelsModal' })
 
   const { totalDeposits } = useTotalLendingPoolDeposits()
-
   const { rKsuAmount } = useEarnedRKsu()
-
   const stakedPercentage = useLockingPercentage()
-
   const { currentLevel } = useLoyaltyLevel(stakedPercentage)
-
   const isLoyal = currentLevel === 1 || currentLevel === 2
 
   return (
@@ -81,6 +77,7 @@ const LoyaltyOverview = () => {
         }
       />
       <InfoRow
+        showDivider
         title={`rKSU ${capitalize(t('general.balance'))}`}
         toolTipInfo='info'
         metric={
@@ -90,8 +87,9 @@ const LoyaltyOverview = () => {
           />
         }
       />
-      <Divider />
+
       <InfoRow
+        showDivider
         title={t('locking.widgets.loyalty.metric-2')}
         toolTipInfo='info'
         metric={
@@ -101,8 +99,9 @@ const LoyaltyOverview = () => {
           />
         }
       />
-      <Divider />
+
       <InfoRow
+        showDivider
         title='rKSU Ratio to Total USDC Deposits'
         toolTipInfo='info'
         metric={

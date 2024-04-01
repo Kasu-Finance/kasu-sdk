@@ -1,41 +1,44 @@
-import { PoolDelegateProfileAndHistory } from 'kasu-sdk/src/services/DataService/types'
 import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
-interface UsePoolDelegateReturnType {
-  data: PoolDelegateProfileAndHistory[] | null
-  error: any
-  isLoading: boolean
-}
-
-const usePoolDelegate = (poolId: string): UsePoolDelegateReturnType => {
+const usePoolDelegate = (poolId: string) => {
   const sdk = useKasuSDK()
 
-  const fetchPoolDelegate = async (): Promise<
-    PoolDelegateProfileAndHistory[] | null
-  > => {
-    const result = await sdk.DataService.getPoolDelegateProfileAndHistory([
-      poolId,
-    ])
+  const fetchPoolDelegate = async () => {
+    const result = await sdk.DataService.getPoolDelegateProfileAndHistory()
 
     if (!result?.length) {
-      console.warn('Received empty data for poolDelegateProfileAndHistory')
-      return null
+      throw new Error('No data available.')
     }
 
     return result
   }
 
-  const { data, error } = useSWR<PoolDelegateProfileAndHistory[] | null>(
-    poolId ? `poolDelegateProfileAndHistory/${poolId}` : null,
+  const { data, error, mutate } = useSWR(
+    'poolDelegateProfileAndHistory',
     fetchPoolDelegate
   )
 
+  let customError = error
+  let filteredPoolDelegate = data
+    ? data.find((item) => item.poolIdFK === poolId)
+    : null
+
+  filteredPoolDelegate =
+    filteredPoolDelegate === undefined ? null : filteredPoolDelegate
+
+  if (data && !filteredPoolDelegate) {
+    customError = new Error(`No data available for pool ID: ${poolId}`)
+    console.error(`No data available for pool ID: ${poolId}`)
+  }
+
   return {
-    data: data || null,
-    error,
-    isLoading: !data && !error && data !== null,
+    data: filteredPoolDelegate,
+    error: customError,
+    isLoading: !filteredPoolDelegate && !customError,
+    // Expose mutate for refetching or cache updating if needed
+    mutate,
   }
 }
 

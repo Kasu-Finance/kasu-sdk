@@ -1,7 +1,6 @@
 'use client'
 
-import MUIAvatar, { AvatarProps as MUIAvatarProps } from '@mui/material/Avatar'
-import React from 'react'
+import Avatar, { AvatarProps as MUIAvatarProps } from '@mui/material/Avatar'
 
 import useImageError from '@/hooks/useImageError'
 
@@ -17,9 +16,13 @@ const PoolAvatar: React.FC<AvatarProps> = ({ src, name, ...props }) => {
   const initials: string = name ? getInitials(name) : ''
 
   return (
-    <MUIAvatar {...props} src={!imgError ? src : undefined}>
+    <Avatar
+      {...props}
+      sx={{ boxShadow: '0 0 8px rgba(0,0,0,.14) inset' }}
+      src={!imgError ? src : undefined}
+    >
       {imgError && initials}
-    </MUIAvatar>
+    </Avatar>
   )
 }
 

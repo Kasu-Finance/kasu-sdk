@@ -15,9 +15,7 @@ type KycButtonProps = ButtonProps & {
 
 const KycButton: React.FC<KycButtonProps> = (props) => {
   const { account } = useWeb3React()
-
   const { openModal } = useModalState()
-
   const { isVerifying, isAuthenticated, kycCompleted } = useKycState()
 
   const getButtonState = (): {
