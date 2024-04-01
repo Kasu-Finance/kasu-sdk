@@ -175,6 +175,12 @@
           "title": "Total Loss Rate",
           "tooltip": "Total unrecoverable losses that expressed as a percentage of total loans associated with this Lending Pool."
         }
+      },
+      "trancheCard": {
+        "remainingCapacity": {
+          "title": "Remaining capacity",
+          "tooltip": "Amount of additional funds the Pool can accept in USDC, also represented as a percentage of the maximum Lending Pool target amount.​"
+        }
       }
     },
     "poolDetails": {},

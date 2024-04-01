@@ -1,4 +1,8 @@
+'use client'
+
 import { Box, Typography } from '@mui/material'
+
+import useTranslation from '@/hooks/useTranslation'
 
 import ContentWithSuffix from '@/components/atoms/ContentWithSuffix'
 import InfoRow from '@/components/atoms/InfoRow'
@@ -16,6 +20,8 @@ const TranchDetailCard: React.FC<TranchDetailCardProps> = ({
   minimumDepositAmount,
   maxDepositAmount,
 }) => {
+  const { t } = useTranslation()
+
   return (
     <Box
       className='light-blue-background'
@@ -29,8 +35,10 @@ const TranchDetailCard: React.FC<TranchDetailCardProps> = ({
         {title}
       </Typography>
       <InfoRow
-        title='Remaining capacity'
-        toolTipInfo='01'
+        title={t('lending.poolOverview.trancheCard.remainingCapacity.title')}
+        toolTipInfo={t(
+          'lending.poolOverview.trancheCard.remainingCapacity.tooltip'
+        )}
         showDivider
         metric={
           <div>
@@ -52,13 +60,11 @@ const TranchDetailCard: React.FC<TranchDetailCardProps> = ({
 
       <InfoRow
         title='Minimum Deposit Amount'
-        toolTipInfo='02'
         showDivider
         metric={<ContentWithSuffix content={minimumDepositAmount} />}
       />
       <InfoRow
         title='Maximum Deposit Amount'
-        toolTipInfo='03'
         metric={<ContentWithSuffix content={maxDepositAmount} suffix='USDC' />}
       />
     </Box>
