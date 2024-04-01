@@ -13,7 +13,7 @@ const ImageWithFallback: React.FC<{ src: string; alt?: string }> = ({
 
   return (
     <ImageCover>
-      {!imageError ? (
+      {!imageError && src !== '' ? (
         <Image
           fill
           src={src}
