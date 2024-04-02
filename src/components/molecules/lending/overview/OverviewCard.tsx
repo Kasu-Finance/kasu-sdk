@@ -67,7 +67,10 @@ const PoolOverview = () => {
           poolDelegate={currentPoolDelegate}
         />
         <TranchesDetailsCard pool={currentPool} />
-        <InvestmentPortfolio />
+        <InvestmentPortfolio
+          pool={currentPool}
+          poolDelegate={currentPoolDelegate}
+        />
         <LoyaltyCard />
       </>
     )
