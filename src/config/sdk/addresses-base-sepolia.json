@@ -1,0 +1,89 @@
+{
+  "network": "base-sepolia",
+  "startBlock": 8139559,
+  "KSU": {
+    "address": "0x072ea077fe9fE41d31b4a04481c3454585B35b99",
+    "implementation": "0x1D5793e3532AB44358676B79b6a1916135D74F06",
+    "startBlock": 8139559
+  },
+  "USDC": {
+    "address": "0x08C1D3dF90c1d448fa4f84F0DFe9Ec8647c012a8",
+    "implementation": "0x811ADCE63d82F46944c96d5519a6Ab798FF3EaB6",
+    "startBlock": 8139559
+  },
+  "KasuController": {
+    "address": "0xACAc29eBC8389d943325cdaE354D22088fdee207",
+    "implementation": "0xE10E9019c689dae7361eb24F978268B2413c8B5e",
+    "startBlock": 8139559
+  },
+  "KSULocking": {
+    "address": "0xD5cf0dd8de3Cb13ACF1297e69bDcf26cEf970633",
+    "implementation": "0x89115787FaEB8A54127811b2e17EA3d38359eB90",
+    "startBlock": 8139559
+  },
+  "KsuPrice": {
+    "address": "0x95697C4e481B6205d6DC25AcA7CD4B4a2Fbf8d2f",
+    "implementation": "0x3e14473F0F4D093FE2DE8d41cF70851437404692",
+    "startBlock": 8139559
+  },
+  "SystemVariables": {
+    "address": "0x25f2204db8139198825073B77410531147793609",
+    "implementation": "0x7C66d0aC70331f0570dDa4370456Cc73039303b0",
+    "startBlock": 8139559
+  },
+  "FeeManager": {
+    "address": "0xB3Abca9cAB9f5d8130971485a7239Fc16B577acE",
+    "implementation": "0x97742886a22283DE82A7b2851AeDD398a33ffBD2",
+    "startBlock": 8139559
+  },
+  "UserManager": {
+    "address": "0xcb6A1c7a5eeFe6559F34BAb78803907A43Fb4E10",
+    "implementation": "0x98EC20aE3f69D440C62aB2dc2234489c6cF38780",
+    "startBlock": 8139559
+  },
+  "LendingPoolManager": {
+    "address": "0x01F44d0692D051Fbb3Cb4701e42EBd37b5b361BD",
+    "implementation": "0xeF3bCAfE4176AF718BB4235B43f422F1372E1145",
+    "startBlock": 8139559
+  },
+  "KasuAllowList": {
+    "address": "0x4040839f6Da44AeeeD6B646217Ba360D9966E02b",
+    "implementation": "0x7CF1CeFe5b8C4f8cd8915F7B37b1B64B698c6f91",
+    "startBlock": 8139559
+  },
+  "ClearingCoordinator": {
+    "address": "0x456a5D46efE9276721afdCF79c92414049333C94",
+    "implementation": "0xe0b197c2D04C71b856E7c3690e35cd2472e41668",
+    "startBlock": 8139559
+  },
+  "AcceptedRequestsCalculation": {
+    "address": "0xC24E019084B6b8f44Ba68c990eb7D83d225b6C1C",
+    "implementation": "0x25a842c5fDe96fc799Dc6A0e7Bf7DE4F191e2212",
+    "startBlock": 8139559
+  },
+  "PendingPool_Beacon": {
+    "address": "0x3d8730c0d9d60085F60aE85cCD32230EFc63D023",
+    "implementation": "0xae9EAbebCf3eD4dc50aF46E88a22cd91Fca47733",
+    "startBlock": 8139559
+  },
+  "LendingPool_Beacon": {
+    "address": "0x90ae769982e61E1e18b5a5BB292AD13B44CD90c1",
+    "implementation": "0xbe1dF346087c00448c1d582E2a9Bb2387265aBae",
+    "startBlock": 8139559
+  },
+  "LendingPoolTranche_Beacon": {
+    "address": "0x731ec81c0b40f3c05459a7816e98EdD42Fe9f5Fd",
+    "implementation": "0x7cD4cdB1828E8Fa8c5e83ceB3f8d8B8576C57f80",
+    "startBlock": 8139559
+  },
+  "LendingPoolFactory": {
+    "address": "0xd39ACC9232E9A6d4b6e0c9E7177533D9Be0Ee41E",
+    "implementation": "0xAe5C0AF8f135d1961B7960f8ad42B4797aDEF54c",
+    "startBlock": 8139559
+  },
+  "KSULockBonus": {
+    "address": "0xF2CD03B2ceDf8de92F1760680ec57609613716e8",
+    "implementation": "0x4806755e058Ea6d910523F9AC0ee11d92EFe5e04",
+    "startBlock": 8139559
+  }
+}
