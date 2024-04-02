@@ -43,7 +43,7 @@ const OverviewDetails: React.FC<{
                   content={formatAmount(pool.totalValueLocked)}
                   suffix='USDC'
                   tooltipKey='lending.poolOverview.detailCard.tvl.tooltip'
-                  titleKey='lending.poolOverview.detailCard.tvl.title'
+                  titleKey='lending.poolOverview.detailCard.tvl.label'
                 />
               </Grid>
               <Grid item xs={6}>
@@ -51,7 +51,7 @@ const OverviewDetails: React.FC<{
                   content={pool.loansUnderManagement ?? '0'}
                   suffix='USDC'
                   tooltipKey='lending.poolOverview.detailCard.loansUnder.tooltip'
-                  titleKey='lending.poolOverview.detailCard.loansUnder.title'
+                  titleKey='lending.poolOverview.detailCard.loansUnder.label'
                 />
               </Grid>
             </Grid>
@@ -67,7 +67,7 @@ const OverviewDetails: React.FC<{
                     content={pool.yieldEarned}
                     suffix='USDC'
                     tooltipKey='lending.poolOverview.detailCard.totalPoolYieldEarnings.tooltip'
-                    titleKey='lending.poolOverview.detailCard.totalPoolYieldEarnings.title'
+                    titleKey='lending.poolOverview.detailCard.totalPoolYieldEarnings.label'
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -75,7 +75,7 @@ const OverviewDetails: React.FC<{
                     content={formatAmount(+poolDelegate.historicLossRate)}
                     suffix='USDC'
                     tooltipKey='lending.poolOverview.detailCard.totalLossRate.tooltip'
-                    titleKey='lending.poolOverview.detailCard.totalLossRate.title'
+                    titleKey='lending.poolOverview.detailCard.totalLossRate.label'
                   />
                 </Grid>
               </Grid>
@@ -89,14 +89,14 @@ const OverviewDetails: React.FC<{
                 <MetricWithSuffix
                   content={lendingDuration}
                   tooltipKey='lending.poolOverview.detailCard.lendingHistory.tooltip'
-                  titleKey='lending.poolOverview.detailCard.lendingHistory.title'
+                  titleKey='lending.poolOverview.detailCard.lendingHistory.label'
                 />
               </Grid>
               <Grid item xs={6}>
                 <MetricWithSuffix
                   content={pool.assetClass}
                   tooltipKey='lending.poolOverview.detailCard.assetClass.tooltip'
-                  titleKey='lending.poolOverview.detailCard.assetClass.title'
+                  titleKey='lending.poolOverview.detailCard.assetClass.label'
                 />
               </Grid>
             </Grid>
@@ -108,13 +108,13 @@ const OverviewDetails: React.FC<{
                 toolTipInfo={t(
                   'lending.poolOverview.detailCard.industry.tooltip'
                 )}
-                title={t('lending.poolOverview.detailCard.industry.title')}
+                title={t('lending.poolOverview.detailCard.industry.label')}
                 showDivider
                 metric={pool.industryExposure}
               />
               <InfoRow
                 toolTipInfo={t('lending.poolOverview.detailCard.terms.tooltip')}
-                title={t('lending.poolOverview.detailCard.terms.title')}
+                title={t('lending.poolOverview.detailCard.terms.label')}
                 showDivider
                 metric={pool.poolInvestmentTerm}
               />
@@ -122,7 +122,7 @@ const OverviewDetails: React.FC<{
                 toolTipInfo={t(
                   'lending.poolOverview.detailCard.apyStructure.tooltip'
                 )}
-                title={t('lending.poolOverview.detailCard.apyStructure.title')}
+                title={t('lending.poolOverview.detailCard.apyStructure.label')}
                 metric={pool.poolApyStructure}
               />
             </Box>

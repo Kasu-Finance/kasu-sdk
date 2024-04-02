@@ -35,7 +35,7 @@ const TranchDetailCard: React.FC<TranchDetailCardProps> = ({
         {title}
       </Typography>
       <InfoRow
-        title={t('lending.poolOverview.trancheCard.remainingCapacity.title')}
+        title={t('lending.poolOverview.trancheCard.remainingCapacity.label')}
         toolTipInfo={t(
           'lending.poolOverview.trancheCard.remainingCapacity.tooltip'
         )}

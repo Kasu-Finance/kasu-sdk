@@ -1,16 +1,33 @@
+import LogoutIcon from '@mui/icons-material/Logout'
 import { Card, CardContent, CardHeader } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
+import {
+  PoolDelegateProfileAndHistory,
+  PoolOverview,
+} from 'kasu-sdk/src/services/DataService/types'
 
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 import TranchInvestmentCard from '@/components/molecules/TranchInvestmentCard'
 
-const InvestmentPortfolio = () => {
+import { COLS } from '@/constants'
+import { formatAmount, getAverageApyAndTotal } from '@/utils'
+
+const InvestmentPortfolio: React.FC<{
+  pool: PoolOverview
+  poolDelegate: PoolDelegateProfileAndHistory
+}> = ({ pool, poolDelegate }) => {
+  const tranches = pool.tranches
+
+  const tranchesTotal = getAverageApyAndTotal(tranches)
+
+  console.warn('TODO: ', poolDelegate)
+
   return (
     <Card sx={{ mt: 3 }}>
       <CardHeader
-        title='Pool Overview'
+        title='Your Investment'
         titleTypographyProps={{
           variant: 'h6',
           component: 'h6',
@@ -22,7 +39,7 @@ const InvestmentPortfolio = () => {
             sx={{ height: '30px', top: 4, right: 8 }}
             size='small'
           >
-            Your investment
+            View Portfolio
           </Button>
         }
       />
@@ -46,52 +63,47 @@ const InvestmentPortfolio = () => {
             >
               <Grid item xs={4}>
                 <MetricWithSuffix
-                  content='12.50 %'
+                  content={formatAmount(tranchesTotal.totalCapacity, {
+                    maxDecimals: 2,
+                  })}
+                  suffix='USDC'
                   tooltipKey='01'
-                  titleKey='lending.tranche.senior'
+                  titleKey='Total Amount Invested'
                 />
               </Grid>
               <Grid item xs={4}>
                 <MetricWithSuffix
-                  content='5.50 %'
+                  content={
+                    formatAmount(tranchesTotal.averageApy * 100, {
+                      maxDecimals: 2,
+                    }) + ' %'
+                  }
                   tooltipKey='01'
-                  titleKey='lending.tranche.mezzanine'
+                  titleKey='Weighted Average APY'
                 />
               </Grid>
               <Grid item xs={4}>
                 <MetricWithSuffix
                   content=' 2.4 %'
                   tooltipKey='01'
-                  titleKey='lending.tranche.junior'
+                  titleKey='Total Yield Earned'
                 />
               </Grid>
             </Grid>
           </Box>{' '}
         </Grid>
-        <Grid item xs={4}>
-          <TranchInvestmentCard
-            title='Senior Tranche'
-            amount='10,000.00'
-            apy='4.50'
-            yieldEarned='1,000.00'
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <TranchInvestmentCard
-            title='Mezzanine Tranche'
-            amount='10,000.00'
-            apy='4.50'
-            yieldEarned='1,000.00'
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <TranchInvestmentCard
-            title='Junior Tranche'
-            amount='10,000.00'
-            apy='4.50'
-            yieldEarned='1,000.00'
-          />
-        </Grid>
+        {tranches.map((tranche, index) => {
+          return (
+            <Grid item xs={COLS / pool.tranches.length} key={index}>
+              <TranchInvestmentCard
+                title={`${tranche.name} Tranche APY`}
+                amount='300'
+                apy={formatAmount(+tranche.apy * 100, { maxDecimals: 2 })}
+                yieldEarned='dsds'
+              />
+            </Grid>
+          )
+        })}
       </Grid>
       <Box
         display='flex'
@@ -104,7 +116,9 @@ const InvestmentPortfolio = () => {
           pb: 2,
         }}
       >
-        <Button variant='contained'>Withdraw</Button>
+        <Button startIcon={<LogoutIcon />} variant='contained'>
+          Withdraw
+        </Button>
       </Box>
     </Card>
   )
