@@ -8,7 +8,7 @@ const useDoubtfulDebts = (poolId: string) => {
   const sdk = useKasuSDK()
 
   const fetchDoubtfulDebts = async () => {
-    const data = await sdk.DataService.getBadAndDoubtfulDebts([poolId])
+    const data = await sdk.DataService.getBadAndDoubtfulDebts()
 
     if (!data?.length) {
       throw new Error('No data available for doubtful debts')
@@ -17,7 +17,7 @@ const useDoubtfulDebts = (poolId: string) => {
     return data
   }
 
-  const { data, error } = useSWR(
+  const { data, error, mutate } = useSWR(
     `getBadAndDoubtfulDebts/${poolId}`,
     fetchDoubtfulDebts,
     {
@@ -25,10 +25,23 @@ const useDoubtfulDebts = (poolId: string) => {
     }
   )
 
+  let customError = error
+  let filteredData = data
+    ? data.filter((item) => item.poolIdFK === poolId)
+    : null
+
+  filteredData = filteredData === undefined ? null : filteredData
+
+  if (data && !filteredData) {
+    customError = new Error(`No data available for pool ID: ${poolId}`)
+    console.error(`No data available for pool ID: ${poolId}`)
+  }
+
   return {
-    data,
-    error,
-    isLoading: !data && !error,
+    data: filteredData,
+    error: customError,
+    isLoading: !filteredData && !customError,
+    mutate,
   }
 }
 

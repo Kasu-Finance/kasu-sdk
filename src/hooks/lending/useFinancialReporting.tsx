@@ -11,7 +11,7 @@ const useFinancialReporting = (poolId: string) => {
   const fetchFinancialReporting = async (): Promise<
     FinancialReportingDocumentsDirectus[]
   > => {
-    const data = await sdk.DataService.getFinancialReportingDocuments([poolId])
+    const data = await sdk.DataService.getFinancialReportingDocuments()
 
     if (!data?.length) {
       throw new Error('No data available for financial reporting documents')
@@ -20,7 +20,7 @@ const useFinancialReporting = (poolId: string) => {
     return data
   }
 
-  const { data, error } = useSWR(
+  const { data, error, mutate } = useSWR(
     `getFinancialReportingDocuments/${poolId}`,
     fetchFinancialReporting,
     {
@@ -28,10 +28,23 @@ const useFinancialReporting = (poolId: string) => {
     }
   )
 
+  let customError = error
+  let filteredData = data
+    ? data.filter((item) => item.poolIdFK === poolId)
+    : null
+
+  filteredData = filteredData === undefined ? null : filteredData
+
+  if (data && !filteredData) {
+    customError = new Error(`No data available for pool ID: ${poolId}`)
+    console.error(`No data available for pool ID: ${poolId}`)
+  }
+
   return {
-    data,
-    error,
-    isLoading: !data && !error,
+    data: filteredData,
+    error: customError,
+    isLoading: !filteredData && !customError,
+    mutate,
   }
 }
 
