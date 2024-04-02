@@ -14,7 +14,6 @@ import PoolCard from '@/components/molecules/PoolCard'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import { mockedPoolOverview } from '@/app/mock-data/withdrawMock'
 import { Routes } from '@/config/routes'
 
 const Lending = () => {
@@ -24,7 +23,7 @@ const Lending = () => {
   const { openModal } = useModalState()
 
   const handleWithdrawClick = (pool: PoolOverview) => {
-    openModal({ name: ModalsKeys.WITHDRAW, poolData: mockedPoolOverview })
+    openModal({ name: ModalsKeys.WITHDRAW, poolData: pool })
 
     router.push(`${Routes.lending.root.url}?poolId=${pool.id}&step=1`)
   }

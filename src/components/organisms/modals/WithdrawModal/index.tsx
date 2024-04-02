@@ -118,7 +118,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
         {modalStatusAction !== ModalStatusAction.CONFIRM && (
           <WithdrawModalMetrics
             metrics={metricsMock}
-            poolName={poolData?.poolName || ''}
+            poolData={poolData}
             selectedTranche={selectedTranche}
             modalStatusAction={modalStatusAction as number}
             isMultiTranche={isMultiTranche}

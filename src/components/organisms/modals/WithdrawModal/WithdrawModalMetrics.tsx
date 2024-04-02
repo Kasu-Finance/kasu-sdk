@@ -1,5 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
+import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
 import React, { useMemo } from 'react'
 
 import useMetricValues from '@/hooks/useMetricValues'
@@ -16,7 +17,7 @@ import { formatAccount } from '@/utils'
 import { PoolMetric } from '@/types/lending'
 
 interface WithdrawModalMetricsProps {
-  poolName: string
+  poolData: PoolOverview
   metrics: PoolMetric[]
   modalStatusAction: number
   selectedTranche: string
@@ -25,7 +26,7 @@ interface WithdrawModalMetricsProps {
 }
 
 const WithdrawModalMetrics: React.FC<WithdrawModalMetricsProps> = ({
-  poolName,
+  poolData,
   metrics,
   modalStatusAction,
   selectedTranche,
@@ -44,9 +45,10 @@ const WithdrawModalMetrics: React.FC<WithdrawModalMetricsProps> = ({
   const totalInvestment = metricValues[WithdrawMetrics.TOTAL_INVESTMENT]
   const trancheInvestment = metricValues[WithdrawMetrics.TRANCHE_INVESTMENT]
 
+  const findTranche = poolData.tranches.find((_) => _.id === selectedTranche)
   const tranche = {
     id: WithdrawMetrics.TRANCHE,
-    content: selectedTranche || '',
+    content: findTranche?.name || '',
   }
   const toWallet = { id: WithdrawMetrics.TO_WALLET, content: userAddress || '' }
 
@@ -64,7 +66,7 @@ const WithdrawModalMetrics: React.FC<WithdrawModalMetricsProps> = ({
             title={t('lending.withdraw.fromPool')}
             metric={
               <Typography variant='h6' pl={2} mt={0.5}>
-                {poolName}
+                {poolData.poolName || ''}
               </Typography>
             }
           />
