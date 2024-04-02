@@ -2,12 +2,14 @@
 
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import { Box, Button, DialogActions, DialogContent } from '@mui/material'
+import { useWeb3React } from '@web3-react/core'
 import { useRouter } from 'next/navigation'
 import React, { useMemo } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
+import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
 import useTranslation from '@/hooks/useTranslation'
 
 import DialogHeader from '@/components/molecules/DialogHeader'
@@ -23,6 +25,7 @@ import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
 import { metricsMock } from '@/app/mock-data/withdrawMock'
 import { Routes } from '@/config/routes'
+import { formatAccount } from '@/utils'
 
 interface WithdrawModalProps {
   handleClose: () => void
@@ -46,6 +49,16 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
   const { modalStatusAction, setModalStatusAction } = useModalStatusState()
 
   const poolData = modal.withdrawModal.poolData
+  const { account } = useWeb3React()
+  const userAddress = useMemo(() => formatAccount(account), [account]) || ''
+
+  const { data, isLoading, error } = useUserPoolBalance(
+    poolData?.id,
+    userAddress
+  )
+
+  console.warn('useUserPoolBalance', error)
+
   const disabledButton = !amount || !!errorMsg
 
   const validationStyle = errorMsg
