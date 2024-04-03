@@ -181,6 +181,32 @@
           "label": "Remaining capacity",
           "tooltip": "Amount of additional funds the Pool can accept in USDC, also represented as a percentage of the maximum Lending Pool target amount.​"
         }
+      },
+      "investmentCard": {
+        "totalAmount": {
+          "label": "Total Amount Invested",
+          "tooltip": "Total amount of USDC you have invested into this Lending Pool."
+        },
+        "weightedAvgApy": {
+          "label": "Weighted Average APY",
+          "tooltip": "The average APY you are currently earning within this Pool that has been adjusted to reflect your weighted contribution to each Tranche relative to your total contribution across all tranches."
+        },
+        "totYieldEarned": {
+          "label": "Total Yield Earned",
+          "tooltip": "Total yield you have earned on your USDC investment(s) whilst you remain active in this Lending Pool. For example, if you withdraw your total investment from this Lending Pool (and are therefore no longer active in this Lending Pool), then your total yield earned will be displayed as zero. To view a breakdown of your total yield earned across all Lending Pools, please click on the 'My Portfolio' tab."
+        },
+        "amountInvested": {
+          "label": "Amount Invested",
+          "tooltip": "Total amount of USDC you have invested into this Tranche within this Lending Pool. For example, if you withdraw your total investment amount from this"
+        },
+        "trancheApy": {
+          "label": "Tranche APY",
+          "tooltip": "The current APY you are currently earning within this Tranche (in the case that there are multiple Tranches within this Pool). In the absence of multiple Tranches, then this reflects the APY you are currently earning within this Pool."
+        },
+        "yieldEarned": {
+          "label": "Yield Earned",
+          "tooltip": "Total yield you have earned on your investment within this Tranche."
+        }
       }
     },
     "poolDetails": {},

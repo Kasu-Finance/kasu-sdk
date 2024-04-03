@@ -1,4 +1,8 @@
+'use client'
+
 import { Box, Typography } from '@mui/material'
+
+import useTranslation from '@/hooks/useTranslation'
 
 import ContentWithSuffix from '@/components/atoms/ContentWithSuffix'
 import InfoRow from '@/components/atoms/InfoRow'
@@ -16,6 +20,8 @@ const TranchInvestmentCard: React.FC<InvestmentCardProps> = ({
   apy,
   yieldEarned,
 }) => {
+  const { t } = useTranslation()
+
   return (
     <Box
       className='light-blue-background'
@@ -29,21 +35,27 @@ const TranchInvestmentCard: React.FC<InvestmentCardProps> = ({
         {title}
       </Typography>
       <InfoRow
-        title='Amount invested'
-        toolTipInfo='01'
+        title={t('lending.poolOverview.investmentCard.amountInvested.label')}
+        toolTipInfo={t(
+          'lending.poolOverview.investmentCard.amountInvested.tooltip'
+        )}
         showDivider
         metric={<ContentWithSuffix content={amount} suffix='USDC' />}
       />
 
       <InfoRow
-        title='Tranch APY'
-        toolTipInfo='02'
+        title={t('lending.poolOverview.investmentCard.trancheApy.label')}
+        toolTipInfo={t(
+          'lending.poolOverview.investmentCard.trancheApy.tooltip'
+        )}
         showDivider
         metric={<ContentWithSuffix content={apy + ' %'} />}
       />
       <InfoRow
-        title='Yield Earned'
-        toolTipInfo='03'
+        title={t('lending.poolOverview.investmentCard.yieldEarned.label')}
+        toolTipInfo={t(
+          'lending.poolOverview.investmentCard.yieldEarned.tooltip'
+        )}
         metric={<ContentWithSuffix content={yieldEarned} suffix='USDC' />}
       />
     </Box>
