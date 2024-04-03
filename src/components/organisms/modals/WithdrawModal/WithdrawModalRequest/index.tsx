@@ -10,18 +10,19 @@ import TrancheSelect from '@/components/organisms/modals/WithdrawModal/WithdrawM
 
 interface WithdrawModalRequestProps {
   poolData: PoolOverview
+  balance: string
   isMultiTranche: boolean
   containerClassName?: string
 }
 
 const WithdrawModalRequest: React.FC<WithdrawModalRequestProps> = ({
   poolData,
+  balance,
   isMultiTranche,
   containerClassName,
 }) => {
-  const { amount, errorMsg, setAmount, setErrorMsg } = useWithdrawModalState()
-
   const { t } = useTranslation()
+  const { amount, setAmount } = useWithdrawModalState()
 
   return (
     <Box pt={3} pl={1} pr={1} className={containerClassName}>
@@ -29,12 +30,7 @@ const WithdrawModalRequest: React.FC<WithdrawModalRequestProps> = ({
         {t('lending.withdraw.subtitle')}
       </Typography>
 
-      <AmountInput
-        amount={amount}
-        errorMsg={errorMsg}
-        setErrorMsg={setErrorMsg}
-        setAmount={setAmount}
-      />
+      <AmountInput balance={balance} amount={amount} setAmount={setAmount} />
 
       {isMultiTranche && <TrancheSelect poolData={poolData} />}
     </Box>

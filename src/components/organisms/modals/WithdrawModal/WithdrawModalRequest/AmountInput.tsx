@@ -1,40 +1,54 @@
 import LogoutIcon from '@mui/icons-material/Logout'
 import { Box, Typography, useTheme } from '@mui/material'
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 
+import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useTranslation from '@/hooks/useTranslation'
 
 import NumericalInput from '@/components/molecules/NumericalInput'
 
+import { toBigNumber } from '@/utils'
+
 interface AmountInputProps {
+  balance: string
   amount: string
-  errorMsg: string
-  setErrorMsg: (msg: string) => void
   setAmount: (amount: string) => void
 }
 
 const AmountInput: React.FC<AmountInputProps> = ({
+  balance,
   amount,
-  errorMsg,
-  setErrorMsg,
   setAmount,
 }) => {
   const { t } = useTranslation()
   const theme = useTheme()
+  const { modalStatus, setModalStatus } = useModalStatusState()
+  const [focused, setFocused] = useState(false)
+
+  const showSuccess = !focused && modalStatus.type === 'success'
 
   const validateAmount = useCallback(
     (input: string) => {
-      const errorInput = '123'
-      // TODO - change this to a valid condition
-      if (input === errorInput) {
-        setErrorMsg(t('lending.withdraw.errors.invalidCriteria'))
+      if (input && toBigNumber(input).gt(toBigNumber(balance))) {
+        setModalStatus({
+          type: 'error',
+          errorMessage: t('lending.withdraw.errors.invalidCriteria'),
+        })
         return false
-      } else {
-        setErrorMsg('')
-        return true
       }
+
+      if (input && toBigNumber(input).isZero()) {
+        setModalStatus({
+          type: 'error',
+          errorMessage: t('lending.withdraw.errors.invalidCriteria'),
+        })
+        return false
+      }
+
+      setModalStatus({ type: input ? 'success' : 'default' })
+      return true
     },
-    [t, setErrorMsg]
+    [balance, setModalStatus, t]
   )
 
   const handleAmountChange = (value: string) => {
@@ -43,40 +57,53 @@ const AmountInput: React.FC<AmountInputProps> = ({
   }
 
   const handleMax = () => {
-    const maxAmount = '100' // TODO - get the max amount
-    validateAmount(maxAmount)
-    setAmount(maxAmount)
+    setAmount(balance)
+    validateAmount(balance)
   }
 
-  const isAmountValid = useMemo(
-    () => (amount && validateAmount(amount)) || false,
-    [amount, validateAmount]
-  )
+  const handleFocusState = (state: boolean) => {
+    if (state) {
+      setFocused(true)
+      setModalStatus({ type: 'focused' })
+    } else {
+      validateAmount(amount)
+      setFocused(false)
+    }
+  }
 
-  const numericalInputRootProps = {
-    sx: {
-      mt: 1,
-      '& .MuiOutlinedInput-root': {
-        fieldset: {
-          borderColor: isAmountValid ? theme.palette.success.main : '',
+  const errorMsg = modalStatus.type === 'error' ? modalStatus.errorMessage : ''
+
+  const numericalInputRootProps = useMemo(
+    () => ({
+      sx: () => ({
+        mt: 1,
+        '& .MuiOutlinedInput-root': {
+          fieldset: {
+            borderColor: showSuccess ? theme.palette.success.main : '',
+          },
         },
+        '& .MuiInputLabel-root': {
+          color: showSuccess ? theme.palette.success.main : '',
+        },
+        '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+          borderColor: showSuccess ? theme.palette.success.main : '',
+        },
+        '& .MuiInputBase-input': {
+          pl: 1,
+        },
+      }),
+      error: !!errorMsg,
+      onFocus: () => handleFocusState(true),
+      onBlur: () => handleFocusState(false),
+      InputProps: {
+        startAdornment: (
+          <LogoutIcon sx={{ color: theme.palette.icon.primary }} />
+        ),
+        endAdornment: 'USDC',
       },
-      '& .MuiInputLabel-root': {
-        color: isAmountValid ? theme.palette.success.main : '',
-      },
-      '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-        borderColor: isAmountValid ? theme.palette.success.main : '',
-      },
-      '& .MuiInputBase-input': {
-        pl: 1,
-      },
-    },
-    error: !!errorMsg,
-    InputProps: {
-      startAdornment: <LogoutIcon sx={{ color: theme.palette.icon.primary }} />,
-      endAdornment: 'USDC',
-    },
-  }
+    }),
+    [errorMsg, showSuccess, theme, handleFocusState]
+  )
 
   return (
     <Box>

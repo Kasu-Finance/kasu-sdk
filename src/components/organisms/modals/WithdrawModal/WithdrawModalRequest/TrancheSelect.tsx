@@ -12,6 +12,8 @@ import { useMemo } from 'react'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import useTranslation from '@/hooks/useTranslation'
 
+import { Tranche } from '@/context/withdrawModal/withdrawModal.types'
+
 import { HexString } from '@/types/lending'
 
 interface TrancheSelectProps {
@@ -20,22 +22,24 @@ interface TrancheSelectProps {
 
 const TrancheSelect: React.FC<TrancheSelectProps> = ({ poolData }) => {
   const { t } = useTranslation()
-  const { setSelectedTranche } = useWithdrawModalState()
+  const { selectedTranche, setSelectedTranche } = useWithdrawModalState()
 
-  const defaultTranche = useMemo(() => {
-    if (poolData.tranches && poolData.tranches.length > 0) {
-      return (
-        poolData.tranches.find(
-          (tranche) => tranche.name === 'Senior Tranche'
-        ) ||
-        poolData.tranches.find(
-          (tranche) => tranche.name === 'Mezzanine Tranche'
-        ) ||
-        poolData.tranches[0]
-      )
+  const trancheSelected = useMemo(() => {
+    if (selectedTranche) {
+      return poolData?.tranches?.find((_) => _.id === selectedTranche)
     }
-    return ''
-  }, [poolData.tranches])
+
+    const defaultTranche =
+      poolData?.tranches?.find((tranche) =>
+        tranche.name.includes(Tranche.SENIOR_TRANCHE)
+      ) ||
+      poolData?.tranches?.find((tranche) =>
+        tranche.name.includes(Tranche.MEZZANINE_TRANCHE)
+      ) ||
+      poolData?.tranches?.[0]
+
+    return defaultTranche
+  }, [poolData?.tranches, selectedTranche])
 
   if (poolData.tranches.length <= 1) return null
 
@@ -44,6 +48,7 @@ const TrancheSelect: React.FC<TrancheSelectProps> = ({ poolData }) => {
     const selectedTranche = poolData.tranches.find(
       (tranche) => tranche.name === selectedName
     )
+
     if (selectedTranche) {
       setSelectedTranche(selectedTranche.id as HexString)
     }
@@ -59,7 +64,7 @@ const TrancheSelect: React.FC<TrancheSelectProps> = ({ poolData }) => {
           size='small'
           id='tranche'
           labelId='tranche-select-label'
-          value={defaultTranche ? defaultTranche.name : ''}
+          value={trancheSelected?.name || ''}
           onChange={handleTrancheChange}
           label={t('lending.withdraw.dropdown.label')}
         >

@@ -2,14 +2,16 @@
 
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import { Box, Button, DialogActions, DialogContent } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
+import { formatUnits } from 'ethers/lib/utils'
 import { useRouter } from 'next/navigation'
 import React, { useMemo } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
+import usePoolTrancheBalance from '@/hooks/lending/usePoolTrancheBalance'
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
+import useWithdrawRequest from '@/hooks/lending/useWithdrawRequest'
 import useTranslation from '@/hooks/useTranslation'
 
 import DialogHeader from '@/components/molecules/DialogHeader'
@@ -25,45 +27,52 @@ import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
 import { metricsMock } from '@/app/mock-data/withdrawMock'
 import { Routes } from '@/config/routes'
-import { formatAccount } from '@/utils'
+import { toBigNumber } from '@/utils'
 
 interface WithdrawModalProps {
   handleClose: () => void
 }
 
 const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
-  const {
-    amount,
-    selectedTranche,
-    errorMsg,
-    processing,
-    setAmount,
-    setSelectedTranche,
-    setErrorMsg,
-    setProcessing,
-  } = useWithdrawModalState()
+  const { amount, selectedTranche, processing, setProcessing } =
+    useWithdrawModalState()
   const router = useRouter()
   const { t } = useTranslation()
 
   const { modal } = useModalState()
-  const { modalStatusAction, setModalStatusAction } = useModalStatusState()
+  const { modalStatus, setModalStatusAction, modalStatusAction } =
+    useModalStatusState()
 
   const poolData = modal.withdrawModal.poolData
-  const { account } = useWeb3React()
-  const userAddress = useMemo(() => formatAccount(account), [account]) || ''
 
-  const { data, isLoading, error } = useUserPoolBalance(
+  const { requestWithdrawal, data: withdrawResponse } = useWithdrawRequest()
+  const { data: userPool } = useUserPoolBalance(poolData?.id)
+  const { data: poolTranche } = usePoolTrancheBalance(
     poolData?.id,
-    userAddress
+    selectedTranche
   )
 
-  console.warn('useUserPoolBalance', error)
+  const balance = useMemo(() => {
+    if (!userPool && !poolTranche) return '0'
 
-  const disabledButton = !amount || !!errorMsg
+    const decimals = 6
+    const userPoolBalance = formatUnits(userPool?.balance || '0', decimals)
+    const poolTrancheBalance = formatUnits(
+      poolTranche?.balance || '0',
+      decimals
+    )
 
-  const validationStyle = errorMsg
-    ? 'light-error-background'
-    : 'light-blue-background'
+    const poolBalance = toBigNumber(userPoolBalance)
+    const trancheBalance = toBigNumber(poolTrancheBalance)
+    const totalBalance = poolBalance.add(trancheBalance)
+
+    return formatUnits(totalBalance, decimals)
+  }, [userPool, poolTranche])
+
+  const validationStyle =
+    modalStatus.type === 'error'
+      ? 'light-error-background'
+      : 'light-blue-background'
 
   const isMultiTranche = useMemo(
     () => poolData?.tranches?.length > 1,
@@ -71,13 +80,27 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
   )
 
   const onModalClose = () => {
-    setAmount('')
-    setErrorMsg('')
-    setModalStatusAction(ModalStatusAction.REQUEST)
-    setSelectedTranche('0x0')
-    setProcessing(false)
     handleClose()
     router.push(Routes.lending.root.url)
+  }
+
+  const onSubmitApprove = async () => {
+    setProcessing(true)
+    try {
+      const txResponse = await requestWithdrawal(
+        poolData.id,
+        selectedTranche,
+        amount
+      )
+      console.log('Withdrawal transaction response:', txResponse)
+
+      setModalStatusAction(ModalStatusAction.CONFIRM)
+      router.push(`${Routes.lending.root.url}?poolId=${poolData?.id}&step=3`)
+    } catch (err) {
+      console.error('Withdrawal request failed:', err)
+    } finally {
+      setProcessing(false)
+    }
   }
 
   if (processing) {
@@ -129,6 +152,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
         {modalStatusAction === ModalStatusAction.REQUEST && (
           <WithdrawModalRequest
             poolData={poolData}
+            balance={balance}
             isMultiTranche={isMultiTranche}
             containerClassName={validationStyle}
           />
@@ -147,7 +171,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
         <WithdrawModalActions
           poolData={poolData}
           onModalClose={onModalClose}
-          disabledButton={disabledButton}
+          onSubmitApprove={onSubmitApprove}
         />
       </DialogActions>
     </>

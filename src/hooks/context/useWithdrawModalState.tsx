@@ -38,16 +38,6 @@ const useWithdrawModalState = (): WithdrawModalTypes => {
     [dispatch]
   )
 
-  const setErrorMsg = useCallback(
-    (errorMsg: string) => {
-      dispatch({
-        type: WithdrawActionTypes.SET_ERROR_MSG,
-        payload: errorMsg,
-      })
-    },
-    [dispatch]
-  )
-
   const setProcessing = useCallback(
     (processing: boolean) => {
       dispatch({
@@ -62,7 +52,6 @@ const useWithdrawModalState = (): WithdrawModalTypes => {
     ...context,
     setAmount,
     setSelectedTranche,
-    setErrorMsg,
     setProcessing,
   }
 }

@@ -14,34 +14,27 @@ import { Routes } from '@/config/routes'
 
 interface WithdrawModalActionsProps {
   poolData: PoolOverview
-  disabledButton: boolean
   onModalClose: () => void
+  onSubmitApprove: () => void
 }
 
 const WithdrawModalActions: React.FC<WithdrawModalActionsProps> = ({
   poolData,
-  disabledButton,
   onModalClose,
+  onSubmitApprove,
 }) => {
   const theme = useTheme()
   const router = useRouter()
   const { t } = useTranslation()
-  const { setProcessing } = useWithdrawModalState()
-  const { modalStatusAction, setModalStatusAction } = useModalStatusState()
+  const { amount } = useWithdrawModalState()
+  const { modalStatus, modalStatusAction, setModalStatusAction } =
+    useModalStatusState()
+
+  const disabledButton = Boolean(!amount || modalStatus.type === 'error')
 
   const onSubmitRequest = () => {
     setModalStatusAction(ModalStatusAction.APPROVE)
     router.push(`${Routes.lending.root.url}?poolId=${poolData?.id}&step=2`)
-  }
-
-  const onSubmitApprove = () => {
-    setProcessing(true)
-
-    setTimeout(() => {
-      setProcessing(false)
-      setModalStatusAction(ModalStatusAction.CONFIRM)
-      router.push(`${Routes.lending.root.url}?poolId=${poolData?.id}&step=3`)
-    }, 2000)
   }
 
   const handleAdjust = () => {

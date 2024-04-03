@@ -3,28 +3,33 @@ import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
-const useUserPoolBalance = (poolId: string) => {
+import { HexString } from '@/types/lending'
+
+const usePoolTrancheBalance = (poolId: string, trancheId: HexString) => {
   const sdk = useKasuSDK()
   const { account: userAddress } = useWeb3React()
 
-  const fetchUserBalance = async () => {
+  const fetchUserTrancheBalance = async () => {
     if (!poolId || !userAddress) {
       console.error('No poolId or userAddress provided')
       return null
     }
-    const data = await sdk.UserLending.getUserPoolBalance(userAddress, poolId)
-    console.warn('fetchUserBalance', data)
+
+    const data = await sdk.UserLending.getUserTrancheBalance(
+      userAddress,
+      trancheId
+    )
 
     if (!data) {
-      throw new Error('No user balance found for this pool')
+      throw new Error('No user balance found for this tranche')
     }
 
     return data
   }
 
   const { data, error, mutate } = useSWR(
-    `userPoolBalance/${poolId}`,
-    fetchUserBalance
+    `userTrancheBalance/${trancheId}`,
+    fetchUserTrancheBalance
   )
 
   return {
@@ -35,4 +40,4 @@ const useUserPoolBalance = (poolId: string) => {
   }
 }
 
-export default useUserPoolBalance
+export default usePoolTrancheBalance
