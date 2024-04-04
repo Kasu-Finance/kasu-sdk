@@ -2,7 +2,7 @@
 
 import LoginIcon from '@mui/icons-material/Login'
 import { Box, Grid } from '@mui/material'
-import React, { useRef } from 'react'
+import React, { useMemo, useRef } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useIsSticky from '@/hooks/useIsSticky'
@@ -18,20 +18,33 @@ export type PoolData = {
   lendingPoolId: `0x${string}`
   totalUserInvestment: string
   tranches: {
-    content: string
     toolTip: string
     title: string
     trancheId: `0x${string}`
   }[]
 }
 
-import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
+import { formatUnits } from 'ethers/lib/utils'
+import {
+  PoolOverview,
+  TrancheData,
+} from 'kasu-sdk/src/services/DataService/types'
+
+import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
 
 const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
   const divRef = useRef<HTMLDivElement>(null)
   const { t } = useTranslation()
 
   const { openModal } = useModalState()
+
+  const { data: userPoolBalance } = useUserPoolBalance(pool?.id)
+
+  const poolBalance = useMemo(() => {
+    if (!userPoolBalance) return '0'
+    const decimals = 6
+    return formatUnits(userPoolBalance?.balance || '0', decimals)
+  }, [userPoolBalance])
 
   const { isSticky } = useIsSticky({
     elementRef: divRef,
@@ -42,29 +55,14 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
     openModal({ name: 'depositModal', poolData: POOL_DATA })
 
   const POOL_DATA: PoolData = {
-    poolName: 'Apxium Invoice Standard Financing Pool',
-    lendingPoolId: '0xd63541135Be7f482f0A337553E8E40a871019895',
-    totalUserInvestment: '200000',
-    tranches: [
-      {
-        content: '12.50 %',
-        toolTip: 'lending.tranche.senior.tooltip',
-        title: t('lending.tranche.senior.title'),
-        trancheId: '0xe840a390756cb7c18b6102457f81803fb63635d9',
-      },
-      {
-        content: '12.50 %',
-        toolTip: 'lending.tranche.mezzanine.tooltip',
-        title: t('lending.tranche.mezzanine.title'),
-        trancheId: '0x90adcd57397133c6ce6078dbc70143b7acbc2670',
-      },
-      {
-        content: '2.4 %',
-        toolTip: 'lending.tranche.junior.tooltip',
-        title: t('lending.tranche.junior.title'),
-        trancheId: '0xf73306c30023538d588cca69f347b136d52f374f',
-      },
-    ],
+    poolName: pool.poolName,
+    lendingPoolId: pool.id as `0x${string}`,
+    totalUserInvestment: poolBalance,
+    tranches: pool.tranches.map((tranche: TrancheData) => ({
+      toolTip: `lending.tranche.${tranche.name.toLowerCase()}.tooltip`,
+      title: t(`lending.tranche.${tranche.name.toLowerCase()}.title`),
+      trancheId: tranche.id as `0x${string}`,
+    })),
   }
 
   const tranches = pool.tranches.map((item) => {
