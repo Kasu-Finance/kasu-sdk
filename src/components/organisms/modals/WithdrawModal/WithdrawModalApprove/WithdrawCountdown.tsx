@@ -7,7 +7,7 @@ import Countdown from '@/components/atoms/Countdown'
 
 import { extractDateAndUtcOffset, formatTimestampWithOffset } from '@/utils'
 
-const CountdownSection = () => {
+const WithdrawCountdown = () => {
   const { t } = useTranslation()
   const { nextEpochTime = 0 } = useNextEpochTime()
 
@@ -39,4 +39,4 @@ const CountdownSection = () => {
   )
 }
 
-export default CountdownSection
+export default WithdrawCountdown

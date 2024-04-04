@@ -5,8 +5,8 @@ import React from 'react'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import useTranslation from '@/hooks/useTranslation'
 
-import AmountInput from '@/components/organisms/modals/WithdrawModal/WithdrawModalRequest/AmountInput'
-import TrancheSelect from '@/components/organisms/modals/WithdrawModal/WithdrawModalRequest/TrancheSelect'
+import WithdrawAmountInput from '@/components/organisms/modals/WithdrawModal/WithdrawModalRequest/WithdrawAmountInput'
+import WithdrawTrancheSelect from '@/components/organisms/modals/WithdrawModal/WithdrawModalRequest/WithdrawTrancheSelect'
 
 interface WithdrawModalRequestProps {
   poolData: PoolOverview
@@ -30,9 +30,13 @@ const WithdrawModalRequest: React.FC<WithdrawModalRequestProps> = ({
         {t('lending.withdraw.subtitle')}
       </Typography>
 
-      <AmountInput balance={balance} amount={amount} setAmount={setAmount} />
+      <WithdrawAmountInput
+        balance={balance}
+        amount={amount}
+        setAmount={setAmount}
+      />
 
-      {isMultiTranche && <TrancheSelect poolData={poolData} />}
+      {isMultiTranche && <WithdrawTrancheSelect poolData={poolData} />}
     </Box>
   )
 }

@@ -9,13 +9,13 @@ import NumericalInput from '@/components/molecules/NumericalInput'
 
 import { toBigNumber } from '@/utils'
 
-interface AmountInputProps {
+interface WithdrawAmountInputProps {
   balance: string
   amount: string
   setAmount: (amount: string) => void
 }
 
-const AmountInput: React.FC<AmountInputProps> = ({
+const WithdrawAmountInput: React.FC<WithdrawAmountInputProps> = ({
   balance,
   amount,
   setAmount,
@@ -123,4 +123,4 @@ const AmountInput: React.FC<AmountInputProps> = ({
   )
 }
 
-export default AmountInput
+export default WithdrawAmountInput
