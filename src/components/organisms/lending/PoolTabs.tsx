@@ -5,7 +5,7 @@ import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import { memo, useCallback, useState } from 'react'
 
-import PoolOverview from '@/components/molecules/lending/overview/OverviewCard'
+import PoolOverview from '@/components/molecules/lending/overview/PoolOverview'
 import TabPanel from '@/components/molecules/tabs/TabPanel'
 import PoolDetails from '@/components/organisms/details/PoolDetails'
 import Repayments from '@/components/organisms/repayments/Repayments'
