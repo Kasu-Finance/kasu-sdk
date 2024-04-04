@@ -14,12 +14,6 @@ export enum WithdrawMetrics {
   TO_WALLET = 'toWallet',
 }
 
-export enum Tranche {
-  JUNIOR_TRANCHE = 'Junior',
-  MEZZANINE_TRANCHE = 'Mezzanine',
-  SENIOR_TRANCHE = 'Senior',
-}
-
 export type WithdrawModalActions =
   | {
       type: WithdrawActionTypes.SET_AMOUNT

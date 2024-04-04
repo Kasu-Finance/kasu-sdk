@@ -12,8 +12,6 @@ import { useMemo } from 'react'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import useTranslation from '@/hooks/useTranslation'
 
-import { Tranche } from '@/context/withdrawModal/withdrawModal.types'
-
 import { HexString } from '@/types/lending'
 
 interface TrancheSelectProps {
@@ -31,10 +29,10 @@ const TrancheSelect: React.FC<TrancheSelectProps> = ({ poolData }) => {
 
     const defaultTranche =
       poolData?.tranches?.find((tranche) =>
-        tranche.name.includes(Tranche.SENIOR_TRANCHE)
+        tranche.name.toLowerCase().includes('senior')
       ) ||
       poolData?.tranches?.find((tranche) =>
-        tranche.name.includes(Tranche.MEZZANINE_TRANCHE)
+        tranche.name.toLowerCase().includes('mezzanine')
       ) ||
       poolData?.tranches?.[0]
 
