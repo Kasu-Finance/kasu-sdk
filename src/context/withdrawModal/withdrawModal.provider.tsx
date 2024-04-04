@@ -14,7 +14,6 @@ type WithdrawModalProviderProps = {
 const initialState: WithdrawModalStateType = {
   amount: '',
   selectedTranche: '0x0',
-  errorMsg: '',
   processing: false,
 }
 

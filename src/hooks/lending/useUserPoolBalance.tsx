@@ -13,7 +13,6 @@ const useUserPoolBalance = (poolId: string) => {
       return null
     }
     const data = await sdk.UserLending.getUserPoolBalance(userAddress, poolId)
-    console.warn('fetchUserBalance', data)
 
     if (!data) {
       throw new Error('No user balance found for this pool')

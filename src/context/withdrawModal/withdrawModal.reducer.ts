@@ -19,11 +19,6 @@ const withdrawModalReducer = (
         ...state,
         selectedTranche: action.payload,
       }
-    case WithdrawActionTypes.SET_ERROR_MSG:
-      return {
-        ...state,
-        errorMsg: action.payload,
-      }
     case WithdrawActionTypes.SET_PROCESSING:
       return {
         ...state,

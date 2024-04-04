@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 
@@ -19,12 +19,25 @@ const WithdrawModalWrapper: React.FC<WithdrawModalWrapperProps> = ({
 }) => {
   const { modal } = useModalState()
 
+  const defaultTrancheId = useMemo(() => {
+    const tranches = modal.withdrawModal.poolData.tranches
+
+    if (tranches?.length === 0) return '0x0'
+
+    const defaultTranche =
+      tranches.find((tranche) =>
+        tranche.name.toLowerCase().includes('senior')
+      ) ||
+      tranches?.find((tranche) =>
+        tranche.name.toLowerCase().includes('mezzanine')
+      ) ||
+      tranches?.[0]
+
+    return defaultTranche.id
+  }, [modal.withdrawModal.poolData])
+
   return (
-    <WithdrawModalProvider
-      defaultTrancheId={
-        modal.withdrawModal.poolData.tranches[0].id as HexString
-      }
-    >
+    <WithdrawModalProvider defaultTrancheId={defaultTrancheId as HexString}>
       <ModalStatusState defaultStatus={ModalStatusAction.REQUEST}>
         <WithdrawModal handleClose={handleClose} />
       </ModalStatusState>

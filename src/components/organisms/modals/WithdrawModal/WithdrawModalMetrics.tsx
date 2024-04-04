@@ -3,7 +3,6 @@ import { useWeb3React } from '@web3-react/core'
 import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
 import React, { useMemo } from 'react'
 
-import useMetricValues from '@/hooks/useMetricValues'
 import useTranslation from '@/hooks/useTranslation'
 
 import InfoColumn from '@/components/atoms/InfoColumn'
@@ -14,11 +13,10 @@ import { WithdrawMetrics } from '@/context/withdrawModal/withdrawModal.types'
 
 import { formatAccount } from '@/utils'
 
-import { PoolMetric } from '@/types/lending'
-
 interface WithdrawModalMetricsProps {
   poolData: PoolOverview
-  metrics: PoolMetric[]
+  poolBalance: string
+  trancheBalance: string
   modalStatusAction: number
   selectedTranche: string
   isMultiTranche: boolean
@@ -27,7 +25,8 @@ interface WithdrawModalMetricsProps {
 
 const WithdrawModalMetrics: React.FC<WithdrawModalMetricsProps> = ({
   poolData,
-  metrics,
+  poolBalance,
+  trancheBalance,
   modalStatusAction,
   selectedTranche,
   isMultiTranche,
@@ -37,13 +36,17 @@ const WithdrawModalMetrics: React.FC<WithdrawModalMetricsProps> = ({
   const { account } = useWeb3React()
   const userAddress = useMemo(() => formatAccount(account), [account])
 
-  const metricValues = useMetricValues(metrics, [
-    WithdrawMetrics.TOTAL_INVESTMENT,
-    WithdrawMetrics.TRANCHE_INVESTMENT,
-  ])
+  const totalInvestment = {
+    id: WithdrawMetrics.TOTAL_INVESTMENT,
+    content: poolBalance,
+    unit: 'USDC',
+  }
 
-  const totalInvestment = metricValues[WithdrawMetrics.TOTAL_INVESTMENT]
-  const trancheInvestment = metricValues[WithdrawMetrics.TRANCHE_INVESTMENT]
+  const trancheInvestment = {
+    id: WithdrawMetrics.TRANCHE_INVESTMENT,
+    content: trancheBalance,
+    unit: 'USDC',
+  }
 
   const findTranche = poolData.tranches.find((_) => _.id === selectedTranche)
   const tranche = {

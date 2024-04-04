@@ -22,22 +22,10 @@ const TrancheSelect: React.FC<TrancheSelectProps> = ({ poolData }) => {
   const { t } = useTranslation()
   const { selectedTranche, setSelectedTranche } = useWithdrawModalState()
 
-  const trancheSelected = useMemo(() => {
-    if (selectedTranche) {
-      return poolData?.tranches?.find((_) => _.id === selectedTranche)
-    }
-
-    const defaultTranche =
-      poolData?.tranches?.find((tranche) =>
-        tranche.name.toLowerCase().includes('senior')
-      ) ||
-      poolData?.tranches?.find((tranche) =>
-        tranche.name.toLowerCase().includes('mezzanine')
-      ) ||
-      poolData?.tranches?.[0]
-
-    return defaultTranche
-  }, [poolData?.tranches, selectedTranche])
+  const trancheSelected = useMemo(
+    () => poolData?.tranches?.find((_) => _.id === selectedTranche),
+    [poolData?.tranches, selectedTranche]
+  )
 
   if (poolData.tranches.length <= 1) return null
 

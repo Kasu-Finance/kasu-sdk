@@ -25,9 +25,7 @@ import WithdrawModalRequest from '@/components/organisms/modals/WithdrawModal/Wi
 
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
-import { metricsMock } from '@/app/mock-data/withdrawMock'
 import { Routes } from '@/config/routes'
-import { toBigNumber } from '@/utils'
 
 interface WithdrawModalProps {
   handleClose: () => void
@@ -45,39 +43,36 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
 
   const poolData = modal.withdrawModal.poolData
 
-  const { requestWithdrawal, data: withdrawResponse } = useWithdrawRequest()
-  const { data: userPool } = useUserPoolBalance(poolData?.id)
+  const { requestWithdrawal, data: withdrawTransaction } = useWithdrawRequest()
+  const { data: userPoolBalance } = useUserPoolBalance(poolData?.id)
   const { data: poolTranche } = usePoolTrancheBalance(
     poolData?.id,
     selectedTranche
   )
 
-  const balance = useMemo(() => {
-    if (!userPool && !poolTranche) return '0'
-
+  const poolBalance = useMemo(() => {
+    if (!userPoolBalance) return '0'
     const decimals = 6
-    const userPoolBalance = formatUnits(userPool?.balance || '0', decimals)
-    const poolTrancheBalance = formatUnits(
-      poolTranche?.balance || '0',
-      decimals
-    )
+    return formatUnits(userPoolBalance?.balance || '0', decimals)
+  }, [userPoolBalance])
 
-    const poolBalance = toBigNumber(userPoolBalance)
-    const trancheBalance = toBigNumber(poolTrancheBalance)
-    const totalBalance = poolBalance.add(trancheBalance)
-
-    return formatUnits(totalBalance, decimals)
-  }, [userPool, poolTranche])
-
-  const validationStyle =
-    modalStatus.type === 'error'
-      ? 'light-error-background'
-      : 'light-blue-background'
+  const trancheBalance = useMemo(() => {
+    if (!poolTranche) return '0'
+    const decimals = 6
+    return formatUnits(poolTranche?.balance || '0', decimals)
+  }, [poolTranche])
 
   const isMultiTranche = useMemo(
     () => poolData?.tranches?.length > 1,
     [poolData]
   )
+
+  const txHash = withdrawTransaction?.hash
+
+  const validationStyle =
+    modalStatus.type === 'error'
+      ? 'light-error-background'
+      : 'light-blue-background'
 
   const onModalClose = () => {
     handleClose()
@@ -106,10 +101,6 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
   if (processing) {
     return <ProcessingModal handleClose={onModalClose} />
   }
-
-  // TODO: Replace with real tx hash
-  const txHash =
-    modalStatusAction === ModalStatusAction.CONFIRM ? 'test-tx-hash' : ''
 
   return (
     <>
@@ -140,7 +131,8 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
 
         {modalStatusAction !== ModalStatusAction.CONFIRM && (
           <WithdrawModalMetrics
-            metrics={metricsMock}
+            poolBalance={poolBalance}
+            trancheBalance={trancheBalance}
             poolData={poolData}
             selectedTranche={selectedTranche}
             modalStatusAction={modalStatusAction as number}
@@ -152,7 +144,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
         {modalStatusAction === ModalStatusAction.REQUEST && (
           <WithdrawModalRequest
             poolData={poolData}
-            balance={balance}
+            balance={trancheBalance}
             isMultiTranche={isMultiTranche}
             containerClassName={validationStyle}
           />
