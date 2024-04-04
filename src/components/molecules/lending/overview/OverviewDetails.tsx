@@ -1,9 +1,30 @@
+'use client'
+
 import { Box, Card, Grid } from '@mui/material'
+import {
+  PoolDelegateProfileAndHistory,
+  PoolOverview,
+} from 'kasu-sdk/src/services/DataService/types'
+
+import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
-const OverviewDetails = () => {
+import { formatAmount } from '@/utils'
+import formatDuration from '@/utils/formats/formatDuration'
+
+const OverviewDetails: React.FC<{
+  pool: PoolOverview
+  poolDelegate: PoolDelegateProfileAndHistory
+}> = ({ pool, poolDelegate }) => {
+  const { t } = useTranslation()
+
+  const lendingDuration = formatDuration(poolDelegate.delegateLendingHistory, {
+    months: true,
+    days: true,
+  })
+
   return (
     <Box sx={{ mt: 3 }}>
       <Grid
@@ -19,18 +40,18 @@ const OverviewDetails = () => {
             <Grid container columnSpacing={2} sx={{ pb: 3 }}>
               <Grid item xs={6}>
                 <MetricWithSuffix
-                  content='10.2 M'
+                  content={formatAmount(pool.totalValueLocked)}
                   suffix='USDC'
-                  tooltipKey='01'
-                  titleKey='Total Value Locked (TVL)'
+                  tooltipKey='lending.poolOverview.detailCard.tvl.tooltip'
+                  titleKey='lending.poolOverview.detailCard.tvl.label'
                 />
               </Grid>
               <Grid item xs={6}>
                 <MetricWithSuffix
-                  content='10.2 M'
+                  content={pool.loansUnderManagement ?? '0'}
                   suffix='USDC'
-                  tooltipKey='01'
-                  titleKey='Total Value Locked (TVL)'
+                  tooltipKey='lending.poolOverview.detailCard.loansUnder.tooltip'
+                  titleKey='lending.poolOverview.detailCard.loansUnder.label'
                 />
               </Grid>
             </Grid>
@@ -43,18 +64,18 @@ const OverviewDetails = () => {
               >
                 <Grid item xs={6}>
                   <MetricWithSuffix
-                    content='10,000.00 M'
+                    content={pool.yieldEarned}
                     suffix='USDC'
-                    tooltipKey='03'
-                    titleKey='Total Pool Yield Earned'
+                    tooltipKey='lending.poolOverview.detailCard.totalPoolYieldEarnings.tooltip'
+                    titleKey='lending.poolOverview.detailCard.totalPoolYieldEarnings.label'
                   />
                 </Grid>
                 <Grid item xs={6}>
                   <MetricWithSuffix
-                    content='500.00'
+                    content={formatAmount(+poolDelegate.historicLossRate)}
                     suffix='USDC'
-                    tooltipKey='04'
-                    titleKey='Total Loss Rate'
+                    tooltipKey='lending.poolOverview.detailCard.totalLossRate.tooltip'
+                    titleKey='lending.poolOverview.detailCard.totalLossRate.label'
                   />
                 </Grid>
               </Grid>
@@ -66,16 +87,16 @@ const OverviewDetails = () => {
             <Grid container columnSpacing={2} sx={{ pb: 3 }}>
               <Grid item xs={6}>
                 <MetricWithSuffix
-                  content='2 years • 3 months'
-                  tooltipKey='05'
-                  titleKey='Lending History'
+                  content={lendingDuration}
+                  tooltipKey='lending.poolOverview.detailCard.lendingHistory.tooltip'
+                  titleKey='lending.poolOverview.detailCard.lendingHistory.label'
                 />
               </Grid>
               <Grid item xs={6}>
                 <MetricWithSuffix
-                  content='Invoice Financing'
-                  tooltipKey='01'
-                  titleKey='Asset class'
+                  content={pool.assetClass}
+                  tooltipKey='lending.poolOverview.detailCard.assetClass.tooltip'
+                  titleKey='lending.poolOverview.detailCard.assetClass.label'
                 />
               </Grid>
             </Grid>
@@ -84,21 +105,25 @@ const OverviewDetails = () => {
               sx={{ mt: 1, borderRadius: 1 }}
             >
               <InfoRow
-                title='Industry Exposure'
-                toolTipInfo='info'
+                toolTipInfo={t(
+                  'lending.poolOverview.detailCard.industry.tooltip'
+                )}
+                title={t('lending.poolOverview.detailCard.industry.label')}
                 showDivider
-                metric='Accounting Firms'
+                metric={pool.industryExposure}
               />
               <InfoRow
-                title='Term & Structure'
-                toolTipInfo='info'
+                toolTipInfo={t('lending.poolOverview.detailCard.terms.tooltip')}
+                title={t('lending.poolOverview.detailCard.terms.label')}
                 showDivider
-                metric='Revolving'
+                metric={pool.poolInvestmentTerm}
               />
               <InfoRow
-                title='Pool APY Structure'
-                toolTipInfo='info'
-                metric='Fixed'
+                toolTipInfo={t(
+                  'lending.poolOverview.detailCard.apyStructure.tooltip'
+                )}
+                title={t('lending.poolOverview.detailCard.apyStructure.label')}
+                metric={pool.poolApyStructure}
               />
             </Box>
           </Card>

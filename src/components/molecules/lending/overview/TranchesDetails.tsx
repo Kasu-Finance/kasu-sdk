@@ -1,45 +1,40 @@
 'use client'
 
 import { Card, CardContent, Grid } from '@mui/material'
+import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
 
 import TranchDetailCard from '@/components/molecules/TranchDetailCard'
 
 import { COLS } from '@/constants'
+import { formatAmount } from '@/utils'
 
-const TranchesDetails = () => {
-  const tranches = [
-    {
-      title: 'Senior Tranche',
-      remainingAmount: { pct: '15', value: '10,000.00' },
-      minimumDepositAmount: '4.50',
-      maxDepositAmount: '1,0 M',
-    },
-    {
-      title: 'Mezzanine Tranche',
-      remainingAmount: { pct: '15', value: '10,000.00' },
-      minimumDepositAmount: '4.50',
-      maxDepositAmount: '1,0 M',
-    },
-    {
-      title: 'Junior Tranche',
-      remainingAmount: { pct: '15', value: '10,000.00' },
-      minimumDepositAmount: '4.50',
-      maxDepositAmount: '1,0 M',
-    },
-  ]
+const remainingAmount = (maxAmount: string, currentAmount: string) => {
+  const amountLeft = +maxAmount - +currentAmount
 
+  const amountPct = (amountLeft / +maxAmount) * 100
+
+  return {
+    value: formatAmount(amountLeft, { minDecimals: 2 }),
+    pct: formatAmount(amountPct),
+  }
+}
+
+const TranchesDetails: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
   return (
     <Card sx={{ mt: 3 }}>
       <Grid container columnSpacing={3} rowGap={2} component={CardContent}>
-        {tranches.length > 0 &&
-          tranches.map((tranche, index) => {
+        {pool.tranches.length > 0 &&
+          pool.tranches.map((tranche, index) => {
             return (
-              <Grid item xs={COLS / tranches.length} key={index}>
+              <Grid item xs={COLS / pool.tranches.length} key={index}>
                 <TranchDetailCard
-                  title={tranche.title}
-                  remainingAmount={tranche.remainingAmount}
-                  minimumDepositAmount={tranche.minimumDepositAmount}
-                  maxDepositAmount={tranche.maxDepositAmount}
+                  title={tranche.name + ' Tranche'}
+                  remainingAmount={remainingAmount(
+                    tranche.maximumDeposit,
+                    tranche.poolCapacity
+                  )}
+                  minimumDepositAmount={formatAmount(tranche.minimumDeposit)}
+                  maxDepositAmount={formatAmount(tranche.maximumDeposit)}
                 />
               </Grid>
             )

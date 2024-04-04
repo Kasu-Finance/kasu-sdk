@@ -1,16 +1,44 @@
+import { BigNumber } from '@ethersproject/bignumber'
+import LogoutIcon from '@mui/icons-material/Logout'
 import { Card, CardContent, CardHeader } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
+import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
+
+import useGetUserBalance from '@/hooks/lending/useUserTrancheBalance'
 
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 import TranchInvestmentCard from '@/components/molecules/TranchInvestmentCard'
 
-const InvestmentPortfolio = () => {
+import { COLS } from '@/constants'
+import {
+  calculateTotalYieldEarned,
+  formatAmount,
+  getAverageApyAndTotal,
+  getTranchesWithUserBalances,
+} from '@/utils'
+
+const InvestmentPortfolio: React.FC<{
+  pool: PoolOverview
+}> = ({ pool }) => {
+  const tranches = pool.tranches.map((tranche) => tranche)
+  const tranchesId = tranches.map((tranche) => tranche.id)
+  let tranchesWithBalances = null
+  let totalYieldEarned = 0
+
+  const tranchesTotal = getAverageApyAndTotal(tranches)
+  const { amount, isLoading } = useGetUserBalance(tranchesId)
+
+  if (!isLoading && amount) {
+    tranchesWithBalances = getTranchesWithUserBalances(tranches, amount)
+    totalYieldEarned = calculateTotalYieldEarned(tranchesWithBalances)
+  }
+
   return (
     <Card sx={{ mt: 3 }}>
       <CardHeader
-        title='Pool Overview'
+        title='Your Investment'
         titleTypographyProps={{
           variant: 'h6',
           component: 'h6',
@@ -22,7 +50,7 @@ const InvestmentPortfolio = () => {
             sx={{ height: '30px', top: 4, right: 8 }}
             size='small'
           >
-            Your investment
+            View Portfolio
           </Button>
         }
       />
@@ -46,52 +74,47 @@ const InvestmentPortfolio = () => {
             >
               <Grid item xs={4}>
                 <MetricWithSuffix
-                  content='12.50 %'
-                  tooltipKey='01'
-                  titleKey='lending.tranche.senior'
+                  content={formatAmount(tranchesTotal.totalCapacity)}
+                  suffix='USDC'
+                  tooltipKey='lending.poolOverview.investmentCard.totalAmount.tooltip'
+                  titleKey='lending.poolOverview.investmentCard.totalAmount.label'
                 />
               </Grid>
               <Grid item xs={4}>
                 <MetricWithSuffix
-                  content='5.50 %'
-                  tooltipKey='01'
-                  titleKey='lending.tranche.mezzanine'
+                  content={formatAmount(tranchesTotal.averageApy * 100) + ' %'}
+                  tooltipKey='lending.poolOverview.investmentCard.weightedAvgApy.tooltip'
+                  titleKey='lending.poolOverview.investmentCard.weightedAvgApy.label'
                 />
               </Grid>
               <Grid item xs={4}>
                 <MetricWithSuffix
-                  content=' 2.4 %'
-                  tooltipKey='01'
-                  titleKey='lending.tranche.junior'
+                  content={formatAmount(totalYieldEarned + 5.555)}
+                  suffix='USDC'
+                  tooltipKey='lending.poolOverview.investmentCard.totYieldEarned.tooltip'
+                  titleKey='lending.poolOverview.investmentCard.totYieldEarned.label'
                 />
               </Grid>
             </Grid>
           </Box>{' '}
         </Grid>
-        <Grid item xs={4}>
-          <TranchInvestmentCard
-            title='Senior Tranche'
-            amount='10,000.00'
-            apy='4.50'
-            yieldEarned='1,000.00'
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <TranchInvestmentCard
-            title='Mezzanine Tranche'
-            amount='10,000.00'
-            apy='4.50'
-            yieldEarned='1,000.00'
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <TranchInvestmentCard
-            title='Junior Tranche'
-            amount='10,000.00'
-            apy='4.50'
-            yieldEarned='1,000.00'
-          />
-        </Grid>
+        {tranchesWithBalances &&
+          tranchesWithBalances.map((tranche, index) => {
+            const totalInvested = tranche?.balance
+              ? BigNumber.from(tranche.balance._hex)
+              : BigNumber.from('0x00')
+
+            return (
+              <Grid item xs={COLS / tranchesWithBalances.length} key={index}>
+                <TranchInvestmentCard
+                  title={`${tranche.name} Tranche APY`}
+                  amount={totalInvested.toString()}
+                  apy={formatAmount(+tranche.apy * 100)}
+                  yieldEarned={tranche.yieldEarned?.toString() || ''}
+                />
+              </Grid>
+            )
+          })}
       </Grid>
       <Box
         display='flex'
@@ -104,7 +127,9 @@ const InvestmentPortfolio = () => {
           pb: 2,
         }}
       >
-        <Button variant='contained'>Withdraw</Button>
+        <Button startIcon={<LogoutIcon />} variant='contained'>
+          Withdraw
+        </Button>
       </Box>
     </Card>
   )

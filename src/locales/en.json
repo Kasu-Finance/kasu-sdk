@@ -140,7 +140,82 @@
   },
 
   "lending": {
-    "poolOverview": { "title": "Pool Overview" },
+    "poolOverview": {
+      "title": "Pool Overview",
+      "detailCard": {
+        "apyStructure": {
+          "label": "Pool APY Structure",
+          "tooltip": "Indicates whether the APY earned by Liquidity Providers is fixed for a specified period of time, or variable."
+        },
+        "assetClass": {
+          "label": "Asset class",
+          "tooltip": "The lending specialisation, type or category related to this Lending Pool."
+        },
+        "industry": {
+          "label": "Industry Exposure",
+          "tooltip": "Industry and/or business category in which the Pool Delegate's customer (end borrowers) operate."
+        },
+        "lendingHistory": {
+          "label": "Lending History",
+          "tooltip": "Total length of time the Pool Delegate has been operating as a lending business."
+        },
+        "loansUnder": {
+          "label": "Loans Under Management",
+          "tooltip": "Total USDC equivalent amount within this Lending Pool that is deployed into loans to end borrowers."
+        },
+        "tvl": {
+          "label": "Total Value Locked (TVL)",
+          "tooltip": "Aggregate USDC equivalent amount deposited into Lending Pools, combined with locked KSU."
+        },
+        "terms": {
+          "label": "Term & Structure",
+          "tooltip": "The structure of each loan provided by the Pool Delegate to its customers (end borrowers). A Revolving Loan refers to a loan structure that that has no defined end date as it is utilised to fund ongoing operations (akin to a Line of Credit, Working Capital Loan or Evergreen Facility). An Amortising loan refers to a loan structure that has defined Principal and Interest repayment periods until it is fully repaid upon a specific end/maturity date. "
+        },
+        "totalPoolYieldEarnings": {
+          "label": "Total Pool Yield Earned",
+          "tooltip": "Total yield earned by (paid to) Liquidity Providers since the inception of the Lending Pool. "
+        },
+        "totalLossRate": {
+          "label": "Total Loss Rate",
+          "tooltip": "Total unrecoverable losses that expressed as a percentage of total loans associated with this Lending Pool."
+        }
+      },
+      "trancheCard": {
+        "remainingCapacity": {
+          "label": "Remaining capacity",
+          "tooltip": "Amount of additional funds the Pool can accept in USDC, also represented as a percentage of the maximum Lending Pool target amount.​"
+        }
+      },
+      "investmentCard": {
+        "totalAmount": {
+          "label": "Total Amount Invested",
+          "tooltip": "Total amount of USDC you have invested into this Lending Pool."
+        },
+        "weightedAvgApy": {
+          "label": "Weighted Average APY",
+          "tooltip": "The average APY you are currently earning within this Pool that has been adjusted to reflect your weighted contribution to each Tranche relative to your total contribution across all tranches."
+        },
+        "totYieldEarned": {
+          "label": "Total Yield Earned",
+          "tooltip": "Total yield you have earned on your USDC investment(s) whilst you remain active in this Lending Pool. For example, if you withdraw your total investment from this Lending Pool (and are therefore no longer active in this Lending Pool), then your total yield earned will be displayed as zero. To view a breakdown of your total yield earned across all Lending Pools, please click on the 'My Portfolio' tab."
+        },
+        "amountInvested": {
+          "label": "Amount Invested",
+          "tooltip": "Total amount of USDC you have invested into this Tranche within this Lending Pool. For example, if you withdraw your total investment amount from this"
+        },
+        "trancheApy": {
+          "label": "Tranche APY",
+          "tooltip": "The current APY you are currently earning within this Tranche (in the case that there are multiple Tranches within this Pool). In the absence of multiple Tranches, then this reflects the APY you are currently earning within this Pool."
+        },
+        "yieldEarned": {
+          "label": "Yield Earned",
+          "tooltip": "Total yield you have earned on your investment within this Tranche."
+        }
+      }
+    },
+    "poolDetails": {},
+    "poolRepayments": {},
+    "poolRisk": {},
     "strategyDeck": "Strategy deck",
     "tranche": {
       "senior": "Senior Tranche",
@@ -192,6 +267,18 @@
       },
       "errors": {
         "invalidCriteria": "The value entered does not meet the criteria required for this field."
+      },
+      "senior": {
+        "title": "Senior Tranche",
+        "tooltip": "The current Annual Percentage Yield offered by the Pool Delegate for the Senior Tranche within this Lending Pool, assuming all repayments will be made as expected."
+      },
+      "mezzanine": {
+        "title": "Mezzanine Tranche",
+        "tooltip": "The current Annual Percentage Yield offered by the Pool Delegate for the Mezzanine Tranche within this Lending Pool, assuming all repayments will be made as expected."
+      },
+      "junior": {
+        "title": "Junior Tranche",
+        "tooltip": "The current Annual Percentage Yield offered by the Pool Delegate for the Junior Tranche within this Lending Pool, assuming all repayments will be made as expected. "
       }
     }
   },

@@ -2,7 +2,7 @@
 
 import LoginIcon from '@mui/icons-material/Login'
 import { Box, Grid } from '@mui/material'
-import { useRef } from 'react'
+import React, { useRef } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useIsSticky from '@/hooks/useIsSticky'
@@ -25,7 +25,9 @@ export type PoolData = {
   }[]
 }
 
-const TranchesApyCard = () => {
+import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
+
+const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
   const divRef = useRef<HTMLDivElement>(null)
   const { t } = useTranslation()
 
@@ -46,24 +48,33 @@ const TranchesApyCard = () => {
     tranches: [
       {
         content: '12.50 %',
-        toolTip: '01',
-        title: t('lending.tranche.senior'),
+        toolTip: 'lending.tranche.senior.tooltip',
+        title: t('lending.tranche.senior.title'),
         trancheId: '0xe840a390756cb7c18b6102457f81803fb63635d9',
       },
       {
         content: '12.50 %',
-        toolTip: '01',
-        title: t('lending.tranche.mezzanine'),
+        toolTip: 'lending.tranche.mezzanine.tooltip',
+        title: t('lending.tranche.mezzanine.title'),
         trancheId: '0x90adcd57397133c6ce6078dbc70143b7acbc2670',
       },
       {
         content: '2.4 %',
-        toolTip: '01',
-        title: t('lending.tranche.junior'),
+        toolTip: 'lending.tranche.junior.tooltip',
+        title: t('lending.tranche.junior.title'),
         trancheId: '0xf73306c30023538d588cca69f347b136d52f374f',
       },
     ],
   }
+
+  const tranches = pool.tranches.map((item) => {
+    const key = item.name.toLowerCase()
+
+    return {
+      ...item,
+      tooltip: `lending.tranche.${key}.tooltip`,
+    }
+  })
 
   return (
     <Box
@@ -102,13 +113,13 @@ const TranchesApyCard = () => {
           columnSpacing={{ xs: 1, sm: 2, md: 3 }}
           maxWidth='lg'
         >
-          {POOL_DATA.tranches.map((tranche, index) => {
+          {tranches.map((tranche, index) => {
             return (
-              <Grid item xs={COLS / POOL_DATA.tranches.length} key={index}>
+              <Grid item xs={COLS / pool.tranches.length} key={index}>
                 <MetricWithSuffix
-                  content={tranche.content}
-                  tooltipKey={tranche.toolTip}
-                  titleKey={`${tranche.title} APY`}
+                  content={+tranche.apy * 100 + ' %'}
+                  tooltipKey={tranche.tooltip}
+                  titleKey={`${tranche.name} Tranche APY`}
                 />
               </Grid>
             )
