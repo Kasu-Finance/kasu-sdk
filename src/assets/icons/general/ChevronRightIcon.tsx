@@ -1,10 +1,4 @@
-interface ChevronRightIconProps {
-  color?: string
-}
-
-const ChevronRightIcon: React.FC<ChevronRightIconProps> = ({
-  color = 'white',
-}) => (
+const ChevronRightIcon = () => (
   <svg
     width='8'
     height='12'
@@ -14,7 +8,7 @@ const ChevronRightIcon: React.FC<ChevronRightIconProps> = ({
   >
     <path
       d='M1.70492 0L0.294922 1.41L4.87492 6L0.294922 10.59L1.70492 12L7.70492 6L1.70492 0Z'
-      fill={color}
+      fill='white'
     />
   </svg>
 )
