@@ -8,15 +8,16 @@ import React, { useMemo } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
+import useToastState from '@/hooks/context/useToastState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import usePoolTrancheBalance from '@/hooks/lending/usePoolTrancheBalance'
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
 import useWithdrawRequest from '@/hooks/lending/useWithdrawRequest'
 import useTranslation from '@/hooks/useTranslation'
+import useHandleError from '@/hooks/web3/useHandleError'
 
 import DialogHeader from '@/components/molecules/DialogHeader'
 import HorizontalStepper from '@/components/molecules/HorizontalStepper'
-import ProcessingModal from '@/components/organisms/modals/ProcessingModal'
 import WithdrawModalActions from '@/components/organisms/modals/WithdrawModal/WithdrawModalActions'
 import WithdrawModalApprove from '@/components/organisms/modals/WithdrawModal/WithdrawModalApprove'
 import WithdrawModalConfirm from '@/components/organisms/modals/WithdrawModal/WithdrawModalConfirm'
@@ -26,20 +27,22 @@ import WithdrawModalRequest from '@/components/organisms/modals/WithdrawModal/Wi
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
 import { Routes } from '@/config/routes'
+import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 
 interface WithdrawModalProps {
   handleClose: () => void
 }
 
 const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
-  const { amount, selectedTranche, processing, setProcessing } =
-    useWithdrawModalState()
+  const { amount, selectedTranche } = useWithdrawModalState()
   const router = useRouter()
   const { t } = useTranslation()
 
   const { modal } = useModalState()
   const { modalStatus, setModalStatusAction, modalStatusAction } =
     useModalStatusState()
+  const { setToast, removeToast } = useToastState()
+  const handleError = useHandleError()
 
   const poolData = modal.withdrawModal.poolData
 
@@ -80,26 +83,29 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
   }
 
   const onSubmitApprove = async () => {
-    setProcessing(true)
+    setToast({
+      type: 'info',
+      title: ActionStatus.PROCESSING,
+      message: ACTION_MESSAGES[ActionStatus.PROCESSING],
+      isClosable: false,
+    })
     try {
       const txResponse = await requestWithdrawal(
         poolData.id,
         selectedTranche,
         amount
       )
-      console.log('Withdrawal transaction response:', txResponse)
-
+      console.warn('withdrawal txResponse', txResponse)
       setModalStatusAction(ModalStatusAction.CONFIRM)
       router.push(`${Routes.lending.root.url}?poolId=${poolData?.id}&step=3`)
-    } catch (err) {
-      console.error('Withdrawal request failed:', err)
-    } finally {
-      setProcessing(false)
+      removeToast()
+    } catch (error) {
+      handleError(
+        error,
+        `${ActionType.WITHDRAW} ${ActionStatus.ERROR}`,
+        ACTION_MESSAGES[ActionType.WITHDRAW][ActionStatus.ERROR]
+      )
     }
-  }
-
-  if (processing) {
-    return <ProcessingModal handleClose={onModalClose} />
   }
 
   return (

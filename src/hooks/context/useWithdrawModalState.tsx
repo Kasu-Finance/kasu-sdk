@@ -38,21 +38,10 @@ const useWithdrawModalState = (): WithdrawModalTypes => {
     [dispatch]
   )
 
-  const setProcessing = useCallback(
-    (processing: boolean) => {
-      dispatch({
-        type: WithdrawActionTypes.SET_PROCESSING,
-        payload: processing,
-      })
-    },
-    [dispatch]
-  )
-
   return {
     ...context,
     setAmount,
     setSelectedTranche,
-    setProcessing,
   }
 }
 
