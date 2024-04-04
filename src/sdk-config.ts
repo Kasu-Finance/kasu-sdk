@@ -5,6 +5,7 @@ export interface ContractAddresses {
     UserManager: string;
     LendingPoolManager: string;
     KasuAllowList: string;
+    SystemVariables: string;
 }
 export class SdkConfig {
     subgraphUrl: string;

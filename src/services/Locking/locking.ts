@@ -6,10 +6,18 @@ import { GraphQLClient, gql } from 'graphql-request';
 import {
     IERC20MetadataAbi,
     IERC20MetadataAbi__factory,
-    IKSULockingAbi,
+    IKSULockingAbi, ISystemVariablesAbi, ISystemVariablesAbi__factory, IUserManagerAbi, IUserManagerAbi__factory,
 } from '../../contracts';
 import { IKSULockingAbi__factory } from '../../contracts/factories/IKSULockingAbi__factory';
 import { SdkConfig } from '../../sdk-config';
+
+import {
+    claimedFeesQuery,
+    userEarnedrKsuQuery,
+    userLocksQuery,
+    userStakedKsuQuery,
+    userTotalBonusAmountQuery,
+} from './locking.query';
 import {
     GQLClaimedFeesForAddress,
     GQLEarnedRKsuForAddress,
@@ -21,21 +29,16 @@ import {
     LockPeriodInterface,
     RSVDeadlineValue,
     UserLock,
-} from '../../types';
-
-import {
-    claimedFeesQuery,
-    userEarnedrKsuQuery,
-    userLocksQuery,
-    userStakedKsuQuery,
-    userTotalBonusAmountQuery,
-} from './locking.query';
+} from './types';
 
 export class KSULocking {
     private readonly _contractAbi: IKSULockingAbi;
     private readonly _kasuToken: IERC20MetadataAbi;
     private readonly _kasuBonusAddress: string;
     private readonly _graph: GraphQLClient;
+    private readonly _userManagerAbi: IUserManagerAbi;
+    private readonly _systemVariablesAbi: ISystemVariablesAbi;
+    private readonly apyBonuses = [ 0, 0.001, 0.002 ]
     /**
      *
      */
@@ -48,6 +51,14 @@ export class KSULocking {
             kasuConfig.contracts.KSUToken,
             signerOrProvider,
         );
+        this._userManagerAbi = IUserManagerAbi__factory.connect(
+            kasuConfig.contracts.UserManager,
+            signerOrProvider,
+        )
+        this._systemVariablesAbi = ISystemVariablesAbi__factory.connect(
+            kasuConfig.contracts.SystemVariables,
+            signerOrProvider,
+        )
         this._kasuBonusAddress = kasuConfig.contracts.IKSULockBonus;
         this._graph = new GraphQLClient(kasuConfig.subgraphUrl);
     }
@@ -111,20 +122,48 @@ export class KSULocking {
             userAddress: userAddress.toLowerCase(),
         });
 
-        return result.userLocks
-            .map((userLock) => {
+        const resultPromises =  result.userLocks
+            .map(async (userLock) => {
                 const [, id] = userLock.id.split('-');
 
+                const rKSUtoUSDCRatio = await this.getRKSUvsUSDCRatio(
+                    userLock.rKSUAmount,
+                    userAddress,
+                )
+                const loyaltyStatus = this.getLoyaltyLevelAndApyBonusFromRatio(rKSUtoUSDCRatio)
                 return {
                     id: BigNumber.from(id),
                     lockedAmount: userLock.ksuAmount,
                     rKSUAmount: userLock.rKSUAmount,
+                    rKSUtoUSDCRatio: rKSUtoUSDCRatio,
+                    apyBonus: loyaltyStatus.apyBonus,
+                    loyaltyLevel: loyaltyStatus.loyaltyLevel,
                     startTime: Number(userLock.startTimestamp),
                     endTime: Number(userLock.endTimestamp),
                     lockPeriod: userLock.lockPeriod,
                 };
             })
-            .sort((a, b) => a.endTime - b.endTime);
+
+        const results = await Promise.all(resultPromises);
+        return results.sort((a, b) => a.endTime - b.endTime);
+    }
+
+    getLoyaltyLevelAndApyBonusFromRatio(rKSUtoUSDCRatio: number): {loyaltyLevel: number, apyBonus: number} {
+        if (rKSUtoUSDCRatio < 0.01) {
+           return {loyaltyLevel: 0, apyBonus: this.apyBonuses[0]};
+        }
+        else if (rKSUtoUSDCRatio < 0.05) {
+            return {loyaltyLevel: 1, apyBonus: this.apyBonuses[1]};
+        }
+        return {loyaltyLevel: 2, apyBonus: this.apyBonuses[2]};
+    }
+
+    async getRKSUvsUSDCRatio(rKSUAmount: string, userAddress: string): Promise<number> {
+        const usdcAmount: BigNumber = await this._userManagerAbi.getUserTotalPendingAndActiveDepositedAmountForCurrentEpoch(userAddress);
+        const ksuPrice: BigNumber = await this._systemVariablesAbi.ksuEpochTokenPrice();
+        const rKSUAmountBignumber: BigNumber = BigNumber.from(rKSUAmount);
+        const rKSUInUSDC = rKSUAmountBignumber.mul(ksuPrice).div(Math.pow(10, 18)).div(Math.pow(10,12));
+        return rKSUInUSDC.div(usdcAmount).toNumber();
     }
 
     async getClaimableRewards(userAddress: string): Promise<BigNumber> {
@@ -187,7 +226,9 @@ export class KSULocking {
                 userAddress: userAddress.toLowerCase(),
             },
         );
-
+        if(result.userLockDepositsInfo == null) {
+            return "0";
+        }
         return result.userLockDepositsInfo.ksuLockedAmount;
     }
 
@@ -198,6 +239,9 @@ export class KSULocking {
                 userAddress: userAddress.toLowerCase(),
             },
         );
+        if(result.userLockDepositsInfo == null) {
+            return "0";
+        }
 
         return result.userLockDepositsInfo.rKSUAmount;
     }
@@ -209,6 +253,9 @@ export class KSULocking {
                 userAddress: userAddress.toLowerCase(),
             },
         );
+        if(result.userLockDepositsInfo == null) {
+            return "0";
+        }
 
         return result.userLockDepositsInfo.totalKsuBonusAmount;
     }

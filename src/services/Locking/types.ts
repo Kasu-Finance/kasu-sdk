@@ -25,6 +25,7 @@ export interface UserLock {
     id: BigNumber;
     lockedAmount: string;
     rKSUAmount: string;
+    rKSUtoUSDCRatio: number;
     startTime: EpochTimeStamp;
     endTime: EpochTimeStamp;
     lockPeriod: LockPeriod;
@@ -36,24 +37,24 @@ export interface GQLGetLockingPeriods {
 export interface GQLClaimedFeesForAddress {
     userLockDepositsInfo: {
         feesClaimed: string;
-    };
+    } | undefined;
 }
 export interface GQLStakedAmountForAddress {
     userLockDepositsInfo: {
         ksuLockedAmount: string;
-    };
+    } | undefined;
 }
 
 export interface GQLEarnedRKsuForAddress {
     userLockDepositsInfo: {
         rKSUAmount: string;
-    };
+    } | undefined;
 }
 
 export interface GQLTotalBonusAmountForAddress {
     userLockDepositsInfo: {
         totalKsuBonusAmount: string;
-    };
+    } | undefined;
 }
 
 export interface GQLUserLocks {
