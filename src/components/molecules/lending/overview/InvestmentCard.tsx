@@ -5,12 +5,17 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
+import { useRouter } from 'next/navigation'
 
+import useModalState from '@/hooks/context/useModalState'
 import useGetUserBalance from '@/hooks/lending/useUserTrancheBalance'
 
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 import TranchInvestmentCard from '@/components/molecules/TranchInvestmentCard'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
+import { Routes } from '@/config/routes'
 import { COLS } from '@/constants'
 import {
   calculateTotalInvested,
@@ -36,6 +41,16 @@ const InvestmentPortfolio: React.FC<{
     tranchesWithBalances = getTranchesWithUserBalances(tranches, amount)
     totalYieldEarned = calculateTotalYieldEarned(tranchesWithBalances)
     totalInvestment = calculateTotalInvested(tranchesWithBalances)
+  }
+
+  const router = useRouter()
+
+  const { openModal } = useModalState()
+
+  const handleWithdrawClick = (pool: PoolOverview) => {
+    openModal({ name: ModalsKeys.WITHDRAW, poolData: pool })
+
+    router.push(`${Routes.lending.root.url}/${pool.id}?step=1`)
   }
 
   return (
@@ -130,7 +145,11 @@ const InvestmentPortfolio: React.FC<{
           pb: 2,
         }}
       >
-        <Button startIcon={<LogoutIcon />} variant='contained'>
+        <Button
+          startIcon={<LogoutIcon />}
+          variant='contained'
+          onClick={() => handleWithdrawClick(pool)}
+        >
           Withdraw
         </Button>
       </Box>

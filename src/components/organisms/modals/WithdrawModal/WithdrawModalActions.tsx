@@ -34,12 +34,12 @@ const WithdrawModalActions: React.FC<WithdrawModalActionsProps> = ({
 
   const onSubmitRequest = () => {
     setModalStatusAction(ModalStatusAction.APPROVE)
-    router.push(`${Routes.lending.root.url}?poolId=${poolData?.id}&step=2`)
+    router.push(`${Routes.lending.root.url}/${poolData.id}?step=2`)
   }
 
   const handleAdjust = () => {
     setModalStatusAction(ModalStatusAction.REQUEST)
-    router.push(`${Routes.lending.root.url}?poolId=${poolData?.id}&step=1`)
+    router.push(`${Routes.lending.root.url}/${poolData.id}?step=1`)
   }
 
   return (

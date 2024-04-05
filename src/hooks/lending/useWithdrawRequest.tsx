@@ -59,13 +59,12 @@ const useWithdrawRequest = () => {
         tranche,
         amount
       )
-      console.warn('requestWithdrawal txResponse', txResponse)
 
-      const receipt = await waitForReceipt(txResponse)
-      console.log('Transaction receipt:', receipt)
+      await waitForReceipt(txResponse)
 
       setData(txResponse)
       removeToast()
+      return txResponse
     } catch (error) {
       console.error('Failed to request withdrawal:', error)
       setData(null)

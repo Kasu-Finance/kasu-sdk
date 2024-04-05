@@ -2,7 +2,6 @@
 
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import { Box, Button, DialogActions, DialogContent } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { useRouter } from 'next/navigation'
 import React, { useMemo } from 'react'
@@ -52,8 +51,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
     selectedTranche
   )
 
-  const { account } = useWeb3React()
-  const { isApproved, approve } = useApproveToken(USDC, account, amount)
+  const { isApproved, approve } = useApproveToken(USDC, poolData.id, amount)
 
   const poolBalance = useMemo(() => {
     if (!userPoolBalance) return '0'
@@ -73,8 +71,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
   )
 
   const txHash = withdrawTransaction?.hash
-  const networkScanUrl = config.networkScanUrl
-  const transactionUrl = `${networkScanUrl}/tx/${txHash}`
+  const transactionUrl = `${config.networkScanUrl}/tx/${txHash}`
 
   const validationStyle =
     modalStatus.type === 'error'
@@ -83,7 +80,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
 
   const onModalClose = () => {
     handleClose()
-    router.push(Routes.lending.root.url)
+    router.push(`${Routes.lending.root.url}/${poolData.id}`)
   }
 
   const onSubmitApprove = async () => {
@@ -93,14 +90,13 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
         return
       }
 
-      const txResponse = await requestWithdrawal(
+      await requestWithdrawal(
         poolData.id,
         selectedTranche,
         parseUnits(amount, 6).toString()
       )
-      console.warn('withdrawal txResponse', txResponse)
       setModalStatusAction(ModalStatusAction.CONFIRM)
-      router.push(`${Routes.lending.root.url}?poolId=${poolData?.id}&step=3`)
+      router.push(`${Routes.lending.root.url}/${poolData.id}?step=3`)
     } catch (error) {
       console.error('Failed to request withdrawal:', error)
     }
