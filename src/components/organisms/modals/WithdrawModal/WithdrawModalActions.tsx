@@ -7,10 +7,12 @@ import { useRouter } from 'next/navigation'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import useTranslation from '@/hooks/useTranslation'
+import useApproveToken from '@/hooks/web3/useApproveToken'
 
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
 import { Routes } from '@/config/routes'
+import sdkConfig, { USDC } from '@/config/sdk'
 
 interface WithdrawModalActionsProps {
   poolData: PoolOverview
@@ -29,6 +31,12 @@ const WithdrawModalActions: React.FC<WithdrawModalActionsProps> = ({
   const { amount } = useWithdrawModalState()
   const { modalStatus, modalStatusAction, setModalStatusAction } =
     useModalStatusState()
+
+  const { isApproved, approve } = useApproveToken(
+    USDC,
+    sdkConfig.contracts.LendingPoolManager,
+    amount
+  )
 
   const disabledButton = Boolean(!amount || modalStatus.type === 'error')
 
@@ -79,7 +87,7 @@ const WithdrawModalActions: React.FC<WithdrawModalActionsProps> = ({
           <Button
             variant='contained'
             endIcon={<ChevronRight />}
-            onClick={onSubmitApprove}
+            onClick={() => (isApproved ? onSubmitApprove() : approve(amount))}
             sx={{ fontSize: '15px' }}
           >
             {t('lending.withdraw.button.confirm')}

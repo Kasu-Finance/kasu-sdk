@@ -13,7 +13,6 @@ import usePoolTrancheBalance from '@/hooks/lending/usePoolTrancheBalance'
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
 import useWithdrawRequest from '@/hooks/lending/useWithdrawRequest'
 import useTranslation from '@/hooks/useTranslation'
-import useApproveToken from '@/hooks/web3/useApproveToken'
 
 import DialogHeader from '@/components/molecules/DialogHeader'
 import HorizontalStepper from '@/components/molecules/HorizontalStepper'
@@ -26,7 +25,6 @@ import WithdrawModalRequest from '@/components/organisms/modals/WithdrawModal/Wi
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
 import { Routes } from '@/config/routes'
-import { USDC } from '@/config/sdk'
 import config from '@/constants/config'
 
 interface WithdrawModalProps {
@@ -50,8 +48,6 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
     poolData?.id,
     selectedTranche
   )
-
-  const { isApproved, approve } = useApproveToken(USDC, poolData.id, amount)
 
   const poolBalance = useMemo(() => {
     if (!userPoolBalance) return '0'
@@ -85,19 +81,14 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
 
   const onSubmitApprove = async () => {
     try {
-      if (!isApproved) {
-        await approve(amount)
-        return
-      }
-
       const isMaxWithdrawal = amount === trancheBalance
-
       await requestWithdrawal(
         poolData.id,
         selectedTranche,
         parseUnits(amount, 6).toString(),
         { isWithdrawMax: isMaxWithdrawal }
       )
+
       setModalStatusAction(ModalStatusAction.CONFIRM)
       router.push(`${Routes.lending.root.url}/${poolData.id}?step=3`)
     } catch (error) {

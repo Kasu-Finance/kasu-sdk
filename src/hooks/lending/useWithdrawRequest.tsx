@@ -16,9 +16,9 @@ const useWithdrawRequest = () => {
   const [data, setData] = useState<ContractTransaction | null>(null)
 
   const { account } = useWeb3React()
-  const { setToast, removeToast } = useToastState()
   const handleError = useHandleError()
   const { kycData } = useGenerateKycSignature()
+  const { setToast, removeToast } = useToastState()
 
   const requestWithdrawal = async (
     lendingPool: string,
