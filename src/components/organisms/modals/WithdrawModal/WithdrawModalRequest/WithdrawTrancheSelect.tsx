@@ -56,7 +56,7 @@ const TrancheSelect: React.FC<TrancheSelectProps> = ({ poolData }) => {
         >
           {poolData.tranches.map(({ id: trancheId, name }) => (
             <MenuItem key={trancheId} value={name}>
-              {name}
+              {t(`lending.tranche.${name.toLowerCase()}`)}
             </MenuItem>
           ))}
         </Select>

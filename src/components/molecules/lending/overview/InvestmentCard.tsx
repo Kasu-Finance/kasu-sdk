@@ -4,11 +4,14 @@ import { Card, CardContent, CardHeader } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
+import { useWeb3React } from '@web3-react/core'
 import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
 import { useRouter } from 'next/navigation'
+import { useMemo } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useGetUserBalance from '@/hooks/lending/useUserTrancheBalance'
+import useGenerateKycSignature from '@/hooks/web3/useGenerateKycSignature'
 
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 import TranchInvestmentCard from '@/components/molecules/TranchInvestmentCard'
@@ -44,8 +47,15 @@ const InvestmentPortfolio: React.FC<{
   }
 
   const router = useRouter()
-
   const { openModal } = useModalState()
+
+  const { kycData } = useGenerateKycSignature()
+  const { account } = useWeb3React()
+  const hasBalance = totalInvestment.gt(BigNumber.from('0'))
+
+  const isWithdrawDisabled = useMemo(() => {
+    return !hasBalance || !kycData || !account
+  }, [hasBalance, kycData, account])
 
   const handleWithdrawClick = (pool: PoolOverview) => {
     openModal({ name: ModalsKeys.WITHDRAW, poolData: pool })
@@ -148,6 +158,7 @@ const InvestmentPortfolio: React.FC<{
         <Button
           startIcon={<LogoutIcon />}
           variant='contained'
+          disabled={isWithdrawDisabled}
           onClick={() => handleWithdrawClick(pool)}
         >
           Withdraw

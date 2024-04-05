@@ -4,34 +4,30 @@ import { useState } from 'react'
 
 import useToastState from '@/hooks/context/useToastState'
 import useKasuSDK from '@/hooks/useKasuSDK'
+import useGenerateKycSignature from '@/hooks/web3/useGenerateKycSignature'
 import useHandleError from '@/hooks/web3/useHandleError'
 
-import generateKycSignature from '@/actions/generateKycSignature'
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { waitForReceipt } from '@/utils'
-
-import { HexString } from '@/types/lending'
 
 const useWithdrawRequest = () => {
   const sdk = useKasuSDK()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [data, setData] = useState<ContractTransaction | null>(null)
 
-  const { account, chainId } = useWeb3React()
+  const { account } = useWeb3React()
   const { setToast, removeToast } = useToastState()
   const handleError = useHandleError()
+  const { kycData } = useGenerateKycSignature()
 
   const requestWithdrawal = async (
     lendingPool: string,
     tranche: string,
-    amount: BigNumberish
+    amount: BigNumberish,
+    options?: { isWithdrawMax: boolean }
   ) => {
     if (!account) {
       return console.error('RequestWithdraw:: Account is undefined')
-    }
-
-    if (!chainId) {
-      return console.error('RequestWithdraw:: ChainId is undefined')
     }
 
     setIsLoading(true)
@@ -43,27 +39,29 @@ const useWithdrawRequest = () => {
         isClosable: false,
       })
 
-      const kycSignatureParams = await sdk.UserLending.buildKycSignatureParams(
-        account as HexString,
-        chainId.toString()
-      )
-
-      const kycData = await generateKycSignature(kycSignatureParams)
-
       if (!kycData) {
         throw new Error('RequestWithdrawal:: Error generating signature')
       }
 
-      const txResponse = await sdk.UserLending.requestWithdrawal(
-        lendingPool,
-        tranche,
-        amount
-      )
+      let txResponse
+      if (options?.isWithdrawMax) {
+        txResponse = await sdk.UserLending.requestWithdrawalMax(
+          lendingPool,
+          tranche,
+          account
+        )
+      } else {
+        txResponse = await sdk.UserLending.requestWithdrawalInUSDC(
+          lendingPool,
+          tranche,
+          amount
+        )
+      }
 
       await waitForReceipt(txResponse)
-
       setData(txResponse)
       removeToast()
+
       return txResponse
     } catch (error) {
       console.error('Failed to request withdrawal:', error)

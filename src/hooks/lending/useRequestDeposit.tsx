@@ -13,6 +13,8 @@ import generateKycSignature from '@/actions/generateKycSignature'
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { waitForReceipt } from '@/utils'
 
+import { HexString } from '@/types/lending'
+
 const useRequestDeposit = () => {
   const sdk = useKasuSDK()
 
@@ -48,7 +50,7 @@ const useRequestDeposit = () => {
       })
 
       const kycSignatureParams = await sdk.UserLending.buildKycSignatureParams(
-        account as `0x${string}`,
+        account as HexString,
         chainId.toString()
       )
 

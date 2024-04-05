@@ -60,7 +60,7 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
     totalUserInvestment: poolBalance,
     tranches: pool.tranches.map((tranche: TrancheData) => ({
       toolTip: `lending.tranche.${tranche.name.toLowerCase()}.tooltip`,
-      title: t(`lending.tranche.${tranche.name.toLowerCase()}.title`),
+      title: t(`lending.tranche.${tranche.name.toLowerCase()}`),
       trancheId: tranche.id as `0x${string}`,
     })),
   }
