@@ -11,7 +11,7 @@ import { GraphQLClient } from 'graphql-request';
 import {
     IKasuAllowListAbi__factory, ILendingPoolAbi__factory,
     ILendingPoolManagerAbi,
-    ILendingPoolManagerAbi__factory, ILendingPoolTrancheAbi__factory,
+    ILendingPoolManagerAbi__factory, ILendingPoolTrancheAbi, ILendingPoolTrancheAbi__factory,
     IUserManagerAbi,
     IUserManagerAbi__factory,
 } from '../../contracts';
@@ -62,49 +62,52 @@ export class UserLending {
     async hasUserRKSU(user: string): Promise<boolean> {
         return await this._userManagerAbi.hasUserRKSU(user);
     }
+    /*
+    TODO
 
-    buildKycSignatureParams(userAddress: `0x${string}`, chainId: string) {
-        const address = userAddress.toLowerCase() as `0x${string}`;
+buildKycSignatureParams(userAddress: `0x${string}`, chainId: string) {
+    const address = userAddress.toLowerCase() as `0x${string}`;
 
-        return {
-            contractAbi: IKasuAllowListAbi__factory.abi,
-            contractAddress:
-                this._kasuConfig.contracts.KasuAllowList.toLowerCase() as `0x${string}`,
-            functionName: 'verifyUserKyc',
-            args: [address],
-            userAddress: address,
-            chainId,
-        };
-    }
+    return {
+        contractAbi: IKasuAllowListAbi__factory.abi,
+        contractAddress:
+            this._kasuConfig.contracts.KasuAllowList.toLowerCase() as `0x${string}`,
+        functionName: 'verifyUserKyc',
+        args: [address],
+        userAddress: address,
+        chainId,
+    };
+}
 
-    async requestDepositWithKyc(
-        lendingPool: string,
-        tranche: string,
-        amount: BigNumberish,
-        blockExpiration: BigNumberish,
-        signature: BytesLike,
-    ): Promise<ContractTransaction> {
-        return await this._lendingPoolManagerAbi.requestDepositWithKyc(
-            lendingPool,
-            tranche,
-            amount,
-            blockExpiration,
-            signature,
-        );
-    }
 
-    async requestDeposit(
-        lendingPool: string,
-        tranche: string,
-        amount: BigNumberish,
-    ): Promise<ContractTransaction> {
-        return await this._lendingPoolManagerAbi.requestDeposit(
-            lendingPool,
-            tranche,
-            amount,
-        );
-    }
+async requestDepositWithKyc(
+    lendingPool: string,
+    tranche: string,
+    amount: BigNumberish,
+    blockExpiration: BigNumberish,
+    signature: BytesLike,
+): Promise<ContractTransaction> {
+    return await this._lendingPoolManagerAbi.requestDepositWithKyc(
+        lendingPool,
+        tranche,
+        amount,
+        blockExpiration,
+        signature,
+    );
+}
 
+async requestDeposit(
+    lendingPool: string,
+    tranche: string,
+    amount: BigNumberish,
+): Promise<ContractTransaction> {
+    return await this._lendingPoolManagerAbi.requestDeposit(
+        lendingPool,
+        tranche,
+        amount,
+    );
+}
+ */
     async cancelDepositRequest(
         lendingPool: string,
         dNftID: BigNumberish,
@@ -132,7 +135,7 @@ export class UserLending {
         tranche: string,
         usdcAmount: BigNumberish,
     ): Promise<ContractTransaction> {
-        const trancheContract = ILendingPoolManagerAbi__factory.connect(tranche, _signerOrProvider);
+        const trancheContract: ILendingPoolTrancheAbi = ILendingPoolTrancheAbi__factory.connect(tranche, this._signerOrProvider);
         const shareAmount = await trancheContract.convertToShares(usdcAmount);
 
         return await this._lendingPoolManagerAbi.requestWithdrawal(
@@ -147,8 +150,8 @@ export class UserLending {
         tranche: string,
         user: string
     ): Promise<ContractTransaction> {
-        const trancheContract = ILendingPoolManagerAbi__factory.connect(tranche, _signerOrProvider);
-        const userShares = await trancheContract.balanceOf(user);
+        const trancheContract: ILendingPoolTrancheAbi = ILendingPoolTrancheAbi__factory.connect(tranche, this._signerOrProvider);
+        const userShares = await trancheContract['balanceOf(address)'](user);
 
         return await this._lendingPoolManagerAbi.requestWithdrawal(
             lendingPool,

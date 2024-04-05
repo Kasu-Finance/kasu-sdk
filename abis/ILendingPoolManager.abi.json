@@ -49,24 +49,6 @@
       },
       {
         "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "borrowLoanImmediate",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "lendingPool",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
         "name": "dNftID",
         "type": "uint256"
       }
@@ -145,16 +127,6 @@
           {
             "components": [
               {
-                "internalType": "string",
-                "name": "trancheName",
-                "type": "string"
-              },
-              {
-                "internalType": "string",
-                "name": "trancheSymbol",
-                "type": "string"
-              },
-              {
                 "internalType": "uint256",
                 "name": "ratio",
                 "type": "uint256"
@@ -186,12 +158,12 @@
           },
           {
             "internalType": "address",
-            "name": "borrowRecipient",
+            "name": "drawRecipient",
             "type": "address"
           },
           {
             "internalType": "uint256",
-            "name": "totalDesiredLoanAmount",
+            "name": "desiredDrawAmount",
             "type": "uint256"
           }
         ],
@@ -250,7 +222,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "lendingPoolAddress",
+        "name": "lendingPool",
         "type": "address"
       },
       {
@@ -267,6 +239,38 @@
         "internalType": "uint256",
         "name": "acceptedRequestsExecutionBatchSize",
         "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "drawAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "trancheDesiredRatios",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxExcessPercentage",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "minExcessPercentage",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ClearingConfiguration",
+        "name": "clearingConfigOverride",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bool",
+        "name": "isConfigOverridden",
+        "type": "bool"
       }
     ],
     "name": "doClearing",
@@ -365,44 +369,22 @@
         "type": "address"
       },
       {
+        "internalType": "address",
+        "name": "tranche",
+        "type": "address"
+      },
+      {
         "internalType": "uint256",
-        "name": "epoch",
+        "name": "lossId",
         "type": "uint256"
       },
       {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "borrowAmount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256[]",
-            "name": "trancheDesiredRatios",
-            "type": "uint256[]"
-          },
-          {
-            "internalType": "uint256",
-            "name": "maxExcessPercentage",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "minExcessPercentage",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "isOverridden",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct ClearingConfiguration",
-        "name": "clearingConfig",
-        "type": "tuple"
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
       }
     ],
-    "name": "registerClearingConfig",
+    "name": "repayLoss",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -425,35 +407,7 @@
         "type": "address"
       }
     ],
-    "name": "repayLoan",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "lendingPool",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "tranche",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "lossId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "repayLoss",
+    "name": "repayOwedFunds",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -501,8 +455,13 @@
       },
       {
         "internalType": "uint256",
-        "name": "amount",
+        "name": "maxAmount",
         "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "swapData",
+        "type": "bytes"
       }
     ],
     "name": "requestDeposit",
@@ -513,7 +472,7 @@
         "type": "uint256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -530,8 +489,13 @@
       },
       {
         "internalType": "uint256",
-        "name": "amount",
+        "name": "maxAmount",
         "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "swapData",
+        "type": "bytes"
       },
       {
         "internalType": "uint256",
@@ -552,7 +516,7 @@
         "type": "uint256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -610,12 +574,30 @@
         "type": "address"
       },
       {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "updateDesiredDrawAmount",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
-        "name": "borrowRecipient",
+        "name": "lendingPool",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "drawRecipient",
         "type": "address"
       }
     ],
-    "name": "updateBorrowRecipient",
+    "name": "updateDrawRecipient",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -698,24 +680,6 @@
       }
     ],
     "name": "updateTargetExcessLiquidityPercentage",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "lendingPool",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "updateTotalDesiredLoanAmount",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
