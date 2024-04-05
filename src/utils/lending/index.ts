@@ -1,4 +1,5 @@
 export {
+  calculateTotalInvested,
   calculateTotalYieldEarned,
   getTranchesWithUserBalances,
 } from '@/utils/lending/calculateUserBalances'

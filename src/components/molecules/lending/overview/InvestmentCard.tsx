@@ -1,3 +1,5 @@
+'use client'
+
 import { BigNumber } from '@ethersproject/bignumber'
 import LogoutIcon from '@mui/icons-material/Logout'
 import { Card, CardContent, CardHeader } from '@mui/material'
@@ -13,19 +15,23 @@ import TranchInvestmentCard from '@/components/molecules/TranchInvestmentCard'
 
 import { COLS } from '@/constants'
 import {
+  calculateTotalInvested,
   calculateTotalYieldEarned,
   formatAmount,
   getAverageApyAndTotal,
   getTranchesWithUserBalances,
+  hexToUSD,
 } from '@/utils'
+import { TrancheWithUserBalance } from '@/utils/lending/calculateUserBalances'
 
 const InvestmentPortfolio: React.FC<{
   pool: PoolOverview
 }> = ({ pool }) => {
   const tranches = pool.tranches.map((tranche) => tranche)
   const tranchesId = tranches.map((tranche) => tranche.id)
-  let tranchesWithBalances = null
-  let totalYieldEarned = 0
+  let tranchesWithBalances: TrancheWithUserBalance[] = []
+  let totalYieldEarned: number = 0
+  let totalInvestment: string = BigNumber.from('0x00').toString()
 
   const tranchesTotal = getAverageApyAndTotal(tranches)
   const { amount, isLoading } = useGetUserBalance(tranchesId)
@@ -33,6 +39,7 @@ const InvestmentPortfolio: React.FC<{
   if (!isLoading && amount) {
     tranchesWithBalances = getTranchesWithUserBalances(tranches, amount)
     totalYieldEarned = calculateTotalYieldEarned(tranchesWithBalances)
+    totalInvestment = calculateTotalInvested(tranchesWithBalances)
   }
 
   return (
@@ -74,7 +81,7 @@ const InvestmentPortfolio: React.FC<{
             >
               <Grid item xs={4}>
                 <MetricWithSuffix
-                  content={formatAmount(tranchesTotal.totalCapacity)}
+                  content={formatAmount(totalInvestment)}
                   suffix='USDC'
                   tooltipKey='lending.poolOverview.investmentCard.totalAmount.tooltip'
                   titleKey='lending.poolOverview.investmentCard.totalAmount.label'
@@ -89,7 +96,7 @@ const InvestmentPortfolio: React.FC<{
               </Grid>
               <Grid item xs={4}>
                 <MetricWithSuffix
-                  content={formatAmount(totalYieldEarned + 5.555)}
+                  content={formatAmount(totalYieldEarned)}
                   suffix='USDC'
                   tooltipKey='lending.poolOverview.investmentCard.totYieldEarned.tooltip'
                   titleKey='lending.poolOverview.investmentCard.totYieldEarned.label'
@@ -101,14 +108,14 @@ const InvestmentPortfolio: React.FC<{
         {tranchesWithBalances &&
           tranchesWithBalances.map((tranche, index) => {
             const totalInvested = tranche?.balance
-              ? BigNumber.from(tranche.balance._hex)
-              : BigNumber.from('0x00')
+              ? hexToUSD(tranche.balance)
+              : BigNumber.from('0x00').toString()
 
             return (
               <Grid item xs={COLS / tranchesWithBalances.length} key={index}>
                 <TranchInvestmentCard
                   title={`${tranche.name} Tranche APY`}
-                  amount={totalInvested.toString()}
+                  amount={formatAmount(totalInvested)}
                   apy={formatAmount(+tranche.apy * 100)}
                   yieldEarned={tranche.yieldEarned?.toString() || ''}
                 />
