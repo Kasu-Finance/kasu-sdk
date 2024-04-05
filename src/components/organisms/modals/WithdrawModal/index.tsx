@@ -2,19 +2,19 @@
 
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import { Box, Button, DialogActions, DialogContent } from '@mui/material'
-import { formatUnits } from 'ethers/lib/utils'
+import { useWeb3React } from '@web3-react/core'
+import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { useRouter } from 'next/navigation'
 import React, { useMemo } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
-import useToastState from '@/hooks/context/useToastState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import usePoolTrancheBalance from '@/hooks/lending/usePoolTrancheBalance'
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
 import useWithdrawRequest from '@/hooks/lending/useWithdrawRequest'
 import useTranslation from '@/hooks/useTranslation'
-import useHandleError from '@/hooks/web3/useHandleError'
+import useApproveToken from '@/hooks/web3/useApproveToken'
 
 import DialogHeader from '@/components/molecules/DialogHeader'
 import HorizontalStepper from '@/components/molecules/HorizontalStepper'
@@ -27,7 +27,8 @@ import WithdrawModalRequest from '@/components/organisms/modals/WithdrawModal/Wi
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
 import { Routes } from '@/config/routes'
-import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
+import { USDC } from '@/config/sdk'
+import config from '@/constants/config'
 
 interface WithdrawModalProps {
   handleClose: () => void
@@ -41,8 +42,6 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
   const { modal } = useModalState()
   const { modalStatus, setModalStatusAction, modalStatusAction } =
     useModalStatusState()
-  const { setToast, removeToast } = useToastState()
-  const handleError = useHandleError()
 
   const poolData = modal.withdrawModal.poolData
 
@@ -52,6 +51,9 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
     poolData?.id,
     selectedTranche
   )
+
+  const { account } = useWeb3React()
+  const { isApproved, approve } = useApproveToken(USDC, account, amount)
 
   const poolBalance = useMemo(() => {
     if (!userPoolBalance) return '0'
@@ -71,6 +73,8 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
   )
 
   const txHash = withdrawTransaction?.hash
+  const networkScanUrl = config.networkScanUrl
+  const transactionUrl = `${networkScanUrl}/tx/${txHash}`
 
   const validationStyle =
     modalStatus.type === 'error'
@@ -83,28 +87,21 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
   }
 
   const onSubmitApprove = async () => {
-    setToast({
-      type: 'info',
-      title: ActionStatus.PROCESSING,
-      message: ACTION_MESSAGES[ActionStatus.PROCESSING],
-      isClosable: false,
-    })
     try {
+      if (!isApproved) {
+        await approve(amount)
+      }
+
       const txResponse = await requestWithdrawal(
         poolData.id,
         selectedTranche,
-        amount
+        parseUnits(amount, 6).toString()
       )
       console.warn('withdrawal txResponse', txResponse)
       setModalStatusAction(ModalStatusAction.CONFIRM)
       router.push(`${Routes.lending.root.url}?poolId=${poolData?.id}&step=3`)
-      removeToast()
     } catch (error) {
-      handleError(
-        error,
-        `${ActionType.WITHDRAW} ${ActionStatus.ERROR}`,
-        ACTION_MESSAGES[ActionType.WITHDRAW][ActionStatus.ERROR]
-      )
+      console.error('Failed to request withdrawal:', error)
     }
   }
 
@@ -120,7 +117,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
             sx={{ height: 30, width: 97, p: '4px 10px' }}
             variant='outlined'
             startIcon={<ReceiptIcon />}
-            href={txHash}
+            href={transactionUrl}
             target='_blank'
           >
             {t('lending.withdraw.button.viewTx')}
