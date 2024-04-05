@@ -90,6 +90,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
     try {
       if (!isApproved) {
         await approve(amount)
+        return
       }
 
       const txResponse = await requestWithdrawal(
