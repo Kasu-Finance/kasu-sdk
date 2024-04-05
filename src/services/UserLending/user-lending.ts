@@ -127,6 +127,36 @@ export class UserLending {
         );
     }
 
+    async requestWithdrawalInUSDC(
+        lendingPool: string,
+        tranche: string,
+        usdcAmount: BigNumberish,
+    ): Promise<ContractTransaction> {
+        const trancheContract = ILendingPoolManagerAbi__factory.connect(tranche, _signerOrProvider);
+        const shareAmount = await trancheContract.convertToShares(usdcAmount);
+
+        return await this._lendingPoolManagerAbi.requestWithdrawal(
+            lendingPool,
+            tranche,
+            shareAmount,
+        );
+    }
+
+    async requestWithdrawalMax(
+        lendingPool: string,
+        tranche: string,
+        user: string
+    ): Promise<ContractTransaction> {
+        const trancheContract = ILendingPoolManagerAbi__factory.connect(tranche, _signerOrProvider);
+        const userShares = await trancheContract.balanceOf(user);
+
+        return await this._lendingPoolManagerAbi.requestWithdrawal(
+            lendingPool,
+            tranche,
+            userShares,
+        );
+    }
+
     async cancelWithdrawalRequest(
         lendingPool: string,
         dNftID: BigNumberish,
