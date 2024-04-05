@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 
 import hexToUSD from '@/utils/hexToUSD'
 
