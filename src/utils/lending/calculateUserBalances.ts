@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 
 interface Tranche {
   id: string
@@ -40,4 +40,17 @@ export const calculateTotalYieldEarned = (
 
     return total
   }, 0)
+}
+
+export const calculateTotalInvested = (tranches: TrancheWithUserBalance[]) => {
+  return tranches.reduce((total, tranche) => {
+    // Check if balance exists and is a BigNumber
+    if (tranche.balance && BigNumber.isBigNumber(tranche.balance)) {
+      // Convert hex balance to a BigNumber and add to total
+      const balanceBigNumber = ethers.BigNumber.from(tranche.balance._hex)
+      return total.add(balanceBigNumber)
+    }
+
+    return total
+  }, ethers.BigNumber.from('0x00'))
 }

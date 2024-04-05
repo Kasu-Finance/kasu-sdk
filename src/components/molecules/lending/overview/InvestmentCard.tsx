@@ -13,6 +13,7 @@ import TranchInvestmentCard from '@/components/molecules/TranchInvestmentCard'
 
 import { COLS } from '@/constants'
 import {
+  calculateTotalInvested,
   calculateTotalYieldEarned,
   formatAmount,
   getAverageApyAndTotal,
@@ -26,6 +27,7 @@ const InvestmentPortfolio: React.FC<{
   const tranchesId = tranches.map((tranche) => tranche.id)
   let tranchesWithBalances = null
   let totalYieldEarned = 0
+  let totalInvestment = BigNumber.from('0x00')
 
   const tranchesTotal = getAverageApyAndTotal(tranches)
   const { amount, isLoading } = useGetUserBalance(tranchesId)
@@ -33,6 +35,7 @@ const InvestmentPortfolio: React.FC<{
   if (!isLoading && amount) {
     tranchesWithBalances = getTranchesWithUserBalances(tranches, amount)
     totalYieldEarned = calculateTotalYieldEarned(tranchesWithBalances)
+    totalInvestment = calculateTotalInvested(tranchesWithBalances)
   }
 
   return (
@@ -74,7 +77,7 @@ const InvestmentPortfolio: React.FC<{
             >
               <Grid item xs={4}>
                 <MetricWithSuffix
-                  content={formatAmount(tranchesTotal.totalCapacity)}
+                  content={formatAmount(totalInvestment)}
                   suffix='USDC'
                   tooltipKey='lending.poolOverview.investmentCard.totalAmount.tooltip'
                   titleKey='lending.poolOverview.investmentCard.totalAmount.label'
