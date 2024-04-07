@@ -161,9 +161,9 @@ export class KSULocking {
     async getRKSUvsUSDCRatio(rKSUAmount: string, userAddress: string): Promise<number> {
         const usdcAmount: BigNumber = await this._userManagerAbi.getUserTotalPendingAndActiveDepositedAmountForCurrentEpoch(userAddress);
         const ksuPrice: BigNumber = await this._systemVariablesAbi.ksuEpochTokenPrice();
-        const rKSUAmountBignumber: BigNumber = BigNumber.from(rKSUAmount);
-        const rKSUInUSDC = rKSUAmountBignumber.mul(ksuPrice).div(Math.pow(10, 18)).div(Math.pow(10,12));
-        return rKSUInUSDC.div(usdcAmount).toNumber();
+        const rKSUAmountBignumber: BigNumber = ethers.utils.parseUnits(rKSUAmount, 18);
+        const rKSUInUSDC = rKSUAmountBignumber.mul(ksuPrice).div(ethers.utils.parseUnits("1", 18)).div(ethers.utils.parseUnits("1", 12));
+        return Number(rKSUInUSDC)/Number(usdcAmount);
     }
 
     async getClaimableRewards(userAddress: string): Promise<BigNumber> {
