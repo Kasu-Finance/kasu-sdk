@@ -6,6 +6,7 @@ export interface DirectusSchema {
     PoolCreditMetrics: PoolCreditMetricsDirectus[];
     BadAndDoubtfulDebts: BadAndDoubtfulDebtsDirectus[];
     FinancialReportingDocuments: FinancialReportingDocumentsDirectus[];
+    PoolRepayments: PoolRepaymentDirectus[];
 }
 
 
@@ -85,4 +86,22 @@ export interface FinancialReportingDocumentsDirectus {
     version: number;
     documentUrl: string;
     poolIdFK: string;
+}
+export interface PoolRepaymentDirectus {
+    id: string;
+    poolIdFK: string;
+    cumulativeLendingFundsFlow_InterestAccrued: number;
+    cumulativeLendingFundsFlow_InterestPayments: number;
+    cumulativeLendingFundsFlow_LoansDrawn: number;
+    cumulativeLendingFundsFlow_OpeningLoansBalance: number;
+    cumulativeLendingFundsFlow_PrincipalRepayments: number;
+    cumulativeLendingFundsFlow_UnrealisedLosses: number;
+    upcomingLendingFundsFlow_1_Key: string | null;
+    upcomingLendingFundsFlow_1_Value: number | null;
+    upcomingLendingFundsFlow_2_Key: string | null;
+    upcomingLendingFundsFlow_2_Value: number | null;
+    upcomingLendingFundsFlow_3_Key: string | null;
+    upcomingLendingFundsFlow_3_Value: number | null;
+    upcomingLendingFundsFlow_4_Key: string | null;
+    upcomingLendingFundsFlow_4_Value: number | null;
 }
