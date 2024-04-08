@@ -200,10 +200,10 @@ export class DataService {
         const poolRepaymentDirectus: PoolRepaymentDirectus[] = await this._directus.request(readItems('PoolRepayments'));
         const retn: PoolRepayment[] = [];
         for(const data of poolRepaymentDirectus){
-            const upcomingLendingFundsFlow_1_Value = data.upcomingLendingFundsFlow_1_Value ?? 0.00;
-            const upcomingLendingFundsFlow_2_Value = data.upcomingLendingFundsFlow_2_Value ?? 0.00;
-            const upcomingLendingFundsFlow_3_Value = data.upcomingLendingFundsFlow_3_Value ?? 0.00;
-            const upcomingLendingFundsFlow_4_Value = data.upcomingLendingFundsFlow_4_Value ?? 0.00;
+            const upcomingLendingFundsFlow_1_Value = data.upcomingLendingFundsFlow_1_Value && data.upcomingLendingFundsFlow_1_Key ? data.upcomingLendingFundsFlow_1_Value : 0.00;
+            const upcomingLendingFundsFlow_2_Value = data.upcomingLendingFundsFlow_2_Value && data.upcomingLendingFundsFlow_2_Key ? data.upcomingLendingFundsFlow_2_Value : 0.00;
+            const upcomingLendingFundsFlow_3_Value = data.upcomingLendingFundsFlow_3_Value && data.upcomingLendingFundsFlow_3_Key ? data.upcomingLendingFundsFlow_3_Value : 0.00;
+            const upcomingLendingFundsFlow_4_Value = data.upcomingLendingFundsFlow_4_Value && data.upcomingLendingFundsFlow_4_Key ? data.upcomingLendingFundsFlow_4_Value : 0.00;
             const poolRepayment: PoolRepayment = {
                 id: data.id,
                 poolIdFK: data.poolIdFK,
