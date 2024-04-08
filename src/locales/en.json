@@ -389,7 +389,7 @@
       }
     },
     "badDebts": {
-      "title": "Bad Debts Metrics",
+      "title": "Bad and Doubtful Debts",
       "headers": {
         "column-1": "Total (Lifetime)",
         "column-2": "Monthly Average (Last 12 Months)",
