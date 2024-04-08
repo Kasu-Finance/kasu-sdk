@@ -22,6 +22,7 @@ const EmptyCardState: React.FC<EmptyCardStateProps> = (props) => {
     alignItems: 'center',
     justifyContent: 'center',
     boxShadow: 2,
+    mt: 3,
     ...sx,
   }
 
