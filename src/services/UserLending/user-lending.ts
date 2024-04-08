@@ -1,7 +1,7 @@
 import { Provider } from '@ethersproject/providers';
 import {
     BigNumber,
-    BigNumberish,
+    BigNumberish, Bytes,
     BytesLike,
     ContractTransaction,
     Signer,
@@ -62,52 +62,60 @@ export class UserLending {
     async hasUserRKSU(user: string): Promise<boolean> {
         return await this._userManagerAbi.hasUserRKSU(user);
     }
-    /*
-    TODO
 
-buildKycSignatureParams(userAddress: `0x${string}`, chainId: string) {
-    const address = userAddress.toLowerCase() as `0x${string}`;
+    buildKycSignatureParams(userAddress: `0x${string}`, chainId: string): {
+        contractAbi: IKasuAllowListAbi__factory;
+        contractAddress: string;
+        functionName: string;
+        args: BytesLike[];
+        userAddress: string;
+        chainId: string;
+    } {
+        const address = userAddress.toLowerCase() as `0x${string}`;
 
-    return {
-        contractAbi: IKasuAllowListAbi__factory.abi,
-        contractAddress:
-            this._kasuConfig.contracts.KasuAllowList.toLowerCase() as `0x${string}`,
-        functionName: 'verifyUserKyc',
-        args: [address],
-        userAddress: address,
-        chainId,
-    };
-}
+        return {
+            contractAbi: IKasuAllowListAbi__factory.abi,
+            contractAddress:
+                this._kasuConfig.contracts.KasuAllowList.toLowerCase() as `0x${string}`,
+            functionName: 'verifyUserKyc',
+            args: [address],
+            userAddress: address,
+            chainId,
+        };
+    }
 
 
-async requestDepositWithKyc(
-    lendingPool: string,
-    tranche: string,
-    amount: BigNumberish,
-    blockExpiration: BigNumberish,
-    signature: BytesLike,
-): Promise<ContractTransaction> {
-    return await this._lendingPoolManagerAbi.requestDepositWithKyc(
-        lendingPool,
-        tranche,
-        amount,
-        blockExpiration,
-        signature,
-    );
-}
+    async requestDepositWithKyc(
+        lendingPool: string,
+        tranche: string,
+        amount: BigNumberish,
+        swapData: BytesLike,
+        blockExpiration: BigNumberish,
+        signature: BytesLike,
+    ): Promise<ContractTransaction> {
+        return await this._lendingPoolManagerAbi.requestDepositWithKyc(
+            lendingPool,
+            tranche,
+            amount,
+            swapData,
+            blockExpiration,
+            signature,
+        );
+    }
 
-async requestDeposit(
-    lendingPool: string,
-    tranche: string,
-    amount: BigNumberish,
-): Promise<ContractTransaction> {
-    return await this._lendingPoolManagerAbi.requestDeposit(
-        lendingPool,
-        tranche,
-        amount,
-    );
-}
- */
+    async requestDeposit(
+        lendingPool: string,
+        tranche: string,
+        amount: BigNumberish,
+        swapData: BytesLike
+    ): Promise<ContractTransaction> {
+        return await this._lendingPoolManagerAbi.requestDeposit(
+            lendingPool,
+            tranche,
+            amount,
+            swapData
+        );
+    }
     async cancelDepositRequest(
         lendingPool: string,
         dNftID: BigNumberish,
