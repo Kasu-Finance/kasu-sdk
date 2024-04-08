@@ -1,10 +1,3 @@
-export enum PoolCreditTableKeys {
-  KEY_METRIC = 'keyMetric',
-  PREVIOUS_FISCAL_YEAR = 'previousFiscalYear',
-  RECENT_QUARTER = 'mostRecentQuarter',
-  PRIOR_MONTH = 'priorMonth',
-}
-
 export enum BadDebtsTableKeys {
   CATEGORY = 'category',
   EMPTY = 'empty',
