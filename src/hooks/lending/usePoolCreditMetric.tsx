@@ -9,12 +9,12 @@ const usePoolCreditMetric = (poolId: string) => {
 
   const fetchPoolCreditMetric = async () => {
     const data = await sdk.DataService.getPoolCreditMetrics()
-
-    if (!data?.length) {
+    if (!data?.length)
       throw new Error('No data available for pool credit metric')
-    }
-
-    return data
+    const filteredData = data.filter((item) => item.poolIdFK === poolId)
+    if (!filteredData.length)
+      throw new Error(`No data available for pool ID: ${poolId}`)
+    return filteredData
   }
 
   const { data, error, mutate } = useSWR(
@@ -23,22 +23,10 @@ const usePoolCreditMetric = (poolId: string) => {
     { dedupingInterval: FIVE_MINUTES }
   )
 
-  let customError = error
-  let filteredData = data
-    ? data.filter((item) => item.poolIdFK === poolId)
-    : null
-
-  filteredData = filteredData === undefined ? null : filteredData
-
-  if (data && !filteredData) {
-    customError = new Error(`No data available for pool ID: ${poolId}`)
-    console.error(`No data available for pool ID: ${poolId}`)
-  }
-
   return {
-    data: filteredData,
-    error: customError,
-    isLoading: !filteredData && !customError,
+    data,
+    error,
+    isLoading: !data && !error,
     mutate,
   }
 }

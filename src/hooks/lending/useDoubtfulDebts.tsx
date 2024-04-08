@@ -9,38 +9,23 @@ const useDoubtfulDebts = (poolId: string) => {
 
   const fetchDoubtfulDebts = async () => {
     const data = await sdk.DataService.getBadAndDoubtfulDebts()
-
-    if (!data?.length) {
-      throw new Error('No data available for doubtful debts')
-    }
-
-    return data
+    if (!data?.length) throw new Error('No data available for doubtful debts')
+    const filteredData = data.filter((item) => item.poolIdFK === poolId)
+    if (!filteredData.length)
+      throw new Error(`No data available for pool ID: ${poolId}`)
+    return filteredData
   }
 
   const { data, error, mutate } = useSWR(
     `getBadAndDoubtfulDebts/${poolId}`,
     fetchDoubtfulDebts,
-    {
-      dedupingInterval: FIVE_MINUTES,
-    }
+    { dedupingInterval: FIVE_MINUTES }
   )
 
-  let customError = error
-  let filteredData = data
-    ? data.filter((item) => item.poolIdFK === poolId)
-    : null
-
-  filteredData = filteredData === undefined ? null : filteredData
-
-  if (data && !filteredData) {
-    customError = new Error(`No data available for pool ID: ${poolId}`)
-    console.error(`No data available for pool ID: ${poolId}`)
-  }
-
   return {
-    data: filteredData,
-    error: customError,
-    isLoading: !filteredData && !customError,
+    data,
+    error,
+    isLoading: !data && !error,
     mutate,
   }
 }

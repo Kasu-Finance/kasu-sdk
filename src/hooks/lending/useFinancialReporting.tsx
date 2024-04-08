@@ -12,38 +12,24 @@ const useFinancialReporting = (poolId: string) => {
     FinancialReportingDocumentsDirectus[]
   > => {
     const data = await sdk.DataService.getFinancialReportingDocuments()
-
-    if (!data?.length) {
+    if (!data?.length)
       throw new Error('No data available for financial reporting documents')
-    }
-
-    return data
+    const filteredData = data.filter((item) => item.poolIdFK === poolId)
+    if (!filteredData.length)
+      throw new Error(`No data available for pool ID: ${poolId}`)
+    return filteredData
   }
 
   const { data, error, mutate } = useSWR(
     `getFinancialReportingDocuments/${poolId}`,
     fetchFinancialReporting,
-    {
-      dedupingInterval: FIVE_MINUTES,
-    }
+    { dedupingInterval: FIVE_MINUTES }
   )
 
-  let customError = error
-  let filteredData = data
-    ? data.filter((item) => item.poolIdFK === poolId)
-    : null
-
-  filteredData = filteredData === undefined ? null : filteredData
-
-  if (data && !filteredData) {
-    customError = new Error(`No data available for pool ID: ${poolId}`)
-    console.error(`No data available for pool ID: ${poolId}`)
-  }
-
   return {
-    data: filteredData,
-    error: customError,
-    isLoading: !filteredData && !customError,
+    data,
+    error,
+    isLoading: !data && !error,
     mutate,
   }
 }
