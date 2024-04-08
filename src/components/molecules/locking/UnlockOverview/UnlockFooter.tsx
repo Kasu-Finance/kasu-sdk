@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import { formatEther } from 'ethers/lib/utils'
-import { UserLock } from 'kasu-sdk/src/types'
+import { UserLock } from 'kasu-sdk/src/services/Locking/types'
 import React from 'react'
 
 import TokenAmount from '@/components/atoms/TokenAmount'

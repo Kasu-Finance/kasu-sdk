@@ -1,6 +1,6 @@
 'use client'
 
-import { UserLock } from 'kasu-sdk/src/types'
+import { UserLock } from 'kasu-sdk/src/services/Locking/types'
 
 import useUserLocks from '@/hooks/locking/useUserLocks'
 
