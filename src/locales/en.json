@@ -360,23 +360,114 @@
     }
   },
   "repayments": {
-    "title": "Repayments",
+    "title": "Repayments and Funds Flow",
     "downloadBtn": "DOWNLOAD AS CSV",
-    "metrics": {
-      "closingCash": {
-        "label": "Closing Cash at Bank (Excess Cash)",
-        "tooltip": "content is missing​"
+    "loanModelDescription": "This Pool Delegate's lending model is to facilitate Fiat currency loans to real world businesses off-chain. The Asset Class and Loan Structure outlined in the 'Pool Details' screen indicates that these loans are 'Revolving/Evergreen' Loan Facilities, with fluctuating loan balances, being a function of ongoing and simultaneous loan repayments and loan redraws in Fiat currency off-chain. Accordingly, these Fiat currency transactions can only be viewed via CSV download at this current point in time.",
+    "borrowerFundsCSV": "Download CSV to view fiat currency funds flow on a per borrower basis:",
+    "sections": {
+      "aggregated": {
+        "title": "Aggregated Funds Flow",
+        "description": "An aggregated view of this funds flow for all end borrowers, along with other/related loan funds flow is as follows. Note, this is update upon the commencement of every Epoch (clearing period).",
+        "metrics": {
+          "totalBorrowers": {
+            "label": "Total End Borrowers (Current)",
+            "tooltip": "content is missing​"
+          }
+        }
       },
-      "totalLoans": {
-        "label": "Closing Total Loans",
-        "tooltip": "content is missing"
+      "cumulativeFunds": {
+        "title": "Cumulative Lending Funds Flow",
+        "titleSuffix": "(Actual)",
+        "metrics": {
+          "closingLoans": {
+            "label": "Closing Loans Balance",
+            "tooltip": "content is missing"
+          },
+          "openingLoans": {
+            "label": "Opening Loans Balance",
+            "tooltip": "content is missing"
+          },
+          "loansDrawn": {
+            "label": "Loans Drawn",
+            "tooltip": "content is missing"
+          },
+          "interestAccrued": {
+            "label": "Interest Accrued",
+            "tooltip": "content is missing"
+          },
+          "interestPayments": {
+            "label": "Interest Payments",
+            "tooltip": "content is missing"
+          },
+          "principalRepayments": {
+            "label": "Principal Repayments",
+            "tooltip": "content is missing"
+          },
+          "unrealisedLosses": {
+            "label": "Unrealised Losses",
+            "tooltip": "content is missing"
+          }
+        }
       },
-      "totalBalance": {
-        "label": "Total Pool Balance (inc. cap int)",
-        "tooltip": "content is missing"
+      "upcomingFunds": {
+        "title": "Upcoming Lending Funds Flow",
+        "titleSuffix": "(Current Epoch)",
+        "metrics": {
+          "netInflows": {
+            "label": "Net Inflows/(Outflows)",
+            "tooltip": "content is missing"
+          },
+          "upcomingLoan": {
+            "label": "Upcoming Loan Drawdowns",
+            "tooltip": "content is missing"
+          },
+          "upcomingInterest": {
+            "label": "Upcoming Interest Payments",
+            "tooltip": "content is missing"
+          },
+          "upcomingPrincipal": {
+            "label": "Upcoming Principal Repayments",
+            "tooltip": "content is missing"
+          }
+        }
+      },
+      "transactions": {
+        "title": "Cumulative Deposits & ​Withdrawals",
+        "titleSuffix": "(Actual)",
+        "metrics": {
+          "netDeposit": {
+            "label": "Net Deposit/(Withdrawal))",
+            "tooltip": "content is missing"
+          },
+          "cumulativeDeposit": {
+            "label": "Cumulative Deposits",
+            "tooltip": "content is missing"
+          },
+          "cumulativeWithdraw": {
+            "label": "Cumulative Withdrawals",
+            "tooltip": "content is missing"
+          }
+        }
+      },
+      "fundsRequest": {
+        "title": "Cumulative Deposits & ​Withdrawals",
+        "titleSuffix": "(Actual)",
+        "metrics": {
+          "netDeposits": {
+            "label": "Net Deposits/(Withdrawal Requests)",
+            "tooltip": "content is missing"
+          },
+          "currentDeposits": {
+            "label": "Current Deposits Requests",
+            "tooltip": "content is missing"
+          },
+          "currentWithdrawal": {
+            "label": "Current Withdrawal Requests",
+            "tooltip": "content is missing"
+          }
+        }
       }
-    },
-    "loadModelDescription": "This Pool Delegate's lending model is to facilitate Fiat currency loans to real world businesses off-chain. The Asset Class and Loan Structure outlined in the 'Pool Details' screen indicates that these loans are 'Revolving/Evergreen' Loan Facilities, with fluctuating loan balances, being a function of ongoing and simultaneous loan repayments and loan redraws in Fiat currency off-chain. Accordingly, these Fiat currency transactions can only be viewed via CSV download at this current point in time."
+    }
   },
   "risk": {
     "poolCredit": {

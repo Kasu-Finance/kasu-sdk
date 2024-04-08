@@ -3,8 +3,6 @@ import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
-import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
-
 import { DownloadIcon } from '@/assets/icons'
 
 const metrics = [
@@ -30,22 +28,50 @@ const RepaymentsCard: React.FC = () => {
 
   return (
     <Card sx={{ minWidth: 275, boxShadow: 3, padding: 2, mt: 3 }} elevation={1}>
-      <Typography variant='h6' mb={2}>
-        {t('repayments.title')}
-      </Typography>
+      <Box display='flex' justifyContent='space-between'>
+        <Typography variant='h6' mb={2}>
+          {t('repayments.title')}
+        </Typography>
 
-      <Button
-        type='button'
-        variant='contained'
-        sx={{ fontSize: 15 }}
-        startIcon={<DownloadIcon color='white' opacity='1' />}
-        onClick={() => alert('Download is not implemented yet.')}
-      >
-        {t('repayments.downloadBtn')}
-      </Button>
+        <Button
+          type='button'
+          variant='contained'
+          sx={{ fontSize: 15 }}
+          startIcon={<DownloadIcon color='white' opacity='1' />}
+          onClick={() => alert('Download is not implemented yet.')}
+        >
+          {t('repayments.downloadBtn')}
+        </Button>
+      </Box>
 
-      <Box display='flex' width='100%' className='light-blue-background' mt={2}>
-        {metrics.map((metric, index) => {
+      <Box mt={2}>
+        <Typography variant='body2'>
+          {t('repayments.loanModelDescription')}
+        </Typography>
+        <Typography variant='body2' mt={2}>
+          {t('repayments.borrowerFundsCSV')}
+        </Typography>
+      </Box>
+
+      <Box mt={2}>
+        <Typography variant='h6'>
+          {t('repayments.sections.aggregated.title')}
+        </Typography>
+
+        <Typography variant='body2' mt={2}>
+          {t('repayments.sections.aggregated.description')}
+        </Typography>
+
+        <Box
+          display='flex'
+          width='100%'
+          className='light-blue-background'
+          mt={2}
+        >
+          metrics
+        </Box>
+
+        {/* {metrics.map((metric, index) => {
           const uniqueKey = `repayments-${metric.id}-${index}`
           const titleKey = `repayments.metrics.${metric.id}.label`
           const tooltipKey = `repayments.metrics.${metric.id}.tooltip`
@@ -60,13 +86,7 @@ const RepaymentsCard: React.FC = () => {
               containerSx={{ width: '33%', pb: 1, pr: 1 }}
             />
           )
-        })}
-      </Box>
-
-      <Box mt={2}>
-        <Typography variant='body2'>
-          {t('repayments.loadModelDescription')}
-        </Typography>
+        })} */}
       </Box>
     </Card>
   )
