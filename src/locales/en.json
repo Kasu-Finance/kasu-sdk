@@ -451,7 +451,7 @@
       },
       "fundsRequest": {
         "title": "Cumulative Deposits & ​Withdrawals",
-        "titleSuffix": "(Actual)",
+        "titleSuffix": "(Current Epoch)",
         "metrics": {
           "netDeposits": {
             "label": "Net Deposits/(Withdrawal Requests)",
