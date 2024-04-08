@@ -18,7 +18,7 @@ import {
     FinancialReportingDocumentsDirectus,
     PoolCreditMetricsDirectus,
     PoolDelegateProfileAndHistoryDirectus,
-    PoolOverviewDirectus,
+    PoolOverviewDirectus, PoolRepaymentDirectus,
     RiskManagementDirectus,
     RiskManagementItemDirectus,
 } from './directus-types';
@@ -26,7 +26,7 @@ import { LendingPoolSubgraph, TrancheConfigurationSubgraph, TrancheSubgraph } fr
 import {
     BadAndDoubtfulDebts, PoolCreditMetrics,
     PoolDelegateProfileAndHistory,
-    PoolOverview, PoolTranche,
+    PoolOverview, PoolRepayment, PoolTranche,
     RiskManagement,
     RiskManagementItem, TrancheData,
 } from './types';
@@ -194,5 +194,41 @@ export class DataService {
             return financialReportingDocumentsDirectus;
         }
         return financialReportingDocumentsDirectus.filter(data => id_in.includes(data.id));
+    }
+
+    async getRepayments(id_in?: string): Promise<PoolRepayment[]>{
+        const poolRepaymentDirectus: PoolRepaymentDirectus[] = await this._directus.request(readItems('PoolRepayments'));
+        const retn: PoolRepayment[] = [];
+        for(const data of poolRepaymentDirectus){
+            const upcomingLendingFundsFlow_1_Value = data.upcomingLendingFundsFlow_1_Value && data.upcomingLendingFundsFlow_1_Key ? data.upcomingLendingFundsFlow_1_Value : 0.00;
+            const upcomingLendingFundsFlow_2_Value = data.upcomingLendingFundsFlow_2_Value && data.upcomingLendingFundsFlow_2_Key ? data.upcomingLendingFundsFlow_2_Value : 0.00;
+            const upcomingLendingFundsFlow_3_Value = data.upcomingLendingFundsFlow_3_Value && data.upcomingLendingFundsFlow_3_Key ? data.upcomingLendingFundsFlow_3_Value : 0.00;
+            const upcomingLendingFundsFlow_4_Value = data.upcomingLendingFundsFlow_4_Value && data.upcomingLendingFundsFlow_4_Key ? data.upcomingLendingFundsFlow_4_Value : 0.00;
+            const poolRepayment: PoolRepayment = {
+                id: data.id,
+                poolIdFK: data.poolIdFK,
+                cumulativeLendingFundsFlow_InterestAccrued: data.cumulativeLendingFundsFlow_InterestAccrued,
+                cumulativeLendingFundsFlow_InterestPayments: data.cumulativeLendingFundsFlow_InterestPayments,
+                cumulativeLendingFundsFlow_LoansDrawn: data.cumulativeLendingFundsFlow_LoansDrawn,
+                cumulativeLendingFundsFlow_OpeningLoansBalance: data.cumulativeLendingFundsFlow_OpeningLoansBalance,
+                cumulativeLendingFundsFlow_PrincipalRepayments: data.cumulativeLendingFundsFlow_PrincipalRepayments,
+                cumulativeLendingFundsFlow_UnrealisedLosses: data.cumulativeLendingFundsFlow_UnrealisedLosses,
+                upcomingLendingFundsFlow_1_Key: data.upcomingLendingFundsFlow_1_Key ?? "N/A",
+                upcomingLendingFundsFlow_2_Key: data.upcomingLendingFundsFlow_2_Key ?? "N/A",
+                upcomingLendingFundsFlow_3_Key: data.upcomingLendingFundsFlow_3_Key ?? "N/A",
+                upcomingLendingFundsFlow_4_Key: data.upcomingLendingFundsFlow_4_Key ?? "N/A",
+                upcomingLendingFundsFlow_1_Value: upcomingLendingFundsFlow_1_Value,
+                upcomingLendingFundsFlow_2_Value: upcomingLendingFundsFlow_2_Value,
+                upcomingLendingFundsFlow_3_Value: upcomingLendingFundsFlow_3_Value,
+                upcomingLendingFundsFlow_4_Value: upcomingLendingFundsFlow_4_Value,
+                cumulativeLendingFundsFlow_ClosingLoansBalance: data.cumulativeLendingFundsFlow_InterestAccrued + data.cumulativeLendingFundsFlow_InterestPayments + data.cumulativeLendingFundsFlow_LoansDrawn + data.cumulativeLendingFundsFlow_OpeningLoansBalance + data.cumulativeLendingFundsFlow_PrincipalRepayments + data.cumulativeLendingFundsFlow_UnrealisedLosses,
+                upcomingLendingFundsFlow_NetInflows: upcomingLendingFundsFlow_1_Value + upcomingLendingFundsFlow_2_Value + upcomingLendingFundsFlow_3_Value + upcomingLendingFundsFlow_4_Value,
+            };
+            retn.push(poolRepayment);
+        }
+        if(!id_in){
+            return retn;
+        }
+        return retn.filter(data => id_in.includes(data.id));
     }
 }

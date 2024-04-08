@@ -96,3 +96,24 @@ export interface BadAndDoubtfulDebts {
     currentStatusAmount: number;
     currentStatusPercentage: number;
 }
+
+export interface PoolRepayment {
+    id: string;
+    poolIdFK: string;
+    cumulativeLendingFundsFlow_ClosingLoansBalance: number;
+    cumulativeLendingFundsFlow_InterestAccrued: number;
+    cumulativeLendingFundsFlow_InterestPayments: number;
+    cumulativeLendingFundsFlow_LoansDrawn: number;
+    cumulativeLendingFundsFlow_OpeningLoansBalance: number;
+    cumulativeLendingFundsFlow_PrincipalRepayments: number;
+    cumulativeLendingFundsFlow_UnrealisedLosses: number;
+    upcomingLendingFundsFlow_NetInflows: number;
+    upcomingLendingFundsFlow_1_Key: string;
+    upcomingLendingFundsFlow_1_Value: number;
+    upcomingLendingFundsFlow_2_Key: string;
+    upcomingLendingFundsFlow_2_Value: number;
+    upcomingLendingFundsFlow_3_Key: string;
+    upcomingLendingFundsFlow_3_Value: number;
+    upcomingLendingFundsFlow_4_Key: string;
+    upcomingLendingFundsFlow_4_Value: number;
+}
