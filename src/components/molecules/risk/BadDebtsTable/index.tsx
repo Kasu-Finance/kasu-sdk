@@ -9,6 +9,8 @@ import CustomTable, { Sort } from '@/components/molecules/CustomTable'
 import { CustomTableHeader } from '@/components/molecules/CustomTable/TableHeaders'
 import DataTypography from '@/components/molecules/risk/BadDebtsTable/DataTypography'
 
+import { formatPercentage } from '@/utils'
+
 const headersStyles: SxProps<Theme> = {
   '& > *': {
     pt: 1.5,
@@ -150,19 +152,23 @@ const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
                 <DataTypography data={data.totalAmount} />
               </TableCell>
               <TableCell align='center'>
-                <DataTypography data={data.totalPercentage} />
+                <DataTypography data={formatPercentage(data.totalPercentage)} />
               </TableCell>
               <TableCell align='center'>
                 <DataTypography data={data.monthlyAverageAmount} />
               </TableCell>
               <TableCell align='center'>
-                <DataTypography data={data.monthlyAveragePercentage} />
+                <DataTypography
+                  data={formatPercentage(data.monthlyAveragePercentage)}
+                />
               </TableCell>
               <TableCell align='center'>
                 <DataTypography data={data.currentStatusAmount} />
               </TableCell>
               <TableCell align='center'>
-                <DataTypography data={data.currentStatusPercentage} />
+                <DataTypography
+                  data={formatPercentage(data.currentStatusPercentage)}
+                />
               </TableCell>
             </TableRow>
           ))

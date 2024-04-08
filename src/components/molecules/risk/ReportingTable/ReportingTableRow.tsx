@@ -8,7 +8,6 @@ import {
 } from '@mui/material'
 import React from 'react'
 
-import { ReportingData } from '@/components/molecules/risk/ReportingTable'
 import ActionCell from '@/components/molecules/risk/ReportingTable/ActionCell'
 
 import { extractDateAndUtcOffset, formatTimestampWithOffset } from '@/utils'
@@ -32,6 +31,14 @@ const CircularTypography = styled(Typography)(({ theme }) => ({
   padding: '8px',
   lineHeight: 26,
 }))
+
+interface ReportingData {
+  name: string
+  description: string
+  uploadTimestamp: number
+  version: string
+  documentUrl: string
+}
 
 interface ReportingTableRowProps {
   data: ReportingData
