@@ -1,4 +1,4 @@
-export interface UserRequestsSubgraphResponse {
+export interface UserRequestsSubgraph {
     userRequests: {
         id: string;
         amountRequested: string;
@@ -33,4 +33,12 @@ export interface UserRequestsSubgraphResponse {
         }
         userRequestEventsCount: string;
     }[]
+}
+
+export interface LendingPoolUserDetailsSubgraph {
+    lendingPoolUserDetails: {
+        id: string;
+        totalAcceptedDeposits: string;
+        totalAcceptedWithdrawnAmount: string;
+    }
 }

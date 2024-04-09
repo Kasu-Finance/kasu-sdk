@@ -38,3 +38,24 @@ export const userRequestsQuery = gql`
       }
     }
 `;
+
+
+export const lendingPoolUserDetailsQuery = gql`
+    query LendingPoolUserDetailsQuery($userAddress: String!) {
+      lendingPoolUserDetails(id: $userAddress) {
+        id
+        totalAcceptedDeposits
+        totalAcceptedWithdrawnAmount
+      }
+    }
+`;
+
+export const trancheUserDetailsQuery = gql`
+    query TrancheUserDetailsQuery($userAddress: String!, $trancheId: String!) {
+      lendingPoolTrancheUserDetails(id: $userAddress, trancheId: $trancheId) {
+        id
+        totalAcceptedDeposits
+        totalAcceptedWithdrawnAmount
+      }
+    }
+`;
