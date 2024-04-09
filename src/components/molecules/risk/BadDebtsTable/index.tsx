@@ -58,6 +58,14 @@ const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
     },
     {
       label: t('risk.badDebts.headers.column-1'),
+      extraLabel: {
+        text: t('risk.badDebts.headers.column-1-suffix'),
+        props: {
+          variant: 'caption',
+          component: 'span',
+          sx: { fontSize: 12, ml: 0.5 },
+        },
+      },
       value: 'totalAmount',
       disableSort: true,
     },
@@ -68,6 +76,14 @@ const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
     },
     {
       label: t('risk.badDebts.headers.column-2'),
+      extraLabel: {
+        text: t('risk.badDebts.headers.column-2-suffix'),
+        props: {
+          variant: 'caption',
+          component: 'span',
+          sx: { fontSize: 12, ml: 0.5 },
+        },
+      },
       value: 'monthlyAverageAmount',
       disableSort: true,
     },

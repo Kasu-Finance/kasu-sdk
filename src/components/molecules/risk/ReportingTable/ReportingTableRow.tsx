@@ -6,6 +6,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material'
+import { FinancialReportingDocumentsDirectus } from 'kasu-sdk/src/services/DataService/directus-types'
 import React from 'react'
 
 import ActionCell from '@/components/molecules/risk/ReportingTable/ActionCell'
@@ -32,16 +33,8 @@ const CircularTypography = styled(Typography)(({ theme }) => ({
   lineHeight: 26,
 }))
 
-interface ReportingData {
-  name: string
-  description: string
-  uploadTimestamp: number
-  version: string
-  documentUrl: string
-}
-
 interface ReportingTableRowProps {
-  data: ReportingData
+  data: FinancialReportingDocumentsDirectus
   index: number
 }
 
