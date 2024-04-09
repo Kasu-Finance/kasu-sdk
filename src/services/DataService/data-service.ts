@@ -10,6 +10,7 @@ import {
 import { GraphQLClient } from 'graphql-request';
 
 import { SdkConfig } from '../../sdk-config';
+import { filterArray } from '../shared';
 
 import { getAllLendingPoolsQuery, getAllTrancheConfigurationsQuery, getAllTranchesQuery } from './data-service.query';
 import {
@@ -64,7 +65,7 @@ export class DataService {
                     apy: trancheConfig.interestRate,
                     maximumDeposit: trancheConfig.maxDepositAmount,
                     minimumDeposit: trancheConfig.minDepositAmount,
-                    poolCapacity: "10", // need formula for calculation
+                    poolCapacity: "10", // TODO need formula for calculation
                     name: trancheNames[lendingPoolSubgraph.tranches.length-1][parseInt(tranche.orderId)]
                 });
             }
@@ -91,10 +92,7 @@ export class DataService {
             }
             retn.push(poolOverview);
         }
-        if(!id_in){
-            return retn;
-        }
-        return retn.filter(data => id_in.includes(data.id));
+        return filterArray(retn, id_in);
     }
 
     async getRiskManagement(id_in?: string[]): Promise<RiskManagement[]>{
@@ -117,10 +115,7 @@ export class DataService {
                 },
             });
         }
-        if(!id_in){
-            return retn;
-        }
-        return retn.filter(data => id_in.includes(data.id));
+        return filterArray(retn, id_in);
     }
 
     async getPoolDelegateProfileAndHistory(id_in?: string[]): Promise<PoolDelegateProfileAndHistory[]> {
@@ -139,10 +134,7 @@ export class DataService {
                 historicLossRate: data.historicLossRate
             });
         }
-        if(!id_in){
-            return retn;
-        }
-        return retn.filter(data => id_in.includes(data.id));
+        return filterArray(retn, id_in);
     }
 
     async getPoolTranches(id_in?: string[]): Promise<PoolTranche[]> {
@@ -155,48 +147,35 @@ export class DataService {
                 console.log("Couldn't find tranche configuration for id: ", trancheSubgraph.id);
                 continue;
             }
-
             const tranche: PoolTranche = {
                 id: trancheSubgraph.id,
                 poolIdFK: trancheSubgraph.lendingPool.id,
                 apy: configuration.interestRate,
-                remainingCapacity: "10", // need formula for calculation
+                remainingCapacity: "10", // TODO need formula for calculation
                 minimalDepositThreshold: configuration.minDepositAmount,
                 maximalDepositThreshold: configuration.maxDepositAmount
             }
+            retn.push(tranche);
         }
-
-        if(!id_in){
-            return retn;
-        }
-        return retn.filter(data => id_in.includes(data.id));
+        return filterArray(retn, id_in);
     }
 
     async getBadAndDoubtfulDebts(id_in?: string[]): Promise<BadAndDoubtfulDebts[]> {
         const badAndDoubtfulDebtsDirectus: BadAndDoubtfulDebtsDirectus[] = await this._directus.request(readItems('BadAndDoubtfulDebts'));
-        if(!id_in){
-            return badAndDoubtfulDebtsDirectus;
-        }
-        return badAndDoubtfulDebtsDirectus.filter(data => id_in.includes(data.id));
+        return filterArray(badAndDoubtfulDebtsDirectus, id_in);
     }
 
     async getPoolCreditMetrics(id_in?: string[]): Promise<PoolCreditMetrics[]> {
         const poolCreditMetricsDirectus: PoolCreditMetricsDirectus[] = await this._directus.request(readItems('PoolCreditMetrics'));
-        if(!id_in){
-            return poolCreditMetricsDirectus;
-        }
-        return poolCreditMetricsDirectus.filter(data => id_in.includes(data.id));
+        return filterArray(poolCreditMetricsDirectus, id_in);
     }
 
     async getFinancialReportingDocuments(id_in?: string[]): Promise<FinancialReportingDocumentsDirectus[]> {
         const financialReportingDocumentsDirectus: FinancialReportingDocumentsDirectus[] = await this._directus.request(readItems('FinancialReportingDocuments'));
-        if(!id_in){
-            return financialReportingDocumentsDirectus;
-        }
-        return financialReportingDocumentsDirectus.filter(data => id_in.includes(data.id));
+        return filterArray(financialReportingDocumentsDirectus, id_in);
     }
 
-    async getRepayments(id_in?: string): Promise<PoolRepayment[]>{
+    async getRepayments(id_in?: string[]): Promise<PoolRepayment[]>{
         const poolRepaymentDirectus: PoolRepaymentDirectus[] = await this._directus.request(readItems('PoolRepayments'));
         const retn: PoolRepayment[] = [];
         for(const data of poolRepaymentDirectus){
@@ -226,9 +205,6 @@ export class DataService {
             };
             retn.push(poolRepayment);
         }
-        if(!id_in){
-            return retn;
-        }
-        return retn.filter(data => id_in.includes(data.id));
+        return filterArray(retn, id_in);
     }
 }
