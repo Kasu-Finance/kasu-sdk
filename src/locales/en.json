@@ -391,15 +391,18 @@
     "badDebts": {
       "title": "Bad and Doubtful Debts",
       "headers": {
-        "column-1": "Total (Lifetime)",
-        "column-2": "Monthly Average (Last 12 Months)",
+        "column-1": "Total",
+        "column-1-suffix": "(Lifetime)",
+        "column-2": "Monthly Average",
+        "column-2-suffix": "(Last 12 Months)",
         "column-3": "Current Status"
       }
     },
     "reporting": {
       "title": "Financial Reporting Documents",
       "headers": {
-        "column-1": "Report Description",
+        "column-1": "Report",
+        "column-1-suffix": "Description",
         "column-2": "Upload Date",
         "column-3": "Version",
         "column-4": "Actions"
