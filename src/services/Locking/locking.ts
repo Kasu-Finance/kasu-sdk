@@ -302,7 +302,7 @@ export class KSULocking {
         return formatEther(balance);
     }
     async getNextEpochDate(): Promise<BigNumber> {
-        return await this._systemVariablesAbi.getNextEpochStartTimestamp()
+        return await this._systemVariablesAbi.nextEpochStartTimestamp()
     }
     async getActiveLockPeriods(): Promise<LockPeriod[]> {
         const data: GQLGetLockingPeriods =
