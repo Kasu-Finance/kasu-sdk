@@ -1,10 +1,16 @@
+enum WithdrawSteps {
+  STEP_1 = 0,
+  STEP_2 = 1,
+  STEP_3 = 3,
+}
+
 export enum ModalStatusAction {
   EDITING = 'EDITING',
   REVIEWING = 'REVIEWING',
   COMPLETED = 'COMPLETED',
-  REQUEST = 0,
-  APPROVE = 1,
-  CONFIRM = 2,
+  REQUEST = WithdrawSteps.STEP_1,
+  APPROVE = WithdrawSteps.STEP_2,
+  CONFIRM = WithdrawSteps.STEP_3,
 }
 
 export enum ModalStatus {

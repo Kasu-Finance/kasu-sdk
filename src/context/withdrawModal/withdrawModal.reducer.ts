@@ -2,7 +2,7 @@ import {
   WithdrawActionTypes,
   WithdrawModalActions,
   WithdrawModalStateType,
-} from './withdrawModal.types'
+} from '@/context/withdrawModal/withdrawModal.types'
 
 const withdrawModalReducer = (
   state: WithdrawModalStateType,

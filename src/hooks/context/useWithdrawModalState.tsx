@@ -9,15 +9,13 @@ import {
 import { HexString } from '@/types/lending'
 
 const useWithdrawModalState = (): WithdrawModalTypes => {
-  const context = useContext(WithdrawModalContext)
+  const { dispatch, ...contextProps } = useContext(WithdrawModalContext)
 
-  if (!context) {
+  if (!contextProps) {
     throw new Error(
       'useWithdrawModalState must be used within a WithdrawModalProvider'
     )
   }
-
-  const { dispatch } = context
 
   const setAmount = useCallback(
     (amount: string) => {
@@ -39,7 +37,7 @@ const useWithdrawModalState = (): WithdrawModalTypes => {
   )
 
   return {
-    ...context,
+    ...contextProps,
     setAmount,
     setSelectedTranche,
   }

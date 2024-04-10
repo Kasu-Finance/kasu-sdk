@@ -3,7 +3,7 @@ import { createContext } from 'react'
 import {
   WithdrawModalActions,
   WithdrawModalStateType,
-} from './withdrawModal.types'
+} from '@/context/withdrawModal/withdrawModal.types'
 
 import { ContextWrapper } from '@/types/utils'
 

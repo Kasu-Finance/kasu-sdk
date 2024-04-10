@@ -27,6 +27,11 @@ const useWithdrawRequest = () => {
     options?: { isWithdrawMax: boolean }
   ) => {
     if (!account) {
+      handleError(
+        'Account is undefined',
+        `${ActionType.WITHDRAW} ${ActionStatus.ERROR}`,
+        ACTION_MESSAGES[ActionType.WITHDRAW][ActionStatus.ERROR]
+      )
       return console.error('RequestWithdraw:: Account is undefined')
     }
 
