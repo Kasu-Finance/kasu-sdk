@@ -9,7 +9,7 @@ import CustomTable, { Sort } from '@/components/molecules/CustomTable'
 import { CustomTableHeader } from '@/components/molecules/CustomTable/TableHeaders'
 import DataTypography from '@/components/molecules/risk/BadDebtsTable/DataTypography'
 
-import { formatPercentage } from '@/utils'
+import { formatAmount, formatPercentage } from '@/utils'
 
 const headersStyles: SxProps<Theme> = {
   '& > *': {
@@ -165,13 +165,19 @@ const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
                 <DataTypography data={data.name} />
               </TableCell>
               <TableCell align='center'>
-                <DataTypography data={data.totalAmount} />
+                <DataTypography
+                  data={formatAmount(data.totalAmount)}
+                  suffix='USDC'
+                />
               </TableCell>
               <TableCell align='center'>
                 <DataTypography data={formatPercentage(data.totalPercentage)} />
               </TableCell>
               <TableCell align='center'>
-                <DataTypography data={data.monthlyAverageAmount} />
+                <DataTypography
+                  data={formatAmount(data.monthlyAverageAmount)}
+                  suffix='USDC'
+                />
               </TableCell>
               <TableCell align='center'>
                 <DataTypography
@@ -179,7 +185,10 @@ const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
                 />
               </TableCell>
               <TableCell align='center'>
-                <DataTypography data={data.currentStatusAmount} />
+                <DataTypography
+                  data={formatAmount(data.currentStatusAmount)}
+                  suffix='USDC'
+                />
               </TableCell>
               <TableCell align='center'>
                 <DataTypography

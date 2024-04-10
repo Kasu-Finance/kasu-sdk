@@ -7,7 +7,7 @@ import useTranslation from '@/hooks/useTranslation'
 import CustomTable, { Sort } from '@/components/molecules/CustomTable'
 import { CustomTableHeader } from '@/components/molecules/CustomTable/TableHeaders'
 
-import { formatPercentage } from '@/utils'
+import { formatAmount, formatPercentage } from '@/utils'
 
 const handleSort = (
   _a: PoolCreditMetricsDirectus,
@@ -23,6 +23,7 @@ interface PoolCreditTableProps {
 
 const PoolCreditTable: React.FC<PoolCreditTableProps> = ({ data }) => {
   const { t } = useTranslation()
+  const formatConfig = { minDecimals: 2 }
 
   const headers: CustomTableHeader<PoolCreditMetricsDirectus>[] = useMemo(
     () => [
@@ -79,21 +80,21 @@ const PoolCreditTable: React.FC<PoolCreditTableProps> = ({ data }) => {
               <TableCell align='right'>
                 <Typography variant='body1'>
                   {index < 2
-                    ? `${data.previousFiscalYear} x`
+                    ? `${formatAmount(data.previousFiscalYear, formatConfig)} x`
                     : formatPercentage(data.previousFiscalYear)}
                 </Typography>
               </TableCell>
               <TableCell align='right'>
                 <Typography variant='body1'>
                   {index < 2
-                    ? `${data.mostRecentQuarter} x`
+                    ? `${formatAmount(data.mostRecentQuarter, formatConfig)} x`
                     : formatPercentage(data.mostRecentQuarter)}
                 </Typography>
               </TableCell>
               <TableCell align='right'>
                 <Typography variant='body1'>
                   {index < 2
-                    ? `${data.priorMonth} x`
+                    ? `${formatAmount(data.priorMonth, formatConfig)} x`
                     : formatPercentage(data.priorMonth)}
                 </Typography>
               </TableCell>

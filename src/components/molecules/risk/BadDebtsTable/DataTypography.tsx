@@ -3,10 +3,12 @@ import React from 'react'
 
 interface DataTypographyProps extends TypographyProps {
   data: number | string | null
+  suffix?: string
 }
 
 const DataTypography: React.FC<DataTypographyProps> = ({
   data,
+  suffix,
   ...typographyProps
 }) => {
   const isValidData = data !== null && data !== undefined && data !== ''
@@ -16,6 +18,11 @@ const DataTypography: React.FC<DataTypographyProps> = ({
   return (
     <Typography {...typographyProps} color={color}>
       {content}
+      {suffix && isValidData && (
+        <Typography variant='caption' component='span'>
+          {suffix}
+        </Typography>
+      )}
     </Typography>
   )
 }

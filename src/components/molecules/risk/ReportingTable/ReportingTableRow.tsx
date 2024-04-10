@@ -69,7 +69,9 @@ const ReportingTableRow: React.FC<ReportingTableRowProps> = ({
         </Typography>
       </TableCell>
       <TableCell align='right'>
-        <Typography variant='body1'>{data.version}</Typography>
+        <Typography variant='body1'>
+          {parseFloat(data.version).toFixed(2)}
+        </Typography>
       </TableCell>
       <TableCell align='right'>
         <ActionCell actionUrl={data.documentUrl} />
