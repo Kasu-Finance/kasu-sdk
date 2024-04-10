@@ -83,7 +83,7 @@ export interface FinancialReportingDocumentsDirectus {
     name: string;
     description: string;
     uploadTimestamp: number;
-    version: number;
+    version: string;
     documentUrl: string;
     poolIdFK: string;
 }
