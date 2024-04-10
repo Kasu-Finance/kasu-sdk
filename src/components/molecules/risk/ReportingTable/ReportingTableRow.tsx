@@ -42,7 +42,7 @@ const ReportingTableRow: React.FC<ReportingTableRowProps> = ({
   data,
   index,
 }) => {
-  const formattedDate = formatTimestampWithOffset(data.uploadDate, 1)
+  const formattedDate = formatTimestampWithOffset(data.uploadTimestamp, 1)
   const { date, time, format, offset } = extractDateAndUtcOffset(formattedDate)
 
   return (
@@ -52,7 +52,7 @@ const ReportingTableRow: React.FC<ReportingTableRowProps> = ({
           <CircularTypography variant='body2'>{index + 1}</CircularTypography>
           <Box ml={3} display='flex' flexDirection='column'>
             <Typography variant='subtitle1' pb={0.5}>
-              {data.category}
+              {data.name}
             </Typography>
             <Divider />
             <Typography variant='body2' sx={{ mt: 1, whiteSpace: 'pre-wrap' }}>
@@ -72,7 +72,7 @@ const ReportingTableRow: React.FC<ReportingTableRowProps> = ({
         <Typography variant='body1'>{data.version}</Typography>
       </TableCell>
       <TableCell align='right'>
-        <ActionCell actionUrl={data.actionUrl} />
+        <ActionCell actionUrl={data.documentUrl} />
       </TableCell>
     </StyledTableRow>
   )

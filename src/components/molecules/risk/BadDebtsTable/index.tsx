@@ -1,5 +1,6 @@
 import { Theme } from '@emotion/react'
 import { Card, SxProps, TableCell, TableRow, Typography } from '@mui/material'
+import { BadAndDoubtfulDebtsDirectus } from 'kasu-sdk/src/services/DataService/directus-types'
 import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
@@ -7,9 +8,6 @@ import useTranslation from '@/hooks/useTranslation'
 import CustomTable, { Sort } from '@/components/molecules/CustomTable'
 import { CustomTableHeader } from '@/components/molecules/CustomTable/TableHeaders'
 import DataTypography from '@/components/molecules/risk/BadDebtsTable/DataTypography'
-
-import { mockBadDebtData } from '@/app/mock-data/risk-data'
-import { BadDebtsTableKeys } from '@/constants/riskReporting'
 
 const headersStyles: SxProps<Theme> = {
   '& > *': {
@@ -31,99 +29,97 @@ const additionalHeadersStyles: SxProps<Theme> = {
 }
 
 const handleSort = (
-  _a: BadDebtTableData,
-  _b: BadDebtTableData,
-  _sort: Sort<BadDebtTableData>
+  _a: ExtendedBadAndDoubtfulDebts,
+  _b: ExtendedBadAndDoubtfulDebts,
+  _sort: Sort<ExtendedBadAndDoubtfulDebts>
 ): number => {
   return 0
 }
 
-export type BadDebtTableData = {
-  category: string
-  empty: string
-  totalAmount: number
-  totalAmountSuffix: string
-  monthlyAverage: number
-  monthlyAverageSuffix: string
-  currentStatus: string
-  currentStatusSuffix: string
+interface BadDebtsTableProps {
+  data: BadAndDoubtfulDebtsDirectus[]
 }
 
-const BadDebtsTable: React.FC = () => {
+export interface ExtendedBadAndDoubtfulDebts
+  extends BadAndDoubtfulDebtsDirectus {
+  empty: string
+}
+
+const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
   const { t } = useTranslation()
 
-  const headers: CustomTableHeader<BadDebtTableData>[] = [
+  const headers: CustomTableHeader<ExtendedBadAndDoubtfulDebts>[] = [
     {
       label: '',
-      value: BadDebtsTableKeys.CATEGORY,
+      value: 'empty',
       disableSort: true,
     },
     {
       label: t('risk.badDebts.headers.column-1'),
-      value: BadDebtsTableKeys.TOTAL_AMOUNT,
+      value: 'totalAmount',
       disableSort: true,
     },
     {
       label: '',
-      value: BadDebtsTableKeys.EMPTY,
+      value: 'empty',
       disableSort: true,
     },
     {
       label: t('risk.badDebts.headers.column-2'),
-      value: BadDebtsTableKeys.MONTHLY_AVERAGE,
+      value: 'monthlyAverageAmount',
       disableSort: true,
     },
     {
       label: '',
-      value: BadDebtsTableKeys.EMPTY,
+      value: 'empty',
       disableSort: true,
     },
     {
       label: t('risk.badDebts.headers.column-3'),
-      value: BadDebtsTableKeys.CURRENT_STATUS,
+      value: 'currentStatusAmount',
       disableSort: true,
     },
     {
       label: '',
-      value: BadDebtsTableKeys.EMPTY,
+      value: 'empty',
       disableSort: true,
     },
   ]
 
-  const additionalHeaders: CustomTableHeader<BadDebtTableData>[] = [
+  const additionalHeaders: CustomTableHeader<ExtendedBadAndDoubtfulDebts>[] = [
     {
       label: '',
-      value: BadDebtsTableKeys.CATEGORY,
+      value: 'empty',
       disableSort: true,
     },
     {
       label: 'Amount',
-      value: BadDebtsTableKeys.TOTAL_AMOUNT,
+      value: 'totalAmount',
       disableSort: true,
     },
     {
       label: '%',
-      value: BadDebtsTableKeys.TOTAL_AMOUNT_SUFFIX,
+      value: 'totalPercentage',
       disableSort: true,
     },
     {
       label: 'Amount',
-      value: BadDebtsTableKeys.MONTHLY_AVERAGE,
+      value: 'monthlyAverageAmount',
       disableSort: true,
     },
     {
       label: '%',
-      value: BadDebtsTableKeys.MONTHLY_AVERAGE_SUFFIX,
+      value: 'currentStatusPercentage',
       disableSort: true,
     },
     {
       label: 'Amount',
-      value: BadDebtsTableKeys.CURRENT_STATUS,
+      value: 'currentStatusAmount',
       disableSort: true,
     },
     {
       label: '%',
-      value: BadDebtsTableKeys.CURRENT_STATUS_SUFFIX,
+      value: 'currentStatusPercentage',
       disableSort: true,
     },
   ]
@@ -137,9 +133,9 @@ const BadDebtsTable: React.FC = () => {
       <CustomTable
         headers={headers}
         additionalHeaders={additionalHeaders}
-        data={mockBadDebtData}
+        data={data as ExtendedBadAndDoubtfulDebts[]}
         pagination={false}
-        defaultSortKey={BadDebtsTableKeys.CATEGORY}
+        defaultSortKey='totalAmount'
         handleSort={handleSort}
         headersStyle={headersStyles}
         additionalHeadersStyle={additionalHeadersStyles}
@@ -148,25 +144,25 @@ const BadDebtsTable: React.FC = () => {
           sortedData.map((data, index) => (
             <TableRow key={index}>
               <TableCell align='left' width='10%'>
-                <DataTypography data={data.category} />
+                <DataTypography data={data.name} />
               </TableCell>
               <TableCell align='center'>
                 <DataTypography data={data.totalAmount} />
               </TableCell>
               <TableCell align='center'>
-                <DataTypography data={data.totalAmountSuffix} />
+                <DataTypography data={data.totalPercentage} />
               </TableCell>
               <TableCell align='center'>
-                <DataTypography data={data.monthlyAverage} />
+                <DataTypography data={data.monthlyAverageAmount} />
               </TableCell>
               <TableCell align='center'>
-                <DataTypography data={data.monthlyAverageSuffix} />
+                <DataTypography data={data.monthlyAveragePercentage} />
               </TableCell>
               <TableCell align='center'>
-                <DataTypography data={data.currentStatus} />
+                <DataTypography data={data.currentStatusAmount} />
               </TableCell>
               <TableCell align='center'>
-                <DataTypography data={data.currentStatusSuffix} />
+                <DataTypography data={data.currentStatusPercentage} />
               </TableCell>
             </TableRow>
           ))

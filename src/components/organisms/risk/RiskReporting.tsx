@@ -1,36 +1,60 @@
 import { Box } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
+import React from 'react'
 
+import useDoubtfulDebts from '@/hooks/lending/useDoubtfulDebts'
+import useFinancialReporting from '@/hooks/lending/useFinancialReporting'
+import usePoolCreditMetric from '@/hooks/lending/usePoolCreditMetric'
+
+import EmptyCardState from '@/components/atoms/EmptyCardState'
 import TableSkeleton from '@/components/molecules/loaders/TableSkeleton'
 import BadDebtsTable from '@/components/molecules/risk/BadDebtsTable'
 import PoolCreditTable from '@/components/molecules/risk/PoolCreditTable'
 import ReportingTable from '@/components/molecules/risk/ReportingTable'
 
 const RiskReporting: React.FC = () => {
-  const [loading, setLoading] = useState<boolean>(true)
+  const { slug } = useParams()
+  const poolId = slug as string
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false)
-    }, 1000)
+  const doubtfulHook = useDoubtfulDebts(poolId)
+  const poolCreditHook = usePoolCreditMetric(poolId)
+  const reportingHook = useFinancialReporting(poolId)
 
-    return () => clearTimeout(timer)
-  }, [])
+  const isLoading =
+    doubtfulHook.isLoading ||
+    poolCreditHook.isLoading ||
+    reportingHook.isLoading
+
+  const noData =
+    !isLoading &&
+    !doubtfulHook.data &&
+    !poolCreditHook.data &&
+    !reportingHook.data
+
+  if (isLoading) {
+    return (
+      <Box mt={3}>
+        <TableSkeleton columns={4} rows={3} />
+        <TableSkeleton columns={3} rows={4} />
+        <TableSkeleton columns={3} rows={4} />
+      </Box>
+    )
+  }
+
+  if (noData) {
+    return <EmptyCardState message='No data available for this pool.' />
+  }
 
   return (
     <Box mt={3}>
-      {loading ? (
-        <>
-          <TableSkeleton columns={4} rows={3} />
-          <TableSkeleton columns={3} rows={4} />
-          <TableSkeleton columns={3} rows={4} />
-        </>
-      ) : (
-        <>
-          <PoolCreditTable />
-          <BadDebtsTable />
-          <ReportingTable />
-        </>
+      {poolCreditHook.data?.length && (
+        <PoolCreditTable data={poolCreditHook.data} />
+      )}
+
+      {doubtfulHook.data?.length && <BadDebtsTable data={doubtfulHook.data} />}
+
+      {reportingHook.data?.length && (
+        <ReportingTable data={reportingHook.data} />
       )}
     </Box>
   )
