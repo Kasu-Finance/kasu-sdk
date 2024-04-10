@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request';
 
 export const claimedFeesQuery = gql`
-    query getClaimedFeesForAddress($userAddress: String!) {
+    query GetClaimedFeesForAddress($userAddress: String!) {
         userLockDepositsInfo(id: $userAddress) {
             feesClaimed
         }
@@ -9,7 +9,7 @@ export const claimedFeesQuery = gql`
 `;
 
 export const userEarnedrKsuQuery = gql`
-    query getClaimedFeesForAddress($userAddress: String!) {
+    query GetClaimedFeesForAddress($userAddress: String!) {
         userLockDepositsInfo(id: $userAddress) {
             rKSUAmount
         }
@@ -17,7 +17,7 @@ export const userEarnedrKsuQuery = gql`
 `;
 
 export const userTotalBonusAmountQuery = gql`
-    query getClaimedFeesForAddress($userAddress: String!) {
+    query GetClaimedFeesForAddress($userAddress: String!) {
         userLockDepositsInfo(id: $userAddress) {
             totalKsuBonusAmount
         }
@@ -25,7 +25,7 @@ export const userTotalBonusAmountQuery = gql`
 `;
 
 export const userStakedKsuQuery = gql`
-    query getUserLockDepositsInfo($userAddress: String!) {
+    query GetUserLockDepositsInfo($userAddress: String!) {
         userLockDepositsInfo(id: $userAddress) {
             ksuLockedAmount
         }
@@ -33,7 +33,7 @@ export const userStakedKsuQuery = gql`
 `;
 
 export const userLocksQuery = gql`
-    query getUserLocks($userAddress: String!) {
+    query GetUserLocks($userAddress: String!) {
         userLocks(
             where: { userLockDepositsInfo: $userAddress, ksuAmount_gt: 0 }
         ) {
@@ -48,6 +48,18 @@ export const userLocksQuery = gql`
                 ksuBonusMultiplier
                 id
             }
+        }
+    }
+`;
+
+export const lockingPeriodsQuery = gql`
+    query LockingPeriodsQuery {
+        lockPeriods(orderBy: lockPeriod, where: { isActive: true }) {
+            rKSUMultiplier
+            lockPeriod
+            ksuBonusMultiplier
+            isActive
+            id
         }
     }
 `;

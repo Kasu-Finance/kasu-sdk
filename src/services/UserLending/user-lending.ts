@@ -1,7 +1,7 @@
 import { Provider } from '@ethersproject/providers';
 import {
     BigNumber,
-    BigNumberish, Bytes,
+    BigNumberish,
     BytesLike,
     ContractTransaction,
     Signer,
@@ -17,9 +17,9 @@ import {
 } from '../../contracts';
 import { SdkConfig } from '../../sdk-config';
 
-import { UserRequestsSubgraphResponse } from './subgraph-types';
+import { LendingPoolUserDetailsSubgraph, UserRequestsSubgraph } from './subgraph-types';
 import { UserBalance, UserRequest } from './types';
-import { userRequestsQuery } from './user-lending.query';
+import { lendingPoolUserDetailsQuery, userRequestsQuery } from './user-lending.query';
 
 export class UserLending {
     private readonly _graph: GraphQLClient;
@@ -191,7 +191,7 @@ export class UserLending {
     }
 
     async getUserRequests(): Promise<UserRequest[]> {
-        const subgraphResult: UserRequestsSubgraphResponse = await this._graph.request(userRequestsQuery);
+        const subgraphResult: UserRequestsSubgraph = await this._graph.request(userRequestsQuery);
         return subgraphResult.userRequests;
     }
 
@@ -200,11 +200,12 @@ export class UserLending {
             poolId,
             this._signerOrProvider
         )
+        const balance = await lendingPool.userBalance(user)
         return {
             userId: user,
             address: poolId,
             yieldEarned: 0, // TODO do this calculation
-            balance: await lendingPool.userBalance(user),
+            balance: balance,
         }
     }
 
@@ -212,12 +213,14 @@ export class UserLending {
         const tranche = ILendingPoolTrancheAbi__factory.connect(
             trancheId,
             this._signerOrProvider
-        )
+        );
+        const userDetailsSubgraph: LendingPoolUserDetailsSubgraph = await this._graph.request(lendingPoolUserDetailsQuery, { userAddress: user })
+        const balance = await tranche['balanceOf(address)'](user);
         return {
             userId: user,
             address: trancheId,
             yieldEarned: 0, // TODO do this calculation
-            balance: await tranche['balanceOf(address)'](user),
+            balance: balance,
         }
     }
 }

@@ -1,18 +1,23 @@
 import { Provider } from '@ethersproject/providers';
-import { BigNumber, ContractTransaction, Signer, ethers } from 'ethers';
+import { BigNumber, ContractTransaction, ethers, Signer } from 'ethers';
 import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils';
-import { GraphQLClient, gql } from 'graphql-request';
+import { GraphQLClient } from 'graphql-request';
 
 import {
     IERC20MetadataAbi,
     IERC20MetadataAbi__factory,
-    IKSULockingAbi, ISystemVariablesAbi, ISystemVariablesAbi__factory, IUserManagerAbi, IUserManagerAbi__factory,
+    IKSULockingAbi,
+    IKSULockingAbi__factory,
+    ISystemVariablesAbi,
+    ISystemVariablesAbi__factory,
+    IUserManagerAbi,
+    IUserManagerAbi__factory,
 } from '../../contracts';
-import { IKSULockingAbi__factory } from '../../contracts/factories/IKSULockingAbi__factory';
 import { SdkConfig } from '../../sdk-config';
 
 import {
     claimedFeesQuery,
+    lockingPeriodsQuery,
     userEarnedrKsuQuery,
     userLocksQuery,
     userStakedKsuQuery,
@@ -192,7 +197,7 @@ export class KSULocking {
             },
         );
 
-        const claimedRewards = result?.userLockDepositsInfo?.feesClaimed ?? '0';
+        const claimedRewards = result.userLockDepositsInfo?.feesClaimed ?? '0';
 
         if (!claimableRewards) {
             claimableRewards = await this.getClaimableRewards(userAddress);
@@ -296,38 +301,12 @@ export class KSULocking {
 
         return formatEther(balance);
     }
-
-    getNextEpochDate(): EpochTimeStamp {
-        const epoch = new Date();
-        epoch.setUTCDate(epoch.getDate() + ((-1 - epoch.getDay() + 7) % 7) + 1);
-        epoch.setUTCHours(0, 0, 1, 0);
-        return epoch.getTime();
+    async getNextEpochDate(): Promise<BigNumber> {
+        return await this._systemVariablesAbi.getNextEpochStartTimestamp()
     }
-
     async getActiveLockPeriods(): Promise<LockPeriod[]> {
-        const getLockingPeriods = gql`
-            query {
-                lockPeriods(orderBy: lockPeriod, where: { isActive: true }) {
-                    rKSUMultiplier
-                    lockPeriod
-                    ksuBonusMultiplier
-                    isActive
-                    id
-                }
-            }
-        `;
-
         const data: GQLGetLockingPeriods =
-            await this._graph.request(getLockingPeriods);
-
+            await this._graph.request(lockingPeriodsQuery);
         return data.lockPeriods;
-    }
-
-    getProjectedApy(): string {
-        return '10.00';
-    }
-
-    getProjectedUSDC(): string {
-        return '20.00';
     }
 }
