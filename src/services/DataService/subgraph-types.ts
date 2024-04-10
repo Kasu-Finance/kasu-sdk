@@ -1,11 +1,10 @@
 export interface LendingPoolSubgraph {
     lendingPools: {
         id: string;
-        totalYieldAmount: string;
+        totalUserYieldAmount: string;
         totalLossAmount: string;
         name: string;
         balance: string;
-        borrowedAmount: string;
         firstLostCapital: string;
         tranches: TrancheSubgraph[];
     }[]
