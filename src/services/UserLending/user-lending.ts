@@ -45,16 +45,16 @@ export class UserLending {
 
     async getUserTotalPendingAndActiveDepositedAmount(
         user: string,
-    ): Promise<BigNumber> {
-        return await this._userManagerAbi.getUserTotalPendingAndActiveDepositedAmount(
+    ): Promise<[BigNumber, BigNumber]> {
+        return await this._userManagerAbi.userTotalPendingAndActiveDepositedAmount(
             user,
         );
     }
 
     async getUserTotalPendingAndActiveDepositedAmountForCurrentEpoch(
         user: string,
-    ): Promise<BigNumber> {
-        return await this._userManagerAbi.getUserTotalPendingAndActiveDepositedAmountForCurrentEpoch(
+    ): Promise<[BigNumber, BigNumber]> {
+        return await this._userManagerAbi.userTotalPendingAndActiveDepositedAmountForCurrentEpoch(
             user,
         );
     }
@@ -204,7 +204,7 @@ export class UserLending {
             userId: user,
             address: poolId,
             yieldEarned: 0, // TODO do this calculation
-            balance: await lendingPool.getUserBalance(user),
+            balance: await lendingPool.userBalance(user),
         }
     }
 
@@ -217,7 +217,7 @@ export class UserLending {
             userId: user,
             address: trancheId,
             yieldEarned: 0, // TODO do this calculation
-            balance: await tranche.getUserActiveAssets(user),
+            balance: await tranche['balanceOf(address)'](user),
         }
     }
 }

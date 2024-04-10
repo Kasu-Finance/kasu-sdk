@@ -49,6 +49,19 @@
     "type": "event"
   },
   {
+    "inputs": [],
+    "name": "allUsers",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -86,6 +99,30 @@
         "internalType": "address",
         "name": "user",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "epoch",
+        "type": "uint256"
+      }
+    ],
+    "name": "calculatedUserEpochLoyaltyLevel",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "loyaltyLevel",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
       }
     ],
     "name": "canUserDepositInJuniorTranche",
@@ -100,43 +137,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "getAllUsers",
-    "outputs": [
-      {
-        "internalType": "address[]",
-        "name": "",
-        "type": "address[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "epoch",
-        "type": "uint256"
-      }
-    ],
-    "name": "getCalculatedUserEpochLoyaltyLevel",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "loyaltyLevel",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -144,7 +144,7 @@
         "type": "uint256"
       }
     ],
-    "name": "getEpochUserLoyaltyProcessing",
+    "name": "epochUserLoyaltyProcessing",
     "outputs": [
       {
         "components": [
@@ -167,87 +167,6 @@
         "internalType": "struct EpochUserLoyaltyProcessing",
         "name": "",
         "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      }
-    ],
-    "name": "getUserLendingPools",
-    "outputs": [
-      {
-        "internalType": "address[]",
-        "name": "lendingPools",
-        "type": "address[]"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      }
-    ],
-    "name": "getUserLoyaltyLevel",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "currentEpoch",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "loyaltyLevel",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      }
-    ],
-    "name": "getUserTotalPendingAndActiveDepositedAmount",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      }
-    ],
-    "name": "getUserTotalPendingAndActiveDepositedAmountForCurrentEpoch",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -296,6 +215,49 @@
         "internalType": "address",
         "name": "user",
         "type": "address"
+      }
+    ],
+    "name": "userLendingPools",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "lendingPools",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "userLoyaltyLevel",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "currentEpoch",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint8",
+        "name": "loyaltyLevel",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
       },
       {
         "internalType": "address",
@@ -306,6 +268,54 @@
     "name": "userRequestedDeposit",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "userTotalPendingAndActiveDepositedAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "activeDepositAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "pendingDepositAmount",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "userTotalPendingAndActiveDepositedAmountForCurrentEpoch",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "activeDepositAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "pendingDepositAmount",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   }
 ]

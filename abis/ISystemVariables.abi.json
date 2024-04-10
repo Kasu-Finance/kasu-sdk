@@ -29,11 +29,11 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "protocolFee",
+        "name": "performanceFee",
         "type": "uint256"
       }
     ],
-    "name": "ProtocolFeeUpdated",
+    "name": "PerformanceFeeUpdated",
     "type": "event"
   },
   {
@@ -43,6 +43,32 @@
       {
         "internalType": "uint256",
         "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "currentEpochNumber",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "currentRequestEpoch",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "requestEpoch",
         "type": "uint256"
       }
     ],
@@ -64,33 +90,7 @@
   },
   {
     "inputs": [],
-    "name": "getCurrentEpochNumber",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getCurrentRequestEpoch",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "requestEpoch",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getEpochDuration",
+    "name": "epochDuration",
     "outputs": [
       {
         "internalType": "uint256",
@@ -109,7 +109,7 @@
         "type": "uint256"
       }
     ],
-    "name": "getEpochStartTimestamp",
+    "name": "epochStartTimestamp",
     "outputs": [
       {
         "internalType": "uint256",
@@ -122,38 +122,17 @@
   },
   {
     "inputs": [],
-    "name": "getNextEpochStartTimestamp",
+    "name": "feeRates",
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "ecosystemFeeRate",
         "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getPriceUpdateEpoch",
-    "outputs": [
+      },
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "protocolFeeRate",
         "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getUserCanDepositToJuniorTrancheWhenHeHasRKSU",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -180,6 +159,19 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "loyaltyLevelsCount",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
       }
     ],
     "stateMutability": "view",
@@ -239,12 +231,51 @@
   },
   {
     "inputs": [],
-    "name": "protocolFee",
+    "name": "nextEpochStartTimestamp",
     "outputs": [
       {
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "performanceFee",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "priceUpdateEpoch",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "protocolFeeReceiver",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -259,6 +290,24 @@
       }
     ],
     "name": "setDefaultTrancheInterestChangeEpochDelay",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "ecosystemFeeRate",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "protocolFeeRate",
+        "type": "uint256"
+      }
+    ],
+    "name": "setFeeRates",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -293,11 +342,24 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "protocolFee",
+        "name": "performanceFee",
         "type": "uint256"
       }
     ],
-    "name": "setProtocolFee",
+    "name": "setPerformanceFee",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "receiver",
+        "type": "address"
+      }
+    ],
+    "name": "setProtocolFeeReceiver",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -310,9 +372,40 @@
         "type": "bool"
       }
     ],
-    "name": "setUserCanDepositToJuniorTrancheWhenHeHasRKSU",
+    "name": "setUserCanOnlyDepositToJuniorTrancheWhenHeHasRKSU",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      }
+    ],
+    "name": "trancheNameInfo",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "trancheName",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "tokenSymbol",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct TrancheInfo",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -320,6 +413,19 @@
     "name": "updateKsuEpochTokenPrice",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "userCanOnlyDepositToJuniorTrancheWhenHeHasRKSU",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   }
 ]

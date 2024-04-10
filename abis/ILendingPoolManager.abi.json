@@ -232,12 +232,12 @@
       },
       {
         "internalType": "uint256",
-        "name": "pendingRequestsPriorityCalculationBatchSize",
+        "name": "priorityCalculationBatchSize",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "acceptedRequestsExecutionBatchSize",
+        "name": "acceptRequestsBatchSize",
         "type": "uint256"
       },
       {
@@ -338,27 +338,14 @@
       }
     ],
     "name": "forceImmediateWithdrawal",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "contractAddress",
-        "type": "address"
-      }
-    ],
-    "name": "ownLendingPool",
     "outputs": [
       {
-        "internalType": "address",
-        "name": "lendingPool",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -553,11 +540,6 @@
       {
         "internalType": "address",
         "name": "lendingPool",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "firstLossCapitalReceiver",
         "type": "address"
       }
     ],

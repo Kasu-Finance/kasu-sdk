@@ -527,6 +527,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "calculateMaximumLossAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -628,95 +641,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "lossId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getLossDetails",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "lossAmount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "usersCount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "usersMintedCount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "recoveredAmount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "totalLossShares",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct LossDetails",
-        "name": "",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      }
-    ],
-    "name": "getUserActiveAssets",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "activeAssets",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "lossId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getUserClaimableLoss",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "claimableAmount",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address",
         "name": "account",
         "type": "address"
@@ -752,6 +676,52 @@
         "internalType": "bool",
         "name": "",
         "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "lossId",
+        "type": "uint256"
+      }
+    ],
+    "name": "lossDetails",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "lossAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "usersCount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "usersMintedCount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "recoveredAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalLossShares",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct LossDetails",
+        "name": "",
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",
@@ -997,12 +967,12 @@
       },
       {
         "internalType": "uint256",
-        "name": "lossAmoun",
+        "name": "lossAmount",
         "type": "uint256"
       },
       {
         "internalType": "bool",
-        "name": "doMintLossTokenst",
+        "name": "doMintLossTokens",
         "type": "bool"
       }
     ],
@@ -1246,6 +1216,73 @@
       }
     ],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "userActiveAssets",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lossId",
+        "type": "uint256"
+      }
+    ],
+    "name": "userClaimableLoss",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "claimableAmount",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lossId",
+        "type": "uint256"
+      }
+    ],
+    "name": "userClaimedLosses",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "claimedAmount",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {

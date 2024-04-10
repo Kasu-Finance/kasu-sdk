@@ -359,6 +359,20 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "requireNotPaused",
+    "outputs": [],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "requirePaused",
+    "outputs": [],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
