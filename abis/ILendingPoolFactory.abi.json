@@ -21,16 +21,6 @@
           {
             "components": [
               {
-                "internalType": "string",
-                "name": "trancheName",
-                "type": "string"
-              },
-              {
-                "internalType": "string",
-                "name": "trancheSymbol",
-                "type": "string"
-              },
-              {
                 "internalType": "uint256",
                 "name": "ratio",
                 "type": "uint256"
@@ -62,12 +52,12 @@
           },
           {
             "internalType": "address",
-            "name": "borrowRecipient",
+            "name": "drawRecipient",
             "type": "address"
           },
           {
             "internalType": "uint256",
-            "name": "totalDesiredLoanAmount",
+            "name": "desiredDrawAmount",
             "type": "uint256"
           }
         ],

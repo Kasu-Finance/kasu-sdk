@@ -1,9 +1,14 @@
 [
   {
+    "inputs": [],
+    "name": "ClearingIsPending",
+    "type": "error"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "borrowAmount",
+        "name": "drawAmount",
         "type": "uint256"
       },
       {
@@ -12,18 +17,23 @@
         "type": "uint256"
       }
     ],
-    "name": "BorrowAmountCantBeGreaterThanAvailableAmount",
+    "name": "DrawAmountCantBeGreaterThanAvailableAmount",
     "type": "error"
   },
   {
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "borrowedAmoun",
+        "name": "feesOwedAmount",
         "type": "uint256"
       }
     ],
-    "name": "BorrowedAmountIsGreaterThanZero",
+    "name": "FeesOwedAmountIsGreaterThanZero",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "LendingPoolIsNotStopped",
     "type": "error"
   },
   {
@@ -35,23 +45,23 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "lossAmount",
+        "name": "reportedLossAmount",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "supply",
+        "name": "maxLossAmount",
         "type": "uint256"
       }
     ],
-    "name": "LossAmountCantBeGreaterThanSupply",
+    "name": "LossAmountCantBeGreaterThanMaxLossAmount",
     "type": "error"
   },
   {
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "lossAmount",
+        "name": "reportedLossAmount",
         "type": "uint256"
       }
     ],
@@ -89,11 +99,22 @@
       },
       {
         "internalType": "uint256",
-        "name": "borrowedAmount",
+        "name": "owedAmount",
         "type": "uint256"
       }
     ],
-    "name": "RepayAmountCantBeGreaterThanBorrowedAmount",
+    "name": "RepayAmountCantBeGreaterThanOwedAmount",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "userOwedAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "UserOwedAmountIsGreaterThanZero",
     "type": "error"
   },
   {
@@ -166,15 +187,28 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256",
-        "name": "amountAdded",
+        "name": "epoch",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "newTotalAmount",
+        "name": "feesIncreasedAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "FeesOwedIncreased",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amountAdded",
         "type": "uint256"
       }
     ],
@@ -208,15 +242,22 @@
         "internalType": "uint256",
         "name": "amountWithdrawn",
         "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "newTotalAmount",
-        "type": "uint256"
       }
     ],
     "name": "FirstLossCapitalWithdrawn",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "FundsDrawn",
     "type": "event"
   },
   {
@@ -254,26 +295,31 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
+        "internalType": "address",
+        "name": "tranche",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "epoch",
+        "type": "uint256"
+      },
+      {
         "indexed": false,
         "internalType": "uint256",
-        "name": "amount",
+        "name": "interestAmount",
         "type": "uint256"
       }
     ],
-    "name": "LoanBorrowed",
+    "name": "InterestApplied",
     "type": "event"
   },
   {
     "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "LoanRepaid",
+    "inputs": [],
+    "name": "LendingPoolStopped",
     "type": "event"
   },
   {
@@ -287,6 +333,38 @@
       }
     ],
     "name": "LossReported",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amountForUsers",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amountForFees",
+        "type": "uint256"
+      }
+    ],
+    "name": "OwedFundsRepaid",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "feesPaid",
+        "type": "uint256"
+      }
+    ],
+    "name": "PaidFees",
     "type": "event"
   },
   {
@@ -311,7 +389,7 @@
         "type": "uint256"
       }
     ],
-    "name": "RemovedTracheInterestRateUpdate",
+    "name": "RemovedTrancheInterestRateUpdate",
     "type": "event"
   },
   {
@@ -343,6 +421,109 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "desiredDrawAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "UpdatedDesiredDrawAmount",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "drawRecipient",
+        "type": "address"
+      }
+    ],
+    "name": "UpdatedDrawRecipient",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "tranche",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "UpdatedMaximumDepositAmount",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "tranche",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "UpdatedMinimumDepositAmount",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "percentage",
+        "type": "uint256"
+      }
+    ],
+    "name": "UpdatedMinimumExcessLiquidityPercentage",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "percentage",
+        "type": "uint256"
+      }
+    ],
+    "name": "UpdatedTargetExcessLiquidityPercentage",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256[]",
+        "name": "ratios",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "UpdatedTrancheDesiredRatios",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "address",
         "name": "tranche",
@@ -368,6 +549,19 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "epochDelay",
+        "type": "uint256"
+      }
+    ],
+    "name": "UpdatedTrancheInterestRateChangeEpochDelay",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "address",
         "name": "user",
@@ -383,6 +577,12 @@
         "indexed": false,
         "internalType": "uint256",
         "name": "shares",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "assetAmount",
         "type": "uint256"
       }
     ],
@@ -408,7 +608,13 @@
       }
     ],
     "name": "acceptDeposit",
-    "outputs": [],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "trancheShares",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -468,6 +674,19 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "epoch",
+        "type": "uint256"
+      }
+    ],
+    "name": "applyInterests",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "spender",
         "type": "address"
@@ -490,6 +709,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "availableFunds",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -509,16 +741,16 @@
     "type": "function"
   },
   {
-    "inputs": [
+    "inputs": [],
+    "name": "calculateMaximumLossAmount",
+    "outputs": [
       {
         "internalType": "uint256",
-        "name": "amount",
+        "name": "maximumLossAmount",
         "type": "uint256"
       }
     ],
-    "name": "borrowLoan",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -566,6 +798,32 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "drawFunds",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "feesOwedAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "tranche",
         "type": "address"
@@ -594,31 +852,59 @@
   },
   {
     "inputs": [],
-    "name": "getPendingPool",
+    "name": "getClearingConfig",
     "outputs": [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "drawAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "trancheDesiredRatios",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxExcessPercentage",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "minExcessPercentage",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ClearingConfiguration",
+        "name": "clearingConfig",
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      }
-    ],
-    "name": "getUserBalance",
+    "inputs": [],
+    "name": "getLendingPoolInfo",
     "outputs": [
       {
-        "internalType": "uint256",
+        "components": [
+          {
+            "internalType": "address[]",
+            "name": "trancheAddresses",
+            "type": "address[]"
+          },
+          {
+            "internalType": "address",
+            "name": "pendingPool",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct LendingPoolInfo",
         "name": "",
-        "type": "uint256"
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",
@@ -645,24 +931,38 @@
   },
   {
     "inputs": [],
-    "name": "lendingPoolInfo",
+    "name": "lendingPoolTrancheCount",
     "outputs": [
       {
-        "components": [
-          {
-            "internalType": "address[]",
-            "name": "trancheAddresses",
-            "type": "address[]"
-          },
-          {
-            "internalType": "address",
-            "name": "pendingPoolAddress",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct LendingPoolInfo",
+        "internalType": "uint256",
         "name": "",
-        "type": "tuple"
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "lendingPoolTranches",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "pendingPool",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -703,17 +1003,12 @@
           },
           {
             "internalType": "address",
-            "name": "poolAdmin",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "borrowRecipient",
+            "name": "drawRecipient",
             "type": "address"
           },
           {
             "internalType": "uint256",
-            "name": "totalDesiredLoanAmount",
+            "name": "desiredDrawAmount",
             "type": "uint256"
           },
           {
@@ -728,7 +1023,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "minumumExcessLiquidityPercentage",
+            "name": "minimumExcessLiquidityPercentage",
             "type": "uint256"
           }
         ],
@@ -737,25 +1032,7 @@
         "type": "tuple"
       }
     ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "repaymentAddress",
-        "type": "address"
-      }
-    ],
-    "name": "repayLoan",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -785,6 +1062,19 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "repayOwedFunds",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "lossAmount",
         "type": "uint256"
       },
@@ -806,13 +1096,7 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "firstLossCapitalReceiver",
-        "type": "address"
-      }
-    ],
+    "inputs": [],
     "name": "stop",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -821,6 +1105,49 @@
   {
     "inputs": [],
     "name": "totalSupply",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "tranche",
+        "type": "address"
+      }
+    ],
+    "name": "trancheConfigurationDepositLimits",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "minDepositAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxDepositAmount",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "tranche",
+        "type": "address"
+      }
+    ],
+    "name": "trancheIndex",
     "outputs": [
       {
         "internalType": "uint256",
@@ -887,12 +1214,25 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "desiredDrawAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "updateDesiredDrawAmount",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
-        "name": "borrowRecipient",
+        "name": "drawRecipient",
         "type": "address"
       }
     ],
-    "name": "updateBorrowRecipient",
+    "name": "updateDrawRecipient",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -937,7 +1277,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "minumumExcessLiquidityPercentage",
+        "name": "minimumExcessLiquidityPercentage",
         "type": "uint256"
       }
     ],
@@ -955,19 +1295,6 @@
       }
     ],
     "name": "updateTargetExcessLiquidityPercentage",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "totalDesiredLoanAmount",
-        "type": "uint256"
-      }
-    ],
-    "name": "updateTotalDesiredLoanAmount",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1014,6 +1341,73 @@
     "name": "updateTrancheInterestRateChangeEpochDelay",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "userBalance",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "userOwedAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "drawAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "trancheDesiredRatios",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxExcessPercentage",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "minExcessPercentage",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ClearingConfiguration",
+        "name": "clearingConfig",
+        "type": "tuple"
+      }
+    ],
+    "name": "verifyClearingConfig",
+    "outputs": [],
+    "stateMutability": "view",
     "type": "function"
   },
   {

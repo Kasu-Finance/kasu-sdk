@@ -45,16 +45,16 @@ export class UserLending {
 
     async getUserTotalPendingAndActiveDepositedAmount(
         user: string,
-    ): Promise<BigNumber> {
-        return await this._userManagerAbi.getUserTotalPendingAndActiveDepositedAmount(
+    ): Promise<[BigNumber, BigNumber]> {
+        return await this._userManagerAbi.userTotalPendingAndActiveDepositedAmount(
             user,
         );
     }
 
     async getUserTotalPendingAndActiveDepositedAmountForCurrentEpoch(
         user: string,
-    ): Promise<BigNumber> {
-        return await this._userManagerAbi.getUserTotalPendingAndActiveDepositedAmountForCurrentEpoch(
+    ): Promise<[BigNumber, BigNumber]> {
+        return await this._userManagerAbi.userTotalPendingAndActiveDepositedAmountForCurrentEpoch(
             user,
         );
     }
@@ -200,7 +200,7 @@ export class UserLending {
             poolId,
             this._signerOrProvider
         )
-        const balance = await lendingPool.getUserBalance(user)
+        const balance = await lendingPool.userBalance(user)
         return {
             userId: user,
             address: poolId,
@@ -215,7 +215,7 @@ export class UserLending {
             this._signerOrProvider
         );
         const userDetailsSubgraph: LendingPoolUserDetailsSubgraph = await this._graph.request(lendingPoolUserDetailsQuery, { userAddress: user })
-        const balance = await tranche.getUserActiveAssets(user);
+        const balance = await tranche['balanceOf(address)'](user);
         return {
             userId: user,
             address: trancheId,
