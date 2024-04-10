@@ -28,6 +28,10 @@ jobs:
           string=$IMAGE_TAG
           replaced=${string//v/}
           echo ::set-output name=VERSION::$replaced
+      - name: Replace version inside package.json
+        env:
+          VERSION: ${{ steps.replaced_version.outputs.VERSION }}
+        run: bash versioner.sh $VERSION
 
       - uses: actions/setup-node@v3
         with:
