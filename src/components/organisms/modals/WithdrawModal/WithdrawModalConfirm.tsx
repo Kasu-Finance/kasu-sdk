@@ -32,7 +32,7 @@ const ConfirmContent: React.FC<ConfirmContentProps> = ({ poolData }) => {
         {t('lending.withdraw.confirmStep.withdrawInfo')}
       </Typography>
       <Typography variant='subtitle2'>
-        <b>• {amount} KSU •</b> {t('lending.withdraw.confirmStep.amountLabel')}
+        <b>• {amount} USDC •</b> {t('lending.withdraw.confirmStep.amountLabel')}
       </Typography>
 
       {/* Pool and Tranche Information */}
@@ -48,7 +48,7 @@ const ConfirmContent: React.FC<ConfirmContentProps> = ({ poolData }) => {
 
       {/*Token amount and User Address */}
       <Typography variant='subtitle2'>
-        <b>• {amount} KSU •</b>{' '}
+        <b>• {amount} USDC •</b>{' '}
         {t('lending.withdraw.confirmStep.depositedLabel')}
         <b style={{ textTransform: 'uppercase' }}> {userAddress}</b>
       </Typography>

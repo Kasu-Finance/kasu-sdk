@@ -4,7 +4,6 @@ import { useState } from 'react'
 
 import useToastState from '@/hooks/context/useToastState'
 import useKasuSDK from '@/hooks/useKasuSDK'
-import useGenerateKycSignature from '@/hooks/web3/useGenerateKycSignature'
 import useHandleError from '@/hooks/web3/useHandleError'
 
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
@@ -17,7 +16,6 @@ const useWithdrawRequest = () => {
 
   const { account } = useWeb3React()
   const handleError = useHandleError()
-  const { kycData } = useGenerateKycSignature()
   const { setToast, removeToast } = useToastState()
 
   const requestWithdrawal = async (
@@ -43,10 +41,6 @@ const useWithdrawRequest = () => {
         message: ACTION_MESSAGES[ActionStatus.PROCESSING],
         isClosable: false,
       })
-
-      if (!kycData) {
-        throw new Error('RequestWithdrawal:: Error generating signature')
-      }
 
       let txResponse
       if (options?.isWithdrawMax) {

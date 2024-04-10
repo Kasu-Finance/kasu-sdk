@@ -8,12 +8,12 @@ export const TOKENS: Record<string, Token> = {
   KSU: {
     symbol: 'KSU',
     address: '...',
-    decimals: 6,
+    decimals: 18,
   },
   USDC: {
     symbol: 'USDC',
     address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
-    decimals: 2,
+    decimals: 6,
   },
   USDT: {
     symbol: 'USDT',

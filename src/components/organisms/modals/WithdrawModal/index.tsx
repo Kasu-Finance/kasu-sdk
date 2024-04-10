@@ -84,7 +84,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
       await requestWithdrawal(
         poolData.id,
         selectedTranche,
-        parseUnits(amount, 2).toString(),
+        parseUnits(amount, TOKENS.USDC.decimals),
         { isWithdrawMax: isMaxWithdrawal }
       )
 
