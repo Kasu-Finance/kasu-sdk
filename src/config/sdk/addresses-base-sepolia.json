@@ -1,89 +1,99 @@
 {
   "network": "base-sepolia",
-  "startBlock": 8139559,
+  "startBlock": 8458076,
   "KSU": {
-    "address": "0x072ea077fe9fE41d31b4a04481c3454585B35b99",
-    "implementation": "0x1D5793e3532AB44358676B79b6a1916135D74F06",
-    "startBlock": 8139559
+    "address": "0xa0f698Feb9Bc2BeA6E85eb071D5E3F59dc5bC56b",
+    "implementation": "0x72f3497B5602bAcB0c3b92AB12D3bd44C6daFEa2",
+    "startBlock": 8458076
   },
   "USDC": {
-    "address": "0x08C1D3dF90c1d448fa4f84F0DFe9Ec8647c012a8",
-    "implementation": "0x811ADCE63d82F46944c96d5519a6Ab798FF3EaB6",
-    "startBlock": 8139559
+    "address": "0xB3B34eFB7e6d2e261B1246Abd9B5732FeF4c8B6C",
+    "implementation": "0xA388Ea8AD1ED0a48c754453ad6DF0D9533f27B6A",
+    "startBlock": 8458076
   },
   "KasuController": {
-    "address": "0xACAc29eBC8389d943325cdaE354D22088fdee207",
-    "implementation": "0xE10E9019c689dae7361eb24F978268B2413c8B5e",
-    "startBlock": 8139559
+    "address": "0x634628c46F551682c67B77D81C145f32a7060df6",
+    "implementation": "0xD60d11d46AF9B210e2155d8EdFF994fE66b40cDE",
+    "startBlock": 8458076
   },
   "KSULocking": {
-    "address": "0xD5cf0dd8de3Cb13ACF1297e69bDcf26cEf970633",
-    "implementation": "0x89115787FaEB8A54127811b2e17EA3d38359eB90",
-    "startBlock": 8139559
+    "address": "0x529A81c11ab6176c5E88670d293BB771800066a2",
+    "implementation": "0x4C0F1306Acab98b4C45F279d42A415f5848375a0",
+    "startBlock": 8458076
   },
   "KsuPrice": {
-    "address": "0x95697C4e481B6205d6DC25AcA7CD4B4a2Fbf8d2f",
-    "implementation": "0x3e14473F0F4D093FE2DE8d41cF70851437404692",
-    "startBlock": 8139559
+    "address": "0xcb05D96bFF8263C089b34EBD8aC6C52B99369C8c",
+    "implementation": "0x285F00f3B1C7358DED025923F6d456aD0316da20",
+    "startBlock": 8458076
   },
   "SystemVariables": {
-    "address": "0x25f2204db8139198825073B77410531147793609",
-    "implementation": "0x7C66d0aC70331f0570dDa4370456Cc73039303b0",
-    "startBlock": 8139559
+    "address": "0xB174a3240B23e595e90bC2736A5b8ec674Cba73A",
+    "implementation": "0x63C564654Ef2cAAFe24228F00D546D7EFc20b657",
+    "startBlock": 8458076
   },
   "FeeManager": {
-    "address": "0xB3Abca9cAB9f5d8130971485a7239Fc16B577acE",
-    "implementation": "0x97742886a22283DE82A7b2851AeDD398a33ffBD2",
-    "startBlock": 8139559
+    "address": "0xcfCf098cA12C74206E5eEe08479522B25627C113",
+    "implementation": "0x51a00385A3e6D43FE4d90B7dA23588F0499bEcfd",
+    "startBlock": 8458076
+  },
+  "UserLoyaltyRewards": {
+    "address": "0x3A5000BF528DCf4353f3D86a2FD630a862057Bb9",
+    "implementation": "0xeAfC1257979DdD3b2659214dd9F5d45c66cBCF50",
+    "startBlock": 8458076
   },
   "UserManager": {
-    "address": "0xcb6A1c7a5eeFe6559F34BAb78803907A43Fb4E10",
-    "implementation": "0x98EC20aE3f69D440C62aB2dc2234489c6cF38780",
-    "startBlock": 8139559
+    "address": "0xA788e9223fDd7c9Db91Ef133BbeB73515c174773",
+    "implementation": "0xa7700De9ed2222bc6A6a90124c2147F4e3352DbD",
+    "startBlock": 8458076
+  },
+  "Swapper": {
+    "address": "0x44205B18610bF6aeFE51562651590419638F59be",
+    "implementation": "0xCD91733e04650F431cB1Ecd8946bad403a2341b2",
+    "startBlock": 8458076
   },
   "LendingPoolManager": {
-    "address": "0x01F44d0692D051Fbb3Cb4701e42EBd37b5b361BD",
-    "implementation": "0xeF3bCAfE4176AF718BB4235B43f422F1372E1145",
-    "startBlock": 8139559
+    "address": "0xc074Aaf2565aae18db2c7498ee1387610a809F40",
+    "implementation": "0x6548a8B8eF923Faa0B8E45F4aa7aAd7C6c2F0C21",
+    "startBlock": 8458076
   },
   "KasuAllowList": {
-    "address": "0x4040839f6Da44AeeeD6B646217Ba360D9966E02b",
-    "implementation": "0x7CF1CeFe5b8C4f8cd8915F7B37b1B64B698c6f91",
-    "startBlock": 8139559
+    "address": "0xaE94F9D187c9eA649ADd4966340831F7cc62B69c",
+    "implementation": "0x255A3220669e7837F059038f026B3641B4DD6482",
+    "startBlock": 8458076
   },
   "ClearingCoordinator": {
-    "address": "0x456a5D46efE9276721afdCF79c92414049333C94",
-    "implementation": "0xe0b197c2D04C71b856E7c3690e35cd2472e41668",
-    "startBlock": 8139559
+    "address": "0x335532BF8b04f57e4F8944145077DBA5c1c9b61d",
+    "implementation": "0x59919DCF0E28B25F564f151ab8c9A8b6836bC490",
+    "startBlock": 8458076
   },
   "AcceptedRequestsCalculation": {
-    "address": "0xC24E019084B6b8f44Ba68c990eb7D83d225b6C1C",
-    "implementation": "0x25a842c5fDe96fc799Dc6A0e7Bf7DE4F191e2212",
-    "startBlock": 8139559
-  },
-  "PendingPool_Beacon": {
-    "address": "0x3d8730c0d9d60085F60aE85cCD32230EFc63D023",
-    "implementation": "0xae9EAbebCf3eD4dc50aF46E88a22cd91Fca47733",
-    "startBlock": 8139559
+    "address": "0x38A9CA6d41c935469a25aBadB8ad3663fea92811",
+    "implementation": "0x1b752BE7bd958871829C15B2AcAAf8F15bAB9f76",
+    "startBlock": 8458076
   },
   "LendingPool_Beacon": {
-    "address": "0x90ae769982e61E1e18b5a5BB292AD13B44CD90c1",
-    "implementation": "0xbe1dF346087c00448c1d582E2a9Bb2387265aBae",
-    "startBlock": 8139559
+    "address": "0x5E586942f18F8A1Def60740698b4DCC9F343C257",
+    "implementation": "0x027c577b68689990dD6c82a98B1D6bd0BcAfa46A",
+    "startBlock": 8458076
+  },
+  "PendingPool_Beacon": {
+    "address": "0x2b6b1Ffb167670415AF3BA6112Fe0A7AA411E28C",
+    "implementation": "0xD569F31C1e8924217BD9f5043E6457766fE82929",
+    "startBlock": 8458076
   },
   "LendingPoolTranche_Beacon": {
-    "address": "0x731ec81c0b40f3c05459a7816e98EdD42Fe9f5Fd",
-    "implementation": "0x7cD4cdB1828E8Fa8c5e83ceB3f8d8B8576C57f80",
-    "startBlock": 8139559
+    "address": "0x5a57d26097492D3C31454617e9Da9d630AF8dF9C",
+    "implementation": "0x8F6a77B538B8997A5c04c52e2Bf98A92a2FAC65F",
+    "startBlock": 8458076
   },
   "LendingPoolFactory": {
-    "address": "0xd39ACC9232E9A6d4b6e0c9E7177533D9Be0Ee41E",
-    "implementation": "0xAe5C0AF8f135d1961B7960f8ad42B4797aDEF54c",
-    "startBlock": 8139559
+    "address": "0x7A5E39ad3A098772BC1B016401ce784e194dD41B",
+    "implementation": "0x636Fc1F61620F41BD88ef6F71F7D8900848c3Cec",
+    "startBlock": 8458076
   },
   "KSULockBonus": {
-    "address": "0xF2CD03B2ceDf8de92F1760680ec57609613716e8",
-    "implementation": "0x4806755e058Ea6d910523F9AC0ee11d92EFe5e04",
-    "startBlock": 8139559
+    "address": "0xBBfFd5F744156FFc526df12F5e09dC7b208Be740",
+    "implementation": "0x69f9eb4179F0ba4Eca978776f6196173e035869A",
+    "startBlock": 8458076
   }
 }
