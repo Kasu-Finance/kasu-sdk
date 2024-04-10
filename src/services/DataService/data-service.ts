@@ -85,7 +85,7 @@ export class DataService {
                 poolName: lendingPoolSubgraph.name,
                 totalValueLocked: lendingPoolSubgraph.balance,
                 loansUnderManagement: lendingPoolDirectus.loansUnderManagement,
-                yieldEarned: lendingPoolSubgraph.totalYieldAmount,
+                yieldEarned: lendingPoolSubgraph.totalUserYieldAmount,
                 poolCapacity: "placeholder", // need formula for calculation
                 activeLoans: lendingPoolDirectus.activeLoans,
                 tranches: tranches,
