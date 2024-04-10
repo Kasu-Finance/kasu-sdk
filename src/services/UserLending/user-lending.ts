@@ -18,7 +18,7 @@ import {
 import { SdkConfig } from '../../sdk-config';
 
 import { LendingPoolUserDetailsSubgraph, UserRequestsSubgraph } from './subgraph-types';
-import { UserBalance, UserRequest } from './types';
+import { UserPoolBalance, UserRequest, UserTrancheBalance } from './types';
 import { lendingPoolUserDetailsQuery, userRequestsQuery } from './user-lending.query';
 
 export class UserLending {
@@ -195,7 +195,7 @@ export class UserLending {
         return subgraphResult.userRequests;
     }
 
-    async getUserPoolBalance(user: string, poolId: string): Promise<UserBalance> {
+    async getUserPoolBalance(user: string, poolId: string): Promise<UserPoolBalance> {
         const lendingPool = ILendingPoolAbi__factory.connect(
             poolId,
             this._signerOrProvider
@@ -209,18 +209,19 @@ export class UserLending {
         }
     }
 
-    async getUserTrancheBalance(user: string, trancheId: string): Promise<UserBalance> {
+    async getUserTrancheBalance(user: string, trancheId: string): Promise<UserTrancheBalance> {
         const tranche = ILendingPoolTrancheAbi__factory.connect(
             trancheId,
             this._signerOrProvider
         );
         const userDetailsSubgraph: LendingPoolUserDetailsSubgraph = await this._graph.request(lendingPoolUserDetailsQuery, { userAddress: user })
-        const balance = await tranche['balanceOf(address)'](user);
+        const balance = await tranche.userActiveAssets(user);
         return {
             userId: user,
             address: trancheId,
             yieldEarned: 0, // TODO do this calculation
             balance: balance,
+            availableToWithdraw: await tranche.maxWithdraw(user)
         }
     }
 }
