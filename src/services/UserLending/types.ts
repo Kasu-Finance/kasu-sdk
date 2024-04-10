@@ -62,7 +62,15 @@ export interface UserRequest {
         userRequestEventsCount: string;
 }
 
-export interface UserBalance {
+export interface UserTrancheBalance {
+    userId: string;
+    address: string;
+    yieldEarned: number;
+    balance: BigNumber;
+    availableToWithdraw: BigNumber;
+}
+
+export interface UserPoolBalance {
     userId: string;
     address: string;
     yieldEarned: number;
