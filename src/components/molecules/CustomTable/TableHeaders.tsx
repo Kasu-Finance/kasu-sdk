@@ -8,19 +8,27 @@ import {
   TableSortLabel,
   TableSortLabelProps,
   Theme,
+  Typography,
+  TypographyProps,
 } from '@mui/material'
 import React, { ReactNode, useCallback, useMemo } from 'react'
 
 import { Sort } from '@/components/molecules/CustomTable'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  background: alpha(theme.palette.primary.main, 0.08),
+  background: alpha(theme.palette.primary.main, 0.05),
 }))
+
+type LabelPart = {
+  text: string
+  props?: TypographyProps
+}
 
 export type CustomTableHeader<T> = {
   label: ReactNode
   value: keyof T
   disableSort?: boolean
+  extraLabel?: LabelPart
 }
 
 type TableHeadersProps<U> = {
@@ -54,14 +62,28 @@ const TableHeaders = <U,>({
         sx={{ textAlign: index === 0 ? 'left' : 'right' }}
       >
         {header.disableSort ? (
-          header.label
+          <>
+            <span>{header.label}</span>
+            {header.extraLabel && (
+              <Typography {...header.extraLabel.props}>
+                {header.extraLabel.text}
+              </Typography>
+            )}
+          </>
         ) : (
           <SortLabelComp
             active={isActive}
             direction={isActive ? sort.direction : 'desc'}
             onClick={() => handleSortChange(header.value)}
           >
-            {header.label}
+            <>
+              <span>{header.label}</span>
+              {header.extraLabel && (
+                <Typography {...header.extraLabel.props}>
+                  {header.extraLabel.text}
+                </Typography>
+              )}
+            </>
           </SortLabelComp>
         )}
       </TableCellComp>

@@ -1,4 +1,5 @@
 import { Card, Typography } from '@mui/material'
+import { FinancialReportingDocumentsDirectus } from 'kasu-sdk/src/services/DataService/directus-types'
 import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
@@ -7,47 +8,48 @@ import CustomTable, { Sort } from '@/components/molecules/CustomTable'
 import { CustomTableHeader } from '@/components/molecules/CustomTable/TableHeaders'
 import ReportingTableRow from '@/components/molecules/risk/ReportingTable/ReportingTableRow'
 
-import { reportingMock } from '@/app/mock-data/risk-data'
-import { ReportingTableKeys } from '@/constants/riskReporting'
-
-export type ReportingData = {
-  category: string
-  description: string
-  uploadDate: number
-  version: string
-  actionUrl: string
-}
-
 const handleSort = (
-  _a: ReportingData,
-  _b: ReportingData,
-  _sort: Sort<ReportingData>
+  _a: FinancialReportingDocumentsDirectus,
+  _b: FinancialReportingDocumentsDirectus,
+  _sort: Sort<FinancialReportingDocumentsDirectus>
 ): number => {
   return 0
 }
 
-const ReportingTable: React.FC = () => {
+interface ReportingTableProps {
+  data: FinancialReportingDocumentsDirectus[]
+}
+
+const ReportingTable: React.FC<ReportingTableProps> = ({ data }) => {
   const { t } = useTranslation()
 
-  const headers: CustomTableHeader<ReportingData>[] = [
+  const headers: CustomTableHeader<FinancialReportingDocumentsDirectus>[] = [
     {
       label: t('risk.reporting.headers.column-1'),
-      value: ReportingTableKeys.CATEGORY,
+      extraLabel: {
+        text: t('risk.reporting.headers.column-1-suffix'),
+        props: {
+          variant: 'caption',
+          component: 'p',
+          sx: { fontSize: 12, mt: -0.3 },
+        },
+      },
+      value: 'name',
       disableSort: true,
     },
     {
       label: t('risk.reporting.headers.column-2'),
-      value: ReportingTableKeys.UPLOAD_DATE,
+      value: 'uploadTimestamp',
       disableSort: true,
     },
     {
       label: t('risk.reporting.headers.column-3'),
-      value: ReportingTableKeys.VERSION,
+      value: 'version',
       disableSort: true,
     },
     {
       label: t('risk.reporting.headers.column-4'),
-      value: ReportingTableKeys.ACTION_URL,
+      value: 'documentUrl',
       disableSort: true,
     },
   ]
@@ -59,9 +61,9 @@ const ReportingTable: React.FC = () => {
       </Typography>
       <CustomTable
         headers={headers}
-        data={reportingMock}
+        data={data}
         handleSort={handleSort}
-        defaultSortKey={ReportingTableKeys.CATEGORY}
+        defaultSortKey='name'
         headersStyle={{ '& > *': { pb: 1, pt: 1.5 } }}
       >
         {(sortedData) =>
