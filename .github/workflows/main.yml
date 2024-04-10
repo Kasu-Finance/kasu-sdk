@@ -1,0 +1,42 @@
+name: Workflow-publish
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+-?[a-zA-Z0-9]*'
+
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
+      - name: Replace version string
+        id: replaced_version
+        env:
+          IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
+        run: |
+          string=$IMAGE_TAG
+          replaced=${string//v/}
+          echo ::set-output name=VERSION::$replaced
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: https://npm.pkg.github.com/
+          scope: '@solidant'
+      - run: npm install
+      - run: npm run build-tc
+      - run: npm run build
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
