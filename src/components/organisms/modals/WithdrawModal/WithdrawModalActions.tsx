@@ -3,25 +3,31 @@ import EditIcon from '@mui/icons-material/Edit'
 import { Button, DialogActions, useTheme } from '@mui/material'
 import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
 import { useRouter } from 'next/navigation'
+import { useMemo } from 'react'
 
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import useTranslation from '@/hooks/useTranslation'
 import useApproveToken from '@/hooks/web3/useApproveToken'
 
-import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
+import {
+  ModalStatus,
+  ModalStatusAction,
+} from '@/context/modalStatus/modalStatus.types'
 
 import { Routes } from '@/config/routes'
 import sdkConfig, { USDC } from '@/config/sdk'
 
 interface WithdrawModalActionsProps {
   poolData: PoolOverview
+  trancheBalance: string
   onModalClose: () => void
   onSubmitApprove: () => void
 }
 
 const WithdrawModalActions: React.FC<WithdrawModalActionsProps> = ({
   poolData,
+  trancheBalance,
   onModalClose,
   onSubmitApprove,
 }) => {
@@ -38,7 +44,12 @@ const WithdrawModalActions: React.FC<WithdrawModalActionsProps> = ({
     amount
   )
 
-  const disabledButton = Boolean(!amount || modalStatus.type === 'error')
+  const disabledButton = useMemo(
+    () =>
+      Boolean(!amount || modalStatus.type === ModalStatus.ERROR) ||
+      parseFloat(trancheBalance) === 0,
+    [amount, modalStatus.type, trancheBalance]
+  )
 
   const onSubmitRequest = () => {
     setModalStatusAction(ModalStatusAction.APPROVE)

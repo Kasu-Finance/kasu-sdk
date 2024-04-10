@@ -14,16 +14,18 @@ import useTranslation from '@/hooks/useTranslation'
 
 import { HexString } from '@/types/lending'
 
-interface TrancheSelectProps {
+interface WithdrawTrancheSelectProps {
   poolData: PoolOverview
 }
 
-const TrancheSelect: React.FC<TrancheSelectProps> = ({ poolData }) => {
+const WithdrawTrancheSelect: React.FC<WithdrawTrancheSelectProps> = ({
+  poolData,
+}) => {
   const { t } = useTranslation()
   const { selectedTranche, setSelectedTranche } = useWithdrawModalState()
 
-  const trancheSelected = useMemo(
-    () => poolData?.tranches?.find((_) => _.id === selectedTranche),
+  const getUserTranche = useMemo(
+    () => poolData?.tranches?.find((tranche) => tranche.id === selectedTranche),
     [poolData?.tranches, selectedTranche]
   )
 
@@ -50,7 +52,7 @@ const TrancheSelect: React.FC<TrancheSelectProps> = ({ poolData }) => {
           size='small'
           id='tranche'
           labelId='tranche-select-label'
-          value={trancheSelected?.name || ''}
+          value={getUserTranche?.name || ''}
           onChange={handleTrancheChange}
           label={t('lending.withdraw.dropdown.label')}
         >
@@ -65,4 +67,4 @@ const TrancheSelect: React.FC<TrancheSelectProps> = ({ poolData }) => {
   )
 }
 
-export default TrancheSelect
+export default WithdrawTrancheSelect

@@ -18,7 +18,6 @@ export enum ModalsKeys {
   LOCK = 'lockModal',
   UNLOCK = 'unlockModal',
   WITHDRAW = 'withdrawModal',
-  TRANSACTION_PROCESSING = 'transactionProcessingModal',
   DEPOSIT = 'depositModal',
   KYC = 'kycModal',
 }
@@ -42,7 +41,7 @@ export type Modals = {
 
 export type ModalWithProps = Extract<
   keyof Modals,
-  'unlockModal' | 'depositModal' | 'kycModal' | 'withdrawModal'
+  ModalsKeys.UNLOCK | ModalsKeys.DEPOSIT | ModalsKeys.KYC | ModalsKeys.WITHDRAW
 >
 
 export type OpenModalWithProps<T extends keyof Modals> = Omit<

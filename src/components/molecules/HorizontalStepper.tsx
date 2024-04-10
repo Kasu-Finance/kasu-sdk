@@ -1,37 +1,41 @@
-import Box from '@mui/material/Box'
+import Divider from '@mui/material/Divider'
 import Step from '@mui/material/Step'
 import StepLabel from '@mui/material/StepLabel'
 import Stepper from '@mui/material/Stepper'
+import React from 'react'
 
 interface HorizontalStepperProps {
   steps: string[]
-  activeStep?: number
-  successColor?: string
+  activeStep: number
 }
 
 const HorizontalStepper: React.FC<HorizontalStepperProps> = ({
   steps,
-  activeStep = 0,
-  successColor = '',
+  activeStep,
 }) => {
   return (
-    <Box sx={{ width: '100%' }}>
-      <Stepper
-        activeStep={activeStep}
-        alternativeLabel
-        sx={(theme) => ({
-          '& .MuiStepIcon-root.Mui-completed': {
-            color: successColor || theme.palette.success.main,
-          },
-        })}
-      >
-        {steps.map((label, index) => (
-          <Step key={index}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-    </Box>
+    <Stepper
+      activeStep={activeStep}
+      alternativeLabel
+      connector={null}
+      sx={(theme) => ({
+        display: 'grid',
+        gridTemplateColumns:
+          'max-content minmax(0,1fr) max-content minmax(0,1fr) max-content',
+        '& .MuiStepIcon-root.Mui-completed': {
+          color: theme.palette.success.main,
+        },
+      })}
+    >
+      {steps.map((label, index) => (
+        <Step sx={{ display: 'contents' }} key={label}>
+          {index !== 0 && (
+            <Divider sx={{ mt: 1.5, borderColor: 'rgba(189, 189, 189, 1)' }} />
+          )}
+          <StepLabel>{label}</StepLabel>
+        </Step>
+      ))}
+    </Stepper>
   )
 }
 

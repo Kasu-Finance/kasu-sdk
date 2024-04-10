@@ -4,7 +4,13 @@ export enum ModalStatusAction {
   COMPLETED = 'COMPLETED',
   REQUEST = 0,
   APPROVE = 1,
-  CONFIRM = 3,
+  CONFIRM = 2,
+}
+
+export enum ModalStatus {
+  SUCCESS = 'success',
+  ERROR = 'error',
+  FOCUSED = 'focused',
 }
 
 export type ModalStatusState =

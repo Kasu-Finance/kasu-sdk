@@ -19,13 +19,14 @@ import HorizontalStepper from '@/components/molecules/HorizontalStepper'
 import WithdrawModalActions from '@/components/organisms/modals/WithdrawModal/WithdrawModalActions'
 import WithdrawModalApprove from '@/components/organisms/modals/WithdrawModal/WithdrawModalApprove'
 import WithdrawModalConfirm from '@/components/organisms/modals/WithdrawModal/WithdrawModalConfirm'
-import WithdrawModalMetrics from '@/components/organisms/modals/WithdrawModal/WithdrawModalMetrics'
 import WithdrawModalRequest from '@/components/organisms/modals/WithdrawModal/WithdrawModalRequest'
+import WithdrawModalMetrics from '@/components/organisms/modals/WithdrawModal/WithdrawModalRequest/WithdrawModalMetrics'
 
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
+import config from '@/config'
 import { Routes } from '@/config/routes'
-import config from '@/constants/config'
+import { TOKENS } from '@/constants/tokens'
 
 interface WithdrawModalProps {
   handleClose: () => void
@@ -51,14 +52,12 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
 
   const poolBalance = useMemo(() => {
     if (!userPoolBalance) return '0'
-    const decimals = 6
-    return formatUnits(userPoolBalance?.balance || '0', decimals)
+    return formatUnits(userPoolBalance?.balance || '0', TOKENS.USDC.decimals)
   }, [userPoolBalance])
 
   const trancheBalance = useMemo(() => {
     if (!poolTranche) return '0'
-    const decimals = 6
-    return formatUnits(poolTranche?.balance || '0', decimals)
+    return formatUnits(poolTranche?.balance || '0', TOKENS.USDC.decimals)
   }, [poolTranche])
 
   const isMultiTranche = useMemo(
@@ -85,7 +84,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
       await requestWithdrawal(
         poolData.id,
         selectedTranche,
-        parseUnits(amount, 6).toString(),
+        parseUnits(amount, 2).toString(),
         { isWithdrawMax: isMaxWithdrawal }
       )
 
@@ -156,6 +155,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
       <DialogActions>
         <WithdrawModalActions
           poolData={poolData}
+          trancheBalance={trancheBalance}
           onModalClose={onModalClose}
           onSubmitApprove={onSubmitApprove}
         />

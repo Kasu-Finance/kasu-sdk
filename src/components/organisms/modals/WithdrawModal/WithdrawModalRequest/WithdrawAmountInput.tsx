@@ -1,11 +1,13 @@
 import LogoutIcon from '@mui/icons-material/Logout'
 import { Box, Typography, useTheme } from '@mui/material'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useTranslation from '@/hooks/useTranslation'
 
 import NumericalInput from '@/components/molecules/NumericalInput'
+
+import { ModalStatus } from '@/context/modalStatus/modalStatus.types'
 
 import { toBigNumber } from '@/utils'
 
@@ -25,13 +27,11 @@ const WithdrawAmountInput: React.FC<WithdrawAmountInputProps> = ({
   const { modalStatus, setModalStatus } = useModalStatusState()
   const [focused, setFocused] = useState(false)
 
-  const showSuccess = !focused && modalStatus.type === 'success'
-
   const validateAmount = useCallback(
     (input: string) => {
       if (input && toBigNumber(input).gt(toBigNumber(balance))) {
         setModalStatus({
-          type: 'error',
+          type: ModalStatus.ERROR,
           errorMessage: t('lending.withdraw.errors.invalidCriteria'),
         })
         return false
@@ -64,46 +64,43 @@ const WithdrawAmountInput: React.FC<WithdrawAmountInputProps> = ({
   const handleFocusState = (state: boolean) => {
     if (state) {
       setFocused(true)
-      setModalStatus({ type: 'focused' })
+      setModalStatus({ type: ModalStatus.FOCUSED })
     } else {
       validateAmount(amount)
       setFocused(false)
     }
   }
 
-  const errorMsg = modalStatus.type === 'error' ? modalStatus.errorMessage : ''
+  const showSuccess = !focused && modalStatus.type === ModalStatus.SUCCESS
+  const errorMsg =
+    modalStatus.type === ModalStatus.ERROR ? modalStatus.errorMessage : ''
 
-  const numericalInputRootProps = useMemo(
-    () => ({
-      sx: () => ({
-        mt: 1,
-        '& .MuiOutlinedInput-root': {
-          fieldset: {
-            borderColor: showSuccess ? theme.palette.success.main : '',
-          },
-        },
-        '& .MuiInputLabel-root': {
-          color: showSuccess ? theme.palette.success.main : '',
-        },
-        '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-          borderColor: showSuccess ? theme.palette.success.main : '',
-        },
-        '& .MuiInputBase-input': {
-          pl: 1,
-        },
-      }),
-      error: !!errorMsg,
-      onFocus: () => handleFocusState(true),
-      onBlur: () => handleFocusState(false),
-      InputProps: {
-        startAdornment: (
-          <LogoutIcon sx={{ color: theme.palette.icon.primary }} />
-        ),
-        endAdornment: 'USDC',
+  const inputStyles = {
+    '& .MuiOutlinedInput-root': {
+      fieldset: {
+        borderColor: showSuccess ? theme.palette.success.main : '',
       },
-    }),
-    [errorMsg, showSuccess, theme, handleFocusState]
-  )
+    },
+    '& .MuiInputLabel-root': {
+      color: showSuccess ? theme.palette.success.main : '',
+    },
+    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: showSuccess ? theme.palette.success.main : '',
+    },
+    '& .MuiInputBase-input': {
+      pl: 1,
+    },
+  }
+  const numericalInputRootProps = {
+    sx: inputStyles,
+    error: !!errorMsg,
+    onFocus: () => handleFocusState(true),
+    onBlur: () => handleFocusState(false),
+    InputProps: {
+      startAdornment: <LogoutIcon sx={{ color: theme.palette.icon.primary }} />,
+      endAdornment: 'USDC',
+    },
+  }
 
   return (
     <Box>

@@ -8,6 +8,8 @@ import ModalStatusState from '@/context/modalStatus/modalStatus.provider'
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 import WithdrawModalProvider from '@/context/withdrawModal/withdrawModal.provider'
 
+import { Tranche, ZERO_ADDRESS } from '@/constants/pool'
+
 import { HexString } from '@/types/lending'
 
 interface WithdrawModalWrapperProps {
@@ -22,14 +24,14 @@ const WithdrawModalWrapper: React.FC<WithdrawModalWrapperProps> = ({
   const defaultTrancheId = useMemo(() => {
     const tranches = modal.withdrawModal.poolData.tranches
 
-    if (tranches?.length === 0) return '0x0'
+    if (tranches?.length === 0) return ZERO_ADDRESS
 
     const defaultTranche =
       tranches.find((tranche) =>
-        tranche.name.toLowerCase().includes('senior')
+        tranche.name.toLowerCase().includes(Tranche.SENIOR)
       ) ||
       tranches?.find((tranche) =>
-        tranche.name.toLowerCase().includes('mezzanine')
+        tranche.name.toLowerCase().includes(Tranche.MEZZANINE)
       ) ||
       tranches?.[0]
 

@@ -19,8 +19,8 @@ import DepositModalStepper from '@/components/organisms/modals/DepositModal/Depo
 
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
+import config from '@/config'
 import sdkConfig, { USDC } from '@/config/sdk'
-import config from '@/constants/config'
 
 const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { t } = useTranslation()

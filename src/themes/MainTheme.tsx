@@ -153,7 +153,7 @@ export const theme = createTheme({
         background-color: #1976D20A;
       }
       .light-error-background {
-        background-color: #d32f2f0a;
+        background-color: rgba(211, 47, 47, 0.04);
       }
     `,
     },

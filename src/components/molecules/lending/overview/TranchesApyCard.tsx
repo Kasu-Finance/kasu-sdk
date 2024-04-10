@@ -32,6 +32,8 @@ import {
 
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
 
+import { TOKENS } from '@/constants/tokens'
+
 const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
   const divRef = useRef<HTMLDivElement>(null)
   const { t } = useTranslation()
@@ -42,8 +44,7 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
 
   const poolBalance = useMemo(() => {
     if (!userPoolBalance) return '0'
-    const decimals = 6
-    return formatUnits(userPoolBalance?.balance || '0', decimals)
+    return formatUnits(userPoolBalance?.balance || '0', TOKENS.USDC.decimals)
   }, [userPoolBalance])
 
   const { isSticky } = useIsSticky({
