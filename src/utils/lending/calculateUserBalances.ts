@@ -1,5 +1,7 @@
 import { BigNumber, ethers } from 'ethers'
 
+import { ZERO_ADDRESS } from '@/constants/pool'
+
 interface Tranche {
   id: string
 }
@@ -52,5 +54,5 @@ export const calculateTotalInvested = (tranches: TrancheWithUserBalance[]) => {
     }
 
     return total
-  }, ethers.BigNumber.from('0x00'))
+  }, ethers.BigNumber.from(ZERO_ADDRESS))
 }

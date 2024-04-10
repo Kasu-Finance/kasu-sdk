@@ -20,6 +20,7 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { Routes } from '@/config/routes'
 import { COLS } from '@/constants'
+import { ZERO_ADDRESS } from '@/constants/pool'
 import {
   calculateTotalInvested,
   calculateTotalYieldEarned,
@@ -35,7 +36,7 @@ const InvestmentPortfolio: React.FC<{
   const tranchesId = tranches.map((tranche) => tranche.id)
   let tranchesWithBalances = null
   let totalYieldEarned = 0
-  let totalInvestment = BigNumber.from('0x00')
+  let totalInvestment = BigNumber.from(ZERO_ADDRESS)
 
   const tranchesTotal = getAverageApyAndTotal(tranches)
   const { amount, isLoading } = useGetUserBalance(tranchesId)
@@ -130,7 +131,7 @@ const InvestmentPortfolio: React.FC<{
           tranchesWithBalances.map((tranche, index) => {
             const totalInvested = tranche?.balance
               ? BigNumber.from(tranche.balance._hex)
-              : BigNumber.from('0x00')
+              : BigNumber.from(ZERO_ADDRESS)
 
             return (
               <Grid item xs={COLS / tranchesWithBalances.length} key={index}>
