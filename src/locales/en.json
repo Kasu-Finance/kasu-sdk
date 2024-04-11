@@ -269,7 +269,8 @@
         "depositedLabel": "to be deposited to the wallet address"
       },
       "errors": {
-        "invalidCriteria": "The value entered does not meet the criteria required for this field."
+        "invalidCriteria": "The value entered does not meet the criteria required for this field.",
+        "tooManyDecimals": "Enter a value with a maximum of 6 decimals."
       },
       "senior": {
         "title": "Senior Tranche",

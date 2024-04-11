@@ -9,6 +9,7 @@ import NumericalInput from '@/components/molecules/NumericalInput'
 
 import { ModalStatus } from '@/context/modalStatus/modalStatus.types'
 
+import { TOKENS } from '@/constants/tokens'
 import { toBigNumber } from '@/utils'
 
 interface WithdrawAmountInputProps {
@@ -29,7 +30,18 @@ const WithdrawAmountInput: React.FC<WithdrawAmountInputProps> = ({
 
   const validateAmount = useCallback(
     (input: string) => {
-      if (input && toBigNumber(input).gt(toBigNumber(balance))) {
+      if (!input) return true
+
+      const parts = input.split('.')
+      if (parts.length > 1 && parts[1].length > TOKENS.USDC.decimals) {
+        setModalStatus({
+          type: ModalStatus.ERROR,
+          errorMessage: t('lending.withdraw.errors.tooManyDecimals'),
+        })
+        return false
+      }
+
+      if (toBigNumber(input).gt(toBigNumber(balance))) {
         setModalStatus({
           type: ModalStatus.ERROR,
           errorMessage: t('lending.withdraw.errors.invalidCriteria'),
@@ -37,7 +49,7 @@ const WithdrawAmountInput: React.FC<WithdrawAmountInputProps> = ({
         return false
       }
 
-      if (input && toBigNumber(input).isZero()) {
+      if (toBigNumber(input).isZero()) {
         setModalStatus({
           type: 'error',
           errorMessage: t('lending.withdraw.errors.invalidCriteria'),

@@ -1,10 +1,4 @@
-type Token = {
-  symbol: string
-  address: string
-  decimals?: number
-}
-
-export const TOKENS: Record<string, Token> = {
+export const TOKENS = {
   KSU: {
     symbol: 'KSU',
     address: '...',
