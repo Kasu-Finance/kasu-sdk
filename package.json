@@ -8,6 +8,9 @@
     "build-tc": "typechain --target ethers-v5 --out-dir src/contracts './abis/*.json'",
     "build": "eslint . && tsc --build --force tsconfig.json"
   },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/@solidant"
+  }
   "author": "",
   "license": "ISC",
   "devDependencies": {
