@@ -1,5 +1,5 @@
 {
-  "name": "kasu-sdk",
+  "name": "@solidant/kasu-sdk",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
