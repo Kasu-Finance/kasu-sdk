@@ -8,6 +8,7 @@ export { default as extractDateAndUtcOffset } from '@/utils/date/extractDateAndU
 export { default as escapeRegExp } from '@/utils/escapeRegExp'
 export { default as formatAccount } from '@/utils/formats/formatAccount'
 export { default as formatAmount } from '@/utils/formats/formatAmount'
+export { default as formatPercentage } from '@/utils/formats/formatPercentage'
 export { default as formatTimestampWithOffset } from '@/utils/formats/formatTimestampWithOffset'
 export { default as getObjectById } from '@/utils/getObjectById'
 export { default as isSupportedChain } from '@/utils/isSupportedChain'

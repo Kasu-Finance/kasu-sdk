@@ -64,6 +64,7 @@ const useRequestDeposit = () => {
         lendingPoolId,
         trancheId,
         parseUnits(amount, 6).toString(),
+        '0x',
         kycData.blockExpiration,
         kycData.signature
       )
