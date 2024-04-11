@@ -10,7 +10,7 @@
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/@solidant"
-  }
+  },
   "author": "",
   "license": "ISC",
   "devDependencies": {
