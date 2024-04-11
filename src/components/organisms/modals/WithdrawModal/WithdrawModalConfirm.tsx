@@ -44,13 +44,27 @@ const ConfirmContent: React.FC<ConfirmContentProps> = ({
       <Typography variant='subtitle2' ml={1.5}>
         from <b>{poolName} </b>
       </Typography>
-      <Typography variant='caption' mt={-0.5} ml={1.5}>
-        {t('lending.withdraw.confirmStep.subjectLiquidity')}
-      </Typography>
-      {isMultiTranche && (
-        <Typography variant='subtitle2' ml={1.5}>
-          Tranche <b>• {tranche?.name || 'N/A'}</b>
+      {!isMultiTranche && (
+        <Typography variant='caption' mt={-0.5} ml={1.5} mb={0.5} component='p'>
+          {t('lending.withdraw.confirmStep.subjectLiquidity')}
         </Typography>
+      )}
+
+      {isMultiTranche && (
+        <>
+          <Typography variant='subtitle2' ml={1.5}>
+            Tranche <b>• {tranche?.name || 'N/A'}</b>
+          </Typography>
+          <Typography
+            variant='caption'
+            mt={-0.5}
+            ml={1.5}
+            mb={0.5}
+            component='p'
+          >
+            {t('lending.withdraw.confirmStep.subjectLiquidity')}
+          </Typography>
+        </>
       )}
 
       {/*Token amount and User Address */}
@@ -59,7 +73,7 @@ const ConfirmContent: React.FC<ConfirmContentProps> = ({
         {t('lending.withdraw.confirmStep.depositedLabel')}
         <b style={{ textTransform: 'uppercase' }}> {userAddress}</b>
       </Typography>
-      <Typography variant='caption' mt={-0.5} ml={1.5}>
+      <Typography variant='caption' mt={-0.5} ml={1.5} mb={0.5} component='p'>
         {t('lending.withdraw.confirmStep.subjectLiquidity')}
       </Typography>
     </Box>

@@ -118,6 +118,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
       <DialogHeader
         title={t('lending.withdraw.title')}
         showClose={!txHash}
+        containerSx={{ mt: 1 }}
         onClose={onModalClose}
       >
         {txHash && (
@@ -133,7 +134,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
         )}
       </DialogHeader>
       <DialogContent>
-        <Box mt={3} width='100%'>
+        <Box width='100%'>
           <HorizontalStepper
             activeStep={modalStatusAction as number}
             steps={['Request', 'Approve', 'Confirm']}

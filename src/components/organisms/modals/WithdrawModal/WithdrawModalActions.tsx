@@ -83,7 +83,7 @@ const WithdrawModalActions: React.FC<WithdrawModalActionsProps> = ({
             variant='outlined'
             startIcon={<EditIcon />}
             onClick={handleAdjust}
-            sx={{ mr: 2, fontSize: '15px' }}
+            sx={{ mr: 1, fontSize: '15px' }}
           >
             {t('lending.withdraw.button.adjust')}
           </Button>

@@ -68,7 +68,7 @@ const WithdrawModalMetrics: React.FC<WithdrawModalMetricsProps> = ({
 
   const toWallet = {
     id: WithdrawMetrics.TO_WALLET,
-    content: userAddress || t('common.unknown'),
+    content: userAddress?.toUpperCase() || t('common.unknown'),
   }
 
   return (
