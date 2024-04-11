@@ -24,6 +24,7 @@ const ConfirmContent: React.FC<ConfirmContentProps> = ({ poolData }) => {
     [poolData, selectedTranche]
   )
   const poolName = poolData?.poolName || ''
+  const amountParsed = parseFloat(amount).toFixed(2)
 
   return (
     <Box width='100%' mt={3}>
@@ -32,7 +33,8 @@ const ConfirmContent: React.FC<ConfirmContentProps> = ({ poolData }) => {
         {t('lending.withdraw.confirmStep.withdrawInfo')}
       </Typography>
       <Typography variant='subtitle2'>
-        <b>• {amount} USDC •</b> {t('lending.withdraw.confirmStep.amountLabel')}
+        <b>• {amountParsed} USDC •</b>{' '}
+        {t('lending.withdraw.confirmStep.amountLabel')}
       </Typography>
 
       {/* Pool and Tranche Information */}
@@ -48,7 +50,7 @@ const ConfirmContent: React.FC<ConfirmContentProps> = ({ poolData }) => {
 
       {/*Token amount and User Address */}
       <Typography variant='subtitle2'>
-        <b>• {amount} USDC •</b>{' '}
+        <b>• {amountParsed} USDC •</b>{' '}
         {t('lending.withdraw.confirmStep.depositedLabel')}
         <b style={{ textTransform: 'uppercase' }}> {userAddress}</b>
       </Typography>

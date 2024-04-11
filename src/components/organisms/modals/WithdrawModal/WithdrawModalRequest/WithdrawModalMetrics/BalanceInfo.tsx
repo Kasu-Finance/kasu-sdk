@@ -11,7 +11,7 @@ import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
 import { PoolMetric } from '@/types/lending'
 
-interface PoolDataMetricsProps {
+interface BalanceInfoProps {
   modalStatusAction: number
   poolData: PoolOverview
   totalInvestment: PoolMetric
@@ -19,7 +19,7 @@ interface PoolDataMetricsProps {
   className?: string
 }
 
-const TotalInvestmentInfo: FC<PoolDataMetricsProps> = ({
+const BalanceInfo: FC<BalanceInfoProps> = ({
   modalStatusAction,
   poolData,
   totalInvestment,
@@ -67,4 +67,4 @@ const TotalInvestmentInfo: FC<PoolDataMetricsProps> = ({
   )
 }
 
-export default TotalInvestmentInfo
+export default BalanceInfo

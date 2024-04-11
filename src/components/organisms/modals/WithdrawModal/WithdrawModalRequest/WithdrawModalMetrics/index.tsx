@@ -7,7 +7,7 @@ import useTranslation from '@/hooks/useTranslation'
 
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 import ApprovalMetrics from '@/components/organisms/modals/WithdrawModal/WithdrawModalRequest/WithdrawModalMetrics/ApprovalMetrics'
-import TotalInvestmentInfo from '@/components/organisms/modals/WithdrawModal/WithdrawModalRequest/WithdrawModalMetrics/TotalInvestmentInfo'
+import BalanceInfo from '@/components/organisms/modals/WithdrawModal/WithdrawModalRequest/WithdrawModalMetrics/BalanceInfo'
 
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 import { WithdrawMetrics } from '@/context/withdrawModal/withdrawModal.types'
@@ -50,7 +50,7 @@ const WithdrawModalMetrics: React.FC<WithdrawModalMetricsProps> = ({
 
   const totalInvestment = {
     id: WithdrawMetrics.TOTAL_INVESTMENT,
-    content: poolBalance,
+    content: parseFloat(poolBalance).toFixed(2),
     unit: 'USDC',
   }
 
@@ -62,7 +62,7 @@ const WithdrawModalMetrics: React.FC<WithdrawModalMetricsProps> = ({
 
   const trancheInvestment = {
     id: WithdrawMetrics.TRANCHE_INVESTMENT,
-    content: trancheBalance,
+    content: parseFloat(trancheBalance).toFixed(2),
     unit: 'USDC',
   }
 
@@ -73,7 +73,7 @@ const WithdrawModalMetrics: React.FC<WithdrawModalMetricsProps> = ({
 
   return (
     <>
-      <TotalInvestmentInfo
+      <BalanceInfo
         modalStatusAction={modalStatusAction}
         withdrawRequest={withdrawRequest}
         poolData={poolData}
