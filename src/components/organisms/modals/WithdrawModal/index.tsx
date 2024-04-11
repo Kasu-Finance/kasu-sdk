@@ -81,12 +81,14 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
   const onSubmitApprove = async () => {
     try {
       const isMaxWithdrawal = amount === trancheBalance
-      await requestWithdrawal(
+      const transaction = await requestWithdrawal(
         poolData.id,
         selectedTranche,
         parseUnits(amount, TOKENS.USDC.decimals),
         { isWithdrawMax: isMaxWithdrawal }
       )
+
+      if (!transaction) return
 
       setModalStatusAction(ModalStatusAction.CONFIRM)
       router.push(`${Routes.lending.root.url}/${poolData.id}?step=3`)
