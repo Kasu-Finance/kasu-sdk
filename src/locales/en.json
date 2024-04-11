@@ -229,7 +229,10 @@
       "toWallet": "To Wallet",
       "epochEnds": "Epoch ends in",
       "withdrawalSchedule": "Withdrawal will be scheduled for the end of the current Epoch. The final Withdrawal Amount may vary due to Pool conditions.",
-      "inputLabel": "Withdraw Request Amount",
+      "amountInput": {
+        "label": "Withdraw Request Amount",
+        "tooltip": "empty"
+      },
       "button": {
         "review": "REVIEW WITHDRAWAL",
         "adjust": "ADJUST",

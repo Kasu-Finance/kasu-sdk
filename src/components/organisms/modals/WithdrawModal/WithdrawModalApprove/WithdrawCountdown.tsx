@@ -28,13 +28,16 @@ const WithdrawCountdown = () => {
           }}
         />
       </Typography>
-      <Typography variant='body1' color='grey.500'>
-        {date} • {time}{' '}
-        <span style={{ fontSize: '0.75rem' }}>
-          {format}
-          {offset}
-        </span>
-      </Typography>
+
+      {date && time && (
+        <Typography variant='body1' color='grey.500'>
+          {date} • {time}{' '}
+          <span style={{ fontSize: '0.75rem' }}>
+            {format}
+            {offset}
+          </span>
+        </Typography>
+      )}
     </Box>
   )
 }

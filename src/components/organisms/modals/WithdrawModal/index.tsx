@@ -124,6 +124,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
 
         {modalStatusAction !== ModalStatusAction.CONFIRM && (
           <WithdrawModalMetrics
+            amount={amount}
             poolBalance={poolBalance}
             trancheBalance={trancheBalance}
             poolData={poolData}

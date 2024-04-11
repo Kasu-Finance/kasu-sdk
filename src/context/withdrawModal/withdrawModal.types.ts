@@ -11,6 +11,7 @@ export enum WithdrawMetrics {
   TRANCHE_INVESTMENT = 'trancheInvestment',
   TRANCHE = 'tranche',
   TO_WALLET = 'toWallet',
+  WITHDRAW_REQUEST = 'withdrawRequest',
 }
 
 export type WithdrawModalActions =

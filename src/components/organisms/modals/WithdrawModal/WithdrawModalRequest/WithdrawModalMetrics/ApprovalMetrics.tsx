@@ -20,14 +20,14 @@ const ApprovalMetrics: React.FC<ApprovalMetricsProps> = ({
 }) => {
   const { t } = useTranslation()
   return (
-    <Box display='flex' className={className} pt={2}>
+    <Box display='flex' className={className}>
       {isMultiTranche ? (
         <MetricWithSuffix
           key={tranche.id}
           titleKey={t('lending.withdraw.metrics.tranche.label')}
           tooltipKey={t('lending.withdraw.metrics.tranche.tooltip')}
           content={String(tranche.content)}
-          containerSx={{ width: '50%', pb: 1 }}
+          containerSx={{ width: '50%', pb: 1, pr: 2 }}
           sx={{ mt: 0.5 }}
         />
       ) : (

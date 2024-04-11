@@ -26,7 +26,7 @@ const WithdrawModalRequest: React.FC<WithdrawModalRequestProps> = ({
 
   return (
     <Box pt={3} pl={1} pr={1} className={containerClassName}>
-      <Typography variant='subtitle1' mb={0.5}>
+      <Typography variant='subtitle1' mb={2}>
         {t('lending.withdraw.subtitle')}
       </Typography>
 
