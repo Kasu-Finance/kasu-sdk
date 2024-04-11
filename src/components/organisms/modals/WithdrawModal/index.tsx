@@ -55,9 +55,25 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
     return formatUnits(userPoolBalance?.balance || '0', TOKENS.USDC.decimals)
   }, [userPoolBalance])
 
-  const trancheBalance = useMemo(() => {
-    if (!poolTranche) return '0'
-    return formatUnits(poolTranche?.balance || '0', TOKENS.USDC.decimals)
+  const { availableToWithdraw, trancheBalance } = useMemo(() => {
+    if (!poolTranche) {
+      return { availableToWithdraw: '0', trancheBalance: '0' }
+    }
+
+    const formattedAvailableToWithdraw = formatUnits(
+      poolTranche?.availableToWithdraw || '0',
+      TOKENS.USDC.decimals
+    )
+
+    const formattedTrancheBalance = formatUnits(
+      poolTranche?.balance || '0',
+      TOKENS.USDC.decimals
+    )
+
+    return {
+      availableToWithdraw: formattedAvailableToWithdraw,
+      trancheBalance: formattedTrancheBalance,
+    }
   }, [poolTranche])
 
   const isMultiTranche = useMemo(
@@ -80,7 +96,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
 
   const onSubmitApprove = async () => {
     try {
-      const isMaxWithdrawal = amount === trancheBalance
+      const isMaxWithdrawal = amount === availableToWithdraw
       const transaction = await requestWithdrawal(
         poolData.id,
         selectedTranche,
@@ -140,7 +156,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
         {modalStatusAction === ModalStatusAction.REQUEST && (
           <WithdrawModalRequest
             poolData={poolData}
-            balance={trancheBalance}
+            balance={availableToWithdraw}
             isMultiTranche={isMultiTranche}
             containerClassName={validationStyle}
           />
