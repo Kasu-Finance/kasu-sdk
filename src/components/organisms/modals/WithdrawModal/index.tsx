@@ -151,7 +151,10 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
         )}
 
         {modalStatusAction === ModalStatusAction.CONFIRM && (
-          <WithdrawModalConfirm amount={amount} poolData={poolData} />
+          <WithdrawModalConfirm
+            poolData={poolData}
+            isMultiTranche={isMultiTranche}
+          />
         )}
       </DialogContent>
 

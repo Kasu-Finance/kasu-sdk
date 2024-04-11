@@ -81,7 +81,7 @@ const WithdrawModalMetrics: React.FC<WithdrawModalMetricsProps> = ({
         className={metricsRowClassName}
       />
 
-      {modalStatusAction === ModalStatusAction.REQUEST && (
+      {modalStatusAction === ModalStatusAction.REQUEST && isMultiTranche && (
         <>
           <Box display='flex' className={metricsRowClassName} pt={1}>
             <Box flex={1} />

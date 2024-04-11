@@ -9,11 +9,14 @@ import useTranslation from '@/hooks/useTranslation'
 import { formatAccount } from '@/utils'
 
 interface ConfirmContentProps {
-  amount: string
   poolData: PoolOverview
+  isMultiTranche: boolean
 }
 
-const ConfirmContent: React.FC<ConfirmContentProps> = ({ poolData }) => {
+const ConfirmContent: React.FC<ConfirmContentProps> = ({
+  poolData,
+  isMultiTranche,
+}) => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
   const { amount, selectedTranche } = useWithdrawModalState()
@@ -44,9 +47,11 @@ const ConfirmContent: React.FC<ConfirmContentProps> = ({ poolData }) => {
       <Typography variant='caption' mt={-0.5} ml={1.5}>
         {t('lending.withdraw.confirmStep.subjectLiquidity')}
       </Typography>
-      <Typography variant='subtitle2' ml={1.5}>
-        Tranche <b>• {tranche?.name}</b>
-      </Typography>
+      {isMultiTranche && (
+        <Typography variant='subtitle2' ml={1.5}>
+          Tranche <b>• {tranche?.name || 'N/A'}</b>
+        </Typography>
+      )}
 
       {/*Token amount and User Address */}
       <Typography variant='subtitle2'>
