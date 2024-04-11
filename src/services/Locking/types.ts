@@ -26,6 +26,7 @@ export interface UserLock {
     lockedAmount: string;
     rKSUAmount: string;
     rKSUtoUSDCRatio: number;
+    apyBonus: number;
     startTime: EpochTimeStamp;
     endTime: EpochTimeStamp;
     lockPeriod: LockPeriod;

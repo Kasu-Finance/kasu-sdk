@@ -43,7 +43,7 @@ export class KSULocking {
     private readonly _graph: GraphQLClient;
     private readonly _userManagerAbi: IUserManagerAbi;
     private readonly _systemVariablesAbi: ISystemVariablesAbi;
-    private readonly apyBonuses = [ 0, 0.001, 0.002 ]
+    private readonly apyBonuses: number[] = [ 0, 0.001, 0.002 ]
     /**
      *
      */
