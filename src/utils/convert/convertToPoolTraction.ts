@@ -1,4 +1,4 @@
-import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import { PoolDetailsSectionIds, PoolTractionMetricIds } from '@/constants'
 

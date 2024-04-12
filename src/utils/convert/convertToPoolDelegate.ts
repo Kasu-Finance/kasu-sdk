@@ -1,4 +1,4 @@
-import { PoolDelegateProfileAndHistory } from 'kasu-sdk/src/services/DataService/types'
+import { PoolDelegateProfileAndHistory } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import { PoolDelegateMetricIds } from '@/constants'
 

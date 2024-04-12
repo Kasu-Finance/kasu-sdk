@@ -1,7 +1,7 @@
 'use client'
 
 import { Card, CardContent, Grid } from '@mui/material'
-import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import TranchDetailCard from '@/components/molecules/TranchDetailCard'
 

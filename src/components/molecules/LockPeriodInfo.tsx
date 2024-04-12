@@ -1,5 +1,5 @@
 import { Box, Divider, Typography } from '@mui/material'
-import { LockPeriod } from 'kasu-sdk/src/types'
+import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
 import React from 'react'
 
 import useLockPeriods from '@/hooks/locking/useLockPeriods'

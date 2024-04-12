@@ -6,7 +6,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material'
-import { FinancialReportingDocumentsDirectus } from 'kasu-sdk/src/services/DataService/directus-types'
+import { FinancialReportingDocumentsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import React from 'react'
 
 import ActionCell from '@/components/molecules/risk/ReportingTable/ActionCell'
