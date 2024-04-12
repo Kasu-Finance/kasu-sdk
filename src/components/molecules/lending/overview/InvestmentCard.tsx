@@ -77,7 +77,7 @@ const InvestmentPortfolio: React.FC<{
             >
               <Grid item xs={4}>
                 <MetricWithSuffix
-                  content={formatAmount(totalInvestment)}
+                  content={formatAmount(totalInvestment.toString())}
                   suffix='USDC'
                   tooltipKey='lending.poolOverview.investmentCard.totalAmount.tooltip'
                   titleKey='lending.poolOverview.investmentCard.totalAmount.label'
