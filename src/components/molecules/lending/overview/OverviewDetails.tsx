@@ -4,7 +4,7 @@ import { Box, Card, Grid } from '@mui/material'
 import {
   PoolDelegateProfileAndHistory,
   PoolOverview,
-} from 'kasu-sdk/src/services/DataService/types'
+} from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import useTranslation from '@/hooks/useTranslation'
 

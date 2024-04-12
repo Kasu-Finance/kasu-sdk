@@ -1,5 +1,5 @@
 import { Grid, Typography } from '@mui/material'
-import { UserLock } from 'kasu-sdk/src/types'
+import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
 import { useState } from 'react'
 
 import useLockModalState from '@/hooks/context/useLockModalState'

@@ -1,6 +1,6 @@
 import { JsonRpcProvider } from '@ethersproject/providers'
+import { KasuSdk } from '@solidant/kasu-sdk/src'
 import { useWeb3React } from '@web3-react/core'
-import { KasuSdk } from 'kasu-sdk/src'
 import useSWR from 'swr'
 
 import sdkConfig from '@/config/sdk'

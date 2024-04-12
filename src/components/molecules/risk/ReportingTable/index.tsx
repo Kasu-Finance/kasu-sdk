@@ -1,5 +1,5 @@
 import { Card, Typography } from '@mui/material'
-import { FinancialReportingDocumentsDirectus } from 'kasu-sdk/src/services/DataService/directus-types'
+import { FinancialReportingDocumentsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
@@ -26,6 +26,14 @@ const ReportingTable: React.FC<ReportingTableProps> = ({ data }) => {
   const headers: CustomTableHeader<FinancialReportingDocumentsDirectus>[] = [
     {
       label: t('risk.reporting.headers.column-1'),
+      extraLabel: {
+        text: t('risk.reporting.headers.column-1-suffix'),
+        props: {
+          variant: 'caption',
+          component: 'p',
+          sx: { fontSize: 12, mt: -0.3 },
+        },
+      },
       value: 'name',
       disableSort: true,
     },

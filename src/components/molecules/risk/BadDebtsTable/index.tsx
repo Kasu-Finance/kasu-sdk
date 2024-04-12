@@ -1,6 +1,6 @@
 import { Theme } from '@emotion/react'
 import { Card, SxProps, TableCell, TableRow, Typography } from '@mui/material'
-import { BadAndDoubtfulDebtsDirectus } from 'kasu-sdk/src/services/DataService/directus-types'
+import { BadAndDoubtfulDebtsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
@@ -8,6 +8,8 @@ import useTranslation from '@/hooks/useTranslation'
 import CustomTable, { Sort } from '@/components/molecules/CustomTable'
 import { CustomTableHeader } from '@/components/molecules/CustomTable/TableHeaders'
 import DataTypography from '@/components/molecules/risk/BadDebtsTable/DataTypography'
+
+import { formatAmount, formatPercentage } from '@/utils'
 
 const headersStyles: SxProps<Theme> = {
   '& > *': {
@@ -56,6 +58,14 @@ const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
     },
     {
       label: t('risk.badDebts.headers.column-1'),
+      extraLabel: {
+        text: t('risk.badDebts.headers.column-1-suffix'),
+        props: {
+          variant: 'caption',
+          component: 'span',
+          sx: { fontSize: 12, ml: 0.5 },
+        },
+      },
       value: 'totalAmount',
       disableSort: true,
     },
@@ -66,6 +76,14 @@ const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
     },
     {
       label: t('risk.badDebts.headers.column-2'),
+      extraLabel: {
+        text: t('risk.badDebts.headers.column-2-suffix'),
+        props: {
+          variant: 'caption',
+          component: 'span',
+          sx: { fontSize: 12, ml: 0.5 },
+        },
+      },
       value: 'monthlyAverageAmount',
       disableSort: true,
     },
@@ -147,22 +165,35 @@ const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
                 <DataTypography data={data.name} />
               </TableCell>
               <TableCell align='center'>
-                <DataTypography data={data.totalAmount} />
+                <DataTypography
+                  data={formatAmount(data.totalAmount)}
+                  suffix='USDC'
+                />
               </TableCell>
               <TableCell align='center'>
-                <DataTypography data={data.totalPercentage} />
+                <DataTypography data={formatPercentage(data.totalPercentage)} />
               </TableCell>
               <TableCell align='center'>
-                <DataTypography data={data.monthlyAverageAmount} />
+                <DataTypography
+                  data={formatAmount(data.monthlyAverageAmount)}
+                  suffix='USDC'
+                />
               </TableCell>
               <TableCell align='center'>
-                <DataTypography data={data.monthlyAveragePercentage} />
+                <DataTypography
+                  data={formatPercentage(data.monthlyAveragePercentage)}
+                />
               </TableCell>
               <TableCell align='center'>
-                <DataTypography data={data.currentStatusAmount} />
+                <DataTypography
+                  data={formatAmount(data.currentStatusAmount)}
+                  suffix='USDC'
+                />
               </TableCell>
               <TableCell align='center'>
-                <DataTypography data={data.currentStatusPercentage} />
+                <DataTypography
+                  data={formatPercentage(data.currentStatusPercentage)}
+                />
               </TableCell>
             </TableRow>
           ))

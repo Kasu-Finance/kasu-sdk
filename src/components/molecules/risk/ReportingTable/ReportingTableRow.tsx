@@ -6,9 +6,9 @@ import {
   TableRow,
   Typography,
 } from '@mui/material'
+import { FinancialReportingDocumentsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import React from 'react'
 
-import { ReportingData } from '@/components/molecules/risk/ReportingTable'
 import ActionCell from '@/components/molecules/risk/ReportingTable/ActionCell'
 
 import { extractDateAndUtcOffset, formatTimestampWithOffset } from '@/utils'
@@ -34,7 +34,7 @@ const CircularTypography = styled(Typography)(({ theme }) => ({
 }))
 
 interface ReportingTableRowProps {
-  data: ReportingData
+  data: FinancialReportingDocumentsDirectus
   index: number
 }
 
@@ -69,7 +69,9 @@ const ReportingTableRow: React.FC<ReportingTableRowProps> = ({
         </Typography>
       </TableCell>
       <TableCell align='right'>
-        <Typography variant='body1'>{data.version}</Typography>
+        <Typography variant='body1'>
+          {parseFloat(data.version).toFixed(2)}
+        </Typography>
       </TableCell>
       <TableCell align='right'>
         <ActionCell actionUrl={data.documentUrl} />

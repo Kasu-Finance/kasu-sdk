@@ -24,11 +24,11 @@ export type PoolData = {
   }[]
 }
 
-import { formatUnits } from 'ethers/lib/utils'
 import {
   PoolOverview,
   TrancheData,
-} from 'kasu-sdk/src/services/DataService/types'
+} from '@solidant/kasu-sdk/src/services/DataService/types'
+import { formatUnits } from 'ethers/lib/utils'
 
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
 

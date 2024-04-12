@@ -1,11 +1,13 @@
 import { Card, TableCell, TableRow, Typography } from '@mui/material'
-import { PoolCreditMetricsDirectus } from 'kasu-sdk/src/services/DataService/directus-types'
+import { PoolCreditMetricsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import React, { useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
 import CustomTable, { Sort } from '@/components/molecules/CustomTable'
 import { CustomTableHeader } from '@/components/molecules/CustomTable/TableHeaders'
+
+import { formatAmount, formatPercentage } from '@/utils'
 
 const handleSort = (
   _a: PoolCreditMetricsDirectus,
@@ -21,6 +23,7 @@ interface PoolCreditTableProps {
 
 const PoolCreditTable: React.FC<PoolCreditTableProps> = ({ data }) => {
   const { t } = useTranslation()
+  const formatConfig = { minDecimals: 2 }
 
   const headers: CustomTableHeader<PoolCreditMetricsDirectus>[] = useMemo(
     () => [
@@ -76,17 +79,23 @@ const PoolCreditTable: React.FC<PoolCreditTableProps> = ({ data }) => {
               </TableCell>
               <TableCell align='right'>
                 <Typography variant='body1'>
-                  {`${data.previousFiscalYear} ${index < 2 ? 'x' : '%'}`}
+                  {index < 2
+                    ? `${formatAmount(data.previousFiscalYear, formatConfig)} x`
+                    : formatPercentage(data.previousFiscalYear)}
                 </Typography>
               </TableCell>
               <TableCell align='right'>
                 <Typography variant='body1'>
-                  {`${data.mostRecentQuarter} ${index < 2 ? 'x' : '%'}`}
+                  {index < 2
+                    ? `${formatAmount(data.mostRecentQuarter, formatConfig)} x`
+                    : formatPercentage(data.mostRecentQuarter)}
                 </Typography>
               </TableCell>
               <TableCell align='right'>
                 <Typography variant='body1'>
-                  {`${data.priorMonth} ${index < 2 ? 'x' : '%'}`}
+                  {index < 2
+                    ? `${formatAmount(data.priorMonth, formatConfig)} x`
+                    : formatPercentage(data.priorMonth)}
                 </Typography>
               </TableCell>
             </TableRow>
