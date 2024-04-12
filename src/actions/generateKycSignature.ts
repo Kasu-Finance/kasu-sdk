@@ -1,5 +1,7 @@
 'use server'
 
+import { IKasuAllowListAbi__factory } from '@solidant/kasu-sdk/src/contracts'
+
 import NEXERA_API_BASE_URL from '@/config/api.nexera'
 
 type ApiRes =
@@ -19,11 +21,11 @@ type ApiRes =
     }
 
 const generateKycSignature = async (params: {
-  contractAbi: readonly unknown[]
-  contractAddress: `0x${string}`
+  contractAbi: IKasuAllowListAbi__factory
+  contractAddress: `${string}`
   functionName: string
   args: unknown[]
-  userAddress: `0x${string}`
+  userAddress: `${string}`
   chainId: string
 }) => {
   const response = await fetch(

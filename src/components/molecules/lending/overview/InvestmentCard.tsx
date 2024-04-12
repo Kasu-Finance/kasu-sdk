@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
-import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import useGetUserBalance from '@/hooks/lending/useUserTrancheBalance'
 
@@ -81,7 +81,7 @@ const InvestmentPortfolio: React.FC<{
             >
               <Grid item xs={4}>
                 <MetricWithSuffix
-                  content={formatAmount(totalInvestment)}
+                  content={formatAmount(totalInvestment.toString())}
                   suffix='USDC'
                   tooltipKey='lending.poolOverview.investmentCard.totalAmount.tooltip'
                   titleKey='lending.poolOverview.investmentCard.totalAmount.label'

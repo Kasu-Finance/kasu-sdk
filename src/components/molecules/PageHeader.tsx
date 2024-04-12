@@ -1,7 +1,7 @@
 'use client'
 
 import { Box, Paper, Typography } from '@mui/material'
-import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React, { useMemo } from 'react'
 
 import usePoolOverview from '@/hooks/lending/usePoolOverview'

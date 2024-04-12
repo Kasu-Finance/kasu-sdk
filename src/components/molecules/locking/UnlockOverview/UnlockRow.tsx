@@ -1,5 +1,5 @@
 import { Button, TableCell, TableRow, Typography } from '@mui/material'
-import { UserLock } from 'kasu-sdk/src/types'
+import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
 
 import useModalState from '@/hooks/context/useModalState'
 import useCountdown from '@/hooks/useCountdown'

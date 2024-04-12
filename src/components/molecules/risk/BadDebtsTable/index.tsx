@@ -1,6 +1,6 @@
 import { Theme } from '@emotion/react'
 import { Card, SxProps, TableCell, TableRow, Typography } from '@mui/material'
-import { BadAndDoubtfulDebtsDirectus } from 'kasu-sdk/src/services/DataService/directus-types'
+import { BadAndDoubtfulDebtsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'

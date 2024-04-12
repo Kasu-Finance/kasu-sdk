@@ -1,6 +1,6 @@
 'use client'
 
-import { LockPeriod } from 'kasu-sdk/src/types'
+import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
 import { ReactNode, useReducer } from 'react'
 
 import LockModalContext from '@/context/lockModal/lockModal.context'

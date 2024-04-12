@@ -1,4 +1,4 @@
-import { UserLock } from 'kasu-sdk/src/types'
+import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
 
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 

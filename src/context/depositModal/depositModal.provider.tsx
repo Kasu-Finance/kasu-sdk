@@ -22,7 +22,7 @@ const DepositModalState: React.FC<DepositModalStateProps> = ({
 }) => {
   const [state, dispatch] = useReducer(depositModalReducer, {
     ...initialState,
-    trancheId: defaultTrancheId,
+    trancheId: `0x${defaultTrancheId}`,
   })
 
   return (

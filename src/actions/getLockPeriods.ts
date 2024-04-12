@@ -1,6 +1,9 @@
 'use server'
 
-import { GQLGetLockingPeriods, LockPeriod } from 'kasu-sdk/src/types'
+import {
+  GQLGetLockingPeriods,
+  LockPeriod,
+} from '@solidant/kasu-sdk/src/services/Locking/types'
 
 import FALLBACK_LOCK_PERIODS from '@/config/lockPeriod'
 import sdkConfig from '@/config/sdk'
