@@ -1,32 +1,39 @@
 import { Box } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
+import React from 'react'
 
+import usePoolRepayments from '@/hooks/lending/usePoolRepayments'
+
+import EmptyCardState from '@/components/atoms/EmptyCardState'
 import CardSkeleton from '@/components/molecules/loaders/CardSkeleton'
 import RepaymentsCard from '@/components/molecules/repayments/RepaymentsCard'
 
 const Repayments: React.FC = () => {
-  const [loading, setLoading] = useState<boolean>(true)
+  const { slug } = useParams()
+  const poolId = slug as string
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false)
-    }, 1000)
+  const { data, isLoading } = usePoolRepayments(poolId)
 
-    return () => clearTimeout(timer)
-  }, [])
+  if (isLoading) {
+    return (
+      <CardSkeleton
+        leftRowNumbers={3}
+        rightRowNumbers={3}
+        showSubtitle
+        titleStyle={{ width: '15%' }}
+        subtitleStyle={{ width: '20%' }}
+      />
+    )
+  }
 
   return (
     <Box mt={3}>
-      {loading ? (
-        <CardSkeleton
-          leftRowNumbers={3}
-          rightRowNumbers={3}
-          showSubtitle
-          titleStyle={{ width: '15%' }}
-          subtitleStyle={{ width: '20%' }}
-        />
+      {data ? (
+        <RepaymentsCard data={data} />
       ) : (
-        <RepaymentsCard />
+        <EmptyCardState
+          message={'No data available for this pool: ' + poolId}
+        />
       )}
     </Box>
   )

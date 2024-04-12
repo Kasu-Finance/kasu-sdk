@@ -5,46 +5,43 @@ import ContentWithSuffix from '@/components/atoms/ContentWithSuffix'
 import InfoRow from '@/components/atoms/InfoRow'
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
-interface Metric {
-  id: string
-  content: string
-  unit: string
-}
-
-interface MetricsSection {
-  title: string
-  metrics: Metric[]
-}
+import { RepaymentsMetrics } from '@/constants/repayments'
+import { RepaymentSection } from '@/utils/convert/adaptDataForRepayments'
 
 interface RenderMetricsProps {
-  metricsSection: MetricsSection
+  data: RepaymentSection
   sectionKey: string
 }
 
-const RenderMetrics: React.FC<RenderMetricsProps> = ({
-  metricsSection,
-  sectionKey,
-}) => {
+const RenderMetrics: React.FC<RenderMetricsProps> = ({ data, sectionKey }) => {
   const { t } = useTranslation()
 
-  const rowsKeys = ['closingLoans', 'netInflows', 'netDeposit', 'netDeposits']
+  const rowsKeys = [
+    RepaymentsMetrics.ClosingLoans,
+    RepaymentsMetrics.NetInflows,
+    RepaymentsMetrics.NetDeposit,
+    RepaymentsMetrics.NetDeposits,
+  ]
 
-  return metricsSection.metrics?.map((metric, index) => {
-    const baseKey = `${metricsSection.title}-${metric.id}-${index}`
+  return data.metrics?.map((metric, index) => {
+    const baseKey = `${metric.id}-${index}`
     const labelKey = `repayments.sections.${sectionKey}.metrics.${metric.id}.label`
     const tooltipKey = `repayments.sections.${sectionKey}.metrics.${metric.id}.tooltip`
-    const asRow = !rowsKeys.includes(metric.id)
+    const renderAsRow = !rowsKeys.includes(metric.id as RepaymentsMetrics)
 
-    return asRow ? (
+    return renderAsRow ? (
       <InfoRow
         key={baseKey}
         title={t(labelKey)}
         toolTipInfo={t(tooltipKey)}
         showDivider
         metric={
-          <ContentWithSuffix content={metric.content} suffix={metric.unit} />
+          <ContentWithSuffix
+            content={String(metric.content)}
+            suffix={metric.unit}
+          />
         }
-        sx={{ mb: 2, flexDirection: 'row' }}
+        sx={{ flexDirection: 'row' }}
       />
     ) : (
       <ColoredBox>
@@ -52,9 +49,9 @@ const RenderMetrics: React.FC<RenderMetricsProps> = ({
           key={baseKey}
           titleKey={t(labelKey)}
           tooltipKey={t(tooltipKey)}
-          content={metric.content}
+          content={String(metric.content)}
           suffix={metric.unit}
-          containerSx={{ mb: 2 }}
+          containerSx={{ mb: 1 }}
         />
       </ColoredBox>
     )

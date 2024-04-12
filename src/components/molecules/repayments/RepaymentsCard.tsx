@@ -1,4 +1,5 @@
 import { Box, Button, Card, Grid, Typography } from '@mui/material'
+import { PoolRepayment } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
@@ -6,16 +7,25 @@ import useTranslation from '@/hooks/useTranslation'
 
 import Countdown from '@/components/atoms/Countdown'
 import InfoColumn from '@/components/atoms/InfoColumn'
-import { fundsFlowReport } from '@/components/molecules/repayments/mock-data'
 import RenderMetrics from '@/components/molecules/repayments/RenderMetrics'
 
 import { DownloadIcon } from '@/assets/icons'
 
-import { extractDateAndUtcOffset, formatTimestampWithOffset } from '@/utils'
+import {
+  adaptDataForRepayments,
+  extractDateAndUtcOffset,
+  formatTimestampWithOffset,
+} from '@/utils'
+import { RepaymentsSections } from '@/utils/convert/adaptDataForRepayments'
 
-const RepaymentsCard: React.FC = () => {
+interface RepaymentsCardProps {
+  data: PoolRepayment
+}
+
+const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
   const { t } = useTranslation()
   const { nextEpochTime = 0 } = useNextEpochTime()
+  const repaymentsData = adaptDataForRepayments(data)
 
   const formattedDate = formatTimestampWithOffset(nextEpochTime, 1)
   const { date, time, format, offset } = extractDateAndUtcOffset(formattedDate)
@@ -73,7 +83,7 @@ const RepaymentsCard: React.FC = () => {
             )}
             metric={
               <Typography variant='h6' pl={2} mt={1}>
-                1
+                This data is missing
               </Typography>
             }
           />
@@ -95,20 +105,22 @@ const RepaymentsCard: React.FC = () => {
                     }}
                   />
                 </Typography>
-                <Typography variant='body1' color='grey.500'>
-                  {date} • {time}{' '}
-                  <span style={{ fontSize: '0.75rem' }}>
-                    {format}
-                    {offset}
-                  </span>
-                </Typography>
+                {date && time && (
+                  <Typography variant='body1' color='grey.500'>
+                    {date} • {time}{' '}
+                    <span style={{ fontSize: '0.75rem' }}>
+                      {format}
+                      {offset}
+                    </span>
+                  </Typography>
+                )}
               </Box>
             }
           />
         </Box>
 
         <Grid container spacing={2} mt={1}>
-          {Object.keys(fundsFlowReport).map((sectionKey) => (
+          {Object.keys(repaymentsData).map((sectionKey) => (
             <Grid item xs={12} md={6} key={sectionKey}>
               <Box sx={{ width: '100%' }}>
                 <Typography variant='h6'>
@@ -119,7 +131,7 @@ const RepaymentsCard: React.FC = () => {
                 </Typography>
 
                 <RenderMetrics
-                  metricsSection={fundsFlowReport[sectionKey]}
+                  data={repaymentsData[sectionKey as keyof RepaymentsSections]}
                   sectionKey={sectionKey}
                 />
               </Box>
