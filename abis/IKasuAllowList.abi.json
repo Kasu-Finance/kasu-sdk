@@ -1,479 +1,465 @@
 [
     {
-        "type": "constructor",
         "inputs": [
             {
+                "internalType": "contract IKasuController",
                 "name": "kasuController_",
-                "type": "address",
-                "internalType": "contract IKasuController"
+                "type": "address"
             }
         ],
-        "stateMutability": "nonpayable"
+        "stateMutability": "nonpayable",
+        "type": "constructor"
     },
     {
-        "type": "function",
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "account",
+                "type": "address"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "neededRole",
+                "type": "bytes32"
+            }
+        ],
+        "name": "AccessControlUnauthorizedAccount",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "BlockExpired",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "ConfigurationAddressZero",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "InvalidInitialization",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "InvalidSignature",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "NotInitializing",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "OnlyLendingPoolManager",
+        "type": "error"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            }
+        ],
+        "name": "UserBlocked",
+        "type": "error"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            }
+        ],
+        "name": "UserNotInAllowList",
+        "type": "error"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            }
+        ],
+        "name": "UserNotKycd",
+        "type": "error"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint64",
+                "name": "version",
+                "type": "uint64"
+            }
+        ],
+        "name": "Initialized",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "chainID",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "nonce",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "blockExpiration",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "contractAddress",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "userAddress",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "bytes",
+                "name": "functionCallData",
+                "type": "bytes"
+            }
+        ],
+        "name": "NexeraIDSignatureVerified",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "newSigner",
+                "type": "address"
+            }
+        ],
+        "name": "SignerChanged",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            }
+        ],
+        "name": "UserAddedInAllowList",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            }
+        ],
+        "name": "UserBlockedFromAllowList",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            }
+        ],
+        "name": "UserRemovedFromAllowList",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            }
+        ],
+        "name": "UserUnblockedFromAllowList",
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
         "name": "allowList",
-        "inputs": [
-            {
-                "name": "",
-                "type": "address",
-                "internalType": "address"
-            }
-        ],
         "outputs": [
             {
+                "internalType": "bool",
                 "name": "",
-                "type": "bool",
-                "internalType": "bool"
+                "type": "bool"
             }
         ],
-        "stateMutability": "view"
+        "stateMutability": "view",
+        "type": "function"
     },
     {
-        "type": "function",
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            }
+        ],
         "name": "allowUser",
-        "inputs": [
-            {
-                "name": "user",
-                "type": "address",
-                "internalType": "address"
-            }
-        ],
         "outputs": [],
-        "stateMutability": "nonpayable"
+        "stateMutability": "nonpayable",
+        "type": "function"
     },
     {
-        "type": "function",
-        "name": "blockList",
         "inputs": [
             {
+                "internalType": "address",
                 "name": "",
-                "type": "address",
-                "internalType": "address"
+                "type": "address"
             }
         ],
+        "name": "blockList",
         "outputs": [
             {
+                "internalType": "bool",
                 "name": "",
-                "type": "bool",
-                "internalType": "bool"
+                "type": "bool"
             }
         ],
-        "stateMutability": "view"
+        "stateMutability": "view",
+        "type": "function"
     },
     {
-        "type": "function",
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            }
+        ],
         "name": "blockUser",
-        "inputs": [
-            {
-                "name": "user",
-                "type": "address",
-                "internalType": "address"
-            }
-        ],
         "outputs": [],
-        "stateMutability": "nonpayable"
+        "stateMutability": "nonpayable",
+        "type": "function"
     },
     {
-        "type": "function",
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            }
+        ],
         "name": "disallowUser",
-        "inputs": [
-            {
-                "name": "user",
-                "type": "address",
-                "internalType": "address"
-            }
-        ],
         "outputs": [],
-        "stateMutability": "nonpayable"
+        "stateMutability": "nonpayable",
+        "type": "function"
     },
     {
-        "type": "function",
-        "name": "getMessageHash",
         "inputs": [
             {
-                "name": "_txAuthData",
-                "type": "tuple",
-                "internalType": "struct BaseTxAuthDataVerifier.TxAuthData",
                 "components": [
                     {
+                        "internalType": "uint256",
                         "name": "chainID",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        "type": "uint256"
                     },
                     {
+                        "internalType": "uint256",
                         "name": "nonce",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        "type": "uint256"
                     },
                     {
+                        "internalType": "uint256",
                         "name": "blockExpiration",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        "type": "uint256"
                     },
                     {
+                        "internalType": "address",
                         "name": "contractAddress",
-                        "type": "address",
-                        "internalType": "address"
+                        "type": "address"
                     },
                     {
+                        "internalType": "address",
                         "name": "userAddress",
-                        "type": "address",
-                        "internalType": "address"
+                        "type": "address"
                     },
                     {
+                        "internalType": "bytes",
                         "name": "functionCallData",
-                        "type": "bytes",
-                        "internalType": "bytes"
+                        "type": "bytes"
                     }
-                ]
+                ],
+                "internalType": "struct BaseTxAuthDataVerifier.TxAuthData",
+                "name": "_txAuthData",
+                "type": "tuple"
             }
         ],
+        "name": "getMessageHash",
         "outputs": [
             {
+                "internalType": "bytes32",
                 "name": "",
-                "type": "bytes32",
-                "internalType": "bytes32"
+                "type": "bytes32"
             }
         ],
-        "stateMutability": "pure"
+        "stateMutability": "pure",
+        "type": "function"
     },
     {
-        "type": "function",
-        "name": "getSignerAddress",
-        "inputs": [],
-        "outputs": [
-            {
-                "name": "",
-                "type": "address",
-                "internalType": "address"
-            }
-        ],
-        "stateMutability": "view"
-    },
-    {
-        "type": "function",
-        "name": "getUserNonce",
         "inputs": [
             {
-                "name": "user",
-                "type": "address",
-                "internalType": "address"
-            }
-        ],
-        "outputs": [
-            {
-                "name": "",
-                "type": "uint256",
-                "internalType": "uint256"
-            }
-        ],
-        "stateMutability": "view"
-    },
-    {
-        "type": "function",
-        "name": "initialize",
-        "inputs": [
-            {
+                "internalType": "address",
                 "name": "lendingPoolManager_",
-                "type": "address",
-                "internalType": "address"
+                "type": "address"
             },
             {
+                "internalType": "address",
                 "name": "signer_",
-                "type": "address",
-                "internalType": "address"
+                "type": "address"
             }
         ],
+        "name": "initialize",
         "outputs": [],
-        "stateMutability": "nonpayable"
+        "stateMutability": "nonpayable",
+        "type": "function"
     },
     {
-        "type": "function",
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
         "name": "nonces",
-        "inputs": [
-            {
-                "name": "",
-                "type": "address",
-                "internalType": "address"
-            }
-        ],
         "outputs": [
             {
+                "internalType": "uint256",
                 "name": "",
-                "type": "uint256",
-                "internalType": "uint256"
+                "type": "uint256"
             }
         ],
-        "stateMutability": "view"
+        "stateMutability": "view",
+        "type": "function"
     },
     {
-        "type": "function",
-        "name": "setNexeraIDSigner",
         "inputs": [
             {
+                "internalType": "address",
                 "name": "signer_",
-                "type": "address",
-                "internalType": "address"
+                "type": "address"
             }
         ],
+        "name": "setNexeraIDSigner",
         "outputs": [],
-        "stateMutability": "nonpayable"
+        "stateMutability": "nonpayable",
+        "type": "function"
     },
     {
-        "type": "function",
-        "name": "unblockUser",
-        "inputs": [
-            {
-                "name": "user",
-                "type": "address",
-                "internalType": "address"
-            }
-        ],
-        "outputs": [],
-        "stateMutability": "nonpayable"
-    },
-    {
-        "type": "function",
-        "name": "verifyUserKyc",
-        "inputs": [
-            {
-                "name": "user",
-                "type": "address",
-                "internalType": "address"
-            },
-            {
-                "name": "blockExpiration",
-                "type": "uint256",
-                "internalType": "uint256"
-            },
-            {
-                "name": "signature",
-                "type": "bytes",
-                "internalType": "bytes"
-            }
-        ],
+        "inputs": [],
+        "name": "txAuthDataSignerAddress",
         "outputs": [
             {
+                "internalType": "address",
                 "name": "",
-                "type": "bool",
-                "internalType": "bool"
+                "type": "address"
             }
         ],
-        "stateMutability": "nonpayable"
+        "stateMutability": "view",
+        "type": "function"
     },
     {
-        "type": "event",
-        "name": "Initialized",
         "inputs": [
             {
-                "name": "version",
-                "type": "uint64",
-                "indexed": false,
-                "internalType": "uint64"
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
             }
         ],
-        "anonymous": false
+        "name": "txAuthDataUserNonce",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
     },
     {
-        "type": "event",
-        "name": "NexeraIDSignatureVerified",
         "inputs": [
             {
-                "name": "chainID",
-                "type": "uint256",
-                "indexed": false,
-                "internalType": "uint256"
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            }
+        ],
+        "name": "unblockUser",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
             },
             {
-                "name": "nonce",
-                "type": "uint256",
-                "indexed": false,
-                "internalType": "uint256"
-            },
-            {
+                "internalType": "uint256",
                 "name": "blockExpiration",
-                "type": "uint256",
-                "indexed": false,
-                "internalType": "uint256"
+                "type": "uint256"
             },
             {
-                "name": "contractAddress",
-                "type": "address",
-                "indexed": false,
-                "internalType": "address"
-            },
-            {
-                "name": "userAddress",
-                "type": "address",
-                "indexed": false,
-                "internalType": "address"
-            },
-            {
-                "name": "functionCallData",
-                "type": "bytes",
-                "indexed": false,
-                "internalType": "bytes"
+                "internalType": "bytes",
+                "name": "signature",
+                "type": "bytes"
             }
         ],
-        "anonymous": false
-    },
-    {
-        "type": "event",
-        "name": "UserAddedInAllowList",
-        "inputs": [
+        "name": "verifyUserKyc",
+        "outputs": [
             {
-                "name": "user",
-                "type": "address",
-                "indexed": false,
-                "internalType": "address"
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
             }
         ],
-        "anonymous": false
-    },
-    {
-        "type": "event",
-        "name": "UserBlockedFromAllowList",
-        "inputs": [
-            {
-                "name": "user",
-                "type": "address",
-                "indexed": false,
-                "internalType": "address"
-            }
-        ],
-        "anonymous": false
-    },
-    {
-        "type": "event",
-        "name": "UserRemovedFromAllowList",
-        "inputs": [
-            {
-                "name": "user",
-                "type": "address",
-                "indexed": false,
-                "internalType": "address"
-            }
-        ],
-        "anonymous": false
-    },
-    {
-        "type": "event",
-        "name": "UserUnblockedFromAllowList",
-        "inputs": [
-            {
-                "name": "user",
-                "type": "address",
-                "indexed": false,
-                "internalType": "address"
-            }
-        ],
-        "anonymous": false
-    },
-    {
-        "type": "error",
-        "name": "AccessControlUnauthorizedAccount",
-        "inputs": [
-            {
-                "name": "account",
-                "type": "address",
-                "internalType": "address"
-            },
-            {
-                "name": "neededRole",
-                "type": "bytes32",
-                "internalType": "bytes32"
-            }
-        ]
-    },
-    {
-        "type": "error",
-        "name": "BlockExpired",
-        "inputs": []
-    },
-    {
-        "type": "error",
-        "name": "ConfigurationAddressZero",
-        "inputs": []
-    },
-    {
-        "type": "error",
-        "name": "ECDSAInvalidSignature",
-        "inputs": []
-    },
-    {
-        "type": "error",
-        "name": "ECDSAInvalidSignatureLength",
-        "inputs": [
-            {
-                "name": "length",
-                "type": "uint256",
-                "internalType": "uint256"
-            }
-        ]
-    },
-    {
-        "type": "error",
-        "name": "ECDSAInvalidSignatureS",
-        "inputs": [
-            {
-                "name": "s",
-                "type": "bytes32",
-                "internalType": "bytes32"
-            }
-        ]
-    },
-    {
-        "type": "error",
-        "name": "InvalidInitialization",
-        "inputs": []
-    },
-    {
-        "type": "error",
-        "name": "InvalidSignature",
-        "inputs": []
-    },
-    {
-        "type": "error",
-        "name": "NotInitializing",
-        "inputs": []
-    },
-    {
-        "type": "error",
-        "name": "OnlyLendingPoolManager",
-        "inputs": []
-    },
-    {
-        "type": "error",
-        "name": "UserBlocked",
-        "inputs": [
-            {
-                "name": "user",
-                "type": "address",
-                "internalType": "address"
-            }
-        ]
-    },
-    {
-        "type": "error",
-        "name": "UserNotInAllowList",
-        "inputs": [
-            {
-                "name": "user",
-                "type": "address",
-                "internalType": "address"
-            }
-        ]
-    },
-    {
-        "type": "error",
-        "name": "UserNotKycd",
-        "inputs": [
-            {
-                "name": "user",
-                "type": "address",
-                "internalType": "address"
-            }
-        ]
+        "stateMutability": "nonpayable",
+        "type": "function"
     }
 ]
