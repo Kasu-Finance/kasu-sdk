@@ -6,32 +6,34 @@ export interface UserRequestsSubgraph {
         amountRejected: string;
         status: string;
         createdOn: string;
-        updatedOn: string;
         type: string;
-        epochId: string;
-        user: {
-            id: string;
-        };
-        nftId: string;
+        updatedOn: string;
         lendingPool: {
             id: string;
-        };
+            tranches: {
+                orderId: string;
+            }[]
+        }
         tranche: {
+            orderId: string;
             id: string;
-        };
+        }
+        user: {
+            id: string,
+        }
         userRequestEvents: {
-            assetAmount: string;
+            assetAmount?: string;
             createdOn: string;
             id: string;
             index: string;
             type: string;
+            transactionHash: string;
             sharesAmount: string;
             tranche: {
                 id: string;
+                orderId: string;
             }
-            transactionHash: string;
-        }
-        userRequestEventsCount: string;
+        }[]
     }[]
 }
 

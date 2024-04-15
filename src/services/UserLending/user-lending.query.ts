@@ -5,36 +5,40 @@ export const userRequestsQuery = gql`
       userRequests {
         amountAccepted
         amountRejected
+        epochId
         amountRequested
         createdOn
-        epochId
         id
         nftId
+        status
+        type
+        updatedOn
         lendingPool {
           id
+            tranches {
+              orderId
+            }
         }
         tranche {
           id
+          orderId
         }
         user {
-          id
+            id
         }
-        type
-        updatedOn
-        status
         userRequestEvents {
-          assetAmount
-          createdOn
-          id
-          index
-          sharesAmount
-          transactionHash
-          type
           tranche {
+            orderId
             id
           }
+          sharesAmount
+          index
+          id
+          createdOn
+          assetAmount
+          transactionHash
+          type
         }
-        userRequestEventsCount
       }
     }
 `;

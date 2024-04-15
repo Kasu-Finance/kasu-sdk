@@ -18,7 +18,14 @@ import {
 import { SdkConfig } from '../../sdk-config';
 
 import { LendingPoolUserDetailsSubgraph, UserRequestsSubgraph } from './subgraph-types';
-import { UserPoolBalance, UserRequest, UserTrancheBalance } from './types';
+import {
+    UserPoolBalance,
+    UserRequest,
+    UserRequestEvent,
+    UserRequestEventType,
+    UserRequestType,
+    UserTrancheBalance,
+} from './types';
 import { lendingPoolUserDetailsQuery, userRequestsQuery } from './user-lending.query';
 
 export class UserLending {
@@ -191,8 +198,59 @@ export class UserLending {
     }
 
     async getUserRequests(): Promise<UserRequest[]> {
+
+        const trancheNames: string[][] = [["Senior"], ["Junior", "Senior"], ["Junior", "Mezzanine", "Senior"]];
         const subgraphResult: UserRequestsSubgraph = await this._graph.request(userRequestsQuery);
-        return subgraphResult.userRequests;
+        const retn: UserRequest[] = [];
+        const totalAssets = 1000; // TODO
+        const totalSupply = 1000;
+        for (const userRequest of subgraphResult.userRequests) {
+            const trancheName = trancheNames[userRequest.lendingPool.tranches.length-1][parseInt(userRequest.tranche.orderId)]
+            const events: UserRequestEvent[] = [];
+            const totalRequested = 0;
+            const totalAccepted = 0;
+            const totalRejected = 0;
+            for (const event of userRequest.userRequestEvents) {
+                events.push({
+                    id: event.id,
+                    request: event.type,
+                    timestamp: event.createdOn,
+                    totalRequested: totalRequested,
+                    totalAccepted: totalAccepted,
+                    totalRejected: totalRejected,
+                    assetAmount: event.assetAmount ?? this.convertSharesToAssets(event.sharesAmount, totalAssets, totalSupply).toString(),
+                    index: parseInt(event.index),
+                    transactionHash: event.transactionHash
+                });
+            }
+            const userRequestBase: UserRequest = {
+                id: userRequest.id,
+                userId: userRequest.user.id,
+                lendingPoolId: userRequest.lendingPool.id,
+                request: userRequest.type,
+                tranche: trancheName,
+                requested: parseInt(userRequest.amountRequested),
+                accepted: parseInt(userRequest.amountAccepted),
+                rejected: parseInt(userRequest.amountRejected),
+                status: userRequest.status,
+                timestamp: userRequest.createdOn,
+                canCancel: this.isCancelable(userRequest.type, userRequest.status, userRequest.lendingPool.id),
+                events: events,
+            };
+            retn.push(userRequestBase);
+        }
+        return retn;
+    }
+    convertSharesToAssets(sharesAmount: string, totalAssets: number, totalSupply: number): number {
+        return (parseFloat(sharesAmount) * totalAssets) / totalSupply;
+    }
+    isCancelable(type: string, status: string, lendingPoolId: string): boolean {
+        // TODO ugly
+        if(type === UserRequestType.DEPOSIT as string && status != "Processed") {
+            return true
+        }
+        // TODO
+        return false
     }
 
     async getUserPoolBalance(user: string, poolId: string): Promise<UserPoolBalance> {

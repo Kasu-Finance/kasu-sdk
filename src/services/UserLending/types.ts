@@ -28,40 +28,31 @@ export interface UserTransactions {
 }
 
 export interface UserRequest {
-        id: string;
-        amountRequested: string;
-        amountAccepted: string;
-        amountRejected: string;
-        status: string;
-        createdOn: string;
-        updatedOn: string;
-        type: string;
-        epochId: string;
-        user: {
-            id: string;
-        };
-        nftId: string;
-        lendingPool: {
-            id: string;
-        };
-        tranche: {
-            id: string;
-        };
-        userRequestEvents: {
-            assetAmount: string;
-            createdOn: string;
-            id: string;
-            index: string;
-            type: string;
-            sharesAmount: string;
-            tranche: {
-                id: string;
-            }
-            transactionHash: string;
-        }
-        userRequestEventsCount: string;
+    id: string;
+    userId: string;
+    lendingPoolId: string;
+    request: string;
+    tranche: string;
+    requested: number;
+    accepted: number;
+    rejected: number;
+    timestamp: string;
+    status: string;
+    canCancel: boolean;
+    events: UserRequestEvent[];
 }
 
+export interface UserRequestEvent {
+    id: string;
+    request: string;
+    assetAmount: string;
+    totalRequested: number;
+    totalAccepted: number;
+    totalRejected: number;
+    index: number;
+    timestamp: string;
+    transactionHash: string;
+}
 export interface UserTrancheBalance {
     userId: string;
     address: string;
@@ -75,4 +66,24 @@ export interface UserPoolBalance {
     address: string;
     yieldEarned: number;
     balance: BigNumber;
+}
+
+export enum UserRequestStatus {
+    REQUESTED = 'Requested',
+    ACCEPTED = 'Accepted',
+    REJECTED = 'Rejected',
+    CANCELLED = 'Cancelled'
+}
+
+export enum UserRequestType {
+    DEPOSIT = 'DepositRequest',
+    WITHDRAW = 'WithdrawRequest'
+}
+
+export enum UserRequestEventType {
+    DEPOSIT_INITIATED = 'DepositInitiated',
+    ACCEPTED = 'DepositAccepted',
+    REJECTED = 'DepositRejected',
+    CANCELLED = 'DepositCancelled',
+    WITHDRAWAL_INITIATED = 'WithdrawalInitiated',
 }
