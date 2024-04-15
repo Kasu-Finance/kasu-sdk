@@ -436,7 +436,7 @@
         "titleSuffix": "(Actual)",
         "metrics": {
           "netDeposit": {
-            "label": "Net Deposit/(Withdrawal))",
+            "label": "Net Deposit/(Withdrawal)",
             "tooltip": "content is missing"
           },
           "cumulativeDeposit": {

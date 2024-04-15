@@ -25,8 +25,11 @@ interface RepaymentsCardProps {
 const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
   const { t } = useTranslation()
   const { nextEpochTime = 0 } = useNextEpochTime()
-  const repaymentsData = adaptDataForRepayments(data)
 
+  const repaymentsData = adaptDataForRepayments(data)
+  const endBorrowerFunds = data?.currentTotalEndBorrowers ?? 0
+
+  // TODO: Fix type error
   const formattedDate = formatTimestampWithOffset(nextEpochTime, 1)
   const { date, time, format, offset } = extractDateAndUtcOffset(formattedDate)
 
@@ -83,7 +86,7 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
             )}
             metric={
               <Typography variant='h6' pl={2} mt={1}>
-                This data is missing
+                {endBorrowerFunds}
               </Typography>
             }
           />
