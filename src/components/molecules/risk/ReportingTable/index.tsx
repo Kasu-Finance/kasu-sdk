@@ -1,11 +1,13 @@
-import { Card, Typography } from '@mui/material'
+import { Box, Card, Typography } from '@mui/material'
 import { FinancialReportingDocumentsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
-import CustomTable, { Sort } from '@/components/molecules/CustomTable'
-import { CustomTableHeader } from '@/components/molecules/CustomTable/TableHeaders'
+import CustomTable, {
+  CustomTableHeader,
+  Sort,
+} from '@/components/molecules/CustomTable'
 import ReportingTableRow from '@/components/molecules/risk/ReportingTable/ReportingTableRow'
 
 const handleSort = (
@@ -25,32 +27,37 @@ const ReportingTable: React.FC<ReportingTableProps> = ({ data }) => {
 
   const headers: CustomTableHeader<FinancialReportingDocumentsDirectus>[] = [
     {
-      label: t('risk.reporting.headers.column-1'),
-      extraLabel: {
-        text: t('risk.reporting.headers.column-1-suffix'),
-        props: {
-          variant: 'caption',
-          component: 'p',
-          sx: { fontSize: 12, mt: -0.3 },
-        },
-      },
+      label: (
+        <Box>
+          {t('risk.reporting.headers.column-1')}
+          <br />
+          <Typography display='block' variant='caption' component='span'>
+            {t('risk.reporting.headers.column-1-suffix')}
+          </Typography>
+        </Box>
+      ),
+
       value: 'name',
       disableSort: true,
+      styles: { width: '65%' },
     },
     {
       label: t('risk.reporting.headers.column-2'),
       value: 'uploadTimestamp',
       disableSort: true,
+      styles: { width: '18%' },
     },
     {
       label: t('risk.reporting.headers.column-3'),
       value: 'version',
       disableSort: true,
+      styles: { width: '8.5%' },
     },
     {
       label: t('risk.reporting.headers.column-4'),
       value: 'documentUrl',
       disableSort: true,
+      styles: { width: '8.5%' },
     },
   ]
 
@@ -64,7 +71,13 @@ const ReportingTable: React.FC<ReportingTableProps> = ({ data }) => {
         data={data}
         handleSort={handleSort}
         defaultSortKey='name'
-        headersStyle={{ '& > *': { pb: 1, pt: 1.5 } }}
+        headersStyle={{
+          '& .MuiTableCell-root': {
+            py: '6px',
+            px: 2,
+            verticalAlign: 'bottom',
+          },
+        }}
       >
         {(sortedData) =>
           sortedData.map((data, index) => (
