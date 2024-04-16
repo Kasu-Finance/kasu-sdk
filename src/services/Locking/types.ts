@@ -30,6 +30,8 @@ export interface UserLock {
     startTime: EpochTimeStamp;
     endTime: EpochTimeStamp;
     lockPeriod: LockPeriod;
+    totalBonusYieldEarnings: number;
+    lifetimeBonusYieldEarnings: number;
 }
 
 export interface GQLGetLockingPeriods {

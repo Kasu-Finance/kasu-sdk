@@ -100,6 +100,7 @@ export interface BadAndDoubtfulDebts {
 export interface PoolRepayment {
     id: string;
     poolIdFK: string;
+    currentTotalEndBorrowers: number;
     cumulativeLendingFundsFlow_ClosingLoansBalance: number;
     cumulativeLendingFundsFlow_InterestAccrued: number;
     cumulativeLendingFundsFlow_InterestPayments: number;
@@ -116,4 +117,10 @@ export interface PoolRepayment {
     upcomingLendingFundsFlow_3_Value: number;
     upcomingLendingFundsFlow_4_Key: string;
     upcomingLendingFundsFlow_4_Value: number;
+    cumulativeDepositsAndWithdrawals_NetDeposits: number;
+    cumulativeDepositsAndWithdrawals_CumulativeWithdrawals: number;
+    cumulativeDepositsAndWithdrawals_CumulativeDeposits: number;
+    depositAndWithdrawalRequests_NetDeposits: number;
+    depositAndWithdrawalRequests_CurrentDepositsRequests: number;
+    depositAndWithdrawalRequests_CurrentWithdrawalRequests: number;
 }
