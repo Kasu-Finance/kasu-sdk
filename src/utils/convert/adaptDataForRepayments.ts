@@ -2,11 +2,6 @@ import { PoolRepayment } from '@solidant/kasu-sdk/src/services/DataService/types
 
 import { RepaymentsMetrics, SectionKeys } from '@/constants/repayments'
 
-interface MetricMapping {
-  id: string
-  unit: string
-}
-
 interface RepaymentMetric {
   id: string
   content: string | number
@@ -25,38 +20,43 @@ export interface RepaymentsSections {
   fundsRequest: RepaymentSection
 }
 
-const metricsMapping: { [key: string]: MetricMapping } = {
+interface MetricMapping {
+  id: string
+  unit: string
+}
+
+const staticMetricsMapping: { [key: string]: MetricMapping } = {
   cumulativeLendingFundsFlow_ClosingLoansBalance: {
     id: RepaymentsMetrics.CLOSING_LOANS,
-    unit: 'USDC',
+    unit: 'USD',
   },
   cumulativeLendingFundsFlow_OpeningLoansBalance: {
     id: RepaymentsMetrics.OPENING_LOANS,
-    unit: 'USDC',
+    unit: 'USD',
   },
   cumulativeLendingFundsFlow_LoansDrawn: {
     id: RepaymentsMetrics.LOANS_DRAWN,
-    unit: 'USDC',
+    unit: 'USD',
   },
   cumulativeLendingFundsFlow_InterestAccrued: {
     id: RepaymentsMetrics.INTEREST_ACCRUED,
-    unit: 'USDC',
+    unit: 'USD',
   },
   cumulativeLendingFundsFlow_InterestPayments: {
     id: RepaymentsMetrics.INTEREST_PAYMENTS,
-    unit: 'USDC',
+    unit: 'USD',
   },
   cumulativeLendingFundsFlow_PrincipalRepayments: {
     id: RepaymentsMetrics.PRINCIPAL_REPAYMENTS,
-    unit: 'USDC',
+    unit: 'USD',
   },
   cumulativeLendingFundsFlow_UnrealisedLosses: {
     id: RepaymentsMetrics.UNREALISED_LOSSES,
-    unit: 'USDC',
+    unit: 'USD',
   },
   upcomingLendingFundsFlow_NetInflows: {
     id: RepaymentsMetrics.NET_INFLOWS,
-    unit: 'USDC',
+    unit: 'USD',
   },
   cumulativeDepositsAndWithdrawals_NetDeposits: {
     id: RepaymentsMetrics.NET_DEPOSIT,
@@ -84,7 +84,7 @@ const metricsMapping: { [key: string]: MetricMapping } = {
   },
 }
 
-const formatNumber = (value: any): string => {
+const formatNumber = (value: string) => {
   const num = parseFloat(value)
   return isNaN(num) ? '0.00' : num.toFixed(2)
 }
@@ -100,6 +100,61 @@ const getSectionKey = (key: string): SectionKeys | undefined => {
   return undefined
 }
 
+function sortCumulativeFundsMetrics(metrics: RepaymentMetric[]): void {
+  const order = [
+    RepaymentsMetrics.CLOSING_LOANS,
+    RepaymentsMetrics.OPENING_LOANS,
+    RepaymentsMetrics.LOANS_DRAWN,
+    RepaymentsMetrics.INTEREST_ACCRUED,
+    RepaymentsMetrics.INTEREST_PAYMENTS,
+    RepaymentsMetrics.PRINCIPAL_REPAYMENTS,
+    RepaymentsMetrics.UNREALISED_LOSSES,
+  ]
+
+  metrics.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id))
+}
+
+function sortUpcomingFundsMetrics(metrics: RepaymentMetric[]): void {
+  const firstId = RepaymentsMetrics.NET_INFLOWS
+  metrics.sort((a, b) => (a.id === firstId ? -1 : b.id === firstId ? 1 : 0))
+}
+
+function handleDynamicMetric(
+  key: string,
+  data: PoolRepayment,
+  sections: RepaymentsSections
+): void {
+  const label = (data[key as keyof typeof data] as string) || 'N/A'
+  const valueKey = key.replace('Key', 'Value') as keyof typeof data
+  const metricValue = formatNumber(String(data[valueKey]))
+
+  sections.upcomingFunds.metrics.push({
+    id: key,
+    content: metricValue,
+    label,
+    unit: 'USD',
+  })
+}
+
+function handleStaticMetric(
+  key: string,
+  data: PoolRepayment,
+  sections: RepaymentsSections
+): void {
+  const mapping = staticMetricsMapping[key]
+  if (mapping) {
+    const formattedValue = formatNumber(String(data[key as keyof typeof data]))
+    const sectionKey = getSectionKey(key)
+    if (sectionKey) {
+      sections[sectionKey].metrics.push({
+        id: mapping.id,
+        content: formattedValue,
+        unit: mapping.unit,
+      })
+    }
+  }
+}
+
 const adaptDataForRepayments = (data: PoolRepayment): RepaymentsSections => {
   const sections: RepaymentsSections = {
     cumulativeFunds: { metrics: [] },
@@ -108,32 +163,19 @@ const adaptDataForRepayments = (data: PoolRepayment): RepaymentsSections => {
     fundsRequest: { metrics: [] },
   }
 
-  Object.entries(data).forEach(([key, value]) => {
-    if (key.includes('upcomingLendingFundsFlow') && key.endsWith('Key')) {
-      const index = key.split('_')[3]
-      // TODO: Fix type error
-      const label = data[key] || `N/A`
-      const valueKey = key.replace('Key', 'Value')
-      const metricValue = formatNumber(data[valueKey as keyof PoolRepayment])
+  Object.keys(data).forEach((key) => {
+    // Example of dynamic key: UpcomingLendingFundsFlow_1_Key
+    const isDynamicLabelKey = key.endsWith('Key')
 
-      sections.upcomingFunds.metrics.push({
-        id: `upcoming_${index}`,
-        content: metricValue,
-        label,
-        unit: 'USDC',
-      })
+    if (isDynamicLabelKey) {
+      handleDynamicMetric(key, data, sections)
     } else {
-      const mapping = metricsMapping[key]
-      if (mapping) {
-        const formattedValue = formatNumber(value)
-        sections[getSectionKey(key) as keyof RepaymentsSections].metrics.push({
-          id: mapping.id,
-          content: formattedValue,
-          unit: mapping.unit,
-        })
-      }
+      handleStaticMetric(key, data, sections)
     }
   })
+
+  sortCumulativeFundsMetrics(sections.cumulativeFunds.metrics)
+  sortUpcomingFundsMetrics(sections.upcomingFunds.metrics)
 
   return sections
 }

@@ -24,13 +24,15 @@ interface RepaymentsCardProps {
 
 const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
   const { t } = useTranslation()
-  const { nextEpochTime = 0 } = useNextEpochTime()
+  const { nextEpochTime } = useNextEpochTime()
 
   const repaymentsData = adaptDataForRepayments(data)
   const endBorrowerFunds = data?.currentTotalEndBorrowers ?? 0
 
-  // TODO: Fix type error
-  const formattedDate = formatTimestampWithOffset(nextEpochTime, 1)
+  const formattedDate = formatTimestampWithOffset(
+    nextEpochTime?.toNumber() || 0,
+    1
+  )
   const { date, time, format, offset } = extractDateAndUtcOffset(formattedDate)
 
   return (
@@ -98,7 +100,7 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
               <Box px={2} py='6px'>
                 <Typography variant='h6' component='span' display='block'>
                   <Countdown
-                    endTime={nextEpochTime ?? 0}
+                    endTime={nextEpochTime ? nextEpochTime.toNumber() : 0}
                     format='D:HH:mm'
                     render={(countDown) => {
                       const [days, hours, minutes] = countDown.split(':')
