@@ -32,7 +32,10 @@ export type Sort<T> = {
 type CustomTableProps<T> = {
   headers:
     | CustomTableHeader<T>[]
-    | ((handleSortChange: (newKey: keyof T) => void) => ReactNode)
+    | ((
+        handleSortChange: (newKey: keyof T) => void,
+        sort: Sort<T>
+      ) => ReactNode)
   data: T[]
   defaultSortKey: keyof T
   handleSort: (a: T, b: T, sort: Sort<T>) => number
@@ -45,6 +48,7 @@ type CustomTableProps<T> = {
   tableContainerStyles?: SxProps<Theme>
   tableStyles?: SxProps<Theme>
   headersStyle?: SxProps<Theme>
+  footerStyle?: SxProps<Theme>
 }
 
 const CustomTable = <T,>({
@@ -61,6 +65,7 @@ const CustomTable = <T,>({
   tableContainerStyles,
   tableStyles,
   headersStyle,
+  footerStyle,
 }: CustomTableProps<T>) => {
   const [sort, setSort] = useState<Sort<T>>({
     key: defaultSortKey,
@@ -110,7 +115,7 @@ const CustomTable = <T,>({
         >
           <TableHead sx={{ ...headersStyle }}>
             {typeof headers === 'function' ? (
-              headers(handleSortChange)
+              headers(handleSortChange, sort)
             ) : (
               <TableRow
                 sx={(theme) => ({
@@ -156,15 +161,18 @@ const CustomTable = <T,>({
             )}
           </TableBody>
           {footer && (
-            <TableFooter sx={{ borderTop: '1px solid rgba(224, 224, 224, 1)' }}>
+            <TableFooter
+              sx={{
+                borderTop: '1px solid rgba(224, 224, 224, 1)',
+                ...footerStyle,
+              }}
+            >
               <TableRow
                 sx={(theme) => ({
                   background: alpha(theme.palette.primary.main, 0.08),
                 })}
               >
-                <TableCell padding='none' colSpan={headers.length}>
-                  {footer}
-                </TableCell>
+                {footer}
               </TableRow>
             </TableFooter>
           )}
