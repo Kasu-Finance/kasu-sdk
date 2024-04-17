@@ -24,7 +24,8 @@
     "pools": "pools",
     "none": "none",
     "pool": "pool",
-    "adjust": "adjust"
+    "adjust": "adjust",
+    "overview": "overview"
   },
   "time": {
     "days": "days",
