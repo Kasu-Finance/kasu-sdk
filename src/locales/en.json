@@ -25,7 +25,8 @@
     "none": "none",
     "pool": "pool",
     "adjust": "adjust",
-    "overview": "overview"
+    "overview": "overview",
+    "poolApy": "Pool APY"
   },
   "time": {
     "days": "days",
@@ -226,6 +227,17 @@
       "junior": {
         "title": "Junior Tranche",
         "tooltip": "The current Annual Percentage Yield offered by the Pool Delegate for the Junior Tranche within this Lending Pool, assuming all repayments will be made as expected. "
+      }
+    },
+    "shortcutTranche": {
+      "senior": {
+        "title": "Senior"
+      },
+      "mezzanine": {
+        "title": "Mezzanine"
+      },
+      "junior": {
+        "title": "Junior"
       }
     }
   },
