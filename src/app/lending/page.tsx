@@ -2,6 +2,7 @@
 
 import { Box, Container, Typography } from '@mui/material'
 
+import usePoolDelegate from '@/hooks/lending/usePoolDelegate'
 import usePoolOverview from '@/hooks/lending/usePoolOverview'
 
 import PoolTractionCard from '@/components/molecules/details/PoolTractionCard'
@@ -18,6 +19,9 @@ const mockPoolOverview = {
 
 const Lending = () => {
   const { data: pools, isLoading } = usePoolOverview()
+  const { data: delagates } = usePoolDelegate()
+
+  console.warn('delagates', delagates)
 
   if (isLoading) {
     return (
