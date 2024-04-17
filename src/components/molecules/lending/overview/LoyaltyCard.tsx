@@ -8,11 +8,12 @@ import {
   Link,
   Typography,
 } from '@mui/material'
-import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
+import { formatEther } from 'ethers/lib/utils'
 
 import useModalState from '@/hooks/context/useModalState'
 import useUserLocks from '@/hooks/locking/useUserLocks'
 import useTranslation from '@/hooks/useTranslation'
+import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import ContentWithSuffix from '@/components/atoms/ContentWithSuffix'
@@ -22,24 +23,34 @@ import LendingLoyalityInfo from '@/components/molecules/locking/LoyaltyOverview/
 
 import { LockIcon, WalletIcon } from '@/assets/icons'
 
-import { formatAmount } from '@/utils'
+import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
 const LoyaltyCard = () => {
   const { openModal } = useModalState()
   const { t } = useTranslation()
   const handleOpenLockingKSU = () => openModal({ name: 'lockModal' })
-  const { userLocks, isLoading } = useUserLocks()
-  // const { totalLaunchBonus } = useEarnedBonusLockingAmount()
+  const { userLocks } = useUserLocks()
+  const { ksuPrice } = useKsuPrice()
 
-  let userKSU: null | UserLock = null
+  const userKSU = userLocks && userLocks.length > 0 ? userLocks[0] : null
 
-  console.warn('userLocks', userLocks)
+  const totalBonusYieldUSDC = userKSU
+    ? formatEther(
+        convertToUSD(
+          toBigNumber(userKSU?.totalBonusYieldEarnings.toString() || '0'),
+          toBigNumber(ksuPrice || '0')
+        )
+      )
+    : '0'
 
-  const hasLockedTokens = userLocks && Boolean(userLocks.length)
-
-  if (!isLoading && hasLockedTokens) {
-    userKSU = userLocks[0]
-  }
+  const lifetimeYieldEarnedUSDC = userKSU
+    ? formatEther(
+        convertToUSD(
+          toBigNumber(userKSU?.totalBonusYieldEarnings.toString() || '0'),
+          toBigNumber(ksuPrice || '0')
+        )
+      )
+    : '0'
 
   return (
     <Card sx={{ mt: 3 }}>
@@ -115,7 +126,12 @@ const LoyaltyCard = () => {
                 <div>
                   <ContentWithSuffix
                     textAlign='right'
-                    content='500.00'
+                    content={`${formatAmount(
+                      userKSU?.totalBonusYieldEarnings ?? 0,
+                      {
+                        minDecimals: 2,
+                      }
+                    )}`}
                     suffix='KSU'
                   />
                   <Typography
@@ -124,7 +140,10 @@ const LoyaltyCard = () => {
                     variant='caption'
                     component='h6'
                   >
-                    250.00 USDC
+                    {formatAmount(totalBonusYieldUSDC, {
+                      minDecimals: 2,
+                    })}{' '}
+                    USDC
                   </Typography>
                 </div>
               }
@@ -141,7 +160,12 @@ const LoyaltyCard = () => {
                 <div>
                   <ContentWithSuffix
                     textAlign='right'
-                    content='500.00'
+                    content={`${formatAmount(
+                      userKSU?.lifetimeBonusYieldEarnings ?? 0,
+                      {
+                        minDecimals: 2,
+                      }
+                    )}`}
                     suffix='KSU'
                   />
                   <Typography
@@ -150,7 +174,10 @@ const LoyaltyCard = () => {
                     variant='caption'
                     component='h6'
                   >
-                    250.00 USDC
+                    {formatAmount(lifetimeYieldEarnedUSDC, {
+                      minDecimals: 2,
+                    })}
+                    USDC
                   </Typography>
                 </div>
               }
