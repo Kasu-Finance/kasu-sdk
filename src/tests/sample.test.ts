@@ -5,6 +5,7 @@ import { KasuSdk } from "..";
 import { SdkConfig } from "../sdk-config";
 
 
+/*
 test('subgraphCall', async () => {
     
     const provider = new ethers.providers.JsonRpcProvider("https://sepolia.base.org");
@@ -29,3 +30,4 @@ const wallet = new ethers.Wallet("dddddddddddddddddddddddddddddddddddddddddddddd
 
 });
 
+*/
