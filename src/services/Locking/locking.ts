@@ -135,7 +135,8 @@ export class KSULocking {
                     userLock.rKSUAmount,
                     userAddress,
                 )
-                const loyaltyStatus = this.getLoyaltyLevelAndApyBonusFromRatio(rKSUtoUSDCRatio)
+                const loyaltyStatus = this.getLoyaltyLevelAndApyBonusFromRatio(rKSUtoUSDCRatio);
+                // TODO real data
                 return {
                     id: BigNumber.from(id),
                     lockedAmount: userLock.ksuAmount,
@@ -146,6 +147,8 @@ export class KSULocking {
                     startTime: Number(userLock.startTimestamp),
                     endTime: Number(userLock.endTimestamp),
                     lockPeriod: userLock.lockPeriod,
+                    totalBonusYieldEarnings: 0,
+                    lifetimeBonusYieldEarnings: 0,
                 };
             })
 
@@ -176,6 +179,7 @@ export class KSULocking {
         return result;
     }
 
+    // TODO
     async getKasuTokenPrice(): Promise<{ price: BigNumber; decimals: number }> {
         const decimals = 6;
 

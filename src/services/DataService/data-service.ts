@@ -183,9 +183,11 @@ export class DataService {
             const upcomingLendingFundsFlow_2_Value = data.upcomingLendingFundsFlow_2_Value && data.upcomingLendingFundsFlow_2_Key ? data.upcomingLendingFundsFlow_2_Value : 0.00;
             const upcomingLendingFundsFlow_3_Value = data.upcomingLendingFundsFlow_3_Value && data.upcomingLendingFundsFlow_3_Key ? data.upcomingLendingFundsFlow_3_Value : 0.00;
             const upcomingLendingFundsFlow_4_Value = data.upcomingLendingFundsFlow_4_Value && data.upcomingLendingFundsFlow_4_Key ? data.upcomingLendingFundsFlow_4_Value : 0.00;
+            // TODO real data
             const poolRepayment: PoolRepayment = {
                 id: data.id,
                 poolIdFK: data.poolIdFK,
+                currentTotalEndBorrowers: 0,
                 cumulativeLendingFundsFlow_InterestAccrued: data.cumulativeLendingFundsFlow_InterestAccrued,
                 cumulativeLendingFundsFlow_InterestPayments: data.cumulativeLendingFundsFlow_InterestPayments,
                 cumulativeLendingFundsFlow_LoansDrawn: data.cumulativeLendingFundsFlow_LoansDrawn,
@@ -202,6 +204,12 @@ export class DataService {
                 upcomingLendingFundsFlow_4_Value: upcomingLendingFundsFlow_4_Value,
                 cumulativeLendingFundsFlow_ClosingLoansBalance: data.cumulativeLendingFundsFlow_InterestAccrued + data.cumulativeLendingFundsFlow_InterestPayments + data.cumulativeLendingFundsFlow_LoansDrawn + data.cumulativeLendingFundsFlow_OpeningLoansBalance + data.cumulativeLendingFundsFlow_PrincipalRepayments + data.cumulativeLendingFundsFlow_UnrealisedLosses,
                 upcomingLendingFundsFlow_NetInflows: upcomingLendingFundsFlow_1_Value + upcomingLendingFundsFlow_2_Value + upcomingLendingFundsFlow_3_Value + upcomingLendingFundsFlow_4_Value,
+                cumulativeDepositsAndWithdrawals_NetDeposits: 0,
+                cumulativeDepositsAndWithdrawals_CumulativeWithdrawals: 0,
+                cumulativeDepositsAndWithdrawals_CumulativeDeposits: 0,
+                depositAndWithdrawalRequests_NetDeposits: 0,
+                depositAndWithdrawalRequests_CurrentDepositsRequests: 0,
+                depositAndWithdrawalRequests_CurrentWithdrawalRequests: 0,
             };
             retn.push(poolRepayment);
         }
