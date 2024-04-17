@@ -38,9 +38,6 @@ jobs:
           node-version: 18
           registry-url: https://npm.pkg.github.com/
           scope: '@solidant'
-      - run: npm install
-      - run: npm run build-tc
-      - run: npm run build
-      - run: npm publish
+      - run: npm install && npm run build-tc && npm run build && npm run publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
