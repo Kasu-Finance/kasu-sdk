@@ -4,12 +4,17 @@ import { Box, Container, Typography } from '@mui/material'
 
 import usePoolOverview from '@/hooks/lending/usePoolOverview'
 
-import EmptyCardState from '@/components/atoms/EmptyCardState'
-import Carousel from '@/components/molecules/Carousel'
+import PoolTractionCard from '@/components/molecules/details/PoolTractionCard'
 import PageHeader from '@/components/molecules/PageHeader'
-import PoolCard from '@/components/molecules/PoolCard'
+import HomeTabs from '@/components/organisms/home/HomeTabs'
 
-import { Routes } from '@/config/routes'
+const mockPoolOverview = {
+  totalValueLocked: 1000000,
+  loansUnderManagement: 750000,
+  yieldEarned: 50000,
+  activeLoans: 25,
+  poolCapacity: 250000,
+}
 
 const Lending = () => {
   const { data: pools, isLoading } = usePoolOverview()
@@ -25,24 +30,10 @@ const Lending = () => {
     )
   }
 
-  const hasPools = pools && pools.length > 0
-
-  const poolsContent = hasPools ? (
-    pools.map((pool, index) => (
-      <PoolCard
-        name={pool.poolName}
-        link={`${Routes.lending.root.url}/${pool.id}`}
-        key={index}
-      />
-    ))
-  ) : (
-    <EmptyCardState message='No pools available.' />
-  )
-
   return (
     <Container maxWidth='lg'>
-      <PageHeader title='Lending' />
-      <Carousel slidesPerPage={3}>{poolsContent}</Carousel>
+      <PoolTractionCard data={mockPoolOverview} />
+      <HomeTabs pools={pools} />
     </Container>
   )
 }

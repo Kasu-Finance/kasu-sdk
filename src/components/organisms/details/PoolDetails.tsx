@@ -5,6 +5,7 @@ import React from 'react'
 import usePoolDelegate from '@/hooks/lending/usePoolDelegate'
 import usePoolOverview from '@/hooks/lending/usePoolOverview'
 import useRiskManagement from '@/hooks/lending/useRiskManagement'
+import useTranslation from '@/hooks/useTranslation'
 
 import EmptyCardState from '@/components/atoms/EmptyCardState'
 import PoolDelegateCard from '@/components/molecules/details/PoolDelegateCard'
@@ -14,6 +15,7 @@ import RiskManagementCard from '@/components/molecules/details/RiskManagementCar
 import CardSkeleton from '@/components/molecules/loaders/CardSkeleton'
 
 const PoolDetails: React.FC = () => {
+  const { t } = useTranslation()
   const { slug } = useParams()
   const poolId = slug as string
 
@@ -53,7 +55,10 @@ const PoolDetails: React.FC = () => {
       )}
 
       {overviewHook.data?.length && (
-        <PoolTractionCard data={overviewHook.data[0]} />
+        <PoolTractionCard
+          data={overviewHook.data[0]}
+          title={t('details.poolTraction.title')}
+        />
       )}
 
       {riskHook.data?.length && <RiskManagementCard data={riskHook.data[0]} />}
