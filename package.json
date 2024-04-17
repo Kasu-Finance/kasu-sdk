@@ -2,7 +2,7 @@
   "name": "@solidant/kasu-sdk",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "jest --config=jest-config.ts",
     "build-tc": "typechain --target ethers-v5 --out-dir src/contracts './abis/*.json'",
