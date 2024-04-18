@@ -33,6 +33,14 @@
   },
   "locking": {
     "widgets": {
+      "ksuStatus": {
+        "rksuBalance": {
+          "tooltip": "The value of your current rKSU balance, which is derived by a multiplier applied to your amount of locked KSU. This multiplier varies according to your locking period, per the below table. The value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Pools determines your Loyalty Level. Your Loyalty Level determines the extent of your token utility (lending pool deposit priority and withdrawal priority) and associated rewards (APY bonus). Regardless of your Loyalty Level, your rKSU balance relative to the total rKSU in the Kasu ecosystem, also determines your share of Protocol Fees."
+        },
+        "loyaltyLevel": {
+          "tooltip": "info"
+        }
+      },
       "loyalty": {
         "metric-1": "Current Loyalty Ratio",
         "metric-2": "Total Deposited",
