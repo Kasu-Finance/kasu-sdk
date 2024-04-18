@@ -4,3 +4,4 @@ certificates/*
 
 .env
 .env.local
+.npmrc
