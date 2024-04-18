@@ -1,10 +1,12 @@
-import { BigNumber, ethers } from 'ethers'
+import { BigNumber } from 'ethers'
+
+import hexToUSD from '@/utils/hexToUSD'
 
 interface Tranche {
   id: string
 }
 
-interface TrancheWithUserBalance extends Tranche {
+export interface TrancheWithUserBalance extends Tranche {
   yieldEarned: number
   apy: string
   name: string
@@ -42,15 +44,24 @@ export const calculateTotalYieldEarned = (
   }, 0)
 }
 
-export const calculateTotalInvested = (tranches: TrancheWithUserBalance[]) => {
-  return tranches.reduce((total, tranche) => {
+export const calculateTotalInvested = (
+  tranches: TrancheWithUserBalance[],
+  decimal: number = 6
+): string => {
+  const tot = tranches.reduce((total, tranche) => {
     // Check if balance exists and is a BigNumber
     if (tranche.balance && BigNumber.isBigNumber(tranche.balance)) {
       // Convert hex balance to a BigNumber and add to total
-      const balanceBigNumber = ethers.BigNumber.from(tranche.balance._hex)
+      const balanceBigNumber = BigNumber.from(tranche.balance)
       return total.add(balanceBigNumber)
     }
 
     return total
-  }, ethers.BigNumber.from('0x00'))
+  }, BigNumber.from('0x00'))
+
+  return hexToUSD(tot, decimal)
+}
+
+export const hexToBigNumber = (hex: string) => {
+  return BigNumber.from(hex)
 }
