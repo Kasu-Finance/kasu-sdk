@@ -1,4 +1,5 @@
 export { default as capitalize } from '@/utils/capitalize'
+export { default as adaptDataForRepayments } from '@/utils/convert/adaptDataForRepayments'
 export { default as convertToPoolDelegate } from '@/utils/convert/convertToPoolDelegate'
 export { default as convertToPoolDetails } from '@/utils/convert/convertToPoolDetails'
 export { default as convertToPoolTraction } from '@/utils/convert/convertToPoolTraction'
