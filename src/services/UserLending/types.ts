@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers';
+import { UserRequestStatus } from './subgraph-types';
 
 export interface UserInvestment {
     id: string;
@@ -7,7 +8,6 @@ export interface UserInvestment {
     totalYieldEarned: number;
     userTrancheData: UserTrancheData[];
 }
-
 
 export interface UserTrancheData {
     id: string;
@@ -19,7 +19,7 @@ export interface UserTrancheData {
 export interface UserTransactions {
     id: string;
     request: string;
-    tranche: string
+    tranche: string;
     requested: number;
     accepted: number;
     rejected: number;
@@ -31,26 +31,32 @@ export interface UserRequest {
     id: string;
     userId: string;
     lendingPoolId: string;
-    request: string;
-    tranche: string;
-    requested: number;
-    accepted: number;
-    rejected: number;
-    timestamp: string;
-    status: string;
+    requestType: 'Deposit' | 'Withdrawal';
+    trancheName: string;
+    requestedAmount: string;
+    acceptedAmount: string;
+    rejectedAmount: string;
+    timestamp: EpochTimeStamp;
+    status: UserRequestStatus;
     canCancel: boolean;
     events: UserRequestEvent[];
+    nftId: string;
 }
 
 export interface UserRequestEvent {
     id: string;
-    request: string;
+    requestType:
+        | 'Initiated'
+        | 'Increased'
+        | 'Cancelled'
+        | 'Accepted'
+        | 'Rejected';
     assetAmount: string;
-    totalRequested: number;
-    totalAccepted: number;
-    totalRejected: number;
+    totalRequested: string;
+    totalAccepted: string;
+    totalRejected: string;
     index: number;
-    timestamp: string;
+    timestamp: EpochTimeStamp;
     transactionHash: string;
 }
 export interface UserTrancheBalance {
@@ -68,16 +74,9 @@ export interface UserPoolBalance {
     balance: BigNumber;
 }
 
-export enum UserRequestStatus {
-    REQUESTED = 'Requested',
-    ACCEPTED = 'Accepted',
-    REJECTED = 'Rejected',
-    CANCELLED = 'Cancelled'
-}
-
 export enum UserRequestType {
     DEPOSIT = 'DepositRequest',
-    WITHDRAW = 'WithdrawRequest'
+    WITHDRAW = 'WithdrawRequest',
 }
 
 export enum UserRequestEventType {
