@@ -15,17 +15,11 @@ import { waitForReceipt } from '@/utils'
 
 const useLockKSU = () => {
   const sdk = useKasuSDK()
-
   const handleError = useHandleError()
-
   const { updateUserLocks } = useUserLocks()
-
   const { updateEarnedRKsu } = useEarnedRKsu()
-
   const { updateEarnedBonusLockingAmount } = useEarnedBonusLockingAmount()
-
   const { setModalStatusAction } = useModalStatusState()
-
   const { setToast, removeToast } = useToastState()
 
   return async (amount: BigNumber, duration: string) => {
