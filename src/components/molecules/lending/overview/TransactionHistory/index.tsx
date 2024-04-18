@@ -1,6 +1,8 @@
 import { Box, Card, CardContent, CardHeader } from '@mui/material'
-import { ethers } from 'ethers'
+import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
 import { useState } from 'react'
+
+import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
 
 import ToolTip from '@/components/atoms/ToolTip'
 import CustomTable, { Sort } from '@/components/molecules/CustomTable'
@@ -11,76 +13,21 @@ import TransactionHistoryTableRow from '@/components/molecules/lending/overview/
 
 import { toBigNumber } from '@/utils'
 
-export type ActionHistory = {
-  id: string
-  actionType: 'Initiated' | 'Accepted' | 'Rejected'
-  requestedAmount: string
-  acceptedAmount: string
-  rejectedAmount: string
-  requestDate: EpochTimeStamp
-  txHash: string
-}
-
-export type TransactionHistoryType = {
-  id: string
-  requestType: 'Deposit' | 'Withdrawal'
-  requestedAmount: string
-  acceptedAmount: string
-  rejectedAmount: string
-  requestDate: EpochTimeStamp
-  status: 'Processing' | 'Processed' | 'Requested'
-  actionHistory: ActionHistory[]
-}
-
-const DATA: TransactionHistoryType[] = [
-  {
-    id: ethers.constants.AddressZero,
-    requestType: 'Deposit',
-    requestedAmount: '1000.00',
-    acceptedAmount: '0',
-    rejectedAmount: '1000.00',
-    requestDate: 1713008042,
-    status: 'Processed',
-    actionHistory: [
-      {
-        txHash: '0x1',
-        id: ethers.constants.AddressZero,
-        requestedAmount: '1000.00',
-        acceptedAmount: '0',
-        rejectedAmount: '1000.00',
-        requestDate: 1713008042,
-        actionType: 'Initiated',
-      },
-    ],
-  },
-  {
-    id: '0x0000000000000000000000000000000000000001',
-    requestType: 'Withdrawal',
-    requestedAmount: '500.00',
-    acceptedAmount: '400',
-    rejectedAmount: '100.00',
-    requestDate: 1713018042,
-    status: 'Processing',
-    actionHistory: [
-      {
-        txHash: '0x1',
-        id: ethers.constants.AddressZero,
-        requestedAmount: '1000.00',
-        acceptedAmount: '0',
-        rejectedAmount: '1000.00',
-        requestDate: 1713008042,
-        actionType: 'Initiated',
-      },
-    ],
-  },
-]
-
 const handleSort = (
-  a: TransactionHistoryType,
-  b: TransactionHistoryType,
-  sort: Sort<TransactionHistoryType>
+  a: UserRequest,
+  b: UserRequest,
+  sort: Sort<UserRequest>
 ) => {
-  if (sort.key === 'id' || sort.key === 'actionHistory') return 0
+  if (
+    sort.key === 'id' ||
+    sort.key === 'events' ||
+    sort.key === 'trancheName' ||
+    sort.key === 'lendingPoolId' ||
+    sort.key === 'userId' ||
+    sort.key === 'canCancel' ||
+    sort.key === 'nftId'
+  )
+    return 0
 
   const direction = sort.direction === 'asc' ? 1 : -1
 
@@ -113,6 +60,10 @@ const handleSort = (
 const TransactionHistory = () => {
   const [open, setOpen] = useState<number | undefined>(undefined)
 
+  const { transactionHistory, isLoading } = useTransactionHistory()
+
+  if (isLoading || !transactionHistory?.length) return null
+
   return (
     <Card sx={{ mt: 3 }}>
       <CardHeader
@@ -132,7 +83,7 @@ const TransactionHistory = () => {
         <TransactionHistoryFilters />
         <CustomTable
           tableContainerStyles={{ mt: 2 }}
-          data={DATA}
+          data={transactionHistory}
           defaultSortKey='requestType'
           handleSort={handleSort}
           headersStyle={{

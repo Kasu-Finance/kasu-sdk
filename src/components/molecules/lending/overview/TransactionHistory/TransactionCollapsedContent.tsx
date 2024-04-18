@@ -1,18 +1,23 @@
 import Receipt from '@mui/icons-material/Receipt'
 import { Button, TableCell, TableRow, Typography } from '@mui/material'
+import { UserRequestEvent } from '@solidant/kasu-sdk/src/services/UserLending/types'
+import { useWeb3React } from '@web3-react/core'
 
 import TokenAmount from '@/components/atoms/TokenAmount'
-import { ActionHistory } from '@/components/molecules/lending/overview/TransactionHistory'
 
+import { SupportedChainIds } from '@/connection/chains'
+import { networks } from '@/connection/networks'
 import dayjs from '@/dayjs'
 
 type TransactionCollapsedContentProps = {
-  actionHistory: ActionHistory
+  actionHistory: UserRequestEvent
 }
 
 const TransactionCollapsedContent: React.FC<
   TransactionCollapsedContentProps
 > = ({ actionHistory }) => {
+  const { chainId } = useWeb3React()
+
   return (
     <TableRow
       sx={{
@@ -29,44 +34,49 @@ const TransactionCollapsedContent: React.FC<
           display='block'
           pl={6}
         >
-          {actionHistory.actionType}
+          {actionHistory.requestType}
         </Typography>
       </TableCell>
       <TableCell width='18%' align='right' padding='none'>
         <TokenAmount
-          amount={actionHistory.requestedAmount}
+          amount={actionHistory.totalRequested}
           symbol='USDC'
           sx={{ width: '100%', textAlign: 'right' }}
         />
       </TableCell>
       <TableCell width='18%' align='right' padding='none'>
         <TokenAmount
-          amount={actionHistory.acceptedAmount}
+          amount={actionHistory.totalAccepted}
           symbol='USDC'
           sx={{ width: '100%', textAlign: 'right' }}
         />
       </TableCell>
       <TableCell width='18%' align='right' padding='none'>
         <TokenAmount
-          amount={actionHistory.rejectedAmount}
+          amount={actionHistory.totalRejected}
           symbol='USDC'
           sx={{ width: '100%', textAlign: 'right' }}
         />
       </TableCell>
       <TableCell width='14%' align='right' padding='none'>
         <Typography variant='body1' component='span'>
-          {dayjs.unix(actionHistory.requestDate).format('DD.MM.YYYY')}
+          {dayjs.unix(actionHistory.timestamp).format('DD.MM.YYYY')}
         </Typography>
         <br />
         <Typography variant='caption' component='span'>
-          {dayjs.unix(actionHistory.requestDate).format('HH:mm:ss UTCZZ')}
+          {dayjs.unix(actionHistory.timestamp).format('HH:mm:ss UTCZZ')}
         </Typography>
       </TableCell>
       <TableCell width='14%' align='center' padding='none'>
         <Button
           variant='outlined'
           size='small'
-          href={actionHistory.txHash}
+          disabled={!chainId}
+          href={`${
+            networks[
+              (chainId as SupportedChainIds) || SupportedChainIds.MAINNET
+            ].blockExplorerUrls[0]
+          }/tx/${actionHistory.transactionHash}`}
           target='_blank'
           startIcon={<Receipt />}
           sx={{ height: 30, width: 97 }}

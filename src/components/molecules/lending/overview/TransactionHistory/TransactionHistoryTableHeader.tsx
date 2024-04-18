@@ -1,13 +1,13 @@
 import { alpha, TableCell, TableRow } from '@mui/material'
+import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
 import React from 'react'
 
 import { Sort } from '@/components/molecules/CustomTable'
-import { TransactionHistoryType } from '@/components/molecules/lending/overview/TransactionHistory'
 import TransactionSortLabel from '@/components/molecules/lending/overview/TransactionHistory/TransactionSortLabel'
 
 type TransactionHistoryTableHeaderProps = {
-  handleSortChange: (newKey: keyof TransactionHistoryType) => void
-  sort: Sort<TransactionHistoryType>
+  handleSortChange: (newKey: keyof UserRequest) => void
+  sort: Sort<UserRequest>
 }
 
 const TransactionHistoryTableHeader: React.FC<
@@ -33,7 +33,7 @@ const TransactionHistoryTableHeader: React.FC<
       <TableCell rowSpan={2} width='14%' align='right'>
         <TransactionSortLabel
           label='Request Date'
-          sortKey='requestDate'
+          sortKey='timestamp'
           sort={sort}
           handleSortChange={handleSortChange}
         />

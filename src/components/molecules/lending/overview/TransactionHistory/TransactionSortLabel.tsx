@@ -1,13 +1,13 @@
 import { TableSortLabel } from '@mui/material'
+import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
 
 import { Sort } from '@/components/molecules/CustomTable'
-import { TransactionHistoryType } from '@/components/molecules/lending/overview/TransactionHistory'
 
 type TransactionSortLabelProps = {
   label: string
-  sort: Sort<TransactionHistoryType>
-  sortKey: keyof TransactionHistoryType
-  handleSortChange: (key: keyof TransactionHistoryType) => void
+  sort: Sort<UserRequest>
+  sortKey: keyof UserRequest
+  handleSortChange: (key: keyof UserRequest) => void
 }
 
 const TransactionSortLabel: React.FC<TransactionSortLabelProps> = ({
