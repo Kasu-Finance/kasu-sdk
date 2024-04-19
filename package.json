@@ -2,11 +2,14 @@
   "name": "@solidant/kasu-sdk",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/bundle.cjs.js",
+  "module": "dist/bundle.esm.js",
+  "types": "dist/types/index.d.ts",
   "scripts": {
     "test": "jest --config=jest-config.ts",
     "build-tc": "typechain --target ethers-v5 --out-dir src/contracts './abis/*.json'",
-    "build": "eslint . && tsc --build --force tsconfig.json"
+    "build": "eslint . && tsc --build --force tsconfig.json",
+    "rollup-build": "rollup -c"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/@solidant"
@@ -14,22 +17,27 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
     "@types/jest": "^29.5.11",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",
     "prettier": "^3.2.2",
+    "rollup": "^4.14.3",
     "ts-jest": "^29.1.2",
     "typechain": "^8.3.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.5"
   },
   "dependencies": {
     "@directus/sdk": "^15.0.1",
+    "@rollup/plugin-commonjs": "^25.0.7",
     "@typechain/ethers-v5": "^11.1.2",
     "eslint": "^8.56.0",
     "ethers": "^5.7.2",
     "graphql-request": "^6.1.0",
     "jest": "^29.7.0",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "tslib": "^2.6.2"
   }
 }
