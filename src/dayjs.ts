@@ -1,5 +1,5 @@
 /* eslint-disable func-names */
-import { default as _dayjs } from 'dayjs'
+import _dayjs from 'dayjs'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 import duration from 'dayjs/plugin/duration'
 import utc from 'dayjs/plugin/utc'

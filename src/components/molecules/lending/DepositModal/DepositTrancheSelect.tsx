@@ -21,7 +21,8 @@ const DepositTrancheSelect: React.FC<DepositTrancheSelectProps> = ({
   const { trancheId, setSelectedTranche } = useDepositModalState()
 
   const handleChange = (e: SelectChangeEvent) => {
-    setSelectedTranche(e.target.value)
+    const trancheValue = e.target.value
+    setSelectedTranche(trancheValue as `0x${string}`)
   }
 
   if (poolData.tranches.length <= 1) return null
