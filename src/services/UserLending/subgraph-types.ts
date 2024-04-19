@@ -10,6 +10,7 @@ export interface UserRequestsSubgraph {
         updatedOn: string;
         lendingPool: {
             id: string;
+            name: string;
             tranches: {
                 orderId: string;
             }[];

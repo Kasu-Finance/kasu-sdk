@@ -2,7 +2,7 @@ import { gql } from 'graphql-request';
 
 export const userRequestsQuery = gql`
     query userRequestsQuery($userAddress: String!) {
-        userRequests {
+        userRequests(where: { user: $userAddress }) {
             amountAccepted
             amountRejected
             epochId
@@ -15,6 +15,7 @@ export const userRequestsQuery = gql`
             updatedOn
             lendingPool {
                 id
+                name
                 tranches {
                     orderId
                 }

@@ -30,7 +30,11 @@ export interface UserTransactions {
 export interface UserRequest {
     id: string;
     userId: string;
-    lendingPoolId: string;
+    lendingPool: {
+        id: string;
+        name: string;
+        tranches: { orderId: string }[];
+    };
     requestType: 'Deposit' | 'Withdrawal';
     trancheName: string;
     requestedAmount: string;

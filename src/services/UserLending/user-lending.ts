@@ -261,7 +261,11 @@ export class UserLending {
             const userRequestBase: UserRequest = {
                 id: userRequest.id,
                 userId: userRequest.user.id,
-                lendingPoolId: userRequest.lendingPool.id,
+                lendingPool: {
+                    id: userRequest.lendingPool.id,
+                    name: userRequest.lendingPool.name,
+                    tranches: userRequest.lendingPool.tranches,
+                },
                 requestType:
                     userRequest.type === 'DepositRequest'
                         ? 'Deposit'
