@@ -25,7 +25,7 @@ import {
 } from './directus-types';
 import { LendingPoolSubgraph, TrancheConfigurationSubgraph, TrancheSubgraph } from './subgraph-types';
 import {
-    BadAndDoubtfulDebts, PoolCreditMetrics,
+    BadAndDoubtfulDebts, LendingTotals, PoolCreditMetrics,
     PoolDelegateProfileAndHistory,
     PoolOverview, PoolRepayment, PoolTranche,
     RiskManagement,
@@ -48,7 +48,7 @@ export class DataService {
         const directusResults: PoolOverviewDirectus[] = await this._directus.request(readItems('PoolOverview'));
         const retn: PoolOverview[] = [];
         for (const lendingPoolSubgraph of subgraphResults.lendingPools) {
-            const lendingPoolDirectus = directusResults.find(r => r.id == lendingPoolSubgraph.id);
+            const lendingPoolDirectus: PoolOverviewDirectus | undefined = directusResults.find(r => r.id == lendingPoolSubgraph.id);
             const tranches: TrancheData[] = [];
             if(!lendingPoolDirectus) {
                 console.log("Couldn't find directus pool for id: ", lendingPoolSubgraph.id);
@@ -88,6 +88,7 @@ export class DataService {
                 yieldEarned: lendingPoolSubgraph.totalUserYieldAmount,
                 poolCapacity: "placeholder", // need formula for calculation
                 activeLoans: lendingPoolDirectus.activeLoans,
+                loanFundsOriginated: lendingPoolDirectus.loanFundsOriginated,
                 tranches: tranches,
             }
             retn.push(poolOverview);
@@ -214,5 +215,24 @@ export class DataService {
             retn.push(poolRepayment);
         }
         return filterArray(retn, id_in);
+    }
+
+    async getLendingTotals(): Promise<LendingTotals> {
+        const poolOverviews: PoolOverview[] = await this.getPoolOverview();
+        const retn: LendingTotals = {
+            totalValueLocked: 0,
+            loansUnderManagement: 0,
+            totalLoanFundsOriginated: 0,
+            totalLossRate: 0,
+            totalYieldEarned: 0
+        }
+        for (const poolOverview of poolOverviews){
+            retn.totalValueLocked += Number(poolOverview.totalValueLocked);
+            retn.loansUnderManagement += Number(poolOverview.loansUnderManagement);
+            retn.totalLoanFundsOriginated += poolOverview.loanFundsOriginated;
+            retn.totalLossRate += 0; // TODO
+            retn.totalYieldEarned += Number(poolOverview.yieldEarned);
+        }
+        return retn;
     }
 }

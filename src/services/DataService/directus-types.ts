@@ -22,8 +22,9 @@ export interface PoolOverviewDirectus {
     poolApyStructure: string;
     poolInvestmentTerm: string;
     loanStructure: string;
-    loansUnderManagement: string;
+    loansUnderManagement: number;
     activeLoans: string;
+    loanFundsOriginated: number;
 }
 
 export interface PoolDelegateProfileAndHistoryDirectus {

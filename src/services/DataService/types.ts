@@ -10,7 +10,7 @@ export interface PoolOverview {
     strategyDeckUrl: string; // CMS
     tranches: TrancheData[]; // SUBGRAPH
     totalValueLocked: string; // SUBGRAPH
-    loansUnderManagement: string; // SUBGRAPH
+    loansUnderManagement: number; // SUBGRAPH
     yieldEarned: string; // SUBGRAPH
     poolCapacity: string; // SUBGRAPH
     activeLoans: string; // SUBGRAPH
@@ -19,6 +19,7 @@ export interface PoolOverview {
     poolApyStructure: string; // CMS
     poolInvestmentTerm: string; // CMS
     loanStructure: string; // CMS
+    loanFundsOriginated: number; // CMS
 }
 
 export interface PoolDelegateProfileAndHistory {
@@ -123,4 +124,12 @@ export interface PoolRepayment {
     depositAndWithdrawalRequests_NetDeposits: number;
     depositAndWithdrawalRequests_CurrentDepositsRequests: number;
     depositAndWithdrawalRequests_CurrentWithdrawalRequests: number;
+}
+
+export interface LendingTotals {
+    totalValueLocked: number;
+    loansUnderManagement: number;
+    totalLoanFundsOriginated: number;
+    totalYieldEarned: number;
+    totalLossRate: number;
 }
