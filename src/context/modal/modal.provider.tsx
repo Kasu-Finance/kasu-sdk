@@ -14,7 +14,12 @@ const initialState: Modals = {
   connectWalletModal: { isOpen: false },
   loyaltyLevelsModal: { isOpen: false },
   lockModal: { isOpen: false },
-}
+  depositModal: { isOpen: false },
+  unlockModal: { isOpen: false },
+  cancelDepositModal: { isOpen: false },
+  cancelWithdrawalModal: { isOpen: false },
+  kycModal: { isOpen: false },
+} as Modals
 
 const ModalState: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [modal, dispatch] = useReducer(modalReducer, initialState)

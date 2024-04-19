@@ -1,4 +1,5 @@
 import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
+import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
 
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 
@@ -24,11 +25,17 @@ export type Modals = {
   unlockModal: ModalData<{ userLock: UserLock }>
   depositModal: ModalData<{ poolData: PoolData }>
   kycModal: ModalData<{ callback: () => void }>
+  cancelDepositModal: ModalData<{ transactionHistory: UserRequest }>
+  cancelWithdrawalModal: ModalData<{ transactionHistory: UserRequest }>
 }
 
 export type ModalWithProps = Extract<
   keyof Modals,
-  'unlockModal' | 'depositModal' | 'kycModal'
+  | 'unlockModal'
+  | 'depositModal'
+  | 'kycModal'
+  | 'cancelDepositModal'
+  | 'cancelWithdrawalModal'
 >
 
 export type OpenModalWithProps<T extends keyof Modals> = Omit<

@@ -9,7 +9,8 @@ import {
 } from '@mui/material'
 
 import useModalState from '@/hooks/context/useModalState'
-import useCancelWithdrawal from '@/hooks/lending/useCancelDeposit'
+import useCancelWithdrawal from '@/hooks/lending/useCancelWithdrawal'
+import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
 import useTranslation from '@/hooks/useTranslation'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
@@ -22,54 +23,42 @@ import DialogHeader from '@/components/molecules/DialogHeader'
 import dayjs from '@/dayjs'
 import { formatAmount } from '@/utils'
 
-const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
+const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { t } = useTranslation()
 
   const { modal } = useModalState()
 
-  const transactionHistory = modal.cancelDepositModal.transactionHistory
+  const transactionHistory = modal.cancelWithdrawalModal.transactionHistory
 
   const transactionEvents = transactionHistory.events
 
   const latestEvent = transactionEvents[transactionEvents.length - 1]
 
-  const nextClearingTime = 1711723761
+  const { nextEpochTime } = useNextEpochTime()
 
-  const cancelDeposit = useCancelWithdrawal()
+  const cancelWithdrawal = useCancelWithdrawal()
 
   return (
     <>
-      <DialogHeader title='Cancel Deposit Request' onClose={handleClose} />
+      <DialogHeader title='Cancel Withdrawal Request' onClose={handleClose} />
       <DialogContent>
         <ColoredBox>
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <InfoColumn
-                title='Deposit To'
+                title='From Pool'
                 toolTipInfo='info'
                 showDivider
                 metric={
                   <Typography pt='6px' pl={2} variant='h6' component='span'>
-                    {transactionHistory.lendingPool.name}
+                    {transactionHistory.lendingPoolName}
                   </Typography>
                 }
               />
-              {transactionHistory.lendingPool.tranches.length > 1 && (
-                <InfoColumn
-                  title='Tranche'
-                  toolTipInfo='info'
-                  showDivider
-                  metric={
-                    <Typography pt='6px' pl={2} variant='h6' component='span'>
-                      {transactionHistory.trancheName}
-                    </Typography>
-                  }
-                />
-              )}
             </Grid>
             <Grid item xs={6}>
               <InfoColumn
-                title='Deposit Request Amount'
+                title='Withdrawal Request Amount'
                 toolTipInfo='info'
                 showDivider
                 metric={
@@ -83,7 +72,7 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                 }
               />
               <InfoColumn
-                title='Deposit Request Date'
+                title='Withdrawal Request Date'
                 toolTipInfo='info'
                 showDivider
                 metric={
@@ -105,13 +94,13 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         </ColoredBox>
         <Box mt={2}>
           <InfoColumn
-            title='Next Clearing Period Starts in'
+            title='Epoch Ends in'
             showDivider
             metric={
               <Box px={2} py='6px'>
                 <Typography variant='h6' component='span' display='block'>
                   <Countdown
-                    endTime={nextClearingTime ?? 0}
+                    endTime={nextEpochTime ?? 0}
                     format='D:HH:mm'
                     render={(countDown) => {
                       const parts = countDown.split(':')
@@ -128,7 +117,7 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                   color={(theme) => theme.palette.text.secondary}
                 >
                   {dayjs
-                    .unix(nextClearingTime ?? 0)
+                    .unix(nextEpochTime ?? 0)
                     .format('DD.MM.YYYY • HH:mm:ss UTCZZ')}
                 </Typography>
               </Box>
@@ -141,17 +130,17 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           variant='contained'
           startIcon={<DeleteIcon />}
           onClick={() =>
-            cancelDeposit(
-              transactionHistory.lendingPool.id as `0x${string}`,
+            cancelWithdrawal(
+              transactionHistory.lendingPoolId as `0x${string}`,
               transactionHistory.nftId
             )
           }
         >
-          Cancel Deposit Request
+          Cancel Withdrawal Request
         </Button>
       </DialogActions>
     </>
   )
 }
 
-export default CancelDepositModal
+export default CancelWithdrawalModal

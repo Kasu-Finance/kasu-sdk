@@ -5,7 +5,7 @@ import useHandleError from '@/hooks/web3/useHandleError'
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { waitForReceipt } from '@/utils'
 
-const useCancelDeposit = () => {
+const useCancelWithdrawal = () => {
   const sdk = useKasuSDK()
 
   const handleError = useHandleError()
@@ -21,7 +21,7 @@ const useCancelDeposit = () => {
         isClosable: false,
       })
 
-      const cancel = await sdk.UserLending.cancelDepositRequest(
+      const cancel = await sdk.UserLending.cancelWithdrawalRequest(
         lendingPoolId,
         dNft
       )
@@ -39,4 +39,4 @@ const useCancelDeposit = () => {
   }
 }
 
-export default useCancelDeposit
+export default useCancelWithdrawal

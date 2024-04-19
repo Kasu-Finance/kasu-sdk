@@ -14,6 +14,8 @@ import TranchesDetailsCard from '@/components/molecules/lending/overview/Tranche
 import TransactionHistory from '@/components/molecules/lending/overview/TransactionHistory'
 import CardSkeleton from '@/components/molecules/loaders/CardSkeleton'
 
+import TransactionHistoryState from '@/context/transactionHistory/transactionHistory.provider'
+
 import { getObjectById } from '@/utils'
 
 const PoolOverview = () => {
@@ -70,7 +72,9 @@ const PoolOverview = () => {
         <TranchesDetailsCard pool={currentPool} />
         <InvestmentPortfolio pool={currentPool} />
         <LoyaltyCard />
-        <TransactionHistory />
+        <TransactionHistoryState>
+          <TransactionHistory />
+        </TransactionHistoryState>
       </>
     )
   }

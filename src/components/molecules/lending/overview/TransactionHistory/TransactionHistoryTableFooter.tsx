@@ -1,11 +1,23 @@
 import { Box, TableCell, Typography } from '@mui/material'
+import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
+import { BigNumber } from 'ethers'
 import { formatEther } from 'ethers/lib/utils'
 
 import TokenAmount from '@/components/atoms/TokenAmount'
 
-import { formatAmount } from '@/utils'
+import { formatAmount, toBigNumber } from '@/utils'
 
-const TransactionHistoryTableFooter = () => {
+type TransactionHistoryTableFooterProps = {
+  transactionHistory: UserRequest[]
+}
+
+const TransactionHistoryTableFooter: React.FC<
+  TransactionHistoryTableFooterProps
+> = ({ transactionHistory }) => {
+  const total = transactionHistory.reduce((acc, cur) => {
+    return acc.add(toBigNumber(cur.acceptedAmount))
+  }, BigNumber.from(0))
+
   return (
     <TableCell padding='none' colSpan={6}>
       <Box px={2}>
@@ -19,7 +31,7 @@ const TransactionHistoryTableFooter = () => {
         </Typography>
         <TokenAmount
           py='6px'
-          amount={formatAmount(formatEther('1000'))}
+          amount={formatAmount(formatEther(total))}
           symbol='USDC'
         />
       </Box>

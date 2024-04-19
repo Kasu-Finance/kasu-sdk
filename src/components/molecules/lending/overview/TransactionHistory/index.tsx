@@ -2,6 +2,7 @@ import { Box, Card, CardContent, CardHeader } from '@mui/material'
 import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
 import { useState } from 'react'
 
+import useTransactionHistoryState from '@/hooks/context/useTransactionHistoryState'
 import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
 
 import ToolTip from '@/components/atoms/ToolTip'
@@ -22,7 +23,7 @@ const handleSort = (
     sort.key === 'id' ||
     sort.key === 'events' ||
     sort.key === 'trancheName' ||
-    sort.key === 'lendingPoolId' ||
+    sort.key === 'lendingPool' ||
     sort.key === 'userId' ||
     sort.key === 'canCancel' ||
     sort.key === 'nftId'
@@ -62,7 +63,26 @@ const TransactionHistory = () => {
 
   const { transactionHistory, isLoading } = useTransactionHistory()
 
+  const { status, trancheType, transactionType } = useTransactionHistoryState()
+
   if (isLoading || !transactionHistory?.length) return null
+
+  const filteredData = transactionHistory
+    .filter((transaction) => {
+      if (status === 'All') return true
+
+      return transaction.status === status
+    })
+    .filter((transaction) => {
+      if (trancheType === 'All Tranches') return true
+
+      return transaction.trancheName === trancheType
+    })
+    .filter((transaction) => {
+      if (transactionType === 'All Transactions') return true
+
+      return transaction.requestType === transactionType
+    })
 
   return (
     <Card sx={{ mt: 3 }}>
@@ -83,7 +103,7 @@ const TransactionHistory = () => {
         <TransactionHistoryFilters />
         <CustomTable
           tableContainerStyles={{ mt: 2 }}
-          data={transactionHistory}
+          data={filteredData}
           defaultSortKey='requestType'
           handleSort={handleSort}
           headersStyle={{
@@ -92,7 +112,11 @@ const TransactionHistory = () => {
               px: 2,
             },
           }}
-          footer={<TransactionHistoryTableFooter />}
+          footer={
+            <TransactionHistoryTableFooter
+              transactionHistory={transactionHistory}
+            />
+          }
           headers={(handleSortChange, sort) => (
             <TransactionHistoryTableHeader
               handleSortChange={handleSortChange}

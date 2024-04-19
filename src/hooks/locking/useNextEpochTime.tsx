@@ -8,7 +8,7 @@ const useNextEpochTime = () => {
   const { data, error } = useSWRImmutable('nextEpochTime', async () => {
     const epoch = await sdk.Locking.getNextEpochDate()
 
-    return epoch.div(1000)
+    return epoch.div(1000).toNumber()
   })
 
   return {

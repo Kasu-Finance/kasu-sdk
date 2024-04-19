@@ -7,49 +7,47 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material'
-import { useState } from 'react'
+
+import useTransactionHistoryState from '@/hooks/context/useTransactionHistoryState'
 
 import { ValueOf } from '@/types/utils'
 
-const TransactionStatus = {
+export const TransactionStatus = {
+  ALL: 'All',
   PROCESSING: 'Processing',
   PROCESSED: 'Processed',
   REQUESTED: 'Requested',
-  ALL: 'All',
 } as const
 
-const TransactionType = {
+export const TransactionType = {
+  ALL: 'All Transactions',
   DEPOSIT: 'Deposit',
   WITHDRAW: 'Withdrawal',
-  ALL: 'All Transactions',
 } as const
 
-const TransactionTranches = {
+export const TransactionTranches = {
+  ALL: 'All Tranches',
   JUNIOR: 'Junior',
   MEZZANINE: 'Mezzanine',
   SENIOR: 'Senior',
-  ALL: 'All Tranches',
 } as const
 
 const TransactionHistoryFilters = () => {
-  const [status, setStatus] = useState<ValueOf<typeof TransactionStatus>>(
-    TransactionStatus.ALL
-  )
-
-  const [type, setType] = useState<ValueOf<typeof TransactionType>>(
-    TransactionType.ALL
-  )
-
-  const [trancheType, setTrancheType] = useState<
-    ValueOf<typeof TransactionTranches>
-  >(TransactionTranches.ALL)
+  const {
+    status,
+    trancheType,
+    transactionType,
+    setStatus,
+    setTrancheType,
+    setTransactionType,
+  } = useTransactionHistoryState()
 
   const handleStatusChange = (e: SelectChangeEvent) => {
     setStatus(e.target.value as ValueOf<typeof TransactionStatus>)
   }
 
   const handleTypeChange = (e: SelectChangeEvent) => {
-    setType(e.target.value as ValueOf<typeof TransactionType>)
+    setTransactionType(e.target.value as ValueOf<typeof TransactionType>)
   }
 
   const handleTrancheChange = (e: SelectChangeEvent) => {
@@ -87,7 +85,7 @@ const TransactionHistoryFilters = () => {
           </InputLabel>
           <Select
             notched={true}
-            value={type}
+            value={transactionType}
             inputProps={{
               id: 'transaction-type-selector',
             }}

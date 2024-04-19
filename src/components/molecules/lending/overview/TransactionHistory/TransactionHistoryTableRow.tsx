@@ -11,9 +11,10 @@ import {
   TableRow,
   Typography,
 } from '@mui/material'
-import { UserRequestStatus } from '@solidant/kasu-sdk/src/services/UserLending/subgraph-types'
 import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
 import React from 'react'
+
+import useModalState from '@/hooks/context/useModalState'
 
 import TokenAmount from '@/components/atoms/TokenAmount'
 import TransactionCollapsedContent from '@/components/molecules/lending/overview/TransactionHistory/TransactionCollapsedContent'
@@ -33,11 +34,18 @@ const TransactionHistoryTableRow: React.FC<TransactionHistoryTableRowProps> = ({
   transaction,
   isActive,
 }) => {
+  const { openModal } = useModalState()
+
   const handleCancel = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation()
 
-    // if (transaction.requestType === 'Deposit') {
-    // }
+    openModal({
+      name:
+        transaction.requestType === 'Deposit'
+          ? 'cancelDepositModal'
+          : 'cancelWithdrawalModal',
+      transactionHistory: transaction,
+    })
   }
 
   return (
@@ -106,7 +114,7 @@ const TransactionHistoryTableRow: React.FC<TransactionHistoryTableRowProps> = ({
           <Typography variant='body2' component='span' display='block'>
             {transaction.status}
           </Typography>
-          {transaction.status === UserRequestStatus.PROCESSING && (
+          {transaction.canCancel && (
             <Button
               sx={{ width: 96, height: 30, mt: 1 }}
               size='small'
