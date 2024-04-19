@@ -111,7 +111,11 @@ function sortCumulativeFundsMetrics(metrics: RepaymentMetric[]): void {
     RepaymentsMetrics.UNREALISED_LOSSES,
   ]
 
-  metrics.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id))
+  metrics.sort(
+    (a, b) =>
+      order.indexOf(a.id as RepaymentsMetrics) -
+      order.indexOf(b.id as RepaymentsMetrics)
+  )
 }
 
 function sortUpcomingFundsMetrics(metrics: RepaymentMetric[]): void {
