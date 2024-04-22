@@ -1,10 +1,13 @@
 node_modules
 .next
+
+# Ignore certificates folder
 certificates/*
 
 .env
 .env.local
 .env.production
+
 .npmrc
 
 dist/
