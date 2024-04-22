@@ -421,5 +421,11 @@
         "column-4": "Actions"
       }
     }
+  },
+  "home": {
+    "tabs": {
+      "activePools": "Active Pools",
+      "closedPools": "Closed pools"
+    }
   }
 }

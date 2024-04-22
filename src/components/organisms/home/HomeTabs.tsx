@@ -1,7 +1,13 @@
 import Box from '@mui/material/Box'
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
+import {
+  PoolDelegateProfileAndHistory,
+  PoolOverview,
+} from '@solidant/kasu-sdk/src/services/DataService/types'
 import { memo, useCallback, useState } from 'react'
+
+import useTranslation from '@/hooks/useTranslation'
 
 import EmptyCardState from '@/components/atoms/EmptyCardState'
 import Carousel from '@/components/molecules/Carousel'
@@ -11,10 +17,12 @@ import TabPanel from '@/components/molecules/tabs/TabPanel'
 import { Routes } from '@/config/routes'
 
 interface PoolCardProps {
-  pools: any
+  pools: PoolOverview[]
+  poolDelegates: PoolDelegateProfileAndHistory[]
 }
 
-const HomeTabs: React.FC<PoolCardProps> = ({ pools }) => {
+const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState(0)
   const panelsId = 'home-pools'
 
@@ -25,13 +33,20 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools }) => {
     []
   )
 
+  const getDelegateByPoolId = useCallback(
+    (poolId: string) =>
+      poolDelegates.find((delegate) => delegate.poolIdFK === poolId),
+    [poolDelegates]
+  )
+
   const hasPools = pools && pools.length > 0
 
   const poolsContent = hasPools ? (
-    pools.map((pool, index) => (
+    pools.map((pool) => (
       <PoolCard
-        key={index}
+        key={pool.id}
         pool={pool}
+        poolDelegate={getDelegateByPoolId(pool.id)}
         link={`${Routes.lending.root.url}/${pool.id}`}
       />
     ))
@@ -46,8 +61,8 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools }) => {
         onChange={handleChange}
         aria-label='Home Tabs Example'
       >
-        <Tab label='Active Pools' />
-        <Tab label='Closed Pools' />
+        <Tab label={t('home.tabs.activePools')} />
+        <Tab label={t('home.tabs.closedPools')} />
       </Tabs>
       <TabPanel value={activeTab} index={0} id={`${panelsId}-active`}>
         <Box>

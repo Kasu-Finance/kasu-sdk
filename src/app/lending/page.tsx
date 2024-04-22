@@ -19,9 +19,7 @@ const mockPoolOverview = {
 
 const Lending = () => {
   const { data: pools, isLoading } = usePoolOverview()
-  const { data: delagates } = usePoolDelegate()
-
-  console.warn('delagates', delagates)
+  const { data: poolDelegates } = usePoolDelegate()
 
   if (isLoading) {
     return (
@@ -37,7 +35,7 @@ const Lending = () => {
   return (
     <Container maxWidth='lg'>
       <PoolTractionCard data={mockPoolOverview} />
-      <HomeTabs pools={pools} />
+      <HomeTabs pools={pools} poolDelegates={poolDelegates} />
     </Container>
   )
 }
