@@ -1,6 +1,8 @@
 node_modules
 .next
 
+build/*
+
 # Ignore certificates folder
 certificates/*
 
@@ -11,3 +13,4 @@ certificates/*
 .npmrc
 
 dist/
+.vercel
