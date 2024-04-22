@@ -4,7 +4,6 @@
 const path = require('path')
 
 const nextConfig = {
-  distDir: 'build',
   images: {
     domains: [
       'example2.com', // TODO: Remove 'example2.com' and add the real URL domain here when the backend is ready.
