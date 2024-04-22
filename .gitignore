@@ -1,9 +1,7 @@
 node_modules
 .next
 
-build/*
-
-# Ignore certificates folder
+# ignore certificates folder
 certificates/*
 
 .env
