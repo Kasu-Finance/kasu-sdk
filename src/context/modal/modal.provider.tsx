@@ -14,6 +14,18 @@ const initialState: Modals = {
   connectWalletModal: { isOpen: false },
   loyaltyLevelsModal: { isOpen: false },
   lockModal: { isOpen: false },
+  unlockModal: {
+    isOpen: false,
+    userLock: null,
+  },
+  depositModal: {
+    isOpen: false,
+    poolData: null,
+  },
+  kycModal: {
+    isOpen: false,
+    callback: () => {},
+  },
 }
 
 const ModalState: React.FC<{ children: ReactNode }> = ({ children }) => {

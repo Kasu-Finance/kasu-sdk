@@ -4,3 +4,6 @@ certificates/*
 
 .env
 .env.local
+.npmrc
+
+dist/
