@@ -54,7 +54,7 @@ export class DataService {
                 console.log("Couldn't find directus pool for id: ", lendingPoolSubgraph.id);
                 continue;
             }
-            for (const tranche of lendingPoolSubgraph.tranches) {
+            for (const tranche of lendingPoolSubgraph.tranches.lendingPoolTranches) {
                 const trancheConfig = subgraphTrancheConfigurationResults.lendingPoolTrancheConfigurations.find(r => r.id == tranche.id);
                 if(!trancheConfig) {
                     console.log("Couldn't find tranche config for id: ", tranche.id);
@@ -66,7 +66,7 @@ export class DataService {
                     maximumDeposit: trancheConfig.maxDepositAmount,
                     minimumDeposit: trancheConfig.minDepositAmount,
                     poolCapacity: "10", // TODO need formula for calculation
-                    name: trancheNames[lendingPoolSubgraph.tranches.length-1][parseInt(tranche.orderId)]
+                    name: trancheNames[lendingPoolSubgraph.tranches.lendingPoolTranches.length-1][parseInt(tranche.orderId)]
                 });
             }
             const poolOverview: PoolOverview = {
@@ -139,10 +139,11 @@ export class DataService {
 
     async getPoolTranches(id_in?: string[]): Promise<PoolTranche[]> {
         const EPOCHS_IN_YEAR = 52.17857;
-        const subgraphResults: TrancheSubgraph[] = await this._graph.request(getAllTranchesQuery);
+        const subgraphResults: TrancheSubgraph = await this._graph.request(getAllTranchesQuery);
+        console.log(subgraphResults)
         const subgraphConfigurationResults: TrancheConfigurationSubgraph = await this._graph.request(getAllTrancheConfigurationsQuery);
         const retn: PoolTranche[] = [];
-        for (const trancheSubgraph of subgraphResults) {
+        for (const trancheSubgraph of subgraphResults.lendingPoolTranches) {
             const configuration = subgraphConfigurationResults.lendingPoolTrancheConfigurations.find(r => r.id == trancheSubgraph.id);
             if(!configuration) {
                 console.log("Couldn't find tranche configuration for id: ", trancheSubgraph.id);
