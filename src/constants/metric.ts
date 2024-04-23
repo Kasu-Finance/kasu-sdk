@@ -16,6 +16,9 @@ export enum PoolDelegateMetricIds {
   OtherPools = 'otherPools',
   Loans = 'loans',
   Loss = 'loss',
+  TotalLossRate = 'totalLossRate',
+  LendingHistory = 'lendingHistory',
+  Security = 'security',
 }
 
 export enum PoolDetailsMetricIds {
