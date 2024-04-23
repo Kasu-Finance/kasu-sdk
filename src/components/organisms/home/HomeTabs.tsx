@@ -39,20 +39,19 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
     [poolDelegates]
   )
 
-  const hasPools = pools && pools.length > 0
-
-  const poolsContent = hasPools ? (
-    pools.map((pool) => (
-      <PoolCard
-        key={pool.id}
-        pool={pool}
-        poolDelegate={getDelegateByPoolId(pool.id)}
-        link={`${Routes.lending.root.url}/${pool.id}`}
-      />
-    ))
-  ) : (
-    <EmptyCardState message='No pools available.' />
-  )
+  const poolsContent =
+    pools?.length > 0 ? (
+      pools.map((pool) => (
+        <PoolCard
+          key={pool.id}
+          pool={pool}
+          poolDelegate={getDelegateByPoolId(pool.id)}
+          link={`${Routes.lending.root.url}/${pool.id}`}
+        />
+      ))
+    ) : (
+      <EmptyCardState message='No pools available.' />
+    )
 
   return (
     <Box sx={{ width: '100%', mt: 0.5 }}>
@@ -66,7 +65,15 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
       </Tabs>
       <TabPanel value={activeTab} index={0} id={`${panelsId}-active`}>
         <Box>
-          <Carousel slidesPerPage={3}>{poolsContent}</Carousel>
+          <Carousel
+            slidesPerPage={3}
+            arrowButtonStyle={{
+              leftArrow: { left: '-40px' },
+              rightArrow: { right: '-40px' },
+            }}
+          >
+            {poolsContent}
+          </Carousel>
         </Box>
       </TabPanel>
       <TabPanel value={activeTab} index={1} id={`${panelsId}-closed`}>
