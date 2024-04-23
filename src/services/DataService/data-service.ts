@@ -138,6 +138,7 @@ export class DataService {
     }
 
     async getPoolTranches(id_in?: string[]): Promise<PoolTranche[]> {
+        const EPOCHS_IN_YEAR = 52.17857;
         const subgraphResults: TrancheSubgraph[] = await this._graph.request(getAllTranchesQuery);
         const subgraphConfigurationResults: TrancheConfigurationSubgraph = await this._graph.request(getAllTrancheConfigurationsQuery);
         const retn: PoolTranche[] = [];
@@ -147,10 +148,11 @@ export class DataService {
                 console.log("Couldn't find tranche configuration for id: ", trancheSubgraph.id);
                 continue;
             }
+            const apy = (1 + parseFloat(configuration.interestRate)) ** EPOCHS_IN_YEAR - 1
             const tranche: PoolTranche = {
                 id: trancheSubgraph.id,
                 poolIdFK: trancheSubgraph.lendingPool.id,
-                apy: configuration.interestRate,
+                apy: apy.toString(),
                 remainingCapacity: "10", // TODO need formula for calculation
                 minimalDepositThreshold: configuration.minDepositAmount,
                 maximalDepositThreshold: configuration.maxDepositAmount
