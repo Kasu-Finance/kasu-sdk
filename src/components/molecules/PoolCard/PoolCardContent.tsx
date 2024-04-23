@@ -8,11 +8,12 @@ import { useMemo } from 'react'
 import useTranslation from '@/hooks/useTranslation'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
+import InfoColumn from '@/components/atoms/InfoColumn'
 import InfoRow from '@/components/atoms/InfoRow'
-import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
 import { PoolDelegateMetricIds } from '@/constants'
 import { formatAmount } from '@/utils'
+import formatDuration from '@/utils/formats/formatDuration'
 
 interface PoolCardContentProps {
   pool: PoolOverview
@@ -62,8 +63,13 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
       baseMetrics.push({
         id: PoolDelegateMetricIds.LendingHistory,
         title: 'lending.poolOverview.detailCard.lendingHistory',
-        value: String(poolDelegate.delegateLendingHistory),
-        suffix: 'days', // TODO: check if this is correct
+        value: String(
+          formatDuration(poolDelegate.delegateLendingHistory, {
+            months: true,
+            days: true,
+          })
+        ),
+        suffix: '',
         sx: { mt: 1 },
         showDivider: false,
       })
@@ -91,19 +97,32 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
             ? `lending.shortcutTranche.${tranche.name.toLowerCase()}.title`
             : 'general.poolApy'
           const trancheApy = parseFloat(tranche.apy) * 100
-          const formattedApy = trancheApy.toFixed(2)
+          const formattedApy = trancheApy.toFixed(2) + ' %'
 
           return (
-            // TODO: use here <InfoColumn key={tranche.id} title={title} subtitle={} metric={tranche.apy} />
-            <MetricWithSuffix
+            <InfoColumn
               key={tranche.id}
-              content={formattedApy}
-              suffix='%'
-              titleKey={titleKey}
-              tooltipKey=''
+              title={t(titleKey)}
+              subtitle={
+                isMultiTranche
+                  ? t('lending.poolOverview.investmentCard.trancheApy.label')
+                  : ''
+              }
+              toolTipInfo=''
+              showDivider
+              metric={
+                <Typography variant='subtitle2' sx={{ pl: 2, mt: 0.5 }}>
+                  {formattedApy}
+                </Typography>
+              }
               containerSx={{
                 width: isMultiTranche ? '50%' : '100%',
                 pb: 1,
+              }}
+              subtitleStyle={{
+                component: 'p',
+                sx: { ml: 0 },
+                variant: 'caption',
               }}
             />
           )
