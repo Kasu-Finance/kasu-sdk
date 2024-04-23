@@ -15,8 +15,6 @@ interface PoolCardProps {
 }
 
 const PoolCard: React.FC<PoolCardProps> = ({ pool, poolDelegate, link }) => {
-  console.warn('poolDelegate', poolDelegate)
-  console.warn('pool', pool)
   return (
     <Card>
       <PoolCardHeader pool={pool} />

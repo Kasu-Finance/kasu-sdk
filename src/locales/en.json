@@ -28,7 +28,9 @@
     "pool": "pool",
     "adjust": "adjust",
     "overview": "overview",
-    "poolApy": "Pool APY"
+    "poolApy": "Pool APY",
+    "apy": "APY",
+    "tvl": "TVL"
   },
   "time": {
     "days": "days",

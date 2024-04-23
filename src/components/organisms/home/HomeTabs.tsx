@@ -11,6 +11,7 @@ import useTranslation from '@/hooks/useTranslation'
 
 import EmptyCardState from '@/components/atoms/EmptyCardState'
 import Carousel from '@/components/molecules/Carousel'
+import ClosedPoolsTable from '@/components/molecules/home/ClosedPoolsTable'
 import PoolCard from '@/components/molecules/PoolCard'
 import TabPanel from '@/components/molecules/tabs/TabPanel'
 
@@ -24,7 +25,7 @@ interface PoolCardProps {
 const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
   const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState(0)
-  const panelsId = 'home-pools'
+  console.log('pools', pools)
 
   const handleChange = useCallback(
     (event: React.SyntheticEvent, newValue: number) => {
@@ -63,7 +64,7 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
         <Tab label={t('home.tabs.activePools')} />
         <Tab label={t('home.tabs.closedPools')} />
       </Tabs>
-      <TabPanel value={activeTab} index={0} id={`${panelsId}-active`}>
+      <TabPanel value={activeTab} index={0} id='home-pools-active'>
         <Box>
           <Carousel
             slidesPerPage={3}
@@ -76,14 +77,9 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
           </Carousel>
         </Box>
       </TabPanel>
-      <TabPanel value={activeTab} index={1} id={`${panelsId}-closed`}>
-        {/* Content for Closed Pools */}
+      <TabPanel value={activeTab} index={1} id='home-pools-closed'>
         <Box>
-          <h2>Closed Pools</h2>
-          <p>
-            This section can contain information about pools that have been
-            closed.
-          </p>
+          <ClosedPoolsTable pools={pools} poolDelegates={poolDelegates} />
         </Box>
       </TabPanel>
     </Box>
