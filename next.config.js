@@ -23,7 +23,11 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['dayjs', 'ethers'],
     // needed for turbo dev mode for locally linked packages
-    // outputFileTracingRoot: path.join(__dirname, '../../'),
+    ...(process.env.NODE_ENV === 'development'
+      ? {
+          outputFileTracingRoot: path.join(__dirname, '../../'),
+        }
+      : {}),
   },
   i18n: {
     locales: ['en'],
