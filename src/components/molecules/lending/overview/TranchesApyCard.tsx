@@ -32,6 +32,8 @@ import { formatUnits } from 'ethers/lib/utils'
 
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
 import { TOKENS } from '@/constants/tokens'
 
 const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
@@ -53,7 +55,10 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
   })
 
   const handleOpen = () =>
-    openModal({ name: 'depositModal', poolData: POOL_DATA })
+    openModal({
+      name: ModalsKeys.DEPOSIT,
+      poolData: POOL_DATA,
+    })
 
   const POOL_DATA: PoolData = {
     poolName: pool.poolName,
