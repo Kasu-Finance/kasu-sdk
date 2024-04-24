@@ -9,3 +9,5 @@ export interface PoolDetailSection {
   id: string
   metrics: PoolMetric[]
 }
+
+export type HexString = `0x${string}`

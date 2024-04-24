@@ -19,6 +19,7 @@ import DepositModalStepper from '@/components/organisms/modals/DepositModal/Depo
 
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
+import config from '@/config'
 import sdkConfig, { USDC } from '@/config/sdk'
 
 const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
@@ -40,6 +41,7 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const requestDeposit = useRequestDeposit()
 
   const poolData = modal.depositModal.poolData
+  const transactionUrl = `${config.networkScanUrl}/tx/${txHash}`
 
   return (
     <>
@@ -53,7 +55,7 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             sx={{ height: 30, width: 97, p: '4px 10px' }}
             variant='outlined'
             startIcon={<ReceiptIcon />}
-            href={txHash}
+            href={transactionUrl}
             target='_blank'
           >
             VIEW TX

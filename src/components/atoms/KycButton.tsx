@@ -5,6 +5,8 @@ import React, { ReactNode } from 'react'
 import useKycState from '@/hooks/context/useKycState'
 import useModalState from '@/hooks/context/useModalState'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
 type KycButtonProps = ButtonProps & {
   defaultText?: {
     connectWallet: string
@@ -40,7 +42,7 @@ const KycButton: React.FC<KycButtonProps> = (props) => {
           ? props.onClick
           : (e) =>
               openModal({
-                name: 'kycModal',
+                name: ModalsKeys.KYC,
                 callback: () => {
                   props.onClick?.(e)
                 },

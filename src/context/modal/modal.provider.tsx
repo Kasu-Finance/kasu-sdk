@@ -14,6 +14,8 @@ const initialState: Modals = {
   connectWalletModal: { isOpen: false },
   loyaltyLevelsModal: { isOpen: false },
   lockModal: { isOpen: false },
+  withdrawModal: { isOpen: false, poolData: null },
+  transactionProcessingModal: { isOpen: false },
   unlockModal: {
     isOpen: false,
     userLock: null,
