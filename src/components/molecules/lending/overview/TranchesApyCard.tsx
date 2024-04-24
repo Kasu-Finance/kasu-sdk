@@ -35,6 +35,7 @@ import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { TOKENS } from '@/constants/tokens'
+import { sortTranches } from '@/utils'
 
 const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
   const divRef = useRef<HTMLDivElement>(null)
@@ -60,18 +61,20 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
       poolData: POOL_DATA,
     })
 
+  const sortedTranches = sortTranches(pool.tranches)
+
   const POOL_DATA: PoolData = {
     poolName: pool.poolName,
     lendingPoolId: pool.id as `0x${string}`,
     totalUserInvestment: poolBalance,
-    tranches: pool.tranches.map((tranche: TrancheData) => ({
+    tranches: sortedTranches.map((tranche: TrancheData) => ({
       toolTip: `lending.tranche.${tranche.name.toLowerCase()}.tooltip`,
       title: t(`lending.tranche.${tranche.name.toLowerCase()}`),
       trancheId: tranche.id as `0x${string}`,
     })),
   }
 
-  const tranches = pool.tranches.map((item) => {
+  const tranches = sortedTranches.map((item) => {
     const key = item.name.toLowerCase()
 
     return {
