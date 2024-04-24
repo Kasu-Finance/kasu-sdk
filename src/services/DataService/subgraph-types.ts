@@ -1,3 +1,5 @@
+import { gql } from 'graphql-request';
+
 export interface LendingPoolSubgraph {
     lendingPools: {
         id: string;
@@ -31,5 +33,38 @@ export interface TrancheConfigurationSubgraph {
         id: string;
         desiredRatio: string;
         orderId: string;
+    }[]
+}
+
+
+export interface LendingPoolConfigurationSubgraph {
+    lendingPoolConfigurations: {
+        desiredDrawAmount: string;
+        drawRecipient: string;
+        id: string;
+        minimumExcessLiquidityPercentage: string;
+        targetExcessLiquidityPercentage: string;
+        trancheInterestChangeEpochDelay: string;
+        tranchesConfig: {
+            maxDepositAmount: string;
+            minDepositAmount: string;
+            interestRate: string;
+            id: string;
+            desiredRatio: string;
+            orderId: string;
+        }[]
+    }[]
+}
+
+export interface LendingPoolWithdrawalAndDepositSubgraph {
+    lendingPools: {
+        id: string;
+        pendingPool: {
+            totalPendingDepositAmounts: string[];
+            totalPendingDepositAmount: string;
+            totalPendingWithdrawalShares: string;
+        }
+        totalDepositsAccepted: string;
+        totalWithdrawalsAccepted: string;
     }[]
 }

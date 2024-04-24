@@ -30,8 +30,9 @@ export interface UserLock {
     startTime: EpochTimeStamp;
     endTime: EpochTimeStamp;
     lockPeriod: LockPeriod;
-    totalBonusYieldEarnings: number;
-    lifetimeBonusYieldEarnings: number;
+    lifetimeYieldEarnings: string;
+    ksuBonusAndRewards: string;
+    protocolFeesEarned: string;
 }
 
 export interface GQLGetLockingPeriods {
@@ -60,6 +61,14 @@ export interface GQLTotalBonusAmountForAddress {
     } | undefined;
 }
 
+export interface UserLockDepositsInfo {
+    feesClaimed: string;
+    ksuLockedAmount: string;
+    rKSUAmount: string;
+    totalKsuBonusAmount: string;
+    id: string;
+}
+
 export interface GQLUserLocks {
     userLocks: {
         id: string;
@@ -68,5 +77,6 @@ export interface GQLUserLocks {
         startTimestamp: string;
         rKSUAmount: string;
         lockPeriod: LockPeriod;
+        userLockDepositsInfo: UserLockDepositsInfo;
     }[];
 }

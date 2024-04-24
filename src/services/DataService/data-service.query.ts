@@ -45,3 +45,38 @@ export const getAllTrancheConfigurationsQuery = gql`
         }
     }
 `;
+
+export const getAllLendingPoolConfigurationQuery = gql`
+    query getAllLendingPoolConfigurations {
+      lendingPoolConfigurations {
+        desiredDrawAmount
+        drawRecipient
+        id
+        minimumExcessLiquidityPercentage
+        targetExcessLiquidityPercentage
+        trancheInterestChangeEpochDelay
+        tranchesConfig {
+          desiredRatio
+          interestRate
+          id
+          maxDepositAmount
+          minDepositAmount
+          orderId
+        }
+  }
+}`;
+
+export const getLendingPoolWithdrawalAndDepositsQuery = gql`
+    query getLendingPoolWithdrawalAndDeposits {
+      lendingPools {
+        id
+        pendingPool {
+          totalPendingDepositAmounts
+          totalPendingDepositsAmount
+          totalPendingWithdrawalShares
+        }
+        totalDepositsAccepted
+        totalWithdrawalsAccepted
+      }
+    }
+`;

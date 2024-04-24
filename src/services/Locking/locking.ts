@@ -126,20 +126,18 @@ export class KSULocking {
         const result: GQLUserLocks = await this._graph.request(userLocksQuery, {
             userAddress: userAddress.toLowerCase(),
         });
-
+        const protocolFeesEarned = await this._contractAbi.rewards(userAddress);
         const resultPromises =  result.userLocks
             .map(async (userLock) => {
                 const [, id] = userLock.id.split('-');
-
                 const rKSUtoUSDCRatio = await this.getRKSUvsUSDCRatio(
                     userLock.rKSUAmount,
                     userAddress,
                 )
                 const loyaltyStatus = this.getLoyaltyLevelAndApyBonusFromRatio(rKSUtoUSDCRatio);
-                // TODO real data
                 return {
                     id: BigNumber.from(id),
-                    lockedAmount: userLock.ksuAmount,
+                    lockedAmount: userLock.userLockDepositsInfo.ksuLockedAmount,
                     rKSUAmount: userLock.rKSUAmount,
                     rKSUtoUSDCRatio: rKSUtoUSDCRatio,
                     apyBonus: loyaltyStatus.apyBonus,
@@ -147,8 +145,9 @@ export class KSULocking {
                     startTime: Number(userLock.startTimestamp),
                     endTime: Number(userLock.endTimestamp),
                     lockPeriod: userLock.lockPeriod,
-                    totalBonusYieldEarnings: 0,
-                    lifetimeBonusYieldEarnings: 0,
+                    lifetimeYieldEarnings: "0", // TODO
+                    ksuBonusAndRewards: (Number.parseFloat(userLock.userLockDepositsInfo.totalKsuBonusAmount) + Number.parseFloat(userLock.userLockDepositsInfo.feesClaimed)).toString(),
+                    protocolFeesEarned: ethers.utils.formatUnits(protocolFeesEarned, 18)
                 };
             })
 

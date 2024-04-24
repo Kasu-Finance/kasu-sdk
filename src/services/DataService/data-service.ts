@@ -12,7 +12,13 @@ import { GraphQLClient } from 'graphql-request';
 import { SdkConfig } from '../../sdk-config';
 import { filterArray } from '../shared';
 
-import { getAllLendingPoolsQuery, getAllTrancheConfigurationsQuery, getAllTranchesQuery } from './data-service.query';
+import {
+    getAllLendingPoolConfigurationQuery,
+    getAllLendingPoolsQuery,
+    getAllTrancheConfigurationsQuery,
+    getAllTranchesQuery,
+    getLendingPoolWithdrawalAndDepositsQuery,
+} from './data-service.query';
 import {
     BadAndDoubtfulDebtsDirectus,
     DirectusSchema,
@@ -24,10 +30,11 @@ import {
     RiskManagementItemDirectus,
 } from './directus-types';
 import {
+    LendingPoolConfigurationSubgraph,
     LendingPoolSubgraph,
+    LendingPoolWithdrawalAndDepositSubgraph,
     TrancheConfigurationSubgraph,
     TrancheSubgraph,
-    TrancheSubgraphResult,
 } from './subgraph-types';
 import {
     BadAndDoubtfulDebts, LendingTotals, PoolCreditMetrics,
@@ -46,19 +53,55 @@ export class DataService {
         this._graph = new GraphQLClient(kasuConfig.subgraphUrl);
         this._directus = createDirectus<DirectusSchema>(kasuConfig.directusUrl).with(authentication()).with(rest());
     }
+
+    /*
+    calculatePoolCapacity(poolCapacities: number[], index: number, spillOver: number): number[]{
+
+        const desiredDrawAmount = desiredDrawAmount // subgraph
+        const desiredTrancheRatio = tranchesConfig[index].desiredRatio;
+
+        const targetDrawAmount = parseFloat(desiredDrawAmount) * parseFloat(desiredTrancheRatio);
+
+        const juniorPendingDeposits = LendingPool.pendingPool.totalPendingDepositAmounts[trancheId] // subgraph
+
+        const juniorBalance = LendingPool.tranches[trancheId].balance // subgraph
+
+        const targetJuniorAmount = juniorBalance + targetDrawAmount;
+
+        const juniorRemainingCapacity = Math.max(juniorTargetDrawAmount - juniorPendingDeposits, 0);
+        const juniorRemainingCapacityPercentage = juniorRemainingCapacity / targetJuniorAmount;
+
+
+        const juniorRemainingCapacitySpillover = Math.min(targetDrawAmount - juniorPendingDeposits, 0);
+
+
+
+        if(index == poolCapacities.length){
+            return poolCapacities;
+        }
+        return this.calculatePoolCapacity(poolCapacities, index++, spillOver)
+    }
+
+
+
+     */
+
     async getPoolOverview(id_in?: string[]): Promise<PoolOverview[]> {
         const trancheNames: string[][] = [["Senior"], ["Junior", "Senior"], ["Junior", "Mezzanine", "Senior"]];
         const subgraphTrancheConfigurationResults: TrancheConfigurationSubgraph = await this._graph.request(getAllTrancheConfigurationsQuery);
+        const subgraphLendingPoolConfigurationResults: LendingPoolConfigurationSubgraph = await this._graph.request(getAllLendingPoolConfigurationQuery);
         const subgraphResults: LendingPoolSubgraph = await this._graph.request(getAllLendingPoolsQuery);
         const directusResults: PoolOverviewDirectus[] = await this._directus.request(readItems('PoolOverview'));
         const retn: PoolOverview[] = [];
         for (const lendingPoolSubgraph of subgraphResults.lendingPools) {
             const lendingPoolDirectus: PoolOverviewDirectus | undefined = directusResults.find(r => r.id == lendingPoolSubgraph.id);
-            const tranches: TrancheData[] = [];
-            if(!lendingPoolDirectus) {
+            const lendingPoolConfig = subgraphLendingPoolConfigurationResults.lendingPoolConfigurations.find(r => r.id == lendingPoolSubgraph.id);
+            if(!lendingPoolDirectus || !lendingPoolConfig) {
                 console.log("Couldn't find directus pool for id: ", lendingPoolSubgraph.id);
                 continue;
             }
+            const tranches: TrancheData[] = [];
+
             for (const tranche of lendingPoolSubgraph.tranches) {
                 const trancheConfig = subgraphTrancheConfigurationResults.lendingPoolTrancheConfigurations.find(r => r.id == tranche.id);
                 if(!trancheConfig) {
@@ -144,22 +187,19 @@ export class DataService {
     }
 
     async getPoolTranches(id_in?: string[]): Promise<PoolTranche[]> {
-        const EPOCHS_IN_YEAR = 52.17857;
-        const subgraphResults: TrancheSubgraphResult = await this._graph.request(getAllTranchesQuery);
-        console.log(subgraphResults)
+        const subgraphResults: TrancheSubgraph[] = await this._graph.request(getAllTranchesQuery);
         const subgraphConfigurationResults: TrancheConfigurationSubgraph = await this._graph.request(getAllTrancheConfigurationsQuery);
         const retn: PoolTranche[] = [];
-        for (const trancheSubgraph of subgraphResults.lendingPoolTranches) {
+        for (const trancheSubgraph of subgraphResults) {
             const configuration = subgraphConfigurationResults.lendingPoolTrancheConfigurations.find(r => r.id == trancheSubgraph.id);
             if(!configuration) {
                 console.log("Couldn't find tranche configuration for id: ", trancheSubgraph.id);
                 continue;
             }
-            const apy = (1 + parseFloat(configuration.interestRate)) ** EPOCHS_IN_YEAR - 1
             const tranche: PoolTranche = {
                 id: trancheSubgraph.id,
                 poolIdFK: trancheSubgraph.lendingPool.id,
-                apy: apy.toString(),
+                apy: configuration.interestRate,
                 remainingCapacity: "10", // TODO need formula for calculation
                 minimalDepositThreshold: configuration.minDepositAmount,
                 maximalDepositThreshold: configuration.maxDepositAmount
@@ -186,13 +226,17 @@ export class DataService {
 
     async getRepayments(id_in?: string[]): Promise<PoolRepayment[]>{
         const poolRepaymentDirectus: PoolRepaymentDirectus[] = await this._directus.request(readItems('PoolRepayments'));
+        const lendingPoolsWithdrawalsAndDepositsSubgraph: LendingPoolWithdrawalAndDepositSubgraph = await this._graph.request(getLendingPoolWithdrawalAndDepositsQuery);
         const retn: PoolRepayment[] = [];
         for(const data of poolRepaymentDirectus){
             const upcomingLendingFundsFlow_1_Value = data.upcomingLendingFundsFlow_1_Value && data.upcomingLendingFundsFlow_1_Key ? data.upcomingLendingFundsFlow_1_Value : 0.00;
             const upcomingLendingFundsFlow_2_Value = data.upcomingLendingFundsFlow_2_Value && data.upcomingLendingFundsFlow_2_Key ? data.upcomingLendingFundsFlow_2_Value : 0.00;
             const upcomingLendingFundsFlow_3_Value = data.upcomingLendingFundsFlow_3_Value && data.upcomingLendingFundsFlow_3_Key ? data.upcomingLendingFundsFlow_3_Value : 0.00;
             const upcomingLendingFundsFlow_4_Value = data.upcomingLendingFundsFlow_4_Value && data.upcomingLendingFundsFlow_4_Key ? data.upcomingLendingFundsFlow_4_Value : 0.00;
-            // TODO real data
+            const cumulativeDepositsAndWithdrawals_CumulativeWithdrawals = lendingPoolsWithdrawalsAndDepositsSubgraph.lendingPools.find(pool =>  pool.id == data.poolIdFK)?.totalWithdrawalsAccepted ?? "0";
+            const cumulativeDepositsAndWithdrawals_CumulativeDeposits = lendingPoolsWithdrawalsAndDepositsSubgraph.lendingPools.find(pool =>  pool.id == data.poolIdFK)?.totalDepositsAccepted ?? "0";
+            const depositAndWithdrawalRequests_CurrentDepositsRequests = lendingPoolsWithdrawalsAndDepositsSubgraph.lendingPools.find(pool =>  pool.id == data.poolIdFK)?.pendingPool.totalPendingDepositAmount ?? "0";
+            const depositAndWithdrawalRequests_CurrentWithdrawalRequests = lendingPoolsWithdrawalsAndDepositsSubgraph.lendingPools.find(pool =>  pool.id == data.poolIdFK)?.pendingPool.totalPendingWithdrawalShares ?? "0";
             const poolRepayment: PoolRepayment = {
                 id: data.id,
                 poolIdFK: data.poolIdFK,
@@ -213,12 +257,13 @@ export class DataService {
                 upcomingLendingFundsFlow_4_Value: upcomingLendingFundsFlow_4_Value,
                 cumulativeLendingFundsFlow_ClosingLoansBalance: data.cumulativeLendingFundsFlow_InterestAccrued + data.cumulativeLendingFundsFlow_InterestPayments + data.cumulativeLendingFundsFlow_LoansDrawn + data.cumulativeLendingFundsFlow_OpeningLoansBalance + data.cumulativeLendingFundsFlow_PrincipalRepayments + data.cumulativeLendingFundsFlow_UnrealisedLosses,
                 upcomingLendingFundsFlow_NetInflows: upcomingLendingFundsFlow_1_Value + upcomingLendingFundsFlow_2_Value + upcomingLendingFundsFlow_3_Value + upcomingLendingFundsFlow_4_Value,
-                cumulativeDepositsAndWithdrawals_NetDeposits: 0,
-                cumulativeDepositsAndWithdrawals_CumulativeWithdrawals: 0,
-                cumulativeDepositsAndWithdrawals_CumulativeDeposits: 0,
-                depositAndWithdrawalRequests_NetDeposits: 0,
-                depositAndWithdrawalRequests_CurrentDepositsRequests: 0,
-                depositAndWithdrawalRequests_CurrentWithdrawalRequests: 0,
+                // TODO check decimals and units here
+                cumulativeDepositsAndWithdrawals_NetDeposits: parseFloat(cumulativeDepositsAndWithdrawals_CumulativeDeposits) - parseFloat(cumulativeDepositsAndWithdrawals_CumulativeWithdrawals),
+                cumulativeDepositsAndWithdrawals_CumulativeWithdrawals: parseFloat(cumulativeDepositsAndWithdrawals_CumulativeWithdrawals),
+                cumulativeDepositsAndWithdrawals_CumulativeDeposits: parseFloat(cumulativeDepositsAndWithdrawals_CumulativeDeposits),
+                depositAndWithdrawalRequests_NetDeposits: parseFloat(depositAndWithdrawalRequests_CurrentDepositsRequests) - parseFloat(depositAndWithdrawalRequests_CurrentWithdrawalRequests),
+                depositAndWithdrawalRequests_CurrentDepositsRequests: parseFloat(depositAndWithdrawalRequests_CurrentDepositsRequests),
+                depositAndWithdrawalRequests_CurrentWithdrawalRequests: parseFloat(depositAndWithdrawalRequests_CurrentWithdrawalRequests)
             };
             retn.push(poolRepayment);
         }
