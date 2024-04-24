@@ -52,7 +52,7 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
       },
       {
         id: PoolDelegateMetricIds.AssetClasses,
-        title: 'details.poolDelegate.assetClass',
+        title: 'details.poolDetails.assetClass',
         value: poolDelegate?.assetClasses || 'N/A',
         suffix: '',
         sx: { mt: 1 },

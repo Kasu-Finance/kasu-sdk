@@ -556,6 +556,11 @@
     "tabs": {
       "activePools": "Active Pools",
       "closedPools": "Closed pools"
+    },
+    "closedPools": {
+      "table": {
+        "lossRate": "Loss Rate"
+      }
     }
   }
 }
