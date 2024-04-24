@@ -6,7 +6,7 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material'
-import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useMemo } from 'react'
 
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'

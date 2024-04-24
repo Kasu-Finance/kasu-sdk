@@ -1,7 +1,7 @@
 import ChevronRight from '@mui/icons-material/ChevronRight'
 import EditIcon from '@mui/icons-material/Edit'
 import { Button, DialogActions, useTheme } from '@mui/material'
-import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useRouter } from 'next/navigation'
 import { useMemo } from 'react'
 

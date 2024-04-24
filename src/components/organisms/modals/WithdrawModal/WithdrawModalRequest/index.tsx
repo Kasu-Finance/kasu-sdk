@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material'
-import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'

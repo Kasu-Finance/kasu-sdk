@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useWeb3React } from '@web3-react/core'
-import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
 import { useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
