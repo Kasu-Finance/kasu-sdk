@@ -30,7 +30,7 @@ export const getAllTranchesQuery = gql`
           id
         }
       }
-}
+    }
 `;
 
 export const getAllTrancheConfigurationsQuery = gql`
