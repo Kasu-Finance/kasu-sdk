@@ -8,6 +8,7 @@ const nextConfig = {
     domains: [
       'example2.com', // TODO: Remove 'example2.com' and add the real URL domain here when the backend is ready.
       'kasu.finance',
+      '',
     ],
   },
   async redirects() {
@@ -20,8 +21,13 @@ const nextConfig = {
     ]
   },
   experimental: {
+    optimizePackageImports: ['dayjs', 'ethers'],
     // needed for turbo dev mode for locally linked packages
-    outputFileTracingRoot: path.join(__dirname, '../../'),
+    ...(process.env.NODE_ENV === 'development'
+      ? {
+          outputFileTracingRoot: path.join(__dirname, '../../'),
+        }
+      : {}),
   },
   i18n: {
     locales: ['en'],

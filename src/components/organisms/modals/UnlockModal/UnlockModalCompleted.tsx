@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material'
+import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
 import { useWeb3React } from '@web3-react/core'
 import { formatEther } from 'ethers/lib/utils'
-import { UserLock } from 'kasu-sdk/src/types'
 import React from 'react'
 
 import useLockModalState from '@/hooks/context/useLockModalState'

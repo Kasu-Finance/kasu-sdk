@@ -1,41 +1,37 @@
+'use client'
+
 import { BigNumber } from '@ethersproject/bignumber'
 import LogoutIcon from '@mui/icons-material/Logout'
 import { Card, CardContent, CardHeader } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
-import { useWeb3React } from '@web3-react/core'
-import { PoolOverview } from 'kasu-sdk/src/services/DataService/types'
-import { useRouter } from 'next/navigation'
-import { useMemo } from 'react'
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 
-import useModalState from '@/hooks/context/useModalState'
 import useGetUserBalance from '@/hooks/lending/useUserTrancheBalance'
 
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 import TranchInvestmentCard from '@/components/molecules/TranchInvestmentCard'
 
-import { ModalsKeys } from '@/context/modal/modal.types'
-
-import { Routes } from '@/config/routes'
 import { COLS } from '@/constants'
-import { ZERO_ADDRESS } from '@/constants/pool'
 import {
   calculateTotalInvested,
   calculateTotalYieldEarned,
   formatAmount,
   getAverageApyAndTotal,
   getTranchesWithUserBalances,
+  hexToUSD,
 } from '@/utils'
+import { TrancheWithUserBalance } from '@/utils/lending/calculateUserBalances'
 
 const InvestmentPortfolio: React.FC<{
   pool: PoolOverview
 }> = ({ pool }) => {
   const tranches = pool.tranches.map((tranche) => tranche)
   const tranchesId = tranches.map((tranche) => tranche.id)
-  let tranchesWithBalances = null
-  let totalYieldEarned = 0
-  let totalInvestment = BigNumber.from(ZERO_ADDRESS)
+  let tranchesWithBalances: TrancheWithUserBalance[] = []
+  let totalYieldEarned: number = 0
+  let totalInvestment: string = BigNumber.from('0x00').toString()
 
   const tranchesTotal = getAverageApyAndTotal(tranches)
   const { amount, isLoading } = useGetUserBalance(tranchesId)
@@ -44,22 +40,6 @@ const InvestmentPortfolio: React.FC<{
     tranchesWithBalances = getTranchesWithUserBalances(tranches, amount)
     totalYieldEarned = calculateTotalYieldEarned(tranchesWithBalances)
     totalInvestment = calculateTotalInvested(tranchesWithBalances)
-  }
-
-  const router = useRouter()
-  const { openModal } = useModalState()
-
-  const { account } = useWeb3React()
-  const hasBalance = totalInvestment.gt(BigNumber.from('0'))
-
-  const isWithdrawDisabled = useMemo(() => {
-    return !hasBalance || !account
-  }, [hasBalance, account])
-
-  const handleWithdrawClick = (pool: PoolOverview) => {
-    openModal({ name: ModalsKeys.WITHDRAW, poolData: pool })
-
-    router.push(`${Routes.lending.root.url}/${pool.id}?step=1`)
   }
 
   return (
@@ -101,7 +81,7 @@ const InvestmentPortfolio: React.FC<{
             >
               <Grid item xs={4}>
                 <MetricWithSuffix
-                  content={formatAmount(totalInvestment)}
+                  content={formatAmount(totalInvestment.toString())}
                   suffix='USDC'
                   tooltipKey='lending.poolOverview.investmentCard.totalAmount.tooltip'
                   titleKey='lending.poolOverview.investmentCard.totalAmount.label'
@@ -128,14 +108,14 @@ const InvestmentPortfolio: React.FC<{
         {tranchesWithBalances &&
           tranchesWithBalances.map((tranche, index) => {
             const totalInvested = tranche?.balance
-              ? BigNumber.from(tranche.balance._hex)
-              : BigNumber.from(ZERO_ADDRESS)
+              ? hexToUSD(tranche.balance)
+              : BigNumber.from('0x00').toString()
 
             return (
               <Grid item xs={COLS / tranchesWithBalances.length} key={index}>
                 <TranchInvestmentCard
                   title={`${tranche.name} Tranche APY`}
-                  amount={totalInvested.toString()}
+                  amount={formatAmount(totalInvested)}
                   apy={formatAmount(+tranche.apy * 100)}
                   yieldEarned={tranche.yieldEarned?.toString() || ''}
                 />
@@ -154,12 +134,7 @@ const InvestmentPortfolio: React.FC<{
           pb: 2,
         }}
       >
-        <Button
-          startIcon={<LogoutIcon />}
-          variant='contained'
-          disabled={isWithdrawDisabled}
-          onClick={() => handleWithdrawClick(pool)}
-        >
+        <Button startIcon={<LogoutIcon />} variant='contained'>
           Withdraw
         </Button>
       </Box>

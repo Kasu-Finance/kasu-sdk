@@ -1,5 +1,5 @@
 import { Box, Card, Typography } from '@mui/material'
-import { PoolDelegateProfileAndHistory } from 'kasu-sdk/src/services/DataService/types'
+import { PoolDelegateProfileAndHistory } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useCallback, useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'

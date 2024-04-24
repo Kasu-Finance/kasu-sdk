@@ -1,4 +1,4 @@
-import { FinancialReportingDocumentsDirectus } from 'kasu-sdk/src/services/DataService/directus-types'
+import { FinancialReportingDocumentsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'

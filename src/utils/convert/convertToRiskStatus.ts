@@ -1,4 +1,4 @@
-import { RiskPerformance } from 'kasu-sdk/src/services/DataService/types'
+import { RiskPerformance } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import { PoolDetailsSectionIds, RiskMetricIds } from '@/constants'
 

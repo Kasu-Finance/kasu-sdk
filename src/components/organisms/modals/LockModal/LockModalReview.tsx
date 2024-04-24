@@ -1,5 +1,5 @@
 import { Box, Grid, Typography } from '@mui/material'
-import { LockPeriod } from 'kasu-sdk/src/types'
+import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
 import React from 'react'
 
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
@@ -84,7 +84,7 @@ const LockModalReview: React.FC<LockModalReviewProps> = ({
             <Box px={2} py='6px'>
               <Typography variant='h6' component='span' display='block'>
                 <Countdown
-                  endTime={nextEpochTime ?? 0}
+                  endTime={nextEpochTime?.toNumber() || 0}
                   format='D:HH:mm'
                   render={(countDown) => {
                     const parts = countDown.split(':')
@@ -101,7 +101,7 @@ const LockModalReview: React.FC<LockModalReviewProps> = ({
                 color={(theme) => theme.palette.text.secondary}
               >
                 {dayjs
-                  .unix(nextEpochTime ?? 0)
+                  .unix(nextEpochTime?.toNumber() || 0)
                   .format('DD.MM.YYYY • HH:mm:ss UTCZZ')}
               </Typography>
             </Box>

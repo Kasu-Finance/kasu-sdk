@@ -1,4 +1,4 @@
-import { LockPeriod } from 'kasu-sdk/src/types'
+import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
 import { useCallback, useContext } from 'react'
 
 import lockModalContext from '@/context/lockModal/lockModal.context'
