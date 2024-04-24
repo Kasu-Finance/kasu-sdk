@@ -233,10 +233,18 @@ export class DataService {
             const upcomingLendingFundsFlow_2_Value = data.upcomingLendingFundsFlow_2_Value && data.upcomingLendingFundsFlow_2_Key ? data.upcomingLendingFundsFlow_2_Value : 0.00;
             const upcomingLendingFundsFlow_3_Value = data.upcomingLendingFundsFlow_3_Value && data.upcomingLendingFundsFlow_3_Key ? data.upcomingLendingFundsFlow_3_Value : 0.00;
             const upcomingLendingFundsFlow_4_Value = data.upcomingLendingFundsFlow_4_Value && data.upcomingLendingFundsFlow_4_Key ? data.upcomingLendingFundsFlow_4_Value : 0.00;
-            const cumulativeDepositsAndWithdrawals_CumulativeWithdrawals = lendingPoolsWithdrawalsAndDepositsSubgraph.lendingPools.find(pool =>  pool.id == data.poolIdFK)?.totalWithdrawalsAccepted ?? "0";
-            const cumulativeDepositsAndWithdrawals_CumulativeDeposits = lendingPoolsWithdrawalsAndDepositsSubgraph.lendingPools.find(pool =>  pool.id == data.poolIdFK)?.totalDepositsAccepted ?? "0";
-            const depositAndWithdrawalRequests_CurrentDepositsRequests = lendingPoolsWithdrawalsAndDepositsSubgraph.lendingPools.find(pool =>  pool.id == data.poolIdFK)?.pendingPool.totalPendingDepositAmount ?? "0";
-            const depositAndWithdrawalRequests_CurrentWithdrawalRequests = lendingPoolsWithdrawalsAndDepositsSubgraph.lendingPools.find(pool =>  pool.id == data.poolIdFK)?.pendingPool.totalPendingWithdrawalShares ?? "0";
+            const lendingPoolSubgraph = lendingPoolsWithdrawalsAndDepositsSubgraph.lendingPools.find(pool =>  pool.id == data.poolIdFK);
+            if (lendingPoolSubgraph === undefined) {
+                console.log("Couldn't find lending pool for id: ", data.poolIdFK);
+                continue;
+            }
+            const cumulativeDepositsAndWithdrawals_CumulativeWithdrawals = lendingPoolSubgraph.totalWithdrawalsAccepted;
+            const cumulativeDepositsAndWithdrawals_CumulativeDeposits = lendingPoolSubgraph.totalDepositsAccepted;
+            const depositAndWithdrawalRequests_CurrentDepositsRequests = lendingPoolSubgraph.pendingPool.totalPendingDepositsAmount;
+            let sumTotalPendingWithdrawalShares = 0.00;
+            lendingPoolSubgraph.pendingPool.totalPendingWithdrawalShares.forEach(shares => {
+                sumTotalPendingWithdrawalShares += parseFloat(shares);
+            })
             const poolRepayment: PoolRepayment = {
                 id: data.id,
                 poolIdFK: data.poolIdFK,
@@ -261,9 +269,9 @@ export class DataService {
                 cumulativeDepositsAndWithdrawals_NetDeposits: parseFloat(cumulativeDepositsAndWithdrawals_CumulativeDeposits) - parseFloat(cumulativeDepositsAndWithdrawals_CumulativeWithdrawals),
                 cumulativeDepositsAndWithdrawals_CumulativeWithdrawals: parseFloat(cumulativeDepositsAndWithdrawals_CumulativeWithdrawals),
                 cumulativeDepositsAndWithdrawals_CumulativeDeposits: parseFloat(cumulativeDepositsAndWithdrawals_CumulativeDeposits),
-                depositAndWithdrawalRequests_NetDeposits: parseFloat(depositAndWithdrawalRequests_CurrentDepositsRequests) - parseFloat(depositAndWithdrawalRequests_CurrentWithdrawalRequests),
+                depositAndWithdrawalRequests_NetDeposits: parseFloat(depositAndWithdrawalRequests_CurrentDepositsRequests) - sumTotalPendingWithdrawalShares,
                 depositAndWithdrawalRequests_CurrentDepositsRequests: parseFloat(depositAndWithdrawalRequests_CurrentDepositsRequests),
-                depositAndWithdrawalRequests_CurrentWithdrawalRequests: parseFloat(depositAndWithdrawalRequests_CurrentWithdrawalRequests)
+                depositAndWithdrawalRequests_CurrentWithdrawalRequests: sumTotalPendingWithdrawalShares
             };
             retn.push(poolRepayment);
         }

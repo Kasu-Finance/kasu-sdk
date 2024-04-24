@@ -61,8 +61,8 @@ export interface LendingPoolWithdrawalAndDepositSubgraph {
         id: string;
         pendingPool: {
             totalPendingDepositAmounts: string[];
-            totalPendingDepositAmount: string;
-            totalPendingWithdrawalShares: string;
+            totalPendingDepositsAmount: string;
+            totalPendingWithdrawalShares: string[];
         }
         totalDepositsAccepted: string;
         totalWithdrawalsAccepted: string;
