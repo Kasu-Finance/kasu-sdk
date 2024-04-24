@@ -9,7 +9,7 @@ import { extractDateAndUtcOffset, formatTimestampWithOffset } from '@/utils'
 
 const WithdrawCountdown = () => {
   const { t } = useTranslation()
-  const { nextEpochTime = 0 } = useNextEpochTime()
+  const { nextEpochTime } = useNextEpochTime()
 
   const formattedDate = formatTimestampWithOffset(nextEpochTime, 1)
   const { date, time, format, offset } = extractDateAndUtcOffset(formattedDate)
