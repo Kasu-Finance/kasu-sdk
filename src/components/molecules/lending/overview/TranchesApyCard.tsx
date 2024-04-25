@@ -21,6 +21,8 @@ export type PoolData = {
     toolTip: string
     title: string
     trancheId: `0x${string}`
+    minimumDeposit: string
+    maximumDeposit: string
   }[]
 }
 
@@ -71,6 +73,8 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
       toolTip: `lending.tranche.${tranche.name.toLowerCase()}.tooltip`,
       title: t(`lending.tranche.${tranche.name.toLowerCase()}`),
       trancheId: tranche.id as `0x${string}`,
+      minimumDeposit: tranche.minimumDeposit,
+      maximumDeposit: tranche.maximumDeposit,
     })),
   }
 
