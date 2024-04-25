@@ -1,6 +1,8 @@
 import { PoolDelegateProfileAndHistory } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import { PoolDelegateMetricIds } from '@/constants'
+import formatAmount from '@/utils/formats/formatAmount'
+import formatPercentage from '@/utils/formats/formatPercentage'
 
 import { PoolMetric } from '@/types/lending'
 
@@ -13,12 +15,14 @@ const convertToPoolDelegate = (
   },
   {
     id: PoolDelegateMetricIds.TotalFunds,
-    content: `${delegateProfile.totalLoanFundsOriginated} M`,
+    content: `${formatAmount(delegateProfile.totalLoanFundsOriginated, {
+      minDecimals: 2,
+    })} M`,
     unit: 'USDC',
   },
   {
     id: PoolDelegateMetricIds.TotalLoans,
-    content: delegateProfile.totalLoansOriginated.toString(),
+    content: delegateProfile.totalLoansOriginated,
   },
   {
     id: PoolDelegateMetricIds.AssetClasses,
@@ -30,12 +34,14 @@ const convertToPoolDelegate = (
   },
   {
     id: PoolDelegateMetricIds.Loans,
-    content: `${delegateProfile.loansUnderManagement} M`,
+    content: `${formatAmount(delegateProfile.loansUnderManagement, {
+      minDecimals: 2,
+    })} M`,
     unit: 'USDC',
   },
   {
     id: PoolDelegateMetricIds.Loss,
-    content: `${delegateProfile.historicLossRate} %`,
+    content: `${formatPercentage(delegateProfile.historicLossRate)}`,
   },
 ]
 

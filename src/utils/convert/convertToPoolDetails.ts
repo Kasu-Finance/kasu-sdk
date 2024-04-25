@@ -1,12 +1,16 @@
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import { PoolDetailsMetricIds, PoolDetailsSectionIds } from '@/constants'
+import formatPercentage from '@/utils/formats/formatPercentage'
 
 import { PoolDetailSection, PoolMetric } from '@/types/lending'
 
 const convertToPoolDetails = (overview: PoolOverview): PoolDetailSection => {
   const metrics: PoolMetric[] = [
-    { id: PoolDetailsMetricIds.APY, content: `${overview.apy} %` },
+    {
+      id: PoolDetailsMetricIds.APY,
+      content: `${formatPercentage(overview.apy)}`,
+    },
     { id: PoolDetailsMetricIds.AssetClass, content: overview.assetClass },
     {
       id: PoolDetailsMetricIds.ExposureIndustry,
