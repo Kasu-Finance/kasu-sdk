@@ -32,6 +32,10 @@ import { formatUnits } from 'ethers/lib/utils'
 
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
+import { TOKENS } from '@/constants/tokens'
+
 const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
   const divRef = useRef<HTMLDivElement>(null)
   const { t } = useTranslation()
@@ -42,8 +46,7 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
 
   const poolBalance = useMemo(() => {
     if (!userPoolBalance) return '0'
-    const decimals = 6
-    return formatUnits(userPoolBalance?.balance || '0', decimals)
+    return formatUnits(userPoolBalance?.balance || '0', TOKENS.USDC.decimals)
   }, [userPoolBalance])
 
   const { isSticky } = useIsSticky({
@@ -52,7 +55,10 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
   })
 
   const handleOpen = () =>
-    openModal({ name: 'depositModal', poolData: POOL_DATA })
+    openModal({
+      name: ModalsKeys.DEPOSIT,
+      poolData: POOL_DATA,
+    })
 
   const POOL_DATA: PoolData = {
     poolName: pool.poolName,
@@ -60,7 +66,7 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
     totalUserInvestment: poolBalance,
     tranches: pool.tranches.map((tranche: TrancheData) => ({
       toolTip: `lending.tranche.${tranche.name.toLowerCase()}.tooltip`,
-      title: t(`lending.tranche.${tranche.name.toLowerCase()}.title`),
+      title: t(`lending.tranche.${tranche.name.toLowerCase()}`),
       trancheId: tranche.id as `0x${string}`,
     })),
   }

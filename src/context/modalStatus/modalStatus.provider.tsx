@@ -11,17 +11,21 @@ import {
 
 type ModalStatusStateProps = {
   children: ReactNode
+  defaultStatus?: ModalStatusAction
 }
 
-const initialState: ModalStatusStateType = {
-  modalStatus: {
-    type: 'default',
-    bgColor: undefined,
-  },
-  modalStatusAction: ModalStatusAction.EDITING,
-}
+const ModalStatusState: React.FC<ModalStatusStateProps> = ({
+  children,
+  defaultStatus = ModalStatusAction.EDITING,
+}) => {
+  const initialState: ModalStatusStateType = {
+    modalStatus: {
+      type: 'default',
+      bgColor: undefined,
+    },
+    modalStatusAction: defaultStatus,
+  }
 
-const ModalStatusState: React.FC<ModalStatusStateProps> = ({ children }) => {
   const [state, dispatch] = useReducer(modalStatusReducer, initialState)
 
   return (

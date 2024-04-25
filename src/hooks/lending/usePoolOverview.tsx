@@ -7,13 +7,13 @@ const usePoolOverview = (poolId?: string) => {
 
   const fetchPoolOverview = async () => {
     const argument = poolId ? [poolId] : undefined
-    const poolOverview = await sdk.DataService.getPoolOverview(argument)
+    const data = await sdk.DataService.getPoolOverview(argument)
 
-    if (!poolOverview?.length) {
+    if (!data?.length) {
       throw new Error('No pool overview data found')
     }
 
-    return poolOverview
+    return data
   }
 
   const { data, error } = useSWR(`poolOverview/${poolId}`, fetchPoolOverview)

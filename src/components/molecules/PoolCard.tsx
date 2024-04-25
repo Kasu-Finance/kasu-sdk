@@ -1,20 +1,20 @@
-import { Button, Card, Typography } from '@mui/material'
+import { Box, Button, Card, Typography } from '@mui/material'
 import Link from 'next/link'
 
 interface PoolCardProps {
-  name: string
+  poolName: string
   link: string
 }
 
-const PoolCard: React.FC<PoolCardProps> = ({ name, link }) => {
-  return (
-    <Card>
-      <Typography variant='h5'>{name}</Typography>
+const PoolCard: React.FC<PoolCardProps> = ({ poolName, link }) => (
+  <Card sx={{ p: 3 }}>
+    <Typography variant='h5'>{poolName}</Typography>
+    <Box display='flex' justifyContent='space-between'>
       <Button href={link} variant='contained' component={Link}>
         Overview
       </Button>
-    </Card>
-  )
-}
+    </Box>
+  </Card>
+)
 
 export default PoolCard

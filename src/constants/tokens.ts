@@ -1,0 +1,20 @@
+export const TOKENS = {
+  KSU: {
+    symbol: 'KSU',
+    address: '...',
+    decimals: 18,
+  },
+  USDC: {
+    symbol: 'USDC',
+    address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+    decimals: 6,
+  },
+  USDT: {
+    symbol: 'USDT',
+    address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+  },
+  WETH: {
+    symbol: 'WETH',
+    address: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+  },
+}
