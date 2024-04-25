@@ -1,4 +1,4 @@
-import { Box, Button, DialogTitle } from '@mui/material'
+import { Box, Button, DialogTitle, SxProps, Theme } from '@mui/material'
 import React, { ReactNode } from 'react'
 
 import { CrossIcon } from '@/assets/icons'
@@ -7,6 +7,7 @@ type DialogHeaderProps = {
   title: string
   children?: ReactNode
   showClose?: boolean
+  containerSx?: SxProps<Theme>
   onClose: () => void
 }
 
@@ -14,6 +15,7 @@ const DialogHeader: React.FC<DialogHeaderProps> = ({
   title,
   children,
   showClose = true,
+  containerSx,
   onClose,
 }) => {
   return (
@@ -23,6 +25,7 @@ const DialogHeader: React.FC<DialogHeaderProps> = ({
       alignItems='center'
       px={2}
       py={1}
+      sx={containerSx}
     >
       <DialogTitle sx={{ p: 0 }} variant='h5' component='span'>
         {title}

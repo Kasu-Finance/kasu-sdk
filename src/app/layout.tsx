@@ -2,7 +2,6 @@ import { Box } from '@mui/material'
 import type { Metadata } from 'next'
 import { Roboto } from 'next/font/google'
 import { ReactNode } from 'react'
-import '@/connection/eagerlyConnect'
 
 import Header from '@/components/organisms/header'
 import ModalsContainer from '@/components/organisms/modals/ModalsContainer'
@@ -15,6 +14,8 @@ import Web3Provider from '@/context/web3provider/web3.provider'
 
 import getLockPeriods from '@/actions/getLockPeriods'
 import ThemeRegistry from '@/themes/ThemeRegistry'
+
+import '@/connection/eagerlyConnect'
 
 type RootLayoutProps = {
   children: ReactNode

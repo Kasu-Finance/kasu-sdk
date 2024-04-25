@@ -19,7 +19,7 @@ const Lending = () => {
       <Container maxWidth='lg'>
         <PageHeader title='Lending' />
         <Box display='flex' justifyContent='center' alignItems='center' mt={3}>
-          <Typography variant='h6'>Loading...</Typography>
+          <Typography variant='h6'>Missing Loader...</Typography>
         </Box>
       </Container>
     )
@@ -30,9 +30,9 @@ const Lending = () => {
   const poolsContent = hasPools ? (
     pools.map((pool, index) => (
       <PoolCard
-        name={pool.poolName}
-        link={`${Routes.lending.root.url}/${pool.id}`}
         key={index}
+        poolName={pool.poolName}
+        link={`${Routes.lending.root.url}/${pool.id}`}
       />
     ))
   ) : (

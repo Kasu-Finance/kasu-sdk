@@ -1,6 +1,16 @@
 node_modules
 .next
+
+build/*
+
+# Ignore certificates folder
 certificates/*
 
 .env
 .env.local
+.env.production
+
+.npmrc
+
+dist/
+.vercel

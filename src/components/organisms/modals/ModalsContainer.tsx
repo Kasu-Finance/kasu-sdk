@@ -10,8 +10,9 @@ import KycModal from '@/components/organisms/modals/KycModal'
 import LockModalWrapper from '@/components/organisms/modals/LockModal/LockModalWrapper'
 import LoyaltyLevelsModal from '@/components/organisms/modals/LoyaltyLevelsModal'
 import UnlockModalWrapper from '@/components/organisms/modals/UnlockModal/UnlockModalWrapper'
+import WithdrawModalWrapper from '@/components/organisms/modals/WithdrawModal/WithdrawModalWrapper'
 
-import { Modals } from '@/context/modal/modal.types'
+import { Modals, ModalsKeys } from '@/context/modal/modal.types'
 
 import ConnectWalletModal from './ConnectWalletModal'
 
@@ -26,31 +27,35 @@ export const getModal = (
   handleClose: () => void
 ): ModalDetails | null => {
   switch (modalName) {
-    case 'connectWalletModal':
+    case ModalsKeys.CONNECT_WALLET:
       return {
         component: <ConnectWalletModal handleClose={handleClose} />,
         ariaLabel: 'Connect Wallet Modal',
         ariaDescription: 'List of available web3 wallet connections',
       }
-    case 'loyaltyLevelsModal':
+    case ModalsKeys.LOYALTY_LEVELS:
       return {
         component: <LoyaltyLevelsModal handleClose={handleClose} />,
         ariaLabel: 'Loyalty Levels',
         ariaDescription: 'Information about loyalty levels',
       }
-    case 'lockModal':
+    case ModalsKeys.LOCK:
       return {
         component: <LockModalWrapper handleClose={handleClose} />,
       }
-    case 'unlockModal':
+    case ModalsKeys.UNLOCK:
       return {
         component: <UnlockModalWrapper handleClose={handleClose} />,
       }
-    case 'depositModal':
+    case ModalsKeys.WITHDRAW:
+      return {
+        component: <WithdrawModalWrapper handleClose={handleClose} />,
+      }
+    case ModalsKeys.DEPOSIT:
       return {
         component: <DepositModalWrapper handleClose={handleClose} />,
       }
-    case 'kycModal':
+    case ModalsKeys.KYC:
       return {
         component: <KycModal handleClose={handleClose} />,
       }
