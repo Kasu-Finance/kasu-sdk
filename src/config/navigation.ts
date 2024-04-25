@@ -16,6 +16,10 @@ export const NAV_ITEMS: NavItemType[] = [
     to: Routes.locking.root.url,
   },
   {
+    label: 'My Portfolio',
+    to: Routes.portfolio.root.url,
+  },
+  {
     label: 'Docs',
     to: Routes.docs.root.url,
   },

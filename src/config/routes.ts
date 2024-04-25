@@ -4,11 +4,11 @@ export enum BaseRoutesPaths {
   BORROW = '/borrow',
   DOCS = '/docs',
   LOCKING = '/locking',
-  ACCOUNT = '/account',
+  PORTFOLIO = '/portfolio',
 }
 
 export type RouteDefinition = {
-  url: string
+  url: BaseRoutesPaths
 }
 
 type RouteGroup = {
@@ -17,7 +17,7 @@ type RouteGroup = {
   }
 }
 
-export const Routes: RouteGroup = {
+export const Routes = {
   home: {
     root: { url: BaseRoutesPaths.HOME },
   },
@@ -33,7 +33,7 @@ export const Routes: RouteGroup = {
   locking: {
     root: { url: BaseRoutesPaths.LOCKING },
   },
-  account: {
-    root: { url: BaseRoutesPaths.ACCOUNT },
+  portfolio: {
+    root: { url: BaseRoutesPaths.PORTFOLIO },
   },
-}
+} as const satisfies RouteGroup
