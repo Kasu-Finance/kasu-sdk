@@ -76,3 +76,8 @@ export interface UserPoolBalance {
     yieldEarned: number;
     balance: BigNumber;
 }
+
+export interface UserApyBonus {
+    balance: BigNumber;
+    lifetime: number;
+}

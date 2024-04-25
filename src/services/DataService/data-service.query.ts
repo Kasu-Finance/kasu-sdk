@@ -3,6 +3,12 @@ import { gql } from 'graphql-request';
 export const getAllLendingPoolsQuery = gql`
     query getAllLendingPools {
       lendingPools {
+        pendingPool {
+          id
+          totalPendingDepositAmounts
+          totalPendingDepositsAmount
+          totalPendingWithdrawalShares
+        }
         id
         totalUserYieldAmount
         totalLossAmount
