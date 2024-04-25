@@ -70,7 +70,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
     if (inputBN.lt(minDepositBN)) {
       setModalStatus({
         type: 'error',
-        errorMessage: `Minimum deposit is ${minDeposit}`,
+        errorMessage: `Minimum deposit is ${minDeposit} USDC`,
       })
       return
     }
@@ -78,7 +78,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
     if (inputBN.gt(maxDepositBN)) {
       setModalStatus({
         type: 'error',
-        errorMessage: `Maximum deposit is ${maxDeposit}`,
+        errorMessage: `Maximum deposit is ${maxDeposit} USDC`,
       })
       return
     }
