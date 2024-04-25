@@ -11,12 +11,19 @@ import PoolDetails from '@/components/organisms/details/PoolDetails'
 import Repayments from '@/components/organisms/repayments/Repayments'
 import RiskReporting from '@/components/organisms/risk/RiskReporting'
 
+const POOL_TABS = {
+  Overview: <PoolOverview />,
+  'Pool Details': <PoolDetails />,
+  Repayments: <Repayments />,
+  'Risk Reporting': <RiskReporting />,
+  Support: 'Support',
+} as const
+
 const PoolTabs: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0)
-  const panelsId = 'lending'
 
   const handleChange = useCallback(
-    (event: React.SyntheticEvent, newValue: number) => {
+    (_: React.SyntheticEvent, newValue: number) => {
       setActiveTab(newValue)
     },
     []
@@ -30,28 +37,20 @@ const PoolTabs: React.FC = () => {
           onChange={handleChange}
           aria-label='basic tabs example'
         >
-          <Tab label='Overview' />
-          <Tab label='Pool Details' />
-          <Tab label='Repayments' />
-          <Tab label='Risk Reporting' />
-          <Tab label='Support' />
+          {Object.keys(POOL_TABS).map((label) => (
+            <Tab label={label} key={label} />
+          ))}
         </Tabs>
       </Box>
-      <TabPanel value={activeTab} index={0} id={panelsId}>
-        <PoolOverview />
-      </TabPanel>
-      <TabPanel value={activeTab} index={1} id={panelsId}>
-        <PoolDetails />
-      </TabPanel>
-      <TabPanel value={activeTab} index={2} id={panelsId}>
-        <Repayments />
-      </TabPanel>
-      <TabPanel value={activeTab} index={3} id={panelsId}>
-        <RiskReporting />
-      </TabPanel>
-      <TabPanel value={activeTab} index={4} id={panelsId}>
-        Support
-      </TabPanel>
+      {Object.values(POOL_TABS).map((render, index) => (
+        <TabPanel
+          id={`lending-${index}`}
+          isActive={activeTab === index}
+          key={index}
+        >
+          {render}
+        </TabPanel>
+      ))}
     </Box>
   )
 }
