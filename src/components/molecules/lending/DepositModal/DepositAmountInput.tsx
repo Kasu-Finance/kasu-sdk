@@ -12,10 +12,12 @@ import NumericalInput from '@/components/molecules/NumericalInput'
 import { toBigNumber } from '@/utils'
 
 type DepositAmountInputProps = {
+  balance: string
   poolData: PoolData
 }
 
 const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
+  balance,
   poolData,
 }) => {
   const { amount, trancheId, setAmount } = useDepositModalState()
@@ -47,14 +49,18 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
   }, [poolData.tranches, trancheId])
 
   const handleMax = () => {
-    setAmount(maxDeposit)
-    validate(maxDeposit)
+    const maxPossible = toBigNumber(maxDeposit).lt(toBigNumber(balance))
+      ? maxDeposit
+      : balance
+    setAmount(maxPossible)
+    validate(maxPossible)
   }
 
   const validate = (inputAmount: string) => {
     const inputBN = toBigNumber(inputAmount)
     const minDepositBN = toBigNumber(minDeposit)
     const maxDepositBN = toBigNumber(maxDeposit)
+    const balanceBN = toBigNumber(balance)
 
     if (inputBN.isZero()) {
       setModalStatus({ type: 'error', errorMessage: 'Invalid amount' })
@@ -73,6 +79,14 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
       setModalStatus({
         type: 'error',
         errorMessage: `Maximum deposit is ${maxDeposit}`,
+      })
+      return
+    }
+
+    if (inputBN.gt(balanceBN)) {
+      setModalStatus({
+        type: 'error',
+        errorMessage: 'Insufficient balance',
       })
       return
     }

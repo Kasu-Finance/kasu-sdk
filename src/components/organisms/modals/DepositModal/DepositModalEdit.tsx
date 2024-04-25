@@ -38,7 +38,7 @@ const DepositModalEdit: React.FC<DepositModalEditProps> = ({ poolData }) => {
   return (
     <Box display='grid' gap={2} mt={2}>
       <DepositModalOverview poolData={poolData} userBalance={userBalance} />
-      <DepositAmountInput poolData={poolData} />
+      <DepositAmountInput poolData={poolData} balance={userBalance} />
       <DepositTrancheSelect poolData={poolData} />
       <DepositDescription />
       <Box display='flex' justifyContent='center' gap={2}>
