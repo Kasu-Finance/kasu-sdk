@@ -122,24 +122,53 @@ export class KSULocking {
         return await this._contractAbi.userTotalDeposits(userAddress);
     }
 
+    /*
+    // TODO your protocol fee rewards
+    calculateProtocolFeeRewards(): number {
+        const totalRKSU = LockingSummary.totalRKsuAmount //subgraph
+
+        const KSULocked = 1000; // user input on the UI
+
+        const newUserRKSU = (KSULocked + (KSULocked * ksuBonusMultiplier)) * rKsuMultiplier // calculate how much rKSU user will get
+
+        const totalRKSUAfterLock = totalRKSU + newUserRKSU
+
+        const performanceFee = 0.1;
+
+        const ecosystemFee = 0.5;
+
+        // get all tranches and calculate its yearly interest rate (can be taken from subgraph)
+
+        let projectedYearlyPlatformInterest = 0;
+        for (const tranche of tranches) {
+            projectedYearlyPlatformInterest = tranche.balance * this.calculateApy(tranche.interestRate)
+        }
+
+        const totalExpectedEcosystemFees = projectedYearlyPlatformInterest * performanceFee * ecosystemFee;
+    }
+     */
+
+    calculateApy(epochInterestRate: number): number {
+        const EPOCHS_IN_YEAR = 52.17857
+        return (1 + epochInterestRate)^EPOCHS_IN_YEAR - 1
+    }
+
     async getUserLocks(userAddress: string): Promise<UserLock[]> {
         const result: GQLUserLocks = await this._graph.request(userLocksQuery, {
             userAddress: userAddress.toLowerCase(),
         });
-
+        const protocolFeesEarned = await this._contractAbi.rewards(userAddress);
         const resultPromises =  result.userLocks
             .map(async (userLock) => {
                 const [, id] = userLock.id.split('-');
-
                 const rKSUtoUSDCRatio = await this.getRKSUvsUSDCRatio(
                     userLock.rKSUAmount,
                     userAddress,
                 )
                 const loyaltyStatus = this.getLoyaltyLevelAndApyBonusFromRatio(rKSUtoUSDCRatio);
-                // TODO real data
                 return {
                     id: BigNumber.from(id),
-                    lockedAmount: userLock.ksuAmount,
+                    lockedAmount: userLock.userLockDepositsInfo.ksuLockedAmount,
                     rKSUAmount: userLock.rKSUAmount,
                     rKSUtoUSDCRatio: rKSUtoUSDCRatio,
                     apyBonus: loyaltyStatus.apyBonus,
@@ -147,8 +176,9 @@ export class KSULocking {
                     startTime: Number(userLock.startTimestamp),
                     endTime: Number(userLock.endTimestamp),
                     lockPeriod: userLock.lockPeriod,
-                    totalBonusYieldEarnings: 0,
-                    lifetimeBonusYieldEarnings: 0,
+                    lifetimeYieldEarnings: "0", // TODO
+                    ksuBonusAndRewards: (Number.parseFloat(userLock.userLockDepositsInfo.totalKsuBonusAmount) + Number.parseFloat(userLock.userLockDepositsInfo.feesClaimed)).toString(),
+                    protocolFeesEarned: ethers.utils.formatUnits(protocolFeesEarned, 18)
                 };
             })
 
@@ -266,7 +296,7 @@ export class KSULocking {
             return "0";
         }
 
-        return result.userLockDepositsInfo.totalKsuBonusAmount;
+        return result.userLockDepositsInfo.totalKsuBonusAmount ;
     }
 
     async getLockingRewards(

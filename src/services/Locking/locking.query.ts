@@ -33,23 +33,29 @@ export const userStakedKsuQuery = gql`
 `;
 
 export const userLocksQuery = gql`
-    query GetUserLocks($userAddress: String!) {
-        userLocks(
-            where: { userLockDepositsInfo: $userAddress, ksuAmount_gt: 0 }
-        ) {
-            id
-            ksuAmount
-            endTimestamp
-            startTimestamp
-            rKSUAmount
-            lockPeriod {
-                rKSUMultiplier
-                lockPeriod
-                ksuBonusMultiplier
-                id
-            }
-        }
+query GetUserLocks($userAddress: String!) {
+  userLocks(where: {userLockDepositsInfo: $userAddress, ksuAmount_gt: 0}) {
+    id
+    ksuAmount
+    endTimestamp
+    startTimestamp
+    lockPeriod {
+      rKSUMultiplier
+      lockPeriod
+      ksuBonusMultiplier
+      id
     }
+    rKSUAmount
+    userLockDepositsInfo {
+      totalKsuBonusAmount
+      rKSUAmount
+      ksuLockedAmount
+      id
+      feesClaimed
+    }
+  }
+}
+
 `;
 
 export const lockingPeriodsQuery = gql`

@@ -3,6 +3,12 @@ import { gql } from 'graphql-request';
 export const getAllLendingPoolsQuery = gql`
     query getAllLendingPools {
       lendingPools {
+        pendingPool {
+          id
+          totalPendingDepositAmounts
+          totalPendingDepositsAmount
+          totalPendingWithdrawalShares
+        }
         id
         totalUserYieldAmount
         totalLossAmount
@@ -43,5 +49,40 @@ export const getAllTrancheConfigurationsQuery = gql`
             interestRate
             desiredRatio
         }
+    }
+`;
+
+export const getAllLendingPoolConfigurationQuery = gql`
+    query getAllLendingPoolConfigurations {
+      lendingPoolConfigurations {
+        desiredDrawAmount
+        drawRecipient
+        id
+        minimumExcessLiquidityPercentage
+        targetExcessLiquidityPercentage
+        trancheInterestChangeEpochDelay
+        tranchesConfig {
+          desiredRatio
+          interestRate
+          id
+          maxDepositAmount
+          minDepositAmount
+          orderId
+        }
+  }
+}`;
+
+export const getLendingPoolWithdrawalAndDepositsQuery = gql`
+    query getLendingPoolWithdrawalAndDeposits {
+      lendingPools {
+        id
+        pendingPool {
+          totalPendingDepositAmounts
+          totalPendingDepositsAmount
+          totalPendingWithdrawalShares
+        }
+        totalDepositsAccepted
+        totalWithdrawalsAccepted
+      }
     }
 `;
