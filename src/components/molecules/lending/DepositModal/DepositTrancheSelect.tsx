@@ -6,6 +6,7 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material'
+import { useMemo } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 
@@ -19,6 +20,22 @@ const DepositTrancheSelect: React.FC<DepositTrancheSelectProps> = ({
   poolData,
 }) => {
   const { trancheId, setSelectedTranche } = useDepositModalState()
+
+  const selectedTrancheId = useMemo(() => {
+    const existingTranche = poolData.tranches.find(
+      (tranche) => tranche.trancheId === trancheId
+    )
+
+    if (existingTranche) {
+      return existingTranche.trancheId
+    }
+
+    const seniorTranche = poolData.tranches.find((tranche) =>
+      tranche.title.toLowerCase().includes('senior')
+    )
+
+    return (seniorTranche || poolData.tranches[0]).trancheId
+  }, [poolData.tranches, trancheId])
 
   const handleChange = (e: SelectChangeEvent) => {
     const trancheValue = e.target.value
@@ -34,7 +51,7 @@ const DepositTrancheSelect: React.FC<DepositTrancheSelectProps> = ({
       </InputLabel>
       <Select
         notched={true}
-        value={trancheId}
+        value={selectedTrancheId}
         inputProps={{
           id: 'tranche-selector',
         }}

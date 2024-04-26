@@ -21,6 +21,7 @@ import {
   getAverageApyAndTotal,
   getTranchesWithUserBalances,
   hexToUSD,
+  sortTranches,
 } from '@/utils'
 import { TrancheWithUserBalance } from '@/utils/lending/calculateUserBalances'
 
@@ -28,16 +29,17 @@ const InvestmentPortfolio: React.FC<{
   pool: PoolOverview
 }> = ({ pool }) => {
   const tranches = pool.tranches.map((tranche) => tranche)
-  const tranchesId = tranches.map((tranche) => tranche.id)
+  const sortedTranches = sortTranches(tranches)
+  const tranchesId = sortedTranches.map((tranche) => tranche.id)
   let tranchesWithBalances: TrancheWithUserBalance[] = []
   let totalYieldEarned: number = 0
   let totalInvestment: string = BigNumber.from('0x00').toString()
 
-  const tranchesTotal = getAverageApyAndTotal(tranches)
+  const tranchesTotal = getAverageApyAndTotal(sortedTranches)
   const { amount, isLoading } = useGetUserBalance(tranchesId)
 
   if (!isLoading && amount) {
-    tranchesWithBalances = getTranchesWithUserBalances(tranches, amount)
+    tranchesWithBalances = getTranchesWithUserBalances(sortedTranches, amount)
     totalYieldEarned = calculateTotalYieldEarned(tranchesWithBalances)
     totalInvestment = calculateTotalInvested(tranchesWithBalances)
   }
