@@ -14,14 +14,23 @@ const initialState: Modals = {
   connectWalletModal: { isOpen: false },
   loyaltyLevelsModal: { isOpen: false },
   lockModal: { isOpen: false },
-  withdrawModal: { isOpen: false },
+  withdrawModal: { isOpen: false, poolData: null },
   transactionProcessingModal: { isOpen: false },
-  unlockModal: { isOpen: false },
-  depositModal: { isOpen: false },
-  cancelDepositModal: { isOpen: false },
-  cancelWithdrawalModal: { isOpen: false },
-  kycModal: { isOpen: false },
-} as Modals
+  cancelDepositModal: { isOpen: false, transactionHistory: null },
+  cancelWithdrawalModal: { isOpen: false, transactionHistory: null },
+  unlockModal: {
+    isOpen: false,
+    userLock: null,
+  },
+  depositModal: {
+    isOpen: false,
+    poolData: null,
+  },
+  kycModal: {
+    isOpen: false,
+    callback: () => {},
+  },
+}
 
 const ModalState: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [modal, dispatch] = useReducer(modalReducer, initialState)
