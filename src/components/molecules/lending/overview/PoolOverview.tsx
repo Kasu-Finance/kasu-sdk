@@ -11,7 +11,10 @@ import LoyaltyCard from '@/components/molecules/lending/overview/LoyaltyCard'
 import OverviewDetails from '@/components/molecules/lending/overview/OverviewDetails'
 import TranchesApyCard from '@/components/molecules/lending/overview/TranchesApyCard'
 import TranchesDetailsCard from '@/components/molecules/lending/overview/TranchesDetails'
+import TransactionHistory from '@/components/molecules/lending/overview/TransactionHistory'
 import CardSkeleton from '@/components/molecules/loaders/CardSkeleton'
+
+import TransactionHistoryState from '@/context/transactionHistory/transactionHistory.provider'
 
 import { getObjectById } from '@/utils'
 
@@ -69,6 +72,9 @@ const PoolOverview = () => {
         <TranchesDetailsCard pool={currentPool} />
         <InvestmentPortfolio pool={currentPool} />
         <LoyaltyCard />
+        <TransactionHistoryState>
+          <TransactionHistory />
+        </TransactionHistoryState>
       </>
     )
   }
