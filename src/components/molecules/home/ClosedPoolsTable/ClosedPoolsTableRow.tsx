@@ -13,30 +13,26 @@ import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import PoolAvatar from '@/components/atoms/PoolAvatar'
-import { TableData } from '@/components/molecules/home/ClosedPoolsTable'
+import { ClosedPoolData } from '@/components/molecules/home/ClosedPoolsTable'
 
 import { formatAmount, formatPercentage } from '@/utils'
 
 interface RowProps {
-  data: TableData
+  data: ClosedPoolData[]
 }
 
 const ClosedPoolsTableRow: React.FC<RowProps> = ({ data }) => {
-  console.log('ClosedPoolsTableRow', data)
   const { t } = useTranslation()
-
-  if (!data.tranches) {
-    return null
-  }
 
   return (
     <TableRow>
       <TableCell align='left' width='30%'>
         <Box display='flex' alignItems='center' mb={1}>
           <PoolAvatar
-            src={data?.thumbnailImageUrl}
+            src={data?.poolImage}
             name={data?.poolName}
-            showActiveStatus
+            showIconStatus
+            iconStatusSx={{ background: 'rgba(211, 47, 47, 1)' }}
           />
           <Typography variant='h6' component='h1' ml={1}>
             {data?.poolName || 'N/A'}
@@ -95,7 +91,7 @@ const ClosedPoolsTableRow: React.FC<RowProps> = ({ data }) => {
                   pb={0.5}
                 >
                   {isMultiTranche
-                    ? t(`lending.tranche.${tranche.name.toLowerCase()}.title`)
+                    ? t(`lending.tranche.${tranche.name.toLowerCase()}`)
                     : ''}
                 </Typography>
 

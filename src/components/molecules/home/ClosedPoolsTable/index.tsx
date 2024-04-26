@@ -2,37 +2,52 @@ import { Card } from '@mui/material'
 import {
   PoolDelegateProfileAndHistory,
   PoolOverview,
+  TrancheData,
 } from '@solidant/kasu-sdk/src/services/DataService/types'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
-import useTranslation from '@/hooks/useTranslation'
-
-import CustomTable, { Sort } from '@/components/molecules/CustomTable'
-import { CustomTableHeader } from '@/components/molecules/CustomTable/TableHeaders'
+import CustomTable from '@/components/molecules/CustomTable'
 import ClosedPoolsTableFooter from '@/components/molecules/home/ClosedPoolsTable/ClosedPoolsTableFooter'
+import ClosedPoolsTableHeader from '@/components/molecules/home/ClosedPoolsTable/ClosedPoolsTableHeader'
 import ClosedPoolsTableRow from '@/components/molecules/home/ClosedPoolsTable/ClosedPoolsTableRow'
 
-export interface MergedPoolData
-  extends PoolOverview,
-    PoolDelegateProfileAndHistory {}
-
-export type TableData = MergedPoolData
-
-interface TableDataHeader {
-  poolName: string
-  apy: number | string
-  totalValueLocked: number
-  loansUnderManagement: number
-  totalFunds: number
-  totalLossRate: string | number
+type GenericSort<T> = {
+  key: keyof T
+  direction: 'asc' | 'desc'
 }
 
-const handleSort = (
-  _a: TableData,
-  _b: TableData,
-  _sort: Sort<TableData>
+const handleSort = <T extends object>(
+  a: T,
+  b: T,
+  sort: GenericSort<T>
 ): number => {
+  const key = sort.key
+  const direction = sort.direction === 'asc' ? 1 : -1
+  const aValue = a[key]
+  const bValue = b[key]
+
+  if (typeof aValue === 'string' && typeof bValue === 'string') {
+    return aValue.localeCompare(bValue) * direction
+  } else if (typeof aValue === 'number' && typeof bValue === 'number') {
+    return (aValue - bValue) * direction
+  } else if (typeof aValue === 'number' && typeof bValue === 'string') {
+    return -1 * direction
+  } else if (typeof aValue === 'string' && typeof bValue === 'number') {
+    return 1 * direction
+  }
   return 0
+}
+
+export interface ClosedPoolData {
+  poolName: string
+  apy: number
+  totalValueLocked: string
+  loansUnderManagement: string
+  poolImage: string
+  tranches: TrancheData[]
+  totalFunds: number
+  totalLossRate: number
+  assetClass: string
 }
 
 interface ClosedPoolsTableProps {
@@ -44,63 +59,44 @@ const ClosedPoolsTable: React.FC<ClosedPoolsTableProps> = ({
   pools,
   poolDelegates,
 }) => {
-  const { t } = useTranslation()
-
-  const tableData = useMemo(() => {
+  const tableData: ClosedPoolData[] = useMemo(() => {
     if (!pools.length || !poolDelegates.length) {
+      console.warn('No data available to merge')
       return []
     }
 
-    const mergedPoolsData = pools.map((pool) => {
+    return pools.map((pool) => {
       const delegate = poolDelegates.find(
         (delegate) => delegate.poolIdFK === pool.id
       )
-      return { ...pool, ...delegate }
+      return {
+        poolName: pool.poolName,
+        apy: pool.apy,
+        totalValueLocked: pool.totalValueLocked,
+        loansUnderManagement: pool.loansUnderManagement,
+        poolImage: pool.thumbnailImageUrl,
+        tranches: pool.tranches,
+        totalFunds: delegate.totalLoanFundsOriginated,
+        totalLossRate: delegate.historicLossRate,
+        assetClass: delegate.assetClasses,
+      }
     })
-
-    return mergedPoolsData
   }, [pools, poolDelegates])
 
-  console.warn('tableData', tableData)
+  console.warn('Merged data for table:', tableData)
 
-  const headers: CustomTableHeader<TableDataHeader>[] = useMemo(
-    () => [
-      {
-        label: t('general.pool'),
-        value: 'poolName',
-      },
-      {
-        label: t('general.tvl'),
-        value: 'totalValueLocked',
-      },
-      {
-        label: t('general.apy'),
-        value: 'apy',
-      },
-      {
-        label: t('lending.poolOverview.detailCard.loansUnder.label'),
-        value: 'loansUnderManagement',
-      },
-      {
-        label: t('details.poolDelegate.totalFunds.label'),
-        value: 'totalFunds',
-      },
-      {
-        label: t('home.closedPools.table.lossRate'),
-        value: 'totalLossRate',
-      },
-    ],
-    [t]
-  )
-
-  console.warn('tableData', tableData)
   return (
     <Card sx={{ minWidth: 275, boxShadow: 1, padding: 2 }} elevation={1}>
       <CustomTable
-        headers={headers}
         data={tableData}
         defaultSortKey='poolName'
         handleSort={handleSort}
+        headers={(handleSortChange, sort) => (
+          <ClosedPoolsTableHeader
+            handleSortChange={handleSortChange}
+            sort={sort}
+          />
+        )}
         footer={<ClosedPoolsTableFooter />}
         headersStyle={{
           '& > *': {

@@ -1,7 +1,7 @@
 'use client'
 
 import Avatar from '@mui/material/Avatar'
-import { styled } from '@mui/material/styles'
+import { styled, SxProps } from '@mui/material/styles'
 import React from 'react'
 
 import useImageError from '@/hooks/useImageError'
@@ -13,13 +13,13 @@ const StyledAvatarContainer = styled('div')(() => ({
   display: 'inline-block',
 }))
 
-const ActiveStatusIcon = styled('span')(() => ({
+const ActiveStatusIcon = styled('span')((props) => ({
   position: 'absolute',
   bottom: 5,
   right: 5,
   height: '12px',
   width: '12px',
-  backgroundColor: 'rgba(171, 212, 140, 1)',
+  backgroundColor: props.theme.palette.success.main,
   borderRadius: '50%',
   border: '2px solid white',
   transform: 'translate(50%, 50%)',
@@ -28,13 +28,15 @@ const ActiveStatusIcon = styled('span')(() => ({
 interface AvatarProps {
   src?: string
   name?: string
-  showActiveStatus?: boolean
+  showIconStatus?: boolean
+  iconStatusSx?: SxProps
 }
 
 const PoolAvatar: React.FC<AvatarProps> = ({
   src,
   name,
-  showActiveStatus,
+  showIconStatus,
+  iconStatusSx,
   ...props
 }) => {
   const imgError = useImageError(src)
@@ -50,7 +52,7 @@ const PoolAvatar: React.FC<AvatarProps> = ({
         {imgError ? initials : null}
       </Avatar>
 
-      {showActiveStatus && <ActiveStatusIcon />}
+      {showIconStatus && <ActiveStatusIcon sx={iconStatusSx} />}
     </StyledAvatarContainer>
   )
 }

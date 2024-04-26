@@ -3,7 +3,6 @@ import React from 'react'
 
 import { formatPercentage } from '@/utils'
 
-// TODO: Re-implement this when we have the data
 const averageAndTotalRows = [
   {
     name: 'Average',
@@ -25,50 +24,57 @@ const averageAndTotalRows = [
 
 const ClosedPoolsTableFooter: React.FC = () => {
   return (
-    <TableRow
-      key={averageAndTotalRows.name}
-      sx={(theme) => ({
-        background: alpha(theme.palette.primary.main, 0.08),
-      })}
-    >
-      <TableCell align='left'>
-        <Typography variant='subtitle2'>{averageAndTotalRows.name}</Typography>
-      </TableCell>
-      <TableCell align='right'>
-        <Typography variant='h6'>{averageAndTotalRows.apy}</Typography>
-      </TableCell>
-      <TableCell align='right'>
-        <Typography variant='h6'>
-          {averageAndTotalRows.totalValueLocked} M{' '}
-          <Typography variant='body2' component='span'>
-            USDC
-          </Typography>
-        </Typography>
-      </TableCell>
-      <TableCell align='right'>
-        <Typography variant='h6'>
-          {averageAndTotalRows.loansUnderManagement} M{' '}
-          <Typography variant='body2' component='span'>
-            USDC
-          </Typography>
-        </Typography>
-      </TableCell>
-      <TableCell align='right'>
-        <Typography variant='h6'>
-          {averageAndTotalRows.totalFunds} M{' '}
-          <Typography variant='body2' component='span'>
-            USDC
-          </Typography>
-        </Typography>
-      </TableCell>
-      <TableCell align='right'>
-        <Typography variant='h6'>
-          {averageAndTotalRows.name === 'Total'
-            ? averageAndTotalRows?.totalLossRate
-            : formatPercentage(averageAndTotalRows?.totalLossRate) || 0}
-        </Typography>
-      </TableCell>
-    </TableRow>
+    <>
+      {averageAndTotalRows.map((row, index) => (
+        <TableRow
+          key={index}
+          sx={(theme) => ({
+            background: alpha(theme.palette.primary.main, 0.04),
+          })}
+        >
+          <TableCell align='left'>
+            <Typography variant='subtitle2'>{row.name}</Typography>
+          </TableCell>
+          <TableCell align='right'>
+            <Typography variant='h6'>{row.apy}</Typography>
+          </TableCell>
+          <TableCell align='right'>
+            <Typography variant='h6'>
+              {`${row.totalValueLocked} M`}
+              <Typography variant='body2' component='span'>
+                {' '}
+                USDC
+              </Typography>
+            </Typography>
+          </TableCell>
+          <TableCell align='right'>
+            <Typography variant='h6'>
+              {`${row.loansUnderManagement} M`}
+              <Typography variant='body2' component='span'>
+                {' '}
+                USDC
+              </Typography>
+            </Typography>
+          </TableCell>
+          <TableCell align='right'>
+            <Typography variant='h6'>
+              {`${row.totalFunds} M`}
+              <Typography variant='body2' component='span'>
+                {' '}
+                USDC
+              </Typography>
+            </Typography>
+          </TableCell>
+          <TableCell align='right'>
+            <Typography variant='h6'>
+              {row.name === 'Total'
+                ? row?.totalLossRate
+                : formatPercentage(row?.totalLossRate) || 0}
+            </Typography>
+          </TableCell>
+        </TableRow>
+      ))}
+    </>
   )
 }
 
