@@ -12,6 +12,6 @@ const USER_REQUEST_EVENT_MAP = {
     WithdrawalInitiated: 'Initiated',
 } as const;
 
-export const mapUserRequestEventType = (requestType: UserRequestEventType) => {
+export const mapUserRequestEventType = (requestType: UserRequestEventType): string => {
     return USER_REQUEST_EVENT_MAP[requestType];
 };
