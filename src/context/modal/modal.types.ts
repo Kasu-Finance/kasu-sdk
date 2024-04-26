@@ -34,9 +34,9 @@ export type Modals = {
   connectWalletModal: ModalData
   loyaltyLevelsModal: ModalData
   lockModal: ModalData
+  transactionProcessingModal: ModalData
   unlockModal: ModalData<{ userLock: UserLock }>
   withdrawModal: ModalData<{ poolData: PoolOverview }>
-  transactionProcessingModal: ModalData
   depositModal: ModalData<{ poolData: PoolData }>
   kycModal: ModalData<{ callback: () => void }>
   cancelDepositModal: ModalData<{ transactionHistory: UserRequest }>
