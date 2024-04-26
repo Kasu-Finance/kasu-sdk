@@ -1,23 +1,25 @@
 import { Box, TableCell, Typography } from '@mui/material'
-import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
+import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
+import { BigNumber } from 'ethers'
 import { formatEther } from 'ethers/lib/utils'
-import React from 'react'
 
 import TokenAmount from '@/components/atoms/TokenAmount'
 
 import { formatAmount, toBigNumber } from '@/utils'
 
-type UnlockFooterProps = {
-  userLocks: UserLock[]
+type TransactionHistoryTableFooterProps = {
+  transactionHistory: UserRequest[]
 }
 
-const UnlockFooter: React.FC<UnlockFooterProps> = ({ userLocks }) => {
-  const total = userLocks.reduce((acc, cur) => {
-    return acc.add(toBigNumber(cur.lockedAmount))
-  }, toBigNumber('0'))
+const TransactionHistoryTableFooter: React.FC<
+  TransactionHistoryTableFooterProps
+> = ({ transactionHistory }) => {
+  const total = transactionHistory.reduce((acc, cur) => {
+    return acc.add(toBigNumber(cur.acceptedAmount))
+  }, BigNumber.from(0))
 
   return (
-    <TableCell padding='none' colSpan={5}>
+    <TableCell padding='none' colSpan={6}>
       <Box px={2}>
         <Typography
           variant='subtitle2'
@@ -30,11 +32,11 @@ const UnlockFooter: React.FC<UnlockFooterProps> = ({ userLocks }) => {
         <TokenAmount
           py='6px'
           amount={formatAmount(formatEther(total))}
-          symbol='KSU'
+          symbol='USDC'
         />
       </Box>
     </TableCell>
   )
 }
 
-export default UnlockFooter
+export default TransactionHistoryTableFooter

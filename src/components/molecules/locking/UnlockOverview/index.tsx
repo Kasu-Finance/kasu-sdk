@@ -12,11 +12,7 @@ import UnlockRow from '@/components/molecules/locking/UnlockOverview/UnlockRow'
 
 import { toBigNumber } from '@/utils'
 
-const handleSort = (
-  a: UserLock,
-  b: UserLock,
-  sort: Sort<Omit<UserLock, 'launchBonus'>>
-) => {
+const handleSort = (a: UserLock, b: UserLock, sort: Sort<UserLock>) => {
   const direction = sort.direction === 'asc' ? 1 : -1
 
   let aValue: number
