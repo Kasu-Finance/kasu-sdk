@@ -1,3 +1,4 @@
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
 import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
 
@@ -12,6 +13,17 @@ export enum ModalsActionTypes {
   CLOSE_MODAL = 'CLOSE_MODAL',
 }
 
+export enum ModalsKeys {
+  CONNECT_WALLET = 'connectWalletModal',
+  LOYALTY_LEVELS = 'loyaltyLevelsModal',
+  LOCK = 'lockModal',
+  UNLOCK = 'unlockModal',
+  WITHDRAW = 'withdrawModal',
+  TRANSACTION_PROCESSING = 'transactionProcessingModal',
+  DEPOSIT = 'depositModal',
+  KYC = 'kycModal',
+}
+
 export type ModalAction =
   | { type: ModalsActionTypes.OPEN_MODAL; name: keyof Modals; content?: any }
   | { type: ModalsActionTypes.CLOSE_MODAL; name: keyof Modals }
@@ -22,7 +34,9 @@ export type Modals = {
   connectWalletModal: ModalData
   loyaltyLevelsModal: ModalData
   lockModal: ModalData
+  transactionProcessingModal: ModalData
   unlockModal: ModalData<{ userLock: UserLock }>
+  withdrawModal: ModalData<{ poolData: PoolOverview }>
   depositModal: ModalData<{ poolData: PoolData }>
   kycModal: ModalData<{ callback: () => void }>
   cancelDepositModal: ModalData<{ transactionHistory: UserRequest }>
@@ -32,6 +46,7 @@ export type Modals = {
 export type ModalWithProps = Extract<
   keyof Modals,
   | 'unlockModal'
+  | 'withdrawModal'
   | 'depositModal'
   | 'kycModal'
   | 'cancelDepositModal'

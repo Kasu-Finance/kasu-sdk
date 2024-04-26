@@ -55,7 +55,7 @@ const UnlockModalReview: React.FC<UnlockModalReviewProps> = ({
             <Box px={2} py='6px'>
               <Typography variant='h6' component='span' display='block'>
                 <Countdown
-                  endTime={nextEpochTime ?? 0}
+                  endTime={nextEpochTime}
                   format='D:HH:mm'
                   render={(countDown) => {
                     const parts = countDown.split(':')
@@ -72,7 +72,7 @@ const UnlockModalReview: React.FC<UnlockModalReviewProps> = ({
                 color={(theme) => theme.palette.text.secondary}
               >
                 {dayjs
-                  .unix(nextEpochTime ?? 0)
+                  .unix(nextEpochTime)
                   .format('DD.MM.YYYY • HH:mm:ss UTCZZ')}
               </Typography>
             </Box>

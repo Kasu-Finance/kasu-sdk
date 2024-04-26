@@ -12,7 +12,7 @@ const useNextEpochTime = () => {
   })
 
   return {
-    nextEpochTime: data,
+    nextEpochTime: data || 0,
     error,
     isLoading: !data && !error,
   }

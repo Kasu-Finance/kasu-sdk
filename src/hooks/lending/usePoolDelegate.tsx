@@ -21,22 +21,19 @@ const usePoolDelegate = (poolId: string) => {
   )
 
   let customError = error
-  let filteredPoolDelegate = data
-    ? data.find((item) => item.poolIdFK === poolId)
-    : null
+  let filteredData = data ? data.find((item) => item.poolIdFK === poolId) : null
 
-  filteredPoolDelegate =
-    filteredPoolDelegate === undefined ? null : filteredPoolDelegate
+  filteredData = filteredData === undefined ? null : filteredData
 
-  if (data && !filteredPoolDelegate) {
+  if (data && !filteredData) {
     customError = new Error(`No data available for pool ID: ${poolId}`)
     console.error(`No data available for pool ID: ${poolId}`)
   }
 
   return {
-    data: filteredPoolDelegate,
+    data: filteredData,
     error: customError,
-    isLoading: !filteredPoolDelegate && !customError,
+    isLoading: !filteredData && !customError,
     // Expose mutate for refetching or cache updating if needed
     mutate,
   }

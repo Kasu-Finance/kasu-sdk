@@ -6,24 +6,37 @@ const useRiskManagement = (poolId: string) => {
   const sdk = useKasuSDK()
 
   const fetchRiskManagement = async () => {
-    const riskManagementData = await sdk.DataService.getRiskManagement([poolId])
+    const data = await sdk.DataService.getRiskManagement()
 
-    if (!riskManagementData?.length) {
+    if (!data?.length) {
       throw new Error('No data available for this pool.')
     }
 
-    return riskManagementData
+    return data
   }
 
-  const { data, error } = useSWR(
+  const { data, error, mutate } = useSWR(
     poolId ? `riskManagement/${poolId}` : null,
     fetchRiskManagement
   )
 
+  let customError = error
+  let filteredData = data
+    ? data.find((item) => item.poolIdFK === poolId) || null
+    : null
+
+  filteredData = filteredData === undefined ? null : filteredData
+
+  if (data && !filteredData) {
+    customError = new Error(`No data available for pool ID: ${poolId}`)
+    console.error(`No data available for pool ID: ${poolId}`)
+  }
+
   return {
     data,
-    error,
-    isLoading: !data && !error,
+    error: customError,
+    isLoading: !filteredData && !customError,
+    mutate,
   }
 }
 

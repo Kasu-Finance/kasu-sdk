@@ -56,7 +56,7 @@ const PoolDelegateCard: React.FC<PoolDelegateCardProps> = ({ data }) => {
       </Typography>
 
       <Box display='flex' width='100%' className='light-blue-background'>
-        <MetricGroup metrics={firstArray} type={MetricGroupType.First} />d
+        <MetricGroup metrics={firstArray} type={MetricGroupType.First} />
       </Box>
 
       <Box display='flex' justifyContent='space-between' width='100%' mt={2}>

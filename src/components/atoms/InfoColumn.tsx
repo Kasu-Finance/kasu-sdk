@@ -1,4 +1,11 @@
-import { Box, Divider, Typography, TypographyProps } from '@mui/material'
+import {
+  Box,
+  Divider,
+  SxProps,
+  Theme,
+  Typography,
+  TypographyProps,
+} from '@mui/material'
 import React, { ReactNode } from 'react'
 
 import ToolTip from '@/components/atoms/ToolTip'
@@ -9,6 +16,7 @@ type InfoColumnProps = {
   toolTipInfo?: string
   showDivider?: boolean
   metric: ReactNode
+  containerSx?: SxProps<Theme>
   titleStyle?: TypographyProps
   subtitleStyle?: TypographyProps
 }
@@ -19,11 +27,12 @@ const InfoColumn: React.FC<InfoColumnProps> = ({
   toolTipInfo,
   showDivider = false,
   metric,
+  containerSx,
   titleStyle,
   subtitleStyle,
 }) => {
   return (
-    <Box>
+    <Box sx={containerSx}>
       <Box
         display='flex'
         justifyContent='space-between'
