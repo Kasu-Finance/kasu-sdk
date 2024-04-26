@@ -104,7 +104,7 @@ const TransactionHistory = () => {
         <CustomTable
           tableContainerStyles={{ mt: 2 }}
           data={filteredData}
-          defaultSortKey='requestType'
+          defaultSortKey='timestamp'
           handleSort={handleSort}
           headersStyle={{
             '& .MuiTableCell-root': {
