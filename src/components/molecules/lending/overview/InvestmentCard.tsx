@@ -7,12 +7,17 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
+import { useRouter } from 'next/navigation'
 
+import useModalState from '@/hooks/context/useModalState'
 import useGetUserBalance from '@/hooks/lending/useUserTrancheBalance'
 
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 import TranchInvestmentCard from '@/components/molecules/TranchInvestmentCard'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
+import { Routes } from '@/config/routes'
 import { COLS } from '@/constants'
 import {
   calculateTotalInvested,
@@ -28,6 +33,9 @@ import { TrancheWithUserBalance } from '@/utils/lending/calculateUserBalances'
 const InvestmentPortfolio: React.FC<{
   pool: PoolOverview
 }> = ({ pool }) => {
+  const { openModal } = useModalState()
+  const router = useRouter()
+
   const tranches = pool.tranches.map((tranche) => tranche)
   const sortedTranches = sortTranches(tranches)
   const tranchesId = sortedTranches.map((tranche) => tranche.id)
@@ -42,6 +50,17 @@ const InvestmentPortfolio: React.FC<{
     tranchesWithBalances = getTranchesWithUserBalances(sortedTranches, amount)
     totalYieldEarned = calculateTotalYieldEarned(tranchesWithBalances)
     totalInvestment = calculateTotalInvested(tranchesWithBalances)
+  }
+
+  // TODO: add disabled state for withdraw button
+  // const isWithdrawDisabled = useMemo(() => {
+  //   return !hasBalance || !account
+  // }, [hasBalance, account])
+
+  const handleWithdrawClick = (pool: PoolOverview) => {
+    openModal({ name: ModalsKeys.WITHDRAW, poolData: pool })
+
+    router.push(`${Routes.lending.root.url}/${pool.id}?step=1`)
   }
 
   return (
@@ -136,7 +155,11 @@ const InvestmentPortfolio: React.FC<{
           pb: 2,
         }}
       >
-        <Button startIcon={<LogoutIcon />} variant='contained'>
+        <Button
+          startIcon={<LogoutIcon />}
+          onClick={() => handleWithdrawClick(pool)}
+          variant='contained'
+        >
           Withdraw
         </Button>
       </Box>
