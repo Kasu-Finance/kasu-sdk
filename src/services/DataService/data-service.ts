@@ -23,7 +23,12 @@ import {
     RiskManagementDirectus,
     RiskManagementItemDirectus,
 } from './directus-types';
-import { LendingPoolSubgraph, TrancheConfigurationSubgraph, TrancheSubgraph } from './subgraph-types';
+import {
+    LendingPoolSubgraph,
+    TrancheConfigurationSubgraph,
+    TrancheSubgraph,
+    TrancheSubgraphResult,
+} from './subgraph-types';
 import {
     BadAndDoubtfulDebts, LendingTotals, PoolCreditMetrics,
     PoolDelegateProfileAndHistory,
@@ -54,7 +59,7 @@ export class DataService {
                 console.log("Couldn't find directus pool for id: ", lendingPoolSubgraph.id);
                 continue;
             }
-            for (const tranche of lendingPoolSubgraph.tranches.lendingPoolTranches) {
+            for (const tranche of lendingPoolSubgraph.tranches) {
                 const trancheConfig = subgraphTrancheConfigurationResults.lendingPoolTrancheConfigurations.find(r => r.id == tranche.id);
                 if(!trancheConfig) {
                     console.log("Couldn't find tranche config for id: ", tranche.id);
@@ -66,7 +71,7 @@ export class DataService {
                     maximumDeposit: trancheConfig.maxDepositAmount,
                     minimumDeposit: trancheConfig.minDepositAmount,
                     poolCapacity: "10", // TODO need formula for calculation
-                    name: trancheNames[lendingPoolSubgraph.tranches.lendingPoolTranches.length-1][parseInt(tranche.orderId)]
+                    name: trancheNames[lendingPoolSubgraph.tranches.length-1][parseInt(tranche.orderId)]
                 });
             }
             const poolOverview: PoolOverview = {
@@ -140,7 +145,7 @@ export class DataService {
 
     async getPoolTranches(id_in?: string[]): Promise<PoolTranche[]> {
         const EPOCHS_IN_YEAR = 52.17857;
-        const subgraphResults: TrancheSubgraph = await this._graph.request(getAllTranchesQuery);
+        const subgraphResults: TrancheSubgraphResult = await this._graph.request(getAllTranchesQuery);
         console.log(subgraphResults)
         const subgraphConfigurationResults: TrancheConfigurationSubgraph = await this._graph.request(getAllTrancheConfigurationsQuery);
         const retn: PoolTranche[] = [];

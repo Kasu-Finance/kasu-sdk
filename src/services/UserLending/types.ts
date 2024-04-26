@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers';
+
 import { UserRequestStatus } from './subgraph-types';
 
 export interface UserInvestment {

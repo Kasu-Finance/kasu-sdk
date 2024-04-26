@@ -31,11 +31,11 @@ import {
     UserRequestType,
     UserTrancheBalance,
 } from './types';
+import { mapUserRequestEventType } from './user-lending.helper';
 import {
     lendingPoolUserDetailsQuery,
     userRequestsQuery,
 } from './user-lending.query';
-import { mapUserRequestEventType } from './user-lending.helper';
 
 export class UserLending {
     private readonly _graph: GraphQLClient;

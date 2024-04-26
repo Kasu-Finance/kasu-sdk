@@ -6,20 +6,21 @@ export interface LendingPoolSubgraph {
         name: string;
         balance: string;
         firstLostCapital: string;
-        tranches: TrancheSubgraph;
+        tranches: TrancheSubgraph[];
     }[]
 }
 
 export interface TrancheSubgraph {
-    lendingPoolTranches:{
-        balance: string;
+    balance: string;
+    id: string;
+    totalYieldAmount: string;
+    orderId: string;
+    lendingPool: {
         id: string;
-        totalYieldAmount: string;
-        orderId: string;
-        lendingPool: {
-            id: string;
-        }
-    }[]
+    }
+}
+export interface TrancheSubgraphResult {
+    lendingPoolTranches: TrancheSubgraph[];
 }
 
 export interface TrancheConfigurationSubgraph {
