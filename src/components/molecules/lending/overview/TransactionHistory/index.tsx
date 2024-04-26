@@ -58,29 +58,30 @@ const handleSort = (
   return (aValue - bValue) * direction
 }
 
-const TransactionHistory = () => {
+const TransactionHistory: React.FC<{ poolId: string }> = ({ poolId }) => {
   const [open, setOpen] = useState<number | undefined>(undefined)
-
   const { transactionHistory, isLoading } = useTransactionHistory()
-
   const { status, trancheType, transactionType } = useTransactionHistoryState()
 
   if (isLoading || !transactionHistory?.length) return null
 
-  const filteredData = transactionHistory
+  const currentPoolTransactions: UserRequest[] = transactionHistory.filter(
+    (transaction) => {
+      return transaction.lendingPool.id === poolId
+    }
+  )
+
+  const filteredData: UserRequest[] = currentPoolTransactions
     .filter((transaction) => {
       if (status === 'All') return true
-
       return transaction.status === status
     })
     .filter((transaction) => {
       if (trancheType === 'All Tranches') return true
-
       return transaction.trancheName === trancheType
     })
     .filter((transaction) => {
       if (transactionType === 'All Transactions') return true
-
       return transaction.requestType === transactionType
     })
 
@@ -114,7 +115,7 @@ const TransactionHistory = () => {
           }}
           footer={
             <TransactionHistoryTableFooter
-              transactionHistory={transactionHistory}
+              transactionHistory={currentPoolTransactions}
             />
           }
           headers={(handleSortChange, sort) => (
