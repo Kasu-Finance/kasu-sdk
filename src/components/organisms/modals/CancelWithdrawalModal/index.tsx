@@ -51,7 +51,7 @@ const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                 showDivider
                 metric={
                   <Typography pt='6px' pl={2} variant='h6' component='span'>
-                    {transactionHistory.lendingPoolName}
+                    {transactionHistory.lendingPool.name}
                   </Typography>
                 }
               />
@@ -131,7 +131,7 @@ const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           startIcon={<DeleteIcon />}
           onClick={() =>
             cancelWithdrawal(
-              transactionHistory.lendingPoolId as `0x${string}`,
+              transactionHistory.id as `0x${string}`,
               transactionHistory.nftId
             )
           }
