@@ -16,6 +16,8 @@ const initialState: Modals = {
   lockModal: { isOpen: false },
   withdrawModal: { isOpen: false, poolData: null },
   transactionProcessingModal: { isOpen: false },
+  cancelDepositModal: { isOpen: false, transactionHistory: null },
+  cancelWithdrawalModal: { isOpen: false, transactionHistory: null },
   unlockModal: {
     isOpen: false,
     userLock: null,

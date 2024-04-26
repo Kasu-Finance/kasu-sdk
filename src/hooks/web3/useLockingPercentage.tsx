@@ -9,7 +9,7 @@ const useLockingPercentage = () => {
 
   const { rKsuAmount } = useEarnedRKsu()
 
-  const ratio = useRatio(rKsuAmount ?? '1', totalDeposits ?? '1')
+  const ratio = useRatio(rKsuAmount || '0', totalDeposits || '0')
 
   const stakedPercentage = parseFloat(formatEther(ratio.mul(100)))
 

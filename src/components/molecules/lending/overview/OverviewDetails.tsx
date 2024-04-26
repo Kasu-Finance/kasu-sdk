@@ -48,7 +48,7 @@ const OverviewDetails: React.FC<{
               </Grid>
               <Grid item xs={6}>
                 <MetricWithSuffix
-                  content={pool.loansUnderManagement ?? '0'}
+                  content={pool.loansUnderManagement.toString() ?? '0'}
                   suffix='USDC'
                   tooltipKey='lending.poolOverview.detailCard.loansUnder.tooltip'
                   titleKey='lending.poolOverview.detailCard.loansUnder.label'

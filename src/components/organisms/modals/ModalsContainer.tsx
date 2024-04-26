@@ -3,6 +3,8 @@
 import useModalState from '@/hooks/context/useModalState'
 
 import DialogWrapper from '@/components/atoms/DialogWrapper'
+import CancelDepositModal from '@/components/organisms/modals/CancelDepositModal'
+import CancelWithdrawalModal from '@/components/organisms/modals/CancelWithdrawalModal'
 import DepositModalWrapper from '@/components/organisms/modals/DepositModal/DepositModalWrapper'
 import KycModal from '@/components/organisms/modals/KycModal'
 import LockModalWrapper from '@/components/organisms/modals/LockModal/LockModalWrapper'
@@ -57,9 +59,14 @@ export const getModal = (
       return {
         component: <KycModal handleClose={handleClose} />,
       }
-
-    default:
-      return null
+    case 'cancelDepositModal':
+      return {
+        component: <CancelDepositModal handleClose={handleClose} />,
+      }
+    case 'cancelWithdrawalModal':
+      return {
+        component: <CancelWithdrawalModal handleClose={handleClose} />,
+      }
   }
 }
 

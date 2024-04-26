@@ -4,8 +4,10 @@ import React, { useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
-import CustomTable, { Sort } from '@/components/molecules/CustomTable'
-import { CustomTableHeader } from '@/components/molecules/CustomTable/TableHeaders'
+import CustomTable, {
+  CustomTableHeader,
+  Sort,
+} from '@/components/molecules/CustomTable'
 
 import { formatAmount, formatPercentage } from '@/utils'
 
@@ -31,21 +33,25 @@ const PoolCreditTable: React.FC<PoolCreditTableProps> = ({ data }) => {
         label: t('risk.poolCredit.headers.column-1'),
         value: 'keyCreditMetric',
         disableSort: true,
+        styles: { width: '47%' },
       },
       {
         label: t('risk.poolCredit.headers.column-2'),
         value: 'previousFiscalYear',
         disableSort: true,
+        styles: { width: '17%' },
       },
       {
         label: t('risk.poolCredit.headers.column-3'),
         value: 'mostRecentQuarter',
         disableSort: true,
+        styles: { width: '19%' },
       },
       {
         label: t('risk.poolCredit.headers.column-4'),
         value: 'priorMonth',
         disableSort: true,
+        styles: { width: '17%' },
       },
     ],
     [t]
@@ -64,10 +70,9 @@ const PoolCreditTable: React.FC<PoolCreditTableProps> = ({ data }) => {
         defaultSortKey='poolIdFK'
         handleSort={handleSort}
         headersStyle={{
-          '& > *': {
-            p: 1,
-            pl: 2,
-            pr: 2,
+          '& .MuiTableCell-root': {
+            py: '6px',
+            px: 2,
           },
         }}
       >
