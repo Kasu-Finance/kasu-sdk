@@ -28,7 +28,6 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
   const showSuccess = !focused && modalStatus.type === 'success'
 
   const { minDeposit, maxDeposit } = useMemo(() => {
-    // try to find the tranche by ID
     let tranche = poolData.tranches.find((t) => t.trancheId === trancheId)
 
     // If the tranche is not found by ID, fall back to names
@@ -70,7 +69,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
     if (inputBN.lt(minDepositBN)) {
       setModalStatus({
         type: 'error',
-        errorMessage: `Minimum deposit is ${minDeposit} USDC`,
+        errorMessage: `The value entered is below the minimum of ${minDeposit} USDC`,
       })
       return
     }
@@ -78,7 +77,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
     if (inputBN.gt(maxDepositBN)) {
       setModalStatus({
         type: 'error',
-        errorMessage: `Maximum deposit is ${maxDeposit} USDC`,
+        errorMessage: `The value entered is above the maximum of ${maxDeposit} USDC`,
       })
       return
     }
@@ -92,6 +91,11 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
     }
 
     setModalStatus({ type: amount ? 'success' : 'default' })
+  }
+
+  const handleAmountChange = (value: string) => {
+    setAmount(value)
+    validate(value)
   }
 
   const handleFocusState = (state: boolean) => {
@@ -110,7 +114,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
       <NumericalInput
         amount={amount}
         label='Deposit Amount'
-        setAmount={setAmount}
+        setAmount={handleAmountChange}
         handleMax={handleMax}
         decimals={6}
         rootProps={{
