@@ -25,7 +25,6 @@ interface PoolCardProps {
 const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
   const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState(0)
-  console.log('pools', pools)
 
   const handleChange = useCallback(
     (event: React.SyntheticEvent, newValue: number) => {
@@ -36,7 +35,7 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
 
   const getDelegateByPoolId = useCallback(
     (poolId: string) =>
-      poolDelegates.find((delegate) => delegate.poolIdFK === poolId),
+      poolDelegates?.find((delegate) => delegate.poolIdFK === poolId) || null,
     [poolDelegates]
   )
 
