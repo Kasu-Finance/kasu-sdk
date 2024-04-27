@@ -10,6 +10,7 @@ import TokenAmount from '@/components/atoms/TokenAmount'
 import { UnlockIcon } from '@/assets/icons'
 
 import dayjs from '@/dayjs'
+import { formatAmount } from '@/utils'
 
 type UnlockRowProps = {
   userLock: UserLock
@@ -35,7 +36,10 @@ const UnlockRow: React.FC<UnlockRowProps> = ({ userLock }) => {
   return (
     <TableRow>
       <TableCell>
-        <TokenAmount amount={lockedAmount} symbol='KSU' />
+        <TokenAmount
+          amount={formatAmount(lockedAmount, { minDecimals: 2 })}
+          symbol='KSU'
+        />
         <Typography variant='caption' component='span' display='block'>
           {dayjs.unix(startTime).format('DD.MM.YYYY • HH:mm:ss UTCZZ')}
         </Typography>
