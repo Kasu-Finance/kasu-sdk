@@ -28,7 +28,7 @@ const Lending = () => {
       <Container maxWidth='lg'>
         <PageHeader title='Lending' />
         <Box display='flex' justifyContent='center' alignItems='center' mt={3}>
-          <Typography variant='h6'>Missing Loader...</Typography>
+          <Typography variant='h6'>Loading...</Typography>
         </Box>
       </Container>
     )
