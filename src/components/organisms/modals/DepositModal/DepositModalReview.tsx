@@ -87,7 +87,13 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
               title='Deposit Amount'
               toolTipInfo='info'
               showDivider
-              metric={<TokenAmount px={2} amount={amount} symbol='USDC' />}
+              metric={
+                <TokenAmount
+                  px={2}
+                  amount={formatAmount(amount, { minDecimals: 2 })}
+                  symbol='USDC'
+                />
+              }
             />
             <InfoColumn
               title='Total Investment'

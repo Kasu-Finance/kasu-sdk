@@ -6,6 +6,8 @@ import useModalState from '@/hooks/context/useModalState'
 import List from '@/components/atoms/List'
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 
+import { formatAmount } from '@/utils'
+
 type DepositModalCompletedProps = {
   poolData: PoolData
 }
@@ -28,7 +30,7 @@ const DepositModalCompleted: React.FC<DepositModalCompletedProps> = ({
         <List>
           <li>
             <Typography variant='subtitle1' component='p'>
-              {amount} USDC •{' '}
+              {formatAmount(amount, { minDecimals: 2 })} USDC •{' '}
               <Typography variant='subtitle2' component='span'>
                 to be deposited in the next Epoch to
               </Typography>{' '}
