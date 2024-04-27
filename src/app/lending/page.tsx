@@ -5,16 +5,18 @@ import { Box, Container, Typography } from '@mui/material'
 import usePoolDelegate from '@/hooks/lending/usePoolDelegate'
 import usePoolOverview from '@/hooks/lending/usePoolOverview'
 
-import PoolTractionCard from '@/components/molecules/details/PoolTractionCard'
+import HomeMetricsCard, {
+  HomeMetricData,
+} from '@/components/molecules/home/HomeMetricsCard'
 import PageHeader from '@/components/molecules/PageHeader'
 import HomeTabs from '@/components/organisms/home/HomeTabs'
 
-const mockPoolOverview = {
+const mockPoolOverview: HomeMetricData = {
   totalValueLocked: 1000000,
   loansUnderManagement: 750000,
-  totalLoan: 25,
+  totalFunds: 25,
   yieldEarned: 50000,
-  totalLoss: 0.0,
+  totalLossRate: 0.0,
 }
 
 const Lending = () => {
@@ -34,7 +36,7 @@ const Lending = () => {
 
   return (
     <Container maxWidth='lg'>
-      <PoolTractionCard data={mockPoolOverview} />
+      <HomeMetricsCard data={mockPoolOverview} />
       <HomeTabs pools={pools} poolDelegates={poolDelegates} />
     </Container>
   )
