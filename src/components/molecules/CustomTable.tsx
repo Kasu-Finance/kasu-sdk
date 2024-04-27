@@ -167,13 +167,7 @@ const CustomTable = <T,>({
                 ...footerStyle,
               }}
             >
-              <TableRow
-                sx={(theme) => ({
-                  background: alpha(theme.palette.primary.main, 0.08),
-                })}
-              >
-                {footer}
-              </TableRow>
+              {footer}
             </TableFooter>
           )}
         </Table>

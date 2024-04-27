@@ -42,7 +42,7 @@ export interface ClosedPoolData {
   poolName: string
   apy: number
   totalValueLocked: string
-  loansUnderManagement: string
+  loansUnderManagement: number
   poolImage: string
   tranches: TrancheData[]
   totalFunds: number
