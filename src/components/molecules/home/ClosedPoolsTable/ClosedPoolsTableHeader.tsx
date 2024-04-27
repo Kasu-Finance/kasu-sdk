@@ -20,7 +20,7 @@ const ClosedPoolsTableHeader: React.FC<ClosedPoolsTableHeaderProps> = ({
       background: alpha(theme.palette.primary.main, 0.04),
     })}
   >
-    <TableCell>
+    <TableCell align='left'>
       <ClosedPoolsTableSortLabel
         label='Pool'
         sort={sort}
@@ -28,7 +28,7 @@ const ClosedPoolsTableHeader: React.FC<ClosedPoolsTableHeaderProps> = ({
         handleSortChange={handleSortChange}
       />
     </TableCell>
-    <TableCell>
+    <TableCell align='right'>
       <ClosedPoolsTableSortLabel
         label='APY'
         sort={sort}
@@ -36,7 +36,7 @@ const ClosedPoolsTableHeader: React.FC<ClosedPoolsTableHeaderProps> = ({
         handleSortChange={handleSortChange}
       />
     </TableCell>
-    <TableCell>
+    <TableCell align='right'>
       <ClosedPoolsTableSortLabel
         label='TVL'
         sort={sort}
@@ -44,7 +44,7 @@ const ClosedPoolsTableHeader: React.FC<ClosedPoolsTableHeaderProps> = ({
         handleSortChange={handleSortChange}
       />
     </TableCell>
-    <TableCell>
+    <TableCell align='right'>
       <ClosedPoolsTableSortLabel
         label='Loans Under Management'
         sort={sort}
@@ -52,7 +52,7 @@ const ClosedPoolsTableHeader: React.FC<ClosedPoolsTableHeaderProps> = ({
         handleSortChange={handleSortChange}
       />
     </TableCell>
-    <TableCell>
+    <TableCell align='right'>
       <ClosedPoolsTableSortLabel
         label='Total Funds'
         sort={sort}
@@ -60,7 +60,7 @@ const ClosedPoolsTableHeader: React.FC<ClosedPoolsTableHeaderProps> = ({
         handleSortChange={handleSortChange}
       />
     </TableCell>
-    <TableCell>
+    <TableCell align='right'>
       <ClosedPoolsTableSortLabel
         label='Loss Rate'
         sort={sort}
