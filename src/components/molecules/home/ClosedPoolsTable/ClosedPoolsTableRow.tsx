@@ -18,7 +18,7 @@ import { ClosedPoolData } from '@/components/molecules/home/ClosedPoolsTable'
 import { formatAmount, formatPercentage } from '@/utils'
 
 interface RowProps {
-  data: ClosedPoolData[]
+  data: ClosedPoolData
 }
 
 const ClosedPoolsTableRow: React.FC<RowProps> = ({ data }) => {

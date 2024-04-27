@@ -55,11 +55,7 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
 
   return (
     <Box sx={{ width: '100%', mt: 0.5 }}>
-      <Tabs
-        value={activeTab}
-        onChange={handleChange}
-        aria-label='Home Tabs Example'
-      >
+      <Tabs value={activeTab} onChange={handleChange}>
         <Tab label={t('home.tabs.activePools')} />
         <Tab label={t('home.tabs.closedPools')} />
       </Tabs>

@@ -12,9 +12,9 @@ import HomeTabs from '@/components/organisms/home/HomeTabs'
 const mockPoolOverview = {
   totalValueLocked: 1000000,
   loansUnderManagement: 750000,
+  totalLoan: 25,
   yieldEarned: 50000,
-  activeLoans: 25,
-  poolCapacity: 250000,
+  totalLoss: 0.0,
 }
 
 const Lending = () => {

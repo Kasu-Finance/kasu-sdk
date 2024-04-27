@@ -2,21 +2,13 @@ import { alpha, TableCell, TableRow } from '@mui/material'
 import React from 'react'
 
 import { Sort } from '@/components/molecules/CustomTable'
+import { ClosedPoolData } from '@/components/molecules/home/ClosedPoolsTable'
 
 import ClosedPoolsTableSortLabel from './ClosedPoolsTableSortLabel'
 
-export interface TableDataHeader {
-  poolName: string
-  apy: number | string
-  totalValueLocked: number
-  loansUnderManagement: number
-  totalFunds: number
-  totalLossRate: string | number
-}
-
 interface ClosedPoolsTableHeaderProps {
-  handleSortChange: (newKey: keyof TableDataHeader) => void
-  sort: Sort<TableDataHeader>
+  handleSortChange: (newKey: keyof ClosedPoolData) => void
+  sort: Sort<ClosedPoolData>
 }
 
 const ClosedPoolsTableHeader: React.FC<ClosedPoolsTableHeaderProps> = ({

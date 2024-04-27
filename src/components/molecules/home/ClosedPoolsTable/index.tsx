@@ -6,36 +6,30 @@ import {
 } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useMemo } from 'react'
 
-import CustomTable from '@/components/molecules/CustomTable'
+import CustomTable, { Sort } from '@/components/molecules/CustomTable'
 import ClosedPoolsTableFooter from '@/components/molecules/home/ClosedPoolsTable/ClosedPoolsTableFooter'
 import ClosedPoolsTableHeader from '@/components/molecules/home/ClosedPoolsTable/ClosedPoolsTableHeader'
 import ClosedPoolsTableRow from '@/components/molecules/home/ClosedPoolsTable/ClosedPoolsTableRow'
 
-type GenericSort<T> = {
-  key: keyof T
-  direction: 'asc' | 'desc'
-}
-
-const handleSort = <T extends object>(
+const handleSort = <T extends { [key: string]: any }>(
   a: T,
   b: T,
-  sort: GenericSort<T>
+  sort: Sort<T>
 ): number => {
-  const key = sort.key
+  const key = sort.key as keyof T
   const direction = sort.direction === 'asc' ? 1 : -1
   const aValue = a[key]
   const bValue = b[key]
 
-  if (typeof aValue === 'string' && typeof bValue === 'string') {
-    return aValue.localeCompare(bValue) * direction
-  } else if (typeof aValue === 'number' && typeof bValue === 'number') {
-    return (aValue - bValue) * direction
-  } else if (typeof aValue === 'number' && typeof bValue === 'string') {
-    return -1 * direction
-  } else if (typeof aValue === 'string' && typeof bValue === 'number') {
-    return 1 * direction
+  if (key === 'poolName' || key === 'apy') {
+    return typeof aValue === 'string' && typeof bValue === 'string'
+      ? aValue.localeCompare(bValue) * direction
+      : (aValue - bValue) * direction
   }
-  return 0
+
+  const aNum = parseFloat(aValue)
+  const bNum = parseFloat(bValue)
+  return (aNum - bNum) * direction
 }
 
 export interface ClosedPoolData {
@@ -61,7 +55,6 @@ const ClosedPoolsTable: React.FC<ClosedPoolsTableProps> = ({
 }) => {
   const tableData: ClosedPoolData[] = useMemo(() => {
     if (!pools.length || !poolDelegates.length) {
-      console.warn('No data available to merge')
       return []
     }
 
@@ -69,7 +62,9 @@ const ClosedPoolsTable: React.FC<ClosedPoolsTableProps> = ({
       const delegate = poolDelegates.find(
         (delegate) => delegate.poolIdFK === pool.id
       )
+
       return {
+        id: pool.id,
         poolName: pool.poolName,
         apy: pool.apy,
         totalValueLocked: pool.totalValueLocked,
@@ -82,8 +77,6 @@ const ClosedPoolsTable: React.FC<ClosedPoolsTableProps> = ({
       }
     })
   }, [pools, poolDelegates])
-
-  console.warn('Merged data for table:', tableData)
 
   return (
     <Card sx={{ minWidth: 275, boxShadow: 1, padding: 2 }} elevation={1}>
@@ -110,11 +103,8 @@ const ClosedPoolsTable: React.FC<ClosedPoolsTableProps> = ({
         }}
       >
         {(sortedData) =>
-          sortedData.map((data) => (
-            <ClosedPoolsTableRow
-              key={`${data.poolName}-standard`}
-              data={data}
-            />
+          sortedData.map((data, idx) => (
+            <ClosedPoolsTableRow key={`${data.poolName}-${idx}`} data={data} />
           ))
         }
       </CustomTable>
