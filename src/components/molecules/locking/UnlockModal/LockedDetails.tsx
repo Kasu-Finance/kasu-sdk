@@ -57,8 +57,10 @@ const LockedDetails: React.FC<LockedDetailsProps> = ({ userLock }) => {
                   <TokenAmount
                     amount={
                       isValidAmount
-                        ? formatAmount(ksuRemaining)
-                        : formatAmount(userLock.lockedAmount)
+                        ? formatAmount(ksuRemaining, { minDecimals: 2 })
+                        : formatAmount(userLock.lockedAmount, {
+                            minDecimals: 2,
+                          })
                     }
                     symbol='KSU'
                   />
@@ -81,8 +83,8 @@ const LockedDetails: React.FC<LockedDetailsProps> = ({ userLock }) => {
                   <TokenAmount
                     amount={
                       isValidAmount
-                        ? formatAmount(rKsuRemaining)
-                        : formatAmount(userLock.rKSUAmount)
+                        ? formatAmount(rKsuRemaining, { minDecimals: 2 })
+                        : formatAmount(userLock.rKSUAmount, { minDecimals: 2 })
                     }
                     symbol='rKSU'
                   />

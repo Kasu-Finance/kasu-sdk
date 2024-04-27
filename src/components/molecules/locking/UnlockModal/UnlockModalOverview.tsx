@@ -8,6 +8,7 @@ import ColoredBox from '@/components/atoms/ColoredBox'
 import BalanceItem from '@/components/molecules/locking/BalanceOverview/BalanceItem'
 
 import dayjs from '@/dayjs'
+import { formatAmount } from '@/utils'
 
 type UnlockModalOverviewProps = {
   userLock: UserLock
@@ -28,12 +29,18 @@ const UnlockModalOverview: React.FC<UnlockModalOverviewProps> = ({
             <BalanceItem
               title='Total KSU Locked'
               toolTipInfo='info'
-              value={[userLock.lockedAmount, 'KSU']}
+              value={[
+                formatAmount(userLock.lockedAmount, { minDecimals: 2 }),
+                'KSU',
+              ]}
             />
             <BalanceItem
               title='rKSU Amount'
               toolTipInfo='info'
-              value={[userLock.rKSUAmount, 'rKSU']}
+              value={[
+                formatAmount(userLock.rKSUAmount, { minDecimals: 2 }),
+                'rKSU',
+              ]}
             />
           </Grid>
           <Grid item xs={6}>
