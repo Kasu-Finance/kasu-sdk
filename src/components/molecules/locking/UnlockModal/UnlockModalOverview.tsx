@@ -29,18 +29,12 @@ const UnlockModalOverview: React.FC<UnlockModalOverviewProps> = ({
             <BalanceItem
               title='Total KSU Locked'
               toolTipInfo='info'
-              value={[
-                formatAmount(userLock.lockedAmount, { minDecimals: 2 }),
-                'KSU',
-              ]}
+              value={[formatAmount(userLock.lockedAmount), 'KSU']}
             />
             <BalanceItem
               title='rKSU Amount'
               toolTipInfo='info'
-              value={[
-                formatAmount(userLock.rKSUAmount, { minDecimals: 2 }),
-                'rKSU',
-              ]}
+              value={[formatAmount(userLock.rKSUAmount), 'rKSU']}
             />
           </Grid>
           <Grid item xs={6}>

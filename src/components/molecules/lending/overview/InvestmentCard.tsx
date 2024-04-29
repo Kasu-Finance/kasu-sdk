@@ -119,7 +119,7 @@ const InvestmentPortfolio: React.FC<{
               </Grid>
               <Grid item xs={4}>
                 <MetricWithSuffix
-                  content={formatAmount(totalYieldEarned, { minDecimals: 2 })}
+                  content={formatAmount(totalYieldEarned)}
                   suffix='USDC'
                   tooltipKey='lending.poolOverview.investmentCard.totYieldEarned.tooltip'
                   titleKey='lending.poolOverview.investmentCard.totYieldEarned.label'
@@ -138,7 +138,7 @@ const InvestmentPortfolio: React.FC<{
               <Grid item xs={COLS / tranchesWithBalances.length} key={index}>
                 <TranchInvestmentCard
                   title={`${tranche.name} Tranche APY`}
-                  amount={formatAmount(totalInvested, { minDecimals: 2 })}
+                  amount={formatAmount(totalInvested)}
                   apy={formatAmount(+tranche.apy * 100)}
                   yieldEarned={
                     formatAmount(tranche.yieldEarned, {

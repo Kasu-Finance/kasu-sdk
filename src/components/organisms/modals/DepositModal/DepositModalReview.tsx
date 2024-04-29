@@ -90,7 +90,7 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
               metric={
                 <TokenAmount
                   px={2}
-                  amount={formatAmount(amount, { minDecimals: 2 })}
+                  amount={formatAmount(amount)}
                   symbol='USDC'
                 />
               }

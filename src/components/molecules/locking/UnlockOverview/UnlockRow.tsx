@@ -36,10 +36,7 @@ const UnlockRow: React.FC<UnlockRowProps> = ({ userLock }) => {
   return (
     <TableRow>
       <TableCell>
-        <TokenAmount
-          amount={formatAmount(lockedAmount, { minDecimals: 2 })}
-          symbol='KSU'
-        />
+        <TokenAmount amount={formatAmount(lockedAmount)} symbol='KSU' />
         <Typography variant='caption' component='span' display='block'>
           {dayjs.unix(startTime).format('DD.MM.YYYY • HH:mm:ss UTCZZ')}
         </Typography>

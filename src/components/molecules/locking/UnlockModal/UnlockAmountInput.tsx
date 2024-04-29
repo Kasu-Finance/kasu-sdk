@@ -65,7 +65,7 @@ const UnlockAmountInput: React.FC<UnlockAmountInputProps> = ({ userLock }) => {
       <BalanceItem
         title='Available KSU to Unlock'
         toolTipInfo='info'
-        value={[formatAmount(lockedAmount, { minDecimals: 2 }), 'KSU']}
+        value={[formatAmount(lockedAmount), 'KSU']}
       />
       <Grid item xs={12}>
         <NumericalInput

@@ -14,7 +14,7 @@ const remainingAmount = (maxAmount: string, currentAmount: string) => {
   const amountPct = (amountLeft / +maxAmount) * 100
 
   return {
-    value: formatAmount(amountLeft, { minDecimals: 2 }),
+    value: formatAmount(amountLeft),
     pct: formatAmount(amountPct),
   }
 }
