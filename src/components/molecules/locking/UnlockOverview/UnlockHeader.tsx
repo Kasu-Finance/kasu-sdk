@@ -1,8 +1,7 @@
-import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
-
 import { CustomTableHeader } from '@/components/molecules/CustomTable'
+import { UNLOCK_TABLE_KEYS } from '@/components/molecules/locking/UnlockOverview'
 
-const UnlockHeader: CustomTableHeader<Omit<UserLock, 'launchBonus'>>[] = [
+const UnlockHeader: CustomTableHeader<typeof UNLOCK_TABLE_KEYS>[] = [
   {
     label: 'Amount Locked',
     value: 'lockedAmount',
@@ -18,7 +17,7 @@ const UnlockHeader: CustomTableHeader<Omit<UserLock, 'launchBonus'>>[] = [
         Locking Duration
       </>
     ),
-    value: 'id', // using id here just for unique purposes, replaced in handleSort
+    value: 'remainingDuration', // using id here just for unique purposes, replaced in handleSort
   },
   {
     label: 'rKSU Multiplier',

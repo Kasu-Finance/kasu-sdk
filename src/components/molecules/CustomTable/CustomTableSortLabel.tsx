@@ -1,21 +1,20 @@
 import { TableSortLabel } from '@mui/material'
-import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
 
 import { Sort } from '@/components/molecules/CustomTable'
 
-type TransactionSortLabelProps = {
+type CustomTableSortLabelProps<T extends readonly any[]> = {
   label: string
-  sort: Sort<UserRequest>
-  sortKey: keyof UserRequest
-  handleSortChange: (key: keyof UserRequest) => void
+  sort: Sort<T>
+  sortKey: T[number]
+  handleSortChange: (key: T[number]) => void
 }
 
-const TransactionSortLabel: React.FC<TransactionSortLabelProps> = ({
+const CustomTableSortLabel = <T extends readonly any[]>({
   label,
   sortKey,
   sort,
   handleSortChange,
-}) => {
+}: CustomTableSortLabelProps<T>) => {
   const isActive = sort.key === sortKey
 
   return (
@@ -29,4 +28,4 @@ const TransactionSortLabel: React.FC<TransactionSortLabelProps> = ({
   )
 }
 
-export default TransactionSortLabel
+export default CustomTableSortLabel

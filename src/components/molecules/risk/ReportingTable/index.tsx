@@ -13,7 +13,7 @@ import ReportingTableRow from '@/components/molecules/risk/ReportingTable/Report
 const handleSort = (
   _a: FinancialReportingDocumentsDirectus,
   _b: FinancialReportingDocumentsDirectus,
-  _sort: Sort<FinancialReportingDocumentsDirectus>
+  _sort: Sort<string[]>
 ): number => {
   return 0
 }
@@ -25,7 +25,7 @@ interface ReportingTableProps {
 const ReportingTable: React.FC<ReportingTableProps> = ({ data }) => {
   const { t } = useTranslation()
 
-  const headers: CustomTableHeader<FinancialReportingDocumentsDirectus>[] = [
+  const headers: CustomTableHeader<string[]>[] = [
     {
       label: (
         <Box>
@@ -70,6 +70,7 @@ const ReportingTable: React.FC<ReportingTableProps> = ({ data }) => {
         headers={headers}
         data={data}
         handleSort={handleSort}
+        sortKeys={[]}
         defaultSortKey='name'
         headersStyle={{
           '& .MuiTableCell-root': {
