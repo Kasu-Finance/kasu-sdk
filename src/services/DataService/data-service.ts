@@ -293,7 +293,7 @@ export class DataService {
         for (const poolOverview of poolOverviews){
             retn.totalValueLocked += Number(poolOverview.totalValueLocked);
             retn.loansUnderManagement += Number(poolOverview.loansUnderManagement);
-            retn.totalLoanFundsOriginated += poolOverview.loanFundsOriginated;
+            retn.totalLoanFundsOriginated += Number(poolOverview.loanFundsOriginated);
             retn.totalLossRate += 0; // TODO
             retn.totalYieldEarned += Number(poolOverview.yieldEarned);
         }

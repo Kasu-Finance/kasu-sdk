@@ -81,3 +81,4 @@ export interface UserApyBonus {
     balance: BigNumber;
     lifetime: number;
 }
+

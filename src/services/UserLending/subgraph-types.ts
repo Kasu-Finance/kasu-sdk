@@ -48,3 +48,14 @@ export interface TotalUserLoyaltyRewardsSubgraph {
         totalUserLoyaltyRewards: string
     }
 }
+
+export type UserRequestEventType =
+    | 'DepositInitiated'
+    | 'DepositIncreased'
+    | 'DepositCancelled'
+    | 'DepositAccepted'
+    | 'DepositRejected'
+    | 'WithdrawalInitiated'
+    | 'WithdrawalIncreased'
+    | 'WithdrawalCancelled'
+    | 'WithdrawalAccepted';
