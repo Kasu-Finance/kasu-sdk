@@ -19,6 +19,7 @@ import useModalState from '@/hooks/context/useModalState'
 import TokenAmount from '@/components/atoms/TokenAmount'
 import TransactionCollapsedContent from '@/components/molecules/lending/overview/TransactionHistory/TransactionCollapsedContent'
 
+import { DATE_FORMAT, TIME_FORMAT } from '@/constants'
 import dayjs from '@/dayjs'
 import { formatAmount } from '@/utils'
 
@@ -110,11 +111,11 @@ const TransactionHistoryTableRow: React.FC<TransactionHistoryTableRowProps> = ({
         </TableCell>
         <TableCell align='right'>
           <Typography variant='body1' component='span'>
-            {dayjs.unix(transaction.timestamp).format('DD.MM.YYYY')}
+            {dayjs.unix(transaction.timestamp).format(DATE_FORMAT)}
           </Typography>
           <br />
           <Typography variant='caption' component='span'>
-            {dayjs.unix(transaction.timestamp).format('HH:mm:ss UTCZZ')}
+            {dayjs.unix(transaction.timestamp).format(TIME_FORMAT)}
           </Typography>
         </TableCell>
         <TableCell align='center'>

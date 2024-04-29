@@ -20,6 +20,7 @@ import InfoColumn from '@/components/atoms/InfoColumn'
 import TokenAmount from '@/components/atoms/TokenAmount'
 import DialogHeader from '@/components/molecules/DialogHeader'
 
+import { DATE_FORMAT, TIME_FORMAT } from '@/constants'
 import dayjs from '@/dayjs'
 import { formatAmount } from '@/utils'
 
@@ -78,13 +79,11 @@ const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                 metric={
                   <Box pt='6px' pl={2}>
                     <Typography variant='body1' component='span'>
-                      {dayjs.unix(latestEvent.timestamp).format('DD.MM.YYYY')}
+                      {dayjs.unix(latestEvent.timestamp).format(DATE_FORMAT)}
                     </Typography>
                     <br />
                     <Typography variant='caption' component='span'>
-                      {dayjs
-                        .unix(latestEvent.timestamp)
-                        .format('HH:mm:ss UTCZZ')}
+                      {dayjs.unix(latestEvent.timestamp).format(TIME_FORMAT)}
                     </Typography>
                   </Box>
                 }
@@ -118,7 +117,7 @@ const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                 >
                   {dayjs
                     .unix(nextEpochTime ?? 0)
-                    .format('DD.MM.YYYY • HH:mm:ss UTCZZ')}
+                    .format(`${DATE_FORMAT} • ${TIME_FORMAT}`)}
                 </Typography>
               </Box>
             }

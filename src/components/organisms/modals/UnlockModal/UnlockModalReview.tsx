@@ -9,6 +9,7 @@ import Countdown from '@/components/atoms/Countdown'
 import InfoColumn from '@/components/atoms/InfoColumn'
 import TokenAmount from '@/components/atoms/TokenAmount'
 
+import { DATE_FORMAT, TIME_FORMAT } from '@/constants'
 import dayjs from '@/dayjs'
 
 type UnlockModalReviewProps = {
@@ -73,7 +74,7 @@ const UnlockModalReview: React.FC<UnlockModalReviewProps> = ({
               >
                 {dayjs
                   .unix(nextEpochTime)
-                  .format('DD.MM.YYYY • HH:mm:ss UTCZZ')}
+                  .format(`${DATE_FORMAT} • ${TIME_FORMAT}`)}
               </Typography>
             </Box>
           }
