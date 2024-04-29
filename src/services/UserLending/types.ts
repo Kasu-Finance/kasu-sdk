@@ -1,5 +1,7 @@
 import { BigNumber } from 'ethers';
 
+import { UserRequestStatus } from './subgraph-types';
+
 export interface UserInvestment {
     id: string;
     totalAmountInvested: number;
@@ -7,7 +9,6 @@ export interface UserInvestment {
     totalYieldEarned: number;
     userTrancheData: UserTrancheData[];
 }
-
 
 export interface UserTrancheData {
     id: string;
@@ -19,7 +20,7 @@ export interface UserTrancheData {
 export interface UserTransactions {
     id: string;
     request: string;
-    tranche: string
+    tranche: string;
     requested: number;
     accepted: number;
     rejected: number;
@@ -28,40 +29,41 @@ export interface UserTransactions {
 }
 
 export interface UserRequest {
+    id: string;
+    userId: string;
+    lendingPool: {
         id: string;
-        amountRequested: string;
-        amountAccepted: string;
-        amountRejected: string;
-        status: string;
-        createdOn: string;
-        updatedOn: string;
-        type: string;
-        epochId: string;
-        user: {
-            id: string;
-        };
-        nftId: string;
-        lendingPool: {
-            id: string;
-        };
-        tranche: {
-            id: string;
-        };
-        userRequestEvents: {
-            assetAmount: string;
-            createdOn: string;
-            id: string;
-            index: string;
-            type: string;
-            sharesAmount: string;
-            tranche: {
-                id: string;
-            }
-            transactionHash: string;
-        }
-        userRequestEventsCount: string;
+        name: string;
+        tranches: { orderId: string }[];
+    };
+    requestType: 'Deposit' | 'Withdrawal';
+    trancheName: string;
+    requestedAmount: string;
+    acceptedAmount: string;
+    rejectedAmount: string;
+    timestamp: EpochTimeStamp;
+    status: UserRequestStatus;
+    canCancel: boolean;
+    events: UserRequestEvent[];
+    nftId: string;
 }
 
+export interface UserRequestEvent {
+    id: string;
+    requestType:
+        | 'Initiated'
+        | 'Increased'
+        | 'Cancelled'
+        | 'Accepted'
+        | 'Rejected';
+    assetAmount: string;
+    totalRequested: string;
+    totalAccepted: string;
+    totalRejected: string;
+    index: number;
+    timestamp: EpochTimeStamp;
+    transactionHash: string;
+}
 export interface UserTrancheBalance {
     userId: string;
     address: string;
@@ -77,8 +79,15 @@ export interface UserPoolBalance {
     balance: BigNumber;
 }
 
-export interface UserApyBonus {
-    balance: BigNumber;
-    lifetime: number;
+export enum UserRequestType {
+    DEPOSIT = 'DepositRequest',
+    WITHDRAW = 'WithdrawRequest',
 }
 
+export enum UserRequestEventType {
+    DEPOSIT_INITIATED = 'DepositInitiated',
+    ACCEPTED = 'DepositAccepted',
+    REJECTED = 'DepositRejected',
+    CANCELLED = 'DepositCancelled',
+    WITHDRAWAL_INITIATED = 'WithdrawalInitiated',
+}

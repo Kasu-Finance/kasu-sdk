@@ -4,58 +4,57 @@ export interface UserRequestsSubgraph {
         amountRequested: string;
         amountAccepted: string;
         amountRejected: string;
-        status: string;
+        status: UserRequestStatus;
         createdOn: string;
+        type: 'DepositRequest' | 'WithdrawalRequest';
         updatedOn: string;
-        type: string;
-        epochId: string;
+        lendingPool: {
+            id: string;
+            name: string;
+            tranches: {
+                orderId: string;
+            }[];
+        };
+        tranche: {
+            orderId: string;
+            id: string;
+        };
         user: {
             id: string;
         };
         nftId: string;
-        lendingPool: {
-            id: string;
-        };
-        tranche: {
-            id: string;
-        };
         userRequestEvents: {
-            assetAmount: string;
+            assetAmount?: string;
             createdOn: string;
             id: string;
             index: string;
-            type: string;
+            type: UserRequestEventType;
+            transactionHash: string;
             sharesAmount: string;
             tranche: {
                 id: string;
-            }
-            transactionHash: string;
-        }
-        userRequestEventsCount: string;
-    }[]
+                orderId: string;
+            };
+        }[];
+    }[];
 }
+
+export enum UserRequestStatus {
+    REQUESTED = 'Requested',
+    PROCESSING = 'Processing',
+    PROCESSED = 'Processed',
+}
+
+export type UserRequestEventType =
+    | 'WithdrawalInitiated'
+    | 'WithdrawalIncreased'
+    | 'WithdrawalCancelled'
+    | 'WithdrawalAccepted';
 
 export interface LendingPoolUserDetailsSubgraph {
     lendingPoolUserDetails: {
         id: string;
         totalAcceptedDeposits: string;
         totalAcceptedWithdrawnAmount: string;
-    }
+    };
 }
-
-export interface TotalUserLoyaltyRewardsSubgraph {
-    user: {
-        totalUserLoyaltyRewards: string
-    }
-}
-
-export type UserRequestEventType =
-    | 'DepositInitiated'
-    | 'DepositIncreased'
-    | 'DepositCancelled'
-    | 'DepositAccepted'
-    | 'DepositRejected'
-    | 'WithdrawalInitiated'
-    | 'WithdrawalIncreased'
-    | 'WithdrawalCancelled'
-    | 'WithdrawalAccepted';
