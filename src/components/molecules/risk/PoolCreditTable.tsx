@@ -14,7 +14,7 @@ import { formatAmount, formatPercentage } from '@/utils'
 const handleSort = (
   _a: PoolCreditMetricsDirectus,
   _b: PoolCreditMetricsDirectus,
-  _sort: Sort<PoolCreditMetricsDirectus>
+  _sort: Sort<string[]>
 ): number => {
   return 0
 }
@@ -27,7 +27,7 @@ const PoolCreditTable: React.FC<PoolCreditTableProps> = ({ data }) => {
   const { t } = useTranslation()
   const formatConfig = { minDecimals: 2 }
 
-  const headers: CustomTableHeader<PoolCreditMetricsDirectus>[] = useMemo(
+  const headers: CustomTableHeader<string[]>[] = useMemo(
     () => [
       {
         label: t('risk.poolCredit.headers.column-1'),
@@ -69,6 +69,7 @@ const PoolCreditTable: React.FC<PoolCreditTableProps> = ({ data }) => {
         pagination={false}
         defaultSortKey='poolIdFK'
         handleSort={handleSort}
+        sortKeys={[]}
         headersStyle={{
           '& .MuiTableCell-root': {
             py: '6px',

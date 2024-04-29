@@ -1,13 +1,13 @@
 import { alpha, TableCell, TableRow } from '@mui/material'
-import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
 import React from 'react'
 
 import { Sort } from '@/components/molecules/CustomTable'
-import TransactionSortLabel from '@/components/molecules/lending/overview/TransactionHistory/TransactionSortLabel'
+import CustomTableSortLabel from '@/components/molecules/CustomTable/CustomTableSortLabel'
+import { TRANSACTION_HISTORY_KEYS } from '@/components/molecules/lending/overview/TransactionHistory'
 
 type TransactionHistoryTableHeaderProps = {
-  handleSortChange: (newKey: keyof UserRequest) => void
-  sort: Sort<UserRequest>
+  handleSortChange: (newKey: (typeof TRANSACTION_HISTORY_KEYS)[number]) => void
+  sort: Sort<typeof TRANSACTION_HISTORY_KEYS>
 }
 
 const TransactionHistoryTableHeader: React.FC<
@@ -20,7 +20,7 @@ const TransactionHistoryTableHeader: React.FC<
       })}
     >
       <TableCell rowSpan={2} width='18%' sx={{ pl: 8 }}>
-        <TransactionSortLabel
+        <CustomTableSortLabel
           label='Request'
           sortKey='requestType'
           sort={sort}
@@ -31,7 +31,7 @@ const TransactionHistoryTableHeader: React.FC<
         Total Amounts
       </TableCell>
       <TableCell rowSpan={2} width='14%' align='right'>
-        <TransactionSortLabel
+        <CustomTableSortLabel
           label='Request Date'
           sortKey='timestamp'
           sort={sort}
@@ -39,7 +39,7 @@ const TransactionHistoryTableHeader: React.FC<
         />
       </TableCell>
       <TableCell rowSpan={2} width='14%' align='center'>
-        <TransactionSortLabel
+        <CustomTableSortLabel
           label='Status'
           sortKey='status'
           sort={sort}
@@ -53,7 +53,7 @@ const TransactionHistoryTableHeader: React.FC<
       })}
     >
       <TableCell align='right' width='18%'>
-        <TransactionSortLabel
+        <CustomTableSortLabel
           label='Requested'
           sortKey='requestedAmount'
           sort={sort}
@@ -61,7 +61,7 @@ const TransactionHistoryTableHeader: React.FC<
         />
       </TableCell>
       <TableCell align='right' width='18%'>
-        <TransactionSortLabel
+        <CustomTableSortLabel
           label='Accepted'
           sortKey='acceptedAmount'
           sort={sort}
@@ -69,7 +69,7 @@ const TransactionHistoryTableHeader: React.FC<
         />
       </TableCell>
       <TableCell align='right' width='18%'>
-        <TransactionSortLabel
+        <CustomTableSortLabel
           label='Rejected'
           sortKey='rejectedAmount'
           sort={sort}

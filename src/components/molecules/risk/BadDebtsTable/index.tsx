@@ -64,6 +64,7 @@ const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
             </TableRow>
           </>
         )}
+        sortKeys={[]}
         data={data as ExtendedBadAndDoubtfulDebts[]}
         pagination={false}
         defaultSortKey='totalAmount' // not needed
