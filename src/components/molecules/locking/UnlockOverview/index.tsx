@@ -12,7 +12,11 @@ import UnlockRow from '@/components/molecules/locking/UnlockOverview/UnlockRow'
 
 import { toBigNumber } from '@/utils'
 
-const handleSort = (a: UserLock, b: UserLock, sort: Sort<UserLock>) => {
+const handleSort = (
+  a: UserLock,
+  b: UserLock,
+  sort: Sort<typeof UNLOCK_TABLE_KEYS>
+) => {
   const direction = sort.direction === 'asc' ? 1 : -1
 
   let aValue: number
@@ -35,7 +39,7 @@ const handleSort = (a: UserLock, b: UserLock, sort: Sort<UserLock>) => {
   } else {
     let sortKey = sort.key
 
-    if (sortKey === 'id') {
+    if (sortKey === 'remainingDuration') {
       sortKey = 'endTime'
     }
 
@@ -45,6 +49,14 @@ const handleSort = (a: UserLock, b: UserLock, sort: Sort<UserLock>) => {
 
   return (aValue - bValue) * direction
 }
+
+export const UNLOCK_TABLE_KEYS = [
+  'lockedAmount',
+  'endTime',
+  'remainingDuration',
+  'lockPeriod',
+  'rKSUAmount',
+] as const
 
 const UnlockOverview = () => {
   const { userLocks } = useUserLocks()
@@ -59,6 +71,7 @@ const UnlockOverview = () => {
         defaultSortKey='endTime'
         handleSort={handleSort}
         headers={UnlockHeader}
+        sortKeys={UNLOCK_TABLE_KEYS}
         footer={<UnlockFooter userLocks={userLocks} />}
       >
         {(data) =>

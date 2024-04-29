@@ -17,19 +17,8 @@ import { toBigNumber } from '@/utils'
 const handleSort = (
   a: UserRequest,
   b: UserRequest,
-  sort: Sort<UserRequest>
+  sort: Sort<typeof TRANSACTION_HISTORY_KEYS>
 ) => {
-  if (
-    sort.key === 'id' ||
-    sort.key === 'events' ||
-    sort.key === 'trancheName' ||
-    sort.key === 'lendingPool' ||
-    sort.key === 'userId' ||
-    sort.key === 'canCancel' ||
-    sort.key === 'nftId'
-  )
-    return 0
-
   const direction = sort.direction === 'asc' ? 1 : -1
 
   if (sort.key === 'status' || sort.key === 'requestType') {
@@ -57,6 +46,15 @@ const handleSort = (
 
   return (aValue - bValue) * direction
 }
+
+export const TRANSACTION_HISTORY_KEYS = [
+  'status',
+  'requestType',
+  'acceptedAmount',
+  'requestedAmount',
+  'rejectedAmount',
+  'timestamp',
+] as const
 
 const TransactionHistory = () => {
   const [open, setOpen] = useState<number | undefined>(undefined)
@@ -104,6 +102,7 @@ const TransactionHistory = () => {
         <CustomTable
           tableContainerStyles={{ mt: 2 }}
           data={filteredData}
+          sortKeys={TRANSACTION_HISTORY_KEYS}
           defaultSortKey='requestType'
           handleSort={handleSort}
           headersStyle={{
