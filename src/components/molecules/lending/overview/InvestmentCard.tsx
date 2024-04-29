@@ -102,9 +102,7 @@ const InvestmentPortfolio: React.FC<{
             >
               <Grid item xs={4}>
                 <MetricWithSuffix
-                  content={formatAmount(totalInvestment.toString(), {
-                    minDecimals: 2,
-                  })}
+                  content={formatAmount(totalInvestment.toString())}
                   suffix='USDC'
                   tooltipKey='lending.poolOverview.investmentCard.totalAmount.tooltip'
                   titleKey='lending.poolOverview.investmentCard.totalAmount.label'
@@ -140,11 +138,7 @@ const InvestmentPortfolio: React.FC<{
                   title={`${tranche.name} Tranche APY`}
                   amount={formatAmount(totalInvested)}
                   apy={formatAmount(+tranche.apy * 100)}
-                  yieldEarned={
-                    formatAmount(tranche.yieldEarned, {
-                      minDecimals: 2,
-                    }).toString() ?? '0.00'
-                  }
+                  yieldEarned={formatAmount(tranche.yieldEarned)}
                 />
               </Grid>
             )

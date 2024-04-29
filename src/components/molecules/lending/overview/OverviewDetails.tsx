@@ -40,9 +40,7 @@ const OverviewDetails: React.FC<{
             <Grid container columnSpacing={2} sx={{ pb: 3 }}>
               <Grid item xs={6}>
                 <MetricWithSuffix
-                  content={formatAmount(pool.totalValueLocked, {
-                    minDecimals: 2,
-                  })}
+                  content={formatAmount(pool.totalValueLocked)}
                   suffix='USDC'
                   tooltipKey='lending.poolOverview.detailCard.tvl.tooltip'
                   titleKey='lending.poolOverview.detailCard.tvl.label'
@@ -50,11 +48,7 @@ const OverviewDetails: React.FC<{
               </Grid>
               <Grid item xs={6}>
                 <MetricWithSuffix
-                  content={
-                    formatAmount(pool.loansUnderManagement, {
-                      minDecimals: 2,
-                    }).toString() ?? '0.00'
-                  }
+                  content={formatAmount(pool.loansUnderManagement)}
                   suffix='USDC'
                   tooltipKey='lending.poolOverview.detailCard.loansUnder.tooltip'
                   titleKey='lending.poolOverview.detailCard.loansUnder.label'
@@ -70,11 +64,7 @@ const OverviewDetails: React.FC<{
               >
                 <Grid item xs={6}>
                   <MetricWithSuffix
-                    content={
-                      formatAmount(pool.yieldEarned, {
-                        minDecimals: 2,
-                      }).toString() ?? '0.00'
-                    }
+                    content={formatAmount(pool.yieldEarned)}
                     suffix='USDC'
                     tooltipKey='lending.poolOverview.detailCard.totalPoolYieldEarnings.tooltip'
                     titleKey='lending.poolOverview.detailCard.totalPoolYieldEarnings.label'
@@ -82,9 +72,7 @@ const OverviewDetails: React.FC<{
                 </Grid>
                 <Grid item xs={6}>
                   <MetricWithSuffix
-                    content={formatAmount(+poolDelegate.historicLossRate, {
-                      minDecimals: 2,
-                    })}
+                    content={formatAmount(+poolDelegate.historicLossRate)}
                     suffix='USDC'
                     tooltipKey='lending.poolOverview.detailCard.totalLossRate.tooltip'
                     titleKey='lending.poolOverview.detailCard.totalLossRate.label'

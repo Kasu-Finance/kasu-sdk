@@ -67,9 +67,7 @@ const BalanceOverview = () => {
               title={`${t('general.wallet')} ${t('general.balance')}`}
               toolTipInfo='info'
               value={[
-                formatAmount(formatUnits(ksuBalance || '0', ksuDecimals), {
-                  minDecimals: 2,
-                }),
+                formatAmount(formatUnits(ksuBalance || '0', ksuDecimals)),
                 'KSU',
               ]}
               usdValue={formatAmount(formatEther(ksuInUSD))}
@@ -78,9 +76,7 @@ const BalanceOverview = () => {
               title='Available Funds'
               toolTipInfo='info'
               value={[
-                formatAmount(formatUnits(usdcBalance || '0', usdcDecimals), {
-                  minDecimals: 2,
-                }),
+                formatAmount(formatUnits(usdcBalance || '0', usdcDecimals)),
                 'USDC',
               ]}
             />

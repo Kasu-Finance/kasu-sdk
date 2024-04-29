@@ -84,27 +84,21 @@ const TransactionHistoryTableRow: React.FC<TransactionHistoryTableRowProps> = ({
         <TableCell>{transaction.trancheName}</TableCell>
         <TableCell align='right'>
           <TokenAmount
-            amount={formatAmount(transaction.requestedAmount, {
-              minDecimals: 2,
-            })}
+            amount={formatAmount(transaction.requestedAmount)}
             symbol='USDC'
             sx={{ width: '100%', textAlign: 'right' }}
           />
         </TableCell>
         <TableCell align='right'>
           <TokenAmount
-            amount={formatAmount(transaction.acceptedAmount, {
-              minDecimals: 2,
-            })}
+            amount={formatAmount(transaction.acceptedAmount)}
             symbol='USDC'
             sx={{ width: '100%', textAlign: 'right' }}
           />
         </TableCell>
         <TableCell align='right'>
           <TokenAmount
-            amount={formatAmount(transaction.rejectedAmount, {
-              minDecimals: 2,
-            })}
+            amount={formatAmount(transaction.rejectedAmount)}
             symbol='USDC'
             sx={{ width: '100%', textAlign: 'right' }}
           />

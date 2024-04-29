@@ -35,12 +35,8 @@ const TranchesDetails: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
                     tranche.maximumDeposit,
                     tranche.poolCapacity
                   )}
-                  minimumDepositAmount={formatAmount(tranche.minimumDeposit, {
-                    minDecimals: 2,
-                  })}
-                  maxDepositAmount={formatAmount(tranche.maximumDeposit, {
-                    minDecimals: 2,
-                  })}
+                  minimumDepositAmount={formatAmount(tranche.minimumDeposit)}
+                  maxDepositAmount={formatAmount(tranche.maximumDeposit)}
                 />
               </Grid>
             )

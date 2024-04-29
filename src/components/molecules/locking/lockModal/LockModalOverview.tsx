@@ -41,21 +41,14 @@ const LockModalOverview: React.FC<LockModalOverviewProps> = ({ balance }) => {
           <BalanceItem
             title={`${t('general.wallet')} ${t('general.balance')}`}
             toolTipInfo='info'
-            value={[
-              formatAmount(balance, {
-                minDecimals: 2,
-              }),
-              'KSU',
-            ]}
+            value={[formatAmount(balance), 'KSU']}
             usdValue={formatAmount(formatEther(ksuInUSD))}
           />
           <BalanceItem
             title='Available Funds'
             toolTipInfo='info'
             value={[
-              formatAmount(formatUnits(usdcBalance || '0', usdcDecimals), {
-                minDecimals: 2,
-              }),
+              formatAmount(formatUnits(usdcBalance || '0', usdcDecimals)),
               'USDC',
             ]}
           />

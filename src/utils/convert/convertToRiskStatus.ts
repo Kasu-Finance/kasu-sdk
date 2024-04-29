@@ -12,9 +12,7 @@ const convertToRiskStatus = (riskData: RiskPerformance) => {
     metrics: [
       {
         id: RiskMetricIds.FirstLoss,
-        content: `${formatAmount(riskData.firstLossCapital, {
-          minDecimals: 2,
-        })}`,
+        content: `${formatAmount(riskData.firstLossCapital)}`,
         unit: 'USDC',
         isRating: false,
       },
@@ -25,17 +23,13 @@ const convertToRiskStatus = (riskData: RiskPerformance) => {
       },
       {
         id: RiskMetricIds.RiskScore,
-        content: `${formatAmount(riskData.independentRiskScore, {
-          minDecimals: 2,
-        })}`,
+        content: `${formatAmount(riskData.independentRiskScore)}`,
         unit: '/ 5.00',
         isRating: false,
       },
       {
         id: RiskMetricIds.KasuRating,
-        content: `${formatAmount(riskData.communityRating, {
-          minDecimals: 2,
-        })}`,
+        content: `${formatAmount(riskData.communityRating)}`,
         isRating: true,
       },
     ],
