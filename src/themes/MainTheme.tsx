@@ -309,6 +309,9 @@ export const theme = createTheme({
     MuiTableCell: {
       styleOverrides: {
         root: {
+          '&.p-64': {
+            paddingLeft: '64px',
+          },
           minWidth: '0px',
           wordWrap: 'break-word',
         },

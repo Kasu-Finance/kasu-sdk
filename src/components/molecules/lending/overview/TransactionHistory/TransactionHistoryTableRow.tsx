@@ -12,7 +12,7 @@ import {
   Typography,
 } from '@mui/material'
 import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
-import React from 'react'
+import React, { memo } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 
@@ -55,7 +55,9 @@ const TransactionHistoryTableRow: React.FC<TransactionHistoryTableRowProps> = ({
         hover={!isActive}
         sx={(theme) => ({
           cursor: 'pointer',
+          height: '90px',
           '.MuiTableCell-root': {
+            borderBottom: '0px',
             ...(isActive && {
               borderColor: 'rgba(0,0,0,0)',
               background: alpha(theme.palette.primary.main, 0.08),
@@ -117,7 +119,7 @@ const TransactionHistoryTableRow: React.FC<TransactionHistoryTableRowProps> = ({
           </Typography>
           {transaction.canCancel && (
             <Button
-              sx={{ width: 96, height: 30, mt: 1 }}
+              sx={{ width: 'auto', height: 30, pl: 1.25, pr: 1.25, mt: 0.75 }}
               size='small'
               variant='contained'
               startIcon={<DeleteIcon />}
@@ -148,4 +150,4 @@ const TransactionHistoryTableRow: React.FC<TransactionHistoryTableRowProps> = ({
   )
 }
 
-export default TransactionHistoryTableRow
+export default memo(TransactionHistoryTableRow)
