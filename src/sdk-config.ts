@@ -7,6 +7,7 @@ export interface ContractAddresses {
     KasuAllowList: string;
     SystemVariables: string;
     UserLoyaltyRewards: string;
+    KsuPrice: string;
 }
 export class SdkConfig {
     subgraphUrl: string;
