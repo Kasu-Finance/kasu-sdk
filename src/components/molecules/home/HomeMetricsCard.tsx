@@ -1,59 +1,44 @@
 import { Box, Card, Typography } from '@mui/material'
+import { LendingTotals } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useMemo } from 'react'
 
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
 import { formatAmount, formatPercentage } from '@/utils'
 
-export interface HomeMetricData {
-  totalValueLocked: number
-  loansUnderManagement: number
-  totalFunds: number
-  yieldEarned: number
-  totalLossRate: number
-}
-
 const HomeMetricsCard: React.FC<{
-  data: HomeMetricData
+  data: LendingTotals
   title?: string
 }> = ({ data, title }) => {
   const metrics = useMemo(() => {
-    const {
-      totalValueLocked,
-      loansUnderManagement,
-      totalFunds,
-      yieldEarned,
-      totalLossRate,
-    } = data
-
     return [
       {
         titleKey: 'details.poolTraction.valueLocked.label',
         tooltipKey: 'details.poolTraction.valueLocked.tooltip',
-        content: `${formatAmount(totalValueLocked)} M`,
+        content: `${formatAmount(data?.totalValueLocked)} M`,
         unit: 'USDC',
       },
       {
         titleKey: 'details.poolTraction.management.label',
         tooltipKey: 'details.poolTraction.management.tooltip',
-        content: `${formatAmount(loansUnderManagement)} M`,
+        content: `${formatAmount(data?.loansUnderManagement)} M`,
         unit: 'USDC',
       },
       {
         titleKey: 'details.poolDelegate.totalFunds.label',
         tooltipKey: 'details.poolDelegate.totalFunds.tooltip',
-        content: `${formatAmount(totalFunds)} M`,
+        content: `${formatAmount(data?.totalLoanFundsOriginated)} M`,
         unit: 'USDC',
       },
       {
         titleKey: 'details.poolTraction.yield.label',
         tooltipKey: 'details.poolTraction.yield.tooltip',
-        content: `${formatPercentage(yieldEarned)}`,
+        content: `${formatPercentage(data?.totalYieldEarned || 0)}`,
       },
       {
         titleKey: 'lending.poolOverview.detailCard.totalLossRate.label',
         tooltipKey: 'lending.poolOverview.detailCard.totalLossRate.tooltip',
-        content: `${formatPercentage(totalLossRate)}`,
+        content: `${formatPercentage(data?.totalLossRate || 0)}`,
       },
     ]
   }, [data])

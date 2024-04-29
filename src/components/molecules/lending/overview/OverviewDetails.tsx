@@ -72,7 +72,7 @@ const OverviewDetails: React.FC<{
                 </Grid>
                 <Grid item xs={6}>
                   <MetricWithSuffix
-                    content={formatAmount(+poolDelegate.historicLossRate)}
+                    content={formatAmount(+poolDelegate?.historicLossRate)}
                     suffix='USDC'
                     tooltipKey='lending.poolOverview.detailCard.totalLossRate.tooltip'
                     titleKey='lending.poolOverview.detailCard.totalLossRate.label'
