@@ -17,28 +17,29 @@ import React, { ReactNode, useState } from 'react'
 
 import usePagination from '@/hooks/usePagination'
 
-export type CustomTableHeader<T> = {
+export type CustomTableHeader<U extends readonly any[]> = {
   label: ReactNode
-  value: keyof T
+  value: U[number]
   disableSort?: boolean
   styles?: SxProps<Theme>
 }
 
-export type Sort<T> = {
-  key: keyof T
+export type Sort<U extends readonly any[]> = {
+  key: U[number]
   direction: 'asc' | 'desc'
 }
 
-type CustomTableProps<T> = {
+type CustomTableProps<T, U extends readonly any[]> = {
   headers:
-    | CustomTableHeader<T>[]
+    | CustomTableHeader<U>[]
     | ((
-        handleSortChange: (newKey: keyof T) => void,
-        sort: Sort<T>
+        handleSortChange: (newKey: Readonly<U[number]>) => void,
+        sort: Sort<U>
       ) => ReactNode)
+  sortKeys: U
   data: T[]
-  defaultSortKey: keyof T
-  handleSort: (a: T, b: T, sort: Sort<T>) => number
+  defaultSortKey: U[number]
+  handleSort: (a: T, b: T, sort: Sort<U>) => number
   children: (data: T[]) => ReactNode
   pagination?: boolean
   ariaLabel?: string
@@ -51,7 +52,7 @@ type CustomTableProps<T> = {
   footerStyle?: SxProps<Theme>
 }
 
-const CustomTable = <T,>({
+const CustomTable = <T, U extends readonly any[]>({
   ariaLabel = 'Table',
   headers,
   data,
@@ -66,8 +67,8 @@ const CustomTable = <T,>({
   tableStyles,
   headersStyle,
   footerStyle,
-}: CustomTableProps<T>) => {
-  const [sort, setSort] = useState<Sort<T>>({
+}: CustomTableProps<T, U>) => {
+  const [sort, setSort] = useState<Sort<U>>({
     key: defaultSortKey,
     direction: 'desc',
   })
@@ -84,7 +85,7 @@ const CustomTable = <T,>({
       ? Math.max(0, (1 + currentPage) * rowsPerPage - data.length)
       : 0
 
-  const handleSortChange = (newKey: keyof T) => {
+  const handleSortChange = (newKey: U[number]) => {
     setSort((prev) => ({
       key: newKey,
       direction:
