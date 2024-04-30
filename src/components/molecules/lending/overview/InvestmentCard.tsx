@@ -7,9 +7,12 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
+import { useWeb3React } from '@web3-react/core'
 import { useRouter } from 'next/navigation'
+import { useMemo } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
+import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
 import useGetUserBalance from '@/hooks/lending/useUserTrancheBalance'
 
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
@@ -35,6 +38,8 @@ const InvestmentPortfolio: React.FC<{
 }> = ({ pool }) => {
   const { openModal } = useModalState()
   const router = useRouter()
+  const { account } = useWeb3React()
+  const { data: userPoolBalance } = useUserPoolBalance(pool?.id)
 
   const tranches = pool.tranches.map((tranche) => tranche)
   const sortedTranches = sortTranches(tranches)
@@ -52,10 +57,12 @@ const InvestmentPortfolio: React.FC<{
     totalInvestment = calculateTotalInvested(tranchesWithBalances)
   }
 
-  // TODO: add disabled state for withdraw button
-  // const isWithdrawDisabled = useMemo(() => {
-  //   return !hasBalance || !account
-  // }, [hasBalance, account])
+  const isWithdrawDisabled = useMemo(() => {
+    const hasNonZeroBalance =
+      userPoolBalance && !userPoolBalance.balance.isZero()
+
+    return !account || hasNonZeroBalance
+  }, [userPoolBalance, account])
 
   const handleWithdrawClick = (pool: PoolOverview) => {
     openModal({ name: ModalsKeys.WITHDRAW, poolData: pool })
@@ -159,6 +166,7 @@ const InvestmentPortfolio: React.FC<{
           startIcon={<LogoutIcon />}
           onClick={() => handleWithdrawClick(pool)}
           variant='contained'
+          disabled={isWithdrawDisabled}
         >
           Withdraw
         </Button>
