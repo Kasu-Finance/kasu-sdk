@@ -10,7 +10,9 @@ import Countdown from '@/components/atoms/Countdown'
 import InfoColumn from '@/components/atoms/InfoColumn'
 import TokenAmount from '@/components/atoms/TokenAmount'
 
+import { DATE_FORMAT, TIME_FORMAT } from '@/constants'
 import dayjs from '@/dayjs'
+import { formatAmount } from '@/utils'
 
 type LockModalReviewProps = {
   lockAmount: string
@@ -52,7 +54,13 @@ const LockModalReview: React.FC<LockModalReviewProps> = ({
                 title={t('modals.lock.reviewLock.lockAmount')}
                 toolTipInfo='info'
                 showDivider
-                metric={<TokenAmount px={2} amount={lockAmount} symbol='KSU' />}
+                metric={
+                  <TokenAmount
+                    px={2}
+                    amount={formatAmount(lockAmount)}
+                    symbol='KSU'
+                  />
+                }
               />
             </Grid>
             <Grid item xs={12}>
@@ -102,7 +110,7 @@ const LockModalReview: React.FC<LockModalReviewProps> = ({
               >
                 {dayjs
                   .unix(nextEpochTime)
-                  .format('DD.MM.YYYY • HH:mm:ss UTCZZ')}
+                  .format(`${DATE_FORMAT} • ${TIME_FORMAT}`)}
               </Typography>
             </Box>
           }

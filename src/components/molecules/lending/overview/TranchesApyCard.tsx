@@ -37,7 +37,7 @@ import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { TOKENS } from '@/constants/tokens'
-import { sortTranches } from '@/utils'
+import { formatAmount, sortTranches } from '@/utils'
 
 const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
   const divRef = useRef<HTMLDivElement>(null)
@@ -124,11 +124,12 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
           columnSpacing={{ xs: 1, sm: 2, md: 3 }}
           maxWidth='lg'
         >
+          {}
           {tranches.map((tranche, index) => {
             return (
               <Grid item xs={COLS / pool.tranches.length} key={index}>
                 <MetricWithSuffix
-                  content={+tranche.apy * 100 + ' %'}
+                  content={formatAmount(+tranche.apy * 100) + ' %'}
                   tooltipKey={tranche.tooltip}
                   titleKey={`${tranche.name} Tranche APY`}
                 />

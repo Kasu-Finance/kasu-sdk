@@ -89,9 +89,7 @@ const LoyaltyCard = () => {
           />
           <Divider />
           <ContentWithSuffix
-            content={formatAmount(userKSU?.lockedAmount ?? '0', {
-              minDecimals: 2,
-            })}
+            content={formatAmount(userKSU?.lockedAmount)}
             suffix='KSU'
             sx={{ pl: 0 }}
           />
@@ -143,10 +141,7 @@ const LoyaltyCard = () => {
                     variant='caption'
                     component='h6'
                   >
-                    {formatAmount(totalBonusYieldUSDC, {
-                      minDecimals: 2,
-                    })}{' '}
-                    USDC
+                    {formatAmount(totalBonusYieldUSDC)} USDC
                   </Typography>
                 </div>
               }
@@ -164,10 +159,7 @@ const LoyaltyCard = () => {
                   <ContentWithSuffix
                     textAlign='right'
                     content={`${formatAmount(
-                      userKSU?.lifetimeBonusYieldEarnings ?? 0,
-                      {
-                        minDecimals: 2,
-                      }
+                      userKSU?.lifetimeBonusYieldEarnings
                     )}`}
                     suffix='KSU'
                   />
@@ -177,9 +169,7 @@ const LoyaltyCard = () => {
                     variant='caption'
                     component='h6'
                   >
-                    {formatAmount(lifetimeYieldEarnedUSDC, {
-                      minDecimals: 2,
-                    })}
+                    {formatAmount(lifetimeYieldEarnedUSDC)}
                     USDC
                   </Typography>
                 </div>
