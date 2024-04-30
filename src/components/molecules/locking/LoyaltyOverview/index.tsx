@@ -94,7 +94,7 @@ const LoyaltyOverview = () => {
         toolTipInfo='info'
         metric={
           <TokenAmount
-            amount={formatAmount(totalDeposits ?? '0', { minDecimals: 2 })}
+            amount={formatAmount(totalDeposits.activeDepositAmount)}
             symbol='USDC'
           />
         }
