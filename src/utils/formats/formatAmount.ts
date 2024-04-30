@@ -13,7 +13,7 @@ const formatAmount = (
   options: OptionsParam = {}
 ): string => {
   const {
-    minDecimals = 0,
+    minDecimals = 2,
     minValue,
     currency = '',
     useGrouping = true,
@@ -23,14 +23,9 @@ const formatAmount = (
 
   let { maxDecimals = 2 } = options
 
-  if (!value && value !== 0) {
-    console.warn('formatAmount: Value is not defined')
-    value = 0
-  }
-
-  if (isNaN(Number(value))) {
-    console.warn('formatAmount: Value is not a number')
-    value = 0
+  if (value === undefined || isNaN(Number(value))) {
+    console.warn('formatAmount: Invalid input, expected a number.')
+    return '0.00'
   }
 
   if (minDecimals > maxDecimals) {

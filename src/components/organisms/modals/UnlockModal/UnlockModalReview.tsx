@@ -10,6 +10,7 @@ import InfoColumn from '@/components/atoms/InfoColumn'
 import TokenAmount from '@/components/atoms/TokenAmount'
 
 import dayjs from '@/dayjs'
+import { formatAmount } from '@/utils'
 
 type UnlockModalReviewProps = {
   lockedAmount: string
@@ -33,7 +34,13 @@ const UnlockModalReview: React.FC<UnlockModalReviewProps> = ({
               title='Total KSU Locked'
               toolTipInfo='info'
               showDivider
-              metric={<TokenAmount px={2} amount={lockedAmount} symbol='KSU' />}
+              metric={
+                <TokenAmount
+                  px={2}
+                  amount={formatAmount(lockedAmount)}
+                  symbol='KSU'
+                />
+              }
             />
           </Grid>
           <Grid item xs={6}>
@@ -41,7 +48,13 @@ const UnlockModalReview: React.FC<UnlockModalReviewProps> = ({
               title='Available KSU to Unlock'
               toolTipInfo='info'
               showDivider
-              metric={<TokenAmount px={2} amount={unlockAmount} symbol='KSU' />}
+              metric={
+                <TokenAmount
+                  px={2}
+                  amount={formatAmount(unlockAmount)}
+                  symbol='KSU'
+                />
+              }
             />
           </Grid>
         </Grid>

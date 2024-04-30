@@ -145,7 +145,7 @@ const InvestmentPortfolio: React.FC<{
                   title={`${tranche.name} Tranche APY`}
                   amount={formatAmount(totalInvested)}
                   apy={formatAmount(+tranche.apy * 100)}
-                  yieldEarned={tranche.yieldEarned?.toString() || ''}
+                  yieldEarned={formatAmount(tranche.yieldEarned)}
                 />
               </Grid>
             )

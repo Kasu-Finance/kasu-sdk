@@ -64,7 +64,6 @@ const RewardSummary = () => {
                 py='6px'
                 px={2}
                 amount={formatAmount(lockingRewards?.claimableRewards ?? '0', {
-                  minDecimals: 2,
                   hideTrailingZero: false,
                 })}
                 symbol='USDC'
@@ -85,13 +84,9 @@ const RewardSummary = () => {
                 <TokenAmount
                   py='6px'
                   px={2}
-                  amount={formatAmount(ksuBonus, {
-                    minDecimals: 2,
-                  })}
+                  amount={formatAmount(ksuBonus)}
                   symbol='KSU'
-                  usdValue={formatAmount(formatEther(rewardsInUSD), {
-                    minDecimals: 2,
-                  })}
+                  usdValue={formatAmount(formatEther(rewardsInUSD))}
                 />
               }
             />

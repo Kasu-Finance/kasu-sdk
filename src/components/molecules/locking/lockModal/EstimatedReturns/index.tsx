@@ -60,7 +60,6 @@ const EstimatedReturns = () => {
                 getTextColor(theme, toBigNumber(projectedUsdcEarning).isZero())
               }
               amount={formatAmount(disabled ? '0' : projectedUsdcEarning, {
-                minDecimals: 2,
                 minValue: 100_000_000_000,
               })}
               symbol='USDC'
@@ -75,7 +74,6 @@ const EstimatedReturns = () => {
             <TokenAmount
               color={(theme) => getTextColor(theme, true)}
               amount={formatAmount('0', {
-                minDecimals: 2,
                 minValue: 100_000_000_000,
               })}
               symbol='KSU'
@@ -92,7 +90,6 @@ const EstimatedReturns = () => {
                 getTextColor(theme, toBigNumber(estimatedLaunchBonus).isZero())
               }
               amount={formatAmount(disabled ? '0' : estimatedLaunchBonus, {
-                minDecimals: 2,
                 minValue: 100_000_000_000,
               })}
               symbol='KSU'
