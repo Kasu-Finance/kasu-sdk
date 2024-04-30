@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers'
 
-import { UserLendingPortfolio } from '@/components/organisms/portfolio/LendingPortfolioTable'
+import { UserLendingPortfolio } from '@/components/organisms/portfolio/LendingPortfolioTab/LendingPortfolioTable'
 
 import { toBigNumber } from '@/utils'
 

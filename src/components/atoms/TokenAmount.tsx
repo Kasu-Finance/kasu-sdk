@@ -30,7 +30,7 @@ const TokenAmount: React.FC<TokenAmountProps> = ({
       {symbol}
     </Typography>
     {usdValue && (
-      <Box>
+      <Box color={(theme) => theme.palette.text.secondary}>
         <Typography
           variant={usdcVariant ?? 'body1'}
           component='span'

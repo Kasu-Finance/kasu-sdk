@@ -1,7 +1,7 @@
 import CustomTable, { Sort } from '@/components/molecules/CustomTable'
-import LendingPortfolioTableFooter from '@/components/molecules/portfolio/LendingPortfolioTableFooter'
-import LendingPortfolioTableHeader from '@/components/molecules/portfolio/LendingPortfolioTableHeader'
-import LendingPortfolioTableRow from '@/components/molecules/portfolio/LendingPortfolioTableRow'
+import LendingPortfolioTableFooter from '@/components/molecules/portfolio/lendingPortfolioTab/LendingPortfolioTableFooter'
+import LendingPortfolioTableHeader from '@/components/molecules/portfolio/lendingPortfolioTab/LendingPortfolioTableHeader'
+import LendingPortfolioTableRow from '@/components/molecules/portfolio/lendingPortfolioTab/LendingPortfolioTableRow'
 
 import { toBigNumber } from '@/utils'
 

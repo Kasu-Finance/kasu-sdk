@@ -1,14 +1,15 @@
 'use client'
 
-import { Box, Tab, Tabs } from '@mui/material'
+import { Box, Card, Tab, Tabs } from '@mui/material'
 import { memo, useCallback, useState } from 'react'
 
 import TabPanel from '@/components/molecules/tabs/TabPanel'
 import LendingPortfolioTab from '@/components/organisms/portfolio/LendingPortfolioTab'
+import RewardsTab from '@/components/organisms/portfolio/PortfolioRewardsTab'
 
 const PORTFOLIO_TABS = {
   'Lending Portfolio': <LendingPortfolioTab />,
-  Rewards: 'Rewards',
+  Rewards: <RewardsTab />,
   Wallet: 'Wallet',
 } as const
 
@@ -39,7 +40,7 @@ const PortfolioTabs = () => {
           isActive={activeTab === index}
           key={index}
         >
-          {render}
+          <Card>{render}</Card>
         </TabPanel>
       ))}
     </Box>

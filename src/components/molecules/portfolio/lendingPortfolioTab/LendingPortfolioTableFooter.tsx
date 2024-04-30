@@ -6,7 +6,7 @@ import useCalculatePortfolioAverage from '@/hooks/lending/useCalculatePortfolioA
 import useCalculatePortfolioTotal from '@/hooks/lending/useCalculatePortfolioTotal'
 
 import TokenAmount from '@/components/atoms/TokenAmount'
-import { UserLendingPortfolio } from '@/components/organisms/portfolio/LendingPortfolioTable'
+import { UserLendingPortfolio } from '@/components/organisms/portfolio/LendingPortfolioTab/LendingPortfolioTable'
 
 import { formatAmount, formatPercentage } from '@/utils'
 

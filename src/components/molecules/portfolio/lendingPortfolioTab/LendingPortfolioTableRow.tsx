@@ -11,8 +11,8 @@ import {
 import React from 'react'
 
 import PoolAvatar from '@/components/atoms/PoolAvatar'
-import LendingPortfolioTableCell from '@/components/molecules/portfolio/LendingPortfolioTableCell'
-import { UserLendingPortfolio } from '@/components/organisms/portfolio/LendingPortfolioTable'
+import LendingPortfolioTableCell from '@/components/molecules/portfolio/lendingPortfolioTab/LendingPortfolioTableCell'
+import { UserLendingPortfolio } from '@/components/organisms/portfolio/LendingPortfolioTab/LendingPortfolioTable'
 
 import { formatAmount, formatPercentage } from '@/utils'
 

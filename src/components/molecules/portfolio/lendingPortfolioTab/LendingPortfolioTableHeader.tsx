@@ -3,7 +3,7 @@ import React from 'react'
 
 import { Sort } from '@/components/molecules/CustomTable'
 import CustomTableSortLabel from '@/components/molecules/CustomTable/CustomTableSortLabel'
-import { LENDING_PORTFOLIO_KEYS } from '@/components/organisms/portfolio/LendingPortfolioTable'
+import { LENDING_PORTFOLIO_KEYS } from '@/components/organisms/portfolio/LendingPortfolioTab/LendingPortfolioTable'
 
 type LendingPortfolioTableHeaderProps = {
   handleSortChange: (newKey: (typeof LENDING_PORTFOLIO_KEYS)[number]) => void
