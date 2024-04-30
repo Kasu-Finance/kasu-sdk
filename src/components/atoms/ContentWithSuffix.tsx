@@ -13,8 +13,13 @@ const ContentWithSuffix: React.FC<ContentWithSuffixProps & TypographyProps> = ({
   sx,
   ...typographyProps
 }) => {
+  const sxProps = {
+    pl: 2,
+    ...sx,
+  }
+
   return (
-    <Typography variant='h6' {...typographyProps} sx={{ pl: 2, ...sx }}>
+    <Typography variant='h6' {...typographyProps} sx={sxProps}>
       {content}{' '}
       {suffix && (
         <Typography variant='body1' component='span'>
