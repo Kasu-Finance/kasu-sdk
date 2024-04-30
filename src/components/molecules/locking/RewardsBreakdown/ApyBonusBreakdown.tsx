@@ -1,12 +1,16 @@
 import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
+import useUserLocks from '@/hooks/locking/useUserLocks'
 import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
 
 import RewardsBreakdownCard from '@/components/molecules/locking/RewardsBreakdown/RewardsBreakdownCard'
+
+import { formatAmount } from '@/utils'
 
 const ApyBonusBreakdown = () => {
   const stakedPercentage = useLockingPercentage()
 
   const { currentLevel } = useLoyaltyLevel(stakedPercentage)
+  const { userLocks } = useUserLocks()
 
   return (
     <RewardsBreakdownCard
@@ -23,12 +27,15 @@ const ApyBonusBreakdown = () => {
         {
           title: 'Balance',
           toolTipInfo: 'info',
-          metric: ['1.00', 'KSU'],
+          metric: ['0.00', 'KSU'],
         },
         {
           title: 'Lifetime',
           toolTipInfo: 'info',
-          metric: ['2.00', 'KSU'],
+          metric: [
+            formatAmount(userLocks?.lifetimeYieldEarnings, { minDecimals: 2 }),
+            'KSU',
+          ],
         },
       ]}
     />

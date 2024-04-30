@@ -1,10 +1,11 @@
 'use client'
 
 import { Grid } from '@mui/material'
-import { formatEther } from 'ethers/lib/utils'
+import { formatEther, formatUnits } from 'ethers/lib/utils'
 
 import useClaimLockingRewards from '@/hooks/locking/useClaimLockingRewards'
 import useLockingRewards from '@/hooks/locking/useLockingRewards'
+import useUserLocks from '@/hooks/locking/useUserLocks'
 import useTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
@@ -14,16 +15,26 @@ import InfoColumn from '@/components/atoms/InfoColumn'
 import TokenAmount from '@/components/atoms/TokenAmount'
 import ClaimButton from '@/components/molecules/locking/RewardSummary/ClaimButton'
 
+import { TOKENS } from '@/constants/tokens'
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
-
-const ksuBonus = '100'
 
 const RewardSummary = () => {
   const { lockingRewards } = useLockingRewards()
   const { t } = useTranslation()
   const claimRewards = useClaimLockingRewards()
 
+  const { userLocks } = useUserLocks()
   const { ksuPrice } = useKsuPrice()
+
+  if (!userLocks?.length) {
+    return null
+  }
+
+  // TODO: remove index, it should be object not array
+  const ksuBonus = formatUnits(
+    toBigNumber(userLocks[0]?.ksuBonusAndRewards || '0'),
+    TOKENS.KSU.decimals
+  )
 
   const rewardsInUSD = convertToUSD(
     toBigNumber(ksuBonus || '0'),
@@ -67,7 +78,7 @@ const RewardSummary = () => {
         <Grid item xs={6}>
           <ColoredBox sx={{ p: 0 }}>
             <InfoColumn
-              title='KSU Bonus/Rewards Balance​'
+              title='KSU Rewards Claimable Balance'
               toolTipInfo='info'
               showDivider
               metric={
