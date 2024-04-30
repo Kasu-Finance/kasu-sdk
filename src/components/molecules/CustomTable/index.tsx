@@ -165,16 +165,13 @@ const CustomTable = <T, U extends readonly any[]>({
             <TableFooter
               sx={{
                 borderTop: '1px solid rgba(224, 224, 224, 1)',
+                '& .MuiTableCell-root': {
+                  background: 'rgba(25, 118, 210, 0.08)',
+                },
                 ...footerStyle,
               }}
             >
-              <TableRow
-                sx={(theme) => ({
-                  background: alpha(theme.palette.primary.main, 0.08),
-                })}
-              >
-                {footer}
-              </TableRow>
+              {footer}
             </TableFooter>
           )}
         </Table>

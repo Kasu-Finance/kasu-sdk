@@ -4,9 +4,10 @@ import { Box, Tab, Tabs } from '@mui/material'
 import { memo, useCallback, useState } from 'react'
 
 import TabPanel from '@/components/molecules/tabs/TabPanel'
+import LendingPortfolioTab from '@/components/organisms/portfolio/LendingPortfolioTab'
 
 const PORTFOLIO_TABS = {
-  'Lending Portfolio': 'Lending Portfolio',
+  'Lending Portfolio': <LendingPortfolioTab />,
   Rewards: 'Rewards',
   Wallet: 'Wallet',
 } as const

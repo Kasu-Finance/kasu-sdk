@@ -1,4 +1,4 @@
-import { Box, Button, Card, Grid, Typography } from '@mui/material'
+import { Box, Card, Grid, Typography } from '@mui/material'
 import { PoolRepayment } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
@@ -6,10 +6,9 @@ import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
 import useTranslation from '@/hooks/useTranslation'
 
 import Countdown from '@/components/atoms/Countdown'
+import CsvDownloadButton from '@/components/atoms/CsvDownloadButton'
 import InfoColumn from '@/components/atoms/InfoColumn'
 import RenderMetrics from '@/components/molecules/repayments/RenderMetrics'
-
-import { DownloadIcon } from '@/assets/icons'
 
 import {
   adaptDataForRepayments,
@@ -38,16 +37,10 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
         <Typography variant='h6' mb={2}>
           {t('repayments.title')}
         </Typography>
-
-        <Button
-          type='button'
-          variant='contained'
+        <CsvDownloadButton
+          onDownload={() => alert('Download is not implemented yet.')}
           sx={{ fontSize: 15 }}
-          startIcon={<DownloadIcon color='white' opacity='1' />}
-          onClick={() => alert('Download is not implemented yet.')}
-        >
-          {t('repayments.downloadBtn')}
-        </Button>
+        />
       </Box>
 
       <Box mt={2}>

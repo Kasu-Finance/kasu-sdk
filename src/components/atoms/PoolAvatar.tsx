@@ -18,7 +18,7 @@ const PoolAvatar: React.FC<AvatarProps> = ({ src, name, ...props }) => {
   return (
     <Avatar
       {...props}
-      sx={{ boxShadow: '0 0 8px rgba(0,0,0,.14) inset' }}
+      sx={{ boxShadow: '0 0 8px rgba(0,0,0,.14) inset', ...props.sx }}
       src={!imgError ? src : undefined}
     >
       {imgError && initials}

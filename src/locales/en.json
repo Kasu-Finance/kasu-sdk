@@ -26,7 +26,8 @@
     "pools": "pools",
     "none": "none",
     "pool": "pool",
-    "adjust": "adjust"
+    "adjust": "adjust",
+    "csvDownload": "DOWNLOAD AS CSV"
   },
   "time": {
     "days": "days",
@@ -456,7 +457,6 @@
   },
   "repayments": {
     "title": "Repayments and Funds Flow",
-    "downloadBtn": "DOWNLOAD AS CSV",
     "loanModelDescription": "This Pool Delegate's lending model is to facilitate Fiat currency loans to real world businesses off-chain. The Asset Class and Loan Structure outlined in the 'Pool Details' screen indicates that these loans are 'Revolving/Evergreen' Loan Facilities, with fluctuating loan balances, being a function of ongoing and simultaneous loan repayments and loan redraws in Fiat currency off-chain. Accordingly, these Fiat currency transactions can only be viewed via CSV download at this current point in time.",
     "borrowerFundsCSV": "Download CSV to view fiat currency funds flow on a per borrower basis:",
     "sections": {
