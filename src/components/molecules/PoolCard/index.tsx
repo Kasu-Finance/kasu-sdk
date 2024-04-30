@@ -21,7 +21,7 @@ const PoolCard: React.FC<PoolCardProps> = ({ pool, poolDelegate, link }) => {
 
       <PoolCardContent pool={pool} poolDelegate={poolDelegate} />
 
-      <PoolCardActions link={link} />
+      <PoolCardActions pool={pool} link={link} />
     </Card>
   )
 }
