@@ -42,7 +42,7 @@ const LoyaltyCard = () => {
   const totalBonusYieldUSDC = userKSU
     ? formatEther(
         convertToUSD(
-          toBigNumber(userKSU?.totalBonusYieldEarnings.toString() || '0'),
+          toBigNumber(userKSU?.protocolFeesEarned.toString() || '0'),
           toBigNumber(ksuPrice || '0')
         )
       )
@@ -51,7 +51,7 @@ const LoyaltyCard = () => {
   const lifetimeYieldEarnedUSDC = userKSU
     ? formatEther(
         convertToUSD(
-          toBigNumber(userKSU?.totalBonusYieldEarnings.toString() || '0'),
+          toBigNumber(userKSU?.protocolFeesEarned.toString() || '0'),
           toBigNumber(ksuPrice || '0')
         )
       )
@@ -132,12 +132,9 @@ const LoyaltyCard = () => {
                 <div>
                   <ContentWithSuffix
                     textAlign='right'
-                    content={`${formatAmount(
-                      userKSU?.totalBonusYieldEarnings ?? 0,
-                      {
-                        minDecimals: 2,
-                      }
-                    )}`}
+                    content={`${formatAmount(userKSU?.protocolFeesEarned ?? 0, {
+                      minDecimals: 2,
+                    })}`}
                     suffix='KSU'
                   />
                   <Typography
