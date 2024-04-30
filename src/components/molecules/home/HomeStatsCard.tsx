@@ -6,7 +6,7 @@ import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
 import { formatAmount, formatPercentage } from '@/utils'
 
-const HomeMetricsCard: React.FC<{
+const HomeStatsCard: React.FC<{
   data: LendingTotals
   title?: string
 }> = ({ data, title }) => {
@@ -15,19 +15,19 @@ const HomeMetricsCard: React.FC<{
       {
         titleKey: 'details.poolTraction.valueLocked.label',
         tooltipKey: 'details.poolTraction.valueLocked.tooltip',
-        content: `${formatAmount(data?.totalValueLocked)} M`,
+        content: `${formatAmount(data?.totalValueLocked, { roundingScale: 'auto' })}`,
         unit: 'USDC',
       },
       {
         titleKey: 'details.poolTraction.management.label',
         tooltipKey: 'details.poolTraction.management.tooltip',
-        content: `${formatAmount(data?.loansUnderManagement)} M`,
+        content: `${formatAmount(data?.loansUnderManagement, { roundingScale: 'auto' })}`,
         unit: 'USDC',
       },
       {
         titleKey: 'details.poolDelegate.totalFunds.label',
         tooltipKey: 'details.poolDelegate.totalFunds.tooltip',
-        content: `${formatAmount(data?.totalLoanFundsOriginated)} M`,
+        content: `${formatAmount(data?.totalLoanFundsOriginated, { roundingScale: 'auto' })}`,
         unit: 'USDC',
       },
       {
@@ -73,4 +73,4 @@ const HomeMetricsCard: React.FC<{
   )
 }
 
-export default HomeMetricsCard
+export default HomeStatsCard

@@ -6,7 +6,7 @@ import useLendingTotals from '@/hooks/home/useLendingTotals'
 import usePoolDelegate from '@/hooks/lending/usePoolDelegate'
 import usePoolOverview from '@/hooks/lending/usePoolOverview'
 
-import HomeMetricsCard from '@/components/molecules/home/HomeMetricsCard'
+import HomeStatsCard from '@/components/molecules/home/HomeStatsCard'
 import PageHeader from '@/components/molecules/PageHeader'
 import HomeTabs from '@/components/organisms/home/HomeTabs'
 
@@ -28,7 +28,7 @@ const Lending = () => {
 
   return (
     <Container maxWidth='lg'>
-      <HomeMetricsCard data={lendingTotals} />
+      <HomeStatsCard data={lendingTotals} />
       <HomeTabs pools={pools} poolDelegates={poolDelegates} />
     </Container>
   )
