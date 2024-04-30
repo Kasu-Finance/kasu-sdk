@@ -11,9 +11,11 @@ import {
 import { formatEther } from 'ethers/lib/utils'
 
 import useModalState from '@/hooks/context/useModalState'
+import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
 import useUserLocks from '@/hooks/locking/useUserLocks'
 import useTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
+import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import ContentWithSuffix from '@/components/atoms/ContentWithSuffix'
@@ -31,6 +33,9 @@ const LoyaltyCard = () => {
   const handleOpenLockingKSU = () => openModal({ name: 'lockModal' })
   const { userLocks } = useUserLocks()
   const { ksuPrice } = useKsuPrice()
+
+  const stakedPercentage = useLockingPercentage()
+  const { currentLevel } = useLoyaltyLevel(stakedPercentage)
 
   const userKSU = userLocks && userLocks.length > 0 ? userLocks[0] : null
 
@@ -103,9 +108,13 @@ const LoyaltyCard = () => {
               showDivider
               metric={
                 <ContentWithSuffix
-                  content={`${formatAmount(
-                    userKSU?.apyBonus ? userKSU.apyBonus * 100 : '0'
-                  )} %`}
+                  content={
+                    currentLevel === 1
+                      ? '0.1%'
+                      : currentLevel === 2
+                        ? '0.2%'
+                        : 'None'
+                  }
                 />
               }
             />
