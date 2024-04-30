@@ -1,4 +1,5 @@
-import { alpha, TableCell, TableRow } from '@mui/material'
+import { alpha, TableRow } from '@mui/material'
+import TableCell from '@mui/material/TableCell'
 import React from 'react'
 
 import { Sort } from '@/components/molecules/CustomTable'
@@ -19,7 +20,7 @@ const TransactionHistoryTableHeader: React.FC<
         background: alpha(theme.palette.primary.main, 0.04),
       })}
     >
-      <TableCell rowSpan={2} width='18%' sx={{ pl: 8 }}>
+      <TableCell rowSpan={2} width='16%' className='p-64'>
         <CustomTableSortLabel
           label='Request'
           sortKey='requestType'
@@ -27,7 +28,16 @@ const TransactionHistoryTableHeader: React.FC<
           handleSortChange={handleSortChange}
         />
       </TableCell>
-      <TableCell align='center' width='54%' colSpan={3}>
+      <TableCell rowSpan={2} width='12%'>
+        <CustomTableSortLabel
+          label='Tranche'
+          sortKey='trancheName'
+          sort={sort}
+          handleSortChange={handleSortChange}
+        />
+      </TableCell>
+
+      <TableCell align='center' colSpan={3} width='30%'>
         Total Amounts
       </TableCell>
       <TableCell rowSpan={2} width='14%' align='right'>
@@ -52,7 +62,7 @@ const TransactionHistoryTableHeader: React.FC<
         background: alpha(theme.palette.primary.main, 0.04),
       })}
     >
-      <TableCell align='right' width='18%'>
+      <TableCell align='right' width='14%'>
         <CustomTableSortLabel
           label='Requested'
           sortKey='requestedAmount'
@@ -60,7 +70,7 @@ const TransactionHistoryTableHeader: React.FC<
           handleSortChange={handleSortChange}
         />
       </TableCell>
-      <TableCell align='right' width='18%'>
+      <TableCell align='right' width='14%'>
         <CustomTableSortLabel
           label='Accepted'
           sortKey='acceptedAmount'
@@ -68,7 +78,7 @@ const TransactionHistoryTableHeader: React.FC<
           handleSortChange={handleSortChange}
         />
       </TableCell>
-      <TableCell align='right' width='18%'>
+      <TableCell align='right' width='14%'>
         <CustomTableSortLabel
           label='Rejected'
           sortKey='rejectedAmount'

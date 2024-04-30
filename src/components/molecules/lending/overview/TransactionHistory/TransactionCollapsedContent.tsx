@@ -27,7 +27,7 @@ const TransactionCollapsedContent: React.FC<
         },
       }}
     >
-      <TableCell width='18%' padding='none'>
+      <TableCell colSpan={2} width='28%' padding='none'>
         <Typography
           fontSize='inherit'
           fontFamily='inherit'
@@ -38,21 +38,21 @@ const TransactionCollapsedContent: React.FC<
           {actionHistory.requestType}
         </Typography>
       </TableCell>
-      <TableCell width='18%' align='right' padding='none'>
+      <TableCell width='14%' align='right' padding='none'>
         <TokenAmount
           amount={actionHistory.totalRequested}
           symbol='USDC'
           sx={{ width: '100%', textAlign: 'right' }}
         />
       </TableCell>
-      <TableCell width='18%' align='right' padding='none'>
+      <TableCell width='14%' align='right' padding='none'>
         <TokenAmount
           amount={actionHistory.totalAccepted}
           symbol='USDC'
           sx={{ width: '100%', textAlign: 'right' }}
         />
       </TableCell>
-      <TableCell width='18%' align='right' padding='none'>
+      <TableCell width='14%' align='right' padding='none'>
         <TokenAmount
           amount={actionHistory.totalRejected}
           symbol='USDC'
