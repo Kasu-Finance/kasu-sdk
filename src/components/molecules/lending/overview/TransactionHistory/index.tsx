@@ -1,6 +1,6 @@
 import { Box, Card, CardContent, CardHeader } from '@mui/material'
 import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import useTransactionHistoryState from '@/hooks/context/useTransactionHistoryState'
 import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
@@ -21,7 +21,11 @@ const handleSort = (
 ) => {
   const direction = sort.direction === 'asc' ? 1 : -1
 
-  if (sort.key === 'status' || sort.key === 'requestType') {
+  if (
+    sort.key === 'status' ||
+    sort.key === 'requestType' ||
+    sort.key === 'trancheName'
+  ) {
     return a[sort.key].localeCompare(b[sort.key]) * direction
   }
 
@@ -54,12 +58,17 @@ export const TRANSACTION_HISTORY_KEYS = [
   'requestedAmount',
   'rejectedAmount',
   'timestamp',
+  'trancheName',
 ] as const
 
 const TransactionHistory: React.FC<{ poolId: string }> = ({ poolId }) => {
   const [open, setOpen] = useState<number | undefined>(undefined)
   const { transactionHistory, isLoading } = useTransactionHistory()
   const { status, trancheType, transactionType } = useTransactionHistoryState()
+
+  const handleCollapse = useCallback((index) => {
+    setOpen((prev) => (prev === index ? undefined : index))
+  }, [])
 
   if (isLoading || !transactionHistory?.length) return null
 
@@ -69,19 +78,17 @@ const TransactionHistory: React.FC<{ poolId: string }> = ({ poolId }) => {
     }
   )
 
-  const filteredData: UserRequest[] = currentPoolTransactions
-    .filter((transaction) => {
-      if (status === 'All') return true
-      return transaction.status === status
-    })
-    .filter((transaction) => {
-      if (trancheType === 'All Tranches') return true
-      return transaction.trancheName === trancheType
-    })
-    .filter((transaction) => {
-      if (transactionType === 'All Transactions') return true
-      return transaction.requestType === transactionType
-    })
+  const filteredData: UserRequest[] = currentPoolTransactions.filter(
+    (transaction) => {
+      return (
+        (status === 'All' || transaction.status === status) &&
+        (trancheType === 'All Tranches' ||
+          transaction.trancheName === trancheType) &&
+        (transactionType === 'All Transactions' ||
+          transaction.requestType === transactionType)
+      )
+    }
+  )
 
   return (
     <Card sx={{ mt: 3 }}>
@@ -130,9 +137,7 @@ const TransactionHistory: React.FC<{ poolId: string }> = ({ poolId }) => {
 
               return (
                 <TransactionHistoryTableRow
-                  handleCollapse={() =>
-                    setOpen((prev) => (prev === index ? undefined : index))
-                  }
+                  handleCollapse={() => handleCollapse(index)}
                   isActive={isActive}
                   transaction={transaction}
                   key={index}

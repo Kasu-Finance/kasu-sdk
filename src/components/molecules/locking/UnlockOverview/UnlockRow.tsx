@@ -9,7 +9,9 @@ import TokenAmount from '@/components/atoms/TokenAmount'
 
 import { UnlockIcon } from '@/assets/icons'
 
+import { DATE_FORMAT, TIME_FORMAT } from '@/constants'
 import dayjs from '@/dayjs'
+import { formatAmount } from '@/utils'
 
 type UnlockRowProps = {
   userLock: UserLock
@@ -35,9 +37,9 @@ const UnlockRow: React.FC<UnlockRowProps> = ({ userLock }) => {
   return (
     <TableRow>
       <TableCell>
-        <TokenAmount amount={lockedAmount} symbol='KSU' />
+        <TokenAmount amount={formatAmount(lockedAmount)} symbol='KSU' />
         <Typography variant='caption' component='span' display='block'>
-          {dayjs.unix(startTime).format('DD.MM.YYYY • HH:mm:ss UTCZZ')}
+          {dayjs.unix(startTime).format(`${DATE_FORMAT} • ${TIME_FORMAT}`)}
         </Typography>
         <Button
           variant='contained'
@@ -58,7 +60,7 @@ const UnlockRow: React.FC<UnlockRowProps> = ({ userLock }) => {
       </TableCell>
       <TableCell align='right'>
         <Typography variant='body1' component='span'>
-          {dayjs.unix(endTime).format('DD.MM.YYYY')}
+          {dayjs.unix(endTime).format(DATE_FORMAT)}
         </Typography>
       </TableCell>
       <TableCell align='right'>

@@ -36,7 +36,7 @@
     "@mui/material-nextjs": "^5.15.3",
     "@nexeraid/identity-sdk": "^1.1.308",
     "@nexeraprotocol/nexera-id-schemas": "^1.10.92",
-    "@solidant/kasu-sdk": "^0.0.32",
+    "@solidant/kasu-sdk": "^0.0.36",
     "@web3-react/coinbase-wallet": "^8.2.3",
     "@web3-react/core": "^8.2.3",
     "@web3-react/eip1193": "^8.2.3",
@@ -49,14 +49,15 @@
     "@web3-react/walletconnect-v2": "^8.5.1",
     "dayjs": "^1.11.10",
     "ethers": "^5.7.2",
-    "next": "^14.2.2",
+    "next": "^14.2.3",
     "pino-pretty": "^11.0.0",
     "react": "^18",
     "react-dom": "^18",
     "react-hotjar": "^6.3.1",
     "sass": "^1.69.5",
     "styled-components": "^6.1.2",
-    "swr": "^2.2.5"
+    "swr": "^2.2.5",
+    "update": "^0.7.4"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",

@@ -14,23 +14,13 @@ const FeesEarnedBreakdown = () => {
         {
           title: 'Claimable Balance',
           toolTipInfo: 'info',
-          metric: [
-            formatAmount(lockingRewards?.claimableRewards ?? '0', {
-              minDecimals: 2,
-            }),
-            'USDC',
-          ],
+          metric: [formatAmount(lockingRewards?.claimableRewards), 'USDC'],
         },
 
         {
           title: 'Lifetime Protocol Fees',
           toolTipInfo: 'info',
-          metric: [
-            formatAmount(lockingRewards?.lifeTimeRewards ?? '0', {
-              minDecimals: 2,
-            }),
-            'USDC',
-          ],
+          metric: [formatAmount(lockingRewards?.lifeTimeRewards), 'USDC'],
         },
       ]}
     />

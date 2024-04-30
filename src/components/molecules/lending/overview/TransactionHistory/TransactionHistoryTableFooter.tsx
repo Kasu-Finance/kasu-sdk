@@ -24,7 +24,7 @@ const TransactionHistoryTableFooter: React.FC<
         background: alpha(theme.palette.primary.main, 0.08),
       })}
     >
-      <TableCell padding='none' colSpan={6}>
+      <TableCell padding='none' colSpan={7}>
         <Box px={2}>
           <Typography
             variant='subtitle2'

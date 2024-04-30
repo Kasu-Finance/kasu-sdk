@@ -9,6 +9,7 @@ import ColoredBox from '@/components/atoms/ColoredBox'
 import InfoRow from '@/components/atoms/InfoRow'
 import LockPeriodInfo from '@/components/molecules/LockPeriodInfo'
 
+import { DATE_FORMAT } from '@/constants'
 import dayjs from '@/dayjs'
 
 const LockDurationInput = () => {
@@ -102,7 +103,7 @@ const LockDurationInput = () => {
                 disabled ? theme.palette.text.disabled : undefined
               }
             >
-              {disabled ? 'Not Available' : unlockTime.format('DD.MM.YYYY')}
+              {disabled ? 'Not Available' : unlockTime.format(DATE_FORMAT)}
             </Typography>
           }
         ></InfoRow>
