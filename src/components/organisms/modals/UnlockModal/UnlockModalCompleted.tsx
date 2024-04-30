@@ -9,7 +9,7 @@ import useRatio from '@/hooks/useRatio'
 
 import List from '@/components/atoms/List'
 
-import { formatAccount, toBigNumber } from '@/utils'
+import { formatAccount, formatAmount, toBigNumber } from '@/utils'
 
 type UnlockModalCompletedProps = {
   userLock: UserLock
@@ -61,7 +61,7 @@ const UnlockModalCompleted: React.FC<UnlockModalCompletedProps> = ({
             <li>
               <Typography variant='body1' component='p'>
                 <Typography variant='h6' component='span'>
-                  {amount} KSU
+                  {formatAmount(amount)} KSU
                 </Typography>{' '}
                 to be withdrawn to the wallet{' '}
                 <Typography variant='h6' component='span'>
@@ -76,7 +76,7 @@ const UnlockModalCompleted: React.FC<UnlockModalCompletedProps> = ({
         <Typography variant='body1' component='p' display='block' px={1}>
           You have successfully requested{' '}
           <Typography variant='h6' component='span'>
-            {amount} KSU
+            {formatAmount(amount)} KSU
           </Typography>{' '}
           to be unlocked in the next Epoch.
         </Typography>

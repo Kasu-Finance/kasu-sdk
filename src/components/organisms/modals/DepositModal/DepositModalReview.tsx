@@ -11,6 +11,7 @@ import InfoColumn from '@/components/atoms/InfoColumn'
 import TokenAmount from '@/components/atoms/TokenAmount'
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 
+import { DATE_FORMAT, TIME_FORMAT } from '@/constants'
 import dayjs from '@/dayjs'
 import { formatAmount } from '@/utils'
 
@@ -68,7 +69,7 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
                     px={2}
                     pt='5px'
                   >
-                    {now.format('DD.MM.YYYY')}
+                    {now.format(DATE_FORMAT)}
                   </Typography>
                   <Box px={2} pb='5px'>
                     <Typography variant='body1' component='span'>
@@ -87,7 +88,13 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
               title='Deposit Amount'
               toolTipInfo='info'
               showDivider
-              metric={<TokenAmount px={2} amount={amount} symbol='USDC' />}
+              metric={
+                <TokenAmount
+                  px={2}
+                  amount={formatAmount(amount)}
+                  symbol='USDC'
+                />
+              }
             />
             <InfoColumn
               title='Total Investment'
@@ -97,9 +104,7 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
               metric={
                 <TokenAmount
                   px={2}
-                  amount={formatAmount(poolData.totalUserInvestment, {
-                    minDecimals: 2,
-                  })}
+                  amount={formatAmount(poolData.totalUserInvestment)}
                   symbol='USDC'
                 />
               }
@@ -150,7 +155,7 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
             >
               {dayjs
                 .unix(nextClearingTime ?? 0)
-                .format('DD.MM.YYYY • HH:mm:ss UTCZZ')}
+                .format(`${DATE_FORMAT} • ${TIME_FORMAT}`)}
             </Typography>
           </Box>
         }

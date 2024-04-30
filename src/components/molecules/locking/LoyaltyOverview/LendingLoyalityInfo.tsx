@@ -39,10 +39,7 @@ const LendingLoyalityInfo = () => {
           title={`rKSU ${capitalize(t('general.balance'))}`}
           toolTipInfo='info'
           metric={
-            <TokenAmount
-              amount={formatAmount(rKsuAmount ?? '0', { minDecimals: 2 })}
-              symbol='rKSU'
-            />
+            <TokenAmount amount={formatAmount(rKsuAmount)} symbol='rKSU' />
           }
         />
 

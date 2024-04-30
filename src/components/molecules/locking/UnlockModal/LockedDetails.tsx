@@ -56,7 +56,9 @@ const LockedDetails: React.FC<LockedDetailsProps> = ({ userLock }) => {
                 <Box pt='6px' pl={2} width='max-content' textAlign='right'>
                   <TokenAmount
                     amount={
-                      isValidAmount ? ksuRemaining : userLock.lockedAmount
+                      isValidAmount
+                        ? formatAmount(ksuRemaining)
+                        : formatAmount(userLock.lockedAmount)
                     }
                     symbol='KSU'
                   />
@@ -77,7 +79,11 @@ const LockedDetails: React.FC<LockedDetailsProps> = ({ userLock }) => {
               <>
                 <Box pt='6px' pl={2} width='max-content' textAlign='right'>
                   <TokenAmount
-                    amount={isValidAmount ? rKsuRemaining : userLock.rKSUAmount}
+                    amount={
+                      isValidAmount
+                        ? formatAmount(rKsuRemaining)
+                        : formatAmount(userLock.rKSUAmount)
+                    }
                     symbol='rKSU'
                   />
                   <Typography variant='caption' component='span'>

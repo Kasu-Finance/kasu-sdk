@@ -7,7 +7,9 @@ import useModalStatusState from '@/hooks/context/useModalStatusState'
 import ColoredBox from '@/components/atoms/ColoredBox'
 import BalanceItem from '@/components/molecules/locking/BalanceOverview/BalanceItem'
 
+import { DATE_FORMAT } from '@/constants'
 import dayjs from '@/dayjs'
+import { formatAmount } from '@/utils'
 
 type UnlockModalOverviewProps = {
   userLock: UserLock
@@ -28,19 +30,19 @@ const UnlockModalOverview: React.FC<UnlockModalOverviewProps> = ({
             <BalanceItem
               title='Total KSU Locked'
               toolTipInfo='info'
-              value={[userLock.lockedAmount, 'KSU']}
+              value={[formatAmount(userLock.lockedAmount), 'KSU']}
             />
             <BalanceItem
               title='rKSU Amount'
               toolTipInfo='info'
-              value={[userLock.rKSUAmount, 'rKSU']}
+              value={[formatAmount(userLock.rKSUAmount), 'rKSU']}
             />
           </Grid>
           <Grid item xs={6}>
             <BalanceItem
               title='Locked Date'
               toolTipInfo='info'
-              value={[startTime.format('DD.MM.YYYY'), '']}
+              value={[startTime.format(DATE_FORMAT), '']}
               // subValue={[
               //   startTime.format('HH:mm:ss'),
               //   startTime.format('UTCZZ'),
