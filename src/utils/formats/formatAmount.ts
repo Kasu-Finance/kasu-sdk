@@ -23,7 +23,7 @@ const formatAmount = (
 
   let { maxDecimals = 2 } = options
 
-  if (value === undefined || isNaN(Number(value))) {
+  if (value === undefined || isNaN(Number(value)) || !isFinite(Number(value))) {
     console.warn('formatAmount: Invalid input, expected a number.')
     return '0.00'
   }
