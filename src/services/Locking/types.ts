@@ -30,7 +30,6 @@ export interface UserLock {
     startTime: EpochTimeStamp;
     endTime: EpochTimeStamp;
     lockPeriod: LockPeriod;
-    lifetimeYieldEarnings: string;
     ksuBonusAndRewards: string;
     protocolFeesEarned: string;
 }

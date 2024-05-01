@@ -182,7 +182,6 @@ export class KSULocking {
                     startTime: Number(userLock.startTimestamp),
                     endTime: Number(userLock.endTimestamp),
                     lockPeriod: userLock.lockPeriod,
-                    lifetimeYieldEarnings: "0", // TODO
                     ksuBonusAndRewards: (Number.parseFloat(userLock.userLockDepositsInfo.totalKsuBonusAmount) + Number.parseFloat(userLock.userLockDepositsInfo.feesClaimed)).toString(),
                     protocolFeesEarned: ethers.utils.formatUnits(protocolFeesEarned, 18)
                 };

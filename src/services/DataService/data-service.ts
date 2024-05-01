@@ -67,9 +67,10 @@ export class DataService {
         const balance = parseFloat(lendingPoolSubgraph.tranches[index].balance) // subgraph
 
         const targetAmount = balance + targetDrawAmount;
-        // TODO return percentages
+
         const remainingCapacity = Math.max(targetDrawAmount - pendingDeposits, 0);
-        const remainingCapacityPercentage = remainingCapacity / targetAmount;
+
+        const remainingCapacityPercentage = targetAmount != 0 ? remainingCapacity / targetAmount : 1;
 
         const remainingCapacitySpillover = Math.min(targetDrawAmount - pendingDeposits, 0);
 
@@ -119,7 +120,7 @@ export class DataService {
                 });
             }
             const poolCapacitySum = poolCapacities.poolCapacity.reduce((a, b) => a + b, 0);
-            const poolCapacityPercentageSum = poolCapacities.poolCapacityPercentage.reduce((a, b) => a + b, 0);
+            const poolCapacityPercentageSum = poolCapacities.poolCapacityPercentage.reduce((a, b) => a + b, 0) / poolCapacities.poolCapacity.length;
             const poolOverview: PoolOverview = {
                 id: lendingPoolSubgraph.id,
                 // TODO weighted average  of  apy and tranche balances - remove from directus
