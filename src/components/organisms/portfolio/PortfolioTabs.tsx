@@ -6,11 +6,12 @@ import { memo, useCallback, useState } from 'react'
 import TabPanel from '@/components/molecules/tabs/TabPanel'
 import LendingPortfolioTab from '@/components/organisms/portfolio/LendingPortfolioTab'
 import RewardsTab from '@/components/organisms/portfolio/PortfolioRewardsTab'
+import PortfolioWalletTab from '@/components/organisms/portfolio/PortfolioWalletTab'
 
 const PORTFOLIO_TABS = {
   'Lending Portfolio': <LendingPortfolioTab />,
   Rewards: <RewardsTab />,
-  Wallet: 'Wallet',
+  Wallet: <PortfolioWalletTab />,
 } as const
 
 const PortfolioTabs = () => {
