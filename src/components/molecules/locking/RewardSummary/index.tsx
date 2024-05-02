@@ -1,7 +1,8 @@
 'use client'
 
 import { Grid } from '@mui/material'
-import { formatEther, formatUnits } from 'ethers/lib/utils'
+import { formatEther } from 'ethers/lib/utils'
+import { useMemo } from 'react'
 
 import useClaimLockingRewards from '@/hooks/locking/useClaimLockingRewards'
 import useLockingRewards from '@/hooks/locking/useLockingRewards'
@@ -15,7 +16,6 @@ import InfoColumn from '@/components/atoms/InfoColumn'
 import TokenAmount from '@/components/atoms/TokenAmount'
 import ClaimButton from '@/components/molecules/locking/RewardSummary/ClaimButton'
 
-import { TOKENS } from '@/constants/tokens'
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
 const RewardSummary = () => {
@@ -26,18 +26,22 @@ const RewardSummary = () => {
   const { userLocks } = useUserLocks()
   const { ksuPrice } = useKsuPrice()
 
-  if (!userLocks?.length) {
-    return null
-  }
+  const totalKsuBonusAndRewards = useMemo(() => {
+    if (!userLocks?.length) {
+      return '0.00'
+    }
 
-  // TODO: remove index, it should be object not array
-  const ksuBonus = formatUnits(
-    toBigNumber(userLocks[0]?.ksuBonusAndRewards || '0'),
-    TOKENS.KSU.decimals
-  )
+    const total = userLocks.reduce((sum, lock) => {
+      const ksuBonusAndRewards = Number(lock?.ksuBonusAndRewards || '0')
+
+      return sum + ksuBonusAndRewards
+    }, 0)
+
+    return total.toFixed(2).toString()
+  }, [userLocks])
 
   const rewardsInUSD = convertToUSD(
-    toBigNumber(ksuBonus || '0'),
+    toBigNumber(totalKsuBonusAndRewards || '0'),
     toBigNumber(ksuPrice || '0')
   )
 
@@ -84,7 +88,7 @@ const RewardSummary = () => {
                 <TokenAmount
                   py='6px'
                   px={2}
-                  amount={formatAmount(ksuBonus)}
+                  amount={totalKsuBonusAndRewards}
                   symbol='KSU'
                   usdValue={formatAmount(formatEther(rewardsInUSD))}
                 />
