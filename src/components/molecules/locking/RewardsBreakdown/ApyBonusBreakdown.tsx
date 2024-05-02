@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+
 import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
 import useUserLocks from '@/hooks/locking/useUserLocks'
 import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
@@ -11,6 +13,27 @@ const ApyBonusBreakdown = () => {
 
   const { currentLevel } = useLoyaltyLevel(stakedPercentage)
   const { userLocks } = useUserLocks()
+
+  const earningsData = useMemo(() => {
+    if (!userLocks?.length) {
+      return { yieldEarnings: '0.00', lockedAmount: '0.00' }
+    }
+
+    const totalLifetimeYieldEarnings = userLocks.reduce((sum, lock) => {
+      const yieldEarnings = Number(lock?.lifetimeYieldEarnings || '0')
+      return sum + yieldEarnings
+    }, 0)
+
+    const totalLockedAmount = userLocks.reduce((sum, lock) => {
+      const lockedAmount = Number(lock?.lockedAmount || '0')
+      return sum + lockedAmount
+    }, 0)
+
+    return {
+      yieldEarnings: formatAmount(totalLifetimeYieldEarnings),
+      lockedAmount: formatAmount(totalLockedAmount),
+    }
+  }, [userLocks])
 
   return (
     <RewardsBreakdownCard
@@ -27,15 +50,12 @@ const ApyBonusBreakdown = () => {
         {
           title: 'Balance',
           toolTipInfo: 'info',
-          metric: ['0.00', 'KSU'],
+          metric: [earningsData.lockedAmount, 'KSU'],
         },
         {
           title: 'Lifetime',
           toolTipInfo: 'info',
-          metric: [
-            formatAmount(userLocks?.lifetimeYieldEarnings, { minDecimals: 2 }),
-            'KSU',
-          ],
+          metric: [earningsData.yieldEarnings, 'KSU'],
         },
       ]}
     />
