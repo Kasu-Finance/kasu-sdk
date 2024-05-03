@@ -1,4 +1,4 @@
-import React, { ReactNode, useReducer } from 'react'
+import { ReactNode, useReducer } from 'react'
 
 import WithdrawModalContext from '@/context/withdrawModal/withdrawModal.context'
 import withdrawModalReducer from '@/context/withdrawModal/withdrawModal.reducer'

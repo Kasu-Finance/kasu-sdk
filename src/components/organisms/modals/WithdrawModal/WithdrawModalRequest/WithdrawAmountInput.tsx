@@ -1,6 +1,6 @@
 import LogoutIcon from '@mui/icons-material/Logout'
 import { Box, Typography, useTheme } from '@mui/material'
-import React, { useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useTranslation from '@/hooks/useTranslation'

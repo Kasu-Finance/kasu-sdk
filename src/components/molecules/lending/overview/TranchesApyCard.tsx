@@ -2,7 +2,7 @@
 
 import LoginIcon from '@mui/icons-material/Login'
 import { Box, Grid } from '@mui/material'
-import React, { useRef } from 'react'
+import { useRef } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useIsSticky from '@/hooks/useIsSticky'
