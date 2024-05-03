@@ -63,3 +63,11 @@ export const trancheUserDetailsQuery = gql`
         }
     }
 `;
+
+export const totalUserLoyaltyRewardsQuery = gql`
+    query TotalUserLoyaltyRewardsQuery($userAddress: String!) {
+      user(id: $userAddress) {
+          totalUserLoyaltyRewards
+      }
+    }
+`;

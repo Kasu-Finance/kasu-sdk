@@ -58,3 +58,9 @@ export interface LendingPoolUserDetailsSubgraph {
         totalAcceptedWithdrawnAmount: string;
     };
 }
+
+export interface TotalUserLoyaltyRewardsSubgraph {
+    user: {
+        totalUserLoyaltyRewards: string
+    }
+}

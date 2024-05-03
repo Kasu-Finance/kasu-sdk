@@ -91,3 +91,8 @@ export enum UserRequestEventType {
     CANCELLED = 'DepositCancelled',
     WITHDRAWAL_INITIATED = 'WithdrawalInitiated',
 }
+
+export interface UserApyBonus {
+    balance: BigNumber;
+    lifetime: number;
+}

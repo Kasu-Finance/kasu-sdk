@@ -14,17 +14,18 @@ import {
     ILendingPoolManagerAbi,
     ILendingPoolManagerAbi__factory,
     ILendingPoolTrancheAbi,
-    ILendingPoolTrancheAbi__factory,
+    ILendingPoolTrancheAbi__factory, IUserLoyaltyRewardsAbi, IUserLoyaltyRewardsAbi__factory,
     IUserManagerAbi,
     IUserManagerAbi__factory,
 } from '../../contracts';
 import { SdkConfig } from '../../sdk-config';
 
 import {
-    LendingPoolUserDetailsSubgraph,
+    LendingPoolUserDetailsSubgraph, TotalUserLoyaltyRewardsSubgraph,
     UserRequestsSubgraph,
 } from './subgraph-types';
 import {
+    UserApyBonus,
     UserPoolBalance,
     UserRequest,
     UserRequestEvent,
@@ -33,7 +34,7 @@ import {
 } from './types';
 import { mapUserRequestEventType } from './user-lending.helper';
 import {
-    lendingPoolUserDetailsQuery,
+    lendingPoolUserDetailsQuery, totalUserLoyaltyRewardsQuery,
     userRequestsQuery,
 } from './user-lending.query';
 
@@ -41,6 +42,7 @@ export class UserLending {
     private readonly _graph: GraphQLClient;
     private readonly _userManagerAbi: IUserManagerAbi;
     private readonly _lendingPoolManagerAbi: ILendingPoolManagerAbi;
+    private readonly _userLoyaltyRewardsAbi: IUserLoyaltyRewardsAbi;
     readonly _signerOrProvider: Signer | Provider;
 
     constructor(
@@ -55,6 +57,10 @@ export class UserLending {
         );
         this._lendingPoolManagerAbi = ILendingPoolManagerAbi__factory.connect(
             _kasuConfig.contracts.LendingPoolManager,
+            signerOrProvider,
+        );
+        this._userLoyaltyRewardsAbi = IUserLoyaltyRewardsAbi__factory.connect(
+            _kasuConfig.contracts.UserLoyaltyRewards,
             signerOrProvider,
         );
     }
@@ -344,5 +350,14 @@ export class UserLending {
             balance: balance,
             availableToWithdraw: await tranche.maxWithdraw(user),
         };
+    }
+
+    async getUserApyBonus(user: string): Promise<UserApyBonus> {
+        const subgraphResult: TotalUserLoyaltyRewardsSubgraph = await this._graph.request(totalUserLoyaltyRewardsQuery, { userAddress: user });
+        const balance = await this._userLoyaltyRewardsAbi.userRewards(user);
+        return {
+            balance: balance,
+            lifetime: parseFloat(subgraphResult.user.totalUserLoyaltyRewards),
+        }
     }
 }
