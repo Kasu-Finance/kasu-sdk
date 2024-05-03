@@ -1,6 +1,6 @@
 'use client'
 
-import React, { ReactNode, useCallback, useReducer } from 'react'
+import { ReactNode, useCallback, useReducer } from 'react'
 
 import ModalContext from '@/context/modal/modal.context'
 import { modalReducer } from '@/context/modal/modal.reducer'

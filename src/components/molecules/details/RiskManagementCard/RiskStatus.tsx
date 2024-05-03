@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 

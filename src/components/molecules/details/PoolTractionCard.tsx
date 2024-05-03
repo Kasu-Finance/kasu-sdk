@@ -2,25 +2,25 @@ import { Box, Card, Typography } from '@mui/material'
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useMemo } from 'react'
 
-import useTranslation from '@/hooks/useTranslation'
-
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
 import { convertToPoolTraction } from '@/utils'
 
 interface PoolTractionCardProps {
   data: PoolOverview
+  title?: string
 }
 
-const PoolTractionCard: React.FC<PoolTractionCardProps> = ({ data }) => {
-  const { t } = useTranslation()
+const PoolTractionCard: React.FC<PoolTractionCardProps> = ({ data, title }) => {
   const { metrics } = useMemo(() => convertToPoolTraction(data), [data])
 
   return (
     <Card sx={{ minWidth: 275, boxShadow: 3, padding: 2, mt: 3 }} elevation={1}>
-      <Typography variant='h6' mb={2}>
-        {t('details.poolTraction.title')}
-      </Typography>
+      {title && (
+        <Typography variant='h6' mb={2}>
+          {title}
+        </Typography>
+      )}
 
       <Box display='flex' alignItems='center'>
         {metrics.map(({ id, content, unit = '' }, index) => (
