@@ -31,8 +31,8 @@ const ClosedPoolsTableRow: React.FC<RowProps> = ({ data }) => {
           <PoolAvatar
             src={data?.poolImage}
             name={data?.poolName}
-            showIconStatus
-            iconStatusSx={{ background: 'rgba(211, 47, 47, 1)' }}
+            showStatus
+            sx={{ background: 'rgba(211, 47, 47, 1)' }}
           />
           <Typography variant='h6' component='h1' ml={1}>
             {data?.poolName || 'N/A'}

@@ -2,13 +2,12 @@ import { alpha, TableCell, TableRow } from '@mui/material'
 import React from 'react'
 
 import { Sort } from '@/components/molecules/CustomTable'
-import { ClosedPoolData } from '@/components/molecules/home/ClosedPoolsTable'
-
-import ClosedPoolsTableSortLabel from './ClosedPoolsTableSortLabel'
+import CustomTableSortLabel from '@/components/molecules/CustomTable/CustomTableSortLabel'
+import { CLOSED_POOLS_KEYS } from '@/components/molecules/home/ClosedPoolsTable'
 
 interface ClosedPoolsTableHeaderProps {
-  handleSortChange: (newKey: keyof ClosedPoolData) => void
-  sort: Sort<ClosedPoolData>
+  handleSortChange: (newKey: (typeof CLOSED_POOLS_KEYS)[number]) => void
+  sort: Sort<typeof CLOSED_POOLS_KEYS>
 }
 
 const ClosedPoolsTableHeader: React.FC<ClosedPoolsTableHeaderProps> = ({
@@ -21,7 +20,7 @@ const ClosedPoolsTableHeader: React.FC<ClosedPoolsTableHeaderProps> = ({
     })}
   >
     <TableCell align='left'>
-      <ClosedPoolsTableSortLabel
+      <CustomTableSortLabel
         label='Pool'
         sort={sort}
         sortKey='poolName'
@@ -29,7 +28,7 @@ const ClosedPoolsTableHeader: React.FC<ClosedPoolsTableHeaderProps> = ({
       />
     </TableCell>
     <TableCell align='right'>
-      <ClosedPoolsTableSortLabel
+      <CustomTableSortLabel
         label='APY'
         sort={sort}
         sortKey='apy'
@@ -37,7 +36,7 @@ const ClosedPoolsTableHeader: React.FC<ClosedPoolsTableHeaderProps> = ({
       />
     </TableCell>
     <TableCell align='right'>
-      <ClosedPoolsTableSortLabel
+      <CustomTableSortLabel
         label='TVL'
         sort={sort}
         sortKey='totalValueLocked'
@@ -45,7 +44,7 @@ const ClosedPoolsTableHeader: React.FC<ClosedPoolsTableHeaderProps> = ({
       />
     </TableCell>
     <TableCell align='right'>
-      <ClosedPoolsTableSortLabel
+      <CustomTableSortLabel
         label='Loans Under Management'
         sort={sort}
         sortKey='loansUnderManagement'
@@ -53,7 +52,7 @@ const ClosedPoolsTableHeader: React.FC<ClosedPoolsTableHeaderProps> = ({
       />
     </TableCell>
     <TableCell align='right'>
-      <ClosedPoolsTableSortLabel
+      <CustomTableSortLabel
         label='Total Funds'
         sort={sort}
         sortKey='totalFunds'
@@ -61,7 +60,7 @@ const ClosedPoolsTableHeader: React.FC<ClosedPoolsTableHeaderProps> = ({
       />
     </TableCell>
     <TableCell align='right'>
-      <ClosedPoolsTableSortLabel
+      <CustomTableSortLabel
         label='Loss Rate'
         sort={sort}
         sortKey='totalLossRate'

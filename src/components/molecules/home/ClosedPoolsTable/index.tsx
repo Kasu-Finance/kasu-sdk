@@ -11,25 +11,32 @@ import ClosedPoolsTableFooter from '@/components/molecules/home/ClosedPoolsTable
 import ClosedPoolsTableHeader from '@/components/molecules/home/ClosedPoolsTable/ClosedPoolsTableHeader'
 import ClosedPoolsTableRow from '@/components/molecules/home/ClosedPoolsTable/ClosedPoolsTableRow'
 
-const handleSort = <T extends { [key: string]: any }>(
-  a: T,
-  b: T,
-  sort: Sort<T>
-): number => {
-  const key = sort.key as keyof T
-  const direction = sort.direction === 'asc' ? 1 : -1
-  const aValue = a[key]
-  const bValue = b[key]
+export const CLOSED_POOLS_KEYS = [
+  'poolName',
+  'apy',
+  'totalValueLocked',
+  'loansUnderManagement',
+  'totalFunds',
+  'totalLossRate',
+  'assetClass',
+] as const
 
-  if (key === 'poolName' || key === 'apy') {
-    return typeof aValue === 'string' && typeof bValue === 'string'
-      ? aValue.localeCompare(bValue) * direction
-      : (aValue - bValue) * direction
+const handleSort = (
+  a: ClosedPoolData,
+  b: ClosedPoolData,
+  sort: Sort<typeof CLOSED_POOLS_KEYS>
+): number => {
+  const key = sort.key
+  const direction = sort.direction === 'asc' ? 1 : -1
+
+  const aValue = parseFloat(String(a[key]))
+  const bValue = parseFloat(String(b[key]))
+
+  if (!isNaN(aValue) && !isNaN(bValue)) {
+    return (aValue - bValue) * direction
   }
 
-  const aNum = parseFloat(aValue)
-  const bNum = parseFloat(bValue)
-  return (aNum - bNum) * direction
+  return String(a[key]).localeCompare(String(b[key])) * direction
 }
 
 export interface ClosedPoolData {
@@ -83,6 +90,7 @@ const ClosedPoolsTable: React.FC<ClosedPoolsTableProps> = ({
       <CustomTable
         data={tableData}
         defaultSortKey='poolName'
+        sortKeys={CLOSED_POOLS_KEYS}
         handleSort={handleSort}
         headers={(handleSortChange, sort) => (
           <ClosedPoolsTableHeader
