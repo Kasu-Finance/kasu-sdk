@@ -8,17 +8,6 @@ import TranchDetailCard from '@/components/molecules/TranchDetailCard'
 import { COLS } from '@/constants'
 import { formatAmount, sortTranches } from '@/utils'
 
-const remainingAmount = (maxAmount: string, currentAmount: string) => {
-  const amountLeft = +maxAmount - +currentAmount
-
-  const amountPct = (amountLeft / +maxAmount) * 100
-
-  return {
-    value: formatAmount(amountLeft),
-    pct: formatAmount(amountPct),
-  }
-}
-
 const TranchesDetails: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
   const sortedTranches = sortTranches(pool.tranches)
 
@@ -31,10 +20,10 @@ const TranchesDetails: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
               <Grid item xs={COLS / pool.tranches.length} key={index}>
                 <TranchDetailCard
                   title={tranche.name + ' Tranche'}
-                  remainingAmount={remainingAmount(
-                    tranche.maximumDeposit,
-                    tranche.poolCapacity
-                  )}
+                  remainingAmount={{
+                    pct: formatAmount(tranche.poolCapacityPercentage),
+                    value: formatAmount(tranche.poolCapacity),
+                  }}
                   minimumDepositAmount={formatAmount(tranche.minimumDeposit)}
                   maxDepositAmount={formatAmount(tranche.maximumDeposit)}
                 />
