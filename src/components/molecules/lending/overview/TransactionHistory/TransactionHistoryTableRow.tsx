@@ -12,7 +12,7 @@ import {
   Typography,
 } from '@mui/material'
 import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
-import React, { memo } from 'react'
+import { memo } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 

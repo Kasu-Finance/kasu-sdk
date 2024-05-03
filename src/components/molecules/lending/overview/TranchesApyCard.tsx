@@ -2,7 +2,7 @@
 
 import LoginIcon from '@mui/icons-material/Login'
 import { Box, Grid } from '@mui/material'
-import React, { useMemo, useRef } from 'react'
+import { useRef } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useIsSticky from '@/hooks/useIsSticky'
@@ -26,31 +26,21 @@ export type PoolData = {
   }[]
 }
 
-import {
-  PoolOverview,
-  TrancheData,
-} from '@solidant/kasu-sdk/src/services/DataService/types'
-import { formatUnits } from 'ethers/lib/utils'
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import { TOKENS } from '@/constants/tokens'
-import { formatAmount, sortTranches } from '@/utils'
+import { formatAmount, getPoolData, sortTranches } from '@/utils'
 
 const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
   const divRef = useRef<HTMLDivElement>(null)
   const { t } = useTranslation()
-
   const { openModal } = useModalState()
-
   const { data: userPoolBalance } = useUserPoolBalance(pool?.id)
-
-  const poolBalance = useMemo(() => {
-    if (!userPoolBalance) return '0'
-    return formatUnits(userPoolBalance?.balance || '0', TOKENS.USDC.decimals)
-  }, [userPoolBalance])
+  const sortedTranches = sortTranches(pool.tranches)
+  const poolData: PoolData = getPoolData(pool, userPoolBalance)
 
   const { isSticky } = useIsSticky({
     elementRef: divRef,
@@ -60,23 +50,8 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
   const handleOpen = () =>
     openModal({
       name: ModalsKeys.DEPOSIT,
-      poolData: POOL_DATA,
+      poolData: poolData,
     })
-
-  const sortedTranches = sortTranches(pool.tranches)
-
-  const POOL_DATA: PoolData = {
-    poolName: pool.poolName,
-    lendingPoolId: pool.id as `0x${string}`,
-    totalUserInvestment: poolBalance,
-    tranches: sortedTranches.map((tranche: TrancheData) => ({
-      toolTip: `lending.tranche.${tranche.name.toLowerCase()}.tooltip`,
-      title: t(`lending.tranche.${tranche.name.toLowerCase()}`),
-      trancheId: tranche.id as `0x${string}`,
-      minimumDeposit: tranche.minimumDeposit,
-      maximumDeposit: tranche.maximumDeposit,
-    })),
-  }
 
   const tranches = sortedTranches.map((item) => {
     const key = item.name.toLowerCase()

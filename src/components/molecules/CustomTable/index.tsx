@@ -13,7 +13,7 @@ import {
   TableSortLabel,
   Theme,
 } from '@mui/material'
-import React, { ReactNode, useState } from 'react'
+import { ReactNode, useState } from 'react'
 
 import usePagination from '@/hooks/usePagination'
 
@@ -168,13 +168,7 @@ const CustomTable = <T, U extends readonly any[]>({
                 ...footerStyle,
               }}
             >
-              <TableRow
-                sx={(theme) => ({
-                  background: alpha(theme.palette.primary.main, 0.08),
-                })}
-              >
-                {footer}
-              </TableRow>
+              {footer}
             </TableFooter>
           )}
         </Table>

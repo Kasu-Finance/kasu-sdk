@@ -4,7 +4,7 @@ import ReceiptIcon from '@mui/icons-material/Receipt'
 import { Box, Button, DialogActions, DialogContent } from '@mui/material'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { useRouter } from 'next/navigation'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'

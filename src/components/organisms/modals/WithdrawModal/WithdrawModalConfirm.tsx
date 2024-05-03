@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material'
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useWeb3React } from '@web3-react/core'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import useTranslation from '@/hooks/useTranslation'

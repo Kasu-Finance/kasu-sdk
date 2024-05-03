@@ -6,24 +6,24 @@ type OptionsParam = {
   symbol?: string
   useGrouping?: boolean
   hideTrailingZero?: boolean
+  roundingScale?: 'K' | 'M' | 'auto' | null
 }
-
 const formatAmount = (
   value: number | string,
   options: OptionsParam = {}
 ): string => {
   const {
     minDecimals = 2,
-    minValue,
     currency = '',
     useGrouping = true,
     hideTrailingZero = false,
     symbol,
-  } = options
+    roundingScale = null, // Default rounding scale is null, indicating no scaling
+  }: OptionsParam = options
 
   let { maxDecimals = 2 } = options
 
-  if (value === undefined || isNaN(Number(value))) {
+  if (value === undefined || isNaN(Number(value)) || !isFinite(Number(value))) {
     console.warn('formatAmount: Invalid input, expected a number.')
     return '0.00'
   }
@@ -35,11 +35,29 @@ const formatAmount = (
     maxDecimals = minDecimals
   }
 
-  const formatWithSuffix = Boolean(minValue && +value > minValue)
+  let numValue = Number(value)
+  let suffix = ''
+  const scaledAndSuffixApplied =
+    roundingScale === 'K' || roundingScale === 'M' || roundingScale === 'auto'
+
+  if (roundingScale === 'auto') {
+    if (numValue >= 1000000) {
+      numValue /= 1000000
+      suffix = ' M'
+    } else if (numValue >= 1000) {
+      numValue /= 1000
+      suffix = ' K'
+    }
+  } else if (roundingScale === 'K') {
+    numValue /= 1000
+    suffix = ' K'
+  } else if (roundingScale === 'M') {
+    numValue /= 1000000
+    suffix = ' M'
+  }
 
   const format = new Intl.NumberFormat('en-US', {
     ...(currency && { style: 'currency', currency }),
-    ...(formatWithSuffix && { notation: 'compact', compactDisplay: 'short' }),
     minimumFractionDigits: minDecimals,
     maximumFractionDigits: maxDecimals,
     // @ts-ignore typescript hasn't added this
@@ -47,17 +65,17 @@ const formatAmount = (
     useGrouping,
   })
 
-  if (!formatWithSuffix) return `${format.format(+value)} ${symbol ?? ''}`
+  if (!scaledAndSuffixApplied) {
+    const joinedFormat = format
+      .formatToParts(numValue)
+      .map((part) => (part.type === 'compact' ? ` ${part.value}` : part.value))
+      .reduce((string, part) => `${string}${part}`)
 
-  // adds spacing to "compact part" e.g "K" -> " K"
-  const joinedFormat = format
-    .formatToParts(+value)
-    .map((parts) =>
-      parts.type === 'compact' ? ` ${parts.value}` : parts.value
-    )
-    .reduce((string, part) => `${string}${part}`)
-
-  return `${joinedFormat} ${symbol ?? ''}`
+    return `${joinedFormat} ${symbol ?? ''}`.trim()
+  } else {
+    const formattedValue = format.format(numValue)
+    return `${formattedValue}${suffix} ${symbol ?? ''}`.trim()
+  }
 }
 
 export default formatAmount

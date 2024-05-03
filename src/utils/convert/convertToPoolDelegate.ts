@@ -15,7 +15,7 @@ const convertToPoolDelegate = (
   },
   {
     id: PoolDelegateMetricIds.TotalFunds,
-    content: `${formatAmount(delegateProfile.totalLoanFundsOriginated)} M`,
+    content: `${formatAmount(delegateProfile?.totalLoanFundsOriginated, { roundingScale: 'auto' })}`,
     unit: 'USDC',
   },
   {
@@ -32,7 +32,7 @@ const convertToPoolDelegate = (
   },
   {
     id: PoolDelegateMetricIds.Loans,
-    content: `${formatAmount(delegateProfile.loansUnderManagement)} M`,
+    content: `${formatAmount(delegateProfile?.loansUnderManagement, { roundingScale: 'auto' })}`,
     unit: 'USDC',
   },
   {

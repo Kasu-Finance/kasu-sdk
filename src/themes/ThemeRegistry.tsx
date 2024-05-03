@@ -3,7 +3,7 @@ import createCache from '@emotion/cache'
 import { CacheProvider } from '@emotion/react'
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import { useServerInsertedHTML } from 'next/navigation'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 import { theme } from '@/themes/MainTheme'
 
