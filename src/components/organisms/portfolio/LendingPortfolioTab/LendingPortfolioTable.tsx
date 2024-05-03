@@ -204,6 +204,7 @@ const LendingPortfolioTable = () => {
       footerStyle={{
         '& .MuiTableCell-root': {
           background: 'none',
+          height: '100px',
         },
       }}
     >

@@ -41,7 +41,7 @@ const InfoRow: React.FC<InfoRowProps> = ({
 
   return (
     <>
-      <Box sx={{ ...defaultSx, ...sx }}>
+      <Box sx={[defaultSx, ...(Array.isArray(sx) ? sx : [sx])]}>
         <Box display='flex' alignItems='center'>
           <Box>
             <Typography

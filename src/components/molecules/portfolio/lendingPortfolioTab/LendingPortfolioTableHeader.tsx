@@ -47,7 +47,11 @@ const LendingPortfolioTableHeader: React.FC<
         Yield Earnings
       </TableCell>
     </TableRow>
-    <TableRow>
+    <TableRow
+      sx={(theme) => ({
+        background: alpha(theme.palette.primary.main, 0.04),
+      })}
+    >
       <TableCell align='right'>
         <CustomTableSortLabel
           sort={sort}
