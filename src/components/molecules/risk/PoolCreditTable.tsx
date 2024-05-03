@@ -1,6 +1,6 @@
 import { Card, TableCell, TableRow, Typography } from '@mui/material'
 import { PoolCreditMetricsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 

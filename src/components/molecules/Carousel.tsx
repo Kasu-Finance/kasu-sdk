@@ -1,44 +1,84 @@
 'use client'
-import { Box, Grid, Pagination } from '@mui/material'
+
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
+import { Box, Grid, IconButton } from '@mui/material'
 import { Children, ReactElement, useState } from 'react'
 
 // Extend CarouselProps to accept a generic type for children
 interface CarouselProps<T> {
   children: ReactElement<T>[] | ReactElement<T>
   slidesPerPage: number
+  arrowButtonStyle?: {
+    leftArrow?: React.CSSProperties
+    rightArrow?: React.CSSProperties
+  }
 }
 
-const Carousel = <T,>({ children, slidesPerPage }: CarouselProps<T>) => {
-  const [currentPage, setCurrentPage] = useState(1)
-
+const Carousel = <T,>({
+  children,
+  slidesPerPage = 3,
+  arrowButtonStyle = {},
+}: CarouselProps<T>) => {
+  const [currentPage, setCurrentPage] = useState(0)
   const childrenArray = Children.toArray(children) as ReactElement<T>[]
-  const COLS = 12
+  const totalPages = Math.ceil(childrenArray.length / slidesPerPage)
 
-  const validSlidesPerPage = Math.min(Math.max(slidesPerPage, 1), 4)
-  const pageCount = Math.ceil(childrenArray.length / validSlidesPerPage)
-  const startIndex = (currentPage - 1) * validSlidesPerPage
-  const endIndex = startIndex + validSlidesPerPage
-  const currentChildren = childrenArray.slice(startIndex, endIndex)
+  const handleNext = () => {
+    setCurrentPage((prev) => (prev + 1) % totalPages)
+  }
+
+  const handleBack = () => {
+    setCurrentPage((prev) => (prev - 1 + totalPages) % totalPages)
+  }
+
+  const currentChildren = childrenArray.slice(
+    currentPage * slidesPerPage,
+    (currentPage + 1) * slidesPerPage
+  )
+
+  const showIconBtn = childrenArray.length > 3
 
   return (
-    <Box sx={{ mt: 4 }}>
+    <Box sx={{ position: 'relative', width: '100%', mt: 4 }}>
+      {showIconBtn && (
+        <IconButton
+          onClick={handleBack}
+          sx={{
+            position: 'absolute',
+            left: 0,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            zIndex: 1,
+            ...arrowButtonStyle.leftArrow,
+          }}
+        >
+          <ArrowBackIosIcon />
+        </IconButton>
+      )}
+
       <Grid container spacing={2} justifyContent='center'>
         {currentChildren.map((child, index) => (
-          <Grid item key={index} xs={COLS / validSlidesPerPage}>
+          <Grid item key={index} xs={12 / slidesPerPage}>
             {child}
           </Grid>
         ))}
       </Grid>
-
-      <Box display='flex' justifyContent='center' overflow='hidden'>
-        <Pagination
-          count={pageCount}
-          page={currentPage}
-          onChange={(_, page) => setCurrentPage(page)}
-          color='primary'
-          sx={{ mt: 4 }}
-        />
-      </Box>
+      {showIconBtn && (
+        <IconButton
+          onClick={handleNext}
+          sx={{
+            position: 'absolute',
+            right: 0,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            zIndex: 1,
+            ...arrowButtonStyle.rightArrow,
+          }}
+        >
+          <ArrowForwardIosIcon />
+        </IconButton>
+      )}
     </Box>
   )
 }

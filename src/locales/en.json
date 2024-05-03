@@ -26,7 +26,11 @@
     "pools": "pools",
     "none": "none",
     "pool": "pool",
-    "adjust": "adjust"
+    "adjust": "adjust",
+    "overview": "overview",
+    "poolApy": "Pool APY",
+    "apy": "APY",
+    "tvl": "TVL"
   },
   "time": {
     "days": "days",
@@ -321,6 +325,17 @@
         "title": "Junior Tranche",
         "tooltip": "The current Annual Percentage Yield offered by the Pool Delegate for the Junior Tranche within this Lending Pool, assuming all repayments will be made as expected. "
       }
+    },
+    "shortcutTranche": {
+      "senior": {
+        "title": "Senior"
+      },
+      "mezzanine": {
+        "title": "Mezzanine"
+      },
+      "junior": {
+        "title": "Junior"
+      }
     }
   },
   "details": {
@@ -592,6 +607,17 @@
         "column-2": "Upload Date",
         "column-3": "Version",
         "column-4": "Actions"
+      }
+    }
+  },
+  "home": {
+    "tabs": {
+      "activePools": "Active Pools",
+      "closedPools": "Closed pools"
+    },
+    "closedPools": {
+      "table": {
+        "lossRate": "Loss Rate"
       }
     }
   }
