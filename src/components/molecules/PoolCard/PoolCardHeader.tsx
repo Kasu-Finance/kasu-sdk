@@ -31,7 +31,7 @@ const PoolCardHeader: React.FC<PoolCardHeaderProps> = ({ pool }) => {
           background: alpha(theme.palette.primary.main, 0.08),
         })}
       >
-        <PoolAvatar src={poolAvatarImg} name={poolName} showIconStatus />
+        <PoolAvatar src={poolAvatarImg} name={poolName} showStatus />
         <Typography variant='h6' component='h1' sx={{ ml: 2 }}>
           {poolName}
         </Typography>
