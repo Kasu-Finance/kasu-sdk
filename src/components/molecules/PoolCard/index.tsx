@@ -1,3 +1,5 @@
+'use client'
+
 import { Card } from '@mui/material'
 import {
   PoolDelegateProfileAndHistory,
@@ -18,9 +20,7 @@ const PoolCard: React.FC<PoolCardProps> = ({ pool, poolDelegate, link }) => {
   return (
     <Card>
       <PoolCardHeader pool={pool} />
-
       <PoolCardContent pool={pool} poolDelegate={poolDelegate} />
-
       <PoolCardActions pool={pool} link={link} />
     </Card>
   )

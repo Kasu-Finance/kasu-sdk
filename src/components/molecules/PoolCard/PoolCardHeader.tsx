@@ -21,7 +21,6 @@ const PoolCardHeader: React.FC<PoolCardHeaderProps> = ({ pool }) => {
   return (
     <Box>
       <ImageWithFallback src={poolBannerImg} />
-
       <Box
         display='flex'
         alignItems='center'
