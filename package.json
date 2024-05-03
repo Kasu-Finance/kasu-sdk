@@ -36,7 +36,7 @@
     "@mui/material-nextjs": "^5.15.3",
     "@nexeraid/identity-sdk": "^1.1.308",
     "@nexeraprotocol/nexera-id-schemas": "^1.10.92",
-    "@solidant/kasu-sdk": "^0.0.36",
+    "@solidant/kasu-sdk": "^0.0.38",
     "@web3-react/coinbase-wallet": "^8.2.3",
     "@web3-react/core": "^8.2.3",
     "@web3-react/eip1193": "^8.2.3",

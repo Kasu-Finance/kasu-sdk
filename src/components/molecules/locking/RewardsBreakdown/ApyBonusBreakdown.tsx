@@ -1,7 +1,5 @@
-import { useMemo } from 'react'
-
 import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
-import useUserLocks from '@/hooks/locking/useUserLocks'
+import useUserApyBonus from '@/hooks/locking/useUserApyBonus'
 import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
 
 import RewardsBreakdownCard from '@/components/molecules/locking/RewardsBreakdown/RewardsBreakdownCard'
@@ -12,28 +10,8 @@ const ApyBonusBreakdown = () => {
   const stakedPercentage = useLockingPercentage()
 
   const { currentLevel } = useLoyaltyLevel(stakedPercentage)
-  const { userLocks } = useUserLocks()
 
-  const earningsData = useMemo(() => {
-    if (!userLocks?.length) {
-      return { yieldEarnings: '0.00', lockedAmount: '0.00' }
-    }
-
-    const totalLifetimeYieldEarnings = userLocks.reduce((sum, lock) => {
-      const yieldEarnings = Number(lock?.lifetimeYieldEarnings || '0')
-      return sum + yieldEarnings
-    }, 0)
-
-    const totalLockedAmount = userLocks.reduce((sum, lock) => {
-      const lockedAmount = Number(lock?.lockedAmount || '0')
-      return sum + lockedAmount
-    }, 0)
-
-    return {
-      yieldEarnings: formatAmount(totalLifetimeYieldEarnings),
-      lockedAmount: formatAmount(totalLockedAmount),
-    }
-  }, [userLocks])
+  const { apyBonus } = useUserApyBonus()
 
   return (
     <RewardsBreakdownCard
@@ -50,12 +28,12 @@ const ApyBonusBreakdown = () => {
         {
           title: 'Balance',
           toolTipInfo: 'info',
-          metric: [earningsData.lockedAmount, 'KSU'],
+          metric: [formatAmount(apyBonus?.balance), 'KSU'],
         },
         {
           title: 'Lifetime',
           toolTipInfo: 'info',
-          metric: [earningsData.yieldEarnings, 'KSU'],
+          metric: [formatAmount(apyBonus?.lifetime), 'KSU'],
         },
       ]}
     />

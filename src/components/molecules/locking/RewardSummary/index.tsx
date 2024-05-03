@@ -5,8 +5,7 @@ import { formatEther } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 
 import useClaimLockingRewards from '@/hooks/locking/useClaimLockingRewards'
-import useLockingRewards from '@/hooks/locking/useLockingRewards'
-import useUserLocks from '@/hooks/locking/useUserLocks'
+import useUserBonusData from '@/hooks/locking/useUserBonusData'
 import useTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
@@ -19,26 +18,19 @@ import ClaimButton from '@/components/molecules/locking/RewardSummary/ClaimButto
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
 const RewardSummary = () => {
-  const { lockingRewards } = useLockingRewards()
   const { t } = useTranslation()
   const claimRewards = useClaimLockingRewards()
 
-  const { userLocks } = useUserLocks()
+  const { userBonus } = useUserBonusData()
   const { ksuPrice } = useKsuPrice()
 
   const totalKsuBonusAndRewards = useMemo(() => {
-    if (!userLocks?.length) {
+    if (!userBonus) {
       return '0.00'
     }
 
-    const total = userLocks.reduce((sum, lock) => {
-      const ksuBonusAndRewards = Number(lock?.ksuBonusAndRewards || '0')
-
-      return sum + ksuBonusAndRewards
-    }, 0)
-
-    return total.toFixed(2).toString()
-  }, [userLocks])
+    return formatAmount(userBonus?.ksuBonusAndRewards)
+  }, [userBonus])
 
   const rewardsInUSD = convertToUSD(
     toBigNumber(totalKsuBonusAndRewards || '0'),
@@ -46,7 +38,7 @@ const RewardSummary = () => {
   )
 
   const isFeesClaimable = Boolean(
-    lockingRewards && !toBigNumber(lockingRewards.claimableRewards).isZero()
+    userBonus && !toBigNumber(userBonus.protocolFeesEarned).isZero()
   )
 
   return (
@@ -67,7 +59,7 @@ const RewardSummary = () => {
               <TokenAmount
                 py='6px'
                 px={2}
-                amount={formatAmount(lockingRewards?.claimableRewards ?? '0', {
+                amount={formatAmount(userBonus?.protocolFeesEarned, {
                   hideTrailingZero: false,
                 })}
                 symbol='USDC'
