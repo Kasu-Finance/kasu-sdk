@@ -2,9 +2,10 @@
 
 import { Grid } from '@mui/material'
 import { formatEther } from 'ethers/lib/utils'
+import { useMemo } from 'react'
 
 import useClaimLockingRewards from '@/hooks/locking/useClaimLockingRewards'
-import useLockingRewards from '@/hooks/locking/useLockingRewards'
+import useUserBonusData from '@/hooks/locking/useUserBonusData'
 import useTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
@@ -16,22 +17,28 @@ import ClaimButton from '@/components/molecules/locking/RewardSummary/ClaimButto
 
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
-const ksuBonus = '100'
-
 const RewardSummary = () => {
-  const { lockingRewards } = useLockingRewards()
   const { t } = useTranslation()
   const claimRewards = useClaimLockingRewards()
 
+  const { userBonus } = useUserBonusData()
   const { ksuPrice } = useKsuPrice()
 
+  const totalKsuBonusAndRewards = useMemo(() => {
+    if (!userBonus) {
+      return '0.00'
+    }
+
+    return formatAmount(userBonus?.ksuBonusAndRewards)
+  }, [userBonus])
+
   const rewardsInUSD = convertToUSD(
-    toBigNumber(ksuBonus || '0'),
+    toBigNumber(totalKsuBonusAndRewards || '0'),
     toBigNumber(ksuPrice || '0')
   )
 
   const isFeesClaimable = Boolean(
-    lockingRewards && !toBigNumber(lockingRewards.claimableRewards).isZero()
+    userBonus && !toBigNumber(userBonus.protocolFeesEarned).isZero()
   )
 
   return (
@@ -52,7 +59,7 @@ const RewardSummary = () => {
               <TokenAmount
                 py='6px'
                 px={2}
-                amount={formatAmount(lockingRewards?.claimableRewards ?? '0', {
+                amount={formatAmount(userBonus?.protocolFeesEarned, {
                   hideTrailingZero: false,
                 })}
                 symbol='USDC'
@@ -66,14 +73,14 @@ const RewardSummary = () => {
         <Grid item xs={6}>
           <ColoredBox sx={{ p: 0 }}>
             <InfoColumn
-              title='KSU Bonus/Rewards Balance​'
+              title='KSU Rewards Claimable Balance'
               toolTipInfo='info'
               showDivider
               metric={
                 <TokenAmount
                   py='6px'
                   px={2}
-                  amount={formatAmount(ksuBonus)}
+                  amount={totalKsuBonusAndRewards}
                   symbol='KSU'
                   usdValue={formatAmount(formatEther(rewardsInUSD))}
                 />

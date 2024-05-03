@@ -88,7 +88,10 @@ const LoyaltyOverview = () => {
         title={t('locking.widgets.loyalty.metric-2')}
         toolTipInfo='info'
         metric={
-          <TokenAmount amount={formatAmount(totalDeposits)} symbol='USDC' />
+          <TokenAmount
+            amount={formatAmount(totalDeposits.activeDepositAmount)}
+            symbol='USDC'
+          />
         }
       />
 
