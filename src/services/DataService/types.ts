@@ -13,6 +13,7 @@ export interface PoolOverview {
     loansUnderManagement: number; // SUBGRAPH
     yieldEarned: string; // SUBGRAPH
     poolCapacity: string; // SUBGRAPH
+    poolCapacityPercentage: string; // SUBGRAPH
     activeLoans: string; // SUBGRAPH
     assetClass: string; // CMS
     industryExposure: string; // CMS
@@ -38,7 +39,6 @@ export interface PoolTranche {
     id: string; // subgraph
     poolIdFK: string; // subgraph
     apy: string; // subgraph
-    remainingCapacity: string; // subgraph
     minimalDepositThreshold: string; // subgraph
     maximalDepositThreshold: string; // subgraph
 }
@@ -74,6 +74,7 @@ export interface TrancheData {
     maximumDeposit: string;
     minimumDeposit: string;
     poolCapacity: string;
+    poolCapacityPercentage: string;
     name: string;
 }
 

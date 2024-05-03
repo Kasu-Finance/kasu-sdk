@@ -30,9 +30,12 @@ export interface UserLock {
     startTime: EpochTimeStamp;
     endTime: EpochTimeStamp;
     lockPeriod: LockPeriod;
-    lifetimeYieldEarnings: string;
+}
+
+export interface UserBonusData {
     ksuBonusAndRewards: string;
     protocolFeesEarned: string;
+    totalLockedAmount: string;
 }
 
 export interface GQLGetLockingPeriods {

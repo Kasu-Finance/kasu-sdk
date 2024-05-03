@@ -14,20 +14,29 @@ import {
     ILendingPoolManagerAbi,
     ILendingPoolManagerAbi__factory,
     ILendingPoolTrancheAbi,
-    ILendingPoolTrancheAbi__factory, IUserLoyaltyRewardsAbi,
-    IUserLoyaltyRewardsAbi__factory,
+    ILendingPoolTrancheAbi__factory, IUserLoyaltyRewardsAbi, IUserLoyaltyRewardsAbi__factory,
     IUserManagerAbi,
     IUserManagerAbi__factory,
 } from '../../contracts';
 import { SdkConfig } from '../../sdk-config';
 
 import {
-    LendingPoolUserDetailsSubgraph,
-    TotalUserLoyaltyRewardsSubgraph,
+    LendingPoolUserDetailsSubgraph, TotalUserLoyaltyRewardsSubgraph,
     UserRequestsSubgraph,
 } from './subgraph-types';
-import { UserApyBonus, UserInvestment, UserPoolBalance, UserRequest, UserTrancheBalance } from './types';
-import { lendingPoolUserDetailsQuery, totalUserLoyaltyRewardsQuery, userRequestsQuery } from './user-lending.query';
+import {
+    UserApyBonus,
+    UserPoolBalance,
+    UserRequest,
+    UserRequestEvent,
+    UserRequestType,
+    UserTrancheBalance,
+} from './types';
+import { mapUserRequestEventType } from './user-lending.helper';
+import {
+    lendingPoolUserDetailsQuery, totalUserLoyaltyRewardsQuery,
+    userRequestsQuery,
+} from './user-lending.query';
 
 export class UserLending {
     private readonly _graph: GraphQLClient;
@@ -53,7 +62,7 @@ export class UserLending {
         this._userLoyaltyRewardsAbi = IUserLoyaltyRewardsAbi__factory.connect(
             _kasuConfig.contracts.UserLoyaltyRewards,
             signerOrProvider,
-        )
+        );
     }
 
     async getUserTotalPendingAndActiveDepositedAmount(
@@ -76,7 +85,10 @@ export class UserLending {
         return await this._userManagerAbi.hasUserRKSU(user);
     }
 
-    buildKycSignatureParams(userAddress: `0x${string}`, chainId: string): {
+    buildKycSignatureParams(
+        userAddress: `0x${string}`,
+        chainId: string,
+    ): {
         contractAbi: IKasuAllowListAbi__factory;
         contractAddress: string;
         functionName: string;
@@ -96,7 +108,6 @@ export class UserLending {
             chainId,
         };
     }
-
 
     async requestDepositWithKyc(
         lendingPool: string,
@@ -120,13 +131,13 @@ export class UserLending {
         lendingPool: string,
         tranche: string,
         amount: BigNumberish,
-        swapData: BytesLike
+        swapData: BytesLike,
     ): Promise<ContractTransaction> {
         return await this._lendingPoolManagerAbi.requestDeposit(
             lendingPool,
             tranche,
             amount,
-            swapData
+            swapData,
         );
     }
     async cancelDepositRequest(
@@ -156,7 +167,11 @@ export class UserLending {
         tranche: string,
         usdcAmount: BigNumberish,
     ): Promise<ContractTransaction> {
-        const trancheContract: ILendingPoolTrancheAbi = ILendingPoolTrancheAbi__factory.connect(tranche, this._signerOrProvider);
+        const trancheContract: ILendingPoolTrancheAbi =
+            ILendingPoolTrancheAbi__factory.connect(
+                tranche,
+                this._signerOrProvider,
+            );
         const shareAmount = await trancheContract.convertToShares(usdcAmount);
 
         return await this._lendingPoolManagerAbi.requestWithdrawal(
@@ -169,9 +184,13 @@ export class UserLending {
     async requestWithdrawalMax(
         lendingPool: string,
         tranche: string,
-        user: string
+        user: string,
     ): Promise<ContractTransaction> {
-        const trancheContract: ILendingPoolTrancheAbi = ILendingPoolTrancheAbi__factory.connect(tranche, this._signerOrProvider);
+        const trancheContract: ILendingPoolTrancheAbi =
+            ILendingPoolTrancheAbi__factory.connect(
+                tranche,
+                this._signerOrProvider,
+            );
         const userShares = await trancheContract['balanceOf(address)'](user);
 
         return await this._lendingPoolManagerAbi.requestWithdrawal(
@@ -203,39 +222,134 @@ export class UserLending {
         );
     }
 
-    async getUserRequests(): Promise<UserRequest[]> {
-        const subgraphResult: UserRequestsSubgraph = await this._graph.request(userRequestsQuery);
-        return subgraphResult.userRequests;
+    async getUserRequests(userAddress: `0x${string}`): Promise<UserRequest[]> {
+        const trancheNames: string[][] = [
+            ['Senior'],
+            ['Junior', 'Senior'],
+            ['Junior', 'Mezzanine', 'Senior'],
+        ];
+
+        const subgraphResult: UserRequestsSubgraph = await this._graph.request(
+            userRequestsQuery,
+            { userAddress: userAddress.toLowerCase() },
+        );
+        const retn: UserRequest[] = [];
+        const totalAssets = 1000; // TODO
+        const totalSupply = 1000;
+        for (const userRequest of subgraphResult.userRequests) {
+            const trancheName =
+                trancheNames[userRequest.lendingPool.tranches.length - 1][
+                    parseInt(userRequest.tranche.orderId)
+                    ];
+            const events: UserRequestEvent[] = [];
+            const totalRequested = '0';
+            const totalAccepted = '0';
+            const totalRejected = '0';
+            for (const event of userRequest.userRequestEvents) {
+                events.push({
+                    id: event.id,
+                    requestType: mapUserRequestEventType(event.type),
+                    timestamp: parseInt(event.createdOn),
+                    totalRequested: totalRequested,
+                    totalAccepted: totalAccepted,
+                    totalRejected: totalRejected,
+                    assetAmount:
+                        event.assetAmount ??
+                        this.convertSharesToAssets(
+                            event.sharesAmount,
+                            totalAssets,
+                            totalSupply,
+                        ).toString(),
+                    index: parseInt(event.index),
+                    transactionHash: event.transactionHash,
+                });
+            }
+            const userRequestBase: UserRequest = {
+                id: userRequest.id,
+                userId: userRequest.user.id,
+                lendingPool: {
+                    id: userRequest.lendingPool.id,
+                    name: userRequest.lendingPool.name,
+                    tranches: userRequest.lendingPool.tranches,
+                },
+                requestType:
+                    userRequest.type === 'DepositRequest'
+                        ? 'Deposit'
+                        : 'Withdrawal',
+                trancheName: trancheName,
+                requestedAmount: userRequest.amountRequested,
+                acceptedAmount: userRequest.amountAccepted,
+                rejectedAmount: userRequest.amountRejected,
+                status: userRequest.status,
+                timestamp: parseInt(userRequest.createdOn),
+                canCancel: this.isCancelable(
+                    userRequest.type,
+                    userRequest.status,
+                    userRequest.lendingPool.id,
+                ),
+                nftId: userRequest.nftId,
+                events: events,
+            };
+            retn.push(userRequestBase);
+        }
+        return retn;
+    }
+    convertSharesToAssets(
+        sharesAmount: string,
+        totalAssets: number,
+        totalSupply: number,
+    ): number {
+        return (parseFloat(sharesAmount) * totalAssets) / totalSupply;
+    }
+    isCancelable(type: string, status: string, lendingPoolId: string): boolean {
+        // TODO ugly
+        if (
+            type === (UserRequestType.DEPOSIT as string) &&
+            status != 'Processed'
+        ) {
+            return true;
+        }
+        // TODO
+        return false;
     }
 
-    async getUserPoolBalance(user: string, poolId: string): Promise<UserPoolBalance> {
+    async getUserPoolBalance(
+        user: string,
+        poolId: string,
+    ): Promise<UserPoolBalance> {
         const lendingPool = ILendingPoolAbi__factory.connect(
             poolId,
-            this._signerOrProvider
-        )
-        const balance = await lendingPool.userBalance(user)
+            this._signerOrProvider,
+        );
+        const balance = await lendingPool.userBalance(user);
         return {
             userId: user,
             address: poolId,
             yieldEarned: 0, // TODO do this calculation
             balance: balance,
-        }
+        };
     }
 
-    async getUserTrancheBalance(user: string, trancheId: string): Promise<UserTrancheBalance> {
+    async getUserTrancheBalance(
+        user: string,
+        trancheId: string,
+    ): Promise<UserTrancheBalance> {
         const tranche = ILendingPoolTrancheAbi__factory.connect(
             trancheId,
-            this._signerOrProvider
+            this._signerOrProvider,
         );
-        const userDetailsSubgraph: LendingPoolUserDetailsSubgraph = await this._graph.request(lendingPoolUserDetailsQuery, { userAddress: user })
+        const userDetailsSubgraph: LendingPoolUserDetailsSubgraph =
+            await this._graph.request(lendingPoolUserDetailsQuery, {
+                userAddress: user,
+            });
         const balance = await tranche.userActiveAssets(user);
         return {
             userId: user,
             address: trancheId,
             yieldEarned: 0, // TODO do this calculation
             balance: balance,
-            availableToWithdraw: await tranche.maxWithdraw(user)
-        }
+            availableToWithdraw: await tranche.maxWithdraw(user),
+        };
     }
 
     async getUserApyBonus(user: string): Promise<UserApyBonus> {
