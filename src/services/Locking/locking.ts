@@ -33,7 +33,7 @@ import {
     GQLUserLocks,
     LockPeriod,
     LockPeriodInterface,
-    RSVDeadlineValue,
+    RSVDeadlineValue, UserBonusData,
     UserLock,
 } from './types';
 
@@ -163,7 +163,6 @@ export class KSULocking {
         const result: GQLUserLocks = await this._graph.request(userLocksQuery, {
             userAddress: userAddress.toLowerCase(),
         });
-        const protocolFeesEarned = await this._contractAbi.rewards(userAddress);
         const resultPromises =  result.userLocks
             .map(async (userLock) => {
                 const [, id] = userLock.id.split('-');
@@ -174,7 +173,7 @@ export class KSULocking {
                 const loyaltyStatus = this.getLoyaltyLevelAndApyBonusFromRatio(rKSUtoUSDCRatio);
                 return {
                     id: BigNumber.from(id),
-                    lockedAmount: userLock.userLockDepositsInfo.ksuLockedAmount,
+                    lockedAmount: userLock.ksuAmount,
                     rKSUAmount: userLock.rKSUAmount,
                     rKSUtoUSDCRatio: rKSUtoUSDCRatio,
                     apyBonus: loyaltyStatus.apyBonus,
@@ -182,13 +181,31 @@ export class KSULocking {
                     startTime: Number(userLock.startTimestamp),
                     endTime: Number(userLock.endTimestamp),
                     lockPeriod: userLock.lockPeriod,
-                    ksuBonusAndRewards: (Number.parseFloat(userLock.userLockDepositsInfo.totalKsuBonusAmount) + Number.parseFloat(userLock.userLockDepositsInfo.feesClaimed)).toString(),
-                    protocolFeesEarned: ethers.utils.formatUnits(protocolFeesEarned, 18)
                 };
             })
 
         const results = await Promise.all(resultPromises);
         return results.sort((a, b) => a.endTime - b.endTime);
+    }
+
+    async getUserBonusData(userAddress: string): Promise<UserBonusData> {
+        const result: GQLUserLocks = await this._graph.request(userLocksQuery, {
+            userAddress: userAddress.toLowerCase(),
+        });
+        const protocolFeesEarned = await this._contractAbi.rewards(userAddress);
+        if(result.userLocks.length == 0){
+            return {
+                ksuBonusAndRewards: "0",
+                protocolFeesEarned: ethers.utils.formatUnits(protocolFeesEarned, 18),
+                totalLockedAmount: "0",
+            }
+        }
+
+        return {
+            ksuBonusAndRewards: (Number.parseFloat(result.userLocks[0].userLockDepositsInfo.totalKsuBonusAmount) + Number.parseFloat(result.userLocks[0].userLockDepositsInfo.feesClaimed)).toString(),
+            protocolFeesEarned: ethers.utils.formatUnits(protocolFeesEarned, 18),
+            totalLockedAmount: result.userLocks[0].userLockDepositsInfo.ksuLockedAmount,
+        }
     }
 
     getLoyaltyLevelAndApyBonusFromRatio(rKSUtoUSDCRatio: number): {loyaltyLevel: number, apyBonus: number} {
