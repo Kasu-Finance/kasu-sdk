@@ -9,13 +9,39 @@ import {
   Typography,
 } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
+import { formatEther, formatUnits, parseEther } from 'ethers/lib/utils'
+
+import useKsuPrice from '@/hooks/web3/useKsuPrice'
+import useUserBalance from '@/hooks/web3/useUserBalance'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import InfoColumn from '@/components/atoms/InfoColumn'
 import TokenAmount from '@/components/atoms/TokenAmount'
 
+import sdkConfig, { USDC } from '@/config/sdk'
+import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
+
 const PortfolioWalletTab = () => {
   const { account } = useWeb3React()
+
+  const { balance: ksuBalance, decimals: ksuDecimals } = useUserBalance(
+    sdkConfig.contracts.KSUToken
+  )
+
+  const { balance: usdcBalance, decimals: usdcDecimals } = useUserBalance(USDC)
+
+  const { ksuPrice } = useKsuPrice()
+
+  const ksuInUSD = convertToUSD(ksuBalance, parseEther(ksuPrice || '0'))
+
+  const walletBalances = {
+    ksu: formatUnits(ksuBalance, ksuDecimals),
+    usdc: formatUnits(usdcBalance, usdcDecimals),
+  } as const
+
+  const walletWithBalance = Object.entries(walletBalances)
+    .filter(([_, amount]) => !toBigNumber(amount).isZero())
+    .map(([symbol, amount]) => ({ amount, symbol }))
 
   return (
     <>
@@ -46,10 +72,21 @@ const PortfolioWalletTab = () => {
                 toolTipInfo='info'
                 showDivider
                 metric={
-                  <Box pt='6px' pl={2}>
-                    <Typography variant='h6' component='span'>
-                      -
-                    </Typography>
+                  <Box pt='6px' pl={2} textTransform='uppercase'>
+                    {walletWithBalance.length ? (
+                      walletWithBalance.map((balance) => (
+                        <TokenAmount
+                          key={balance.symbol}
+                          {...balance}
+                          amountVariant='body1'
+                          symbolVariant='caption'
+                        />
+                      ))
+                    ) : (
+                      <Typography variant='h6' component='span'>
+                        -
+                      </Typography>
+                    )}
                   </Box>
                 }
               />
@@ -58,6 +95,7 @@ const PortfolioWalletTab = () => {
               variant='contained'
               sx={{ mt: 2, mx: 'auto', display: 'flex' }}
               startIcon={<CachedIcon />}
+              disabled={!walletWithBalance.length}
             >
               CONVERT TO KSU
             </Button>
@@ -72,9 +110,11 @@ const PortfolioWalletTab = () => {
                     showDivider
                     metric={
                       <TokenAmount
-                        amount='0.00'
+                        amount={formatAmount(
+                          formatUnits(ksuBalance || '0', ksuDecimals)
+                        )}
                         symbol='KSU'
-                        usdValue='0.00'
+                        usdValue={formatAmount(formatEther(ksuInUSD))}
                         pt='6px'
                         pl={2}
                       />
@@ -83,12 +123,14 @@ const PortfolioWalletTab = () => {
                 </Grid>
                 <Grid item xs={5}>
                   <InfoColumn
-                    title='Availablbe Funds'
+                    title='Available Funds'
                     toolTipInfo='info'
                     showDivider
                     metric={
                       <TokenAmount
-                        amount='0.00'
+                        amount={formatAmount(
+                          formatUnits(usdcBalance || '0', usdcDecimals)
+                        )}
                         symbol='USDC'
                         pt='6px'
                         pl={2}
@@ -102,6 +144,7 @@ const PortfolioWalletTab = () => {
               variant='contained'
               sx={{ mt: 2, mx: 'auto', display: 'flex' }}
               startIcon={<WalletIcon />}
+              disabled={usdcBalance.isZero()}
             >
               BUY KSU
             </Button>
