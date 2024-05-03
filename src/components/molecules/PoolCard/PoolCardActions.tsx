@@ -1,13 +1,8 @@
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import LoginIcon from '@mui/icons-material/Login'
 import { Box, Button } from '@mui/material'
-import {
-  PoolOverview,
-  TrancheData,
-} from '@solidant/kasu-sdk/src/services/DataService/types'
-import { formatUnits } from 'ethers/lib/utils'
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import Link from 'next/link'
-import { useMemo } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
@@ -18,7 +13,7 @@ import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCar
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import { TOKENS } from '@/constants/tokens'
+import { getPoolData } from '@/utils'
 
 interface PoolCardActionsProps {
   pool: PoolOverview
@@ -28,31 +23,13 @@ interface PoolCardActionsProps {
 const PoolCardActions: React.FC<PoolCardActionsProps> = ({ pool, link }) => {
   const { t } = useTranslation()
   const { openModal } = useModalState()
-
   const { data: userPoolBalance } = useUserPoolBalance(pool?.id)
-
-  const poolBalance = useMemo(() => {
-    if (!userPoolBalance) return '0'
-    return formatUnits(userPoolBalance?.balance || '0', TOKENS.USDC.decimals)
-  }, [userPoolBalance])
-
-  const POOL_DATA: PoolData = {
-    poolName: pool.poolName,
-    lendingPoolId: pool.id as `0x${string}`,
-    totalUserInvestment: poolBalance,
-    tranches: pool.tranches.map((tranche: TrancheData) => ({
-      toolTip: `lending.tranche.${tranche.name.toLowerCase()}.tooltip`,
-      title: t(`lending.tranche.${tranche.name.toLowerCase()}`),
-      trancheId: tranche.id as `0x${string}`,
-      minimumDeposit: tranche.minimumDeposit,
-      maximumDeposit: tranche.maximumDeposit,
-    })),
-  }
+  const poolData: PoolData = getPoolData(pool, userPoolBalance)
 
   const handleOpenDeposit = () =>
     openModal({
       name: ModalsKeys.DEPOSIT,
-      poolData: POOL_DATA,
+      poolData: poolData,
     })
 
   return (
