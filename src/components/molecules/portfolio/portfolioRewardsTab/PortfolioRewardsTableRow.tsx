@@ -1,13 +1,14 @@
 import { TableCell, TableRow, Typography } from '@mui/material'
 import React from 'react'
 
+import { PortfolioRewardsType } from '@/hooks/portfolio/usePortfolioRewards'
+
 import TokenAmount from '@/components/atoms/TokenAmount'
-import { PortfolioRewards } from '@/components/organisms/portfolio/PortfolioRewardsTab/PortfolioRewardsTable'
 
 import { formatAmount } from '@/utils'
 
 type PortfolioRewardsTableRowProps = {
-  portfolioReward: PortfolioRewards
+  portfolioReward: PortfolioRewardsType
 }
 
 const PortfolioRewardsTableRow: React.FC<PortfolioRewardsTableRowProps> = ({
@@ -53,11 +54,11 @@ const PortfolioRewardsTableRow: React.FC<PortfolioRewardsTableRowProps> = ({
     <TableCell align='right'>
       <TokenAmount
         amount={formatAmount(
-          portfolioReward.lifetime.ksuAmount ??
-            portfolioReward.lifetime.usdcAmount,
+          portfolioReward.lifeTime.ksuAmount ??
+            portfolioReward.lifeTime.usdcAmount,
           { minValue: 1_000_000 }
         )}
-        symbol={portfolioReward.lifetime.ksuAmount ? 'KSU' : 'USDC'}
+        symbol={portfolioReward.lifeTime.ksuAmount ? 'KSU' : 'USDC'}
         amountVariant='body1'
         symbolVariant='caption'
         usdcVariant='caption'

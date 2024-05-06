@@ -1,14 +1,55 @@
 'use client'
 
-import { Divider, Grid, Typography } from '@mui/material'
+import { Divider, Grid, Skeleton, Typography } from '@mui/material'
+import { formatEther, parseEther } from 'ethers/lib/utils'
+
+import usePortfolioSummary from '@/hooks/portfolio/usePortfolioSummary'
+import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import InfoColumn from '@/components/atoms/InfoColumn'
 import TokenAmount from '@/components/atoms/TokenAmount'
 
-import { formatAmount } from '@/utils'
+import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
 const LifetimeSummary = () => {
+  const { portfolioSummary, isLoading } = usePortfolioSummary()
+
+  const { ksuPrice } = useKsuPrice()
+
+  if (isLoading) {
+    return (
+      <Grid item xs={6}>
+        <ColoredBox sx={{ p: 0 }}>
+          <Skeleton sx={{ fontSize: '1.3rem' }} />
+          <Divider />
+          <Grid container spacing={2}>
+            <Grid item xs={4}>
+              <Skeleton sx={{ fontSize: '1.5rem' }} />
+              <Divider />
+              <Skeleton sx={{ fontSize: '2rem' }} />
+            </Grid>
+            <Grid item xs={4}>
+              <Skeleton sx={{ fontSize: '1.5rem' }} />
+              <Divider />
+              <Skeleton sx={{ fontSize: '2.6rem' }} />
+            </Grid>
+            <Grid item xs={4}>
+              <Skeleton sx={{ fontSize: '1.5rem' }} />
+              <Divider />
+              <Skeleton sx={{ fontSize: '2rem' }} />
+            </Grid>
+          </Grid>
+        </ColoredBox>
+      </Grid>
+    )
+  }
+
+  const ksuInUSD = convertToUSD(
+    toBigNumber(portfolioSummary.lifetime.ksuBonusRewards || '0'),
+    parseEther(ksuPrice || '0')
+  )
+
   return (
     <Grid item xs={6}>
       <ColoredBox sx={{ p: 0 }}>
@@ -31,7 +72,9 @@ const LifetimeSummary = () => {
               showDivider
               metric={
                 <TokenAmount
-                  amount={formatAmount(1_000)}
+                  amount={formatAmount(
+                    portfolioSummary.lifetime.yieldEarnings || '0'
+                  )}
                   symbol='USDC'
                   pt='6px'
                   pl={2}
@@ -47,9 +90,11 @@ const LifetimeSummary = () => {
               showDivider
               metric={
                 <TokenAmount
-                  amount={formatAmount(100_000)}
+                  amount={formatAmount(
+                    portfolioSummary.lifetime.ksuBonusRewards || '0'
+                  )}
                   symbol='KSU'
-                  usdValue={formatAmount(200_000)}
+                  usdValue={formatAmount(formatEther(ksuInUSD || '0'))}
                   pt='6px'
                   pl={2}
                 />
@@ -64,7 +109,9 @@ const LifetimeSummary = () => {
               showDivider
               metric={
                 <TokenAmount
-                  amount={formatAmount(1_000)}
+                  amount={formatAmount(
+                    portfolioSummary.lifetime.protocolFeesEarned || '0'
+                  )}
                   symbol='USDC'
                   pt='6px'
                   pl={2}

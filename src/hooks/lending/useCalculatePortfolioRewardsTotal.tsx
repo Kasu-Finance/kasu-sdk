@@ -1,11 +1,11 @@
 import { BigNumber } from 'ethers'
 
-import { PortfolioRewards } from '@/components/organisms/portfolio/PortfolioRewardsTab/PortfolioRewardsTable'
+import { PortfolioRewardsType } from '@/hooks/portfolio/usePortfolioRewards'
 
 import { toBigNumber } from '@/utils'
 
 const useCalculatePortfolioRewardsTotal = (
-  portfolioRewards: PortfolioRewards[]
+  portfolioRewards: PortfolioRewardsType[]
 ) => {
   return portfolioRewards.reduce(
     (reward, cur) => {
@@ -26,13 +26,13 @@ const useCalculatePortfolioRewardsTotal = (
         }
       }
 
-      if (!cur.lifetime.ksuAmount) {
+      if (!cur.lifeTime.ksuAmount) {
         reward.lifetimeUsdcBonus = reward.lifetimeUsdcBonus.add(
-          toBigNumber(cur.lifetime.usdcAmount)
+          toBigNumber(cur.lifeTime.usdcAmount)
         )
       } else {
         reward.lifetimeKsuBonus = reward.lifetimeKsuBonus.add(
-          toBigNumber(cur.lifetime.ksuAmount)
+          toBigNumber(cur.lifeTime.ksuAmount)
         )
       }
 

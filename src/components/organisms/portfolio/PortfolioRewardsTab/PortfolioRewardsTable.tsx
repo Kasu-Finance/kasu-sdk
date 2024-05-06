@@ -1,3 +1,9 @@
+import { Divider, Grid, Skeleton } from '@mui/material'
+
+import usePortfolioRewards, {
+  PortfolioRewardsType,
+} from '@/hooks/portfolio/usePortfolioRewards'
+
 import CustomTable, { Sort } from '@/components/molecules/CustomTable'
 import PortfolioRewardsTableFooter from '@/components/molecules/portfolio/portfolioRewardsTab/PortfolioRewardsTableFooter'
 import PortfolioRewardsTableHeader from '@/components/molecules/portfolio/portfolioRewardsTab/PortfolioRewardsTableHeader'
@@ -5,57 +11,14 @@ import PortfolioRewardsTableRow from '@/components/molecules/portfolio/portfolio
 
 import { toBigNumber } from '@/utils'
 
-export type PortfolioRewards = {
-  label: string
-  lastEpoch:
-    | {
-        ksuAmount?: string
-        usdcAmount: string
-      }
-    | undefined
-  lifetime: {
-    ksuAmount?: string
-    usdcAmount: string
-  }
-}
-
-const DATA: PortfolioRewards[] = [
-  {
-    label: 'Bonus Yield Earnings',
-    lastEpoch: {
-      ksuAmount: '100000',
-      usdcAmount: '50000',
-    },
-    lifetime: {
-      ksuAmount: '10000000',
-      usdcAmount: '500000',
-    },
-  },
-  {
-    label: 'Protocol Fees',
-    lastEpoch: {
-      usdcAmount: '100000',
-    },
-    lifetime: {
-      usdcAmount: '10000000',
-    },
-  },
-  {
-    label: 'KSU Launch Bonus',
-    lastEpoch: undefined,
-    lifetime: {
-      ksuAmount: '1000',
-      usdcAmount: '500',
-    },
-  },
-]
-
 export const PORTFOLIO_REWARDS_KEY = ['lastEpoch', 'lifetime'] as const
 
 const PortfolioRewardsTable = () => {
+  const { portfolioRewards, isLoading } = usePortfolioRewards()
+
   const handleSort = (
-    a: PortfolioRewards,
-    b: PortfolioRewards,
+    a: PortfolioRewardsType,
+    b: PortfolioRewardsType,
     sort: Sort<typeof PORTFOLIO_REWARDS_KEY>
   ) => {
     const direction = sort.direction === 'asc' ? 1 : -1
@@ -70,6 +33,25 @@ const PortfolioRewardsTable = () => {
     )
   }
 
+  if (isLoading)
+    return (
+      <Grid container spacing={2}>
+        <Grid item xs={6} />
+        <Grid item xs={6}>
+          <Skeleton sx={{ fontSize: '2.5rem' }} />
+        </Grid>
+        <Grid item xs={12}>
+          <Divider />
+          <Skeleton sx={{ fontSize: '2.5rem' }} />
+          <Divider />
+          <Skeleton sx={{ fontSize: '2.5rem' }} />
+          <Divider />
+          <Skeleton sx={{ fontSize: '2.5rem' }} />
+          <Divider />
+        </Grid>
+      </Grid>
+    )
+
   return (
     <CustomTable
       headers={(handleSortChange, sort) => (
@@ -79,11 +61,13 @@ const PortfolioRewardsTable = () => {
         />
       )}
       pagination={false}
-      data={DATA}
+      data={portfolioRewards}
       sortKeys={PORTFOLIO_REWARDS_KEY}
       defaultSortKey='lastEpoch'
       handleSort={handleSort}
-      footer={<PortfolioRewardsTableFooter portfolioRewards={DATA} />}
+      footer={
+        <PortfolioRewardsTableFooter portfolioRewards={portfolioRewards} />
+      }
       headersStyle={{
         '& .MuiTableCell-root': {
           py: '6px',

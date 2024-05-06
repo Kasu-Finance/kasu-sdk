@@ -1,13 +1,53 @@
 'use client'
 
-import { Grid, Typography } from '@mui/material'
+import { Divider, Grid, Skeleton, Typography } from '@mui/material'
+import { formatEther, parseEther } from 'ethers/lib/utils'
+
+import usePortfolioSummary from '@/hooks/portfolio/usePortfolioSummary'
+import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
 import InfoColumn from '@/components/atoms/InfoColumn'
 import TokenAmount from '@/components/atoms/TokenAmount'
 
-import { formatAmount, formatPercentage } from '@/utils'
+import {
+  convertToUSD,
+  formatAmount,
+  formatPercentage,
+  toBigNumber,
+} from '@/utils'
 
 const CurrentSummary = () => {
+  const { portfolioSummary, isLoading } = usePortfolioSummary()
+
+  const { ksuPrice } = useKsuPrice()
+
+  if (isLoading) {
+    return (
+      <Grid item xs={6} container spacing={2} mt='auto'>
+        <Grid item xs={4}>
+          <Skeleton sx={{ fontSize: '1.5rem' }} />
+          <Divider />
+          <Skeleton sx={{ fontSize: '2.6rem' }} />
+        </Grid>
+        <Grid item xs={4}>
+          <Skeleton sx={{ fontSize: '1.5rem' }} />
+          <Divider />
+          <Skeleton sx={{ fontSize: '2rem' }} />
+        </Grid>
+        <Grid item xs={4}>
+          <Skeleton sx={{ fontSize: '1.5rem' }} />
+          <Divider />
+          <Skeleton sx={{ fontSize: '2rem' }} />
+        </Grid>
+      </Grid>
+    )
+  }
+
+  const ksuInUSD = convertToUSD(
+    toBigNumber(portfolioSummary.current.totalKsuLocked),
+    parseEther(ksuPrice || '0')
+  )
+
   return (
     <Grid item xs={6} container spacing={2} mt='auto'>
       <Grid item xs={4}>
@@ -18,9 +58,11 @@ const CurrentSummary = () => {
           titleStyle={{ whiteSpace: 'nowrap' }}
           metric={
             <TokenAmount
-              amount={formatAmount(100_000)}
+              amount={formatAmount(
+                portfolioSummary.current.totalKsuLocked || '0'
+              )}
               symbol='KSU'
-              usdValue={formatAmount(200_000)}
+              usdValue={formatAmount(formatEther(ksuInUSD || '0'))}
               pt='6px'
               pl={2}
             />
@@ -35,7 +77,9 @@ const CurrentSummary = () => {
           titleStyle={{ whiteSpace: 'nowrap' }}
           metric={
             <TokenAmount
-              amount={formatAmount(30_000)}
+              amount={formatAmount(
+                portfolioSummary.current.totalLendingPoolInvestments || '0'
+              )}
               symbol='USDC'
               pt='6px'
               pl={2}
@@ -57,7 +101,9 @@ const CurrentSummary = () => {
               pt='6px'
               pl={2}
             >
-              {formatPercentage(0.105)}
+              {formatPercentage(
+                portfolioSummary.current.weightedAverageApy || '0'
+              )}
             </Typography>
           }
         />

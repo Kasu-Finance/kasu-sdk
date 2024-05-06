@@ -3,14 +3,14 @@ import { formatEther } from 'ethers/lib/utils'
 import React from 'react'
 
 import useCalculatePortfolioRewardsTotal from '@/hooks/lending/useCalculatePortfolioRewardsTotal'
+import { PortfolioRewardsType } from '@/hooks/portfolio/usePortfolioRewards'
 
 import TokenAmount from '@/components/atoms/TokenAmount'
-import { PortfolioRewards } from '@/components/organisms/portfolio/PortfolioRewardsTab/PortfolioRewardsTable'
 
 import { formatAmount } from '@/utils'
 
 type PortfolioRewardsTableFooterProps = {
-  portfolioRewards: PortfolioRewards[]
+  portfolioRewards: PortfolioRewardsType[]
 }
 
 const PortfolioRewardsTableFooter: React.FC<
