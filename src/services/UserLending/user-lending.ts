@@ -20,6 +20,11 @@ import {
 } from '../../contracts';
 import { SdkConfig } from '../../sdk-config';
 
+import { mapUserRequestEventType } from './helper';
+import {
+    lendingPoolUserDetailsQuery, totalUserLoyaltyRewardsQuery,
+    userRequestsQuery,
+} from './queries';
 import {
     LendingPoolUserDetailsSubgraph, TotalUserLoyaltyRewardsSubgraph,
     UserRequestsSubgraph,
@@ -32,11 +37,6 @@ import {
     UserRequestType,
     UserTrancheBalance,
 } from './types';
-import { mapUserRequestEventType } from './user-lending.helper';
-import {
-    lendingPoolUserDetailsQuery, totalUserLoyaltyRewardsQuery,
-    userRequestsQuery,
-} from './user-lending.query';
 
 export class UserLending {
     private readonly _graph: GraphQLClient;
@@ -354,6 +354,12 @@ export class UserLending {
 
     async getUserApyBonus(user: string): Promise<UserApyBonus> {
         const subgraphResult: TotalUserLoyaltyRewardsSubgraph = await this._graph.request(totalUserLoyaltyRewardsQuery, { userAddress: user });
+        if(!subgraphResult.user) {
+            return {
+                balance: BigNumber.from(0),
+                lifetime: 0
+            }
+        }
         const balance = await this._userLoyaltyRewardsAbi.userRewards(user);
         return {
             balance: balance,

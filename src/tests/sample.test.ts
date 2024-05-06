@@ -5,12 +5,11 @@ import { KasuSdk } from "..";
 import { SdkConfig } from "../sdk-config";
 
 
-/*
 test('subgraphCall', async () => {
-    
+
     const provider = new ethers.providers.JsonRpcProvider("https://sepolia.base.org");
 
-const wallet = new ethers.Wallet("dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", provider);
+    const wallet = new ethers.Wallet("dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", provider);
     const config = new SdkConfig(
         "https://api.studio.thegraph.com/query/63245/kasu-wip-sepolia/version/latest",
         {
@@ -21,13 +20,13 @@ const wallet = new ethers.Wallet("dddddddddddddddddddddddddddddddddddddddddddddd
             LendingPoolManager: "0xc074Aaf2565aae18db2c7498ee1387610a809F40",
             KasuAllowList: "0xaE94F9D187c9eA649ADd4966340831F7cc62B69c",
             SystemVariables: "0xB174a3240B23e595e90bC2736A5b8ec674Cba73A",
+            UserLoyaltyRewards: "0x259631CE76FD9F65296549Cd81232aa59D53Dd0c",
+            KsuPrice: "0x2027192aCFB4810Ad734A212F19d7030F698aCE3",
         },
         "https://kasu-finance.directus.app"
     );
     const sdk = new KasuSdk(config, wallet);
 
-    console.log(await sdk.DataService.getPoolOverview(["0x469f4feaf9b125f093e5dbb45ae6170ac3b8f745"]));
+    console.log(await sdk.UserLending.getUserApyBonus("0xef38c432682ab49095e00442aaa354e955ac03a5"));
 
 });
-
-*/

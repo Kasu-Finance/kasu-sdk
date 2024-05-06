@@ -60,7 +60,7 @@ export interface LendingPoolUserDetailsSubgraph {
 }
 
 export interface TotalUserLoyaltyRewardsSubgraph {
-    user: {
+    user?: {
         totalUserLoyaltyRewards: string
     }
 }

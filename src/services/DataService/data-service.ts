@@ -13,13 +13,6 @@ import { SdkConfig } from '../../sdk-config';
 import { filterArray } from '../shared';
 
 import {
-    getAllLendingPoolConfigurationQuery,
-    getAllLendingPoolsQuery,
-    getAllTrancheConfigurationsQuery,
-    getAllTranchesQuery,
-    getLendingPoolWithdrawalAndDepositsQuery,
-} from './data-service.query';
-import {
     BadAndDoubtfulDebtsDirectus,
     DirectusSchema,
     FinancialReportingDocumentsDirectus,
@@ -29,6 +22,13 @@ import {
     RiskManagementDirectus,
     RiskManagementItemDirectus,
 } from './directus-types';
+import {
+    getAllLendingPoolConfigurationQuery,
+    getAllLendingPoolsQuery,
+    getAllTrancheConfigurationsQuery,
+    getAllTranchesQuery,
+    getLendingPoolWithdrawalAndDepositsQuery,
+} from './queries';
 import {
     LendingPoolConfigurationSubgraph,
     LendingPoolConfigurationSubgraphReturn,

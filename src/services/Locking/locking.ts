@@ -23,7 +23,7 @@ import {
     userLocksQuery,
     userStakedKsuQuery,
     userTotalBonusAmountQuery,
-} from './locking.query';
+} from './queries';
 import {
     GQLClaimedFeesForAddress,
     GQLEarnedRKsuForAddress,
