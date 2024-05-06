@@ -3,17 +3,22 @@ import { BigNumber, Signer } from 'ethers';
 import { GraphQLClient } from 'graphql-request';
 
 import {
-    ILendingPoolManagerAbi, ILendingPoolManagerAbi__factory,
-    IUserLoyaltyRewardsAbi, IUserLoyaltyRewardsAbi__factory,
+    ILendingPoolManagerAbi,
+    ILendingPoolManagerAbi__factory,
+    IUserLoyaltyRewardsAbi,
+    IUserLoyaltyRewardsAbi__factory,
     IUserManagerAbi,
     IUserManagerAbi__factory,
 } from '../../contracts';
 import { SdkConfig } from '../../sdk-config';
 
-import { LendingPortfolioData, PortfolioRewards, PortfolioSummary } from './types';
+import {
+    LendingPortfolioData,
+    PortfolioRewards,
+    PortfolioSummary,
+} from './types';
 
-
-export class UserLending {
+export class Portfolio {
     private readonly _graph: GraphQLClient;
     private readonly _userManagerAbi: IUserManagerAbi;
     private readonly _lendingPoolManagerAbi: ILendingPoolManagerAbi;
@@ -45,18 +50,32 @@ export class UserLending {
         return {
             bonusYieldEarnings: {
                 lastEpoch: { ksuAmount: '0', usdcAmount: '0' },
-                lifeTime: { ksuAmount: '0', usdcAmount: '0' }
+                lifeTime: { ksuAmount: '0', usdcAmount: '0' },
             },
-            ksuLaunchBonus: { lastEpoch: { usdcAmount: '0' }, lifeTime: { ksuAmount: '0', usdcAmount: '0' } },
-            protocolFees: { lastEpoch: { usdcAmount: '0' }, lifeTime: { usdcAmount: '0' } },
-        }
+            ksuLaunchBonus: {
+                lastEpoch: { usdcAmount: '0' },
+                lifeTime: { ksuAmount: '0', usdcAmount: '0' },
+            },
+            protocolFees: {
+                lastEpoch: { usdcAmount: '0' },
+                lifeTime: { usdcAmount: '0' },
+            },
+        };
     }
 
     getPortfolioSummary(userAddress: string): PortfolioSummary {
         return {
-            current: { totalKsuLocked: '0', totalLendingPoolInvestments: '0', weightedAverageApy: '0' },
-            lifetime: { yieldEarnings: '0', ksuBonusRewards: '0', protocolFeesEarned: '0' }
-        }
+            current: {
+                totalKsuLocked: '0',
+                totalLendingPoolInvestments: '0',
+                weightedAverageApy: '0',
+            },
+            lifetime: {
+                yieldEarnings: '0',
+                ksuBonusRewards: '0',
+                protocolFeesEarned: '0',
+            },
+        };
     }
 
     getPortfolioLendingData(userAddress: string): LendingPortfolioData {
@@ -67,7 +86,7 @@ export class UserLending {
                 yieldEarningsLastEpoch: '0',
                 yieldEarningsLastMonth: '0',
                 yieldEarningsLastYear: '0',
-                yieldEarningsLifetime: '0'
+                yieldEarningsLifetime: '0',
             },
             lendingPools: [
                 {
@@ -83,19 +102,19 @@ export class UserLending {
                                 lastEpoch: '0',
                                 lastMonth: '0',
                                 lastYear: '0',
-                                lifetime: '0'
-                            }
-                        }
-                    ]
-                }
+                                lifetime: '0',
+                            },
+                        },
+                    ],
+                },
             ],
             total: {
                 investedAmount: '0',
                 yieldEarningsLastEpoch: '0',
                 yieldEarningsLastMonth: '0',
                 yieldEarningsLastYear: '0',
-                yieldEarningsLifetime: '0'
+                yieldEarningsLifetime: '0',
             },
-        }
+        };
     }
 }
