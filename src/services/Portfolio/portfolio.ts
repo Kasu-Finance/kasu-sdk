@@ -1,5 +1,6 @@
 import { Provider } from '@ethersproject/providers';
 import { BigNumber, ethers, Signer } from 'ethers';
+
 import { SdkConfig } from '../../sdk-config';
 import { DataService } from '../DataService/data-service';
 import { KSULocking } from '../Locking/locking';
