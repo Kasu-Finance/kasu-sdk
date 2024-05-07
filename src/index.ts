@@ -5,8 +5,8 @@ import { GraphQLClient } from 'graphql-request';
 import { SdkConfig } from './sdk-config';
 import { DataService } from './services/DataService/data-service';
 import { KSULocking } from './services/Locking/locking';
-import { UserLending } from './services/UserLending/user-lending';
 import { Portfolio } from './services/Portfolio/portfolio';
+import { UserLending } from './services/UserLending/user-lending';
 
 export class KasuSdk {
     private readonly _graphClient: GraphQLClient;
