@@ -18,7 +18,7 @@ export class KasuSdk {
         this._graphClient = new GraphQLClient(config.subgraphUrl);
         this.Locking = new KSULocking(config, signerOrProvider);
         this.UserLending = new UserLending(config, signerOrProvider);
-        this.Portfolio = new Portfolio(config, signerOrProvider);
         this.DataService = new DataService(config);
+        this.Portfolio = new Portfolio(config, signerOrProvider);
     }
 }
