@@ -18,7 +18,7 @@ export interface PortfolioRewards {
             usdcAmount: string;
         }
     }
-    ksuLaunchBonus : {
+    ksuLaunchBonus: {
         lastEpoch: {
             usdcAmount: string;
         }
@@ -40,38 +40,33 @@ export interface PortfolioSummary  {
         ksuBonusRewards: string;
         protocolFeesEarned: string;
     }
+    lastEpoch: {
+        yieldEarnings: string;
+    }
 }
 
-export interface LendingPortfolioData {
-    total: {
-        investedAmount: string;
-        yieldEarningsLastEpoch: string;
-        yieldEarningsLastMonth: string;
-        yieldEarningsLastYear: string;
-        yieldEarningsLifetime: string;
+export interface PortfolioTranche {
+    name: string;
+    id:string;
+    apy: string;
+    investedAmount:string;
+    yieldEarnings:{
+        lastEpoch: string;
+        lifetime: string;
     }
+}
+export interface  PortfolioLendingPool {
+    id: string;
+    name: string;
+    tranches: PortfolioTranche[]
+}
+export interface LendingPortfolioData {
     average: {
-        investedAmount: string;
+        investedAmountPerPool: string;
+        investedAmountPerTranche: string;
         yieldEarningsLastEpoch: string;
-        yieldEarningsLastMonth: string;
-        yieldEarningsLastYear: string;
         yieldEarningsLifetime: string;
         averageWeightedApy: string;
     }
-    lendingPools: {
-        id: string;
-        name: string;
-        tranches: {
-            name: string;
-            id:string;
-            apy: string;
-            investedAmount:string;
-            yieldEarnings:{
-                lastEpoch: string;
-                lastMonth: string;
-                lastYear: string;
-                lifetime: string;
-            }
-        }[]
-    }[]
+    lendingPools: PortfolioLendingPool[]
 }
