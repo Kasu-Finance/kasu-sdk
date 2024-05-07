@@ -1,4 +1,12 @@
-import { alpha, Box, TableCell, TableRow, Typography } from '@mui/material'
+import {
+  alpha,
+  Box,
+  TableCell,
+  TableCellProps,
+  TableRow,
+  Typography,
+} from '@mui/material'
+import { PortfolioLendingPool } from '@solidant/kasu-sdk/src/services/Portfolio/types'
 import { formatEther } from 'ethers/lib/utils'
 import React, { ReactNode } from 'react'
 
@@ -6,15 +14,14 @@ import useCalculatePortfolioAverage from '@/hooks/lending/useCalculatePortfolioA
 import useCalculatePortfolioTotal from '@/hooks/lending/useCalculatePortfolioTotal'
 
 import TokenAmount from '@/components/atoms/TokenAmount'
-import { UserLendingPortfolio } from '@/components/organisms/portfolio/LendingPortfolioTab/LendingPortfolioTable'
 
 import { formatAmount, formatPercentage } from '@/utils'
 
 type LendingPortfolioTableFooterProps = {
-  lendingPortfolio: UserLendingPortfolio[]
+  lendingPortfolio: PortfolioLendingPool[]
 }
 
-type FooterCellProps = {
+type FooterCellProps = TableCellProps & {
   value: ReactNode
   caption: string
 }
@@ -62,6 +69,8 @@ const LendingPortfolioTableFooter: React.FC<
             </Typography>
           }
           caption='Weighted'
+          sx={{ pr: 0 }}
+          className='apy'
         />
         <FooterCell
           value={
@@ -78,28 +87,6 @@ const LendingPortfolioTableFooter: React.FC<
           value={
             <TokenAmount
               amount={formatAmount(formatEther(averageValues.lastEpoch), {
-                minValue: 100_000,
-              })}
-              symbol='USDC'
-            />
-          }
-          caption='Per Pool'
-        />
-        <FooterCell
-          value={
-            <TokenAmount
-              amount={formatAmount(formatEther(averageValues.lastMonth), {
-                minValue: 100_000,
-              })}
-              symbol='USDC'
-            />
-          }
-          caption='Per Pool'
-        />
-        <FooterCell
-          value={
-            <TokenAmount
-              amount={formatAmount(formatEther(averageValues.lastYear), {
                 minValue: 100_000,
               })}
               symbol='USDC'
@@ -141,7 +128,6 @@ const LendingPortfolioTableFooter: React.FC<
             width='100%'
           />
         </TableCell>
-
         <TableCell align='right'>
           <TokenAmount
             amount={formatAmount(formatEther(totalValues.lastEpoch), {
@@ -151,27 +137,6 @@ const LendingPortfolioTableFooter: React.FC<
             width='100%'
           />
         </TableCell>
-
-        <TableCell align='right'>
-          <TokenAmount
-            amount={formatAmount(formatEther(totalValues.lastMonth), {
-              minValue: 100_000,
-            })}
-            symbol='USDC'
-            width='100%'
-          />
-        </TableCell>
-
-        <TableCell align='right'>
-          <TokenAmount
-            amount={formatAmount(formatEther(totalValues.lastYear), {
-              minValue: 100_000,
-            })}
-            symbol='USDC'
-            width='100%'
-          />
-        </TableCell>
-
         <TableCell align='right'>
           <TokenAmount
             amount={formatAmount(formatEther(totalValues.lifeTime), {

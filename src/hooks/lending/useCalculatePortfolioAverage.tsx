@@ -1,26 +1,23 @@
+import { PortfolioLendingPool } from '@solidant/kasu-sdk/src/services/Portfolio/types'
 import { BigNumber } from 'ethers'
 import { formatEther } from 'ethers/lib/utils'
-
-import { UserLendingPortfolio } from '@/components/organisms/portfolio/LendingPortfolioTab/LendingPortfolioTable'
 
 import { toBigNumber } from '@/utils'
 
 const useCalculatePortfolioAverage = (
   totalValues: {
     lastEpoch: BigNumber
-    lastMonth: BigNumber
-    lastYear: BigNumber
     lifeTime: BigNumber
     investedAmount: BigNumber
   },
-  lendingPortfolio: UserLendingPortfolio[]
+  lendingPortfolio: PortfolioLendingPool[]
 ) => {
   const totalTranches = lendingPortfolio.reduce((trancheCount, cur) => {
-    return trancheCount + cur.lendingPool.tranches.length
+    return trancheCount + cur.tranches.length
   }, 0)
 
   const weightedApy = lendingPortfolio.reduce((weightedAverage, cur) => {
-    const weightedTranchesApy = cur.lendingPool.tranches.reduce(
+    const weightedTranchesApy = cur.tranches.reduce(
       (trancheApy, curTranche) =>
         trancheApy.add(
           toBigNumber(curTranche.apy).mul(
@@ -35,11 +32,11 @@ const useCalculatePortfolioAverage = (
 
   return {
     lastEpoch: totalValues.lastEpoch.div(lendingPortfolio.length),
-    lastMonth: totalValues.lastMonth.div(lendingPortfolio.length),
-    lastYear: totalValues.lastYear.div(lendingPortfolio.length),
     lifeTime: totalValues.lifeTime.div(lendingPortfolio.length),
     investedAmount: totalValues.investedAmount.div(totalTranches),
-    weightedApy: formatEther(weightedApy.div(totalValues.investedAmount)),
+    weightedApy: totalValues.investedAmount.isZero()
+      ? '0'
+      : formatEther(weightedApy.div(totalValues.investedAmount)),
   }
 }
 

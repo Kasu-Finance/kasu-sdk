@@ -1,49 +1,27 @@
-import { alpha, TableCell, TableRow } from '@mui/material'
-import React from 'react'
+import { alpha, Box, TableCell, TableRow } from '@mui/material'
 
-import { Sort } from '@/components/molecules/CustomTable'
-import CustomTableSortLabel from '@/components/molecules/CustomTable/CustomTableSortLabel'
-import { LENDING_PORTFOLIO_KEYS } from '@/components/organisms/portfolio/LendingPortfolioTab/LendingPortfolioTable'
+import ToolTip from '@/components/atoms/ToolTip'
 
-type LendingPortfolioTableHeaderProps = {
-  handleSortChange: (newKey: (typeof LENDING_PORTFOLIO_KEYS)[number]) => void
-  sort: Sort<typeof LENDING_PORTFOLIO_KEYS>
-}
-
-const LendingPortfolioTableHeader: React.FC<
-  LendingPortfolioTableHeaderProps
-> = ({ handleSortChange, sort }) => (
+const LendingPortfolioTableHeader = () => (
   <>
     <TableRow
       sx={(theme) => ({
         background: alpha(theme.palette.primary.main, 0.04),
       })}
     >
-      <TableCell rowSpan={2}>
-        <CustomTableSortLabel
-          sort={sort}
-          handleSortChange={handleSortChange}
-          label='Pool'
-          sortKey='poolName'
-        />
+      <TableCell rowSpan={2} width='17%'>
+        Pool
       </TableCell>
-      <TableCell rowSpan={2} align='right'>
-        <CustomTableSortLabel
-          sort={sort}
-          handleSortChange={handleSortChange}
-          label='APY'
-          sortKey='weightedApy'
-        />
+      <TableCell rowSpan={2} align='right' width='17%' className='apy'>
+        APY
       </TableCell>
-      <TableCell rowSpan={2} align='right'>
-        <CustomTableSortLabel
-          sort={sort}
-          handleSortChange={handleSortChange}
-          label='Investment'
-          sortKey='totalInvestedAmount'
-        />
+      <TableCell rowSpan={2} align='right' width='17%'>
+        <Box display='flex' alignItems='center' justifyContent='end'>
+          Investment
+          <ToolTip title='info' />
+        </Box>
       </TableCell>
-      <TableCell colSpan={4} align='center'>
+      <TableCell colSpan={2} align='center' width='48%'>
         Yield Earnings
       </TableCell>
     </TableRow>
@@ -52,38 +30,8 @@ const LendingPortfolioTableHeader: React.FC<
         background: alpha(theme.palette.primary.main, 0.04),
       })}
     >
-      <TableCell align='right'>
-        <CustomTableSortLabel
-          sort={sort}
-          handleSortChange={handleSortChange}
-          label='Last Epoch'
-          sortKey='totalYieldEarningsLastEpoch'
-        />
-      </TableCell>
-      <TableCell align='right'>
-        <CustomTableSortLabel
-          sort={sort}
-          handleSortChange={handleSortChange}
-          label='Last 30 Days'
-          sortKey='totalYieldEarningsLastMonth'
-        />
-      </TableCell>
-      <TableCell align='right'>
-        <CustomTableSortLabel
-          sort={sort}
-          handleSortChange={handleSortChange}
-          label='Last 12 Months'
-          sortKey='totalYieldEarningsLastYear'
-        />
-      </TableCell>
-      <TableCell align='right'>
-        <CustomTableSortLabel
-          sort={sort}
-          handleSortChange={handleSortChange}
-          label='Lifetime'
-          sortKey='totalYieldEarningsLifetime'
-        />
-      </TableCell>
+      <TableCell align='right'>Last Epoch</TableCell>
+      <TableCell align='right'>Lifetime</TableCell>
     </TableRow>
   </>
 )

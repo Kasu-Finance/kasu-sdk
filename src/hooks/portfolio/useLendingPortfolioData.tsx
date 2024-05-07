@@ -15,10 +15,10 @@ const useLendingPortfolioData = () => {
   )
 
   return {
-    portfolioSummary: data,
+    lendingPortfolioData: data,
     error,
     isLoading: !data && !error,
-    updatePortfolioSummary: mutate,
+    updateLendingPortfolioData: mutate,
   }
 }
 

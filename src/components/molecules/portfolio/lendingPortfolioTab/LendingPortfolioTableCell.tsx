@@ -1,16 +1,17 @@
-import { Box, Divider, TableCell } from '@mui/material'
+import { Box, Divider, TableCell, TableCellProps } from '@mui/material'
 import React from 'react'
 
 import TokenAmount from '@/components/atoms/TokenAmount'
 
-type LendingPortfolioTableCellProps = {
+type LendingPortfolioTableCellProps = TableCellProps & {
   value: string
 }
 
 const LendingPortfolioTableCell: React.FC<LendingPortfolioTableCellProps> = ({
   value,
+  ...rest
 }) => (
-  <TableCell sx={{ border: 'none', py: 0, height: 0 }} align='right'>
+  <TableCell sx={{ border: 'none', py: 0, height: 0 }} align='right' {...rest}>
     <Box width='max-content' ml='auto' height='100%'>
       <TokenAmount
         amountVariant='body1'
