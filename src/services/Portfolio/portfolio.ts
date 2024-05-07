@@ -109,10 +109,10 @@ export class Portfolio {
         return {
             average: {
                 averageWeightedApy: '0',
-                investedAmountPerPool: totalInvestments.eq(BigNumber.from(0)) ? '0' : (Number.parseFloat(ethers.utils.formatUnits(totalInvestments))/totalPoolsInvestedIn).toString(),
-                investedAmountPerTranche: totalTrancheInvesments.eq(BigNumber.from(0)) ? '0' : (Number.parseFloat(ethers.utils.formatUnits(totalTrancheInvesments))/totalTranchesInvestedIn).toString(),
+                investedAmountPerPool: totalPoolsInvestedIn == 0 ? '0' : (Number.parseFloat(ethers.utils.formatUnits(totalInvestments))/totalPoolsInvestedIn).toString(),
+                investedAmountPerTranche: totalTranchesInvestedIn == 0 ? '0' : (Number.parseFloat(ethers.utils.formatUnits(totalTrancheInvesments))/totalTranchesInvestedIn).toString(),
                 yieldEarningsLastEpoch: '0',
-                yieldEarningsLifetime: totalYieldEarned == 0 ? '0' : (totalYieldEarned/totalPoolsInvestedIn).toString(),
+                yieldEarningsLifetime: totalPoolsInvestedIn == 0 ? '0' : (totalYieldEarned/totalPoolsInvestedIn).toString(),
             },
             lendingPools: portfolioLendingPools,
         }
