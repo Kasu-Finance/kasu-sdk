@@ -99,6 +99,7 @@ export class Portfolio {
             portfolioLendingPools.push({
                 id: poolOverview.id,
                 totalYieldEarningsLastEpoch: '0',
+                totalInvestedAmount: userPoolBalance.balance.toString(),
                 totalYieldEarningsLifetime: userPoolBalance.yieldEarned.toString(),
                 isActive: poolOverview.isActive,
                 name: poolOverview.poolName,

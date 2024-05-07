@@ -58,6 +58,7 @@ export interface PortfolioTranche {
 export interface  PortfolioLendingPool {
     id: string;
     name: string;
+    totalInvestedAmount: string;
     totalYieldEarningsLastEpoch: string;
     totalYieldEarningsLifetime: string;
     isActive: boolean;
