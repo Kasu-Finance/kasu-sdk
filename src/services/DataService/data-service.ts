@@ -144,6 +144,7 @@ export class DataService {
                 activeLoans: lendingPoolDirectus.activeLoans,
                 loanFundsOriginated: lendingPoolDirectus.loanFundsOriginated,
                 tranches: tranches,
+                isActive: !lendingPoolSubgraph.isStopped,
             }
             retn.push(poolOverview);
         }

@@ -21,6 +21,7 @@ export interface PoolOverview {
     poolInvestmentTerm: string; // CMS
     loanStructure: string; // CMS
     loanFundsOriginated: number; // CMS
+    isActive: boolean; // SUBGRAPH
 }
 
 export interface PoolDelegateProfileAndHistory {

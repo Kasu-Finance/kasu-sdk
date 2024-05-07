@@ -5,6 +5,7 @@ export interface LendingPoolSubgraph {
     name: string;
     balance: string;
     firstLostCapital: string;
+    isStopped: boolean;
     pendingPool: {
         id: string;
         totalPendingDepositAmounts: string[];

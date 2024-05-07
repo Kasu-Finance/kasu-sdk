@@ -15,6 +15,7 @@ export const getAllLendingPoolsQuery = gql`
         name
         balance
         firstLostCapital
+        isStopped
         tranches(orderBy: orderId, orderDirection: asc) {
           balance
           id
