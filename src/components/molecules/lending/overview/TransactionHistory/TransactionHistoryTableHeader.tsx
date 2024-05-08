@@ -19,7 +19,7 @@ const TransactionHistoryTableHeader: React.FC<
         background: alpha(theme.palette.primary.main, 0.04),
       })}
     >
-      <TableCell rowSpan={2} width='18%' sx={{ pl: 8 }}>
+      <TableCell rowSpan={2} width='18%' className='request-type'>
         <CustomTableSortLabel
           label='Request'
           sortKey='requestType'
@@ -27,7 +27,17 @@ const TransactionHistoryTableHeader: React.FC<
           handleSortChange={handleSortChange}
         />
       </TableCell>
-      <TableCell align='center' width='54%' colSpan={3}>
+      <TableCell rowSpan={2} width='12%' align='right'>
+        <CustomTableSortLabel
+          label='Tranche'
+          sortKey='tranche'
+          sort={sort}
+          handleSortChange={handleSortChange}
+          flipIcon
+        />
+      </TableCell>
+
+      <TableCell align='center' colSpan={3} width='30%'>
         Total Amounts
       </TableCell>
       <TableCell rowSpan={2} width='14%' align='right'>

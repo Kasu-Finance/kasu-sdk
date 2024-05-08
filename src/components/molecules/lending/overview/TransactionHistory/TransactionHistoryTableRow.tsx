@@ -12,13 +12,14 @@ import {
   Typography,
 } from '@mui/material'
 import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
-import React from 'react'
+import { memo } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 
 import TokenAmount from '@/components/atoms/TokenAmount'
 import TransactionCollapsedContent from '@/components/molecules/lending/overview/TransactionHistory/TransactionCollapsedContent'
 
+import { DATE_FORMAT, TIME_FORMAT } from '@/constants'
 import dayjs from '@/dayjs'
 import { formatAmount } from '@/utils'
 
@@ -55,7 +56,9 @@ const TransactionHistoryTableRow: React.FC<TransactionHistoryTableRowProps> = ({
         hover={!isActive}
         sx={(theme) => ({
           cursor: 'pointer',
+          height: '90px',
           '.MuiTableCell-root': {
+            borderBottom: '0px',
             ...(isActive && {
               borderColor: 'rgba(0,0,0,0)',
               background: alpha(theme.palette.primary.main, 0.08),
@@ -80,6 +83,7 @@ const TransactionHistoryTableRow: React.FC<TransactionHistoryTableRowProps> = ({
             {transaction.requestType}
           </Box>
         </TableCell>
+        <TableCell align='right'>{transaction.trancheName}</TableCell>
         <TableCell align='right'>
           <TokenAmount
             amount={formatAmount(transaction.requestedAmount)}
@@ -103,11 +107,11 @@ const TransactionHistoryTableRow: React.FC<TransactionHistoryTableRowProps> = ({
         </TableCell>
         <TableCell align='right'>
           <Typography variant='body1' component='span'>
-            {dayjs.unix(transaction.timestamp).format('DD.MM.YYYY')}
+            {dayjs.unix(transaction.timestamp).format(DATE_FORMAT)}
           </Typography>
           <br />
           <Typography variant='caption' component='span'>
-            {dayjs.unix(transaction.timestamp).format('HH:mm:ss UTCZZ')}
+            {dayjs.unix(transaction.timestamp).format(TIME_FORMAT)}
           </Typography>
         </TableCell>
         <TableCell align='center'>
@@ -116,7 +120,7 @@ const TransactionHistoryTableRow: React.FC<TransactionHistoryTableRowProps> = ({
           </Typography>
           {transaction.canCancel && (
             <Button
-              sx={{ width: 96, height: 30, mt: 1 }}
+              sx={{ width: 'auto', height: 30, pl: 1.25, pr: 1.25, mt: 0.75 }}
               size='small'
               variant='contained'
               startIcon={<DeleteIcon />}
@@ -147,4 +151,4 @@ const TransactionHistoryTableRow: React.FC<TransactionHistoryTableRowProps> = ({
   )
 }
 
-export default TransactionHistoryTableRow
+export default memo(TransactionHistoryTableRow)

@@ -5,11 +5,7 @@ const path = require('path')
 
 const nextConfig = {
   images: {
-    domains: [
-      'example2.com', // TODO: Remove 'example2.com' and add the real URL domain here when the backend is ready.
-      'kasu.finance',
-      '',
-    ],
+    domains: ['kasu-uat.vercel.app', 'kasu.finance', ''],
   },
   async redirects() {
     return [

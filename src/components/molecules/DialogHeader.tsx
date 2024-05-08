@@ -1,5 +1,5 @@
 import { Box, Button, DialogTitle, SxProps, Theme } from '@mui/material'
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
 
 import { CrossIcon } from '@/assets/icons'
 

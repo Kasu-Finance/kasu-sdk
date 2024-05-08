@@ -61,11 +61,23 @@ const TranchDetailCard: React.FC<TranchDetailCardProps> = ({
       <InfoRow
         title='Minimum Deposit Amount'
         showDivider
-        metric={<ContentWithSuffix content={minimumDepositAmount} />}
+        metric={
+          <ContentWithSuffix
+            textAlign='right'
+            content={minimumDepositAmount}
+            suffix='USDC'
+          />
+        }
       />
       <InfoRow
         title='Maximum Deposit Amount'
-        metric={<ContentWithSuffix content={maxDepositAmount} suffix='USDC' />}
+        metric={
+          <ContentWithSuffix
+            textAlign='right'
+            content={maxDepositAmount}
+            suffix='USDC'
+          />
+        }
       />
     </Box>
   )

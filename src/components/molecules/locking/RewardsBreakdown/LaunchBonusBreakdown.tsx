@@ -14,10 +14,7 @@ const LaunchBonusBreakdown = () => {
         {
           title: 'Your Total Launch Bonus',
           toolTipInfo: 'info',
-          metric: [
-            formatAmount(totalLaunchBonus ?? '0', { minDecimals: 2 }),
-            'KSU',
-          ],
+          metric: [formatAmount(totalLaunchBonus), 'KSU'],
         },
       ]}
     />

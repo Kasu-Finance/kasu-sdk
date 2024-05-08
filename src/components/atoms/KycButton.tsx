@@ -1,6 +1,6 @@
 import { Button, ButtonProps } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
 
 import useKycState from '@/hooks/context/useKycState'
 import useModalState from '@/hooks/context/useModalState'

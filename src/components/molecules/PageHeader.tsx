@@ -2,7 +2,7 @@
 
 import { Box, Paper, Typography } from '@mui/material'
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import usePoolOverview from '@/hooks/lending/usePoolOverview'
 import useTranslation from '@/hooks/useTranslation'
@@ -25,10 +25,9 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   title,
   poolId,
   variant = 'title',
-  loading = false,
 }) => {
   const { t } = useTranslation()
-  const { data } = usePoolOverview(poolId)
+  const { data, isLoading } = usePoolOverview(poolId)
 
   const { poolName, poolAvatarImg, poolBannerImg } = useMemo(() => {
     const pool: PoolOverview | null = data?.length ? data[0] : null
@@ -47,7 +46,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
     )
   }
 
-  if (loading) {
+  if (isLoading) {
     return <PageHeaderSkeleton />
   }
 

@@ -1,6 +1,8 @@
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import { PoolDetailsSectionIds, PoolTractionMetricIds } from '@/constants'
+import formatAmount from '@/utils/formats/formatAmount'
+import formatPercentage from '@/utils/formats/formatPercentage'
 
 import { PoolDetailSection, PoolMetric } from '@/types/lending'
 
@@ -8,17 +10,17 @@ const convertToPoolTraction = (overview: PoolOverview): PoolDetailSection => {
   const metrics: PoolMetric[] = [
     {
       id: PoolTractionMetricIds.ValueLocked,
-      content: `${overview.totalValueLocked || 'N/A'} M`,
+      content: `${formatAmount(overview.totalValueLocked)} M`,
       unit: 'USDC',
     },
     {
       id: PoolTractionMetricIds.Management,
-      content: `${overview.loansUnderManagement || 'N/A'}`,
+      content: `${formatAmount(overview.loansUnderManagement)}`,
       unit: 'USDC',
     },
     {
       id: PoolTractionMetricIds.Yield,
-      content: `${overview.yieldEarned || 'N/A'} %`,
+      content: formatPercentage(overview.yieldEarned),
     },
     {
       id: PoolTractionMetricIds.Capacity,

@@ -7,12 +7,20 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
+import { useWeb3React } from '@web3-react/core'
+import { useRouter } from 'next/navigation'
+import { useMemo } from 'react'
 
+import useModalState from '@/hooks/context/useModalState'
+import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
 import useGetUserBalance from '@/hooks/lending/useUserTrancheBalance'
 
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 import TranchInvestmentCard from '@/components/molecules/TranchInvestmentCard'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
+import { Routes } from '@/config/routes'
 import { COLS } from '@/constants'
 import {
   calculateTotalInvested,
@@ -21,25 +29,45 @@ import {
   getAverageApyAndTotal,
   getTranchesWithUserBalances,
   hexToUSD,
+  sortTranches,
 } from '@/utils'
 import { TrancheWithUserBalance } from '@/utils/lending/calculateUserBalances'
 
 const InvestmentPortfolio: React.FC<{
   pool: PoolOverview
 }> = ({ pool }) => {
+  const { openModal } = useModalState()
+  const router = useRouter()
+  const { account } = useWeb3React()
+  const { data: userPoolBalance } = useUserPoolBalance(pool?.id)
+
   const tranches = pool.tranches.map((tranche) => tranche)
-  const tranchesId = tranches.map((tranche) => tranche.id)
+  const sortedTranches = sortTranches(tranches)
+  const tranchesId = sortedTranches.map((tranche) => tranche.id)
   let tranchesWithBalances: TrancheWithUserBalance[] = []
   let totalYieldEarned: number = 0
   let totalInvestment: string = BigNumber.from('0x00').toString()
 
-  const tranchesTotal = getAverageApyAndTotal(tranches)
+  const tranchesTotal = getAverageApyAndTotal(sortedTranches)
   const { amount, isLoading } = useGetUserBalance(tranchesId)
 
   if (!isLoading && amount) {
-    tranchesWithBalances = getTranchesWithUserBalances(tranches, amount)
+    tranchesWithBalances = getTranchesWithUserBalances(sortedTranches, amount)
     totalYieldEarned = calculateTotalYieldEarned(tranchesWithBalances)
     totalInvestment = calculateTotalInvested(tranchesWithBalances)
+  }
+
+  const isWithdrawDisabled = useMemo(() => {
+    const hasNonZeroBalance =
+      userPoolBalance && !userPoolBalance.balance.isZero()
+
+    return !account || hasNonZeroBalance
+  }, [userPoolBalance, account])
+
+  const handleWithdrawClick = (pool: PoolOverview) => {
+    openModal({ name: ModalsKeys.WITHDRAW, poolData: pool })
+
+    router.push(`${Routes.lending.root.url}/${pool.id}?step=1`)
   }
 
   return (
@@ -117,7 +145,7 @@ const InvestmentPortfolio: React.FC<{
                   title={`${tranche.name} Tranche APY`}
                   amount={formatAmount(totalInvested)}
                   apy={formatAmount(+tranche.apy * 100)}
-                  yieldEarned={tranche.yieldEarned?.toString() || ''}
+                  yieldEarned={formatAmount(tranche.yieldEarned)}
                 />
               </Grid>
             )
@@ -134,7 +162,12 @@ const InvestmentPortfolio: React.FC<{
           pb: 2,
         }}
       >
-        <Button startIcon={<LogoutIcon />} variant='contained'>
+        <Button
+          startIcon={<LogoutIcon />}
+          onClick={() => handleWithdrawClick(pool)}
+          variant='contained'
+          disabled={isWithdrawDisabled}
+        >
           Withdraw
         </Button>
       </Box>

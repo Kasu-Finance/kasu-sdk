@@ -6,7 +6,7 @@ import {
   Typography,
   TypographyProps,
 } from '@mui/material'
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
 
 import ToolTip from '@/components/atoms/ToolTip'
 

@@ -26,22 +26,14 @@ const DepositModalOverview: React.FC<DepositModalOverviewProps> = ({
           <BalanceItem
             title='Available Funds'
             toolTipInfo='info'
-            value={[
-              formatAmount(userBalance, {
-                minDecimals: 2,
-              }),
-              'USDC',
-            ]}
+            value={[formatAmount(userBalance), 'USDC']}
           />
         </Grid>
         <Grid item xs={6}>
           <BalanceItem
             title='Total Investent'
             toolTipInfo='info'
-            value={[
-              formatAmount(poolData.totalUserInvestment, { minDecimals: 2 }),
-              'USDC',
-            ]}
+            value={[formatAmount(poolData.totalUserInvestment), 'USDC']}
           />
         </Grid>
       </Grid>

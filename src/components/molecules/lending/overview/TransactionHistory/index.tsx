@@ -1,6 +1,6 @@
 import { Box, Card, CardContent, CardHeader } from '@mui/material'
 import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import useTransactionHistoryState from '@/hooks/context/useTransactionHistoryState'
 import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
@@ -54,33 +54,37 @@ export const TRANSACTION_HISTORY_KEYS = [
   'requestedAmount',
   'rejectedAmount',
   'timestamp',
+  'tranche',
 ] as const
 
-const TransactionHistory = () => {
+const TransactionHistory: React.FC<{ poolId: string }> = ({ poolId }) => {
   const [open, setOpen] = useState<number | undefined>(undefined)
-
   const { transactionHistory, isLoading } = useTransactionHistory()
-
   const { status, trancheType, transactionType } = useTransactionHistoryState()
+
+  const handleCollapse = useCallback((index) => {
+    setOpen((prev) => (prev === index ? undefined : index))
+  }, [])
 
   if (isLoading || !transactionHistory?.length) return null
 
-  const filteredData = transactionHistory
-    .filter((transaction) => {
-      if (status === 'All') return true
+  const currentPoolTransactions: UserRequest[] = transactionHistory.filter(
+    (transaction) => {
+      return transaction.lendingPool.id === poolId
+    }
+  )
 
-      return transaction.status === status
-    })
-    .filter((transaction) => {
-      if (trancheType === 'All Tranches') return true
-
-      return transaction.trancheName === trancheType
-    })
-    .filter((transaction) => {
-      if (transactionType === 'All Transactions') return true
-
-      return transaction.requestType === transactionType
-    })
+  const filteredData: UserRequest[] = currentPoolTransactions.filter(
+    (transaction) => {
+      return (
+        (status === 'All' || transaction.status === status) &&
+        (trancheType === 'All Tranches' ||
+          transaction.trancheName === trancheType) &&
+        (transactionType === 'All Transactions' ||
+          transaction.requestType === transactionType)
+      )
+    }
+  )
 
   return (
     <Card sx={{ mt: 3 }}>
@@ -109,11 +113,15 @@ const TransactionHistory = () => {
             '& .MuiTableCell-root': {
               py: '6px',
               px: 2,
+
+              '&.request-type': {
+                pl: 8,
+              },
             },
           }}
           footer={
             <TransactionHistoryTableFooter
-              transactionHistory={transactionHistory}
+              transactionHistory={currentPoolTransactions}
             />
           }
           headers={(handleSortChange, sort) => (
@@ -129,9 +137,7 @@ const TransactionHistory = () => {
 
               return (
                 <TransactionHistoryTableRow
-                  handleCollapse={() =>
-                    setOpen((prev) => (prev === index ? undefined : index))
-                  }
+                  handleCollapse={() => handleCollapse(index)}
                   isActive={isActive}
                   transaction={transaction}
                   key={index}

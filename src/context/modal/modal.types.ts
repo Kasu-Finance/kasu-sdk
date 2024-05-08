@@ -45,8 +45,12 @@ export type Modals = {
 
 export type ModalWithProps = Extract<
   keyof Modals,
+  | 'connectWalletModal'
+  | 'loyaltyLevelsModal'
+  | 'lockModal'
   | 'unlockModal'
   | 'withdrawModal'
+  | 'transactionProcessingModal'
   | 'depositModal'
   | 'kycModal'
   | 'cancelDepositModal'

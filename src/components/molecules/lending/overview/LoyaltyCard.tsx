@@ -9,11 +9,15 @@ import {
   Typography,
 } from '@mui/material'
 import { formatEther } from 'ethers/lib/utils'
+import { useMemo } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
+import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
+import useUserBonusData from '@/hooks/locking/useUserBonusData'
 import useUserLocks from '@/hooks/locking/useUserLocks'
 import useTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
+import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import ContentWithSuffix from '@/components/atoms/ContentWithSuffix'
@@ -31,13 +35,24 @@ const LoyaltyCard = () => {
   const handleOpenLockingKSU = () => openModal({ name: 'lockModal' })
   const { userLocks } = useUserLocks()
   const { ksuPrice } = useKsuPrice()
+  const { userBonus } = useUserBonusData()
+  const stakedPercentage = useLockingPercentage()
+  const { currentLevel } = useLoyaltyLevel(stakedPercentage)
+
+  const totalKsuBonusAndRewards = useMemo(() => {
+    if (!userBonus) {
+      return '0.00'
+    }
+
+    return formatAmount(userBonus?.protocolFeesEarned)
+  }, [userBonus])
 
   const userKSU = userLocks && userLocks.length > 0 ? userLocks[0] : null
 
   const totalBonusYieldUSDC = userKSU
     ? formatEther(
         convertToUSD(
-          toBigNumber(userKSU?.totalBonusYieldEarnings.toString() || '0'),
+          toBigNumber(totalKsuBonusAndRewards),
           toBigNumber(ksuPrice || '0')
         )
       )
@@ -46,7 +61,7 @@ const LoyaltyCard = () => {
   const lifetimeYieldEarnedUSDC = userKSU
     ? formatEther(
         convertToUSD(
-          toBigNumber(userKSU?.totalBonusYieldEarnings.toString() || '0'),
+          toBigNumber(totalKsuBonusAndRewards),
           toBigNumber(ksuPrice || '0')
         )
       )
@@ -84,9 +99,7 @@ const LoyaltyCard = () => {
           />
           <Divider />
           <ContentWithSuffix
-            content={formatAmount(userKSU?.lockedAmount ?? '0', {
-              minDecimals: 2,
-            })}
+            content={formatAmount(userKSU?.lockedAmount)}
             suffix='KSU'
             sx={{ pl: 0 }}
           />
@@ -105,12 +118,13 @@ const LoyaltyCard = () => {
               showDivider
               metric={
                 <ContentWithSuffix
-                  content={`${formatAmount(
-                    userKSU?.apyBonus ? userKSU.apyBonus * 100 : '0',
-                    {
-                      minDecimals: 2,
-                    }
-                  )} %`}
+                  content={
+                    currentLevel === 1
+                      ? '0.1%'
+                      : currentLevel === 2
+                        ? '0.2%'
+                        : 'None'
+                  }
                 />
               }
             />
@@ -126,13 +140,8 @@ const LoyaltyCard = () => {
                 <div>
                   <ContentWithSuffix
                     textAlign='right'
-                    content={`${formatAmount(
-                      userKSU?.totalBonusYieldEarnings ?? 0,
-                      {
-                        minDecimals: 2,
-                      }
-                    )}`}
-                    suffix='KSU'
+                    content={`${formatAmount(totalKsuBonusAndRewards)}`}
+                    suffix='KSU test'
                   />
                   <Typography
                     textAlign='right'
@@ -140,10 +149,7 @@ const LoyaltyCard = () => {
                     variant='caption'
                     component='h6'
                   >
-                    {formatAmount(totalBonusYieldUSDC, {
-                      minDecimals: 2,
-                    })}{' '}
-                    USDC
+                    {formatAmount(totalBonusYieldUSDC)} USDC
                   </Typography>
                 </div>
               }
@@ -161,10 +167,7 @@ const LoyaltyCard = () => {
                   <ContentWithSuffix
                     textAlign='right'
                     content={`${formatAmount(
-                      userKSU?.lifetimeBonusYieldEarnings ?? 0,
-                      {
-                        minDecimals: 2,
-                      }
+                      userKSU?.lifetimeBonusYieldEarnings
                     )}`}
                     suffix='KSU'
                   />
@@ -174,9 +177,7 @@ const LoyaltyCard = () => {
                     variant='caption'
                     component='h6'
                   >
-                    {formatAmount(lifetimeYieldEarnedUSDC, {
-                      minDecimals: 2,
-                    })}
+                    {formatAmount(lifetimeYieldEarnedUSDC)}
                     USDC
                   </Typography>
                 </div>

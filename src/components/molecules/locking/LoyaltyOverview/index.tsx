@@ -80,12 +80,7 @@ const LoyaltyOverview = () => {
         showDivider
         title={`rKSU ${capitalize(t('general.balance'))}`}
         toolTipInfo='info'
-        metric={
-          <TokenAmount
-            amount={formatAmount(rKsuAmount ?? '0', { minDecimals: 2 })}
-            symbol='rKSU'
-          />
-        }
+        metric={<TokenAmount amount={formatAmount(rKsuAmount)} symbol='rKSU' />}
       />
 
       <InfoRow
@@ -94,7 +89,7 @@ const LoyaltyOverview = () => {
         toolTipInfo='info'
         metric={
           <TokenAmount
-            amount={formatAmount(totalDeposits ?? '0', { minDecimals: 2 })}
+            amount={formatAmount(totalDeposits.activeDepositAmount)}
             symbol='USDC'
           />
         }

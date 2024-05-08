@@ -73,7 +73,7 @@ const PoolOverview = () => {
         <InvestmentPortfolio pool={currentPool} />
         <LoyaltyCard />
         <TransactionHistoryState>
-          <TransactionHistory />
+          <TransactionHistory poolId={currentPool.id} />
         </TransactionHistoryState>
       </>
     )

@@ -10,7 +10,6 @@ const SinglePoolPage = ({ params }: { params: { slug: string } }) => {
         title={'Pool: ' + params.slug}
         poolId={params.slug}
         variant='hero'
-        loading={false}
       />
       <PoolTabs />
     </Container>

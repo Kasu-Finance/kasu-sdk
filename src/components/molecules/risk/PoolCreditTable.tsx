@@ -1,6 +1,6 @@
 import { Card, TableCell, TableRow, Typography } from '@mui/material'
 import { PoolCreditMetricsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
@@ -25,7 +25,6 @@ interface PoolCreditTableProps {
 
 const PoolCreditTable: React.FC<PoolCreditTableProps> = ({ data }) => {
   const { t } = useTranslation()
-  const formatConfig = { minDecimals: 2 }
 
   const headers: CustomTableHeader<string[]>[] = useMemo(
     () => [
@@ -86,21 +85,21 @@ const PoolCreditTable: React.FC<PoolCreditTableProps> = ({ data }) => {
               <TableCell align='right'>
                 <Typography variant='body1'>
                   {index < 2
-                    ? `${formatAmount(data.previousFiscalYear, formatConfig)} x`
+                    ? `${formatAmount(data.previousFiscalYear)} x`
                     : formatPercentage(data.previousFiscalYear)}
                 </Typography>
               </TableCell>
               <TableCell align='right'>
                 <Typography variant='body1'>
                   {index < 2
-                    ? `${formatAmount(data.mostRecentQuarter, formatConfig)} x`
+                    ? `${formatAmount(data.mostRecentQuarter)} x`
                     : formatPercentage(data.mostRecentQuarter)}
                 </Typography>
               </TableCell>
               <TableCell align='right'>
                 <Typography variant='body1'>
                   {index < 2
-                    ? `${formatAmount(data.priorMonth, formatConfig)} x`
+                    ? `${formatAmount(data.priorMonth)} x`
                     : formatPercentage(data.priorMonth)}
                 </Typography>
               </TableCell>

@@ -2,47 +2,34 @@
 
 import { Box, Container, Typography } from '@mui/material'
 
+import useLendingTotals from '@/hooks/home/useLendingTotals'
+import usePoolDelegate from '@/hooks/lending/usePoolDelegate'
 import usePoolOverview from '@/hooks/lending/usePoolOverview'
 
-import EmptyCardState from '@/components/atoms/EmptyCardState'
-import Carousel from '@/components/molecules/Carousel'
+import HomeStatsCard from '@/components/molecules/home/HomeStatsCard'
 import PageHeader from '@/components/molecules/PageHeader'
-import PoolCard from '@/components/molecules/PoolCard'
-
-import { Routes } from '@/config/routes'
+import HomeTabs from '@/components/organisms/home/HomeTabs'
 
 const Lending = () => {
   const { data: pools, isLoading } = usePoolOverview()
+  const { data: poolDelegates } = usePoolDelegate()
+  const { lendingTotals } = useLendingTotals()
 
   if (isLoading) {
     return (
       <Container maxWidth='lg'>
         <PageHeader title='Lending' />
         <Box display='flex' justifyContent='center' alignItems='center' mt={3}>
-          <Typography variant='h6'>Missing Loader...</Typography>
+          <Typography variant='h6'>Loading...</Typography>
         </Box>
       </Container>
     )
   }
 
-  const hasPools = pools && pools.length > 0
-
-  const poolsContent = hasPools ? (
-    pools.map((pool, index) => (
-      <PoolCard
-        key={index}
-        poolName={pool.poolName}
-        link={`${Routes.lending.root.url}/${pool.id}`}
-      />
-    ))
-  ) : (
-    <EmptyCardState message='No pools available.' />
-  )
-
   return (
     <Container maxWidth='lg'>
-      <PageHeader title='Lending' />
-      <Carousel slidesPerPage={3}>{poolsContent}</Carousel>
+      <HomeStatsCard data={lendingTotals} />
+      <HomeTabs pools={pools} poolDelegates={poolDelegates} />
     </Container>
   )
 }

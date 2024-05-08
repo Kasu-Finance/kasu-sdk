@@ -1,6 +1,8 @@
 import { RiskPerformance } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import { PoolDetailsSectionIds, RiskMetricIds } from '@/constants'
+import formatAmount from '@/utils/formats/formatAmount'
+import formatPercentage from '@/utils/formats/formatPercentage'
 
 import { PoolDetailSection } from '@/types/lending'
 
@@ -10,24 +12,24 @@ const convertToRiskStatus = (riskData: RiskPerformance) => {
     metrics: [
       {
         id: RiskMetricIds.FirstLoss,
-        content: `${riskData.firstLossCapital}`,
+        content: `${formatAmount(riskData.firstLossCapital)}`,
         unit: 'USDC',
         isRating: false,
       },
       {
         id: RiskMetricIds.LossRate,
-        content: `${riskData.poolLossRate}%`,
+        content: formatPercentage(riskData.poolLossRate),
         isRating: false,
       },
       {
         id: RiskMetricIds.RiskScore,
-        content: riskData.independentRiskScore,
+        content: `${formatAmount(riskData.independentRiskScore)}`,
         unit: '/ 5.00',
         isRating: false,
       },
       {
         id: RiskMetricIds.KasuRating,
-        content: riskData.communityRating,
+        content: `${formatAmount(riskData.communityRating)}`,
         isRating: true,
       },
     ],

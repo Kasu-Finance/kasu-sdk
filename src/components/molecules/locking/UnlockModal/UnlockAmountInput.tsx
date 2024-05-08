@@ -11,7 +11,7 @@ import NumericalInput from '@/components/molecules/NumericalInput'
 
 import { RefreshIcon } from '@/assets/icons'
 
-import { toBigNumber } from '@/utils'
+import { formatAmount, toBigNumber } from '@/utils'
 
 type UnlockAmountInputProps = {
   userLock: UserLock
@@ -65,7 +65,7 @@ const UnlockAmountInput: React.FC<UnlockAmountInputProps> = ({ userLock }) => {
       <BalanceItem
         title='Available KSU to Unlock'
         toolTipInfo='info'
-        value={[lockedAmount, 'KSU']}
+        value={[formatAmount(lockedAmount), 'KSU']}
       />
       <Grid item xs={12}>
         <NumericalInput

@@ -13,7 +13,7 @@ import {
   TableSortLabel,
   Theme,
 } from '@mui/material'
-import React, { ReactNode, useState } from 'react'
+import { ReactNode, useState } from 'react'
 
 import usePagination from '@/hooks/usePagination'
 

@@ -7,6 +7,7 @@ import TokenAmount from '@/components/atoms/TokenAmount'
 
 import { SupportedChainIds } from '@/connection/chains'
 import { networks } from '@/connection/networks'
+import { DATE_FORMAT, TIME_FORMAT } from '@/constants'
 import dayjs from '@/dayjs'
 
 type TransactionCollapsedContentProps = {
@@ -26,7 +27,7 @@ const TransactionCollapsedContent: React.FC<
         },
       }}
     >
-      <TableCell width='18%' padding='none'>
+      <TableCell colSpan={2} width='28%' padding='none'>
         <Typography
           fontSize='inherit'
           fontFamily='inherit'
@@ -37,21 +38,21 @@ const TransactionCollapsedContent: React.FC<
           {actionHistory.requestType}
         </Typography>
       </TableCell>
-      <TableCell width='18%' align='right' padding='none'>
+      <TableCell width='14%' align='right' padding='none'>
         <TokenAmount
           amount={actionHistory.totalRequested}
           symbol='USDC'
           sx={{ width: '100%', textAlign: 'right' }}
         />
       </TableCell>
-      <TableCell width='18%' align='right' padding='none'>
+      <TableCell width='14%' align='right' padding='none'>
         <TokenAmount
           amount={actionHistory.totalAccepted}
           symbol='USDC'
           sx={{ width: '100%', textAlign: 'right' }}
         />
       </TableCell>
-      <TableCell width='18%' align='right' padding='none'>
+      <TableCell width='14%' align='right' padding='none'>
         <TokenAmount
           amount={actionHistory.totalRejected}
           symbol='USDC'
@@ -60,11 +61,11 @@ const TransactionCollapsedContent: React.FC<
       </TableCell>
       <TableCell width='14%' align='right' padding='none'>
         <Typography variant='body1' component='span'>
-          {dayjs.unix(actionHistory.timestamp).format('DD.MM.YYYY')}
+          {dayjs.unix(actionHistory.timestamp).format(DATE_FORMAT)}
         </Typography>
         <br />
         <Typography variant='caption' component='span'>
-          {dayjs.unix(actionHistory.timestamp).format('HH:mm:ss UTCZZ')}
+          {dayjs.unix(actionHistory.timestamp).format(TIME_FORMAT)}
         </Typography>
       </TableCell>
       <TableCell width='14%' align='center' padding='none'>
