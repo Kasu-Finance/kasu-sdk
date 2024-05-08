@@ -1,48 +1,49 @@
-import { Button, ButtonGroup, CardHeader } from '@mui/material'
+import { Box, Button, ButtonGroup, CardHeader } from '@mui/material'
 
 import CsvDownloadButton from '@/components/atoms/CsvDownloadButton'
 
 const LendingPortfolioTabHeader = () => {
   return (
-    <CardHeader
-      action={
-        <>
-          <ButtonGroup
-            variant='contained'
-            sx={(theme) => ({
-              height: 30,
-              mr: 2,
-              '.MuiButton-root': {
-                height: 'inherit',
-              },
-              '.MuiButtonGroup-firstButton': {
-                borderColor: theme.palette.success.dark,
-              },
-              '.MuiButtonGroup-middleButton': {
-                borderColor: theme.palette.warning.dark,
-              },
-            })}
-          >
-            <Button color='success'>ACTIVE</Button>
-            <Button color='warning'>SUSPENDED</Button>
-            <Button color='error'>CLOSED</Button>
-          </ButtonGroup>
-          <CsvDownloadButton
-            onDownload={() => alert('Download is not implemented yet.')}
+    <>
+      <CardHeader
+        action={
+          <Box
             sx={{
-              height: 30,
-              width: 169,
-              px: 1.5,
-              py: 0.5,
-              '& .MuiButton-startIcon > svg': {
-                width: 18,
-              },
+              top: 4,
+              position: 'relative',
+              right: 8,
             }}
-          />
-        </>
-      }
-      title='Lending Portfolio'
-    />
+          >
+            <ButtonGroup
+              disableElevation
+              variant='contained'
+              sx={{
+                mr: 2,
+                '.MuiButtonGroup-grouped': {
+                  borderColor: 'inherit',
+                  border: '0px',
+                },
+              }}
+            >
+              <Button size='small' color='success'>
+                Active
+              </Button>
+              <Button size='small' color='warning'>
+                Suspended
+              </Button>
+              <Button size='small' color='error'>
+                Closed
+              </Button>
+            </ButtonGroup>
+            <CsvDownloadButton
+              size='small'
+              onDownload={() => alert('Download is not implemented yet.')}
+            />
+          </Box>
+        }
+        title='Lending Portfolio'
+      />
+    </>
   )
 }
 

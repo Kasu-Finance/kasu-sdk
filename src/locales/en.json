@@ -27,7 +27,7 @@
     "none": "none",
     "pool": "pool",
     "adjust": "adjust",
-    "csvDownload": "DOWNLOAD AS CSV",
+    "csvDownload": "download as csv",
     "overview": "overview",
     "poolApy": "Pool APY",
     "apy": "APY",

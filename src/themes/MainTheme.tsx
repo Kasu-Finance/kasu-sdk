@@ -376,8 +376,18 @@ export const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          height: '42px',
-          padding: '8px 22px',
+          '&.MuiButton-sizeMedium': {
+            height: '42px',
+            // background: 'red !important',
+            // padding: '8px 22px',
+          },
+          '&.MuiButton-sizeSmall': {
+            height: '30px',
+            pl: 1.25,
+            pr: 1.25,
+            // background: 'blue !important',
+          },
+
           // textTransform: 'inherit',
           fontWeight: 500,
           minWidth: 0,

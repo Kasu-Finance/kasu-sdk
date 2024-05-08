@@ -19,7 +19,7 @@ const OverviewTitle = () => {
       action={
         <Button
           variant='contained'
-          sx={{ height: '30px', top: 4, pl: 1.25, pr: 1.25, right: 8 }}
+          sx={{ top: 4, right: 8 }}
           size='small'
           startIcon={<PhotoIcon />}
         >

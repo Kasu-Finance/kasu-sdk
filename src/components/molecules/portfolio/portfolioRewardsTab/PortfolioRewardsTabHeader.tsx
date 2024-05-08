@@ -7,16 +7,9 @@ const RewardsTabHeader = () => {
     <CardHeader
       action={
         <CsvDownloadButton
+          size='small'
           onDownload={() => alert('Download is not implemented yet.')}
-          sx={{
-            height: 30,
-            width: 169,
-            px: 1.5,
-            py: 0.5,
-            '& .MuiButton-startIcon > svg': {
-              width: 18,
-            },
-          }}
+          sx={{ top: 4, right: 8 }}
         />
       }
       title='My Rewards Portfolio'

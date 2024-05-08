@@ -16,15 +16,18 @@ const CsvDownloadButton: React.FC<CsvDownloadButtonProps> = ({
   const { t } = useTranslation()
 
   return (
-    <Button
-      type='button'
-      variant='contained'
-      startIcon={<DownloadIcon />}
-      onClick={onDownload}
-      {...rest}
-    >
-      {text ?? t('general.csvDownload')}
-    </Button>
+    <>
+      <Button
+        type='button'
+        disableElevation
+        variant='contained'
+        startIcon={<DownloadIcon />}
+        onClick={onDownload}
+        {...rest}
+      >
+        {text ?? t('general.csvDownload')}
+      </Button>
+    </>
   )
 }
 
