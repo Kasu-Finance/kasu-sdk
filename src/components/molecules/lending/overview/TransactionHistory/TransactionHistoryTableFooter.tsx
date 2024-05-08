@@ -20,7 +20,7 @@ const TransactionHistoryTableFooter: React.FC<
 
   return (
     <TableRow>
-      <TableCell padding='none' colSpan={6}>
+      <TableCell padding='none' colSpan={7}>
         <Box px={2}>
           <Typography
             variant='subtitle2'
