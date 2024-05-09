@@ -68,15 +68,10 @@ const TransactionHistory: React.FC<{ poolId: string }> = ({ poolId }) => {
 
   if (isLoading || !transactionHistory?.length) return null
 
-  const currentPoolTransactions: UserRequest[] = transactionHistory.filter(
-    (transaction) => {
-      return transaction.lendingPool.id === poolId
-    }
-  )
-
-  const filteredData: UserRequest[] = currentPoolTransactions.filter(
+  const filteredData: UserRequest[] = transactionHistory.filter(
     (transaction) => {
       return (
+        transaction.lendingPool.id === poolId &&
         (status === 'All' || transaction.status === status) &&
         (trancheType === 'All Tranches' ||
           transaction.trancheName === trancheType) &&
@@ -120,9 +115,7 @@ const TransactionHistory: React.FC<{ poolId: string }> = ({ poolId }) => {
             },
           }}
           footer={
-            <TransactionHistoryTableFooter
-              transactionHistory={currentPoolTransactions}
-            />
+            <TransactionHistoryTableFooter transactionHistory={filteredData} />
           }
           headers={(handleSortChange, sort) => (
             <TransactionHistoryTableHeader
