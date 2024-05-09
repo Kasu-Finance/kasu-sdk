@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Kasu Frontend
 
-## Getting Started
+## FE Architecture
 
-First, run the development server:
+- nextjs
+- node
+- typescript
+- husky
+- eslint
+- commitlint
+- prettier
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Usage
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Clone the repo:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `npm install`
+- `npm run dev`
+- `npm run build`
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Scripts
 
-## Learn More
+- `npm run dev:https` - run dev server
+- `npm run build` - build for production
+- `npm run start` - serve production build
+- `npm run lint` - run eslint
+- `npm run lint:fix` - run eslint with fix
+- `npm run format` - run prettier and format all files
+- `npm run format:check` - check which files are not formatted
+- `npm run generate-types` - create types from abis
+- `npm run types` - check types
 
-To learn more about Next.js, take a look at the following resources:
+## Solidant Packages
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+To install Solidant packages like:
+`https://github.com/solidant/kasu-sdk/pkgs/npm/kasu-sdk`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+1. create a github token with read:packages permission:
+   settings -> developer settings -> personal access token
+2. create a file named .npmrc (dont commit this file, add it to gitignore) and add in:
+   @solidant:registry=https://npm.pkg.github.com/
+   //npm.pkg.github.com/:\_authToken=YOUR_TOKEN_HERE
 
-## Deploy on Vercel
+## Committing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `npm run commit` - run commitizen to create a commit message
+- `npm run commit:lint` - run commitlint to check commit message
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Allowed commit types (commitlint.config.js): `build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style`, `test`
+For commits check [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) and [commitlint](https://commitlint.js.org/#/) for more info.

@@ -13,6 +13,7 @@
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "prepare": "husky install",
     "format": "prettier -w .",
+    "format:check": "prettier -c . '!build/**/*'",
     "generate-types": "typechain --target=ethers-v5 --always-generate-overloads --out-dir=src/contracts/output src/contracts/abis/*.json",
     "types": "tsc -p tsconfig.json --noEmit"
   },
