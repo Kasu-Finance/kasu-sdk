@@ -16,7 +16,7 @@ const PoolTabs: React.FC = () => {
   const panelsId = 'lending'
 
   const handleChange = useCallback(
-    (event: React.SyntheticEvent, newValue: number) => {
+    (_: React.SyntheticEvent, newValue: number) => {
       setActiveTab(newValue)
     },
     []
@@ -37,19 +37,19 @@ const PoolTabs: React.FC = () => {
           <Tab label='Support' />
         </Tabs>
       </Box>
-      <TabPanel value={activeTab} index={0} id={panelsId}>
+      <TabPanel isActive={activeTab === 0} id={panelsId}>
         <PoolOverview />
       </TabPanel>
-      <TabPanel value={activeTab} index={1} id={panelsId}>
+      <TabPanel isActive={activeTab === 1} id={panelsId}>
         <PoolDetails />
       </TabPanel>
-      <TabPanel value={activeTab} index={2} id={panelsId}>
+      <TabPanel isActive={activeTab === 2} id={panelsId}>
         <Repayments />
       </TabPanel>
-      <TabPanel value={activeTab} index={3} id={panelsId}>
+      <TabPanel isActive={activeTab === 3} id={panelsId}>
         <RiskReporting />
       </TabPanel>
-      <TabPanel value={activeTab} index={4} id={panelsId}>
+      <TabPanel isActive={activeTab === 4} id={panelsId}>
         Support
       </TabPanel>
     </Box>
