@@ -21,7 +21,9 @@ const TranchesDetails: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
                 <TranchDetailCard
                   title={tranche.name + ' Tranche'}
                   remainingAmount={{
-                    pct: formatAmount(tranche.poolCapacityPercentage),
+                    pct: formatAmount(
+                      parseFloat(tranche.poolCapacityPercentage) * 100
+                    ),
                     value: formatAmount(tranche.poolCapacity),
                   }}
                   minimumDepositAmount={formatAmount(tranche.minimumDeposit)}
