@@ -65,12 +65,5 @@ export interface  PortfolioLendingPool {
     tranches: PortfolioTranche[]
 }
 export interface LendingPortfolioData {
-    average: {
-        investedAmountPerPool: string;
-        investedAmountPerTranche: string;
-        yieldEarningsLastEpoch: string;
-        yieldEarningsLifetime: string;
-        averageWeightedApy: string;
-    }
     lendingPools: PortfolioLendingPool[]
 }

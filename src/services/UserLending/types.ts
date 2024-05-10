@@ -55,7 +55,8 @@ export interface UserRequestEvent {
         | 'Increased'
         | 'Cancelled'
         | 'Accepted'
-        | 'Rejected';
+        | 'Rejected'
+        | 'Reallocated';
     assetAmount: string;
     totalRequested: string;
     totalAccepted: string;

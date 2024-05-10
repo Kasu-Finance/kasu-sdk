@@ -45,8 +45,8 @@ export const userRequestsQuery = gql`
 `;
 
 export const lendingPoolUserDetailsQuery = gql`
-    query LendingPoolUserDetailsQuery($userAddress: String!) {
-        lendingPoolUserDetails(id: $userAddress) {
+    query LendingPoolUserDetailsQuery(id: String!) {
+        lendingPoolUserDetails(id: id) {
             id
             totalAcceptedDeposits
             totalAcceptedWithdrawnAmount
@@ -55,8 +55,8 @@ export const lendingPoolUserDetailsQuery = gql`
 `;
 
 export const trancheUserDetailsQuery = gql`
-    query TrancheUserDetailsQuery($userAddress: String!, $trancheId: String!) {
-        lendingPoolTrancheUserDetails(id: $userAddress, trancheId: $trancheId) {
+    query TrancheUserDetailsQuery(id: String!) {
+        lendingPoolTrancheUserDetails(id: $id) {
             id
             totalAcceptedDeposits
             totalAcceptedWithdrawnAmount

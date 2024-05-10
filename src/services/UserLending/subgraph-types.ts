@@ -49,10 +49,19 @@ export type UserRequestEventType =
     | 'WithdrawalInitiated'
     | 'WithdrawalIncreased'
     | 'WithdrawalCancelled'
-    | 'WithdrawalAccepted';
+    | 'WithdrawalAccepted'
+    | 'DepositReallocated';
 
 export interface LendingPoolUserDetailsSubgraph {
     lendingPoolUserDetails: {
+        id: string;
+        totalAcceptedDeposits: string;
+        totalAcceptedWithdrawnAmount: string;
+    };
+}
+
+export interface TrancheUserDetailsSubgraph {
+    lendingPoolTrancheUserDetails: {
         id: string;
         totalAcceptedDeposits: string;
         totalAcceptedWithdrawnAmount: string;

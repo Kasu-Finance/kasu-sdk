@@ -62,28 +62,14 @@ export class Portfolio {
     async getPortfolioLendingData(userAddress: string): Promise<LendingPortfolioData> {
         const poolOverviews = await this._dataService.getPoolOverview();
         let totalInvestments =  BigNumber.from(0);
-        let totalTrancheInvesments =  BigNumber.from(0);
-        let totalTranchesInvestedIn = 0;
-        let totalYieldEarned = 0;
-        let totalPoolsInvestedIn = 0;
         const portfolioLendingPools: PortfolioLendingPool[] = [];
         for(const poolOverview of poolOverviews) {
             const userPoolBalance = await this._userLendingService.getUserPoolBalance(userAddress, poolOverview.id);
             totalInvestments = userPoolBalance.balance.add(totalInvestments);
             const yieldEarned = userPoolBalance.yieldEarned;
-            if (!userPoolBalance.balance.eq(BigNumber.from(0))) {
-                totalPoolsInvestedIn++;
-            }
             const tranches: PortfolioTranche[]  = [];
             for (const tranche of poolOverview.tranches) {
                 const userTrancheBalance = await this._userLendingService.getUserTrancheBalance(userAddress, tranche.id);
-                totalTrancheInvesments = totalTrancheInvesments.add(userTrancheBalance.balance);
-                if (!userTrancheBalance.balance.eq(BigNumber.from(0))) {
-                    {
-                        totalTranchesInvestedIn++;
-                    }
-                }
-                totalYieldEarned += yieldEarned;
                 tranches.push({
                     id: tranche.id,
                     name: tranche.name,
@@ -95,7 +81,6 @@ export class Portfolio {
                     }
                 })
             }
-
             portfolioLendingPools.push({
                 id: poolOverview.id,
                 totalYieldEarningsLastEpoch: '0',
@@ -107,13 +92,6 @@ export class Portfolio {
             })
         }
         return {
-            average: {
-                averageWeightedApy: '0',
-                investedAmountPerPool: totalPoolsInvestedIn == 0 ? '0' : (Number.parseFloat(ethers.utils.formatUnits(totalInvestments))/totalPoolsInvestedIn).toString(),
-                investedAmountPerTranche: totalTranchesInvestedIn == 0 ? '0' : (Number.parseFloat(ethers.utils.formatUnits(totalTrancheInvesments))/totalTranchesInvestedIn).toString(),
-                yieldEarningsLastEpoch: '0',
-                yieldEarningsLifetime: totalPoolsInvestedIn == 0 ? '0' : (totalYieldEarned/totalPoolsInvestedIn).toString(),
-            },
             lendingPools: portfolioLendingPools,
         }
     }
