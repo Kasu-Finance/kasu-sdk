@@ -48,6 +48,7 @@ export const theme = createTheme({
     success: {
       main: 'rgba(46, 125, 50, 1)',
       contrastText: 'rgba(255,255,255,0.9)',
+      dark: 'rgba(27, 94, 32, 1)',
     },
     error: {
       main: 'rgba(211, 47, 47, 1)',
@@ -55,6 +56,7 @@ export const theme = createTheme({
     },
     warning: {
       main: 'rgba(237, 108, 2, 1)',
+      dark: 'rgba(230, 81, 0, 1)',
     },
     highlight: {
       background: 'rgba(42, 162, 202, 0.08)',
@@ -374,8 +376,18 @@ export const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          height: '42px',
-          padding: '8px 22px',
+          '&.MuiButton-sizeMedium': {
+            height: '42px',
+            // background: 'red !important',
+            // padding: '8px 22px',
+          },
+          '&.MuiButton-sizeSmall': {
+            height: '30px',
+            pl: 1.25,
+            pr: 1.25,
+            // background: 'blue !important',
+          },
+
           // textTransform: 'inherit',
           fontWeight: 500,
           minWidth: 0,

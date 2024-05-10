@@ -30,7 +30,7 @@ const generateKycSignature = async (params: {
 }) => {
   const NEXERA_API_URL =
     process.env.NEXERA_API_URL ||
-    `${NEXERA_API_BASE_URL}/customer-tx-auth-signature`
+    `${NEXERA_API_BASE_URL}/customers/get-tx-auth-signature`
 
   const response = await fetch(NEXERA_API_URL, {
     body: JSON.stringify(params),

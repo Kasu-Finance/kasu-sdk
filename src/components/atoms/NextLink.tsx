@@ -22,7 +22,7 @@ const NextLink: React.FC<NextLinkProps> = ({
     href={href}
     variant='body2'
     component={Link}
-    sx={{ textDecoration: 'none', ...sx }}
+    sx={[{ textDecoration: 'none' }, ...(Array.isArray(sx) ? sx : [sx])]}
     {...linkProps}
   >
     {children}

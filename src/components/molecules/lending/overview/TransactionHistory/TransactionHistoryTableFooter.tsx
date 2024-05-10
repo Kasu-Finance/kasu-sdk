@@ -1,4 +1,4 @@
-import { alpha, Box, TableCell, TableRow, Typography } from '@mui/material'
+import { Box, TableCell, TableRow, Typography } from '@mui/material'
 import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
 import { BigNumber } from 'ethers'
 import { formatEther } from 'ethers/lib/utils'
@@ -19,11 +19,7 @@ const TransactionHistoryTableFooter: React.FC<
   }, BigNumber.from(0))
 
   return (
-    <TableRow
-      sx={(theme) => ({
-        background: alpha(theme.palette.primary.main, 0.08),
-      })}
-    >
+    <TableRow>
       <TableCell padding='none' colSpan={7}>
         <Box px={2}>
           <Typography

@@ -23,11 +23,10 @@ const EmptyCardState: React.FC<EmptyCardStateProps> = (props) => {
     justifyContent: 'center',
     boxShadow: 2,
     mt: 3,
-    ...sx,
   }
 
   return (
-    <Card sx={combinedSx}>
+    <Card sx={[combinedSx, ...(Array.isArray(sx) ? sx : [sx])]}>
       <Typography variant={variant} color={color}>
         {message}
       </Typography>

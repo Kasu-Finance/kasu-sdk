@@ -35,7 +35,10 @@ const LoyaltyLevelInfo: React.FC<LoyaltyLevelInfoProps> = ({
     <ColoredBox
       display='grid'
       gap={2}
-      sx={{ px: 2, pt: 1, pb: 2, ...rootStyles }}
+      sx={[
+        { px: 2, pt: 1, pb: 2 },
+        ...(Array.isArray(rootStyles) ? rootStyles : [rootStyles]),
+      ]}
     >
       <Box
         display='grid'

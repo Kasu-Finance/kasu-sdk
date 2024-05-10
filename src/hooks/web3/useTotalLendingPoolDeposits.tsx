@@ -39,12 +39,12 @@ const useTotalLendingPoolDeposits = () => {
     if (!data) {
       return { activeDepositAmount: '0.00', pendingDepositAmount: '0.00' }
     }
-    const active = formatUnits(
-      data.activeDepositAmount || '0',
-      TOKENS.USDC.decimals
-    )
+
+    const [activeDepositAmount, pendingDepositAmount] = data
+
+    const active = formatUnits(activeDepositAmount || '0', TOKENS.USDC.decimals)
     const pending = formatUnits(
-      data.pendingDepositAmount || '0',
+      pendingDepositAmount || '0',
       TOKENS.USDC.decimals
     )
     return { activeDepositAmount: active, pendingDepositAmount: pending }

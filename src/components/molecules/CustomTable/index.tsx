@@ -109,12 +109,22 @@ const CustomTable = <T, U extends readonly any[]>({
 
   return (
     <Box>
-      <TableContainer sx={{ borderBottom: 'none', ...tableContainerStyles }}>
+      <TableContainer
+        sx={[
+          { borderBottom: 'none' },
+          ...(Array.isArray(tableContainerStyles)
+            ? tableContainerStyles
+            : [tableContainerStyles]),
+        ]}
+      >
         <Table
-          sx={{ borderRadius: 2, overflow: 'hidden', ...tableStyles }}
+          sx={[
+            { borderRadius: 2, overflow: 'hidden' },
+            ...(Array.isArray(tableStyles) ? tableStyles : [tableStyles]),
+          ]}
           aria-labelledby={ariaLabel}
         >
-          <TableHead sx={{ ...headersStyle }}>
+          <TableHead sx={headersStyle}>
             {typeof headers === 'function' ? (
               headers(handleSortChange, sort)
             ) : (
@@ -129,10 +139,12 @@ const CustomTable = <T, U extends readonly any[]>({
                   return (
                     <TableCell
                       key={index}
-                      sx={{
-                        textAlign: index === 0 ? 'left' : 'right',
-                        ...styles,
-                      }}
+                      sx={[
+                        {
+                          textAlign: index === 0 ? 'left' : 'right',
+                        },
+                        ...(Array.isArray(styles) ? styles : [styles]),
+                      ]}
                     >
                       {disableSort ? (
                         label
@@ -163,10 +175,16 @@ const CustomTable = <T, U extends readonly any[]>({
           </TableBody>
           {footer && (
             <TableFooter
-              sx={{
-                borderTop: '1px solid rgba(224, 224, 224, 1)',
-                ...footerStyle,
-              }}
+              sx={[
+                (theme) => ({
+                  borderTop: '1px solid rgba(224, 224, 224, 1)',
+                  '& .MuiTableCell-root': {
+                    background: 'rgba(25, 118, 210, 0.08)',
+                    color: theme.palette.text.primary,
+                  },
+                }),
+                ...(Array.isArray(footerStyle) ? footerStyle : [footerStyle]),
+              ]}
             >
               {footer}
             </TableFooter>

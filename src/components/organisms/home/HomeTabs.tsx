@@ -59,7 +59,7 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
         <Tab label={t('home.tabs.activePools')} />
         <Tab label={t('home.tabs.closedPools')} />
       </Tabs>
-      <TabPanel value={activeTab} index={0} id='home-pools-active'>
+      <TabPanel isActive={activeTab === 0} id='home-pools-active'>
         <Box>
           <Carousel
             slidesPerPage={3}
@@ -72,7 +72,7 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
           </Carousel>
         </Box>
       </TabPanel>
-      <TabPanel value={activeTab} index={1} id='home-pools-closed'>
+      <TabPanel isActive={activeTab === 1} id='home-pools-closed'>
         <Box>
           <ClosedPoolsTable pools={pools} poolDelegates={poolDelegates} />
         </Box>

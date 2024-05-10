@@ -1,5 +1,4 @@
-import { alpha, TableRow } from '@mui/material'
-import TableCell from '@mui/material/TableCell'
+import { alpha, TableCell, TableRow } from '@mui/material'
 import React from 'react'
 
 import { Sort } from '@/components/molecules/CustomTable'
@@ -20,7 +19,7 @@ const TransactionHistoryTableHeader: React.FC<
         background: alpha(theme.palette.primary.main, 0.04),
       })}
     >
-      <TableCell rowSpan={2} width='16%' className='p-64'>
+      <TableCell rowSpan={2} width='18%' className='request-type'>
         <CustomTableSortLabel
           label='Request'
           sortKey='requestType'
@@ -28,12 +27,13 @@ const TransactionHistoryTableHeader: React.FC<
           handleSortChange={handleSortChange}
         />
       </TableCell>
-      <TableCell rowSpan={2} width='12%'>
+      <TableCell rowSpan={2} width='12%' align='right'>
         <CustomTableSortLabel
           label='Tranche'
-          sortKey='trancheName'
+          sortKey='tranche'
           sort={sort}
           handleSortChange={handleSortChange}
+          flipIcon
         />
       </TableCell>
 
@@ -62,7 +62,7 @@ const TransactionHistoryTableHeader: React.FC<
         background: alpha(theme.palette.primary.main, 0.04),
       })}
     >
-      <TableCell align='right' width='14%'>
+      <TableCell align='right' width='18%'>
         <CustomTableSortLabel
           label='Requested'
           sortKey='requestedAmount'
@@ -70,7 +70,7 @@ const TransactionHistoryTableHeader: React.FC<
           handleSortChange={handleSortChange}
         />
       </TableCell>
-      <TableCell align='right' width='14%'>
+      <TableCell align='right' width='18%'>
         <CustomTableSortLabel
           label='Accepted'
           sortKey='acceptedAmount'
@@ -78,7 +78,7 @@ const TransactionHistoryTableHeader: React.FC<
           handleSortChange={handleSortChange}
         />
       </TableCell>
-      <TableCell align='right' width='14%'>
+      <TableCell align='right' width='18%'>
         <CustomTableSortLabel
           label='Rejected'
           sortKey='rejectedAmount'

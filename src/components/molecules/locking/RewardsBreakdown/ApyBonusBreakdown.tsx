@@ -8,9 +8,7 @@ import { formatAmount } from '@/utils'
 
 const ApyBonusBreakdown = () => {
   const stakedPercentage = useLockingPercentage()
-
   const { currentLevel } = useLoyaltyLevel(stakedPercentage)
-
   const { apyBonus } = useUserApyBonus()
 
   return (
@@ -28,7 +26,7 @@ const ApyBonusBreakdown = () => {
         {
           title: 'Balance',
           toolTipInfo: 'info',
-          metric: [formatAmount(apyBonus?.balance), 'KSU'],
+          metric: [formatAmount(apyBonus?.balance.toString()), 'KSU'],
         },
         {
           title: 'Lifetime',

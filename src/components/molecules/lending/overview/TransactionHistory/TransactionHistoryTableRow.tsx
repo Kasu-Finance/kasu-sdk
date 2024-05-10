@@ -83,7 +83,7 @@ const TransactionHistoryTableRow: React.FC<TransactionHistoryTableRowProps> = ({
             {transaction.requestType}
           </Box>
         </TableCell>
-        <TableCell>{transaction.trancheName}</TableCell>
+        <TableCell align='right'>{transaction.trancheName}</TableCell>
         <TableCell align='right'>
           <TokenAmount
             amount={formatAmount(transaction.requestedAmount)}

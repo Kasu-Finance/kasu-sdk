@@ -26,11 +26,13 @@ const MetricWithSuffix: React.FC<MetricWithSuffixProps> = ({
 
   return (
     <Box
-      sx={{
-        flexDirection: 'column',
-        width: '100%',
-        ...containerSx,
-      }}
+      sx={[
+        {
+          flexDirection: 'column',
+          width: '100%',
+        },
+        ...(Array.isArray(containerSx) ? containerSx : [containerSx]),
+      ]}
     >
       <InfoRow title={t(titleKey)} toolTipInfo={t(tooltipKey)} showDivider />
       <ContentWithSuffix

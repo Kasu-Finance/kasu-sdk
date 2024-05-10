@@ -3,6 +3,7 @@ import { Routes } from '@/config/routes'
 type NavItemType = {
   to: string
   label: string
+  accountRequired?: boolean
 }
 
 export const NAV_ITEMS: NavItemType[] = [
@@ -14,6 +15,11 @@ export const NAV_ITEMS: NavItemType[] = [
   {
     label: 'Locking',
     to: Routes.locking.root.url,
+  },
+  {
+    label: 'My Portfolio',
+    to: Routes.portfolio.root.url,
+    accountRequired: true,
   },
   {
     label: 'Docs',

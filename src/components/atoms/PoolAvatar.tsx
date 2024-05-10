@@ -48,7 +48,10 @@ const PoolAvatar: React.FC<AvatarProps> = ({
     >
       <Avatar
         {...props}
-        sx={{ ...sx, boxShadow: '0 0 8px rgba(0,0,0,0.14) inset' }}
+        sx={[
+          { boxShadow: '0 0 8px rgba(0,0,0,.14) inset' },
+          ...(Array.isArray(sx) ? sx : [sx]),
+        ]}
         src={avatarSrc}
       >
         {avatarContent}
