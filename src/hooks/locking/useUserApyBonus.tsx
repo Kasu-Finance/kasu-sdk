@@ -9,7 +9,7 @@ const useUserApyBonus = () => {
 
   const { data, error, mutate } = useSWR(
     account ? ['userApyBonus', account] : null,
-    async ([_, userAddress]) => sdk.Locking.getUserApyBonus(userAddress)
+    async ([_, userAddress]) => sdk.UserLending.getUserApyBonus(userAddress)
   )
 
   return {

@@ -15,6 +15,7 @@ import useModalState from '@/hooks/context/useModalState'
 import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
 import useUserBonusData from '@/hooks/locking/useUserBonusData'
 import useUserLocks from '@/hooks/locking/useUserLocks'
+import useLendingPortfolioData from '@/hooks/portfolio/useLendingPortfolioData'
 import useTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
@@ -29,7 +30,9 @@ import { LockIcon, WalletIcon } from '@/assets/icons'
 
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
-const LoyaltyCard = () => {
+const LoyaltyCard: React.FC<{
+  poolId: string
+}> = ({ poolId }) => {
   const { openModal } = useModalState()
   const { t } = useTranslation()
   const handleOpenLockingKSU = () => openModal({ name: 'lockModal' })
@@ -38,6 +41,12 @@ const LoyaltyCard = () => {
   const { userBonus } = useUserBonusData()
   const stakedPercentage = useLockingPercentage()
   const { currentLevel } = useLoyaltyLevel(stakedPercentage)
+  const { lendingPortfolioData } = useLendingPortfolioData()
+
+  const lifetimeBonusYieldEarnings: string = lendingPortfolioData
+    ? lendingPortfolioData.lendingPools.find((pool) => pool.id === poolId)
+        ?.totalYieldEarningsLifetime || '0.00'
+    : '0.00'
 
   const totalKsuBonusAndRewards = useMemo(() => {
     if (!userBonus) {
@@ -166,10 +175,8 @@ const LoyaltyCard = () => {
                 <div>
                   <ContentWithSuffix
                     textAlign='right'
-                    content={`${formatAmount(
-                      userKSU?.lifetimeBonusYieldEarnings
-                    )}`}
-                    suffix='KSU'
+                    content={`${formatAmount(lifetimeBonusYieldEarnings)}`}
+                    suffix='KSU TEST'
                   />
                   <Typography
                     textAlign='right'
