@@ -53,7 +53,7 @@ export type UserRequestEventType =
     | 'DepositReallocated';
 
 export interface LendingPoolUserDetailsSubgraph {
-    lendingPoolUserDetails: {
+    lendingPoolUserDetails?: {
         id: string;
         totalAcceptedDeposits: string;
         totalAcceptedWithdrawnAmount: string;
@@ -61,7 +61,7 @@ export interface LendingPoolUserDetailsSubgraph {
 }
 
 export interface TrancheUserDetailsSubgraph {
-    lendingPoolTrancheUserDetails: {
+    lendingPoolTrancheUserDetails?: {
         id: string;
         totalAcceptedDeposits: string;
         totalAcceptedWithdrawnAmount: string;

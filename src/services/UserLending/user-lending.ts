@@ -326,14 +326,14 @@ export class UserLending {
         );
         const userDetailsSubgraph: LendingPoolUserDetailsSubgraph =
             await this._graph.request(lendingPoolUserDetailsQuery, {
-                id: `${poolId}-${user}`,
+                userAddress: `${poolId}-${user}`,
             });
         const balance = await lendingPool.userBalance(user);
         const balanceNumber = parseFloat(ethers.utils.formatUnits(balance,6));
         return {
             userId: user,
             address: poolId,
-            yieldEarned: balanceNumber - parseFloat(userDetailsSubgraph.lendingPoolUserDetails.totalAcceptedDeposits) - parseFloat(userDetailsSubgraph.lendingPoolUserDetails.totalAcceptedWithdrawnAmount),
+            yieldEarned: userDetailsSubgraph.lendingPoolUserDetails != null ? balanceNumber - parseFloat(userDetailsSubgraph.lendingPoolUserDetails.totalAcceptedDeposits) - parseFloat(userDetailsSubgraph.lendingPoolUserDetails.totalAcceptedWithdrawnAmount) : 0,
             balance: balance,
         };
     }
@@ -351,12 +351,12 @@ export class UserLending {
         const balanceNumber = parseFloat(ethers.utils.formatUnits(balance,6));
         const userDetailsSubgraph: TrancheUserDetailsSubgraph =
             await this._graph.request(trancheUserDetailsQuery, {
-                id: `${trancheId}-${user}`,
+                userAddress: `${trancheId}-${user}`,
             });
         return {
             userId: user,
             address: trancheId,
-            yieldEarned: balanceNumber - parseFloat(userDetailsSubgraph.lendingPoolTrancheUserDetails.totalAcceptedDeposits) - parseFloat(userDetailsSubgraph.lendingPoolTrancheUserDetails.totalAcceptedWithdrawnAmount),
+            yieldEarned: userDetailsSubgraph.lendingPoolTrancheUserDetails != null ? balanceNumber - parseFloat(userDetailsSubgraph.lendingPoolTrancheUserDetails.totalAcceptedDeposits) - parseFloat(userDetailsSubgraph.lendingPoolTrancheUserDetails.totalAcceptedWithdrawnAmount) : 0,
             balance: balance,
             availableToWithdraw: await tranche.maxWithdraw(user),
     };
