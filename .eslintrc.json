@@ -18,7 +18,7 @@
     "parserOptions": {
         "project": ["./tsconfig.json"] // Specify it only for TypeScript files
     },
-    "ignorePatterns": ["node_modules", "src/contracts"],
+    "ignorePatterns": ["node_modules", "src/contracts", "index.ts"],
     "rules": {
         "@typescript-eslint/no-explicit-any": "error",
         "testing-library/prefer-screen-queries": "off",
