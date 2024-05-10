@@ -4,6 +4,7 @@ import React from 'react'
 
 import useCalculatePortfolioRewardsTotal from '@/hooks/lending/useCalculatePortfolioRewardsTotal'
 import { PortfolioRewardsType } from '@/hooks/portfolio/usePortfolioRewards'
+import useTranslation from '@/hooks/useTranslation'
 
 import TokenAmount from '@/components/atoms/TokenAmount'
 
@@ -23,6 +24,8 @@ const PortfolioRewardsTableFooter: React.FC<
     lifetimeUsdcBonus,
   } = useCalculatePortfolioRewardsTotal(portfolioRewards)
 
+  const { t } = useTranslation()
+
   return (
     <>
       <TableRow
@@ -34,10 +37,10 @@ const PortfolioRewardsTableFooter: React.FC<
       >
         <TableCell>
           <Typography variant='subtitle2' component='span'>
-            Total USDC Bonus/Rewards{' '}
+            {t('portfolio.rewards.totalUsdcBonus')}{' '}
           </Typography>
           <Typography variant='caption' component='span'>
-            (Protocol Fees)
+            ({t('portfolio.rewards.Protocol Fees')})
           </Typography>
         </TableCell>
         <TableCell align='right'>
@@ -68,7 +71,7 @@ const PortfolioRewardsTableFooter: React.FC<
       >
         <TableCell>
           <Typography variant='subtitle2' component='span'>
-            Total KSU Bonus/Rewards
+            {t('portfolio.rewards.totalKsuBonus')}
           </Typography>
         </TableCell>
         <TableCell align='right'>

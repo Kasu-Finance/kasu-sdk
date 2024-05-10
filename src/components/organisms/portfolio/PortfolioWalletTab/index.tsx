@@ -11,6 +11,7 @@ import {
 import { useWeb3React } from '@web3-react/core'
 import { formatEther, formatUnits, parseEther } from 'ethers/lib/utils'
 
+import useTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 import useUserBalance from '@/hooks/web3/useUserBalance'
 
@@ -22,6 +23,8 @@ import sdkConfig, { USDC } from '@/config/sdk'
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
 const PortfolioWalletTab = () => {
+  const { t } = useTranslation()
+
   const { account } = useWeb3React()
 
   const { balance: ksuBalance, decimals: ksuDecimals } = useUserBalance(
@@ -45,10 +48,10 @@ const PortfolioWalletTab = () => {
 
   return (
     <>
-      <CardHeader title='My Wallet' />
+      <CardHeader title={t('portfolio.wallet.title')} />
       <CardContent>
         <InfoColumn
-          title='Connected Wallet'
+          title={t('portfolio.wallet.connectedWallet')}
           showDivider
           metric={
             <Typography
@@ -68,8 +71,8 @@ const PortfolioWalletTab = () => {
           <Grid item xs={6}>
             <ColoredBox>
               <InfoColumn
-                title='Wallet Balance'
-                toolTipInfo='info'
+                title={t('portfolio.wallet.metric-1')}
+                toolTipInfo={t('portfolio.wallet.metric-1-tooltip')}
                 showDivider
                 metric={
                   <Box pt='6px' pl={2} textTransform='uppercase'>
@@ -93,11 +96,15 @@ const PortfolioWalletTab = () => {
             </ColoredBox>
             <Button
               variant='contained'
-              sx={{ mt: 2, mx: 'auto', display: 'flex' }}
+              sx={{
+                mt: 2,
+                mx: 'auto',
+                display: 'flex',
+              }}
               startIcon={<CachedIcon />}
               disabled={!walletWithBalance.length}
             >
-              CONVERT TO KSU
+              {t('general.convertToKSU')}
             </Button>
           </Grid>
           <Grid item xs={6}>
@@ -105,8 +112,8 @@ const PortfolioWalletTab = () => {
               <Grid container spacing={2}>
                 <Grid item xs={5}>
                   <InfoColumn
-                    title='Total KSU Balance'
-                    toolTipInfo='info'
+                    title={t('portfolio.wallet.metric-2')}
+                    toolTipInfo={t('portfolio.wallet.metric-2-tooltip')}
                     showDivider
                     metric={
                       <TokenAmount
@@ -123,8 +130,8 @@ const PortfolioWalletTab = () => {
                 </Grid>
                 <Grid item xs={5}>
                   <InfoColumn
-                    title='Available Funds'
-                    toolTipInfo='info'
+                    title={t('portfolio.wallet.metric-3')}
+                    toolTipInfo={t('portfolio.wallet.metric-3-toolip')}
                     showDivider
                     metric={
                       <TokenAmount
@@ -146,7 +153,7 @@ const PortfolioWalletTab = () => {
               startIcon={<WalletIcon />}
               disabled={usdcBalance.isZero()}
             >
-              BUY KSU
+              {t('general.buyKSU')}
             </Button>
           </Grid>
         </Grid>

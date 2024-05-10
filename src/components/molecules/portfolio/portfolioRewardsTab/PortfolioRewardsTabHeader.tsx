@@ -1,8 +1,12 @@
 import { CardHeader } from '@mui/material'
 
+import useTranslation from '@/hooks/useTranslation'
+
 import CsvDownloadButton from '@/components/atoms/CsvDownloadButton'
 
 const RewardsTabHeader = () => {
+  const { t } = useTranslation()
+
   return (
     <CardHeader
       action={
@@ -12,7 +16,7 @@ const RewardsTabHeader = () => {
           sx={{ top: 4, right: 8 }}
         />
       }
-      title='My Rewards Portfolio'
+      title={t('portfolio.rewards.title')}
     />
   )
 }

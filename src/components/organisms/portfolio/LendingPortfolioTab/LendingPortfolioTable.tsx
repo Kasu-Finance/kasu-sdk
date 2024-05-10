@@ -51,6 +51,7 @@ const LendingPortfolioTable = () => {
         '& .MuiTableCell-root': {
           py: '6px',
           px: 2,
+          textTransform: 'capitalize',
 
           '&.apy': {
             pr: 0,
@@ -70,6 +71,7 @@ const LendingPortfolioTable = () => {
         '& .MuiTableCell-root': {
           background: 'none',
           height: '100px',
+          textTransform: 'capitalize',
         },
       }}
     >

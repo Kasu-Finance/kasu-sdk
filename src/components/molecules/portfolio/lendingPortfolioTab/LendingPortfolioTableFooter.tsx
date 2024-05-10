@@ -12,6 +12,7 @@ import React, { ReactNode } from 'react'
 
 import useCalculatePortfolioAverage from '@/hooks/lending/useCalculatePortfolioAverage'
 import useCalculatePortfolioTotal from '@/hooks/lending/useCalculatePortfolioTotal'
+import useTranslation from '@/hooks/useTranslation'
 
 import TokenAmount from '@/components/atoms/TokenAmount'
 
@@ -47,6 +48,8 @@ const LendingPortfolioTableFooter: React.FC<
     lendingPortfolio
   )
 
+  const { t } = useTranslation()
+
   return (
     <>
       <TableRow
@@ -59,7 +62,7 @@ const LendingPortfolioTableFooter: React.FC<
       >
         <TableCell>
           <Typography variant='subtitle2' component='span'>
-            Average
+            {t('general.average')}
           </Typography>
         </TableCell>
         <FooterCell
@@ -68,7 +71,7 @@ const LendingPortfolioTableFooter: React.FC<
               {formatPercentage(averageValues.weightedApy)}
             </Typography>
           }
-          caption='Weighted'
+          caption={t('general.weighted')}
           sx={{ pr: 0 }}
           className='apy'
         />
@@ -81,7 +84,7 @@ const LendingPortfolioTableFooter: React.FC<
               symbol='USDC'
             />
           }
-          caption='Per Tranche'
+          caption={t('general.perTranche')}
         />
         <FooterCell
           value={
@@ -92,7 +95,7 @@ const LendingPortfolioTableFooter: React.FC<
               symbol='USDC'
             />
           }
-          caption='Per Pool'
+          caption={t('general.perPool')}
         />
         <FooterCell
           value={
@@ -103,7 +106,7 @@ const LendingPortfolioTableFooter: React.FC<
               symbol='USDC'
             />
           }
-          caption='Per Pool'
+          caption={t('general.perPool')}
         />
       </TableRow>
       <TableRow
@@ -116,7 +119,7 @@ const LendingPortfolioTableFooter: React.FC<
       >
         <TableCell colSpan={2}>
           <Typography variant='subtitle2' component='span'>
-            Total
+            {t('general.total')}
           </Typography>
         </TableCell>
         <TableCell align='right'>

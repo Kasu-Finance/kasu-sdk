@@ -72,6 +72,7 @@ const PortfolioRewardsTable = () => {
         '& .MuiTableCell-root': {
           py: '6px',
           px: 2,
+          textTransform: 'capitalize',
         },
       }}
     >
