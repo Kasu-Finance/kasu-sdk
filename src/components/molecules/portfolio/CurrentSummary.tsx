@@ -4,6 +4,7 @@ import { Divider, Grid, Skeleton, Typography } from '@mui/material'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 
 import usePortfolioSummary from '@/hooks/portfolio/usePortfolioSummary'
+import useTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
 import InfoColumn from '@/components/atoms/InfoColumn'
@@ -20,6 +21,8 @@ const CurrentSummary = () => {
   const { portfolioSummary, isLoading } = usePortfolioSummary()
 
   const { ksuPrice } = useKsuPrice()
+
+  const { t } = useTranslation()
 
   if (isLoading) {
     return (
@@ -52,8 +55,8 @@ const CurrentSummary = () => {
     <Grid item xs={6} container spacing={2} mt='auto'>
       <Grid item xs={4}>
         <InfoColumn
-          title='Total KSU Locked'
-          toolTipInfo='info'
+          title={t('portfolio.summary.totalKsuLocked.title')}
+          toolTipInfo={t('portfolio.summary.totalKsuLocked.tooltip')}
           showDivider
           titleStyle={{ whiteSpace: 'nowrap' }}
           metric={
@@ -71,8 +74,8 @@ const CurrentSummary = () => {
       </Grid>
       <Grid item xs={4}>
         <InfoColumn
-          title='Lending Pool Investments'
-          toolTipInfo='info'
+          title={t('portfolio.summary.lendingPoolInvestment.title')}
+          toolTipInfo={t('portfolio.summary.lendingPoolInvestment.tooltip')}
           showDivider
           titleStyle={{ whiteSpace: 'nowrap' }}
           metric={
@@ -89,8 +92,8 @@ const CurrentSummary = () => {
       </Grid>
       <Grid item xs={4}>
         <InfoColumn
-          title='Weighted Average APY'
-          toolTipInfo='info'
+          title={t('portfolio.summary.weightedApy.title')}
+          toolTipInfo={t('portfolio.summary.weightedApy.tooltip')}
           showDivider
           titleStyle={{ whiteSpace: 'nowrap' }}
           metric={

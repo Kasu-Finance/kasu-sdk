@@ -1,14 +1,10 @@
 import { PortfolioRewards } from '@solidant/kasu-sdk/src/services/Portfolio/types'
 import { useWeb3React } from '@web3-react/core'
+import { useMemo } from 'react'
 import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
-
-const mapKeyToLabel = {
-  bonusYieldEarnings: 'Bonus Yield Earnings',
-  ksuLaunchBonus: 'KSU Launch Bonus',
-  protocolFees: 'Protocol Fees',
-} as const satisfies Record<keyof PortfolioRewards, string>
+import useTranslation from '@/hooks/useTranslation'
 
 export type PortfolioRewardsType = {
   label: string
@@ -29,10 +25,22 @@ const usePortfolioRewards = () => {
 
   const { account } = useWeb3React()
 
+  const { t } = useTranslation()
+
+  const mapKeyToLabel = useMemo(
+    () =>
+      ({
+        bonusYieldEarnings: t('portfolio.rewards.bonusYieldEarnings'),
+        ksuLaunchBonus: t('portfolio.rewards.ksuLaunchBonus'),
+        protocolFees: t('portfolio.rewards.Protocol Fees'),
+      }) as const satisfies Record<keyof PortfolioRewards, string>,
+    [t]
+  )
+
   const { data, error, mutate } = useSWR(
     account ? ['portfolioRewards', account] : null,
     async ([_, userAddress]) => {
-      const rewards = sdk.Portfolio.getPortfolioRewards(
+      const rewards = await sdk.Portfolio.getPortfolioRewards(
         userAddress.toLowerCase()
       )
 

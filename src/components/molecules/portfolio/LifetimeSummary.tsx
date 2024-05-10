@@ -4,6 +4,7 @@ import { Divider, Grid, Skeleton, Typography } from '@mui/material'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 
 import usePortfolioSummary from '@/hooks/portfolio/usePortfolioSummary'
+import useTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
@@ -16,6 +17,8 @@ const LifetimeSummary = () => {
   const { portfolioSummary, isLoading } = usePortfolioSummary()
 
   const { ksuPrice } = useKsuPrice()
+
+  const { t } = useTranslation()
 
   if (isLoading) {
     return (
@@ -60,15 +63,16 @@ const LifetimeSummary = () => {
           width='100%'
           display='block'
           py='6px'
+          textTransform='capitalize'
         >
-          Lifetime
+          {t('general.lifetime')}
         </Typography>
         <Divider />
         <Grid container spacing={2}>
           <Grid item xs={4}>
             <InfoColumn
-              title='Yield Earnings'
-              toolTipInfo='info'
+              title={t('portfolio.summary.yieldEarnings.title')}
+              toolTipInfo={t('portfolio.summary.yieldEarnings.tooltip')}
               showDivider
               metric={
                 <TokenAmount
@@ -84,8 +88,8 @@ const LifetimeSummary = () => {
           </Grid>
           <Grid item xs={4}>
             <InfoColumn
-              title='KSU Bonus & Rewards'
-              toolTipInfo='info'
+              title={t('portfolio.summary.ksuBonusRewards.title')}
+              toolTipInfo={t('portfolio.summary.ksuBonusRewards.tooltip')}
               titleStyle={{ whiteSpace: 'nowrap' }}
               showDivider
               metric={
@@ -103,8 +107,8 @@ const LifetimeSummary = () => {
           </Grid>
           <Grid item xs={4}>
             <InfoColumn
-              title='Protocol Fees Earned'
-              toolTipInfo='info'
+              title={t('portfolio.summary.protocolFeesEarned.title')}
+              toolTipInfo={t('portfolio.summary.protocolFeesEarned.tooltip')}
               titleStyle={{ whiteSpace: 'nowrap' }}
               showDivider
               metric={
