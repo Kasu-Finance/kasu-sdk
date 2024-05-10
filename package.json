@@ -34,7 +34,7 @@
     "@directus/sdk": "^15.0.1",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@typechain/ethers-v5": "^11.1.2",
-    "@typescript-eslint/parser": "^7.7.1",
+    "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.56.0",
     "ethers": "^5.7.2",
     "graphql-request": "^6.1.0",
