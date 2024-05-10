@@ -3,7 +3,7 @@ import {
     BigNumber,
     BigNumberish,
     BytesLike,
-    ContractTransaction,
+    ContractTransaction, ethers,
     Signer,
 } from 'ethers';
 import { GraphQLClient } from 'graphql-request';
@@ -22,11 +22,11 @@ import { SdkConfig } from '../../sdk-config';
 
 import { mapUserRequestEventType } from './helper';
 import {
-    lendingPoolUserDetailsQuery, totalUserLoyaltyRewardsQuery,
+    lendingPoolUserDetailsQuery, totalUserLoyaltyRewardsQuery, trancheUserDetailsQuery,
     userRequestsQuery,
 } from './queries';
 import {
-    LendingPoolUserDetailsSubgraph, TotalUserLoyaltyRewardsSubgraph,
+    LendingPoolUserDetailsSubgraph, TotalUserLoyaltyRewardsSubgraph, TrancheUserDetailsSubgraph,
     UserRequestsSubgraph,
 } from './subgraph-types';
 import {
@@ -246,6 +246,9 @@ export class UserLending {
             const totalAccepted = '0';
             const totalRejected = '0';
             for (const event of userRequest.userRequestEvents) {
+                if(event.tranche.id != userRequest.tranche.id){
+                    event.type = 'DepositReallocated';
+                }
                 events.push({
                     id: event.id,
                     requestType: mapUserRequestEventType(event.type),
@@ -321,11 +324,16 @@ export class UserLending {
             poolId,
             this._signerOrProvider,
         );
+        const userDetailsSubgraph: LendingPoolUserDetailsSubgraph =
+            await this._graph.request(lendingPoolUserDetailsQuery, {
+                id: `${poolId}-${user}`,
+            });
         const balance = await lendingPool.userBalance(user);
+        const balanceNumber = parseFloat(ethers.utils.formatUnits(balance,6));
         return {
             userId: user,
             address: poolId,
-            yieldEarned: 0, // TODO do this calculation
+            yieldEarned: balanceNumber - parseFloat(userDetailsSubgraph.lendingPoolUserDetails.totalAcceptedDeposits) - parseFloat(userDetailsSubgraph.lendingPoolUserDetails.totalAcceptedWithdrawnAmount),
             balance: balance,
         };
     }
@@ -338,18 +346,21 @@ export class UserLending {
             trancheId,
             this._signerOrProvider,
         );
-        const userDetailsSubgraph: LendingPoolUserDetailsSubgraph =
-            await this._graph.request(lendingPoolUserDetailsQuery, {
-                userAddress: user,
-            });
+
         const balance = await tranche.userActiveAssets(user);
+        const balanceNumber = parseFloat(ethers.utils.formatUnits(balance,6));
+        const userDetailsSubgraph: TrancheUserDetailsSubgraph =
+            await this._graph.request(trancheUserDetailsQuery, {
+                id: `${trancheId}-${user}`,
+            });
         return {
             userId: user,
             address: trancheId,
-            yieldEarned: 0, // TODO do this calculation
+            yieldEarned: balanceNumber - parseFloat(userDetailsSubgraph.lendingPoolTrancheUserDetails.totalAcceptedDeposits) - parseFloat(userDetailsSubgraph.lendingPoolTrancheUserDetails.totalAcceptedWithdrawnAmount),
             balance: balance,
             availableToWithdraw: await tranche.maxWithdraw(user),
-        };
+    };
+
     }
 
     async getUserApyBonus(user: string): Promise<UserApyBonus> {
