@@ -43,10 +43,11 @@ const LoyaltyCard: React.FC<{
   const { currentLevel } = useLoyaltyLevel(stakedPercentage)
   const { lendingPortfolioData } = useLendingPortfolioData()
 
-  const lifetimeBonusYieldEarnings: string = lendingPortfolioData
-    ? lendingPortfolioData.lendingPools.find((pool) => pool.id === poolId)
-        ?.totalYieldEarningsLifetime || '0.00'
-    : '0.00'
+  const lifetimeBonusYieldEarnings =
+    (
+      lendingPortfolioData &&
+      lendingPortfolioData?.lendingPools.find((pool) => pool.id === poolId)
+    )?.totalYieldEarningsLifetime ?? '0.00'
 
   const totalKsuBonusAndRewards = useMemo(() => {
     if (!userBonus) {
