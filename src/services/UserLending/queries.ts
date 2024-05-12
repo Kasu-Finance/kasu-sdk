@@ -71,3 +71,12 @@ export const totalUserLoyaltyRewardsQuery = gql`
       }
     }
 `;
+
+export const lendingPoolsBalanceQuery = gql`
+    query LendingPoolsBalanceQuery {
+      lendingPools {
+        id
+        balance
+      }
+    }
+`

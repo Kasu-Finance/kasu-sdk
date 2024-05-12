@@ -4,6 +4,7 @@ import { BigNumber, ethers, Signer } from 'ethers';
 import { SdkConfig } from '../../sdk-config';
 import { DataService } from '../DataService/data-service';
 import { KSULocking } from '../Locking/locking';
+import { UserPoolBalance } from '../UserLending/types';
 import { UserLending } from '../UserLending/user-lending';
 
 import {
@@ -62,9 +63,18 @@ export class Portfolio {
     async getPortfolioLendingData(userAddress: string): Promise<LendingPortfolioData> {
         const poolOverviews = await this._dataService.getPoolOverview();
         let totalInvestments =  BigNumber.from(0);
-        const portfolioLendingPools: PortfolioLendingPool[] = [];
+        const portfolioLendingPools: PortfolioLendingPool[] = []
+        const usePoolBalancePromises: Promise<UserPoolBalance>[] = []
+        for (const poolOverview of poolOverviews) {
+            usePoolBalancePromises.push(this._userLendingService.getUserPoolBalance(userAddress, poolOverview.id));
+        }
+        const userPoolBalances = await Promise.all(usePoolBalancePromises);
         for(const poolOverview of poolOverviews) {
-            const userPoolBalance = await this._userLendingService.getUserPoolBalance(userAddress, poolOverview.id);
+            const userPoolBalance = userPoolBalances.find(u => u.address === poolOverview.id);
+            if(!userPoolBalance) {
+                console.log(`Could not find user pool balance for ${poolOverview.id}`);
+                continue;
+            }
             totalInvestments = userPoolBalance.balance.add(totalInvestments);
             const yieldEarned = userPoolBalance.yieldEarned;
             const tranches: PortfolioTranche[]  = [];

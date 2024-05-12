@@ -14,9 +14,9 @@ export interface PoolOverviewDirectus {
     id: string;
     apy: number;
     description: string;
-    bannerImageUrl: string;
-    thumbnailImageUrl: string;
-    strategyDeckUrl: string;
+    bannerImage: string;
+    thumbnailImage: string;
+    strategyDeck: string;
     assetClass: string;
     industryExposure: string;
     poolApyStructure: string;
