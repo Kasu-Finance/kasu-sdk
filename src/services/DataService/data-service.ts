@@ -42,7 +42,7 @@ import {
     PoolDelegateProfileAndHistory,
     PoolOverview, PoolRepayment, PoolTranche,
     RiskManagement,
-    RiskManagementItem, TrancheData,
+    RiskManagementItem, RiskPerformance, TrancheData,
 } from './types';
 
 
@@ -53,6 +53,10 @@ export class DataService {
     constructor(kasuConfig: SdkConfig) {
         this._graph = new GraphQLClient(kasuConfig.subgraphUrl);
         this._directus = createDirectus<DirectusSchema>(kasuConfig.directusUrl).with(authentication()).with(rest());
+    }
+
+    private getUrlFromFile(fileName: string): string {
+        return `https://kasu-finance.directus.app/assets/${fileName}`;
     }
 
     calculatePoolCapacity(poolCapacities: number[], poolCapacityPercentages: number[], index: number, spillOver: number, lendingPoolSubgraph: LendingPoolSubgraph, lendingPoolConfig: LendingPoolConfigurationSubgraph): {poolCapacity: number[], poolCapacityPercentage: number[]} {
@@ -121,15 +125,25 @@ export class DataService {
             }
             const poolCapacitySum = poolCapacities.poolCapacity.reduce((a, b) => a + b, 0);
             const poolCapacityPercentageSum = poolCapacities.poolCapacityPercentage.reduce((a, b) => a + b, 0) / poolCapacities.poolCapacity.length;
+            const trancheBalanceSum = lendingPoolSubgraph.tranches.reduce((a, b) => a + parseFloat(b.balance), 0);
+            let averageApy = 0;
+            for(const tranche of lendingPoolSubgraph.tranches) {
+                const trancheDirectus = directusResults.find(r => r.id == tranche.id);
+                if(!trancheDirectus) {
+                    console.log("Couldn't find tranche directus for id: ", tranche.id);
+                    continue;
+                }
+                const weight = parseFloat(tranche.balance) / trancheBalanceSum;
+                averageApy += trancheDirectus.apy * weight;
+            }
             const poolOverview: PoolOverview = {
                 id: lendingPoolSubgraph.id,
-                // TODO weighted average  of  apy and tranche balances - remove from directus
-                apy: lendingPoolDirectus.apy,
+                apy: averageApy,
                 poolAddress: lendingPoolSubgraph.id,
                 description: lendingPoolDirectus.description,
-                bannerImageUrl: lendingPoolDirectus.bannerImageUrl,
-                thumbnailImageUrl: lendingPoolDirectus.thumbnailImageUrl,
-                strategyDeckUrl: lendingPoolDirectus.strategyDeckUrl,
+                bannerImageUrl: this.getUrlFromFile(lendingPoolDirectus.bannerImage),
+                thumbnailImageUrl: this.getUrlFromFile(lendingPoolDirectus.thumbnailImage),
+                strategyDeckUrl: this.getUrlFromFile(lendingPoolDirectus.strategyDeck),
                 assetClass: lendingPoolDirectus.assetClass,
                 industryExposure: lendingPoolDirectus.industryExposure,
                 poolApyStructure: lendingPoolDirectus.poolApyStructure,
@@ -285,6 +299,7 @@ export class DataService {
 
     async getLendingTotals(): Promise<LendingTotals> {
         const poolOverviews: PoolOverview[] = await this.getPoolOverview();
+        const riskManagements: RiskManagement[] = await this.getRiskManagement()
         const retn: LendingTotals = {
             totalValueLocked: 0,
             loansUnderManagement: 0,
@@ -293,11 +308,19 @@ export class DataService {
             totalYieldEarned: 0
         }
         for (const poolOverview of poolOverviews){
-            retn.totalValueLocked += Number(poolOverview.totalValueLocked);
-            retn.loansUnderManagement += Number(poolOverview.loansUnderManagement);
-            retn.totalLoanFundsOriginated += Number(poolOverview.loanFundsOriginated);
-            retn.totalLossRate += 0; // TODO
-            retn.totalYieldEarned += Number(poolOverview.yieldEarned);
+            retn.totalValueLocked += parseFloat(poolOverview.totalValueLocked);
+            retn.loansUnderManagement += poolOverview.loansUnderManagement;
+            retn.totalLoanFundsOriginated += poolOverview.loanFundsOriginated;
+            retn.totalYieldEarned += parseFloat(poolOverview.yieldEarned);
+        }
+        for (const poolOverview of poolOverviews){
+            const riskManagement = riskManagements.find(rm => rm.poolIdFK === poolOverview.id);
+            if(!riskManagement) {
+                console.log("Couldn't find risk management for id: ", poolOverview.id);
+                continue;
+            }
+            const weight = poolOverview.loanFundsOriginated / retn.totalLoanFundsOriginated;
+            retn.totalLossRate += riskManagement.riskPerformance.poolLossRate * weight;
         }
         return retn;
     }

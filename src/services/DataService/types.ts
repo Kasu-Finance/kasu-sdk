@@ -2,53 +2,53 @@
 export interface PoolOverview {
     poolName: string;
     id: string;
-    poolAddress: string; // SUBGRAPH - CMS
-    apy: number; // CMS
-    description: string; // CMS
-    bannerImageUrl: string; // CMS
-    thumbnailImageUrl: string; // CMS
-    strategyDeckUrl: string; // CMS
-    tranches: TrancheData[]; // SUBGRAPH
-    totalValueLocked: string; // SUBGRAPH
-    loansUnderManagement: number; // SUBGRAPH
-    yieldEarned: string; // SUBGRAPH
-    poolCapacity: string; // SUBGRAPH
-    poolCapacityPercentage: string; // SUBGRAPH
-    activeLoans: string; // SUBGRAPH
-    assetClass: string; // CMS
-    industryExposure: string; // CMS
-    poolApyStructure: string; // CMS
-    poolInvestmentTerm: string; // CMS
-    loanStructure: string; // CMS
-    loanFundsOriginated: number; // CMS
-    isActive: boolean; // SUBGRAPH
+    poolAddress: string;
+    apy: number;
+    description: string;
+    bannerImageUrl: string;
+    thumbnailImageUrl: string;
+    strategyDeckUrl: string;
+    tranches: TrancheData[];
+    totalValueLocked: string;
+    loansUnderManagement: number;
+    yieldEarned: string;
+    poolCapacity: string;
+    poolCapacityPercentage: string;
+    activeLoans: string;
+    assetClass: string;
+    industryExposure: string;
+    poolApyStructure: string;
+    poolInvestmentTerm: string;
+    loanStructure: string;
+    loanFundsOriginated: number;
+    isActive: boolean;
 }
 
 export interface PoolDelegateProfileAndHistory {
-    id: string; // CMS
-    poolIdFK: string; // CMS
-    delegateLendingHistory: number; // CMS
-    assetClasses: string; // CMS
-    otherKASUPools: string[]; // CMS
-    totalLoanFundsOriginated: number; // CMS
-    totalLoansOriginated: number; // CMS
-    loansUnderManagement: number; // CMS
-    historicLossRate: number; // CMS
+    id: string;
+    poolIdFK: string;
+    delegateLendingHistory: number;
+    assetClasses: string;
+    otherKASUPools: string[];
+    totalLoanFundsOriginated: number;
+    totalLoansOriginated: number;
+    loansUnderManagement: number;
+    historicLossRate: number;
 }
 
 export interface PoolTranche {
-    id: string; // subgraph
-    poolIdFK: string; // subgraph
-    apy: string; // subgraph
-    minimalDepositThreshold: string; // subgraph
-    maximalDepositThreshold: string; // subgraph
+    id: string;
+    poolIdFK: string;
+    apy: string;
+    minimalDepositThreshold: string;
+    maximalDepositThreshold: string;
 }
 
 export interface RiskManagement {
-    id: string; // cms
+    id: string;
     poolIdFK: string;
-    items: RiskManagementItem[]; // cms
-    riskPerformance: RiskPerformance; // cms
+    items: RiskManagementItem[];
+    riskPerformance: RiskPerformance;
 }
 
 export interface RiskManagementItem {

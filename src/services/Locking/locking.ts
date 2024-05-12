@@ -15,10 +15,12 @@ import {
     IUserManagerAbi__factory,
 } from '../../contracts';
 import { SdkConfig } from '../../sdk-config';
+import { getAllTrancheConfigurationsQuery, getAllTranchesQuery } from '../DataService/queries';
+import { TrancheConfigurationSubgraph, TrancheSubgraphResult } from '../DataService/subgraph-types';
 
 import {
     claimedFeesQuery,
-    lockingPeriodsQuery,
+    lockingPeriodsQuery, lockingSummariesQuery,
     userEarnedrKsuQuery,
     userLocksQuery,
     userStakedKsuQuery,
@@ -30,7 +32,7 @@ import {
     GQLGetLockingPeriods,
     GQLStakedAmountForAddress,
     GQLTotalBonusAmountForAddress,
-    GQLUserLocks,
+    GQLUserLocks, LockingSummarySubgraphResult,
     LockPeriod,
     LockPeriodInterface,
     RSVDeadlineValue, UserBonusData,
@@ -127,32 +129,38 @@ export class KSULocking {
         return await this._contractAbi.userTotalDeposits(userAddress);
     }
 
-    /*
-    // TODO your protocol fee rewards
-    calculateProtocolFeeRewards(): number {
-        const totalRKSU = LockingSummary.totalRKsuAmount //subgraph
+    async calculateProtocolFeeRewards(KSULocked: number, lockPeriod: BigNumber): Promise<number> {
+        const lockingSummarySubgraph: LockingSummarySubgraphResult = await this._graph.request(lockingSummariesQuery);
+        const lockingSummary = lockingSummarySubgraph.lockingSummaries[0];
+        const totalRKSU = lockingSummary.totalRKsuAmount;
 
-        const KSULocked = 1000; // user input on the UI
+        const lockDetails = await this.lockDetails(lockPeriod)
 
-        const newUserRKSU = (KSULocked + (KSULocked * ksuBonusMultiplier)) * rKsuMultiplier // calculate how much rKSU user will get
+
+        const newUserRKSU = (KSULocked + (KSULocked * lockDetails.ksuBonusMultiplier)) * lockDetails.rKsuMultiplier
 
         const totalRKSUAfterLock = totalRKSU + newUserRKSU
 
-        // TODO read this from subgraph
+        // TODO read this from subgraph - ask dan about this
         const performanceFee = 0.1;
-
         const ecosystemFee = 0.5;
 
-        // get all tranches and calculate its yearly interest rate (can be taken from subgraph)
-
         let projectedYearlyPlatformInterest = 0;
-        for (const tranche of tranches) {
-            projectedYearlyPlatformInterest = tranche.balance * this.calculateApy(tranche.interestRate)
+        const subgraphResults: TrancheSubgraphResult = await this._graph.request(getAllTranchesQuery);
+        const subgraphConfigurationResults: TrancheConfigurationSubgraph = await this._graph.request(getAllTrancheConfigurationsQuery);
+
+        for (const tranche of subgraphResults.lendingPoolTranches) {
+            const trancheConfig = subgraphConfigurationResults.lendingPoolTrancheConfigurations.find(r => r.id == tranche.id);
+            if(!trancheConfig) {
+                console.log("Couldn't find tranche configuration for id: ", tranche.id);
+                continue;
+            }
+            projectedYearlyPlatformInterest = parseFloat(tranche.balance) * this.calculateApy(parseFloat(trancheConfig.interestRate));
         }
 
         const totalExpectedEcosystemFees = projectedYearlyPlatformInterest * performanceFee * ecosystemFee;
+        return totalExpectedEcosystemFees;
     }
-    */
 
     calculateApy(epochInterestRate: number): number {
         const EPOCHS_IN_YEAR = 52.17857
@@ -178,8 +186,8 @@ export class KSULocking {
                     rKSUtoUSDCRatio: rKSUtoUSDCRatio,
                     apyBonus: loyaltyStatus.apyBonus,
                     loyaltyLevel: loyaltyStatus.loyaltyLevel,
-                    startTime: Number(userLock.startTimestamp),
-                    endTime: Number(userLock.endTimestamp),
+                    startTime: parseFloat(userLock.startTimestamp),
+                    endTime: parseFloat(userLock.endTimestamp),
                     lockPeriod: userLock.lockPeriod,
                 };
             })
@@ -223,7 +231,7 @@ export class KSULocking {
         const ksuPrice: BigNumber = await this._systemVariablesAbi.ksuEpochTokenPrice();
         const rKSUAmountBignumber: BigNumber = ethers.utils.parseUnits(rKSUAmount, 18);
         const rKSUInUSDC = rKSUAmountBignumber.mul(ksuPrice).div(ethers.utils.parseUnits("1", 18)).div(ethers.utils.parseUnits("1", 12));
-        return Number(rKSUInUSDC)/Number(usdcAmount[0]);
+        return rKSUInUSDC.toNumber()/usdcAmount[0].toNumber();
     }
 
     async getClaimableRewards(userAddress: string): Promise<BigNumber> {

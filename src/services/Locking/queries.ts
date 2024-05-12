@@ -69,3 +69,32 @@ export const lockingPeriodsQuery = gql`
         }
     }
 `;
+
+export const lockingSummariesQuery = gql`
+    query LockingSummariesQuery {
+      lockingSummaries {
+        id
+        totalRKsuAmount
+        totalKsuLockedAmount
+        totalFeesEmitted
+      }
+    }
+`;
+
+export const getAllTranchesQuery = gql`
+    query getAllTranches {
+      lendingPoolTranches {
+        id
+        balance
+      }
+    }
+`;
+
+export const getAllTrancheConfigurationsQuery = gql`
+    query getAllTrancheConfigurations {
+        lendingPoolTrancheConfigurations {
+            id
+            interestRate
+        }
+    }
+`;

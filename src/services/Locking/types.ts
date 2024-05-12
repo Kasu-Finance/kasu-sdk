@@ -83,3 +83,28 @@ export interface GQLUserLocks {
         userLockDepositsInfo: UserLockDepositsInfo;
     }[];
 }
+
+export interface LockingSummarySubgraphResult {
+    lockingSummaries: {
+        id: string;
+        totalRKsuAmount: string;
+        totalKsuLockedAmount: string;
+        totalFeesEmitted: string;
+    }[]
+}
+
+export interface TrancheConfigurationSubgraph {
+    lendingPoolTrancheConfigurations: {
+        id: string;
+        interestRate: string;
+    }[]
+}
+
+export interface TrancheSubgraph {
+    id: string;
+    balance: string;
+}
+
+export interface TrancheSubgraphResult {
+    lendingPoolTranches: TrancheSubgraph[]
+}

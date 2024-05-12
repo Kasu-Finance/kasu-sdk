@@ -22,10 +22,12 @@ import { SdkConfig } from '../../sdk-config';
 
 import { mapUserRequestEventType } from './helper';
 import {
+    lendingPoolsBalanceQuery,
     lendingPoolUserDetailsQuery, totalUserLoyaltyRewardsQuery, trancheUserDetailsQuery,
     userRequestsQuery,
 } from './queries';
 import {
+    LendingPoolsBalanceSubgraph,
     LendingPoolUserDetailsSubgraph, TotalUserLoyaltyRewardsSubgraph, TrancheUserDetailsSubgraph,
     UserRequestsSubgraph,
 } from './subgraph-types';
@@ -233,9 +235,12 @@ export class UserLending {
             userRequestsQuery,
             { userAddress: userAddress.toLowerCase() },
         );
+
+        const lendingPoolBalances: LendingPoolsBalanceSubgraph = await this._graph.request(
+            lendingPoolsBalanceQuery
+        )
         const retn: UserRequest[] = [];
-        const totalAssets = 1000; // TODO
-        const totalSupply = 1000;
+        const totalSupply = 1000; // TODO has to be added to subgraph
         for (const userRequest of subgraphResult.userRequests) {
             const trancheName =
                 trancheNames[userRequest.lendingPool.tranches.length - 1][
@@ -249,6 +254,9 @@ export class UserLending {
                 if(event.tranche.id != userRequest.tranche.id){
                     event.type = 'DepositReallocated';
                 }
+                const lendingPoolId = event.id.split('-')[0];
+                const lendingPool = lendingPoolBalances.lendingPools.find(lendingPool => lendingPool.id === lendingPoolId);
+                const totalAssets = lendingPool ? parseFloat(lendingPool.balance) : 0;
                 events.push({
                     id: event.id,
                     requestType: mapUserRequestEventType(event.type),
@@ -305,14 +313,13 @@ export class UserLending {
         return (parseFloat(sharesAmount) * totalAssets) / totalSupply;
     }
     isCancelable(type: string, status: string, lendingPoolId: string): boolean {
-        // TODO ugly
         if (
             type === (UserRequestType.DEPOSIT as string) &&
             status != 'Processed'
         ) {
             return true;
         }
-        // TODO
+        // TODO add additional checks
         return false;
     }
 
