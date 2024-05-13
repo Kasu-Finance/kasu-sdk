@@ -162,7 +162,7 @@
         "anonymous": false,
         "inputs": [
             {
-                "indexed": false,
+                "indexed": true,
                 "internalType": "address",
                 "name": "user",
                 "type": "address"
@@ -175,7 +175,7 @@
         "anonymous": false,
         "inputs": [
             {
-                "indexed": false,
+                "indexed": true,
                 "internalType": "address",
                 "name": "user",
                 "type": "address"
@@ -188,7 +188,7 @@
         "anonymous": false,
         "inputs": [
             {
-                "indexed": false,
+                "indexed": true,
                 "internalType": "address",
                 "name": "user",
                 "type": "address"
@@ -201,7 +201,7 @@
         "anonymous": false,
         "inputs": [
             {
-                "indexed": false,
+                "indexed": true,
                 "internalType": "address",
                 "name": "user",
                 "type": "address"
@@ -439,16 +439,6 @@
                 "internalType": "address",
                 "name": "user",
                 "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "blockExpiration",
-                "type": "uint256"
-            },
-            {
-                "internalType": "bytes",
-                "name": "signature",
-                "type": "bytes"
             }
         ],
         "name": "verifyUserKyc",
