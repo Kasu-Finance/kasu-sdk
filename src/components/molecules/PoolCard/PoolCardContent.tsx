@@ -39,7 +39,12 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
         title: 'details.poolDelegate.totalFunds',
         value: poolDelegate?.totalLoanFundsOriginated.toFixed(2) || '0.00',
         suffix: 'USDC',
-        sx: { mt: 2 },
+        sx: {
+          mt: 2,
+          pb: 0,
+          borderBottomLeftRadius: '0',
+          borderBottomRightRadius: '0',
+        },
         showDivider: true,
       },
       {
@@ -48,14 +53,20 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
         value: formatAmount(+poolDelegate.historicLossRate) || '0',
         suffix: '%',
         showDivider: false,
-        sx: { pt: 0 },
+        sx: {
+          pt: 0,
+          borderTopLeftRadius: '0',
+          borderTopRightRadius: '0',
+        },
       },
       {
         id: PoolDelegateMetricIds.AssetClasses,
         title: 'details.poolDetails.assetClass',
         value: poolDelegate?.assetClasses || 'N/A',
         suffix: '',
-        sx: { mt: 1 },
+        sx: {
+          mt: 1,
+        },
         showDivider: false,
       },
     ]
@@ -129,7 +140,6 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
           )
         })}
       </ColoredBox>
-
       {metrics.map((metric) => (
         <ColoredBox
           key={metric.id}
@@ -148,7 +158,7 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
             metric={
               <>
                 <Typography variant='subtitle2'>
-                  {metric.value}{' '}
+                  {metric.value}
                   <Typography variant='caption' component='span'>
                     {metric.suffix || ''}
                   </Typography>
