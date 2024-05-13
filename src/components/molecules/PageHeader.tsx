@@ -29,11 +29,10 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   const { t } = useTranslation()
   const { data, isLoading } = usePoolOverview(poolId)
 
-  const { poolName, poolAvatarImg, poolBannerImg } = useMemo(() => {
+  const { poolName, poolBannerImg } = useMemo(() => {
     const pool: PoolOverview | null = data?.length ? data[0] : null
     return {
       poolName: pool?.poolName || '',
-      poolAvatarImg: pool?.thumbnailImageUrl || '',
       poolBannerImg: pool?.bannerImageUrl || '',
     }
   }, [data])
@@ -61,7 +60,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
         sx={{ p: 2 }}
       >
         <Box display='flex' alignItems='center'>
-          <PoolAvatar src={poolAvatarImg} name={poolName} showStatus />
+          <PoolAvatar name={poolName} showStatus />
           <Typography variant='h5' sx={{ ml: 1 }}>
             {poolName || title}
           </Typography>

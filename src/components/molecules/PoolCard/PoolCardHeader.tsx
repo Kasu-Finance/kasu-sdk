@@ -11,10 +11,9 @@ interface PoolCardHeaderProps {
 }
 
 const PoolCardHeader: React.FC<PoolCardHeaderProps> = ({ pool }) => {
-  const { poolName, poolAvatarImg, poolBannerImg } = useMemo(() => {
+  const { poolName, poolBannerImg } = useMemo(() => {
     return {
       poolName: pool?.poolName || '',
-      poolAvatarImg: pool?.thumbnailImageUrl || undefined,
       poolBannerImg: pool?.bannerImageUrl || undefined,
     }
   }, [pool])
@@ -23,7 +22,7 @@ const PoolCardHeader: React.FC<PoolCardHeaderProps> = ({ pool }) => {
     <Box>
       <ImageWithFallback src={poolBannerImg} />
       <BoxBackground display='flex' alignItems='center' sx={{ p: 2 }}>
-        <PoolAvatar src={poolAvatarImg} name={poolName} showStatus />
+        <PoolAvatar name={poolName} showStatus />
         <Typography variant='h5' sx={{ ml: 1 }}>
           {poolName}
         </Typography>
