@@ -77,5 +77,8 @@ export interface LendingPoolsBalanceSubgraph {
     lendingPools: {
         id: string;
         balance: string;
+        tranches: {
+            shares: string;
+        }[];
     }[]
 }
