@@ -38,7 +38,7 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
         id: PoolDelegateMetricIds.TotalFunds,
         title: 'details.poolDelegate.totalFunds',
         value: poolDelegate?.totalLoanFundsOriginated.toFixed(2) || '0.00',
-        suffix: 'USDC',
+        suffix: ' USDC',
         sx: {
           mt: 2,
           pb: 0,
@@ -50,8 +50,8 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
       {
         id: PoolDelegateMetricIds.TotalLossRate,
         title: 'lending.poolOverview.detailCard.totalLossRate',
-        value: formatAmount(+poolDelegate.historicLossRate) || '0',
-        suffix: '%',
+        value: `${formatAmount(+poolDelegate.historicLossRate)}  %`,
+        suffix: '',
         showDivider: false,
         sx: {
           pt: 0,
