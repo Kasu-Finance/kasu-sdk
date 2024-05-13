@@ -1,9 +1,11 @@
 import { Box } from '@mui/material'
 import type { Metadata } from 'next'
-import { Roboto } from 'next/font/google'
 import { ReactNode } from 'react'
 
+import '@/styles/fonts.module.css'
+
 import Tracking from '@/components/atoms/Tracking'
+import PageFooter from '@/components/molecules/PageFooter'
 import Header from '@/components/organisms/header'
 import ModalsContainer from '@/components/organisms/modals/ModalsContainer'
 
@@ -22,11 +24,6 @@ type RootLayoutProps = {
   children: ReactNode
 }
 
-const roboto = Roboto({
-  weight: ['100', '300', '400', '500', '700', '900'],
-  subsets: ['latin'],
-})
-
 export const metadata: Metadata = {
   title: 'Kasu',
   description: 'Kasu',
@@ -39,7 +36,8 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang='en'>
       <Tracking />
-      <body className={roboto.className}>
+      <body>
+        <div className='top-layout-bg'></div>
         <SWRProvider lockPeriods={lockPeriods}>
           <ThemeRegistry>
             <Web3Provider>
@@ -47,8 +45,10 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                 <ModalState>
                   <ToastState>
                     <Header />
-                    <Box component='main' paddingTop={3} paddingBottom={3}>
+                    <Box component='main' marginTop={3} paddingBottom={2}>
                       {children}
+
+                      <PageFooter />
                     </Box>
                     <ModalsContainer />
                   </ToastState>
@@ -57,6 +57,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             </Web3Provider>
           </ThemeRegistry>
         </SWRProvider>
+        <div className='bottom-layout-bg'></div>
       </body>
     </html>
   )

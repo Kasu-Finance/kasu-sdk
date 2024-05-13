@@ -1,3 +1,5 @@
+import LockClockIcon from '@mui/icons-material/LockClock'
+import UploadFileIcon from '@mui/icons-material/UploadFile'
 import { Button, DialogActions, DialogContent, Typography } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { useCallback } from 'react'
@@ -9,8 +11,6 @@ import useHandleError from '@/hooks/web3/useHandleError'
 
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
 import DialogHeader from '@/components/molecules/DialogHeader'
-
-import { LockIcon, UploadDocumentIcon } from '@/assets/icons'
 
 import checkUserKycState from '@/actions/checkUserKycState'
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
@@ -169,7 +169,7 @@ const KycModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         {isAuthenticated ? (
           <Button
             variant='contained'
-            startIcon={<UploadDocumentIcon />}
+            startIcon={<UploadFileIcon />}
             onClick={() => handleVerification()}
             disabled={!identityClient.polygonIdDID}
           >
@@ -178,7 +178,7 @@ const KycModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         ) : (
           <Button
             variant='contained'
-            startIcon={<LockIcon />}
+            startIcon={<LockClockIcon />}
             onClick={handleAuth}
           >
             Authorise KYC Process

@@ -1,4 +1,4 @@
-import { alpha, TableCell, TableRow } from '@mui/material'
+import { alpha, TableCell, TableRow, Typography } from '@mui/material'
 import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
@@ -26,7 +26,7 @@ const PortfolioRewardsTableHeader: React.FC<
       >
         <TableCell width='50%' rowSpan={2} />
         <TableCell align='center' colSpan={2}>
-          {t('general.rewards')}
+          <Typography variant='subtitle2'>{t('general.rewards')}</Typography>
         </TableCell>
       </TableRow>
       <TableRow
@@ -41,6 +41,7 @@ const PortfolioRewardsTableHeader: React.FC<
             sort={sort}
             sortKey='lastEpoch'
             flipIcon
+            variant='caption'
           />
         </TableCell>
         <TableCell align='right'>
@@ -50,6 +51,7 @@ const PortfolioRewardsTableHeader: React.FC<
             sort={sort}
             sortKey='lifetime'
             flipIcon
+            variant='caption'
           />
         </TableCell>
       </TableRow>

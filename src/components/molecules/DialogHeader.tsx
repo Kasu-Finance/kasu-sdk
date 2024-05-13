@@ -1,7 +1,8 @@
+import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, DialogTitle, SxProps, Theme } from '@mui/material'
 import { ReactNode } from 'react'
 
-import { CrossIcon } from '@/assets/icons'
+import BoxImgBackground from '@/components/atoms/BoxImgBackground'
 
 type DialogHeaderProps = {
   title: string
@@ -19,7 +20,7 @@ const DialogHeader: React.FC<DialogHeaderProps> = ({
   onClose,
 }) => {
   return (
-    <Box
+    <BoxImgBackground
       display='flex'
       justifyContent='space-between'
       alignItems='center'
@@ -36,13 +37,18 @@ const DialogHeader: React.FC<DialogHeaderProps> = ({
           <Button
             variant='text'
             onClick={onClose}
-            sx={{ p: 1.5, width: 48, height: 48 }}
+            sx={{
+              p: 1.5,
+              width: 48,
+              height: 48,
+              color: (theme) => theme.palette.primary.contrastText,
+            }}
           >
-            <CrossIcon />
+            <CloseIcon />
           </Button>
         )}
       </Box>
-    </Box>
+    </BoxImgBackground>
   )
 }
 

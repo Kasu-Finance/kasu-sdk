@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, CardHeader } from '@mui/material'
+import { Box, Card, CardContent, CardHeader, Typography } from '@mui/material'
 import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
 import { useCallback, useState } from 'react'
 
@@ -82,12 +82,14 @@ const TransactionHistory: React.FC<{ poolId: string }> = ({ poolId }) => {
   )
 
   return (
-    <Card sx={{ mt: 3 }}>
+    <Card>
       <CardHeader
         title={
           <Box display='flex' alignItems='center'>
-            Your Transactions
-            <ToolTip sx={{ display: 'inline-block' }} title='tooltip' />
+            <Typography variant='h6' component='h6' m={0}>
+              Your Transactions
+            </Typography>
+            <ToolTip sx={{ mt: 0.5 }} title='tooltip' />
           </Box>
         }
         titleTypographyProps={{

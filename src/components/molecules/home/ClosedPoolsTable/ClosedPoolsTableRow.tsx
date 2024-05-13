@@ -6,6 +6,7 @@ import {
   TableCell,
   TableRow,
   Typography,
+  useTheme,
 } from '@mui/material'
 import React from 'react'
 
@@ -23,6 +24,7 @@ interface RowProps {
 
 const ClosedPoolsTableRow: React.FC<RowProps> = ({ data }) => {
   const { t } = useTranslation()
+  const theme = useTheme()
 
   return (
     <TableRow>
@@ -32,9 +34,9 @@ const ClosedPoolsTableRow: React.FC<RowProps> = ({ data }) => {
             src={data?.poolImage}
             name={data?.poolName}
             showStatus
-            sx={{ background: 'rgba(211, 47, 47, 1)' }}
+            badgeColor={theme.palette.error.main}
           />
-          <Typography variant='h6' component='h1' ml={1}>
+          <Typography variant='h6' component='h1' ml={1} fontWeight={700}>
             {data?.poolName || 'N/A'}
           </Typography>
         </Box>
@@ -53,7 +55,7 @@ const ClosedPoolsTableRow: React.FC<RowProps> = ({ data }) => {
           />
         </Box>
         <Button
-          sx={{ height: 30, width: 97, p: '4px 10px', mt: 1 }}
+          sx={{ p: '0.375rem 1rem', mt: 1, fontSize: '14px' }}
           variant='outlined'
           startIcon={<ReceiptIcon />}
           href='#'

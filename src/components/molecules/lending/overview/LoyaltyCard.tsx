@@ -1,3 +1,5 @@
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
+import LockClockIcon from '@mui/icons-material/LockClock'
 import {
   Box,
   Button,
@@ -25,8 +27,6 @@ import ContentWithSuffix from '@/components/atoms/ContentWithSuffix'
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
 import LendingLoyalityInfo from '@/components/molecules/locking/LoyaltyOverview/LendingLoyalityInfo'
-
-import { LockIcon, WalletIcon } from '@/assets/icons'
 
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
@@ -78,7 +78,7 @@ const LoyaltyCard: React.FC<{
     : '0'
 
   return (
-    <Card sx={{ mt: 3 }}>
+    <Card>
       <CardHeader
         title={t('lending.poolOverview.lockingStatus.title')}
         titleTypographyProps={{
@@ -151,7 +151,7 @@ const LoyaltyCard: React.FC<{
                   <ContentWithSuffix
                     textAlign='right'
                     content={`${formatAmount(totalKsuBonusAndRewards)}`}
-                    suffix='KSU test'
+                    suffix='KSU'
                   />
                   <Typography
                     textAlign='right'
@@ -191,7 +191,7 @@ const LoyaltyCard: React.FC<{
                 </div>
               }
             />
-            <Box sx={{ pl: 2, py: 1 }}>
+            <Box sx={{ display: 'flex', pl: 2, py: 1 }}>
               <Link
                 display='inline-block'
                 textTransform='none'
@@ -200,10 +200,13 @@ const LoyaltyCard: React.FC<{
                 }}
                 href='/'
               >
-                {t('lending.poolOverview.lockingStatus.allOtherRewards.label')}
+                <Typography variant='caption' component='span'>
+                  {t(
+                    'lending.poolOverview.lockingStatus.allOtherRewards.label'
+                  )}
+                </Typography>
               </Link>
               <ToolTip
-                sx={{ display: 'inline-block' }}
                 title={t(
                   'lending.poolOverview.lockingStatus.allOtherRewards.tooltip'
                 )}
@@ -225,7 +228,7 @@ const LoyaltyCard: React.FC<{
             <Button
               onClick={handleOpenLockingKSU}
               variant='contained'
-              startIcon={<LockIcon />}
+              startIcon={<LockClockIcon />}
             >
               {t('general.lockKSU')}
             </Button>
@@ -236,7 +239,7 @@ const LoyaltyCard: React.FC<{
             variant='contained'
             href='https://www.google.com'
             target='_blank'
-            startIcon={<WalletIcon />}
+            startIcon={<AccountBalanceWalletIcon />}
           >
             {t('general.buyKSU')}
           </Button>

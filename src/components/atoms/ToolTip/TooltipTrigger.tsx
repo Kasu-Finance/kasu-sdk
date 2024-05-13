@@ -1,19 +1,19 @@
 import { Box, styled } from '@mui/material'
-import { forwardRef, ReactNode } from 'react'
+import { ReactNode, forwardRef } from 'react'
 
 type TooltipTriggerProps = {
   children: ReactNode
 }
 
-const StyledBox = styled(Box)({
+const StyledBox = styled(Box)(({ theme }) => ({
   cursor: 'help',
   ':hover > svg > path': {
-    fill: '#42A5F5',
+    fill: theme.palette.primary.dark,
   },
   '& > svg > path ': {
     transition: 'fill 0.3s ease',
   },
-})
+}))
 
 const TooltipTrigger = forwardRef<HTMLDivElement, TooltipTriggerProps>(
   ({ children, ...rest }, ref) => (

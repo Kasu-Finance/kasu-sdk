@@ -169,7 +169,7 @@
   "modals": {
     "loyaltyLevels": {
       "title": "Loyalty levels",
-      "subtitle": "About the loyalty program",
+      "subtitle": "About KSU Loyalty Program​",
       "description-1": "The more you lock, the higher your loyalty level and the more benefits you receive.",
       "description-2": "If you do not wish to lock KSU tokens, then you are can still participate in lending pools to earn APY. However, you will not receive any bonus APY, and any deposit/withdrawal request will be processed after Loyalty 1 and 2 Token Lockers.",
       "description-3": "Each KSU token that you unlock will burn a proportionate amount of rKSU. In order to maintain your loyalty level and associated privileges, be sure to maintain an amount of locked KSU to avoid burning rKSU to the point that it falls below the above minimum ratio of USDC deposits."

@@ -1,5 +1,6 @@
 'use client'
 
+import CloseIcon from '@mui/icons-material/Close'
 import {
   Alert,
   AlertTitle,
@@ -14,7 +15,6 @@ import ToastContext from '@/context/toast/toast.context'
 import toastReducer from '@/context/toast/toast.reducer'
 import { ToastStateType } from '@/context/toast/toast.types'
 
-import { CrossIcon } from '@/assets/icons'
 import SuccessIcon from '@/assets/icons/general/SuccessIcon'
 
 import { SupportedChainIds } from '@/connection/chains'
@@ -89,7 +89,7 @@ const ToastState: React.FC<ToastStateProps> = ({ children }) => {
                       className='close-button'
                       onClick={handleClose}
                     >
-                      <CrossIcon />
+                      <CloseIcon />
                     </Button>
                   )}
                 </>

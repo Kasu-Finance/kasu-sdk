@@ -27,31 +27,32 @@ declare module '@mui/material/styles/createPalette' {
   }
 }
 
-const fontFamily = [
-  '"Poppins"',
-  '-apple-system',
-  'BlinkMacSystemFont',
-  '"Segoe UI"',
-  '"Helvetica Neue"',
-  'Arial',
-  'sans-serif',
-].join(',')
+const primaryFontFamily = ['Barlow'].join(',')
+const barlowSemiCondensedFontFamily = ['Barlow Semi Condensed'].join(',')
+const condensedFontFamily = ['Barlow Condensed'].join(',')
+const khmerFontFamily = ['Noto Sans Khmer'].join(',')
 
-const primaryColor = '#1976D2'
+const primaryColor = '#e5c397'
+const primaryContrastColor = '#28282a'
 
 export const theme = createTheme({
   palette: {
+    background: {
+      default: primaryContrastColor,
+    },
     primary: {
       main: primaryColor,
-      contrastText: '#ffffff',
+      contrastText: primaryContrastColor,
+      dark: 'rgba(161, 136, 106, 1)',
+      light: 'rgba(229, 195, 151, 1)',
     },
     success: {
-      main: 'rgba(46, 125, 50, 1)',
+      main: 'rgba(171, 212, 140, 1)',
       contrastText: 'rgba(255,255,255,0.9)',
       dark: 'rgba(27, 94, 32, 1)',
     },
     error: {
-      main: 'rgba(211, 47, 47, 1)',
+      main: 'rgba(212, 98, 98, 1)',
       contrastText: 'rgba(255,255,255, 0.9)',
     },
     warning: {
@@ -83,57 +84,63 @@ export const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: fontFamily,
+    fontFamily: primaryFontFamily,
     allVariants: {
-      fontFamily: fontFamily,
+      fontFamily: condensedFontFamily,
       fontWeight: 400,
     },
     h5: {
-      fontFamily: fontFamily,
+      fontFamily: condensedFontFamily,
       fontSize: 24,
       fontWeight: 400,
     },
     h6: {
-      fontFamily: fontFamily,
+      fontFamily: condensedFontFamily,
       fontSize: 20,
       fontWeight: 500,
+      letterSpacing: '0.15px',
     },
     body1: {
-      fontFamily: fontFamily,
-      fontSize: 16,
+      fontFamily: khmerFontFamily,
+      fontSize: 14,
+      lineHeight: '21px',
+      letterSpacing: '0.15px',
     },
     body2: {
-      fontFamily,
-      fontSize: 14,
-      lineHeight: '20px',
+      fontFamily: khmerFontFamily,
+      fontSize: 12,
+      lineHeight: '17.16px',
+      letterSpacing: '0.17px',
     },
     caption: {
-      fontFamily,
+      fontFamily: khmerFontFamily,
       fontSize: 12,
       lineHeight: '20px',
+      letterSpacing: '0.4px',
     },
     overline: {
-      fontFamily: fontFamily,
+      fontFamily: primaryFontFamily,
       letterSpacing: '1px',
     },
     button: {
-      fontFamily,
-      fontSize: 13,
+      fontFamily: primaryFontFamily,
+      fontSize: 15,
       fontWeight: 500,
-      lineHeight: '22px',
+      lineHeight: '26px',
+      letterSpacing: '0.46px',
     },
     subtitle1: {
-      fontFamily,
+      fontFamily: barlowSemiCondensedFontFamily,
       fontSize: 16,
       fontWeight: 700,
       lineHeight: '28px',
       letterSpacing: '0.15px',
     },
     subtitle2: {
-      fontFamily,
+      fontFamily: primaryFontFamily,
       fontSize: 14,
       fontWeight: 500,
-      lineHeight: '24px',
+      lineHeight: '22px',
       letterSpacing: '0.1px',
     },
   },
@@ -151,8 +158,40 @@ export const theme = createTheme({
   components: {
     MuiCssBaseline: {
       styleOverrides: `
-      .light-blue-background {
-        background-color: #1976D20A;
+
+      body {
+        font-family: ${primaryFontFamily};
+      }
+
+      main {
+        position: relative;
+        z-index: 1;
+      }
+
+      .top-layout-bg {
+        background: url("/images/bg-image-top.png") no-repeat;
+        background-size: cover;
+        background-position: bottom;
+        height: 362px;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index:0;
+      }
+      
+      .bottom-layout-bg{
+        background: url("/images/bg-image-bottom.png") no-repeat;
+        background-size: cover;
+        background-position: top;
+        height: 362px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        z-index:0;
+      }
+
+      .light-colored-background {
+        background-color: rgba(211, 179, 139, 0.12);
       }
       .light-error-background {
         background-color: rgba(211, 47, 47, 0.04);
@@ -162,6 +201,7 @@ export const theme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
+          boxShadow: 'none',
           background: '#ffffff',
         },
       },
@@ -230,6 +270,9 @@ export const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
+          boxShadow: 'none',
+          borderRadius: 0,
+
           '&.section-card': {
             borderRadius: '8px',
             overflow: 'inherit',
@@ -240,6 +283,18 @@ export const theme = createTheme({
             backgroundColor: 'rgba(0, 0, 0, 0.04)',
             borderRadius: '4px',
           },
+        },
+      },
+    },
+    MuiCardHeader: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'url("/images/seamless-noise-20.png")',
+          backgroundRepeat: 'repeat',
+          backgroundColor: 'rgba(229, 195, 151, 1)',
+          backgroundPosition: '0 0',
+          backgroundSize: '120px 86px',
+          fontWeight: 500,
         },
       },
     },
@@ -340,12 +395,12 @@ export const theme = createTheme({
           // Default styles for the root element
           '&.Mui-active': {
             '.MuiTableSortLabel-icon': {
-              color: alpha(primaryColor, 0.54),
+              color: alpha(primaryContrastColor, 0.54),
             },
           },
           '&:hover': {
             '.MuiTableSortLabel-icon': {
-              color: alpha(primaryColor, 0.87),
+              color: alpha(primaryContrastColor, 0.87),
               opacity: 1,
             },
           },
@@ -357,6 +412,13 @@ export const theme = createTheme({
 
         icon: {
           opacity: '0.5',
+        },
+      },
+    },
+    MuiTableFooter: {
+      styleOverrides: {
+        root: {
+          background: alpha(primaryColor, 0.08),
         },
       },
     },
@@ -391,10 +453,41 @@ export const theme = createTheme({
           // textTransform: 'inherit',
           fontWeight: 500,
           minWidth: 0,
+          boxShadow: 'none',
+
           '&.Mui-disabled': {
             pointerEvents: 'visible',
             cursor: 'not-allowed',
+            boxShadow: 'none',
           },
+          '&:hover': {
+            boxShadow: 'none',
+          },
+          '&:active': {
+            boxShadow: 'none',
+          },
+        },
+        contained: {
+          backgroundImage: 'url("/images/seamless-noise-20.png")',
+          backgroundRepeat: 'repeat',
+          backgroundColor: 'rgba(211, 179, 139, 1)',
+          backgroundPosition: '0 0',
+          backgroundSize: '120px 86px',
+          fontWeight: 700,
+
+          '&.Mui-disabled': {
+            backgroundColor: 'rgba(127, 116, 102, 0.26)',
+            color: '#7F7466',
+            opacity: 0.8,
+          },
+        },
+        containedSuccess: {
+          color: '#fff',
+          backgroundColor: 'rgba(171, 212, 140, 1)',
+        },
+        containedError: {
+          color: '#fff',
+          backgroundColor: 'rgba(212, 98, 98, 1)',
         },
       },
     },

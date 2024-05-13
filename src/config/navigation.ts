@@ -13,7 +13,7 @@ export const NAV_ITEMS: NavItemType[] = [
   },
 
   {
-    label: 'Locking',
+    label: 'KSU Locking',
     to: Routes.locking.root.url,
   },
   {

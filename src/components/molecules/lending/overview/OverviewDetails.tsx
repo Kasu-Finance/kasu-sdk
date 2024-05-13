@@ -26,13 +26,12 @@ const OverviewDetails: React.FC<{
   })
 
   return (
-    <Box sx={{ mt: 3 }}>
+    <Box>
       <Grid
         container
         direction='row'
         justifyContent='flex-start'
         alignItems='stretch'
-        columnSpacing={3}
         sx={{ height: '248px' }}
       >
         <Grid item xs={6} sx={{ height: '100%' }} alignItems='stretch'>
@@ -55,7 +54,7 @@ const OverviewDetails: React.FC<{
                 />
               </Grid>
             </Grid>
-            <Box className='light-blue-background' sx={{ mt: 1 }}>
+            <Box className='light-colored-background'>
               <Grid
                 container
                 justifyContent='space-between'
@@ -100,10 +99,7 @@ const OverviewDetails: React.FC<{
                 />
               </Grid>
             </Grid>
-            <Box
-              className='light-blue-background'
-              sx={{ mt: 1, borderRadius: 1 }}
-            >
+            <Box className='light-colored-background'>
               <InfoRow
                 toolTipInfo={t(
                   'lending.poolOverview.detailCard.industry.tooltip'

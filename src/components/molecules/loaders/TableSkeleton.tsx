@@ -17,7 +17,7 @@ interface TableSkeletonProps {
 
 const TableSkeleton: React.FC<TableSkeletonProps> = ({ rows, columns }) => {
   return (
-    <Card sx={{ minWidth: 275, boxShadow: 3, padding: 2, mb: 2 }} elevation={1}>
+    <Card sx={{ minWidth: 275, boxShadow: 0, padding: 2 }} elevation={1}>
       <Box pl={2}>
         <Skeleton variant='text' width='40%' height={35} />
       </Box>

@@ -24,7 +24,7 @@ const convertToRiskStatus = (riskData: RiskPerformance) => {
       {
         id: RiskMetricIds.RiskScore,
         content: `${formatAmount(riskData.independentRiskScore)}`,
-        unit: '/ 5.00',
+        unit: '',
         isRating: false,
       },
       {

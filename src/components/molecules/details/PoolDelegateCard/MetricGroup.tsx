@@ -65,15 +65,15 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
                       <NextLink
                         key={`${metric.id}_${itemIndex}`}
                         href='#'
-                        color='primary'
-                        variant='body2'
+                        color='primary.contrastText'
+                        variant='body1'
                       >
                         {item}
                       </NextLink>
                     ))}
                   </Box>
                 ) : (
-                  <Typography variant='body2' component='span'>
+                  <Typography variant='body1' component='span'>
                     {metric.content}
                   </Typography>
                 )

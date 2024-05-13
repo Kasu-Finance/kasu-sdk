@@ -51,10 +51,14 @@ const LendingPortfolioTableRow: React.FC<LendingPortfolioTableRowProps> = ({
           key={index}
         >
           <TableCell sx={{ py: '6px' }} width='17%'>
-            {portfolio.tranches.length > 1 ? tranche.name : 'Lending Pool'}
+            <Typography variant='caption'>
+              {portfolio.tranches.length > 1 ? tranche.name : 'Lending Pool'}
+            </Typography>
           </TableCell>
           <TableCell sx={{ py: '6px', pr: 0 }} align='right' width='17%'>
-            {formatPercentage(tranche.apy)}
+            <Typography variant='body1'>
+              {formatPercentage(tranche.apy)}
+            </Typography>
           </TableCell>
           <LendingPortfolioTableCell
             value={formatAmount(tranche.investedAmount, {

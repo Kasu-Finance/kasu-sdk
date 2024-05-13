@@ -1,5 +1,6 @@
 'use client'
 
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { Box, Paper, Typography } from '@mui/material'
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useMemo } from 'react'
@@ -8,11 +9,10 @@ import usePoolOverview from '@/hooks/lending/usePoolOverview'
 import useTranslation from '@/hooks/useTranslation'
 
 import BackButton from '@/components/atoms/BackButton'
+import BoxBackground from '@/components/atoms/BoxBackground'
 import ImageWithFallback from '@/components/atoms/ImageWithFallback'
 import PoolAvatar from '@/components/atoms/PoolAvatar'
 import PageHeaderSkeleton from '@/components/molecules/loaders/PageHeaderSkeleton'
-
-import ArrowLeftIcon from '@/assets/icons/general/ArrowLeftIcon'
 
 type PageHeaderProps = {
   title: string
@@ -54,20 +54,20 @@ const PageHeader: React.FC<PageHeaderProps> = ({
     <Paper sx={{ borderRadius: '4px' }}>
       <ImageWithFallback src={poolBannerImg} />
 
-      <Box
+      <BoxBackground
         display='flex'
         justifyContent='space-between'
         alignItems='center'
-        p={2}
+        sx={{ p: 2 }}
       >
         <Box display='flex' alignItems='center'>
-          <PoolAvatar src={poolAvatarImg} name={poolName} />
-          <Typography variant='h6' component='h1' sx={{ ml: 2 }}>
+          <PoolAvatar src={poolAvatarImg} name={poolName} showStatus />
+          <Typography variant='h5' sx={{ ml: 1 }}>
             {poolName || title}
           </Typography>
         </Box>
 
-        <BackButton variant='outlined' startIcon={<ArrowLeftIcon />}>
+        <BackButton variant='contained' startIcon={<ArrowBackIcon />}>
           <Typography
             variant='subtitle2'
             sx={{ fontSize: 15, letterSpacing: '0.5px' }}
@@ -75,7 +75,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
             {t('general.pools')}
           </Typography>
         </BackButton>
-      </Box>
+      </BoxBackground>
     </Paper>
   )
 }

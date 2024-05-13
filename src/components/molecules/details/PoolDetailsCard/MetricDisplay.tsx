@@ -41,7 +41,7 @@ const MetricDisplay: React.FC<MetricDisplayProps> = ({
             showDivider={!isLastItem}
             title={t(titleKey)}
             toolTipInfo={t(tooltipKey)}
-            metric={<Typography variant='body2'>{metric.content}</Typography>}
+            metric={<Typography variant='body1'>{metric.content}</Typography>}
           />
         </Box>
       )}

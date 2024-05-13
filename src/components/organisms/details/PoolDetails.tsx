@@ -34,7 +34,7 @@ const PoolDetails: React.FC = () => {
       <Box>
         <CardSkeleton leftRowNumbers={3} rightRowNumbers={3} />
         <CardSkeleton leftRowNumbers={1} rightRowNumbers={4} />
-        <CardSkeleton leftRowNumbers={2} rightRowNumbers={2} />
+        <CardSkeleton leftRowNumbers={1} rightRowNumbers={1} />
         <CardSkeleton leftRowNumbers={6} rightRowNumbers={3} />
       </Box>
     )

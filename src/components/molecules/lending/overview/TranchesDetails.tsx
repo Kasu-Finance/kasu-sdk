@@ -12,7 +12,7 @@ const TranchesDetails: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
   const sortedTranches = sortTranches(pool.tranches)
 
   return (
-    <Card sx={{ mt: 3 }}>
+    <Card>
       <Grid container columnSpacing={3} rowGap={2} component={CardContent}>
         {sortedTranches.length > 0 &&
           sortedTranches.map((tranche, index) => {

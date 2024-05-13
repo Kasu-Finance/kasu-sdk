@@ -27,21 +27,13 @@ const CurrentSummary = () => {
   if (isLoading) {
     return (
       <Grid item xs={6} container spacing={2} mt='auto'>
-        <Grid item xs={4}>
-          <Skeleton sx={{ fontSize: '1.5rem' }} />
-          <Divider />
-          <Skeleton sx={{ fontSize: '2.6rem' }} />
-        </Grid>
-        <Grid item xs={4}>
-          <Skeleton sx={{ fontSize: '1.5rem' }} />
-          <Divider />
-          <Skeleton sx={{ fontSize: '2rem' }} />
-        </Grid>
-        <Grid item xs={4}>
-          <Skeleton sx={{ fontSize: '1.5rem' }} />
-          <Divider />
-          <Skeleton sx={{ fontSize: '2rem' }} />
-        </Grid>
+        {Array.from({ length: 3 }).map((_, index) => (
+          <Grid item xs={4} key={index}>
+            <Skeleton sx={{ fontSize: '1.5rem' }} />
+            <Divider />
+            <Skeleton sx={{ fontSize: '2.6rem' }} />
+          </Grid>
+        ))}
       </Grid>
     )
   }

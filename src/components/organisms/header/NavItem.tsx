@@ -16,7 +16,10 @@ const NavItem = styled(Button, {
   borderRadius: 0,
   borderBottom: props.isActive ? '2px solid currentColor' : 'none',
   padding: props.theme.spacing(1, 2),
-  textTransform: 'uppercase',
+  textTransform: 'capitalize',
+  fontFamily: 'Noto Sans Khmer,serif',
+  fontWeight: 400,
+  fontSize: '14px',
 }))
 
 export default NavItem

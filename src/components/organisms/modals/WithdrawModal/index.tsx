@@ -87,7 +87,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
   const validationStyle =
     modalStatus.type === 'error'
       ? 'light-error-background'
-      : 'light-blue-background'
+      : 'light-colored-background'
 
   const onModalClose = () => {
     handleClose()

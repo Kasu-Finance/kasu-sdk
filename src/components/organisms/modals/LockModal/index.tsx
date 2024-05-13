@@ -1,5 +1,7 @@
 'use client'
 
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import EditIcon from '@mui/icons-material/Edit'
 import { Button, DialogActions, DialogContent, Typography } from '@mui/material'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import React from 'react'
@@ -17,8 +19,6 @@ import LockModalEdit from '@/components/organisms/modals/LockModal/LockModalEdit
 import LockModalReview from '@/components/organisms/modals/LockModal/LockModalReview'
 
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
-
-import { ChevronRightIcon, EditIcon } from '@/assets/icons'
 
 import sdkConfig from '@/config/sdk'
 import { capitalize, formatAmount } from '@/utils'

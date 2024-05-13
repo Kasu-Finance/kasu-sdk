@@ -1,4 +1,4 @@
-import { Box, Card, Typography } from '@mui/material'
+import { Box, Card, CardContent, CardHeader, Typography } from '@mui/material'
 import { FinancialReportingDocumentsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import React from 'react'
 
@@ -36,56 +36,61 @@ const ReportingTable: React.FC<ReportingTableProps> = ({ data }) => {
           </Typography>
         </Box>
       ),
-
       value: 'name',
       disableSort: true,
-      styles: { width: '65%' },
+      styles: { width: '65%', fontSize: '14px', fontFamily: 'Barlow' },
     },
     {
       label: t('risk.reporting.headers.column-2'),
       value: 'uploadTimestamp',
       disableSort: true,
-      styles: { width: '18%' },
+      styles: { width: '18%', fontSize: '14px', fontFamily: 'Barlow' },
     },
     {
       label: t('risk.reporting.headers.column-3'),
       value: 'version',
       disableSort: true,
-      styles: { width: '8.5%' },
+      styles: { width: '8.5%', fontSize: '14px', fontFamily: 'Barlow' },
     },
     {
       label: t('risk.reporting.headers.column-4'),
       value: 'documentUrl',
       disableSort: true,
-      styles: { width: '8.5%' },
+      styles: { width: '8.5%', fontSize: '14px', fontFamily: 'Barlow' },
     },
   ]
 
   return (
-    <Card sx={{ minWidth: 275, boxShadow: 1, padding: 2, mt: 3 }} elevation={1}>
-      <Typography variant='h6' component='h2' mb={3}>
-        {t('risk.reporting.title')}
-      </Typography>
-      <CustomTable
-        headers={headers}
-        data={data}
-        handleSort={handleSort}
-        sortKeys={[]}
-        defaultSortKey='name'
-        headersStyle={{
-          '& .MuiTableCell-root': {
-            py: '6px',
-            px: 2,
-            verticalAlign: 'bottom',
-          },
-        }}
-      >
-        {(sortedData) =>
-          sortedData.map((data, index) => (
-            <ReportingTableRow key={index} data={data} index={index} />
-          ))
+    <Card>
+      <CardHeader
+        title={
+          <Typography variant='h6'>{t('risk.reporting.title')}</Typography>
         }
-      </CustomTable>
+      />
+      <CardContent sx={{ padding: 2 }}>
+        <CustomTable
+          headers={headers}
+          data={data}
+          handleSort={handleSort}
+          sortKeys={[]}
+          defaultSortKey='name'
+          headersStyle={{
+            '& .MuiTableCell-root': {
+              py: '6px',
+              px: 2,
+              verticalAlign: 'bottom',
+              fontSize: '14px',
+              fontFamily: 'Barlow',
+            },
+          }}
+        >
+          {(sortedData) =>
+            sortedData.map((data, index) => (
+              <ReportingTableRow key={index} data={data} index={index} />
+            ))
+          }
+        </CustomTable>
+      </CardContent>
     </Card>
   )
 }

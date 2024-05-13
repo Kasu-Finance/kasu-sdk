@@ -40,7 +40,7 @@ const Carousel = <T,>({
   const showIconBtn = childrenArray.length > 3
 
   return (
-    <Box sx={{ position: 'relative', width: '100%', mt: 4 }}>
+    <Box sx={{ position: 'relative', width: '100%', mt: 3 }}>
       {showIconBtn && (
         <IconButton
           onClick={handleBack}

@@ -1,4 +1,4 @@
-import { alpha, TableCell, TableRow } from '@mui/material'
+import { alpha, TableCell, TableRow, Typography } from '@mui/material'
 import React from 'react'
 
 import { Sort } from '@/components/molecules/CustomTable'
@@ -38,7 +38,9 @@ const TransactionHistoryTableHeader: React.FC<
       </TableCell>
 
       <TableCell align='center' colSpan={3} width='30%'>
-        Total Amounts
+        <Typography variant='subtitle2' sx={{ fontWeight: '500' }}>
+          Total Amounts
+        </Typography>
       </TableCell>
       <TableCell rowSpan={2} width='14%' align='right'>
         <CustomTableSortLabel

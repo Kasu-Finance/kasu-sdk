@@ -1,4 +1,4 @@
-import { TableSortLabel } from '@mui/material'
+import { TableSortLabel, Typography, TypographyProps } from '@mui/material'
 
 import { Sort } from '@/components/molecules/CustomTable'
 
@@ -8,6 +8,7 @@ type CustomTableSortLabelProps<T extends readonly any[]> = {
   sortKey: T[number]
   handleSortChange: (key: T[number]) => void
   flipIcon?: boolean
+  variant?: TypographyProps['variant']
 }
 
 const CustomTableSortLabel = <T extends readonly any[]>({
@@ -16,6 +17,7 @@ const CustomTableSortLabel = <T extends readonly any[]>({
   sort,
   handleSortChange,
   flipIcon,
+  variant = 'subtitle2',
 }: CustomTableSortLabelProps<T>) => {
   const isActive = sort.key === sortKey
 
@@ -34,7 +36,9 @@ const CustomTableSortLabel = <T extends readonly any[]>({
           : undefined
       }
     >
-      {label}
+      <Typography variant={variant} fontWeight={500}>
+        {label}
+      </Typography>
     </TableSortLabel>
   )
 }

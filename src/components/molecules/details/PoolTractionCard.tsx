@@ -1,4 +1,4 @@
-import { Box, Card, Typography } from '@mui/material'
+import { Box, Card, CardContent, CardHeader, Typography } from '@mui/material'
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useMemo } from 'react'
 
@@ -15,33 +15,33 @@ const PoolTractionCard: React.FC<PoolTractionCardProps> = ({ data, title }) => {
   const { metrics } = useMemo(() => convertToPoolTraction(data), [data])
 
   return (
-    <Card sx={{ minWidth: 275, boxShadow: 3, padding: 2, mt: 3 }} elevation={1}>
-      {title && (
-        <Typography variant='h6' mb={2}>
-          {title}
-        </Typography>
-      )}
+    <Card sx={{ borderRadius: 0 }}>
+      <CardHeader
+        title={title && <Typography variant='h6'>{title}</Typography>}
+      />
 
-      <Box display='flex' alignItems='center'>
-        {metrics.map(({ id, content, unit = '' }, index) => (
-          <Box
-            key={id}
-            display='flex'
-            width='100%'
-            flexDirection='column'
-            pl={index > 0 ? 1 : 0}
-          >
-            <MetricWithSuffix
-              content={String(content)}
-              suffix={unit}
-              containerSx={{ pr: index === metrics.length - 1 ? 0 : 0.5 }}
-              sx={{ pb: 1 }}
-              titleKey={`details.poolTraction.${id}.label`}
-              tooltipKey={`details.poolTraction.${id}.tooltip`}
-            />
-          </Box>
-        ))}
-      </Box>
+      <CardContent sx={{ padding: 2 }}>
+        <Box display='flex' alignItems='center'>
+          {metrics.map(({ id, content, unit = '' }, index) => (
+            <Box
+              key={id}
+              display='flex'
+              width='100%'
+              flexDirection='column'
+              pl={index > 0 ? 1 : 0}
+            >
+              <MetricWithSuffix
+                content={String(content)}
+                suffix={unit}
+                containerSx={{ pr: index === metrics.length - 1 ? 0 : 0.5 }}
+                sx={{ pb: 1 }}
+                titleKey={`details.poolTraction.${id}.label`}
+                tooltipKey={`details.poolTraction.${id}.tooltip`}
+              />
+            </Box>
+          ))}
+        </Box>
+      </CardContent>
     </Card>
   )
 }

@@ -182,7 +182,6 @@ const CustomTable = <T, U extends readonly any[]>({
                 (theme) => ({
                   borderTop: '1px solid rgba(224, 224, 224, 1)',
                   '& .MuiTableCell-root': {
-                    background: 'rgba(25, 118, 210, 0.08)',
                     color: theme.palette.text.primary,
                   },
                 }),

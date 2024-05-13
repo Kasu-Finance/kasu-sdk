@@ -16,7 +16,7 @@ const Portfolio = () => {
 
   return (
     <Container maxWidth='lg'>
-      <Stack spacing={3}>
+      <Stack spacing={1}>
         <PortfolioSummary />
         <PortfolioTabs />
       </Stack>

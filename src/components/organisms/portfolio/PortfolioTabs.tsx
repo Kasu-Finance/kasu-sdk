@@ -1,10 +1,11 @@
 'use client'
 
-import { Box, Card, Tab, Tabs } from '@mui/material'
+import { Box, Card, Tabs } from '@mui/material'
 import { memo, useCallback, useMemo, useState } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
+import StyledTab from '@/components/atoms/StyledTab'
 import TabPanel from '@/components/molecules/tabs/TabPanel'
 import LendingPortfolioTab from '@/components/organisms/portfolio/LendingPortfolioTab'
 import RewardsTab from '@/components/organisms/portfolio/PortfolioRewardsTab'
@@ -33,9 +34,9 @@ const PortfolioTabs = () => {
 
   return (
     <Box>
-      <Tabs value={activeTab} onChange={handleChange}>
+      <Tabs value={activeTab} onChange={handleChange} sx={{ mb: 3 }}>
         {Object.keys(PORTFOLIO_TABS).map((label) => (
-          <Tab label={label} key={label} />
+          <StyledTab key={label} label={label} />
         ))}
       </Tabs>
       {Object.values(PORTFOLIO_TABS).map((render, index) => (

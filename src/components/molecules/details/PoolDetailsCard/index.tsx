@@ -1,4 +1,4 @@
-import { Box, Card, Typography } from '@mui/material'
+import { Box, Card, CardContent, CardHeader, Typography } from '@mui/material'
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useCallback, useMemo } from 'react'
 
@@ -46,47 +46,53 @@ const PoolDetailsCard: React.FC<PoolDetailsCardProps> = ({ data }) => {
   )
 
   return (
-    <Card sx={{ minWidth: 275, boxShadow: 3, padding: 2, mt: 3 }} elevation={1}>
-      <Typography variant='h6' mb={2}>
-        {t('details.poolDetails.title')}
-      </Typography>
+    <Card>
+      <CardHeader
+        title={
+          <Typography variant='h6'>{t('details.poolDetails.title')}</Typography>
+        }
+      />
 
-      <Box display='flex' width='100%' className='light-blue-background'>
-        {firstArray.map((metric) => (
-          <MetricDisplay
-            metric={metric}
-            key={metric.id}
-            type={MetricGroupType.First}
-            isLastItem={firstArray.indexOf(metric) === firstArray.length - 1}
-          />
-        ))}
-      </Box>
-
-      <Box display='flex' mt={2} width='100%'>
-        <Box display='flex' flexDirection='column' width='50%'>
-          {secondArray.map((metric) => (
+      <CardContent sx={{ padding: 2 }}>
+        <Box display='flex' width='100%' className='light-colored-background'>
+          {firstArray.map((metric) => (
             <MetricDisplay
               metric={metric}
               key={metric.id}
-              type={MetricGroupType.Second}
-              isLastItem={
-                secondArray.indexOf(metric) === secondArray.length - 1
-              }
+              type={MetricGroupType.First}
+              isLastItem={firstArray.indexOf(metric) === firstArray.length - 1}
             />
           ))}
         </Box>
 
-        <Box display='flex' flexDirection='column' width='50%'>
-          {thirdArray.map((metric) => (
-            <MetricDisplay
-              metric={metric}
-              key={metric.id}
-              type={MetricGroupType.Second}
-              isLastItem={thirdArray.indexOf(metric) === secondArray.length - 1}
-            />
-          ))}
+        <Box display='flex' mt={2} width='100%'>
+          <Box display='flex' flexDirection='column' width='50%'>
+            {secondArray.map((metric) => (
+              <MetricDisplay
+                metric={metric}
+                key={metric.id}
+                type={MetricGroupType.Second}
+                isLastItem={
+                  secondArray.indexOf(metric) === secondArray.length - 1
+                }
+              />
+            ))}
+          </Box>
+
+          <Box display='flex' flexDirection='column' width='50%'>
+            {thirdArray.map((metric) => (
+              <MetricDisplay
+                metric={metric}
+                key={metric.id}
+                type={MetricGroupType.Second}
+                isLastItem={
+                  thirdArray.indexOf(metric) === secondArray.length - 1
+                }
+              />
+            ))}
+          </Box>
         </Box>
-      </Box>
+      </CardContent>
     </Card>
   )
 }

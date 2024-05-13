@@ -1,4 +1,4 @@
-import { Box, Card, Typography } from '@mui/material'
+import { Box, Card, CardContent, CardHeader, Typography } from '@mui/material'
 import { RiskManagement } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useMemo } from 'react'
 
@@ -22,42 +22,48 @@ const RiskManagementCard: React.FC<RiskManagementCardProps> = ({ data }) => {
   )
 
   return (
-    <Card sx={{ minWidth: 275, boxShadow: 3, padding: 2, mt: 3 }} elevation={1}>
-      <Typography variant='h6' mb={4}>
-        {t('details.riskManagement.title')}
-      </Typography>
+    <Card>
+      <CardHeader
+        title={
+          <Typography variant='h6'>
+            {t('details.riskManagement.title')}
+          </Typography>
+        }
+      />
 
-      <RiskStatus metrics={riskStatus.metrics} />
+      <CardContent sx={{ padding: 2 }}>
+        <RiskStatus metrics={riskStatus.metrics} />
 
-      {/* Dynamic sections as items */}
-      <Box display='flex'>
-        {data.items.map((item, index) => (
-          <Box
-            key={item.id}
-            display='flex'
-            width='100%'
-            flexDirection='column'
-            sx={{
-              pr: index % 2 === 0 ? 2 : 0,
-            }}
-          >
-            <Typography variant='subtitle1' sx={{ mt: 3 }}>
-              {item.group}
-            </Typography>
+        {/* Dynamic sections as items */}
+        <Box display='flex'>
+          {data.items.map((item, index) => (
+            <Box
+              key={item.id}
+              display='flex'
+              width='100%'
+              flexDirection='column'
+              sx={{
+                pr: index % 2 === 0 ? 2 : 0,
+              }}
+            >
+              <Typography variant='subtitle1' sx={{ mt: 3 }}>
+                {item.group}
+              </Typography>
 
-            <InfoColumn
-              title={item.title}
-              toolTipInfo={item.tooltip}
-              showDivider
-              metric={
-                <Typography variant='body2' sx={{ pl: 2, mt: 0.5 }}>
-                  {item.title}
-                </Typography>
-              }
-            />
-          </Box>
-        ))}
-      </Box>
+              <InfoColumn
+                title={item.title}
+                toolTipInfo={item.tooltip}
+                showDivider
+                metric={
+                  <Typography variant='body2' sx={{ pl: 2, mt: 0.5 }}>
+                    {item.title}
+                  </Typography>
+                }
+              />
+            </Box>
+          ))}
+        </Box>
+      </CardContent>
     </Card>
   )
 }

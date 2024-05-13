@@ -1,4 +1,11 @@
-import { Card, TableCell, TableRow, Typography } from '@mui/material'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  TableCell,
+  TableRow,
+  Typography,
+} from '@mui/material'
 import { PoolCreditMetricsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import { useMemo } from 'react'
 
@@ -32,81 +39,84 @@ const PoolCreditTable: React.FC<PoolCreditTableProps> = ({ data }) => {
         label: t('risk.poolCredit.headers.column-1'),
         value: 'keyCreditMetric',
         disableSort: true,
-        styles: { width: '47%' },
+        styles: { width: '47%', fontSize: '14px', fontFamily: 'Barlow' },
       },
       {
         label: t('risk.poolCredit.headers.column-2'),
         value: 'previousFiscalYear',
         disableSort: true,
-        styles: { width: '17%' },
+        styles: { width: '17%', fontSize: '14px', fontFamily: 'Barlow' },
       },
       {
         label: t('risk.poolCredit.headers.column-3'),
         value: 'mostRecentQuarter',
         disableSort: true,
-        styles: { width: '19%' },
+        styles: { width: '19%', fontSize: '14px', fontFamily: 'Barlow' },
       },
       {
         label: t('risk.poolCredit.headers.column-4'),
         value: 'priorMonth',
         disableSort: true,
-        styles: { width: '17%' },
+        styles: { width: '17%', fontSize: '14px', fontFamily: 'Barlow' },
       },
     ],
     [t]
   )
 
   return (
-    <Card sx={{ minWidth: 275, boxShadow: 1, padding: 2 }} elevation={1}>
-      <Typography variant='h6' component='h2' mb={3}>
-        {t('risk.poolCredit.title')}
-      </Typography>
-
-      <CustomTable
-        headers={headers}
-        data={data}
-        pagination={false}
-        defaultSortKey='poolIdFK'
-        handleSort={handleSort}
-        sortKeys={[]}
-        headersStyle={{
-          '& .MuiTableCell-root': {
-            py: '6px',
-            px: 2,
-          },
-        }}
-      >
-        {(sortedData) =>
-          sortedData.map((data, index) => (
-            <TableRow key={index}>
-              <TableCell width='30%' align='left'>
-                {data.keyCreditMetric}
-              </TableCell>
-              <TableCell align='right'>
-                <Typography variant='body1'>
-                  {index < 2
-                    ? `${formatAmount(data.previousFiscalYear)} x`
-                    : formatPercentage(data.previousFiscalYear)}
-                </Typography>
-              </TableCell>
-              <TableCell align='right'>
-                <Typography variant='body1'>
-                  {index < 2
-                    ? `${formatAmount(data.mostRecentQuarter)} x`
-                    : formatPercentage(data.mostRecentQuarter)}
-                </Typography>
-              </TableCell>
-              <TableCell align='right'>
-                <Typography variant='body1'>
-                  {index < 2
-                    ? `${formatAmount(data.priorMonth)} x`
-                    : formatPercentage(data.priorMonth)}
-                </Typography>
-              </TableCell>
-            </TableRow>
-          ))
+    <Card sx={{ mt: 3 }}>
+      <CardHeader
+        title={
+          <Typography variant='h6'>{t('risk.poolCredit.title')}</Typography>
         }
-      </CustomTable>
+      />
+      <CardContent sx={{ padding: 2 }}>
+        <CustomTable
+          headers={headers}
+          data={data}
+          pagination={false}
+          defaultSortKey='poolIdFK'
+          handleSort={handleSort}
+          sortKeys={[]}
+          headersStyle={{
+            '& .MuiTableCell-root': {
+              py: '6px',
+              px: 2,
+            },
+          }}
+        >
+          {(sortedData) =>
+            sortedData.map((data, index) => (
+              <TableRow key={index}>
+                <TableCell width='30%' align='left'>
+                  {data.keyCreditMetric}
+                </TableCell>
+                <TableCell align='right'>
+                  <Typography variant='body1'>
+                    {index < 2
+                      ? `${formatAmount(data.previousFiscalYear)} x`
+                      : formatPercentage(data.previousFiscalYear)}
+                  </Typography>
+                </TableCell>
+                <TableCell align='right'>
+                  <Typography variant='body1'>
+                    {index < 2
+                      ? `${formatAmount(data.mostRecentQuarter)} x`
+                      : formatPercentage(data.mostRecentQuarter)}
+                  </Typography>
+                </TableCell>
+                <TableCell align='right'>
+                  <Typography variant='body1'>
+                    {index < 2
+                      ? `${formatAmount(data.priorMonth)} x`
+                      : formatPercentage(data.priorMonth)}
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            ))
+          }
+        </CustomTable>
+      </CardContent>
     </Card>
   )
 }

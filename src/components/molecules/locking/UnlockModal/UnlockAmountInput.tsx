@@ -1,3 +1,4 @@
+import RefreshIcon from '@mui/icons-material/Refresh'
 import { Grid, Typography } from '@mui/material'
 import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
 import { formatEther } from 'ethers/lib/utils'
@@ -11,8 +12,6 @@ import useKsuPrice from '@/hooks/web3/useKsuPrice'
 import ColoredBox from '@/components/atoms/ColoredBox'
 import BalanceItem from '@/components/molecules/locking/BalanceOverview/BalanceItem'
 import NumericalInput from '@/components/molecules/NumericalInput'
-
-import { RefreshIcon } from '@/assets/icons'
 
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 

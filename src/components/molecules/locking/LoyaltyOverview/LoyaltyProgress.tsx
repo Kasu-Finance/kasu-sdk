@@ -1,3 +1,4 @@
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import { Box, SxProps, Theme, Typography } from '@mui/material'
 import React from 'react'
 
@@ -5,8 +6,6 @@ import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
 import useTranslation from '@/hooks/useTranslation'
 
 import ProgressBar from '@/components/atoms/ProgressBar'
-
-import { ChevronDownIcon } from '@/assets/icons'
 
 const GRID_TEMPLATE_COLUMN =
   'minmax(0, 0.45fr) minmax(0, 0.25fr) minmax(0, 0.3fr)'
@@ -73,8 +72,8 @@ const LoyaltyProgress: React.FC<LoyaltyProgressProps> = ({
           alignItems='center'
           sx={getLabelStyle(stakedPercentage !== 0)}
         >
-          <ChevronDownIcon />
-          <Typography variant='subtitle2' component='span' ml='7px'>
+          <ArrowDropDownIcon />
+          <Typography variant='body2' component='span'>
             {t('locking.widgets.loyalty.level.level-0.title')}
           </Typography>
         </Box>
@@ -92,10 +91,10 @@ const LoyaltyProgress: React.FC<LoyaltyProgressProps> = ({
           >
             {t('general.loyalty')}&nbsp;
           </Typography>
-          <Typography variant='subtitle2' component='span' mr='7px'>
+          <Typography variant='subtitle2' component='span'>
             {t('locking.widgets.loyalty.level.level-1.level')}
           </Typography>
-          <ChevronDownIcon />
+          <ArrowDropDownIcon />
         </Box>
         <Box
           display='flex'
@@ -110,10 +109,10 @@ const LoyaltyProgress: React.FC<LoyaltyProgressProps> = ({
           >
             {t('general.loyalty')}&nbsp;
           </Typography>
-          <Typography variant='subtitle2' component='span' mr='7px'>
+          <Typography variant='subtitle2' component='span'>
             {t('locking.widgets.loyalty.level.level-2.level')}
           </Typography>
-          <ChevronDownIcon />
+          <ArrowDropDownIcon />
         </Box>
       </Box>
       <ProgressBar
@@ -123,6 +122,7 @@ const LoyaltyProgress: React.FC<LoyaltyProgressProps> = ({
           alignItems: 'center',
           gridTemplateColumns: GRID_TEMPLATE_COLUMN,
           padding: '0 4px',
+          color: 'primary.contrastText',
         }}
         value={calculateValue(stakedPercentage, level_1, level_2)}
       >

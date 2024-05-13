@@ -55,11 +55,8 @@ const PoolOverview = () => {
   if (currentPool && currentPoolDelegate) {
     return (
       <>
-        <Card
-          sx={{ minWidth: 275, height: 352, boxShadow: 3, overflow: 'inherit' }}
-          elevation={1}
-        >
-          <OverviewTitle />
+        <Card sx={{ mt: 3 }}>
+          <OverviewTitle pdfUrl={currentPool?.strategyDeckUrl || ''} />
           <CardContent>
             <Typography variant='body1'>{currentPool.description}</Typography>
           </CardContent>

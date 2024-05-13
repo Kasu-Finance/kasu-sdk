@@ -3,13 +3,15 @@ import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
+import { isLocalhost } from '@/utils'
+
 const useUserPoolBalance = (poolId: string) => {
   const sdk = useKasuSDK()
   const { account: userAddress } = useWeb3React()
 
   const fetchUserBalance = async () => {
     if (!poolId || !userAddress) {
-      console.error('No poolId or userAddress provided')
+      isLocalhost() && console.warn('No poolId or userAddress provided')
       return null
     }
     const data = await sdk.UserLending.getUserPoolBalance(userAddress, poolId)

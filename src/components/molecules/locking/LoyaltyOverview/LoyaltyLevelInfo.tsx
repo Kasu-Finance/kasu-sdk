@@ -1,10 +1,9 @@
+import VerifiedIcon from '@mui/icons-material/Verified'
 import { Box, SxProps, Theme, Typography, TypographyProps } from '@mui/material'
 import React from 'react'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import List from '@/components/atoms/List'
-
-import { VerifiedIcon } from '@/assets/icons'
 
 type LoyaltyLevelInfoProps = {
   title: string
@@ -46,8 +45,11 @@ const LoyaltyLevelInfo: React.FC<LoyaltyLevelInfoProps> = ({
         alignItems='start'
         gap={1}
       >
-        <Box pt='7px'>
-          <VerifiedIcon />
+        <Box pt='5px'>
+          <VerifiedIcon
+            fontSize='small'
+            sx={{ color: 'rgba(127, 116, 102, 0.54)' }}
+          />
         </Box>
         <Box>
           <Typography

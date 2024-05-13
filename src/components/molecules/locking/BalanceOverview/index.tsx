@@ -1,5 +1,7 @@
 'use client'
 
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
+import LockClockIcon from '@mui/icons-material/LockClock'
 import { Button, Grid } from '@mui/material'
 import { formatEther, formatUnits, parseEther } from 'ethers/lib/utils'
 
@@ -12,8 +14,6 @@ import useUserBalance from '@/hooks/web3/useUserBalance'
 import CardWidget from '@/components/atoms/CardWidget'
 import ColoredBox from '@/components/atoms/ColoredBox'
 import BalanceItem from '@/components/molecules/locking/BalanceOverview/BalanceItem'
-
-import { TimedLockIcon, WalletIcon } from '@/assets/icons'
 
 import sdkConfig, { USDC } from '@/config/sdk'
 import { convertToUSD, formatAmount } from '@/utils'
@@ -45,7 +45,7 @@ const BalanceOverview = () => {
             sx={{ width: 134 }}
             href='https://www.google.com'
             target='_blank'
-            startIcon={<WalletIcon />}
+            startIcon={<AccountBalanceWalletIcon />}
           >
             {t('general.buyKSU')}
           </Button>
@@ -53,7 +53,7 @@ const BalanceOverview = () => {
             sx={{ wixth: 143 }}
             variant='contained'
             onClick={handleOpen}
-            startIcon={<TimedLockIcon />}
+            startIcon={<LockClockIcon />}
           >
             {t('general.lockKSU')}
           </Button>

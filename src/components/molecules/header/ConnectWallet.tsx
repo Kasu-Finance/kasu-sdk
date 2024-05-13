@@ -1,5 +1,7 @@
 'use client'
 
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
+import CloseIcon from '@mui/icons-material/Close'
 import { Button, Chip, Typography, useTheme } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { useCallback, useEffect, useState } from 'react'
@@ -9,14 +11,10 @@ import useToastState from '@/hooks/context/useToastState'
 
 import ToolTip from '@/components/atoms/ToolTip'
 
-import { ArrowRightIcon, CrossIcon, WalletIcon } from '@/assets/icons'
-
 import { setRecentWeb3ConnectionDisconnected } from '@/connection/connection.helper'
 import { networkConnection } from '@/connection/connectors/networkConnector'
 import { isSupportedChain } from '@/utils'
 import formatAccount from '@/utils/formats/formatAccount'
-
-// import { StyledConnectWalletButton } from './header.style'
 
 const ConnectWallet = () => {
   const { account, connector, chainId } = useWeb3React()
@@ -89,14 +87,9 @@ const ConnectWallet = () => {
       title={
         connected && (
           <Button
-            startIcon={<CrossIcon />}
+            startIcon={<CloseIcon />}
             variant='contained'
             onClick={disconnect}
-            sx={{
-              '& .MuiButton-startIcon > svg > path': {
-                fill: 'white',
-              },
-            }}
           >
             Disconnect
           </Button>
@@ -111,10 +104,9 @@ const ConnectWallet = () => {
           pr: 2,
           ml: 'auto',
           height: 36,
-          width: account ? 176 : 206,
         }}
         startIcon={
-          <WalletIcon
+          <AccountBalanceWalletIcon
             fill={
               connected || invalidChain
                 ? theme.palette.primary.main
@@ -124,9 +116,9 @@ const ConnectWallet = () => {
         }
         endIcon={
           connected || invalidChain ? (
-            <CrossIcon width='12' height='12' />
+            <CloseIcon width='12' height='12' />
           ) : (
-            <ArrowRightIcon />
+            <></>
           )
         }
         onClick={connected || invalidChain ? undefined : handleOpen}
@@ -140,6 +132,7 @@ const ConnectWallet = () => {
                 variant='subtitle2'
                 component='span'
                 fontSize={10}
+                color='white'
               >
                 {isSupportedChain(chainId) ? 'Connected' : 'Wrong Chain'}
               </Typography>
@@ -147,7 +140,7 @@ const ConnectWallet = () => {
             variant='filled'
             sx={{
               px: '3px',
-              py: 0.5,
+              pb: 0.5,
               width: 69,
               height: 20,
               position: 'absolute',

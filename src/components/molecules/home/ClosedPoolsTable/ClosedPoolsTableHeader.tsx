@@ -16,7 +16,7 @@ const ClosedPoolsTableHeader: React.FC<ClosedPoolsTableHeaderProps> = ({
 }) => (
   <TableRow
     sx={(theme) => ({
-      background: alpha(theme.palette.primary.main, 0.04),
+      background: alpha(theme.palette.primary.main, 0.08),
     })}
   >
     <TableCell align='left'>

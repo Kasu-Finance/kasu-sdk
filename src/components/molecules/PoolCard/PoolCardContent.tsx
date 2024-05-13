@@ -106,7 +106,7 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
               subtitle={
                 isMultiTranche
                   ? t('lending.poolOverview.investmentCard.trancheApy.label')
-                  : ''
+                  : ' '
               }
               toolTipInfo=''
               showDivider
@@ -123,6 +123,7 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
                 component: 'p',
                 sx: { ml: 0 },
                 variant: 'caption',
+                minHeight: '20px',
               }}
             />
           )

@@ -1,3 +1,4 @@
+import LockClockIcon from '@mui/icons-material/LockClock'
 import { Box, Typography } from '@mui/material'
 import { useState } from 'react'
 
@@ -10,8 +11,6 @@ import ColoredBox from '@/components/atoms/ColoredBox'
 import InfoRow from '@/components/atoms/InfoRow'
 import TokenAmount from '@/components/atoms/TokenAmount'
 import NumericalInput from '@/components/molecules/NumericalInput'
-
-import { TimedLockIcon } from '@/assets/icons'
 
 import { formatAmount, toBigNumber } from '@/utils'
 
@@ -97,7 +96,7 @@ const LockAmountInput: React.FC<LockAmountInputProps> = ({ balance }) => {
             shrink: true,
           },
           InputProps: {
-            startAdornment: <TimedLockIcon />,
+            startAdornment: <LockClockIcon />,
             endAdornment: 'KSU',
             sx: (theme) => ({
               '& .MuiInputBase-input': {

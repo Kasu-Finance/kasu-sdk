@@ -1,3 +1,4 @@
+import LockOpenIcon from '@mui/icons-material/LockOpen'
 import { Button, TableCell, TableRow, Typography } from '@mui/material'
 import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
 
@@ -6,8 +7,6 @@ import useCountdown from '@/hooks/useCountdown'
 import useTranslation from '@/hooks/useTranslation'
 
 import TokenAmount from '@/components/atoms/TokenAmount'
-
-import { UnlockIcon } from '@/assets/icons'
 
 import { DATE_FORMAT, TIME_FORMAT } from '@/constants'
 import dayjs from '@/dayjs'
@@ -43,15 +42,7 @@ const UnlockRow: React.FC<UnlockRowProps> = ({ userLock }) => {
         </Typography>
         <Button
           variant='contained'
-          startIcon={<UnlockIcon />}
-          sx={{
-            mt: 1,
-            '& .MuiButton-startIcon > svg > path': isUnlocked
-              ? undefined
-              : {
-                  fill: 'rgba(0,0,0,0.26)',
-                },
-          }}
+          startIcon={<LockOpenIcon />}
           onClick={handleOpen}
           disabled={!isUnlocked}
         >

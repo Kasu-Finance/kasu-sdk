@@ -26,22 +26,15 @@ const LifetimeSummary = () => {
         <ColoredBox sx={{ p: 0 }}>
           <Skeleton sx={{ fontSize: '1.3rem' }} />
           <Divider />
+
           <Grid container spacing={2}>
-            <Grid item xs={4}>
-              <Skeleton sx={{ fontSize: '1.5rem' }} />
-              <Divider />
-              <Skeleton sx={{ fontSize: '2rem' }} />
-            </Grid>
-            <Grid item xs={4}>
-              <Skeleton sx={{ fontSize: '1.5rem' }} />
-              <Divider />
-              <Skeleton sx={{ fontSize: '2.6rem' }} />
-            </Grid>
-            <Grid item xs={4}>
-              <Skeleton sx={{ fontSize: '1.5rem' }} />
-              <Divider />
-              <Skeleton sx={{ fontSize: '2rem' }} />
-            </Grid>
+            {Array.from({ length: 3 }).map((_, index) => (
+              <Grid item xs={4} key={index}>
+                <Skeleton sx={{ fontSize: '1.5rem' }} />
+                <Divider />
+                <Skeleton sx={{ fontSize: '2rem' }} />
+              </Grid>
+            ))}
           </Grid>
         </ColoredBox>
       </Grid>

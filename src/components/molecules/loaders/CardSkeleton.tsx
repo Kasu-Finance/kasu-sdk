@@ -37,7 +37,7 @@ const CardSkeleton: React.FC<CardSkeletonProps> = ({
   subtitleStyle,
 }) => {
   return (
-    <Card sx={{ minWidth: 275, boxShadow: 3, padding: 2, mb: 2 }} elevation={1}>
+    <Card sx={{ minWidth: 275, boxShadow: 0, padding: 2 }} elevation={1}>
       <Box sx={titleStyle}>
         <Skeleton variant='text' width='100%' height={50} />
       </Box>

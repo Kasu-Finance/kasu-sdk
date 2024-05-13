@@ -11,6 +11,7 @@ interface AvatarProps {
   src?: string
   name?: string
   showStatus?: boolean
+  badgeColor?: string
   sx?: SxProps
 }
 
@@ -18,6 +19,7 @@ const PoolAvatar: React.FC<AvatarProps> = ({
   src,
   name,
   showStatus = true,
+  badgeColor,
   sx,
   ...props
 }) => {
@@ -36,8 +38,8 @@ const PoolAvatar: React.FC<AvatarProps> = ({
       invisible={!showStatus}
       sx={{
         '& .MuiBadge-badge': {
-          backgroundColor: theme.palette.success.main,
-          color: theme.palette.getContrastText(theme.palette.success.main),
+          backgroundColor: badgeColor || theme.palette.success.main,
+          color: badgeColor || theme.palette.success.contrastText,
           height: 12,
           width: 12,
           borderRadius: '50%',
@@ -49,7 +51,12 @@ const PoolAvatar: React.FC<AvatarProps> = ({
       <Avatar
         {...props}
         sx={[
-          { boxShadow: '0 0 8px rgba(0,0,0,.14) inset' },
+          {
+            boxShadow: '0 0 8px rgba(0,0,0,.14) inset',
+            background: theme.palette.primary.dark,
+            color: theme.palette.primary.main,
+          },
+
           ...(Array.isArray(sx) ? sx : [sx]),
         ]}
         src={avatarSrc}

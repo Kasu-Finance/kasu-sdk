@@ -1,4 +1,4 @@
-import { alpha, Box, TableCell, TableRow } from '@mui/material'
+import { alpha, Box, TableCell, TableRow, Typography } from '@mui/material'
 
 import useTranslation from '@/hooks/useTranslation'
 
@@ -15,19 +15,23 @@ const LendingPortfolioTableHeader = () => {
         })}
       >
         <TableCell rowSpan={2} width='17%'>
-          {t('general.pool')}
+          <Typography variant='subtitle2'>{t('general.pool')}</Typography>
         </TableCell>
         <TableCell rowSpan={2} align='right' width='17%' className='apy'>
-          {t('general.apy')}
+          <Typography variant='subtitle2'>{t('general.apy')}</Typography>
         </TableCell>
         <TableCell rowSpan={2} align='right' width='17%'>
           <Box display='flex' alignItems='center' justifyContent='end'>
-            {t('general.investment')}
+            <Typography variant='subtitle2'>
+              {t('general.investment')}
+            </Typography>
             <ToolTip title='info' />
           </Box>
         </TableCell>
         <TableCell colSpan={2} align='center' width='48%'>
-          {t('portfolio.summary.yieldEarnings.title')}
+          <Typography variant='subtitle2'>
+            {t('portfolio.summary.yieldEarnings.title')}
+          </Typography>
         </TableCell>
       </TableRow>
       <TableRow
@@ -35,8 +39,12 @@ const LendingPortfolioTableHeader = () => {
           background: alpha(theme.palette.primary.main, 0.04),
         })}
       >
-        <TableCell align='right'>{t('general.lastEpoch')}</TableCell>
-        <TableCell align='right'>{t('general.lifetime')}</TableCell>
+        <TableCell align='right'>
+          <Typography variant='caption'>{t('general.lastEpoch')}</Typography>
+        </TableCell>
+        <TableCell align='right'>
+          <Typography variant='caption'>{t('general.lifetime')}</Typography>
+        </TableCell>
       </TableRow>
     </>
   )

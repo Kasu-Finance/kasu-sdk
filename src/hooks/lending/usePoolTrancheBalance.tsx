@@ -3,6 +3,8 @@ import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
+import { isLocalhost } from '@/utils'
+
 import { HexString } from '@/types/lending'
 
 const usePoolTrancheBalance = (poolId: string, trancheId: HexString) => {
@@ -11,7 +13,7 @@ const usePoolTrancheBalance = (poolId: string, trancheId: HexString) => {
 
   const fetchUserTrancheBalance = async () => {
     if (!poolId || !userAddress) {
-      console.error('No poolId or userAddress provided')
+      isLocalhost() && console.warn('No poolId or userAddress provided')
       return null
     }
 

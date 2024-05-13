@@ -1,11 +1,10 @@
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { Box, Divider, Typography } from '@mui/material'
 import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
 import React from 'react'
 
 import useLockPeriods from '@/hooks/locking/useLockPeriods'
 import useTranslation from '@/hooks/useTranslation'
-
-import { ArrowRightIcon } from '@/assets/icons'
 
 import { formatAmount } from '@/utils'
 
@@ -54,7 +53,7 @@ const LockPeriodInfo: React.FC<LockPeriodInfoProps> = ({ activePeriod }) => {
             })}
             key={period.lockPeriod}
           >
-            {index !== 0 && <ArrowRightIcon />}
+            {index !== 0 && <ArrowForwardIcon />}
             <Box textAlign='center'>
               <Typography
                 variant='subtitle2'

@@ -25,6 +25,9 @@ const HorizontalStepper: React.FC<HorizontalStepperProps> = ({
         '& .MuiStepIcon-root.Mui-completed': {
           color: theme.palette.success.main,
         },
+        '& .MuiStepIcon-text': {
+          fill: 'white',
+        },
       })}
     >
       {steps.map((label, index) => (

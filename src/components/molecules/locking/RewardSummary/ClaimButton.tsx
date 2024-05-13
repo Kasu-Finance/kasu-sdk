@@ -1,6 +1,5 @@
+import VerifiedIcon from '@mui/icons-material/Verified'
 import { Button, ButtonProps, styled } from '@mui/material'
-
-import { VerifiedIcon } from '@/assets/icons'
 
 const StyledClaimButton = styled(Button)(({ theme }) => ({
   display: 'flex',

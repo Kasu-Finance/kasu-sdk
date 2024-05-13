@@ -2,8 +2,6 @@ import { Box, Button, ButtonGroup, CardHeader } from '@mui/material'
 
 import useTranslation from '@/hooks/useTranslation'
 
-import CsvDownloadButton from '@/components/atoms/CsvDownloadButton'
-
 const LendingPortfolioTabHeader = () => {
   const { t } = useTranslation()
   return (
@@ -28,17 +26,26 @@ const LendingPortfolioTabHeader = () => {
                 },
               }}
             >
-              <Button size='small' color='success'>
+              <Button
+                size='small'
+                color='success'
+                sx={{ fontSize: '13px', fontWeight: '400' }}
+              >
                 Active
               </Button>
-              <Button size='small' color='error'>
+
+              <Button
+                size='small'
+                color='error'
+                sx={{ fontSize: '13px', fontWeight: '400' }}
+              >
                 Closed
               </Button>
             </ButtonGroup>
-            <CsvDownloadButton
+            {/* <CsvDownloadButton
               size='small'
               onDownload={() => alert('Download is not implemented yet.')}
-            />
+            /> */}
           </Box>
         }
         title={t('portfolio.lendingPortfolio.title')}

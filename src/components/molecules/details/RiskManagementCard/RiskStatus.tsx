@@ -86,7 +86,7 @@ const RiskStatus: React.FC<RiskStatusProps> = ({ metrics }) => {
       <Box
         display='flex'
         width='100%'
-        className='light-blue-background'
+        className='light-colored-background'
         pb={0.5}
       >
         <Box width='50%' display='flex' flexDirection='column' pr={2}>

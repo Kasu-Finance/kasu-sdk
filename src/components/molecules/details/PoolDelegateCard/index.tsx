@@ -1,4 +1,4 @@
-import { Box, Card, Typography } from '@mui/material'
+import { Box, Card, CardContent, CardHeader, Typography } from '@mui/material'
 import { PoolDelegateProfileAndHistory } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useCallback, useMemo } from 'react'
 
@@ -50,24 +50,30 @@ const PoolDelegateCard: React.FC<PoolDelegateCardProps> = ({ data }) => {
   )
 
   return (
-    <Card sx={{ minWidth: 275, boxShadow: 3, padding: 2 }} elevation={1}>
-      <Typography variant='h6' mb={2}>
-        {t('details.poolDelegate.title')}
-      </Typography>
+    <Card sx={{ mt: 3 }}>
+      <CardHeader
+        title={
+          <Typography variant='h6'>
+            {t('details.poolDelegate.title')}
+          </Typography>
+        }
+      />
 
-      <Box display='flex' width='100%' className='light-blue-background'>
-        <MetricGroup metrics={firstArray} type={MetricGroupType.First} />
-      </Box>
-
-      <Box display='flex' justifyContent='space-between' width='100%' mt={2}>
-        <Box display='flex' width='50%'>
-          <MetricGroup metrics={secondArray} type={MetricGroupType.Second} />
+      <CardContent sx={{ padding: 2 }}>
+        <Box display='flex' width='100%' className='light-colored-background'>
+          <MetricGroup metrics={firstArray} type={MetricGroupType.First} />
         </Box>
 
-        <Box display='flex' width='50%'>
-          <MetricGroup metrics={thirdArray} type={MetricGroupType.Third} />
+        <Box display='flex' justifyContent='space-between' width='100%' mt={2}>
+          <Box display='flex' width='50%'>
+            <MetricGroup metrics={secondArray} type={MetricGroupType.Second} />
+          </Box>
+
+          <Box display='flex' width='50%'>
+            <MetricGroup metrics={thirdArray} type={MetricGroupType.Third} />
+          </Box>
         </Box>
-      </Box>
+      </CardContent>
     </Card>
   )
 }

@@ -1,6 +1,5 @@
+import InfoIcon from '@mui/icons-material/Info'
 import { IconButton, Tooltip } from '@mui/material'
-
-import { InfoIcon } from '@/assets/icons' // Adjust the import based on your
 
 interface InfoTooltipProps {
   title: string | null | undefined

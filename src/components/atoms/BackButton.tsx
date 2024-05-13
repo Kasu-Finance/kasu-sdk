@@ -15,7 +15,12 @@ const BackButton: React.FC<ButtonProps> = ({ startIcon, ...props }) => {
   }
 
   return (
-    <Button {...props} onClick={handleBack} startIcon={startIcon}>
+    <Button
+      sx={{ fontWeight: 700 }}
+      {...props}
+      onClick={handleBack}
+      startIcon={startIcon}
+    >
       {props.children || t('general.goBack')}
     </Button>
   )

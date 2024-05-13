@@ -1,3 +1,5 @@
+'use client'
+
 import Image from 'next/image'
 import { useState } from 'react'
 
@@ -13,7 +15,7 @@ const ImageWithFallback: React.FC<{ src: string; alt?: string }> = ({
 
   return (
     <ImageCover>
-      {!imageError && src !== '' ? (
+      {!imageError && src ? (
         <Image
           fill
           src={src}

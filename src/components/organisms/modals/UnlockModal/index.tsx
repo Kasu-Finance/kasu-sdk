@@ -1,3 +1,5 @@
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import EditIcon from '@mui/icons-material/Edit'
 import { Button, DialogActions, DialogContent } from '@mui/material'
 import { parseUnits } from 'ethers/lib/utils'
 
@@ -15,8 +17,6 @@ import UnlockModalEdit from '@/components/organisms/modals/UnlockModal/UnlockMod
 import UnlockModalReview from '@/components/organisms/modals/UnlockModal/UnlockModalReview'
 
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
-
-import { ChevronRightIcon, EditIcon } from '@/assets/icons'
 
 import sdkConfig from '@/config/sdk'
 import { capitalize } from '@/utils'

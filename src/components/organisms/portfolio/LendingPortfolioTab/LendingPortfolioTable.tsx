@@ -1,8 +1,7 @@
-import { Divider, Grid, Skeleton } from '@mui/material'
-
 import useLendingPortfolioData from '@/hooks/portfolio/useLendingPortfolioData'
 
 import CustomTable from '@/components/molecules/CustomTable'
+import TableSkeleton from '@/components/molecules/loaders/TableSkeleton'
 import LendingPortfolioTableFooter from '@/components/molecules/portfolio/lendingPortfolioTab/LendingPortfolioTableFooter'
 import LendingPortfolioTableHeader from '@/components/molecules/portfolio/lendingPortfolioTab/LendingPortfolioTableHeader'
 import LendingPortfolioTableRow from '@/components/molecules/portfolio/lendingPortfolioTab/LendingPortfolioTableRow'
@@ -18,27 +17,7 @@ export const LENDING_PORTFOLIO_KEYS = [
 const LendingPortfolioTable = () => {
   const { lendingPortfolioData, isLoading } = useLendingPortfolioData()
 
-  if (isLoading)
-    return (
-      <Grid container spacing={2}>
-        <Grid item xs={2}>
-          <Skeleton sx={{ fontSize: '2.5rem' }} />
-        </Grid>
-        <Grid item xs={4} />
-        <Grid item xs={6}>
-          <Skeleton sx={{ fontSize: '2.5rem' }} />
-        </Grid>
-        <Grid item xs={12}>
-          <Divider />
-          <Skeleton sx={{ fontSize: '2.5rem' }} />
-          <Divider />
-          <Skeleton sx={{ fontSize: '2.5rem' }} />
-          <Divider />
-          <Skeleton sx={{ fontSize: '2.5rem' }} />
-          <Divider />
-        </Grid>
-      </Grid>
-    )
+  if (isLoading) return <TableSkeleton rows={6} columns={3} />
 
   return (
     <CustomTable

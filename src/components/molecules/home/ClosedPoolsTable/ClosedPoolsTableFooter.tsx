@@ -1,4 +1,4 @@
-import { alpha, TableCell, TableRow, Typography } from '@mui/material'
+import { TableCell, TableRow, Typography } from '@mui/material'
 import React from 'react'
 
 import { formatPercentage } from '@/utils'
@@ -31,12 +31,7 @@ const ClosedPoolsTableFooter: React.FC = () => {
   return (
     <>
       {averageAndTotalRows.map((row, index) => (
-        <TableRow
-          key={index}
-          sx={(theme) => ({
-            background: alpha(theme.palette.primary.main, 0.04),
-          })}
-        >
+        <TableRow key={index}>
           <TableCell align='left'>
             <Typography variant='subtitle2'>{row.name}</Typography>
           </TableCell>

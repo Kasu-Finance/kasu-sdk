@@ -1,10 +1,10 @@
 'use client'
 
 import Box from '@mui/material/Box'
-import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import { memo, useCallback, useState } from 'react'
 
+import StyledTab from '@/components/atoms/StyledTab'
 import PoolOverview from '@/components/molecules/lending/overview/PoolOverview'
 import TabPanel from '@/components/molecules/tabs/TabPanel'
 import PoolDetails from '@/components/organisms/details/PoolDetails'
@@ -30,11 +30,11 @@ const PoolTabs: React.FC = () => {
           onChange={handleChange}
           aria-label='basic tabs example'
         >
-          <Tab label='Overview' />
-          <Tab label='Pool Details' />
-          <Tab label='Repayments' />
-          <Tab label='Risk Reporting' />
-          <Tab label='Support' />
+          <StyledTab label='Overview' isActive={activeTab === 0} />
+          <StyledTab label='Pool Details' isActive={activeTab === 1} />
+          <StyledTab label='Repayments' isActive={activeTab === 2} />
+          <StyledTab label='Risk Reporting' isActive={activeTab === 3} />
+          <StyledTab label='Support' isActive={activeTab === 4} />
         </Tabs>
       </Box>
       <TabPanel isActive={activeTab === 0} id={panelsId}>

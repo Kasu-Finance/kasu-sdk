@@ -86,7 +86,7 @@ const ClosedPoolsTable: React.FC<ClosedPoolsTableProps> = ({
   }, [pools, poolDelegates])
 
   return (
-    <Card sx={{ minWidth: 275, boxShadow: 1, padding: 2 }} elevation={1}>
+    <Card sx={{ minWidth: 275, padding: 2 }}>
       <CustomTable
         data={tableData}
         defaultSortKey='poolName'

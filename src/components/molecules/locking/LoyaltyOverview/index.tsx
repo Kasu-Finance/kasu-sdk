@@ -1,5 +1,6 @@
 'use client'
 
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { Button, Typography } from '@mui/material'
 
 import useModalState from '@/hooks/context/useModalState'
@@ -14,8 +15,6 @@ import InfoRow from '@/components/atoms/InfoRow'
 import TokenAmount from '@/components/atoms/TokenAmount'
 import LoyaltyLevelInfo from '@/components/molecules/locking/LoyaltyOverview/LoyaltyLevelInfo'
 import LoyaltyProgress from '@/components/molecules/locking/LoyaltyOverview/LoyaltyProgress'
-
-import { ArrowRightIcon } from '@/assets/icons'
 
 import { capitalize, formatAmount } from '@/utils'
 
@@ -40,7 +39,7 @@ const LoyaltyOverview = () => {
               fill: theme.palette.primary.main,
             },
           })}
-          startIcon={<ArrowRightIcon />}
+          startIcon={<ArrowForwardIcon />}
           variant='outlined'
           onClick={handleOpen}
         >

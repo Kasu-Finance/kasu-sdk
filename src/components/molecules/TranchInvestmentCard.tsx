@@ -24,7 +24,7 @@ const TranchInvestmentCard: React.FC<InvestmentCardProps> = ({
 
   return (
     <Box
-      className='light-blue-background'
+      className='light-colored-background'
       sx={{ minWidth: 275, margin: 0, p: 0, borderRadius: '8px' }}
     >
       <Typography

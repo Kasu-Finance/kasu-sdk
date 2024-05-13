@@ -1,5 +1,6 @@
 'use client'
 
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import {
   Box,
   Button,
@@ -14,8 +15,6 @@ import { DialogChildProps } from '@/components/atoms/DialogWrapper'
 import DialogHeader from '@/components/molecules/DialogHeader'
 import LoyaltyLevelInfo from '@/components/molecules/locking/LoyaltyOverview/LoyaltyLevelInfo'
 
-import { ChevronLeftIcon } from '@/assets/icons'
-
 const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { t } = useTranslation()
 
@@ -27,7 +26,7 @@ const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
       />
       <DialogContent sx={{ px: 3, py: 1 }}>
         <Box display='grid' gap={2}>
-          <Typography variant='h5' component='span' display='block'>
+          <Typography variant='h6' component='span' display='block'>
             {t('modals.loyaltyLevels.subtitle')}
           </Typography>
           <Typography variant='body2' component='p'>
@@ -60,7 +59,7 @@ const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             ]}
           />
         </Box>
-        <Typography variant='subtitle2' fontWeight={700} component='p'>
+        <Typography variant='subtitle2' fontWeight={700} component='p' mt={1}>
           {t('modals.loyaltyLevels.description-3')}
         </Typography>
       </DialogContent>
@@ -69,12 +68,7 @@ const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           variant='contained'
           startIcon={<ChevronLeftIcon />}
           onClick={handleClose}
-          sx={{
-            width: 130,
-            '& .MuiButton-startIcon > svg > path': {
-              fill: 'white',
-            },
-          }}
+          sx={{ width: 130 }}
         >
           {t('general.return')}
         </Button>

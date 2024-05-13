@@ -85,11 +85,11 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
     >
       <Box
         borderRadius={2}
-        className='light-blue-background'
+        className='light-colored-background'
         sx={{
           flexGrow: 1,
-          mt: 2,
           mb: 2,
+          pb: 0.5,
         }}
       >
         <Grid
@@ -107,6 +107,7 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
                   content={formatAmount(+tranche.apy * 100) + ' %'}
                   tooltipKey={tranche.tooltip}
                   titleKey={`${tranche.name} Tranche APY`}
+                  variant='h5'
                 />
               </Grid>
             )

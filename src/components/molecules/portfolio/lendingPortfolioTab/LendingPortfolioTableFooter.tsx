@@ -1,5 +1,4 @@
 import {
-  alpha,
   Box,
   TableCell,
   TableCellProps,
@@ -53,12 +52,11 @@ const LendingPortfolioTableFooter: React.FC<
   return (
     <>
       <TableRow
-        sx={(theme) => ({
-          background: alpha(theme.palette.primary.main, 0.04),
+        sx={{
           '& .MuiTableCell-root': {
             py: '6px',
           },
-        })}
+        }}
       >
         <TableCell>
           <Typography variant='subtitle2' component='span'>
@@ -110,12 +108,11 @@ const LendingPortfolioTableFooter: React.FC<
         />
       </TableRow>
       <TableRow
-        sx={(theme) => ({
-          background: alpha(theme.palette.primary.main, 0.08),
+        sx={{
           '& .MuiTableCell-root': {
             py: '6px',
           },
-        })}
+        }}
       >
         <TableCell colSpan={2}>
           <Typography variant='subtitle2' component='span'>

@@ -5,7 +5,11 @@ import { Button, CardHeader } from '@mui/material'
 
 import useTranslation from '@/hooks/useTranslation'
 
-const OverviewTitle = () => {
+interface OverviewTitleProps {
+  pdfUrl?: string
+}
+
+const OverviewTitle: React.FC<OverviewTitleProps> = ({ pdfUrl }) => {
   const { t } = useTranslation()
 
   return (
@@ -22,6 +26,7 @@ const OverviewTitle = () => {
           sx={{ top: 4, right: 8 }}
           size='small'
           startIcon={<PhotoIcon />}
+          onClick={() => window.open(pdfUrl || '', '_blank')}
         >
           {t('lending.strategyDeck')}
         </Button>

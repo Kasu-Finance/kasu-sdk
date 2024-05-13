@@ -71,7 +71,7 @@ const InvestmentPortfolio: React.FC<{
   }
 
   return (
-    <Card sx={{ mt: 3 }}>
+    <Card>
       <CardHeader
         title='Your Investment'
         titleTypographyProps={{
@@ -93,7 +93,7 @@ const InvestmentPortfolio: React.FC<{
         <Grid item xs={12}>
           <Box
             borderRadius={2}
-            className='light-blue-background'
+            className='light-colored-background'
             sx={{
               flexGrow: 1,
               mt: 2,

@@ -5,7 +5,23 @@ const path = require('path')
 
 const nextConfig = {
   images: {
-    domains: ['kasu-uat.vercel.app', 'kasu.finance', ''],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'kasu-uat.vercel.app',
+        pathname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'kasu.finance',
+        pathname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'kasu-finance.directus.app',
+        pathname: '**',
+      },
+    ],
   },
   async redirects() {
     return [

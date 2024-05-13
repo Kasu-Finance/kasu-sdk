@@ -1,7 +1,6 @@
+import DownloadIcon from '@mui/icons-material/Download'
 import { Box, IconButton } from '@mui/material'
 import React from 'react'
-
-import { DownloadIcon } from '@/assets/icons'
 
 interface ActionCellProps {
   actionUrl: string

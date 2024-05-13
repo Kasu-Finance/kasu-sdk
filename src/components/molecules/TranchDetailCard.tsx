@@ -24,7 +24,7 @@ const TranchDetailCard: React.FC<TranchDetailCardProps> = ({
 
   return (
     <Box
-      className='light-blue-background'
+      className='light-colored-background'
       sx={{ minWidth: 275, margin: 0, p: 0, borderRadius: '8px' }}
     >
       <Typography
@@ -45,6 +45,7 @@ const TranchDetailCard: React.FC<TranchDetailCardProps> = ({
             <ContentWithSuffix
               textAlign='right'
               content={remainingAmount.pct + ' %'}
+              variant='body1'
             />
             <Typography
               textAlign='right'
@@ -66,6 +67,7 @@ const TranchDetailCard: React.FC<TranchDetailCardProps> = ({
             textAlign='right'
             content={minimumDepositAmount}
             suffix='USDC'
+            variant='body1'
           />
         }
       />
@@ -76,6 +78,7 @@ const TranchDetailCard: React.FC<TranchDetailCardProps> = ({
             textAlign='right'
             content={maxDepositAmount}
             suffix='USDC'
+            variant='body1'
           />
         }
       />

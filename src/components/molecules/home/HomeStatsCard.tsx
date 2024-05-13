@@ -44,7 +44,7 @@ const HomeStatsCard: React.FC<{
   }, [data])
 
   return (
-    <Card sx={{ minWidth: 275, boxShadow: 3, padding: 2, mt: 3 }} elevation={1}>
+    <Card sx={{ minWidth: 275, padding: 2 }} elevation={1}>
       {title && (
         <Typography variant='h6' mb={2}>
           {title}
