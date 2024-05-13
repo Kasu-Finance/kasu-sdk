@@ -1,4 +1,4 @@
-import { Grid } from '@mui/material'
+import { Grid, TypographyProps } from '@mui/material'
 import React from 'react'
 
 import InfoColumn from '@/components/atoms/InfoColumn'
@@ -9,6 +9,7 @@ type BalanceItemProps = {
   toolTipInfo: string
   value: string[]
   usdValue?: string
+  titleStyle?: TypographyProps
 }
 
 const BalanceItem: React.FC<BalanceItemProps> = ({
@@ -16,6 +17,7 @@ const BalanceItem: React.FC<BalanceItemProps> = ({
   toolTipInfo,
   value,
   usdValue,
+  titleStyle = { textTransform: 'capitalize' },
 }) => {
   return (
     <Grid item xs={12}>
@@ -23,7 +25,7 @@ const BalanceItem: React.FC<BalanceItemProps> = ({
         title={title}
         toolTipInfo={toolTipInfo}
         showDivider
-        titleStyle={{ textTransform: 'capitalize' }}
+        titleStyle={titleStyle}
         metric={
           <TokenAmount
             pt='6px'

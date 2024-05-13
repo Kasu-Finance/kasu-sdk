@@ -3,6 +3,8 @@ import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
 import { formatEther } from 'ethers/lib/utils'
 import React from 'react'
 
+import useTranslation from '@/hooks/useTranslation'
+
 import TokenAmount from '@/components/atoms/TokenAmount'
 
 import { formatAmount, toBigNumber } from '@/utils'
@@ -12,6 +14,8 @@ type UnlockFooterProps = {
 }
 
 const UnlockFooter: React.FC<UnlockFooterProps> = ({ userLocks }) => {
+  const { t } = useTranslation()
+
   const total = userLocks.reduce((acc, cur) => {
     return acc.add(toBigNumber(cur.lockedAmount))
   }, toBigNumber('0'))
@@ -25,8 +29,9 @@ const UnlockFooter: React.FC<UnlockFooterProps> = ({ userLocks }) => {
             component='span'
             display='block'
             py='6px'
+            textTransform='capitalize'
           >
-            Total
+            {t('general.total')}
           </Typography>
           <TokenAmount
             py='6px'

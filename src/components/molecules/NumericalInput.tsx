@@ -58,6 +58,7 @@ const NumericalInput: React.FC<NumericalInputProps> = ({
       variant='outlined'
       sx={{ textTransform: 'uppercase', height: '56px', width: '56px' }}
       onClick={handleMax}
+      size='large'
     >
       {t('general.max')}
     </Button>

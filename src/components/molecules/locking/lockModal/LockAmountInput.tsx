@@ -67,7 +67,7 @@ const LockAmountInput: React.FC<LockAmountInputProps> = ({ balance }) => {
   return (
     <Box>
       <Typography variant='subtitle1' component='span' display='block'>
-        {t('modals.lock.deposit.title')}
+        {t('modals.lock.deposit.amount-title')}
       </Typography>
       <NumericalInput
         amount={amount}
@@ -142,14 +142,14 @@ const LockAmountInput: React.FC<LockAmountInputProps> = ({ balance }) => {
         </Typography>
       )}
       <InfoRow
-        title='Minimum KSU Lock Amount for Loyalty 1'
-        toolTipInfo='info'
+        title={t('modals.lock.deposit.amount-metric-1')}
+        toolTipInfo={t('modals.lock.deposit.amount-metric-1-tooltip')}
         showDivider
         metric={<TokenAmount amount='500.00' symbol='KSU' />}
       />
       <InfoRow
-        title='Minimum KSU Lock Amount for Loyalty 2'
-        toolTipInfo='info'
+        title={t('modals.lock.deposit.amount-metric-2')}
+        toolTipInfo={t('modals.lock.deposit.amount-metric-2-tooltip')}
         showDivider
         metric={<TokenAmount amount='1,000.00' symbol='KSU' />}
       />

@@ -79,14 +79,14 @@ const LoyaltyOverview = () => {
       <InfoRow
         showDivider
         title={`rKSU ${capitalize(t('general.balance'))}`}
-        toolTipInfo='info'
+        toolTipInfo={t('locking.widgets.loyalty.metric-1-tooltip')}
         metric={<TokenAmount amount={formatAmount(rKsuAmount)} symbol='rKSU' />}
       />
 
       <InfoRow
         showDivider
         title={t('locking.widgets.loyalty.metric-2')}
-        toolTipInfo='info'
+        toolTipInfo={t('locking.widgets.loyalty.metric-2-toolip')}
         metric={
           <TokenAmount
             amount={formatAmount(totalDeposits.activeDepositAmount)}
@@ -97,7 +97,7 @@ const LoyaltyOverview = () => {
 
       <InfoRow
         showDivider
-        title='rKSU Ratio to Total USDC Deposits'
+        title={t('locking.widgets.loyalty.metric-3')}
         toolTipInfo={t('locking.widgets.loyalty.metric-3-toolip.description')}
         metric={
           <Typography variant='h6' component='span'>

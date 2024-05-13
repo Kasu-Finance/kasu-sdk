@@ -77,7 +77,7 @@ const LockPeriodInfo: React.FC<LockPeriodInfoProps> = ({ activePeriod }) => {
                 ✕
                 <br />
                 <Typography variant='caption' component='span'>
-                  multiplier
+                  {t('general.multiplier')}
                 </Typography>
               </Typography>
             </Box>

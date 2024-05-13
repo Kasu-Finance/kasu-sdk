@@ -19,6 +19,7 @@ import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 import { ChevronRightIcon, EditIcon } from '@/assets/icons'
 
 import sdkConfig from '@/config/sdk'
+import { capitalize } from '@/utils'
 
 const UnlockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { t } = useTranslation()
@@ -38,7 +39,10 @@ const UnlockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   return (
     <>
-      <DialogHeader title='Unlock' onClose={handleClose} />
+      <DialogHeader
+        title={capitalize(t('general.unlock'))}
+        onClose={handleClose}
+      />
       <DialogContent>
         {modalStatusAction === ModalStatusAction.REVIEWING ? (
           <UnlockModalReview
@@ -89,11 +93,11 @@ const UnlockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             onClick={() => setModalStatusAction(ModalStatusAction.REVIEWING)}
             disabled={modalStatus.type === 'error'}
           >
-            Review Unlock
+            {t('modals.unlock.buttons.reviewUnlock')}
           </Button>
         ) : (
           <Button variant='contained' sx={{ width: 191 }} onClick={handleClose}>
-            LOCKING OVERVIEW
+            {t('modals.lock.completed.lockingOverview')}
           </Button>
         )}
       </DialogActions>

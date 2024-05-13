@@ -1,9 +1,12 @@
 import { Grid, Typography } from '@mui/material'
 import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
+import { formatEther } from 'ethers/lib/utils'
 import { useState } from 'react'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
+import useTranslation from '@/hooks/useTranslation'
+import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import BalanceItem from '@/components/molecules/locking/BalanceOverview/BalanceItem'
@@ -11,13 +14,15 @@ import NumericalInput from '@/components/molecules/NumericalInput'
 
 import { RefreshIcon } from '@/assets/icons'
 
-import { formatAmount, toBigNumber } from '@/utils'
+import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
 type UnlockAmountInputProps = {
   userLock: UserLock
 }
 
 const UnlockAmountInput: React.FC<UnlockAmountInputProps> = ({ userLock }) => {
+  const { t } = useTranslation()
+
   const { amount, setAmount } = useLockModalState()
 
   const { modalStatus, setModalStatus } = useModalStatusState()
@@ -27,6 +32,13 @@ const UnlockAmountInput: React.FC<UnlockAmountInputProps> = ({ userLock }) => {
   const showSuccess = !focused && modalStatus.type === 'success'
 
   const { lockedAmount } = userLock
+
+  const { ksuPrice } = useKsuPrice()
+
+  const ksuInUSD = convertToUSD(
+    toBigNumber(amount || '0'),
+    toBigNumber(ksuPrice || '0')
+  )
 
   const handleMax = () => {
     setAmount(lockedAmount)
@@ -63,14 +75,14 @@ const UnlockAmountInput: React.FC<UnlockAmountInputProps> = ({ userLock }) => {
   return (
     <Grid container columns={24} spacing={2} pt={1}>
       <BalanceItem
-        title='Available KSU to Unlock'
-        toolTipInfo='info'
+        title={t('modals.unlock.withdraw.withdraw-metric-3')}
+        toolTipInfo={t('modals.unlock.withdraw.withdraw-metric-3-tooltip')}
         value={[formatAmount(lockedAmount), 'KSU']}
       />
       <Grid item xs={12}>
         <NumericalInput
           amount={amount}
-          label='Unlock Amount'
+          label={t('modals.unlock.withdraw.input-label')}
           setAmount={setAmount}
           handleMax={handleMax}
           rootProps={{
@@ -139,7 +151,7 @@ const UnlockAmountInput: React.FC<UnlockAmountInputProps> = ({ userLock }) => {
             mt='3px'
             mb={0.5}
           >
-            500.00 USDC
+            {formatAmount(formatEther(ksuInUSD))} USDC
           </Typography>
         )}
       </Grid>

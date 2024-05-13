@@ -21,7 +21,7 @@ import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 import { ChevronRightIcon, EditIcon } from '@/assets/icons'
 
 import sdkConfig from '@/config/sdk'
-import { formatAmount } from '@/utils'
+import { capitalize, formatAmount } from '@/utils'
 
 const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { t } = useTranslation()
@@ -42,7 +42,10 @@ const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   return (
     <>
-      <DialogHeader title='Lock' onClose={handleClose} />
+      <DialogHeader
+        title={capitalize(t('general.lock'))}
+        onClose={handleClose}
+      />
       <DialogContent>
         {modalStatusAction === ModalStatusAction.REVIEWING ? (
           <LockModalReview
@@ -53,11 +56,11 @@ const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           <LockModalEdit userBalance={formatUnits(balance ?? '0', decimals)} />
         ) : (
           <Typography variant='body1' component='p' display='block' px={1}>
-            You have successfully queued{' '}
+            {t('modals.lock.completed.description-1')}{' '}
             <Typography variant='h6' component='span'>
               {formatAmount(amount)} KSU
             </Typography>{' '}
-            to be locked in the next Epoch.
+            {t('modals.lock.completed.description-2')}
           </Typography>
         )}
       </DialogContent>
@@ -93,7 +96,7 @@ const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               sx={{ width: 191 }}
               onClick={handleClose}
             >
-              LOCKING OVERVIEW
+              {t('modals.lock.completed.lockingOverview')}
             </Button>
           )}
         </DialogActions>
