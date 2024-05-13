@@ -99,7 +99,7 @@ export class DataService {
         const directusResults: PoolOverviewDirectus[] = await this._directus.request(readItems('PoolOverview'));
         const retn: PoolOverview[] = [];
         for (const lendingPoolSubgraph of subgraphResults.lendingPools) {
-            const lendingPoolDirectus: PoolOverviewDirectus | undefined = directusResults.find(r => r.id == lendingPoolSubgraph.id);
+            const lendingPoolDirectus: PoolOverviewDirectus | undefined = directusResults.find(r => r.id.toLowerCase() == lendingPoolSubgraph.id);
             const lendingPoolConfig: LendingPoolConfigurationSubgraph | undefined = subgraphLendingPoolConfigurationResults.lendingPoolConfigurations.find(r => r.id == lendingPoolSubgraph.id);
             if(!lendingPoolDirectus || !lendingPoolConfig) {
                 console.log("Couldn't find directus pool for id: ", lendingPoolSubgraph.id);
@@ -128,13 +128,13 @@ export class DataService {
             const trancheBalanceSum = lendingPoolSubgraph.tranches.reduce((a, b) => a + parseFloat(b.balance), 0);
             let averageApy = 0;
             for(const tranche of lendingPoolSubgraph.tranches) {
-                const trancheDirectus = directusResults.find(r => r.id == tranche.id);
-                if(!trancheDirectus) {
+                const trancheData = tranches.find(r => r.id.toLowerCase() == tranche.id);
+                if(!trancheData) {
                     console.log("Couldn't find tranche directus for id: ", tranche.id);
                     continue;
                 }
-                const weight = parseFloat(tranche.balance) / trancheBalanceSum;
-                averageApy += trancheDirectus.apy * weight;
+                const weight = trancheBalanceSum == 0 ? 0 : parseFloat(tranche.balance) / trancheBalanceSum;
+                averageApy += parseFloat(trancheData.apy) * weight;
             }
             const poolOverview: PoolOverview = {
                 id: lendingPoolSubgraph.id,
