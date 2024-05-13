@@ -105,4 +105,5 @@ export interface PoolRepaymentDirectus {
     upcomingLendingFundsFlow_3_Value: number | null;
     upcomingLendingFundsFlow_4_Key: string | null;
     upcomingLendingFundsFlow_4_Value: number | null;
+    repaymentsFile: string;
 }

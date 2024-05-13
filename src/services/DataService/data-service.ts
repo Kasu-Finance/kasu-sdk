@@ -290,7 +290,8 @@ export class DataService {
                 cumulativeDepositsAndWithdrawals_CumulativeDeposits: parseFloat(cumulativeDepositsAndWithdrawals_CumulativeDeposits),
                 depositAndWithdrawalRequests_NetDeposits: parseFloat(depositAndWithdrawalRequests_CurrentDepositsRequests) - sumTotalPendingWithdrawalShares,
                 depositAndWithdrawalRequests_CurrentDepositsRequests: parseFloat(depositAndWithdrawalRequests_CurrentDepositsRequests),
-                depositAndWithdrawalRequests_CurrentWithdrawalRequests: sumTotalPendingWithdrawalShares
+                depositAndWithdrawalRequests_CurrentWithdrawalRequests: sumTotalPendingWithdrawalShares,
+                repaymentsFileUrl: this.getUrlFromFile(data.repaymentsFile)
             };
             retn.push(poolRepayment);
         }
