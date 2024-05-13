@@ -45,9 +45,9 @@ const usePortfolioRewards = () => {
       )
 
       const mappedPortfolioRewards: PortfolioRewardsType[] = Object.entries(
-        rewards
+        rewards as PortfolioRewards
       ).map(([key, val]) => ({
-        label: mapKeyToLabel[key],
+        label: mapKeyToLabel[key as keyof PortfolioRewards],
         ...val,
       }))
 
