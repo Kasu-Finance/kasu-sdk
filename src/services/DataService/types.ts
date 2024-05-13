@@ -126,6 +126,7 @@ export interface PoolRepayment {
     depositAndWithdrawalRequests_NetDeposits: number;
     depositAndWithdrawalRequests_CurrentDepositsRequests: number;
     depositAndWithdrawalRequests_CurrentWithdrawalRequests: number;
+    repaymentsFileUrl: string;
 }
 
 export interface LendingTotals {
