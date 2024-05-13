@@ -174,7 +174,7 @@ export class DataService {
             const itemsList: RiskManagementItem[] = items.sort((a, b) => a.priority - b.priority);
             retn.push({
                 id: riskManagementDirectus.id,
-                poolIdFK: riskManagementDirectus.poolIdFK,
+                poolIdFK: riskManagementDirectus.poolIdFK.toLowerCase(),
                 items: itemsList,
                 riskPerformance: {
                     id: riskManagementDirectus.id,
@@ -194,7 +194,7 @@ export class DataService {
         for(const data of poolDelegateProfileAndHistoryDirectus){
             retn.push({
                 id: data.id,
-                poolIdFK: data.poolIdFK,
+                poolIdFK: data.poolIdFK.toLowerCase(),
                 delegateLendingHistory: data.delegateLendingHistory,
                 assetClasses: data.assetClasses,
                 otherKASUPools: data.otherKASUPools.split(","),
@@ -219,7 +219,7 @@ export class DataService {
             }
             const tranche: PoolTranche = {
                 id: trancheSubgraph.id,
-                poolIdFK: trancheSubgraph.lendingPool.id,
+                poolIdFK: trancheSubgraph.lendingPool.id.toLowerCase(),
                 apy: this.calculateApyForTranche(configuration.interestRate).toString(),
                 minimalDepositThreshold: configuration.minDepositAmount,
                 maximalDepositThreshold: configuration.maxDepositAmount
@@ -267,7 +267,7 @@ export class DataService {
             })
             const poolRepayment: PoolRepayment = {
                 id: data.id,
-                poolIdFK: data.poolIdFK,
+                poolIdFK: data.poolIdFK.toLowerCase(),
                 currentTotalEndBorrowers: 0,
                 cumulativeLendingFundsFlow_InterestAccrued: data.cumulativeLendingFundsFlow_InterestAccrued,
                 cumulativeLendingFundsFlow_InterestPayments: data.cumulativeLendingFundsFlow_InterestPayments,
@@ -315,7 +315,7 @@ export class DataService {
             retn.totalYieldEarned += parseFloat(poolOverview.yieldEarned);
         }
         for (const poolOverview of poolOverviews){
-            const riskManagement = riskManagements.find(rm => rm.poolIdFK === poolOverview.id);
+            const riskManagement = riskManagements.find(rm => rm.poolIdFK.toLowerCase() === poolOverview.id.toLowerCase());
             if(!riskManagement) {
                 console.log("Couldn't find risk management for id: ", poolOverview.id);
                 continue;
