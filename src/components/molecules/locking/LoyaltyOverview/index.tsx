@@ -32,7 +32,7 @@ const LoyaltyOverview = () => {
 
   return (
     <CardWidget
-      title='Loyalty Status'
+      title={t('locking.widgets.loyalty.title')}
       cardAction={
         <Button
           sx={(theme) => ({
@@ -98,7 +98,7 @@ const LoyaltyOverview = () => {
       <InfoRow
         showDivider
         title='rKSU Ratio to Total USDC Deposits'
-        toolTipInfo='info'
+        toolTipInfo={t('locking.widgets.loyalty.metric-3-toolip.description')}
         metric={
           <Typography variant='h6' component='span'>
             {formatAmount(stakedPercentage, {

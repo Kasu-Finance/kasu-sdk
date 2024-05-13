@@ -42,7 +42,7 @@ const RewardSummary = () => {
   )
 
   return (
-    <CardWidget title='Bonus & Rewards Summary​​'>
+    <CardWidget title={t('locking.widgets.rewardsSummary.title')}>
       <Grid container spacing={3}>
         <Grid
           item
@@ -52,8 +52,8 @@ const RewardSummary = () => {
           justifyContent='space-between'
         >
           <InfoColumn
-            title='Protocol Fee Sharing Balance'
-            toolTipInfo='The amount KSU rewards that can be claimed upon the conclusion of the current Epoch.​'
+            title={t('locking.widgets.rewardsSummary.metric-1')}
+            toolTipInfo={t('locking.widgets.rewardsSummary.metric-1-tooltip')}
             showDivider
             metric={
               <TokenAmount
@@ -73,8 +73,8 @@ const RewardSummary = () => {
         <Grid item xs={6}>
           <ColoredBox sx={{ p: 0 }}>
             <InfoColumn
-              title='KSU Rewards Claimable Balance'
-              toolTipInfo='info'
+              title={t('locking.widgets.rewardsSummary.metric-2')}
+              toolTipInfo={t('locking.widgets.rewardsSummary.metric-2-toolip')}
               showDivider
               metric={
                 <TokenAmount

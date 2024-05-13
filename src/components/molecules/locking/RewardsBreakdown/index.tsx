@@ -13,7 +13,7 @@ const RewardsBreakdown = () => {
   const { t } = useTranslation()
 
   return (
-    <CardWidget title={t('locking.widgets.totalRewards.title')}>
+    <CardWidget title={t('locking.widgets.rewardsSummary.title')}>
       <Grid container spacing={3}>
         <ApyBonusBreakdown />
         <LaunchBonusBreakdown />

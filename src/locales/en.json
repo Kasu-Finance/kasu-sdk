@@ -40,7 +40,10 @@
     "weighted": "weighted",
     "perTranche": "per tranche",
     "perPool": "per pool",
-    "convertToKSU": "Convert to KSU"
+    "convertToKSU": "Convert to KSU",
+    "locking": "Locking",
+    "availableFunds": "available funds",
+    "totalKsuLocked": "total KSU locked"
   },
   "time": {
     "days": "days",
@@ -49,6 +52,11 @@
   },
   "locking": {
     "widgets": {
+      "overview": {
+        "metric-1-tooltip": "KSU balance currently held in your Web3 wallet, including the current estimated USDC equivalent.",
+        "metric-2-tooltip": "Total USDC equivalent value of all tokens in your Web3 wallet that can be used to purchase KSU tokens.",
+        "metric-3-tooltip": "Your balance of KSU currently locked."
+      },
       "ksuStatus": {
         "rksuBalance": {
           "tooltip": "The value of your current rKSU balance, which is derived by a multiplier applied to your amount of locked KSU. This multiplier varies according to your locking period, per the below table. The value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Pools determines your Loyalty Level. Your Loyalty Level determines the extent of your token utility (lending pool deposit priority and withdrawal priority) and associated rewards (APY bonus). Regardless of your Loyalty Level, your rKSU balance relative to the total rKSU in the Kasu ecosystem, also determines your share of Protocol Fees."
@@ -58,8 +66,28 @@
         }
       },
       "loyalty": {
-        "metric-1": "Current Loyalty Ratio",
-        "metric-2": "Total Deposited",
+        "title": " Loyalty Status",
+        "metric-1-tooltip": "The value of your current rKSU balance, which is derived by a multiplier applied to your amount of locked KSU. This multiplier varies according to your locking period, per the below table. The value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Pools determines your Loyalty Level. Your Loyalty Level determines the extent of your token utility (lending pool deposit priority and withdrawal priority) and associated rewards (APY bonus). Regardless of your Loyalty Level, your rKSU balance relative to the total rKSU in the Kasu ecosystem, also determines your share of Protocol Fees.",
+        "metric-2": "Total Lending Pool Deposits​",
+        "metric-2-toolip": "For the purposes of calculating your Loyalty Level, your total lending pool deposits includes your existing lending pool deposits plus pending lending pool deposits.",
+        "metric-3": "rKSU Ratio to Total USDC Deposits                                             ",
+        "metric-3-toolip": {
+          "description": "The value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Pools. This ratio determines your Loyalty Level. Your Loyalty Level determines the extent of your token utility (lending pool deposit priority access and withdrawal priority) and associated rewards (APY bonus) as follows:",
+          "subtitle-1": "No Loyalty Status",
+          "subtitle-1-description": "If the value of your rKSU balance relative to your current and pending USDC deposits is less than 1%, then:",
+          "subtitle-1-list-0": "No withdrawal or deposit priority benefits apply.",
+          "subtitle-1-list-1": "Deposit/withdrawal requests are processed after Loyalty level 1 and 2 Token Lockers.",
+          "subtitle-2": "Loyalty Level 1",
+          "subtitle-2-description": "If the value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Pools is 1% or greater, but less than 5%, you will achieve Loyalty Level 1, entitling you to the following privileges:",
+          "subtitle-2-list-0": "Second order priority access to lending pools (behind Loyalty Level 2).",
+          "subtitle-2-list-1": "Second order priority for capital withdrawals from lending pools (behind Loyalty Level 2).",
+          "subtitle-2-list-2": "Additional APY (APY Bonus) from your deposits in all lending pools, awarded in KSU (subject to change according to liquidity demand and supply requirements).",
+          "subtitle-3": "Loyalty Level 2",
+          "subtitle-3-description": "If the value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Pools is 5% or greater, you will achieve Loyalty Level 2, entitling you to the following privileges:",
+          "subtitle-3-list-0": "First order priority access to lending pools.",
+          "subtitle-3-list-1": "Firstly order priority for capital withdrawals from lending pools.",
+          "subtitle-3-list-2": "Additional APY (more APY Bonus than Loyalty Level 1 Token Lockers) from your deposits in all lending pools, awarded in KSU (subject to change according to liquidity demand and supply requirements)."
+        },
         "button": "HOW TO/WHY INCREASE LOYALTY LEVEL?",
         "level": {
           "level-0": {
@@ -88,7 +116,14 @@
           }
         }
       },
-      "totalRewards": {
+      "rewardsSummary": {
+        "title": "Bonus & Rewards Summary",
+        "metric-1": "Protocol Fee Sharing Balance",
+        "metric-1-tooltip": "Your share of USDC Protocol Fees earned that is available to claim. Token Lockers are entitled to a share of 5% of the total gross yield earnings generated by lending activities on Kasu. Your proportionale share of this amount is determined by your rKSU balance relative to the total rKSU in the Kasu ecosystem. For example, in a scenario where a total of 1,000 rKSU exists in the entire Kasu ecosystem, a Token Locker who owns 150 of these rKSU (which is 15%) would be entitled to 15% of all Protocol Fees allocated to KSU Token Lockers. This proportionality is augmented as more KSU tokens are locked (or unlocked) to generate more rKSU (or burn more rKSU), entitling them to a proportionate share of protocol fees.",
+        "metric-2": "KSU Bonus/Rewards Balance​",
+        "metric-2-toolip": "The value of your KSU balance (and estimated USDC equivalent value) associated with the following bonuses/rewards (per Rewards 1 and 2 below): 1) APY Bonus (only applicable to Loyalty Level 1 and 2 KSU Token Lockers); and, 2) KSU Launch Bonus (only applicable for early Token Lockers until the KSU bonus pool (5% of total supply) is fully consumed, which is based on the amount and duration of KSU locked and the associated multiplier)."
+      },
+      "rewardsBreakdown": {
         "title": "Bonus & Rewards Breakdown",
         "metric-1": "Epoch ends in",
         "rewards-1": {
@@ -671,11 +706,9 @@
     "wallet": {
       "title": "My Wallet",
       "connectedWallet": "Connected Wallet",
-      "metric-1": "Wallet Balance",
       "metric-1-tooltip": "The individual balances of all your cryptocurrencies in your connected Web3 wallet that can be instantly converted to KSU.",
       "metric-2": "Total KSU Balance",
       "metric-2-tooltip": "Your current KSU balance (and estimated USDC equivalent value) held in your Web3 wallet.",
-      "metric-3": "Available Funds",
       "metric-3-toolip": "Total USDC equivalent value of all tokens in your Web3 wallet that can be used to purchase KSU tokens."
     }
   }
