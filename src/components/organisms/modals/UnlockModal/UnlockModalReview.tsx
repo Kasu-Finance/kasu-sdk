@@ -31,9 +31,10 @@ const UnlockModalReview: React.FC<UnlockModalReviewProps> = ({
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <InfoColumn
-              title='Total KSU Locked'
-              toolTipInfo='info'
+              title={t('general.totalKsuLocked')}
+              toolTipInfo={t('modals.unlock.overview.metric-1-tooltip')}
               showDivider
+              titleStyle={{ textTransform: 'capitalize' }}
               metric={
                 <TokenAmount
                   px={2}
@@ -45,8 +46,10 @@ const UnlockModalReview: React.FC<UnlockModalReviewProps> = ({
           </Grid>
           <Grid item xs={6}>
             <InfoColumn
-              title='Available KSU to Unlock'
-              toolTipInfo='info'
+              title={t('modals.unlock.withdraw.withdraw-metric-3')}
+              toolTipInfo={t(
+                'modals.unlock.withdraw.withdraw-metric-3-tooltip'
+              )}
               showDivider
               metric={
                 <TokenAmount

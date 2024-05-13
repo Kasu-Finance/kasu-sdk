@@ -3,6 +3,7 @@ import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
 import React from 'react'
 
 import useModalStatusState from '@/hooks/context/useModalStatusState'
+import useTranslation from '@/hooks/useTranslation'
 
 import LockedDetails from '@/components/molecules/locking/UnlockModal/LockedDetails'
 import UnlockAmountInput from '@/components/molecules/locking/UnlockModal/UnlockAmountInput'
@@ -13,6 +14,8 @@ type UnlockModalEditProps = {
 }
 
 const UnlockModalEdit: React.FC<UnlockModalEditProps> = ({ userLock }) => {
+  const { t } = useTranslation()
+
   const { modalStatus } = useModalStatusState()
 
   return (
@@ -27,7 +30,7 @@ const UnlockModalEdit: React.FC<UnlockModalEditProps> = ({ userLock }) => {
         <UnlockModalOverview userLock={userLock} />
         <Grid item xs={1}>
           <Typography variant='subtitle1' component='span' display='block'>
-            Unlocking
+            {t('modals.unlock.withdraw.withdraw-title')}
           </Typography>
           <LockedDetails userLock={userLock} />
           <UnlockAmountInput userLock={userLock} />

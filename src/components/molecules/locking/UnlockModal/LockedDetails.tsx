@@ -5,6 +5,7 @@ import { formatEther } from 'ethers/lib/utils'
 import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useRatio from '@/hooks/useRatio'
+import useTranslation from '@/hooks/useTranslation'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import InfoColumn from '@/components/atoms/InfoColumn'
@@ -17,6 +18,8 @@ type LockedDetailsProps = {
 }
 
 const LockedDetails: React.FC<LockedDetailsProps> = ({ userLock }) => {
+  const { t } = useTranslation()
+
   const { amount } = useLockModalState()
 
   const { modalStatus } = useModalStatusState()
@@ -48,8 +51,8 @@ const LockedDetails: React.FC<LockedDetailsProps> = ({ userLock }) => {
       <Grid container spacing={2}>
         <Grid item xs={6}>
           <InfoColumn
-            title='KSU Remaining'
-            toolTipInfo='info'
+            title={t('modals.unlock.withdraw.withdraw-metric-1')}
+            toolTipInfo={t('modals.unlock.withdraw.withdraw-metric-1-tooltip')}
             showDivider
             metric={
               <>
@@ -72,8 +75,8 @@ const LockedDetails: React.FC<LockedDetailsProps> = ({ userLock }) => {
         </Grid>
         <Grid item xs={6}>
           <InfoColumn
-            title='rKSU Remaining'
-            toolTipInfo='info'
+            title={t('modals.unlock.withdraw.withdraw-metric-2')}
+            toolTipInfo={t('modals.unlock.withdraw.withdraw-metric-2-tooltip')}
             showDivider
             metric={
               <>

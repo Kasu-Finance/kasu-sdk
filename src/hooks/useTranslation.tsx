@@ -14,7 +14,7 @@ export const TRANSLATIONS = {
 export type TranslationKeys = Leaves<(typeof TRANSLATIONS)['en']>
 
 // Define a type with overloaded signatures
-type TranslateFunction = {
+export type TranslateFunction = {
   // For known translation keys
   <K extends TranslationKeys>(key: K): string
   // For any string

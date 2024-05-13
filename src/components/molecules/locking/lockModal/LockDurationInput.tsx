@@ -102,8 +102,11 @@ const LockDurationInput = () => {
               color={(theme) =>
                 disabled ? theme.palette.text.disabled : undefined
               }
+              textTransform='capitalize'
             >
-              {disabled ? 'Not Available' : unlockTime.format(DATE_FORMAT)}
+              {disabled
+                ? t('general.notAvailable')
+                : unlockTime.format(DATE_FORMAT)}
             </Typography>
           }
         ></InfoRow>

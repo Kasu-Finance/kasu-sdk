@@ -47,7 +47,7 @@ const BalanceOverview = () => {
             target='_blank'
             startIcon={<WalletIcon />}
           >
-            {t('general.buy')} KSU
+            {t('general.buyKSU')}
           </Button>
           <Button
             sx={{ wixth: 143 }}
@@ -55,7 +55,7 @@ const BalanceOverview = () => {
             onClick={handleOpen}
             startIcon={<TimedLockIcon />}
           >
-            {t('general.lock')} KSU
+            {t('general.lockKSU')}
           </Button>
         </>
       }
@@ -65,7 +65,7 @@ const BalanceOverview = () => {
           <Grid item container xs={6}>
             <BalanceItem
               title={`${t('general.wallet')} ${t('general.balance')}`}
-              toolTipInfo='info'
+              toolTipInfo={t('locking.widgets.overview.metric-1-tooltip')}
               value={[
                 formatAmount(formatUnits(ksuBalance || '0', ksuDecimals)),
                 'KSU',
@@ -73,8 +73,8 @@ const BalanceOverview = () => {
               usdValue={formatAmount(formatEther(ksuInUSD))}
             />
             <BalanceItem
-              title='Available Funds'
-              toolTipInfo='info'
+              title={t('general.availableFunds')}
+              toolTipInfo={t('locking.widgets.overview.metric-2-tooltip')}
               value={[
                 formatAmount(formatUnits(usdcBalance || '0', usdcDecimals)),
                 'USDC',
@@ -83,8 +83,8 @@ const BalanceOverview = () => {
           </Grid>
           <Grid item xs={6}>
             <BalanceItem
-              title='Total KSU Locked'
-              toolTipInfo='info'
+              title={t('general.totalKsuLocked')}
+              toolTipInfo={t('locking.widgets.overview.metric-3-tooltip')}
               value={[formatAmount(stakedKSU), 'KSU']}
             />
           </Grid>

@@ -6,6 +6,7 @@ import React from 'react'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
 import useRatio from '@/hooks/useRatio'
+import useTranslation from '@/hooks/useTranslation'
 
 import List from '@/components/atoms/List'
 
@@ -18,6 +19,8 @@ type UnlockModalCompletedProps = {
 const UnlockModalCompleted: React.FC<UnlockModalCompletedProps> = ({
   userLock,
 }) => {
+  const { t } = useTranslation()
+
   const { amount } = useLockModalState()
 
   const { account } = useWeb3React()
@@ -31,7 +34,7 @@ const UnlockModalCompleted: React.FC<UnlockModalCompletedProps> = ({
       {isPartial ? (
         <>
           <Typography variant='body1' component='p'>
-            You have successfully requested:
+            {t('modals.unlock.completed.description-1')}
           </Typography>
           <List>
             <li>
@@ -42,7 +45,7 @@ const UnlockModalCompleted: React.FC<UnlockModalCompletedProps> = ({
                   )}{' '}
                   KSU
                 </Typography>{' '}
-                to remain locked and
+                {t('modals.unlock.completed.description-3')}
               </Typography>
             </li>
             <li>
@@ -55,7 +58,7 @@ const UnlockModalCompleted: React.FC<UnlockModalCompletedProps> = ({
                   )}{' '}
                   rKSU
                 </Typography>{' '}
-                to be burned and
+                {t('modals.unlock.completed.description-4')}
               </Typography>
             </li>
             <li>
@@ -63,22 +66,22 @@ const UnlockModalCompleted: React.FC<UnlockModalCompletedProps> = ({
                 <Typography variant='h6' component='span'>
                   {formatAmount(amount)} KSU
                 </Typography>{' '}
-                to be withdrawn to the wallet{' '}
+                {t('modals.unlock.completed.description-5')}{' '}
                 <Typography variant='h6' component='span'>
                   {formatAccount(account)}
                 </Typography>{' '}
-                in the next Epoch
+                {t('modals.unlock.completed.description-6')}
               </Typography>
             </li>
           </List>
         </>
       ) : (
         <Typography variant='body1' component='p' display='block' px={1}>
-          You have successfully requested{' '}
+          {t('modals.unlock.completed.description-1')}{' '}
           <Typography variant='h6' component='span'>
             {formatAmount(amount)} KSU
           </Typography>{' '}
-          to be unlocked in the next Epoch.
+          {t('modals.unlock.completed.description-2')}
         </Typography>
       )}{' '}
     </Box>

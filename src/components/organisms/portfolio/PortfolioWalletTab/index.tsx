@@ -71,7 +71,8 @@ const PortfolioWalletTab = () => {
           <Grid item xs={6}>
             <ColoredBox>
               <InfoColumn
-                title={t('portfolio.wallet.metric-1')}
+                title={`${t('general.wallet')} ${t('general.balance')}`}
+                titleStyle={{ textTransform: 'capitalize' }}
                 toolTipInfo={t('portfolio.wallet.metric-1-tooltip')}
                 showDivider
                 metric={
@@ -130,7 +131,8 @@ const PortfolioWalletTab = () => {
                 </Grid>
                 <Grid item xs={5}>
                   <InfoColumn
-                    title={t('portfolio.wallet.metric-3')}
+                    title={t('general.availableFunds')}
+                    titleStyle={{ textTransform: 'capitalize' }}
                     toolTipInfo={t('portfolio.wallet.metric-3-toolip')}
                     showDivider
                     metric={

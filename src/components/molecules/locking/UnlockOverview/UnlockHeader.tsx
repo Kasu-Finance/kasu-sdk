@@ -1,30 +1,34 @@
+import { TranslateFunction } from '@/hooks/useTranslation'
+
 import { CustomTableHeader } from '@/components/molecules/CustomTable'
 import { UNLOCK_TABLE_KEYS } from '@/components/molecules/locking/UnlockOverview'
 
-const UnlockHeader: CustomTableHeader<typeof UNLOCK_TABLE_KEYS>[] = [
+const UnlockHeader: (
+  t: TranslateFunction
+) => CustomTableHeader<typeof UNLOCK_TABLE_KEYS>[] = (t) => [
   {
-    label: 'Amount Locked',
+    label: t('locking.widgets.unlock.table.headers.amountLocked'),
     value: 'lockedAmount',
   },
   {
-    label: 'Unlock Date',
+    label: t('locking.widgets.unlock.table.headers.unlockDate'),
     value: 'endTime',
   },
   {
     label: (
       <>
-        Remaining <br />
-        Locking Duration
+        {t('locking.widgets.unlock.table.headers.remainingDuration.1')} <br />
+        {t('locking.widgets.unlock.table.headers.remainingDuration.2')}
       </>
     ),
     value: 'remainingDuration', // using id here just for unique purposes, replaced in handleSort
   },
   {
-    label: 'rKSU Multiplier',
+    label: t('locking.widgets.unlock.table.headers.multiplier'),
     value: 'lockPeriod',
   },
   {
-    label: 'rKSU Balance',
+    label: t('locking.widgets.unlock.table.headers.balance'),
     value: 'rKSUAmount',
   },
 ]

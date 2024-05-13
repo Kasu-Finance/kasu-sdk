@@ -1,36 +1,45 @@
 import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
 import useUserApyBonus from '@/hooks/locking/useUserApyBonus'
+import useTranslation from '@/hooks/useTranslation'
 import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
 
 import RewardsBreakdownCard from '@/components/molecules/locking/RewardsBreakdown/RewardsBreakdownCard'
 
-import { formatAmount } from '@/utils'
+import { capitalize, formatAmount } from '@/utils'
 
 const ApyBonusBreakdown = () => {
+  const { t } = useTranslation()
+
   const stakedPercentage = useLockingPercentage()
   const { currentLevel } = useLoyaltyLevel(stakedPercentage)
   const { apyBonus } = useUserApyBonus()
 
   return (
     <RewardsBreakdownCard
-      title='Reward 1 • APY Bonus'
-      subtitle='(Paid in KSU)'
+      title={t('locking.widgets.rewardsBreakdown.rewards-1.title')}
+      subtitle={t('locking.widgets.rewardsBreakdown.rewards-1.subtitle')}
       breakdowns={[
         {
-          title: 'APY Bonus Based on Loyalty Level',
-          toolTipInfo: 'info',
+          title: t('locking.widgets.rewardsBreakdown.rewards-1.metric-1'),
+          toolTipInfo: t(
+            'locking.widgets.rewardsBreakdown.rewards-1.metric-1-tooltip'
+          ),
           metric: [
             currentLevel === 1 ? '0.1%' : currentLevel === 2 ? '0.2%' : 'None',
           ],
         },
         {
-          title: 'Balance',
-          toolTipInfo: 'info',
+          title: capitalize(t('general.balance')),
+          toolTipInfo: t(
+            'locking.widgets.rewardsBreakdown.rewards-1.metric-2-tooltip'
+          ),
           metric: [formatAmount(apyBonus?.balance.toString()), 'KSU'],
         },
         {
-          title: 'Lifetime',
-          toolTipInfo: 'info',
+          title: capitalize(t('general.lifetime')),
+          toolTipInfo: t(
+            'locking.widgets.rewardsBreakdown.rewards-1.metric-3-tooltip'
+          ),
           metric: [formatAmount(apyBonus?.lifetime), 'KSU'],
         },
       ]}

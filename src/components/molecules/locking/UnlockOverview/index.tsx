@@ -3,6 +3,7 @@
 import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
 
 import useUserLocks from '@/hooks/locking/useUserLocks'
+import useTranslation from '@/hooks/useTranslation'
 
 import CardWidget from '@/components/atoms/CardWidget'
 import CustomTable, { Sort } from '@/components/molecules/CustomTable'
@@ -59,18 +60,20 @@ export const UNLOCK_TABLE_KEYS = [
 ] as const
 
 const UnlockOverview = () => {
+  const { t } = useTranslation()
+
   const { userLocks } = useUserLocks()
 
   const hasLockedTokens = userLocks && Boolean(userLocks.length)
 
   return hasLockedTokens ? (
-    <CardWidget title='Your KSU Locking'>
+    <CardWidget title={t('locking.widgets.unlock.title')}>
       <CustomTable
         ariaLabel='KSU Locking Table'
         data={userLocks}
         defaultSortKey='endTime'
         handleSort={handleSort}
-        headers={UnlockHeader}
+        headers={UnlockHeader(t)}
         sortKeys={UNLOCK_TABLE_KEYS}
         footer={<UnlockFooter userLocks={userLocks} />}
       >

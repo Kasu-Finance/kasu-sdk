@@ -92,6 +92,7 @@ const ConnectWalletModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                 <Box gap={1} display='flex' alignItems='center'>
                   {icon && typeof icon === 'string' && (
                     <Image
+                      unoptimized
                       width={30}
                       height={30}
                       src={icon}

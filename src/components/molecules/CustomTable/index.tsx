@@ -16,6 +16,7 @@ import {
 import { ReactNode, useState } from 'react'
 
 import usePagination from '@/hooks/usePagination'
+import useTranslation from '@/hooks/useTranslation'
 
 export type CustomTableHeader<U extends readonly any[]> = {
   label: ReactNode
@@ -68,6 +69,8 @@ const CustomTable = <T, U extends readonly any[]>({
   headersStyle,
   footerStyle,
 }: CustomTableProps<T, U>) => {
+  const { t } = useTranslation()
+
   const [sort, setSort] = useState<Sort<U>>({
     key: defaultSortKey,
     direction: 'desc',
@@ -200,6 +203,7 @@ const CustomTable = <T, U extends readonly any[]>({
           page={currentPage}
           onPageChange={handlePageChange}
           onRowsPerPageChange={handleRowsPerPageChange}
+          labelRowsPerPage={t('general.rowsPerPage')}
         />
       )}
     </Box>

@@ -13,7 +13,7 @@ import ToolTip from '@/components/atoms/ToolTip'
 type InfoRowProps = {
   title: string
   subtitle?: string
-  toolTipInfo?: string
+  toolTipInfo?: ReactNode
   showDivider?: boolean
   metric?: ReactNode | number | string
   titleStyle?: TypographyProps

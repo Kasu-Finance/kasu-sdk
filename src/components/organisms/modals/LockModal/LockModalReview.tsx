@@ -52,7 +52,7 @@ const LockModalReview: React.FC<LockModalReviewProps> = ({
             <Grid item xs={12}>
               <InfoColumn
                 title={t('modals.lock.reviewLock.lockAmount')}
-                toolTipInfo='info'
+                toolTipInfo={t('modals.lock.reviewLock.lockAmount-tooltip')}
                 showDivider
                 metric={
                   <TokenAmount
@@ -66,7 +66,9 @@ const LockModalReview: React.FC<LockModalReviewProps> = ({
             <Grid item xs={12}>
               <InfoColumn
                 title={t('modals.lock.reviewLock.lockingDuration')}
-                toolTipInfo='info'
+                toolTipInfo={t(
+                  'modals.lock.reviewLock.lockingDuration-tooltip'
+                )}
                 showDivider
                 metric={
                   <Typography
