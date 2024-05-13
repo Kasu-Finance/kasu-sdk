@@ -1,7 +1,7 @@
-import { SupportedChainIds } from '@/connection/chains';
+import { SupportedChainIds } from '@/connection/chains'
 
 const isSupportedChain = (chainId: number): chainId is SupportedChainIds => {
-    return chainId in SupportedChainIds;
-};
+  return chainId in SupportedChainIds
+}
 
-export default isSupportedChain;
+export default isSupportedChain
