@@ -122,7 +122,7 @@ const PortfolioWalletTab = () => {
                           formatUnits(ksuBalance || '0', ksuDecimals)
                         )}
                         symbol='KSU'
-                        usdValue={formatAmount(formatEther(ksuInUSD))}
+                        usdValue={formatAmount(formatEther(ksuInUSD) || '0')}
                         pt='6px'
                         pl={2}
                       />

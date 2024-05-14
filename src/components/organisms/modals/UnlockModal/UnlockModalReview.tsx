@@ -38,7 +38,7 @@ const UnlockModalReview: React.FC<UnlockModalReviewProps> = ({
               metric={
                 <TokenAmount
                   px={2}
-                  amount={formatAmount(lockedAmount)}
+                  amount={formatAmount(lockedAmount || '0')}
                   symbol='KSU'
                 />
               }
@@ -54,7 +54,7 @@ const UnlockModalReview: React.FC<UnlockModalReviewProps> = ({
               metric={
                 <TokenAmount
                   px={2}
-                  amount={formatAmount(unlockAmount)}
+                  amount={formatAmount(unlockAmount || '0')}
                   symbol='KSU'
                 />
               }

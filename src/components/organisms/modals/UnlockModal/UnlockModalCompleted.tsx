@@ -64,11 +64,11 @@ const UnlockModalCompleted: React.FC<UnlockModalCompletedProps> = ({
             <li>
               <Typography variant='body1' component='p'>
                 <Typography variant='h6' component='span'>
-                  {formatAmount(amount)} KSU
+                  {formatAmount(amount || '0')} KSU
                 </Typography>{' '}
                 {t('modals.unlock.completed.description-5')}{' '}
                 <Typography variant='h6' component='span'>
-                  {formatAccount(account)}
+                  {formatAccount(account || '0')}
                 </Typography>{' '}
                 {t('modals.unlock.completed.description-6')}
               </Typography>
@@ -79,7 +79,7 @@ const UnlockModalCompleted: React.FC<UnlockModalCompletedProps> = ({
         <Typography variant='body1' component='p' display='block' px={1}>
           {t('modals.unlock.completed.description-1')}{' '}
           <Typography variant='h6' component='span'>
-            {formatAmount(amount)} KSU
+            {formatAmount(amount || '0')} KSU
           </Typography>{' '}
           {t('modals.unlock.completed.description-2')}
         </Typography>

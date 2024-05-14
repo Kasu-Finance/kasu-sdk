@@ -34,12 +34,12 @@ const UnlockModalOverview: React.FC<UnlockModalOverviewProps> = ({
             <BalanceItem
               title={t('general.totalKsuLocked')}
               toolTipInfo={t('modals.unlock.overview.metric-1-tooltip')}
-              value={[formatAmount(userLock.lockedAmount), 'KSU']}
+              value={[formatAmount(userLock.lockedAmount || '0'), 'KSU']}
             />
             <BalanceItem
               title={`rKSU ${t('general.balance')}`}
               toolTipInfo={t('modals.unlock.overview.metric-2-tooltip')}
-              value={[formatAmount(userLock.rKSUAmount), 'rKSU']}
+              value={[formatAmount(userLock.rKSUAmount || '0'), 'rKSU']}
               titleStyle={{}}
             />
           </Grid>

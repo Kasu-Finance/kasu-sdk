@@ -15,30 +15,30 @@ const HomeStatsCard: React.FC<{
       {
         titleKey: 'details.poolTraction.valueLocked.label',
         tooltipKey: 'details.poolTraction.valueLocked.tooltip',
-        content: `${formatAmount(data?.totalValueLocked, { roundingScale: 'auto' })}`,
+        content: `${formatAmount(data?.totalValueLocked || '0', { roundingScale: 'auto' })}`,
         unit: 'USDC',
       },
       {
         titleKey: 'details.poolTraction.management.label',
         tooltipKey: 'details.poolTraction.management.tooltip',
-        content: `${formatAmount(data?.loansUnderManagement, { roundingScale: 'auto' })}`,
+        content: `${formatAmount(data?.loansUnderManagement || '0', { roundingScale: 'auto' })}`,
         unit: 'USDC',
       },
       {
         titleKey: 'details.poolDelegate.totalFunds.label',
         tooltipKey: 'details.poolDelegate.totalFunds.tooltip',
-        content: `${formatAmount(data?.totalLoanFundsOriginated, { roundingScale: 'auto' })}`,
+        content: `${formatAmount(data?.totalLoanFundsOriginated || '0', { roundingScale: 'auto' })}`,
         unit: 'USDC',
       },
       {
         titleKey: 'details.poolTraction.yield.label',
         tooltipKey: 'details.poolTraction.yield.tooltip',
-        content: `${formatPercentage(data?.totalYieldEarned || 0)}`,
+        content: `${formatPercentage(data?.totalYieldEarned)}`,
       },
       {
         titleKey: 'lending.poolOverview.detailCard.totalLossRate.label',
         tooltipKey: 'lending.poolOverview.detailCard.totalLossRate.tooltip',
-        content: `${formatPercentage(data?.totalLossRate || 0)}`,
+        content: `${formatPercentage(data?.totalLossRate)}`,
       },
     ]
   }, [data])

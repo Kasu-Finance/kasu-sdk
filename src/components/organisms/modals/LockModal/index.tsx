@@ -58,7 +58,7 @@ const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           <Typography variant='body1' component='p' display='block' px={1}>
             {t('modals.lock.completed.description-1')}{' '}
             <Typography variant='h6' component='span'>
-              {formatAmount(amount)} KSU
+              {formatAmount(amount || '0')} KSU
             </Typography>{' '}
             {t('modals.lock.completed.description-2')}
           </Typography>

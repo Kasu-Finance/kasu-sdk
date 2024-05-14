@@ -45,7 +45,7 @@ const PortfolioRewardsTableFooter: React.FC<
         </TableCell>
         <TableCell align='right'>
           <TokenAmount
-            amount={formatAmount(formatEther(lastEpochUsdcBonus), {
+            amount={formatAmount(formatEther(lastEpochUsdcBonus || '0'), {
               minValue: 1_000_000,
             })}
             symbol='USDC'
@@ -54,7 +54,7 @@ const PortfolioRewardsTableFooter: React.FC<
         </TableCell>
         <TableCell align='right'>
           <TokenAmount
-            amount={formatAmount(formatEther(lifetimeUsdcBonus), {
+            amount={formatAmount(formatEther(lifetimeUsdcBonus || '0'), {
               minValue: 1_000_000,
             })}
             symbol='USDC'
@@ -76,19 +76,25 @@ const PortfolioRewardsTableFooter: React.FC<
         </TableCell>
         <TableCell align='right'>
           <TokenAmount
-            amount={formatAmount(formatEther(lastEpochKsuBonus.ksuAmount), {
-              minValue: 1_000_000,
-            })}
+            amount={formatAmount(
+              formatEther(lastEpochKsuBonus.ksuAmount || '0'),
+              {
+                minValue: 1_000_000,
+              }
+            )}
             symbol='KSU'
-            usdValue={formatAmount(formatEther(lastEpochKsuBonus.usdAmount), {
-              minValue: 1_000_000,
-            })}
+            usdValue={formatAmount(
+              formatEther(lastEpochKsuBonus.usdAmount || '0'),
+              {
+                minValue: 1_000_000,
+              }
+            )}
             width='100%'
           />
         </TableCell>
         <TableCell align='right'>
           <TokenAmount
-            amount={formatAmount(formatEther(lifetimeKsuBonus), {
+            amount={formatAmount(formatEther(lifetimeKsuBonus || '0'), {
               minValue: 1_000_000,
             })}
             symbol='KSU'

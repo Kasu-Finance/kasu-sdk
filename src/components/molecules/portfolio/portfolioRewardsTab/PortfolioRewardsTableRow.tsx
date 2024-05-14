@@ -31,7 +31,7 @@ const PortfolioRewardsTableRow: React.FC<PortfolioRewardsTableRowProps> = ({
           symbol={portfolioReward.lastEpoch.ksuAmount ? 'KSU' : 'USDC'}
           usdValue={
             portfolioReward.lastEpoch.ksuAmount
-              ? formatAmount(portfolioReward.lastEpoch.usdcAmount, {
+              ? formatAmount(portfolioReward.lastEpoch.usdcAmount || '0', {
                   minValue: 1_000_000,
                 })
               : undefined

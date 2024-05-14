@@ -70,7 +70,7 @@ const LockPeriodInfo: React.FC<LockPeriodInfoProps> = ({ activePeriod }) => {
                 display='block'
                 p={(theme) => theme.spacing('6px', 2)}
               >
-                {formatAmount(period.rKSUMultiplier, {
+                {formatAmount(period.rKSUMultiplier || '0', {
                   hideTrailingZero: false,
                 })}{' '}
                 ✕

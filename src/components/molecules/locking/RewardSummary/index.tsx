@@ -29,7 +29,7 @@ const RewardSummary = () => {
       return '0.00'
     }
 
-    return formatAmount(userBonus?.ksuBonusAndRewards)
+    return formatAmount(userBonus?.ksuBonusAndRewards || '0')
   }, [userBonus])
 
   const rewardsInUSD = convertToUSD(
@@ -82,7 +82,7 @@ const RewardSummary = () => {
                   px={2}
                   amount={totalKsuBonusAndRewards}
                   symbol='KSU'
-                  usdValue={formatAmount(formatEther(rewardsInUSD))}
+                  usdValue={formatAmount(formatEther(rewardsInUSD) || '0')}
                 />
               }
             />

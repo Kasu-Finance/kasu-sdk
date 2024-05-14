@@ -57,7 +57,7 @@ const LockModalReview: React.FC<LockModalReviewProps> = ({
                 metric={
                   <TokenAmount
                     px={2}
-                    amount={formatAmount(lockAmount)}
+                    amount={formatAmount(lockAmount || '0')}
                     symbol='KSU'
                   />
                 }
