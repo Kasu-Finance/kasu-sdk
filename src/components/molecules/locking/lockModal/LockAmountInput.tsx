@@ -1,18 +1,20 @@
 import LockClockIcon from '@mui/icons-material/LockClock'
 import { Box, Typography } from '@mui/material'
+import { formatEther } from 'ethers/lib/utils'
 import { useState } from 'react'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
-import useEstimatedDepositValue from '@/hooks/locking/useEstimatedDepositValue'
 import useTranslation from '@/hooks/useTranslation'
+import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import InfoRow from '@/components/atoms/InfoRow'
 import TokenAmount from '@/components/atoms/TokenAmount'
 import NumericalInput from '@/components/molecules/NumericalInput'
 
-import { formatAmount, toBigNumber } from '@/utils'
+import { TOKENS } from '@/constants/tokens'
+import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
 type LockAmountInputProps = {
   balance: string
@@ -24,9 +26,12 @@ const LockAmountInput: React.FC<LockAmountInputProps> = ({ balance }) => {
   const { modalStatus, setModalStatus } = useModalStatusState()
 
   const [focused, setFocused] = useState(false)
+  const { ksuPrice } = useKsuPrice()
 
-  const estimatedDepositValue = useEstimatedDepositValue(amount)
-
+  const ksuInUSD = convertToUSD(
+    toBigNumber(amount),
+    toBigNumber(ksuPrice || '0', TOKENS.USDC.decimals)
+  )
   const showSuccess = !focused && modalStatus.type === 'success'
 
   const handleMax = () => {
@@ -137,7 +142,7 @@ const LockAmountInput: React.FC<LockAmountInputProps> = ({ balance }) => {
           mx={1.5}
           mb={1.5}
         >
-          {formatAmount(estimatedDepositValue || '0')} USDC
+          {formatAmount(formatEther(ksuInUSD) || '0')} USDC
         </Typography>
       )}
       <InfoRow
