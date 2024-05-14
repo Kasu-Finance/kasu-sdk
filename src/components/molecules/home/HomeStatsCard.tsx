@@ -33,12 +33,12 @@ const HomeStatsCard: React.FC<{
       {
         titleKey: 'details.poolTraction.yield.label',
         tooltipKey: 'details.poolTraction.yield.tooltip',
-        content: `${formatPercentage(data?.totalYieldEarned)}`,
+        content: `${formatPercentage(data?.totalYieldEarned || '0')}`,
       },
       {
         titleKey: 'lending.poolOverview.detailCard.totalLossRate.label',
         tooltipKey: 'lending.poolOverview.detailCard.totalLossRate.tooltip',
-        content: `${formatPercentage(data?.totalLossRate)}`,
+        content: `${formatPercentage(data?.totalLossRate || '0')}`,
       },
     ]
   }, [data])

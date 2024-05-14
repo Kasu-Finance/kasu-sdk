@@ -22,7 +22,7 @@ const TranchesDetails: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
                   title={tranche.name + ' Tranche'}
                   remainingAmount={{
                     pct: formatAmount(
-                      parseFloat(tranche.poolCapacityPercentage) * 100
+                      parseFloat(tranche.poolCapacityPercentage || '0') * 100
                     ),
                     value: formatAmount(tranche.poolCapacity || '0'),
                   }}

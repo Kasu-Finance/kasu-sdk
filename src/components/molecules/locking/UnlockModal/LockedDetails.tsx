@@ -31,7 +31,7 @@ const LockedDetails: React.FC<LockedDetailsProps> = ({ userLock }) => {
   )
 
   const percentage = isValidAmount
-    ? formatAmount(formatEther(ratio.mul(100)), {
+    ? formatAmount(formatEther(ratio.mul(100)) || '0', {
         maxDecimals: 2,
       })
     : '0'

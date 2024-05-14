@@ -12,7 +12,7 @@ const convertToPoolDetails = (overview: PoolOverview): PoolDetailSection => {
   const metrics: PoolMetric[] = [
     {
       id: PoolDetailsMetricIds.APY,
-      content: `${formatAmount(tranchesTotal.averageApy * 100) + ' %'}`,
+      content: `${formatAmount(tranchesTotal.averageApy * 100 || '0') + ' %'}`,
     },
     { id: PoolDetailsMetricIds.AssetClass, content: overview.assetClass },
     {

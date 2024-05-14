@@ -117,7 +117,9 @@ const InvestmentPortfolio: React.FC<{
               </Grid>
               <Grid item xs={4}>
                 <MetricWithSuffix
-                  content={formatAmount(tranchesTotal.averageApy * 100) + ' %'}
+                  content={
+                    formatAmount(tranchesTotal.averageApy * 100 || '0') + ' %'
+                  }
                   tooltipKey='lending.poolOverview.investmentCard.weightedAvgApy.tooltip'
                   titleKey='lending.poolOverview.investmentCard.weightedAvgApy.label'
                 />
@@ -144,7 +146,7 @@ const InvestmentPortfolio: React.FC<{
                 <TranchInvestmentCard
                   title={`${tranche.name} Tranche APY`}
                   amount={formatAmount(totalInvested || '0')}
-                  apy={formatAmount(+tranche.apy * 100)}
+                  apy={formatAmount(+tranche.apy * 100 || '0')}
                   yieldEarned={formatAmount(tranche.yieldEarned || '0')}
                 />
               </Grid>

@@ -104,7 +104,7 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
             return (
               <Grid item xs={COLS / pool.tranches.length} key={index}>
                 <MetricWithSuffix
-                  content={formatAmount(+tranche.apy * 100) + ' %'}
+                  content={formatAmount(+tranche.apy * 100 || '0') + ' %'}
                   tooltipKey={tranche.tooltip}
                   titleKey={`${tranche.name} Tranche APY`}
                   variant='h5'
