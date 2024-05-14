@@ -104,7 +104,7 @@ const TransactionHistory: React.FC<{ poolId: string }> = ({ poolId }) => {
           tableContainerStyles={{ mt: 2 }}
           data={filteredData}
           sortKeys={TRANSACTION_HISTORY_KEYS}
-          defaultSortKey='requestType'
+          defaultSortKey='timestamp'
           handleSort={handleSort}
           headersStyle={{
             '& .MuiTableCell-root': {

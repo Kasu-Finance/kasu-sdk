@@ -395,18 +395,18 @@ export const theme = createTheme({
           // Default styles for the root element
           '&.Mui-active': {
             '.MuiTableSortLabel-icon': {
-              color: alpha(primaryContrastColor, 0.54),
+              color: primaryColor,
             },
           },
           '&:hover': {
             '.MuiTableSortLabel-icon': {
-              color: alpha(primaryContrastColor, 0.87),
+              color: alpha(primaryColor, 0.87),
               opacity: 1,
             },
           },
           '.MuiTableSortLabel-icon': {
             // Default icon color (inactive)
-            color: 'rgba(0, 0, 0, 0.87)',
+            color: alpha(primaryContrastColor, 0.54),
           },
         },
 
