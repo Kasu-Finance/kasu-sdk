@@ -66,7 +66,7 @@ export class DataService {
 
         const targetDrawAmount = parseFloat(desiredDrawAmount) * parseFloat(desiredTrancheRatio);
 
-        const pendingDeposits = parseFloat(lendingPoolSubgraph.pendingPool.totalPendingDepositAmounts[index]) + spillOver;
+        const pendingDeposits = parseFloat(lendingPoolSubgraph.pendingPool.totalPendingDepositAmounts[index]) - spillOver;
 
         const balance = parseFloat(lendingPoolSubgraph.tranches[index].balance) // subgraph
 
