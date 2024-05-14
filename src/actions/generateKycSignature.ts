@@ -47,7 +47,7 @@ const generateKycSignature = async (params: {
   if ('signatureData' in data) {
     return {
       blockExpiration: data.blockExpiration,
-      signature: data.signatureData,
+      signature: '0x' + data.signatureData.substring(64),
     }
   }
 }
