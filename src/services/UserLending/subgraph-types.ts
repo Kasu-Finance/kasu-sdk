@@ -50,7 +50,11 @@ export type UserRequestEventType =
     | 'WithdrawalIncreased'
     | 'WithdrawalCancelled'
     | 'WithdrawalAccepted'
-    | 'DepositReallocated';
+    | 'DepositReallocated'
+    | 'DepositInitiated'
+    | 'DepositIncreased'
+    | 'DepositCancelled'
+    | 'DepositAccepted';
 
 export interface LendingPoolUserDetailsSubgraph {
     lendingPoolUserDetails?: {
