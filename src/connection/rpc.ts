@@ -7,15 +7,14 @@ export const FALLBACK_URLS: Record<SupportedChainIds, string[]> = {
     // "Safe" URLs
     // ...
     // "Fallback" URLs
-    'https://rpc.ankr.com/eth',
-    'https://eth-mainnet.public.blastapi.io',
+    'https://mainnet.base.org',
   ],
-  [SupportedChainIds.ARBITRUM_ONE]: [
-    // "Safe" URLs
-    'https://arb1.arbitrum.io/rpc',
-    // "Fallback" URLs
-    'https://arbitrum.public-rpc.com',
-  ],
+  // [SupportedChainIds.ARBITRUM_ONE]: [
+  //   // "Safe" URLs
+  //   'https://arb1.arbitrum.io/rpc',
+  //   // "Fallback" URLs
+  //   'https://arbitrum.public-rpc.com',
+  // ],
   [SupportedChainIds.BASE_SEPOLIA]: ['https://sepolia.base.org'],
 }
 
@@ -25,10 +24,10 @@ export const RPC_URLS: Record<SupportedChainIds, string[]> = {
     // QUICKNODE_MAINNET_RPC_URL,
     ...FALLBACK_URLS[SupportedChainIds.MAINNET],
   ],
-  [SupportedChainIds.ARBITRUM_ONE]: [
-    `https://base-mainnet.infura.io/v3/${INFURA_KEY}`,
-    ...FALLBACK_URLS[SupportedChainIds.ARBITRUM_ONE],
-  ],
+  // [SupportedChainIds.ARBITRUM_ONE]: [
+  //   `https://base-mainnet.infura.io/v3/${INFURA_KEY}`,
+  //   ...FALLBACK_URLS[SupportedChainIds.ARBITRUM_ONE],
+  // ],
   [SupportedChainIds.BASE_SEPOLIA]: [
     'https://sepolia.base.org',
     ...FALLBACK_URLS[SupportedChainIds.BASE_SEPOLIA],

@@ -17,23 +17,24 @@ export type ChainDetails = {
 export const networks: Record<SupportedChainIds, ChainDetails> = {
   [SupportedChainIds.MAINNET]: {
     chainId: SupportedChainIds.MAINNET,
-    chainName: 'Mainnet',
+    chainName: 'Base',
+    label: 'Base',
     nativeCurrency: {
       decimals: 18,
       name: 'Ether',
       symbol: 'ETH',
     },
     rpcUrls: RPC_URLS[SupportedChainIds.MAINNET],
-    blockExplorerUrls: ['https://etherscan.io'],
+    blockExplorerUrls: ['https://basescan.org/'],
   },
-  [SupportedChainIds.ARBITRUM_ONE]: {
-    chainId: SupportedChainIds.ARBITRUM_ONE,
-    chainName: 'Arbitrum One',
-    label: 'Arbitrum',
-    nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-    blockExplorerUrls: ['https://arbiscan.io'],
-    rpcUrls: RPC_URLS[SupportedChainIds.ARBITRUM_ONE],
-  },
+  // [SupportedChainIds.ARBITRUM_ONE]: {
+  //   chainId: SupportedChainIds.ARBITRUM_ONE,
+  //   chainName: 'Arbitrum One',
+  //   label: 'Arbitrum',
+  //   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  //   blockExplorerUrls: ['https://arbiscan.io'],
+  //   rpcUrls: RPC_URLS[SupportedChainIds.ARBITRUM_ONE],
+  // },
   [SupportedChainIds.BASE_SEPOLIA]: {
     chainId: SupportedChainIds.BASE_SEPOLIA,
     chainName: 'Base Sepolia',

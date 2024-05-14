@@ -15,9 +15,10 @@ export const RPC_PROVIDERS: {
     providerFactory(SupportedChainIds.MAINNET),
     providerFactory(SupportedChainIds.MAINNET, 1),
   ]),
-  [SupportedChainIds.ARBITRUM_ONE]: providerFactory(
-    SupportedChainIds.ARBITRUM_ONE
-  ),
+  // [SupportedChainIds.ARBITRUM_ONE]: providerFactory(
+  //   SupportedChainIds.ARBITRUM_ONE
+  // ),
+
   [SupportedChainIds.BASE_SEPOLIA]: providerFactory(
     SupportedChainIds.BASE_SEPOLIA
   ),
