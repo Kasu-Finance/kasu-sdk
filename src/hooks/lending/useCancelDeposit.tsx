@@ -26,9 +26,10 @@ const useCancelDeposit = () => {
         dNft
       )
 
-      await waitForReceipt(cancel)
-
+      const response = await waitForReceipt(cancel)
       removeToast()
+
+      return response
     } catch (error) {
       handleError(
         error,

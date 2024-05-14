@@ -9,7 +9,8 @@ import {
 } from '@mui/material'
 
 import useModalState from '@/hooks/context/useModalState'
-import useCancelWithdrawal from '@/hooks/lending/useCancelDeposit'
+import useCancelDeposit from '@/hooks/lending/useCancelDeposit'
+import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
 import useTranslation from '@/hooks/useTranslation'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
@@ -36,7 +37,20 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const nextClearingTime = 1711723761
 
-  const cancelDeposit = useCancelWithdrawal()
+  const { updateTransactionHistory } = useTransactionHistory()
+  const cancelDeposit = useCancelDeposit()
+
+  const handleCancel = async () => {
+    const res = await cancelDeposit(
+      transactionHistory.lendingPool.id as `0x${string}`,
+      transactionHistory.nftId
+    )
+
+    if (res.transactionHash) {
+      handleClose()
+      await updateTransactionHistory()
+    }
+  }
 
   return (
     <>
@@ -139,12 +153,7 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         <Button
           variant='contained'
           startIcon={<DeleteIcon />}
-          onClick={() =>
-            cancelDeposit(
-              transactionHistory.lendingPool.id as `0x${string}`,
-              transactionHistory.nftId
-            )
-          }
+          onClick={handleCancel}
         >
           Cancel Deposit Request
         </Button>
