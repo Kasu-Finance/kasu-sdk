@@ -12,6 +12,7 @@ import ColoredBox from '@/components/atoms/ColoredBox'
 import BalanceItem from '@/components/molecules/locking/BalanceOverview/BalanceItem'
 
 import { USDC } from '@/config/sdk'
+import { TOKENS } from '@/constants/tokens'
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
 type LockModalOverviewProps = {
@@ -31,7 +32,7 @@ const LockModalOverview: React.FC<LockModalOverviewProps> = ({ balance }) => {
 
   const ksuInUSD = convertToUSD(
     toBigNumber(balance),
-    toBigNumber(ksuPrice || '0')
+    toBigNumber(ksuPrice || '0', TOKENS.USDC.decimals)
   )
 
   return (
