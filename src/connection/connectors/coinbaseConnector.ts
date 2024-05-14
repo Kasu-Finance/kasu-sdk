@@ -16,7 +16,7 @@ const [web3CoinbaseWallet, web3CoinbaseWalletHooks] =
       new CoinbaseWallet({
         actions,
         options: {
-          url: RPC_URLS[SupportedChainIds.MAINNET][0],
+          url: RPC_URLS[SupportedChainIds.BASE][0],
           appName: 'Spool',
           reloadOnDisconnect: false,
         },
