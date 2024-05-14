@@ -35,7 +35,7 @@ const UnlockFooter: React.FC<UnlockFooterProps> = ({ userLocks }) => {
           </Typography>
           <TokenAmount
             py='6px'
-            amount={formatAmount(formatEther(total))}
+            amount={formatAmount(formatEther(total) || '0')}
             symbol='KSU'
           />
         </Box>

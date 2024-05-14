@@ -61,20 +61,20 @@ const LendingPortfolioTableRow: React.FC<LendingPortfolioTableRowProps> = ({
             </Typography>
           </TableCell>
           <LendingPortfolioTableCell
-            value={formatAmount(tranche.investedAmount, {
+            value={formatAmount(tranche.investedAmount || '0', {
               minValue: 100_000,
             })}
             width='17%'
           />
           <LendingPortfolioTableCell
-            value={formatAmount(tranche.yieldEarnings.lastEpoch, {
+            value={formatAmount(tranche.yieldEarnings.lastEpoch || '0', {
               minValue: 100_000,
             })}
             width='24%'
           />
 
           <LendingPortfolioTableCell
-            value={formatAmount(tranche.yieldEarnings.lifetime, {
+            value={formatAmount(tranche.yieldEarnings.lifetime || '0', {
               minValue: 100_000,
             })}
             width='24%'

@@ -76,9 +76,12 @@ const LendingPortfolioTableFooter: React.FC<
         <FooterCell
           value={
             <TokenAmount
-              amount={formatAmount(formatEther(averageValues.investedAmount), {
-                minValue: 100_000,
-              })}
+              amount={formatAmount(
+                formatEther(averageValues.investedAmount || '0'),
+                {
+                  minValue: 100_000,
+                }
+              )}
               symbol='USDC'
             />
           }
@@ -87,9 +90,12 @@ const LendingPortfolioTableFooter: React.FC<
         <FooterCell
           value={
             <TokenAmount
-              amount={formatAmount(formatEther(averageValues.lastEpoch), {
-                minValue: 100_000,
-              })}
+              amount={formatAmount(
+                formatEther(averageValues.lastEpoch || '0'),
+                {
+                  minValue: 100_000,
+                }
+              )}
               symbol='USDC'
             />
           }
@@ -98,7 +104,7 @@ const LendingPortfolioTableFooter: React.FC<
         <FooterCell
           value={
             <TokenAmount
-              amount={formatAmount(formatEther(averageValues.lifeTime), {
+              amount={formatAmount(formatEther(averageValues.lifeTime || '0'), {
                 minValue: 100_000,
               })}
               symbol='USDC'
@@ -121,7 +127,19 @@ const LendingPortfolioTableFooter: React.FC<
         </TableCell>
         <TableCell align='right'>
           <TokenAmount
-            amount={formatAmount(formatEther(totalValues.investedAmount), {
+            amount={formatAmount(
+              formatEther(totalValues.investedAmount || '0'),
+              {
+                minValue: 100_000,
+              }
+            )}
+            symbol='USDC'
+            width='100%'
+          />
+        </TableCell>
+        <TableCell align='right'>
+          <TokenAmount
+            amount={formatAmount(formatEther(totalValues.lastEpoch || '0'), {
               minValue: 100_000,
             })}
             symbol='USDC'
@@ -130,16 +148,7 @@ const LendingPortfolioTableFooter: React.FC<
         </TableCell>
         <TableCell align='right'>
           <TokenAmount
-            amount={formatAmount(formatEther(totalValues.lastEpoch), {
-              minValue: 100_000,
-            })}
-            symbol='USDC'
-            width='100%'
-          />
-        </TableCell>
-        <TableCell align='right'>
-          <TokenAmount
-            amount={formatAmount(formatEther(totalValues.lifeTime), {
+            amount={formatAmount(formatEther(totalValues.lifeTime || '0'), {
               minValue: 100_000,
             })}
             symbol='USDC'

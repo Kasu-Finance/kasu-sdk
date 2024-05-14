@@ -54,7 +54,7 @@ const LoyaltyCard: React.FC<{
       return '0.00'
     }
 
-    return formatAmount(userBonus?.protocolFeesEarned)
+    return formatAmount(userBonus?.protocolFeesEarned || '0')
   }, [userBonus])
 
   const userKSU = userLocks && userLocks.length > 0 ? userLocks[0] : null
@@ -109,7 +109,7 @@ const LoyaltyCard: React.FC<{
           />
           <Divider />
           <ContentWithSuffix
-            content={formatAmount(userKSU?.lockedAmount)}
+            content={formatAmount(userKSU?.lockedAmount || '0')}
             suffix='KSU'
             sx={{ pl: 0 }}
           />
@@ -150,7 +150,7 @@ const LoyaltyCard: React.FC<{
                 <div>
                   <ContentWithSuffix
                     textAlign='right'
-                    content={`${formatAmount(totalKsuBonusAndRewards)}`}
+                    content={`${formatAmount(totalKsuBonusAndRewards || '0')}`}
                     suffix='KSU'
                   />
                   <Typography
@@ -159,7 +159,7 @@ const LoyaltyCard: React.FC<{
                     variant='caption'
                     component='h6'
                   >
-                    {formatAmount(totalBonusYieldUSDC)} USDC
+                    {formatAmount(totalBonusYieldUSDC || '0')} USDC
                   </Typography>
                 </div>
               }
@@ -176,7 +176,7 @@ const LoyaltyCard: React.FC<{
                 <div>
                   <ContentWithSuffix
                     textAlign='right'
-                    content={`${formatAmount(lifetimeBonusYieldEarnings)}`}
+                    content={`${formatAmount(lifetimeBonusYieldEarnings || '0')}`}
                     suffix='KSU'
                   />
                   <Typography
@@ -185,7 +185,7 @@ const LoyaltyCard: React.FC<{
                     variant='caption'
                     component='h6'
                   >
-                    {formatAmount(lifetimeYieldEarnedUSDC)}
+                    {formatAmount(lifetimeYieldEarnedUSDC || '0')}
                     USDC
                   </Typography>
                 </div>

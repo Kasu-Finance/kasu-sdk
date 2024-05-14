@@ -41,8 +41,8 @@ const LockModalOverview: React.FC<LockModalOverviewProps> = ({ balance }) => {
           <BalanceItem
             title={`${t('general.wallet')} ${t('general.balance')}`}
             toolTipInfo={t('modals.lock.overview.metric-1-tooltip')}
-            value={[formatAmount(balance), 'KSU']}
-            usdValue={formatAmount(formatEther(ksuInUSD))}
+            value={[formatAmount(balance || '0'), 'KSU']}
+            usdValue={formatAmount(formatEther(ksuInUSD) || '0')}
           />
           <BalanceItem
             title={t('general.availableFunds')}
@@ -57,7 +57,7 @@ const LockModalOverview: React.FC<LockModalOverviewProps> = ({ balance }) => {
           <BalanceItem
             title={t('general.totalKsuLocked')}
             toolTipInfo={t('modals.lock.overview.metric-3-tooltip')}
-            value={[formatAmount(stakedKSU), 'KSU']}
+            value={[formatAmount(stakedKSU || '0'), 'KSU']}
           />
         </Grid>
       </Grid>

@@ -36,7 +36,7 @@ const UnlockRow: React.FC<UnlockRowProps> = ({ userLock }) => {
   return (
     <TableRow>
       <TableCell>
-        <TokenAmount amount={formatAmount(lockedAmount)} symbol='KSU' />
+        <TokenAmount amount={formatAmount(lockedAmount || '0')} symbol='KSU' />
         <Typography variant='caption' component='span' display='block'>
           {dayjs.unix(startTime).format(`${DATE_FORMAT} • ${TIME_FORMAT}`)}
         </Typography>

@@ -30,7 +30,7 @@ const DepositModalCompleted: React.FC<DepositModalCompletedProps> = ({
         <List>
           <li>
             <Typography variant='subtitle1' component='p'>
-              {formatAmount(amount)} USDC •{' '}
+              {formatAmount(amount || '0')} USDC •{' '}
               <Typography variant='subtitle2' component='span'>
                 to be deposited in the next Epoch to
               </Typography>{' '}
