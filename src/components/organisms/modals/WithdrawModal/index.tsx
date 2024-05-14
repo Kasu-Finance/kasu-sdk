@@ -2,6 +2,7 @@
 
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import { Box, Button, DialogActions, DialogContent } from '@mui/material'
+import { useWeb3React } from '@web3-react/core'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { useRouter } from 'next/navigation'
 import { useMemo } from 'react'
@@ -24,8 +25,9 @@ import WithdrawModalMetrics from '@/components/organisms/modals/WithdrawModal/Wi
 
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
-import config from '@/config'
 import { Routes } from '@/config/routes'
+import { SupportedChainIds } from '@/connection/chains'
+import { networks } from '@/connection/networks'
 import { TOKENS } from '@/constants/tokens'
 
 interface WithdrawModalProps {
@@ -34,6 +36,9 @@ interface WithdrawModalProps {
 
 const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
   const { amount, selectedTranche } = useWithdrawModalState()
+
+  const { chainId } = useWeb3React()
+
   const router = useRouter()
   const { t } = useTranslation()
 
@@ -82,7 +87,6 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
   )
 
   const txHash = withdrawTransaction?.hash
-  const transactionUrl = `${config.networkScanUrl}/tx/${txHash}`
 
   const validationStyle =
     modalStatus.type === 'error'
@@ -126,7 +130,11 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
             sx={{ height: 30, width: 97, p: '4px 10px' }}
             variant='outlined'
             startIcon={<ReceiptIcon />}
-            href={transactionUrl}
+            href={`${
+              networks[
+                (chainId as SupportedChainIds) || SupportedChainIds.MAINNET
+              ].blockExplorerUrls[0]
+            }/tx/${txHash}`}
             target='_blank'
           >
             {t('lending.withdraw.button.viewTx')}

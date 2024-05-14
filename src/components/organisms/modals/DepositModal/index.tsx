@@ -2,6 +2,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import EditIcon from '@mui/icons-material/Edit'
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import { Box, Button, DialogActions, DialogContent } from '@mui/material'
+import { useWeb3React } from '@web3-react/core'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
@@ -19,11 +20,14 @@ import DepositModalStepper from '@/components/organisms/modals/DepositModal/Depo
 
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
-import config from '@/config'
 import sdkConfig, { USDC } from '@/config/sdk'
+import { SupportedChainIds } from '@/connection/chains'
+import { networks } from '@/connection/networks'
 
 const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { t } = useTranslation()
+
+  const { chainId } = useWeb3React()
 
   const { modal } = useModalState()
 
@@ -41,7 +45,6 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const requestDeposit = useRequestDeposit()
 
   const poolData = modal.depositModal.poolData
-  const transactionUrl = `${config.networkScanUrl}/tx/${txHash}`
 
   return (
     <>
@@ -52,11 +55,16 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
       >
         {txHash && (
           <Button
-            sx={{ height: 30, width: 97, p: '4px 10px' }}
-            variant='outlined'
+            sx={{ width: 97, p: '4px 10px' }}
+            variant='contained'
             startIcon={<ReceiptIcon />}
-            href={transactionUrl}
+            href={`${
+              networks[
+                (chainId as SupportedChainIds) || SupportedChainIds.MAINNET
+              ].blockExplorerUrls[0]
+            }/tx/${txHash}`}
             target='_blank'
+            size='small'
           >
             VIEW TX
           </Button>
