@@ -177,7 +177,7 @@ const LoyaltyCard: React.FC<{
                   <ContentWithSuffix
                     textAlign='right'
                     content={`${formatAmount(lifetimeBonusYieldEarnings)}`}
-                    suffix='KSU TEST'
+                    suffix='KSU'
                   />
                   <Typography
                     textAlign='right'
