@@ -32,7 +32,7 @@ const TransactionHistoryTableFooter: React.FC<
           </Typography>
           <TokenAmount
             py='6px'
-            amount={formatAmount(formatEther(total))}
+            amount={formatAmount(formatEther(total) || '0')}
             symbol='USDC'
           />
         </Box>

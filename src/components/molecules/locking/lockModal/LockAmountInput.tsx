@@ -137,7 +137,7 @@ const LockAmountInput: React.FC<LockAmountInputProps> = ({ balance }) => {
           mx={1.5}
           mb={1.5}
         >
-          {formatAmount(estimatedDepositValue)} USDC
+          {formatAmount(estimatedDepositValue || '0')} USDC
         </Typography>
       )}
       <InfoRow

@@ -39,7 +39,7 @@ const OverviewDetails: React.FC<{
             <Grid container columnSpacing={2} sx={{ pb: 3 }}>
               <Grid item xs={6}>
                 <MetricWithSuffix
-                  content={formatAmount(pool.totalValueLocked)}
+                  content={formatAmount(pool.totalValueLocked || '0')}
                   suffix='USDC'
                   tooltipKey='lending.poolOverview.detailCard.tvl.tooltip'
                   titleKey='lending.poolOverview.detailCard.tvl.label'
@@ -47,7 +47,7 @@ const OverviewDetails: React.FC<{
               </Grid>
               <Grid item xs={6}>
                 <MetricWithSuffix
-                  content={formatAmount(pool.loansUnderManagement)}
+                  content={formatAmount(pool.loansUnderManagement || '0')}
                   suffix='USDC'
                   tooltipKey='lending.poolOverview.detailCard.loansUnder.tooltip'
                   titleKey='lending.poolOverview.detailCard.loansUnder.label'
@@ -63,7 +63,7 @@ const OverviewDetails: React.FC<{
               >
                 <Grid item xs={6}>
                   <MetricWithSuffix
-                    content={formatAmount(pool.yieldEarned)}
+                    content={formatAmount(pool.yieldEarned || '0')}
                     suffix='USDC'
                     tooltipKey='lending.poolOverview.detailCard.totalPoolYieldEarnings.tooltip'
                     titleKey='lending.poolOverview.detailCard.totalPoolYieldEarnings.label'
@@ -71,7 +71,9 @@ const OverviewDetails: React.FC<{
                 </Grid>
                 <Grid item xs={6}>
                   <MetricWithSuffix
-                    content={formatAmount(+poolDelegate?.historicLossRate)}
+                    content={formatAmount(
+                      +poolDelegate?.historicLossRate || '0'
+                    )}
                     suffix='USDC'
                     tooltipKey='lending.poolOverview.detailCard.totalLossRate.tooltip'
                     titleKey='lending.poolOverview.detailCard.totalLossRate.label'

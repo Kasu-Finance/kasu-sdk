@@ -39,7 +39,10 @@ const LendingLoyalityInfo = () => {
           title={`rKSU ${capitalize(t('general.balance'))}`}
           toolTipInfo='info'
           metric={
-            <TokenAmount amount={formatAmount(rKsuAmount)} symbol='rKSU' />
+            <TokenAmount
+              amount={formatAmount(rKsuAmount || '0')}
+              symbol='rKSU'
+            />
           }
         />
 
@@ -48,7 +51,7 @@ const LendingLoyalityInfo = () => {
           toolTipInfo='info'
           metric={
             <Typography variant='h6' component='span'>
-              {formatAmount(stakedPercentage, {
+              {formatAmount(stakedPercentage || '0', {
                 maxDecimals: 2,
               })}
               %

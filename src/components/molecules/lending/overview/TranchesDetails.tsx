@@ -24,10 +24,12 @@ const TranchesDetails: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
                     pct: formatAmount(
                       parseFloat(tranche.poolCapacityPercentage) * 100
                     ),
-                    value: formatAmount(tranche.poolCapacity),
+                    value: formatAmount(tranche.poolCapacity || '0'),
                   }}
-                  minimumDepositAmount={formatAmount(tranche.minimumDeposit)}
-                  maxDepositAmount={formatAmount(tranche.maximumDeposit)}
+                  minimumDepositAmount={formatAmount(
+                    tranche.minimumDeposit || '0'
+                  )}
+                  maxDepositAmount={formatAmount(tranche.maximumDeposit || '0')}
                 />
               </Grid>
             )

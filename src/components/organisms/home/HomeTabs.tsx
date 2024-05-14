@@ -85,7 +85,7 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
       </TabPanel>
       <TabPanel isActive={activeTab === 1} id='home-pools-closed'>
         <Box mt={3}>
-          {closedPools.length ? (
+          {closedPools?.length ? (
             <ClosedPoolsTable
               pools={closedPools}
               poolDelegates={poolDelegates}

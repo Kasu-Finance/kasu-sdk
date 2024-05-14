@@ -76,7 +76,7 @@ const UnlockAmountInput: React.FC<UnlockAmountInputProps> = ({ userLock }) => {
       <BalanceItem
         title={t('modals.unlock.withdraw.withdraw-metric-3')}
         toolTipInfo={t('modals.unlock.withdraw.withdraw-metric-3-tooltip')}
-        value={[formatAmount(lockedAmount), 'KSU']}
+        value={[formatAmount(lockedAmount || '0'), 'KSU']}
       />
       <Grid item xs={12}>
         <NumericalInput
@@ -150,7 +150,7 @@ const UnlockAmountInput: React.FC<UnlockAmountInputProps> = ({ userLock }) => {
             mt='3px'
             mb={0.5}
           >
-            {formatAmount(formatEther(ksuInUSD))} USDC
+            {formatAmount(formatEther(ksuInUSD || '0'))} USDC
           </Typography>
         )}
       </Grid>

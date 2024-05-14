@@ -50,7 +50,7 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
       {
         id: PoolDelegateMetricIds.TotalLossRate,
         title: 'lending.poolOverview.detailCard.totalLossRate',
-        value: `${formatAmount(+poolDelegate.historicLossRate)}  %`,
+        value: `${formatAmount(+poolDelegate.historicLossRate || '0')}  %`,
         suffix: '',
         showDivider: false,
         sx: {
