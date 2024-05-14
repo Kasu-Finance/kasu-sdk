@@ -1,5 +1,5 @@
 import { Box, styled } from '@mui/material'
-import { ReactNode, forwardRef } from 'react'
+import { forwardRef, ReactNode } from 'react'
 
 type TooltipTriggerProps = {
   children: ReactNode

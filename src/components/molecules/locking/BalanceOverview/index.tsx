@@ -85,7 +85,7 @@ const BalanceOverview = () => {
             <BalanceItem
               title={t('general.totalKsuLocked')}
               toolTipInfo={t('locking.widgets.overview.metric-3-tooltip')}
-              value={[formatAmount(stakedKSU), 'KSU']}
+              value={[formatAmount(stakedKSU || '0'), 'KSU']}
             />
           </Grid>
         </Grid>

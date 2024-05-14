@@ -79,7 +79,9 @@ const LoyaltyOverview = () => {
         showDivider
         title={`rKSU ${capitalize(t('general.balance'))}`}
         toolTipInfo={t('locking.widgets.loyalty.metric-1-tooltip')}
-        metric={<TokenAmount amount={formatAmount(rKsuAmount)} symbol='rKSU' />}
+        metric={
+          <TokenAmount amount={formatAmount(rKsuAmount || '0')} symbol='rKSU' />
+        }
       />
 
       <InfoRow
@@ -88,7 +90,7 @@ const LoyaltyOverview = () => {
         toolTipInfo={t('locking.widgets.loyalty.metric-2-toolip')}
         metric={
           <TokenAmount
-            amount={formatAmount(totalDeposits.activeDepositAmount)}
+            amount={formatAmount(totalDeposits.activeDepositAmount || '0')}
             symbol='USDC'
           />
         }
@@ -100,7 +102,7 @@ const LoyaltyOverview = () => {
         toolTipInfo={t('locking.widgets.loyalty.metric-3-toolip.description')}
         metric={
           <Typography variant='h6' component='span'>
-            {formatAmount(stakedPercentage, {
+            {formatAmount(stakedPercentage || '0', {
               maxDecimals: 2,
             })}
             %

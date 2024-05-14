@@ -33,14 +33,14 @@ const ApyBonusBreakdown = () => {
           toolTipInfo: t(
             'locking.widgets.rewardsBreakdown.rewards-1.metric-2-tooltip'
           ),
-          metric: [formatAmount(apyBonus?.balance.toString()), 'KSU'],
+          metric: [formatAmount(apyBonus?.balance.toString() || '0'), 'KSU'],
         },
         {
           title: capitalize(t('general.lifetime')),
           toolTipInfo: t(
             'locking.widgets.rewardsBreakdown.rewards-1.metric-3-tooltip'
           ),
-          metric: [formatAmount(apyBonus?.lifetime), 'KSU'],
+          metric: [formatAmount(apyBonus?.lifetime || '0'), 'KSU'],
         },
       ]}
     />

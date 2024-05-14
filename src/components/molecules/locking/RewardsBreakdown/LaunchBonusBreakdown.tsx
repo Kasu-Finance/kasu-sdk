@@ -19,7 +19,7 @@ const LaunchBonusBreakdown = () => {
           toolTipInfo: t(
             'locking.widgets.rewardsBreakdown.rewards-2.metric-tooltip'
           ),
-          metric: [formatAmount(totalLaunchBonus), 'KSU'],
+          metric: [formatAmount(totalLaunchBonus || '0'), 'KSU'],
         },
       ]}
     />

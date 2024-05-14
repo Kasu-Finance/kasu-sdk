@@ -19,7 +19,10 @@ const FeesEarnedBreakdown = () => {
           toolTipInfo: t(
             'locking.widgets.rewardsBreakdown.rewards-3.metric-1-tooltip'
           ),
-          metric: [formatAmount(lockingRewards?.claimableRewards), 'USDC'],
+          metric: [
+            formatAmount(lockingRewards?.claimableRewards || '0'),
+            'USDC',
+          ],
         },
 
         {
@@ -27,7 +30,10 @@ const FeesEarnedBreakdown = () => {
           toolTipInfo: t(
             'locking.widgets.rewardsBreakdown.rewards-3.metric-2-tooltip'
           ),
-          metric: [formatAmount(lockingRewards?.lifeTimeRewards), 'USDC'],
+          metric: [
+            formatAmount(lockingRewards?.lifeTimeRewards || '0'),
+            'USDC',
+          ],
         },
       ]}
     />

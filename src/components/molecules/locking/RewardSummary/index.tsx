@@ -59,7 +59,7 @@ const RewardSummary = () => {
               <TokenAmount
                 py='6px'
                 px={2}
-                amount={formatAmount(userBonus?.protocolFeesEarned, {
+                amount={formatAmount(userBonus?.protocolFeesEarned || '0', {
                   hideTrailingZero: false,
                 })}
                 symbol='USDC'
