@@ -9,9 +9,7 @@ const useTransactionHistory = () => {
   const { account } = useWeb3React()
 
   const { data, error, mutate } = useSWR(
-    account
-      ? ['transactionHistory', '0xfc6e7b8866f92d6e8f4aa9171b30adc930efcf74']
-      : null,
+    account ? ['transactionHistory', account] : null,
     async ([_, userAdress]) =>
       sdk.UserLending.getUserRequests(userAdress as `0x${string}`)
   )
