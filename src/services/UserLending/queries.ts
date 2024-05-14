@@ -77,6 +77,9 @@ export const lendingPoolsBalanceQuery = gql`
       lendingPools {
         id
         balance
+        tranches {
+          shares
+        }
       }
     }
 `

@@ -239,8 +239,14 @@ export class UserLending {
         const lendingPoolBalances: LendingPoolsBalanceSubgraph = await this._graph.request(
             lendingPoolsBalanceQuery
         )
+        const lendingPoolSharesHelper: {id: string, shares: number}[] = [];
+        for(const lendingPoolBalance of lendingPoolBalances.lendingPools){
+            lendingPoolSharesHelper.push({
+                id: lendingPoolBalance.id,
+                shares: lendingPoolBalance.tranches.reduce((acc, tranche) => acc + parseFloat(tranche.shares), 0)
+            })
+        }
         const retn: UserRequest[] = [];
-        const totalSupply = 1000; // TODO has to be added to subgraph
         for (const userRequest of subgraphResult.userRequests) {
             const trancheName =
                 trancheNames[userRequest.lendingPool.tranches.length - 1][
@@ -255,8 +261,10 @@ export class UserLending {
                     event.type = 'DepositReallocated';
                 }
                 const lendingPoolId = event.id.split('-')[0];
-                const lendingPool = lendingPoolBalances.lendingPools.find(lendingPool => lendingPool.id === lendingPoolId);
-                const totalAssets = lendingPool ? parseFloat(lendingPool.balance) : 0;
+                const lendingPoolBalance = lendingPoolBalances.lendingPools.find(lendingPool => lendingPool.id === lendingPoolId);
+                const lendingPoolShares = lendingPoolSharesHelper.find(lendingPool => lendingPool.id === lendingPoolId);
+                const totalSupply = lendingPoolShares ? lendingPoolShares.shares : 0;
+                const totalAssets = lendingPoolBalance ? parseFloat(lendingPoolBalance.balance) : 0;
                 events.push({
                     id: event.id,
                     requestType: mapUserRequestEventType(event.type),
