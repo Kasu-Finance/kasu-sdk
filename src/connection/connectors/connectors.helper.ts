@@ -1,4 +1,5 @@
 import { MetamaskIcon } from '@/assets/icons'
+import MetamaskLogoIcon from '@/assets/icons/connectors/MetamaskLogoIcon'
 
 import { ProviderInfo } from '@/types/connectors'
 
@@ -24,7 +25,7 @@ export const getDeprecatedInjection = (): ProviderInfo | undefined => {
 
   // Prompt MetaMask install when no window.ethereum or eip6963 injection is present, or the only injection detected is coinbase (CB has separate entry point in UI)
   if (!window.ethereum || window.ethereum.isCoinbaseWallet)
-    return { name: 'Install MetaMask', icon: MetamaskIcon() }
+    return { name: 'Install MetaMask', icon: MetamaskLogoIcon() }
 
   // Use a generic icon when injection is present but no known non-coinbase wallet is detected
   return {

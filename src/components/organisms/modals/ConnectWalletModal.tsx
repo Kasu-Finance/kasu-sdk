@@ -86,11 +86,13 @@ const ConnectWalletModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             >
               {isLoading ? (
                 <CircularProgress size={24} />
-              ) : isValidElement(icon) ? (
-                <>{icon}</>
+              ) : isValidElement(providerInfo.customIcon) ? (
+                providerInfo.customIcon
               ) : (
-                <Box gap={1} display='flex' alignItems='center'>
-                  {icon && typeof icon === 'string' && (
+                <Box gap={1} display='flex' alignItems='center' color='white'>
+                  {isValidElement(icon) ? (
+                    icon
+                  ) : typeof icon === 'string' ? (
                     <Image
                       unoptimized
                       width={30}
@@ -98,8 +100,7 @@ const ConnectWalletModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                       src={icon}
                       alt={providerInfo.name}
                     />
-                  )}
-
+                  ) : null}
                   {providerInfo.name}
                 </Box>
               )}

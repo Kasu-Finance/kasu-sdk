@@ -40,6 +40,6 @@ export const walletConnectConnection: Connection = {
   shouldDisplay: () => true,
   getProviderInfo: () => ({
     name: 'Wallet Connect V2',
-    icon: WalletConnectIcon(),
+    customIcon: WalletConnectIcon(),
   }),
 }

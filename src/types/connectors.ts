@@ -22,6 +22,7 @@ export type RecentConnection = {
 export type ProviderInfo = {
   name: string
   icon?: ReactNode
+  customIcon?: ReactNode
   rdns?: string
 }
 

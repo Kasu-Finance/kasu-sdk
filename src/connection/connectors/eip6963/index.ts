@@ -13,22 +13,22 @@ import {
   ProviderInfo,
 } from '@/types/connectors'
 
-const ICON_OVERRIDE_MAP: { [rdns in string]?: ReactNode } = {
+const CUSTOM_ICON_MAP: { [rdns in string]?: ReactNode } = {
   'io.metamask': MetamaskIcon(), // MetaMask's provided icon has no padding
   'com.coinbase.wallet': CoinbaseIcon(),
 }
 
 /** Replaces an announced provider's icon with our preferred image, when applicable */
-export const applyOverrideIcon = (providerInfo: ProviderInfo): ProviderInfo => {
+export const applyCustomIcon = (providerInfo: ProviderInfo): ProviderInfo => {
   if (!providerInfo.rdns) return providerInfo
 
-  const overrideIcon = ICON_OVERRIDE_MAP[providerInfo.rdns]
+  const customIcon = CUSTOM_ICON_MAP[providerInfo.rdns]
 
-  if (!overrideIcon) return providerInfo
+  if (!customIcon) return providerInfo
 
   return {
     ...providerInfo,
-    icon: overrideIcon,
+    customIcon: customIcon,
   }
 }
 
@@ -53,7 +53,7 @@ export const eip6963Connection: InjectedConnection = {
 
     return {
       ...this,
-      getProviderInfo: () => applyOverrideIcon(providerInfo),
+      getProviderInfo: () => applyCustomIcon(providerInfo),
       overrideActivate() {
         eip6963.selectProvider(rdns) // Select the specific eip6963 provider before activating
         return false

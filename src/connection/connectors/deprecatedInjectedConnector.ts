@@ -11,10 +11,25 @@ const [web3Injected, web3InjectedHooks] = initializeConnector<MetaMask>(
   (actions) => new MetaMask({ actions, onError: web3reactError })
 )
 
+const isInjected = typeof window !== 'undefined' && Boolean(window.ethereum)
+const isCoinbaseWallet =
+  typeof window !== 'undefined' && Boolean(window.ethereum?.isCoinbaseWallet)
+
+const getShouldAdvertiseMetaMask = () =>
+  getDeprecatedInjection()?.name !== 'MetaMask' &&
+  (!isInjected || isCoinbaseWallet)
+
 export const deprecatedInjectedConnection: Connection = {
   connector: web3Injected,
   hooks: web3InjectedHooks,
   type: ConnectionType.INJECTED,
   getProviderInfo: () => getDeprecatedInjection() ?? { name: '' },
   shouldDisplay: () => true,
+  overrideActivate: () => {
+    if (getShouldAdvertiseMetaMask()) {
+      window.open('https://metamask.io/', 'inst_metamask')
+      return true
+    }
+    return false
+  },
 }

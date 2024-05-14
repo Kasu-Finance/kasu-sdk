@@ -28,5 +28,8 @@ export const coinbaseWalletConnection: Connection = {
   hooks: web3CoinbaseWalletHooks,
   type: ConnectionType.COINBASE_WALLET,
   shouldDisplay: () => true,
-  getProviderInfo: () => ({ name: 'Coinbase Wallet', icon: CoinbaseIcon() }),
+  getProviderInfo: () => ({
+    name: 'Coinbase Wallet',
+    customIcon: CoinbaseIcon(),
+  }),
 }
