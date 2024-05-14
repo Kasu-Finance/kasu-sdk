@@ -8,7 +8,7 @@ import { DepositModalStateType } from '@/context/depositModal/depositModal.types
 
 type DepositModalStateProps = {
   children: ReactNode
-  defaultTrancheId: string
+  defaultTrancheId: `0x${string}`
 }
 
 const initialState: Omit<DepositModalStateType, 'trancheId'> = {
@@ -22,7 +22,7 @@ const DepositModalState: React.FC<DepositModalStateProps> = ({
 }) => {
   const [state, dispatch] = useReducer(depositModalReducer, {
     ...initialState,
-    trancheId: `0x${defaultTrancheId}`,
+    trancheId: defaultTrancheId,
   })
 
   return (

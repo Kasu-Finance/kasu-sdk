@@ -6,7 +6,7 @@ import NEXERA_API_BASE_URL from '@/config/api.nexera'
 
 type ApiRes =
   | {
-      signature: string
+      signatureData: string
       blockExpiration: number
       isAuthorized: boolean
     }
@@ -30,7 +30,7 @@ const generateKycSignature = async (params: {
 }) => {
   const NEXERA_API_URL =
     process.env.NEXERA_API_URL ||
-    `${NEXERA_API_BASE_URL}/customers/get-tx-auth-signature`
+    `${NEXERA_API_BASE_URL}/customer-tx-auth-signature`
 
   const response = await fetch(NEXERA_API_URL, {
     body: JSON.stringify(params),
@@ -44,14 +44,12 @@ const generateKycSignature = async (params: {
 
   const data: ApiRes = await response.json()
 
-  if ('signature' in data) {
+  if ('signatureData' in data) {
     return {
       blockExpiration: data.blockExpiration,
-      signature: data.signature,
+      signature: data.signatureData,
     }
   }
-
-  console.error(data)
 }
 
 export default generateKycSignature
