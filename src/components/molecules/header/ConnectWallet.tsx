@@ -146,6 +146,10 @@ const ConnectWallet = () => {
               position: 'absolute',
               bottom: 0,
               transform: 'translateY(50%)',
+              backgroundImage: 'url("/images/seamless-noise-20.png")',
+              backgroundRepeat: 'repeat',
+              backgroundPosition: '0 0',
+              backgroundSize: '120px 86px',
               '& .MuiChip-label': {
                 padding: 0,
               },

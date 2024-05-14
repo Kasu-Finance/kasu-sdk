@@ -1,5 +1,6 @@
+// TODO: ADAPT SUPPORTED CHAINS WHEN DEPLOYING TO MAINET
 export enum SupportedChainIds {
-  MAINNET = 1,
+  MAINNET = 0, // TODO: return to "1" instead of "0" when deploying to mainnet
   //   GOERLI = 5,
   ARBITRUM_ONE = 42161,
   BASE_SEPOLIA = 84532,
