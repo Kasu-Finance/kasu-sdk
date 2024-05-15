@@ -10,7 +10,7 @@ export interface PoolOverview {
     strategyDeckUrl: string;
     tranches: TrancheData[];
     totalValueLocked: string;
-    loansUnderManagement: number;
+    loansUnderManagement: string;
     yieldEarned: string;
     poolCapacity: string;
     poolCapacityPercentage: string;
@@ -20,7 +20,7 @@ export interface PoolOverview {
     poolApyStructure: string;
     poolInvestmentTerm: string;
     loanStructure: string;
-    loanFundsOriginated: number;
+    loanFundsOriginated: string;
     isActive: boolean;
 }
 

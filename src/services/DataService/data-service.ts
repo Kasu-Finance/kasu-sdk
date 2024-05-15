@@ -74,7 +74,7 @@ export class DataService {
 
         const remainingCapacity = Math.max(targetDrawAmount - pendingDeposits, 0);
 
-        const remainingCapacityPercentage = targetAmount != 0 ? remainingCapacity / targetAmount : 1;
+        const remainingCapacityPercentage = targetAmount != 0 ? remainingCapacity / targetAmount : 0;
 
         const remainingCapacitySpillover = Math.min(targetDrawAmount - pendingDeposits, 0);
 
@@ -310,8 +310,8 @@ export class DataService {
         }
         for (const poolOverview of poolOverviews){
             retn.totalValueLocked += parseFloat(poolOverview.totalValueLocked);
-            retn.loansUnderManagement += poolOverview.loansUnderManagement;
-            retn.totalLoanFundsOriginated += poolOverview.loanFundsOriginated;
+            retn.loansUnderManagement += parseFloat(poolOverview.loansUnderManagement);
+            retn.totalLoanFundsOriginated += parseFloat(poolOverview.loanFundsOriginated);
             retn.totalYieldEarned += parseFloat(poolOverview.yieldEarned);
         }
         for (const poolOverview of poolOverviews){
@@ -320,7 +320,7 @@ export class DataService {
                 console.log("Couldn't find risk management for id: ", poolOverview.id);
                 continue;
             }
-            const weight = poolOverview.loanFundsOriginated / retn.totalLoanFundsOriginated;
+            const weight = retn.totalLoanFundsOriginated === 0 ? 0 : parseFloat(poolOverview.loanFundsOriginated) / retn.totalLoanFundsOriginated;
             retn.totalLossRate += riskManagement.riskPerformance.poolLossRate * weight;
         }
         return retn;
