@@ -21,7 +21,7 @@ import formatAccount from '@/utils/formats/formatAccount'
 const ConnectWallet = () => {
   const { account, connector, chainId } = useWeb3React()
   const theme = useTheme()
-  const { setToast } = useToastState()
+  const { setToast, removeToast } = useToastState()
   const { openModal } = useModalState()
   const switchChain = useSwitchChain()
 
@@ -31,8 +31,12 @@ const ConnectWallet = () => {
   const handleOpen = () => openModal({ name: 'connectWalletModal' })
 
   const handleSwitchChain = useCallback(async () => {
-    await switchChain(SupportedChainIds.BASE)
-  }, [switchChain])
+    const switched = await switchChain(SupportedChainIds.BASE)
+
+    if (switched) {
+      removeToast()
+    }
+  }, [switchChain, removeToast])
 
   const invalidChain = chainId && !isSupportedChain(chainId)
   const connected = account && !invalidChain
