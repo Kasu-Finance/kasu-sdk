@@ -131,9 +131,8 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
             variant='outlined'
             startIcon={<ReceiptIcon />}
             href={`${
-              networks[
-                (chainId as SupportedChainIds) || SupportedChainIds.MAINNET
-              ].blockExplorerUrls[0]
+              networks[(chainId as SupportedChainIds) || SupportedChainIds.BASE]
+                .blockExplorerUrls[0]
             }/tx/${txHash}`}
             target='_blank'
           >

@@ -59,9 +59,8 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             variant='contained'
             startIcon={<ReceiptIcon />}
             href={`${
-              networks[
-                (chainId as SupportedChainIds) || SupportedChainIds.MAINNET
-              ].blockExplorerUrls[0]
+              networks[(chainId as SupportedChainIds) || SupportedChainIds.BASE]
+                .blockExplorerUrls[0]
             }/tx/${txHash}`}
             target='_blank'
             size='small'
