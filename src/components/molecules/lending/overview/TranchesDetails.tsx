@@ -16,10 +16,13 @@ const TranchesDetails: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
       <Grid container columnSpacing={3} rowGap={2} component={CardContent}>
         {sortedTranches.length > 0 &&
           sortedTranches.map((tranche, index) => {
+            const isSingleTranche = sortedTranches.length === 1
+
             return (
               <Grid item xs={COLS / pool.tranches.length} key={index}>
                 <TranchDetailCard
-                  title={tranche.name + ' Tranche'}
+                  title={isSingleTranche ? '' : tranche.name + ' Tranche'}
+                  isSingleTranche={isSingleTranche}
                   remainingAmount={{
                     pct: formatAmount(
                       parseFloat(tranche.poolCapacityPercentage || '0') * 100
