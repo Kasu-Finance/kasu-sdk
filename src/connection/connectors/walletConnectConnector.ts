@@ -23,7 +23,7 @@ const [walletConnectV2, walletConnectV2hooks] =
         actions,
         options: {
           projectId: '5c42aeed3e2601d7df2464a8303b7d37',
-          chains: [SupportedChainIds.MAINNET],
+          chains: [SupportedChainIds.BASE],
           showQrModal: true,
           qrModalOptions: {
             themeVariables: {

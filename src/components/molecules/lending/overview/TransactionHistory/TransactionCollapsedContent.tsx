@@ -74,9 +74,8 @@ const TransactionCollapsedContent: React.FC<
           size='small'
           disabled={!chainId}
           href={`${
-            networks[
-              (chainId as SupportedChainIds) || SupportedChainIds.MAINNET
-            ].blockExplorerUrls[0]
+            networks[(chainId as SupportedChainIds) || SupportedChainIds.BASE]
+              .blockExplorerUrls[0]
           }/tx/${actionHistory.transactionHash}`}
           target='_blank'
           startIcon={<Receipt />}

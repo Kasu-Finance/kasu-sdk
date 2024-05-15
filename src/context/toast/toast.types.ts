@@ -4,6 +4,10 @@ export type Toast = {
   type: AlertColor
   title: string
   message: string
+  action?: {
+    label: string
+    onClick: () => void
+  }
   txHash?: string
   isClosable?: boolean
   onCloseCallback?: () => void

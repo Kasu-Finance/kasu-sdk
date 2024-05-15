@@ -11,13 +11,14 @@ const providerFactory = (chainId: SupportedChainIds, i = 0) =>
 export const RPC_PROVIDERS: {
   [key in SupportedChainIds]: StaticJsonRpcProvider
 } = {
-  [SupportedChainIds.MAINNET]: new AppRpcProvider(SupportedChainIds.MAINNET, [
-    providerFactory(SupportedChainIds.MAINNET),
-    providerFactory(SupportedChainIds.MAINNET, 1),
+  [SupportedChainIds.BASE]: new AppRpcProvider(SupportedChainIds.BASE, [
+    providerFactory(SupportedChainIds.BASE),
+    providerFactory(SupportedChainIds.BASE, 1),
   ]),
-  [SupportedChainIds.ARBITRUM_ONE]: providerFactory(
-    SupportedChainIds.ARBITRUM_ONE
-  ),
+  // [SupportedChainIds.ARBITRUM_ONE]: providerFactory(
+  //   SupportedChainIds.ARBITRUM_ONE
+  // ),
+
   [SupportedChainIds.BASE_SEPOLIA]: providerFactory(
     SupportedChainIds.BASE_SEPOLIA
   ),

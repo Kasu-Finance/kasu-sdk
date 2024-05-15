@@ -8,9 +8,11 @@ import { useCallback, useEffect, useState } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useToastState from '@/hooks/context/useToastState'
+import useSwitchChain from '@/hooks/web3/useSwitchChain'
 
 import ToolTip from '@/components/atoms/ToolTip'
 
+import { SupportedChainIds } from '@/connection/chains'
 import { setRecentWeb3ConnectionDisconnected } from '@/connection/connection.helper'
 import { networkConnection } from '@/connection/connectors/networkConnector'
 import { isSupportedChain } from '@/utils'
@@ -19,14 +21,22 @@ import formatAccount from '@/utils/formats/formatAccount'
 const ConnectWallet = () => {
   const { account, connector, chainId } = useWeb3React()
   const theme = useTheme()
-  const { setToast } = useToastState()
-
+  const { setToast, removeToast } = useToastState()
   const { openModal } = useModalState()
+  const switchChain = useSwitchChain()
 
   // using state + useEffect here to deal with hydration issue
   const [text, setText] = useState('CONNECT WALLET')
 
   const handleOpen = () => openModal({ name: 'connectWalletModal' })
+
+  const handleSwitchChain = useCallback(async () => {
+    const switched = await switchChain(SupportedChainIds.BASE)
+
+    if (switched) {
+      removeToast()
+    }
+  }, [switchChain, removeToast])
 
   const invalidChain = chainId && !isSupportedChain(chainId)
   const connected = account && !invalidChain
@@ -60,10 +70,14 @@ const ConnectWallet = () => {
         title: 'Wrong Chain',
         message:
           'An error has occured in the connection request - please switch your chain and retry, or review log for more details.',
+        action: {
+          label: 'Switch Chain',
+          onClick: async () => handleSwitchChain(),
+        },
         type: 'warning',
       })
     }
-  }, [account, invalidChain, setToast])
+  }, [account, invalidChain, setToast, handleSwitchChain])
 
   return (
     <ToolTip
