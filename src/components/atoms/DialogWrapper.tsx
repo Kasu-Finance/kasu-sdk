@@ -29,6 +29,7 @@ const DialogWrapper: React.FC<{
       open={modal[modalName].isOpen}
       PaperProps={{ sx: { width: 600 } }}
       onClose={handleClose}
+      disableEnforceFocus
       aria-labelledby={modalDetails.ariaLabel}
       aria-describedby={modalDetails.ariaDescription}
     >
