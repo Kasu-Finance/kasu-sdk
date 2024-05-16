@@ -46,7 +46,7 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
       transactionHistory.nftId
     )
 
-    if (res.transactionHash) {
+    if (res?.transactionHash) {
       handleClose()
       await updateTransactionHistory()
     }
