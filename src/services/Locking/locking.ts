@@ -129,16 +129,18 @@ export class KSULocking {
         return await this._contractAbi.userTotalDeposits(userAddress);
     }
 
-    async calculateProtocolFeeRewards(KSULocked: number, lockPeriod: BigNumber): Promise<number> {
+    async calculateUserLockProjectedProtocolFeeRewards(KSULocked: number, lockPeriod: BigNumber): Promise<number> {
+        if (KSULocked === 0) {
+            return 0;
+        }
+
         const lockingSummarySubgraph: LockingSummarySubgraphResult = await this._graph.request(lockingSummariesQuery);
         const lockingSummary = lockingSummarySubgraph.lockingSummaries[0];
         const totalRKSU = lockingSummary.totalRKsuAmount;
 
         const lockDetails = await this.lockDetails(lockPeriod)
 
-
         const newUserRKSU = (KSULocked + (KSULocked * lockDetails.ksuBonusMultiplier)) * lockDetails.rKsuMultiplier
-
         const totalRKSUAfterLock = totalRKSU + newUserRKSU
 
         // TODO read this from subgraph - ask dan about this
@@ -155,11 +157,11 @@ export class KSULocking {
                 console.log("Couldn't find tranche configuration for id: ", tranche.id);
                 continue;
             }
-            projectedYearlyPlatformInterest = parseFloat(tranche.balance) * this.calculateApy(parseFloat(trancheConfig.interestRate));
+            projectedYearlyPlatformInterest += parseFloat(tranche.balance) * this.calculateApy(parseFloat(trancheConfig.interestRate));
         }
 
         const totalExpectedEcosystemFees = projectedYearlyPlatformInterest * performanceFee * ecosystemFee;
-        return totalExpectedEcosystemFees;
+        return totalExpectedEcosystemFees * newUserRKSU / totalRKSUAfterLock;
     }
 
     calculateApy(epochInterestRate: number): number {
