@@ -23,6 +23,11 @@ const depositModalReducer = (
         ...state,
         txHash: action.payload,
       }
+    case 'SET_SIMULATED_DURATION':
+      return {
+        ...state,
+        simulatedDuration: action.payload,
+      }
     default:
       return state
   }

@@ -6,6 +6,7 @@ import DialogWrapper from '@/components/atoms/DialogWrapper'
 import CancelDepositModal from '@/components/organisms/modals/CancelDepositModal'
 import CancelWithdrawalModal from '@/components/organisms/modals/CancelWithdrawalModal'
 import DepositModalWrapper from '@/components/organisms/modals/DepositModal/DepositModalWrapper'
+import EarningsCalculatorModalWrapper from '@/components/organisms/modals/EarningsCalculator/EarningsCalculatorModalWrapper'
 import KycModal from '@/components/organisms/modals/KycModal'
 import LockModalWrapper from '@/components/organisms/modals/LockModal/LockModalWrapper'
 import LoyaltyLevelsModal from '@/components/organisms/modals/LoyaltyLevelsModal'
@@ -25,7 +26,7 @@ type ModalDetails = {
 export const getModal = (
   modalName: keyof Modals,
   handleClose: () => void
-): ModalDetails | null => {
+): ModalDetails => {
   switch (modalName) {
     case ModalsKeys.CONNECT_WALLET:
       return {
@@ -66,6 +67,10 @@ export const getModal = (
     case 'cancelWithdrawalModal':
       return {
         component: <CancelWithdrawalModal handleClose={handleClose} />,
+      }
+    case 'earningsCalculatorModal':
+      return {
+        component: <EarningsCalculatorModalWrapper handleClose={handleClose} />,
       }
   }
 }

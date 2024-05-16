@@ -1,4 +1,4 @@
-import { alpha, createTheme } from '@mui/material'
+import { alpha, createTheme, lighten } from '@mui/material'
 
 declare module '@mui/material/styles' {
   interface BreakpointOverrides {
@@ -232,6 +232,65 @@ export const theme = createTheme({
     MuiList: {
       styleOverrides: {
         root: {},
+      },
+    },
+    MuiSlider: {
+      styleOverrides: {
+        root: {
+          height: 4,
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          display: 'block',
+        },
+        mark: {
+          width: 8,
+          height: 8,
+          borderRadius: '2px',
+          backgroundImage: 'url("/images/seamless-noise-20.png")',
+          backgroundRepeat: 'repeat',
+          backgroundColor: 'rgba(211, 179, 139, 1)',
+          backgroundPosition: '0 0',
+          backgroundSize: '120px 86px',
+          '&[data-index="0"]': {
+            marginLeft: '2px',
+          },
+        },
+        markActive: {
+          width: 4,
+          height: 4,
+          backgroundColor: lighten('#ffffff', 0.2),
+        },
+        rail: {
+          backgroundImage: 'url("/images/seamless-noise-20.png")',
+          backgroundRepeat: 'repeat',
+          backgroundColor: 'rgba(161, 136, 106, 1)',
+          backgroundPosition: '0 0',
+          backgroundSize: '120px 86px',
+          padding: 1,
+          border: 'none',
+        },
+        track: {
+          backgroundImage: 'url("/images/seamless-noise-20.png")',
+          backgroundRepeat: 'repeat',
+          backgroundColor: 'rgba(161, 136, 106, 1)',
+          backgroundPosition: '0 0',
+          backgroundSize: '120px 86px',
+          padding: 1,
+          border: 'none',
+        },
+        thumb: {
+          backgroundImage: 'url("/images/seamless-noise-20.png")',
+          backgroundRepeat: 'repeat',
+          backgroundColor: 'rgba(211, 179, 139, 1)',
+          backgroundPosition: '0 0',
+          backgroundSize: '120px 86px',
+        },
+        valueLabel: {
+          background: 'rgba(40, 40, 42, 0.6)',
+          '&:before': {
+            background: 'rgb(126 126 127)',
+          },
+        },
       },
     },
     MuiAlert: {

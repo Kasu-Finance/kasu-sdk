@@ -1,14 +1,13 @@
 'use client'
 
 import LoginIcon from '@mui/icons-material/Login'
-import { Box, Grid } from '@mui/material'
+import { Box, Button, Grid } from '@mui/material'
 import { useRef } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useIsSticky from '@/hooks/useIsSticky'
 import useTranslation from '@/hooks/useTranslation'
 
-import KycButton from '@/components/atoms/KycButton'
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
 import { COLS } from '@/constants'
@@ -30,8 +29,6 @@ import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
 
-import { ModalsKeys } from '@/context/modal/modal.types'
-
 import { formatAmount, getPoolData, sortTranches } from '@/utils'
 
 const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
@@ -49,7 +46,7 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
 
   const handleOpen = () =>
     openModal({
-      name: ModalsKeys.DEPOSIT,
+      name: 'earningsCalculatorModal',
       poolData: poolData,
     })
 
@@ -125,14 +122,14 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
           pb: 2,
         }}
       >
-        <KycButton
+        <Button
           variant='contained'
           sx={{ pl: 2.25, pr: 2.25 }}
           startIcon={<LoginIcon />}
           onClick={handleOpen}
         >
           {t('general.deposit')}
-        </KycButton>
+        </Button>
       </Box>
     </Box>
   )

@@ -1,4 +1,4 @@
-import { Box, lighten, Slider, Typography } from '@mui/material'
+import { Box, Slider, Typography } from '@mui/material'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
@@ -37,24 +37,8 @@ const LockDurationInput = () => {
       <Slider
         disabled={disabled}
         sx={{
-          height: 4,
           maxWidth: 430,
           mt: 2,
-          mx: 'auto',
-          display: 'block',
-          '& .MuiSlider-mark': {
-            width: 8,
-            height: 8,
-            borderRadius: '2px',
-            '&[data-index="0"]': {
-              ml: '2px',
-            },
-            '&.MuiSlider-markActive': {
-              width: 4,
-              height: 4,
-              backgroundColor: lighten('#ffffff', 0.2),
-            },
-          },
         }}
         getAriaValueText={(val) => val.toString()}
         valueLabelFormat={(val) =>

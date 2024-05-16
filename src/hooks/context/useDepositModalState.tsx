@@ -35,11 +35,18 @@ const useDepositModalState = (): DepositModalTypes => {
     [dispatch]
   )
 
+  const setSimulatedDuration = useCallback(
+    (simulatedDuration: number) =>
+      dispatch({ type: 'SET_SIMULATED_DURATION', payload: simulatedDuration }),
+    [dispatch]
+  )
+
   return {
     ...context,
     setAmount,
     setSelectedTranche,
     setTxHash,
+    setSimulatedDuration,
   }
 }
 

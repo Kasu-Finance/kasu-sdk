@@ -32,6 +32,7 @@
     "overview": "overview",
     "poolApy": "Pool APY",
     "apy": "APY",
+    "base": "base",
     "tvl": "TVL",
     "lifetime": "lifetime",
     "investment": "investment",
@@ -46,7 +47,8 @@
     "totalKsuLocked": "total KSU locked",
     "rowsPerPage": "Rows per page:",
     "notAvailable": "not available",
-    "multiplier": "multiplier"
+    "multiplier": "multiplier",
+    "requestDeposit": "Request Deposit"
   },
   "time": {
     "days": "days",
@@ -255,9 +257,32 @@
         "description-2": "to be locked in the next Epoch.",
         "lockingOverview": "Locking Overview"
       }
+    },
+    "earningsCalculator": {
+      "title": "Earnings Calculator",
+      "subtitle": "Simulate your yield earnings​",
+      "simulatedAmount": {
+        "title": " Deposit Scenario",
+        "metric-1-tooltip": "Total USDC equivalent value of all tokens in your Web3 wallet that can be deposited into Lending Pools.",
+        "metric-2-tooltip": "info"
+      },
+      "simulatedDuration": {
+        "title": "Simulated Deposit Duration",
+        "description-1": "EXAMPLE ONLY • DURATION IS NOT FIXED",
+        "description-2": "YOU CAN REQUEST WITHDRAWAL AT ANY TIME​"
+      },
+      "simulatedYieldEarnings": {
+        "title": "Simulated Yield Earnings",
+        "metric-1-tooltip": "The Annual Percentage Yield that will be applied to determine your yield earnings simulation, assuming all repayments will be made as expected. This is based on the APY currently offered by the Pool Delegate and is subject to change during the simulation forecast period.",
+        "metric-2-title": "Simulated Yield Earnings​",
+        "metric-2-tooltip": "Forecast USDC yield earnings (after fees) associated with depositing the amount entered and duration selected for this Lending Pool at the given APY, assuming all repayments will be made as expected.",
+        "metric-3-title": "​APY Bonus​",
+        "metric-3-tooltip": "The APY bonus (paid in KSU) that will be applied to determine your bonus yield earnings simulation, which is only applicable to Loyalty Level 1 and 2 KSU Token Lockers. Loyalty Level 2 Token Lockers receive a higher APY bonus than Loyalty Level 1. The APY bonus is variable and will change from time to meet liquidity demand and supply requirements.",
+        "metric-4-title": "Simulated Bonus Yield Earnings​",
+        "metric-4-tooltip": "Forecast bonus yield earnings based on the APY bonus (for the given Loyalty Level), applied to the USDC deposit amount entered and duration selected for this Lending Pool."
+      }
     }
   },
-
   "lending": {
     "poolOverview": {
       "title": "Pool Overview",

@@ -13,6 +13,7 @@ type DepositModalStateProps = {
 
 const initialState: Omit<DepositModalStateType, 'trancheId'> = {
   amount: '',
+  simulatedDuration: 0,
   txHash: undefined,
 }
 

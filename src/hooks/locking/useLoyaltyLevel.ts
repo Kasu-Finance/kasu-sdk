@@ -1,7 +1,7 @@
 const LOYALTY_LEVEL_1_REQUIREMENT = 1
 const LOYALTY_LEVEL_2_REQUIREMENT = 5
 
-type LoyaltyLevel = -1 | 0 | 1 | 2
+export type LoyaltyLevel = -1 | 0 | 1 | 2
 
 type useLoyaltyLevelReturnType<T extends number | undefined> = {
   level_1: number

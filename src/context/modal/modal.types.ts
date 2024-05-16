@@ -41,36 +41,15 @@ export type Modals = {
   kycModal: ModalData<{ callback: () => void }>
   cancelDepositModal: ModalData<{ transactionHistory: UserRequest }>
   cancelWithdrawalModal: ModalData<{ transactionHistory: UserRequest }>
+  earningsCalculatorModal: ModalData<{ poolData: PoolData }>
 }
 
-export type ModalWithProps = Extract<
-  keyof Modals,
-  | 'connectWalletModal'
-  | 'loyaltyLevelsModal'
-  | 'lockModal'
-  | 'unlockModal'
-  | 'withdrawModal'
-  | 'transactionProcessingModal'
-  | 'depositModal'
-  | 'kycModal'
-  | 'cancelDepositModal'
-  | 'cancelWithdrawalModal'
->
-
-export type OpenModalWithProps<T extends keyof Modals> = Omit<
+export type OpenModalParam<T extends keyof Modals> = Omit<
   Modals[T],
   'isOpen'
 > & {
-  name: ModalWithProps
-}
-
-export type OpenModalWithoutProps<T extends keyof Modals> = {
   name: T
 }
-
-export type OpenModalParam<T extends keyof Modals> = T extends ModalWithProps
-  ? OpenModalWithProps<T>
-  : OpenModalWithoutProps<T>
 
 export type ModalStateType = {
   modal: Modals

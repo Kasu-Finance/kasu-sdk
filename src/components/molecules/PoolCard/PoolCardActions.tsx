@@ -8,10 +8,7 @@ import useModalState from '@/hooks/context/useModalState'
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
 import useTranslation from '@/hooks/useTranslation'
 
-import KycButton from '@/components/atoms/KycButton'
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
-
-import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { getPoolData } from '@/utils'
 
@@ -28,20 +25,20 @@ const PoolCardActions: React.FC<PoolCardActionsProps> = ({ pool, link }) => {
 
   const handleOpenDeposit = () =>
     openModal({
-      name: ModalsKeys.DEPOSIT,
+      name: 'earningsCalculatorModal',
       poolData: poolData,
     })
 
   return (
     <Box display='flex' justifyContent='center' mt={3} mb={2}>
-      <KycButton
+      <Button
         variant='contained'
         sx={{ pl: 2.25, pr: 2.25 }}
         startIcon={<LoginIcon />}
         onClick={handleOpenDeposit}
       >
         {t('general.deposit')}
-      </KycButton>
+      </Button>
       <Button
         sx={{ ml: 2 }}
         href={link}

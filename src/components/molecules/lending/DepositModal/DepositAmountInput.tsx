@@ -48,9 +48,10 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
   }, [poolData.tranches, trancheId])
 
   const handleMax = () => {
-    const maxPossible = toBigNumber(maxDeposit).lt(toBigNumber(balance))
+    const maxPossible = toBigNumber(balance).gt(toBigNumber(maxDeposit))
       ? maxDeposit
       : balance
+
     setAmount(maxPossible)
     validate(maxPossible)
   }
@@ -90,7 +91,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
       return
     }
 
-    setModalStatus({ type: amount ? 'success' : 'default' })
+    setModalStatus({ type: inputAmount ? 'success' : 'default' })
   }
 
   const handleAmountChange = (value: string) => {
