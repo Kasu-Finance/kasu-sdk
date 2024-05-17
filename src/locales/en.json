@@ -358,6 +358,13 @@
           "label": "View KSU Locking for all other rewards",
           "tooltip": "info"
         }
+      },
+      "transactionsHistory": {
+        "table": {
+          "reallocated": {
+            "label": "Reallocated",
+            "tooltip": "Reallocated to the next available Tranche due to oversubscription of deposit requests to the Tranche you originally requested. You can gain deposit priority access by locking KSU to achieve/increase your Loyalty Level."
+          }
       }
     },
     "poolDetails": {},
