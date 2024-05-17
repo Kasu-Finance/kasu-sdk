@@ -39,9 +39,13 @@ const TransactionCollapsedContent: React.FC<
         {isReallocated ? (
           <Box display='flex' alignItems='center' pl={1}>
             <Typography variant='caption'>
-              {t('general.reallocated')}
+              {t('lending.poolOverview.transactionsHistory.reallocated.label')}
             </Typography>
-            <ToolTip title='missing tooltip' />
+            <ToolTip
+              title={t(
+                'lending.poolOverview.transactionsHistory.reallocated.tooltip'
+              )}
+            />
           </Box>
         ) : (
           <Typography
