@@ -11,6 +11,8 @@ import InfoColumn from '@/components/atoms/InfoColumn'
 import TokenAmount from '@/components/atoms/TokenAmount'
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
 import { DATE_FORMAT, TIME_FORMAT } from '@/constants'
 import dayjs from '@/dayjs'
 import { formatAmount } from '@/utils'
@@ -28,7 +30,7 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
 
   const { amount } = useDepositModalState()
 
-  const handleOpen = () => openModal({ name: 'loyaltyLevelsModal' })
+  const handleOpen = () => openModal({ name: ModalsKeys.LOYALTY_LEVELS })
 
   const now = dayjs()
 

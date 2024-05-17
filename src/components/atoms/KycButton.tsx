@@ -30,7 +30,7 @@ const KycButton: React.FC<KycButtonProps> = (props) => {
     if (!account) {
       return {
         children: defaultText?.connectWallet ?? 'Connect Wallet',
-        onClick: () => openModal({ name: 'connectWalletModal' }),
+        onClick: () => openModal({ name: ModalsKeys.CONNECT_WALLET }),
         disabled: false,
       }
     }

@@ -29,6 +29,8 @@ import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
 import { formatAmount, getPoolData, sortTranches } from '@/utils'
 
 const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
@@ -46,7 +48,7 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
 
   const handleOpen = () =>
     openModal({
-      name: 'earningsCalculatorModal',
+      name: ModalsKeys.EARNINGS_CALCULATOR,
       poolData: poolData,
     })
 

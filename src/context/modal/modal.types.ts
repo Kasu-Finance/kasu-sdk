@@ -17,11 +17,14 @@ export enum ModalsKeys {
   CONNECT_WALLET = 'connectWalletModal',
   LOYALTY_LEVELS = 'loyaltyLevelsModal',
   LOCK = 'lockModal',
+  TRANSACTION_PROCESSING = 'transactionProcessingModal',
   UNLOCK = 'unlockModal',
   WITHDRAW = 'withdrawModal',
-  TRANSACTION_PROCESSING = 'transactionProcessingModal',
   DEPOSIT = 'depositModal',
   KYC = 'kycModal',
+  CANCEL_DEPOSIT = 'cancelDepositModal',
+  CANCEL_WITHDRAWAL = 'cancelWithdrawalModal',
+  EARNINGS_CALCULATOR = 'earningsCalculatorModal',
 }
 
 export type ModalAction =
@@ -31,17 +34,17 @@ export type ModalAction =
 export type ModalData<T = void> = T extends void ? ModalBase : T & ModalBase
 
 export type Modals = {
-  connectWalletModal: ModalData
-  loyaltyLevelsModal: ModalData
-  lockModal: ModalData
-  transactionProcessingModal: ModalData
-  unlockModal: ModalData<{ userLock: UserLock }>
-  withdrawModal: ModalData<{ poolData: PoolOverview }>
-  depositModal: ModalData<{ poolData: PoolData }>
-  kycModal: ModalData<{ callback: () => void }>
-  cancelDepositModal: ModalData<{ transactionHistory: UserRequest }>
-  cancelWithdrawalModal: ModalData<{ transactionHistory: UserRequest }>
-  earningsCalculatorModal: ModalData<{ poolData: PoolData }>
+  [ModalsKeys.CONNECT_WALLET]: ModalData
+  [ModalsKeys.LOYALTY_LEVELS]: ModalData
+  [ModalsKeys.LOCK]: ModalData
+  [ModalsKeys.TRANSACTION_PROCESSING]: ModalData
+  [ModalsKeys.UNLOCK]: ModalData<{ userLock: UserLock }>
+  [ModalsKeys.WITHDRAW]: ModalData<{ poolData: PoolOverview }>
+  [ModalsKeys.DEPOSIT]: ModalData<{ poolData: PoolData }>
+  [ModalsKeys.KYC]: ModalData<{ callback: () => void }>
+  [ModalsKeys.CANCEL_DEPOSIT]: ModalData<{ transactionHistory: UserRequest }>
+  [ModalsKeys.CANCEL_WITHDRAWAL]: ModalData<{ transactionHistory: UserRequest }>
+  [ModalsKeys.EARNINGS_CALCULATOR]: ModalData<{ poolData: PoolData }>
 }
 
 export type OpenModalParam<T extends keyof Modals> = Omit<

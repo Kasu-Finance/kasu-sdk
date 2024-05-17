@@ -19,6 +19,8 @@ import useModalState from '@/hooks/context/useModalState'
 import TokenAmount from '@/components/atoms/TokenAmount'
 import TransactionCollapsedContent from '@/components/molecules/lending/overview/TransactionHistory/TransactionCollapsedContent'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
 import { DATE_FORMAT, TIME_FORMAT } from '@/constants'
 import dayjs from '@/dayjs'
 import { formatAmount } from '@/utils'
@@ -43,8 +45,8 @@ const TransactionHistoryTableRow: React.FC<TransactionHistoryTableRowProps> = ({
     openModal({
       name:
         transaction.requestType === 'Deposit'
-          ? 'cancelDepositModal'
-          : 'cancelWithdrawalModal',
+          ? ModalsKeys.CANCEL_DEPOSIT
+          : ModalsKeys.CANCEL_WITHDRAWAL,
       transactionHistory: transaction,
     })
   }

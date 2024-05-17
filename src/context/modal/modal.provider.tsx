@@ -30,6 +30,7 @@ const initialState: Modals = {
     isOpen: false,
     callback: () => {},
   },
+  earningsCalculatorModal: { isOpen: false, poolData: null },
 }
 
 const ModalState: React.FC<{ children: ReactNode }> = ({ children }) => {

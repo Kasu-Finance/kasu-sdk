@@ -12,6 +12,8 @@ import useSwitchChain from '@/hooks/web3/useSwitchChain'
 
 import ToolTip from '@/components/atoms/ToolTip'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
 import { SupportedChainIds } from '@/connection/chains'
 import { setRecentWeb3ConnectionDisconnected } from '@/connection/connection.helper'
 import { networkConnection } from '@/connection/connectors/networkConnector'
@@ -28,7 +30,7 @@ const ConnectWallet = () => {
   // using state + useEffect here to deal with hydration issue
   const [text, setText] = useState('CONNECT WALLET')
 
-  const handleOpen = () => openModal({ name: 'connectWalletModal' })
+  const handleOpen = () => openModal({ name: ModalsKeys.CONNECT_WALLET })
 
   const handleSwitchChain = useCallback(async () => {
     const switched = await switchChain(SupportedChainIds.BASE)

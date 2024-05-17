@@ -16,12 +16,14 @@ import TokenAmount from '@/components/atoms/TokenAmount'
 import LoyaltyLevelInfo from '@/components/molecules/locking/LoyaltyOverview/LoyaltyLevelInfo'
 import LoyaltyProgress from '@/components/molecules/locking/LoyaltyOverview/LoyaltyProgress'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
 import { capitalize, formatAmount } from '@/utils'
 
 const LoyaltyOverview = () => {
   const { openModal } = useModalState()
   const { t } = useTranslation()
-  const handleOpen = () => openModal({ name: 'loyaltyLevelsModal' })
+  const handleOpen = () => openModal({ name: ModalsKeys.LOYALTY_LEVELS })
 
   const { totalDeposits } = useTotalLendingPoolDeposits()
   const { rKsuAmount } = useEarnedRKsu()

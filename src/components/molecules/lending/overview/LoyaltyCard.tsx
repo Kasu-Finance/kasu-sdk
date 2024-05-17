@@ -28,6 +28,8 @@ import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
 import LendingLoyalityInfo from '@/components/molecules/locking/LoyaltyOverview/LendingLoyalityInfo'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
 const LoyaltyCard: React.FC<{
@@ -35,7 +37,7 @@ const LoyaltyCard: React.FC<{
 }> = ({ poolId }) => {
   const { openModal } = useModalState()
   const { t } = useTranslation()
-  const handleOpenLockingKSU = () => openModal({ name: 'lockModal' })
+  const handleOpenLockingKSU = () => openModal({ name: ModalsKeys.LOCK })
   const { userLocks } = useUserLocks()
   const { ksuPrice } = useKsuPrice()
   const { userBonus } = useUserBonusData()

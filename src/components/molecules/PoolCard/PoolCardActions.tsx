@@ -10,6 +10,8 @@ import useTranslation from '@/hooks/useTranslation'
 
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
 import { getPoolData } from '@/utils'
 
 interface PoolCardActionsProps {
@@ -25,7 +27,7 @@ const PoolCardActions: React.FC<PoolCardActionsProps> = ({ pool, link }) => {
 
   const handleOpenDeposit = () =>
     openModal({
-      name: 'earningsCalculatorModal',
+      name: ModalsKeys.EARNINGS_CALCULATOR,
       poolData: poolData,
     })
 

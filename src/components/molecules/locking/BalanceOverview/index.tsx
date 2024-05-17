@@ -15,6 +15,8 @@ import CardWidget from '@/components/atoms/CardWidget'
 import ColoredBox from '@/components/atoms/ColoredBox'
 import BalanceItem from '@/components/molecules/locking/BalanceOverview/BalanceItem'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
 import sdkConfig, { USDC } from '@/config/sdk'
 import { convertToUSD, formatAmount } from '@/utils'
 
@@ -22,7 +24,7 @@ const BalanceOverview = () => {
   const { openModal } = useModalState()
   const { t } = useTranslation()
 
-  const handleOpen = () => openModal({ name: 'lockModal' })
+  const handleOpen = () => openModal({ name: ModalsKeys.LOCK })
 
   const { balance: ksuBalance, decimals: ksuDecimals } = useUserBalance(
     sdkConfig.contracts.KSUToken

@@ -2,10 +2,12 @@ import { Button, Typography } from '@mui/material'
 
 import useModalState from '@/hooks/context/useModalState'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
 const DepositDescription = () => {
   const { openModal } = useModalState()
 
-  const handleOpen = () => openModal({ name: 'loyaltyLevelsModal' })
+  const handleOpen = () => openModal({ name: ModalsKeys.LOYALTY_LEVELS })
 
   return (
     <>

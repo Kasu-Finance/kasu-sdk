@@ -14,6 +14,7 @@ import DepositTrancheSelect from '@/components/molecules/lending/DepositModal/De
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 import DepositDescription from '@/components/organisms/modals/DepositModal/DepositDescription'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
 import { USDC } from '@/config/sdk'
@@ -31,7 +32,7 @@ const DepositModalEdit: React.FC<DepositModalEditProps> = ({ poolData }) => {
 
   const { modalStatus, setModalStatusAction } = useModalStatusState()
 
-  const handleOpen = () => openModal({ name: 'loyaltyLevelsModal' })
+  const handleOpen = () => openModal({ name: ModalsKeys.LOYALTY_LEVELS })
 
   const userBalance = formatUnits(balance || '0', decimals)
 

@@ -8,6 +8,8 @@ import useTranslation from '@/hooks/useTranslation'
 
 import TokenAmount from '@/components/atoms/TokenAmount'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
 import { DATE_FORMAT, TIME_FORMAT } from '@/constants'
 import dayjs from '@/dayjs'
 import { formatAmount } from '@/utils'
@@ -24,7 +26,7 @@ const UnlockRow: React.FC<UnlockRowProps> = ({ userLock }) => {
   const { endTime, lockPeriod, lockedAmount, rKSUAmount, startTime } = userLock
 
   const handleOpen = () => {
-    openModal({ name: 'unlockModal', userLock })
+    openModal({ name: ModalsKeys.UNLOCK, userLock })
   }
 
   const isUnlocked = dayjs.unix(endTime).isBefore()

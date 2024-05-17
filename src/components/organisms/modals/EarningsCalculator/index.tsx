@@ -18,6 +18,8 @@ import SimulatedDepositAmount from '@/components/organisms/modals/EarningsCalcul
 import SimulatedDepositDuration from '@/components/organisms/modals/EarningsCalculator/SimulatedDepositDuration'
 import SimulatedYieldEarnings from '@/components/organisms/modals/EarningsCalculator/SimulatedYieldEarnings'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
 import { USDC } from '@/config/sdk'
 
 const EarningsCalculatorModal: React.FC<DialogChildProps> = ({
@@ -41,8 +43,8 @@ const EarningsCalculatorModal: React.FC<DialogChildProps> = ({
   const poolData = modal.earningsCalculatorModal.poolData
 
   const handleOpen = () => {
-    openModal({ name: 'depositModal', poolData })
-    closeModal('earningsCalculatorModal')
+    openModal({ name: ModalsKeys.DEPOSIT, poolData })
+    closeModal(ModalsKeys.EARNINGS_CALCULATOR)
   }
 
   return (

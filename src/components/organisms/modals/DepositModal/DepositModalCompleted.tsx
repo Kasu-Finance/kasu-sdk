@@ -6,6 +6,8 @@ import useModalState from '@/hooks/context/useModalState'
 import List from '@/components/atoms/List'
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
 import { formatAmount } from '@/utils'
 
 type DepositModalCompletedProps = {
@@ -19,7 +21,7 @@ const DepositModalCompleted: React.FC<DepositModalCompletedProps> = ({
 
   const { amount, trancheId } = useDepositModalState()
 
-  const handleOpen = () => openModal({ name: 'loyaltyLevelsModal' })
+  const handleOpen = () => openModal({ name: ModalsKeys.LOYALTY_LEVELS })
 
   return (
     <Box px={1} pt={1} mt={2}>
