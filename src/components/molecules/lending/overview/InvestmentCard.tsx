@@ -135,7 +135,7 @@ const InvestmentPortfolio: React.FC<{
             </Grid>
           </Box>{' '}
         </Grid>
-        {tranchesWithBalances &&
+        {tranchesWithBalances?.length > 1 &&
           tranchesWithBalances.map((tranche, index) => {
             const totalInvested = tranche?.balance
               ? hexToUSD(tranche.balance)
