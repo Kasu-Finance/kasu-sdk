@@ -252,6 +252,7 @@ export class UserLending {
                 trancheNames[userRequest.lendingPool.tranches.length - 1][
                     parseInt(userRequest.tranche.orderId)
                     ];
+                  
             const events: UserRequestEvent[] = [];
             let totalRequested = 0;
             let totalAccepted = 0;
@@ -262,8 +263,10 @@ export class UserLending {
                 const lendingPoolShares = lendingPoolSharesHelper.find(lendingPool => lendingPool.id === lendingPoolId);
                 const totalSupply = lendingPoolShares ? lendingPoolShares.shares : 0;
                 const totalAssets = lendingPoolBalance ? parseFloat(lendingPoolBalance.balance) : 0;
+                const eventTrancheId = event.tranche.id;
+                const eventTrancheName = trancheNames[userRequest.lendingPool.tranches.length - 1][parseInt(event.tranche.orderId)];
 
-                if(event.tranche.id != userRequest.tranche.id){
+                if(eventTrancheId != userRequest.tranche.id){
                     event.type = 'DepositReallocated';
                 }
                 if(event.type == 'DepositAccepted' || event.type == 'WithdrawalAccepted' || event.type == 'DepositReallocated'){
@@ -275,6 +278,7 @@ export class UserLending {
                 if(event.type == 'DepositInitiated' || event.type == 'WithdrawalInitiated' || event.type == "DepositIncreased" || event.type == "WithdrawalIncreased"){
                     totalRequested += event.assetAmount ? parseFloat(event.assetAmount) : this.convertSharesToAssets(event.sharesAmount, totalAssets, totalSupply);
                 }
+              
                 events.push({
                     id: event.id,
                     requestType: mapUserRequestEventType(event.type),
@@ -291,6 +295,7 @@ export class UserLending {
                         ).toString(),
                     index: parseInt(event.index),
                     transactionHash: event.transactionHash,
+                    trancheName: eventTrancheName,
                 });
             }
             const userRequestBase: UserRequest = {

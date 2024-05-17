@@ -1,6 +1,7 @@
 import { BigNumber } from 'ethers';
 
 import { UserRequestStatus } from './subgraph-types';
+import { TrancheData } from '../DataService/types';
 
 export interface UserInvestment {
     id: string;
@@ -64,6 +65,7 @@ export interface UserRequestEvent {
     index: number;
     timestamp: EpochTimeStamp;
     transactionHash: string;
+    trancheName: string;
 }
 export interface UserTrancheBalance {
     userId: string;
