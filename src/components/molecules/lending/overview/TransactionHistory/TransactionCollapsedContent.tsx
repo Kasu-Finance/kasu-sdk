@@ -1,65 +1,109 @@
 import Receipt from '@mui/icons-material/Receipt'
-import { Button, TableCell, TableRow, Typography } from '@mui/material'
+import { Box, Button, TableCell, TableRow, Typography } from '@mui/material'
 import { UserRequestEvent } from '@solidant/kasu-sdk/src/services/UserLending/types'
 import { useWeb3React } from '@web3-react/core'
+import { useMemo } from 'react'
+
+import useTranslation from '@/hooks/useTranslation'
 
 import TokenAmount from '@/components/atoms/TokenAmount'
+import ToolTip from '@/components/atoms/ToolTip'
 
 import { SupportedChainIds } from '@/connection/chains'
 import { networks } from '@/connection/networks'
 import { DATE_FORMAT, TIME_FORMAT } from '@/constants'
 import dayjs from '@/dayjs'
+import { formatAmount } from '@/utils'
 
 type TransactionCollapsedContentProps = {
   actionHistory: UserRequestEvent
+  requestTrancheName: string
 }
 
 const TransactionCollapsedContent: React.FC<
   TransactionCollapsedContentProps
-> = ({ actionHistory }) => {
+> = ({ actionHistory, requestTrancheName }) => {
+  const { t } = useTranslation()
   const { chainId } = useWeb3React()
 
+  const eventTrancheName = actionHistory?.trancheName
+
+  const isReallocated = useMemo(
+    () => eventTrancheName !== requestTrancheName,
+    [eventTrancheName, requestTrancheName]
+  )
+
   return (
-    <TableRow
-      sx={{
-        '& .MuiTableCell-root': {
-          p: 2,
-        },
-      }}
-    >
-      <TableCell colSpan={2} width='28%' padding='none'>
-        <Typography
-          fontSize='inherit'
-          fontFamily='inherit'
-          fontWeight='inherit'
-          display='block'
-          pl={6}
-        >
-          {actionHistory.requestType}
-        </Typography>
+    <TableRow>
+      <TableCell align='left' width='17%'>
+        {isReallocated ? (
+          <Box display='flex' alignItems='center' pl={1}>
+            <Typography variant='caption'>
+              {t('general.reallocated')}
+            </Typography>
+            <ToolTip title='missing tooltip' />
+          </Box>
+        ) : (
+          <Typography
+            fontSize='inherit'
+            fontFamily='inherit'
+            fontWeight='inherit'
+            display='block'
+            pl={6}
+          >
+            {actionHistory.requestType}
+          </Typography>
+        )}
       </TableCell>
-      <TableCell width='14%' align='right' padding='none'>
+      <TableCell align='center' width='11%'>
+        {isReallocated ? (
+          <Box>
+            <Typography
+              variant='caption'
+              component='p'
+              textAlign='center'
+              pl={2}
+            >
+              {requestTrancheName}
+            </Typography>
+            <Typography variant='caption' component='p' textAlign='center'>
+              <span>&#8594;</span> {eventTrancheName}
+            </Typography>
+          </Box>
+        ) : (
+          <Typography variant='caption' component='p' textAlign='center'>
+            {eventTrancheName}
+          </Typography>
+        )}
+      </TableCell>
+      <TableCell align='right' width='16%'>
         <TokenAmount
-          amount={actionHistory.totalRequested}
+          amount={formatAmount(actionHistory.totalRequested || '0')}
+          amountVariant='body1'
+          symbol='USDC'
+          symbolVariant='caption'
+          sx={{ width: '100%', textAlign: 'right' }}
+        />
+      </TableCell>
+      <TableCell align='right' width='15.5%'>
+        <TokenAmount
+          amount={formatAmount(actionHistory.totalAccepted || '0')}
+          amountVariant='body1'
+          symbol='USDC'
+          symbolVariant='caption'
+          sx={{ width: '100%', textAlign: 'right' }}
+        />
+      </TableCell>
+      <TableCell align='right' width='15.5%'>
+        <TokenAmount
+          amount={formatAmount(actionHistory.totalRejected || '0')}
+          amountVariant='body1'
+          symbolVariant='caption'
           symbol='USDC'
           sx={{ width: '100%', textAlign: 'right' }}
         />
       </TableCell>
-      <TableCell width='14%' align='right' padding='none'>
-        <TokenAmount
-          amount={actionHistory.totalAccepted}
-          symbol='USDC'
-          sx={{ width: '100%', textAlign: 'right' }}
-        />
-      </TableCell>
-      <TableCell width='14%' align='right' padding='none'>
-        <TokenAmount
-          amount={actionHistory.totalRejected}
-          symbol='USDC'
-          sx={{ width: '100%', textAlign: 'right' }}
-        />
-      </TableCell>
-      <TableCell width='14%' align='right' padding='none'>
+      <TableCell align='right'>
         <Typography variant='body1' component='span'>
           {dayjs.unix(actionHistory.timestamp).format(DATE_FORMAT)}
         </Typography>
@@ -68,7 +112,7 @@ const TransactionCollapsedContent: React.FC<
           {dayjs.unix(actionHistory.timestamp).format(TIME_FORMAT)}
         </Typography>
       </TableCell>
-      <TableCell width='14%' align='center' padding='none'>
+      <TableCell align='right'>
         <Button
           variant='outlined'
           size='small'

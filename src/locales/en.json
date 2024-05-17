@@ -46,7 +46,8 @@
     "totalKsuLocked": "total KSU locked",
     "rowsPerPage": "Rows per page:",
     "notAvailable": "not available",
-    "multiplier": "multiplier"
+    "multiplier": "multiplier",
+    "reallocated": "Reallocated"
   },
   "time": {
     "days": "days",
