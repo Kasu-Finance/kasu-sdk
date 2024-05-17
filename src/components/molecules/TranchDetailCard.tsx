@@ -3,7 +3,7 @@
 import { Box, Typography } from '@mui/material'
 import React from 'react'
 
-import TrancheMetricDisplay from '@/components/molecules/TranchDetailCard/TrancheMetricDisplay'
+import TrancheMetricDisplay from '@/components/molecules/TrancheMetricDisplay'
 
 interface TranchDetailCardProps {
   title: string
