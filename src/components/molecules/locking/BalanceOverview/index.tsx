@@ -11,6 +11,7 @@ import useTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 import useUserBalance from '@/hooks/web3/useUserBalance'
 
+import AuthenticateButton from '@/components/atoms/AuthenticateButton'
 import CardWidget from '@/components/atoms/CardWidget'
 import ColoredBox from '@/components/atoms/ColoredBox'
 import BalanceItem from '@/components/molecules/locking/BalanceOverview/BalanceItem'
@@ -21,8 +22,9 @@ import sdkConfig, { USDC } from '@/config/sdk'
 import { convertToUSD, formatAmount } from '@/utils'
 
 const BalanceOverview = () => {
-  const { openModal } = useModalState()
   const { t } = useTranslation()
+
+  const { openModal } = useModalState()
 
   const handleOpen = () => openModal({ name: ModalsKeys.LOCK })
 
@@ -51,14 +53,14 @@ const BalanceOverview = () => {
           >
             {t('general.buyKSU')}
           </Button>
-          <Button
+          <AuthenticateButton
             sx={{ wixth: 143 }}
             variant='contained'
             onClick={handleOpen}
             startIcon={<LockClockIcon />}
           >
             {t('general.lockKSU')}
-          </Button>
+          </AuthenticateButton>
         </>
       }
     >

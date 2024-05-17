@@ -8,6 +8,7 @@ import useModalState from '@/hooks/context/useModalState'
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
 import useTranslation from '@/hooks/useTranslation'
 
+import AuthenticateButton from '@/components/atoms/AuthenticateButton'
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
@@ -21,26 +22,27 @@ interface PoolCardActionsProps {
 
 const PoolCardActions: React.FC<PoolCardActionsProps> = ({ pool, link }) => {
   const { t } = useTranslation()
+
   const { openModal } = useModalState()
   const { data: userPoolBalance } = useUserPoolBalance(pool?.id)
   const poolData: PoolData = getPoolData(pool, userPoolBalance)
 
-  const handleOpenDeposit = () =>
+  const handleOpen = () =>
     openModal({
       name: ModalsKeys.EARNINGS_CALCULATOR,
-      poolData: poolData,
+      poolData,
     })
 
   return (
     <Box display='flex' justifyContent='center' mt={3} mb={2}>
-      <Button
+      <AuthenticateButton
         variant='contained'
         sx={{ pl: 2.25, pr: 2.25 }}
         startIcon={<LoginIcon />}
-        onClick={handleOpenDeposit}
+        onClick={handleOpen}
       >
         {t('general.deposit')}
-      </Button>
+      </AuthenticateButton>
       <Button
         sx={{ ml: 2 }}
         href={link}

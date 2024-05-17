@@ -1,7 +1,7 @@
 'use client'
 
 import LoginIcon from '@mui/icons-material/Login'
-import { Box, Button, Grid } from '@mui/material'
+import { Box, Grid } from '@mui/material'
 import { useRef } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
@@ -28,6 +28,8 @@ export type PoolData = {
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
+
+import AuthenticateButton from '@/components/atoms/AuthenticateButton'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
@@ -124,14 +126,14 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
           pb: 2,
         }}
       >
-        <Button
+        <AuthenticateButton
           variant='contained'
           sx={{ pl: 2.25, pr: 2.25 }}
           startIcon={<LoginIcon />}
           onClick={handleOpen}
         >
           {t('general.deposit')}
-        </Button>
+        </AuthenticateButton>
       </Box>
     </Box>
   )
