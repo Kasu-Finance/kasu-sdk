@@ -161,7 +161,7 @@ export class KSULocking {
         }
 
         const totalExpectedEcosystemFees = projectedYearlyPlatformInterest * performanceFee * ecosystemFee;
-        return totalExpectedEcosystemFees * newUserRKSU / totalRKSUAfterLock;
+        return totalExpectedEcosystemFees * newUserRKSU / parseFloat(totalRKSUAfterLock);
     }
 
     calculateApy(epochInterestRate: number): number {
