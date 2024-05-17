@@ -1,5 +1,6 @@
 {
   "general": {
+    "connectWallet": "Connect Wallet",
     "approve": "approve",
     "amount": "amount",
     "balance": "balance",

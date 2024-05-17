@@ -8,6 +8,7 @@ import { useCallback, useEffect, useState } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useToastState from '@/hooks/context/useToastState'
+import useTranslation from '@/hooks/useTranslation'
 import useSwitchChain from '@/hooks/web3/useSwitchChain'
 
 import ToolTip from '@/components/atoms/ToolTip'
@@ -21,6 +22,8 @@ import { isSupportedChain } from '@/utils'
 import formatAccount from '@/utils/formats/formatAccount'
 
 const ConnectWallet = () => {
+  const { t } = useTranslation()
+
   const { account, connector, chainId } = useWeb3React()
   const theme = useTheme()
   const { setToast, removeToast } = useToastState()
@@ -28,7 +31,7 @@ const ConnectWallet = () => {
   const switchChain = useSwitchChain()
 
   // using state + useEffect here to deal with hydration issue
-  const [text, setText] = useState('CONNECT WALLET')
+  const [text, setText] = useState(t('general.connectWallet'))
 
   const handleOpen = () => openModal({ name: ModalsKeys.CONNECT_WALLET })
 
@@ -53,8 +56,8 @@ const ConnectWallet = () => {
   }, [connector])
 
   useEffect(() => {
-    setText(formatAccount(account) || 'CONNECT WALLET')
-  }, [account])
+    setText(formatAccount(account) || t('general.connectWallet'))
+  }, [account, t])
 
   useEffect(() => {
     if (

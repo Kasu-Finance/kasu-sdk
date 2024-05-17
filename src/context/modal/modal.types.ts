@@ -34,10 +34,10 @@ export type ModalAction =
 export type ModalData<T = void> = T extends void ? ModalBase : T & ModalBase
 
 export type Modals = {
-  [ModalsKeys.CONNECT_WALLET]: ModalData
   [ModalsKeys.LOYALTY_LEVELS]: ModalData
   [ModalsKeys.LOCK]: ModalData
   [ModalsKeys.TRANSACTION_PROCESSING]: ModalData
+  [ModalsKeys.CONNECT_WALLET]: ModalData<{ callback?: () => void }>
   [ModalsKeys.UNLOCK]: ModalData<{ userLock: UserLock }>
   [ModalsKeys.WITHDRAW]: ModalData<{ poolData: PoolOverview }>
   [ModalsKeys.DEPOSIT]: ModalData<{ poolData: PoolData }>

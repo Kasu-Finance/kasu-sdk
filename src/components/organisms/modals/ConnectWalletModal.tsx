@@ -5,6 +5,7 @@ import { useWeb3React } from '@web3-react/core'
 import Image from 'next/image'
 import { isValidElement, useCallback, useEffect, useState } from 'react'
 
+import useModalState from '@/hooks/context/useModalState'
 import { useOrderedConnections } from '@/hooks/web3/useOrderedConnections'
 
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
@@ -25,6 +26,8 @@ const ConnectWalletModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { chainId, account, connector, ENSName } = useWeb3React()
   const connection = getConnection(connector)
 
+  const { modal } = useModalState()
+
   const [loading, setLoading] = useState<LoadingState>({})
 
   const tryActivation = useCallback(
@@ -36,6 +39,8 @@ const ConnectWalletModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         if (connection.overrideActivate?.()) return
 
         await connection.connector.activate()
+
+        modal.connectWalletModal.callback?.()
       } catch (error) {
         // Ideally set to setError global context.
         web3reactError(error as Error)
