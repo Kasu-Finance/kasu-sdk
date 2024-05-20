@@ -1,8 +1,10 @@
 import {
+  BaseSelectProps,
   FormControl,
   InputLabel,
   MenuItem,
   OutlinedInput,
+  OutlinedSelectProps,
   Select,
   SelectChangeEvent,
 } from '@mui/material'
@@ -14,10 +16,12 @@ import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCar
 
 type DepositTrancheSelectProps = {
   poolData: PoolData
+  selectProps?: OutlinedSelectProps & BaseSelectProps<string>
 }
 
 const DepositTrancheSelect: React.FC<DepositTrancheSelectProps> = ({
   poolData,
+  selectProps,
 }) => {
   const { trancheId, setSelectedTranche } = useDepositModalState()
 
@@ -57,6 +61,7 @@ const DepositTrancheSelect: React.FC<DepositTrancheSelectProps> = ({
         }}
         onChange={handleChange}
         input={<OutlinedInput label='Tranche' />}
+        {...selectProps}
       >
         {poolData.tranches.map(({ trancheId, title }) => (
           <MenuItem key={trancheId} value={trancheId}>
