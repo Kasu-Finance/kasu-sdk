@@ -50,18 +50,26 @@ const HomeStatsCard: React.FC<{
           {title}
         </Typography>
       )}
-      <Box display='flex' flexWrap='nowrap'>
+      <Box
+        display='flex'
+        flexWrap='nowrap'
+        flexDirection={{ xs: 'column', sm: 'row' }}
+        alignItems={{ xs: 'flex-start', sm: 'center' }}
+      >
         {metrics.map(({ titleKey, tooltipKey, content, unit = '' }, index) => (
           <Box
             key={titleKey}
             display='flex'
             flexDirection='column'
-            pl={index > 0 ? 1 : 0}
+            width='100%'
+            pl={{ xs: 0, sm: index > 0 ? 1 : 0 }}
           >
             <MetricWithSuffix
               content={content}
               suffix={unit}
-              containerSx={{ pr: index === metrics.length - 1 ? 0 : 0.5 }}
+              containerSx={{
+                pr: index === metrics.length - 1 ? 0 : 0.5,
+              }}
               sx={{ pb: 1 }}
               titleKey={titleKey}
               tooltipKey={tooltipKey}
