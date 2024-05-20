@@ -18,64 +18,20 @@ interface RiskStatusProps {
 const RiskStatus: React.FC<RiskStatusProps> = ({ metrics }) => {
   const { t } = useTranslation()
 
-  const { firstArray, secondArray } = useMemo(() => {
-    const firstArray: PoolMetric[] = metrics.filter((metric) =>
-      [RiskMetricIds.FirstLoss, RiskMetricIds.LossRate].includes(
-        metric.id as RiskMetricIds
-      )
+  const { lossMetrics, scoreMetrics } = useMemo(() => {
+    const lossMetrics = metrics.filter(
+      (metric) =>
+        metric.id === RiskMetricIds.FirstLoss ||
+        metric.id === RiskMetricIds.LossRate
     )
 
-    const secondArray: PoolMetric[] = metrics.filter((metric) =>
-      [RiskMetricIds.RiskScore, RiskMetricIds.KasuRating].includes(
-        metric.id as RiskMetricIds
-      )
+    // community rating removed
+    const scoreMetrics = metrics.filter(
+      (metric) => metric.id === RiskMetricIds.RiskScore
     )
 
-    return { firstArray, secondArray }
+    return { lossMetrics, scoreMetrics }
   }, [metrics])
-
-  const renderMetricWithSuffix = (metric: PoolMetric) => (
-    <MetricWithSuffix
-      key={metric.id}
-      content={String(metric.content)}
-      suffix={metric.unit || ''}
-      titleKey={`details.riskManagement.riskStatus.${metric.id}.label`}
-      tooltipKey={`details.riskManagement.riskStatus.${metric.id}.tooltip`}
-      color='grey.400'
-      sx={{ pb: 0.5 }}
-    />
-  )
-
-  const renderInfoRow = (metric: PoolMetric) => {
-    const title = t(`details.riskManagement.riskStatus.${metric.id}.label`)
-    const tooltip = t(`details.riskManagement.riskStatus.${metric.id}.tooltip`)
-
-    return (
-      <Box key={metric.id}>
-        <InfoRow
-          title={title}
-          toolTipInfo={tooltip}
-          metric={<></>}
-          showDivider
-        />
-        {metric.isRating ? (
-          <Rating
-            value={Number(metric.content)}
-            precision={0.5}
-            readOnly
-            sx={{ pl: 2, mt: 0.5 }}
-          />
-        ) : (
-          <Typography variant='h6' sx={{ pl: 2 }}>
-            {metric.content}{' '}
-            <Typography variant='body2' component='span'>
-              {metric.unit}
-            </Typography>
-          </Typography>
-        )}
-      </Box>
-    )
-  }
 
   return (
     <Box>
@@ -89,12 +45,50 @@ const RiskStatus: React.FC<RiskStatusProps> = ({ metrics }) => {
         className='light-colored-background'
         pb={0.5}
       >
-        <Box width='50%' display='flex' flexDirection='column' pr={2}>
-          {firstArray.map(renderMetricWithSuffix)}
+        <Box display='flex' flexDirection='column' pr={2} sx={{ flexGrow: 1 }}>
+          {lossMetrics.map((metric) => (
+            <MetricWithSuffix
+              key={metric.id}
+              content={String(metric.content)}
+              suffix={metric.unit || ''}
+              titleKey={`details.riskManagement.riskStatus.${metric.id}.label`}
+              tooltipKey={`details.riskManagement.riskStatus.${metric.id}.tooltip`}
+              color='grey.400'
+              sx={{ pb: 0.5 }}
+            />
+          ))}
         </Box>
 
-        <Box width='50%' display='flex' flexDirection='column'>
-          {secondArray.map(renderInfoRow)}
+        <Box display='flex' flexDirection='column' sx={{ flexGrow: 1 }}>
+          {scoreMetrics.map((metric) => (
+            <Box key={metric.id}>
+              <InfoRow
+                title={t(
+                  `details.riskManagement.riskStatus.${metric.id}.label`
+                )}
+                toolTipInfo={t(
+                  `details.riskManagement.riskStatus.${metric.id}.tooltip`
+                )}
+                showDivider
+              />
+
+              {metric.isRating ? (
+                <Rating
+                  value={Number(metric.content)}
+                  precision={0.5}
+                  readOnly
+                  sx={{ pl: 2, mt: 0.5 }}
+                />
+              ) : (
+                <Typography variant='h6' sx={{ pl: 2 }}>
+                  {metric.content}{' '}
+                  <Typography variant='body2' component='span'>
+                    {metric.unit}
+                  </Typography>
+                </Typography>
+              )}
+            </Box>
+          ))}
         </Box>
       </Box>
     </Box>
