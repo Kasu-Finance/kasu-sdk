@@ -1,6 +1,5 @@
 import ChevronRight from '@mui/icons-material/ChevronRight'
 import { Box, DialogActions, DialogContent, Typography } from '@mui/material'
-import { formatUnits } from 'ethers/lib/utils'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
@@ -8,7 +7,6 @@ import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
 import useTranslation from '@/hooks/useTranslation'
 import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
-import useUserBalance from '@/hooks/web3/useUserBalance'
 
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
 import KycButton from '@/components/atoms/KycButton'
@@ -19,8 +17,6 @@ import SimulatedDepositDuration from '@/components/organisms/modals/EarningsCalc
 import SimulatedYieldEarnings from '@/components/organisms/modals/EarningsCalculator/SimulatedYieldEarnings'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
-
-import { USDC } from '@/config/sdk'
 
 const EarningsCalculatorModal: React.FC<DialogChildProps> = ({
   handleClose,
@@ -35,10 +31,6 @@ const EarningsCalculatorModal: React.FC<DialogChildProps> = ({
 
   const stakedPercentage = useLockingPercentage()
   const { currentLevel } = useLoyaltyLevel(stakedPercentage)
-
-  const { balance, decimals } = useUserBalance(USDC)
-
-  const userBalance = formatUnits(balance || '0', decimals)
 
   const poolData = modal.earningsCalculatorModal.poolData
 
@@ -65,11 +57,13 @@ const EarningsCalculatorModal: React.FC<DialogChildProps> = ({
             {t('modals.earningsCalculator.subtitle')}
           </Typography>
           <SimulatedDepositAmount
-            userBalance={userBalance}
             loyaltyLevel={currentLevel}
             poolData={poolData}
           />
-          <DepositTrancheSelect poolData={poolData} />
+          <DepositTrancheSelect
+            selectProps={{ size: 'small' }}
+            poolData={poolData}
+          />
           <SimulatedDepositDuration />
           <SimulatedYieldEarnings loyaltyLevel={currentLevel} />
         </Box>
