@@ -31,16 +31,32 @@ const PageFooter: React.FC = () => {
         </Link>
       </Typography>
       <Stack direction='row' spacing={2}>
-        <a href='https://discord.com' target='_blank' rel='noopener noreferrer'>
+        <a
+          href='https://discord.gg/jm2V7vUg99'
+          target='_blank'
+          rel='noopener noreferrer'
+        >
           <DiscordIcon />
         </a>
-        <a href='https://t.me' target='_blank' rel='noopener noreferrer'>
+        <a
+          href='https://t.me/KASU_Fi'
+          target='_blank'
+          rel='noopener noreferrer'
+        >
           <TelegramIcon />
         </a>
-        <a href='https://medium.com' target='_blank' rel='noopener noreferrer'>
+        <a
+          href='https://medium.com/@KasuFinance'
+          target='_blank'
+          rel='noopener noreferrer'
+        >
           <MediumIcon />
         </a>
-        <a href='https://twitter.com' target='_blank' rel='noopener noreferrer'>
+        <a
+          href='https://twitter.com/KasuFinance'
+          target='_blank'
+          rel='noopener noreferrer'
+        >
           <TwitterIcon />
         </a>
       </Stack>
