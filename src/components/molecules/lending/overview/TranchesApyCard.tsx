@@ -26,13 +26,16 @@ export type PoolData = {
 }
 
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
+import { formatUnits } from 'ethers/lib/utils'
 
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
+import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
 import AuthenticateButton from '@/components/atoms/AuthenticateButton'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
+import { SupportedTokens } from '@/constants/tokens'
 import { formatAmount, getPoolData, sortTranches } from '@/utils'
 
 const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
@@ -41,7 +44,16 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
   const { openModal } = useModalState()
   const { data: userPoolBalance } = useUserPoolBalance(pool?.id)
   const sortedTranches = sortTranches(pool.tranches)
-  const poolData: PoolData = getPoolData(pool, userPoolBalance)
+
+  const supportedToken = useSupportedTokenInfo()
+
+  const poolData: PoolData = getPoolData(
+    pool,
+    formatUnits(
+      userPoolBalance?.balance || '0',
+      supportedToken?.[SupportedTokens.USDC].decimals
+    )
+  )
 
   const { isSticky } = useIsSticky({
     elementRef: divRef,

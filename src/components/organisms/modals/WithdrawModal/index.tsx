@@ -14,6 +14,7 @@ import usePoolTrancheBalance from '@/hooks/lending/usePoolTrancheBalance'
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
 import useWithdrawRequest from '@/hooks/lending/useWithdrawRequest'
 import useTranslation from '@/hooks/useTranslation'
+import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
 import DialogHeader from '@/components/molecules/DialogHeader'
 import HorizontalStepper from '@/components/molecules/HorizontalStepper'
@@ -28,7 +29,7 @@ import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 import { Routes } from '@/config/routes'
 import { SupportedChainIds } from '@/connection/chains'
 import { networks } from '@/connection/networks'
-import { TOKENS } from '@/constants/tokens'
+import { SupportedTokens } from '@/constants/tokens'
 
 interface WithdrawModalProps {
   handleClose: () => void
@@ -55,10 +56,14 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
     selectedTranche
   )
 
+  const supportedToken = useSupportedTokenInfo()
+
+  const usdcDecimals = supportedToken?.[SupportedTokens.USDC].decimals
+
   const poolBalance = useMemo(() => {
     if (!userPoolBalance) return '0'
-    return formatUnits(userPoolBalance?.balance || '0', TOKENS.USDC.decimals)
-  }, [userPoolBalance])
+    return formatUnits(userPoolBalance?.balance || '0', usdcDecimals)
+  }, [userPoolBalance, usdcDecimals])
 
   const { availableToWithdraw, trancheBalance } = useMemo(() => {
     if (!poolTranche) {
@@ -67,19 +72,19 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
 
     const formattedAvailableToWithdraw = formatUnits(
       poolTranche?.availableToWithdraw || '0',
-      TOKENS.USDC.decimals
+      usdcDecimals
     )
 
     const formattedTrancheBalance = formatUnits(
       poolTranche?.balance || '0',
-      TOKENS.USDC.decimals
+      usdcDecimals
     )
 
     return {
       availableToWithdraw: formattedAvailableToWithdraw,
       trancheBalance: formattedTrancheBalance,
     }
-  }, [poolTranche])
+  }, [poolTranche, usdcDecimals])
 
   const isMultiTranche = useMemo(
     () => poolData?.tranches?.length > 1,
@@ -104,7 +109,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
       const transaction = await requestWithdrawal(
         poolData.id,
         selectedTranche,
-        parseUnits(amount, TOKENS.USDC.decimals),
+        parseUnits(amount, usdcDecimals),
         { isWithdrawMax: isMaxWithdrawal }
       )
 

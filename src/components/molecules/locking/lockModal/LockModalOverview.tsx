@@ -6,13 +6,14 @@ import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useStakedKSU from '@/hooks/locking/useStakedKSU'
 import useTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
+import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 import useUserBalance from '@/hooks/web3/useUserBalance'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import BalanceItem from '@/components/molecules/locking/BalanceOverview/BalanceItem'
 
 import { USDC } from '@/config/sdk'
-import { TOKENS } from '@/constants/tokens'
+import { SupportedTokens } from '@/constants/tokens'
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
 type LockModalOverviewProps = {
@@ -26,13 +27,18 @@ const LockModalOverview: React.FC<LockModalOverviewProps> = ({ balance }) => {
 
   const { balance: usdcBalance, decimals: usdcDecimals } = useUserBalance(USDC)
 
+  const supportedToken = useSupportedTokenInfo()
+
   const { stakedKSU } = useStakedKSU()
 
   const { ksuPrice } = useKsuPrice()
 
   const ksuInUSD = convertToUSD(
     toBigNumber(balance),
-    toBigNumber(ksuPrice || '0', TOKENS.USDC.decimals)
+    toBigNumber(
+      ksuPrice || '0',
+      supportedToken?.[SupportedTokens.USDC].decimals
+    )
   )
 
   return (

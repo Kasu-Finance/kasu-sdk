@@ -4,12 +4,15 @@ import { useMemo } from 'react'
 import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
+import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
-import { TOKENS } from '@/constants/tokens'
+import { SupportedTokens } from '@/constants/tokens'
 
 const useTotalLendingPoolDeposits = () => {
   const { account } = useWeb3React()
   const sdk = useKasuSDK()
+
+  const supportedToken = useSupportedTokenInfo()
 
   const fetchTotalPoolDeposits = async () => {
     if (!account) {
@@ -42,13 +45,16 @@ const useTotalLendingPoolDeposits = () => {
 
     const [activeDepositAmount, pendingDepositAmount] = data
 
-    const active = formatUnits(activeDepositAmount || '0', TOKENS.USDC.decimals)
+    const active = formatUnits(
+      activeDepositAmount || '0',
+      supportedToken?.[SupportedTokens.USDC].decimals
+    )
     const pending = formatUnits(
       pendingDepositAmount || '0',
-      TOKENS.USDC.decimals
+      supportedToken?.[SupportedTokens.USDC].decimals
     )
     return { activeDepositAmount: active, pendingDepositAmount: pending }
-  }, [data])
+  }, [data, supportedToken])
 
   return {
     totalDeposits: { activeDepositAmount, pendingDepositAmount },

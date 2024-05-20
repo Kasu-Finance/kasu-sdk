@@ -4,12 +4,13 @@ import { useCallback, useState } from 'react'
 
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useTranslation from '@/hooks/useTranslation'
+import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
 import NumericalInput from '@/components/molecules/NumericalInput'
 
 import { ModalStatus } from '@/context/modalStatus/modalStatus.types'
 
-import { TOKENS } from '@/constants/tokens'
+import { SupportedTokens } from '@/constants/tokens'
 import { toBigNumber } from '@/utils'
 
 interface WithdrawAmountInputProps {
@@ -28,18 +29,11 @@ const WithdrawAmountInput: React.FC<WithdrawAmountInputProps> = ({
   const { modalStatus, setModalStatus } = useModalStatusState()
   const [focused, setFocused] = useState(false)
 
+  const supportedToken = useSupportedTokenInfo()
+
   const validateAmount = useCallback(
     (input: string) => {
       if (!input) return true
-
-      const parts = input.split('.')
-      if (parts.length > 1 && parts[1].length > TOKENS.USDC.decimals) {
-        setModalStatus({
-          type: ModalStatus.ERROR,
-          errorMessage: t('lending.withdraw.errors.tooManyDecimals'),
-        })
-        return false
-      }
 
       if (toBigNumber(input).gt(toBigNumber(balance))) {
         setModalStatus({
@@ -122,6 +116,7 @@ const WithdrawAmountInput: React.FC<WithdrawAmountInputProps> = ({
         setAmount={handleAmountChange}
         label={t('lending.withdraw.amountInput.label')}
         rootProps={numericalInputRootProps}
+        decimals={supportedToken?.[SupportedTokens.USDC].decimals}
       />
       {errorMsg && (
         <Typography variant='caption' color={theme.palette.error.main}>
