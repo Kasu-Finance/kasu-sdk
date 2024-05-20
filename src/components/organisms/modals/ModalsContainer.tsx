@@ -24,7 +24,7 @@ type ModalDetails = {
 }
 
 export const getModal = (
-  modalName: keyof Modals,
+  modalName: ModalsKeys,
   handleClose: () => void
 ): ModalDetails => {
   switch (modalName) {
@@ -60,15 +60,15 @@ export const getModal = (
       return {
         component: <KycModal handleClose={handleClose} />,
       }
-    case 'cancelDepositModal':
+    case ModalsKeys.CANCEL_DEPOSIT:
       return {
         component: <CancelDepositModal handleClose={handleClose} />,
       }
-    case 'cancelWithdrawalModal':
+    case ModalsKeys.CANCEL_WITHDRAWAL:
       return {
         component: <CancelWithdrawalModal handleClose={handleClose} />,
       }
-    case 'earningsCalculatorModal':
+    case ModalsKeys.EARNINGS_CALCULATOR:
       return {
         component: <EarningsCalculatorModalWrapper handleClose={handleClose} />,
       }

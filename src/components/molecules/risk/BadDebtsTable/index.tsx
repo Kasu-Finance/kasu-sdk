@@ -80,10 +80,10 @@ const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
               </TableRow>
             </>
           )}
-          sortKeys={[]}
+          sortKeys={['']}
           data={data as ExtendedBadAndDoubtfulDebts[]}
           pagination={false}
-          defaultSortKey='totalAmount' // not needed
+          defaultSortKey='' // not needed
           handleSort={() => 0} // not needed
           headersStyle={{
             '& .MuiTableCell-root': {

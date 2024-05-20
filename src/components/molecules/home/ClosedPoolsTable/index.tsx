@@ -78,9 +78,9 @@ const ClosedPoolsTable: React.FC<ClosedPoolsTableProps> = ({
         loansUnderManagement: Number(pool.loansUnderManagement),
         poolImage: pool.thumbnailImageUrl,
         tranches: pool.tranches,
-        totalFunds: delegate.totalLoanFundsOriginated,
-        totalLossRate: delegate.historicLossRate,
-        assetClass: delegate.assetClasses,
+        totalFunds: delegate?.totalLoanFundsOriginated ?? 0,
+        totalLossRate: delegate?.historicLossRate ?? 0,
+        assetClass: delegate?.assetClasses ?? '',
       }
     })
   }, [pools, poolDelegates])

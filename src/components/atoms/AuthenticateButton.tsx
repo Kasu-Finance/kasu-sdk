@@ -12,7 +12,7 @@ const AuthenticateButton: React.FC<ButtonProps> = (props) => {
   const { openModal } = useModalState()
 
   const handleOpen = (e: any) => {
-    const action = () => props.onClick(e)
+    const action = () => props.onClick?.(e)
 
     if (!account) {
       openModal({ name: ModalsKeys.CONNECT_WALLET, callback: action })

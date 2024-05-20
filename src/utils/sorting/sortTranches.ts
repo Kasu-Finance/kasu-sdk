@@ -11,8 +11,12 @@ const sortTranches = (tranches: TrancheData[]) => {
   }
 
   return tranches.slice().sort((a, b) => {
-    const priorityA = tranchePriority[a.name] || Number.MAX_SAFE_INTEGER
-    const priorityB = tranchePriority[b.name] || Number.MAX_SAFE_INTEGER
+    const priorityA =
+      tranchePriority[a.name as keyof typeof tranchePriority] ||
+      Number.MAX_SAFE_INTEGER
+    const priorityB =
+      tranchePriority[b.name as keyof typeof tranchePriority] ||
+      Number.MAX_SAFE_INTEGER
     return priorityA - priorityB
   })
 }

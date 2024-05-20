@@ -23,7 +23,7 @@ const LendingPortfolioTable = () => {
     <CustomTable
       headers={LendingPortfolioTableHeader}
       sortKeys={LENDING_PORTFOLIO_KEYS}
-      data={lendingPortfolioData.lendingPools}
+      data={lendingPortfolioData!.lendingPools}
       defaultSortKey='weightedApy'
       handleSort={() => 0}
       headersStyle={{
@@ -43,7 +43,7 @@ const LendingPortfolioTable = () => {
       }}
       footer={
         <LendingPortfolioTableFooter
-          lendingPortfolio={lendingPortfolioData.lendingPools}
+          lendingPortfolio={lendingPortfolioData!.lendingPools}
         />
       }
       footerStyle={{

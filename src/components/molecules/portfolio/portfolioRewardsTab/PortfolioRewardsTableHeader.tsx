@@ -49,7 +49,7 @@ const PortfolioRewardsTableHeader: React.FC<
             label={t('general.lifetime')}
             handleSortChange={handleSortChange}
             sort={sort}
-            sortKey='lifetime'
+            sortKey='lifeTime'
             flipIcon
             variant='caption'
           />

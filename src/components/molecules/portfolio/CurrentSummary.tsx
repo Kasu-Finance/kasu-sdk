@@ -24,7 +24,7 @@ const CurrentSummary = () => {
 
   const { t } = useTranslation()
 
-  if (isLoading) {
+  if (isLoading || !portfolioSummary) {
     return (
       <Grid item xs={6} container spacing={2} mt='auto'>
         {Array.from({ length: 3 }).map((_, index) => (

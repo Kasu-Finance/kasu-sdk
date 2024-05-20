@@ -20,7 +20,7 @@ const LifetimeSummary = () => {
 
   const { t } = useTranslation()
 
-  if (isLoading) {
+  if (isLoading || !portfolioSummary) {
     return (
       <Grid item xs={6}>
         <ColoredBox sx={{ p: 0 }}>

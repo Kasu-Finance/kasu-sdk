@@ -168,7 +168,7 @@ const InvestmentPortfolio: React.FC<{
           startIcon={<LogoutIcon />}
           onClick={() => handleWithdrawClick(pool)}
           variant='contained'
-          disabled={isWithdrawDisabled}
+          disabled={Boolean(isWithdrawDisabled)}
         >
           Withdraw
         </Button>

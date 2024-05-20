@@ -30,7 +30,7 @@ const TransactionHistoryTableHeader: React.FC<
       <TableCell rowSpan={2} width='12%' align='right'>
         <CustomTableSortLabel
           label='Tranche'
-          sortKey='tranche'
+          sortKey='trancheName'
           sort={sort}
           handleSortChange={handleSortChange}
           flipIcon

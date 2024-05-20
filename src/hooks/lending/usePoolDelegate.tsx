@@ -1,8 +1,23 @@
-import useSWR from 'swr'
+import { PoolDelegateProfileAndHistory } from '@solidant/kasu-sdk/src/services/DataService/types'
+import useSWR, { KeyedMutator } from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
-const usePoolDelegate = (poolId?: string) => {
+type PoolDelegateReturnType<T> = {
+  data: T | undefined
+  error: any
+  mutate: KeyedMutator<T>
+  isLoading: boolean
+}
+
+function usePoolDelegate(
+  poolId: string
+): PoolDelegateReturnType<PoolDelegateProfileAndHistory>
+function usePoolDelegate(
+  poolId?: undefined
+): PoolDelegateReturnType<PoolDelegateProfileAndHistory[]>
+
+function usePoolDelegate(poolId?: string | undefined): unknown {
   const sdk = useKasuSDK()
 
   const fetchPoolDelegate = async () => {

@@ -7,7 +7,7 @@ import ImageCover from '@/components/atoms/ImageCover'
 
 import ImagePlaceholderIcon from '@/assets/icons/general/ImagePlaceholderIcon'
 
-const ImageWithFallback: React.FC<{ src: string; alt?: string }> = ({
+const ImageWithFallback: React.FC<{ src?: string; alt?: string }> = ({
   src,
   alt = 'Pool Image',
 }) => {

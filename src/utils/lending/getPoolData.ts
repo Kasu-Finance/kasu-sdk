@@ -1,19 +1,18 @@
-import { TrancheData } from '@solidant/kasu-sdk/src/services/DataService/types'
-import { formatUnits } from 'ethers/lib/utils'
+import {
+  PoolOverview,
+  TrancheData,
+} from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 
-import { TOKENS } from '@/constants/tokens'
-
-export const getPoolData = (pool, userPoolBalance): PoolData => {
-  const poolBalance = userPoolBalance
-    ? formatUnits(userPoolBalance.balance || '0', TOKENS.USDC.decimals)
-    : '0'
-
+export const getPoolData = (
+  pool: PoolOverview,
+  userPoolBalance: string
+): PoolData => {
   return {
     poolName: pool.poolName,
     lendingPoolId: pool.id as `0x${string}`,
-    totalUserInvestment: poolBalance,
+    totalUserInvestment: userPoolBalance,
     tranches: pool.tranches.map((tranche: TrancheData) => ({
       toolTip: `lending.tranche.${tranche.name.toLowerCase()}.tooltip`,
       title: tranche.name,

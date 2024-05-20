@@ -1,6 +1,11 @@
 'use client'
 
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
+import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
+import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
 import { ReactNode, useCallback, useReducer } from 'react'
+
+import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 
 import ModalContext from '@/context/modal/modal.context'
 import { modalReducer } from '@/context/modal/modal.reducer'
@@ -14,23 +19,31 @@ const initialState: Modals = {
   connectWalletModal: { isOpen: false },
   loyaltyLevelsModal: { isOpen: false },
   lockModal: { isOpen: false },
-  withdrawModal: { isOpen: false, poolData: null },
-  transactionProcessingModal: { isOpen: false },
-  cancelDepositModal: { isOpen: false, transactionHistory: null },
-  cancelWithdrawalModal: { isOpen: false, transactionHistory: null },
+  withdrawModal: { isOpen: false, poolData: null as unknown as PoolOverview },
+  cancelDepositModal: {
+    isOpen: false,
+    transactionHistory: null as unknown as UserRequest,
+  },
+  cancelWithdrawalModal: {
+    isOpen: false,
+    transactionHistory: null as unknown as UserRequest,
+  },
   unlockModal: {
     isOpen: false,
-    userLock: null,
+    userLock: null as unknown as UserLock,
   },
   depositModal: {
     isOpen: false,
-    poolData: null,
+    poolData: null as unknown as PoolData,
   },
   kycModal: {
     isOpen: false,
     callback: () => {},
   },
-  earningsCalculatorModal: { isOpen: false, poolData: null },
+  earningsCalculatorModal: {
+    isOpen: false,
+    poolData: null as unknown as PoolData,
+  },
 }
 
 const ModalState: React.FC<{ children: ReactNode }> = ({ children }) => {

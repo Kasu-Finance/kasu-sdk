@@ -21,7 +21,11 @@ const handleSort = (
 ) => {
   const direction = sort.direction === 'asc' ? 1 : -1
 
-  if (sort.key === 'status' || sort.key === 'requestType') {
+  if (
+    sort.key === 'status' ||
+    sort.key === 'requestType' ||
+    sort.key === 'trancheName'
+  ) {
     return a[sort.key].localeCompare(b[sort.key]) * direction
   }
 
@@ -54,7 +58,7 @@ export const TRANSACTION_HISTORY_KEYS = [
   'requestedAmount',
   'rejectedAmount',
   'timestamp',
-  'tranche',
+  'trancheName',
 ] as const
 
 const TransactionHistory: React.FC<{ poolId: string }> = ({ poolId }) => {
@@ -62,7 +66,7 @@ const TransactionHistory: React.FC<{ poolId: string }> = ({ poolId }) => {
   const { transactionHistory, isLoading } = useTransactionHistory()
   const { status, trancheType, transactionType } = useTransactionHistoryState()
 
-  const handleCollapse = useCallback((index) => {
+  const handleCollapse = useCallback((index: number) => {
     setOpen((prev) => (prev === index ? undefined : index))
   }, [])
 

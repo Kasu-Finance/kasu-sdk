@@ -12,11 +12,13 @@ import PoolCardHeader from '@/components/molecules/PoolCard/PoolCardHeader'
 
 interface PoolCardProps {
   pool: PoolOverview
-  poolDelegate: PoolDelegateProfileAndHistory
+  poolDelegate?: PoolDelegateProfileAndHistory
   link: string
 }
 
 const PoolCard: React.FC<PoolCardProps> = ({ pool, poolDelegate, link }) => {
+  if (!poolDelegate) return null
+
   return (
     <Card>
       <PoolCardHeader pool={pool} />

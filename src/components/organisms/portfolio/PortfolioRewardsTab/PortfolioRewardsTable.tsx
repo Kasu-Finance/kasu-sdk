@@ -11,7 +11,7 @@ import PortfolioRewardsTableRow from '@/components/molecules/portfolio/portfolio
 
 import { toBigNumber } from '@/utils'
 
-export const PORTFOLIO_REWARDS_KEY = ['lastEpoch', 'lifetime'] as const
+export const PORTFOLIO_REWARDS_KEY = ['lastEpoch', 'lifeTime'] as const
 
 const PortfolioRewardsTable = () => {
   const { portfolioRewards, isLoading } = usePortfolioRewards()
@@ -61,12 +61,12 @@ const PortfolioRewardsTable = () => {
         />
       )}
       pagination={false}
-      data={portfolioRewards}
+      data={portfolioRewards!}
       sortKeys={PORTFOLIO_REWARDS_KEY}
       defaultSortKey='lastEpoch'
       handleSort={handleSort}
       footer={
-        <PortfolioRewardsTableFooter portfolioRewards={portfolioRewards} />
+        <PortfolioRewardsTableFooter portfolioRewards={portfolioRewards!} />
       }
       headersStyle={{
         '& .MuiTableCell-root': {

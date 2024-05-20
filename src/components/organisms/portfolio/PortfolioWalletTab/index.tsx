@@ -62,7 +62,7 @@ const PortfolioWalletTab = () => {
               pl={2}
             >
               {account
-                ? `0x ${account.substring(2).match(/.{4}/g).join(' ')}`
+                ? `0x ${account.substring(2).match(/.{4}/g)?.join(' ')}`
                 : '-'}{' '}
             </Typography>
           }
