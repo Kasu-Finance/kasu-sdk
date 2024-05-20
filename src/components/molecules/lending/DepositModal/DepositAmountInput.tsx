@@ -13,11 +13,13 @@ import { toBigNumber } from '@/utils'
 
 type DepositAmountInputProps = {
   balance: string
+  decimals?: number
   poolData: PoolData
 }
 
 const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
   balance,
+  decimals = 18,
   poolData,
 }) => {
   const { amount, trancheId, setAmount } = useDepositModalState()
@@ -117,7 +119,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
         label='Deposit Amount'
         setAmount={handleAmountChange}
         handleMax={handleMax}
-        decimals={6}
+        decimals={decimals}
         rootProps={{
           sx: (theme) => ({
             mt: 1,
