@@ -6,6 +6,7 @@ import {
 } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { memo, useCallback, useMemo, useState } from 'react'
 
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 
 import EmptyCardState from '@/components/atoms/EmptyCardState'
@@ -25,6 +26,11 @@ interface PoolCardProps {
 const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
   const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState(0)
+  const currentDevice = useDeviceDetection()
+  const isMobile = useMemo(
+    () => currentDevice === Device.MOBILE,
+    [currentDevice]
+  )
 
   const closedPools = useMemo(
     () => pools?.filter((pool) => !pool.isActive),
@@ -59,10 +65,10 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
       <TabPanel isActive={activeTab === 0} id='home-pools-active'>
         {pools?.length ? (
           <Carousel
-            slidesPerPage={3}
+            slidesPerPage={isMobile ? 1 : 3}
             arrowButtonStyle={{
-              leftArrow: { left: '-40px' },
-              rightArrow: { right: '-40px' },
+              leftArrow: { left: isMobile ? '-20px' : '-30px' },
+              rightArrow: { right: isMobile ? '-20px' : '-30px' },
             }}
           >
             {pools.map((pool) => (

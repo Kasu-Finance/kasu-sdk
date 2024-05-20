@@ -50,6 +50,7 @@ const Carousel = <T,>({
             top: '50%',
             transform: 'translateY(-50%)',
             zIndex: 1,
+            color: 'primary.main',
             ...arrowButtonStyle.leftArrow,
           }}
         >
@@ -73,6 +74,7 @@ const Carousel = <T,>({
             top: '50%',
             transform: 'translateY(-50%)',
             zIndex: 1,
+            color: 'primary.main',
             ...arrowButtonStyle.rightArrow,
           }}
         >

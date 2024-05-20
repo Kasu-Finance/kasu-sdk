@@ -6,6 +6,7 @@ import Link from 'next/link'
 
 import useModalState from '@/hooks/context/useModalState'
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 
 import KycButton from '@/components/atoms/KycButton'
@@ -26,6 +27,8 @@ const PoolCardActions: React.FC<PoolCardActionsProps> = ({ pool, link }) => {
   const { data: userPoolBalance } = useUserPoolBalance(pool?.id)
   const poolData: PoolData = getPoolData(pool, userPoolBalance)
 
+  const currentDevice = useDeviceDetection()
+
   const handleOpenDeposit = () =>
     openModal({
       name: ModalsKeys.DEPOSIT,
@@ -34,14 +37,17 @@ const PoolCardActions: React.FC<PoolCardActionsProps> = ({ pool, link }) => {
 
   return (
     <Box display='flex' justifyContent='center' mt={3} mb={2}>
-      <KycButton
-        variant='contained'
-        sx={{ pl: 2.25, pr: 2.25 }}
-        startIcon={<LoginIcon />}
-        onClick={handleOpenDeposit}
-      >
-        {t('general.deposit')}
-      </KycButton>
+      {currentDevice !== Device.MOBILE && (
+        <KycButton
+          variant='contained'
+          sx={{ pl: 2.25, pr: 2.25 }}
+          startIcon={<LoginIcon />}
+          onClick={handleOpenDeposit}
+        >
+          {t('general.deposit')}
+        </KycButton>
+      )}
+
       <Button
         sx={{ ml: 2 }}
         href={link}
