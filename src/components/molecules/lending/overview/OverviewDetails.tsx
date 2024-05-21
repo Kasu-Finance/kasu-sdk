@@ -6,6 +6,7 @@ import {
   PoolOverview,
 } from '@solidant/kasu-sdk/src/services/DataService/types'
 
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
@@ -19,6 +20,8 @@ const OverviewDetails: React.FC<{
   poolDelegate: PoolDelegateProfileAndHistory
 }> = ({ pool, poolDelegate }) => {
   const { t } = useTranslation()
+  const currentDevice = useDeviceDetection()
+  const isMobile = currentDevice === Device.MOBILE
 
   const lendingDuration = formatDuration(poolDelegate.delegateLendingHistory, {
     months: true,
@@ -29,7 +32,7 @@ const OverviewDetails: React.FC<{
     <Box>
       <Grid
         container
-        direction='row'
+        direction={isMobile ? 'column' : 'row'}
         justifyContent='flex-start'
         alignItems='stretch'
         sx={{ height: '248px' }}

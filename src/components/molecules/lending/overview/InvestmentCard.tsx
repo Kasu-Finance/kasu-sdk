@@ -14,6 +14,7 @@ import { useMemo } from 'react'
 import useModalState from '@/hooks/context/useModalState'
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
 import useGetUserBalance from '@/hooks/lending/useUserTrancheBalance'
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 import TranchInvestmentCard from '@/components/molecules/TranchInvestmentCard'
@@ -64,6 +65,9 @@ const InvestmentPortfolio: React.FC<{
     return !account || hasNonZeroBalance
   }, [userPoolBalance, account])
 
+  const currentDevice = useDeviceDetection()
+  const isMobile = currentDevice === Device.MOBILE
+
   const handleWithdrawClick = (pool: PoolOverview) => {
     openModal({ name: ModalsKeys.WITHDRAW, poolData: pool })
 
@@ -89,7 +93,13 @@ const InvestmentPortfolio: React.FC<{
           </Button>
         }
       />
-      <Grid container columnSpacing={3} rowGap={2} component={CardContent}>
+      <Grid
+        container
+        columnSpacing={3}
+        rowGap={2}
+        component={CardContent}
+        direction={isMobile ? 'column' : 'row'}
+      >
         <Grid item xs={12}>
           <Box
             borderRadius={2}
