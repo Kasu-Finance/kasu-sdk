@@ -1,6 +1,7 @@
 import { Box, Typography } from '@mui/material'
 import React from 'react'
 
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
@@ -19,6 +20,8 @@ interface MetricGroupProps {
 
 const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
   const { t } = useTranslation()
+  const currentDevice = useDeviceDetection()
+  const isMobile = currentDevice === Device.MOBILE
 
   const renderMetric = (
     metric: PoolMetric,
@@ -44,7 +47,11 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
             suffix={metric?.unit || ''}
             titleKey={titleKey}
             tooltipKey={tooltipKey}
-            containerSx={{ width: '33%', pb: 1, pr: 1 }}
+            containerSx={{
+              width: isMobile ? '100%' : '33%',
+              pb: 1,
+              pr: 1,
+            }}
           />
         )
       case MetricGroupType.Second:
@@ -67,6 +74,8 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
                         href='#'
                         color='primary.contrastText'
                         variant='body1'
+                        fontSize={isMobile ? 10 : 'inherit'}
+                        align='right'
                       >
                         {item}
                       </NextLink>
@@ -99,6 +108,7 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
   return (
     <Box
       display={type === MetricGroupType.First ? 'flex' : 'block'}
+      flexDirection={isMobile ? 'column' : 'row'}
       justifyContent='space-between'
       width='100%'
     >
