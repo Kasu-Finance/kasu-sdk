@@ -63,277 +63,104 @@ export class Swapper {
             )
     }
 
-    public calculateAmountToBuy(
-        inTokens: string[],
-        outTokens: string[],
-        ratiosAtMax: BigNumber[][],
-        outRatio: BigNumber[],
-        outRatioDecimals: BigNumber[],
-        inAmounts: BigNumber[],
-    ): BigNumber[][] {
-        const amountToBuy: BigNumber[][] = []
-        const values: BigNumber[] = []
-        for (let i = 0; i < inTokens.length; i++) {
-            let x = BigNumber.from(0)
-            for (let j = 0; j < outTokens.length; j++) {
-                x = x.add(
-                    ratiosAtMax[i][j]
-                        .mul(
-                            outRatio[j]
-                                .mul(this.PRECISION)
-                                .div(BigNumber.from(10).pow(outRatioDecimals[j])),
-                        )
-                        .div(this.PRECISION),
-                )
-            }
-            values[i] = inAmounts[i].mul(this.PRECISION).div(x)
-        }
-
-        for (let i = 0; i < inTokens.length; i++) {
-            amountToBuy[i] = []
-            for (let j = 0; j < outTokens.length; j++) {
-                amountToBuy[i][j] = values[i]
-                    .mul(
-                        outRatio[j]
-                            .mul(this.PRECISION)
-                            .div(BigNumber.from(10).pow(outRatioDecimals[j])),
-                    )
-                    .mul(ratiosAtMax[i][j])
-            }
-        }
-
-        return amountToBuy
-    }
-
-    public fixAmountToBuy(
-        inAmounts: BigNumber[],
-        amountToBuy: BigNumber[][],
-    ): BigNumber[][] {
-        const fixedAmountToBuy: BigNumber[][] = []
-        for (let i = 0; i < amountToBuy.length; i++) {
-            let sum: BigNumber = BigNumber.from(0)
-            for (const amount of amountToBuy[i]) {
-                sum = sum.add(amount.div(this.PRECISION.mul(2)))
-            }
-            fixedAmountToBuy[i] = []
-            if (sum.gt(inAmounts[i])) {
-                for (let j = 0; j < amountToBuy[i].length; j++) {
-                    fixedAmountToBuy[i][j] = amountToBuy[i][j]
-                        .div(this.PRECISION.mul(2))
-                        .mul(inAmounts[i])
-                        .div(sum)
-                }
-            }
-        }
-        return fixedAmountToBuy
-    }
-
     public async getSwap(
         swapUrl: string,
         inTokens: string[],
         inAmounts: BigNumber[],
         inDecimals: BigNumber[],
-        outTokens: string[],
-        outRatio: BigNumber[],
-        outRatioDecimals: BigNumber[],
+        outToken: string,
         userAddress: string,
         swapperAddress: string,
-        slippage: string
+        slippage: string,
     ): Promise<SwapDepositBagStruct> {
         if (
             inTokens.length !== inAmounts.length ||
-            outTokens.length !== outRatio.length ||
-            inTokens.length !== inDecimals.length ||
-            outTokens.length !== outRatioDecimals.length
+            inTokens.length !== inDecimals.length
         ) {
             throw new Error('Invalid input')
         }
 
-        const ratiosAtMax: BigNumber[][] = []
-        const ratiosAtMaxPromises: Promise<BigNumber>[][] = []
-        for (let i = 0; i < inTokens.length; i++) {
-            ratiosAtMax[i] = []
-            for (let j = 0; j < outTokens.length; j++) {
-                if (inTokens[i] === outTokens[j]) {
-                    ratiosAtMax[i][j] = BigNumber.from(10).pow(inDecimals[i])
-                    continue
-                }
-                ratiosAtMaxPromises[i][j] = this.getTokenRatioAtMax(
-                    swapUrl,
-                    inTokens[i],
-                    inAmounts[i],
-                    outTokens[j],
-                )
-            }
-        }
 
-        const promiseRatiosAtMax2D = Promise.all(
-            ratiosAtMaxPromises.map(function (innerPromiseArray) {
-                return Promise.all(innerPromiseArray)
-            }),
-        )
-
-        await promiseRatiosAtMax2D.then((values) => {
-            for (let i = 0; i < inTokens.length; i++) {
-                for (let j = 0; j < outTokens.length; j++) {
-                    if (inTokens[i] !== outTokens[j]) {
-                        ratiosAtMax[i][j] = values[i][j]
-                    }
-                }
-            }
-        })
-
-        const amountToBuy: BigNumber[][] = this.calculateAmountToBuy(
-            inTokens,
-            outTokens,
-            ratiosAtMax,
-            outRatio,
-            outRatioDecimals,
-            inAmounts,
-        )
-
-        const fixedAmountToBuy: BigNumber[][] = this.fixAmountToBuy(
-            inAmounts,
-            amountToBuy,
-        )
 
         const transaction: SwapDepositBagStruct = {
             tokensIn: inTokens,
             swapInfo: [],
-            tokenOut: outTokens[0],
+            tokenOut: outToken,
             receiver: userAddress,
         }
 
-        const swapDataPromises: Promise<OneInchSwapRes>[][] = []
+        const swapDataPromises: Promise<OneInchSwapRes>[] = []
         for (let i = 0; i < inTokens.length; i++) {
-            for (let j = 0; j < outTokens.length; j++) {
-                if (inTokens[i] !== outTokens[j]) {
-                    swapDataPromises[i][j] = this.getSwapData(
+                    swapDataPromises[i] = this.getSwapData(
                         swapUrl,
                         inTokens[i],
-                        outTokens[j],
-                        ethers.utils.formatUnits(fixedAmountToBuy[i][j], 0).split('.')[0],
+                        outToken,
+                        ethers.utils.formatUnits(inAmounts[i], 0).split('.')[0],
                         swapperAddress,
                         slippage
                     )
-                }
-            }
         }
 
         const promiseSwapData2D = Promise.all(
-            swapDataPromises.map(function (innerPromiseArray) {
-                return Promise.all(innerPromiseArray)
-            }),
+            swapDataPromises
         )
 
         await promiseSwapData2D.then((values) => {
             for (let i = 0; i < inTokens.length; i++) {
-                for (let j = 0; j < outTokens.length; j++) {
-                    if (inTokens[i] !== outTokens[j]) {
-                        const swapInfo: SwapInfoStruct = {
-                            swapTarget: values[i][j].tx.to,
-                            token: inTokens[i],
-                            swapCallData: values[i][j].tx.data,
-                        }
-                        transaction.swapInfo.push(swapInfo)
+                if (inTokens[i] !== outToken) {
+                    const swapInfo: SwapInfoStruct = {
+                        swapTarget: values[i].tx.to,
+                        token: inTokens[i],
+                        swapCallData: values[i].tx.data,
                     }
+                    transaction.swapInfo.push(swapInfo)
                 }
             }
         })
         return transaction
     }
+
     public async getSwapInfo(
         swapUrl: string,
         inTokens: string[],
         inAmounts: BigNumber[],
         inDecimals: BigNumber[],
-        outTokens: string[],
-        outRatio: BigNumber[],
-        outRatioDecimals: BigNumber[],
+        outToken: string,
+        userAddress: string,
         swapperAddress: string,
         slippage: string,
-    ): Promise<OneInchSwapRes[][]> {
+    ): Promise<Awaited<OneInchSwapRes>[]> {
         if (
             inTokens.length !== inAmounts.length ||
-            outTokens.length !== outRatio.length ||
-            inTokens.length !== inDecimals.length ||
-            outTokens.length !== outRatioDecimals.length
+            inTokens.length !== inDecimals.length
         ) {
             throw new Error('Invalid input')
         }
 
-        const ratiosAtMax: BigNumber[][] = []
-        const ratiosAtMaxPromises: Promise<BigNumber>[][] = []
-        for (let i = 0; i < inTokens.length; i++) {
-            ratiosAtMax[i] = []
-            for (let j = 0; j < outTokens.length; j++) {
-                if (inTokens[i] === outTokens[j]) {
-                    ratiosAtMax[i][j] = BigNumber.from(10).pow(inDecimals[i])
-                    continue
-                }
-                ratiosAtMaxPromises[i][j] = this.getTokenRatioAtMax(
-                    swapUrl,
-                    inTokens[i],
-                    inAmounts[i],
-                    outTokens[j],
-                )
-            }
+
+
+        const transaction: SwapDepositBagStruct = {
+            tokensIn: inTokens,
+            swapInfo: [],
+            tokenOut: outToken,
+            receiver: userAddress,
         }
 
-        const promiseRatiosAtMax2D = Promise.all(
-            ratiosAtMaxPromises.map(function (innerPromiseArray) {
-                return Promise.all(innerPromiseArray)
-            }),
-        )
-
-        await promiseRatiosAtMax2D.then((values) => {
-            for (let i = 0; i < inTokens.length; i++) {
-                for (let j = 0; j < outTokens.length; j++) {
-                    if (inTokens[i] !== outTokens[j]) {
-                        ratiosAtMax[i][j] = values[i][j]
-                    }
-                }
-            }
-        })
-
-        const amountToBuy: BigNumber[][] = await this.calculateAmountToBuy(
-            inTokens,
-            outTokens,
-            ratiosAtMax,
-            outRatio,
-            outRatioDecimals,
-            inAmounts,
-        )
-
-        const fixedAmountToBuy: BigNumber[][] = await this.fixAmountToBuy(
-            inAmounts,
-            amountToBuy,
-        )
-
-        const swapDataPromises: Promise<OneInchSwapRes>[][] = []
+        const swapDataPromises: Promise<OneInchSwapRes>[] = []
         for (let i = 0; i < inTokens.length; i++) {
-            for (let j = 0; j < outTokens.length; j++) {
-                if (inTokens[i] !== outTokens[j]) {
-                    swapDataPromises[i][j] = this.getSwapData(
-                        swapUrl,
-                        inTokens[i],
-                        outTokens[j],
-                        ethers.utils.formatUnits(fixedAmountToBuy[i][j], 0).split('.')[0],
-                        swapperAddress,
-                        slippage
-                    )
-                }
-            }
+            swapDataPromises[i] = this.getSwapData(
+                swapUrl,
+                inTokens[i],
+                outToken,
+                ethers.utils.formatUnits(inAmounts[i], 0).split('.')[0],
+                swapperAddress,
+                slippage
+            )
         }
 
         const promiseSwapData2D = Promise.all(
-            swapDataPromises.map(function (innerPromiseArray) {
-                return Promise.all(innerPromiseArray)
-            }),
+            swapDataPromises
         )
-
-        return promiseSwapData2D
+        return promiseSwapData2D;
     }
-
-
 }
