@@ -23,13 +23,19 @@ const Navigation = () => {
   return (
     <Box sx={{ display: 'flex', ml: theme.spacing(3) }}>
       <IconButton
-        color='inherit'
+        color='primary'
         aria-label='open drawer'
         edge='start'
         onClick={handleDrawerToggle}
-        sx={{ display: { sm: 'none' } }}
+        sx={{
+          display: { sm: 'none' },
+          border: '1px solid',
+          borderRadius: '4px',
+          width: '2rem',
+          height: '2rem',
+        }}
       >
-        <MenuIcon />
+        <MenuIcon color='primary' />
       </IconButton>
 
       <Drawer

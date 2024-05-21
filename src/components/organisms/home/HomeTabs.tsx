@@ -67,8 +67,8 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
           <Carousel
             slidesPerPage={isMobile ? 1 : 3}
             arrowButtonStyle={{
-              leftArrow: { left: isMobile ? '-20px' : '-30px' },
-              rightArrow: { right: isMobile ? '-20px' : '-30px' },
+              leftArrow: { left: isMobile ? '-20px' : '-35px' },
+              rightArrow: { right: isMobile ? '-25px' : '-40px' },
             }}
           >
             {pools.map((pool) => (

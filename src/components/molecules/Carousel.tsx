@@ -5,6 +5,8 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import { Box, Grid, IconButton } from '@mui/material'
 import { Children, ReactElement, useState } from 'react'
 
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
+
 // Extend CarouselProps to accept a generic type for children
 interface CarouselProps<T> {
   children: ReactElement<T>[] | ReactElement<T>
@@ -24,6 +26,9 @@ const Carousel = <T,>({
   const childrenArray = Children.toArray(children) as ReactElement<T>[]
   const totalPages = Math.ceil(childrenArray.length / slidesPerPage)
 
+  const currentDevice = useDeviceDetection()
+  const isMobile = currentDevice === Device.MOBILE
+
   const handleNext = () => {
     setCurrentPage((prev) => (prev + 1) % totalPages)
   }
@@ -37,7 +42,8 @@ const Carousel = <T,>({
     (currentPage + 1) * slidesPerPage
   )
 
-  const showIconBtn = childrenArray.length > 3
+  const showIconBtn =
+    childrenArray.length > 3 || (isMobile && childrenArray.length > 1)
 
   return (
     <Box sx={{ position: 'relative', width: '100%', mt: 3 }}>
@@ -46,11 +52,13 @@ const Carousel = <T,>({
           onClick={handleBack}
           sx={{
             position: 'absolute',
-            left: 0,
-            top: '50%',
+            top: isMobile ? '105%' : '50%',
+            color: isMobile ? 'black' : 'primary.main',
             transform: 'translateY(-50%)',
             zIndex: 1,
-            color: 'primary.main',
+            '&.MuiIconButton-root': {
+              left: isMobile ? '40%' : '',
+            },
             ...arrowButtonStyle.leftArrow,
           }}
         >
@@ -70,11 +78,13 @@ const Carousel = <T,>({
           onClick={handleNext}
           sx={{
             position: 'absolute',
-            right: 0,
-            top: '50%',
+            top: isMobile ? '105%' : '50%',
+            color: isMobile ? 'black' : 'primary.main',
             transform: 'translateY(-50%)',
             zIndex: 1,
-            color: 'primary.main',
+            '&.MuiIconButton-root': {
+              right: isMobile ? '40%' : '',
+            },
             ...arrowButtonStyle.rightArrow,
           }}
         >
