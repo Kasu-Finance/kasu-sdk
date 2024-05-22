@@ -325,4 +325,17 @@ export class DataService {
         }
         return retn;
     }
+
+    calculateCompounding(amount: number, apy: number, time: number): number[] {
+        const COMPOUNDING_PERIOD = 7;
+        const retn: number[] = [amount];
+        const dpy = apy / 365;
+        for (let i = 0; i < time; i++) {
+            retn.push(retn[retn.length - 1] + amount * dpy);
+            if(i % COMPOUNDING_PERIOD === 0){
+                amount = retn[retn.length-1]
+            }
+        }
+        return retn;
+    }
 }
