@@ -32,14 +32,26 @@ const OverviewDetails: React.FC<{
     <Box>
       <Grid
         container
-        direction={isMobile ? 'column' : 'row'}
         justifyContent='flex-start'
         alignItems='stretch'
-        sx={{ height: '248px' }}
+        direction={isMobile ? 'column' : 'row'}
+        sx={{ height: isMobile ? 'auto' : '248px' }}
       >
         <Grid item xs={6} sx={{ height: '100%' }} alignItems='stretch'>
-          <Card sx={{ p: 2, height: '100%' }}>
-            <Grid container columnSpacing={2} sx={{ pb: 3 }}>
+          <Card
+            sx={{
+              p: 2,
+              height: '100%',
+              display: 'flex',
+              flexDirection: isMobile ? 'column' : 'row',
+            }}
+          >
+            <Grid
+              container
+              columnSpacing={2}
+              sx={{ pb: 3 }}
+              direction={isMobile ? 'column' : 'row'}
+            >
               <Grid item xs={6}>
                 <MetricWithSuffix
                   content={formatAmount(pool.totalValueLocked || '0')}
@@ -61,6 +73,7 @@ const OverviewDetails: React.FC<{
               <Grid
                 container
                 justifyContent='space-between'
+                direction={isMobile ? 'column' : 'row'}
                 columnSpacing={2}
                 sx={{ pb: 5.1 }}
               >
@@ -86,9 +99,20 @@ const OverviewDetails: React.FC<{
             </Box>
           </Card>
         </Grid>
-        <Grid item xs={6} sx={{ height: '100%' }} alignItems='stretch'>
+        <Grid
+          item
+          xs={6}
+          sx={{ height: '100%' }}
+          alignItems='stretch'
+          direction={isMobile ? 'column' : 'row'}
+        >
           <Card sx={{ p: 2, height: '100%' }}>
-            <Grid container columnSpacing={2} sx={{ pb: 3 }}>
+            <Grid
+              container
+              columnSpacing={2}
+              sx={{ pb: 3 }}
+              direction={isMobile ? 'column' : 'row'}
+            >
               <Grid item xs={6}>
                 <MetricWithSuffix
                   content={lendingDuration}

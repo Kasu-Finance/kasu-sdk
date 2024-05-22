@@ -53,7 +53,7 @@ const Carousel = <T,>({
           sx={{
             position: 'absolute',
             top: isMobile ? '105%' : '50%',
-            color: isMobile ? 'black' : 'primary.main',
+            color: 'white',
             transform: 'translateY(-50%)',
             zIndex: 1,
             '&.MuiIconButton-root': {
@@ -79,7 +79,7 @@ const Carousel = <T,>({
           sx={{
             position: 'absolute',
             top: isMobile ? '105%' : '50%',
-            color: isMobile ? 'black' : 'primary.main',
+            color: 'white',
             transform: 'translateY(-50%)',
             zIndex: 1,
             '&.MuiIconButton-root': {

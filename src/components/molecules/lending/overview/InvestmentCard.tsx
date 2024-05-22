@@ -41,6 +41,8 @@ const InvestmentPortfolio: React.FC<{
   const router = useRouter()
   const { account } = useWeb3React()
   const { data: userPoolBalance } = useUserPoolBalance(pool?.id)
+  const currentDevice = useDeviceDetection()
+  const isMobile = currentDevice === Device.MOBILE
 
   const tranches = pool.tranches.map((tranche) => tranche)
   const sortedTranches = sortTranches(tranches)
@@ -64,9 +66,6 @@ const InvestmentPortfolio: React.FC<{
 
     return !account || hasNonZeroBalance
   }, [userPoolBalance, account])
-
-  const currentDevice = useDeviceDetection()
-  const isMobile = currentDevice === Device.MOBILE
 
   const handleWithdrawClick = (pool: PoolOverview) => {
     openModal({ name: ModalsKeys.WITHDRAW, poolData: pool })
@@ -116,6 +115,7 @@ const InvestmentPortfolio: React.FC<{
               width='100%'
               m={0}
               columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+              direction={isMobile ? 'column' : 'row'}
             >
               <Grid item xs={4}>
                 <MetricWithSuffix
@@ -163,26 +163,28 @@ const InvestmentPortfolio: React.FC<{
             )
           })}
       </Grid>
-      <Box
-        display='flex'
-        justifyContent='center'
-        width='100%'
-        sx={{
-          pt: 0,
-          pl: 0,
-          pr: 0,
-          pb: 2,
-        }}
-      >
-        <Button
-          startIcon={<LogoutIcon />}
-          onClick={() => handleWithdrawClick(pool)}
-          variant='contained'
-          disabled={isWithdrawDisabled}
+      {!isMobile && (
+        <Box
+          display='flex'
+          justifyContent='center'
+          width='100%'
+          sx={{
+            pt: 0,
+            pl: 0,
+            pr: 0,
+            pb: 2,
+          }}
         >
-          Withdraw
-        </Button>
-      </Box>
+          <Button
+            startIcon={<LogoutIcon />}
+            onClick={() => handleWithdrawClick(pool)}
+            variant='contained'
+            disabled={isWithdrawDisabled}
+          >
+            Withdraw
+          </Button>
+        </Box>
+      )}
     </Card>
   )
 }

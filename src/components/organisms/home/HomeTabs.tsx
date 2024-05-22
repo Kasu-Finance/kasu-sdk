@@ -27,10 +27,7 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
   const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState(0)
   const currentDevice = useDeviceDetection()
-  const isMobile = useMemo(
-    () => currentDevice === Device.MOBILE,
-    [currentDevice]
-  )
+  const isMobile = currentDevice === Device.MOBILE
 
   const closedPools = useMemo(
     () => pools?.filter((pool) => !pool.isActive),
