@@ -15,12 +15,14 @@ type DepositAmountInputProps = {
   balance: string
   decimals?: number
   poolData: PoolData
+  disabled?: boolean
 }
 
 const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
   balance,
   decimals = 18,
   poolData,
+  disabled,
 }) => {
   const { amount, trancheId, setAmount } = useDepositModalState()
   const { modalStatus, setModalStatus } = useModalStatusState()
@@ -120,6 +122,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
         setAmount={handleAmountChange}
         handleMax={handleMax}
         decimals={decimals}
+        disabled={disabled}
         rootProps={{
           sx: (theme) => ({
             mt: 1,

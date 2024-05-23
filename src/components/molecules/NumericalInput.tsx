@@ -11,6 +11,7 @@ type NumericalInputProps = {
   decimals?: number
   amount: string
   placeholder?: string
+  disabled?: boolean
   setAmount: (amount: string) => void
   handleMax?: () => void
 }
@@ -37,6 +38,7 @@ const NumericalInput: React.FC<NumericalInputProps> = ({
   decimals = 18,
   amount,
   placeholder = '0.00',
+  disabled,
   setAmount,
   handleMax,
 }) => {
@@ -59,6 +61,7 @@ const NumericalInput: React.FC<NumericalInputProps> = ({
       sx={{ textTransform: 'uppercase', height: '56px', width: '56px' }}
       onClick={handleMax}
       size='large'
+      disabled={disabled}
     >
       {t('general.max')}
     </Button>
@@ -73,6 +76,7 @@ const NumericalInput: React.FC<NumericalInputProps> = ({
         label={inputLabel}
         id={id}
         placeholder={placeholder}
+        disabled={disabled}
         {...rootProps}
       />
       {maxButton}
