@@ -328,14 +328,26 @@ export class DataService {
 
     calculateCompounding(amount: number, apy: number, time: number): number[] {
         const COMPOUNDING_PERIOD = 7;
-        const retn: number[] = [amount];
+        const helperCalculation: number[] = [amount];
         const dpy = apy / 365;
+
+        const initialAmount = amount;
+
+        let compoundingAmount = amount;
+
+        const earnedAmount = [0];
         for (let i = 0; i < time; i++) {
-            retn.push(retn[retn.length - 1] + amount * dpy);
-            if(i % COMPOUNDING_PERIOD === 0){
-                amount = retn[retn.length-1]
+            helperCalculation.push(helperCalculation[helperCalculation.length - 1] + amount * dpy);
+
+            earnedAmount.push(earnedAmount[earnedAmount.length - 1] + compoundingAmount * dpy);
+
+            if (i % COMPOUNDING_PERIOD === 0) {
+                amount = helperCalculation[helperCalculation.length - 1];
+
+                compoundingAmount = initialAmount + earnedAmount[earnedAmount.length - 1];
             }
         }
-        return retn;
+
+        return earnedAmount;
     }
 }
