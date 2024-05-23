@@ -47,7 +47,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
   const { modalStatus, setModalStatusAction, modalStatusAction } =
     useModalStatusState()
 
-  const poolData = modal.withdrawModal.poolData
+  const poolData = modal.withdrawModal.poolOverview
 
   const { requestWithdrawal, data: withdrawTransaction } = useWithdrawRequest()
   const { data: userPoolBalance } = useUserPoolBalance(poolData?.id)

@@ -65,7 +65,7 @@ const InvestmentPortfolio: React.FC<{
   }, [userPoolBalance, account])
 
   const handleWithdrawClick = (pool: PoolOverview) => {
-    openModal({ name: ModalsKeys.WITHDRAW, poolData: pool })
+    openModal({ name: ModalsKeys.WITHDRAW, poolOverview: pool })
 
     router.push(`${Routes.lending.root.url}/${pool.id}?step=1`)
   }

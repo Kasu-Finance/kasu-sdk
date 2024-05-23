@@ -22,7 +22,7 @@ const WithdrawModalWrapper: React.FC<WithdrawModalWrapperProps> = ({
   const { modal } = useModalState()
 
   const defaultTrancheId = useMemo(() => {
-    const tranches = modal.withdrawModal.poolData.tranches
+    const tranches = modal.withdrawModal.poolOverview.tranches
 
     if (tranches?.length === 0) return ZERO_ADDRESS
 
@@ -36,7 +36,7 @@ const WithdrawModalWrapper: React.FC<WithdrawModalWrapperProps> = ({
       tranches?.[0]
 
     return defaultTranche.id
-  }, [modal.withdrawModal.poolData])
+  }, [modal.withdrawModal.poolOverview])
 
   return (
     <WithdrawModalProvider defaultTrancheId={defaultTrancheId as HexString}>

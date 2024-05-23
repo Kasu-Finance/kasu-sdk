@@ -37,7 +37,7 @@ export type Modals = {
   [ModalsKeys.LOCK]: ModalData
   [ModalsKeys.CONNECT_WALLET]: ModalData<{ callback?: () => void }>
   [ModalsKeys.UNLOCK]: ModalData<{ userLock: UserLock }>
-  [ModalsKeys.WITHDRAW]: ModalData<{ poolData: PoolOverview }>
+  [ModalsKeys.WITHDRAW]: ModalData<{ poolOverview: PoolOverview }>
   [ModalsKeys.DEPOSIT]: ModalData<{ poolData: PoolData }>
   [ModalsKeys.KYC]: ModalData<{ callback: () => void }>
   [ModalsKeys.CANCEL_DEPOSIT]: ModalData<{ transactionHistory: UserRequest }>

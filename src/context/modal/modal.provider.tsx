@@ -19,7 +19,10 @@ const initialState: Modals = {
   connectWalletModal: { isOpen: false },
   loyaltyLevelsModal: { isOpen: false },
   lockModal: { isOpen: false },
-  withdrawModal: { isOpen: false, poolData: null as unknown as PoolOverview },
+  withdrawModal: {
+    isOpen: false,
+    poolOverview: null as unknown as PoolOverview,
+  },
   cancelDepositModal: {
     isOpen: false,
     transactionHistory: null as unknown as UserRequest,
