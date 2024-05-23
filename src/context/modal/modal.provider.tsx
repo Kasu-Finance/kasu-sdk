@@ -46,6 +46,7 @@ const initialState: Modals = {
   earningsCalculatorModal: {
     isOpen: false,
     poolData: null as unknown as PoolData,
+    poolOverview: null as unknown as PoolOverview,
   },
 }
 

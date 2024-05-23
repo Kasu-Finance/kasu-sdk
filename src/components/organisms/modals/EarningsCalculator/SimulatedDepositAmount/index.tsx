@@ -8,7 +8,6 @@ import useTranslation from '@/hooks/useTranslation'
 import ColoredBox from '@/components/atoms/ColoredBox'
 import DepositAmountInput from '@/components/molecules/lending/DepositModal/DepositAmountInput'
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
-import SimulatedDepositDefault from '@/components/organisms/modals/EarningsCalculator/SimulatedDepositAmount/SimulatedDepositDefault'
 import SimulatedSwapAndDeposit from '@/components/organisms/modals/EarningsCalculator/SimulatedDepositAmount/SimulatedSwapAndDeposit'
 
 type SimulatedDepositAmountProps = {
@@ -65,18 +64,7 @@ const SimulatedDepositAmount: React.FC<SimulatedDepositAmountProps> = ({
         )}
       </Box>
       <ColoredBox sx={{ bgcolor: modalStatus.bgColor, mt: 2, mb: 1 }}>
-        {IS_SWAP_AND_DEPOSIT ? (
-          <SimulatedSwapAndDeposit setSelectedBalance={setSelectedBalance} />
-        ) : (
-          <SimulatedDepositDefault
-            setSelectedBalance={setSelectedBalance}
-            loyaltyLabel={
-              isLoyal
-                ? loyaltyLevel.toString()
-                : t('locking.widgets.loyalty.level.level-0.title')
-            }
-          />
-        )}
+        <SimulatedSwapAndDeposit setSelectedBalance={setSelectedBalance} />
       </ColoredBox>
       <DepositAmountInput
         decimals={IS_SWAP_AND_DEPOSIT ? 6 : 6}

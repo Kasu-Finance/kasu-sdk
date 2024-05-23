@@ -43,6 +43,7 @@ const PoolCardActions: React.FC<PoolCardActionsProps> = ({ pool, link }) => {
     openModal({
       name: ModalsKeys.EARNINGS_CALCULATOR,
       poolData,
+      poolOverview: pool,
     })
 
   return (

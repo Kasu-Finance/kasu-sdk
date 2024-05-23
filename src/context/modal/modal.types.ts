@@ -42,7 +42,10 @@ export type Modals = {
   [ModalsKeys.KYC]: ModalData<{ callback: () => void }>
   [ModalsKeys.CANCEL_DEPOSIT]: ModalData<{ transactionHistory: UserRequest }>
   [ModalsKeys.CANCEL_WITHDRAWAL]: ModalData<{ transactionHistory: UserRequest }>
-  [ModalsKeys.EARNINGS_CALCULATOR]: ModalData<{ poolData: PoolData }>
+  [ModalsKeys.EARNINGS_CALCULATOR]: ModalData<{
+    poolData: PoolData
+    poolOverview: PoolOverview
+  }>
 }
 
 export type OpenModalParam<T extends keyof Modals> = Omit<

@@ -63,7 +63,8 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
   const handleOpen = () =>
     openModal({
       name: ModalsKeys.EARNINGS_CALCULATOR,
-      poolData: poolData,
+      poolData,
+      poolOverview: pool,
     })
 
   const tranches = sortedTranches.map((item) => {
@@ -112,7 +113,6 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
           columnSpacing={{ xs: 1, sm: 2, md: 3 }}
           maxWidth='lg'
         >
-          {}
           {tranches.map((tranche, index) => {
             return (
               <Grid item xs={COLS / pool.tranches.length} key={index}>

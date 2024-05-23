@@ -65,7 +65,10 @@ const EarningsCalculatorModal: React.FC<DialogChildProps> = ({
             poolData={poolData}
           />
           <SimulatedDepositDuration />
-          <SimulatedYieldEarnings loyaltyLevel={currentLevel} />
+          <SimulatedYieldEarnings
+            loyaltyLevel={currentLevel}
+            poolOverview={modal.earningsCalculatorModal.poolOverview}
+          />
         </Box>
       </DialogContent>
 

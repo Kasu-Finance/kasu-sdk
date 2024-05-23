@@ -11,7 +11,7 @@ import {
 } from '@mui/material'
 import { BigNumber } from 'ethers'
 import { formatUnits } from 'ethers/lib/utils'
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
 
 import useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
 
@@ -32,6 +32,11 @@ const SimulatedSwapAndDeposit: React.FC<SimulatedSwapAndDepositProps> = ({
   )
 
   const tokens = useSupportedTokenUserBalances()
+
+  const showOneInch = useMemo(
+    () => selectedToken !== SupportedTokens.USDC,
+    [selectedToken]
+  )
 
   useEffect(() => {
     if (!tokens) return
@@ -54,9 +59,9 @@ const SimulatedSwapAndDeposit: React.FC<SimulatedSwapAndDepositProps> = ({
     <Box px={2} py={1.5}>
       <Box display='flex' alignItems='center' mb={2}>
         <Typography variant='subtitle2' component='p' mr={0.5}>
-          Deposit with any token. Powered by 1inch
+          Deposit with any token. {showOneInch && 'Powered by 1inch'}
         </Typography>
-        <OneInchLogo />
+        {showOneInch && <OneInchLogo />}
       </Box>
 
       <FormControl fullWidth={true}>
