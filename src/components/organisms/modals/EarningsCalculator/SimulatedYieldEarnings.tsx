@@ -98,7 +98,8 @@ const SimulatedYieldEarnings: React.FC<SimulatedYieldEarningsProps> = ({
     () =>
       convertFromUSD(
         toBigNumber(
-          simulatedValue.bonusYieldEarnings[simulatedDuration].toString()
+          simulatedValue.bonusYieldEarnings[simulatedDuration]?.toString() ||
+            '0'
         ),
         toBigNumber(
           ksuPrice || '0',
