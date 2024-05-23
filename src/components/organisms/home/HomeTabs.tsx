@@ -27,7 +27,7 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
   const [activeTab, setActiveTab] = useState(0)
 
   const sortPoolsByTrancheLength = (pools) => {
-    return pools.sort((a, b) => a.tranche.length - b.tranche.length)
+    return pools?.sort((a, b) => a?.tranches?.length - b?.tranches?.length)
   }
 
   const sortedPools = useMemo(
