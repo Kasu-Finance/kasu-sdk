@@ -15,8 +15,6 @@ type SimulatedDepositAmountProps = {
   poolData: PoolData
 }
 
-const IS_SWAP_AND_DEPOSIT = true
-
 const SimulatedDepositAmount: React.FC<SimulatedDepositAmountProps> = ({
   loyaltyLevel,
   poolData,
@@ -25,7 +23,10 @@ const SimulatedDepositAmount: React.FC<SimulatedDepositAmountProps> = ({
 
   const { modalStatus } = useModalStatusState()
 
-  const [selectedBalance, setSelectedBalance] = useState('0')
+  const [selectedToken, setSelectedToken] = useState({
+    balance: '0',
+    decimals: 0,
+  })
 
   const isLoyal = loyaltyLevel === 1 || loyaltyLevel === 2
 
@@ -35,41 +36,41 @@ const SimulatedDepositAmount: React.FC<SimulatedDepositAmountProps> = ({
         <Typography variant='subtitle1' component='span'>
           {t('modals.earningsCalculator.simulatedAmount.title')}
         </Typography>
-        {IS_SWAP_AND_DEPOSIT && (
-          <Box display='flex' alignItems='center'>
-            <Typography
-              variant='body2'
-              component='span'
-              textTransform='capitalize'
-            >
-              {t('general.loyaltyLevel')}
+
+        <Box display='flex' alignItems='center'>
+          <Typography
+            variant='body2'
+            component='span'
+            textTransform='capitalize'
+          >
+            {t('general.loyaltyLevel')}
+          </Typography>
+          <Box
+            ml={1}
+            display='flex'
+            alignItems='center'
+            bgcolor={(theme) => theme.palette.primary.main}
+            color='white'
+            height={32}
+            px={1}
+            borderRadius={1}
+          >
+            <Typography variant='subtitle2' component='span'>
+              {isLoyal
+                ? loyaltyLevel.toString()
+                : t('locking.widgets.loyalty.level.level-0.title')}
             </Typography>
-            <Box
-              ml={1}
-              display='flex'
-              alignItems='center'
-              bgcolor={(theme) => theme.palette.primary.main}
-              color='white'
-              height={32}
-              px={1}
-              borderRadius={1}
-            >
-              <Typography variant='subtitle2' component='span'>
-                {isLoyal
-                  ? loyaltyLevel.toString()
-                  : t('locking.widgets.loyalty.level.level-0.title')}
-              </Typography>
-            </Box>
           </Box>
-        )}
+        </Box>
       </Box>
       <ColoredBox sx={{ bgcolor: modalStatus.bgColor, mt: 2, mb: 1 }}>
-        <SimulatedSwapAndDeposit setSelectedBalance={setSelectedBalance} />
+        <SimulatedSwapAndDeposit setSelectedBalance={setSelectedToken} />
       </ColoredBox>
       <DepositAmountInput
-        decimals={IS_SWAP_AND_DEPOSIT ? 6 : 6}
-        balance={selectedBalance}
+        decimals={6}
+        balance={selectedToken.balance}
         poolData={poolData}
+        disabled={!selectedToken.decimals} // if decimals is zero, disable
       />
     </Box>
   )

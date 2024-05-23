@@ -1,7 +1,5 @@
-import ChevronRight from '@mui/icons-material/ChevronRight'
-import { Box, DialogActions, DialogContent, Typography } from '@mui/material'
+import { Box, DialogContent, Typography } from '@mui/material'
 
-import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
@@ -9,35 +7,26 @@ import useTranslation from '@/hooks/useTranslation'
 import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
 
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
-import KycButton from '@/components/atoms/KycButton'
 import DialogHeader from '@/components/molecules/DialogHeader'
 import DepositTrancheSelect from '@/components/molecules/lending/DepositModal/DepositTrancheSelect'
+import EarningsCalculatorActions from '@/components/organisms/modals/EarningsCalculator/EarningsCalculatorActions'
 import SimulatedDepositAmount from '@/components/organisms/modals/EarningsCalculator/SimulatedDepositAmount'
 import SimulatedDepositDuration from '@/components/organisms/modals/EarningsCalculator/SimulatedDepositDuration'
 import SimulatedYieldEarnings from '@/components/organisms/modals/EarningsCalculator/SimulatedYieldEarnings'
-
-import { ModalsKeys } from '@/context/modal/modal.types'
 
 const EarningsCalculatorModal: React.FC<DialogChildProps> = ({
   handleClose,
 }) => {
   const { t } = useTranslation()
 
-  const { modal, openModal, closeModal } = useModalState()
+  const { modal } = useModalState()
 
   const { modalStatus } = useModalStatusState()
-
-  const { amount } = useDepositModalState()
 
   const stakedPercentage = useLockingPercentage()
   const { currentLevel } = useLoyaltyLevel(stakedPercentage)
 
   const poolData = modal.earningsCalculatorModal.poolData
-
-  const handleOpen = () => {
-    openModal({ name: ModalsKeys.DEPOSIT, poolData })
-    closeModal(ModalsKeys.EARNINGS_CALCULATOR)
-  }
 
   return (
     <>
@@ -71,20 +60,7 @@ const EarningsCalculatorModal: React.FC<DialogChildProps> = ({
           />
         </Box>
       </DialogContent>
-
-      <DialogActions
-        disableSpacing
-        sx={{ justifyContent: 'center', pt: 0, pb: 3, gap: 2 }}
-      >
-        <KycButton
-          variant='contained'
-          disabled={Boolean(!amount || modalStatus.type === 'error')}
-          endIcon={<ChevronRight />}
-          onClick={handleOpen}
-        >
-          {t('general.requestDeposit')}
-        </KycButton>
-      </DialogActions>
+      <EarningsCalculatorActions poolData={poolData} />
     </>
   )
 }

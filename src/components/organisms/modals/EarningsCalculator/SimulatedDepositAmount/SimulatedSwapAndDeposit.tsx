@@ -21,7 +21,9 @@ import { SupportedTokenInfo, SupportedTokens } from '@/constants/tokens'
 import { formatAmount } from '@/utils'
 
 type SimulatedSwapAndDepositProps = {
-  setSelectedBalance: Dispatch<SetStateAction<string>>
+  setSelectedBalance: Dispatch<
+    SetStateAction<{ balance: string; decimals: number }>
+  >
 }
 
 const SimulatedSwapAndDeposit: React.FC<SimulatedSwapAndDepositProps> = ({
@@ -45,10 +47,11 @@ const SimulatedSwapAndDeposit: React.FC<SimulatedSwapAndDepositProps> = ({
       (token) => token.symbol === selectedToken
     ) as SupportedTokenInfo & { balance: BigNumber }
 
-    setSelectedBalance(formatUnits(token.balance, token.decimals))
+    setSelectedBalance({
+      balance: formatUnits(token.balance, token.decimals),
+      decimals: token.decimals,
+    })
   }, [tokens, selectedToken, setSelectedBalance])
-
-  if (!tokens) return <Skeleton height={80} />
 
   const handleChange = (e: SelectChangeEvent) => {
     const symbol = e.target.value as SupportedTokens
@@ -64,37 +67,43 @@ const SimulatedSwapAndDeposit: React.FC<SimulatedSwapAndDepositProps> = ({
         {showOneInch && <OneInchLogo />}
       </Box>
 
-      <FormControl fullWidth={true}>
-        <InputLabel shrink={true} htmlFor='multi-asset-selector'>
-          Available Assets
-        </InputLabel>
-        <Select
-          notched={true}
-          value={selectedToken}
-          inputProps={{
-            id: 'multi-asset-selector',
-          }}
-          onChange={handleChange}
-          input={<OutlinedInput label='Available Assets' />}
-        >
-          {Object.values(tokens).map(({ icon, symbol, decimals, balance }) => (
-            <MenuItem key={symbol} value={symbol}>
-              {icon}
-              <Typography
-                variant='inherit'
-                mx={1}
-                component='span'
-                color={(theme) => theme.palette.text.disabled}
-              >
-                {symbol}
-              </Typography>
-              <Typography component='span' variant='inherit'>
-                {formatAmount(formatUnits(balance, decimals))}
-              </Typography>
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      {!tokens ? (
+        <Skeleton variant='rounded' height={60} />
+      ) : (
+        <FormControl fullWidth={true}>
+          <InputLabel shrink={true} htmlFor='multi-asset-selector'>
+            Available Assets
+          </InputLabel>
+          <Select
+            notched={true}
+            value={selectedToken}
+            inputProps={{
+              id: 'multi-asset-selector',
+            }}
+            onChange={handleChange}
+            input={<OutlinedInput label='Available Assets' />}
+          >
+            {Object.values(tokens).map(
+              ({ icon, symbol, decimals, balance }) => (
+                <MenuItem key={symbol} value={symbol}>
+                  {icon}
+                  <Typography
+                    variant='inherit'
+                    mx={1}
+                    component='span'
+                    color={(theme) => theme.palette.text.disabled}
+                  >
+                    {symbol}
+                  </Typography>
+                  <Typography component='span' variant='inherit'>
+                    {formatAmount(formatUnits(balance, decimals))}
+                  </Typography>
+                </MenuItem>
+              )
+            )}
+          </Select>
+        </FormControl>
+      )}
     </Box>
   )
 }
