@@ -33,7 +33,7 @@ const SimulatedYieldEarnings: React.FC<SimulatedYieldEarningsProps> = ({
   )
 
   const apyBonus = useMemo(
-    () => (loyaltyLevel === 1 ? 0.1 : loyaltyLevel === 2 ? 0.2 : 0.2),
+    () => (loyaltyLevel === 1 ? 0.1 : loyaltyLevel === 2 ? 0.2 : 0),
     [loyaltyLevel]
   )
 
