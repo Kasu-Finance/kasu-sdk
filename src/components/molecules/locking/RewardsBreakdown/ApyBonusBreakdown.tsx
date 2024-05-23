@@ -25,7 +25,11 @@ const ApyBonusBreakdown = () => {
             'locking.widgets.rewardsBreakdown.rewards-1.metric-1-tooltip'
           ),
           metric: [
-            currentLevel === 1 ? '0.1%' : currentLevel === 2 ? '0.2%' : 'None',
+            currentLevel === 1
+              ? '0.1%'
+              : currentLevel === 2
+                ? '0.2%'
+                : t('general.none'),
           ],
         },
         {
