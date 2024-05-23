@@ -26,6 +26,20 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
   const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState(0)
 
+  const sortPoolsByTrancheLength = (pools) => {
+    return pools.sort((a, b) => a.tranche.length - b.tranche.length)
+  }
+
+  const sortedPools = useMemo(
+    () => sortPoolsByTrancheLength([...pools]),
+    [pools]
+  )
+
+  const activePools = useMemo(
+    () => sortedPools.filter((pool) => pool.isActive),
+    [sortedPools]
+  )
+
   const closedPools = useMemo(
     () => pools?.filter((pool) => !pool.isActive),
     [pools]
@@ -57,7 +71,7 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
         />
       </Tabs>
       <TabPanel isActive={activeTab === 0} id='home-pools-active'>
-        {pools?.length ? (
+        {activePools?.length ? (
           <Carousel
             slidesPerPage={3}
             arrowButtonStyle={{
@@ -65,7 +79,7 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
               rightArrow: { right: '-40px' },
             }}
           >
-            {pools.map((pool) => (
+            {activePools.map((pool) => (
               <PoolCard
                 key={pool.id}
                 pool={pool}
