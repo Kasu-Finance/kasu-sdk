@@ -10,6 +10,7 @@ type BalanceItemProps = {
   value: string[]
   usdValue?: string
   titleStyle?: TypographyProps
+  showSkeleton?: boolean
 }
 
 const BalanceItem: React.FC<BalanceItemProps> = ({
@@ -18,6 +19,7 @@ const BalanceItem: React.FC<BalanceItemProps> = ({
   value,
   usdValue,
   titleStyle = { textTransform: 'capitalize' },
+  showSkeleton,
 }) => {
   return (
     <Grid item xs={12}>
@@ -33,6 +35,7 @@ const BalanceItem: React.FC<BalanceItemProps> = ({
             amount={value[0]}
             symbol={value[1]}
             usdValue={usdValue}
+            showSkeleton={showSkeleton}
           />
         }
       />
