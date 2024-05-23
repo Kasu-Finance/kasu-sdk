@@ -4,6 +4,7 @@ export { default as convertToPoolDelegate } from '@/utils/convert/convertToPoolD
 export { default as convertToPoolDetails } from '@/utils/convert/convertToPoolDetails'
 export { default as convertToPoolTraction } from '@/utils/convert/convertToPoolTraction'
 export { default as convertToRiskStatus } from '@/utils/convert/convertToRiskStatus'
+export { default as convertFromUSD } from '@/utils/convertFromUSD'
 export { default as convertToUSD } from '@/utils/convertToUSD'
 export { default as extractDateAndUtcOffset } from '@/utils/date/extractDateAndUtcOffset'
 export { default as escapeRegExp } from '@/utils/escapeRegExp'
