@@ -13,6 +13,7 @@ import { BigNumber } from 'ethers'
 import { formatUnits } from 'ethers/lib/utils'
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
 
+import useTranslation from '@/hooks/useTranslation'
 import useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
 
 import OneInchLogo from '@/assets/logo/OneInchLogo'
@@ -20,15 +21,19 @@ import OneInchLogo from '@/assets/logo/OneInchLogo'
 import { SupportedTokenInfo, SupportedTokens } from '@/constants/tokens'
 import { formatAmount } from '@/utils'
 
-type SimulatedSwapAndDepositProps = {
+type SwapAndDepositInputProps = {
+  title: string
   setSelectedBalance: Dispatch<
     SetStateAction<{ balance: string; decimals: number }>
   >
 }
 
-const SimulatedSwapAndDeposit: React.FC<SimulatedSwapAndDepositProps> = ({
+const SwapAndDepositInput: React.FC<SwapAndDepositInputProps> = ({
+  title,
   setSelectedBalance,
 }) => {
+  const { t } = useTranslation()
+
   const [selectedToken, setSelectedToken] = useState<string>(
     SupportedTokens.USDC
   )
@@ -62,7 +67,9 @@ const SimulatedSwapAndDeposit: React.FC<SimulatedSwapAndDepositProps> = ({
     <Box px={2} py={1.5}>
       <Box display='flex' alignItems='center' mb={2}>
         <Typography variant='subtitle2' component='p' mr={0.5}>
-          Deposit with any token. {showOneInch && 'Powered by 1inch'}
+          {title}{' '}
+          {showOneInch &&
+            t('modals.earningsCalculator.simulatedAmount.metric-2')}
         </Typography>
         {showOneInch && <OneInchLogo />}
       </Box>
@@ -71,8 +78,12 @@ const SimulatedSwapAndDeposit: React.FC<SimulatedSwapAndDepositProps> = ({
         <Skeleton variant='rounded' height={60} />
       ) : (
         <FormControl fullWidth={true}>
-          <InputLabel shrink={true} htmlFor='multi-asset-selector'>
-            Available Assets
+          <InputLabel
+            shrink={true}
+            htmlFor='multi-asset-selector'
+            sx={{ textTransform: 'capitalize' }}
+          >
+            {t('general.availableAssets')}
           </InputLabel>
           <Select
             notched={true}
@@ -81,7 +92,12 @@ const SimulatedSwapAndDeposit: React.FC<SimulatedSwapAndDepositProps> = ({
               id: 'multi-asset-selector',
             }}
             onChange={handleChange}
-            input={<OutlinedInput label='Available Assets' />}
+            input={
+              <OutlinedInput
+                sx={{ textTransform: 'capitalize' }}
+                label={t('general.availableAssets')}
+              />
+            }
           >
             {Object.values(tokens).map(
               ({ icon, symbol, decimals, balance }) => (
@@ -108,4 +124,4 @@ const SimulatedSwapAndDeposit: React.FC<SimulatedSwapAndDepositProps> = ({
   )
 }
 
-export default SimulatedSwapAndDeposit
+export default SwapAndDepositInput

@@ -45,6 +45,7 @@
     "convertToKSU": "Convert to KSU",
     "locking": "Locking",
     "availableFunds": "available funds",
+    "availableAssets": "available assets",
     "totalKsuLocked": "total KSU locked",
     "rowsPerPage": "Rows per page:",
     "notAvailable": "not available",
@@ -264,8 +265,8 @@
       "subtitle": "Simulate your yield earnings​",
       "simulatedAmount": {
         "title": " Deposit Scenario",
-        "metric-1-tooltip": "Total USDC equivalent value of all tokens in your Web3 wallet that can be deposited into Lending Pools.",
-        "metric-2-tooltip": "info"
+        "metric-1": "Deposit with any token.",
+        "metric-2": "Powered by 1inch"
       },
       "simulatedDuration": {
         "title": "Simulated Deposit Duration",
