@@ -23,7 +23,8 @@ const PageFooter: React.FC = () => {
       <Typography variant='body1'>
         <Link
           sx={{
-            color: 'text.primary',
+            color: 'primary',
+            textShadow: '0px 0px 8px rgba(0, 0, 0, 0.8)',
           }}
           href='mailto:hello@kasu.finance'
         >
