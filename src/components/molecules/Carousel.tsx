@@ -7,6 +7,8 @@ import { Children, ReactElement, useState } from 'react'
 
 import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 
+import Pagination from './Pagination'
+
 // Extend CarouselProps to accept a generic type for children
 interface CarouselProps<T> {
   children: ReactElement<T>[] | ReactElement<T>
@@ -37,6 +39,10 @@ const Carousel = <T,>({
     setCurrentPage((prev) => (prev - 1 + totalPages) % totalPages)
   }
 
+  const handlePageClick = (page: number) => {
+    setCurrentPage(page)
+  }
+
   const currentChildren = childrenArray.slice(
     currentPage * slidesPerPage,
     (currentPage + 1) * slidesPerPage
@@ -51,14 +57,12 @@ const Carousel = <T,>({
         <IconButton
           onClick={handleBack}
           sx={{
+            display: isMobile ? 'none' : 'block',
             position: 'absolute',
-            top: isMobile ? '105%' : '50%',
+            top: '50%',
             color: 'white',
             transform: 'translateY(-50%)',
             zIndex: 1,
-            '&.MuiIconButton-root': {
-              left: isMobile ? '40%' : '',
-            },
             ...arrowButtonStyle.leftArrow,
           }}
         >
@@ -73,24 +77,29 @@ const Carousel = <T,>({
           </Grid>
         ))}
       </Grid>
+
       {showIconBtn && (
         <IconButton
           onClick={handleNext}
           sx={{
+            display: isMobile ? 'none' : 'block',
             position: 'absolute',
-            top: isMobile ? '105%' : '50%',
+            top: '50%',
             color: 'white',
             transform: 'translateY(-50%)',
             zIndex: 1,
-            '&.MuiIconButton-root': {
-              right: isMobile ? '40%' : '',
-            },
             ...arrowButtonStyle.rightArrow,
           }}
         >
           <ArrowForwardIosIcon />
         </IconButton>
       )}
+
+      <Pagination
+        totalPages={totalPages}
+        currentPage={currentPage}
+        onPageClick={handlePageClick}
+      />
     </Box>
   )
 }
