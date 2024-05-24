@@ -1,6 +1,5 @@
 import { Box } from '@mui/material'
 import Link from 'next/link'
-import React from 'react'
 
 import NavItem from '@/components/organisms/header/NavItem'
 
