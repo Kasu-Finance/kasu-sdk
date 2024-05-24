@@ -7,7 +7,7 @@ import { Children, ReactElement, useState } from 'react'
 
 import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 
-import Pagination from './Pagination'
+import Pagination from '@/components/molecules/Pagination'
 
 // Extend CarouselProps to accept a generic type for children
 interface CarouselProps<T> {

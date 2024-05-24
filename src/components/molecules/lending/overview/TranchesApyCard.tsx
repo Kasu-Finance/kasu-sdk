@@ -66,19 +66,22 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
     }
   })
 
+  const isStickyAndNotMobile = isSticky && !isMobile
+
   return (
     <Box
       ref={divRef}
       sx={{
-        boxShadow: isSticky ? 12 : 0,
-        position: isSticky && !isMobile ? 'fixed' : 'relative',
-        top: isSticky ? 64 : 0,
+        boxShadow: isStickyAndNotMobile ? 12 : 0,
+        position: isStickyAndNotMobile ? 'fixed' : 'relative',
+        top: isStickyAndNotMobile ? 64 : 0,
         transform: `translate3d(0, 0, 0)`,
         transformOrigin: '0% 0%',
         background: '#fff',
         zIndex: 1200,
         transition: 'box-shadow .25s ease-in-out, top .8s ease',
-        width: isSticky ? '1152px' : 'auto',
+        width: isStickyAndNotMobile ? '100%' : 'auto',
+        maxWidth: '1152px',
         backfaceVisibility: 'hidden',
         willChange: 'top, scroll-position',
         ml: 0,

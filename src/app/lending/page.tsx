@@ -15,7 +15,7 @@ const Lending = () => {
   const { data: poolDelegates } = usePoolDelegate()
   const { lendingTotals } = useLendingTotals()
 
-  if (!isLoading) {
+  if (isLoading) {
     return <LendingSkeleton />
   }
 

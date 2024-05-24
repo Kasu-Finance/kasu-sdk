@@ -28,6 +28,8 @@ const PoolTabs: React.FC = () => {
         <Tabs
           value={activeTab}
           onChange={handleChange}
+          variant='scrollable'
+          scrollButtons='auto'
           aria-label='basic tabs example'
         >
           <StyledTab label='Overview' isActive={activeTab === 0} />
