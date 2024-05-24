@@ -41,7 +41,6 @@ const CardSkeleton: React.FC<CardSkeletonProps> = ({
       <Box sx={titleStyle}>
         <Skeleton variant='text' width='100%' height={50} />
       </Box>
-
       {showSubtitle && (
         <Box mb={2} sx={subtitleStyle}>
           <Skeleton variant='text' width='100%' height={50} />

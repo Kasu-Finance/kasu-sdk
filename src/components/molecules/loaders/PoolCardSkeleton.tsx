@@ -1,4 +1,4 @@
-import { Box, Button, Card, Skeleton, Stack } from '@mui/material'
+import { Box, Card, Skeleton, Stack } from '@mui/material'
 
 const PoolCardSkeleton = () => {
   return (
@@ -24,12 +24,8 @@ const PoolCardSkeleton = () => {
         justifyContent='center'
         sx={{ marginTop: 3 }}
       >
-        <Button variant='contained' disabled>
-          <Skeleton width={100} height={50} />
-        </Button>
-        <Button variant='contained' disabled>
-          <Skeleton width={100} height={50} />
-        </Button>
+        <Skeleton animation='wave' variant='rounded' width={100} height={42} />
+        <Skeleton animation='wave' variant='rounded' width={100} height={42} />
       </Stack>
     </Card>
   )
