@@ -34,7 +34,6 @@ const PoolTabs: React.FC = () => {
           <StyledTab label='Pool Details' isActive={activeTab === 1} />
           <StyledTab label='Repayments' isActive={activeTab === 2} />
           <StyledTab label='Risk Reporting' isActive={activeTab === 3} />
-          <StyledTab label='Support' isActive={activeTab === 4} />
         </Tabs>
       </Box>
       <TabPanel isActive={activeTab === 0} id={panelsId}>
@@ -48,9 +47,6 @@ const PoolTabs: React.FC = () => {
       </TabPanel>
       <TabPanel isActive={activeTab === 3} id={panelsId}>
         <RiskReporting />
-      </TabPanel>
-      <TabPanel isActive={activeTab === 4} id={panelsId}>
-        Support
       </TabPanel>
     </Box>
   )
