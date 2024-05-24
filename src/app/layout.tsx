@@ -45,19 +45,8 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                 <ModalState>
                   <ToastState>
                     <Header />
-                    <Box
-                      component='main'
-                      sx={{
-                        marginTop: 3,
-                        paddingBottom: 2,
-                        overflowX: 'hidden',
-                        '@media (max-width: 600px)': {
-                          overflow: 'hidden',
-                        },
-                      }}
-                    >
+                    <Box component='main'>
                       {children}
-
                       <PageFooter />
                     </Box>
                     <ModalsContainer />
