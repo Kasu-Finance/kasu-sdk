@@ -24,7 +24,11 @@ import { formatAmount } from '@/utils'
 type SwapAndDepositInputProps = {
   title: string
   setSelectedBalance: Dispatch<
-    SetStateAction<{ balance: string; decimals: number }>
+    SetStateAction<{
+      balance: string
+      decimals: number
+      symbol: SupportedTokens
+    }>
   >
 }
 
@@ -34,7 +38,7 @@ const SwapAndDepositInput: React.FC<SwapAndDepositInputProps> = ({
 }) => {
   const { t } = useTranslation()
 
-  const [selectedToken, setSelectedToken] = useState<string>(
+  const [selectedToken, setSelectedToken] = useState<SupportedTokens>(
     SupportedTokens.USDC
   )
 
@@ -55,6 +59,7 @@ const SwapAndDepositInput: React.FC<SwapAndDepositInputProps> = ({
     setSelectedBalance({
       balance: formatUnits(token.balance, token.decimals),
       decimals: token.decimals,
+      symbol: selectedToken,
     })
   }, [tokens, selectedToken, setSelectedBalance])
 

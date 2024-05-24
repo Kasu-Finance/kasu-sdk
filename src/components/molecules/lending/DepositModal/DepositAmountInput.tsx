@@ -1,6 +1,6 @@
 import LoginIcon from '@mui/icons-material/Login'
 import { Box, Typography } from '@mui/material'
-import { useMemo, useState } from 'react'
+import { ReactNode, useMemo, useState } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
@@ -16,6 +16,8 @@ type DepositAmountInputProps = {
   decimals?: number
   poolData: PoolData
   disabled?: boolean
+  startAdornment?: ReactNode
+  endAdornment?: ReactNode
 }
 
 const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
@@ -23,6 +25,8 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
   decimals = 18,
   poolData,
   disabled,
+  startAdornment = <LoginIcon />,
+  endAdornment = 'USDC',
 }) => {
   const { amount, trancheId, setAmount } = useDepositModalState()
   const { modalStatus, setModalStatus } = useModalStatusState()
@@ -128,11 +132,8 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
             mt: 1,
 
             ...(showSuccess && {
-              '& .MuiOutlinedInput-root': {
-                color: theme.palette.success.main,
-                '& fieldset': {
-                  borderColor: theme.palette.success.main,
-                },
+              '& .MuiOutlinedInput-root fieldset': {
+                borderColor: theme.palette.success.main,
               },
               '& .MuiInputLabel-outlined': {
                 color: theme.palette.success.main,
@@ -146,8 +147,8 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
             shrink: true,
           },
           InputProps: {
-            startAdornment: <LoginIcon />,
-            endAdornment: 'USDC',
+            startAdornment,
+            endAdornment,
             sx: (theme) => ({
               '& .MuiInputBase-input': {
                 px: 1,

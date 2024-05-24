@@ -7,7 +7,7 @@ import useTranslation from '@/hooks/useTranslation'
 const SimulatedDurationSlider = () => {
   const { t } = useTranslation()
 
-  const { modalStatus, setModalStatus } = useModalStatusState()
+  const { modalStatus } = useModalStatusState()
 
   const { simulatedDuration, setSimulatedDuration } = useDepositModalState()
 
@@ -38,7 +38,6 @@ const SimulatedDurationSlider = () => {
       max={365}
       value={simulatedDuration}
       onChange={handleChange}
-      onChangeCommitted={() => setModalStatus({ type: 'default' })}
     />
   )
 }

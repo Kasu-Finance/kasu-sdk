@@ -1,3 +1,4 @@
+import LoginIcon from '@mui/icons-material/Login'
 import { Box, Typography } from '@mui/material'
 import { useState } from 'react'
 
@@ -9,6 +10,8 @@ import ColoredBox from '@/components/atoms/ColoredBox'
 import DepositAmountInput from '@/components/molecules/lending/DepositModal/DepositAmountInput'
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 import SwapAndDepositInput from '@/components/molecules/SwapAndDepositInput'
+
+import { SupportedTokens } from '@/constants/tokens'
 
 type SimulatedDepositAmountProps = {
   loyaltyLevel: LoyaltyLevel
@@ -26,6 +29,7 @@ const SimulatedDepositAmount: React.FC<SimulatedDepositAmountProps> = ({
   const [selectedToken, setSelectedToken] = useState({
     balance: '0',
     decimals: 0,
+    symbol: SupportedTokens.USDC,
   })
 
   const isLoyal = loyaltyLevel === 1 || loyaltyLevel === 2
@@ -74,6 +78,13 @@ const SimulatedDepositAmount: React.FC<SimulatedDepositAmountProps> = ({
         balance={selectedToken.balance}
         poolData={poolData}
         disabled={!selectedToken.decimals} // if decimals is zero, disable
+        endAdornment=''
+        startAdornment={
+          <Box display='flex' alignItems='center'>
+            <LoginIcon sx={{ mr: 1 }} />
+            {selectedToken.symbol}
+          </Box>
+        }
       />
     </Box>
   )

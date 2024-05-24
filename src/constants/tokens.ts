@@ -9,13 +9,13 @@ import { SupportedChainIds } from '@/connection/chains'
 export enum SupportedTokens {
   KSU = 'KSU',
   USDC = 'USDC',
-  USDT = 'USDT',
+  USDT = 'rKSU',
 }
 
 export type SupportedTokenInfo = {
   name: string
   address: `0x${string}`
-  symbol: string
+  symbol: SupportedTokens
   decimals: number
   icon: ReactNode
 }
@@ -23,21 +23,21 @@ export type SupportedTokenInfo = {
 export const TOKENS = {
   [SupportedChainIds.BASE_SEPOLIA]: {
     [SupportedTokens.KSU]: {
-      symbol: 'KSU',
+      symbol: SupportedTokens.KSU,
       name: 'Kasu Token',
       address: sdkConfig.contracts.KSUToken as `0x${string}`,
       decimals: 18,
       icon: FallbackIcon(),
     },
     [SupportedTokens.USDC]: {
-      symbol: 'USDC',
+      symbol: SupportedTokens.USDC,
       name: 'USD Coin',
       address: '0x15B22C46A37e2fFc1135d143fd3d47d889ad13Ff',
       decimals: 6,
       icon: UsdcIcon(),
     },
     [SupportedTokens.USDT]: {
-      symbol: 'rKSU',
+      symbol: SupportedTokens.USDT,
       name: 'rKasu Token',
       address: '0x2235E1389cC37bdC8086Faeb3abEa3d206fe8E3d',
       decimals: 18,
@@ -46,21 +46,21 @@ export const TOKENS = {
   },
   [SupportedChainIds.BASE]: {
     [SupportedTokens.KSU]: {
-      symbol: 'KSU',
+      symbol: SupportedTokens.KSU,
       name: 'Kasu Token',
       address: sdkConfig.contracts.KSUToken as `0x${string}`,
       decimals: 18,
       icon: FallbackIcon(),
     },
     [SupportedTokens.USDC]: {
-      symbol: 'USDC',
+      symbol: SupportedTokens.USDC,
       name: 'USD Coin',
       address: '0x15B22C46A37e2fFc1135d143fd3d47d889ad13Ff',
       decimals: 6,
       icon: UsdcIcon(),
     },
     [SupportedTokens.USDT]: {
-      symbol: 'rKSU',
+      symbol: SupportedTokens.USDT,
       name: 'rKasu Token',
       address: '0x2235E1389cC37bdC8086Faeb3abEa3d206fe8E3d',
       decimals: 18,
