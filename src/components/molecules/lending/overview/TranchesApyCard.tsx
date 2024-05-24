@@ -29,6 +29,7 @@ export type PoolData = {
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
@@ -41,6 +42,9 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
   const { data: userPoolBalance } = useUserPoolBalance(pool?.id)
   const sortedTranches = sortTranches(pool.tranches)
   const poolData: PoolData = getPoolData(pool, userPoolBalance)
+
+  const currentDevice = useDeviceDetection()
+  const isMobile = currentDevice === Device.MOBILE
 
   const { isSticky } = useIsSticky({
     elementRef: divRef,
@@ -67,7 +71,7 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
       ref={divRef}
       sx={{
         boxShadow: isSticky ? 12 : 0,
-        position: isSticky ? 'fixed' : 'relative',
+        position: isSticky && !isMobile ? 'fixed' : 'relative',
         top: isSticky ? 64 : 0,
         transform: `translate3d(0, 0, 0)`,
         transformOrigin: '0% 0%',
@@ -98,6 +102,7 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
           m={0}
           columnSpacing={{ xs: 1, sm: 2, md: 3 }}
           maxWidth='lg'
+          direction={isMobile ? 'column' : 'row'}
         >
           {}
           {tranches.map((tranche, index) => {

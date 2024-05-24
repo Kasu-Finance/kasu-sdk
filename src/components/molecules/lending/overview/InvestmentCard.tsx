@@ -14,6 +14,7 @@ import { useMemo } from 'react'
 import useModalState from '@/hooks/context/useModalState'
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
 import useGetUserBalance from '@/hooks/lending/useUserTrancheBalance'
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 import TranchInvestmentCard from '@/components/molecules/TranchInvestmentCard'
@@ -40,6 +41,8 @@ const InvestmentPortfolio: React.FC<{
   const router = useRouter()
   const { account } = useWeb3React()
   const { data: userPoolBalance } = useUserPoolBalance(pool?.id)
+  const currentDevice = useDeviceDetection()
+  const isMobile = currentDevice === Device.MOBILE
 
   const tranches = pool.tranches.map((tranche) => tranche)
   const sortedTranches = sortTranches(tranches)
@@ -89,7 +92,13 @@ const InvestmentPortfolio: React.FC<{
           </Button>
         }
       />
-      <Grid container columnSpacing={3} rowGap={2} component={CardContent}>
+      <Grid
+        container
+        columnSpacing={3}
+        rowGap={2}
+        component={CardContent}
+        direction={isMobile ? 'column' : 'row'}
+      >
         <Grid item xs={12}>
           <Box
             borderRadius={2}
@@ -106,6 +115,7 @@ const InvestmentPortfolio: React.FC<{
               width='100%'
               m={0}
               columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+              direction={isMobile ? 'column' : 'row'}
             >
               <Grid item xs={4}>
                 <MetricWithSuffix
@@ -153,26 +163,28 @@ const InvestmentPortfolio: React.FC<{
             )
           })}
       </Grid>
-      <Box
-        display='flex'
-        justifyContent='center'
-        width='100%'
-        sx={{
-          pt: 0,
-          pl: 0,
-          pr: 0,
-          pb: 2,
-        }}
-      >
-        <Button
-          startIcon={<LogoutIcon />}
-          onClick={() => handleWithdrawClick(pool)}
-          variant='contained'
-          disabled={isWithdrawDisabled}
+      {!isMobile && (
+        <Box
+          display='flex'
+          justifyContent='center'
+          width='100%'
+          sx={{
+            pt: 0,
+            pl: 0,
+            pr: 0,
+            pb: 2,
+          }}
         >
-          Withdraw
-        </Button>
-      </Box>
+          <Button
+            startIcon={<LogoutIcon />}
+            onClick={() => handleWithdrawClick(pool)}
+            variant='contained'
+            disabled={isWithdrawDisabled}
+          >
+            Withdraw
+          </Button>
+        </Box>
+      )}
     </Card>
   )
 }

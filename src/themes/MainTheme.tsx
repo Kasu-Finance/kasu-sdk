@@ -168,6 +168,12 @@ export const theme = createTheme({
         z-index: 1;
       }
 
+      .hide-overflow-mobile {
+        @media (max-width: 600px) { 
+          overflow-x: hidden; 
+        }
+      }
+
       .top-layout-bg {
         background: url("/images/bg-image-top.png") no-repeat;
         background-size: cover;

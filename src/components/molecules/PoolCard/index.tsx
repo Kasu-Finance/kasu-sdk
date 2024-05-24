@@ -5,6 +5,9 @@ import {
   PoolDelegateProfileAndHistory,
   PoolOverview,
 } from '@solidant/kasu-sdk/src/services/DataService/types'
+import { useRouter } from 'next/navigation'
+
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 
 import PoolCardActions from '@/components/molecules/PoolCard/PoolCardActions'
 import PoolCardContent from '@/components/molecules/PoolCard/PoolCardContent'
@@ -17,8 +20,15 @@ interface PoolCardProps {
 }
 
 const PoolCard: React.FC<PoolCardProps> = ({ pool, poolDelegate, link }) => {
+  const router = useRouter()
+  const currentDevice = useDeviceDetection()
+
   return (
-    <Card>
+    <Card
+      onClick={() => {
+        currentDevice === Device.MOBILE && router.push(link)
+      }}
+    >
       <PoolCardHeader pool={pool} />
       <PoolCardContent pool={pool} poolDelegate={poolDelegate} />
       <PoolCardActions pool={pool} link={link} />

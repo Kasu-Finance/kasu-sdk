@@ -1,5 +1,9 @@
+'use client'
+
 import { Container, Toolbar } from '@mui/material'
 import Link from 'next/link'
+
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 
 import ConnectWallet from '@/components/molecules/header/ConnectWallet'
 import Navigation from '@/components/molecules/header/Navigation'
@@ -10,15 +14,19 @@ import KasuLogo from '@/assets/logo/Kasu'
 import { BaseRoutesPaths } from '@/config/routes'
 
 const Header = () => {
+  const currentDevice = useDeviceDetection()
+  const logoWidth = currentDevice === Device.MOBILE ? '92px' : '125px'
+  const logoHeight = currentDevice === Device.MOBILE ? '42px' : '64px'
+
   return (
     <HeaderBar>
       <Container maxWidth='lg'>
         <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
           <Link href={BaseRoutesPaths.LENDING}>
-            <KasuLogo />
+            <KasuLogo width={logoWidth} height={logoHeight} />
           </Link>
           <Navigation />
-          <ConnectWallet />
+          {currentDevice !== Device.MOBILE && <ConnectWallet />}
         </Toolbar>
       </Container>
     </HeaderBar>

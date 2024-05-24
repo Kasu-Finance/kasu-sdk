@@ -5,6 +5,8 @@ import {
 } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React, { useMemo } from 'react'
 
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
+
 import TrancheCard from '@/components/molecules/lending/overview/TranchCard'
 
 import { COLS } from '@/constants'
@@ -23,10 +25,18 @@ const TranchesDetails: React.FC<TranchesDetailsProps> = ({ pool }) => {
   const columnWidth = COLS / trancheCount
   const isSingleTranche = trancheCount === 1
 
+  const currentDevice = useDeviceDetection()
+  const isMobile = currentDevice === Device.MOBILE
+
   return (
     <Card>
       <CardContent>
-        <Grid container columnSpacing={3} rowGap={2}>
+        <Grid
+          container
+          columnSpacing={3}
+          rowGap={2}
+          direction={isMobile ? 'column' : 'row'}
+        >
           {sortedTranches.map((tranche) => (
             <TrancheCard
               key={tranche.id}

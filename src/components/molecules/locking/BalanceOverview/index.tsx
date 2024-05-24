@@ -7,6 +7,7 @@ import { formatEther, formatUnits, parseEther } from 'ethers/lib/utils'
 
 import useModalState from '@/hooks/context/useModalState'
 import useStakedKSU from '@/hooks/locking/useStakedKSU'
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 import useUserBalance from '@/hooks/web3/useUserBalance'
@@ -21,6 +22,8 @@ import { convertToUSD, formatAmount } from '@/utils'
 const BalanceOverview = () => {
   const { openModal } = useModalState()
   const { t } = useTranslation()
+  const currentDevice = useDeviceDetection()
+  const isMobile = currentDevice === Device.MOBILE
 
   const handleOpen = () => openModal({ name: 'lockModal' })
 
@@ -40,23 +43,27 @@ const BalanceOverview = () => {
     <CardWidget
       cardAction={
         <>
-          <Button
-            variant='contained'
-            sx={{ width: 134 }}
-            href='https://www.google.com'
-            target='_blank'
-            startIcon={<AccountBalanceWalletIcon />}
-          >
-            {t('general.buyKSU')}
-          </Button>
-          <Button
-            sx={{ wixth: 143 }}
-            variant='contained'
-            onClick={handleOpen}
-            startIcon={<LockClockIcon />}
-          >
-            {t('general.lockKSU')}
-          </Button>
+          {!isMobile && (
+            <>
+              <Button
+                variant='contained'
+                sx={{ width: 134 }}
+                href='https://www.google.com'
+                target='_blank'
+                startIcon={<AccountBalanceWalletIcon />}
+              >
+                {t('general.buyKSU')}
+              </Button>
+              <Button
+                sx={{ wixth: 143 }}
+                variant='contained'
+                onClick={handleOpen}
+                startIcon={<LockClockIcon />}
+              >
+                {t('general.lockKSU')}
+              </Button>
+            </>
+          )}
         </>
       }
     >

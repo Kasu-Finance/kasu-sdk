@@ -36,7 +36,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang='en'>
       <Tracking />
-      <body>
+      <body className='hide-overflow-mobile'>
         <div className='top-layout-bg'></div>
         <SWRProvider lockPeriods={lockPeriods}>
           <ThemeRegistry>
@@ -45,7 +45,17 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                 <ModalState>
                   <ToastState>
                     <Header />
-                    <Box component='main' marginTop={3} paddingBottom={2}>
+                    <Box
+                      component='main'
+                      sx={{
+                        marginTop: 3,
+                        paddingBottom: 2,
+                        overflowX: 'hidden',
+                        '@media (max-width: 600px)': {
+                          overflow: 'hidden',
+                        },
+                      }}
+                    >
                       {children}
 
                       <PageFooter />

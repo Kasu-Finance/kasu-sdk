@@ -18,6 +18,7 @@ import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
 import useUserBonusData from '@/hooks/locking/useUserBonusData'
 import useUserLocks from '@/hooks/locking/useUserLocks'
 import useLendingPortfolioData from '@/hooks/portfolio/useLendingPortfolioData'
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
@@ -42,6 +43,9 @@ const LoyaltyCard: React.FC<{
   const stakedPercentage = useLockingPercentage()
   const { currentLevel } = useLoyaltyLevel(stakedPercentage)
   const { lendingPortfolioData } = useLendingPortfolioData()
+
+  const currentDevice = useDeviceDetection()
+  const isMobile = currentDevice === Device.MOBILE
 
   const lifetimeBonusYieldEarnings =
     (
@@ -90,7 +94,7 @@ const LoyaltyCard: React.FC<{
 
       <Grid
         container
-        direction='row'
+        direction={isMobile ? 'column' : 'row'}
         justifyContent='flex-start'
         alignItems='stretch'
         columnSpacing={3}
@@ -99,7 +103,7 @@ const LoyaltyCard: React.FC<{
         <Grid item xs={6}>
           <LendingLoyalityInfo />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={6} mt={isMobile ? 2 : 0}>
           <InfoRow
             title={t('lending.poolOverview.lockingStatus.lockedInfo.label')}
             sx={{ pl: 0 }}
@@ -215,36 +219,39 @@ const LoyaltyCard: React.FC<{
           </ColoredBox>
         </Grid>
       </Grid>
-      <Grid
-        container
-        direction='row'
-        justifyContent='flex-start'
-        alignItems='stretch'
-        columnSpacing={3}
-        sx={{ pb: 2, pt: 0 }}
-      >
-        <Grid item xs={6}>
-          <Box display='flex' justifyContent='end' width='100%'>
+
+      {!isMobile && (
+        <Grid
+          container
+          direction='row'
+          justifyContent='flex-start'
+          alignItems='stretch'
+          columnSpacing={3}
+          sx={{ pb: 2, pt: 0 }}
+        >
+          <Grid item xs={6}>
+            <Box display='flex' justifyContent='end' width='100%'>
+              <Button
+                onClick={handleOpenLockingKSU}
+                variant='contained'
+                startIcon={<LockClockIcon />}
+              >
+                {t('general.lockKSU')}
+              </Button>
+            </Box>
+          </Grid>
+          <Grid item xs={6}>
             <Button
-              onClick={handleOpenLockingKSU}
               variant='contained'
-              startIcon={<LockClockIcon />}
+              href='https://www.google.com'
+              target='_blank'
+              startIcon={<AccountBalanceWalletIcon />}
             >
-              {t('general.lockKSU')}
+              {t('general.buyKSU')}
             </Button>
-          </Box>
+          </Grid>
         </Grid>
-        <Grid item xs={6}>
-          <Button
-            variant='contained'
-            href='https://www.google.com'
-            target='_blank'
-            startIcon={<AccountBalanceWalletIcon />}
-          >
-            {t('general.buyKSU')}
-          </Button>
-        </Grid>
-      </Grid>
+      )}
     </Card>
   )
 }

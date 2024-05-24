@@ -1,5 +1,6 @@
 import { Box, Typography } from '@mui/material'
 
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
@@ -23,6 +24,8 @@ const MetricDisplay: React.FC<MetricDisplayProps> = ({
   const { t } = useTranslation()
   const titleKey = `details.poolDetails.${metric.id}.label`
   const tooltipKey = `details.poolDetails.${metric.id}.tooltip`
+  const currentDevice = useDeviceDetection()
+  const isMobile = currentDevice === Device.MOBILE
 
   return (
     <>
@@ -38,10 +41,18 @@ const MetricDisplay: React.FC<MetricDisplayProps> = ({
       ) : (
         <Box width='100%' pr={2}>
           <InfoRow
-            showDivider={!isLastItem}
+            showDivider={!isLastItem || isMobile}
             title={t(titleKey)}
             toolTipInfo={t(tooltipKey)}
-            metric={<Typography variant='body1'>{metric.content}</Typography>}
+            metric={
+              <Typography
+                variant='body1'
+                align='right'
+                fontSize={isMobile ? 12 : 'inherit'}
+              >
+                {metric.content}
+              </Typography>
+            }
           />
         </Box>
       )}
