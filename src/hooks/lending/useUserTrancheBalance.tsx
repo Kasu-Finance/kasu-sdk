@@ -32,19 +32,13 @@ const useGetUserBalance = (tranches: string[]) => {
     }
 
     if (isAddress(account)) {
-      try {
-        const balancePromises = tranches.map((trancheAddress) =>
-          sdk.UserLending.getUserTrancheBalance(account, trancheAddress)
-        )
+      const balancePromises = tranches.map((trancheAddress) =>
+        sdk.UserLending.getUserTrancheBalance(account, trancheAddress)
+      )
 
-        const balances = await Promise.all(balancePromises)
+      const balances = await Promise.all(balancePromises)
 
-        return balances
-      } catch (error) {
-        console.error('Error fetching balances:', error)
-        // Rethrow to be caught by SWR
-        throw error
-      }
+      return balances
     }
   }
 
