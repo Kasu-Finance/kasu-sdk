@@ -26,7 +26,7 @@ const ConnectWallet = () => {
 
   const { account, connector, chainId } = useWeb3React()
   const theme = useTheme()
-  const { setToast, removeToast } = useToastState()
+  const { toast, setToast, removeToast } = useToastState()
   const { openModal } = useModalState()
   const switchChain = useSwitchChain()
 
@@ -70,7 +70,7 @@ const ConnectWallet = () => {
   }, [connector, chainId])
 
   useEffect(() => {
-    if (account && invalidChain) {
+    if (account && invalidChain && toast?.title !== 'Wrong Chain') {
       setToast({
         title: 'Wrong Chain',
         message:
@@ -82,7 +82,7 @@ const ConnectWallet = () => {
         type: 'warning',
       })
     }
-  }, [account, invalidChain, setToast, handleSwitchChain])
+  }, [toast, account, invalidChain, setToast, handleSwitchChain])
 
   return (
     <ToolTip
