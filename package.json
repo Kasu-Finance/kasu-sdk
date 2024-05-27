@@ -6,6 +6,7 @@
     "dev": "next dev",
     "dev:https": "next dev --turbo --experimental-https",
     "dev:turbo": "next dev --turbo",
+    "prebuild": "echo \"//npm.pkg.github.com/:_authToken=${NPM_TOKEN}\" > ~/.npmrc && echo \"legacy-peer-deps=true\" >> ~/.npmrc",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
