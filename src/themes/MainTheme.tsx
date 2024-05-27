@@ -16,6 +16,7 @@ declare module '@mui/material/styles/createPalette' {
       primary: string
     }
   }
+
   interface PaletteOptions {
     highlight: {
       background: string
