@@ -10,7 +10,7 @@ export const getAllLendingPoolsQuery = gql`
           totalPendingWithdrawalShares
         }
         id
-        totalUserYieldAmount
+        totalUserInterestAmount
         totalLossAmount
         name
         balance
@@ -19,7 +19,7 @@ export const getAllLendingPoolsQuery = gql`
         tranches(orderBy: orderId, orderDirection: asc) {
           balance
           id
-          totalYieldAmount
+          totalInterestAmount
           orderId
         }
       }
@@ -31,7 +31,7 @@ export const getAllTranchesQuery = gql`
       lendingPoolTranches {
         id
         orderId
-        totalYieldAmount
+        totalInterestAmount
         balance
         lendingPool {
           id

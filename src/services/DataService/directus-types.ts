@@ -55,7 +55,7 @@ export interface RiskManagementItemDirectus {
     description: string;
     group: string;
     priority: number;
-    fkRiskManagement: string;
+    riskManagementFK: string;
 }
 
 export interface PoolCreditMetricsDirectus {

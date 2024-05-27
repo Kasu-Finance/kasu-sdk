@@ -108,3 +108,10 @@ export interface TrancheSubgraph {
 export interface TrancheSubgraphResult {
     lendingPoolTranches: TrancheSubgraph[]
 }
+
+export interface totalUserLoyaltyRewards {
+    user: {
+        id: string;
+        totalUserLoyaltyRewards: string;
+    }
+}

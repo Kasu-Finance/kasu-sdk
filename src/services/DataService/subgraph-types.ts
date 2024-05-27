@@ -1,6 +1,6 @@
 export interface LendingPoolSubgraph {
     id: string;
-    totalUserYieldAmount: string;
+    totalUserInterestAmount: string;
     totalLossAmount: string;
     name: string;
     balance: string;
@@ -22,7 +22,7 @@ export interface LendingPoolSubgraphReturn {
 export interface TrancheSubgraph {
     balance: string;
     id: string;
-    totalYieldAmount: string;
+    totalInterestAmount: string;
     orderId: string;
     lendingPool: {
         id: string;

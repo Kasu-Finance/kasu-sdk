@@ -152,7 +152,7 @@ export class DataService {
                 poolName: lendingPoolSubgraph.name,
                 totalValueLocked: lendingPoolSubgraph.balance,
                 loansUnderManagement: lendingPoolDirectus.loansUnderManagement,
-                yieldEarned: lendingPoolSubgraph.totalUserYieldAmount,
+                yieldEarned: lendingPoolSubgraph.totalUserInterestAmount,
                 poolCapacity: poolCapacitySum.toString(),
                 poolCapacityPercentage: poolCapacityPercentageSum.toString(),
                 activeLoans: lendingPoolDirectus.activeLoans,
@@ -170,7 +170,7 @@ export class DataService {
         const resultDirectusRiskManagementItem: RiskManagementItemDirectus[] = await this._directus.request(readItems('RiskManagementItems'));
         const retn: RiskManagement[] = [];
         for(const riskManagementDirectus of resultDirectusRiskManagement){
-            const items = resultDirectusRiskManagementItem.filter(r => r.fkRiskManagement == riskManagementDirectus.id);
+            const items = resultDirectusRiskManagementItem.filter(r => r.riskManagementFK == riskManagementDirectus.id);
             const itemsList: RiskManagementItem[] = items.sort((a, b) => a.priority - b.priority);
             retn.push({
                 id: riskManagementDirectus.id,

@@ -17,9 +17,11 @@ import {
 import { SdkConfig } from '../../sdk-config';
 import { getAllTrancheConfigurationsQuery, getAllTranchesQuery } from '../DataService/queries';
 import { TrancheConfigurationSubgraph, TrancheSubgraphResult } from '../DataService/subgraph-types';
+import { totalUserLoyaltyRewardsQuery } from '../UserLending/queries';
+import { TotalUserLoyaltyRewardsSubgraph } from '../UserLending/subgraph-types';
 
 import {
-    claimedFeesQuery,
+    claimedFeesQuery, getTotalUserLoyaltsRewardsQuery,
     lockingPeriodsQuery, lockingSummariesQuery,
     userEarnedrKsuQuery,
     userLocksQuery,
@@ -35,7 +37,7 @@ import {
     GQLUserLocks, LockingSummarySubgraphResult,
     LockPeriod,
     LockPeriodInterface,
-    RSVDeadlineValue, UserBonusData,
+    RSVDeadlineValue, totalUserLoyaltyRewards, UserBonusData,
     UserLock,
 } from './types';
 
@@ -261,23 +263,9 @@ export class KSULocking {
 
     async getLifetimeRewards(
         userAddress: string,
-        rewardDecimals: number,
-        claimableRewards?: BigNumber,
-    ): Promise<BigNumber> {
-        const result: GQLClaimedFeesForAddress = await this._graph.request(
-            claimedFeesQuery,
-            {
-                userAddress: userAddress.toLowerCase(),
-            },
-        );
-
-        const claimedRewards = result.userLockDepositsInfo?.feesClaimed ?? '0';
-
-        if (!claimableRewards) {
-            claimableRewards = await this.getClaimableRewards(userAddress);
-        }
-
-        return claimableRewards.add(parseUnits(claimedRewards, rewardDecimals));
+    ): Promise<string> {
+        const result: totalUserLoyaltyRewards = await this._graph.request(getTotalUserLoyaltsRewardsQuery, {userAddress: userAddress});
+        return result.user.totalUserLoyaltyRewards;
     }
 
     getLaunchBonusAmount(
@@ -347,9 +335,7 @@ export class KSULocking {
         const claimableRewards = await this.getClaimableRewards(userAddress);
 
         const lifeTimeRewards = await this.getLifetimeRewards(
-            userAddress,
-            rewardDecimals,
-            claimableRewards,
+            userAddress
         );
 
         return {

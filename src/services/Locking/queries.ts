@@ -98,3 +98,12 @@ export const getAllTrancheConfigurationsQuery = gql`
         }
     }
 `;
+
+export const getTotalUserLoyaltsRewardsQuery = gql`
+    query getAllUserLoyaltsRewards($userAddress: String!) {
+        user(id: $userAddress) {
+          id
+          totalUserLoyaltyRewards
+        }
+    }
+`

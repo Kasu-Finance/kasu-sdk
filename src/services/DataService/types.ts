@@ -58,7 +58,7 @@ export interface RiskManagementItem {
     description: string;
     group: string;
     priority: number;
-    fkRiskManagement: string;
+    riskManagementFK: string;
 }
 
 export interface RiskPerformance {
