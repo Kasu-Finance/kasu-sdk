@@ -11,11 +11,18 @@ import LendingSkeleton from '@/components/molecules/loaders/LendingSkeleton'
 import HomeTabs from '@/components/organisms/home/HomeTabs'
 
 const Lending = () => {
-  const { data: pools, isLoading } = usePoolOverview()
-  const { data: poolDelegates } = usePoolDelegate()
+  const { data: pools, isLoading: poolsLoading } = usePoolOverview()
+  const { data: poolDelegates, isLoading: poolDelegatesLoading } =
+    usePoolDelegate()
   const { lendingTotals } = useLendingTotals()
 
-  if (isLoading) {
+  if (
+    poolsLoading ||
+    poolDelegatesLoading ||
+    !pools ||
+    !poolDelegates ||
+    !lendingTotals
+  ) {
     return <LendingSkeleton />
   }
 
