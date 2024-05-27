@@ -3,6 +3,7 @@ import { Box, SxProps, Theme, Typography } from '@mui/material'
 import React from 'react'
 
 import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 
 import ProgressBar from '@/components/atoms/ProgressBar'
@@ -58,6 +59,8 @@ const LoyaltyProgress: React.FC<LoyaltyProgressProps> = ({
   const { level_1, level_2, getCurrentLevel } = useLoyaltyLevel()
 
   const currentLevel = getCurrentLevel(stakedPercentage)
+  const currentDevice = useDeviceDetection()
+  const isMobile = currentDevice === Device.MOBILE
 
   return (
     <Box my={1} px='7px'>
@@ -84,13 +87,15 @@ const LoyaltyProgress: React.FC<LoyaltyProgressProps> = ({
           mr='-5px' // half of chevron width to make sure arrow is pointing correctly
           sx={getLabelStyle([1, 2].includes(currentLevel))}
         >
-          <Typography
-            variant='body2'
-            component='span'
-            textTransform='capitalize'
-          >
-            {t('general.loyalty')}&nbsp;
-          </Typography>
+          {!isMobile && (
+            <Typography
+              variant='body2'
+              component='span'
+              textTransform='capitalize'
+            >
+              {t('general.loyalty')}&nbsp;
+            </Typography>
+          )}
           <Typography variant='subtitle2' component='span'>
             {t('locking.widgets.loyalty.level.level-1.level')}
           </Typography>
@@ -102,13 +107,15 @@ const LoyaltyProgress: React.FC<LoyaltyProgressProps> = ({
           justifyContent='end'
           sx={getLabelStyle(currentLevel === 2)}
         >
-          <Typography
-            variant='body2'
-            component='span'
-            textTransform='capitalize'
-          >
-            {t('general.loyalty')}&nbsp;
-          </Typography>
+          {!isMobile && (
+            <Typography
+              variant='body2'
+              component='span'
+              textTransform='capitalize'
+            >
+              {t('general.loyalty')}&nbsp;
+            </Typography>
+          )}
           <Typography variant='subtitle2' component='span'>
             {t('locking.widgets.loyalty.level.level-2.level')}
           </Typography>

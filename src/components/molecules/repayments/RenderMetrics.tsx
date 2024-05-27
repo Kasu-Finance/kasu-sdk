@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
@@ -17,6 +18,8 @@ interface RenderMetricsProps {
 
 const RenderMetrics: React.FC<RenderMetricsProps> = ({ data, sectionKey }) => {
   const { t } = useTranslation()
+  const currentDevice = useDeviceDetection()
+  const isMobile = currentDevice === Device.MOBILE
 
   const rowKeysSet = useMemo(
     () =>
@@ -44,11 +47,14 @@ const RenderMetrics: React.FC<RenderMetricsProps> = ({ data, sectionKey }) => {
               key={baseKey}
               title={dynamicLabel || t(labelKey)}
               toolTipInfo={dynamicLabel ? '' : t(tooltipKey)}
+              titleStyle={{ variant: isMobile ? 'body1' : 'h6' }}
               showDivider
               metric={
                 <ContentWithSuffix
                   content={String(metric.content)}
                   suffix={metric.unit}
+                  variant={isMobile ? 'body2' : 'h6'}
+                  suffixVariant={isMobile ? 'caption' : 'body1'}
                 />
               }
               sx={{ flexDirection: 'row' }}
@@ -63,12 +69,13 @@ const RenderMetrics: React.FC<RenderMetricsProps> = ({ data, sectionKey }) => {
                 content={String(metric.content)}
                 suffix={metric.unit}
                 containerSx={{ mb: 1 }}
+                variant={isMobile ? 'body2' : 'h6'}
               />
             </ColoredBox>
           )
         }
       }),
-    [data.metrics, rowKeysSet, t, sectionKey]
+    [data.metrics, rowKeysSet, t, sectionKey, isMobile]
   )
 
   return <>{metrics}</>

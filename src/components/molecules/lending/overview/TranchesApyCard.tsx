@@ -29,6 +29,7 @@ import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { formatUnits } from 'ethers/lib/utils'
 
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
 import AuthenticateButton from '@/components/atoms/AuthenticateButton'
@@ -55,6 +56,9 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
     )
   )
 
+  const currentDevice = useDeviceDetection()
+  const isMobile = currentDevice === Device.MOBILE
+
   const { isSticky } = useIsSticky({
     elementRef: divRef,
     threshold: 64,
@@ -76,19 +80,22 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
     }
   })
 
+  const isStickyAndNotMobile = isSticky && !isMobile
+
   return (
     <Box
       ref={divRef}
       sx={{
-        boxShadow: isSticky ? 12 : 0,
-        position: isSticky ? 'fixed' : 'relative',
-        top: isSticky ? 64 : 0,
+        boxShadow: isStickyAndNotMobile ? 12 : 0,
+        position: isStickyAndNotMobile ? 'fixed' : 'relative',
+        top: isStickyAndNotMobile ? 64 : 0,
         transform: `translate3d(0, 0, 0)`,
         transformOrigin: '0% 0%',
         background: '#fff',
         zIndex: 1200,
         transition: 'box-shadow .25s ease-in-out, top .8s ease',
-        width: isSticky ? '1152px' : 'auto',
+        width: isStickyAndNotMobile ? '100%' : 'auto',
+        maxWidth: '1152px',
         backfaceVisibility: 'hidden',
         willChange: 'top, scroll-position',
         ml: 0,
@@ -112,14 +119,18 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
           m={0}
           columnSpacing={{ xs: 1, sm: 2, md: 3 }}
           maxWidth='lg'
+          direction={isMobile ? 'column' : 'row'}
         >
           {tranches.map((tranche, index) => {
+            const titleKey =
+              tranches.length === 1 ? 'APY' : `${tranche.name} Tranche APY`
+
             return (
               <Grid item xs={COLS / pool.tranches.length} key={index}>
                 <MetricWithSuffix
                   content={formatAmount(+tranche.apy * 100 || '0') + ' %'}
                   tooltipKey={tranche.tooltip}
-                  titleKey={`${tranche.name} Tranche APY`}
+                  titleKey={titleKey}
                   variant='h5'
                 />
               </Grid>

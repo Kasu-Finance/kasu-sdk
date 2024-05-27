@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import useScrollPosition from '@/hooks/useScrollPosition'
 
@@ -7,40 +7,38 @@ import { throttle } from '@/utils'
 interface useIsStickyProps {
   elementRef: React.RefObject<HTMLDivElement>
   threshold?: number
-  scrollAwayBuffer?: number
+  unstickThreshold?: number
 }
-
 const useIsSticky = ({
   elementRef,
   threshold = 0,
-  scrollAwayBuffer = 20,
-}: useIsStickyProps): {
-  isSticky: boolean
-  elementRef: React.RefObject<HTMLDivElement>
-} => {
+  unstickThreshold = 20,
+}: useIsStickyProps): { isSticky: boolean } => {
   const [isSticky, setIsSticky] = useState(false)
-  const scrollPosition = useScrollPosition()
-  const [stickyPosition, setStickyPosition] = useState(scrollPosition.y)
+  const { y: scrollY } = useScrollPosition()
+  const prevScrollY = useRef<number>(scrollY)
 
   useEffect(() => {
     const checkIfShouldStick = () => {
-      const distance = elementRef.current
-        ? elementRef.current.getBoundingClientRect().top
-        : 0
+      const element = elementRef.current
+      if (!element) return
+
+      const elementOffsetFromTop = element.getBoundingClientRect().top
       const currentScrollY = window.scrollY
 
-      if (!isSticky && distance <= threshold) {
+      if (!isSticky && elementOffsetFromTop <= threshold) {
         setIsSticky(true)
-        setStickyPosition(currentScrollY)
-      } else if (isSticky) {
-        // Buffer to the stickyPosition to unstick sooner
-        if (currentScrollY + scrollAwayBuffer < stickyPosition) {
-          setIsSticky(false)
-        }
+      } else if (
+        isSticky &&
+        currentScrollY + unstickThreshold < prevScrollY.current
+      ) {
+        setIsSticky(false)
       }
+
+      prevScrollY.current = currentScrollY
     }
 
-    const throttledCheckIfShouldStick = throttle(checkIfShouldStick, 25)
+    const throttledCheckIfShouldStick = throttle(checkIfShouldStick, 10)
     window.addEventListener('scroll', throttledCheckIfShouldStick)
 
     // Initial check
@@ -49,8 +47,9 @@ const useIsSticky = ({
     return () => {
       window.removeEventListener('scroll', throttledCheckIfShouldStick)
     }
-  }, [isSticky, stickyPosition, threshold, scrollAwayBuffer, elementRef])
+  }, [isSticky, threshold, unstickThreshold, elementRef])
 
-  return { isSticky, elementRef }
+  return { isSticky }
 }
+
 export default useIsSticky

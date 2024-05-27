@@ -27,7 +27,6 @@ import { formatAmount } from '@/utils'
 
 type TransactionHistoryTableRowProps = {
   transaction: UserRequest
-
   isActive: boolean
   handleCollapse: () => void
 }
@@ -85,25 +84,31 @@ const TransactionHistoryTableRow: React.FC<TransactionHistoryTableRowProps> = ({
             {transaction.requestType}
           </Box>
         </TableCell>
-        <TableCell align='right'>{transaction.trancheName}</TableCell>
+        <TableCell align='center'>{transaction.trancheName}</TableCell>
         <TableCell align='right'>
           <TokenAmount
             amount={formatAmount(transaction.requestedAmount || '0')}
+            amountVariant='body1'
             symbol='USDC'
+            symbolVariant='caption'
             sx={{ width: '100%', textAlign: 'right' }}
           />
         </TableCell>
         <TableCell align='right'>
           <TokenAmount
             amount={formatAmount(transaction.acceptedAmount || '0')}
+            amountVariant='body1'
             symbol='USDC'
+            symbolVariant='caption'
             sx={{ width: '100%', textAlign: 'right' }}
           />
         </TableCell>
         <TableCell align='right'>
           <TokenAmount
             amount={formatAmount(transaction.rejectedAmount || '0')}
+            amountVariant='body1'
             symbol='USDC'
+            symbolVariant='caption'
             sx={{ width: '100%', textAlign: 'right' }}
           />
         </TableCell>
@@ -142,6 +147,7 @@ const TransactionHistoryTableRow: React.FC<TransactionHistoryTableRowProps> = ({
                   <TransactionCollapsedContent
                     key={action.id}
                     actionHistory={action}
+                    requestTrancheName={transaction?.trancheName || ''}
                   />
                 ))}
               </TableBody>

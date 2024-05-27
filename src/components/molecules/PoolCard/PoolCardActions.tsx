@@ -7,6 +7,7 @@ import Link from 'next/link'
 
 import useModalState from '@/hooks/context/useModalState'
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
@@ -39,6 +40,8 @@ const PoolCardActions: React.FC<PoolCardActionsProps> = ({ pool, link }) => {
     )
   )
 
+  const currentDevice = useDeviceDetection()
+
   const handleOpen = () =>
     openModal({
       name: ModalsKeys.EARNINGS_CALCULATOR,
@@ -48,14 +51,17 @@ const PoolCardActions: React.FC<PoolCardActionsProps> = ({ pool, link }) => {
 
   return (
     <Box display='flex' justifyContent='center' mt={3} mb={2}>
-      <AuthenticateButton
-        variant='contained'
-        sx={{ pl: 2.25, pr: 2.25 }}
-        startIcon={<LoginIcon />}
-        onClick={handleOpen}
-      >
-        {t('general.deposit')}
-      </AuthenticateButton>
+      {currentDevice !== Device.MOBILE && (
+        <AuthenticateButton
+          variant='contained'
+          sx={{ pl: 2.25, pr: 2.25 }}
+          startIcon={<LoginIcon />}
+          onClick={handleOpen}
+        >
+          {t('general.deposit')}
+        </AuthenticateButton>
+      )}
+
       <Button
         sx={{ ml: 2 }}
         href={link}

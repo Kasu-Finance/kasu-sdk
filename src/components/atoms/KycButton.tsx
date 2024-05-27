@@ -5,6 +5,7 @@ import { ReactNode } from 'react'
 
 import useKycState from '@/hooks/context/useKycState'
 import useModalState from '@/hooks/context/useModalState'
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
@@ -23,6 +24,8 @@ const KycButton: React.FC<KycButtonProps> = (props) => {
   const { account } = useWeb3React()
   const { openModal } = useModalState()
   const { isVerifying, isAuthenticated, kycCompleted } = useKycState()
+  const currentDevice = useDeviceDetection()
+  const isMobile = currentDevice === Device.MOBILE
 
   const getButtonState = (): {
     children: ReactNode
@@ -60,6 +63,10 @@ const KycButton: React.FC<KycButtonProps> = (props) => {
   }
 
   const buttonState = getButtonState()
+
+  if (isMobile) {
+    return null
+  }
 
   return <Button {...{ ...props, ...buttonState }} />
 }

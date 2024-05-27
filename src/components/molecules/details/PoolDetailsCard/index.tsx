@@ -2,6 +2,7 @@ import { Box, Card, CardContent, CardHeader, Typography } from '@mui/material'
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useCallback, useMemo } from 'react'
 
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 
 import MetricDisplay from '@/components/molecules/details/PoolDetailsCard/MetricDisplay'
@@ -16,6 +17,8 @@ interface PoolDetailsCardProps {
 const PoolDetailsCard: React.FC<PoolDetailsCardProps> = ({ data }) => {
   const { t } = useTranslation()
   const { metrics } = useMemo(() => convertToPoolDetails(data), [data])
+  const currentDevice = useDeviceDetection()
+  const isMobile = currentDevice === Device.MOBILE
 
   const filterMetrics = useCallback(
     (ids: PoolDetailsMetricIds[]) => {
@@ -54,7 +57,12 @@ const PoolDetailsCard: React.FC<PoolDetailsCardProps> = ({ data }) => {
       />
 
       <CardContent sx={{ padding: 2 }}>
-        <Box display='flex' width='100%' className='light-colored-background'>
+        <Box
+          display='flex'
+          width='100%'
+          className='light-colored-background'
+          flexDirection={isMobile ? 'column' : 'row'}
+        >
           {firstArray.map((metric) => (
             <MetricDisplay
               metric={metric}
@@ -65,8 +73,17 @@ const PoolDetailsCard: React.FC<PoolDetailsCardProps> = ({ data }) => {
           ))}
         </Box>
 
-        <Box display='flex' mt={2} width='100%'>
-          <Box display='flex' flexDirection='column' width='50%'>
+        <Box
+          mt={2}
+          width='100%'
+          display='flex'
+          flexDirection={isMobile ? 'column' : 'row'}
+        >
+          <Box
+            display='flex'
+            flexDirection='column'
+            width={isMobile ? '100%' : '50%'}
+          >
             {secondArray.map((metric) => (
               <MetricDisplay
                 metric={metric}
@@ -79,7 +96,11 @@ const PoolDetailsCard: React.FC<PoolDetailsCardProps> = ({ data }) => {
             ))}
           </Box>
 
-          <Box display='flex' flexDirection='column' width='50%'>
+          <Box
+            display='flex'
+            flexDirection='column'
+            width={isMobile ? '100%' : '50%'}
+          >
             {thirdArray.map((metric) => (
               <MetricDisplay
                 metric={metric}

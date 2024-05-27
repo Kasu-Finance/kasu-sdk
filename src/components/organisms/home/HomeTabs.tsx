@@ -6,6 +6,7 @@ import {
 } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { memo, useCallback, useMemo, useState } from 'react'
 
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 
 import EmptyCardState from '@/components/atoms/EmptyCardState'
@@ -25,6 +26,22 @@ interface PoolCardProps {
 const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
   const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState(0)
+  const currentDevice = useDeviceDetection()
+  const isMobile = currentDevice === Device.MOBILE
+
+  const sortPoolsByTrancheLength = (pools: PoolOverview[]) => {
+    return pools?.sort((a, b) => a?.tranches?.length - b?.tranches?.length)
+  }
+
+  const sortedPools = useMemo(
+    () => sortPoolsByTrancheLength([...pools]),
+    [pools]
+  )
+
+  const activePools = useMemo(
+    () => sortedPools.filter((pool) => pool.isActive),
+    [sortedPools]
+  )
 
   const closedPools = useMemo(
     () => pools?.filter((pool) => !pool.isActive),
@@ -44,20 +61,6 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
     [poolDelegates]
   )
 
-  const poolsContent =
-    pools?.length > 0 ? (
-      pools.map((pool) => (
-        <PoolCard
-          key={pool.id}
-          pool={pool}
-          poolDelegate={getDelegateByPoolId(pool.id)}
-          link={`${Routes.lending.root.url}/${pool.id}`}
-        />
-      ))
-    ) : (
-      <EmptyCardState message='No pools available.' />
-    )
-
   return (
     <Box sx={{ width: '100%', mt: 0.5 }}>
       <Tabs value={activeTab} onChange={handleChange} indicatorColor='primary'>
@@ -71,17 +74,26 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
         />
       </Tabs>
       <TabPanel isActive={activeTab === 0} id='home-pools-active'>
-        <Box>
+        {activePools?.length ? (
           <Carousel
-            slidesPerPage={3}
+            slidesPerPage={isMobile ? 1 : 3}
             arrowButtonStyle={{
-              leftArrow: { left: '-40px' },
-              rightArrow: { right: '-40px' },
+              leftArrow: { left: isMobile ? '-20px' : '-35px' },
+              rightArrow: { right: isMobile ? '-25px' : '-40px' },
             }}
           >
-            {poolsContent}
+            {activePools.map((pool) => (
+              <PoolCard
+                key={pool.id}
+                pool={pool}
+                poolDelegate={getDelegateByPoolId(pool.id)}
+                link={`${Routes.lending.root.url}/${pool.id}`}
+              />
+            ))}
           </Carousel>
-        </Box>
+        ) : (
+          <EmptyCardState message='No pools available.' />
+        )}
       </TabPanel>
       <TabPanel isActive={activeTab === 1} id='home-pools-closed'>
         <Box mt={3}>

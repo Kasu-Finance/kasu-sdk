@@ -10,6 +10,7 @@ import { PoolRepayment } from '@solidant/kasu-sdk/src/services/DataService/types
 import React from 'react'
 
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 
 import Countdown from '@/components/atoms/Countdown'
@@ -31,6 +32,8 @@ interface RepaymentsCardProps {
 const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
   const { t } = useTranslation()
   const { nextEpochTime } = useNextEpochTime()
+  const currentDevice = useDeviceDetection()
+  const isMobile = currentDevice === Device.MOBILE
 
   const repaymentsData = adaptDataForRepayments(data)
   const endBorrowerFunds = data?.currentTotalEndBorrowers ?? 0
@@ -72,13 +75,14 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
 
           <Box
             display='flex'
+            flexDirection={isMobile ? 'column' : 'row'}
             width='100%'
             className='light-colored-background'
             mt={2}
           >
             <InfoColumn
               showDivider
-              containerSx={{ width: '50%', pr: 1 }}
+              containerSx={{ width: isMobile ? '100%' : '50%', pr: 1 }}
               title={t(
                 'repayments.sections.aggregated.metrics.totalBorrowers.label'
               )}
@@ -93,7 +97,10 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
             />
             <InfoColumn
               showDivider
-              containerSx={{ width: '50%', pl: 1 }}
+              containerSx={{
+                width: isMobile ? '100%' : '50%',
+                pl: isMobile ? 0 : 1,
+              }}
               title='Next Clearing Period Starts in'
               metric={
                 <Box px={2} py='6px'>

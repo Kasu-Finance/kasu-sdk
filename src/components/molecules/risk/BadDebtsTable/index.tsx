@@ -102,7 +102,7 @@ const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
                   value={[
                     <DataTypography
                       data={formatAmount(data.totalAmount || '0')}
-                      suffix='USDC'
+                      suffix=' USDC'
                       key={1}
                     />,
                     <DataTypography
@@ -115,7 +115,7 @@ const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
                   value={[
                     <DataTypography
                       data={formatAmount(data.monthlyAverageAmount || '0')}
-                      suffix='USDC'
+                      suffix=' USDC'
                       key={1}
                     />,
                     <DataTypography
@@ -128,7 +128,7 @@ const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
                   value={[
                     <DataTypography
                       data={formatAmount(data.currentStatusAmount || '0')}
-                      suffix='USDC'
+                      suffix=' USDC'
                       key={1}
                     />,
                     <DataTypography

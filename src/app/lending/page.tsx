@@ -7,7 +7,7 @@ import usePoolDelegate from '@/hooks/lending/usePoolDelegate'
 import usePoolOverview from '@/hooks/lending/usePoolOverview'
 
 import HomeStatsCard from '@/components/molecules/home/HomeStatsCard'
-import HomeSkeleton from '@/components/molecules/loaders/HomeSkeleton'
+import LendingSkeleton from '@/components/molecules/loaders/LendingSkeleton'
 import HomeTabs from '@/components/organisms/home/HomeTabs'
 
 const Lending = () => {
@@ -23,7 +23,7 @@ const Lending = () => {
     !poolDelegates ||
     !lendingTotals
   ) {
-    return <HomeSkeleton />
+    return <LendingSkeleton />
   }
 
   return (

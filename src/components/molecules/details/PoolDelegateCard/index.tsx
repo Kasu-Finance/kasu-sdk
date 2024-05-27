@@ -2,6 +2,7 @@ import { Box, Card, CardContent, CardHeader, Typography } from '@mui/material'
 import { PoolDelegateProfileAndHistory } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useCallback, useMemo } from 'react'
 
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 
 import MetricGroup from '@/components/molecules/details/PoolDelegateCard/MetricGroup'
@@ -15,6 +16,8 @@ interface PoolDelegateCardProps {
 
 const PoolDelegateCard: React.FC<PoolDelegateCardProps> = ({ data }) => {
   const { t } = useTranslation()
+  const currentDevice = useDeviceDetection()
+  const isMobile = currentDevice === Device.MOBILE
 
   const metrics = useMemo(
     () => (data ? convertToPoolDelegate(data) : []),
@@ -64,12 +67,18 @@ const PoolDelegateCard: React.FC<PoolDelegateCardProps> = ({ data }) => {
           <MetricGroup metrics={firstArray} type={MetricGroupType.First} />
         </Box>
 
-        <Box display='flex' justifyContent='space-between' width='100%' mt={2}>
-          <Box display='flex' width='50%'>
+        <Box
+          display='flex'
+          flexDirection={isMobile ? 'column' : 'row'}
+          justifyContent='space-between'
+          width='100%'
+          mt={2}
+        >
+          <Box display='flex' width={isMobile ? '100%' : '50%'}>
             <MetricGroup metrics={secondArray} type={MetricGroupType.Second} />
           </Box>
 
-          <Box display='flex' width='50%'>
+          <Box display='flex' width={isMobile ? '100%' : '50%'}>
             <MetricGroup metrics={thirdArray} type={MetricGroupType.Third} />
           </Box>
         </Box>

@@ -164,8 +164,18 @@ export const theme = createTheme({
       }
 
       main {
+        margin-top: 24px;
+        padding-bottom: 16px;
+        overflow-x: hidden;
         position: relative;
         z-index: 1;
+      }
+      
+
+      .hide-overflow-mobile {
+        @media (max-width: 600px) { 
+          overflow-x: hidden; 
+        }
       }
 
       .top-layout-bg {

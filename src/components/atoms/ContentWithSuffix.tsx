@@ -4,6 +4,7 @@ import { SxProps, Typography, TypographyProps } from '@mui/material'
 interface ContentWithSuffixProps {
   content: string | number
   suffix?: string
+  suffixVariant?: TypographyProps['variant']
   sx?: SxProps<Theme>
 }
 
@@ -11,6 +12,7 @@ const ContentWithSuffix: React.FC<ContentWithSuffixProps & TypographyProps> = ({
   content = '',
   suffix = '',
   sx,
+  suffixVariant = 'body1',
   ...typographyProps
 }) => {
   return (
@@ -21,7 +23,7 @@ const ContentWithSuffix: React.FC<ContentWithSuffixProps & TypographyProps> = ({
     >
       {content}{' '}
       {suffix && (
-        <Typography variant='body1' component='span'>
+        <Typography variant={suffixVariant} component='span'>
           {suffix}
         </Typography>
       )}

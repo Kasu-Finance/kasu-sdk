@@ -3,6 +3,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import { Box, Button, DialogActions, DialogContent } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
+import { useRouter } from 'next/navigation'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
@@ -20,12 +21,14 @@ import DepositModalStepper from '@/components/organisms/modals/DepositModal/Depo
 
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
+import { Routes } from '@/config/routes'
 import sdkConfig, { USDC } from '@/config/sdk'
 import { SupportedChainIds } from '@/connection/chains'
 import { networks } from '@/connection/networks'
 
 const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { t } = useTranslation()
+  const router = useRouter()
 
   const { chainId } = useWeb3React()
 
@@ -45,6 +48,11 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const requestDeposit = useRequestDeposit()
 
   const poolData = modal.depositModal.poolData
+
+  const onCloseModal = () => {
+    handleClose()
+    router.push(`${Routes.lending.root.url}/${poolData.lendingPoolId}`)
+  }
 
   return (
     <>
@@ -117,7 +125,7 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             <Button
               variant='contained'
               sx={{ width: 235 }}
-              onClick={handleClose}
+              onClick={onCloseModal}
             >
               LENDING POOL OVERVIEW
             </Button>
