@@ -1,6 +1,6 @@
 export interface LendingPoolSubgraph {
     id: string;
-    totalUserYieldAmount: string;
+    totalUserInterestAmount: string;
     totalLossAmount: string;
     name: string;
     balance: string;
@@ -11,25 +11,25 @@ export interface LendingPoolSubgraph {
         totalPendingDepositAmounts: string[];
         totalPendingDepositsAmount: string;
         totalPendingWithdrawalShares: string[];
-    }
+    };
     tranches: TrancheSubgraph[];
 }
 
 export interface LendingPoolSubgraphReturn {
-    lendingPools: LendingPoolSubgraph[]
+    lendingPools: LendingPoolSubgraph[];
 }
 
 export interface TrancheSubgraph {
     balance: string;
     id: string;
-    totalYieldAmount: string;
+    totalInterestAmount: string;
     orderId: string;
     lendingPool: {
         id: string;
-    }
+    };
 }
 export interface TrancheSubgraphResult {
-    lendingPoolTranches: TrancheSubgraph[]
+    lendingPoolTranches: TrancheSubgraph[];
 }
 
 export interface TrancheConfigurationSubgraph {
@@ -40,7 +40,7 @@ export interface TrancheConfigurationSubgraph {
         id: string;
         desiredRatio: string;
         orderId: string;
-    }[]
+    }[];
 }
 
 export interface LendingPoolConfigurationSubgraph {
@@ -57,11 +57,11 @@ export interface LendingPoolConfigurationSubgraph {
         id: string;
         desiredRatio: string;
         orderId: string;
-    }[]
+    }[];
 }
 
 export interface LendingPoolConfigurationSubgraphReturn {
-    lendingPoolConfigurations: LendingPoolConfigurationSubgraph[]
+    lendingPoolConfigurations: LendingPoolConfigurationSubgraph[];
 }
 
 export interface LendingPoolWithdrawalAndDepositSubgraph {
@@ -71,8 +71,8 @@ export interface LendingPoolWithdrawalAndDepositSubgraph {
             totalPendingDepositAmounts: string[];
             totalPendingDepositsAmount: string;
             totalPendingWithdrawalShares: string[];
-        }
+        };
         totalDepositsAccepted: string;
         totalWithdrawalsAccepted: string;
-    }[]
+    }[];
 }
