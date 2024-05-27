@@ -33,7 +33,7 @@ const useRiskManagement = (poolId: string) => {
   }
 
   return {
-    data,
+    data: filteredData,
     error: customError,
     isLoading: !filteredData && !customError,
     mutate,

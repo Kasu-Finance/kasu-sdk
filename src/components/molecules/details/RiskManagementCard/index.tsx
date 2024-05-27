@@ -1,5 +1,8 @@
 import { Box, Card, CardContent, CardHeader, Typography } from '@mui/material'
-import { RiskManagement } from '@solidant/kasu-sdk/src/services/DataService/types'
+import {
+  RiskManagement,
+  RiskManagementItem,
+} from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
@@ -21,6 +24,17 @@ const RiskManagementCard: React.FC<RiskManagementCardProps> = ({ data }) => {
     [data]
   )
 
+  const groupedItems = useMemo(() => {
+    return data.items.reduce<Record<string, RiskManagementItem[]>>(
+      (acc, item) => {
+        acc[item.group] = acc[item.group] || []
+        acc[item.group].push(item)
+        return acc
+      },
+      {}
+    )
+  }, [data.items])
+
   return (
     <Card>
       <CardHeader
@@ -33,33 +47,33 @@ const RiskManagementCard: React.FC<RiskManagementCardProps> = ({ data }) => {
 
       <CardContent sx={{ padding: 2 }}>
         <RiskStatus metrics={riskStatus.metrics} />
-
-        {/* Dynamic sections as items */}
-        <Box display='flex'>
-          {data.items.map((item, index) => (
-            <Box
-              key={item.id}
-              display='flex'
-              width='100%'
-              flexDirection='column'
-              sx={{
-                pr: index % 2 === 0 ? 2 : 0,
-              }}
-            >
+        <Box display='flex' width='100%'>
+          {/* Render groups and items within each group */}
+          {Object.entries(groupedItems).map(([group, items]) => (
+            <Box key={group} display='flex' flexDirection='column' width='50%'>
               <Typography variant='subtitle1' sx={{ mt: 3 }}>
-                {item.group}
+                {group}
               </Typography>
-
-              <InfoColumn
-                title={item.title}
-                toolTipInfo={item.tooltip}
-                showDivider
-                metric={
-                  <Typography variant='body2' sx={{ pl: 2, mt: 0.5 }}>
-                    {item.title}
-                  </Typography>
-                }
-              />
+              {items.map((item, index) => (
+                <Box
+                  key={item.id}
+                  display='flex'
+                  width='100%'
+                  flexDirection='column'
+                  sx={{ pr: index % 2 === 0 ? 2 : 0 }}
+                >
+                  <InfoColumn
+                    title={item.title}
+                    toolTipInfo={item.tooltip}
+                    showDivider
+                    metric={
+                      <Typography variant='body2' sx={{ pl: 2, mt: 0.5 }}>
+                        {item.description}
+                      </Typography>
+                    }
+                  />
+                </Box>
+              ))}
             </Box>
           ))}
         </Box>
