@@ -5,6 +5,7 @@ import {
 } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useMemo } from 'react'
 
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 
 import InfoColumn from '@/components/atoms/InfoColumn'
@@ -18,6 +19,8 @@ interface RiskManagementCardProps {
 
 const RiskManagementCard: React.FC<RiskManagementCardProps> = ({ data }) => {
   const { t } = useTranslation()
+  const currentDevice = useDeviceDetection()
+  const isMobile = currentDevice === Device.MOBILE
 
   const { riskStatus } = useMemo(
     () => convertToRiskStatus(data.riskPerformance),
@@ -47,20 +50,29 @@ const RiskManagementCard: React.FC<RiskManagementCardProps> = ({ data }) => {
 
       <CardContent sx={{ padding: 2 }}>
         <RiskStatus metrics={riskStatus.metrics} />
-        <Box display='flex' width='100%'>
+        <Box
+          display='flex'
+          flexDirection={isMobile ? 'column' : 'row'}
+          width='100%'
+        >
           {/* Render groups and items within each group */}
           {Object.entries(groupedItems).map(([group, items]) => (
-            <Box key={group} display='flex' flexDirection='column' width='50%'>
-              <Typography variant='subtitle1' sx={{ mt: 3 }}>
+            <Box
+              key={group}
+              display='flex'
+              flexDirection='column'
+              width={isMobile ? '100%' : '50%'}
+            >
+              <Typography variant='subtitle1' sx={{ mt: 3, padding: '4px' }}>
                 {group}
               </Typography>
-              {items.map((item, index) => (
+              {items.map((item) => (
                 <Box
                   key={item.id}
                   display='flex'
                   width='100%'
                   flexDirection='column'
-                  sx={{ pr: index % 2 === 0 ? 2 : 0 }}
+                  sx={{ pr: 2, py: 0.5 }}
                 >
                   <InfoColumn
                     title={item.title}
