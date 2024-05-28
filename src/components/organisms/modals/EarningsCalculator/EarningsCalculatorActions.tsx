@@ -24,10 +24,14 @@ const EarningsCalculatorActions: React.FC<EarningsCalculatorActionsProps> = ({
 
   const { modalStatus } = useModalStatusState()
 
-  const { amount } = useDepositModalState()
+  const { amount, amountInUSD } = useDepositModalState()
 
   const handleOpen = () => {
-    openModal({ name: ModalsKeys.DEPOSIT, poolData })
+    openModal({
+      name: ModalsKeys.DEPOSIT,
+      poolData,
+      initialAmount: amountInUSD ?? amount,
+    })
     closeModal(ModalsKeys.EARNINGS_CALCULATOR)
   }
 

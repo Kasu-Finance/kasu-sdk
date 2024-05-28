@@ -4,6 +4,7 @@ import { DialogChildProps } from '@/components/atoms/DialogWrapper'
 import DepositModal from '@/components/organisms/modals/DepositModal'
 
 import DepositModalState from '@/context/depositModal/depositModal.provider'
+import { ModalsKeys } from '@/context/modal/modal.types'
 import ModalStatusState from '@/context/modalStatus/modalStatus.provider'
 
 const DepositModalWrapper: React.FC<DialogChildProps> = ({ handleClose }) => {
@@ -11,7 +12,10 @@ const DepositModalWrapper: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   return (
     <DepositModalState
-      defaultTrancheId={modal.depositModal.poolData.tranches[0].trancheId}
+      defaultTrancheId={
+        modal[ModalsKeys.DEPOSIT].poolData.tranches[0].trancheId
+      }
+      initialAmount={modal[ModalsKeys.DEPOSIT].initialAmount}
     >
       <ModalStatusState>
         <DepositModal handleClose={handleClose} />
