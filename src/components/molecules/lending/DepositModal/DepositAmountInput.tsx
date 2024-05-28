@@ -1,6 +1,6 @@
 import LoginIcon from '@mui/icons-material/Login'
 import { Box, Typography } from '@mui/material'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
@@ -46,6 +46,11 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
       maxDeposit: tranche ? tranche.maximumDeposit : '0',
     }
   }, [poolData.tranches, trancheId])
+
+  useEffect(() => {
+    if (amount) validate(amount)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trancheId])
 
   const handleMax = () => {
     const maxPossible = toBigNumber(maxDeposit).lt(toBigNumber(balance))
