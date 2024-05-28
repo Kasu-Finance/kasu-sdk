@@ -4,6 +4,10 @@ export type DepositModalActions =
       payload: string
     }
   | {
+      type: 'SET_AMOUNT_IN_USD'
+      payload: string | undefined
+    }
+  | {
       type: 'SET_SELECTED_TRANCHE'
       payload: `0x${string}`
     }
@@ -21,10 +25,12 @@ export type DepositModalStateType = {
   simulatedDuration: number
   trancheId: `0x${string}`
   txHash: string | undefined
+  amountInUSD: string | undefined
 }
 
 export type DepositModalFunctions = {
   setAmount: (amount: string) => void
+  setAmountInUSD: (amountInUSD: string | undefined) => void
   setSelectedTranche: (selectedTranche: `0x${string}`) => void
   setTxHash: (txHash: string) => void
   setSimulatedDuration: (simulatedDuration: number) => void

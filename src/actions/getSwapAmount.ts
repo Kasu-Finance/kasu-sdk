@@ -2,7 +2,7 @@
 
 import { BigNumberish, ethers } from 'ethers'
 
-import { ONE_INCH_API } from '@/config/sdk'
+import { ONE_INCH_API } from '@/config/api.oneInch'
 
 type GetSwapAmountParams = {
   chainId: number
@@ -25,7 +25,7 @@ const getSwapAmount = async (
       })}`,
       {
         headers: {
-          Authorization: 'Bearer 9IpOzPAIFjurHCZMNWV07dPFEjhzfI1o',
+          Authorization: `Bearer ${process.env.ONE_INCE_API_KEY}`,
         },
       }
     )

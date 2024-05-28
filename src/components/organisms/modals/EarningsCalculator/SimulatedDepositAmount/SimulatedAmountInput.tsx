@@ -2,10 +2,9 @@ import LoginIcon from '@mui/icons-material/Login'
 import { Box, Skeleton, Typography } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
-import useDebounce from '@/hooks/useDebounce'
 import { SupportedTokenUserBalances } from '@/hooks/web3/useSupportedTokenUserBalances'
 
 import DepositAmountInput from '@/components/molecules/lending/DepositModal/DepositAmountInput'
@@ -14,7 +13,7 @@ import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCar
 import getSwapAmount from '@/actions/getSwapAmount'
 import { SupportedChainIds } from '@/connection/chains'
 import { SupportedTokenInfo, SupportedTokens } from '@/constants/tokens'
-import { formatAmount, toBigNumber } from '@/utils'
+import { formatAmount } from '@/utils'
 
 type SimulatedAmountInputProps = {
   usdcInfo: SupportedTokenInfo
@@ -29,54 +28,34 @@ const SimulatedAmountInput: React.FC<SimulatedAmountInputProps> = ({
 }) => {
   const { chainId } = useWeb3React()
 
-  const { amount } = useDepositModalState()
+  const { amount, amountInUSD, setAmountInUSD } = useDepositModalState()
 
-  const [amountInUSD, setAmountInUSD] = useState<string | undefined>(undefined)
+  const { balance, decimals, symbol } = supportedTokenUserBalance
 
-  const { balance, address, decimals, symbol } = supportedTokenUserBalance
-
-  const handleAmountChange = useCallback(
-    async (
-      chainId: SupportedChainIds,
-      fromToken: `0x${string}`,
-      toToken: `0x${string}`,
-      fromAmount: string
-    ) => {
+  const handleApplyConversion = useCallback(
+    async (newAmount: string, chainId?: SupportedChainIds) => {
       setAmountInUSD(undefined)
 
-      const amount = await getSwapAmount({
+      if (!chainId) return '0'
+
+      const usdAmount = await getSwapAmount({
         chainId: 1,
-        fromAmount,
-        fromToken,
-        toToken,
+        fromToken: supportedTokenUserBalance.address,
+        toToken: usdcInfo.address,
+        fromAmount: parseUnits(
+          newAmount,
+          supportedTokenUserBalance.decimals
+        ).toString(),
       })
 
-      setAmountInUSD(formatUnits(amount, usdcInfo.decimals))
+      const formattedAmount = formatUnits(usdAmount, usdcInfo.decimals)
+
+      setAmountInUSD(formattedAmount)
+
+      return formattedAmount
     },
-
-    [usdcInfo]
+    [usdcInfo, supportedTokenUserBalance, setAmountInUSD]
   )
-
-  const { debouncedFunction, isDebouncing } = useDebounce(
-    handleAmountChange,
-    1100
-  )
-
-  useEffect(() => {
-    if (
-      !chainId ||
-      !amount ||
-      supportedTokenUserBalance.symbol === SupportedTokens.USDC
-    )
-      return
-
-    debouncedFunction(
-      chainId,
-      supportedTokenUserBalance.address,
-      usdcInfo.address,
-      parseUnits(amount, supportedTokenUserBalance.decimals).toString()
-    )
-  }, [chainId, amount, supportedTokenUserBalance, usdcInfo, debouncedFunction])
 
   return (
     <DepositAmountInput
@@ -86,7 +65,7 @@ const SimulatedAmountInput: React.FC<SimulatedAmountInputProps> = ({
       endAdornment={
         supportedTokenUserBalance.symbol === SupportedTokens.USDC ? (
           ''
-        ) : isDebouncing || !amountInUSD ? (
+        ) : !amountInUSD && amount ? (
           <Skeleton variant='rounded' width={100} height={30} />
         ) : (
           <Typography
@@ -95,7 +74,7 @@ const SimulatedAmountInput: React.FC<SimulatedAmountInputProps> = ({
             component='span'
             color={(theme) => theme.palette.text.disabled}
           >
-            {usdcInfo.symbol} ~{formatAmount(amountInUSD)}
+            {usdcInfo.symbol} ~{formatAmount(amountInUSD || 0)}
           </Typography>
         )
       }
@@ -111,12 +90,12 @@ const SimulatedAmountInput: React.FC<SimulatedAmountInputProps> = ({
           </Typography>
         </Box>
       }
-      convertedUsdAmount={
-        supportedTokenUserBalance.symbol === SupportedTokens.USDC ||
-        !amountInUSD
+      applyConversion={
+        !chainId || supportedTokenUserBalance.symbol === SupportedTokens.USDC
           ? undefined
-          : toBigNumber(amountInUSD)
+          : (newAmount) => handleApplyConversion(newAmount, chainId)
       }
+      debounceTime={1200}
     />
   )
 }

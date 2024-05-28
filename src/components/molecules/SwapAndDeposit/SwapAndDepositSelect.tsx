@@ -14,7 +14,7 @@ import { Dispatch, SetStateAction, useMemo } from 'react'
 import useTranslation from '@/hooks/useTranslation'
 import { SupportedTokenUserBalances } from '@/hooks/web3/useSupportedTokenUserBalances'
 
-import SwapAndDepositMenuItem from '@/components/molecules/SwapAndDepositSelect/SwapAndDepositMenuItem'
+import SwapAndDepositMenuItem from '@/components/molecules/SwapAndDeposit/SwapAndDepositMenuItem'
 
 import OneInchLogo from '@/assets/logo/OneInchLogo'
 

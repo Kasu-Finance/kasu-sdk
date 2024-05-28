@@ -1,10 +1,10 @@
 import LoginIcon from '@mui/icons-material/Login'
 import { Box, Typography } from '@mui/material'
-import { BigNumber } from 'ethers'
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import { ReactNode, useCallback, useMemo, useState } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
+import useDebounce from '@/hooks/useDebounce'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
@@ -19,7 +19,8 @@ type DepositAmountInputProps = {
   disabled?: boolean
   startAdornment?: ReactNode
   endAdornment?: ReactNode
-  convertedUsdAmount?: BigNumber
+  applyConversion?: (newAmount: string) => Promise<string>
+  debounceTime?: number
 }
 
 const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
@@ -29,7 +30,8 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
   disabled,
   startAdornment = <LoginIcon />,
   endAdornment = 'USDC',
-  convertedUsdAmount,
+  debounceTime = 1000,
+  applyConversion,
 }) => {
   const { amount, trancheId, setAmount } = useDepositModalState()
   const { modalStatus, setModalStatus } = useModalStatusState()
@@ -59,9 +61,10 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
   }, [poolData.tranches, trancheId])
 
   const validate = useCallback(
-    (inputAmount: string, inputAmountInUSD?: BigNumber) => {
+    async (inputAmount: string) => {
+      let convertedAmount: string = '0'
+
       const inputBN = toBigNumber(inputAmount)
-      const inputInUsdBN = inputAmountInUSD
       const minDepositBN = toBigNumber(minDeposit)
       const maxDepositBN = toBigNumber(maxDeposit)
       const balanceBN = toBigNumber(balance)
@@ -71,7 +74,13 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
         return
       }
 
-      const inputUsdBN = inputInUsdBN ? inputInUsdBN : inputBN
+      if (applyConversion) {
+        convertedAmount = await applyConversion(inputAmount)
+      }
+
+      const inputUsdBN = applyConversion
+        ? toBigNumber(convertedAmount)
+        : inputBN
 
       if (inputUsdBN.lt(minDepositBN)) {
         setModalStatus({
@@ -99,24 +108,38 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
 
       setModalStatus({ type: inputAmount ? 'success' : 'default' })
     },
-    [setModalStatus, minDeposit, maxDeposit, balance]
+    [setModalStatus, minDeposit, maxDeposit, balance, applyConversion]
   )
 
-  const handleMax = useCallback(() => {
+  const { debouncedFunction: debouncedValidate } = useDebounce(
+    validate,
+    debounceTime
+  )
+
+  const handleMax = useCallback(async () => {
     const maxPossible = toBigNumber(balance).gt(toBigNumber(maxDeposit))
       ? maxDeposit
       : balance
 
     setAmount(maxPossible)
-    !convertedUsdAmount && validate(maxPossible)
-  }, [balance, maxDeposit, convertedUsdAmount, validate])
+
+    applyConversion ? debouncedValidate(maxPossible) : validate(maxPossible)
+  }, [
+    balance,
+    maxDeposit,
+    setAmount,
+    validate,
+    applyConversion,
+    debouncedValidate,
+  ])
 
   const handleAmountChange = useCallback(
     (value: string) => {
       setAmount(value)
-      !convertedUsdAmount && validate(value)
+
+      applyConversion ? debouncedValidate(value) : validate(value)
     },
-    [convertedUsdAmount, setAmount, validate]
+    [setAmount, validate, applyConversion, debouncedValidate]
   )
 
   const handleFocusState = useCallback(
@@ -126,18 +149,12 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
 
         setModalStatus({ type: 'focused' })
       } else {
-        !convertedUsdAmount && validate(amount)
+        applyConversion ? debouncedValidate(amount) : validate(amount)
         setFocused(false)
       }
     },
-    [setModalStatus, convertedUsdAmount, validate]
+    [amount, setModalStatus, validate, applyConversion, debouncedValidate]
   )
-
-  useEffect(() => {
-    if (!convertedUsdAmount || toBigNumber(amount).isZero()) return
-
-    validate(amount, convertedUsdAmount)
-  }, [amount, convertedUsdAmount, validate])
 
   return (
     <Box>

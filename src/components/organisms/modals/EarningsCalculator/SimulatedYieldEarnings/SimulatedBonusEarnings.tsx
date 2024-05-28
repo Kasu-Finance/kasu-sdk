@@ -24,7 +24,7 @@ const SimulatedBonusEarnings: React.FC<SimulatedBonusEarningsProps> = ({
 
   const { t } = useTranslation()
 
-  const { amount, simulatedDuration } = useDepositModalState()
+  const { amount, amountInUSD, simulatedDuration } = useDepositModalState()
 
   const { ksuPrice } = useKsuPrice()
 
@@ -51,10 +51,13 @@ const SimulatedBonusEarnings: React.FC<SimulatedBonusEarningsProps> = ({
   )
 
   useEffect(() => {
-    if (!amount) return
+    if (!amount) {
+      setBonusYieldEarnings([0])
+      return
+    }
 
-    debouncedFunction(parseFloat(amount), apyBonus, 365)
-  }, [amount, apyBonus, debouncedFunction])
+    debouncedFunction(parseFloat(amountInUSD ?? amount), apyBonus, 365)
+  }, [amount, amountInUSD, apyBonus, debouncedFunction])
 
   const bonusEarningsInKSU = useMemo(
     () =>
@@ -77,7 +80,7 @@ const SimulatedBonusEarnings: React.FC<SimulatedBonusEarningsProps> = ({
         'modals.earningsCalculator.simulatedYieldEarnings.metric-4-tooltip'
       )}
       value={[formatAmount(formatEther(bonusEarningsInKSU)), 'KSU']}
-      usdValue={formatAmount(bonusYieldEarnings[simulatedDuration])}
+      usdValue={formatAmount(bonusYieldEarnings[simulatedDuration] || 0)}
       showSkeleton={isDebouncing}
     />
   )

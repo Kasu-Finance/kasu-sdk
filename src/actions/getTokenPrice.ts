@@ -49,7 +49,7 @@ async function getTokenPrice(
     `${url}?${new URLSearchParams({ id: tokenIds, aux: 'is_active', convert_id: USDC_TOKEN_ID })}`,
     {
       headers: {
-        'X-CMC_PRO_API_KEY': '0d9ae267-9e42-408f-ad93-4b9b643bd981',
+        'X-CMC_PRO_API_KEY': process.env.CMC_API_KEY?.toString() || '',
       },
     }
   )

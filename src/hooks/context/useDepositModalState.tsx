@@ -21,6 +21,15 @@ const useDepositModalState = (): DepositModalTypes => {
     [dispatch]
   )
 
+  const setAmountInUSD = useCallback(
+    (amountInUSD: string | undefined) =>
+      dispatch({
+        type: 'SET_AMOUNT_IN_USD',
+        payload: amountInUSD,
+      }),
+    [dispatch]
+  )
+
   const setSelectedTranche = useCallback(
     (selectedTranche: `0x${string}`) =>
       dispatch({
@@ -44,6 +53,7 @@ const useDepositModalState = (): DepositModalTypes => {
   return {
     ...context,
     setAmount,
+    setAmountInUSD,
     setSelectedTranche,
     setTxHash,
     setSimulatedDuration,

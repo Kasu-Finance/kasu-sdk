@@ -10,7 +10,12 @@ import FallbackIcon from '@/assets/icons/tokens/FallbackIcon'
 import getTokenPrice from '@/actions/getTokenPrice'
 import { SupportedTokenInfo, SupportedTokens } from '@/constants/tokens'
 import { IERC20__factory } from '@/contracts/output'
-import { convertToUSD, isFulfilledPromise, toBigNumber } from '@/utils'
+import {
+  convertToUSD,
+  isFulfilledPromise,
+  TimeConversions,
+  toBigNumber,
+} from '@/utils'
 
 export type SupportedTokenUserBalances = SupportedTokenInfo & {
   balance: BigNumber
@@ -101,6 +106,10 @@ const useSupportedTokenUserBalances = () => {
         },
         {} as Record<SupportedTokens, SupportedTokenUserBalances>
       )
+    },
+    {
+      dedupingInterval: TimeConversions.SECONDS_PER_MINUTE * 1000,
+      refreshInterval: TimeConversions.SECONDS_PER_MINUTE * 1000,
     }
   )
 

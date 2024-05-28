@@ -34,7 +34,7 @@ const useDebounce = <Func extends SomeFunction>(func: Func, delayMs = 1000) => {
       clearTimeout(timer.current)
       timer.current = newTimer
     }) as Func,
-    []
+    [func]
   )
 
   return { debouncedFunction, isDebouncing }

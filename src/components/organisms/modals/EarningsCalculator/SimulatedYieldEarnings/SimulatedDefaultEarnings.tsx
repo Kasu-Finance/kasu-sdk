@@ -21,7 +21,8 @@ const SimulatedDefaultEarnings: React.FC<DefaultEarningsProps> = ({
 
   const { t } = useTranslation()
 
-  const { amount, trancheId, simulatedDuration } = useDepositModalState()
+  const { amount, amountInUSD, trancheId, simulatedDuration } =
+    useDepositModalState()
 
   const simulateEarnings = useSimulateYieldEarnings()
 
@@ -34,12 +35,6 @@ const SimulatedDefaultEarnings: React.FC<DefaultEarningsProps> = ({
     (amount: number, apy: number, duration: number) => {
       const yieldEarnings = simulateEarnings(amount, apy, duration)
 
-      //  const bonusYieldEarnings = simulateEarnings(
-      //    amount,
-      //    apyBonus / 100,
-      //    duration
-      //  )
-
       setYieldEarnings(yieldEarnings)
     },
     [simulateEarnings]
@@ -51,10 +46,17 @@ const SimulatedDefaultEarnings: React.FC<DefaultEarningsProps> = ({
   )
 
   useEffect(() => {
-    if (!amount || !selectedTranche?.apy) return
+    if (!amount || !selectedTranche?.apy) {
+      setYieldEarnings([0])
+      return
+    }
 
-    debouncedFunction(parseFloat(amount), parseFloat(selectedTranche.apy), 365)
-  }, [amount, selectedTranche?.apy, debouncedFunction])
+    debouncedFunction(
+      parseFloat(amountInUSD ?? amount),
+      parseFloat(selectedTranche.apy),
+      365
+    )
+  }, [amount, amountInUSD, selectedTranche?.apy, debouncedFunction])
 
   return (
     <BalanceItem
@@ -64,7 +66,7 @@ const SimulatedDefaultEarnings: React.FC<DefaultEarningsProps> = ({
       toolTipInfo={t(
         'modals.earningsCalculator.simulatedYieldEarnings.metric-2-tooltip'
       )}
-      value={[formatAmount(yieldEarnings[simulatedDuration]), 'USDC']}
+      value={[formatAmount(yieldEarnings[simulatedDuration] || 0), 'USDC']}
       showSkeleton={isDebouncing}
     />
   )

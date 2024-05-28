@@ -1,13 +1,15 @@
 import { Skeleton } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
+import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useTranslation from '@/hooks/useTranslation'
 import useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
-import SwapAndDepositSelect from '@/components/molecules/SwapAndDepositSelect'
+import SwapAndDepositInfo from '@/components/molecules/SwapAndDeposit/SwapAndDepositInfo'
+import SwapAndDepositSelect from '@/components/molecules/SwapAndDeposit/SwapAndDepositSelect'
 import SimulatedAmountInput from '@/components/organisms/modals/EarningsCalculator/SimulatedDepositAmount/SimulatedAmountInput'
 
 import { UsdcIcon } from '@/assets/icons'
@@ -24,7 +26,7 @@ const SimulatedSwapAndDeposit: React.FC<SimulatedSwapAndDepositProps> = ({
 }) => {
   const { t } = useTranslation()
 
-  const { modalStatus } = useModalStatusState()
+  const { modalStatus, setModalStatus } = useModalStatusState()
 
   const supportedTokens = {
     [SupportedTokens.ETH]: {
@@ -52,7 +54,16 @@ const SimulatedSwapAndDeposit: React.FC<SimulatedSwapAndDepositProps> = ({
 
   const { supportedTokenUserBalances } = useSupportedTokenUserBalances()
 
+  const { setAmount, setAmountInUSD } = useDepositModalState()
+
   const [selectedToken, setSelectedToken] = useState(SupportedTokens.USDC)
+
+  useEffect(() => {
+    // reset values
+    setAmount('')
+    setAmountInUSD(undefined)
+    setModalStatus({ type: 'default' })
+  }, [selectedToken, setAmount, setAmountInUSD, setModalStatus])
 
   return (
     <>
@@ -72,6 +83,11 @@ const SimulatedSwapAndDeposit: React.FC<SimulatedSwapAndDepositProps> = ({
         />
       ) : (
         <Skeleton variant='rounded' height={60} />
+      )}
+      {selectedToken !== SupportedTokens.USDC && supportedTokenUserBalances && (
+        <SwapAndDepositInfo
+          supportedTokenUserBalance={supportedTokenUserBalances[selectedToken]}
+        />
       )}
     </>
   )

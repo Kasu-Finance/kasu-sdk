@@ -12,6 +12,12 @@ const depositModalReducer = (
       return {
         ...state,
         amount: action.payload,
+        amountInUSD: undefined,
+      }
+    case 'SET_AMOUNT_IN_USD':
+      return {
+        ...state,
+        amountInUSD: action.payload,
       }
     case 'SET_SELECTED_TRANCHE':
       return {
