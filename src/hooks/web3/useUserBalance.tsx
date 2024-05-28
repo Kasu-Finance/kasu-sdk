@@ -1,5 +1,5 @@
 import { useWeb3React } from '@web3-react/core'
-import { BigNumber } from 'ethers'
+import { ethers } from 'ethers'
 import useSWR from 'swr'
 
 import useTokenDetails from '@/hooks/web3/useTokenDetails'
@@ -9,9 +9,9 @@ import { IERC20__factory } from '@/contracts/output'
 const useUserBalance = (tokenAddress: string | undefined) => {
   const { account, provider } = useWeb3React()
 
-  const { decimals, symbol } = useTokenDetails(tokenAddress)
+  const { decimals, symbol, error } = useTokenDetails(tokenAddress)
 
-  const { data: balance } = useSWR(
+  const { data: balance, error: balanceError } = useSWR(
     provider && account && tokenAddress
       ? [`userBalance-${tokenAddress}`, provider, account, tokenAddress]
       : null,
@@ -22,10 +22,10 @@ const useUserBalance = (tokenAddress: string | undefined) => {
 
       return balance
     },
-    { fallbackData: BigNumber.from(0) }
+    { fallbackData: ethers.constants.Zero }
   )
 
-  return { balance, decimals, symbol }
+  return { balance, decimals, symbol, error: error || balanceError }
 }
 
 export default useUserBalance

@@ -1,6 +1,7 @@
 import LoginIcon from '@mui/icons-material/Login'
 import { Box, Typography } from '@mui/material'
-import { ReactNode, useMemo, useState } from 'react'
+import { BigNumber } from 'ethers'
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
@@ -18,6 +19,7 @@ type DepositAmountInputProps = {
   disabled?: boolean
   startAdornment?: ReactNode
   endAdornment?: ReactNode
+  convertedUsdAmount?: BigNumber
 }
 
 const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
@@ -27,6 +29,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
   disabled,
   startAdornment = <LoginIcon />,
   endAdornment = 'USDC',
+  convertedUsdAmount,
 }) => {
   const { amount, trancheId, setAmount } = useDepositModalState()
   const { modalStatus, setModalStatus } = useModalStatusState()
@@ -55,68 +58,86 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
     }
   }, [poolData.tranches, trancheId])
 
-  const handleMax = () => {
+  const validate = useCallback(
+    (inputAmount: string, inputAmountInUSD?: BigNumber) => {
+      const inputBN = toBigNumber(inputAmount)
+      const inputInUsdBN = inputAmountInUSD
+      const minDepositBN = toBigNumber(minDeposit)
+      const maxDepositBN = toBigNumber(maxDeposit)
+      const balanceBN = toBigNumber(balance)
+
+      if (inputBN.isZero()) {
+        setModalStatus({ type: 'error', errorMessage: 'Invalid amount' })
+        return
+      }
+
+      const inputUsdBN = inputInUsdBN ? inputInUsdBN : inputBN
+
+      if (inputUsdBN.lt(minDepositBN)) {
+        setModalStatus({
+          type: 'error',
+          errorMessage: `The value entered is below the minimum of ${minDeposit} USDC`,
+        })
+        return
+      }
+
+      if (inputUsdBN.gt(maxDepositBN)) {
+        setModalStatus({
+          type: 'error',
+          errorMessage: `The value entered is above the maximum of ${maxDeposit} USDC`,
+        })
+        return
+      }
+
+      if (inputBN.gt(balanceBN)) {
+        setModalStatus({
+          type: 'error',
+          errorMessage: 'Insufficient balance',
+        })
+        return
+      }
+
+      setModalStatus({ type: inputAmount ? 'success' : 'default' })
+    },
+    [setModalStatus, minDeposit, maxDeposit, balance]
+  )
+
+  const handleMax = useCallback(() => {
     const maxPossible = toBigNumber(balance).gt(toBigNumber(maxDeposit))
       ? maxDeposit
       : balance
 
     setAmount(maxPossible)
-    validate(maxPossible)
-  }
+    !convertedUsdAmount && validate(maxPossible)
+  }, [balance, maxDeposit, convertedUsdAmount, validate])
 
-  const validate = (inputAmount: string) => {
-    const inputBN = toBigNumber(inputAmount)
-    const minDepositBN = toBigNumber(minDeposit)
-    const maxDepositBN = toBigNumber(maxDeposit)
-    const balanceBN = toBigNumber(balance)
+  const handleAmountChange = useCallback(
+    (value: string) => {
+      setAmount(value)
+      !convertedUsdAmount && validate(value)
+    },
+    [convertedUsdAmount, setAmount, validate]
+  )
 
-    if (inputBN.isZero()) {
-      setModalStatus({ type: 'error', errorMessage: 'Invalid amount' })
-      return
-    }
+  const handleFocusState = useCallback(
+    (state: boolean) => {
+      if (state) {
+        setFocused(true)
 
-    if (inputBN.lt(minDepositBN)) {
-      setModalStatus({
-        type: 'error',
-        errorMessage: `The value entered is below the minimum of ${minDeposit} USDC`,
-      })
-      return
-    }
+        setModalStatus({ type: 'focused' })
+      } else {
+        !convertedUsdAmount && validate(amount)
+        setFocused(false)
+      }
+    },
+    [setModalStatus, convertedUsdAmount, validate]
+  )
 
-    if (inputBN.gt(maxDepositBN)) {
-      setModalStatus({
-        type: 'error',
-        errorMessage: `The value entered is above the maximum of ${maxDeposit} USDC`,
-      })
-      return
-    }
+  useEffect(() => {
+    if (!convertedUsdAmount || toBigNumber(amount).isZero()) return
 
-    if (inputBN.gt(balanceBN)) {
-      setModalStatus({
-        type: 'error',
-        errorMessage: 'Insufficient balance',
-      })
-      return
-    }
-
-    setModalStatus({ type: inputAmount ? 'success' : 'default' })
-  }
-
-  const handleAmountChange = (value: string) => {
-    setAmount(value)
-    validate(value)
-  }
-
-  const handleFocusState = (state: boolean) => {
-    if (state) {
-      setFocused(true)
-
-      setModalStatus({ type: 'focused' })
-    } else {
-      validate(amount)
-      setFocused(false)
-    }
-  }
+    validate(amount, convertedUsdAmount)
+  }, [amount, convertedUsdAmount, validate])
 
   return (
     <Box>

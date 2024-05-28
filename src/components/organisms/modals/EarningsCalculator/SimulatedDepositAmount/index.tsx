@@ -1,17 +1,10 @@
-import LoginIcon from '@mui/icons-material/Login'
 import { Box, Typography } from '@mui/material'
-import { useState } from 'react'
 
-import useModalStatusState from '@/hooks/context/useModalStatusState'
 import { LoyaltyLevel } from '@/hooks/locking/useLoyaltyLevel'
 import useTranslation from '@/hooks/useTranslation'
 
-import ColoredBox from '@/components/atoms/ColoredBox'
-import DepositAmountInput from '@/components/molecules/lending/DepositModal/DepositAmountInput'
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
-import SwapAndDepositInput from '@/components/molecules/SwapAndDepositInput'
-
-import { SupportedTokens } from '@/constants/tokens'
+import SimulatedSwapAndDeposit from '@/components/organisms/modals/EarningsCalculator/SimulatedDepositAmount/SimulatedSwapAndDeposit'
 
 type SimulatedDepositAmountProps = {
   loyaltyLevel: LoyaltyLevel
@@ -23,14 +16,6 @@ const SimulatedDepositAmount: React.FC<SimulatedDepositAmountProps> = ({
   poolData,
 }) => {
   const { t } = useTranslation()
-
-  const { modalStatus } = useModalStatusState()
-
-  const [selectedToken, setSelectedToken] = useState({
-    balance: '0',
-    decimals: 0,
-    symbol: SupportedTokens.USDC,
-  })
 
   const isLoyal = loyaltyLevel === 1 || loyaltyLevel === 2
 
@@ -67,25 +52,7 @@ const SimulatedDepositAmount: React.FC<SimulatedDepositAmountProps> = ({
           </Box>
         </Box>
       </Box>
-      <ColoredBox sx={{ bgcolor: modalStatus.bgColor, mt: 2, mb: 1 }}>
-        <SwapAndDepositInput
-          title={t('modals.earningsCalculator.simulatedAmount.metric-1')}
-          setSelectedBalance={setSelectedToken}
-        />
-      </ColoredBox>
-      <DepositAmountInput
-        decimals={6}
-        balance={selectedToken.balance}
-        poolData={poolData}
-        disabled={!selectedToken.decimals} // if decimals is zero, disable
-        endAdornment=''
-        startAdornment={
-          <Box display='flex' alignItems='center'>
-            <LoginIcon sx={{ mr: 1 }} />
-            {selectedToken.symbol}
-          </Box>
-        }
-      />
+      <SimulatedSwapAndDeposit poolData={poolData} />
     </Box>
   )
 }

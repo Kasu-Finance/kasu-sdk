@@ -71,16 +71,16 @@ const ConnectWallet = () => {
 
   useEffect(() => {
     if (account && invalidChain && toast?.title !== 'Wrong Chain') {
-      setToast({
-        title: 'Wrong Chain',
-        message:
-          'An error has occured in the connection request - please switch your chain and retry, or review log for more details.',
-        action: {
-          label: 'Switch Chain',
-          onClick: async () => handleSwitchChain(),
-        },
-        type: 'warning',
-      })
+      // setToast({
+      //   title: 'Wrong Chain',
+      //   message:
+      //     'An error has occured in the connection request - please switch your chain and retry, or review log for more details.',
+      //   action: {
+      //     label: 'Switch Chain',
+      //     onClick: async () => handleSwitchChain(),
+      //   },
+      //   type: 'warning',
+      // })
     }
   }, [toast, account, invalidChain, setToast, handleSwitchChain])
 

@@ -7,9 +7,9 @@ import sdkConfig from '@/config/sdk'
 import { SupportedChainIds } from '@/connection/chains'
 
 export enum SupportedTokens {
-  KSU = 'KSU',
+  ETH = 'ETH',
   USDC = 'USDC',
-  USDT = 'rKSU',
+  USDT = 'USDT',
 }
 
 export type SupportedTokenInfo = {
@@ -22,9 +22,9 @@ export type SupportedTokenInfo = {
 
 export const TOKENS = {
   [SupportedChainIds.BASE_SEPOLIA]: {
-    [SupportedTokens.KSU]: {
-      symbol: SupportedTokens.KSU,
-      name: 'Kasu Token',
+    [SupportedTokens.USDT]: {
+      symbol: SupportedTokens.USDT,
+      name: 'Tether USD',
       address: sdkConfig.contracts.KSUToken as `0x${string}`,
       decimals: 18,
       icon: FallbackIcon(),
@@ -36,17 +36,17 @@ export const TOKENS = {
       decimals: 6,
       icon: UsdcIcon(),
     },
-    [SupportedTokens.USDT]: {
-      symbol: SupportedTokens.USDT,
-      name: 'rKasu Token',
+    [SupportedTokens.ETH]: {
+      symbol: SupportedTokens.ETH,
+      name: 'Ether',
       address: '0x2235E1389cC37bdC8086Faeb3abEa3d206fe8E3d',
       decimals: 18,
       icon: FallbackIcon(),
     },
   },
   [SupportedChainIds.BASE]: {
-    [SupportedTokens.KSU]: {
-      symbol: SupportedTokens.KSU,
+    [SupportedTokens.USDT]: {
+      symbol: SupportedTokens.ETH,
       name: 'Kasu Token',
       address: sdkConfig.contracts.KSUToken as `0x${string}`,
       decimals: 18,
@@ -59,8 +59,8 @@ export const TOKENS = {
       decimals: 6,
       icon: UsdcIcon(),
     },
-    [SupportedTokens.USDT]: {
-      symbol: SupportedTokens.USDT,
+    [SupportedTokens.ETH]: {
+      symbol: SupportedTokens.ETH,
       name: 'rKasu Token',
       address: '0x2235E1389cC37bdC8086Faeb3abEa3d206fe8E3d',
       decimals: 18,
