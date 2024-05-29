@@ -137,7 +137,7 @@ const LoyaltyCard: React.FC<{
                       ? '0.1%'
                       : currentLevel === 2
                         ? '0.2%'
-                        : 'None'
+                        : '0.00 %'
                   }
                 />
               }
