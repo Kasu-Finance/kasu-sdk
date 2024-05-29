@@ -9,12 +9,7 @@ const ToolTip: React.FC<ToolTipProps> = ({ children, ...rest }) => {
   const theme = useTheme()
 
   return (
-    <Tooltip
-      disableFocusListener
-      disableTouchListener
-      {...rest}
-      sx={{ border: '2px solid red' }}
-    >
+    <Tooltip disableFocusListener disableTouchListener {...rest}>
       {children ?? (
         <InfoIcon
           sx={{
