@@ -47,7 +47,8 @@
     "rowsPerPage": "Rows per page:",
     "notAvailable": "not available",
     "multiplier": "multiplier",
-    "reallocated": "Reallocated"
+    "reallocated": "Reallocated",
+    "ksu": "KSU"
   },
   "time": {
     "days": "days",
