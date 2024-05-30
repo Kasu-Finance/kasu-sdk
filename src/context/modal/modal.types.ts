@@ -41,6 +41,7 @@ export type Modals = {
   [ModalsKeys.DEPOSIT]: ModalData<{
     poolData: PoolData
     initialAmount?: string
+    initialTranche?: `0x${string}`
   }>
   [ModalsKeys.KYC]: ModalData<{ callback: () => void }>
   [ModalsKeys.CANCEL_DEPOSIT]: ModalData<{ transactionHistory: UserRequest }>

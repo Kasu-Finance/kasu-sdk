@@ -1,10 +1,15 @@
 import { Button, Typography } from '@mui/material'
 
 import useModalState from '@/hooks/context/useModalState'
+import useTranslation from '@/hooks/useTranslation'
+
+import OrderedList from '@/components/atoms/OrderedList'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 const DepositDescription = () => {
+  const { t } = useTranslation()
+
   const { openModal } = useModalState()
 
   const handleOpen = () => openModal({ name: ModalsKeys.LOYALTY_LEVELS })
@@ -12,7 +17,7 @@ const DepositDescription = () => {
   return (
     <>
       <Typography variant='body2' component='p' textAlign='center'>
-        By depositing funds to this Lending Pool, you accept the following{' '}
+        {t('modals.lock.deposit.description.metric-1')}{' '}
         <Button
           onClick={handleOpen}
           variant='text'
@@ -26,18 +31,34 @@ const DepositDescription = () => {
             textTransform: 'inherit',
           }}
         >
-          Terms and Conditions.
+          {t('modals.lock.deposit.description.metric-2')}
         </Button>
       </Typography>
-      <Typography variant='subtitle2' component='p' textAlign='center'>
-        How do I secure my spot in this tranche?
+      <Typography variant='body2' component='p' fontWeight={700}>
+        {t('modals.lock.deposit.description.metric-3')}
       </Typography>
-      <Typography variant='caption' component='p' letterSpacing='0.4px'>
-        Access to higher APY tranches is based on Loyalty Level. In the event of
-        oversubscription, applicants will be automatically reassigned to the
-        next available tranche. This process repeats for each tranche. Higher
-        Loyalty Levels increase the likelihood of allocation to the desired
-        tranche, but do not guarantee it.
+      <OrderedList sx={{ paddingLeft: 1.5, fontWeight: 700 }}>
+        <li>
+          <Typography variant='body2' component='p' fontWeight='inherit'>
+            {t('modals.lock.deposit.description.metric-4')}
+          </Typography>
+        </li>
+        <li>
+          <Typography variant='body2' component='p' fontWeight='inherit'>
+            {t('modals.lock.deposit.description.metric-5')}
+          </Typography>
+        </li>
+      </OrderedList>
+      <Typography variant='subtitle2' component='p' textAlign='center'>
+        {t('modals.lock.deposit.description.metric-6')}
+      </Typography>
+      <Typography
+        variant='caption'
+        component='p'
+        letterSpacing='0.4px'
+        color={(theme) => theme.palette.text.secondary}
+      >
+        {t('modals.lock.deposit.description.metric-7')}
       </Typography>
     </>
   )

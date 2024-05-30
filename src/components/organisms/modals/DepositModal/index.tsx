@@ -57,7 +57,7 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   return (
     <>
       <DialogHeader
-        title='Deposit Funds'
+        title={t('modals.lending.title')}
         showClose={!txHash}
         onClose={handleClose}
       >
@@ -73,7 +73,7 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             target='_blank'
             size='small'
           >
-            VIEW TX
+            {t('lending.withdraw.button.viewTx')}
           </Button>
         )}
       </DialogHeader>
@@ -127,7 +127,7 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               sx={{ width: 235 }}
               onClick={onCloseModal}
             >
-              LENDING POOL OVERVIEW
+              {t('modals.lending.buttons.overview')}
             </Button>
           )}
         </DialogActions>

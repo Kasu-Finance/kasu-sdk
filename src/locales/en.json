@@ -51,7 +51,10 @@
     "notAvailable": "not available",
     "multiplier": "multiplier",
     "requestDeposit": "Request Deposit",
-    "reallocated": "Reallocated"
+    "reallocated": "Reallocated",
+    "request": "Request",
+    "approved": "Approved",
+    "confirmed": "Confirmed"
   },
   "time": {
     "days": "days",
@@ -212,15 +215,19 @@
         "description-6": "in the next Epoch"
       }
     },
+    "lending": {
+      "title": "Lending Request",
+      "buttons": {
+        "overview": "Lending Strategy Overview"
+      }
+    },
     "lock": {
       "buttons": {
         "reviewLock": "Review Lock"
       },
-      "overview": {
-        "title": "Overview",
-        "metric-1-tooltip": "KSU balance currently held in your Web3 wallet, including the current estimated USDC equivalent.",
-        "metric-2-tooltip": "Total USDC equivalent value of all tokens in your Web3 wallet that can be used to purchase KSU tokens.",
-        "metric-3-tooltip": "Your balance of KSU currently locked."
+      "swapAndDeposit": {
+        "title": "Lend with any token.",
+        "input-label": "Lending Amount"
       },
       "deposit": {
         "amount-title": "KSU Locking",
@@ -228,8 +235,16 @@
         "amount-metric-1-tooltip": "The minimum amount and duration of KSU you must lock to ensure you accumulate enough rKSU (per the below slider) relative to your total USDC deposits (including pending deposits) across all Lending Pools to achieve Loyalty Level 1. For example, if the value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Pools is 1% or greater, but less than 5%, you will achieve Loyalty Level 1, entitling you to the following privileges:",
         "amount-metric-2": "Minimum KSU Lock Amount for Loyalty 2",
         "amount-metric-2-tooltip": "The minimum amount and duration of KSU you must lock to ensure you accumulate enough rKSU (per the below slider) relative to your total USDC deposits (including pending deposits) across all Lending Pools to achieve Loyalty Level 2. For example, if the value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Pools is 5% or greater, you will achieve Loyalty Level 2, entitling you to the following privileges:",
-        "input-label": "Lock Amount",
-        "metric": "Locking Amount at Current Exchange Rate"
+        "metric": "Locking Amount at Current Exchange Rate",
+        "description": {
+          "metric-1": "By depositing funds to this Lending Pool, you accept the following",
+          "metric-2": "Terms and Conditions.",
+          "metric-3": "NOTE: YOU ACCEPT THAT:​",
+          "metric-4": "IF THIS TRANCHE IS OVERSUBSCRIBED, YOU WILL BE AUTOMATICALLY REALLOCATED TO THE NEXT AVAILABLE TRANCHE WITH A LOWER APY WITHOUT THE OPPORTUNITY TO OPT OUT. YOU WILL THEN BE SUBJECT TO QUEUING SYSTEM SHOULD YOU WISH TO WITHDRAW YOUR FUNDS.",
+          "metric-5": "YOU WILL BE SUBJECT TO A QUEUING SYSTEM SHOULD YOU WISH TO WITHDRAW YOUR FUNDS FROM ANY TRANCHE. YOU CAN ACHIEVE WITHDRAWAL PRIORITY IN THE QUEUE BY LOCKING KSU TO ESTABLISH /INCREASE YOUR LOYALTY LEVEL​.",
+          "metric-6": "How do I secure my spot in this tranche?",
+          "metric-7": "Access to higher APY tranches is based on Loyalty Level. In the event of oversubscription, applicants will be automatically reassigned to the next available tranche. This process repeats for each tranche. Higher Loyalty Levels increase the likelihood of allocation to the desired tranche, but do not guarantee it."
+        }
       },
       "duration": {
         "title": "Locking Duration",
@@ -259,6 +274,10 @@
         "description-1": "You have successfully queued",
         "description-2": "to be locked in the next Epoch.",
         "lockingOverview": "Locking Overview"
+      },
+      "actions": {
+        "action-1": "INCREASE/ESTABLISH LOYALTY LEVEL",
+        "action-2": "REVIEW LENDING REQUEST"
       }
     },
     "earningsCalculator": {

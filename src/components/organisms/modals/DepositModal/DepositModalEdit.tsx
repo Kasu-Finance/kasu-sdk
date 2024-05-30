@@ -1,30 +1,24 @@
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import VerifiedIcon from '@mui/icons-material/Verified'
 import { Box, Button } from '@mui/material'
-import { formatUnits } from 'ethers/lib/utils'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
-import useUserBalance from '@/hooks/web3/useUserBalance'
+import useTranslation from '@/hooks/useTranslation'
 
-import DepositAmountInput from '@/components/molecules/lending/DepositModal/DepositAmountInput'
-import DepositModalOverview from '@/components/molecules/lending/DepositModal/DepositModalOverview'
 import DepositTrancheSelect from '@/components/molecules/lending/DepositModal/DepositTrancheSelect'
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 import DepositDescription from '@/components/organisms/modals/DepositModal/DepositDescription'
+import SwapAndDeposit from '@/components/organisms/modals/DepositModal/SwapAndDeposit'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
-
-import { USDC } from '@/config/sdk'
 
 type DepositModalEditProps = {
   poolData: PoolData
 }
 
 const DepositModalEdit: React.FC<DepositModalEditProps> = ({ poolData }) => {
-  const { balance, decimals } = useUserBalance(USDC)
+  const { t } = useTranslation()
 
   const { openModal } = useModalState()
 
@@ -34,39 +28,33 @@ const DepositModalEdit: React.FC<DepositModalEditProps> = ({ poolData }) => {
 
   const handleOpen = () => openModal({ name: ModalsKeys.LOYALTY_LEVELS })
 
-  const userBalance = formatUnits(balance || '0', decimals)
-
   return (
     <Box display='grid' gap={2} mt={2}>
-      <DepositModalOverview poolData={poolData} userBalance={userBalance} />
-      <DepositAmountInput
-        decimals={decimals}
+      <SwapAndDeposit
+        title={t('modals.lock.swapAndDeposit.title')}
         poolData={poolData}
-        balance={userBalance}
       />
       <DepositTrancheSelect poolData={poolData} />
       <DepositDescription />
-      <Box display='flex' justifyContent='center' gap={2}>
+      <Box display='flex' justifyContent='center' gap={1}>
         <Button
           variant='outlined'
-          startIcon={<VerifiedIcon />}
-          sx={{ fontSize: 15, width: 342, letterSpacing: '0.46px' }}
+          sx={{ fontSize: 15, width: 310, letterSpacing: '0.46px' }}
           onClick={handleOpen}
         >
-          INCREASE/ESTABLISH LOYALTY LEVEL
+          {t('modals.lock.actions.action-1')}
         </Button>
         <Button
           variant='contained'
-          endIcon={<ChevronRightIcon />}
           sx={{
             fontSize: 15,
-            width: 194,
+            width: 225,
             letterSpacing: '0.46px',
           }}
           disabled={Boolean(!amount || modalStatus.type === 'error')}
           onClick={() => setModalStatusAction(ModalStatusAction.REVIEWING)}
         >
-          REVIEW DEPOSIT
+          {t('modals.lock.actions.action-2')}
         </Button>
       </Box>
     </Box>

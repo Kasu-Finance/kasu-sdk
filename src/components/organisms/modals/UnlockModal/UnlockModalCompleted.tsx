@@ -8,7 +8,7 @@ import useLockModalState from '@/hooks/context/useLockModalState'
 import useRatio from '@/hooks/useRatio'
 import useTranslation from '@/hooks/useTranslation'
 
-import List from '@/components/atoms/List'
+import UnorderedList from '@/components/atoms/UnorderedList'
 
 import { formatAccount, formatAmount, toBigNumber } from '@/utils'
 
@@ -36,7 +36,7 @@ const UnlockModalCompleted: React.FC<UnlockModalCompletedProps> = ({
           <Typography variant='body1' component='p'>
             {t('modals.unlock.completed.description-1')}
           </Typography>
-          <List>
+          <UnorderedList>
             <li>
               <Typography variant='body1' component='p'>
                 <Typography variant='h6' component='span'>
@@ -73,7 +73,7 @@ const UnlockModalCompleted: React.FC<UnlockModalCompletedProps> = ({
                 {t('modals.unlock.completed.description-6')}
               </Typography>
             </li>
-          </List>
+          </UnorderedList>
         </>
       ) : (
         <Typography variant='body1' component='p' display='block' px={1}>

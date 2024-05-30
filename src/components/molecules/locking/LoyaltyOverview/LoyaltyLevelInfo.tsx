@@ -3,7 +3,7 @@ import { Box, SxProps, Theme, Typography, TypographyProps } from '@mui/material'
 import React from 'react'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
-import List from '@/components/atoms/List'
+import UnorderedList from '@/components/atoms/UnorderedList'
 
 type LoyaltyLevelInfoProps = {
   title: string
@@ -73,7 +73,7 @@ const LoyaltyLevelInfo: React.FC<LoyaltyLevelInfoProps> = ({
         </Typography>
       )}
       {list && (
-        <List sx={listProps}>
+        <UnorderedList sx={listProps}>
           {list.map((label) => (
             <li key={label}>
               <Typography variant='body2' component='p' {...listLabelProps}>
@@ -81,7 +81,7 @@ const LoyaltyLevelInfo: React.FC<LoyaltyLevelInfoProps> = ({
               </Typography>
             </li>
           ))}
-        </List>
+        </UnorderedList>
       )}
     </ColoredBox>
   )

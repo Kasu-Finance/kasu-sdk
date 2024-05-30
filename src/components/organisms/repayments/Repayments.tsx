@@ -9,7 +9,7 @@ import CardSkeleton from '@/components/molecules/loaders/CardSkeleton'
 import RepaymentsCard from '@/components/molecules/repayments/RepaymentsCard'
 
 const Repayments: React.FC = () => {
-  const { slug } = useParams()
+  const { slug } = useParams() as { slug: string }
   const poolId = slug as string
 
   const { data, isLoading } = usePoolRepayments(poolId)

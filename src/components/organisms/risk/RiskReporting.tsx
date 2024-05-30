@@ -13,8 +13,8 @@ import PoolCreditTable from '@/components/molecules/risk/PoolCreditTable'
 import ReportingTable from '@/components/molecules/risk/ReportingTable'
 
 const RiskReporting: React.FC = () => {
-  const { slug } = useParams()
-  const poolId = slug as string
+  const { slug } = useParams() as { slug: string }
+  const poolId = slug
 
   const doubtfulHook = useDoubtfulDebts(poolId)
   const poolCreditHook = usePoolCreditMetric(poolId)

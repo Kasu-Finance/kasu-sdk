@@ -16,7 +16,7 @@ import CardSkeleton from '@/components/molecules/loaders/CardSkeleton'
 
 const PoolDetails: React.FC = () => {
   const { t } = useTranslation()
-  const { slug } = useParams()
+  const { slug } = useParams() as { slug: string }
   const poolId = slug as string
 
   const delegateHook = usePoolDelegate(poolId)

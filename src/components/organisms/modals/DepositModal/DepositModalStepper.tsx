@@ -1,10 +1,11 @@
+import { useMemo } from 'react'
+
 import useModalStatusState from '@/hooks/context/useModalStatusState'
+import useTranslation from '@/hooks/useTranslation'
 
 import HorizontalStepper from '@/components/molecules/HorizontalStepper'
 
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
-
-const STEPS = ['Deposit', 'Approval', 'Confirmation']
 
 const getActiveStep = (modalStatusAction: ModalStatusAction) => {
   switch (modalStatusAction) {
@@ -18,7 +19,14 @@ const getActiveStep = (modalStatusAction: ModalStatusAction) => {
 }
 
 const DepositModalStepper = () => {
+  const { t } = useTranslation()
+
   const { modalStatusAction } = useModalStatusState()
+
+  const STEPS = useMemo(
+    () => [t('general.request'), t('general.approved'), t('general.confirmed')],
+    [t]
+  )
 
   return (
     <HorizontalStepper

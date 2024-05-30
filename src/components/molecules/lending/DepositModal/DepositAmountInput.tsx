@@ -5,6 +5,7 @@ import { ReactNode, useCallback, useMemo, useState } from 'react'
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useDebounce from '@/hooks/useDebounce'
+import useTranslation from '@/hooks/useTranslation'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
@@ -33,6 +34,8 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
   debounceTime = 1000,
   applyConversion,
 }) => {
+  const { t } = useTranslation()
+
   const { amount, trancheId, setAmount } = useDepositModalState()
   const { modalStatus, setModalStatus } = useModalStatusState()
 
@@ -160,7 +163,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
     <Box>
       <NumericalInput
         amount={amount}
-        label='Deposit Amount'
+        label={t('modals.lock.swapAndDeposit.input-label')}
         setAmount={handleAmountChange}
         handleMax={handleMax}
         decimals={decimals}

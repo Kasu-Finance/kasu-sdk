@@ -34,6 +34,13 @@ const depositModalReducer = (
         ...state,
         simulatedDuration: action.payload,
       }
+    case 'SET_SELECTED_TOKEN':
+      return {
+        ...state,
+        selectedToken: action.payload,
+        amount: '',
+        amountInUSD: undefined,
+      }
     default:
       return state
   }

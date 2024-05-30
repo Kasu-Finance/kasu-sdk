@@ -12,10 +12,13 @@ import ToolTip from '@/components/atoms/ToolTip'
 import OneInchLogo from '@/assets/logo/OneInchLogo'
 
 import { ONE_INCH_SLIPPAGE } from '@/config/api.oneInch'
+import { SupportedTokens } from '@/constants/tokens'
 import { formatAmount, formatPercentage } from '@/utils'
 
 type SwapAndDepositInfoProps = {
-  supportedTokenUserBalance: SupportedTokenUserBalances
+  supportedTokenUserBalance:
+    | Record<SupportedTokens, SupportedTokenUserBalances>
+    | undefined
 }
 
 const SwapAndDepositInfo: React.FC<SwapAndDepositInfoProps> = ({
@@ -23,7 +26,12 @@ const SwapAndDepositInfo: React.FC<SwapAndDepositInfoProps> = ({
 }) => {
   const { modalStatus } = useModalStatusState()
 
-  const { amount, amountInUSD } = useDepositModalState()
+  const { amount, amountInUSD, selectedToken } = useDepositModalState()
+
+  if (!supportedTokenUserBalance || selectedToken === SupportedTokens.USDC)
+    return null
+
+  const tokenBalance = supportedTokenUserBalance[selectedToken]
 
   return (
     <ColoredBox sx={{ bgcolor: modalStatus.bgColor, mt: 2, p: 2 }}>
@@ -57,7 +65,7 @@ const SwapAndDepositInfo: React.FC<SwapAndDepositInfoProps> = ({
             component='span'
             color={(theme) => theme.palette.text.primary}
           >
-            {formatAmount(amount)} {supportedTokenUserBalance.symbol}
+            {formatAmount(amount)} {tokenBalance.symbol}
           </Typography>{' '}
           for{' '}
           {!amountInUSD && amount ? (

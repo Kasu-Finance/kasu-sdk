@@ -19,7 +19,7 @@ import TransactionHistoryState from '@/context/transactionHistory/transactionHis
 import { getObjectById } from '@/utils'
 
 const PoolOverview = () => {
-  const { slug } = useParams()
+  const { slug } = useParams() as { slug: string }
   const poolId = slug as string
   const overviewPools = usePoolOverview(poolId)
   const delegatePool = usePoolDelegate(poolId)

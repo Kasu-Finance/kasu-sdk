@@ -3,6 +3,8 @@ import { useCallback, useContext } from 'react'
 import depositModalContext from '@/context/depositModal/depositModal.context'
 import { DepositModalTypes } from '@/context/depositModal/depositModal.types'
 
+import { SupportedTokens } from '@/constants/tokens'
+
 const useDepositModalState = (): DepositModalTypes => {
   const context = useContext(depositModalContext)
 
@@ -50,6 +52,12 @@ const useDepositModalState = (): DepositModalTypes => {
     [dispatch]
   )
 
+  const setSelectedToken = useCallback(
+    (selectedToken: SupportedTokens) =>
+      dispatch({ type: 'SET_SELECTED_TOKEN', payload: selectedToken }),
+    [dispatch]
+  )
+
   return {
     ...context,
     setAmount,
@@ -57,6 +65,7 @@ const useDepositModalState = (): DepositModalTypes => {
     setSelectedTranche,
     setTxHash,
     setSimulatedDuration,
+    setSelectedToken,
   }
 }
 

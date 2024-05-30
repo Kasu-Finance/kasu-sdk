@@ -14,7 +14,7 @@ const Navigation = () => {
   const pathName = usePathname()
 
   const isActiveLink = (href: string) =>
-    pathName === href || pathName.includes(href)
+    Boolean(pathName && (pathName === href || pathName.includes(href)))
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen)

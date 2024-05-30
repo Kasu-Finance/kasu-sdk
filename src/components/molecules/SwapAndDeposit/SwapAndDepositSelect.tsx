@@ -9,8 +9,10 @@ import {
   Skeleton,
   Typography,
 } from '@mui/material'
-import { Dispatch, SetStateAction, useMemo } from 'react'
+import { useMemo } from 'react'
 
+import useDepositModalState from '@/hooks/context/useDepositModalState'
+import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useTranslation from '@/hooks/useTranslation'
 import { SupportedTokenUserBalances } from '@/hooks/web3/useSupportedTokenUserBalances'
 
@@ -25,17 +27,17 @@ type SwapAndDepositInputProps = {
   supportedTokenUserBalances:
     | Record<SupportedTokens, SupportedTokenUserBalances>
     | undefined
-  selectedToken: SupportedTokens
-  setSelectedToken: Dispatch<SetStateAction<SupportedTokens>>
 }
 
 const SwapAndDepositSelect: React.FC<SwapAndDepositInputProps> = ({
   title,
   supportedTokenUserBalances,
-  selectedToken,
-  setSelectedToken,
 }) => {
   const { t } = useTranslation()
+
+  const { selectedToken, setSelectedToken } = useDepositModalState()
+
+  const { setModalStatus } = useModalStatusState()
 
   const showOneInch = useMemo(
     () => selectedToken !== SupportedTokens.USDC,
@@ -45,6 +47,9 @@ const SwapAndDepositSelect: React.FC<SwapAndDepositInputProps> = ({
   const handleChange = (e: SelectChangeEvent) => {
     const symbol = e.target.value as SupportedTokens
     setSelectedToken(symbol)
+
+    // reset state
+    setModalStatus({ type: 'default' })
   }
 
   return (

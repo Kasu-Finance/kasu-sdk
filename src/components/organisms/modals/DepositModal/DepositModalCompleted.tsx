@@ -3,7 +3,7 @@ import { Box, Button, Typography } from '@mui/material'
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
 
-import List from '@/components/atoms/List'
+import UnorderedList from '@/components/atoms/UnorderedList'
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
@@ -29,7 +29,7 @@ const DepositModalCompleted: React.FC<DepositModalCompletedProps> = ({
         <Typography variant='subtitle1' component='p'>
           You have successfully queued:
         </Typography>
-        <List>
+        <UnorderedList>
           <li>
             <Typography variant='subtitle1' component='p'>
               {formatAmount(amount || '0')} USDC •{' '}
@@ -52,7 +52,7 @@ const DepositModalCompleted: React.FC<DepositModalCompletedProps> = ({
               </Typography>
             </li>
           )}
-        </List>
+        </UnorderedList>
       </Box>
       <Typography
         display='block'
