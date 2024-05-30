@@ -57,7 +57,7 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   return (
     <>
       <DialogHeader
-        title='Deposit Funds'
+        title='Lend Funds'
         showClose={!txHash}
         onClose={handleClose}
       >
