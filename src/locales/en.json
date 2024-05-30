@@ -517,7 +517,7 @@
         "tooltip": "Total USDC equivalent amount deposited into this Lending Pools.​"
       },
       "management": {
-        "label": "Loan Funds under Management",
+        "label": "Total Active Lending",
         "tooltip": "Total USDC equivalent amount within this Lending Pool that is deployed into loans to end borrowers.​"
       },
       "yield": {
