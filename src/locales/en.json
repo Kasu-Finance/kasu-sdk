@@ -379,7 +379,7 @@
     "withdraw": {
       "title": "Withdraw Funds",
       "subtitle": "Total Withdrawal Request Amount",
-      "fromPool": "From Pool",
+      "fromPool": "From Lending Strategy",
       "toWallet": "To Wallet",
       "epochEnds": "Epoch ends in",
       "withdrawalSchedule": "Withdrawal will be scheduled for the end of the current Epoch. The final Withdrawal Amount may vary due to Pool conditions.",
