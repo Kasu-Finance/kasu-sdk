@@ -44,7 +44,7 @@ const PoolCardActions: React.FC<PoolCardActionsProps> = ({ pool, link }) => {
           startIcon={<LoginIcon />}
           onClick={handleOpenDeposit}
         >
-          {t('general.deposit')}
+          {t('general.lend')}
         </KycButton>
       )}
 
