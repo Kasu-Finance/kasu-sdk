@@ -263,7 +263,7 @@
 
   "lending": {
     "poolOverview": {
-      "title": "Pool Overview",
+      "title": "Lending Strategy Overview",
       "detailCard": {
         "apyStructure": {
           "label": "Pool APY Structure",
@@ -392,7 +392,7 @@
         "review": "REVIEW WITHDRAWAL",
         "adjust": "ADJUST",
         "confirm": "CONFIRM",
-        "poolOverview": "LENDING POOL OVERVIEW",
+        "strategyOverview": "LENDING STRATEGY OVERVIEW",
         "viewTx": "VIEW TX"
       },
       "dropdown": {
