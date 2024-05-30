@@ -329,7 +329,7 @@
           "tooltip": "The current APY you are currently earning within this Tranche (in the case that there are multiple Tranches within this Pool). In the absence of multiple Tranches, then this reflects the APY you are currently earning within this Pool."
         },
         "yieldEarned": {
-          "label": "Interest Earned",
+          "label": "Lifetime Interest Earned",
           "tooltip": "Total interest you have earned on your investment within this Tranche."
         }
       },
