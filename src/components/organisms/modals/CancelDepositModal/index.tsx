@@ -54,7 +54,7 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   return (
     <>
-      <DialogHeader title='Cancel Deposit Request' onClose={handleClose} />
+      <DialogHeader title='Cancel Lending Request' onClose={handleClose} />
       <DialogContent>
         <ColoredBox>
           <Grid container spacing={2}>
@@ -155,7 +155,7 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           startIcon={<DeleteIcon />}
           onClick={handleCancel}
         >
-          Cancel Deposit Request
+          Cancel Lending Request
         </Button>
       </DialogActions>
     </>
