@@ -378,7 +378,7 @@
       "junior": "Junior Tranche"
     },
     "withdraw": {
-      "title": "Withdraw Funds",
+      "title": "Withdraw Request",
       "subtitle": "Total Withdrawal Request Amount",
       "fromPool": "From Pool",
       "toWallet": "To Wallet",

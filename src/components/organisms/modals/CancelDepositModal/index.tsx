@@ -84,7 +84,7 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             </Grid>
             <Grid item xs={6}>
               <InfoColumn
-                title='Deposit Request Amount'
+                title='Lending Request Amount'
                 toolTipInfo='info'
                 showDivider
                 metric={
