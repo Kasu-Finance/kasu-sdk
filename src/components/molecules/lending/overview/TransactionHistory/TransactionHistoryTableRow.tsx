@@ -79,7 +79,9 @@ const TransactionHistoryTableRow: React.FC<TransactionHistoryTableRowProps> = ({
                 mr: 3,
               }}
             />
-            {transaction.requestType}
+            {transaction.requestType === 'Deposit'
+              ? 'Lending'
+              : transaction.requestType}
           </Box>
         </TableCell>
         <TableCell align='center'>{transaction.trancheName}</TableCell>

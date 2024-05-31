@@ -142,7 +142,7 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
           startIcon={<LoginIcon />}
           onClick={handleOpen}
         >
-          {t('general.deposit')}
+          {t('general.lend')}
         </KycButton>
       </Box>
     </Box>

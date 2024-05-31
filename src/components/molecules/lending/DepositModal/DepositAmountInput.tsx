@@ -118,7 +118,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
     <Box>
       <NumericalInput
         amount={amount}
-        label='Deposit Amount'
+        label='Lending Amount'
         setAmount={handleAmountChange}
         handleMax={handleMax}
         decimals={6}

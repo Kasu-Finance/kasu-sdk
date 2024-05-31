@@ -366,7 +366,6 @@ export const theme = createTheme({
     MuiTableContainer: {
       styleOverrides: {
         root: {
-          border: '2px solid blue',
           boxShadow: 'unset',
           borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
           borderBottomLeftRadius: 0,

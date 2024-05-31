@@ -4,7 +4,7 @@ import HorizontalStepper from '@/components/molecules/HorizontalStepper'
 
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
-const STEPS = ['Deposit', 'Approval', 'Confirmation']
+const STEPS = ['Request', 'Approved', 'Confirmed']
 
 const getActiveStep = (modalStatusAction: ModalStatusAction) => {
   switch (modalStatusAction) {
