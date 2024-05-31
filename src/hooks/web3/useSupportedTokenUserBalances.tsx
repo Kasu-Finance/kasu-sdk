@@ -7,7 +7,6 @@ import useUserBalance from '@/hooks/web3/useUserBalance'
 import { UsdcIcon } from '@/assets/icons'
 import FallbackIcon from '@/assets/icons/tokens/FallbackIcon'
 
-import getTokenPrice from '@/actions/getTokenPrice'
 import { SupportedTokenInfo, SupportedTokens } from '@/constants/tokens'
 import { IERC20__factory } from '@/contracts/output'
 import {
@@ -70,7 +69,13 @@ const useSupportedTokenUserBalances = () => {
         (key) => key !== SupportedTokens.USDC
       ) as SupportedTokens[]
 
-      const tokenPrices = await getTokenPrice(filteredTokens)
+      const response = await fetch(
+        `/api/token?${new URLSearchParams({ tokens: filteredTokens.join(',') })}`
+      )
+
+      const { prices: tokenPrices } = (await response.json()) as {
+        prices: Record<SupportedTokens, string>
+      }
 
       const tokenWithBalances = await Promise.allSettled(
         Object.values(tokens).map(async (token) => {
