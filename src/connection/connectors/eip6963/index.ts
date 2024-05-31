@@ -1,7 +1,7 @@
 import { initializeConnector } from '@web3-react/core'
 import { ReactNode } from 'react'
 
-import { CoinbaseIcon, MetamaskIcon } from '@/assets/icons'
+import { CoinbaseIcon, MetamaskIcon, RabbyIcon } from '@/assets/icons'
 
 import { web3reactError } from '@/utils'
 
@@ -22,6 +22,7 @@ enum Rdns {
 const CUSTOM_ICON_MAP: { [rdns in string]?: ReactNode } = {
   [Rdns.METAMASK]: MetamaskIcon(), // MetaMask's provided icon has no padding
   [Rdns.COINBASE]: CoinbaseIcon(),
+  [Rdns.RABBY]: RabbyIcon(),
 }
 
 const isSupportedConnector = (rdns: string): rdns is Rdns => {
