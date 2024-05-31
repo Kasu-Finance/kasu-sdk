@@ -23,6 +23,8 @@ const depositModalReducer = (
         ...state,
         txHash: action.payload,
       }
+    case 'SET_TERMS_ACCEPTED':
+      return { ...state, termsAccepted: action.payload }
     default:
       return state
   }

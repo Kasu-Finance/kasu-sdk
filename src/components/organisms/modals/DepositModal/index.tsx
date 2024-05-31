@@ -34,7 +34,7 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { modal } = useModalState()
 
-  const { amount, trancheId, txHash } = useDepositModalState()
+  const { amount, trancheId, txHash, termsAccepted } = useDepositModalState()
 
   const { modalStatus, modalStatusAction, setModalStatusAction } =
     useModalStatusState()

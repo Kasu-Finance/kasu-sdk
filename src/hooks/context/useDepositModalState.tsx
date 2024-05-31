@@ -35,11 +35,18 @@ const useDepositModalState = (): DepositModalTypes => {
     [dispatch]
   )
 
+  const setTermsAccepted = useCallback(
+    (termsAccepted: boolean) =>
+      dispatch({ type: 'SET_TERMS_ACCEPTED', payload: termsAccepted }),
+    [dispatch]
+  )
+
   return {
     ...context,
     setAmount,
     setSelectedTranche,
     setTxHash,
+    setTermsAccepted,
   }
 }
 
