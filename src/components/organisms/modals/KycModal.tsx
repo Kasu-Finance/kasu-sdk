@@ -159,7 +159,7 @@ const KycModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               <strong>(do not close this window).</strong>
             </>
           ) : (
-            'In order to initiate KYC, you must authorise your wallet in order to undertake interaction with the external service handling the verification process.​'
+            'In order to initiate the KYC process, you must authorise your wallet in order to interact with Kasu’s external KYC provider to complete the verification process.​'
           )}
         </Typography>
       </DialogContent>
