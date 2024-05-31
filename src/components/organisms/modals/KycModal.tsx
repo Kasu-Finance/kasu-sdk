@@ -151,8 +151,8 @@ const KycModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         <Typography variant='body1' component='p'>
           {isAuthenticated ? (
             <>
-              The verification process will be undertaken via our third party
-              KYC provider via integrated widget.
+              The verification process will be undertaken by our third party KYC
+              provider via an integrated widget.
               <br />
               <br />
               Once completed, please return to this browser window{' '}
