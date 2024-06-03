@@ -1,16 +1,42 @@
-import { Button, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Typography,
+} from '@mui/material'
 
+import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
 
 const DepositDescription = () => {
   const { openModal } = useModalState()
-
+  const { setTermsAccepted, termsAccepted } = useDepositModalState()
   const handleOpen = () => openModal({ name: 'loyaltyLevelsModal' })
 
+  const handleCheckboxChange = (event) => {
+    setTermsAccepted(event.target.checked)
+  }
+
   return (
-    <>
-      <Typography variant='body2' component='p' textAlign='center'>
-        By depositing funds to this Lending Pool, you accept the following{' '}
+    <Box display='flex' flexDirection='column' pl={2}>
+      <Box
+        display='flex'
+        alignItems='center'
+        justifyContent='center'
+        flexWrap='wrap'
+        mb={1}
+      >
+        <FormControlLabel
+          control={
+            <Checkbox checked={termsAccepted} onChange={handleCheckboxChange} />
+          }
+          label={
+            <Typography variant='body2' component='span'>
+              By depositing funds to this Lending Pool, you accept the following{' '}
+            </Typography>
+          }
+        />
         <Button
           onClick={handleOpen}
           variant='text'
@@ -18,6 +44,7 @@ const DepositDescription = () => {
             display: 'inline',
             height: 'auto',
             p: 0,
+            mt: -1,
             fontSize: 'inherit',
             fontWeight: 'inherit',
             fontFamily: 'inherit',
@@ -26,18 +53,24 @@ const DepositDescription = () => {
         >
           Terms and Conditions.
         </Button>
-      </Typography>
-      <Typography variant='subtitle2' component='p' textAlign='center'>
+      </Box>
+
+      <Typography variant='subtitle2' component='p' textAlign='center' mb={2}>
         How do I secure my spot in this tranche?
       </Typography>
-      <Typography variant='caption' component='p' letterSpacing='0.4px'>
+      <Typography
+        variant='caption'
+        component='p'
+        letterSpacing='0.4px'
+        textAlign='center'
+      >
         Access to higher APY tranches is based on Loyalty Level. In the event of
         oversubscription, applicants will be automatically reassigned to the
         next available tranche. This process repeats for each tranche. Higher
         Loyalty Levels increase the likelihood of allocation to the desired
         tranche, but do not guarantee it.
       </Typography>
-    </>
+    </Box>
   )
 }
 
