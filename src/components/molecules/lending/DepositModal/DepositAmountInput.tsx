@@ -1,3 +1,5 @@
+'use client'
+
 import LoginIcon from '@mui/icons-material/Login'
 import { Box, Typography } from '@mui/material'
 import { ReactNode, useCallback, useMemo, useState } from 'react'

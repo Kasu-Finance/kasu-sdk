@@ -1,19 +1,19 @@
 import { NextRequest } from 'next/server'
 
+import { COINMARKETCAP_API } from '@/config/api.cmc'
 import { SupportedTokens } from '@/constants/tokens'
 
 import { ValueOf } from '@/types/utils'
+
+type Quote = {
+  price: number
+}
 
 type CoinMarketCapRes = {
   data: Record<
     ValueOf<typeof CMC_TOKEN_ID_MAP>,
     {
-      quote: Record<
-        ValueOf<typeof CMC_TOKEN_ID_MAP>,
-        {
-          price: number
-        }
-      >
+      quote: Record<ValueOf<typeof CMC_TOKEN_ID_MAP>, Quote>
     }
   >
 }
@@ -30,58 +30,106 @@ export async function GET(req: NextRequest) {
   const tokens = req.nextUrl.searchParams.get('tokens')
 
   if (!tokens) {
-    return Response.json(
-      { message: 'Parameter "tokens" is missing from the request' },
-      { status: 400 }
+    return new Response(
+      JSON.stringify({
+        message: 'Parameter "tokens" is missing from the request',
+      }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
     )
   }
 
   const splitTokens = tokens.split(',') as SupportedTokens[]
 
+  // Validate the provided tokens
+  const invalidTokens = splitTokens.filter(
+    (token) => !Object.keys(CMC_TOKEN_ID_MAP).includes(token)
+  )
+  if (invalidTokens.length > 0) {
+    return new Response(
+      JSON.stringify({
+        message: `Invalid tokens provided: ${invalidTokens.join(', ')}`,
+      }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    )
+  }
+
   let tokenIds: string
 
   if (splitTokens.length > 1) {
-    tokenIds = splitTokens
-      .map((token) => CMC_TOKEN_ID_MAP[token as SupportedTokens])
-      .join(',')
+    tokenIds = splitTokens.map((token) => CMC_TOKEN_ID_MAP[token]).join(',')
   } else {
-    tokenIds = CMC_TOKEN_ID_MAP[splitTokens[0] as SupportedTokens]
+    tokenIds = CMC_TOKEN_ID_MAP[splitTokens[0]]
   }
 
-  const url =
-    'https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest'
-
-  const res = await fetch(
-    `${url}?${new URLSearchParams({ id: tokenIds, aux: 'is_active', convert_id: USDC_TOKEN_ID })}`,
-    {
-      headers: {
-        'X-CMC_PRO_API_KEY': process.env.CMC_API_KEY?.toString() || '',
-      },
-    }
-  )
-
-  const { data }: CoinMarketCapRes = await res.json()
-
-  let prices: string | Record<SupportedTokens, string>
-
-  if (splitTokens.length > 1) {
-    prices = splitTokens.reduce(
-      (acc, cur) => {
-        const tokenId = CMC_TOKEN_ID_MAP[cur]
-
-        return {
-          ...acc,
-          [cur]: data[tokenId].quote[USDC_TOKEN_ID].price.toString(),
-        }
-      },
-      {} as Record<SupportedTokens, string>
+  // Fetch the data from CoinMarketCap
+  try {
+    const res = await fetch(
+      `${COINMARKETCAP_API}?${new URLSearchParams({ id: tokenIds, aux: 'is_active', convert_id: USDC_TOKEN_ID })}`,
+      {
+        headers: {
+          'X-CMC_PRO_API_KEY': process.env.CMC_API_KEY?.toString() || '',
+        },
+      }
     )
-  } else {
-    prices =
-      data[CMC_TOKEN_ID_MAP[splitTokens[0]]].quote[
-        USDC_TOKEN_ID
-      ].price.toString()
-  }
 
-  return Response.json({ prices })
+    // Check if the response is OK
+    if (!res.ok) {
+      throw new Error(
+        `Failed to fetch data from CoinMarketCap API with status ${res.status}`
+      )
+    }
+
+    const { data }: CoinMarketCapRes = await res.json()
+
+    let prices: string | Record<SupportedTokens, string>
+
+    // If only one token is requested, return the price as a string
+    if (splitTokens.length > 1) {
+      prices = splitTokens.reduce(
+        (acc, cur) => {
+          const tokenId = CMC_TOKEN_ID_MAP[cur]
+          const quoteData = data[tokenId]?.quote[USDC_TOKEN_ID]
+          if (quoteData) {
+            return {
+              ...acc,
+              [cur]: quoteData.price.toString(),
+            }
+          } else {
+            return {
+              ...acc,
+              [cur]: 'Data not available',
+            }
+          }
+        },
+        {} as Record<SupportedTokens, string>
+      )
+    } else {
+      const tokenId = CMC_TOKEN_ID_MAP[splitTokens[0]]
+      const quoteData = data[tokenId]?.quote[USDC_TOKEN_ID]
+      if (quoteData) {
+        prices = quoteData.price.toString()
+      } else {
+        prices = 'Data not available'
+      }
+    }
+
+    // Return the data
+    return new Response(JSON.stringify({ prices }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  } catch (error) {
+    // Return an error message
+    return new Response(
+      JSON.stringify({
+        message: 'An error occurred while fetching data',
+        error: (error as Error).message,
+        prices: splitTokens.reduce(
+          (acc, token) => ({ ...acc, [token]: 'Data not available' }),
+          {} as Record<SupportedTokens, string>
+        ),
+      }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    )
+  }
 }
