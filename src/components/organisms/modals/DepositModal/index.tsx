@@ -34,7 +34,7 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { modal } = useModalState()
 
-  const { amount, trancheId, txHash } = useDepositModalState()
+  const { amount, txHash } = useDepositModalState()
 
   const { modalStatus, modalStatusAction, setModalStatusAction } =
     useModalStatusState()
@@ -114,7 +114,7 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                 endIcon={<ChevronRightIcon />}
                 onClick={() =>
                   isApproved
-                    ? requestDeposit(poolData.lendingPoolId, trancheId, amount)
+                    ? requestDeposit(poolData.lendingPoolId)
                     : approve(amount)
                 }
               >
