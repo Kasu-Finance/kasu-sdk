@@ -66,6 +66,9 @@ export async function GET(req: NextRequest) {
     const res = await fetch(
       `${COINMARKETCAP_API}?${new URLSearchParams({ id: tokenIds, aux: 'is_active', convert_id: USDC_TOKEN_ID })}`,
       {
+        next: {
+          revalidate: 600,
+        },
         headers: {
           'X-CMC_PRO_API_KEY': process.env.CMC_API_KEY?.toString() || '',
         },
