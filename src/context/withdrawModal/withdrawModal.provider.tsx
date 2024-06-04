@@ -1,10 +1,9 @@
+import { ethers } from 'ethers'
 import { ReactNode, useReducer } from 'react'
 
 import WithdrawModalContext from '@/context/withdrawModal/withdrawModal.context'
 import withdrawModalReducer from '@/context/withdrawModal/withdrawModal.reducer'
 import { WithdrawModalStateType } from '@/context/withdrawModal/withdrawModal.types'
-
-import { ZERO_ADDRESS } from '@/constants/pool'
 
 import { HexString } from '@/types/lending'
 
@@ -15,7 +14,7 @@ type WithdrawModalProviderProps = {
 
 const initialState: WithdrawModalStateType = {
   amount: '',
-  selectedTranche: ZERO_ADDRESS,
+  selectedTranche: ethers.constants.AddressZero,
 }
 
 const WithdrawModalProvider: React.FC<WithdrawModalProviderProps> = ({
