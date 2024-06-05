@@ -10,6 +10,7 @@ import EarningsCalculatorModalWrapper from '@/components/organisms/modals/Earnin
 import KycModal from '@/components/organisms/modals/KycModal'
 import LockModalWrapper from '@/components/organisms/modals/LockModal/LockModalWrapper'
 import LoyaltyLevelsModal from '@/components/organisms/modals/LoyaltyLevelsModal'
+import TermsAndConditionsModal from '@/components/organisms/modals/TermsAndConditionsModal'
 import UnlockModalWrapper from '@/components/organisms/modals/UnlockModal/UnlockModalWrapper'
 import WithdrawModalWrapper from '@/components/organisms/modals/WithdrawModal/WithdrawModalWrapper'
 
@@ -71,6 +72,10 @@ export const getModal = (
     case ModalsKeys.EARNINGS_CALCULATOR:
       return {
         component: <EarningsCalculatorModalWrapper handleClose={handleClose} />,
+      }
+    case ModalsKeys.TERMS_AND_CONDITIONS:
+      return {
+        component: <TermsAndConditionsModal handleClose={handleClose} />,
       }
   }
 }

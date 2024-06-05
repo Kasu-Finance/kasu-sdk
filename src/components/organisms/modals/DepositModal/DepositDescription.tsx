@@ -18,7 +18,8 @@ const DepositDescription = () => {
 
   const { openModal } = useModalState()
 
-  const handleOpen = () => openModal({ name: ModalsKeys.LOYALTY_LEVELS })
+  const handleOpen = () => openModal({ name: ModalsKeys.TERMS_AND_CONDITIONS })
+
   const { setTermsAccepted, termsAccepted } = useDepositModalState()
 
   const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {

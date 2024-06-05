@@ -183,6 +183,36 @@
       "description-2": "If you do not wish to lock KSU tokens, then you are can still participate in lending pools to earn APY. However, you will not receive any bonus APY, and any deposit/withdrawal request will be processed after Loyalty 1 and 2 Token Lockers.",
       "description-3": "Each KSU token that you unlock will burn a proportionate amount of rKSU. In order to maintain your loyalty level and associated privileges, be sure to maintain an amount of locked KSU to avoid burning rKSU to the point that it falls below the above minimum ratio of USDC deposits."
     },
+    "termsAndConditions": {
+      "title": "Terms and Conditions",
+      "description-1": "The more you lock, the higher your Loyalty Level and the more utility and rewards you receive.",
+      "description-2": "However, you will be ranked behind Loyalty Level 1 and 2 Liquidity Providers in the queue for lending access priority and lending withdrawal priority to and from Lending Strategies. Additionally, you will not be eligible for any bonus APY (excluding you from earning bonus interest). Loyalty Levels are as follows:",
+      "description-3": "Should you unlock any amount of KSU, your rKSU will be burned in relative proportion. This may adversely affect your Loyalty Level, which in turn, adversely affects your access to Lending Strategies and loan Tranches, along with your position in the queue for withdrawals from your existing lending. It may also affect your APY bonus. It will also reduce your share of Protocol Fees, regardless of Loyalty Level.",
+      "loyalty-level-0": {
+        "description-1": "If the value of your rKSU balance relative to your total current and pending USDC lending across all Lending Strategies is 1% or greater, but less than 5%, you will achieve Loyalty Level 1, entitling you to the following token utility and benefits:",
+        "list": {
+          "list-0": "Second order priority access to Lending Strategies and loan Tranches (behind Loyalty Level 2).",
+          "list-1": "Second order priority for capital withdrawals from your existing lending (behind Loyalty Level 2).",
+          "list-2": "Additional APY (APY Bonus) awarding you with bonus interest earnings on all your lending, awarded in KSU (subject to change according to liquidity demand and supply requirements)."
+        }
+      },
+      "loyalty-level-1": {
+        "description-1": "If the value of your rKSU balance relative to your total current and pending USDC lending across all Lending Strategies is 1% or greater, but less than 5%, you will achieve Loyalty Level 1, entitling you to the following token utility and benefits:",
+        "list": {
+          "list-0": "Second order priority access to Lending Strategies and loan Tranches (behind Loyalty Level 2).",
+          "list-1": "Second order priority for capital withdrawals from your existing lending (behind Loyalty Level 2).",
+          "list-2": "Additional APY (APY Bonus) awarding you with bonus interest earnings on all your lending, awarded in KSU (subject to change according to liquidity demand and supply requirements)."
+        }
+      },
+      "loyalty-level-2": {
+        "description-1": "If the value of your rKSU balance relative to your total current and pending USDC lending across all Lending Strategies is 5% or greater, you will achieve Loyalty Level 2, entitling you to the following token utility and benefits:",
+        "list": {
+          "list-0": "First order priority access to Lending Strategies and loan Tranches.​",
+          "list-1": "First order priority for capital withdrawals from your existing lending​",
+          "list-2": "Additional APY (more APY Bonus than Loyalty Level 1 Token Lockers) awarding you with bonus interest earnings on all your lending, awarded in KSU (subject to change according to liquidity demand and supply requirements)."
+        }
+      }
+    },
     "unlock": {
       "buttons": {
         "reviewUnlock": "Review Unlock"

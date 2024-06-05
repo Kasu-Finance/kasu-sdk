@@ -18,6 +18,7 @@ import {
 const initialState: Modals = {
   connectWalletModal: { isOpen: false },
   loyaltyLevelsModal: { isOpen: false },
+  termsAndConditionsModal: { isOpen: false },
   lockModal: { isOpen: false },
   withdrawModal: {
     isOpen: false,
