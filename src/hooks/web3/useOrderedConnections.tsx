@@ -12,9 +12,12 @@ function useEIP6963Connections() {
   const eip6963Injectors = EIP6963_PROVIDER_MANAGER.list
 
   return useMemo(() => {
-    const eip6963Connections = eip6963Injectors.flatMap(
-      (injector) => eip6963Connection.wrap(injector.info) ?? []
-    )
+    const eip6963Connections = eip6963Injectors
+      .flatMap(
+        (injector) =>
+          eip6963Connection.wrap(injector.info) ?? ([] as Connection[])
+      )
+      .filter((injector) => injector.shouldDisplay())
 
     // Displays ui to activate window.ethereum for edge-case where we detect window.ethereum !== one of the eip6963 providers
     const showDeprecatedMessage = false

@@ -33,7 +33,10 @@ const PoolTabs: React.FC = () => {
           aria-label='basic tabs example'
         >
           <StyledTab label='Overview' isActive={activeTab === 0} />
-          <StyledTab label='Pool Details' isActive={activeTab === 1} />
+          <StyledTab
+            label='Lending Strategy Details'
+            isActive={activeTab === 1}
+          />
           <StyledTab label='Repayments' isActive={activeTab === 2} />
           <StyledTab label='Risk Reporting' isActive={activeTab === 3} />
         </Tabs>

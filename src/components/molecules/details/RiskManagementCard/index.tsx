@@ -1,7 +1,11 @@
 import { Box, Card, CardContent, CardHeader, Typography } from '@mui/material'
-import { RiskManagement } from '@solidant/kasu-sdk/src/services/DataService/types'
+import {
+  RiskManagement,
+  RiskManagementItem,
+} from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useMemo } from 'react'
 
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 
 import InfoColumn from '@/components/atoms/InfoColumn'
@@ -15,11 +19,24 @@ interface RiskManagementCardProps {
 
 const RiskManagementCard: React.FC<RiskManagementCardProps> = ({ data }) => {
   const { t } = useTranslation()
+  const currentDevice = useDeviceDetection()
+  const isMobile = currentDevice === Device.MOBILE
 
   const { riskStatus } = useMemo(
     () => convertToRiskStatus(data.riskPerformance),
     [data]
   )
+
+  const groupedItems = useMemo(() => {
+    return data.items.reduce<Record<string, RiskManagementItem[]>>(
+      (acc, item) => {
+        acc[item.group] = acc[item.group] || []
+        acc[item.group].push(item)
+        return acc
+      },
+      {}
+    )
+  }, [data.items])
 
   return (
     <Card>
@@ -33,33 +50,42 @@ const RiskManagementCard: React.FC<RiskManagementCardProps> = ({ data }) => {
 
       <CardContent sx={{ padding: 2 }}>
         <RiskStatus metrics={riskStatus.metrics} />
-
-        {/* Dynamic sections as items */}
-        <Box display='flex'>
-          {data.items.map((item, index) => (
+        <Box
+          display='flex'
+          flexDirection={isMobile ? 'column' : 'row'}
+          width='100%'
+        >
+          {/* Render groups and items within each group */}
+          {Object.entries(groupedItems).map(([group, items]) => (
             <Box
-              key={item.id}
+              key={group}
               display='flex'
-              width='100%'
               flexDirection='column'
-              sx={{
-                pr: index % 2 === 0 ? 2 : 0,
-              }}
+              width={isMobile ? '100%' : '50%'}
             >
-              <Typography variant='subtitle1' sx={{ mt: 3 }}>
-                {item.group}
+              <Typography variant='subtitle1' sx={{ mt: 3, padding: '4px' }}>
+                {group}
               </Typography>
-
-              <InfoColumn
-                title={item.title}
-                toolTipInfo={item.tooltip}
-                showDivider
-                metric={
-                  <Typography variant='body2' sx={{ pl: 2, mt: 0.5 }}>
-                    {item.title}
-                  </Typography>
-                }
-              />
+              {items.map((item) => (
+                <Box
+                  key={item.id}
+                  display='flex'
+                  width='100%'
+                  flexDirection='column'
+                  sx={{ pr: 2, py: 0.5 }}
+                >
+                  <InfoColumn
+                    title={item.title}
+                    toolTipInfo={item.tooltip}
+                    showDivider
+                    metric={
+                      <Typography variant='body2' sx={{ pl: 2, mt: 0.5 }}>
+                        {item.description}
+                      </Typography>
+                    }
+                  />
+                </Box>
+              ))}
             </Box>
           ))}
         </Box>

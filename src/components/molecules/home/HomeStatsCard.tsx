@@ -61,8 +61,14 @@ const HomeStatsCard: React.FC<{
             key={titleKey}
             display='flex'
             flexDirection='column'
-            width='100%'
+            width={index === 2 ? '20%' : 'inherit'}
+            flexGrow={1}
             pl={{ xs: 0, sm: index > 0 ? 1 : 0 }}
+            sx={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              letterSpacing: '-1px',
+            }}
           >
             <MetricWithSuffix
               content={content}

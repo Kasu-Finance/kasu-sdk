@@ -1,7 +1,7 @@
 import { initializeConnector } from '@web3-react/core'
 import { ReactNode } from 'react'
 
-import { CoinbaseIcon, MetamaskIcon } from '@/assets/icons'
+import { CoinbaseIcon, MetamaskIcon, RabbyIcon } from '@/assets/icons'
 
 import { web3reactError } from '@/utils'
 
@@ -13,9 +13,20 @@ import {
   ProviderInfo,
 } from '@/types/connectors'
 
+enum Rdns {
+  METAMASK = 'io.metamask',
+  COINBASE = 'com.coinbase.wallet',
+  RABBY = 'io.rabby',
+}
+
 const CUSTOM_ICON_MAP: { [rdns in string]?: ReactNode } = {
-  'io.metamask': MetamaskIcon(), // MetaMask's provided icon has no padding
-  'com.coinbase.wallet': CoinbaseIcon(),
+  [Rdns.METAMASK]: MetamaskIcon(), // MetaMask's provided icon has no padding
+  [Rdns.COINBASE]: CoinbaseIcon(),
+  [Rdns.RABBY]: RabbyIcon(),
+}
+
+const isSupportedConnector = (rdns: string): rdns is Rdns => {
+  return [Rdns.METAMASK, Rdns.COINBASE, Rdns.RABBY].includes(rdns as Rdns)
 }
 
 /** Replaces an announced provider's icon with our preferred image, when applicable */
@@ -58,7 +69,7 @@ export const eip6963Connection: InjectedConnection = {
         eip6963.selectProvider(rdns) // Select the specific eip6963 provider before activating
         return false
       },
-      shouldDisplay: () => true, // Individual eip6963 wallets should always be displayed
+      shouldDisplay: () => isSupportedConnector(rdns),
     }
   },
 }

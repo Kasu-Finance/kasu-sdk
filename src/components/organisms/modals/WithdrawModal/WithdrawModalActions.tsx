@@ -104,7 +104,7 @@ const WithdrawModalActions: React.FC<WithdrawModalActionsProps> = ({
           onClick={onModalClose}
           sx={{ fontSize: '15px' }}
         >
-          {t('lending.withdraw.button.poolOverview')}
+          {t('lending.withdraw.button.strategyOverview')}
         </Button>
       )}
     </DialogActions>

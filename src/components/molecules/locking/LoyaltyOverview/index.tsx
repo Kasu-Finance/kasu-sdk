@@ -13,8 +13,11 @@ import useTotalLendingPoolDeposits from '@/hooks/web3/useTotalLendingPoolDeposit
 import CardWidget from '@/components/atoms/CardWidget'
 import InfoRow from '@/components/atoms/InfoRow'
 import TokenAmount from '@/components/atoms/TokenAmount'
+import ToolTip from '@/components/atoms/ToolTip'
 import LoyaltyLevelInfo from '@/components/molecules/locking/LoyaltyOverview/LoyaltyLevelInfo'
 import LoyaltyProgress from '@/components/molecules/locking/LoyaltyOverview/LoyaltyProgress'
+import RksuBalance from '@/components/molecules/tooltips/RksuBalance'
+import RksuTooltip from '@/components/molecules/tooltips/RksuTooltip'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
@@ -80,7 +83,7 @@ const LoyaltyOverview = () => {
       <InfoRow
         showDivider
         title={`rKSU ${capitalize(t('general.balance'))}`}
-        toolTipInfo={t('locking.widgets.loyalty.metric-1-tooltip')}
+        toolTipInfo={<ToolTip title={<RksuBalance />} />}
         metric={
           <TokenAmount amount={formatAmount(rKsuAmount || '0')} symbol='rKSU' />
         }
@@ -101,7 +104,7 @@ const LoyaltyOverview = () => {
       <InfoRow
         showDivider
         title={t('locking.widgets.loyalty.metric-3')}
-        toolTipInfo={t('locking.widgets.loyalty.metric-3-toolip.description')}
+        toolTipInfo={<ToolTip title={<RksuTooltip />} />}
         metric={
           <Typography variant='h6' component='span'>
             {formatAmount(stakedPercentage || '0', {

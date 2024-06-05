@@ -1,3 +1,4 @@
+import { ethers } from 'ethers'
 import { useMemo } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
@@ -8,7 +9,7 @@ import ModalStatusState from '@/context/modalStatus/modalStatus.provider'
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 import WithdrawModalProvider from '@/context/withdrawModal/withdrawModal.provider'
 
-import { Tranche, ZERO_ADDRESS } from '@/constants/pool'
+import { Tranche } from '@/constants/pool'
 
 import { HexString } from '@/types/lending'
 
@@ -24,7 +25,7 @@ const WithdrawModalWrapper: React.FC<WithdrawModalWrapperProps> = ({
   const defaultTrancheId = useMemo(() => {
     const tranches = modal.withdrawModal.poolOverview.tranches
 
-    if (tranches?.length === 0) return ZERO_ADDRESS
+    if (tranches?.length === 0) return ethers.constants.AddressZero
 
     const defaultTranche =
       tranches.find((tranche) =>

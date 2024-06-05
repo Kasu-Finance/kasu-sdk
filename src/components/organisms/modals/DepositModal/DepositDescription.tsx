@@ -1,9 +1,15 @@
-import { Button, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Typography,
+} from '@mui/material'
+import { ChangeEvent } from 'react'
 
+import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
 import useTranslation from '@/hooks/useTranslation'
-
-import OrderedList from '@/components/atoms/OrderedList'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
@@ -13,11 +19,31 @@ const DepositDescription = () => {
   const { openModal } = useModalState()
 
   const handleOpen = () => openModal({ name: ModalsKeys.LOYALTY_LEVELS })
+  const { setTermsAccepted, termsAccepted } = useDepositModalState()
+
+  const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setTermsAccepted(event.target.checked)
+  }
 
   return (
-    <>
-      <Typography variant='body2' component='p' textAlign='center'>
-        {t('modals.lock.deposit.description.metric-1')}{' '}
+    <Box display='flex' flexDirection='column' pl={2}>
+      <Box
+        display='flex'
+        alignItems='center'
+        justifyContent='center'
+        flexWrap='wrap'
+        mb={1}
+      >
+        <FormControlLabel
+          control={
+            <Checkbox checked={termsAccepted} onChange={handleCheckboxChange} />
+          }
+          label={
+            <Typography variant='body2' component='span'>
+              {t('modals.lock.deposit.description.metric-1')}{' '}
+            </Typography>
+          }
+        />
         <Button
           onClick={handleOpen}
           variant='text'
@@ -25,6 +51,7 @@ const DepositDescription = () => {
             display: 'inline',
             height: 'auto',
             p: 0,
+            mt: -1,
             fontSize: 'inherit',
             fontWeight: 'inherit',
             fontFamily: 'inherit',
@@ -33,34 +60,20 @@ const DepositDescription = () => {
         >
           {t('modals.lock.deposit.description.metric-2')}
         </Button>
-      </Typography>
-      <Typography variant='body2' component='p' fontWeight={700}>
-        {t('modals.lock.deposit.description.metric-3')}
-      </Typography>
-      <OrderedList sx={{ paddingLeft: 1.5, fontWeight: 700 }}>
-        <li>
-          <Typography variant='body2' component='p' fontWeight='inherit'>
-            {t('modals.lock.deposit.description.metric-4')}
-          </Typography>
-        </li>
-        <li>
-          <Typography variant='body2' component='p' fontWeight='inherit'>
-            {t('modals.lock.deposit.description.metric-5')}
-          </Typography>
-        </li>
-      </OrderedList>
-      <Typography variant='subtitle2' component='p' textAlign='center'>
+      </Box>
+
+      <Typography variant='subtitle2' component='p' textAlign='center' mb={2}>
         {t('modals.lock.deposit.description.metric-6')}
       </Typography>
       <Typography
         variant='caption'
         component='p'
         letterSpacing='0.4px'
-        color={(theme) => theme.palette.text.secondary}
+        textAlign='center'
       >
         {t('modals.lock.deposit.description.metric-7')}
       </Typography>
-    </>
+    </Box>
   )
 }
 

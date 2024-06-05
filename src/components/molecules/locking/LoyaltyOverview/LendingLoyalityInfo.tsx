@@ -47,7 +47,7 @@ const LendingLoyalityInfo = () => {
         />
 
         <InfoRow
-          title='rKSU Ratio to Total USDC Deposits'
+          title={t('locking.widgets.loyalty.metric-3')}
           toolTipInfo='info'
           metric={
             <Typography variant='h6' component='span'>

@@ -87,7 +87,7 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
           </Grid>
           <Grid item xs={6}>
             <InfoColumn
-              title='Deposit Amount'
+              title='Lending Amount'
               toolTipInfo='info'
               showDivider
               metric={

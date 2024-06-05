@@ -59,7 +59,7 @@ const PoolDetails: React.FC = () => {
         />
       )}
 
-      {riskHook.data?.length && <RiskManagementCard data={riskHook.data[0]} />}
+      {riskHook?.data && <RiskManagementCard data={riskHook.data} />}
     </Box>
   )
 }

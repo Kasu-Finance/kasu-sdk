@@ -1,3 +1,5 @@
+'use client'
+
 import LoginIcon from '@mui/icons-material/Login'
 import { Box, Typography } from '@mui/material'
 import { ReactNode, useCallback, useMemo, useState } from 'react'
@@ -119,8 +121,8 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
     debounceTime
   )
 
-  const handleMax = useCallback(async () => {
-    const maxPossible = toBigNumber(balance).gt(toBigNumber(maxDeposit))
+  const handleMax = useCallback(() => {
+    const maxPossible = toBigNumber(maxDeposit).lt(toBigNumber(balance))
       ? maxDeposit
       : balance
 
