@@ -5,13 +5,11 @@ import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { useCallback } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
+import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 import { SupportedTokenUserBalances } from '@/hooks/web3/useSupportedTokenUserBalances'
 
 import DepositAmountInput from '@/components/molecules/lending/DepositModal/DepositAmountInput'
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
-
-import { UsdcIcon } from '@/assets/icons'
-import FallbackIcon from '@/assets/icons/tokens/FallbackIcon'
 
 import getSwapAmount from '@/actions/getSwapAmount'
 import { SupportedChainIds } from '@/connection/chains'
@@ -34,29 +32,7 @@ const SwapAndDepositInput: React.FC<SwapAndDepositInputProps> = ({
   const { amount, amountInUSD, selectedToken, setAmountInUSD } =
     useDepositModalState()
 
-  const supportedTokens = {
-    [SupportedTokens.ETH]: {
-      symbol: 'ETH',
-      name: 'Wrapper Ether',
-      address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2' as `0x${string}`,
-      decimals: 18,
-      icon: FallbackIcon(),
-    },
-    [SupportedTokens.USDC]: {
-      symbol: SupportedTokens.USDC,
-      name: 'USD Coin',
-      address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48' as `0x${string}`,
-      decimals: 6,
-      icon: UsdcIcon(),
-    },
-    [SupportedTokens.USDT]: {
-      symbol: 'USDT',
-      name: 'Tether USD',
-      address: '0xea3983Fc6D0fbbC41fb6F6091f68F3e08894dC06' as `0x${string}`,
-      decimals: 18,
-      icon: FallbackIcon(),
-    },
-  } as const
+  const supportedTokens = useSupportedTokenInfo()
 
   const handleApplyConversion = useCallback(
     async (

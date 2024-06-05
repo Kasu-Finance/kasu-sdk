@@ -31,7 +31,8 @@ const SwapAndDepositInfo: React.FC<SwapAndDepositInfoProps> = ({
   if (!supportedTokenUserBalance || selectedToken === SupportedTokens.USDC)
     return null
 
-  const tokenBalance = supportedTokenUserBalance[selectedToken]
+  const symbol = ''
+  // const symbol = supportedTokenUserBalance[selectedToken].symbol || ''
 
   return (
     <ColoredBox sx={{ bgcolor: modalStatus.bgColor, mt: 2, p: 2 }}>
@@ -65,7 +66,7 @@ const SwapAndDepositInfo: React.FC<SwapAndDepositInfoProps> = ({
             component='span'
             color={(theme) => theme.palette.text.primary}
           >
-            {formatAmount(amount)} {tokenBalance.symbol}
+            {formatAmount(amount)} {symbol}
           </Typography>{' '}
           for{' '}
           {!amountInUSD && amount ? (

@@ -2,10 +2,8 @@ import { useWeb3React } from '@web3-react/core'
 import { BigNumber } from 'ethers'
 import useSWR from 'swr'
 
+import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 import useUserBalance from '@/hooks/web3/useUserBalance'
-
-import { UsdcIcon } from '@/assets/icons'
-import FallbackIcon from '@/assets/icons/tokens/FallbackIcon'
 
 import { SupportedTokenInfo, SupportedTokens } from '@/constants/tokens'
 import { IERC20__factory } from '@/contracts/output'
@@ -24,29 +22,7 @@ export type SupportedTokenUserBalances = SupportedTokenInfo & {
 const useSupportedTokenUserBalances = () => {
   const { account, provider } = useWeb3React()
 
-  const supportedTokens = {
-    [SupportedTokens.ETH]: {
-      symbol: 'ETH',
-      name: 'Wrapper Ether',
-      address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2' as `0x${string}`,
-      decimals: 18,
-      icon: FallbackIcon(),
-    },
-    [SupportedTokens.USDC]: {
-      symbol: SupportedTokens.USDC,
-      name: 'USD Coin',
-      address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48' as `0x${string}`,
-      decimals: 6,
-      icon: UsdcIcon(),
-    },
-    [SupportedTokens.USDT]: {
-      symbol: 'USDT',
-      name: 'Tether USD',
-      address: '0xea3983Fc6D0fbbC41fb6F6091f68F3e08894dC06' as `0x${string}`,
-      decimals: 18,
-      icon: FallbackIcon(),
-    },
-  } as const
+  const supportedTokens = useSupportedTokenInfo()
 
   const { balance } = useUserBalance(
     supportedTokens?.[SupportedTokens.USDC].address
@@ -69,30 +45,36 @@ const useSupportedTokenUserBalances = () => {
         (key) => key !== SupportedTokens.USDC
       ) as SupportedTokens[]
 
-      const response = await fetch(
-        `/api/token?${new URLSearchParams({ tokens: filteredTokens.join(',') })}`
-      )
+      let tokenPrices: Record<SupportedTokens, string>
 
-      const { prices: tokenPrices } = (await response.json()) as {
-        prices: Record<SupportedTokens, string>
+      if (filteredTokens.length) {
+        const response = await fetch(
+          `/api/token?${new URLSearchParams({ tokens: filteredTokens.join(',') })}`
+        )
+
+        const data = (await response.json()) as {
+          prices: Record<SupportedTokens, string>
+        }
+
+        tokenPrices = data.prices
       }
 
       const tokenWithBalances = await Promise.allSettled(
-        Object.values(tokens).map(async (token) => {
+        (Object.values(tokens) as SupportedTokenInfo[]).map(async (token) => {
           if (token.symbol === USDC.symbol) {
             return { ...token, balance: usdcBalance, balanceInUSD: usdcBalance }
           }
 
-          if (token.symbol === SupportedTokens.ETH) {
-            const ethBalance = await library.getBalance(userAddress)
+          // if (token.symbol === SupportedTokens.ETH) {
+          //   const ethBalance = await library.getBalance(userAddress)
 
-            const balanceInUSD = convertToUSD(
-              ethBalance,
-              toBigNumber(tokenPrices[token.symbol])
-            )
+          //   const balanceInUSD = convertToUSD(
+          //     ethBalance,
+          //     toBigNumber(tokenPrices[token.symbol])
+          //   )
 
-            return { ...token, balance: ethBalance, balanceInUSD }
-          }
+          //   return { ...token, balance: ethBalance, balanceInUSD }
+          // }
 
           const erc20 = IERC20__factory.connect(token.address, library)
           const balance = await erc20.balanceOf(userAddress)

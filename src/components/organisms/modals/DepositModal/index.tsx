@@ -11,6 +11,7 @@ import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useRequestDeposit from '@/hooks/lending/useRequestDeposit'
 import useTranslation from '@/hooks/useTranslation'
 import useApproveToken from '@/hooks/web3/useApproveToken'
+import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
 import DialogHeader from '@/components/molecules/DialogHeader'
@@ -22,7 +23,7 @@ import DepositModalStepper from '@/components/organisms/modals/DepositModal/Depo
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
 import { Routes } from '@/config/routes'
-import sdkConfig, { USDC } from '@/config/sdk'
+import sdkConfig from '@/config/sdk'
 import { SupportedChainIds } from '@/connection/chains'
 import { networks } from '@/connection/networks'
 
@@ -34,13 +35,15 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { modal } = useModalState()
 
-  const { amount, txHash } = useDepositModalState()
+  const { amount, selectedToken, txHash } = useDepositModalState()
+
+  const supportedToken = useSupportedTokenInfo()
 
   const { modalStatus, modalStatusAction, setModalStatusAction } =
     useModalStatusState()
 
   const { isApproved, approve } = useApproveToken(
-    USDC,
+    supportedToken?.[selectedToken].address,
     sdkConfig.contracts.LendingPoolManager,
     amount
   )
@@ -124,7 +127,7 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           ) : (
             <Button
               variant='contained'
-              sx={{ width: 235 }}
+              sx={{ width: 264 }}
               onClick={onCloseModal}
             >
               {t('modals.lending.buttons.overview')}

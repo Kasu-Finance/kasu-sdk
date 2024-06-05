@@ -1,15 +1,13 @@
 import { ReactNode } from 'react'
 
 import { UsdcIcon } from '@/assets/icons'
-import FallbackIcon from '@/assets/icons/tokens/FallbackIcon'
 
-import sdkConfig from '@/config/sdk'
 import { SupportedChainIds } from '@/connection/chains'
 
 export enum SupportedTokens {
-  ETH = 'ETH',
+  // ETH = 'ETH',
   USDC = 'USDC',
-  USDT = 'USDT',
+  // USDT = 'USDT',
 }
 
 export type SupportedTokenInfo = {
@@ -22,13 +20,13 @@ export type SupportedTokenInfo = {
 
 export const TOKENS = {
   [SupportedChainIds.BASE_SEPOLIA]: {
-    [SupportedTokens.USDT]: {
-      symbol: SupportedTokens.USDT,
-      name: 'Tether USD',
-      address: sdkConfig.contracts.KSUToken as `0x${string}`,
-      decimals: 18,
-      icon: FallbackIcon(),
-    },
+    // [SupportedTokens.USDT]: {
+    //   symbol: SupportedTokens.USDT,
+    //   name: 'Tether USD',
+    //   address: sdkConfig.contracts.KSUToken as `0x${string}`,
+    //   decimals: 18,
+    //   icon: FallbackIcon(),
+    // },
     [SupportedTokens.USDC]: {
       symbol: SupportedTokens.USDC,
       name: 'USD Coin',
@@ -36,22 +34,22 @@ export const TOKENS = {
       decimals: 6,
       icon: UsdcIcon(),
     },
-    [SupportedTokens.ETH]: {
-      symbol: SupportedTokens.ETH,
-      name: 'Ether',
-      address: '0x2235E1389cC37bdC8086Faeb3abEa3d206fe8E3d',
-      decimals: 18,
-      icon: FallbackIcon(),
-    },
+    // [SupportedTokens.ETH]: {
+    //   symbol: SupportedTokens.ETH,
+    //   name: 'Ether',
+    //   address: '0x2235E1389cC37bdC8086Faeb3abEa3d206fe8E3d',
+    //   decimals: 18,
+    //   icon: FallbackIcon(),
+    // },
   },
   [SupportedChainIds.BASE]: {
-    [SupportedTokens.USDT]: {
-      symbol: SupportedTokens.ETH,
-      name: 'Kasu Token',
-      address: sdkConfig.contracts.KSUToken as `0x${string}`,
-      decimals: 18,
-      icon: FallbackIcon(),
-    },
+    // [SupportedTokens.USDT]: {
+    //   symbol: SupportedTokens.ETH,
+    //   name: 'Kasu Token',
+    //   address: sdkConfig.contracts.KSUToken as `0x${string}`,
+    //   decimals: 18,
+    //   icon: FallbackIcon(),
+    // },
     [SupportedTokens.USDC]: {
       symbol: SupportedTokens.USDC,
       name: 'USD Coin',
@@ -59,13 +57,13 @@ export const TOKENS = {
       decimals: 6,
       icon: UsdcIcon(),
     },
-    [SupportedTokens.ETH]: {
-      symbol: SupportedTokens.ETH,
-      name: 'rKasu Token',
-      address: '0x2235E1389cC37bdC8086Faeb3abEa3d206fe8E3d',
-      decimals: 18,
-      icon: FallbackIcon(),
-    },
+    // [SupportedTokens.ETH]: {
+    //   symbol: SupportedTokens.ETH,
+    //   name: 'rKasu Token',
+    //   address: '0x2235E1389cC37bdC8086Faeb3abEa3d206fe8E3d',
+    //   decimals: 18,
+    //   icon: FallbackIcon(),
+    // },
   },
 } as const satisfies Record<
   SupportedChainIds,

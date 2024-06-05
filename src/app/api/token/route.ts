@@ -19,9 +19,9 @@ type CoinMarketCapRes = {
 }
 
 const CMC_TOKEN_ID_MAP = {
-  [SupportedTokens.USDT]: '825',
+  // [SupportedTokens.USDT]: '825',
   [SupportedTokens.USDC]: '3408',
-  [SupportedTokens.ETH]: '1027',
+  // [SupportedTokens.ETH]: '1027',
 } as const satisfies Record<SupportedTokens, string>
 
 const USDC_TOKEN_ID = CMC_TOKEN_ID_MAP[SupportedTokens.USDC]
@@ -44,6 +44,7 @@ export async function GET(req: NextRequest) {
   const invalidTokens = splitTokens.filter(
     (token) => !Object.keys(CMC_TOKEN_ID_MAP).includes(token)
   )
+
   if (invalidTokens.length > 0) {
     return new Response(
       JSON.stringify({
