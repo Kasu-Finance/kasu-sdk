@@ -107,3 +107,20 @@ export const getTotalUserLoyaltsRewardsQuery = gql`
         }
     }
 `
+
+export const getSystemVariablesQuery = gql`
+    query getSystemVariablesQuery {
+      systemVariables_collection {
+        id
+        protocolFeeRate
+        priceUpdateEpoch
+        performanceFee
+        loyaltyThresholds
+        ksuEpochTokenPrice
+        epochDuration
+        ecosystemFeeRate
+        clearingPeriodLength
+        canOnlyDepositJuniorWhenUserHasRKSU
+      }
+    }
+`

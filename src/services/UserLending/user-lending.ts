@@ -9,6 +9,7 @@ import {
 import { GraphQLClient } from 'graphql-request';
 
 import {
+    IClearingCoordinatorAbi, IClearingCoordinatorAbi__factory,
     IKasuAllowListAbi__factory,
     ILendingPoolAbi__factory,
     ILendingPoolManagerAbi,
@@ -45,6 +46,7 @@ export class UserLending {
     private readonly _userManagerAbi: IUserManagerAbi;
     private readonly _lendingPoolManagerAbi: ILendingPoolManagerAbi;
     private readonly _userLoyaltyRewardsAbi: IUserLoyaltyRewardsAbi;
+    private readonly _clearingCoordinatorAbi: IClearingCoordinatorAbi;
     readonly _signerOrProvider: Signer | Provider;
 
     constructor(
@@ -65,6 +67,10 @@ export class UserLending {
             _kasuConfig.contracts.UserLoyaltyRewards,
             signerOrProvider,
         );
+        this._clearingCoordinatorAbi = IClearingCoordinatorAbi__factory.connect(
+            _kasuConfig.contracts.ClearingCoordinator,
+            signerOrProvider,
+        )
     }
 
     async getUserTotalPendingAndActiveDepositedAmount(
@@ -316,7 +322,7 @@ export class UserLending {
                 rejectedAmount: userRequest.amountRejected,
                 status: userRequest.status,
                 timestamp: parseInt(userRequest.createdOn),
-                canCancel: this.isCancelable(
+                canCancel: await this.isCancelable(
                     userRequest.type,
                     userRequest.status,
                     userRequest.lendingPool.id,
@@ -335,15 +341,14 @@ export class UserLending {
     ): number {
         return (parseFloat(sharesAmount) * totalAssets) / totalSupply;
     }
-    isCancelable(type: string, status: string, lendingPoolId: string): boolean {
+    async isCancelable(type: string, status: string, lendingPoolId: string): Promise<boolean> {
         if (
             type === (UserRequestType.DEPOSIT as string) &&
             status != 'Processed'
         ) {
             return true;
         }
-        // TODO add additional checks
-        return false;
+        return !(await this._clearingCoordinatorAbi.isLendingPoolClearingPending(lendingPoolId));
     }
 
     async getUserPoolBalance(
