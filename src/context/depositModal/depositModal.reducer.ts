@@ -1,5 +1,6 @@
 import {
   DepositModalActions,
+  DepositModalActionType,
   DepositModalStateType,
 } from '@/context/depositModal/depositModal.types'
 
@@ -8,39 +9,43 @@ const depositModalReducer = (
   action: DepositModalActions
 ): DepositModalStateType => {
   switch (action.type) {
-    case 'SET_AMOUNT':
+    case DepositModalActionType.SET_AMOUNT:
       return {
         ...state,
         amount: action.payload,
         amountInUSD: undefined,
       }
-    case 'SET_AMOUNT_IN_USD':
+    case DepositModalActionType.SET_AMOUNT_IN_USD:
       return {
         ...state,
         amountInUSD: action.payload,
       }
-    case 'SET_SELECTED_TRANCHE':
+    case DepositModalActionType.SET_SELECTED_TRANCHE:
       return {
         ...state,
         trancheId: action.payload,
+        amount: '',
+        amountInUSD: undefined,
       }
-    case 'SET_TX_HASH':
+    case DepositModalActionType.SET_TX_HASH:
       return {
         ...state,
         txHash: action.payload,
       }
-    case 'SET_SIMULATED_DURATION':
+    case DepositModalActionType.SET_SIMULATED_DURATION:
       return {
         ...state,
         simulatedDuration: action.payload,
       }
-    case 'SET_SELECTED_TOKEN':
+    case DepositModalActionType.SET_SELECTED_TOKEN:
       return {
         ...state,
         selectedToken: action.payload,
         amount: '',
         amountInUSD: undefined,
       }
+    case DepositModalActionType.SET_TERMS_ACCEPTED:
+      return { ...state, termsAccepted: action.payload }
     default:
       return state
   }

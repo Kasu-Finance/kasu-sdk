@@ -151,15 +151,15 @@ const KycModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         <Typography variant='body1' component='p'>
           {isAuthenticated ? (
             <>
-              The verification process will be undertaken via our third party
-              KYC provider via integrated widget.
+              The verification process will be undertaken by our third party KYC
+              provider via an integrated widget.
               <br />
               <br />
               Once completed, please return to this browser window{' '}
               <strong>(do not close this window).</strong>
             </>
           ) : (
-            'In order to initiate KYC, you must authorise your wallet in order to undertake interaction with the external service handling the verification process.​'
+            'In order to initiate the KYC process, you must authorise your wallet in order to interact with Kasu’s external KYC provider to complete the verification process.​'
           )}
         </Typography>
       </DialogContent>

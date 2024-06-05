@@ -42,8 +42,6 @@ const OverviewDetails: React.FC<{
             sx={{
               p: 2,
               height: '100%',
-              display: 'flex',
-              flexDirection: isMobile ? 'column' : 'row',
             }}
           >
             <Grid

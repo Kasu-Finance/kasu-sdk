@@ -29,7 +29,7 @@ const ApyBonusBreakdown = () => {
               ? '0.1%'
               : currentLevel === 2
                 ? '0.2%'
-                : t('general.none'),
+                : '0.00 %',
           ],
         },
         {

@@ -6,14 +6,14 @@ import {
   Typography,
   TypographyProps,
 } from '@mui/material'
-import { ReactNode } from 'react'
+import { isValidElement, ReactNode } from 'react'
 
 import ToolTip from '@/components/atoms/ToolTip'
 
 type InfoRowProps = {
   title: string
   subtitle?: string
-  toolTipInfo?: ReactNode
+  toolTipInfo?: ReactNode | string
   showDivider?: boolean
   metric?: ReactNode | number | string
   titleStyle?: TypographyProps
@@ -37,6 +37,16 @@ const InfoRow: React.FC<InfoRowProps> = ({
     px: 2,
     py: '6px',
     width: '100%',
+  }
+
+  const renderToolTip = (info: ReactNode | string) => {
+    if (typeof info === 'string') {
+      return <ToolTip title={info} />
+    }
+    if (isValidElement(info)) {
+      return info
+    }
+    return null
   }
 
   return (
@@ -64,7 +74,7 @@ const InfoRow: React.FC<InfoRowProps> = ({
               </Typography>
             )}
           </Box>
-          {toolTipInfo && <ToolTip title={toolTipInfo} />}
+          {toolTipInfo && renderToolTip(toolTipInfo)}
         </Box>
         {metric && metric}
       </Box>

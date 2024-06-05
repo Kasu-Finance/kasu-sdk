@@ -60,6 +60,7 @@ const CurrentSummary = () => {
               usdValue={formatAmount(formatEther(ksuInUSD || '0'))}
               pt='6px'
               pl={2}
+              sx={{ width: 'fit-content' }}
             />
           }
         />
@@ -78,6 +79,7 @@ const CurrentSummary = () => {
               symbol='USDC'
               pt='6px'
               pl={2}
+              sx={{ width: 'fit-content' }}
             />
           }
         />

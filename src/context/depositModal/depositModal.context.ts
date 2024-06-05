@@ -1,15 +1,8 @@
 import { createContext } from 'react'
 
-import {
-  DepositModalActions,
-  DepositModalStateType,
-} from '@/context/depositModal/depositModal.types'
+import { DepositModalTypes } from '@/context/depositModal/depositModal.types'
 
-import { ContextWrapper } from '@/types/utils'
-
-const depositModalContext = createContext(
-  {} as ContextWrapper<DepositModalStateType, DepositModalActions>
-)
+const depositModalContext = createContext({} as DepositModalTypes)
 depositModalContext.displayName = 'DepositModalContext'
 
 export default depositModalContext

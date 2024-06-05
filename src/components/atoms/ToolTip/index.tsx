@@ -1,7 +1,6 @@
 import InfoIcon from '@mui/icons-material/Info'
 import { Tooltip, TooltipProps, useTheme } from '@mui/material'
 
-import TooltipTrigger from '@/components/atoms/ToolTip/TooltipTrigger'
 type ToolTipProps = Omit<TooltipProps, 'children'> & {
   children?: React.ReactElement<any, any>
 }
@@ -12,15 +11,19 @@ const ToolTip: React.FC<ToolTipProps> = ({ children, ...rest }) => {
   return (
     <Tooltip disableFocusListener disableTouchListener {...rest}>
       {children ?? (
-        <TooltipTrigger>
-          <InfoIcon
-            sx={{
-              width: '18px',
-              height: '18px',
-              color: theme.palette.primary.dark,
-            }}
-          />
-        </TooltipTrigger>
+        <InfoIcon
+          sx={{
+            ml: 0.5,
+            width: '18px',
+            height: '18px',
+            color: theme.palette.primary.dark,
+            cursor: 'help',
+            transition: 'color 0.3s ease',
+            '&:hover': {
+              color: theme.palette.primary.main,
+            },
+          }}
+        />
       )}
     </Tooltip>
   )

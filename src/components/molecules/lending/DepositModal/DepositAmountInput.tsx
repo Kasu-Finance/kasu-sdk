@@ -121,8 +121,8 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
     debounceTime
   )
 
-  const handleMax = useCallback(async () => {
-    const maxPossible = toBigNumber(balance).gt(toBigNumber(maxDeposit))
+  const handleMax = useCallback(() => {
+    const maxPossible = toBigNumber(maxDeposit).lt(toBigNumber(balance))
       ? maxDeposit
       : balance
 

@@ -16,6 +16,7 @@ declare module '@mui/material/styles/createPalette' {
       primary: string
     }
   }
+
   interface PaletteOptions {
     highlight: {
       background: string
@@ -170,7 +171,32 @@ export const theme = createTheme({
         position: relative;
         z-index: 1;
       }
+
+      ul{
+        padding-left: 1.5em;
+      }
       
+      .slide-enter {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+      
+      .slide-enter-active {
+        opacity: 1;
+        transform: translateX(0);
+        transition: opacity 500ms, transform 500ms;
+      }
+      
+      .slide-exit {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      
+      .slide-exit-active {
+        opacity: 0;
+        transform: translateX(-100%);
+        transition: opacity 500ms, transform 500ms;
+      }
 
       .hide-overflow-mobile {
         @media (max-width: 600px) { 
@@ -413,6 +439,20 @@ export const theme = createTheme({
         },
       },
     },
+    MuiTable: {
+      styleOverrides: {
+        root: {
+          '&.tooltipTable': {
+            '& .MuiTableCell-root': {
+              color: '#fff',
+              paddingLeft: 0,
+              fontFamily: primaryFontFamily,
+              fontSize: '0.6875rem',
+            },
+          },
+        },
+      },
+    },
     MuiTableHead: {
       styleOverrides: {
         root: {
@@ -611,10 +651,14 @@ export const theme = createTheme({
       },
       styleOverrides: {
         tooltip: {
-          maxWidth: '350px',
-          padding: '4px 8px',
+          maxWidth: '460px',
+          maxHeight: '360px',
+          overflow: 'auto',
+          lineHeight: 1.5,
+          padding: '4px 8px 6px 8px',
           backgroundColor: 'rgba(97, 97, 97, 0.9)',
           color: '#ffffff',
+          backdropFilter: 'blur(3px)',
           borderRadius: '4px',
           boxShadow: '0px 3px 5px -1px rgba(0, 0, 0, 0.2)',
           filter:

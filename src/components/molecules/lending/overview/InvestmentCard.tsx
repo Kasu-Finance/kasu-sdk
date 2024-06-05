@@ -76,7 +76,7 @@ const InvestmentPortfolio: React.FC<{
   return (
     <Card>
       <CardHeader
-        title='Your Investment'
+        title='Your Lending'
         titleTypographyProps={{
           variant: 'h6',
           component: 'h6',
