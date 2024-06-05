@@ -2,6 +2,7 @@
 
 import { ReactNode, useReducer } from 'react'
 
+import useModalStatusActions from '@/context/modalStatus/modalStatus.actions'
 import ModalStatusContext from '@/context/modalStatus/modalStatus.context'
 import modalStatusReducer from '@/context/modalStatus/modalStatus.reducer'
 import {
@@ -28,8 +29,10 @@ const ModalStatusState: React.FC<ModalStatusStateProps> = ({
 
   const [state, dispatch] = useReducer(modalStatusReducer, initialState)
 
+  const modalStatusActions = useModalStatusActions(dispatch)
+
   return (
-    <ModalStatusContext.Provider value={{ ...state, dispatch }}>
+    <ModalStatusContext.Provider value={{ ...state, ...modalStatusActions }}>
       {children}
     </ModalStatusContext.Provider>
   )

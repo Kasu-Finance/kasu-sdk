@@ -13,13 +13,18 @@ export type Toast = {
   onCloseCallback?: () => void
 }
 
+export enum ToastActionsType {
+  SET_TOAST = 'SET_TOAST',
+  REMOVE_TOAST = 'REMOVE_TOAST',
+}
+
 export type ToastActions =
   | {
-      type: 'SET_TOAST'
+      type: ToastActionsType.SET_TOAST
       payload: Toast
     }
   | {
-      type: 'REMOVE_TOAST'
+      type: ToastActionsType.REMOVE_TOAST
     }
 
 export type ToastStateType = {

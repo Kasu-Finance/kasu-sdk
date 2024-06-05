@@ -1,15 +1,7 @@
-import { useCallback, useContext } from 'react'
-
-import {
-  TransactionStatus,
-  TransactionTranches,
-  TransactionType,
-} from '@/components/molecules/lending/overview/TransactionHistory/TransactionHistoryFilters'
+import { useContext } from 'react'
 
 import transactionHistoryContext from '@/context/transactionHistory/transactionHistory.context'
 import { TransactionHistoryTypes } from '@/context/transactionHistory/transactionHistory.types'
-
-import { ValueOf } from '@/types/utils'
 
 const useTransactionHistoryState = (): TransactionHistoryTypes => {
   const context = useContext(transactionHistoryContext)
@@ -20,41 +12,7 @@ const useTransactionHistoryState = (): TransactionHistoryTypes => {
     )
   }
 
-  const { dispatch } = context
-
-  const setStatus = useCallback(
-    (status: ValueOf<typeof TransactionStatus>) =>
-      dispatch({
-        type: 'SET_STATUS',
-        payload: status,
-      }),
-    [dispatch]
-  )
-
-  const setTransactionType = useCallback(
-    (tranasctionType: ValueOf<typeof TransactionType>) =>
-      dispatch({
-        type: 'SET_TRANSACTION_TYPE',
-        payload: tranasctionType,
-      }),
-    [dispatch]
-  )
-
-  const setTrancheType = useCallback(
-    (trancheType: ValueOf<typeof TransactionTranches>) =>
-      dispatch({
-        type: 'SET_TRANCHE_TYPE',
-        payload: trancheType,
-      }),
-    [dispatch]
-  )
-
-  return {
-    ...context,
-    setStatus,
-    setTrancheType,
-    setTransactionType,
-  }
+  return context
 }
 
 export default useTransactionHistoryState

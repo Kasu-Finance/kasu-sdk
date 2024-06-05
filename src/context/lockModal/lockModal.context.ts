@@ -1,15 +1,8 @@
 import { createContext } from 'react'
 
-import {
-  LockModalActions,
-  LockModalStateType,
-} from '@/context/lockModal/lockModal.types'
+import { LockModalTypes } from '@/context/lockModal/lockModal.types'
 
-import { ContextWrapper } from '@/types/utils'
-
-const lockModalContext = createContext(
-  {} as ContextWrapper<LockModalStateType, LockModalActions>
-)
+const lockModalContext = createContext({} as LockModalTypes)
 lockModalContext.displayName = 'LockModalContext'
 
 export default lockModalContext

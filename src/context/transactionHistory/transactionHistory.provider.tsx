@@ -8,6 +8,7 @@ import {
   TransactionType,
 } from '@/components/molecules/lending/overview/TransactionHistory/TransactionHistoryFilters'
 
+import useTransactionHistoryActions from '@/context/transactionHistory/transactionHistory.actions'
 import TransactionHistoryContext from '@/context/transactionHistory/transactionHistory.context'
 import transactionHistoryReducer from '@/context/transactionHistory/transactionHistory.reducer'
 import { TransactionHistoryStateType } from '@/context/transactionHistory/transactionHistory.types'
@@ -27,8 +28,12 @@ const TransactionHistoryState: React.FC<TransactionHistoryStateProps> = ({
 }) => {
   const [state, dispatch] = useReducer(transactionHistoryReducer, initialState)
 
+  const transactionHistoryActions = useTransactionHistoryActions(dispatch)
+
   return (
-    <TransactionHistoryContext.Provider value={{ ...state, dispatch }}>
+    <TransactionHistoryContext.Provider
+      value={{ ...state, ...transactionHistoryActions }}
+    >
       {children}
     </TransactionHistoryContext.Provider>
   )

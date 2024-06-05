@@ -3,17 +3,14 @@
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
 import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
-import { ReactNode, useCallback, useReducer } from 'react'
+import { ReactNode, useReducer } from 'react'
 
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 
+import useModalActions from '@/context/modal/modal.actions'
 import ModalContext from '@/context/modal/modal.context'
 import { modalReducer } from '@/context/modal/modal.reducer'
-import {
-  Modals,
-  ModalsActionTypes,
-  OpenModalParam,
-} from '@/context/modal/modal.types'
+import { Modals } from '@/context/modal/modal.types'
 
 const initialState: Modals = {
   connectWalletModal: { isOpen: false },
@@ -54,27 +51,13 @@ const initialState: Modals = {
 const ModalState: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [modal, dispatch] = useReducer(modalReducer, initialState)
 
-  const openModal = useCallback(
-    <T extends keyof Modals>(args: OpenModalParam<T>) => {
-      dispatch({
-        type: ModalsActionTypes.OPEN_MODAL,
-        name: args.name,
-        content: args,
-      })
-    },
-    []
-  )
-
-  const closeModal = useCallback((name: keyof Modals) => {
-    dispatch({ type: ModalsActionTypes.CLOSE_MODAL, name })
-  }, [])
+  const modalActions = useModalActions(dispatch)
 
   return (
     <ModalContext.Provider
       value={{
         modal,
-        openModal,
-        closeModal,
+        ...modalActions,
       }}
     >
       {children}

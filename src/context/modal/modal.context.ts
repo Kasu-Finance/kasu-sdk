@@ -1,8 +1,8 @@
 import { createContext } from 'react'
 
-import { ModalStateType } from '@/context/modal/modal.types'
+import { ModalTypes } from '@/context/modal/modal.types'
 
-const modalContext = createContext({} as ModalStateType)
+const modalContext = createContext({} as ModalTypes)
 modalContext.displayName = 'ModalContext'
 
 export default modalContext

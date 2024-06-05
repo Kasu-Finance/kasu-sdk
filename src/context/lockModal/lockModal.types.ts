@@ -1,12 +1,17 @@
 import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
 
+export enum LockModalActionType {
+  SET_AMOUNT = 'SET_AMOUNT',
+  SET_SELECTED_LOCK_PERIOD = 'SET_SELECTED_LOCK_PERIOD',
+}
+
 export type LockModalActions =
   | {
-      type: 'SET_AMOUNT'
+      type: LockModalActionType.SET_AMOUNT
       payload: string
     }
   | {
-      type: 'SET_SELECTED_LOCK_PERIOD'
+      type: LockModalActionType.SET_SELECTED_LOCK_PERIOD
       payload: LockPeriod
     }
 

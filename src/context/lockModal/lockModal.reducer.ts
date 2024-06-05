@@ -1,5 +1,6 @@
 import {
   LockModalActions,
+  LockModalActionType,
   LockModalStateType,
 } from '@/context/lockModal/lockModal.types'
 
@@ -8,12 +9,12 @@ const lockModalReducer = (
   action: LockModalActions
 ): LockModalStateType => {
   switch (action.type) {
-    case 'SET_AMOUNT':
+    case LockModalActionType.SET_AMOUNT:
       return {
         ...state,
         amount: action.payload,
       }
-    case 'SET_SELECTED_LOCK_PERIOD':
+    case LockModalActionType.SET_SELECTED_LOCK_PERIOD:
       return {
         ...state,
         selectedLockPeriod: action.payload,

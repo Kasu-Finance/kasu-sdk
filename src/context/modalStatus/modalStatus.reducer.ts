@@ -1,5 +1,6 @@
 import {
   ModalStatusActions,
+  ModalStatusActionsType,
   ModalStatusStateType,
 } from '@/context/modalStatus/modalStatus.types'
 
@@ -8,18 +9,16 @@ const modalStatusReducer = (
   action: ModalStatusActions
 ): ModalStatusStateType => {
   switch (action.type) {
-    case 'SET_MODAL_STATUS_STATE':
+    case ModalStatusActionsType.SET_MODAL_STATUS_STATE:
       return {
         ...state,
         modalStatus: action.payload,
       }
-    case 'SET_MODAL_STATUS_ACTON':
+    case ModalStatusActionsType.SET_MODAL_STATUS_ACTON:
       return {
         ...state,
         modalStatusAction: action.payload,
       }
-    default:
-      return state
   }
 }
 

@@ -1,15 +1,8 @@
 import { createContext } from 'react'
 
-import {
-  WithdrawModalActions,
-  WithdrawModalStateType,
-} from '@/context/withdrawModal/withdrawModal.types'
+import { WithdrawModalTypes } from '@/context/withdrawModal/withdrawModal.types'
 
-import { ContextWrapper } from '@/types/utils'
-
-const WithdrawModalContext = createContext(
-  {} as ContextWrapper<WithdrawModalStateType, WithdrawModalActions>
-)
+const WithdrawModalContext = createContext({} as WithdrawModalTypes)
 WithdrawModalContext.displayName = 'WithdrawModalContext'
 
 export default WithdrawModalContext

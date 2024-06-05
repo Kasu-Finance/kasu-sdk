@@ -1,6 +1,6 @@
 import {
-  WithdrawActionTypes,
   WithdrawModalActions,
+  WithdrawModalActionTypes,
   WithdrawModalStateType,
 } from '@/context/withdrawModal/withdrawModal.types'
 
@@ -9,18 +9,16 @@ const withdrawModalReducer = (
   action: WithdrawModalActions
 ): WithdrawModalStateType => {
   switch (action.type) {
-    case WithdrawActionTypes.SET_AMOUNT:
+    case WithdrawModalActionTypes.SET_AMOUNT:
       return {
         ...state,
         amount: action.payload,
       }
-    case WithdrawActionTypes.SET_SELECTED_TRANCHE:
+    case WithdrawModalActionTypes.SET_SELECTED_TRANCHE:
       return {
         ...state,
         selectedTranche: action.payload,
       }
-    default:
-      return state
   }
 }
 

@@ -46,8 +46,6 @@ const depositModalReducer = (
       }
     case DepositModalActionType.SET_TERMS_ACCEPTED:
       return { ...state, termsAccepted: action.payload }
-    default:
-      return state
   }
 }
 

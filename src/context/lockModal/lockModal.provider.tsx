@@ -3,6 +3,7 @@
 import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
 import { ReactNode, useReducer } from 'react'
 
+import useLockModalActions from '@/context/lockModal/lockModal.actions'
 import LockModalContext from '@/context/lockModal/lockModal.context'
 import lockModalReducer from '@/context/lockModal/lockModal.reducer'
 import { LockModalStateType } from '@/context/lockModal/lockModal.types'
@@ -25,8 +26,10 @@ const LockModalState: React.FC<LockModalStateProps> = ({
     selectedLockPeriod: defaultLockPeriod,
   })
 
+  const lockModalActions = useLockModalActions(dispatch)
+
   return (
-    <LockModalContext.Provider value={{ ...state, dispatch }}>
+    <LockModalContext.Provider value={{ ...state, ...lockModalActions }}>
       {children}
     </LockModalContext.Provider>
   )

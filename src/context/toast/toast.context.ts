@@ -1,12 +1,8 @@
 import { createContext } from 'react'
 
-import { ToastActions, ToastStateType } from '@/context/toast/toast.types'
+import { ToastTypes } from '@/context/toast/toast.types'
 
-import { ContextWrapper } from '@/types/utils'
-
-const toastContext = createContext(
-  {} as ContextWrapper<ToastStateType, ToastActions>
-)
+const toastContext = createContext({} as ToastTypes)
 toastContext.displayName = 'ToastContext'
 
 export default toastContext

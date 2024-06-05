@@ -11,9 +11,10 @@ import {
 } from '@mui/material'
 import { ReactNode, useReducer } from 'react'
 
+import useToastActions from '@/context/toast/toast.actions'
 import ToastContext from '@/context/toast/toast.context'
 import toastReducer from '@/context/toast/toast.reducer'
-import { ToastStateType } from '@/context/toast/toast.types'
+import { ToastActionsType, ToastStateType } from '@/context/toast/toast.types'
 
 import SuccessIcon from '@/assets/icons/general/SuccessIcon'
 
@@ -31,16 +32,18 @@ const initialState: ToastStateType = {
 const ToastState: React.FC<ToastStateProps> = ({ children }) => {
   const [state, dispatch] = useReducer(toastReducer, initialState)
 
+  const toastActions = useToastActions(dispatch)
+
   const handleClose = () => {
     state.toast?.onCloseCallback?.()
 
     dispatch({
-      type: 'REMOVE_TOAST',
+      type: ToastActionsType.REMOVE_TOAST,
     })
   }
 
   return (
-    <ToastContext.Provider value={{ ...state, dispatch }}>
+    <ToastContext.Provider value={{ ...state, ...toastActions }}>
       {children}
       {state.toast && (
         <Modal

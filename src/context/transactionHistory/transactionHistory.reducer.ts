@@ -1,5 +1,6 @@
 import {
   TransactionHistoryActions,
+  TransactionHistoryActionsTypes,
   TransactionHistoryStateType,
 } from '@/context/transactionHistory/transactionHistory.types'
 
@@ -8,17 +9,17 @@ const transactionHistoryReducer = (
   action: TransactionHistoryActions
 ): TransactionHistoryStateType => {
   switch (action.type) {
-    case 'SET_STATUS':
+    case TransactionHistoryActionsTypes.SET_STATUS:
       return {
         ...state,
         status: action.payload,
       }
-    case 'SET_TRANSACTION_TYPE':
+    case TransactionHistoryActionsTypes.SET_TRANSACTION_TYPE:
       return {
         ...state,
         transactionType: action.payload,
       }
-    case 'SET_TRANCHE_TYPE':
+    case TransactionHistoryActionsTypes.SET_TRANCHE_TYPE:
       return {
         ...state,
         trancheType: action.payload,

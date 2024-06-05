@@ -1,6 +1,6 @@
 import { HexString } from '@/types/lending'
 
-export enum WithdrawActionTypes {
+export enum WithdrawModalActionTypes {
   SET_AMOUNT = 'SET_AMOUNT',
   SET_SELECTED_TRANCHE = 'SET_SELECTED_TRANCHE',
   SET_WITHDRAW_PROGRESS = 'SET_WITHDRAW_PROGRESS',
@@ -16,11 +16,11 @@ export enum WithdrawMetrics {
 
 export type WithdrawModalActions =
   | {
-      type: WithdrawActionTypes.SET_AMOUNT
+      type: WithdrawModalActionTypes.SET_AMOUNT
       payload: string
     }
   | {
-      type: WithdrawActionTypes.SET_SELECTED_TRANCHE
+      type: WithdrawModalActionTypes.SET_SELECTED_TRANCHE
       payload: HexString
     }
 

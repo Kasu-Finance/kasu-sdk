@@ -4,6 +4,7 @@ import { IdentityClient } from '@nexeraid/identity-sdk'
 import { useWeb3React } from '@web3-react/core'
 import { ReactNode, useEffect, useReducer } from 'react'
 
+import useKycActions from '@/context/kyc/kyc.actions'
 import KycContext from '@/context/kyc/kyc.context'
 import kycReducer from '@/context/kyc/kyc.reducer'
 import { KycStateType } from '@/context/kyc/kyc.types'
@@ -26,6 +27,8 @@ const KycState: React.FC<KycStateProps> = ({ children }) => {
   const { account } = useWeb3React()
 
   const [state, dispatch] = useReducer(kycReducer, initialState)
+
+  const kycActions = useKycActions(dispatch, state.identityClient)
 
   useEffect(() => {
     if (account && account.toLowerCase() !== state.authenticatedUser) {
@@ -63,7 +66,7 @@ const KycState: React.FC<KycStateProps> = ({ children }) => {
   }, [account])
 
   return (
-    <KycContext.Provider value={{ ...state, dispatch }}>
+    <KycContext.Provider value={{ ...state, ...kycActions }}>
       {children}
     </KycContext.Provider>
   )

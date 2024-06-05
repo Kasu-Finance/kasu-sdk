@@ -19,7 +19,5 @@ export const modalReducer = (state: Modals, action: ModalAction): Modals => {
         ...state,
         [action.name]: { isOpen: false },
       }
-    default:
-      return state
   }
 }

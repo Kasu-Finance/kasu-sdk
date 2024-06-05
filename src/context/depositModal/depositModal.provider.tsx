@@ -2,21 +2,10 @@
 
 import { ReactNode, useReducer } from 'react'
 
-import {
-  setAmount,
-  setAmountInUSD,
-  setSelectedToken,
-  setSelectedTranche,
-  setSimulatedDuration,
-  setTermsAccepted,
-  setTxHash,
-} from '@/context/depositModal/depositModal.actions'
+import useDepositModalActions from '@/context/depositModal/depositModal.actions'
 import DepositModalContext from '@/context/depositModal/depositModal.context'
 import depositModalReducer from '@/context/depositModal/depositModal.reducer'
-import {
-  DepositModalStateType,
-  DepositModalTypes,
-} from '@/context/depositModal/depositModal.types'
+import { DepositModalStateType } from '@/context/depositModal/depositModal.types'
 
 import { SupportedTokens } from '@/constants/tokens'
 
@@ -52,24 +41,10 @@ const DepositModalState: React.FC<DepositModalStateProps> = ({
     selectedToken: initialToken ?? SupportedTokens.USDC,
   })
 
-  const context: DepositModalTypes = {
-    ...state,
-    setAmount: (amount: string) => dispatch(setAmount(amount)),
-    setAmountInUSD: (amountInUSD: string | undefined) =>
-      dispatch(setAmountInUSD(amountInUSD)),
-    setSelectedTranche: (selectedTranche: `0x${string}`) =>
-      dispatch(setSelectedTranche(selectedTranche)),
-    setTxHash: (txHash: string) => dispatch(setTxHash(txHash)),
-    setTermsAccepted: (termsAccepted: boolean) =>
-      dispatch(setTermsAccepted(termsAccepted)),
-    setSimulatedDuration: (simulatedDuration: number) =>
-      dispatch(setSimulatedDuration(simulatedDuration)),
-    setSelectedToken: (selectedToken: SupportedTokens) =>
-      dispatch(setSelectedToken(selectedToken)),
-  }
+  const depositModalActions = useDepositModalActions(dispatch)
 
   return (
-    <DepositModalContext.Provider value={context}>
+    <DepositModalContext.Provider value={{ ...state, ...depositModalActions }}>
       {children}
     </DepositModalContext.Provider>
   )

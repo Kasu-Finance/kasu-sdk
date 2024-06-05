@@ -46,13 +46,18 @@ export type ModalStatusParam =
   | { type: 'default' }
   | { type: 'success' }
 
+export enum ModalStatusActionsType {
+  SET_MODAL_STATUS_STATE = 'SET_MODAL_STATUS_STATE',
+  SET_MODAL_STATUS_ACTON = 'SET_MODAL_STATUS_ACTON',
+}
+
 export type ModalStatusActions =
   | {
-      type: 'SET_MODAL_STATUS_STATE'
+      type: ModalStatusActionsType.SET_MODAL_STATUS_STATE
       payload: ModalStatusState
     }
   | {
-      type: 'SET_MODAL_STATUS_ACTON'
+      type: ModalStatusActionsType.SET_MODAL_STATUS_ACTON
       payload: ModalStatusAction
     }
 

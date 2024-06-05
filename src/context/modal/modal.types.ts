@@ -63,6 +63,11 @@ export type OpenModalParam<T extends keyof Modals> = Omit<
 
 export type ModalStateType = {
   modal: Modals
+}
+
+export type ModalFunctions = {
   openModal: <T extends keyof Modals>(args: OpenModalParam<T>) => void
   closeModal: (name: keyof Modals) => void
 }
+
+export type ModalTypes = ModalStateType & ModalFunctions
