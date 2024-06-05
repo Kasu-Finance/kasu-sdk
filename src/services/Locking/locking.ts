@@ -21,7 +21,7 @@ import { totalUserLoyaltyRewardsQuery } from '../UserLending/queries';
 import { TotalUserLoyaltyRewardsSubgraph } from '../UserLending/subgraph-types';
 
 import {
-    claimedFeesQuery, getTotalUserLoyaltsRewardsQuery,
+    claimedFeesQuery, getSystemVariablesQuery, getTotalUserLoyaltsRewardsQuery,
     lockingPeriodsQuery, lockingSummariesQuery,
     userEarnedrKsuQuery,
     userLocksQuery,
@@ -37,7 +37,7 @@ import {
     GQLUserLocks, LockingSummarySubgraphResult,
     LockPeriod,
     LockPeriodInterface,
-    RSVDeadlineValue, totalUserLoyaltyRewards, UserBonusData,
+    RSVDeadlineValue, SystemVariables, totalUserLoyaltyRewards, UserBonusData,
     UserLock,
 } from './types';
 
@@ -145,9 +145,9 @@ export class KSULocking {
         const newUserRKSU = (KSULocked + (KSULocked * lockDetails.ksuBonusMultiplier)) * lockDetails.rKsuMultiplier
         const totalRKSUAfterLock = totalRKSU + newUserRKSU
 
-        // TODO read this from subgraph - ask dan about this
-        const performanceFee = 0.1;
-        const ecosystemFee = 0.5;
+        const systemVariables: SystemVariables = await this._graph.request(getSystemVariablesQuery);
+        const performanceFee = parseFloat(systemVariables.systemVariables_collection[0].performanceFee)/100;
+        const ecosystemFee = parseFloat(systemVariables.systemVariables_collection[0].ecosystemFeeRate)/100;
 
         let projectedYearlyPlatformInterest = 0;
         const subgraphResults: TrancheSubgraphResult = await this._graph.request(getAllTranchesQuery);

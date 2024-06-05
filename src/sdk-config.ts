@@ -8,6 +8,7 @@ export interface ContractAddresses {
     SystemVariables: string;
     UserLoyaltyRewards: string;
     KsuPrice: string;
+    ClearingCoordinator: string;
 }
 export class SdkConfig {
     subgraphUrl: string;

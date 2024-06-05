@@ -67,3 +67,29 @@ export interface  PortfolioLendingPool {
 export interface LendingPortfolioData {
     lendingPools: PortfolioLendingPool[]
 }
+
+export interface LastEpochQueryResult {
+    user: {
+        lendingPoolUserDetails: {
+            id: string
+            lendingPool: {
+                id: string
+                name: string
+            }
+            lendingPoolTrancheUserDetails: {
+                lendingPoolTrancheUserEpochSharesUpdates: {
+                    shares: string
+                }[]
+                tranche: {
+                    id: string
+                    lendingPoolTrancheShareUpdates: {
+                        shares: string
+                    }[]
+                    lendingPoolTrancheEpochInterest: {
+                        epochInterestAmount: string
+                    }[]
+                }
+            }[]
+        }[]
+    }
+}

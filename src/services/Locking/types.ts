@@ -115,3 +115,18 @@ export interface totalUserLoyaltyRewards {
         totalUserLoyaltyRewards: string;
     }
 }
+
+export interface SystemVariables {
+    systemVariables_collection: {
+        id: string;
+        protocolFeeRate: string;
+        priceUpdateEpoch: string;
+        performanceFee: string;
+        loyaltyThresholds: string;
+        ksuEpochTokenPrice: string;
+        epochDuration: string;
+        ecosystemFeeRate: string;
+        clearingPeriodLength: string;
+        canOnlyDepositJuniorWhenUserHasRKSU: boolean;
+    }[]
+}
