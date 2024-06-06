@@ -102,11 +102,20 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
 
   return (
     <Box pl={2} pr={2}>
-      <ColoredBox display='flex' justifyContent='center' mt={3}>
+      <ColoredBox
+        display='flex'
+        justifyContent='center'
+        alignItems='flex-start'
+        mt={3}
+      >
         {tranches.map((tranche) => {
           const titleKey = isMultiTranche
             ? `lending.shortcutTranche.${tranche.name.toLowerCase()}.title`
-            : 'general.poolApy'
+            : 'lending.poolOverview.investmentCard.loanApy'
+
+          const tooltipKey = isMultiTranche
+            ? ''
+            : t('lending.poolOverview.investmentCard.tooltip')
           const trancheApy = parseFloat(tranche.apy) * 100
           const formattedApy = trancheApy.toFixed(2) + ' %'
 
@@ -114,12 +123,13 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
             <InfoColumn
               key={tranche.id}
               title={t(titleKey)}
+              alignTitleItems='normal'
               subtitle={
                 isMultiTranche
                   ? t('lending.poolOverview.investmentCard.trancheApy.label')
                   : ' '
               }
-              toolTipInfo=''
+              toolTipInfo={tooltipKey}
               showDivider
               metric={
                 <Typography variant='subtitle2' sx={{ pl: 2, mt: 0.5 }}>

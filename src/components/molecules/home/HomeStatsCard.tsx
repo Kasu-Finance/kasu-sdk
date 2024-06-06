@@ -36,8 +36,8 @@ const HomeStatsCard: React.FC<{
         content: `${formatPercentage(data?.totalYieldEarned || '0')}`,
       },
       {
-        titleKey: 'lending.poolOverview.detailCard.totalLossRate.label',
-        tooltipKey: 'lending.poolOverview.detailCard.totalLossRate.tooltip',
+        titleKey: 'details.poolTraction.lossRate.label',
+        tooltipKey: 'details.poolTraction.lossRate.tooltip',
         content: `${formatPercentage(data?.totalLossRate || '0')}`,
       },
     ]

@@ -19,6 +19,7 @@ type InfoColumnProps = {
   containerSx?: SxProps<Theme>
   titleStyle?: TypographyProps
   subtitleStyle?: TypographyProps
+  alignTitleItems?: 'center' | 'flex-start' | 'flex-end' | 'normal'
 }
 
 const InfoColumn: React.FC<InfoColumnProps> = ({
@@ -30,17 +31,19 @@ const InfoColumn: React.FC<InfoColumnProps> = ({
   containerSx,
   titleStyle,
   subtitleStyle,
+  alignTitleItems = 'center',
 }) => {
   return (
     <Box sx={containerSx}>
       <Box
         display='flex'
         justifyContent='space-between'
+        alignItems='normal'
         px={2}
         py='6px'
         width='100%'
       >
-        <Box display='flex' alignItems='center'>
+        <Box display='flex' alignItems={alignTitleItems}>
           <Box>
             <Typography
               variant='subtitle2'
@@ -62,7 +65,11 @@ const InfoColumn: React.FC<InfoColumnProps> = ({
               </Typography>
             )}
           </Box>
-          {toolTipInfo && <ToolTip title={toolTipInfo} />}
+          {toolTipInfo && (
+            <Box pt={alignTitleItems === 'normal' ? '3px' : 'inherit'}>
+              <ToolTip title={toolTipInfo} />
+            </Box>
+          )}
         </Box>
       </Box>
       {showDivider && <Divider />}
