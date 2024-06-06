@@ -12,7 +12,10 @@ import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 import ColoredBox from '@/components/atoms/ColoredBox'
 import InfoRow from '@/components/atoms/InfoRow'
 import TokenAmount from '@/components/atoms/TokenAmount'
+import ToolTip from '@/components/atoms/ToolTip'
 import NumericalInput from '@/components/molecules/NumericalInput'
+import MinKsuLockLoyalityOne from '@/components/molecules/tooltips/MinKsuLockLoyalityOne'
+import MinKsuLockLoyalityTwo from '@/components/molecules/tooltips/MinKsuLockLoyalityTwo'
 
 import { SupportedTokens } from '@/constants/tokens'
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
@@ -151,15 +154,16 @@ const LockAmountInput: React.FC<LockAmountInputProps> = ({ balance }) => {
           {formatAmount(formatEther(ksuInUSD) || '0')} USDC
         </Typography>
       )}
+
       <InfoRow
         title={t('modals.lock.deposit.amount-metric-1')}
-        toolTipInfo={t('modals.lock.deposit.amount-metric-1-tooltip')}
+        toolTipInfo={<ToolTip title={<MinKsuLockLoyalityOne />} />}
         showDivider
         metric={<TokenAmount amount='500.00' symbol='KSU' />}
       />
       <InfoRow
         title={t('modals.lock.deposit.amount-metric-2')}
-        toolTipInfo={t('modals.lock.deposit.amount-metric-2-tooltip')}
+        toolTipInfo={<ToolTip title={<MinKsuLockLoyalityTwo />} />}
         showDivider
         metric={<TokenAmount amount='1,000.00' symbol='KSU' />}
       />
