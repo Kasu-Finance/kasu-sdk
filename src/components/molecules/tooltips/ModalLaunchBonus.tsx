@@ -7,7 +7,7 @@ import {
   Typography,
 } from '@mui/material'
 
-const KsuLaunchBonus = () => {
+const ModalLaunchBonus = () => {
   return (
     <>
       <Typography variant='inherit'>
@@ -50,4 +50,4 @@ const KsuLaunchBonus = () => {
   )
 }
 
-export default KsuLaunchBonus
+export default ModalLaunchBonus

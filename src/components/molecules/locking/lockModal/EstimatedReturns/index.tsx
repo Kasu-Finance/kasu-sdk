@@ -10,16 +10,15 @@ import useTranslation from '@/hooks/useTranslation'
 import ColoredBox from '@/components/atoms/ColoredBox'
 import InfoRow from '@/components/atoms/InfoRow'
 import TokenAmount from '@/components/atoms/TokenAmount'
+import ToolTip from '@/components/atoms/ToolTip'
+import ModalLaunchBonus from '@/components/molecules/tooltips/ModalLaunchBonus'
 
 import { formatAmount, toBigNumber } from '@/utils'
 
 const EstimatedReturns = () => {
   const { t } = useTranslation()
-
   const { amount, selectedLockPeriod } = useLockModalState()
-
   const { modalStatus } = useModalStatusState()
-
   const { availableKsuBonus } = useAvailableKsuBonus()
 
   const estimatedLaunchBonus = useCalculateLaunchBonusAmount(
@@ -83,7 +82,7 @@ const EstimatedReturns = () => {
         />
         <InfoRow
           title={t('modals.lock.estimates.est-3')}
-          toolTipInfo={t('modals.lock.estimates.tooltip-3')}
+          toolTipInfo={<ToolTip title={<ModalLaunchBonus />} />}
           metric={
             <TokenAmount
               color={(theme) =>
