@@ -43,7 +43,7 @@ const LockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   return (
     <>
       <DialogHeader
-        title={`${capitalize(t('general.lock')) + ' ' + t('general.ksu')}`}
+        title={`${capitalize(t('general.lock'))}`}
         onClose={handleClose}
       />
       <DialogContent>
