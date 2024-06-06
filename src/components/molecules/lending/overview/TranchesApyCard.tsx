@@ -123,17 +123,21 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
         >
           {tranches.map((tranche, index) => {
             const titleKey =
-              tranches.length === 1 ? 'APY' : `${tranche.name} Tranche APY`
+              tranches.length === 1
+                ? 'general.apy'
+                : `lending.tranche.${tranche.name.toLowerCase()}.title`
 
             return (
-              <Grid item xs={COLS / pool.tranches.length} key={index}>
-                <MetricWithSuffix
-                  content={formatAmount(+tranche.apy * 100 || '0') + ' %'}
-                  tooltipKey={tranche.tooltip}
-                  titleKey={titleKey}
-                  variant='h5'
-                />
-              </Grid>
+              <>
+                <Grid item xs={COLS / pool.tranches.length} key={index}>
+                  <MetricWithSuffix
+                    content={formatAmount(+tranche.apy * 100 || '0') + ' %'}
+                    tooltipKey={tranche.tooltip}
+                    titleKey={titleKey}
+                    variant='h5'
+                  />
+                </Grid>
+              </>
             )
           })}
         </Grid>
