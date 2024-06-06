@@ -1,7 +1,7 @@
 import InfoIcon from '@mui/icons-material/Info'
 import { Tooltip, TooltipProps, useTheme } from '@mui/material'
 
-type ToolTipProps = Omit<TooltipProps, 'children'> & {
+export type ToolTipProps = Omit<TooltipProps, 'children'> & {
   children?: React.ReactElement<any, any>
 }
 
