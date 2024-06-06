@@ -1,4 +1,5 @@
 import { Box, Grid, Typography } from '@mui/material'
+import { ReactNode } from 'react'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import InfoRow from '@/components/atoms/InfoRow'
@@ -8,7 +9,7 @@ type RewardsBreakdownCardProps = {
   subtitle?: string
   breakdowns: {
     title: string
-    toolTipInfo: string
+    toolTipInfo: string | ReactNode
     metric: [string, string?]
   }[]
 }
