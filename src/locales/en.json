@@ -343,8 +343,8 @@
       "title": "Lending Strategy Overview",
       "detailCard": {
         "apyStructure": {
-          "label": "Pool APY Structure",
-          "tooltip": "Indicates whether the APY earned by Liquidity Providers is fixed for a specified period of time, or variable."
+          "label": "Loan APY Structure",
+          "tooltip": "Indicates whether the APY offered by the Lending Delegate is fixed for a specified period of time, or variable (subject to change upon each epoch)."
         },
         "assetClass": {
           "label": "Asset class",
@@ -380,6 +380,8 @@
         }
       },
       "trancheCard": {
+        "minDeposit": "Minimum Deposit Amount",
+        "maxDeposit": "Minimum Deposit Amount",
         "remainingCapacity": {
           "label": "Remaining capacity",
           "tooltip": "Amount of additional funds the Pool can accept in USDC, also represented as a percentage of the maximum Lending Pool target amount."
@@ -389,28 +391,28 @@
         "loanApy": "Loan APY",
         "tooltip": "The Annual Percentage Yield currently offered by the Lending Delegate for this Lending Strategy, assuming all repayments will be made as expected.",
         "totalAmount": {
-          "label": "Total Amount Invested",
-          "tooltip": "Total amount of USDC you have invested into this Lending Pool."
+          "label": "Total Lending Balance",
+          "tooltip": "Your combined total USDC lending balance across all Tranches (or single Lending Strategy offer in the absence of multiple Tranches) within this Lending Strategy."
         },
         "weightedAvgApy": {
           "label": "Weighted Average APY",
-          "tooltip": "The average APY you are currently earning within this Pool that has been adjusted to reflect your weighted contribution to each Tranche relative to your total contribution across all tranches."
+          "tooltip": "The average APY you are currently earning within this Lending Strategy that has been adjusted to reflect your weighted contribution to each Tranche relative to your total contribution across all Tranches."
         },
         "totYieldEarned": {
           "label": "Total Interest Earned",
           "tooltip": "Total interest you have earned on your USDC investment(s) whilst you remain active in this Lending Pool. For example, if you withdraw your total investment from this Lending Pool (and are therefore no longer active in this Lending Pool), then your total interest earned will be displayed as zero. To view a breakdown of your total interest earned across all Lending Pools, please click on the 'My Portfolio' tab."
         },
         "amountInvested": {
-          "label": "Amount Invested",
-          "tooltip": "Total amount of USDC you have invested into this Tranche within this Lending Pool. For example, if you withdraw your total investment amount from this"
+          "label": "Lending Balance",
+          "tooltip": "Your current USDC lending balance in this Tranche."
         },
         "trancheApy": {
           "label": "Tranche APY",
-          "tooltip": "The current APY you are currently earning within this Tranche (in the case that there are multiple Tranches within this Pool). In the absence of multiple Tranches, then this reflects the APY you are currently earning within this Pool."
+          "tooltip": "The Annual Percentage Yield currently offered by the Lending Delegate for this Tranche of this Lending Strategy, assuming all repayments will be made as expected."
         },
         "yieldEarned": {
           "label": "Lifetime Interest Earned",
-          "tooltip": "The total amount of interest you have earned since the beginning of our lending activities on Kasu."
+          "tooltip": "The total amount of interest you have earned (after fees) from this particular loan Tranche since you first started lending to this Tranche. To view a breakdown of your total historical interest earned across all Tranches and Lending Strategies, please visit the 'My Portfolio' tab. "
         }
       },
       "lockingStatus": {

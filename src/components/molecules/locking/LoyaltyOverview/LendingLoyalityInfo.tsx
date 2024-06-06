@@ -12,6 +12,7 @@ import InfoRow from '@/components/atoms/InfoRow'
 import TokenAmount from '@/components/atoms/TokenAmount'
 import ToolTip from '@/components/atoms/ToolTip'
 import LoyaltyProgress from '@/components/molecules/locking/LoyaltyOverview/LoyaltyProgress'
+import LendingLoyalityLevelsTooltip from '@/components/molecules/tooltips/LendingLoyalityLevelsTooltip'
 
 import { capitalize, formatAmount } from '@/utils'
 
@@ -26,9 +27,11 @@ const LendingLoyalityInfo = () => {
     <>
       <Box display='flex' alignItems='center'>
         <Typography variant='subtitle1' component='h6'>
-          {capitalize(t('general.loyaltyLevel'))} {currentLevel}
+          {capitalize(t('general.loyaltyLevel'))} {currentLevel || 0}
         </Typography>
-        <ToolTip title={t('general.loyaltyLevel')} />
+        <ToolTip
+          title={<LendingLoyalityLevelsTooltip loyalityLevel={currentLevel} />}
+        />
       </Box>
 
       <LoyaltyProgress stakedPercentage={stakedPercentage} />

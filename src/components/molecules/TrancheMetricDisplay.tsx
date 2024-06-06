@@ -32,7 +32,11 @@ const TranchMetricDisplay: React.FC<MetricDisplayProps> = ({
   const { t } = useTranslation()
 
   const translatedTitle = t(titleKey)
-  const translatedTooltip = t(tooltipKey)
+  const translatedTooltip = t(tooltipKey || '')
+
+  if (translatedTooltip) {
+    // infoRowProps.toolTipInfo = translatedTooltip;
+  }
 
   const remainingCapacityContent = (
     <Box

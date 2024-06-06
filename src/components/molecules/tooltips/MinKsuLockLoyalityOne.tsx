@@ -12,22 +12,22 @@ const MinKsuLockLoyalityOne = () => {
         all Lending Strategies is 1% or greater, but less than 5%, you will
         achieve Loyalty Level 1, entitling you to the following token utility
         and benefits:
-        <ul>
-          <li>
-            Second order priority access to Lending Strategies and loan Tranches
-            (behind Loyalty Level 2).
-          </li>
-          <li>
-            Second order priority for capital withdrawals from your existing
-            lending (behind Loyalty Level 2).
-          </li>
-          <li>
-            Additional APY (APY Bonus), awarding you with bonus interest
-            earnings on all your lending, awarded in KSU (subject to change
-            according to liquidity demand and supply requirements).
-          </li>
-        </ul>
       </Typography>
+      <ul>
+        <li>
+          Second order priority access to Lending Strategies and loan Tranches
+          (behind Loyalty Level 2).
+        </li>
+        <li>
+          Second order priority for capital withdrawals from your existing
+          lending (behind Loyalty Level 2).
+        </li>
+        <li>
+          Additional APY (APY Bonus), awarding you with bonus interest earnings
+          on all your lending, awarded in KSU (subject to change according to
+          liquidity demand and supply requirements).
+        </li>
+      </ul>
     </>
   )
 }

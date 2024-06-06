@@ -52,14 +52,14 @@ const TranchDetailCard: React.FC<TranchDetailCardProps> = ({
         isRemainingCapacity
       />
       <TrancheMetricDisplay
-        titleKey='Minimum Deposit Amount'
+        titleKey='lending.poolOverview.trancheCard.minDeposit'
         tooltipKey=''
         content={minimumDepositAmount}
         suffix='USDC'
         isSingleTranche={isSingleTranche}
       />
       <TrancheMetricDisplay
-        titleKey='Maximum Deposit Amount'
+        titleKey='lending.poolOverview.trancheCard.maxDeposit'
         tooltipKey=''
         content={maxDepositAmount}
         suffix='USDC'
