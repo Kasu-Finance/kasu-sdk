@@ -78,7 +78,7 @@ const LockDurationInput = () => {
       >
         <InfoRow
           title={t('modals.lock.duration.unlocking')}
-          toolTipInfo='info'
+          toolTipInfo={t('modals.lock.duration.unlocking-date')}
           metric={
             <Typography
               variant='h6'

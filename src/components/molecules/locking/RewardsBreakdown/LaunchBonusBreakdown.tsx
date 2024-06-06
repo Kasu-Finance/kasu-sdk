@@ -1,7 +1,9 @@
 import useEarnedBonusLockingAmount from '@/hooks/locking/useEarnedBonusLockingAmount'
 import useTranslation from '@/hooks/useTranslation'
 
+import ToolTip from '@/components/atoms/ToolTip'
 import RewardsBreakdownCard from '@/components/molecules/locking/RewardsBreakdown/RewardsBreakdownCard'
+import KsuLaunchBonus from '@/components/molecules/tooltips/KsuLaunchBonus'
 
 import { formatAmount } from '@/utils'
 
@@ -16,9 +18,7 @@ const LaunchBonusBreakdown = () => {
       breakdowns={[
         {
           title: t('locking.widgets.rewardsBreakdown.rewards-2.metric'),
-          toolTipInfo: t(
-            'locking.widgets.rewardsBreakdown.rewards-2.metric-tooltip'
-          ),
+          toolTipInfo: <ToolTip title={<KsuLaunchBonus />} />,
           metric: [formatAmount(totalLaunchBonus || '0'), 'KSU'],
         },
       ]}
