@@ -84,7 +84,7 @@ export class DataService {
             lendingPoolConfig.tranchesConfig[index].desiredRatio;
 
         const targetDrawAmount =
-            parseFloat(desiredDrawAmount) * parseFloat(desiredTrancheRatio);
+            parseFloat(desiredDrawAmount) * (parseFloat(desiredTrancheRatio)/100);
 
         const pendingDeposits =
             parseFloat(
