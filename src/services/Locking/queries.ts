@@ -110,7 +110,7 @@ export const getTotalUserLoyaltsRewardsQuery = gql`
 
 export const getSystemVariablesQuery = gql`
     query getSystemVariablesQuery {
-      systemVariables_collection {
+      systemVariables(id: "SYSTEM_VARIABLES") {
         id
         protocolFeeRate
         priceUpdateEpoch

@@ -118,7 +118,7 @@ export interface totalUserLoyaltyRewards {
 }
 
 export interface SystemVariables {
-    systemVariables_collection: {
+    systemVariables: {
         id: string;
         protocolFeeRate: string;
         priceUpdateEpoch: string;
@@ -129,5 +129,5 @@ export interface SystemVariables {
         ecosystemFeeRate: string;
         clearingPeriodLength: string;
         canOnlyDepositJuniorWhenUserHasRKSU: boolean;
-    }[]
+    }
 }

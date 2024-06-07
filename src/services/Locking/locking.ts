@@ -151,8 +151,8 @@ export class KSULocking {
         const totalRKSUAfterLock = totalRKSU + newUserRKSU
 
         const systemVariables: SystemVariables = await this._graph.request(getSystemVariablesQuery);
-        const performanceFee = parseFloat(systemVariables.systemVariables_collection[0].performanceFee)/100;
-        const ecosystemFee = parseFloat(systemVariables.systemVariables_collection[0].ecosystemFeeRate)/100;
+        const performanceFee = parseFloat(systemVariables.systemVariables.performanceFee)/100;
+        const ecosystemFee = parseFloat(systemVariables.systemVariables.ecosystemFeeRate)/100;
 
         let projectedYearlyPlatformInterest = 0;
         const subgraphResults: TrancheSubgraphResult = await this._graph.request(getAllTranchesQuery);
