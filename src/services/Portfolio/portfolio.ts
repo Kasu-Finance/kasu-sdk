@@ -42,13 +42,15 @@ export class Portfolio {
 
     async getPortfolioRewards(userAddress: string): Promise<PortfolioRewards> {
         const userLockingData = await this._lockingService.getUserBonusData(userAddress);
+        const lockingRewards = await this._lockingService.getLockingRewards(userAddress);
+        const ksuLaunchBonus =  await this._lockingService.getUserTotalBonusAmount(userAddress)
         return {
             bonusYieldEarnings: {
-                lastEpoch: { ksuAmount: '0', usdcAmount: '0' },
-                lifeTime: { ksuAmount: userLockingData.ksuBonusAndRewards, usdcAmount: '0' }
+                claimableBalance: { ksuAmount: userLockingData.ksuBonusAndRewards },
+                lifeTime: { ksuAmount: userLockingData.ksuBonusAndRewardsLifetime }
             },
-            ksuLaunchBonus: { lastEpoch: { usdcAmount: '0' }, lifeTime: { ksuAmount: '0', usdcAmount: '0' } },
-            protocolFees: { lastEpoch: { usdcAmount: '0' }, lifeTime: { usdcAmount: userLockingData.protocolFeesEarned } },
+            protocolFees: { claimableBalance: { usdcAmount: lockingRewards.claimableRewards }, lifeTime: { usdcAmount: lockingRewards.lifeTimeRewards } },
+            ksuLaunchBonus: { lifeTime: { ksuAmount: ksuLaunchBonus } },
         }
     }
 
@@ -84,6 +86,7 @@ export class Portfolio {
     async getPortfolioLendingData(userAddress: string): Promise<LendingPortfolioData> {
         const poolOverviews = await this._dataService.getPoolOverview();
         let totalInvestments =  BigNumber.from(0);
+        let totalYieldEarnedLastEpoch = 0;
         const portfolioLendingPools: PortfolioLendingPool[] = [];
         const usePoolBalancePromises: Promise<UserPoolBalance>[] = [];
         const currentEpoch = await this._systemVariablesAbi.currentEpochNumber();
@@ -109,6 +112,7 @@ export class Portfolio {
                 const prevUserShares = lastEpochDatapoint.lendingPoolTrancheUserDetails[0].lendingPoolTrancheUserEpochSharesUpdates.length > 0 ? parseFloat(lastEpochDatapoint.lendingPoolTrancheUserDetails[0].lendingPoolTrancheUserEpochSharesUpdates[0].shares) : 0;
                 const prevTrancheShares = lastEpochDatapoint.lendingPoolTrancheUserDetails[0].tranche.lendingPoolTrancheShareUpdates.length > 0 ? parseFloat(lastEpochDatapoint.lendingPoolTrancheUserDetails[0].tranche.lendingPoolTrancheShareUpdates[0].shares) : 0;
                 const yieldEarningsLastEpoch = prevTrancheShares != 0 ? (prevUserShares * prevTrancheYield) / prevTrancheShares : 0;
+                totalYieldEarnedLastEpoch += yieldEarningsLastEpoch;
                 const userTrancheBalance = await this._userLendingService.getUserTrancheBalance(userAddress, tranche.id);
                 tranches.push({
                     id: tranche.id,
@@ -123,7 +127,7 @@ export class Portfolio {
             }
             portfolioLendingPools.push({
                 id: poolOverview.id,
-                totalYieldEarningsLastEpoch: '0',
+                totalYieldEarningsLastEpoch: totalYieldEarnedLastEpoch.toString(),
                 totalInvestedAmount: userPoolBalance.balance.toString(),
                 totalYieldEarningsLifetime: userPoolBalance.yieldEarned.toString(),
                 isActive: poolOverview.isActive,

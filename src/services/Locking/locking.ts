@@ -10,7 +10,7 @@ import {
     IKSULockingAbi__factory, IKsuPriceAbi,
     IKsuPriceAbi__factory,
     ISystemVariablesAbi,
-    ISystemVariablesAbi__factory,
+    ISystemVariablesAbi__factory, IUserLoyaltyRewardsAbi, IUserLoyaltyRewardsAbi__factory,
     IUserManagerAbi,
     IUserManagerAbi__factory,
 } from '../../contracts';
@@ -49,6 +49,7 @@ export class KSULocking {
     private readonly _userManagerAbi: IUserManagerAbi;
     private readonly _systemVariablesAbi: ISystemVariablesAbi;
     private readonly _ksuPriceAbi: IKsuPriceAbi;
+    private readonly _userLoyaltyRewardsAbi: IUserLoyaltyRewardsAbi;
     private readonly apyBonuses: number[] = [ 0, 0.001, 0.002 ]
     /**
      *
@@ -76,6 +77,10 @@ export class KSULocking {
         )
         this._kasuBonusAddress = kasuConfig.contracts.IKSULockBonus;
         this._graph = new GraphQLClient(kasuConfig.subgraphUrl);
+        this._userLoyaltyRewardsAbi = IUserLoyaltyRewardsAbi__factory.connect(
+            kasuConfig.contracts.UserLoyaltyRewards,
+            signerOrProvider,
+        );
     }
 
     async lockKSUTokens(
@@ -201,20 +206,25 @@ export class KSULocking {
     }
 
     async getUserBonusData(userAddress: string): Promise<UserBonusData> {
+        // TODO this userLocks query is kinda bad -> change to userLocksDepositInfo as u never need user locks by themselves
         const result: GQLUserLocks = await this._graph.request(userLocksQuery, {
             userAddress: userAddress.toLowerCase(),
         });
+        const resultLoyaltyRewards: totalUserLoyaltyRewards = await this._graph.request(getTotalUserLoyaltsRewardsQuery, {userAddress: userAddress});
+
         const protocolFeesEarned = await this._contractAbi.rewards(userAddress);
         if(result.userLocks.length == 0){
             return {
-                ksuBonusAndRewards: "0",
+                ksuBonusAndRewards: ethers.utils.formatUnits(await this._userLoyaltyRewardsAbi.userRewards(userAddress), 18),
+                ksuBonusAndRewardsLifetime: resultLoyaltyRewards.user.totalUserLoyaltyRewards,
                 protocolFeesEarned: ethers.utils.formatUnits(protocolFeesEarned, 18),
                 totalLockedAmount: "0",
             }
         }
 
         return {
-            ksuBonusAndRewards: (Number.parseFloat(result.userLocks[0].userLockDepositsInfo.totalKsuBonusAmount) + Number.parseFloat(result.userLocks[0].userLockDepositsInfo.feesClaimed)).toString(),
+            ksuBonusAndRewards:  ethers.utils.formatUnits(await this._userLoyaltyRewardsAbi.userRewards(userAddress), 18),
+            ksuBonusAndRewardsLifetime: resultLoyaltyRewards.user.totalUserLoyaltyRewards,
             protocolFeesEarned: ethers.utils.formatUnits(protocolFeesEarned, 18),
             totalLockedAmount: result.userLocks[0].userLockDepositsInfo.ksuLockedAmount,
         }
@@ -263,9 +273,23 @@ export class KSULocking {
 
     async getLifetimeRewards(
         userAddress: string,
-    ): Promise<string> {
-        const result: totalUserLoyaltyRewards = await this._graph.request(getTotalUserLoyaltsRewardsQuery, {userAddress: userAddress});
-        return result.user.totalUserLoyaltyRewards;
+        rewardDecimals: number,
+        claimableRewards?: BigNumber,
+    ): Promise<BigNumber> {
+        const result: GQLClaimedFeesForAddress = await this._graph.request(
+            claimedFeesQuery,
+            {
+                userAddress: userAddress.toLowerCase(),
+            },
+        );
+
+        const claimedRewards = result.userLockDepositsInfo?.feesClaimed ?? '0';
+
+        if (!claimableRewards) {
+            claimableRewards = await this.getClaimableRewards(userAddress);
+        }
+
+        return claimableRewards.add(parseUnits(claimedRewards, rewardDecimals));
     }
 
     getLaunchBonusAmount(
@@ -335,7 +359,9 @@ export class KSULocking {
         const claimableRewards = await this.getClaimableRewards(userAddress);
 
         const lifeTimeRewards = await this.getLifetimeRewards(
-            userAddress
+            userAddress,
+            rewardDecimals,
+            claimableRewards,
         );
 
         return {

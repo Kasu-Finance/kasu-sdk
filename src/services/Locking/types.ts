@@ -35,6 +35,7 @@ export interface UserLock {
 export interface UserBonusData {
     ksuBonusAndRewards: string;
     protocolFeesEarned: string;
+    ksuBonusAndRewardsLifetime: string;
     totalLockedAmount: string;
 }
 

@@ -1,32 +1,26 @@
 
 export interface PortfolioRewards {
     bonusYieldEarnings: {
-        lastEpoch: {
-            ksuAmount:  string;
-            usdcAmount: string;
-        }
+        claimableBalance: {
+            ksuAmount: string;
+        };
         lifeTime: {
-            ksuAmount:  string;
-            usdcAmount: string;
-        }
-    }
-    protocolFees: {
-        lastEpoch: {
-            usdcAmount: string;
-        }
-        lifeTime: {
-            usdcAmount: string;
-        }
-    }
+            ksuAmount: string;
+        };
+    };
     ksuLaunchBonus: {
-        lastEpoch: {
-            usdcAmount: string;
-        }
         lifeTime: {
-            ksuAmount:  string;
+            ksuAmount: string;
+        };
+    };
+    protocolFees: {
+        claimableBalance: {
             usdcAmount: string;
-        }
-    }
+        };
+        lifeTime: {
+            usdcAmount: string;
+        };
+    };
 }
 
 export interface PortfolioSummary  {
