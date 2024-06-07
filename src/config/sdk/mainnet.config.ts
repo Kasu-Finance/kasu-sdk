@@ -1,22 +1,23 @@
 import { SdkConfig } from '@solidant/kasu-sdk/src/sdk-config'
 
-import sepolia from '@/config/sdk/addresses-base-sepolia.json'
+import base from '@/config/sdk/addresses-base-mainnet.json'
 
-export const USDC = sepolia.USDC.address
+export const USDC = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'
 
 export const sdkConfig: SdkConfig = {
   contracts: {
-    IKSULockBonus: sepolia.KSULocking.address,
-    IKSULocking: sepolia.KSULocking.address,
-    KSUToken: sepolia.KSU.address,
-    LendingPoolManager: sepolia.LendingPoolManager.address,
-    UserManager: sepolia.UserManager.address,
-    KasuAllowList: sepolia.KasuAllowList.address,
-    SystemVariables: sepolia.SystemVariables.address,
-    KsuPrice: sepolia.KsuPrice.address,
-    UserLoyaltyRewards: sepolia.UserLoyaltyRewards.address,
+    IKSULockBonus: base.KSULocking.address,
+    IKSULocking: base.KSULocking.address,
+    KSUToken: base.KSU.address,
+    LendingPoolManager: base.LendingPoolManager.address,
+    UserManager: base.UserManager.address,
+    KasuAllowList: base.KasuAllowList.address,
+    SystemVariables: base.SystemVariables.address,
+    KsuPrice: base.KsuPrice.address,
+    UserLoyaltyRewards: base.UserLoyaltyRewards.address,
+    ClearingCoordinator: base.ClearingCoordinator.address,
   },
   directusUrl: 'https://kasu-finance.directus.app/',
   subgraphUrl:
-    'https://api.studio.thegraph.com/query/63245/kasu-wip-sepolia/version/latest',
+    'https://subgraph.satsuma-prod.com/3ed46ea711d3/kasu-finance--314476/kasu-base/api',
 }

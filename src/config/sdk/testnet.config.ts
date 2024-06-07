@@ -15,6 +15,7 @@ export const sdkConfig: SdkConfig = {
     SystemVariables: sepolia.SystemVariables.address,
     KsuPrice: sepolia.KsuPrice.address,
     UserLoyaltyRewards: sepolia.UserLoyaltyRewards.address,
+    ClearingCoordinator: sepolia.ClearingCoordinator.address,
   },
   directusUrl: 'https://kasu-finance.directus.app/',
   subgraphUrl:

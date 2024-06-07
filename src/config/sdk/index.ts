@@ -1,9 +1,21 @@
+import { SdkConfig } from '@solidant/kasu-sdk/src/sdk-config'
+
 import * as mainnetConfig from './mainnet.config'
 import * as testnetConfig from './testnet.config'
 
-const useTestNet = true
+interface Config {
+  sdkConfig: SdkConfig
+  USDC: string
+}
 
-const config = useTestNet ? testnetConfig : mainnetConfig
+const NETWORK: string = process.env.NEXT_PUBLIC_CURRENT_NETWORK || 'TESTNET'
+
+const SDK_CONFIG: { [key: string]: Config } = {
+  BASE: mainnetConfig,
+  TESTNET: testnetConfig,
+}
+
+const config = SDK_CONFIG[NETWORK]
 
 const sdkConfig = config.sdkConfig
 
