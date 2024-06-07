@@ -22,6 +22,7 @@ test('subgraphCall', async () => {
             SystemVariables: "0xB174a3240B23e595e90bC2736A5b8ec674Cba73A",
             UserLoyaltyRewards: "0x259631CE76FD9F65296549Cd81232aa59D53Dd0c",
             KsuPrice: "0x2027192aCFB4810Ad734A212F19d7030F698aCE3",
+            ClearingCoordinator: "0x2027192aCFB4810Ad734A212F19d7030F698aCE3"
         },
         "https://kasu-finance.directus.app"
     );
