@@ -12,7 +12,7 @@ import BalanceInfo from '@/components/organisms/modals/WithdrawModal/WithdrawMod
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 import { WithdrawMetrics } from '@/context/withdrawModal/withdrawModal.types'
 
-import { formatAccount } from '@/utils'
+import { formatAccount, formatAmount } from '@/utils'
 
 interface WithdrawModalMetricsProps {
   amount: string
@@ -56,7 +56,7 @@ const WithdrawModalMetrics: React.FC<WithdrawModalMetricsProps> = ({
 
   const withdrawRequest = {
     id: WithdrawMetrics.WITHDRAW_REQUEST,
-    content: parseFloat(amount).toFixed(2),
+    content: formatAmount(amount),
     unit: 'USDC',
   }
 
@@ -88,12 +88,8 @@ const WithdrawModalMetrics: React.FC<WithdrawModalMetricsProps> = ({
 
             <MetricWithSuffix
               key={trancheInvestment.id}
-              titleKey={t(
-                `lending.withdraw.metrics.${trancheInvestment.id}.label`
-              )}
-              tooltipKey={t(
-                `lending.withdraw.metrics.${trancheInvestment.id}.tooltip`
-              )}
+              titleKey={`lending.withdraw.metrics.${trancheInvestment.id}.label`}
+              tooltipKey={`lending.withdraw.metrics.${trancheInvestment.id}.tooltip`}
               content={String(trancheInvestment.content)}
               suffix={trancheInvestment.unit}
               containerSx={{ width: '50%', pb: 1 }}
@@ -104,12 +100,14 @@ const WithdrawModalMetrics: React.FC<WithdrawModalMetricsProps> = ({
       )}
 
       {modalStatusAction === ModalStatusAction.APPROVE && (
-        <ApprovalMetrics
-          tranche={tranche}
-          toWallet={toWallet}
-          isMultiTranche={isMultiTranche}
-          className={metricsRowClassName}
-        />
+        <div>
+          <ApprovalMetrics
+            tranche={tranche}
+            toWallet={toWallet}
+            isMultiTranche={isMultiTranche}
+            className={metricsRowClassName}
+          />
+        </div>
       )}
     </>
   )

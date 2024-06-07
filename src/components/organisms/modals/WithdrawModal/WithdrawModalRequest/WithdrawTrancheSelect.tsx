@@ -58,7 +58,7 @@ const WithdrawTrancheSelect: React.FC<WithdrawTrancheSelectProps> = ({
         >
           {poolData.tranches.map(({ id: trancheId, name }) => (
             <MenuItem key={trancheId} value={name}>
-              {t(`lending.tranche.${name.toLowerCase()}`)}
+              {name}
             </MenuItem>
           ))}
         </Select>

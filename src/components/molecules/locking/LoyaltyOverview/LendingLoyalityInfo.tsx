@@ -13,6 +13,7 @@ import TokenAmount from '@/components/atoms/TokenAmount'
 import ToolTip from '@/components/atoms/ToolTip'
 import LoyaltyProgress from '@/components/molecules/locking/LoyaltyOverview/LoyaltyProgress'
 import LendingLoyalityLevelsTooltip from '@/components/molecules/tooltips/LendingLoyalityLevelsTooltip'
+import RksuTooltip from '@/components/molecules/tooltips/RksuTooltip'
 
 import { capitalize, formatAmount } from '@/utils'
 
@@ -40,7 +41,7 @@ const LendingLoyalityInfo = () => {
         <InfoRow
           showDivider
           title={`rKSU ${capitalize(t('general.balance'))}`}
-          toolTipInfo='info'
+          toolTipInfo={t('lending.poolOverview.rksuBalanceToolTip')}
           metric={
             <TokenAmount
               amount={formatAmount(rKsuAmount || '0')}
@@ -51,7 +52,7 @@ const LendingLoyalityInfo = () => {
 
         <InfoRow
           title={t('locking.widgets.loyalty.metric-3')}
-          toolTipInfo='info'
+          toolTipInfo={<ToolTip title={<RksuTooltip />} />}
           metric={
             <Typography variant='h6' component='span'>
               {formatAmount(stakedPercentage || '0', {

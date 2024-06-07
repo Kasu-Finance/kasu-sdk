@@ -427,27 +427,31 @@
         },
         "apyBonus": {
           "label": "APY Bonus",
-          "tooltip": "Your APY bonus (paid in KSU) in addition to the APY associated with your USDC deposits in Lending Pools, which is only applicable to Loyalty Level 1 and 2 KSU Token Lockers."
+          "tooltip": "Your APY bonus (paid in KSU) in addition to the APY associated with your USDC lending. APY bonus is only applicable to Loyalty Level 1 and 2 KSU Token Lockers. Loyalty Level 2 Token Lockers receive a higher APY bonus than Loyalty Level 1. The APY bonus is variable and will change from time to meet liquidity demand and supply requirements."
         },
         "totalBonusYield": {
           "label": "Total Bonus Interest Earnings",
-          "tooltip": "Your current bonus interest earnings balance (paid in KSU) in addition to the interest earnings associated with your USDC deposit(s) in this Lending Pool, whilst you have an active balance in this Lending Pool. For example, if you withdraw your total investment(s) from this Lending Pool (and are therefore no longer active in this Lending Pool), then your total bonus interest earnings will be reset to zero. To view a breakdown of your total historical bonus interest earnings across all Lending Pools, please click on the 'My Portfolio' tab."
+          "tooltip": "Your current bonus interest earnings balance (paid in KSU) in addition to the interest earnings associated with your USDC lending in this Lending Strategy, whilst you have an active balance in this Lending Strategy. For example, if you withdraw your total lending from this Lending Strategy (and are therefore no longer active in this Lending Strategy), then your total bonus interest earnings will be reset to zero. To view a breakdown of your total historical bonus interest earnings across all Lending Strategies, please visit on the 'My Portfolio' tab."
         },
         "lifeTimeBonus": {
           "label": "Lifetime Bonus Interest Earnings",
-          "tooltip": "The total amount of bonus interest earnings you have earned from this Lending Pool since the very first time you achieved (and maintained) Loyalty Level 1 or 2."
+          "tooltip": "The total amount of bonus interest earnings you have accumulated from this Lending Strategy since the very first time you achieved (and maintained) Loyalty Level 1 or 2."
         },
         "allOtherRewards": {
           "label": "View KSU Locking for all other rewards",
-          "tooltip": "info"
+          "tooltip": ""
         }
       },
       "transactionsHistory": {
+        "title": "Your Transactions",
+        "tooltip": "The status of your lending requests and lending withdrawal requests to and from this Lending Strategy.",
         "reallocated": {
           "label": "Reallocated",
-          "tooltip": "Reallocated to the next available Tranche due to oversubscription of deposit requests to the Tranche you originally requested. You can gain deposit priority access by locking KSU to achieve/increase your Loyalty Level."
+          "tooltip": "Reallocated to the next available Tranche due to oversubscription of lending requests to the Tranche you originally requested. You can achieve priority access to loans by locking KSU to achieve/increase your Loyalty Level."
         }
-      }
+      },
+      "rksuBalanceToolTip": "The value of your current rKSU balance, which is derived by a multiplier applied to the amount and duration of locked KSU (per below table). The value of your rKSU balance relative to your total current and pending USDC lending across all Lending Strategies determines your Loyalty Level. Your Loyalty Level determines the extent of your token utility (lending access priority and lending withdrawal priority to and from Lending Strategies) and associated rewards (APY bonus). Regardless of your Loyalty Level, your rKSU balance relative to the total rKSU in the Kasu ecosystem, also determines your share of Protocol Fees.",
+      "rksuTotalUSDCTooltip": "Strategy deck"
     },
     "strategyDeck": "Strategy deck",
     "tranche": {
@@ -473,7 +477,7 @@
       "withdrawalSchedule": "Withdrawal will be scheduled for the end of the current Epoch. The final Withdrawal Amount may vary due to Pool conditions.",
       "amountInput": {
         "label": "Withdraw Request Amount",
-        "tooltip": "empty"
+        "tooltip": "The USDC lending amount you would like to request for withdrawal from this Lending Strategy."
       },
       "button": {
         "review": "REVIEW WITHDRAWAL",
@@ -492,16 +496,16 @@
       },
       "metrics": {
         "totalInvestment": {
-          "label": "Total Investment",
-          "tooltip": "content is missing"
+          "label": "Total Lending Balance",
+          "tooltip": "Your current USDC lending balance in this Lending Strategy."
         },
         "trancheInvestment": {
-          "label": "Tranche Investment",
-          "tooltip": "content is missing"
+          "label": "Tranche Lending Balance",
+          "tooltip": "Your current USDC lending balance in this loan Tranche related of this Lending Strategy."
         },
         "tranche": {
           "label": "Tranche",
-          "tooltip": "content is missing"
+          "tooltip": "The loan Tranche related to this Lending Strategy that you request to make a withdrawal from."
         }
       },
       "confirmStep": {

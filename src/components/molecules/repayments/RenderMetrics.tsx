@@ -64,8 +64,8 @@ const RenderMetrics: React.FC<RenderMetricsProps> = ({ data, sectionKey }) => {
           return (
             <ColoredBox key={baseKey}>
               <MetricWithSuffix
-                titleKey={t(labelKey)}
-                tooltipKey={t(tooltipKey)}
+                titleKey={labelKey}
+                tooltipKey={tooltipKey}
                 content={String(metric.content)}
                 suffix={metric.unit}
                 containerSx={{ mb: 1 }}

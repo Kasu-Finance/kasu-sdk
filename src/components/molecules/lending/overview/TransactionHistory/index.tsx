@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react'
 
 import useTransactionHistoryState from '@/hooks/context/useTransactionHistoryState'
 import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
+import useTranslation from '@/hooks/useTranslation'
 
 import ToolTip from '@/components/atoms/ToolTip'
 import CustomTable, { Sort } from '@/components/molecules/CustomTable'
@@ -65,6 +66,7 @@ const TransactionHistory: React.FC<{ poolId: string }> = ({ poolId }) => {
   const [open, setOpen] = useState<number | undefined>(undefined)
   const { transactionHistory, isLoading } = useTransactionHistory()
   const { status, trancheType, transactionType } = useTransactionHistoryState()
+  const { t } = useTranslation()
 
   const handleCollapse = useCallback((index: number) => {
     setOpen((prev) => (prev === index ? undefined : index))
@@ -91,9 +93,12 @@ const TransactionHistory: React.FC<{ poolId: string }> = ({ poolId }) => {
         title={
           <Box display='flex' alignItems='center'>
             <Typography variant='h6' component='h6' m={0}>
-              Your Transactions
+              {t('lending.poolOverview.transactionsHistory.title')}
             </Typography>
-            <ToolTip sx={{ mt: 0.5 }} title='tooltip' />
+            <ToolTip
+              sx={{ mt: 0.5 }}
+              title={t('lending.poolOverview.transactionsHistory.tooltip')}
+            />
           </Box>
         }
         titleTypographyProps={{

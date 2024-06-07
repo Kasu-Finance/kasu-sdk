@@ -152,7 +152,6 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
             steps={['Request', 'Approve', 'Confirm']}
           />
         </Box>
-
         {modalStatusAction !== ModalStatusAction.CONFIRM && (
           <WithdrawModalMetrics
             amount={amount}
@@ -174,11 +173,9 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
             containerClassName={validationStyle}
           />
         )}
-
         {modalStatusAction === ModalStatusAction.APPROVE && (
           <WithdrawModalApprove />
         )}
-
         {modalStatusAction === ModalStatusAction.CONFIRM && (
           <WithdrawModalConfirm
             poolData={poolData}
@@ -186,7 +183,6 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
           />
         )}
       </DialogContent>
-
       <DialogActions>
         <WithdrawModalActions
           poolData={poolData}

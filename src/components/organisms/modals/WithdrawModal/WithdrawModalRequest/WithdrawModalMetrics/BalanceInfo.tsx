@@ -41,12 +41,11 @@ const BalanceInfo: FC<BalanceInfoProps> = ({
           }
         />
       </Box>
-
       {modalStatusAction === ModalStatusAction.APPROVE ? (
         <MetricWithSuffix
           key={withdrawRequest.id}
-          titleKey={t('lending.withdraw.amountInput.label')}
-          tooltipKey={t('lending.withdraw.amountInput.tooltip')}
+          titleKey='lending.withdraw.amountInput.label'
+          tooltipKey='lending.withdraw.amountInput.tooltip'
           content={withdrawRequest.content}
           suffix={withdrawRequest.unit}
           containerSx={{ width: '50%', pb: 1 }}
@@ -55,8 +54,8 @@ const BalanceInfo: FC<BalanceInfoProps> = ({
       ) : (
         <MetricWithSuffix
           key={totalInvestment.id}
-          titleKey={t('lending.withdraw.metrics.totalInvestment.label')}
-          tooltipKey={t('lending.withdraw.metrics.totalInvestment.tooltip')}
+          titleKey='lending.withdraw.metrics.totalInvestment.label'
+          tooltipKey='lending.withdraw.metrics.totalInvestment.tooltip'
           suffix={totalInvestment.unit}
           content={String(totalInvestment.content)}
           containerSx={{ width: '50%' }}

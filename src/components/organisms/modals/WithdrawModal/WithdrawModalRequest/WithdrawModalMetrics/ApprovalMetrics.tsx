@@ -1,8 +1,6 @@
 import { Box } from '@mui/material'
 import React from 'react'
 
-import useTranslation from '@/hooks/useTranslation'
-
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
 interface ApprovalMetricsProps {
@@ -18,14 +16,13 @@ const ApprovalMetrics: React.FC<ApprovalMetricsProps> = ({
   isMultiTranche,
   className,
 }) => {
-  const { t } = useTranslation()
   return (
     <Box display='flex' className={className}>
       {isMultiTranche ? (
         <MetricWithSuffix
           key={tranche.id}
-          titleKey={t('lending.withdraw.metrics.tranche.label')}
-          tooltipKey={t('lending.withdraw.metrics.tranche.tooltip')}
+          titleKey='lending.withdraw.metrics.tranche.label'
+          tooltipKey='lending.withdraw.metrics.tranche.tooltip'
           content={String(tranche.content)}
           containerSx={{ width: '50%', pb: 1, pr: 2 }}
           sx={{ mt: 0.5 }}
@@ -35,7 +32,7 @@ const ApprovalMetrics: React.FC<ApprovalMetricsProps> = ({
       )}
       <MetricWithSuffix
         key={toWallet.id}
-        titleKey={t('lending.withdraw.toWallet')}
+        titleKey='lending.withdraw.toWallet'
         tooltipKey=''
         content={toWallet.content}
         containerSx={{ width: '50%', pb: 1 }}

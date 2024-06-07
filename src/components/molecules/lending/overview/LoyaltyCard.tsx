@@ -26,7 +26,6 @@ import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
 import ColoredBox from '@/components/atoms/ColoredBox'
 import ContentWithSuffix from '@/components/atoms/ContentWithSuffix'
 import InfoRow from '@/components/atoms/InfoRow'
-import ToolTip from '@/components/atoms/ToolTip'
 import LendingLoyalityInfo from '@/components/molecules/locking/LoyaltyOverview/LendingLoyalityInfo'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
@@ -212,11 +211,11 @@ const LoyaltyCard: React.FC<{
                   )}
                 </Typography>
               </Link>
-              <ToolTip
+              {/* <ToolTip
                 title={t(
                   'lending.poolOverview.lockingStatus.allOtherRewards.tooltip'
                 )}
-              />
+              /> */}
             </Box>
           </ColoredBox>
         </Grid>
