@@ -16,3 +16,7 @@ certificates/*
 
 dist/
 .vercel
+
+
+.yalc
+yalc.lock

@@ -1,5 +1,5 @@
 import { PortfolioLendingPool } from '@solidant/kasu-sdk/src/services/Portfolio/types'
-import { BigNumber } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import { formatEther } from 'ethers/lib/utils'
 
 import { toBigNumber } from '@/utils'
@@ -31,9 +31,15 @@ const useCalculatePortfolioAverage = (
   }, BigNumber.from(0))
 
   return {
-    lastEpoch: totalValues.lastEpoch.div(lendingPortfolio.length),
-    lifeTime: totalValues.lifeTime.div(lendingPortfolio.length),
-    investedAmount: totalValues.investedAmount.div(totalTranches),
+    lastEpoch: lendingPortfolio.length
+      ? totalValues.lastEpoch.div(lendingPortfolio.length)
+      : ethers.constants.Zero,
+    lifeTime: lendingPortfolio.length
+      ? totalValues.lifeTime.div(lendingPortfolio.length)
+      : ethers.constants.Zero,
+    investedAmount: totalTranches
+      ? totalValues.investedAmount.div(totalTranches)
+      : ethers.constants.Zero,
     weightedApy: totalValues.investedAmount.isZero()
       ? '0'
       : formatEther(weightedApy.div(totalValues.investedAmount)),
