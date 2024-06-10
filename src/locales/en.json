@@ -381,7 +381,7 @@
       },
       "trancheCard": {
         "minDeposit": "Minimum Deposit Amount",
-        "maxDeposit": "Minimum Deposit Amount",
+        "maxDeposit": "Maximum Deposit Amount",
         "remainingCapacity": {
           "label": "Remaining capacity",
           "tooltip": "Amount of additional funds the Pool can accept in USDC, also represented as a percentage of the maximum Lending Pool target amount."

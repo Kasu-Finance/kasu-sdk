@@ -37,7 +37,9 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
       {
         id: PoolDelegateMetricIds.TotalFunds,
         title: 'details.poolDelegate.totalFunds',
-        value: poolDelegate?.totalLoanFundsOriginated.toFixed(2) || '0.00',
+        value: formatAmount(poolDelegate?.totalLoanFundsOriginated || '0', {
+          minValue: 1_000_000,
+        }),
         suffix: ' USDC',
         sx: {
           mt: 2,
@@ -167,7 +169,7 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
             showDivider={metric.showDivider}
             metric={
               <>
-                <Typography variant='subtitle2'>
+                <Typography variant='subtitle2' maxWidth={160}>
                   {metric.value}
                   <Typography variant='caption' component='span'>
                     {metric.suffix || ''}

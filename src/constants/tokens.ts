@@ -53,7 +53,7 @@ export const TOKENS = {
     [SupportedTokens.USDC]: {
       symbol: SupportedTokens.USDC,
       name: 'USD Coin',
-      address: '0x15B22C46A37e2fFc1135d143fd3d47d889ad13Ff',
+      address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
       decimals: 6,
       icon: UsdcIcon(),
     },
