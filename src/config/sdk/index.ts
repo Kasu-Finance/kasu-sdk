@@ -8,7 +8,7 @@ interface Config {
   USDC: string
 }
 
-const NETWORK: string = process.env.NEXT_PUBLIC_CURRENT_NETWORK || 'TESTNET'
+const NETWORK: string = process.env.NEXT_PUBLIC_CURRENT_NETWORK || 'BASE'
 
 const SDK_CONFIG: { [key: string]: Config } = {
   BASE: mainnetConfig,

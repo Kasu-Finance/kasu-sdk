@@ -15,19 +15,19 @@ const HomeStatsCard: React.FC<{
       {
         titleKey: 'details.poolTraction.valueLocked.label',
         tooltipKey: 'details.poolTraction.valueLocked.tooltip',
-        content: `${formatAmount(data?.totalValueLocked || '0', { roundingScale: 'auto' })}`,
+        content: `${formatAmount(data?.totalValueLocked || '0', { minValue: 1_000_000 })}`,
         unit: 'USDC',
       },
       {
         titleKey: 'details.poolTraction.management.label',
         tooltipKey: 'details.poolTraction.management.tooltip',
-        content: `${formatAmount(data?.loansUnderManagement || '0', { roundingScale: 'auto' })}`,
+        content: `${formatAmount(data?.loansUnderManagement || '0', { minValue: 1_000_000 })}`,
         unit: 'USDC',
       },
       {
         titleKey: 'details.poolDelegate.totalFunds.label',
         tooltipKey: 'details.poolDelegate.totalFunds.tooltip',
-        content: `${formatAmount(data?.totalLoanFundsOriginated || '0', { roundingScale: 'auto' })}`,
+        content: `${formatAmount(data?.totalLoanFundsOriginated || '0', { minValue: 1_000_000 })}`,
         unit: 'USDC',
       },
       {

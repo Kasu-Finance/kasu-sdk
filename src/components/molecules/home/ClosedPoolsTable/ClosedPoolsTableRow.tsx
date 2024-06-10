@@ -105,23 +105,21 @@ const ClosedPoolsTableRow: React.FC<RowProps> = ({ data }) => {
       </TableCell>
       <TableCell align='right'>
         <Typography variant='subtitle2'>
-          {formatAmount(data?.totalValueLocked || '0', {
-            roundingScale: 'auto',
-          })}
+          {formatAmount(data?.totalValueLocked || '0', { minValue: 1_000_000 })}
           <Typography variant='caption'> USDC</Typography>
         </Typography>
       </TableCell>
       <TableCell align='right'>
         <Typography variant='subtitle2'>
           {formatAmount(data?.loansUnderManagement || '0', {
-            roundingScale: 'auto',
+            minValue: 1_000_000,
           })}
           <Typography variant='caption'> USDC</Typography>
         </Typography>
       </TableCell>
       <TableCell align='right'>
         <Typography variant='subtitle2'>
-          {formatAmount(data?.totalFunds || '0', { roundingScale: 'auto' })}
+          {formatAmount(data?.totalFunds || '0', { minValue: 1_000_000 })}
           <Typography variant='caption'> USDC</Typography>
         </Typography>
       </TableCell>
