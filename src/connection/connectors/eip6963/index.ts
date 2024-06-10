@@ -25,7 +25,7 @@ const CUSTOM_ICON_MAP: { [rdns in string]?: ReactNode } = {
   [Rdns.RABBY]: RabbyIcon(),
 }
 
-const isSupportedConnector = (rdns: string): rdns is Rdns => {
+export const isSupportedConnector = (rdns: string): rdns is Rdns => {
   return [Rdns.METAMASK, Rdns.COINBASE, Rdns.RABBY].includes(rdns as Rdns)
 }
 
