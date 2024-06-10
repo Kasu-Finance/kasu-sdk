@@ -3,10 +3,13 @@
 import { useMemo } from 'react'
 
 import { connections } from '@/connection/connectors'
-import { eip6963Connection } from '@/connection/connectors/eip6963'
+import {
+  eip6963Connection,
+  isSupportedConnector,
+} from '@/connection/connectors/eip6963'
 import { EIP6963_PROVIDER_MANAGER } from '@/connection/providers/eip6963/eip6963manager'
 
-import { Connection } from '@/types/connectors'
+import { Connection, ConnectionType } from '@/types/connectors'
 
 function useEIP6963Connections() {
   const eip6963Injectors = EIP6963_PROVIDER_MANAGER.list
@@ -33,7 +36,20 @@ function mergeConnections(
   eip6963Connections: Connection[]
 ) {
   const hasEip6963Connections = eip6963Connections.length > 0
-  const displayedConnections = connections.filter((c) => c.shouldDisplay())
+  const displayedConnections = connections.filter((c) => {
+    // filter injected connections that show up but are not supported by us.
+    if (c.type === ConnectionType.INJECTED) {
+      const providerInfo = c.getProviderInfo()
+
+      return (
+        providerInfo.rdns &&
+        isSupportedConnector(providerInfo.rdns) &&
+        c.shouldDisplay()
+      )
+    }
+
+    return c.shouldDisplay()
+  })
 
   if (!hasEip6963Connections) return displayedConnections
 
