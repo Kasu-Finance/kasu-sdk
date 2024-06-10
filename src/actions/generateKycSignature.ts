@@ -7,6 +7,8 @@ import NEXERA_API_BASE_URL from '@/config/api.nexera'
 type ApiRes =
   | {
       signatureData: string
+      payload: string
+      signature: string
       blockExpiration: number
       isAuthorized: boolean
     }
@@ -44,10 +46,10 @@ const generateKycSignature = async (params: {
 
   const data: ApiRes = await response.json()
 
-  if ('signatureData' in data) {
+  if ('payload' in data) {
     return {
       blockExpiration: data.blockExpiration,
-      signature: '0x' + data.signatureData.substring(64),
+      signature: '0x' + data.payload.substring(64),
     }
   }
 }
