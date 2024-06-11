@@ -18,11 +18,7 @@ import CsvDownloadButton from '@/components/atoms/CsvDownloadButton'
 import InfoColumn from '@/components/atoms/InfoColumn'
 import RenderMetrics from '@/components/molecules/repayments/RenderMetrics'
 
-import {
-  adaptDataForRepayments,
-  extractDateAndUtcOffset,
-  formatTimestampWithOffset,
-} from '@/utils'
+import { adaptDataForRepayments, formatTimestamp } from '@/utils'
 import { RepaymentsSections } from '@/utils/convert/adaptDataForRepayments'
 
 interface RepaymentsCardProps {
@@ -38,8 +34,10 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
   const repaymentsData = adaptDataForRepayments(data)
   const endBorrowerFunds = data?.currentTotalEndBorrowers ?? 0
 
-  const formattedDate = formatTimestampWithOffset(nextEpochTime, 1)
-  const { date, time, format, offset } = extractDateAndUtcOffset(formattedDate)
+  const formattedTime = formatTimestamp(nextEpochTime, {
+    format: 'DD.MM.YYYY HH:mm:ss',
+    includeUtcOffset: true,
+  })
 
   return (
     <Card sx={{ mt: 3 }}>
@@ -116,15 +114,16 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
                       }}
                     />
                   </Typography>
-                  {date && time && (
-                    <Typography variant='body1' color='grey.500'>
-                      {date} • {time}{' '}
-                      <span style={{ fontSize: '0.75rem' }}>
-                        {format}
-                        {offset}
-                      </span>
+                  <Typography variant='body1' color='grey.500'>
+                    {formattedTime.date} • {formattedTime.timestamp}{' '}
+                    <Typography
+                      variant='caption'
+                      color='inherit'
+                      component='span'
+                    >
+                      {formattedTime.utcOffset}
                     </Typography>
-                  )}
+                  </Typography>
                 </Box>
               }
             />

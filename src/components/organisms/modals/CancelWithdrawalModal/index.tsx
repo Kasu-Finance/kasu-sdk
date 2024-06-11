@@ -22,7 +22,7 @@ import DialogHeader from '@/components/molecules/DialogHeader'
 
 import { DATE_FORMAT, TIME_FORMAT } from '@/constants'
 import dayjs from '@/dayjs'
-import { formatAmount } from '@/utils'
+import { formatAmount, formatTimestamp } from '@/utils'
 
 const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { t } = useTranslation()
@@ -36,6 +36,11 @@ const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const latestEvent = transactionEvents[transactionEvents.length - 1]
 
   const { nextEpochTime } = useNextEpochTime()
+
+  const formattedTime = formatTimestamp(nextEpochTime, {
+    format: 'DD.MM.YYYY HH:mm:ss',
+    includeUtcOffset: true,
+  })
 
   const cancelWithdrawal = useCancelWithdrawal()
 
@@ -115,9 +120,16 @@ const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                   component='span'
                   color={(theme) => theme.palette.text.secondary}
                 >
-                  {dayjs
-                    .unix(nextEpochTime ?? 0)
-                    .format(`${DATE_FORMAT} • ${TIME_FORMAT}`)}
+                  <Typography variant='body1' color='grey.500'>
+                    {formattedTime.date} • {formattedTime.timestamp}{' '}
+                    <Typography
+                      variant='caption'
+                      color='inherit'
+                      component='span'
+                    >
+                      {formattedTime.utcOffset}
+                    </Typography>
+                  </Typography>
                 </Typography>
               </Box>
             }

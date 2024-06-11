@@ -9,9 +9,7 @@ import ColoredBox from '@/components/atoms/ColoredBox'
 import InfoColumn from '@/components/atoms/InfoColumn'
 import BalanceItem from '@/components/molecules/locking/BalanceOverview/BalanceItem'
 
-import { DATE_FORMAT } from '@/constants'
-import dayjs from '@/dayjs'
-import { formatAmount } from '@/utils'
+import { formatAmount, formatTimestamp } from '@/utils'
 
 type UnlockModalOverviewProps = {
   userLock: UserLock
@@ -24,7 +22,10 @@ const UnlockModalOverview: React.FC<UnlockModalOverviewProps> = ({
 
   const { modalStatus } = useModalStatusState()
 
-  const startTime = dayjs.unix(userLock.startTime)
+  const formattedTime = formatTimestamp(userLock.startTime, {
+    format: 'DD.MM.YYYY HH:mm:ss',
+    includeUtcOffset: true,
+  })
 
   return (
     <Grid item xs={1}>
@@ -57,14 +58,14 @@ const UnlockModalOverview: React.FC<UnlockModalOverviewProps> = ({
                     px={2}
                     pt='5px'
                   >
-                    {startTime.format(DATE_FORMAT)}
+                    {formattedTime.date}
                   </Typography>
                   <Box px={2} pb='5px'>
                     <Typography variant='body1' component='span'>
-                      {startTime.format('HH:mm:ss')}{' '}
+                      {formattedTime.timestamp}{' '}
                     </Typography>
                     <Typography variant='caption' component='span'>
-                      {startTime.format('UTCZZ')}
+                      {formattedTime.utcOffset}
                     </Typography>
                   </Box>
                 </>

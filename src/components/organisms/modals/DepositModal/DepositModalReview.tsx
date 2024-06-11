@@ -15,7 +15,7 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { DATE_FORMAT, TIME_FORMAT } from '@/constants'
 import dayjs from '@/dayjs'
-import { formatAmount } from '@/utils'
+import { formatAmount, formatTimestamp } from '@/utils'
 
 type DepositModalReviewProps = {
   poolData: PoolData
@@ -32,7 +32,10 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
 
   const handleOpen = () => openModal({ name: ModalsKeys.LOYALTY_LEVELS })
 
-  const now = dayjs()
+  const formattedTime = formatTimestamp(dayjs().unix(), {
+    format: 'DD.MM.YYYY HH:mm:ss',
+    includeUtcOffset: true,
+  })
 
   const nextClearingTime = 1711723761
 
@@ -71,14 +74,14 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
                     px={2}
                     pt='5px'
                   >
-                    {now.format(DATE_FORMAT)}
+                    {formattedTime.date}
                   </Typography>
                   <Box px={2} pb='5px'>
                     <Typography variant='body1' component='span'>
-                      {now.format('HH:mm:ss')}{' '}
+                      {formattedTime.timestamp}{' '}
                     </Typography>
                     <Typography variant='body1' component='span'>
-                      {now.format('UTCZZ')}
+                      {formattedTime.utcOffset}
                     </Typography>
                   </Box>
                 </>

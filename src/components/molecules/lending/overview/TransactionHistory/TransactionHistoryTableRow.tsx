@@ -21,9 +21,7 @@ import TransactionCollapsedContent from '@/components/molecules/lending/overview
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import { DATE_FORMAT, TIME_FORMAT } from '@/constants'
-import dayjs from '@/dayjs'
-import { formatAmount } from '@/utils'
+import { formatAmount, formatTimestamp } from '@/utils'
 
 type TransactionHistoryTableRowProps = {
   transaction: UserRequest
@@ -49,6 +47,11 @@ const TransactionHistoryTableRow: React.FC<TransactionHistoryTableRowProps> = ({
       transactionHistory: transaction,
     })
   }
+
+  const formattedTime = formatTimestamp(transaction.timestamp, {
+    format: 'DD.MM.YYYY HH:mm:ss',
+    includeUtcOffset: true,
+  })
 
   return (
     <>
@@ -116,11 +119,11 @@ const TransactionHistoryTableRow: React.FC<TransactionHistoryTableRowProps> = ({
         </TableCell>
         <TableCell align='right'>
           <Typography variant='body1' component='span'>
-            {dayjs.unix(transaction.timestamp).format(DATE_FORMAT)}
+            {formattedTime.date}
           </Typography>
           <br />
           <Typography variant='caption' component='span'>
-            {dayjs.unix(transaction.timestamp).format(TIME_FORMAT)}
+            {formattedTime.timestamp} {formattedTime.utcOffset}
           </Typography>
         </TableCell>
         <TableCell align='center'>
