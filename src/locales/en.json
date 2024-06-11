@@ -354,6 +354,10 @@
           "label": "Industry Exposure",
           "tooltip": "Industry and/or business category in which the Lending Delegate's customers (end borrowers) operate."
         },
+        "security": {
+          "label": "Security",
+          "tooltip": "info"
+        },
         "lendingHistory": {
           "label": "Lending History",
           "tooltip": "Total length of time the Pool Delegate has been operating as a lending business."

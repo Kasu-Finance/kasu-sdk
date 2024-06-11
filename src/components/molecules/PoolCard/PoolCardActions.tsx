@@ -50,7 +50,7 @@ const PoolCardActions: React.FC<PoolCardActionsProps> = ({ pool, link }) => {
     })
 
   return (
-    <Box display='flex' justifyContent='center' mt={3} mb={2}>
+    <Box display='flex' justifyContent='center' mt='auto' mb={2}>
       {currentDevice !== Device.MOBILE && (
         <AuthenticateButton
           variant='contained'
@@ -63,7 +63,14 @@ const PoolCardActions: React.FC<PoolCardActionsProps> = ({ pool, link }) => {
       )}
 
       <Button
-        sx={{ ml: 2 }}
+        className='pool-card-overview-button'
+        sx={{
+          ml: 2,
+          width: 0,
+          transition: 'width 0.3s ease',
+          padding: 0,
+          overflow: 'hidden',
+        }}
         href={link}
         component={Link}
         variant='contained'

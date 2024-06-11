@@ -21,10 +21,13 @@ const PoolCardHeader: React.FC<PoolCardHeaderProps> = ({ pool }) => {
 
   return (
     <Box>
-      <ImageWithFallback src={thumbnailImageUrl} />
+      <ImageWithFallback
+        coverProps={{ height: 238, transition: 'height 0.3s ease' }}
+        src={thumbnailImageUrl}
+      />
       <BoxBackground display='flex' alignItems='center' sx={{ p: 2 }}>
         <PoolAvatar name={poolName} showStatus />
-        <Typography variant='h5' sx={{ ml: 1 }}>
+        <Typography variant='h5' fontSize={20} sx={{ ml: 1 }}>
           {poolName}
         </Typography>
       </BoxBackground>

@@ -13,6 +13,8 @@ import PoolCardActions from '@/components/molecules/PoolCard/PoolCardActions'
 import PoolCardContent from '@/components/molecules/PoolCard/PoolCardContent'
 import PoolCardHeader from '@/components/molecules/PoolCard/PoolCardHeader'
 
+import { PoolDelegateMetricIds } from '@/constants'
+
 interface PoolCardProps {
   pool: PoolOverview
   poolDelegate?: PoolDelegateProfileAndHistory
@@ -29,6 +31,24 @@ const PoolCard: React.FC<PoolCardProps> = ({ pool, poolDelegate, link }) => {
     <Card
       onClick={() => {
         currentDevice === Device.MOBILE && router.push(link)
+      }}
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        '&:hover': {
+          '& .image-cover': {
+            height: 141,
+          },
+          [`& .${PoolDelegateMetricIds.Security}, .${PoolDelegateMetricIds.LendingHistory}`]:
+            {
+              maxHeight: 200,
+            },
+          '& .pool-card-overview-button': {
+            width: 132,
+            padding: '6px 16px',
+          },
+        },
       }}
     >
       <PoolCardHeader pool={pool} />

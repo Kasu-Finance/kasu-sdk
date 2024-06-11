@@ -71,39 +71,48 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
         },
         showDivider: false,
       },
-    ]
-    if (poolDelegate?.delegateLendingHistory) {
-      baseMetrics.push({
+      {
+        id: PoolDelegateMetricIds.Security,
+        title: 'lending.poolOverview.detailCard.security',
+        value: 'N/A',
+        suffix: '',
+        sx: {
+          mt: 1,
+          maxHeight: 0,
+          transition: 'max-height 0.3s ease',
+          padding: 0,
+          overflow: 'hidden',
+        },
+        showDivider: false,
+      },
+      {
         id: PoolDelegateMetricIds.LendingHistory,
         title: 'lending.poolOverview.detailCard.lendingHistory',
-        value: String(
-          formatDuration(poolDelegate.delegateLendingHistory, {
-            months: true,
-            days: true,
-          })
-        ),
+        value: poolDelegate.delegateLendingHistory
+          ? String(
+              formatDuration(poolDelegate.delegateLendingHistory, {
+                months: true,
+                days: true,
+              })
+            )
+          : 'N/A',
         suffix: '',
-        sx: { mt: 1 },
+        sx: {
+          mt: 1,
+          maxHeight: 0,
+          transition: 'max-height 0.3s ease',
+          padding: 0,
+          overflow: 'hidden',
+        },
         showDivider: false,
-      })
-    }
-    // TODO: adjust condition when security metric is available
-    if (poolDelegate.id === 'securityMetric') {
-      baseMetrics.push({
-        id: PoolDelegateMetricIds.Security,
-        title: '',
-        value: '',
-        suffix: '',
-        sx: { mt: 1 },
-        showDivider: true,
-      })
-    }
+      },
+    ]
 
     return baseMetrics
   }, [poolDelegate])
 
   return (
-    <Box pl={2} pr={2}>
+    <Box pl={2} pr={2} mb={3}>
       <ColoredBox
         display='flex'
         justifyContent='center'
@@ -157,6 +166,7 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
           key={metric.id}
           display='flex'
           flexDirection='column'
+          className={metric.id}
           sx={{
             width: '100%',
             ...metric.sx,
