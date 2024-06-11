@@ -11,7 +11,7 @@ import React from 'react'
 
 import ActionCell from '@/components/molecules/risk/ReportingTable/ActionCell'
 
-import { extractDateAndUtcOffset, formatTimestampWithOffset } from '@/utils'
+import { formatTimestamp } from '@/utils'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:last-child': {
@@ -42,8 +42,10 @@ const ReportingTableRow: React.FC<ReportingTableRowProps> = ({
   data,
   index,
 }) => {
-  const formattedDate = formatTimestampWithOffset(data.uploadTimestamp, 1)
-  const { date, time, format, offset } = extractDateAndUtcOffset(formattedDate)
+  const formattedTime = formatTimestamp(data.uploadTimestamp, {
+    format: 'DD.MM.YYYY HH:mm:ss',
+    includeUtcOffset: true,
+  })
 
   return (
     <StyledTableRow>
@@ -62,10 +64,9 @@ const ReportingTableRow: React.FC<ReportingTableRowProps> = ({
         </Box>
       </TableCell>
       <TableCell align='right'>
-        <Typography variant='body1'>{date}</Typography>
+        <Typography variant='body1'>{formattedTime.date}</Typography>
         <Typography variant='body2' color='grey.500' sx={{ fontSize: 12 }}>
-          {time} {format}
-          {offset}
+          {formattedTime.timestamp} {formattedTime.utcOffset}
         </Typography>
       </TableCell>
       <TableCell align='right'>

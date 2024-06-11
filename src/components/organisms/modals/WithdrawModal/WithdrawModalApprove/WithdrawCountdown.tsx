@@ -5,14 +5,16 @@ import useTranslation from '@/hooks/useTranslation'
 
 import Countdown from '@/components/atoms/Countdown'
 
-import { extractDateAndUtcOffset, formatTimestampWithOffset } from '@/utils'
+import { formatTimestamp } from '@/utils'
 
 const WithdrawCountdown = () => {
   const { t } = useTranslation()
   const { nextEpochTime } = useNextEpochTime()
 
-  const formattedDate = formatTimestampWithOffset(nextEpochTime, 1)
-  const { date, time, format, offset } = extractDateAndUtcOffset(formattedDate)
+  const formattedTime = formatTimestamp(nextEpochTime, {
+    format: 'DD.MM.YYYY HH:mm:ss',
+    includeUtcOffset: true,
+  })
 
   return (
     <Box mt={0.5}>
@@ -28,16 +30,12 @@ const WithdrawCountdown = () => {
           }}
         />
       </Typography>
-
-      {date && time && (
-        <Typography variant='body1' color='grey.500'>
-          {date} • {time}{' '}
-          <span style={{ fontSize: '0.75rem' }}>
-            {format}
-            {offset}
-          </span>
+      <Typography variant='body1' color='grey.500'>
+        {formattedTime.date} • {formattedTime.timestamp}{' '}
+        <Typography variant='caption' color='inherit' component='span'>
+          {formattedTime.utcOffset}
         </Typography>
-      )}
+      </Typography>
     </Box>
   )
 }

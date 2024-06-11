@@ -5,11 +5,10 @@ import useKasuSDK from '@/hooks/useKasuSDK'
 const useNextEpochTime = () => {
   const sdk = useKasuSDK()
 
-  const { data, error } = useSWRImmutable('nextEpochTime', async () => {
-    const epoch = await sdk.Locking.getNextEpochDate()
-
-    return epoch.div(1000).toNumber()
-  })
+  const { data, error } = useSWRImmutable(
+    'nextEpochTime',
+    async () => await sdk.Locking.getNextEpochDate()
+  )
 
   return {
     nextEpochTime: data || 0,
