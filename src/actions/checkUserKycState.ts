@@ -28,9 +28,11 @@ type ApiRes =
 const checkUserKycState = async (
   userAddress: string
 ): Promise<NexeraCustomerStatus | undefined> => {
+  const projectId = process.env.NEXERA_PROJECT_ID || NEXERA_PROJECT_ID
+
   try {
     const response = await fetch(
-      `${NEXERA_API_BASE_URL}/customers/project/${NEXERA_PROJECT_ID}/wallet-address/${userAddress.toLowerCase()}`,
+      `${NEXERA_API_BASE_URL}/customers/project/${projectId}/wallet-address/${userAddress.toLowerCase()}`,
       {
         headers: {
           Authorization: `Bearer ${process.env.NEXERA_API_KEY}`,

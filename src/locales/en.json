@@ -848,7 +848,7 @@
         "tooltip": "The total amount of interest you have earned from USDC investments in Lending Pools since your very first deposit."
       },
       "ksuBonusRewards": {
-        "title": "Lifetime KSU Bonus & Rewards",
+        "title": "KSU Bonus & Rewards",
         "tooltip": "The total amount of KSU earned (and estimated USDC equivalent value) since you very first locked KSU associated with: 1) APY Bonus (only applicable to Loyalty Level 1 and 2 KSU Token Lockers); and, 2) KSU Launch Bonus (only applicable for early Token Lockers until the KSU bonus pool (5% of total supply) is fully consumed, which is based on the amount and duration of KSU locked and the associated multiplier)."
       },
       "protocolFeesEarned": {

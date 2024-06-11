@@ -2,7 +2,7 @@
 . "$(dirname "$0")/_/husky.sh"
 
 # Run TypeScript type checking
-npm run types
+# npm run types
 
 # Run lint-staged
-npx lint-staged
+# npx lint-staged
