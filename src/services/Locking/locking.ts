@@ -7,22 +7,34 @@ import {
     IERC20MetadataAbi,
     IERC20MetadataAbi__factory,
     IKSULockingAbi,
-    IKSULockingAbi__factory, IKsuPriceAbi,
+    IKSULockingAbi__factory,
+    IKsuPriceAbi,
     IKsuPriceAbi__factory,
     ISystemVariablesAbi,
-    ISystemVariablesAbi__factory, IUserLoyaltyRewardsAbi, IUserLoyaltyRewardsAbi__factory,
+    ISystemVariablesAbi__factory,
+    IUserLoyaltyRewardsAbi,
+    IUserLoyaltyRewardsAbi__factory,
     IUserManagerAbi,
     IUserManagerAbi__factory,
 } from '../../contracts';
 import { SdkConfig } from '../../sdk-config';
-import { getAllTrancheConfigurationsQuery, getAllTranchesQuery } from '../DataService/queries';
-import { TrancheConfigurationSubgraph, TrancheSubgraphResult } from '../DataService/subgraph-types';
+import {
+    getAllTrancheConfigurationsQuery,
+    getAllTranchesQuery,
+} from '../DataService/queries';
+import {
+    TrancheConfigurationSubgraph,
+    TrancheSubgraphResult,
+} from '../DataService/subgraph-types';
 import { totalUserLoyaltyRewardsQuery } from '../UserLending/queries';
 import { TotalUserLoyaltyRewardsSubgraph } from '../UserLending/subgraph-types';
 
 import {
-    claimedFeesQuery, getSystemVariablesQuery, getTotalUserLoyaltsRewardsQuery,
-    lockingPeriodsQuery, lockingSummariesQuery,
+    claimedFeesQuery,
+    getSystemVariablesQuery,
+    getTotalUserLoyaltsRewardsQuery,
+    lockingPeriodsQuery,
+    lockingSummariesQuery,
     userEarnedrKsuQuery,
     userLocksQuery,
     userStakedKsuQuery,
@@ -34,10 +46,14 @@ import {
     GQLGetLockingPeriods,
     GQLStakedAmountForAddress,
     GQLTotalBonusAmountForAddress,
-    GQLUserLocks, LockingSummarySubgraphResult,
+    GQLUserLocks,
+    LockingSummarySubgraphResult,
     LockPeriod,
     LockPeriodInterface,
-    RSVDeadlineValue, SystemVariables, totalUserLoyaltyRewards, UserBonusData,
+    RSVDeadlineValue,
+    SystemVariables,
+    totalUserLoyaltyRewards,
+    UserBonusData,
     UserLock,
 } from './types';
 
@@ -50,7 +66,7 @@ export class KSULocking {
     private readonly _systemVariablesAbi: ISystemVariablesAbi;
     private readonly _ksuPriceAbi: IKsuPriceAbi;
     private readonly _userLoyaltyRewardsAbi: IUserLoyaltyRewardsAbi;
-    private readonly apyBonuses: number[] = [ 0, 0.001, 0.002 ]
+    private readonly apyBonuses: number[] = [0, 0.001, 0.002];
     /**
      *
      */
@@ -73,8 +89,8 @@ export class KSULocking {
         );
         this._ksuPriceAbi = IKsuPriceAbi__factory.connect(
             kasuConfig.contracts.KsuPrice,
-            signerOrProvider
-        )
+            signerOrProvider,
+        );
         this._kasuBonusAddress = kasuConfig.contracts.IKSULockBonus;
         this._graph = new GraphQLClient(kasuConfig.subgraphUrl);
         this._userLoyaltyRewardsAbi = IUserLoyaltyRewardsAbi__factory.connect(
@@ -136,70 +152,94 @@ export class KSULocking {
         return await this._contractAbi.userTotalDeposits(userAddress);
     }
 
-    async calculateUserLockProjectedProtocolFeeRewards(KSULocked: number, lockPeriod: BigNumber): Promise<number> {
+    async calculateUserLockProjectedProtocolFeeRewards(
+        KSULocked: number,
+        lockPeriod: BigNumber,
+    ): Promise<number> {
         if (KSULocked === 0) {
             return 0;
         }
 
-        const lockingSummarySubgraph: LockingSummarySubgraphResult = await this._graph.request(lockingSummariesQuery);
+        const lockingSummarySubgraph: LockingSummarySubgraphResult =
+            await this._graph.request(lockingSummariesQuery);
         const lockingSummary = lockingSummarySubgraph.lockingSummaries[0];
         const totalRKSU = lockingSummary.totalRKsuAmount;
 
-        const lockDetails = await this.lockDetails(lockPeriod)
+        const lockDetails = await this.lockDetails(lockPeriod);
 
-        const newUserRKSU = (KSULocked + (KSULocked * lockDetails.ksuBonusMultiplier)) * lockDetails.rKsuMultiplier
-        const totalRKSUAfterLock = totalRKSU + newUserRKSU
+        const newUserRKSU =
+            (KSULocked + KSULocked * lockDetails.ksuBonusMultiplier) *
+            lockDetails.rKsuMultiplier;
+        const totalRKSUAfterLock = totalRKSU + newUserRKSU;
 
-        const systemVariables: SystemVariables = await this._graph.request(getSystemVariablesQuery);
-        const performanceFee = parseFloat(systemVariables.systemVariables.performanceFee)/100;
-        const ecosystemFee = parseFloat(systemVariables.systemVariables.ecosystemFeeRate)/100;
+        const systemVariables: SystemVariables = await this._graph.request(
+            getSystemVariablesQuery,
+        );
+        const performanceFee =
+            parseFloat(systemVariables.systemVariables.performanceFee) / 100;
+        const ecosystemFee =
+            parseFloat(systemVariables.systemVariables.ecosystemFeeRate) / 100;
 
         let projectedYearlyPlatformInterest = 0;
-        const subgraphResults: TrancheSubgraphResult = await this._graph.request(getAllTranchesQuery);
-        const subgraphConfigurationResults: TrancheConfigurationSubgraph = await this._graph.request(getAllTrancheConfigurationsQuery);
+        const subgraphResults: TrancheSubgraphResult =
+            await this._graph.request(getAllTranchesQuery);
+        const subgraphConfigurationResults: TrancheConfigurationSubgraph =
+            await this._graph.request(getAllTrancheConfigurationsQuery);
 
         for (const tranche of subgraphResults.lendingPoolTranches) {
-            const trancheConfig = subgraphConfigurationResults.lendingPoolTrancheConfigurations.find(r => r.id == tranche.id);
-            if(!trancheConfig) {
-                console.log("Couldn't find tranche configuration for id: ", tranche.id);
+            const trancheConfig =
+                subgraphConfigurationResults.lendingPoolTrancheConfigurations.find(
+                    (r) => r.id == tranche.id,
+                );
+            if (!trancheConfig) {
+                console.warn(
+                    "Couldn't find tranche configuration for id: ",
+                    tranche.id,
+                );
                 continue;
             }
-            projectedYearlyPlatformInterest += parseFloat(tranche.balance) * this.calculateApy(parseFloat(trancheConfig.interestRate));
+            projectedYearlyPlatformInterest +=
+                parseFloat(tranche.balance) *
+                this.calculateApy(parseFloat(trancheConfig.interestRate));
         }
 
-        const totalExpectedEcosystemFees = projectedYearlyPlatformInterest * performanceFee * ecosystemFee;
-        return totalExpectedEcosystemFees * newUserRKSU / parseFloat(totalRKSUAfterLock);
+        const totalExpectedEcosystemFees =
+            projectedYearlyPlatformInterest * performanceFee * ecosystemFee;
+        return (
+            (totalExpectedEcosystemFees * newUserRKSU) /
+            parseFloat(totalRKSUAfterLock)
+        );
     }
 
     calculateApy(epochInterestRate: number): number {
-        const EPOCHS_IN_YEAR = 52.17857
-        return (1 + epochInterestRate)^EPOCHS_IN_YEAR - 1
+        const EPOCHS_IN_YEAR = 52.17857;
+        return (1 + epochInterestRate) ^ (EPOCHS_IN_YEAR - 1);
     }
 
     async getUserLocks(userAddress: string): Promise<UserLock[]> {
         const result: GQLUserLocks = await this._graph.request(userLocksQuery, {
             userAddress: userAddress.toLowerCase(),
         });
-        const resultPromises =  result.userLocks
-            .map(async (userLock) => {
-                const [, id] = userLock.id.split('-');
-                const rKSUtoUSDCRatio = await this.getRKSUvsUSDCRatio(
-                    userLock.rKSUAmount,
-                    userAddress,
-                )
-                const loyaltyStatus = this.getLoyaltyLevelAndApyBonusFromRatio(rKSUtoUSDCRatio);
-                return {
-                    id: BigNumber.from(id),
-                    lockedAmount: userLock.ksuAmount,
-                    rKSUAmount: userLock.rKSUAmount,
-                    rKSUtoUSDCRatio: rKSUtoUSDCRatio,
-                    apyBonus: loyaltyStatus.apyBonus,
-                    loyaltyLevel: loyaltyStatus.loyaltyLevel,
-                    startTime: parseFloat(userLock.startTimestamp),
-                    endTime: parseFloat(userLock.endTimestamp),
-                    lockPeriod: userLock.lockPeriod,
-                };
-            })
+        const resultPromises = result.userLocks.map(async (userLock) => {
+            const [, id] = userLock.id.split('-');
+            const rKSUtoUSDCRatio = await this.getRKSUvsUSDCRatio(
+                userLock.rKSUAmount,
+                userAddress,
+            );
+            const loyaltyStatus =
+                this.getLoyaltyLevelAndApyBonusFromRatio(rKSUtoUSDCRatio);
+            return {
+                id: BigNumber.from(id),
+                lockedAmount: userLock.ksuAmount,
+                rKSUAmount: userLock.rKSUAmount,
+                rKSUtoUSDCRatio: rKSUtoUSDCRatio,
+                apyBonus: loyaltyStatus.apyBonus,
+                loyaltyLevel: loyaltyStatus.loyaltyLevel,
+                startTime: parseFloat(userLock.startTimestamp),
+                endTime: parseFloat(userLock.endTimestamp),
+                lockPeriod: userLock.lockPeriod,
+            };
+        });
 
         const results = await Promise.all(resultPromises);
         return results.sort((a, b) => a.endTime - b.endTime);
@@ -210,42 +250,75 @@ export class KSULocking {
         const result: GQLUserLocks = await this._graph.request(userLocksQuery, {
             userAddress: userAddress.toLowerCase(),
         });
-        const resultLoyaltyRewards: totalUserLoyaltyRewards = await this._graph.request(getTotalUserLoyaltsRewardsQuery, {userAddress: userAddress});
+        const resultLoyaltyRewards: totalUserLoyaltyRewards =
+            await this._graph.request(getTotalUserLoyaltsRewardsQuery, {
+                userAddress: userAddress,
+            });
 
         const protocolFeesEarned = await this._contractAbi.rewards(userAddress);
-        if(result.userLocks.length == 0){
+        if (result.userLocks.length == 0) {
             return {
-                ksuBonusAndRewards: ethers.utils.formatUnits(await this._userLoyaltyRewardsAbi.userRewards(userAddress), 18),
-                ksuBonusAndRewardsLifetime: resultLoyaltyRewards.user.totalUserLoyaltyRewards,
-                protocolFeesEarned: ethers.utils.formatUnits(protocolFeesEarned, 18),
-                totalLockedAmount: "0",
-            }
+                ksuBonusAndRewards: ethers.utils.formatUnits(
+                    await this._userLoyaltyRewardsAbi.userRewards(userAddress),
+                    18,
+                ),
+                ksuBonusAndRewardsLifetime:
+                    resultLoyaltyRewards.user.totalUserLoyaltyRewards,
+                protocolFeesEarned: ethers.utils.formatUnits(
+                    protocolFeesEarned,
+                    18,
+                ),
+                totalLockedAmount: '0',
+            };
         }
 
         return {
-            ksuBonusAndRewards:  ethers.utils.formatUnits(await this._userLoyaltyRewardsAbi.userRewards(userAddress), 18),
-            ksuBonusAndRewardsLifetime: resultLoyaltyRewards.user.totalUserLoyaltyRewards,
-            protocolFeesEarned: ethers.utils.formatUnits(protocolFeesEarned, 18),
-            totalLockedAmount: result.userLocks[0].userLockDepositsInfo.ksuLockedAmount,
-        }
+            ksuBonusAndRewards: ethers.utils.formatUnits(
+                await this._userLoyaltyRewardsAbi.userRewards(userAddress),
+                18,
+            ),
+            ksuBonusAndRewardsLifetime:
+                resultLoyaltyRewards.user.totalUserLoyaltyRewards,
+            protocolFeesEarned: ethers.utils.formatUnits(
+                protocolFeesEarned,
+                18,
+            ),
+            totalLockedAmount:
+                result.userLocks[0].userLockDepositsInfo.ksuLockedAmount,
+        };
     }
 
-    getLoyaltyLevelAndApyBonusFromRatio(rKSUtoUSDCRatio: number): {loyaltyLevel: number, apyBonus: number} {
+    getLoyaltyLevelAndApyBonusFromRatio(rKSUtoUSDCRatio: number): {
+        loyaltyLevel: number;
+        apyBonus: number;
+    } {
         if (rKSUtoUSDCRatio < 0.01) {
-           return {loyaltyLevel: 0, apyBonus: this.apyBonuses[0]};
+            return { loyaltyLevel: 0, apyBonus: this.apyBonuses[0] };
+        } else if (rKSUtoUSDCRatio < 0.05) {
+            return { loyaltyLevel: 1, apyBonus: this.apyBonuses[1] };
         }
-        else if (rKSUtoUSDCRatio < 0.05) {
-            return {loyaltyLevel: 1, apyBonus: this.apyBonuses[1]};
-        }
-        return {loyaltyLevel: 2, apyBonus: this.apyBonuses[2]};
+        return { loyaltyLevel: 2, apyBonus: this.apyBonuses[2] };
     }
 
-    async getRKSUvsUSDCRatio(rKSUAmount: string, userAddress: string): Promise<number> {
-        const usdcAmount: [BigNumber, BigNumber] = await this._userManagerAbi.userTotalPendingAndActiveDepositedAmountForCurrentEpoch(userAddress);
-        const ksuPrice: BigNumber = await this._systemVariablesAbi.ksuEpochTokenPrice();
-        const rKSUAmountBignumber: BigNumber = ethers.utils.parseUnits(rKSUAmount, 18);
-        const rKSUInUSDC = rKSUAmountBignumber.mul(ksuPrice).div(ethers.utils.parseUnits("1", 18)).div(ethers.utils.parseUnits("1", 12));
-        return rKSUInUSDC.toNumber()/usdcAmount[0].toNumber();
+    async getRKSUvsUSDCRatio(
+        rKSUAmount: string,
+        userAddress: string,
+    ): Promise<number> {
+        const usdcAmount: [BigNumber, BigNumber] =
+            await this._userManagerAbi.userTotalPendingAndActiveDepositedAmountForCurrentEpoch(
+                userAddress,
+            );
+        const ksuPrice: BigNumber =
+            await this._systemVariablesAbi.ksuEpochTokenPrice();
+        const rKSUAmountBignumber: BigNumber = ethers.utils.parseUnits(
+            rKSUAmount,
+            18,
+        );
+        const rKSUInUSDC = rKSUAmountBignumber
+            .mul(ksuPrice)
+            .div(ethers.utils.parseUnits('1', 18))
+            .div(ethers.utils.parseUnits('1', 12));
+        return rKSUInUSDC.toNumber() / usdcAmount[0].toNumber();
     }
 
     async getClaimableRewards(userAddress: string): Promise<BigNumber> {
@@ -259,10 +332,13 @@ export class KSULocking {
         return Promise.resolve({
             price: await this._ksuPriceAbi.ksuTokenPrice(),
             decimals,
-        })
+        });
     }
 
-    async getKasuEpochTokenPrice(): Promise<{ price: BigNumber; decimals: number }> {
+    async getKasuEpochTokenPrice(): Promise<{
+        price: BigNumber;
+        decimals: number;
+    }> {
         const decimals = 18;
 
         return Promise.resolve({
@@ -317,8 +393,8 @@ export class KSULocking {
                 userAddress: userAddress.toLowerCase(),
             },
         );
-        if(result.userLockDepositsInfo == null) {
-            return "0";
+        if (result.userLockDepositsInfo == null) {
+            return '0';
         }
         return result.userLockDepositsInfo.ksuLockedAmount;
     }
@@ -330,8 +406,8 @@ export class KSULocking {
                 userAddress: userAddress.toLowerCase(),
             },
         );
-        if(result.userLockDepositsInfo == null) {
-            return "0";
+        if (result.userLockDepositsInfo == null) {
+            return '0';
         }
 
         return result.userLockDepositsInfo.rKSUAmount;
@@ -344,11 +420,11 @@ export class KSULocking {
                 userAddress: userAddress.toLowerCase(),
             },
         );
-        if(result.userLockDepositsInfo == null) {
-            return "0";
+        if (result.userLockDepositsInfo == null) {
+            return '0';
         }
 
-        return result.userLockDepositsInfo.totalKsuBonusAmount ;
+        return result.userLockDepositsInfo.totalKsuBonusAmount;
     }
 
     async getLockingRewards(
@@ -387,9 +463,33 @@ export class KSULocking {
 
         return formatEther(balance);
     }
-    async getNextEpochDate(): Promise<BigNumber> {
-        return await this._systemVariablesAbi.nextEpochStartTimestamp()
+    async getNextEpochDate(): Promise<EpochTimeStamp> {
+        return (
+            await this._systemVariablesAbi.nextEpochStartTimestamp()
+        ).toNumber();
     }
+
+    async getNextClearingPeriodDate(): Promise<EpochTimeStamp> {
+        const nextEpochDate = await this.getNextEpochDate();
+
+        const clearingPeriodLength =
+            await this._systemVariablesAbi.clearingPeriodLength();
+
+        const nextClearingPeriod = BigNumber.from(nextEpochDate)
+            .sub(clearingPeriodLength)
+            .toNumber();
+
+        const nowUnix = Date.now() / 1000;
+
+        if (nowUnix >= nextClearingPeriod) {
+            const oneWeek = 604800; // in seconds
+
+            return nextClearingPeriod + oneWeek;
+        }
+
+        return nextClearingPeriod;
+    }
+
     async getActiveLockPeriods(): Promise<LockPeriod[]> {
         const data: GQLGetLockingPeriods =
             await this._graph.request(lockingPeriodsQuery);

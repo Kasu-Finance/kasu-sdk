@@ -84,7 +84,8 @@ export class DataService {
             lendingPoolConfig.tranchesConfig[index].desiredRatio;
 
         const targetDrawAmount =
-            parseFloat(desiredDrawAmount) * (parseFloat(desiredTrancheRatio)/100);
+            parseFloat(desiredDrawAmount) *
+            (parseFloat(desiredTrancheRatio) / 100);
 
         const pendingDeposits =
             parseFloat(
@@ -160,7 +161,7 @@ export class DataService {
                     (r) => r.id == lendingPoolSubgraph.id,
                 );
             if (!lendingPoolDirectus || !lendingPoolConfig) {
-                console.log(
+                console.warn(
                     "Couldn't find directus pool for id: ",
                     lendingPoolSubgraph.id,
                 );
@@ -181,7 +182,7 @@ export class DataService {
                         (r) => r.id == tranche.id,
                     );
                 if (!trancheConfig) {
-                    console.log(
+                    console.warn(
                         "Couldn't find tranche config for id: ",
                         tranche.id,
                     );
@@ -226,7 +227,7 @@ export class DataService {
                     (r) => r.id.toLowerCase() == tranche.id,
                 );
                 if (!trancheData) {
-                    console.log(
+                    console.warn(
                         "Couldn't find tranche directus for id: ",
                         tranche.id,
                     );
@@ -279,9 +280,13 @@ export class DataService {
         const resultDirectusRiskManagementItem: RiskManagementItemDirectus[] =
             await this._directus.request(readItems('RiskManagementItems'));
         const retn: RiskManagement[] = [];
-        for(const riskManagementDirectus of resultDirectusRiskManagement){
-            const items = resultDirectusRiskManagementItem.filter(r => r.riskManagementFK == riskManagementDirectus.id);
-            const itemsList: RiskManagementItem[] = items.sort((a, b) => a.priority - b.priority);
+        for (const riskManagementDirectus of resultDirectusRiskManagement) {
+            const items = resultDirectusRiskManagementItem.filter(
+                (r) => r.riskManagementFK == riskManagementDirectus.id,
+            );
+            const itemsList: RiskManagementItem[] = items.sort(
+                (a, b) => a.priority - b.priority,
+            );
             retn.push({
                 id: riskManagementDirectus.id,
                 poolIdFK: riskManagementDirectus.poolIdFK.toLowerCase(),
@@ -335,7 +340,7 @@ export class DataService {
                     (r) => r.id == trancheSubgraph.id,
                 );
             if (!configuration) {
-                console.log(
+                console.warn(
                     "Couldn't find tranche configuration for id: ",
                     trancheSubgraph.id,
                 );
@@ -531,7 +536,7 @@ export class DataService {
                     rm.poolIdFK.toLowerCase() === poolOverview.id.toLowerCase(),
             );
             if (!riskManagement) {
-                console.log(
+                console.warn(
                     "Couldn't find risk management for id: ",
                     poolOverview.id,
                 );
