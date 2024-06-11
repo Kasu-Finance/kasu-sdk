@@ -3,19 +3,23 @@ import {
     BigNumber,
     BigNumberish,
     BytesLike,
-    ContractTransaction, ethers,
+    ContractTransaction,
+    ethers,
     Signer,
 } from 'ethers';
 import { GraphQLClient } from 'graphql-request';
 
 import {
-    IClearingCoordinatorAbi, IClearingCoordinatorAbi__factory,
+    IClearingCoordinatorAbi,
+    IClearingCoordinatorAbi__factory,
     IKasuAllowListAbi__factory,
     ILendingPoolAbi__factory,
     ILendingPoolManagerAbi,
     ILendingPoolManagerAbi__factory,
     ILendingPoolTrancheAbi,
-    ILendingPoolTrancheAbi__factory, IUserLoyaltyRewardsAbi, IUserLoyaltyRewardsAbi__factory,
+    ILendingPoolTrancheAbi__factory,
+    IUserLoyaltyRewardsAbi,
+    IUserLoyaltyRewardsAbi__factory,
     IUserManagerAbi,
     IUserManagerAbi__factory,
 } from '../../contracts';
@@ -24,12 +28,16 @@ import { SdkConfig } from '../../sdk-config';
 import { mapUserRequestEventType } from './helper';
 import {
     lendingPoolsBalanceQuery,
-    lendingPoolUserDetailsQuery, totalUserLoyaltyRewardsQuery, trancheUserDetailsQuery,
+    lendingPoolUserDetailsQuery,
+    totalUserLoyaltyRewardsQuery,
+    trancheUserDetailsQuery,
     userRequestsQuery,
 } from './queries';
 import {
     LendingPoolsBalanceSubgraph,
-    LendingPoolUserDetailsSubgraph, TotalUserLoyaltyRewardsSubgraph, TrancheUserDetailsSubgraph,
+    LendingPoolUserDetailsSubgraph,
+    TotalUserLoyaltyRewardsSubgraph,
+    TrancheUserDetailsSubgraph,
     UserRequestsSubgraph,
 } from './subgraph-types';
 import {
@@ -70,7 +78,7 @@ export class UserLending {
         this._clearingCoordinatorAbi = IClearingCoordinatorAbi__factory.connect(
             _kasuConfig.contracts.ClearingCoordinator,
             signerOrProvider,
-        )
+        );
     }
 
     async getUserTotalPendingAndActiveDepositedAmount(
@@ -242,49 +250,93 @@ export class UserLending {
             { userAddress: userAddress.toLowerCase() },
         );
 
-        const lendingPoolBalances: LendingPoolsBalanceSubgraph = await this._graph.request(
-            lendingPoolsBalanceQuery
-        )
-        const lendingPoolSharesHelper: {id: string, shares: number}[] = [];
-        for(const lendingPoolBalance of lendingPoolBalances.lendingPools){
+        const lendingPoolBalances: LendingPoolsBalanceSubgraph =
+            await this._graph.request(lendingPoolsBalanceQuery);
+        const lendingPoolSharesHelper: { id: string; shares: number }[] = [];
+        for (const lendingPoolBalance of lendingPoolBalances.lendingPools) {
             lendingPoolSharesHelper.push({
                 id: lendingPoolBalance.id,
-                shares: lendingPoolBalance.tranches.reduce((acc, tranche) => acc + parseFloat(tranche.shares), 0)
-            })
+                shares: lendingPoolBalance.tranches.reduce(
+                    (acc, tranche) => acc + parseFloat(tranche.shares),
+                    0,
+                ),
+            });
         }
         const retn: UserRequest[] = [];
         for (const userRequest of subgraphResult.userRequests) {
             const trancheName =
                 trancheNames[userRequest.lendingPool.tranches.length - 1][
                     parseInt(userRequest.tranche.orderId)
-                    ];
-                  
+                ];
+
             const events: UserRequestEvent[] = [];
             let totalRequested = 0;
             let totalAccepted = 0;
             let totalRejected = 0;
             for (const event of userRequest.userRequestEvents) {
                 const lendingPoolId = event.id.split('-')[0];
-                const lendingPoolBalance = lendingPoolBalances.lendingPools.find(lendingPool => lendingPool.id === lendingPoolId);
-                const lendingPoolShares = lendingPoolSharesHelper.find(lendingPool => lendingPool.id === lendingPoolId);
-                const totalSupply = lendingPoolShares ? lendingPoolShares.shares : 0;
-                const totalAssets = lendingPoolBalance ? parseFloat(lendingPoolBalance.balance) : 0;
+                const lendingPoolBalance =
+                    lendingPoolBalances.lendingPools.find(
+                        (lendingPool) => lendingPool.id === lendingPoolId,
+                    );
+                const lendingPoolShares = lendingPoolSharesHelper.find(
+                    (lendingPool) => lendingPool.id === lendingPoolId,
+                );
+                const totalSupply = lendingPoolShares
+                    ? lendingPoolShares.shares
+                    : 0;
+                const totalAssets = lendingPoolBalance
+                    ? parseFloat(lendingPoolBalance.balance)
+                    : 0;
                 const eventTrancheId = event.tranche.id;
-                const eventTrancheName = trancheNames[userRequest.lendingPool.tranches.length - 1][parseInt(event.tranche.orderId)];
+                const eventTrancheName =
+                    trancheNames[userRequest.lendingPool.tranches.length - 1][
+                        parseInt(event.tranche.orderId)
+                    ];
 
-                if(eventTrancheId != userRequest.tranche.id){
+                if (eventTrancheId != userRequest.tranche.id) {
                     event.type = 'DepositReallocated';
                 }
-                if(event.type == 'DepositAccepted' || event.type == 'WithdrawalAccepted' || event.type == 'DepositReallocated'){
-                    totalAccepted += event.assetAmount ? parseFloat(event.assetAmount) : this.convertSharesToAssets(event.sharesAmount, totalAssets, totalSupply);
+                if (
+                    event.type == 'DepositAccepted' ||
+                    event.type == 'WithdrawalAccepted' ||
+                    event.type == 'DepositReallocated'
+                ) {
+                    totalAccepted = event.assetAmount
+                        ? parseFloat(event.assetAmount)
+                        : this.convertSharesToAssets(
+                              event.sharesAmount,
+                              totalAssets,
+                              totalSupply,
+                          );
                 }
-                if(event.type == 'DepositCancelled' || event.type == 'WithdrawalCancelled'){
-                    totalRejected += event.assetAmount ? parseFloat(event.assetAmount) : this.convertSharesToAssets(event.sharesAmount, totalAssets, totalSupply);
+                if (
+                    event.type == 'DepositCancelled' ||
+                    event.type == 'WithdrawalCancelled'
+                ) {
+                    totalRejected = event.assetAmount
+                        ? parseFloat(event.assetAmount)
+                        : this.convertSharesToAssets(
+                              event.sharesAmount,
+                              totalAssets,
+                              totalSupply,
+                          );
                 }
-                if(event.type == 'DepositInitiated' || event.type == 'WithdrawalInitiated' || event.type == "DepositIncreased" || event.type == "WithdrawalIncreased"){
-                    totalRequested += event.assetAmount ? parseFloat(event.assetAmount) : this.convertSharesToAssets(event.sharesAmount, totalAssets, totalSupply);
+                if (
+                    event.type == 'DepositInitiated' ||
+                    event.type == 'WithdrawalInitiated' ||
+                    event.type == 'DepositIncreased' ||
+                    event.type == 'WithdrawalIncreased'
+                ) {
+                    totalRequested = event.assetAmount
+                        ? parseFloat(event.assetAmount)
+                        : this.convertSharesToAssets(
+                              event.sharesAmount,
+                              totalAssets,
+                              totalSupply,
+                          );
                 }
-              
+
                 events.push({
                     id: event.id,
                     requestType: mapUserRequestEventType(event.type),
@@ -341,14 +393,20 @@ export class UserLending {
     ): number {
         return (parseFloat(sharesAmount) * totalAssets) / totalSupply;
     }
-    async isCancelable(type: string, status: string, lendingPoolId: string): Promise<boolean> {
+    async isCancelable(
+        type: string,
+        status: string,
+        lendingPoolId: string,
+    ): Promise<boolean> {
         if (
             type === (UserRequestType.DEPOSIT as string) &&
             status != 'Processed'
         ) {
             return true;
         }
-        return !(await this._clearingCoordinatorAbi.isLendingPoolClearingPending(lendingPoolId));
+        return !(await this._clearingCoordinatorAbi.isLendingPoolClearingPending(
+            lendingPoolId,
+        ));
     }
 
     async getUserPoolBalance(
@@ -364,11 +422,22 @@ export class UserLending {
                 userAddress: `${poolId}-${user}`,
             });
         const balance = await lendingPool.userBalance(user);
-        const balanceNumber = parseFloat(ethers.utils.formatUnits(balance,6));
+        const balanceNumber = parseFloat(ethers.utils.formatUnits(balance, 6));
         return {
             userId: user,
             address: poolId,
-            yieldEarned: userDetailsSubgraph.lendingPoolUserDetails != null ? balanceNumber - parseFloat(userDetailsSubgraph.lendingPoolUserDetails.totalAcceptedDeposits) - parseFloat(userDetailsSubgraph.lendingPoolUserDetails.totalAcceptedWithdrawnAmount) : 0,
+            yieldEarned:
+                userDetailsSubgraph.lendingPoolUserDetails != null
+                    ? balanceNumber -
+                      parseFloat(
+                          userDetailsSubgraph.lendingPoolUserDetails
+                              .totalAcceptedDeposits,
+                      ) -
+                      parseFloat(
+                          userDetailsSubgraph.lendingPoolUserDetails
+                              .totalAcceptedWithdrawnAmount,
+                      )
+                    : 0,
             balance: balance,
         };
     }
@@ -383,7 +452,7 @@ export class UserLending {
         );
 
         const balance = await tranche.userActiveAssets(user);
-        const balanceNumber = parseFloat(ethers.utils.formatUnits(balance,6));
+        const balanceNumber = parseFloat(ethers.utils.formatUnits(balance, 6));
         const userDetailsSubgraph: TrancheUserDetailsSubgraph =
             await this._graph.request(trancheUserDetailsQuery, {
                 userAddress: `${trancheId}-${user}`,
@@ -391,25 +460,38 @@ export class UserLending {
         return {
             userId: user,
             address: trancheId,
-            yieldEarned: userDetailsSubgraph.lendingPoolTrancheUserDetails != null ? balanceNumber - parseFloat(userDetailsSubgraph.lendingPoolTrancheUserDetails.totalAcceptedDeposits) - parseFloat(userDetailsSubgraph.lendingPoolTrancheUserDetails.totalAcceptedWithdrawnAmount) : 0,
+            yieldEarned:
+                userDetailsSubgraph.lendingPoolTrancheUserDetails != null
+                    ? balanceNumber -
+                      parseFloat(
+                          userDetailsSubgraph.lendingPoolTrancheUserDetails
+                              .totalAcceptedDeposits,
+                      ) -
+                      parseFloat(
+                          userDetailsSubgraph.lendingPoolTrancheUserDetails
+                              .totalAcceptedWithdrawnAmount,
+                      )
+                    : 0,
             balance: balance,
             availableToWithdraw: await tranche.maxWithdraw(user),
-    };
-
+        };
     }
 
     async getUserApyBonus(user: string): Promise<UserApyBonus> {
-        const subgraphResult: TotalUserLoyaltyRewardsSubgraph = await this._graph.request(totalUserLoyaltyRewardsQuery, { userAddress: user });
-        if(!subgraphResult.user) {
+        const subgraphResult: TotalUserLoyaltyRewardsSubgraph =
+            await this._graph.request(totalUserLoyaltyRewardsQuery, {
+                userAddress: user,
+            });
+        if (!subgraphResult.user) {
             return {
                 balance: BigNumber.from(0),
-                lifetime: 0
-            }
+                lifetime: 0,
+            };
         }
         const balance = await this._userLoyaltyRewardsAbi.userRewards(user);
         return {
             balance: balance,
             lifetime: parseFloat(subgraphResult.user.totalUserLoyaltyRewards),
-        }
+        };
     }
 }
