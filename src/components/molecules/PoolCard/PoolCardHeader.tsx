@@ -27,7 +27,14 @@ const PoolCardHeader: React.FC<PoolCardHeaderProps> = ({ pool }) => {
       />
       <BoxBackground display='flex' alignItems='center' sx={{ p: 2 }}>
         <PoolAvatar name={poolName} showStatus />
-        <Typography variant='h5' fontSize={20} sx={{ ml: 1 }}>
+        <Typography
+          variant='h5'
+          fontSize={20}
+          sx={{ ml: 1 }}
+          whiteSpace='nowrap'
+          overflow='hidden'
+          textOverflow='ellipsis'
+        >
           {poolName}
         </Typography>
       </BoxBackground>
