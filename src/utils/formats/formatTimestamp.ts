@@ -26,11 +26,30 @@ function formatTimestamp(
     signDisplay: 'exceptZero',
   }).format(time.utcOffset() / 60)
 
-  const [date, timestamp] = formattedTime.split(' ')
+  let date = ''
+  let timestamp = ''
+
+  switch (format) {
+    case 'DD.MM.YYYY': {
+      date = formattedTime
+      break
+    }
+    case 'DD.MM.YYYY HH:mm:ss': {
+      const split = formattedTime.split(' ')
+
+      date = split[0]
+      timestamp = split[1]
+      break
+    }
+    case 'HH:mm:ss': {
+      timestamp = formattedTime
+      break
+    }
+  }
 
   return {
-    date: date || '',
-    timestamp: timestamp || '',
+    date,
+    timestamp,
     ...(includeUtcOffset && { utcOffset: `UTC${utcOffset}` }),
   }
 }
