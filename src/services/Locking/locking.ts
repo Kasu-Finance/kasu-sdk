@@ -327,7 +327,7 @@ export class KSULocking {
     }
 
     async getKasuTokenPrice(): Promise<{ price: BigNumber; decimals: number }> {
-        const decimals = 6;
+        const decimals = 18;
 
         return Promise.resolve({
             price: await this._ksuPriceAbi.ksuTokenPrice(),
