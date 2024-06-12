@@ -55,7 +55,8 @@
     "reallocated": "Reallocated",
     "request": "Request",
     "approved": "Approved",
-    "confirmed": "Confirmed"
+    "confirmed": "Confirmed",
+    "nextClearingPeriodStart": "Next Clearing Period Starts in"
   },
   "time": {
     "days": "days",

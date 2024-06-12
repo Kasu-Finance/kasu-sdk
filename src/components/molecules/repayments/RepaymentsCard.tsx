@@ -9,9 +9,9 @@ import {
 import { PoolRepayment } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
-import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
 import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
+import useNextClearingPeriod from '@/hooks/web3/useNextClearingPeriod'
 
 import Countdown from '@/components/atoms/Countdown'
 import CsvDownloadButton from '@/components/atoms/CsvDownloadButton'
@@ -27,14 +27,15 @@ interface RepaymentsCardProps {
 
 const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
   const { t } = useTranslation()
-  const { nextEpochTime } = useNextEpochTime()
   const currentDevice = useDeviceDetection()
   const isMobile = currentDevice === Device.MOBILE
+
+  const { nextClearingPeriod } = useNextClearingPeriod()
 
   const repaymentsData = adaptDataForRepayments(data)
   const endBorrowerFunds = data?.currentTotalEndBorrowers ?? 0
 
-  const formattedTime = formatTimestamp(nextEpochTime, {
+  const formattedTime = formatTimestamp(nextClearingPeriod, {
     format: 'DD.MM.YYYY HH:mm:ss',
     includeUtcOffset: true,
   })
@@ -99,12 +100,12 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
                 width: isMobile ? '100%' : '50%',
                 pl: isMobile ? 0 : 1,
               }}
-              title='Next Clearing Period Starts in'
+              title={t('general.nextClearingPeriodStart')}
               metric={
                 <Box px={2} py='6px'>
                   <Typography variant='h6' component='span' display='block'>
                     <Countdown
-                      endTime={nextEpochTime}
+                      endTime={nextClearingPeriod}
                       format='D:HH:mm'
                       render={(countDown) => {
                         const [days, hours, minutes] = countDown.split(':')
