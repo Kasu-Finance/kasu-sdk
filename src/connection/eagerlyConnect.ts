@@ -62,7 +62,7 @@ const connectRecent = () => {
 
 // The Safe connector will only work from safe.global, which iframes;
 // it is only necessary to try (and to load all the deps) if we are in an iframe.
-if (window !== window.parent) {
+if (typeof window !== 'undefined' && window !== window.parent) {
   connect(gnosisSafeConnection.connector, ConnectionType.GNOSIS_SAFE)
 }
 

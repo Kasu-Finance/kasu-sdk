@@ -6,6 +6,8 @@ import { ReactNode } from 'react'
 
 import { connections } from '@/connection/connectors'
 
+import '@/connection/eagerlyConnect'
+
 type Web3ProviderProps = {
   children: ReactNode
 }
