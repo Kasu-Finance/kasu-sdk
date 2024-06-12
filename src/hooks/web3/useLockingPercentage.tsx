@@ -3,10 +3,8 @@ import { formatEther } from 'ethers/lib/utils'
 import useRatio from '@/hooks/useRatio'
 import useEarnedRKsu from '@/hooks/web3/useEarnedRKsu'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
-import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 import useTotalLendingPoolDeposits from '@/hooks/web3/useTotalLendingPoolDeposits'
 
-import { SupportedTokens } from '@/constants/tokens'
 import { convertToUSD, toBigNumber } from '@/utils'
 
 const useLockingPercentage = () => {
@@ -16,14 +14,9 @@ const useLockingPercentage = () => {
 
   const { ksuPrice } = useKsuPrice()
 
-  const supportedToken = useSupportedTokenInfo()
-
   const rKsuInUSD = convertToUSD(
     toBigNumber(rKsuAmount || '0'),
-    toBigNumber(
-      ksuPrice || '0',
-      supportedToken?.[SupportedTokens.USDC].decimals
-    )
+    toBigNumber(ksuPrice || '0')
   )
 
   const totalDepositsUSD = toBigNumber(

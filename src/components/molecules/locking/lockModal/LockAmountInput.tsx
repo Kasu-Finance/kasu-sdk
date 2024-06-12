@@ -7,7 +7,6 @@ import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
-import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import InfoRow from '@/components/atoms/InfoRow'
@@ -17,7 +16,6 @@ import NumericalInput from '@/components/molecules/NumericalInput'
 import MinKsuLockLoyalityOne from '@/components/molecules/tooltips/MinKsuLockLoyalityOne'
 import MinKsuLockLoyalityTwo from '@/components/molecules/tooltips/MinKsuLockLoyalityTwo'
 
-import { SupportedTokens } from '@/constants/tokens'
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
 type LockAmountInputProps = {
@@ -32,14 +30,9 @@ const LockAmountInput: React.FC<LockAmountInputProps> = ({ balance }) => {
   const [focused, setFocused] = useState(false)
   const { ksuPrice } = useKsuPrice()
 
-  const supportedToken = useSupportedTokenInfo()
-
   const ksuInUSD = convertToUSD(
     toBigNumber(amount),
-    toBigNumber(
-      ksuPrice || '0',
-      supportedToken?.[SupportedTokens.USDC].decimals
-    )
+    toBigNumber(ksuPrice || '0')
   )
   const showSuccess = !focused && modalStatus.type === 'success'
 
