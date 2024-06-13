@@ -2,7 +2,7 @@
 
 import { SxProps, Theme } from '@mui/material'
 import Image from 'next/image'
-import { useState } from 'react'
+import { memo, useCallback, useState } from 'react'
 
 import ImageCover from '@/components/atoms/ImageCover'
 
@@ -15,6 +15,10 @@ const ImageWithFallback: React.FC<{
 }> = ({ src, alt = 'Pool Image', coverProps }) => {
   const [imageError, setImageError] = useState<boolean>(false)
 
+  const handleError = useCallback(() => {
+    setImageError(true)
+  }, [])
+
   return (
     <ImageCover className='image-cover' sx={coverProps}>
       {!imageError && src ? (
@@ -22,8 +26,8 @@ const ImageWithFallback: React.FC<{
           fill
           src={src}
           alt={alt}
-          style={{ objectFit: 'cover' }}
-          onError={() => setImageError(true)}
+          // style={{ objectFit: 'cover' }}
+          onError={handleError}
         />
       ) : (
         <ImagePlaceholderIcon />
@@ -32,4 +36,4 @@ const ImageWithFallback: React.FC<{
   )
 }
 
-export default ImageWithFallback
+export default memo(ImageWithFallback)

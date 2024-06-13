@@ -1,30 +1,30 @@
-import { Box, Typography } from '@mui/material'
+import { Box, Collapse, Typography } from '@mui/material'
 import {
   PoolDelegateProfileAndHistory,
   PoolOverview,
 } from '@solidant/kasu-sdk/src/services/DataService/types'
-import { useMemo } from 'react'
+import { memo, useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import InfoColumn from '@/components/atoms/InfoColumn'
-import InfoRow from '@/components/atoms/InfoRow'
-
-import { PoolDelegateMetricIds } from '@/constants'
-import { formatAmount } from '@/utils'
-import formatDuration from '@/utils/formats/formatDuration'
+import { getPoolCardMetrics } from '@/components/molecules/PoolCard/pool.card.metrics'
+import PoolCardMetricItem from '@/components/molecules/PoolCard/PoolCardMetricItem'
 
 interface PoolCardContentProps {
   pool: PoolOverview
   poolDelegate: PoolDelegateProfileAndHistory
+  hover: boolean
 }
 
 const PoolCardContent: React.FC<PoolCardContentProps> = ({
   pool,
   poolDelegate,
+  hover,
 }) => {
   const { t } = useTranslation()
+
   const { tranches, isMultiTranche } = useMemo(() => {
     return {
       tranches: pool?.tranches || [],
@@ -32,84 +32,13 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
     }
   }, [pool])
 
-  const metrics = useMemo(() => {
-    const baseMetrics = [
-      {
-        id: PoolDelegateMetricIds.TotalFunds,
-        title: 'details.poolDelegate.totalFunds',
-        value: formatAmount(poolDelegate?.totalLoanFundsOriginated || '0', {
-          minValue: 1_000_000,
-        }),
-        suffix: ' USDC',
-        sx: {
-          mt: 2,
-          pb: 0,
-          borderBottomLeftRadius: '0',
-          borderBottomRightRadius: '0',
-        },
-        showDivider: true,
-      },
-      {
-        id: PoolDelegateMetricIds.TotalLossRate,
-        title: 'lending.poolOverview.detailCard.totalLossRate',
-        value: `${formatAmount(+poolDelegate.historicLossRate || '0')}  %`,
-        suffix: '',
-        showDivider: false,
-        sx: {
-          pt: 0,
-          borderTopLeftRadius: '0',
-          borderTopRightRadius: '0',
-        },
-      },
-      {
-        id: PoolDelegateMetricIds.AssetClasses,
-        title: 'details.poolDetails.assetClass',
-        value: poolDelegate?.assetClasses || 'N/A',
-        suffix: '',
-        sx: {
-          mt: 1,
-        },
-        showDivider: false,
-      },
-      {
-        id: PoolDelegateMetricIds.Security,
-        title: 'lending.poolOverview.detailCard.security',
-        value: 'N/A',
-        suffix: '',
-        sx: {
-          mt: 1,
-          maxHeight: 0,
-          transition: 'max-height 0.3s ease',
-          padding: 0,
-          overflow: 'hidden',
-        },
-        showDivider: false,
-      },
-      {
-        id: PoolDelegateMetricIds.LendingHistory,
-        title: 'lending.poolOverview.detailCard.lendingHistory',
-        value: poolDelegate.delegateLendingHistory
-          ? String(
-              formatDuration(poolDelegate.delegateLendingHistory, {
-                months: true,
-                days: true,
-              })
-            )
-          : 'N/A',
-        suffix: '',
-        sx: {
-          mt: 1,
-          maxHeight: 0,
-          transition: 'max-height 0.3s ease',
-          padding: 0,
-          overflow: 'hidden',
-        },
-        showDivider: false,
-      },
-    ]
+  const metrics = useMemo(
+    () => getPoolCardMetrics(poolDelegate),
+    [poolDelegate]
+  )
 
-    return baseMetrics
-  }, [poolDelegate])
+  const collapsedMetrics = metrics.filter((metric) => metric.isCollapsed)
+  const visibleMetrics = metrics.filter((metric) => !metric.isCollapsed)
 
   return (
     <Box pl={2} pr={2} mb={3}>
@@ -161,37 +90,17 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
           )
         })}
       </ColoredBox>
-      {metrics.map((metric) => (
-        <ColoredBox
-          key={metric.id}
-          display='flex'
-          flexDirection='column'
-          className={metric.id}
-          sx={{
-            width: '100%',
-            ...metric.sx,
-          }}
-        >
-          <InfoRow
-            key={metric.id}
-            title={t(`${metric.title}.label`)}
-            toolTipInfo={t(`${metric.title}.tooltip`)}
-            showDivider={metric.showDivider}
-            metric={
-              <>
-                <Typography variant='subtitle2' maxWidth={160}>
-                  {metric.value}
-                  <Typography variant='caption' component='span'>
-                    {metric.suffix || ''}
-                  </Typography>
-                </Typography>
-              </>
-            }
-          />
-        </ColoredBox>
+
+      {visibleMetrics.map((metric) => (
+        <PoolCardMetricItem key={metric.id} metric={metric} t={t} />
       ))}
+      <Collapse in={hover}>
+        {collapsedMetrics.map((metric) => (
+          <PoolCardMetricItem key={metric.id} metric={metric} t={t} />
+        ))}
+      </Collapse>
     </Box>
   )
 }
 
-export default PoolCardContent
+export default memo(PoolCardContent)

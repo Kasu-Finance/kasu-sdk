@@ -1,9 +1,10 @@
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import LoginIcon from '@mui/icons-material/Login'
-import { Box, Button } from '@mui/material'
+import { Box, Button, Collapse, Grow } from '@mui/material'
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { formatUnits } from 'ethers/lib/utils'
 import Link from 'next/link'
+import { useRef } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useUserPoolBalance from '@/hooks/lending/useUserPoolBalance'
@@ -22,11 +23,16 @@ import { getPoolData } from '@/utils'
 interface PoolCardActionsProps {
   pool: PoolOverview
   link: string
+  hover: boolean
 }
 
-const PoolCardActions: React.FC<PoolCardActionsProps> = ({ pool, link }) => {
+const PoolCardActions: React.FC<PoolCardActionsProps> = ({
+  pool,
+  link,
+  hover,
+}) => {
   const { t } = useTranslation()
-
+  const refBtnOverview = useRef(null)
   const { openModal } = useModalState()
   const { data: userPoolBalance } = useUserPoolBalance(pool?.id)
 
@@ -62,22 +68,20 @@ const PoolCardActions: React.FC<PoolCardActionsProps> = ({ pool, link }) => {
         </AuthenticateButton>
       )}
 
-      <Button
-        className='pool-card-overview-button'
-        sx={{
-          ml: 2,
-          width: 0,
-          transition: 'width 0.3s ease',
-          padding: 0,
-          overflow: 'hidden',
-        }}
-        href={link}
-        component={Link}
-        variant='contained'
-        startIcon={<ArrowForwardIcon />}
-      >
-        {t('general.overview')}
-      </Button>
+      <Collapse in={hover} timeout={250} orientation='horizontal'>
+        <Grow in={hover} timeout={500}>
+          <Button
+            ref={refBtnOverview}
+            sx={{ ml: 1 }}
+            href={link}
+            component={Link}
+            variant='contained'
+            startIcon={<ArrowForwardIcon />}
+          >
+            {t('general.overview')}
+          </Button>
+        </Grow>
+      </Collapse>
     </Box>
   )
 }
