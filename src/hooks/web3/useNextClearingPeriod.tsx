@@ -2,19 +2,19 @@ import useSWRImmutable from 'swr/immutable'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
-const useNextEpochTime = () => {
+const useNextClearingPeriod = () => {
   const sdk = useKasuSDK()
 
   const { data, error } = useSWRImmutable(
-    'nextEpochTime',
-    async () => await sdk.Locking.getNextEpochDate()
+    'nextClearingPeriod',
+    async () => await sdk.Locking.getNextClearingPeriodDate()
   )
 
   return {
-    nextEpochTime: data || 0,
+    nextClearingPeriod: data || 0,
     error,
     isLoading: !data && !error,
   }
 }
 
-export default useNextEpochTime
+export default useNextClearingPeriod

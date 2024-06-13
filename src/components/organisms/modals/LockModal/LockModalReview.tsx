@@ -10,9 +10,7 @@ import Countdown from '@/components/atoms/Countdown'
 import InfoColumn from '@/components/atoms/InfoColumn'
 import TokenAmount from '@/components/atoms/TokenAmount'
 
-import { DATE_FORMAT, TIME_FORMAT } from '@/constants'
-import dayjs from '@/dayjs'
-import { formatAmount } from '@/utils'
+import { formatAmount, formatTimestamp } from '@/utils'
 
 type LockModalReviewProps = {
   lockAmount: string
@@ -25,6 +23,11 @@ const LockModalReview: React.FC<LockModalReviewProps> = ({
 }) => {
   const { nextEpochTime } = useNextEpochTime()
   const { t } = useTranslation()
+
+  const formattedTime = formatTimestamp(nextEpochTime, {
+    format: 'DD.MM.YYYY HH:mm:ss',
+    includeUtcOffset: true,
+  })
 
   return (
     <>
@@ -110,9 +113,16 @@ const LockModalReview: React.FC<LockModalReviewProps> = ({
                 component='span'
                 color={(theme) => theme.palette.text.secondary}
               >
-                {dayjs
-                  .unix(nextEpochTime)
-                  .format(`${DATE_FORMAT} • ${TIME_FORMAT}`)}
+                <Typography variant='body1' color='grey.500'>
+                  {formattedTime.date} • {formattedTime.timestamp}{' '}
+                  <Typography
+                    variant='caption'
+                    color='inherit'
+                    component='span'
+                  >
+                    {formattedTime.utcOffset}
+                  </Typography>
+                </Typography>
               </Typography>
             </Box>
           }

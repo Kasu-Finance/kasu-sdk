@@ -9,20 +9,16 @@ import {
 import { PoolRepayment } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
-import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
 import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
+import useNextClearingPeriod from '@/hooks/web3/useNextClearingPeriod'
 
 import Countdown from '@/components/atoms/Countdown'
 import CsvDownloadButton from '@/components/atoms/CsvDownloadButton'
 import InfoColumn from '@/components/atoms/InfoColumn'
 import RenderMetrics from '@/components/molecules/repayments/RenderMetrics'
 
-import {
-  adaptDataForRepayments,
-  extractDateAndUtcOffset,
-  formatTimestampWithOffset,
-} from '@/utils'
+import { adaptDataForRepayments, formatTimestamp } from '@/utils'
 import { RepaymentsSections } from '@/utils/convert/adaptDataForRepayments'
 
 interface RepaymentsCardProps {
@@ -31,15 +27,18 @@ interface RepaymentsCardProps {
 
 const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
   const { t } = useTranslation()
-  const { nextEpochTime } = useNextEpochTime()
   const currentDevice = useDeviceDetection()
   const isMobile = currentDevice === Device.MOBILE
+
+  const { nextClearingPeriod } = useNextClearingPeriod()
 
   const repaymentsData = adaptDataForRepayments(data)
   const endBorrowerFunds = data?.currentTotalEndBorrowers ?? 0
 
-  const formattedDate = formatTimestampWithOffset(nextEpochTime, 1)
-  const { date, time, format, offset } = extractDateAndUtcOffset(formattedDate)
+  const formattedTime = formatTimestamp(nextClearingPeriod, {
+    format: 'DD.MM.YYYY HH:mm:ss',
+    includeUtcOffset: true,
+  })
 
   return (
     <Card sx={{ mt: 3 }}>
@@ -101,12 +100,12 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
                 width: isMobile ? '100%' : '50%',
                 pl: isMobile ? 0 : 1,
               }}
-              title='Next Clearing Period Starts in'
+              title={t('general.nextClearingPeriodStart')}
               metric={
                 <Box px={2} py='6px'>
                   <Typography variant='h6' component='span' display='block'>
                     <Countdown
-                      endTime={nextEpochTime}
+                      endTime={nextClearingPeriod}
                       format='D:HH:mm'
                       render={(countDown) => {
                         const [days, hours, minutes] = countDown.split(':')
@@ -116,15 +115,16 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
                       }}
                     />
                   </Typography>
-                  {date && time && (
-                    <Typography variant='body1' color='grey.500'>
-                      {date} • {time}{' '}
-                      <span style={{ fontSize: '0.75rem' }}>
-                        {format}
-                        {offset}
-                      </span>
+                  <Typography variant='body1' color='grey.500'>
+                    {formattedTime.date} • {formattedTime.timestamp}{' '}
+                    <Typography
+                      variant='caption'
+                      color='inherit'
+                      component='span'
+                    >
+                      {formattedTime.utcOffset}
                     </Typography>
-                  )}
+                  </Typography>
                 </Box>
               }
             />

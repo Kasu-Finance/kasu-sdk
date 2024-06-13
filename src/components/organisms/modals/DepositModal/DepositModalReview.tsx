@@ -4,6 +4,7 @@ import React from 'react'
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
 import useTranslation from '@/hooks/useTranslation'
+import useNextClearingPeriod from '@/hooks/web3/useNextClearingPeriod'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import Countdown from '@/components/atoms/Countdown'
@@ -13,9 +14,8 @@ import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCar
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import { DATE_FORMAT, TIME_FORMAT } from '@/constants'
 import dayjs from '@/dayjs'
-import { formatAmount } from '@/utils'
+import { formatAmount, formatTimestamp } from '@/utils'
 
 type DepositModalReviewProps = {
   poolData: PoolData
@@ -32,9 +32,17 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
 
   const handleOpen = () => openModal({ name: ModalsKeys.LOYALTY_LEVELS })
 
-  const now = dayjs()
+  const { nextClearingPeriod } = useNextClearingPeriod()
 
-  const nextClearingTime = 1711723761
+  const formattedTimeNow = formatTimestamp(dayjs().unix(), {
+    format: 'DD.MM.YYYY HH:mm:ss',
+    includeUtcOffset: true,
+  })
+
+  const formattedNextClearingPeriod = formatTimestamp(nextClearingPeriod, {
+    format: 'DD.MM.YYYY HH:mm:ss',
+    includeUtcOffset: true,
+  })
 
   return (
     <Box display='grid' gap={2} mt={2}>
@@ -71,14 +79,14 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
                     px={2}
                     pt='5px'
                   >
-                    {now.format(DATE_FORMAT)}
+                    {formattedTimeNow.date}
                   </Typography>
                   <Box px={2} pb='5px'>
                     <Typography variant='body1' component='span'>
-                      {now.format('HH:mm:ss')}{' '}
+                      {formattedTimeNow.timestamp}{' '}
                     </Typography>
                     <Typography variant='body1' component='span'>
-                      {now.format('UTCZZ')}
+                      {formattedTimeNow.utcOffset}
                     </Typography>
                   </Box>
                 </>
@@ -133,13 +141,13 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
         </Button>
       </Typography>
       <InfoColumn
-        title='Next Clearing Period Starts in'
+        title={t('general.nextClearingPeriodStart')}
         showDivider
         metric={
           <Box px={2} py='6px'>
             <Typography variant='h6' component='span' display='block'>
               <Countdown
-                endTime={nextClearingTime ?? 0}
+                endTime={nextClearingPeriod}
                 format='D:HH:mm'
                 render={(countDown) => {
                   const parts = countDown.split(':')
@@ -150,14 +158,12 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
                 }}
               />
             </Typography>
-            <Typography
-              variant='body1'
-              component='span'
-              color={(theme) => theme.palette.text.secondary}
-            >
-              {dayjs
-                .unix(nextClearingTime ?? 0)
-                .format(`${DATE_FORMAT} • ${TIME_FORMAT}`)}
+            <Typography variant='body1' color='grey.500'>
+              {formattedNextClearingPeriod.date} •{' '}
+              {formattedNextClearingPeriod.timestamp}{' '}
+              <Typography variant='caption' color='inherit' component='span'>
+                {formattedNextClearingPeriod.utcOffset}
+              </Typography>
             </Typography>
           </Box>
         }

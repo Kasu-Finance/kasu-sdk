@@ -11,9 +11,7 @@ import ToolTip from '@/components/atoms/ToolTip'
 
 import { SupportedChainIds } from '@/connection/chains'
 import { networks } from '@/connection/networks'
-import { DATE_FORMAT, TIME_FORMAT } from '@/constants'
-import dayjs from '@/dayjs'
-import { formatAmount } from '@/utils'
+import { formatAmount, formatTimestamp } from '@/utils'
 
 type TransactionCollapsedContentProps = {
   actionHistory: UserRequestEvent
@@ -33,9 +31,14 @@ const TransactionCollapsedContent: React.FC<
     [eventTrancheName, requestTrancheName]
   )
 
+  const formattedTime = formatTimestamp(actionHistory.timestamp, {
+    format: 'DD.MM.YYYY HH:mm:ss',
+    includeUtcOffset: true,
+  })
+
   return (
     <TableRow>
-      <TableCell align='left' width='17%'>
+      <TableCell align='left' width='18%'>
         {isReallocated ? (
           <Box display='flex' alignItems='center' pl={1}>
             <Typography variant='caption'>
@@ -59,7 +62,7 @@ const TransactionCollapsedContent: React.FC<
           </Typography>
         )}
       </TableCell>
-      <TableCell align='center' width='11%'>
+      <TableCell align='center' width='12%'>
         {isReallocated ? (
           <Box>
             <Typography
@@ -80,7 +83,7 @@ const TransactionCollapsedContent: React.FC<
           </Typography>
         )}
       </TableCell>
-      <TableCell align='right' width='16%'>
+      <TableCell align='right' width='18%'>
         <TokenAmount
           amount={formatAmount(actionHistory.totalRequested || '0')}
           amountVariant='body1'
@@ -89,7 +92,7 @@ const TransactionCollapsedContent: React.FC<
           sx={{ width: '100%', textAlign: 'right' }}
         />
       </TableCell>
-      <TableCell align='right' width='15.5%'>
+      <TableCell align='right' width='18%'>
         <TokenAmount
           amount={formatAmount(actionHistory.totalAccepted || '0')}
           amountVariant='body1'
@@ -98,7 +101,7 @@ const TransactionCollapsedContent: React.FC<
           sx={{ width: '100%', textAlign: 'right' }}
         />
       </TableCell>
-      <TableCell align='right' width='15.5%'>
+      <TableCell align='right' width='18%'>
         <TokenAmount
           amount={formatAmount(actionHistory.totalRejected || '0')}
           amountVariant='body1'
@@ -107,16 +110,16 @@ const TransactionCollapsedContent: React.FC<
           sx={{ width: '100%', textAlign: 'right' }}
         />
       </TableCell>
-      <TableCell align='right'>
+      <TableCell align='right' width='14%'>
         <Typography variant='body1' component='span'>
-          {dayjs.unix(actionHistory.timestamp).format(DATE_FORMAT)}
+          {formattedTime.date}
         </Typography>
         <br />
         <Typography variant='caption' component='span'>
-          {dayjs.unix(actionHistory.timestamp).format(TIME_FORMAT)}
+          {formattedTime.timestamp} {formattedTime.utcOffset}
         </Typography>
       </TableCell>
-      <TableCell align='right'>
+      <TableCell align='right' width='14%'>
         <Button
           variant='outlined'
           size='small'

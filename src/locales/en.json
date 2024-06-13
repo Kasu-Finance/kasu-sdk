@@ -55,7 +55,8 @@
     "reallocated": "Reallocated",
     "request": "Request",
     "approved": "Approved",
-    "confirmed": "Confirmed"
+    "confirmed": "Confirmed",
+    "nextClearingPeriodStart": "Next Clearing Period Starts in"
   },
   "time": {
     "days": "days",
@@ -353,6 +354,10 @@
         "industry": {
           "label": "Industry Exposure",
           "tooltip": "Industry and/or business category in which the Lending Delegate's customers (end borrowers) operate."
+        },
+        "security": {
+          "label": "Security",
+          "tooltip": "info"
         },
         "lendingHistory": {
           "label": "Lending History",

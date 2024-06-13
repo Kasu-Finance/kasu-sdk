@@ -6,6 +6,7 @@ import {
   PoolOverview,
 } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 
@@ -22,18 +23,30 @@ interface PoolCardProps {
 const PoolCard: React.FC<PoolCardProps> = ({ pool, poolDelegate, link }) => {
   const router = useRouter()
   const currentDevice = useDeviceDetection()
+  const [cardHover, setCardHover] = useState(false)
 
   if (!poolDelegate) return null
 
   return (
     <Card
+      onMouseEnter={() => setCardHover(true)}
+      onMouseLeave={() => setCardHover(false)}
       onClick={() => {
         currentDevice === Device.MOBILE && router.push(link)
       }}
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '760px',
+      }}
     >
-      <PoolCardHeader pool={pool} />
-      <PoolCardContent pool={pool} poolDelegate={poolDelegate} />
-      <PoolCardActions pool={pool} link={link} />
+      <PoolCardHeader pool={pool} hover={cardHover} />
+      <PoolCardContent
+        pool={pool}
+        poolDelegate={poolDelegate}
+        hover={cardHover}
+      />
+      <PoolCardActions pool={pool} link={link} hover={cardHover} />
     </Card>
   )
 }
