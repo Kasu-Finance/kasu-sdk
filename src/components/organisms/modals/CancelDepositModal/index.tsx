@@ -12,6 +12,7 @@ import useModalState from '@/hooks/context/useModalState'
 import useCancelDeposit from '@/hooks/lending/useCancelDeposit'
 import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
 import useTranslation from '@/hooks/useTranslation'
+import useNextClearingPeriod from '@/hooks/web3/useNextClearingPeriod'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import Countdown from '@/components/atoms/Countdown'
@@ -22,7 +23,7 @@ import DialogHeader from '@/components/molecules/DialogHeader'
 
 import { DATE_FORMAT, TIME_FORMAT } from '@/constants'
 import dayjs from '@/dayjs'
-import { formatAmount } from '@/utils'
+import { formatAmount, formatTimestamp } from '@/utils'
 
 const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { t } = useTranslation()
@@ -35,7 +36,12 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const latestEvent = transactionEvents[transactionEvents.length - 1]
 
-  const nextClearingTime = 1711723761
+  const { nextClearingPeriod } = useNextClearingPeriod()
+
+  const formattedTime = formatTimestamp(nextClearingPeriod, {
+    format: 'DD.MM.YYYY HH:mm:ss',
+    includeUtcOffset: true,
+  })
 
   const { updateTransactionHistory } = useTransactionHistory()
   const cancelDeposit = useCancelDeposit()
@@ -118,13 +124,13 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         </ColoredBox>
         <Box mt={2}>
           <InfoColumn
-            title='Next Clearing Period Starts in'
+            title={t('general.nextClearingPeriodStart')}
             showDivider
             metric={
               <Box px={2} py='6px'>
                 <Typography variant='h6' component='span' display='block'>
                   <Countdown
-                    endTime={nextClearingTime ?? 0}
+                    endTime={nextClearingPeriod}
                     format='D:HH:mm'
                     render={(countDown) => {
                       const parts = countDown.split(':')
@@ -135,14 +141,15 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                     }}
                   />
                 </Typography>
-                <Typography
-                  variant='body1'
-                  component='span'
-                  color={(theme) => theme.palette.text.secondary}
-                >
-                  {dayjs
-                    .unix(nextClearingTime ?? 0)
-                    .format(`${DATE_FORMAT} • ${TIME_FORMAT}`)}
+                <Typography variant='body1' color='grey.500'>
+                  {formattedTime.date} • {formattedTime.timestamp}{' '}
+                  <Typography
+                    variant='caption'
+                    color='inherit'
+                    component='span'
+                  >
+                    {formattedTime.utcOffset}
+                  </Typography>
                 </Typography>
               </Box>
             }
