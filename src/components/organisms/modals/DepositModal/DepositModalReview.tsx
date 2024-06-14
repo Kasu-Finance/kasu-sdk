@@ -28,7 +28,7 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
 
   const { openModal } = useModalState()
 
-  const { amount } = useDepositModalState()
+  const { amount, amountInUSD } = useDepositModalState()
 
   const handleOpen = () => openModal({ name: ModalsKeys.LOYALTY_LEVELS })
 
@@ -50,7 +50,7 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <InfoColumn
-              title='Deposit To'
+              title={t('modals.lending.review.metric-1')}
               toolTipInfo='info'
               showDivider
               metric={
@@ -67,7 +67,7 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
               }
             />
             <InfoColumn
-              title='Deposit Request Date'
+              title={t('modals.lending.review.metric-2')}
               toolTipInfo='info'
               showDivider
               metric={
@@ -95,19 +95,21 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
           </Grid>
           <Grid item xs={6}>
             <InfoColumn
-              title='Lending Amount'
+              title={t('modals.lending.review.metric-3')}
               toolTipInfo='info'
               showDivider
               metric={
                 <TokenAmount
                   px={2}
-                  amount={formatAmount(amount || '0')}
+                  amount={formatAmount(amountInUSD || amount || '0', {
+                    maxDecimals: 4,
+                  })}
                   symbol='USDC'
                 />
               }
             />
             <InfoColumn
-              title='Total Investment'
+              title={t('modals.lending.review.metric-4')}
               toolTipInfo='info'
               showDivider
               containerSx={{ mt: 2.5 }}
@@ -123,7 +125,7 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
         </Grid>
       </ColoredBox>
       <Typography variant='body2' component='p' textAlign='center'>
-        By depositing funds to this Lending Pool, you accept the{' '}
+        {t('modals.lending.terms-and-conditions-1')}{' '}
         <Button
           onClick={handleOpen}
           variant='text'
@@ -137,7 +139,7 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
             textTransform: 'inherit',
           }}
         >
-          Terms and Conditions.
+          {t('modals.lending.terms-and-conditions-2')}
         </Button>
       </Typography>
       <InfoColumn

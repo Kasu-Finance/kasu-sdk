@@ -41,6 +41,7 @@
     "average": "average",
     "total": "total",
     "weighted": "weighted",
+    "tranche": "Tranche",
     "perTranche": "per tranche",
     "perPool": "per pool",
     "convertToKSU": "Convert to KSU",
@@ -56,7 +57,8 @@
     "request": "Request",
     "approved": "Approved",
     "confirmed": "Confirmed",
-    "nextClearingPeriodStart": "Next Clearing Period Starts in"
+    "nextClearingPeriodStart": "Next Clearing Period Starts in",
+    "slippage": "Slippage"
   },
   "time": {
     "days": "days",
@@ -251,15 +253,31 @@
       "title": "Lending Request",
       "buttons": {
         "overview": "Lending Strategy Overview"
+      },
+      "terms-and-conditions-1": "By depositing funds to this Lending Pool, you accept the",
+      "terms-and-conditions-2": "Terms and Conditions.",
+      "review": {
+        "metric-1": "Deposit To",
+        "metric-2": "Deposit Request Date",
+        "metric-3": "Lending Amount",
+        "metric-4": "Total Investment"
+      },
+      "completed": {
+        "description-1": "You have successfully queued:",
+        "description-2": "to be deposited in the next Epoch to"
       }
     },
+
     "lock": {
       "buttons": {
         "reviewLock": "Review Lock"
       },
       "swapAndDeposit": {
         "title": "Lend with any token.",
-        "input-label": "Lending Amount"
+        "input-label": "Lending Amount",
+        "swap-via": "Swapped via 1inch",
+        "swap": "Swap",
+        "for": "for"
       },
       "deposit": {
         "input-label": "Lock Amount",
@@ -295,7 +313,6 @@
         "tooltip-3": "Your projected KSU Launch Bonus for being an early Token Locker, based on the amount and duration of KSU locked and the associated multiplier as follows:"
       },
       "reviewLock": {
-        "cashPool": "Apxium Invoice Standard Financing Pool",
         "lockAmount": "Total KSU Locked",
         "lockAmount-tooltip": "The amount of KSU you are requesting to lock.",
         "lockingDuration": "Locking Duration",

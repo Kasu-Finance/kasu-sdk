@@ -29,7 +29,7 @@ const SwapAndDepositMenuItem: React.FC<SwapAndDepositMenuItemProps> = ({
         {symbol}
       </Typography>
       <Typography component='span' variant='inherit'>
-        {formatAmount(formatUnits(balance, decimals))}
+        {formatAmount(formatUnits(balance, decimals), { maxDecimals: 4 })}
       </Typography>
       {showEstimatedPrice && (
         <Typography

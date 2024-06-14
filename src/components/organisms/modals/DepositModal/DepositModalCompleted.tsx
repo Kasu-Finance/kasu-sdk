@@ -2,6 +2,7 @@ import { Box, Button, Typography } from '@mui/material'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
+import useTranslation from '@/hooks/useTranslation'
 
 import UnorderedList from '@/components/atoms/UnorderedList'
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
@@ -17,9 +18,11 @@ type DepositModalCompletedProps = {
 const DepositModalCompleted: React.FC<DepositModalCompletedProps> = ({
   poolData,
 }) => {
+  const { t } = useTranslation()
+
   const { openModal } = useModalState()
 
-  const { amount, trancheId } = useDepositModalState()
+  const { amount, amountInUSD, trancheId } = useDepositModalState()
 
   const handleOpen = () => openModal({ name: ModalsKeys.LOYALTY_LEVELS })
 
@@ -27,14 +30,14 @@ const DepositModalCompleted: React.FC<DepositModalCompletedProps> = ({
     <Box px={1} pt={1} mt={2}>
       <Box width={413}>
         <Typography variant='subtitle1' component='p'>
-          You have successfully queued:
+          {t('modals.lending.completed.description-1')}
         </Typography>
         <UnorderedList>
           <li>
             <Typography variant='subtitle1' component='p'>
-              {formatAmount(amount || '0')} USDC •{' '}
+              {formatAmount(amountInUSD || amount || '0')} USDC •{' '}
               <Typography variant='subtitle2' component='span'>
-                to be deposited in the next Epoch to
+                {t('modals.lending.completed.description-2')}
               </Typography>{' '}
               {poolData.poolName}
             </Typography>
@@ -42,12 +45,12 @@ const DepositModalCompleted: React.FC<DepositModalCompletedProps> = ({
           {poolData.tranches.length > 1 && (
             <li>
               <Typography variant='subtitle2' component='p'>
-                Tranches{' '}
+                {t('general.tranche')}{' '}
                 <Typography variant='subtitle1' component='span'>
                   •{' '}
                   {poolData.tranches.find(
                     (tranche) => tranche.trancheId === trancheId
-                  )?.title || 'Tranche'}
+                  )?.title || t('general.tranche')}
                 </Typography>{' '}
               </Typography>
             </li>
@@ -61,7 +64,7 @@ const DepositModalCompleted: React.FC<DepositModalCompletedProps> = ({
         component='p'
         textAlign='center'
       >
-        By depositing funds to this Lending Pool, you accept the{' '}
+        {t('modals.lending.terms-and-conditions-1')}{' '}
         <Button
           onClick={handleOpen}
           variant='text'
@@ -75,7 +78,7 @@ const DepositModalCompleted: React.FC<DepositModalCompletedProps> = ({
             lineHeight: 'inherit',
           }}
         >
-          Terms and Conditions.
+          {t('modals.lending.terms-and-conditions-2')}
         </Button>
       </Typography>
     </Box>

@@ -65,16 +65,16 @@ const useSupportedTokenUserBalances = () => {
             return { ...token, balance: usdcBalance, balanceInUSD: usdcBalance }
           }
 
-          // if (token.symbol === SupportedTokens.ETH) {
-          //   const ethBalance = await library.getBalance(userAddress)
+          if (token.symbol === SupportedTokens.ETH) {
+            const ethBalance = await library.getBalance(userAddress)
 
-          //   const balanceInUSD = convertToUSD(
-          //     ethBalance,
-          //     toBigNumber(tokenPrices[token.symbol])
-          //   )
+            const balanceInUSD = convertToUSD(
+              ethBalance,
+              toBigNumber(tokenPrices[token.symbol])
+            )
 
-          //   return { ...token, balance: ethBalance, balanceInUSD }
-          // }
+            return { ...token, balance: ethBalance, balanceInUSD }
+          }
 
           const erc20 = IERC20__factory.connect(token.address, library)
           const balance = await erc20.balanceOf(userAddress)
