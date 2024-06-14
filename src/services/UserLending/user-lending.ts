@@ -48,6 +48,7 @@ import {
     UserRequestType,
     UserTrancheBalance,
 } from './types';
+import { defaultAbiCoder } from 'ethers/lib/utils';
 
 export class UserLending {
     private readonly _graph: GraphQLClient;
@@ -125,6 +126,29 @@ export class UserLending {
         };
     }
 
+    buildDepositSwapData(
+        fromToken: string,
+        fromAmount: string,
+        routerAddress: string,
+        swapCallData: string,
+    ) {
+        const MIN_AMOUNT_OUT = 0;
+
+        return defaultAbiCoder.encode(
+            [
+                'tuple(address[], uint256[], (address, address,bytes)[], uint256)',
+            ],
+            [
+                [
+                    [fromToken],
+                    [fromAmount],
+                    [[routerAddress, fromToken, swapCallData]],
+                    MIN_AMOUNT_OUT,
+                ],
+            ],
+        );
+    }
+
     async requestDepositWithKyc(
         lendingPool: string,
         tranche: string,
@@ -132,6 +156,7 @@ export class UserLending {
         swapData: BytesLike,
         blockExpiration: BigNumberish,
         signature: BytesLike,
+        ethValue: string,
     ): Promise<ContractTransaction> {
         return await this._lendingPoolManagerAbi.requestDepositWithKyc(
             lendingPool,
@@ -140,6 +165,9 @@ export class UserLending {
             swapData,
             blockExpiration,
             signature,
+            {
+                value: ethValue,
+            },
         );
     }
 
