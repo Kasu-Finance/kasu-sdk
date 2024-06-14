@@ -7,6 +7,7 @@ import {
     ethers,
     Signer,
 } from 'ethers';
+import { defaultAbiCoder } from 'ethers/lib/utils';
 import { GraphQLClient } from 'graphql-request';
 
 import {
@@ -48,7 +49,6 @@ import {
     UserRequestType,
     UserTrancheBalance,
 } from './types';
-import { defaultAbiCoder } from 'ethers/lib/utils';
 
 export class UserLending {
     private readonly _graph: GraphQLClient;
@@ -131,7 +131,7 @@ export class UserLending {
         fromAmount: string,
         routerAddress: string,
         swapCallData: string,
-    ) {
+    ): BytesLike {
         const MIN_AMOUNT_OUT = 0;
 
         return defaultAbiCoder.encode(
