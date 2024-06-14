@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
 
   const res = await fetch(url, {
     headers: {
-      Authorization: `Bearer ${process.env.ONEINCH_BASE_URI}`,
+      Authorization: `Bearer ${process.env.ONE_INCE_API_KEY}`,
     },
   })
 
