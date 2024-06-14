@@ -4,6 +4,7 @@ import React from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
+import useTranslation from '@/hooks/useTranslation'
 import { SupportedTokenUserBalances } from '@/hooks/web3/useSupportedTokenUserBalances'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
@@ -24,6 +25,8 @@ type SwapAndDepositInfoProps = {
 const SwapAndDepositInfo: React.FC<SwapAndDepositInfoProps> = ({
   supportedTokenUserBalance,
 }) => {
+  const { t } = useTranslation()
+
   const { modalStatus } = useModalStatusState()
 
   const { amount, amountInUSD, selectedToken } = useDepositModalState()
@@ -31,8 +34,7 @@ const SwapAndDepositInfo: React.FC<SwapAndDepositInfoProps> = ({
   if (!supportedTokenUserBalance || selectedToken === SupportedTokens.USDC)
     return null
 
-  const symbol = ''
-  // const symbol = supportedTokenUserBalance[selectedToken].symbol || ''
+  const symbol = supportedTokenUserBalance[selectedToken].symbol || ''
 
   return (
     <ColoredBox sx={{ bgcolor: modalStatus.bgColor, mt: 2, p: 2 }}>
@@ -45,7 +47,7 @@ const SwapAndDepositInfo: React.FC<SwapAndDepositInfoProps> = ({
           ml={1}
           color={(theme) => theme.palette.text.secondary}
         >
-          Swapped via 1inch
+          {t('modals.lock.swapAndDeposit.swap-via')}
         </Typography>
       </Box>
       <Box
@@ -60,15 +62,15 @@ const SwapAndDepositInfo: React.FC<SwapAndDepositInfoProps> = ({
           fontWeight={400}
           color={(theme) => theme.palette.text.secondary}
         >
-          Swap{' '}
+          {t('modals.lock.swapAndDeposit.swap')}{' '}
           <Typography
             variant='inherit'
             component='span'
             color={(theme) => theme.palette.text.primary}
           >
-            {formatAmount(amount)} {symbol}
+            {formatAmount(amount || '0', { maxDecimals: 4 })} {symbol}
           </Typography>{' '}
-          for{' '}
+          {t('modals.lock.swapAndDeposit.for')}{' '}
           {!amountInUSD && amount ? (
             <Skeleton width={50} sx={{ display: 'inline-block' }} />
           ) : (
@@ -77,14 +79,14 @@ const SwapAndDepositInfo: React.FC<SwapAndDepositInfoProps> = ({
               component='span'
               color={(theme) => theme.palette.text.primary}
             >
-              {formatAmount(amountInUSD || '0')}
+              {formatAmount(amountInUSD || '0', { maxDecimals: 4 })}
             </Typography>
           )}{' '}
           USDC
         </Typography>
         <Box display='flex' alignContent='center'>
           <Typography variant='subtitle2' component='p' fontWeight={400}>
-            Slippage
+            {t('general.slippage')}
           </Typography>
 
           <ToolTip title='info' />

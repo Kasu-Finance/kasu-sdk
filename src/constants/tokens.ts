@@ -1,13 +1,14 @@
 import { ReactNode } from 'react'
 
-import { UsdcIcon } from '@/assets/icons'
+import { EtherIcon, USDCoinIcon, WrappedEtherIcon } from '@/assets/icons'
 
 import { SupportedChainIds } from '@/connection/chains'
 
 export enum SupportedTokens {
-  // ETH = 'ETH',
+  WETH = 'WETH',
+  ETH = 'ETH',
   USDC = 'USDC',
-  // USDT = 'USDT',
+  // DAI = 'DAI',
 }
 
 export type SupportedTokenInfo = {
@@ -20,10 +21,10 @@ export type SupportedTokenInfo = {
 
 export const TOKENS = {
   [SupportedChainIds.BASE_SEPOLIA]: {
-    // [SupportedTokens.USDT]: {
-    //   symbol: SupportedTokens.USDT,
-    //   name: 'Tether USD',
-    //   address: sdkConfig.contracts.KSUToken as `0x${string}`,
+    // [SupportedTokens.DAI]: {
+    //   symbol: SupportedTokens.DAI,
+    //   name: 'Dai Stablecoin',
+    //   address: '0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb',
     //   decimals: 18,
     //   icon: FallbackIcon(),
     // },
@@ -32,21 +33,28 @@ export const TOKENS = {
       name: 'USD Coin',
       address: '0x15B22C46A37e2fFc1135d143fd3d47d889ad13Ff',
       decimals: 6,
-      icon: UsdcIcon(),
+      icon: USDCoinIcon(),
     },
-    // [SupportedTokens.ETH]: {
-    //   symbol: SupportedTokens.ETH,
-    //   name: 'Ether',
-    //   address: '0x2235E1389cC37bdC8086Faeb3abEa3d206fe8E3d',
-    //   decimals: 18,
-    //   icon: FallbackIcon(),
-    // },
+    [SupportedTokens.ETH]: {
+      symbol: SupportedTokens.ETH,
+      name: 'Ether',
+      address: '0x4200000000000000000000000000000000000006',
+      decimals: 18,
+      icon: EtherIcon(),
+    },
+    [SupportedTokens.WETH]: {
+      symbol: SupportedTokens.WETH,
+      name: 'Wrapped Ether',
+      address: '0x4200000000000000000000000000000000000006',
+      decimals: 18,
+      icon: WrappedEtherIcon(),
+    },
   },
   [SupportedChainIds.BASE]: {
-    // [SupportedTokens.USDT]: {
-    //   symbol: SupportedTokens.ETH,
-    //   name: 'Kasu Token',
-    //   address: sdkConfig.contracts.KSUToken as `0x${string}`,
+    // [SupportedTokens.DAI]: {
+    //   symbol: SupportedTokens.DAI,
+    //   name: 'Dai Stablecoin',
+    //   address: '0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb',
     //   decimals: 18,
     //   icon: FallbackIcon(),
     // },
@@ -55,15 +63,22 @@ export const TOKENS = {
       name: 'USD Coin',
       address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
       decimals: 6,
-      icon: UsdcIcon(),
+      icon: USDCoinIcon(),
     },
-    // [SupportedTokens.ETH]: {
-    //   symbol: SupportedTokens.ETH,
-    //   name: 'rKasu Token',
-    //   address: '0x2235E1389cC37bdC8086Faeb3abEa3d206fe8E3d',
-    //   decimals: 18,
-    //   icon: FallbackIcon(),
-    // },
+    [SupportedTokens.ETH]: {
+      symbol: SupportedTokens.ETH,
+      name: 'Ether',
+      address: '0x4200000000000000000000000000000000000006',
+      decimals: 18,
+      icon: EtherIcon(),
+    },
+    [SupportedTokens.WETH]: {
+      symbol: SupportedTokens.WETH,
+      name: 'Wrapped Ether',
+      address: '0x4200000000000000000000000000000000000006',
+      decimals: 18,
+      icon: WrappedEtherIcon(),
+    },
   },
 } as const satisfies Record<
   SupportedChainIds,

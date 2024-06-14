@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 
 import { ONE_INCH_API } from '@/config/api.oneInch'
+import { SWAPPER } from '@/config/sdk'
 
 export type SwapDataRes =
   | {
@@ -33,7 +34,15 @@ export async function GET(req: NextRequest) {
     return Response.json({ message: 'Missing parameters' }, { status: 400 })
   }
 
-  const url = `${ONE_INCH_API}/swap/v6.0/${chainId}/swap?${new URLSearchParams({ src, dst, amount, from, slippage })}`
+  const url = `${ONE_INCH_API}/swap/v6.0/${chainId}/swap?${new URLSearchParams({
+    src,
+    dst,
+    amount,
+    from: SWAPPER,
+    slippage,
+    disableEstimate: 'true',
+    allowPartialFill: 'false',
+  })}`
 
   const res = await fetch(url, {
     headers: {

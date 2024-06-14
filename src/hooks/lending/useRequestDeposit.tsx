@@ -5,6 +5,7 @@ import { parseUnits } from 'ethers/lib/utils'
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useToastState from '@/hooks/context/useToastState'
+import useGenerateSwapData from '@/hooks/lending/useGenerateSwapData'
 import useKasuSDK from '@/hooks/useKasuSDK'
 import useHandleError from '@/hooks/web3/useHandleError'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
@@ -12,7 +13,9 @@ import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
 import generateKycSignature from '@/actions/generateKycSignature'
+import { ONE_INCH_SLIPPAGE } from '@/config/api.oneInch'
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
+import { SupportedTokens } from '@/constants/tokens'
 import { waitForReceipt } from '@/utils'
 
 import { HexString } from '@/types/lending'
@@ -24,7 +27,7 @@ const useRequestDeposit = () => {
 
   const handleError = useHandleError()
 
-  const { setTxHash, trancheId, amount } = useDepositModalState()
+  const { setTxHash, trancheId, amount, selectedToken } = useDepositModalState()
 
   const supportedTokens = useSupportedTokenInfo()
 
@@ -32,7 +35,7 @@ const useRequestDeposit = () => {
 
   const { setToast, removeToast } = useToastState()
 
-  // const generateSwapData = useGenerateSwapData()
+  const generateSwapData = useGenerateSwapData()
 
   return async (lendingPoolId: `0x${string}`) => {
     if (!account) {
@@ -66,42 +69,47 @@ const useRequestDeposit = () => {
         throw new Error('RequestDeposit:: Error generating signature')
       }
 
-      const swapData: BytesLike = '0x'
+      let swapData: BytesLike = '0x'
 
-      // if (selectedToken !== SupportedTokens.USDC) {
-      //   const fromToken = supportedTokens[selectedToken]
-      //   const toToken = supportedTokens[SupportedTokens.USDC].address
+      const fromToken = supportedTokens[selectedToken]
+      const fromAmount = parseUnits(amount, fromToken.decimals).toString()
 
-      //   const res = await generateSwapData(
-      //     chainId,
-      //     fromToken.address,
-      //     toToken,
-      //     parseUnits(amount, fromToken.decimals).toString(),
-      //     account as `0x${string}`,
-      //     (parseFloat(ONE_INCH_SLIPPAGE) * 100).toString()
-      //   )
+      const isETH = selectedToken === SupportedTokens.ETH
 
-      //   if ('error' in res) {
-      //     throw new Error(res.error)
-      //   }
+      if (selectedToken !== SupportedTokens.USDC) {
+        const toToken = supportedTokens[SupportedTokens.USDC].address
 
-      //   const swapTarget = ONE_INCH_ROUTER
-      //   const token = toToken
-      //   const swapCallData = res.tx.data
+        const res = await generateSwapData(
+          chainId,
+          fromToken.address,
+          toToken,
+          fromAmount,
+          account as `0x${string}`,
+          (parseFloat(ONE_INCH_SLIPPAGE) * 100).toString()
+        )
 
-      //   swapData = defaultAbiCoder.encode(
-      //     ['address', 'address', 'bytes'],
-      //     [swapTarget, token, swapCallData]
-      //   )
-      // }
+        if ('error' in res) {
+          throw new Error(
+            `RequestDeposit:: Error generating swap data. ${res.error}`
+          )
+        }
+
+        swapData = sdk.UserLending.buildDepositSwapData(
+          fromToken.address,
+          isETH ? '0' : fromAmount, // when using ETH, we pass in ethValue during transaction instead
+          res.tx.to,
+          res.tx.data
+        )
+      }
 
       const deposit = await sdk.UserLending.requestDepositWithKyc(
         lendingPoolId,
         trancheId,
-        parseUnits(amount, 6).toString(),
+        fromAmount,
         swapData,
         kycData.blockExpiration,
-        kycData.signature
+        kycData.signature,
+        isETH ? fromAmount : '0' // when using ETH, pass the value  directly here
       )
 
       const receipt = await waitForReceipt(deposit)

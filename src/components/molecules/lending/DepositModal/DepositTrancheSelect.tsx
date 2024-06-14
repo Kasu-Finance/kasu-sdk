@@ -11,6 +11,7 @@ import {
 import { useMemo } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
+import useTranslation from '@/hooks/useTranslation'
 
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 
@@ -23,6 +24,8 @@ const DepositTrancheSelect: React.FC<DepositTrancheSelectProps> = ({
   poolData,
   selectProps,
 }) => {
+  const { t } = useTranslation()
+
   const { trancheId, setSelectedTranche } = useDepositModalState()
 
   const selectedTrancheId = useMemo(() => {
@@ -51,7 +54,7 @@ const DepositTrancheSelect: React.FC<DepositTrancheSelectProps> = ({
   return (
     <FormControl fullWidth={true}>
       <InputLabel shrink={true} htmlFor='tranche-selector'>
-        Tranche
+        {t('general.tranche')}
       </InputLabel>
       <Select
         notched={true}
@@ -60,7 +63,7 @@ const DepositTrancheSelect: React.FC<DepositTrancheSelectProps> = ({
           id: 'tranche-selector',
         }}
         onChange={handleChange}
-        input={<OutlinedInput label='Tranche' />}
+        input={<OutlinedInput label={t('general.tranche')} />}
         {...selectProps}
       >
         {poolData.tranches.map(({ trancheId, title }) => (

@@ -26,6 +26,7 @@ import { Routes } from '@/config/routes'
 import sdkConfig from '@/config/sdk'
 import { SupportedChainIds } from '@/connection/chains'
 import { networks } from '@/connection/networks'
+import { SupportedTokens } from '@/constants/tokens'
 
 const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { t } = useTranslation()
@@ -56,6 +57,8 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
     handleClose()
     router.push(`${Routes.lending.root.url}/${poolData.lendingPoolId}`)
   }
+
+  const approvalRequired = !isApproved && selectedToken !== SupportedTokens.ETH
 
   return (
     <>
@@ -116,12 +119,14 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                 variant='contained'
                 endIcon={<ChevronRightIcon />}
                 onClick={() =>
-                  isApproved
+                  !approvalRequired
                     ? requestDeposit(poolData.lendingPoolId)
                     : approve(amount)
                 }
               >
-                {isApproved ? t('general.confirm') : t('general.approve')}
+                {!approvalRequired
+                  ? t('general.confirm')
+                  : t('general.approve')}
               </Button>
             </>
           ) : (

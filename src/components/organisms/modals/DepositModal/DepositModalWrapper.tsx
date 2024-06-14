@@ -10,13 +10,21 @@ import ModalStatusState from '@/context/modalStatus/modalStatus.provider'
 const DepositModalWrapper: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { modal } = useModalState()
 
-  const { poolData, initialAmount, initialTranche } = modal[ModalsKeys.DEPOSIT]
+  const {
+    poolData,
+    initialAmount,
+    initialUsdAmount,
+    initialTranche,
+    initialToken,
+  } = modal[ModalsKeys.DEPOSIT]
 
   return (
     <DepositModalState
       defaultTrancheId={poolData.tranches[0].trancheId}
       initialAmount={initialAmount}
       initialTranche={initialTranche}
+      initialToken={initialToken}
+      initialUsdAmount={initialUsdAmount}
     >
       <ModalStatusState>
         <DepositModal handleClose={handleClose} />

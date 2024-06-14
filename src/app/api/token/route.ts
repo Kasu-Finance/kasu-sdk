@@ -19,9 +19,10 @@ type CoinMarketCapRes = {
 }
 
 const CMC_TOKEN_ID_MAP = {
-  // [SupportedTokens.USDT]: '825',
+  // [SupportedTokens.DAI]: '4943',
   [SupportedTokens.USDC]: '3408',
-  // [SupportedTokens.ETH]: '1027',
+  [SupportedTokens.ETH]: '1027',
+  [SupportedTokens.WETH]: '1027',
 } as const satisfies Record<SupportedTokens, string>
 
 const USDC_TOKEN_ID = CMC_TOKEN_ID_MAP[SupportedTokens.USDC]
@@ -85,37 +86,24 @@ export async function GET(req: NextRequest) {
 
     const { data }: CoinMarketCapRes = await res.json()
 
-    let prices: string | Record<SupportedTokens, string>
-
-    // If only one token is requested, return the price as a string
-    if (splitTokens.length > 1) {
-      prices = splitTokens.reduce(
-        (acc, cur) => {
-          const tokenId = CMC_TOKEN_ID_MAP[cur]
-          const quoteData = data[tokenId]?.quote[USDC_TOKEN_ID]
-          if (quoteData) {
-            return {
-              ...acc,
-              [cur]: quoteData.price.toString(),
-            }
-          } else {
-            return {
-              ...acc,
-              [cur]: 'Data not available',
-            }
+    const prices = splitTokens.reduce(
+      (acc, cur) => {
+        const tokenId = CMC_TOKEN_ID_MAP[cur]
+        const quoteData = data[tokenId]?.quote[USDC_TOKEN_ID]
+        if (quoteData) {
+          return {
+            ...acc,
+            [cur]: quoteData.price.toString(),
           }
-        },
-        {} as Record<SupportedTokens, string>
-      )
-    } else {
-      const tokenId = CMC_TOKEN_ID_MAP[splitTokens[0]]
-      const quoteData = data[tokenId]?.quote[USDC_TOKEN_ID]
-      if (quoteData) {
-        prices = quoteData.price.toString()
-      } else {
-        prices = 'Data not available'
-      }
-    }
+        } else {
+          return {
+            ...acc,
+            [cur]: 'Data not available',
+          }
+        }
+      },
+      {} as Record<SupportedTokens, string>
+    )
 
     // Return the data
     return new Response(JSON.stringify({ prices }), {

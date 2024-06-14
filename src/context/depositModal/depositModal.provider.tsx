@@ -13,6 +13,7 @@ type DepositModalStateProps = {
   children: ReactNode
   defaultTrancheId: `0x${string}`
   initialAmount?: string
+  initialUsdAmount?: string
   initialTranche?: `0x${string}`
   initialToken?: SupportedTokens
 }
@@ -31,6 +32,7 @@ const DepositModalState: React.FC<DepositModalStateProps> = ({
   children,
   defaultTrancheId,
   initialAmount,
+  initialUsdAmount,
   initialTranche,
   initialToken,
 }) => {
@@ -38,6 +40,7 @@ const DepositModalState: React.FC<DepositModalStateProps> = ({
     ...initialState,
     trancheId: initialTranche ?? defaultTrancheId,
     amount: initialAmount ?? '',
+    amountInUSD: initialUsdAmount ?? '',
     selectedToken: initialToken ?? SupportedTokens.USDC,
   })
 
