@@ -4,16 +4,23 @@ const getNestedTranslation = <T extends Record<string, any>>(
   path: Leaves<T> | string,
   translations: T
 ): string => {
+  if (typeof path !== 'string' || !path) {
+    return ''
+  }
+
   const keys = path.split('.')
 
   let result: any = translations
 
   for (const key of keys) {
-    // we know for sure that key is a valid key because of type-safety
-    result = result[key as keyof typeof translations]
+    if (result && typeof result === 'object' && key in result) {
+      result = result[key as keyof typeof translations]
+    } else {
+      return 'Translation not found: ' + path
+    }
   }
 
-  return typeof result === 'string' ? result : path
+  return typeof result === 'string' ? result : 'Translation not found'
 }
 
 export default getNestedTranslation
