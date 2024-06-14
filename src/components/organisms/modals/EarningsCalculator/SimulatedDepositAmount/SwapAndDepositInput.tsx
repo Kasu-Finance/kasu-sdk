@@ -46,13 +46,13 @@ const SwapAndDepositInput: React.FC<SwapAndDepositInputProps> = ({
       if (!chainId) return '0'
 
       const usdAmount = await getSwapAmount({
-        chainId: 1,
+        chainId,
         fromToken: tokenBalance.address,
         toToken: usdcInfo.address,
         fromAmount: parseUnits(newAmount, tokenBalance.decimals).toString(),
       })
 
-      const formattedAmount = formatUnits(usdAmount, usdcInfo.decimals)
+      const formattedAmount = formatUnits(usdAmount || '0', usdcInfo.decimals)
 
       setAmountInUSD(formattedAmount)
 
@@ -86,7 +86,8 @@ const SwapAndDepositInput: React.FC<SwapAndDepositInputProps> = ({
             component='span'
             color={(theme) => theme.palette.text.disabled}
           >
-            {usdcInfo.symbol} ~{formatAmount(amountInUSD || 0)}
+            {usdcInfo.symbol} ~
+            {formatAmount(amountInUSD || 0, { maxDecimals: 4 })}
           </Typography>
         )
       }

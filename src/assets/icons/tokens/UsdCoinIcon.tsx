@@ -1,4 +1,4 @@
-const UsdcIcon = () => (
+const UsdCoinIcon = () => (
   <svg
     width='24'
     height='24'
@@ -15,4 +15,4 @@ const UsdcIcon = () => (
   </svg>
 )
 
-export default UsdcIcon
+export default UsdCoinIcon

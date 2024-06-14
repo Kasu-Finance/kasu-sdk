@@ -4,6 +4,8 @@ import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
 
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 
+import { SupportedTokens } from '@/constants/tokens'
+
 export type ModalBase = {
   isOpen: boolean
 }
@@ -43,7 +45,9 @@ export type Modals = {
   [ModalsKeys.DEPOSIT]: ModalData<{
     poolData: PoolData
     initialAmount?: string
+    initialUsdAmount?: string
     initialTranche?: `0x${string}`
+    initialToken?: SupportedTokens
   }>
   [ModalsKeys.KYC]: ModalData<{ callback: () => void }>
   [ModalsKeys.CANCEL_DEPOSIT]: ModalData<{ transactionHistory: UserRequest }>
