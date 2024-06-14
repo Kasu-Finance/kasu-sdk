@@ -25,7 +25,7 @@ const getSwapAmount = async (
       })}`,
       {
         headers: {
-          Authorization: `Bearer ${process.env.ONE_INCE_API_KEY}`,
+          Authorization: `Bearer ${process.env.ONEINCH_API_KEY}`,
         },
       }
     )
