@@ -52,20 +52,23 @@ const connectRecent = () => {
         if (!connected) throw new Error()
       })
       .catch((error) => {
-        // Clear the persisted wallet type if it failed to connect.
         setRecentWeb3Connection(undefined)
-        // Log it if it threw an unknown error.
         console.error(error)
       })
   }
 }
 
-// The Safe connector will only work from safe.global, which iframes;
-// it is only necessary to try (and to load all the deps) if we are in an iframe.
-if (window !== window.parent) {
-  connect(gnosisSafeConnection.connector, ConnectionType.GNOSIS_SAFE)
+const eagerlyConnect = () => {
+  if (typeof window !== 'undefined') {
+    // The Safe connector will only work from safe.global, which iframes;
+    // it is only necessary to try (and to load all the deps) if we are in an iframe.
+    if (window !== window.parent) {
+      connect(gnosisSafeConnection.connector, ConnectionType.GNOSIS_SAFE)
+    }
+
+    connect(networkConnection.connector, ConnectionType.NETWORK)
+    connectRecent()
+  }
 }
 
-connect(networkConnection.connector, ConnectionType.NETWORK)
-
-connectRecent()
+eagerlyConnect()
