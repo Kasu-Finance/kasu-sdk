@@ -18,8 +18,6 @@ import Web3Provider from '@/context/web3provider/web3.provider'
 import getLockPeriods from '@/actions/getLockPeriods'
 import ThemeRegistry from '@/themes/ThemeRegistry'
 
-import '@/connection/eagerlyConnect'
-
 type RootLayoutProps = {
   children: ReactNode
 }
