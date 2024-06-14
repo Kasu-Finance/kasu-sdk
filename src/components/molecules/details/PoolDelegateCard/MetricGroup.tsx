@@ -82,7 +82,7 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
                     ))}
                   </Box>
                 ) : (
-                  <Typography variant='body1' component='span'>
+                  <Typography variant='body1' component='span' maxWidth={300}>
                     {metric.content}
                   </Typography>
                 )
