@@ -24,19 +24,21 @@ const LendingLoyalityInfo = () => {
   const stakedPercentage = useLockingPercentage()
   const { currentLevel } = useLoyaltyLevel(stakedPercentage)
 
+  const isLoyal = currentLevel === 1 || currentLevel === 2
+
   return (
     <>
       <Box display='flex' alignItems='center'>
         <Typography variant='subtitle1' component='h6'>
-          {capitalize(t('general.loyaltyLevel'))} {currentLevel || 0}
+          {t(
+            `locking.widgets.loyalty.level.level-${isLoyal ? currentLevel : 0}.title`
+          )}
         </Typography>
         <ToolTip
           title={<LendingLoyalityLevelsTooltip loyalityLevel={currentLevel} />}
         />
       </Box>
-
       <LoyaltyProgress stakedPercentage={stakedPercentage} />
-
       <ColoredBox>
         <InfoRow
           showDivider
