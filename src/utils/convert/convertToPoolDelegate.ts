@@ -15,12 +15,16 @@ const convertToPoolDelegate = (
   },
   {
     id: PoolDelegateMetricIds.TotalFunds,
-    content: `${formatAmount(delegateProfile?.totalLoanFundsOriginated || '0', { minValue: 1_000_000 })}`,
+    content: formatAmount(delegateProfile?.totalLoanFundsOriginated || '0', {
+      minValue: 1_000_000,
+    }),
     unit: 'USDC',
   },
   {
     id: PoolDelegateMetricIds.TotalLoans,
-    content: delegateProfile.totalLoansOriginated,
+    content: formatAmount(delegateProfile.totalLoansOriginated, {
+      minValue: 1_000_000,
+    }),
   },
   {
     id: PoolDelegateMetricIds.AssetClasses,
@@ -32,12 +36,14 @@ const convertToPoolDelegate = (
   },
   {
     id: PoolDelegateMetricIds.Loans,
-    content: `${formatAmount(delegateProfile?.loansUnderManagement || '0', { minValue: 1_000_000 })}`,
+    content: formatAmount(delegateProfile?.loansUnderManagement || '0', {
+      minValue: 1_000_000,
+    }),
     unit: 'USDC',
   },
   {
     id: PoolDelegateMetricIds.Loss,
-    content: `${formatPercentage(delegateProfile.historicLossRate)}`,
+    content: formatPercentage(delegateProfile.historicLossRate),
   },
 ]
 

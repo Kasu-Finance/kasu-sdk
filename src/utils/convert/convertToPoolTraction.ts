@@ -10,7 +10,7 @@ const convertToPoolTraction = (overview: PoolOverview): PoolDetailSection => {
   const metrics: PoolMetric[] = [
     {
       id: PoolTractionMetricIds.ValueLocked,
-      content: `${formatAmount(overview.totalValueLocked || '0')} M`,
+      content: `${formatAmount(overview.totalValueLocked || '0', { minValue: 1_000_000 })}`,
       unit: 'USDC',
     },
     {
