@@ -29,6 +29,7 @@ import {
     getAllTrancheConfigurationsQuery,
     getAllTranchesQuery,
     getLendingPoolWithdrawalAndDepositsQuery,
+    getPoolNameQuery,
 } from './queries';
 import {
     LendingPoolConfigurationSubgraph,
@@ -309,8 +310,19 @@ export class DataService {
     ): Promise<PoolDelegateProfileAndHistory[]> {
         const poolDelegateProfileAndHistoryDirectus: PoolDelegateProfileAndHistoryDirectus[] =
             await this._directus.request(
-                readItems('PoolDelegateProfileAndHistory'),
+                readItems('PoolDelegateProfileAndHistory', {
+                    fields: ['*', { otherPools: ['*'] }],
+                }),
             );
+
+        const poolNames: {
+            lendingPools: Pick<LendingPoolSubgraph, 'name' | 'id'>[];
+        } = (await this._graph.request(getPoolNameQuery, {
+            ids: poolDelegateProfileAndHistoryDirectus.flatMap((directus) =>
+                directus.otherPools.map((delegate) => delegate.PoolOverview_id),
+            ),
+        })) as any;
+
         const retn: PoolDelegateProfileAndHistory[] = [];
         for (const data of poolDelegateProfileAndHistoryDirectus) {
             retn.push({
@@ -318,7 +330,13 @@ export class DataService {
                 poolIdFK: data.poolIdFK.toLowerCase(),
                 delegateLendingHistory: data.delegateLendingHistory,
                 assetClasses: data.assetClasses,
-                otherKASUPools: data.otherKASUPools.split(','),
+                otherKASUPools: data.otherPools.map((pool) => ({
+                    id: pool.PoolOverview_id,
+                    name:
+                        poolNames.lendingPools?.find(
+                            ({ id }) => pool.PoolOverview_id === id,
+                        )?.name || pool.PoolOverview_id,
+                })),
                 totalLoanFundsOriginated: data.totalLoanFundsOriginated,
                 totalLoansOriginated: data.totalLoansOriginated,
                 loansUnderManagement: data.loansUnderManagement,

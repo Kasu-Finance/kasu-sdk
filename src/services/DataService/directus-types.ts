@@ -9,7 +9,6 @@ export interface DirectusSchema {
     PoolRepayments: PoolRepaymentDirectus[];
 }
 
-
 export interface PoolOverviewDirectus {
     id: string;
     apy: number;
@@ -32,7 +31,11 @@ export interface PoolDelegateProfileAndHistoryDirectus {
     poolIdFK: string;
     delegateLendingHistory: number;
     assetClasses: string;
-    otherKASUPools: string;
+    otherPools: {
+        PoolDelegateProfileAndHistory_id: string;
+        PoolOverview_id: string;
+        id: number;
+    }[];
     totalLoanFundsOriginated: number;
     totalLoansOriginated: number;
     loansUnderManagement: number;

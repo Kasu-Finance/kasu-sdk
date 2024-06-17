@@ -1,4 +1,3 @@
-
 export interface PoolOverview {
     poolName: string;
     id: string;
@@ -29,7 +28,10 @@ export interface PoolDelegateProfileAndHistory {
     poolIdFK: string;
     delegateLendingHistory: number;
     assetClasses: string;
-    otherKASUPools: string[];
+    otherKASUPools: {
+        id: string;
+        name: string;
+    }[];
     totalLoanFundsOriginated: number;
     totalLoansOriginated: number;
     loansUnderManagement: number;
