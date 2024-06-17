@@ -1,6 +1,6 @@
 export interface PoolMetric {
   id: string
-  content: string | number | string[]
+  content: string | number | string[] | { name: string; id: string }[]
   unit?: string
   isRating?: boolean
 }
