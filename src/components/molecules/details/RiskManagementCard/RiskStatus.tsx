@@ -81,7 +81,7 @@ const RiskStatus: React.FC<RiskStatusProps> = ({ metrics }) => {
                 />
               ) : (
                 <Typography variant='h6' sx={{ pl: 2 }}>
-                  {metric.content}{' '}
+                  {String(metric.content)}{' '}
                   <Typography variant='body2' component='span'>
                     {metric.unit}
                   </Typography>

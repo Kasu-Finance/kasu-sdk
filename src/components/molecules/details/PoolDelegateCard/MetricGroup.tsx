@@ -68,22 +68,28 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
                     flexDirection='column'
                     alignItems='flex-end'
                   >
-                    {metric.content.map((item, itemIndex) => (
-                      <NextLink
-                        key={`${metric.id}_${itemIndex}`}
-                        href='#'
-                        color='primary.contrastText'
-                        variant='body1'
-                        fontSize={isMobile ? 10 : 'inherit'}
-                        align='right'
-                      >
-                        {item}
-                      </NextLink>
-                    ))}
+                    {metric.content.length
+                      ? metric.content.map((item, itemIndex) => (
+                          <NextLink
+                            key={`${metric.id}_${itemIndex}`}
+                            href={
+                              typeof item === 'string'
+                                ? '#'
+                                : `/lending/${item.id}`
+                            }
+                            color='primary.contrastText'
+                            variant='body1'
+                            fontSize={isMobile ? 10 : 'inherit'}
+                            align='right'
+                          >
+                            {typeof item === 'string' ? item : item.name}
+                          </NextLink>
+                        ))
+                      : 'N/A'}
                   </Box>
                 ) : (
                   <Typography variant='body1' component='span' maxWidth={300}>
-                    {metric.content}
+                    {metric.content || 'N/A'}
                   </Typography>
                 )
               }
@@ -97,7 +103,9 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
             title={t(titleKey)}
             toolTipInfo={t(tooltipKey)}
             showDivider={index !== arrayLength - 1}
-            metric={<Typography variant='h6'>{metric.content}</Typography>}
+            metric={
+              <Typography variant='h6'>{String(metric.content)}</Typography>
+            }
           />
         )
       default:

@@ -40,7 +40,7 @@ const MetricTextUnit: React.FC<MetricProps> = ({
         metric={<></>}
       />
       <Typography variant='h6' {...typographyProps} sx={{ pl: 2 }}>
-        {metric.content}{' '}
+        {String(metric.content)}{' '}
         <Typography variant='body1' component='span'>
           {metric.unit}
         </Typography>
