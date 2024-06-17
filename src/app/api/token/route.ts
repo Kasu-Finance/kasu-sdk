@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 import { COINMARKETCAP_API } from '@/config/api.cmc'
 import { SupportedTokens } from '@/constants/tokens'
@@ -106,22 +106,21 @@ export async function GET(req: NextRequest) {
     )
 
     // Return the data
-    return new Response(JSON.stringify({ prices }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
+    return NextResponse.json({
+      prices: prices,
     })
   } catch (error) {
     // Return an error message
-    return new Response(
-      JSON.stringify({
+    return NextResponse.json(
+      {
         message: 'An error occurred while fetching data',
         error: (error as Error).message,
         prices: splitTokens.reduce(
-          (acc, token) => ({ ...acc, [token]: 'Data not available' }),
+          (acc, token) => ({ ...acc, [token]: '0.0' }),
           {} as Record<SupportedTokens, string>
         ),
-      }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      },
+      { status: 500 }
     )
   }
 }
