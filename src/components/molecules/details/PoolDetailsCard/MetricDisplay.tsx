@@ -50,7 +50,7 @@ const MetricDisplay: React.FC<MetricDisplayProps> = ({
                 align='right'
                 fontSize={isMobile ? 12 : 'inherit'}
               >
-                {metric.content}
+                {String(metric.content)}
               </Typography>
             }
           />
