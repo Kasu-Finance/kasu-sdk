@@ -51,6 +51,16 @@ const Carousel = <T,>({
   const showIconBtn =
     childrenArray.length > 3 || (isMobile && childrenArray.length > 1)
 
+  const gridSize = (totalChildren: number) => {
+    if (totalChildren <= 2) {
+      // 50% width for 2 elements
+      return 6
+    } else {
+      // 33.33% width for more than 2 elements
+      return 4
+    }
+  }
+
   return (
     <Box sx={{ position: 'relative', width: '100%', mt: 3 }}>
       {showIconBtn && (
@@ -72,7 +82,7 @@ const Carousel = <T,>({
 
       <Grid container spacing={2} justifyContent='center'>
         {currentChildren.map((child, index) => (
-          <Grid item key={index} xs={12 / slidesPerPage}>
+          <Grid item key={index} xs={gridSize(childrenArray.length)}>
             {child}
           </Grid>
         ))}

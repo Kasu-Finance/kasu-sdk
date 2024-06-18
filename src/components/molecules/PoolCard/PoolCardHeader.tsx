@@ -28,15 +28,25 @@ const PoolCardHeader: React.FC<PoolCardHeaderProps> = ({ pool, hover }) => {
           src={thumbnailImageUrl}
         />
       </Collapse>
-      <BoxBackground display='flex' alignItems='center' sx={{ p: 2 }}>
+      <BoxBackground
+        display='flex'
+        alignItems='center'
+        sx={{ p: 2, height: '72px' }}
+      >
         <PoolAvatar name={poolName} showStatus />
         <Typography
           variant='h5'
           fontSize={20}
-          sx={{ ml: 1 }}
-          whiteSpace='nowrap'
-          overflow='hidden'
-          textOverflow='ellipsis'
+          component='div'
+          sx={{
+            ml: 1,
+            lineClamp: 2,
+            overflow: 'hidden',
+            display: '-webkit-box',
+            WebkitBoxOrient: 'vertical',
+            WebkitLineClamp: 2,
+            textOverflow: 'ellipsis',
+          }}
         >
           {poolName}
         </Typography>

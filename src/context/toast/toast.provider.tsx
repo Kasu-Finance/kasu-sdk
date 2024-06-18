@@ -48,6 +48,7 @@ const ToastState: React.FC<ToastStateProps> = ({ children }) => {
       {state.toast && (
         <Modal
           open={true}
+          disableEnforceFocus
           onClose={state.toast.isClosable ? handleClose : undefined}
           sx={{
             display: 'flex',
