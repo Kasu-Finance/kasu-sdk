@@ -333,7 +333,7 @@
     },
     "earningsCalculator": {
       "title": "Earnings Calculator",
-      "subtitle": "Simulate your yield earnings",
+      "subtitle": "Simulate your interest earnings",
       "simulatedAmount": {
         "title": " Deposit Scenario",
         "metric-1": "Deposit with any token.",
