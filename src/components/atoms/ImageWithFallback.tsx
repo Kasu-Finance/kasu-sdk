@@ -26,7 +26,8 @@ const ImageWithFallback: React.FC<{
           fill
           src={src}
           alt={alt}
-          // style={{ objectFit: 'cover' }}
+          quality={85}
+          style={{ objectFit: 'cover' }}
           onError={handleError}
         />
       ) : (
