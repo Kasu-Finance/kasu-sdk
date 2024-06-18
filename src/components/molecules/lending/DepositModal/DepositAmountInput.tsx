@@ -118,7 +118,8 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
 
   const { debouncedFunction: debouncedValidate } = useDebounce(
     validate,
-    debounceTime
+    debounceTime,
+    true
   )
 
   const handleMax = useCallback(() => {

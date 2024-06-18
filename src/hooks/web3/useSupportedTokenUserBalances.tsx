@@ -97,6 +97,7 @@ const useSupportedTokenUserBalances = () => {
     {
       dedupingInterval: TimeConversions.SECONDS_PER_MINUTE * 1000,
       refreshInterval: TimeConversions.SECONDS_PER_MINUTE * 1000,
+      keepPreviousData: true,
     }
   )
 

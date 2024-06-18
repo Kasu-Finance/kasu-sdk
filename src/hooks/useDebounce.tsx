@@ -9,7 +9,11 @@ type SomeFunction = (...args: any[]) => void
  * @returns The debounced function, which will run only if the debounced function has not been called in the last (delay) ms
  */
 
-const useDebounce = <Func extends SomeFunction>(func: Func, delayMs = 1000) => {
+const useDebounce = (
+  func: SomeFunction,
+  delayMs = 1000,
+  memoize: boolean = false
+) => {
   const timer = useRef<Timer>()
 
   const [isDebouncing, setIsDebouncing] = useState(false)
@@ -21,9 +25,12 @@ const useDebounce = <Func extends SomeFunction>(func: Func, delayMs = 1000) => {
     }
   }, [])
 
+  const dependency = [memoize ? func : undefined, delayMs]
+
   // eslint-disable-next-line
   const debouncedFunction = useCallback(
-    ((...args) => {
+    // @ts-ignore ignore args as any
+    (...args) => {
       setIsDebouncing(true)
 
       const newTimer = setTimeout(() => {
@@ -33,11 +40,15 @@ const useDebounce = <Func extends SomeFunction>(func: Func, delayMs = 1000) => {
       }, delayMs)
       clearTimeout(timer.current)
       timer.current = newTimer
-    }) as Func,
-    [func]
+    },
+    // eslint-disable-next-line
+    dependency
   )
 
-  return { debouncedFunction, isDebouncing }
+  return {
+    debouncedFunction,
+    isDebouncing,
+  }
 }
 
 export default useDebounce
