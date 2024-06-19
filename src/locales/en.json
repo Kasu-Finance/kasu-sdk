@@ -258,10 +258,15 @@
       "terms-and-conditions-1": "By depositing funds to this Lending Pool, you accept the",
       "terms-and-conditions-2": "Terms and Conditions.",
       "review": {
-        "metric-1": "Deposit To",
-        "metric-2": "Deposit Request Date",
+        "metric-1": "Lend To",
+        "metric-1-tooltip": "The Lending Strategy that your lending request relates to.",
+        "metric-2": "Lending Request Date​",
+        "metric-2-tooltip": "The date of your lending request.",
         "metric-3": "Lending Amount",
-        "metric-4": "Total Investment"
+        "metric-3-tooltip": "The USDC amount you have requested for lending to this Lending Strategy.",
+        "metric-4": "Total Lending",
+        "metric-4-tooltip": "Your current USDC lending balance in this Lending Strategy",
+        "metric-5-tooltip": "The loan Tranche that you have made a lending request for."
       },
       "completed": {
         "description-1": "You have successfully queued:",
@@ -334,27 +339,49 @@
     },
     "earningsCalculator": {
       "title": "Earnings Calculator",
-      "subtitle": "Simulate your interest earnings",
+      "subtitle": "Simulate your potential interest earnings",
       "simulatedAmount": {
-        "title": " Deposit Scenario",
-        "metric-1": "Deposit with any token.",
+        "title": " Lending Scenario",
+        "metric-1": "Lend with any token.",
         "metric-2": "Powered by 1inch"
       },
       "simulatedDuration": {
-        "title": "Simulated Deposit Duration",
+        "title": "Simulated Lending Duration",
         "description-1": "EXAMPLE ONLY • DURATION IS NOT FIXED",
         "description-2": "YOU CAN REQUEST WITHDRAWAL AT ANY TIME"
       },
       "simulatedYieldEarnings": {
         "title": "Simulated Yield Earnings",
-        "metric-1-tooltip": "The Annual Percentage Yield that will be applied to determine your yield earnings simulation, assuming all repayments will be made as expected. This is based on the APY currently offered by the Pool Delegate and is subject to change during the simulation forecast period.",
-        "metric-2-title": "Simulated Yield Earnings",
-        "metric-2-tooltip": "Forecast USDC yield earnings (after fees) associated with depositing the amount entered and duration selected for this Lending Pool at the given APY, assuming all repayments will be made as expected.",
+        "metric-1-tooltip": "The Annual Percentage Yield that will be applied to determine your interest earnings simulation, assuming all repayments will be made as expected. This is based on the APY currently offered by the Lending Delegate and is subject to change during the simulation forecast period.",
+        "metric-2-title": "Simulated Interest Earnings",
+        "metric-2-tooltip": "Forecast USDC interest earnings (after fees) associated with the lending amount entered and duration selected for this Lending Strategy at the given APY, assuming all repayments will be made as expected.",
         "metric-3-title": "APY Bonus",
-        "metric-3-tooltip": "The APY bonus (paid in KSU) that will be applied to determine your bonus yield earnings simulation, which is only applicable to Loyalty Level 1 and 2 KSU Token Lockers. Loyalty Level 2 Token Lockers receive a higher APY bonus than Loyalty Level 1. The APY bonus is variable and will change from time to meet liquidity demand and supply requirements.",
-        "metric-4-title": "Simulated Bonus Yield Earnings",
-        "metric-4-tooltip": "Forecast bonus yield earnings based on the APY bonus (for the given Loyalty Level), applied to the USDC deposit amount entered and duration selected for this Lending Pool."
+        "metric-3-tooltip": "The APY bonus (paid in KSU) that will be applied to determine your bonus interest earnings simulation, which is only applicable to Loyalty Level 1 and 2 KSU Token Lockers. Loyalty Level 2 Token Lockers receive a higher APY bonus than Loyalty Level 1. The APY bonus is variable and will change from time to meet liquidity demand and supply requirements.",
+        "metric-4-title": "Simulated Bonus Interest Earnings",
+        "metric-4-tooltip": "Forecast bonus interest earnings based on the APY bonus (for the given Loyalty Level), applied to the lending amount entered and duration selected for this Lending Strategy."
       }
+    },
+    "cancelWithdrawal": {
+      "title": "Cancel Withdrawal Request",
+      "metric-1": "From Lending Strategy",
+      "metric-2": "Withdrawal Request Amount​",
+      "metric-2-tooltip": "​​​​​​The USDC lending withdrawal request amount that you would like to cancel.",
+      "metric-3": "Withdrawal Request Date​",
+      "metric-3-tooltip": "The date of your original lending withdrawal request.",
+      "metric-4-tooltip": "​​​​​The loan Tranche related to this Lending Strategy that you request a withdrawal cancellation from.​",
+      "epochEnds": "Epoch Ends in",
+      "cancel-button": "Cancel Withdrawal Request"
+    },
+    "cancelDeposit": {
+      "title": "Cancel Lending Request",
+      "metric-1": "Lend To",
+      "metric-1-tooltip": "The Lending Strategy that your lending cancellation request relates to.",
+      "metric-2-tooltip": "​​​​​​The loan Tranche related to this Lending Strategy that you request a lending cancellation from.​",
+      "metric-3": "Lending Request Amount",
+      "metric-3-tooltip": "The USDC lending request amount that you would like to cancel.",
+      "metric-4": "Lending Request Date​",
+      "metric-4-tooltip": "The date of your original lending request.",
+      "cancel-button": "Cancel Lending Request"
     }
   },
   "lending": {
@@ -570,88 +597,84 @@
   },
   "details": {
     "poolDelegate": {
-      "title": "Pool Delegate Profile and History",
+      "title": "Delegate Profile and History",
       "history": {
         "label": "Lending History",
-        "tooltip": "Total length of time the Lending Delegate has been operating as a lending business."
+        "tooltip": "​The total length of time the Delegate has been operating as a lending business.​"
       },
       "totalFunds": {
         "label": "Total Loan Funds Originated",
-        "tooltip": "Cumulative total USDC equivalent face value of all current and historical loans originated by Lending Delegates to end borrowers from all Lending Strategies on Kasu."
+        "tooltip": "Cumulative total USDC equivalent face value of all current and historical loans originated by the Delegate to end borrowers, regardless of whether the loans have been made available on Kasu or not."
       },
       "totalLoans": {
         "label": "Total Loans Originated",
-        "tooltip": "Total number of individual loans that the Pool Delegate has deployed since its inception, regardless of whether they have been made available on Kasu or not."
+        "tooltip": "Cumulative total number of all current and historical loans originated by the Delegate to end borrowers, regardless of whether the loans were made available on Kasu or not."
       },
       "assetClass": {
         "label": "Asset Class(es)",
-        "tooltip": "All lending specialisations, types or categories in which the Pool Delegate has a track record and expertise, regardless of the Pools available on Kasu by the Pool Delegate."
+        "tooltip": "All lending specialisations, types or categories in which the Delegate has a track record of expertise, regardless of the Lending Strategies the Delegate has made available on Kasu."
       },
       "otherPools": {
-        "label": "Other KASU Pools",
-        "tooltip": "Other Lending Pools that the Pool Delegate has made available on Kasu."
+        "label": "Other KASU Lending Strategies",
+        "tooltip": "​Other Lending Strategies that the Delegate has made available on Kasu.​"
       },
       "loans": {
         "label": "Total Active Lending",
-        "tooltip": "Total USDC equivalent amount within this Lending Pool that is deployed into loans to end borrowers."
+        "tooltip": "Total USDC equivalent face value of all loans that the Delegate currently has deployed to end borrowers, regardless of whether the loans have been made available on Kasu or not."
       },
       "loss": {
         "label": "Historical Loss Rate",
-        "tooltip": "Total losses expressed percentage of total loans originated by the Pool Delegate since its inception, regardless of whether they relate to Lending Pools made available on Kasu or not. "
+        "tooltip": "Total unrecoverable losses expressed percentage of total loans originated by the Delegate since its inception, regardless of whether they relate to Lending Strategies made available on Kasu or not."
       }
     },
     "poolDetails": {
-      "title": "Pool Details",
+      "title": "Lending Strategy Details",
       "apy": {
         "label": "APY",
-        "tooltip": "The current Annual Percentage Interest offered by the Pool Delegate within this Tranche (in the case that there are multiple Tranches within this Pool). In the absence of multiple Tranches, then this reflects the APY that Liquidity Providers are currently earning within this Lending Pool. This assumes all repayments will be made as expected."
+        "tooltip": "The Annual Percentage Yield currently offered by the Delegate for this loan Tranche (in the case that there are multiple loan Tranches within this Lending Strategy). In the absence of multiple loan Tranches, then this reflects the APY offered for the entire Lending Strategy. This assumes all repayments will be made as expected."
       },
       "assetClass": {
         "label": "Asset Class",
-        "tooltip": "The lending specialisation, type or category adopted by the Lending Delegate for this Lending Strategy."
+        "tooltip": "The lending specialisation, type or category related to this Lending Strategy."
       },
       "exposureIndustry": {
         "label": "Industry Exposure",
-        "tooltip": "Industry and/or business category in which the Lending Delegate's customers (end borrowers) operate."
+        "tooltip": "​Industry and/or business category in which the Lending Delegate's customers (end borrowers) operate.​"
       },
       "structureApy": {
-        "label": "Pool APY Structure",
-        "tooltip": "Indicates whether the APY earned by Liquidity Providers is fixed for a specified period of time, or variable."
+        "label": "Lending Strategy APY Structure",
+        "tooltip": "Indicates whether the APY offered by the Delegate is fixed for a specified period of time, or variable (subject to change upon each epoch)."
       },
       "term": {
-        "label": "Pool Investment Term",
-        "tooltip": "The duration of the Lending Pool. 'Open Ended' has no fixed term or duration and is considered ongoing. A fixed term or duration has an end date, at which time it is intended that the Liquidity Pool will reach maturity and all Liquidity Providers will be fully repaid (subject to losses)."
+        "label": "Lending Strategy Loan Term",
+        "tooltip": "The duration of the Lending Strategy. 'Open Ended' has no fixed term or duration and is considered ongoing. A fixed term or duration has an end date, at which time it is intended that the Lending Strategy will reach maturity and all Liquidity Providers will be fully repaid (assumes all repayments will be made as expected)."
       },
       "loan": {
         "label": "Loan Structure (End Borrowers)",
-        "tooltip": "The structure of each loan provided by the Pool Delegate to its customers (end borrowers). A Revolving Loan refers to a loan structure that that has no defined end date as it is utilised to fund ongoing operations (akin to a Line of Credit, Working Capital Loan or Evergreen Facility). An Amortising loan refers to a loan structure that has defined Principal and Interest repayment periods until it is fully repaid upon a specific end/maturity date."
+        "tooltip": "The structure of each loan provided by the Delegate to its customers (end borrowers) with regard to maturity date and repayment profile to suit the lending asset class related to this Lending Strategy. A Revolving Loan refers to a loan structure that has no defined end date as it is typically utilised to fund ongoing operations (akin to a Line of Credit, Working Capital Loan or Evergreen Facility). An Amortising Term Loan refers to a loan structure that has defined Principal and Interest repayment periods until it is fully repaid upon a specific end/maturity date, as it is typically utilised to fund core debt, capital expenditure and long term projects. An Interest Only Term Loan refers to a loan structure that has no principal repayments until a specific end/maturity date, as it is typically utilised to fund projects that have a defined exit period, at which time, the loan is fully repaid with the exit proceeds (or progressively repaid in line with asset sales, such as a residential apartment development)."
       }
     },
     "poolTraction": {
-      "title": "Pool Traction",
+      "title": "Lending Strategy Traction",
       "valueLocked": {
         "label": "Total Value Locked (TVL)",
-        "tooltip": "Combined USDC lending by Liquidity Providers across the Kasu protocol, plus the current value of all KSU locked in the Kasu protocol."
+        "tooltip": "The current balance of all combined USDC equivalent funds within this Lending Strategy, comprised of funds deployed into fiat loans to end borrowers, excess USDC liquidity and first loss capital (if contributed by the Delegate)."
       },
       "management": {
         "label": "Total Active Lending",
-        "tooltip": "Combined USDC equivalent face value of all loans across all Lending Strategies on Kasu that Lending Delegates currently have deployed to end borrowers."
+        "tooltip": "Total USDC equivalent face value of all loans that the Delegate currently has deployed to end borrowers from this Lending Strategy."
       },
       "yield": {
-        "label": "Total Interest Earned",
-        "tooltip": "Cumulative total gross interest earned by Liquidity Providers from all loans since the inception of the Kasu protocol."
-      },
-      "lossRate": {
-        "label": "Total Loss rate",
-        "tooltip": "Total unrecoverable losses expressed as a percentage of total loans associated with all Lending Strategies on the Kasu protocol."
+        "label": "Interest Earned",
+        "tooltip": "Cumulative total gross interest earned by Liquidity Providers from this Lending Strategy since its inception on the Kasu protocol."
       },
       "activeLoans": {
         "label": "Active Loans",
-        "tooltip": "Total number of loans that the Pool Delegate currently has deployed within this Lending Pool. "
+        "tooltip": "The total number of all current (active) loans originated by the Delegate within this Lending Strategy to end borrowers."
       },
       "capacity": {
-        "label": "Pool Capacity",
-        "tooltip": "Amount of additional funds the Lending Pool can accept in USDC, also represented as a percentage of the maximum Pool target amount."
+        "label": "Lending Strategy Capacity",
+        "tooltip": "Amount of additional USDC the Lending Delegate is able to accept for this Lending Strategy, also represented as a percentage of the maximum Lending Strategy target USDC amount.​"
       }
     },
     "riskManagement": {
@@ -660,11 +683,11 @@
         "title": "Risk Status",
         "firstLoss": {
           "label": "First Loss Capital",
-          "tooltip": "The amount of capital contributed by the Pool Delegate that will be absorbed first in the event of any losses, prior to losses being absorbed by Liquidity Providers, thereby providing a degree of loss protection to Liquidity Providers."
+          "tooltip": "The amount of capital contributed by the Delegate that will be absorbed first in the event of any losses, prior to losses being absorbed by Liquidity Providers, thereby providing a degree of loss protection to Liquidity Providers.​ First Loss Capital cannot be deployed into loans."
         },
         "lossRate": {
-          "label": "Pool Loss Rate",
-          "tooltip": "Total losses expressed percentage of total loans originated by the Pool Delegate within this Lending Pool. "
+          "label": "Lending Strategy Loss Rate",
+          "tooltip": "Total unrecoverable losses expressed as a percentage of total loans associated with this Lending Strategy."
         },
         "riskScore": {
           "label": "Independent Risk Score",
@@ -679,15 +702,15 @@
         "title": "Security Structure over End Borrowers",
         "guarantees": {
           "label": "Director(s) Guarantees",
-          "tooltip": "A legal undertaking enforced by the Pool Delegate over the Director(s) of its customer(s) (end borrowers) that places liability into the hands of the Director(s), where in the case that the business cannot repay its loans, the Director(s) is/are personally liable for this debt."
+          "tooltip": "​A legal undertaking enforced by the Delegate over the Director(s) of its customer(s) (end borrowers) that places liability into the hands of the Director(s), where in the case that the business cannot repay its loans, the Director(s) is/are personally liable for this debt."
         },
         "chargeAssets": {
           "label": "Charge over Business Assets",
-          "tooltip": "A legal security interest held by the Pool Delegate  over the assets of its business customer, providing the Pool Delegate with the right to enforce its interest in the event of default or insolvency."
+          "tooltip": "A legal security interest held by the Delegate over the assets of its business customer, providing the Lending Delegate with the right to enforce its interest in the event of default or insolvency."
         },
         "bankControl": {
           "label": "Control over Bank Accounts",
-          "tooltip": "Whether the Pool Delegate has auto/direct debit over its customers' (end borrowers) bank accounts with the right to automatically draw cash funds to recover any loans in default."
+          "tooltip": "Whether the Delegate has control over any of its customers' (end borrowers) bank accounts which derive cash revenues, providing the immediate right to these cash revenues to repay loans prior to the customer (end borrower) having access to these funds. "
         }
       },
       "criteria": {
@@ -714,7 +737,7 @@
         "metrics": {
           "totalBorrowers": {
             "label": "Total End Borrowers (Current)",
-            "tooltip": "content is missing"
+            "tooltip": "The number of individual businesses that the Lending Delegate is currently lending to."
           }
         }
       },
@@ -724,31 +747,31 @@
         "metrics": {
           "closingLoans": {
             "label": "Closing Loans Balance",
-            "tooltip": "content is missing"
+            "tooltip": "Total combined USD equivalent loan balance of all loan Tranches within this Lending Strategy, representing funds deployed into loans to end borrowers (outstanding loans) upon the closure of the most recent epoch. The closing loans balance is the net effect of the below funds flows and related transactions and will be updated every epoch."
           },
           "openingLoans": {
             "label": "Opening Loans Balance",
-            "tooltip": "content is missing"
+            "tooltip": "Total USD equivalent loan balance of all loan Tranches within this Lending Strategy, representing funds deployed into loans to end borrowers (outstanding loans) upon the closure of the prior epoch, being the same as the start of the current epoch."
           },
           "loansDrawn": {
             "label": "Loans Drawn",
-            "tooltip": "content is missing"
+            "tooltip": "The USD equivalent amount within this Lending Strategy of all additional loans drawn (deployed) to end borrowers during the most recent epoch (upon closure of the most recent epoch)."
           },
           "interestAccrued": {
             "label": "Interest Accrued",
-            "tooltip": "content is missing"
+            "tooltip": "The USD equivalent amount within this Lending Strategy of total interest accrued by end borrowers during the most recent epoch (upon closure of the most recent epoch)."
           },
           "interestPayments": {
             "label": "Interest Payments",
-            "tooltip": "content is missing"
+            "tooltip": "The USD equivalent amount within this Lending Strategy of total actual interest paid by end borrowers during the most recent epoch (upon closure of the most recent epoch)."
           },
           "principalRepayments": {
             "label": "Principal Repayments",
-            "tooltip": "content is missing"
+            "tooltip": "The USD equivalent amount within this Lending Strategy of total loan principal repayments made by end borrowers during the most recent epoch (upon closure of the most recent epoch)."
           },
           "unrealisedLosses": {
             "label": "Unrealised Losses",
-            "tooltip": "content is missing"
+            "tooltip": "The USD equivalent amount of loans within this Lending Strategy that became subject to formal recovery or legal action during the most recent epoch (upon closure of the most recent epoch)."
           }
         }
       },
@@ -758,7 +781,7 @@
         "metrics": {
           "netInflows": {
             "label": "Net Inflows/(Outflows)",
-            "tooltip": "content is missing"
+            "tooltip": "The upcoming/expected USD equivalent net effect of the below funds flows for the current epoch (expected upon closure of the current epoch)."
           },
           "upcomingLoan": {
             "label": "Upcoming Loan Drawdowns",
@@ -775,38 +798,38 @@
         }
       },
       "transactions": {
-        "title": "Cumulative Deposits & ​Withdrawals",
+        "title": "Cumulative Lending & ​Withdrawals",
         "titleSuffix": "(Actual)",
         "metrics": {
           "netDeposit": {
-            "label": "Net Deposit/(Withdrawal)",
-            "tooltip": "content is missing"
+            "label": "Net Lending/(Lending Withdrawals)",
+            "tooltip": "The total, cumulative net effect of USDC lending settled and lending withdrawals settled to and from this Lending Strategy since its inception, upon the closure of the most recent epoch."
           },
           "cumulativeDeposit": {
-            "label": "Cumulative Deposits",
-            "tooltip": "content is missing"
+            "label": "Cumulative Lending",
+            "tooltip": "Total, cumulative USDC lending settled to this Lending Strategy since its inception, upon the closure of the most recent epoch."
           },
           "cumulativeWithdraw": {
-            "label": "Cumulative Withdrawals",
-            "tooltip": "content is missing"
+            "label": "Cumulative Lending Withdrawals",
+            "tooltip": "Total, cumulative USDC lending withdrawals settled from this Lending Strategy since its inception, upon the closure of the most recent epoch."
           }
         }
       },
       "fundsRequest": {
-        "title": "Cumulative Deposits & ​Withdrawals",
+        "title": "Lending Request & Lending Withdrawal Request",
         "titleSuffix": "(Current Epoch)",
         "metrics": {
           "netDeposits": {
-            "label": "Net Deposits/(Withdrawal Requests)",
-            "tooltip": "content is missing"
+            "label": "Net Lending/(Withdrawal Requests)",
+            "tooltip": "The net effect of all current USDC lending requests and lending withdrawal requests that remain queued for this Lending Strategy for the current epoch."
           },
           "currentDeposits": {
-            "label": "Current Deposits Requests",
-            "tooltip": "content is missing"
+            "label": "Current Lending Requests",
+            "tooltip": "Total of all current USDC lending requests that remain queued for this Lending Strategy for the current epoch."
           },
           "currentWithdrawal": {
-            "label": "Current Withdrawal Requests",
-            "tooltip": "content is missing"
+            "label": "Current Lending Withdrawal Requests",
+            "tooltip": "Total of all current USDC lending withdrawal requests that remain queued for this Lending Strategy for the current epoch."
           }
         }
       }
@@ -847,6 +870,18 @@
     "tabs": {
       "activePools": "Active Pools",
       "closedPools": "Closed pools"
+    },
+    "summary": {
+      "metric-1": "Total Value Locked (TVL)",
+      "metric-1-tooltip": "Combined USDC lending by Liquidity Providers across the Kasu protocol, plus the current value of all KSU locked in the Kasu protocol.",
+      "metric-2": "Total Active Lending",
+      "metric-2-tooltip": "Combined USDC equivalent face value of all loans across all Lending Strategies on Kasu that Delegates currently have deployed to end borrowers.",
+      "metric-3": "Total Loan Funds Originated​",
+      "metric-3-tooltip": "Cumulative total USDC equivalent face value of all current and historical loans originated by Delegates to end borrowers from all Lending Strategies on Kasu.",
+      "metric-4": "Total Interest Earned​",
+      "metric-4-tooltip": "Cumulative total gross interest earned by Liquidity Providers from all loans since the inception of the Kasu protocol.",
+      "metric-5": "Total Loss Rate",
+      "metric-5-tooltip": "Total unrecoverable losses expressed as a percentage of total loans associated with all Lending Strategies on the Kasu protocol."
     },
     "no-data": {
       "activePools": "No active Lending Strategies",

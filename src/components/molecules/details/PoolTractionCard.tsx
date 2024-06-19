@@ -24,7 +24,7 @@ const PoolTractionCard: React.FC<PoolTractionCardProps> = ({ data, title }) => {
         title={title && <Typography variant='h6'>{title}</Typography>}
       />
 
-      <CardContent sx={{ padding: 2 }}>
+      <CardContent sx={{ padding: 2, pr: 1 }}>
         <Box
           display='flex'
           flexDirection={isMobile ? 'column' : 'row'}
@@ -36,7 +36,7 @@ const PoolTractionCard: React.FC<PoolTractionCardProps> = ({ data, title }) => {
               display='flex'
               width='100%'
               flexDirection='column'
-              pl={index > 0 && !isMobile ? 1 : 0}
+              pl={index > 0 && !isMobile ? 0.5 : 0}
             >
               <MetricWithSuffix
                 content={String(content)}

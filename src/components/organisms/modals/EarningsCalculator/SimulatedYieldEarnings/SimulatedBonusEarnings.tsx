@@ -76,6 +76,7 @@ const SimulatedBonusEarnings: React.FC<SimulatedBonusEarningsProps> = ({
       title={t(
         'modals.earningsCalculator.simulatedYieldEarnings.metric-4-title'
       )}
+      titleStyle={{ whiteSpace: 'nowrap' }}
       toolTipInfo={t(
         'modals.earningsCalculator.simulatedYieldEarnings.metric-4-tooltip'
       )}

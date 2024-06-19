@@ -66,8 +66,8 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <InfoColumn
-                title='Deposit To'
-                toolTipInfo='info'
+                title={t('modals.cancelDeposit.metric-1')}
+                toolTipInfo={t('modals.cancelDeposit.metric-1-tooltip')}
                 showDivider
                 metric={
                   <Typography pt='6px' pl={2} variant='h6' component='span'>
@@ -77,8 +77,9 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               />
               {transactionHistory.lendingPool.tranches.length > 1 && (
                 <InfoColumn
-                  title='Tranche'
-                  toolTipInfo='info'
+                  title={t('general.tranche')}
+                  titleStyle={{ textTransform: 'capitalize' }}
+                  toolTipInfo={t('modals.cancelDeposit.metric-2-tooltip')}
                   showDivider
                   metric={
                     <Typography pt='6px' pl={2} variant='h6' component='span'>
@@ -90,8 +91,8 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             </Grid>
             <Grid item xs={6}>
               <InfoColumn
-                title='Lending Request Amount'
-                toolTipInfo='info'
+                title={t('modals.cancelDeposit.metric-3')}
+                toolTipInfo={t('modals.cancelDeposit.metric-3-tooltip')}
                 showDivider
                 metric={
                   <TokenAmount
@@ -104,8 +105,8 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                 }
               />
               <InfoColumn
-                title='Deposit Request Date'
-                toolTipInfo='info'
+                title={t('modals.cancelDeposit.metric-4')}
+                toolTipInfo={t('modals.cancelDeposit.metric-4-tooltip')}
                 showDivider
                 metric={
                   <Box pt='6px' pl={2}>
@@ -162,7 +163,7 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           startIcon={<DeleteIcon />}
           onClick={handleCancel}
         >
-          Cancel Lending Request
+          {t('modals.cancelDeposit.cancel-button')}
         </Button>
       </DialogActions>
     </>

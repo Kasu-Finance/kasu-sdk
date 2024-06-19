@@ -46,26 +46,45 @@ const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   return (
     <>
-      <DialogHeader title='Cancel Withdrawal Request' onClose={handleClose} />
+      <DialogHeader
+        title={t('modals.cancelWithdrawal.title')}
+        onClose={handleClose}
+      />
       <DialogContent>
         <ColoredBox>
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <InfoColumn
-                title='From Pool'
-                toolTipInfo='info'
+                title={t('modals.cancelWithdrawal.metric-1')}
+                showDivider
+                metric={
+                  <Typography
+                    pt='6px'
+                    pl={2}
+                    variant='h6'
+                    component='span'
+                    mb='10px'
+                  >
+                    {transactionHistory.lendingPool.name}
+                  </Typography>
+                }
+              />
+              <InfoColumn
+                title={t('general.tranche')}
+                titleStyle={{ textTransform: 'capitalize' }}
+                toolTipInfo={t('modals.cancelWithdrawal.metric-4-tooltip')}
                 showDivider
                 metric={
                   <Typography pt='6px' pl={2} variant='h6' component='span'>
-                    {transactionHistory.lendingPool.name}
+                    {latestEvent.trancheName}
                   </Typography>
                 }
               />
             </Grid>
             <Grid item xs={6}>
               <InfoColumn
-                title='Withdrawal Request Amount'
-                toolTipInfo='info'
+                title={t('modals.cancelWithdrawal.metric-2')}
+                toolTipInfo={t('modals.cancelWithdrawal.metric-2-tooltip')}
                 showDivider
                 metric={
                   <TokenAmount
@@ -78,8 +97,8 @@ const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                 }
               />
               <InfoColumn
-                title='Withdrawal Request Date'
-                toolTipInfo='info'
+                title={t('modals.cancelWithdrawal.metric-3')}
+                toolTipInfo={t('modals.cancelWithdrawal.metric-3-tooltip')}
                 showDivider
                 metric={
                   <Box pt='6px' pl={2}>
@@ -98,7 +117,7 @@ const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         </ColoredBox>
         <Box mt={2}>
           <InfoColumn
-            title='Epoch Ends in'
+            title={t('modals.cancelWithdrawal.epochEnds')}
             showDivider
             metric={
               <Box px={2} py='6px'>
@@ -147,7 +166,7 @@ const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             )
           }
         >
-          Cancel Withdrawal Request
+          {t('modals.cancelWithdrawal.cancel-button')}
         </Button>
       </DialogActions>
     </>
