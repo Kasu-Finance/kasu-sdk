@@ -33,8 +33,8 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
   }, [pool])
 
   const metrics = useMemo(
-    () => getPoolCardMetrics(poolDelegate),
-    [poolDelegate]
+    () => getPoolCardMetrics(poolDelegate, pool),
+    [poolDelegate, pool]
   )
 
   const collapsedMetrics = metrics.filter((metric) => metric.isCollapsed)

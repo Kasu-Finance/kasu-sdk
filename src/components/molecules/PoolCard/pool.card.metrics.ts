@@ -1,13 +1,17 @@
 // metrics.ts
 
-import { PoolDelegateProfileAndHistory } from '@solidant/kasu-sdk/src/services/DataService/types'
+import {
+  PoolDelegateProfileAndHistory,
+  PoolOverview,
+} from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import { PoolDelegateMetricIds } from '@/constants'
 import { formatAmount } from '@/utils'
 import formatDuration from '@/utils/formats/formatDuration'
 
 export const getPoolCardMetrics = (
-  poolDelegate: PoolDelegateProfileAndHistory
+  poolDelegate: PoolDelegateProfileAndHistory,
+  pool: PoolOverview
 ) => {
   return [
     {
@@ -40,7 +44,7 @@ export const getPoolCardMetrics = (
     {
       id: PoolDelegateMetricIds.AssetClasses,
       title: 'details.poolDetails.assetClass',
-      value: poolDelegate?.assetClasses || 'N/A',
+      value: pool?.assetClass || 'N/A',
       suffix: '',
       sx: {
         mt: 1,

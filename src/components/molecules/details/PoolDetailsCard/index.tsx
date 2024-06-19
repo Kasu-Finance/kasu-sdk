@@ -1,14 +1,23 @@
-import { Box, Card, CardContent, CardHeader, Typography } from '@mui/material'
+import {
+  Box,
+  Card,
+  CardContent,
+  CardHeader,
+  Grid,
+  Typography,
+} from '@mui/material'
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useCallback, useMemo } from 'react'
 
 import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 
+import ColoredBox from '@/components/atoms/ColoredBox'
+import InfoColumn from '@/components/atoms/InfoColumn'
 import MetricDisplay from '@/components/molecules/details/PoolDetailsCard/MetricDisplay'
 
 import { MetricGroupType, PoolDetailsMetricIds } from '@/constants'
-import { convertToPoolDetails } from '@/utils'
+import { convertToPoolDetails, formatPercentage } from '@/utils'
 
 interface PoolDetailsCardProps {
   data: PoolOverview
@@ -16,6 +25,7 @@ interface PoolDetailsCardProps {
 
 const PoolDetailsCard: React.FC<PoolDetailsCardProps> = ({ data }) => {
   const { t } = useTranslation()
+
   const { metrics } = useMemo(() => convertToPoolDetails(data), [data])
   const currentDevice = useDeviceDetection()
   const isMobile = currentDevice === Device.MOBILE
@@ -31,10 +41,7 @@ const PoolDetailsCard: React.FC<PoolDetailsCardProps> = ({ data }) => {
 
   const { firstArray, secondArray, thirdArray } = useMemo(
     () => ({
-      firstArray: filterMetrics([
-        PoolDetailsMetricIds.APY,
-        PoolDetailsMetricIds.AssetClass,
-      ]),
+      firstArray: filterMetrics([PoolDetailsMetricIds.AssetClass]),
 
       secondArray: filterMetrics([
         PoolDetailsMetricIds.StructureApy,
@@ -57,22 +64,51 @@ const PoolDetailsCard: React.FC<PoolDetailsCardProps> = ({ data }) => {
       />
 
       <CardContent sx={{ padding: 2 }}>
-        <Box
-          display='flex'
-          width='100%'
-          className='light-colored-background'
-          flexDirection={isMobile ? 'column' : 'row'}
-        >
-          {firstArray.map((metric) => (
-            <MetricDisplay
-              metric={metric}
-              key={metric.id}
-              type={MetricGroupType.First}
-              isLastItem={firstArray.indexOf(metric) === firstArray.length - 1}
-            />
-          ))}
-        </Box>
-
+        <ColoredBox>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              {data.tranches.length > 1 ? (
+                data.tranches.map((tranche) => (
+                  <InfoColumn
+                    key={tranche.name}
+                    title={`${tranche.name} ${t('general.tranche')} ${t('general.apy')}`}
+                    showDivider
+                    toolTipInfo={t(
+                      `lending.tranche.${tranche.name.toLowerCase()}.tooltip`
+                    )}
+                    metric={
+                      <Box pt='6px' pl={2}>
+                        {formatPercentage(tranche.apy)}
+                      </Box>
+                    }
+                  />
+                ))
+              ) : (
+                <InfoColumn
+                  title={t('general.apy')}
+                  showDivider
+                  metric={
+                    <Box pt='6px' pl={2}>
+                      {formatPercentage(data.apy)}
+                    </Box>
+                  }
+                />
+              )}
+            </Grid>
+            <Grid item xs={6}>
+              {firstArray.map((metric) => (
+                <MetricDisplay
+                  metric={metric}
+                  key={metric.id}
+                  type={MetricGroupType.First}
+                  isLastItem={
+                    firstArray.indexOf(metric) === firstArray.length - 1
+                  }
+                />
+              ))}
+            </Grid>
+          </Grid>
+        </ColoredBox>
         <Box
           mt={2}
           width='100%'
