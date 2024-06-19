@@ -58,7 +58,9 @@ const PoolOverview = () => {
         <Card sx={{ mt: 3, minHeight: '352px', overflow: 'inherit' }}>
           <OverviewTitle pdfUrl={currentPool?.strategyDeckUrl || ''} />
           <CardContent>
-            <Typography variant='body1'>{currentPool.description}</Typography>
+            <Typography variant='body1' whiteSpace='pre-wrap'>
+              {currentPool.description}
+            </Typography>
           </CardContent>
           <TranchesApyCard pool={currentPool} />
         </Card>
