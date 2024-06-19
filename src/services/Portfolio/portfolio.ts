@@ -270,7 +270,11 @@ export class Portfolio {
             });
         }
         return {
-            lendingPools: portfolioLendingPools,
+            lendingPools: portfolioLendingPools.filter(
+                (pool) =>
+                    !BigNumber.from(pool.totalInvestedAmount).isZero() ||
+                    !BigNumber.from(pool.totalYieldEarningsLifetime).isZero(),
+            ),
         };
     }
 }
