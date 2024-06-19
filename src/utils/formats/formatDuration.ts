@@ -1,3 +1,5 @@
+import type { Dayjs } from 'dayjs'
+
 import dayjs from '@/dayjs'
 
 type durationConfigProps = {
@@ -6,15 +8,25 @@ type durationConfigProps = {
   days?: boolean
 }
 
+const parseTimestamp = (timestamp: number | string): Dayjs => {
+  if (typeof timestamp === 'number') {
+    // Create a Day.js object from Unix timestamp
+    return dayjs.unix(timestamp)
+  } else {
+    // Create a Day.js object from ISO date string
+    return dayjs(timestamp)
+  }
+}
+
 const formatDuration = (
-  timestamp: number,
+  timestamp: number | string,
   durationConfig: durationConfigProps = {
     years: true,
     months: true,
     days: true,
   }
 ): string => {
-  const date = dayjs.unix(timestamp)
+  const date = parseTimestamp(timestamp)
   const now = dayjs()
 
   const durationFromDate = dayjs.duration(now.diff(date))
