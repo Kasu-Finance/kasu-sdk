@@ -846,6 +846,10 @@
       "activePools": "Active Pools",
       "closedPools": "Closed pools"
     },
+    "no-data": {
+      "activePools": "No active Lending Strategies",
+      "closedPools": "No closed Lending Strategies."
+    },
     "closedPools": {
       "table": {
         "lossRate": "Loss Rate"

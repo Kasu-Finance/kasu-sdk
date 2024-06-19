@@ -92,7 +92,7 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
             ))}
           </Carousel>
         ) : (
-          <EmptyCardState message='No pools available.' />
+          <EmptyCardState message={t('home.no-data.activePools')} />
         )}
       </TabPanel>
       <TabPanel isActive={activeTab === 1} id='home-pools-closed'>
@@ -103,7 +103,7 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
               poolDelegates={poolDelegates}
             />
           ) : (
-            <EmptyCardState message='No closed pools available.' />
+            <EmptyCardState message={t('home.no-data.closedPools')} />
           )}
         </Box>
       </TabPanel>
