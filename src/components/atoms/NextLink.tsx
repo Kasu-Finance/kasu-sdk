@@ -3,10 +3,10 @@ import {
   LinkProps as MUILinkProps,
   SxProps,
 } from '@mui/material'
-import Link from 'next/link'
+import Link, { LinkProps } from 'next/link'
 import React from 'react'
 
-interface NextLinkProps extends MUILinkProps {
+interface NextLinkProps extends MUILinkProps, LinkProps {
   href: string
   asPath?: string
   sx?: SxProps

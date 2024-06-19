@@ -7,7 +7,6 @@ import {
   CardHeader,
   Divider,
   Grid,
-  Link,
   Typography,
 } from '@mui/material'
 import { formatEther } from 'ethers/lib/utils'
@@ -26,10 +25,12 @@ import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
 import ColoredBox from '@/components/atoms/ColoredBox'
 import ContentWithSuffix from '@/components/atoms/ContentWithSuffix'
 import InfoRow from '@/components/atoms/InfoRow'
+import NextLink from '@/components/atoms/NextLink'
 import LendingLoyalityInfo from '@/components/molecules/locking/LoyaltyOverview/LendingLoyalityInfo'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
+import { Routes } from '@/config/routes'
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
 const LoyaltyCard: React.FC<{
@@ -197,20 +198,21 @@ const LoyaltyCard: React.FC<{
               }
             />
             <Box sx={{ display: 'flex', pl: 2, py: 1 }}>
-              <Link
+              <NextLink
                 display='inline-block'
                 textTransform='none'
                 sx={{
                   textDecoration: 'none',
                 }}
-                href='/'
+                href={Routes.locking.root.url}
+                prefetch
               >
                 <Typography variant='caption' component='span'>
                   {t(
                     'lending.poolOverview.lockingStatus.allOtherRewards.label'
                   )}
                 </Typography>
-              </Link>
+              </NextLink>
               {/* <ToolTip
                 title={t(
                   'lending.poolOverview.lockingStatus.allOtherRewards.tooltip'
