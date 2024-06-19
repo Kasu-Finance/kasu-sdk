@@ -89,7 +89,7 @@ const PoolDetailsCard: React.FC<PoolDetailsCardProps> = ({ data }) => {
                   showDivider
                   metric={
                     <Box pt='6px' pl={2}>
-                      {data.apy}
+                      {formatPercentage(data.apy)}
                     </Box>
                   }
                 />
