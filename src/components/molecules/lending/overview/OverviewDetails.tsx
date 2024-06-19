@@ -9,8 +9,10 @@ import {
 import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 
+import InfoColumn from '@/components/atoms/InfoColumn'
 import InfoRow from '@/components/atoms/InfoRow'
 import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
+import TokenAmount from '@/components/atoms/TokenAmount'
 
 import { formatAmount } from '@/utils'
 import formatDuration from '@/utils/formats/formatDuration'
@@ -76,21 +78,59 @@ const OverviewDetails: React.FC<{
                 sx={{ pb: 5.1 }}
               >
                 <Grid item xs={6}>
-                  <MetricWithSuffix
-                    content={formatAmount(pool.yieldEarned || '0')}
-                    suffix='USDC'
-                    tooltipKey='lending.poolOverview.detailCard.totalPoolYieldEarnings.tooltip'
-                    titleKey='lending.poolOverview.detailCard.totalPoolYieldEarnings.label'
+                  <InfoColumn
+                    title={t(
+                      'lending.poolOverview.detailCard.totalPoolYieldEarnings.label'
+                    )}
+                    subtitle={t(
+                      'lending.poolOverview.detailCard.totalPoolYieldEarnings.sublabel'
+                    )}
+                    subtitleStyle={{
+                      display: 'block',
+                      variant: 'subtitle2',
+                      ml: 0,
+                    }}
+                    toolTipInfo={t(
+                      'lending.poolOverview.detailCard.totalPoolYieldEarnings.tooltip'
+                    )}
+                    showDivider
+                    metric={
+                      <TokenAmount
+                        px={2}
+                        py='6px'
+                        amount={formatAmount(pool.yieldEarned || '0')}
+                        symbol='USDC'
+                      />
+                    }
                   />
                 </Grid>
                 <Grid item xs={6}>
-                  <MetricWithSuffix
-                    content={formatAmount(
-                      +poolDelegate?.historicLossRate || '0'
+                  <InfoColumn
+                    title={t(
+                      'lending.poolOverview.detailCard.totalLossRate.label'
                     )}
-                    suffix='USDC'
-                    tooltipKey='lending.poolOverview.detailCard.totalLossRate.tooltip'
-                    titleKey='lending.poolOverview.detailCard.totalLossRate.label'
+                    subtitle={t(
+                      'lending.poolOverview.detailCard.totalLossRate.sublabel'
+                    )}
+                    subtitleStyle={{
+                      display: 'block',
+                      variant: 'subtitle2',
+                      ml: 0,
+                    }}
+                    toolTipInfo={t(
+                      'lending.poolOverview.detailCard.totalLossRate.tooltip'
+                    )}
+                    showDivider
+                    metric={
+                      <TokenAmount
+                        px={2}
+                        py='6px'
+                        amount={formatAmount(
+                          +poolDelegate?.historicLossRate || '0'
+                        )}
+                        symbol='USDC'
+                      />
+                    }
                   />
                 </Grid>
               </Grid>

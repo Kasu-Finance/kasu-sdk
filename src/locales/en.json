@@ -58,7 +58,8 @@
     "approved": "Approved",
     "confirmed": "Confirmed",
     "nextClearingPeriodStart": "Next Clearing Period Starts in",
-    "slippage": "Slippage"
+    "slippage": "Slippage",
+    "strategies": "Strategies"
   },
   "time": {
     "days": "days",
@@ -393,11 +394,13 @@
           "tooltip": "The structure of each loan provided by the Lending Delegate to its customers (end borrowers) with regard to maturity date and repayment profile to suit the lending asset class related to this Lending Strategy. A Revolving Loan refers to a loan structure that has no defined end date as it is typically utilised to fund ongoing operations (akin to a Line of Credit, Working Capital Loan or Evergreen Facility). An Amortising loan refers to a loan structure that has defined Principal and Interest repayment periods until it is fully repaid upon a specific end/maturity date, as it is typically utilised to fund core debt, capital expenditure and long term projects."
         },
         "totalPoolYieldEarnings": {
-          "label": "Total Lending Strategy Interest Earned",
+          "label": "Total Lending Strategy",
+          "sublabel": "Interest Earned",
           "tooltip": "Cumulative total gross interest earned by Liquidity Providers from this Lending Strategy since its inception on the Kasu protocol."
         },
         "totalLossRate": {
-          "label": "Total Loss Rate",
+          "label": "Total",
+          "sublabel": "Loss Rate",
           "tooltip": "​Total unrecoverable losses expressed as a percentage of total loans associated with this Lending Strategy."
         }
       },
@@ -405,7 +408,7 @@
         "minDeposit": "Minimum Deposit Amount",
         "maxDeposit": "Maximum Deposit Amount",
         "remainingCapacity": {
-          "label": "Remaining capacity",
+          "label": "Remaining Capacity",
           "tooltip": "Amount of additional funds the Pool can accept in USDC, also represented as a percentage of the maximum Lending Pool target amount."
         }
       },
@@ -844,6 +847,10 @@
     "tabs": {
       "activePools": "Active Pools",
       "closedPools": "Closed pools"
+    },
+    "no-data": {
+      "activePools": "No active Lending Strategies",
+      "closedPools": "No closed Lending Strategies."
     },
     "closedPools": {
       "table": {

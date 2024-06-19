@@ -40,10 +40,16 @@ const Pagination: React.FC<PaginationProps> = ({
         hideNextButton={isMobile ? false : true}
         sx={{
           '& .MuiPaginationItem-root': {
-            color: 'white',
+            bgcolor: 'white',
+            color: 'primary.contrastText',
+            boxShadow: '0 0 1px 1px black',
+
+            '&:hover': {
+              bgcolor: 'primary.dark',
+            },
           },
           '& .Mui-selected': {
-            color: 'primary.contrastText',
+            bgcolor: 'primary.main',
           },
         }}
       />
