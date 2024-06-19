@@ -58,7 +58,8 @@
     "approved": "Approved",
     "confirmed": "Confirmed",
     "nextClearingPeriodStart": "Next Clearing Period Starts in",
-    "slippage": "Slippage"
+    "slippage": "Slippage",
+    "strategies": "Strategies"
   },
   "time": {
     "days": "days",
