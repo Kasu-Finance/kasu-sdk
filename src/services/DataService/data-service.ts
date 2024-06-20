@@ -309,12 +309,12 @@ export class DataService {
         id_in?: string[],
     ): Promise<PoolDelegateProfileAndHistory[]> {
         const poolDelegateProfileAndHistoryDirectus: PoolDelegateProfileAndHistoryDirectus[] =
-            await this._directus.request(
-                // @ts-ignore: type error for field otherPools
+            // eslint-disable-next-line
+            (await this._directus.request(
                 readItems('PoolDelegateProfileAndHistory', {
                     fields: ['*', { otherPools: ['*'] }],
                 }),
-            );
+            )) as unknown as PoolDelegateProfileAndHistoryDirectus[];
 
         const poolNames: {
             lendingPools: Pick<LendingPoolSubgraph, 'name' | 'id'>[];
