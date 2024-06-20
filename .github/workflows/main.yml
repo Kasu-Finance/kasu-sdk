@@ -35,7 +35,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: 18.20.3
+          node-version: 18
           registry-url: https://npm.pkg.github.com/
           scope: '@solidant'
       - run: npm install && npm run build-tc && npm run build && npm run rollup-build && npm publish
