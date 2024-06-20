@@ -26,6 +26,7 @@ const OverviewDetails: React.FC<{
   const isMobile = currentDevice === Device.MOBILE
 
   const lendingDuration = formatDuration(poolDelegate.delegateLendingHistory, {
+    years: true,
     months: true,
     days: true,
   })

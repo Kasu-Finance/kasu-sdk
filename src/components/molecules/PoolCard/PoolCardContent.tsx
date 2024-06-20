@@ -63,7 +63,7 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
             <InfoColumn
               key={tranche.id}
               title={t(titleKey)}
-              alignTitleItems='normal'
+              alignTitleItems='flex-end'
               subtitle={
                 isMultiTranche
                   ? t('lending.poolOverview.investmentCard.trancheApy.label')
@@ -76,6 +76,9 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
                   {formattedApy}
                 </Typography>
               }
+              titleStyle={
+                !isMultiTranche ? { display: 'block', mt: '20px' } : undefined
+              }
               containerSx={{
                 width: isMultiTranche ? '50%' : '100%',
                 pb: 1,
@@ -84,7 +87,6 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
                 component: 'p',
                 sx: { ml: 0 },
                 variant: 'caption',
-                minHeight: '20px',
               }}
             />
           )

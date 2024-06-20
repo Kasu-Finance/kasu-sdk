@@ -14,6 +14,7 @@ import useTranslation from '@/hooks/useTranslation'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import InfoColumn from '@/components/atoms/InfoColumn'
+import InfoRow from '@/components/atoms/InfoRow'
 import MetricDisplay from '@/components/molecules/details/PoolDetailsCard/MetricDisplay'
 
 import { MetricGroupType, PoolDetailsMetricIds } from '@/constants'
@@ -39,10 +40,8 @@ const PoolDetailsCard: React.FC<PoolDetailsCardProps> = ({ data }) => {
     [metrics]
   )
 
-  const { firstArray, secondArray, thirdArray } = useMemo(
+  const { secondArray, thirdArray } = useMemo(
     () => ({
-      firstArray: filterMetrics([PoolDetailsMetricIds.AssetClass]),
-
       secondArray: filterMetrics([
         PoolDetailsMetricIds.StructureApy,
         PoolDetailsMetricIds.Term,
@@ -67,42 +66,22 @@ const PoolDetailsCard: React.FC<PoolDetailsCardProps> = ({ data }) => {
         <ColoredBox>
           <Grid container spacing={2}>
             <Grid item xs={6}>
-              {data.tranches.length > 1 ? (
-                data.tranches.map((tranche) => (
-                  <InfoColumn
-                    key={tranche.name}
-                    title={`${tranche.name} ${t('general.tranche')} ${t('general.apy')}`}
-                    showDivider
-                    toolTipInfo={t(
-                      `lending.tranche.${tranche.name.toLowerCase()}.tooltip`
-                    )}
-                    metric={
-                      <Box pt='6px' pl={2}>
-                        {formatPercentage(tranche.apy)}
-                      </Box>
-                    }
-                  />
-                ))
-              ) : (
+              {data.tranches.map((tranche) => (
                 <InfoColumn
-                  title={t('general.apy')}
+                  key={tranche.name}
+                  title={
+                    data.tranches.length > 1
+                      ? `${tranche.name} ${t('general.tranche')} ${t('general.apy')}`
+                      : t('general.apy')
+                  }
                   showDivider
+                  toolTipInfo={t(
+                    `lending.tranche.${tranche.name.toLowerCase()}.tooltip`
+                  )}
                   metric={
                     <Box pt='6px' pl={2}>
-                      {formatPercentage(data.apy)}
+                      {formatPercentage(tranche.apy)}
                     </Box>
-                  }
-                />
-              )}
-            </Grid>
-            <Grid item xs={6}>
-              {firstArray.map((metric) => (
-                <MetricDisplay
-                  metric={metric}
-                  key={metric.id}
-                  type={MetricGroupType.First}
-                  isLastItem={
-                    firstArray.indexOf(metric) === firstArray.length - 1
                   }
                 />
               ))}
@@ -120,6 +99,15 @@ const PoolDetailsCard: React.FC<PoolDetailsCardProps> = ({ data }) => {
             flexDirection='column'
             width={isMobile ? '100%' : '50%'}
           >
+            <InfoRow
+              title={t('details.poolDetails.assetClass.label')}
+              toolTipInfo={t('details.poolDetails.assetClass.tooltip')}
+              metric={
+                <Typography variant='body1' component='span' maxWidth={300}>
+                  {data.assetClass}
+                </Typography>
+              }
+            />
             {secondArray.map((metric) => (
               <MetricDisplay
                 metric={metric}

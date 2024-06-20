@@ -352,7 +352,7 @@
       },
       "simulatedYieldEarnings": {
         "title": "Simulated Yield Earnings",
-        "metric-1-tooltip": "The Annual Percentage Yield that will be applied to determine your interest earnings simulation, assuming all repayments will be made as expected. This is based on the APY currently offered by the Lending Delegate and is subject to change during the simulation forecast period.",
+        "metric-1-tooltip": "The Annual Percentage Yield that will be applied to determine your interest earnings simulation, assuming all repayments will be made as expected. This is based on the APY currently offered by the Delegate and is subject to change during the simulation forecast period.",
         "metric-2-title": "Simulated Interest Earnings",
         "metric-2-tooltip": "Forecast USDC interest earnings (after fees) associated with the lending amount entered and duration selected for this Lending Strategy at the given APY, assuming all repayments will be made as expected.",
         "metric-3-title": "APY Bonus",
@@ -390,7 +390,7 @@
       "detailCard": {
         "apyStructure": {
           "label": "Loan APY Structure",
-          "tooltip": "Indicates whether the APY offered by the Lending Delegate is fixed for a specified period of time, or variable (subject to change upon each epoch)."
+          "tooltip": "Indicates whether the APY offered by the Delegate is fixed for a specified period of time, or variable (subject to change upon each epoch)."
         },
         "assetClass": {
           "label": "Asset class",
@@ -398,7 +398,7 @@
         },
         "industry": {
           "label": "Industry Exposure",
-          "tooltip": "Industry and/or business category in which the Lending Delegate's customers (end borrowers) operate."
+          "tooltip": "Industry and/or business category in which the Delegate's customers (end borrowers) operate."
         },
         "security": {
           "label": "Security",
@@ -410,20 +410,23 @@
         },
         "loansUnder": {
           "label": "Total Active Lending",
-          "tooltip": "Total USDC equivalent face value of all loans that the Lending Delegate currently has deployed to end borrowers from this Lending Strategy."
+          "tooltip": "Total USDC equivalent face value of all loans that the Delegate currently has deployed to end borrowers from this Lending Strategy."
         },
         "tvl": {
           "label": "Total Value Locked (TVL)",
-          "tooltip": "The current balance of all USDC loans in this Lending Strategy comprised of funds deployed into loans to end borrowers, excess liquidity and first loss capital (if contributed by the Lending Delegate)."
+          "tooltip": "The current balance of all USDC loans in this Lending Strategy comprised of funds deployed into loans to end borrowers, excess liquidity and first loss capital (if contributed by the Delegate)."
         },
         "terms": {
           "label": "Term & Structure",
-          "tooltip": "The structure of each loan provided by the Lending Delegate to its customers (end borrowers) with regard to maturity date and repayment profile to suit the lending asset class related to this Lending Strategy. A Revolving Loan refers to a loan structure that has no defined end date as it is typically utilised to fund ongoing operations (akin to a Line of Credit, Working Capital Loan or Evergreen Facility). An Amortising loan refers to a loan structure that has defined Principal and Interest repayment periods until it is fully repaid upon a specific end/maturity date, as it is typically utilised to fund core debt, capital expenditure and long term projects."
+          "tooltip": "The structure of each loan provided by the Delegate to its customers (end borrowers) with regard to maturity date and repayment profile to suit the lending asset class related to this Lending Strategy. A Revolving Loan refers to a loan structure that has no defined end date as it is typically utilised to fund ongoing operations (akin to a Line of Credit, Working Capital Loan or Evergreen Facility). An Amortising loan refers to a loan structure that has defined Principal and Interest repayment periods until it is fully repaid upon a specific end/maturity date, as it is typically utilised to fund core debt, capital expenditure and long term projects."
         },
         "totalPoolYieldEarnings": {
           "label": "Total Lending Strategy",
           "sublabel": "Interest Earned",
           "tooltip": "Cumulative total gross interest earned by Liquidity Providers from this Lending Strategy since its inception on the Kasu protocol."
+        },
+        "totalLossRate-label": {
+          "label": "Total Loss Rate"
         },
         "totalLossRate": {
           "label": "Total",
@@ -441,7 +444,7 @@
       },
       "investmentCard": {
         "loanApy": "Loan APY",
-        "tooltip": "The Annual Percentage Yield currently offered by the Lending Delegate for this Lending Strategy, assuming all repayments will be made as expected.",
+        "tooltip": "The Annual Percentage Yield currently offered by the Delegate for this Lending Strategy, assuming all repayments will be made as expected.",
         "totalAmount": {
           "label": "Total Lending Balance",
           "tooltip": "Your combined total USDC lending balance across all Tranches (or single Lending Strategy offer in the absence of multiple Tranches) within this Lending Strategy."
@@ -460,7 +463,7 @@
         },
         "trancheApy": {
           "label": "Tranche APY",
-          "tooltip": "The Annual Percentage Yield currently offered by the Lending Delegate for this Tranche of this Lending Strategy, assuming all repayments will be made as expected."
+          "tooltip": "The Annual Percentage Yield currently offered by the Delegate for this Tranche of this Lending Strategy, assuming all repayments will be made as expected."
         },
         "yieldEarned": {
           "label": "Lifetime Interest Earned",
@@ -509,15 +512,15 @@
     "tranche": {
       "senior": {
         "title": "Senior Tranche APY",
-        "tooltip": "The Annual Percentage Yield currently offered by the Lending Delegate for the Senior Tranche of this Lending Strategy, assuming all repayments will be made as expected."
+        "tooltip": "The Annual Percentage Yield currently offered by the Delegate for the Senior Tranche of this Lending Strategy, assuming all repayments will be made as expected."
       },
       "mezzanine": {
         "title": "Mezzanine Tranche APY",
-        "tooltip": "The Annual Percentage Yield currently offered by the Lending Delegate for the Mezzanine Tranche of this Lending Strategy, assuming all repayments will be made as expected."
+        "tooltip": "The Annual Percentage Yield currently offered by the Delegate for the Mezzanine Tranche of this Lending Strategy, assuming all repayments will be made as expected."
       },
       "junior": {
         "title": "Junior Tranche APY",
-        "tooltip": "The Annual Percentage Yield currently offered by the Lending Delegate for the Junior Tranche of this Lending Strategy, assuming all repayments will be made as expected."
+        "tooltip": "The Annual Percentage Yield currently offered by the Delegate for the Junior Tranche of this Lending Strategy, assuming all repayments will be made as expected."
       }
     },
     "withdraw": {
@@ -639,7 +642,7 @@
       },
       "exposureIndustry": {
         "label": "Industry Exposure",
-        "tooltip": "​Industry and/or business category in which the Lending Delegate's customers (end borrowers) operate.​"
+        "tooltip": "​Industry and/or business category in which the Delegate's customers (end borrowers) operate.​"
       },
       "structureApy": {
         "label": "Lending Strategy APY Structure",
@@ -674,7 +677,7 @@
       },
       "capacity": {
         "label": "Lending Strategy Capacity",
-        "tooltip": "Amount of additional USDC the Lending Delegate is able to accept for this Lending Strategy, also represented as a percentage of the maximum Lending Strategy target USDC amount.​"
+        "tooltip": "Amount of additional USDC the Delegate is able to accept for this Lending Strategy, also represented as a percentage of the maximum Lending Strategy target USDC amount.​"
       }
     },
     "riskManagement": {
@@ -706,7 +709,7 @@
         },
         "chargeAssets": {
           "label": "Charge over Business Assets",
-          "tooltip": "A legal security interest held by the Delegate over the assets of its business customer, providing the Lending Delegate with the right to enforce its interest in the event of default or insolvency."
+          "tooltip": "A legal security interest held by the Delegate over the assets of its business customer, providing the Delegate with the right to enforce its interest in the event of default or insolvency."
         },
         "bankControl": {
           "label": "Control over Bank Accounts",
@@ -737,7 +740,7 @@
         "metrics": {
           "totalBorrowers": {
             "label": "Total End Borrowers (Current)",
-            "tooltip": "The number of individual businesses that the Lending Delegate is currently lending to."
+            "tooltip": "The number of individual businesses that the Delegate is currently lending to."
           }
         }
       },
