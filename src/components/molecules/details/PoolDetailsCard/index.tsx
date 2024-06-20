@@ -67,7 +67,7 @@ const PoolDetailsCard: React.FC<PoolDetailsCardProps> = ({ data }) => {
         <ColoredBox>
           <Grid container spacing={2}>
             <Grid item xs={6}>
-              {data.tranches.length > 1 ? (
+              {data.tranches.length > 1 &&
                 data.tranches.map((tranche) => (
                   <InfoColumn
                     key={tranche.name}
@@ -82,14 +82,16 @@ const PoolDetailsCard: React.FC<PoolDetailsCardProps> = ({ data }) => {
                       </Box>
                     }
                   />
-                ))
-              ) : (
+                ))}
+
+              {data.tranches.length === 1 && (
                 <InfoColumn
                   title={t('general.apy')}
                   showDivider
+                  toolTipInfo={t('lending.poolOverview.investmentCard.tooltip')}
                   metric={
                     <Box pt='6px' pl={2}>
-                      {formatPercentage(data.apy)}
+                      {formatPercentage(data.tranches[0].apy)}
                     </Box>
                   }
                 />
