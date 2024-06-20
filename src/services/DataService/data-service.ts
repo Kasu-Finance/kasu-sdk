@@ -311,6 +311,7 @@ export class DataService {
         const poolDelegateProfileAndHistoryDirectus: PoolDelegateProfileAndHistoryDirectus[] =
             (await this._directus.request(
                 readItems('PoolDelegateProfileAndHistory', {
+                    // @ts-ignore:next-line
                     // @ts-expect-error: disable ts check
                     fields: ['*', { otherPools: ['*'] }],
                 }),
