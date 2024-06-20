@@ -20,6 +20,7 @@
     },
     "ignorePatterns": ["node_modules", "src/contracts", "index.ts"],
     "rules": {
+        "@typescript-eslint/restrict-plus-operands": "warn",
         "@typescript-eslint/ban-ts-comment": "warn",
         "@typescript-eslint/ban-tslint-comment": "warn",
         "@typescript-eslint/no-explicit-any": "warn",
