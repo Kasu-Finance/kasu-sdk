@@ -309,9 +309,9 @@ export class DataService {
         id_in?: string[],
     ): Promise<PoolDelegateProfileAndHistory[]> {
         const poolDelegateProfileAndHistoryDirectus: PoolDelegateProfileAndHistoryDirectus[] =
-            // eslint-disable-next-line
             (await this._directus.request(
                 readItems('PoolDelegateProfileAndHistory', {
+                    // @ts-expect-error: disable ts check
                     fields: ['*', { otherPools: ['*'] }],
                 }),
             )) as unknown as PoolDelegateProfileAndHistoryDirectus[];
