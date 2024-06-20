@@ -310,7 +310,7 @@ export class DataService {
     ): Promise<PoolDelegateProfileAndHistory[]> {
         const poolDelegateProfileAndHistoryDirectus: PoolDelegateProfileAndHistoryDirectus[] =
             await this._directus.request(
-                // @ts-expect-error: Directus types doesn't support nested fields
+                // @ts-ignore: type error for field otherPools
                 readItems('PoolDelegateProfileAndHistory', {
                     fields: ['*', { otherPools: ['*'] }],
                 }),
