@@ -317,11 +317,11 @@ export class DataService {
 
         const poolNames: {
             lendingPools: Pick<LendingPoolSubgraph, 'name' | 'id'>[];
-        } = (await this._graph.request(getPoolNameQuery, {
+        } = await this._graph.request(getPoolNameQuery, {
             ids: poolDelegateProfileAndHistoryDirectus.flatMap((directus) =>
                 directus.otherPools.map((delegate) => delegate.PoolOverview_id),
             ),
-        })) as any;
+        });
 
         const retn: PoolDelegateProfileAndHistory[] = [];
         for (const data of poolDelegateProfileAndHistoryDirectus) {
@@ -333,9 +333,9 @@ export class DataService {
                 otherKASUPools: data.otherPools.map((pool) => ({
                     id: pool.PoolOverview_id,
                     name:
-                        poolNames.lendingPools?.find(
+                        poolNames.lendingPools.find(
                             ({ id }) => pool.PoolOverview_id === id,
-                        )?.name || pool.PoolOverview_id,
+                        )?.name ?? pool.PoolOverview_id,
                 })),
                 totalLoanFundsOriginated: data.totalLoanFundsOriginated,
                 totalLoansOriginated: data.totalLoansOriginated,
