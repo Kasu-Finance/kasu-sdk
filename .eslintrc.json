@@ -20,7 +20,8 @@
     },
     "ignorePatterns": ["node_modules", "src/contracts", "index.ts"],
     "rules": {
-        "@typescript-eslint/ban-tslint-comment": "error",
+        "@typescript-eslint/ban-ts-comment": "warn",
+        "@typescript-eslint/ban-tslint-comment": "warn",
         "@typescript-eslint/no-explicit-any": "warn",
         "testing-library/prefer-screen-queries": "off",
         "@typescript-eslint/no-unused-vars": [
