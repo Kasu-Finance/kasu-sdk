@@ -35,7 +35,7 @@ const LockModalReview: React.FC<LockModalReviewProps> = ({
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <InfoColumn
-              title={`${t('general.to')} ${t('general.pool')}`}
+              title={`${t('general.to')} ${t('general.lendingStrategy')}`}
               showDivider
               titleStyle={{ textTransform: 'capitalize' }}
               metric={

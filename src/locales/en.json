@@ -9,6 +9,7 @@
     "claim": "claim",
     "deposit": "deposit",
     "lend": "lend",
+    "lendingStrategy": "lending strategy",
     "confirm": "confirm",
     "goBack": "go back",
     "close": "close",
@@ -26,9 +27,7 @@
     "rewards": "rewards",
     "to": "to",
     "wallet": "wallet",
-    "pools": "pools",
     "none": "none",
-    "pool": "pool",
     "adjust": "adjust",
     "csvDownload": "download as csv",
     "overview": "overview",
@@ -43,7 +42,7 @@
     "weighted": "weighted",
     "tranche": "Tranche",
     "perTranche": "per tranche",
-    "perPool": "per pool",
+    "perPool": "per lending strategy",
     "convertToKSU": "Convert to KSU",
     "locking": "Locking",
     "availableFunds": "available funds",
@@ -75,7 +74,7 @@
       },
       "ksuStatus": {
         "rksuBalance": {
-          "tooltip": "The value of your current rKSU balance, which is derived by a multiplier applied to your amount of locked KSU. This multiplier varies according to your locking period, per the below table. The value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Pools determines your Loyalty Level. Your Loyalty Level determines the extent of your token utility (lending pool deposit priority and withdrawal priority) and associated rewards (APY bonus). Regardless of your Loyalty Level, your rKSU balance relative to the total rKSU in the Kasu ecosystem, also determines your share of Protocol Fees."
+          "tooltip": "The value of your current rKSU balance, which is derived by a multiplier applied to your amount of locked KSU. This multiplier varies according to your locking period, per the below table. The value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Strategies determines your Loyalty Level. Your Loyalty Level determines the extent of your token utility (lending pool deposit priority and withdrawal priority) and associated rewards (APY bonus). Regardless of your Loyalty Level, your rKSU balance relative to the total rKSU in the Kasu ecosystem, also determines your share of Protocol Fees."
         },
         "loyaltyLevel": {
           "tooltip": "info"
@@ -83,26 +82,26 @@
       },
       "loyalty": {
         "title": " Loyalty Status",
-        "metric-1-tooltip": "The value of your current rKSU balance, which is derived by a multiplier applied to your amount of locked KSU. This multiplier varies according to your locking period, per the below table. The value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Pools determines your Loyalty Level. Your Loyalty Level determines the extent of your token utility (lending pool deposit priority and withdrawal priority) and associated rewards (APY bonus). Regardless of your Loyalty Level, your rKSU balance relative to the total rKSU in the Kasu ecosystem, also determines your share of Protocol Fees.",
+        "metric-1-tooltip": "The value of your current rKSU balance, which is derived by a multiplier applied to your amount of locked KSU. This multiplier varies according to your locking period, per the below table. The value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Strategies determines your Loyalty Level. Your Loyalty Level determines the extent of your token utility (lending strategy deposit priority and withdrawal priority) and associated rewards (APY bonus). Regardless of your Loyalty Level, your rKSU balance relative to the total rKSU in the Kasu ecosystem, also determines your share of Protocol Fees.",
         "metric-2": "Total Lending Pool Deposits",
-        "metric-2-toolip": "For the purposes of calculating your Loyalty Level, your total lending pool deposits includes your existing lending pool deposits plus pending lending pool deposits.",
+        "metric-2-toolip": "For the purposes of calculating your Loyalty Level, your total lending strategy deposits includes your existing lending strategy deposits plus pending lending strategy deposits.",
         "metric-3": "rKSU to Total USDC Lending Ratio",
         "metric-3-toolip": {
-          "description": "The value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Pools. This ratio determines your Loyalty Level. Your Loyalty Level determines the extent of your token utility (lending pool deposit priority access and withdrawal priority) and associated rewards (APY bonus) as follows:",
+          "description": "The value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Strategies. This ratio determines your Loyalty Level. Your Loyalty Level determines the extent of your token utility (lending strategy deposit priority access and withdrawal priority) and associated rewards (APY bonus) as follows:",
           "subtitle-1": "No Loyalty Status",
           "subtitle-1-description": "If the value of your rKSU balance relative to your current and pending USDC deposits is less than 1%, then:",
           "subtitle-1-list-0": "No withdrawal or deposit priority benefits apply.",
           "subtitle-1-list-1": "Deposit/withdrawal requests are processed after Loyalty level 1 and 2 Token Lockers.",
           "subtitle-2": "Loyalty Level 1",
-          "subtitle-2-description": "If the value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Pools is 1% or greater, but less than 5%, you will achieve Loyalty Level 1, entitling you to the following privileges:",
-          "subtitle-2-list-0": "Second order priority access to lending pools (behind Loyalty Level 2).",
-          "subtitle-2-list-1": "Second order priority for capital withdrawals from lending pools (behind Loyalty Level 2).",
-          "subtitle-2-list-2": "Additional APY (APY Bonus) from your deposits in all lending pools, awarded in KSU (subject to change according to liquidity demand and supply requirements).",
+          "subtitle-2-description": "If the value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Strategies is 1% or greater, but less than 5%, you will achieve Loyalty Level 1, entitling you to the following privileges:",
+          "subtitle-2-list-0": "Second order priority access to lending strategies (behind Loyalty Level 2).",
+          "subtitle-2-list-1": "Second order priority for capital withdrawals from lending strategies (behind Loyalty Level 2).",
+          "subtitle-2-list-2": "Additional APY (APY Bonus) from your deposits in all lending strategies, awarded in KSU (subject to change according to liquidity demand and supply requirements).",
           "subtitle-3": "Loyalty Level 2",
-          "subtitle-3-description": "If the value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Pools is 5% or greater, you will achieve Loyalty Level 2, entitling you to the following privileges:",
-          "subtitle-3-list-0": "First order priority access to lending pools.",
-          "subtitle-3-list-1": "Firstly order priority for capital withdrawals from lending pools.",
-          "subtitle-3-list-2": "Additional APY (more APY Bonus than Loyalty Level 1 Token Lockers) from your deposits in all lending pools, awarded in KSU (subject to change according to liquidity demand and supply requirements)."
+          "subtitle-3-description": "If the value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Strategies is 5% or greater, you will achieve Loyalty Level 2, entitling you to the following privileges:",
+          "subtitle-3-list-0": "First order priority access to lending strategies.",
+          "subtitle-3-list-1": "Firstly order priority for capital withdrawals from lending strategies.",
+          "subtitle-3-list-2": "Additional APY (more APY Bonus than Loyalty Level 1 Token Lockers) from your deposits in all lending strategies, awarded in KSU (subject to change according to liquidity demand and supply requirements)."
         },
         "button": "HOW TO/WHY INCREASE LOYALTY LEVEL?",
         "level": {
@@ -115,9 +114,9 @@
             "title": "Loyalty Level 1",
             "subtitle": "If your ratio of accumulated rKSU to USDC deposits is between 1% - 5%, then you can enjoy the following benefits:",
             "list": {
-              "list-0": "Second order priority access to lending pools (behind Loyalty Level 2).",
-              "list-1": "Second order priority for capital withdrawals from lending pools (behind Loyalty Level 2).",
-              "list-2": "0.1% additional APY from your deposits in all lending pools, awarded in KSU."
+              "list-0": "Second order priority access to lending strategies (behind Loyalty Level 2).",
+              "list-1": "Second order priority for capital withdrawals from lending strategies (behind Loyalty Level 2).",
+              "list-2": "0.1% additional APY from your deposits in all lending strategies, awarded in KSU."
             }
           },
           "level-2": {
@@ -125,9 +124,9 @@
             "title": "Loyalty Level 2",
             "subtitle": "If your ratio of accumulated rKSU to USDC deposits is 5% or more, then you can enjoy the following benefits:",
             "list": {
-              "list-0": "First order priority access to lending pools.",
-              "list-1": "Firstly order priority for capital withdrawals from lending pools.",
-              "list-2": "0.2% additional APY from your deposits in all lending pools, awarded in KSU."
+              "list-0": "First order priority access to lending strategies.",
+              "list-1": "Firstly order priority for capital withdrawals from lending strategies.",
+              "list-2": "0.2% additional APY from your deposits in all lending strategies, awarded in KSU."
             }
           }
         }
@@ -145,7 +144,7 @@
           "title": "Reward 1 • APY Bonus",
           "subtitle": "(Paid in KSU)",
           "metric-1": "APY Bonus Based on Loyalty Level",
-          "metric-1-tooltip": "Your APY bonus (paid in KSU) in addition to the APY associated with your USDC deposits in Lending Pools, which is only applicable to Loyalty Level 1 and 2 KSU Token Lockers. Loyalty Level 2 Token Lockers receive a higher APY bonus than Loyalty Level 1. The APY bonus is variable and will change from time to meet liquidity demand and supply requirements.",
+          "metric-1-tooltip": "Your APY bonus (paid in KSU) in addition to the APY associated with your USDC deposits in Lending Strategies, which is only applicable to Loyalty Level 1 and 2 KSU Token Lockers. Loyalty Level 2 Token Lockers receive a higher APY bonus than Loyalty Level 1. The APY bonus is variable and will change from time to meet liquidity demand and supply requirements.",
           "metric-2-tooltip": "The balance of your APY bonus earnings that is available to claim.",
           "metric-3-tooltip": "The total amount of APY bonus your have received since the very first time you achieved (and maintained) Loyalty Level 1 or 2."
         },
@@ -184,7 +183,7 @@
       "title": "Loyalty levels",
       "subtitle": "About KSU Loyalty Program",
       "description-1": "The more you lock, the higher your loyalty level and the more benefits you receive.",
-      "description-2": "If you do not wish to lock KSU tokens, then you are can still participate in lending pools to earn APY. However, you will not receive any bonus APY, and any deposit/withdrawal request will be processed after Loyalty 1 and 2 Token Lockers.",
+      "description-2": "If you do not wish to lock KSU tokens, then you are can still participate in lending strategies to earn APY. However, you will not receive any bonus APY, and any deposit/withdrawal request will be processed after Loyalty 1 and 2 Token Lockers.",
       "description-3": "Each KSU token that you unlock will burn a proportionate amount of rKSU. In order to maintain your loyalty level and associated privileges, be sure to maintain an amount of locked KSU to avoid burning rKSU to the point that it falls below the above minimum ratio of USDC deposits."
     },
     "termsAndConditions": {
@@ -406,7 +405,7 @@
         },
         "lendingHistory": {
           "label": "Lending History",
-          "tooltip": "Total length of time the Pool Delegate has been operating as a lending business."
+          "tooltip": "Total length of time the Delegate has been operating as a lending business."
         },
         "loansUnder": {
           "label": "Total Active Lending",
@@ -455,7 +454,7 @@
         },
         "totYieldEarned": {
           "label": "Total Interest Earned",
-          "tooltip": "Total interest you have earned on your USDC investment(s) whilst you remain active in this Lending Pool. For example, if you withdraw your total investment from this Lending Pool (and are therefore no longer active in this Lending Pool), then your total interest earned will be displayed as zero. To view a breakdown of your total interest earned across all Lending Pools, please click on the 'My Portfolio' tab."
+          "tooltip": "Total interest you have earned on your USDC investment(s) whilst you remain active in this Lending Pool. For example, if you withdraw your total investment from this Lending Pool (and are therefore no longer active in this Lending Pool), then your total interest earned will be displayed as zero. To view a breakdown of your total interest earned across all Lending Strategies, please click on the 'My Portfolio' tab."
         },
         "amountInvested": {
           "label": "Lending Balance",
@@ -575,15 +574,15 @@
       },
       "senior": {
         "title": "Senior Tranche",
-        "tooltip": "The current Annual Percentage Interest offered by the Pool Delegate for the Senior Tranche within this Lending Pool, assuming all repayments will be made as expected."
+        "tooltip": "The current Annual Percentage Interest offered by the Delegate for the Senior Tranche within this Lending Pool, assuming all repayments will be made as expected."
       },
       "mezzanine": {
         "title": "Mezzanine Tranche",
-        "tooltip": "The current Annual Percentage Interest offered by the Pool Delegate for the Mezzanine Tranche within this Lending Pool, assuming all repayments will be made as expected."
+        "tooltip": "The current Annual Percentage Interest offered by the Delegate for the Mezzanine Tranche within this Lending Pool, assuming all repayments will be made as expected."
       },
       "junior": {
         "title": "Junior Tranche",
-        "tooltip": "The current Annual Percentage Interest offered by the Pool Delegate for the Junior Tranche within this Lending Pool, assuming all repayments will be made as expected."
+        "tooltip": "The current Annual Percentage Interest offered by the Delegate for the Junior Tranche within this Lending Pool, assuming all repayments will be made as expected."
       }
     },
     "shortcutTranche": {
@@ -720,18 +719,18 @@
         "title": "Minimum Criteria for End Borrowers",
         "yearsBusiness": {
           "label": "Minimum 3 years in Business",
-          "tooltip": "A condition which requires a Pool Delegate's customer (end borrower) to prove that it has been operating for at least 3 years with adequate financial reporting history."
+          "tooltip": "A condition which requires a Delegate's customer (end borrower) to prove that it has been operating for at least 3 years with adequate financial reporting history."
         },
         "propertyOwners": {
           "label": "Directors must be property owners",
-          "tooltip": "A condition enforced by the Pool Delegate which requires at least one Director of Pool Delegate's customer (end borrower) to be a property owner to confirm a minimum level of wealth in order to provide comfort the event that a Director may become personally liability for its business loan(s) where recovery action may be required."
+          "tooltip": "A condition enforced by the Delegate which requires at least one Director of Delegate's customer (end borrower) to be a property owner to confirm a minimum level of wealth in order to provide comfort the event that a Director may become personally liability for its business loan(s) where recovery action may be required."
         }
       }
     }
   },
   "repayments": {
     "title": "Repayments and Funds Flow",
-    "loanModelDescription": "This Pool Delegate's lending model is to facilitate Fiat currency loans to real world businesses off-chain. The Asset Class and Loan Structure outlined in the 'Pool Details' screen indicates that these loans are 'Revolving/Evergreen' Loan Facilities, with fluctuating loan balances, being a function of ongoing and simultaneous loan repayments and loan redraws in Fiat currency off-chain. Accordingly, these Fiat currency transactions can only be viewed via CSV download at this current point in time.",
+    "loanModelDescription": "This Delegate's lending model is to facilitate Fiat currency loans to real world businesses off-chain. The Asset Class and Loan Structure outlined in the 'Pool Details' screen indicates that these loans are 'Revolving/Evergreen' Loan Facilities, with fluctuating loan balances, being a function of ongoing and simultaneous loan repayments and loan redraws in Fiat currency off-chain. Accordingly, these Fiat currency transactions can only be viewed via CSV download at this current point in time.",
     "borrowerFundsCSV": "Download CSV to view fiat currency funds flow on a per borrower basis:",
     "sections": {
       "aggregated": {
@@ -871,8 +870,8 @@
   },
   "home": {
     "tabs": {
-      "activePools": "Active Pools",
-      "closedPools": "Closed pools"
+      "activePools": "Active Strategies",
+      "closedPools": "Closed strategies"
     },
     "summary": {
       "metric-1": "Total Value Locked (TVL)",
@@ -912,7 +911,7 @@
       },
       "yieldEarnings": {
         "title": "Interest Earnings",
-        "tooltip": "The total amount of interest you have earned from USDC investments in Lending Pools since your very first deposit."
+        "tooltip": "The total amount of interest you have earned from USDC investments in Lending Strategies since your very first deposit."
       },
       "ksuBonusRewards": {
         "title": "KSU Bonus & Rewards",

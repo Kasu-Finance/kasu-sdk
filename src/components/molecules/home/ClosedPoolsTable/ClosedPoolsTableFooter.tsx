@@ -1,6 +1,8 @@
 import { TableCell, TableRow, Typography } from '@mui/material'
 import React from 'react'
 
+import useTranslation from '@/hooks/useTranslation'
+
 import { formatPercentage } from '@/utils'
 
 enum RowName {
@@ -28,6 +30,8 @@ const averageAndTotalRows = [
 ]
 
 const ClosedPoolsTableFooter: React.FC = () => {
+  const { t } = useTranslation()
+
   return (
     <>
       {averageAndTotalRows.map((row, index) => (
@@ -59,7 +63,7 @@ const ClosedPoolsTableFooter: React.FC = () => {
             </Typography>
             {row.name === RowName.Average && (
               <Typography variant='caption' component='span'>
-                Per Pool
+                {t('general.perPool')}
               </Typography>
             )}
           </TableCell>
@@ -73,7 +77,7 @@ const ClosedPoolsTableFooter: React.FC = () => {
             </Typography>
             {row.name === RowName.Average && (
               <Typography variant='caption' component='span'>
-                Per Pool
+                {t('general.perPool')}
               </Typography>
             )}
           </TableCell>
@@ -85,7 +89,7 @@ const ClosedPoolsTableFooter: React.FC = () => {
             </Typography>
             {row.name === RowName.Average && (
               <Typography variant='caption' component='span'>
-                Weighted
+                {t('general.weighted')}
               </Typography>
             )}
           </TableCell>

@@ -15,7 +15,9 @@ const LendingPortfolioTableHeader = () => {
         })}
       >
         <TableCell rowSpan={2} width='17%'>
-          <Typography variant='subtitle2'>{t('general.pool')}</Typography>
+          <Typography variant='subtitle2'>
+            {t('general.lendingStrategy')}
+          </Typography>
         </TableCell>
         <TableCell rowSpan={2} align='right' width='17%' className='apy'>
           <Typography variant='subtitle2'>{t('general.apy')}</Typography>
