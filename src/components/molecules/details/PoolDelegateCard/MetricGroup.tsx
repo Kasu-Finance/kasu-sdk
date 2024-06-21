@@ -35,7 +35,11 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
 
     const metricContent =
       metric.id === PoolDelegateMetricIds.History
-        ? formatDuration(Number(metric.content))
+        ? formatDuration(String(metric.content), {
+            years: true,
+            months: true,
+            days: true,
+          })
         : metric.content || ''
 
     switch (type) {

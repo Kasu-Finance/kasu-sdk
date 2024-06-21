@@ -13,31 +13,31 @@ const HomeStatsCard: React.FC<{
   const metrics = useMemo(() => {
     return [
       {
-        titleKey: 'details.poolTraction.valueLocked.label',
-        tooltipKey: 'details.poolTraction.valueLocked.tooltip',
+        titleKey: 'home.summary.metric-1',
+        tooltipKey: 'home.summary.metric-1-tooltip',
         content: `${formatAmount(data?.totalValueLocked || '0', { minValue: 1_000_000 })}`,
         unit: 'USDC',
       },
       {
-        titleKey: 'details.poolTraction.management.label',
-        tooltipKey: 'details.poolTraction.management.tooltip',
+        titleKey: 'home.summary.metric-2',
+        tooltipKey: 'home.summary.metric-2-tooltip',
         content: `${formatAmount(data?.loansUnderManagement || '0', { minValue: 1_000_000 })}`,
         unit: 'USDC',
       },
       {
-        titleKey: 'details.poolDelegate.totalFunds.label',
-        tooltipKey: 'details.poolDelegate.totalFunds.tooltip',
+        titleKey: 'home.summary.metric-3',
+        tooltipKey: 'home.summary.metric-3-tooltip',
         content: `${formatAmount(data?.totalLoanFundsOriginated || '0', { minValue: 1_000_000 })}`,
         unit: 'USDC',
       },
       {
-        titleKey: 'details.poolTraction.yield.label',
-        tooltipKey: 'details.poolTraction.yield.tooltip',
+        titleKey: 'home.summary.metric-4',
+        tooltipKey: 'home.summary.metric-4-tooltip',
         content: `${formatPercentage(data?.totalYieldEarned || '0')}`,
       },
       {
-        titleKey: 'details.poolTraction.lossRate.label',
-        tooltipKey: 'details.poolTraction.lossRate.tooltip',
+        titleKey: 'home.summary.metric-5',
+        tooltipKey: 'home.summary.metric-5-tooltip',
         content: `${formatPercentage(data?.totalLossRate || '0')}`,
       },
     ]

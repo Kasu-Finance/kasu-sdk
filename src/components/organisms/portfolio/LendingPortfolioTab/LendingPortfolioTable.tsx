@@ -1,3 +1,6 @@
+import { TableCell, TableRow } from '@mui/material'
+import React from 'react'
+
 import useLendingPortfolioData from '@/hooks/portfolio/useLendingPortfolioData'
 
 import CustomTable from '@/components/molecules/CustomTable'
@@ -14,17 +17,32 @@ export const LENDING_PORTFOLIO_KEYS = [
   'totalYieldEarningsLifetime',
 ] as const
 
-const LendingPortfolioTable = () => {
+type LendingPortfolioTableProps = {
+  filter: {
+    activePools: boolean
+    closedPools: boolean
+  }
+}
+
+const LendingPortfolioTable: React.FC<LendingPortfolioTableProps> = ({
+  filter,
+}) => {
   const { lendingPortfolioData, isLoading } = useLendingPortfolioData()
 
   if (isLoading || !lendingPortfolioData)
     return <TableSkeleton rows={6} columns={3} />
 
+  const filteredPools = lendingPortfolioData.lendingPools.filter(
+    ({ isActive }) =>
+      (filter.activePools && filter.closedPools) ||
+      (filter.activePools === isActive && filter.closedPools !== isActive)
+  )
+
   return (
     <CustomTable
       headers={LendingPortfolioTableHeader}
       sortKeys={LENDING_PORTFOLIO_KEYS}
-      data={lendingPortfolioData.lendingPools}
+      data={filteredPools}
       defaultSortKey='weightedApy'
       handleSort={() => 0}
       headersStyle={{
@@ -42,11 +60,7 @@ const LendingPortfolioTable = () => {
           },
         },
       }}
-      footer={
-        <LendingPortfolioTableFooter
-          lendingPortfolio={lendingPortfolioData!.lendingPools}
-        />
-      }
+      footer={<LendingPortfolioTableFooter lendingPortfolio={filteredPools} />}
       footerStyle={{
         '& .MuiTableCell-root': {
           background: 'none',
@@ -56,11 +70,21 @@ const LendingPortfolioTable = () => {
       }}
     >
       {(data) =>
-        data.map((userPortfolio, index) => {
-          return (
-            <LendingPortfolioTableRow portfolio={userPortfolio} key={index} />
-          )
-        })
+        data.length ? (
+          data.map((userPortfolio, index) => {
+            return (
+              <LendingPortfolioTableRow portfolio={userPortfolio} key={index} />
+            )
+          })
+        ) : (
+          <TableRow>
+            <TableCell>
+              {lendingPortfolioData.lendingPools.length
+                ? 'No pools match the filter'
+                : 'No data available'}
+            </TableCell>
+          </TableRow>
+        )
       }
     </CustomTable>
   )

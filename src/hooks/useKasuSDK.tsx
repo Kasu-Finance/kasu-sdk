@@ -3,20 +3,23 @@ import { KasuSdk } from '@solidant/kasu-sdk'
 import { useWeb3React } from '@web3-react/core'
 import useSWR from 'swr'
 
-import sdkConfig from '@/config/sdk'
+import sdkConfig, { NETWORK } from '@/config/sdk'
 import { SupportedChainIds } from '@/connection/chains'
 import { RPC_URLS } from '@/connection/rpc'
 
-const fallbackProvider = new JsonRpcProvider(
-  RPC_URLS[SupportedChainIds.BASE_SEPOLIA][0]
-)
+const chain =
+  NETWORK === 'BASE' ? SupportedChainIds.BASE : SupportedChainIds.BASE_SEPOLIA
+
+const fallbackProvider = new JsonRpcProvider(RPC_URLS[chain][0])
 
 const useKasuSDK = () => {
-  const { provider } = useWeb3React()
+  const { provider, account } = useWeb3React()
 
   const { data, error } = useSWR(
-    provider ? ['kasuSDK', provider] : null,
-    ([_, library]) => new KasuSdk(sdkConfig, library.getSigner() ?? library),
+    account && provider ? ['kasuSDK', provider] : null,
+    async ([_, library]) => {
+      return new KasuSdk(sdkConfig, library.getSigner())
+    },
     { fallbackData: new KasuSdk(sdkConfig, fallbackProvider) }
   )
 

@@ -5,6 +5,7 @@ import {
   DialogActions,
   DialogContent,
   Grid,
+  Skeleton,
   Typography,
 } from '@mui/material'
 
@@ -36,7 +37,7 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const latestEvent = transactionEvents[transactionEvents.length - 1]
 
-  const { nextClearingPeriod } = useNextClearingPeriod()
+  const { nextClearingPeriod, isLoading } = useNextClearingPeriod()
 
   const formattedTime = formatTimestamp(nextClearingPeriod, {
     format: 'DD.MM.YYYY HH:mm:ss',
@@ -66,8 +67,8 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <InfoColumn
-                title='Deposit To'
-                toolTipInfo='info'
+                title={t('modals.cancelDeposit.metric-1')}
+                toolTipInfo={t('modals.cancelDeposit.metric-1-tooltip')}
                 showDivider
                 metric={
                   <Typography pt='6px' pl={2} variant='h6' component='span'>
@@ -77,8 +78,9 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               />
               {transactionHistory.lendingPool.tranches.length > 1 && (
                 <InfoColumn
-                  title='Tranche'
-                  toolTipInfo='info'
+                  title={t('general.tranche')}
+                  titleStyle={{ textTransform: 'capitalize' }}
+                  toolTipInfo={t('modals.cancelDeposit.metric-2-tooltip')}
                   showDivider
                   metric={
                     <Typography pt='6px' pl={2} variant='h6' component='span'>
@@ -90,8 +92,8 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             </Grid>
             <Grid item xs={6}>
               <InfoColumn
-                title='Lending Request Amount'
-                toolTipInfo='info'
+                title={t('modals.cancelDeposit.metric-3')}
+                toolTipInfo={t('modals.cancelDeposit.metric-3-tooltip')}
                 showDivider
                 metric={
                   <TokenAmount
@@ -104,8 +106,8 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                 }
               />
               <InfoColumn
-                title='Deposit Request Date'
-                toolTipInfo='info'
+                title={t('modals.cancelDeposit.metric-4')}
+                toolTipInfo={t('modals.cancelDeposit.metric-4-tooltip')}
                 showDivider
                 metric={
                   <Box pt='6px' pl={2}>
@@ -128,29 +130,42 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             showDivider
             metric={
               <Box px={2} py='6px'>
-                <Typography variant='h6' component='span' display='block'>
-                  <Countdown
-                    endTime={nextClearingPeriod}
-                    format='D:HH:mm'
-                    render={(countDown) => {
-                      const parts = countDown.split(':')
-
-                      return `${parts[0]} ${t('time.days')} • ${parts[1]} ${t(
-                        'time.hours'
-                      )} • ${parts[2]} ${t('time.minutes')}`
-                    }}
-                  />
-                </Typography>
-                <Typography variant='body1' color='grey.500'>
-                  {formattedTime.date} • {formattedTime.timestamp}{' '}
-                  <Typography
-                    variant='caption'
-                    color='inherit'
-                    component='span'
-                  >
-                    {formattedTime.utcOffset}
-                  </Typography>
-                </Typography>
+                {isLoading ? (
+                  <>
+                    <Skeleton variant='rounded' height={28} width={200} />
+                    <Skeleton
+                      variant='rounded'
+                      height={18}
+                      width={150}
+                      sx={{ mt: 1 }}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Typography variant='h6' component='span' display='block'>
+                      <Countdown
+                        endTime={nextClearingPeriod}
+                        format='D:HH:mm'
+                        render={(countDown) => {
+                          const [days, hours, minutes] = countDown.split(':')
+                          return `${days} ${t('time.days')} • ${hours} ${t(
+                            'time.hours'
+                          )} • ${minutes} ${t('time.minutes')}`
+                        }}
+                      />
+                    </Typography>
+                    <Typography variant='body1' color='grey.500'>
+                      {formattedTime.date} • {formattedTime.timestamp}{' '}
+                      <Typography
+                        variant='caption'
+                        color='inherit'
+                        component='span'
+                      >
+                        {formattedTime.utcOffset}
+                      </Typography>
+                    </Typography>
+                  </>
+                )}
               </Box>
             }
           />
@@ -162,7 +177,7 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           startIcon={<DeleteIcon />}
           onClick={handleCancel}
         >
-          Cancel Lending Request
+          {t('modals.cancelDeposit.cancel-button')}
         </Button>
       </DialogActions>
     </>

@@ -27,7 +27,7 @@ const RiskManagementCard: React.FC<RiskManagementCardProps> = ({ data }) => {
     [data]
   )
 
-  const groupedItems = useMemo(() => {
+  const securityStructureItems = useMemo(() => {
     return data.items.reduce<Record<string, RiskManagementItem[]>>(
       (acc, item) => {
         acc[item.group] = acc[item.group] || []
@@ -56,7 +56,7 @@ const RiskManagementCard: React.FC<RiskManagementCardProps> = ({ data }) => {
           width='100%'
         >
           {/* Render groups and items within each group */}
-          {Object.entries(groupedItems).map(([group, items]) => (
+          {Object.entries(securityStructureItems).map(([group, items]) => (
             <Box
               key={group}
               display='flex'

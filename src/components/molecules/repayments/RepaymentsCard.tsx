@@ -4,6 +4,7 @@ import {
   CardContent,
   CardHeader,
   Grid,
+  Skeleton,
   Typography,
 } from '@mui/material'
 import { PoolRepayment } from '@solidant/kasu-sdk/src/services/DataService/types'
@@ -30,7 +31,7 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
   const currentDevice = useDeviceDetection()
   const isMobile = currentDevice === Device.MOBILE
 
-  const { nextClearingPeriod } = useNextClearingPeriod()
+  const { nextClearingPeriod, isLoading } = useNextClearingPeriod()
 
   const repaymentsData = adaptDataForRepayments(data)
   const endBorrowerFunds = data?.currentTotalEndBorrowers ?? 0
@@ -103,28 +104,42 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
               title={t('general.nextClearingPeriodStart')}
               metric={
                 <Box px={2} py='6px'>
-                  <Typography variant='h6' component='span' display='block'>
-                    <Countdown
-                      endTime={nextClearingPeriod}
-                      format='D:HH:mm'
-                      render={(countDown) => {
-                        const [days, hours, minutes] = countDown.split(':')
-                        return `${days} ${t('time.days')} • ${hours} ${t(
-                          'time.hours'
-                        )} • ${minutes} ${t('time.minutes')}`
-                      }}
-                    />
-                  </Typography>
-                  <Typography variant='body1' color='grey.500'>
-                    {formattedTime.date} • {formattedTime.timestamp}{' '}
-                    <Typography
-                      variant='caption'
-                      color='inherit'
-                      component='span'
-                    >
-                      {formattedTime.utcOffset}
-                    </Typography>
-                  </Typography>
+                  {isLoading ? (
+                    <>
+                      <Skeleton variant='rounded' height={28} width={200} />
+                      <Skeleton
+                        variant='rounded'
+                        height={18}
+                        width={150}
+                        sx={{ mt: 1 }}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <Typography variant='h6' component='span' display='block'>
+                        <Countdown
+                          endTime={nextClearingPeriod}
+                          format='D:HH:mm'
+                          render={(countDown) => {
+                            const [days, hours, minutes] = countDown.split(':')
+                            return `${days} ${t('time.days')} • ${hours} ${t(
+                              'time.hours'
+                            )} • ${minutes} ${t('time.minutes')}`
+                          }}
+                        />
+                      </Typography>
+                      <Typography variant='body1' color='grey.500'>
+                        {formattedTime.date} • {formattedTime.timestamp}{' '}
+                        <Typography
+                          variant='caption'
+                          color='inherit'
+                          component='span'
+                        >
+                          {formattedTime.utcOffset}
+                        </Typography>
+                      </Typography>
+                    </>
+                  )}
                 </Box>
               }
             />

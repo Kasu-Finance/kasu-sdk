@@ -20,7 +20,8 @@ const convertToPoolTraction = (overview: PoolOverview): PoolDetailSection => {
     },
     {
       id: PoolTractionMetricIds.Yield,
-      content: formatPercentage(overview.yieldEarned),
+      content: formatAmount(overview.yieldEarned),
+      unit: 'USDC',
     },
     {
       id: PoolTractionMetricIds.Capacity,

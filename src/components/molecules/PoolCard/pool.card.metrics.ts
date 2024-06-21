@@ -71,8 +71,8 @@ export const getPoolCardMetrics = (
       value: poolDelegate.delegateLendingHistory
         ? String(
             formatDuration(poolDelegate.delegateLendingHistory, {
+              years: true,
               months: true,
-              days: true,
             })
           )
         : 'N/A',
