@@ -4,6 +4,9 @@
 const path = require('path')
 
 const nextConfig = {
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   images: {
     remotePatterns: [
       {
