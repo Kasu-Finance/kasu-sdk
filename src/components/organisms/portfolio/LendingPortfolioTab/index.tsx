@@ -1,14 +1,20 @@
 import { CardContent } from '@mui/material'
+import { useState } from 'react'
 
 import LendingPortfolioTabHeader from '@/components/molecules/portfolio/lendingPortfolioTab/LendingPortfolioTabHeader'
 import LendingPortfolioTable from '@/components/organisms/portfolio/LendingPortfolioTab/LendingPortfolioTable'
 
 const LendingPortfolioTab = () => {
+  const [filter, setFilter] = useState({
+    activePools: true,
+    closedPools: true,
+  })
+
   return (
     <>
-      <LendingPortfolioTabHeader />
+      <LendingPortfolioTabHeader filter={filter} setFilter={setFilter} />
       <CardContent>
-        <LendingPortfolioTable />
+        <LendingPortfolioTable filter={filter} />
       </CardContent>
     </>
   )
