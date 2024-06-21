@@ -5,6 +5,7 @@ import {
   DialogActions,
   DialogContent,
   Grid,
+  Skeleton,
   Typography,
 } from '@mui/material'
 
@@ -36,7 +37,7 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const latestEvent = transactionEvents[transactionEvents.length - 1]
 
-  const { nextClearingPeriod } = useNextClearingPeriod()
+  const { nextClearingPeriod, isLoading } = useNextClearingPeriod()
 
   const formattedTime = formatTimestamp(nextClearingPeriod, {
     format: 'DD.MM.YYYY HH:mm:ss',
@@ -129,29 +130,42 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             showDivider
             metric={
               <Box px={2} py='6px'>
-                <Typography variant='h6' component='span' display='block'>
-                  <Countdown
-                    endTime={nextClearingPeriod}
-                    format='D:HH:mm'
-                    render={(countDown) => {
-                      const parts = countDown.split(':')
-
-                      return `${parts[0]} ${t('time.days')} • ${parts[1]} ${t(
-                        'time.hours'
-                      )} • ${parts[2]} ${t('time.minutes')}`
-                    }}
-                  />
-                </Typography>
-                <Typography variant='body1' color='grey.500'>
-                  {formattedTime.date} • {formattedTime.timestamp}{' '}
-                  <Typography
-                    variant='caption'
-                    color='inherit'
-                    component='span'
-                  >
-                    {formattedTime.utcOffset}
-                  </Typography>
-                </Typography>
+                {isLoading ? (
+                  <>
+                    <Skeleton variant='rounded' height={28} width={200} />
+                    <Skeleton
+                      variant='rounded'
+                      height={18}
+                      width={150}
+                      sx={{ mt: 1 }}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Typography variant='h6' component='span' display='block'>
+                      <Countdown
+                        endTime={nextClearingPeriod}
+                        format='D:HH:mm'
+                        render={(countDown) => {
+                          const [days, hours, minutes] = countDown.split(':')
+                          return `${days} ${t('time.days')} • ${hours} ${t(
+                            'time.hours'
+                          )} • ${minutes} ${t('time.minutes')}`
+                        }}
+                      />
+                    </Typography>
+                    <Typography variant='body1' color='grey.500'>
+                      {formattedTime.date} • {formattedTime.timestamp}{' '}
+                      <Typography
+                        variant='caption'
+                        color='inherit'
+                        component='span'
+                      >
+                        {formattedTime.utcOffset}
+                      </Typography>
+                    </Typography>
+                  </>
+                )}
               </Box>
             }
           />

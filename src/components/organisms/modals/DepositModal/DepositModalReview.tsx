@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Typography } from '@mui/material'
+import { Box, Button, Grid, Skeleton, Typography } from '@mui/material'
 import React from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
@@ -32,7 +32,7 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
 
   const handleOpen = () => openModal({ name: ModalsKeys.LOYALTY_LEVELS })
 
-  const { nextClearingPeriod } = useNextClearingPeriod()
+  const { nextClearingPeriod, isLoading } = useNextClearingPeriod()
 
   const formattedTimeNow = formatTimestamp(dayjs().unix(), {
     format: 'DD.MM.YYYY HH:mm:ss',
@@ -170,26 +170,45 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
         showDivider
         metric={
           <Box px={2} py='6px'>
-            <Typography variant='h6' component='span' display='block'>
-              <Countdown
-                endTime={nextClearingPeriod}
-                format='D:HH:mm'
-                render={(countDown) => {
-                  const parts = countDown.split(':')
+            {isLoading ? (
+              <>
+                <Skeleton variant='rounded' height={28} width={200} />
+                <Skeleton
+                  variant='rounded'
+                  height={18}
+                  width={150}
+                  sx={{ mt: 1 }}
+                />
+              </>
+            ) : (
+              <>
+                {' '}
+                <Typography variant='h6' component='span' display='block'>
+                  <Countdown
+                    endTime={nextClearingPeriod}
+                    format='D:HH:mm'
+                    render={(countDown) => {
+                      const parts = countDown.split(':')
 
-                  return `${parts[0]} ${t('time.days')} • ${parts[1]} ${t(
-                    'time.hours'
-                  )} • ${parts[2]} ${t('time.minutes')}`
-                }}
-              />
-            </Typography>
-            <Typography variant='body1' color='grey.500'>
-              {formattedNextClearingPeriod.date} •{' '}
-              {formattedNextClearingPeriod.timestamp}{' '}
-              <Typography variant='caption' color='inherit' component='span'>
-                {formattedNextClearingPeriod.utcOffset}
-              </Typography>
-            </Typography>
+                      return `${parts[0]} ${t('time.days')} • ${parts[1]} ${t(
+                        'time.hours'
+                      )} • ${parts[2]} ${t('time.minutes')}`
+                    }}
+                  />
+                </Typography>
+                <Typography variant='body1' color='grey.500'>
+                  {formattedNextClearingPeriod.date} •{' '}
+                  {formattedNextClearingPeriod.timestamp}{' '}
+                  <Typography
+                    variant='caption'
+                    color='inherit'
+                    component='span'
+                  >
+                    {formattedNextClearingPeriod.utcOffset}
+                  </Typography>
+                </Typography>
+              </>
+            )}
           </Box>
         }
       />
