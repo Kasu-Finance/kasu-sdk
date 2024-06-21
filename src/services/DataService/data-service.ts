@@ -213,15 +213,18 @@ export class DataService {
                 (a, b) => a + b,
                 0,
             );
+
             const poolCapacityPercentageSum =
                 poolCapacities.poolCapacityPercentage.reduce(
                     (a, b) => a + b,
                     0,
                 ) / poolCapacities.poolCapacity.length;
+
             const trancheBalanceSum = lendingPoolSubgraph.tranches.reduce(
                 (a, b) => a + parseFloat(b.balance),
                 0,
             );
+
             let averageApy = 0;
             for (const tranche of lendingPoolSubgraph.tranches) {
                 const trancheData = tranches.find(
@@ -311,7 +314,6 @@ export class DataService {
         const poolDelegateProfileAndHistoryDirectus: PoolDelegateProfileAndHistoryDirectus[] =
             (await this._directus.request(
                 readItems('PoolDelegateProfileAndHistory', {
-                    // @ts-ignore:next-line
                     // @ts-expect-error: disable ts check
                     fields: ['*', { otherPools: ['*'] }],
                 }),
