@@ -31,6 +31,15 @@ const OverviewDetails: React.FC<{
     days: true,
   })
 
+  const totalLossRateParts = t(
+    'lending.poolOverview.detailCard.totalLossRate.label'
+  ).split(' ')
+
+  const totalLossRate = {
+    total: totalLossRateParts[0],
+    lossRate: totalLossRateParts.slice(1).join(' '),
+  }
+
   return (
     <Box>
       <Grid
@@ -107,12 +116,8 @@ const OverviewDetails: React.FC<{
                 </Grid>
                 <Grid item xs={6}>
                   <InfoColumn
-                    title={t(
-                      'lending.poolOverview.detailCard.totalLossRate.label'
-                    )}
-                    subtitle={t(
-                      'lending.poolOverview.detailCard.totalLossRate.sublabel'
-                    )}
+                    title={totalLossRate.total}
+                    subtitle={totalLossRate.lossRate}
                     subtitleStyle={{
                       display: 'block',
                       variant: 'subtitle2',

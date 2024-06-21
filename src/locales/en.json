@@ -425,11 +425,9 @@
           "sublabel": "Interest Earned",
           "tooltip": "Cumulative total gross interest earned by Liquidity Providers from this Lending Strategy since its inception on the Kasu protocol."
         },
-        "totalLossRate-label": {
-          "label": "Total Loss Rate"
-        },
+
         "totalLossRate": {
-          "label": "Total",
+          "label": "Total Loss Rate",
           "sublabel": "Loss Rate",
           "tooltip": "​Total unrecoverable losses expressed as a percentage of total loans associated with this Lending Strategy."
         }
