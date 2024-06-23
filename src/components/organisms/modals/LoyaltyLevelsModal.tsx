@@ -41,6 +41,15 @@ const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             {t('modals.loyaltyLevels.description-2')}
           </Typography>
           <LoyaltyLevelInfo
+            title={t('locking.widgets.loyalty.level.level-0.title')}
+            subtitle={t('locking.widgets.loyalty.level.level-0.subtitle')}
+            list={[
+              t('locking.widgets.loyalty.level.level-0.list.list-0'),
+              t('locking.widgets.loyalty.level.level-0.list.list-1'),
+              t('locking.widgets.loyalty.level.level-0.list.list-2'),
+            ]}
+          />
+          <LoyaltyLevelInfo
             title={t('locking.widgets.loyalty.level.level-1.title')}
             subtitle={t('locking.widgets.loyalty.level.level-1.subtitle')}
             list={[

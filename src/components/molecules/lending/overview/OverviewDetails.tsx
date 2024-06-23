@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Card, Grid } from '@mui/material'
+import { Box, Card, Grid, Typography } from '@mui/material'
 import {
   PoolDelegateProfileAndHistory,
   PoolOverview,
@@ -33,25 +33,22 @@ const OverviewDetails: React.FC<{
 
   return (
     <Box>
-      <Grid
-        container
-        justifyContent='flex-start'
-        alignItems='stretch'
-        direction={isMobile ? 'column' : 'row'}
-        sx={{ height: isMobile ? 'auto' : '248px' }}
-      >
-        <Grid item xs={6} sx={{ height: '100%' }} alignItems='stretch'>
+      <Grid container columns={isMobile ? 6 : 12}>
+        <Grid item xs={6}>
           <Card
             sx={{
               p: 2,
               height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
             }}
           >
             <Grid
               container
               columnSpacing={2}
               sx={{ pb: 3 }}
-              direction={isMobile ? 'column' : 'row'}
+              columns={isMobile ? 6 : 12}
             >
               <Grid item xs={6}>
                 <MetricWithSuffix
@@ -138,19 +135,21 @@ const OverviewDetails: React.FC<{
             </Box>
           </Card>
         </Grid>
-        <Grid
-          item
-          xs={6}
-          sx={{ height: '100%' }}
-          alignItems='stretch'
-          direction={isMobile ? 'column' : 'row'}
-        >
-          <Card sx={{ p: 2, height: '100%' }}>
+        <Grid item xs={6}>
+          <Card
+            sx={{
+              p: 2,
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+            }}
+          >
             <Grid
               container
               columnSpacing={2}
               sx={{ pb: 3 }}
-              direction={isMobile ? 'column' : 'row'}
+              columns={isMobile ? 6 : 12}
             >
               <Grid item xs={6}>
                 <MetricWithSuffix
@@ -174,7 +173,11 @@ const OverviewDetails: React.FC<{
                 )}
                 title={t('lending.poolOverview.detailCard.industry.label')}
                 showDivider
-                metric={pool.industryExposure}
+                metric={
+                  <Typography variant='inherit' maxWidth={300}>
+                    {pool.industryExposure}
+                  </Typography>
+                }
               />
               <InfoRow
                 toolTipInfo={t('lending.poolOverview.detailCard.terms.tooltip')}
