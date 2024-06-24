@@ -43,26 +43,24 @@ const RenderMetrics: React.FC<RenderMetricsProps> = ({ data, sectionKey }) => {
 
         if (renderAsRow) {
           return (
-            <>
-              {dynamicLabel !== 'N/A' && (
-                <InfoRow
-                  key={baseKey}
-                  title={dynamicLabel || t(labelKey)}
-                  toolTipInfo={dynamicLabel ? '' : t(tooltipKey)}
-                  titleStyle={{ variant: isMobile ? 'body1' : 'h6' }}
-                  showDivider
-                  metric={
-                    <ContentWithSuffix
-                      content={String(metric.content)}
-                      suffix={metric.unit}
-                      variant={isMobile ? 'body2' : 'h6'}
-                      suffixVariant={isMobile ? 'caption' : 'body1'}
-                    />
-                  }
-                  sx={{ flexDirection: 'row' }}
-                />
-              )}
-            </>
+            dynamicLabel !== 'N/A' && (
+              <InfoRow
+                key={baseKey}
+                title={dynamicLabel || t(labelKey)}
+                toolTipInfo={dynamicLabel ? '' : t(tooltipKey)}
+                titleStyle={{ variant: isMobile ? 'body1' : 'h6' }}
+                showDivider
+                metric={
+                  <ContentWithSuffix
+                    content={String(metric.content)}
+                    suffix={metric.unit}
+                    variant={isMobile ? 'body2' : 'h6'}
+                    suffixVariant={isMobile ? 'caption' : 'body1'}
+                  />
+                }
+                sx={{ flexDirection: 'row' }}
+              />
+            )
           )
         } else {
           return (
