@@ -54,7 +54,7 @@ export const getPoolCardMetrics = (
     {
       id: PoolDelegateMetricIds.Security,
       title: 'lending.poolOverview.detailCard.security',
-      value: 'N/A',
+      value: pool.security || 'N/A',
       suffix: '',
       isCollapsed: true,
       sx: {
