@@ -12,6 +12,7 @@ export interface DirectusSchema {
 export interface PoolOverviewDirectus {
     id: string;
     enabled: boolean;
+    security: string;
     apy: number;
     description: string;
     bannerImage: string;

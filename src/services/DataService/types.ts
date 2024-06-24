@@ -16,6 +16,7 @@ export interface PoolOverview {
     poolCapacityPercentage: string;
     activeLoans: string;
     assetClass: string;
+    security: string;
     industryExposure: string;
     poolApyStructure: string;
     poolInvestmentTerm: string;

@@ -245,6 +245,7 @@ export class DataService {
             }
             const poolOverview: PoolOverview = {
                 id: lendingPoolSubgraph.id,
+                security: lendingPoolDirectus.security,
                 enabled: lendingPoolDirectus.enabled,
                 apy: averageApy,
                 poolAddress: lendingPoolSubgraph.id,
