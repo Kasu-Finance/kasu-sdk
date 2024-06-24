@@ -128,14 +128,17 @@ function handleDynamicMetric(
   data: PoolRepayment,
   sections: RepaymentsSections
 ): void {
-  const label = (data[key as keyof typeof data] as string) || 'N/A'
+  const label = data[key as keyof typeof data]
+
+  if (!label) return
+
   const valueKey = key.replace('Key', 'Value') as keyof typeof data
   const metricValue = formatNumber(String(data[valueKey]))
 
   sections.upcomingFunds.metrics.push({
     id: key,
     content: metricValue,
-    label,
+    label: label.toString(),
     unit: 'USD',
   })
 }

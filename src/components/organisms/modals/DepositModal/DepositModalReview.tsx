@@ -51,7 +51,7 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
   return (
     <Box display='grid' gap={2} mt={2}>
       <ColoredBox>
-        <Grid container spacing={2}>
+        <Grid container columnSpacing={2} rowSpacing={1.5}>
           <Grid item xs={6}>
             <InfoColumn
               title={t('modals.lending.review.metric-1')}
@@ -64,13 +64,30 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
                   display='block'
                   px={2}
                   py='5px'
-                  mb='10px'
                 >
                   {poolData.poolName}
                 </Typography>
               }
             />
-            {poolData.tranches.length > 1 && selectedTranche && (
+          </Grid>
+          <Grid item xs={6}>
+            <InfoColumn
+              title={t('modals.lending.review.metric-3')}
+              toolTipInfo={t('modals.lending.review.metric-3-tooltip')}
+              showDivider
+              metric={
+                <TokenAmount
+                  px={2}
+                  amount={formatAmount(amountInUSD || amount || '0', {
+                    maxDecimals: 4,
+                  })}
+                  symbol='USDC'
+                />
+              }
+            />
+          </Grid>
+          {poolData.tranches.length > 1 && selectedTranche && (
+            <Grid item xs={6}>
               <InfoColumn
                 title={t('general.tranche')}
                 toolTipInfo={t('modals.lending.review.metric-5-tooltip')}
@@ -82,13 +99,32 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
                     display='block'
                     px={2}
                     pt='5px'
-                    mb='10px'
                   >
                     {selectedTranche.title}
                   </Typography>
                 }
               />
-            )}
+            </Grid>
+          )}
+          <Grid
+            item
+            xs={6}
+            order={poolData.tranches.length > 1 ? undefined : 5} // change layout order
+          >
+            <InfoColumn
+              title={t('modals.lending.review.metric-4')}
+              toolTipInfo={t('modals.lending.review.metric-4-tooltip')}
+              showDivider
+              metric={
+                <TokenAmount
+                  px={2}
+                  amount={formatAmount(poolData.totalUserInvestment || '0')}
+                  symbol='USDC'
+                />
+              }
+            />
+          </Grid>
+          <Grid item xs={6}>
             <InfoColumn
               title={t('modals.lending.review.metric-2')}
               toolTipInfo={t('modals.lending.review.metric-2-tooltip')}
@@ -113,35 +149,6 @@ const DepositModalReview: React.FC<DepositModalReviewProps> = ({
                     </Typography>
                   </Box>
                 </>
-              }
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <InfoColumn
-              title={t('modals.lending.review.metric-3')}
-              toolTipInfo={t('modals.lending.review.metric-3-tooltip')}
-              showDivider
-              metric={
-                <TokenAmount
-                  px={2}
-                  amount={formatAmount(amountInUSD || amount || '0', {
-                    maxDecimals: 4,
-                  })}
-                  symbol='USDC'
-                />
-              }
-            />
-            <InfoColumn
-              title={t('modals.lending.review.metric-4')}
-              toolTipInfo={t('modals.lending.review.metric-4-tooltip')}
-              showDivider
-              containerSx={{ mt: 2.5 }}
-              metric={
-                <TokenAmount
-                  px={2}
-                  amount={formatAmount(poolData.totalUserInvestment || '0')}
-                  symbol='USDC'
-                />
               }
             />
           </Grid>
