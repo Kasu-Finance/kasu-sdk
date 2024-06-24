@@ -90,6 +90,7 @@ export interface PoolCreditMetrics {
     previousFiscalYear: number;
     mostRecentQuarter: number;
     priorMonth: number;
+    tooltip: string;
 }
 
 export interface BadAndDoubtfulDebts {
@@ -102,6 +103,7 @@ export interface BadAndDoubtfulDebts {
     monthlyAveragePercentage: number;
     currentStatusAmount: number;
     currentStatusPercentage: number;
+    tooltip: string;
 }
 
 export interface PoolRepayment {
