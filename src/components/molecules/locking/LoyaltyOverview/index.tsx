@@ -59,26 +59,20 @@ const LoyaltyOverview = () => {
             isLoyal ? currentLevel : 0
           }.title`
         )}
-        subtitle={
-          isLoyal
-            ? t(`locking.widgets.loyalty.level.level-${currentLevel}.subtitle`)
-            : undefined
-        }
-        list={
-          isLoyal
-            ? [
-                t(
-                  `locking.widgets.loyalty.level.level-${currentLevel}.list.list-0`
-                ),
-                t(
-                  `locking.widgets.loyalty.level.level-${currentLevel}.list.list-1`
-                ),
-                t(
-                  `locking.widgets.loyalty.level.level-${currentLevel}.list.list-2`
-                ),
-              ]
-            : undefined
-        }
+        subtitle={t(
+          `locking.widgets.loyalty.level.level-${isLoyal ? currentLevel : 0}.subtitle`
+        )}
+        list={[
+          t(
+            `locking.widgets.loyalty.level.level-${isLoyal ? currentLevel : 0}.list.list-0`
+          ),
+          t(
+            `locking.widgets.loyalty.level.level-${isLoyal ? currentLevel : 0}.list.list-1`
+          ),
+          t(
+            `locking.widgets.loyalty.level.level-${isLoyal ? currentLevel : 0}.list.list-2`
+          ),
+        ]}
       />
       <InfoRow
         showDivider

@@ -12,7 +12,7 @@ const ImageWithFallback: React.FC<{
   src?: string
   alt?: string
   coverProps?: SxProps<Theme>
-}> = ({ src, alt = 'Pool Image', coverProps }) => {
+}> = ({ src, alt = 'Lending Strategy Image', coverProps }) => {
   const [imageError, setImageError] = useState<boolean>(false)
 
   const handleError = useCallback(() => {

@@ -131,7 +131,11 @@ const InvestmentPortfolio: React.FC<{
                     formatAmount(tranchesTotal.averageApy * 100 || '0') + ' %'
                   }
                   tooltipKey='lending.poolOverview.investmentCard.weightedAvgApy.tooltip'
-                  titleKey='lending.poolOverview.investmentCard.weightedAvgApy.label'
+                  titleKey={
+                    tranches.length > 1
+                      ? 'lending.poolOverview.investmentCard.weightedAvgApy.label'
+                      : 'general.apy'
+                  }
                 />
               </Grid>
               <Grid item xs={4}>

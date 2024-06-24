@@ -2,6 +2,8 @@ import { Badge, Box, TableCell, TableRow, Typography } from '@mui/material'
 import { PortfolioLendingPool } from '@solidant/kasu-sdk/src/services/Portfolio/types'
 import React from 'react'
 
+import useTranslation from '@/hooks/useTranslation'
+
 import PoolAvatar from '@/components/atoms/PoolAvatar'
 import LendingPortfolioTableCell from '@/components/molecules/portfolio/lendingPortfolioTab/LendingPortfolioTableCell'
 
@@ -14,6 +16,8 @@ type LendingPortfolioTableRowProps = {
 const LendingPortfolioTableRow: React.FC<LendingPortfolioTableRowProps> = ({
   portfolio,
 }) => {
+  const { t } = useTranslation()
+
   return (
     <>
       <TableRow sx={{ '& .MuiTableCell-root': { border: 'none' } }}>
@@ -51,8 +55,10 @@ const LendingPortfolioTableRow: React.FC<LendingPortfolioTableRowProps> = ({
           key={index}
         >
           <TableCell sx={{ py: '6px' }} width='17%'>
-            <Typography variant='caption'>
-              {portfolio.tranches.length > 1 ? tranche.name : 'Lending Pool'}
+            <Typography variant='caption' textTransform='capitalize'>
+              {portfolio.tranches.length > 1
+                ? tranche.name
+                : t('general.lendingStrategy')}
             </Typography>
           </TableCell>
           <TableCell sx={{ py: '6px', pr: 0 }} align='right' width='17%'>
