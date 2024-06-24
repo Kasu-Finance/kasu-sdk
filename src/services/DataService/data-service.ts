@@ -314,7 +314,7 @@ export class DataService {
         const poolDelegateProfileAndHistoryDirectus: PoolDelegateProfileAndHistoryDirectus[] =
             (await this._directus.request(
                 readItems('PoolDelegateProfileAndHistory', {
-                    // @ts-ignore: TODO: Fix this type error
+                    // @ts-ignore:next-line
                     fields: ['*', { otherPools: ['*'] }],
                 }),
             )) as unknown as PoolDelegateProfileAndHistoryDirectus[];
@@ -414,24 +414,24 @@ export class DataService {
         const retn: PoolRepayment[] = [];
         for (const data of poolRepaymentDirectus) {
             const upcomingLendingFundsFlow_1_Value =
-                data.upcomingLendingFundsFlow_1_Value &&
-                data.upcomingLendingFundsFlow_1_Key
-                    ? data.upcomingLendingFundsFlow_1_Value
+                data.UpcomingLendingFundsFlow_1_Value &&
+                data.UpcomingLendingFundsFlow_1_Key
+                    ? data.UpcomingLendingFundsFlow_1_Value
                     : 0.0;
             const upcomingLendingFundsFlow_2_Value =
-                data.upcomingLendingFundsFlow_2_Value &&
-                data.upcomingLendingFundsFlow_2_Key
-                    ? data.upcomingLendingFundsFlow_2_Value
+                data.UpcomingLendingFundsFlow_2_Value &&
+                data.UpcomingLendingFundsFlow_2_Key
+                    ? data.UpcomingLendingFundsFlow_2_Value
                     : 0.0;
             const upcomingLendingFundsFlow_3_Value =
-                data.upcomingLendingFundsFlow_3_Value &&
-                data.upcomingLendingFundsFlow_3_Key
-                    ? data.upcomingLendingFundsFlow_3_Value
+                data.UpcomingLendingFundsFlow_3_Value &&
+                data.UpcomingLendingFundsFlow_3_Key
+                    ? data.UpcomingLendingFundsFlow_3_Value
                     : 0.0;
             const upcomingLendingFundsFlow_4_Value =
-                data.upcomingLendingFundsFlow_4_Value &&
-                data.upcomingLendingFundsFlow_4_Key
-                    ? data.upcomingLendingFundsFlow_4_Value
+                data.UpcomingLendingFundsFlow_4_Value &&
+                data.UpcomingLendingFundsFlow_4_Key
+                    ? data.UpcomingLendingFundsFlow_4_Value
                     : 0.0;
             const lendingPoolSubgraph =
                 lendingPoolsWithdrawalsAndDepositsSubgraph.lendingPools.find(
@@ -461,25 +461,25 @@ export class DataService {
                 poolIdFK: data.poolIdFK.toLowerCase(),
                 currentTotalEndBorrowers: 0,
                 cumulativeLendingFundsFlow_InterestAccrued:
-                    data.cumulativeLendingFundsFlow_InterestAccrued,
+                    data.CumulativeLendingFundsFlow_InterestAccrued,
                 cumulativeLendingFundsFlow_InterestPayments:
-                    data.cumulativeLendingFundsFlow_InterestPayments,
+                    data.CumulativeLendingFundsFlow_InterestPayments,
                 cumulativeLendingFundsFlow_LoansDrawn:
-                    data.cumulativeLendingFundsFlow_LoansDrawn,
+                    data.CumulativeLendingFundsFlow_LoansDrawn,
                 cumulativeLendingFundsFlow_OpeningLoansBalance:
-                    data.cumulativeLendingFundsFlow_OpeningLoansBalance,
+                    data.CumulativeLendingFundsFlow_OpeningLoansBalance,
                 cumulativeLendingFundsFlow_PrincipalRepayments:
-                    data.cumulativeLendingFundsFlow_PrincipalRepayments,
+                    data.CumulativeLendingFundsFlow_PrincipalRepayments,
                 cumulativeLendingFundsFlow_UnrealisedLosses:
-                    data.cumulativeLendingFundsFlow_UnrealisedLosses,
+                    data.CumulativeLendingFundsFlow_UnrealisedLosses,
                 upcomingLendingFundsFlow_1_Key:
-                    data.upcomingLendingFundsFlow_1_Key ?? 'N/A',
+                    data.UpcomingLendingFundsFlow_1_Key,
                 upcomingLendingFundsFlow_2_Key:
-                    data.upcomingLendingFundsFlow_2_Key ?? 'N/A',
+                    data.UpcomingLendingFundsFlow_2_Key,
                 upcomingLendingFundsFlow_3_Key:
-                    data.upcomingLendingFundsFlow_3_Key ?? 'N/A',
+                    data.UpcomingLendingFundsFlow_3_Key,
                 upcomingLendingFundsFlow_4_Key:
-                    data.upcomingLendingFundsFlow_4_Key ?? 'N/A',
+                    data.UpcomingLendingFundsFlow_4_Key,
                 upcomingLendingFundsFlow_1_Value:
                     upcomingLendingFundsFlow_1_Value,
                 upcomingLendingFundsFlow_2_Value:
@@ -489,12 +489,12 @@ export class DataService {
                 upcomingLendingFundsFlow_4_Value:
                     upcomingLendingFundsFlow_4_Value,
                 cumulativeLendingFundsFlow_ClosingLoansBalance:
-                    data.cumulativeLendingFundsFlow_InterestAccrued +
-                    data.cumulativeLendingFundsFlow_InterestPayments +
-                    data.cumulativeLendingFundsFlow_LoansDrawn +
-                    data.cumulativeLendingFundsFlow_OpeningLoansBalance +
-                    data.cumulativeLendingFundsFlow_PrincipalRepayments +
-                    data.cumulativeLendingFundsFlow_UnrealisedLosses,
+                    data.CumulativeLendingFundsFlow_InterestAccrued +
+                    data.CumulativeLendingFundsFlow_InterestPayments +
+                    data.CumulativeLendingFundsFlow_LoansDrawn +
+                    data.CumulativeLendingFundsFlow_OpeningLoansBalance +
+                    data.CumulativeLendingFundsFlow_PrincipalRepayments +
+                    data.CumulativeLendingFundsFlow_UnrealisedLosses,
                 upcomingLendingFundsFlow_NetInflows:
                     upcomingLendingFundsFlow_1_Value +
                     upcomingLendingFundsFlow_2_Value +

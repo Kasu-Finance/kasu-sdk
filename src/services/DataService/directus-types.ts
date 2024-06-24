@@ -96,19 +96,19 @@ export interface FinancialReportingDocumentsDirectus {
 export interface PoolRepaymentDirectus {
     id: string;
     poolIdFK: string;
-    cumulativeLendingFundsFlow_InterestAccrued: number;
-    cumulativeLendingFundsFlow_InterestPayments: number;
-    cumulativeLendingFundsFlow_LoansDrawn: number;
-    cumulativeLendingFundsFlow_OpeningLoansBalance: number;
-    cumulativeLendingFundsFlow_PrincipalRepayments: number;
-    cumulativeLendingFundsFlow_UnrealisedLosses: number;
-    upcomingLendingFundsFlow_1_Key: string | null;
-    upcomingLendingFundsFlow_1_Value: number | null;
-    upcomingLendingFundsFlow_2_Key: string | null;
-    upcomingLendingFundsFlow_2_Value: number | null;
-    upcomingLendingFundsFlow_3_Key: string | null;
-    upcomingLendingFundsFlow_3_Value: number | null;
-    upcomingLendingFundsFlow_4_Key: string | null;
-    upcomingLendingFundsFlow_4_Value: number | null;
+    CumulativeLendingFundsFlow_InterestAccrued: number;
+    CumulativeLendingFundsFlow_InterestPayments: number;
+    CumulativeLendingFundsFlow_LoansDrawn: number;
+    CumulativeLendingFundsFlow_OpeningLoansBalance: number;
+    CumulativeLendingFundsFlow_PrincipalRepayments: number;
+    CumulativeLendingFundsFlow_UnrealisedLosses: number;
+    UpcomingLendingFundsFlow_1_Key: string | null;
+    UpcomingLendingFundsFlow_1_Value: number | null;
+    UpcomingLendingFundsFlow_2_Key: string | null;
+    UpcomingLendingFundsFlow_2_Value: number | null;
+    UpcomingLendingFundsFlow_3_Key: string | null;
+    UpcomingLendingFundsFlow_3_Value: number | null;
+    UpcomingLendingFundsFlow_4_Key: string | null;
+    UpcomingLendingFundsFlow_4_Value: number | null;
     repaymentsFile: string;
 }

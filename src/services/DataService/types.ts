@@ -114,13 +114,13 @@ export interface PoolRepayment {
     cumulativeLendingFundsFlow_PrincipalRepayments: number;
     cumulativeLendingFundsFlow_UnrealisedLosses: number;
     upcomingLendingFundsFlow_NetInflows: number;
-    upcomingLendingFundsFlow_1_Key: string;
+    upcomingLendingFundsFlow_1_Key: string | null;
     upcomingLendingFundsFlow_1_Value: number;
-    upcomingLendingFundsFlow_2_Key: string;
+    upcomingLendingFundsFlow_2_Key: string | null;
     upcomingLendingFundsFlow_2_Value: number;
-    upcomingLendingFundsFlow_3_Key: string;
+    upcomingLendingFundsFlow_3_Key: string | null;
     upcomingLendingFundsFlow_3_Value: number;
-    upcomingLendingFundsFlow_4_Key: string;
+    upcomingLendingFundsFlow_4_Key: string | null;
     upcomingLendingFundsFlow_4_Value: number;
     cumulativeDepositsAndWithdrawals_NetDeposits: number;
     cumulativeDepositsAndWithdrawals_CumulativeWithdrawals: number;
