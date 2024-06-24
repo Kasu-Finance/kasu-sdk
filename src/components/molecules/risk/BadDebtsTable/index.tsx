@@ -96,7 +96,7 @@ const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
             sortedData.map((data, index) => (
               <TableRow key={index}>
                 <TableCell align='left' width='10%'>
-                  <DataTypography data={data.name} />
+                  <DataTypography data={data.name} toolTip={data.tooltip} />
                 </TableCell>
                 <BadDebtsCell
                   value={[

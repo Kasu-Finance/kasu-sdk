@@ -369,11 +369,11 @@
     "cancelWithdrawal": {
       "title": "Cancel Withdrawal Request",
       "metric-1": "From Lending Strategy",
-      "metric-2": "Withdrawal Request Amount​",
-      "metric-2-tooltip": "​​​​​​The USDC lending withdrawal request amount that you would like to cancel.",
-      "metric-3": "Withdrawal Request Date​",
+      "metric-2": "Withdrawal Request Amount",
+      "metric-2-tooltip": "The USDC lending withdrawal request amount that you would like to cancel.",
+      "metric-3": "Withdrawal Request Date",
       "metric-3-tooltip": "The date of your original lending withdrawal request.",
-      "metric-4-tooltip": "​​​​​The loan Tranche related to this Lending Strategy that you request a withdrawal cancellation from.​",
+      "metric-4-tooltip": "The loan Tranche related to this Lending Strategy that you request a withdrawal cancellation from.",
       "epochEnds": "Epoch Ends in",
       "cancel-button": "Cancel Withdrawal Request"
     },
@@ -381,10 +381,10 @@
       "title": "Cancel Lending Request",
       "metric-1": "Lend To",
       "metric-1-tooltip": "The Lending Strategy that your lending cancellation request relates to.",
-      "metric-2-tooltip": "​​​​​​The loan Tranche related to this Lending Strategy that you request a lending cancellation from.​",
+      "metric-2-tooltip": "The loan Tranche related to this Lending Strategy that you request a lending cancellation from.",
       "metric-3": "Lending Request Amount",
       "metric-3-tooltip": "The USDC lending request amount that you would like to cancel.",
-      "metric-4": "Lending Request Date​",
+      "metric-4": "Lending Request Date",
       "metric-4-tooltip": "The date of your original lending request.",
       "cancel-button": "Cancel Lending Request"
     }
@@ -430,14 +430,10 @@
           "sublabel": "Interest Earned",
           "tooltip": "Cumulative total gross interest earned by Liquidity Providers from this Lending Strategy since its inception on the Kasu protocol."
         },
-        "totalLossRate-label": {
-          "label": "Total Loss Rate",
-          "tooltip": "Total unrecoverable losses expressed as a percentage of total loans associated with the Delegate's history with this particular lending asset class, regardless of whether the loans have been made available on Kasu or not.​"
-        },
         "totalLossRate": {
-          "label": "Total",
+          "label": "Total Loss Rate",
           "sublabel": "Loss Rate",
-          "tooltip": "​Total unrecoverable losses expressed as a percentage of total loans associated with this Lending Strategy."
+          "tooltip": "Total unrecoverable losses expressed as a percentage of total loans associated with the Delegate's history with this particular lending asset class, regardless of whether the loans have been made available on Kasu or not."
         }
       },
       "trancheCard": {

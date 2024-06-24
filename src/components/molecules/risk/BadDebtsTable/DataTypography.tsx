@@ -1,14 +1,17 @@
 import { Typography, TypographyProps } from '@mui/material'
-import React from 'react'
+
+import ToolTip from '@/components/atoms/ToolTip'
 
 interface DataTypographyProps extends TypographyProps {
   data: number | string | null
   suffix?: string
+  toolTip?: string
 }
 
 const DataTypography: React.FC<DataTypographyProps> = ({
   data,
   suffix,
+  toolTip,
   ...typographyProps
 }) => {
   const isValidData = data !== null && data !== undefined && data !== ''
@@ -22,6 +25,15 @@ const DataTypography: React.FC<DataTypographyProps> = ({
         <Typography variant='caption' component='span'>
           {suffix}
         </Typography>
+      )}
+      {toolTip && (
+        <ToolTip
+          iconSx={{
+            position: 'relative',
+            top: '4px',
+          }}
+          title={toolTip}
+        />
       )}
     </Typography>
   )

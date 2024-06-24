@@ -11,6 +11,7 @@ import { useMemo } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
+import ToolTip from '@/components/atoms/ToolTip'
 import CustomTable, {
   CustomTableHeader,
   Sort,
@@ -90,6 +91,15 @@ const PoolCreditTable: React.FC<PoolCreditTableProps> = ({ data }) => {
               <TableRow key={index}>
                 <TableCell width='30%' align='left'>
                   {data.keyCreditMetric}
+                  {data.tooltip && (
+                    <ToolTip
+                      iconSx={{
+                        position: 'relative',
+                        top: '5px',
+                      }}
+                      title={data.tooltip}
+                    />
+                  )}
                 </TableCell>
                 <TableCell align='right'>
                   <Typography variant='body1'>
