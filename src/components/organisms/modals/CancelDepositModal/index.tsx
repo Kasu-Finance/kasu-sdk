@@ -71,7 +71,13 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                 toolTipInfo={t('modals.cancelDeposit.metric-1-tooltip')}
                 showDivider
                 metric={
-                  <Typography pt='6px' pl={2} variant='h6' component='span'>
+                  <Typography
+                    pt='6px'
+                    pl={2}
+                    variant='h6'
+                    component='span'
+                    display='block'
+                  >
                     {transactionHistory.lendingPool.name}
                   </Typography>
                 }

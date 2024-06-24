@@ -71,7 +71,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
             variant='subtitle2'
             sx={{ fontSize: 15, letterSpacing: '0.5px' }}
           >
-            {t('general.strategies')}
+            {t('general.lending')} {t('general.strategies')}
           </Typography>
         </BackButton>
       </BoxBackground>

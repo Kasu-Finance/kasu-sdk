@@ -68,11 +68,9 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
           <Typography variant='subtitle1'>
             {t('repayments.sections.aggregated.title')}
           </Typography>
-
           <Typography variant='body2' mt={2}>
             {t('repayments.sections.aggregated.description')}
           </Typography>
-
           <Box
             display='flex'
             flexDirection={isMobile ? 'column' : 'row'}
@@ -144,7 +142,6 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
               }
             />
           </Box>
-
           <Grid container spacing={2} mt={1}>
             {Object.keys(repaymentsData).map((sectionKey) => (
               <Grid item xs={12} md={6} key={sectionKey}>

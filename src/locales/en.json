@@ -5,6 +5,7 @@
     "amount": "amount",
     "balance": "balance",
     "basic": "basic",
+    "lending": "lending",
     "buyKSU": "buy KSU",
     "claim": "claim",
     "deposit": "deposit",
@@ -397,7 +398,7 @@
           "tooltip": "Indicates whether the APY offered by the Delegate is fixed for a specified period of time, or variable (subject to change upon each epoch)."
         },
         "assetClass": {
-          "label": "Asset class",
+          "label": "Asset Class",
           "tooltip": "The lending specialisation, type or category related to this Lending Strategy."
         },
         "industry": {
@@ -430,7 +431,8 @@
           "tooltip": "Cumulative total gross interest earned by Liquidity Providers from this Lending Strategy since its inception on the Kasu protocol."
         },
         "totalLossRate-label": {
-          "label": "Total Loss Rate"
+          "label": "Total Loss Rate",
+          "tooltip": "Total unrecoverable losses expressed as a percentage of total loans associated with the Delegate's history with this particular lending asset class, regardless of whether the loans have been made available on Kasu or not.​"
         },
         "totalLossRate": {
           "label": "Total",
@@ -478,7 +480,7 @@
         "title": "Your KSU Status",
         "lendingAndBonus": {
           "label": "Lending Bonus & Rewards",
-          "caption": "Related to This Lending Strategy Only"
+          "caption": "Related to This Lending Pool Only"
         },
         "lockedInfo": {
           "label": "Total KSU Locked",
@@ -680,7 +682,7 @@
         "tooltip": "The total number of all current (active) loans originated by the Delegate within this Lending Strategy to end borrowers."
       },
       "capacity": {
-        "label": "Lending Strategy Capacity",
+        "label": "Remaining Capacity",
         "tooltip": "Amount of additional USDC the Delegate is able to accept for this Lending Strategy, also represented as a percentage of the maximum Lending Strategy target USDC amount.​"
       }
     },
@@ -735,7 +737,7 @@
   },
   "repayments": {
     "title": "Repayments and Funds Flow",
-    "loanModelDescription": "This Delegate's lending model is to facilitate Fiat currency loans to real world businesses off-chain. The Asset Class and Loan Structure outlined in the 'Pool Details' screen indicates that these loans are 'Revolving/Evergreen' Loan Facilities, with fluctuating loan balances, being a function of ongoing and simultaneous loan repayments and loan redraws in Fiat currency off-chain. Accordingly, these Fiat currency transactions can only be viewed via CSV download at this current point in time.",
+    "loanModelDescription": "The Delegate's lending model is to facilitate Fiat currency loans to real world businesses off-chain. The Asset Class and Loan Structure outlined in the 'Lending Strategy Details' screen indicates that these loans are 'Revolving/Evergreen' Loan Facilities, with fluctuating loan balances, being a function of ongoing and simultaneous loan repayments and loan redraws in Fiat currency off-chain. Accordingly, these Fiat currency transactions can only be viewed via CSV download at this current point in time.",
     "borrowerFundsCSV": "Download CSV to view fiat currency funds flow on a per borrower basis:",
     "sections": {
       "aggregated": {

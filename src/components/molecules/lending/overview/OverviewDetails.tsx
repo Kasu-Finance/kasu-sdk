@@ -126,7 +126,7 @@ const OverviewDetails: React.FC<{
                         amount={formatAmount(
                           +poolDelegate?.historicLossRate || '0'
                         )}
-                        symbol='USDC'
+                        symbol='%'
                       />
                     }
                   />

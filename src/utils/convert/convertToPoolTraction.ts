@@ -25,7 +25,7 @@ const convertToPoolTraction = (overview: PoolOverview): PoolDetailSection => {
     },
     {
       id: PoolTractionMetricIds.Capacity,
-      content: formatPercentage(overview.poolCapacity) || 'N/A',
+      content: formatPercentage(overview.poolCapacityPercentage) || 'N/A',
     },
     {
       id: PoolTractionMetricIds.ActiveLoans,
