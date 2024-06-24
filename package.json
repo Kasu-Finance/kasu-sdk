@@ -31,7 +31,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "@directus/sdk": "^15.0.1",
+    "@directus/sdk": "^15.1.0",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@typechain/ethers-v5": "^11.1.2",
     "@typescript-eslint/parser": "^6.0.0",
