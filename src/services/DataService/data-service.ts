@@ -318,12 +318,15 @@ export class DataService {
         id_in?: string[],
     ): Promise<PoolDelegateProfileAndHistory[]> {
         const poolDelegateProfileAndHistoryDirectus: PoolDelegateProfileAndHistoryDirectus[] =
-            (await this._directus.request(
-                readItems('PoolDelegateProfileAndHistory', {
-                    // @ts-ignore:next-line
-                    fields: ['*', { otherPools: ['*'] }],
-                }),
-            )) as unknown as PoolDelegateProfileAndHistoryDirectus[];
+            [];
+
+        // TODO: fix wildcard dynamic type
+        // (await this._directus.request(
+        //     readItems('PoolDelegateProfileAndHistory', {
+        // @ts-ignore:next-line
+        //         fields: ['*', { otherPools: ['*'] }],
+        //     }),
+        // )) as unknown as PoolDelegateProfileAndHistoryDirectus[];
 
         const poolNames: {
             lendingPools: Pick<LendingPoolSubgraph, 'name' | 'id'>[];
