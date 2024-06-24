@@ -54,7 +54,8 @@ export type UserRequestEventType =
     | 'DepositInitiated'
     | 'DepositIncreased'
     | 'DepositCancelled'
-    | 'DepositAccepted';
+    | 'DepositAccepted'
+    | 'DepositRejected';
 
 export interface LendingPoolUserDetailsSubgraph {
     lendingPoolUserDetails?: {
@@ -74,8 +75,8 @@ export interface TrancheUserDetailsSubgraph {
 
 export interface TotalUserLoyaltyRewardsSubgraph {
     user?: {
-        totalUserLoyaltyRewards: string
-    }
+        totalUserLoyaltyRewards: string;
+    };
 }
 export interface LendingPoolsBalanceSubgraph {
     lendingPools: {
@@ -84,5 +85,5 @@ export interface LendingPoolsBalanceSubgraph {
         tranches: {
             shares: string;
         }[];
-    }[]
+    }[];
 }

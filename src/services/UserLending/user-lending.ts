@@ -298,10 +298,12 @@ export class UserLending {
                 ];
 
             const events: UserRequestEvent[] = [];
-            let totalRequested = 0;
-            let totalAccepted = 0;
-            let totalRejected = 0;
+
             for (const event of userRequest.userRequestEvents) {
+                let totalRequested = 0;
+                let totalAccepted = 0;
+                let totalRejected = 0;
+
                 const lendingPoolId = event.id.split('-')[0];
                 const lendingPoolBalance =
                     lendingPoolBalances.lendingPools.find(
@@ -322,13 +324,13 @@ export class UserLending {
                         parseInt(event.tranche.orderId)
                     ];
 
-                if (eventTrancheId != userRequest.tranche.id) {
+                if (eventTrancheId !== userRequest.tranche.id) {
                     event.type = 'DepositReallocated';
                 }
                 if (
-                    event.type == 'DepositAccepted' ||
-                    event.type == 'WithdrawalAccepted' ||
-                    event.type == 'DepositReallocated'
+                    event.type === 'DepositAccepted' ||
+                    event.type === 'WithdrawalAccepted' ||
+                    event.type === 'DepositReallocated'
                 ) {
                     totalAccepted = event.assetAmount
                         ? parseFloat(event.assetAmount)
@@ -339,8 +341,9 @@ export class UserLending {
                           );
                 }
                 if (
-                    event.type == 'DepositCancelled' ||
-                    event.type == 'WithdrawalCancelled'
+                    event.type === 'DepositCancelled' ||
+                    event.type === 'WithdrawalCancelled' ||
+                    event.type === 'DepositRejected'
                 ) {
                     totalRejected = event.assetAmount
                         ? parseFloat(event.assetAmount)
@@ -351,10 +354,10 @@ export class UserLending {
                           );
                 }
                 if (
-                    event.type == 'DepositInitiated' ||
-                    event.type == 'WithdrawalInitiated' ||
-                    event.type == 'DepositIncreased' ||
-                    event.type == 'WithdrawalIncreased'
+                    event.type === 'DepositInitiated' ||
+                    event.type === 'WithdrawalInitiated' ||
+                    event.type === 'DepositIncreased' ||
+                    event.type === 'WithdrawalIncreased'
                 ) {
                     totalRequested = event.assetAmount
                         ? parseFloat(event.assetAmount)
@@ -428,7 +431,7 @@ export class UserLending {
     ): Promise<boolean> {
         if (
             type === (UserRequestType.DEPOSIT as string) &&
-            status != 'Processed'
+            status !== 'Processed'
         ) {
             return true;
         }
