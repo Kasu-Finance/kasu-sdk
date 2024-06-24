@@ -245,6 +245,7 @@ export class DataService {
             }
             const poolOverview: PoolOverview = {
                 id: lendingPoolSubgraph.id,
+                enabled: lendingPoolDirectus.enabled,
                 apy: averageApy,
                 poolAddress: lendingPoolSubgraph.id,
                 description: lendingPoolDirectus.description,
@@ -273,8 +274,13 @@ export class DataService {
                 tranches: tranches,
                 isActive: !lendingPoolSubgraph.isStopped,
             };
-            retn.push(poolOverview);
+
+            // show only enabled pools from cms
+            if (poolOverview.enabled) {
+                retn.push(poolOverview);
+            }
         }
+
         return filterArray(retn, id_in);
     }
 
