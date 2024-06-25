@@ -9,7 +9,6 @@ import useTranslation from '@/hooks/useTranslation'
 import ToolTip from '@/components/atoms/ToolTip'
 import CustomTable, { Sort } from '@/components/molecules/CustomTable'
 import TransactionHistoryFilters from '@/components/molecules/lending/overview/TransactionHistory/TransactionHistoryFilters'
-import TransactionHistoryTableFooter from '@/components/molecules/lending/overview/TransactionHistory/TransactionHistoryTableFooter'
 import TransactionHistoryTableHeader from '@/components/molecules/lending/overview/TransactionHistory/TransactionHistoryTableHeader'
 import TransactionHistoryTableRow from '@/components/molecules/lending/overview/TransactionHistory/TransactionHistoryTableRow'
 
@@ -125,9 +124,6 @@ const TransactionHistory: React.FC<{ poolId: string }> = ({ poolId }) => {
               },
             },
           }}
-          footer={
-            <TransactionHistoryTableFooter transactionHistory={filteredData} />
-          }
           headers={(handleSortChange, sort) => (
             <TransactionHistoryTableHeader
               handleSortChange={handleSortChange}
