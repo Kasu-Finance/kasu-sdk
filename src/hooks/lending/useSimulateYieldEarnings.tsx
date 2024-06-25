@@ -6,8 +6,18 @@ const useSimulateYieldEarnings = () => {
   const sdk = useKasuSDK()
 
   return useCallback(
-    (amount: number, apy: number, days: number) =>
-      sdk.DataService.calculateCompounding(amount, apy, days),
+    (
+      amount: number,
+      interestRate: number,
+      daysInvested: number,
+      interestFee: number
+    ) =>
+      sdk.DataService.calculateCompounding(
+        amount,
+        interestRate,
+        daysInvested,
+        interestFee
+      ),
     [sdk]
   )
 }

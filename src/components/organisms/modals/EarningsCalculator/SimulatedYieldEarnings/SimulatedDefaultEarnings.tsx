@@ -1,10 +1,17 @@
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+} from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useSimulateYieldEarnings from '@/hooks/lending/useSimulateYieldEarnings'
 import useDebounce from '@/hooks/useDebounce'
 import useTranslation from '@/hooks/useTranslation'
+import usePerformanceFee from '@/hooks/web3/usePerformanceFee'
 
 import BalanceItem from '@/components/molecules/locking/BalanceOverview/BalanceItem'
 
@@ -12,13 +19,15 @@ import { formatAmount } from '@/utils'
 
 type DefaultEarningsProps = {
   poolOverview: PoolOverview
+  yieldEarnings: number[]
+  setYieldEarnings: Dispatch<SetStateAction<number[]>>
 }
 
 const SimulatedDefaultEarnings: React.FC<DefaultEarningsProps> = ({
   poolOverview,
+  yieldEarnings,
+  setYieldEarnings,
 }) => {
-  const [yieldEarnings, setYieldEarnings] = useState([0])
-
   const { t } = useTranslation()
 
   const { amount, amountInUSD, trancheId, simulatedDuration } =
@@ -26,18 +35,30 @@ const SimulatedDefaultEarnings: React.FC<DefaultEarningsProps> = ({
 
   const simulateEarnings = useSimulateYieldEarnings()
 
+  const { performanceFee } = usePerformanceFee()
+
   const selectedTranche = useMemo(
     () => poolOverview.tranches.find((tranche) => tranche.id === trancheId),
     [poolOverview.tranches, trancheId]
   )
 
   const handleSimulateChange = useCallback(
-    (amount: number, apy: number, duration: number) => {
-      const yieldEarnings = simulateEarnings(amount, apy, duration)
+    (
+      amount: number,
+      interestRate: number,
+      daysInvested: number,
+      interestFee: number
+    ) => {
+      const yieldEarnings = simulateEarnings(
+        amount,
+        interestRate,
+        daysInvested,
+        interestFee
+      )
 
       setYieldEarnings(yieldEarnings)
     },
-    [simulateEarnings]
+    [simulateEarnings, setYieldEarnings]
   )
 
   const { debouncedFunction, isDebouncing } = useDebounce(
@@ -46,17 +67,25 @@ const SimulatedDefaultEarnings: React.FC<DefaultEarningsProps> = ({
   )
 
   useEffect(() => {
-    if (!amount || !selectedTranche?.apy) {
+    if (!amount || !selectedTranche?.interestRate || !performanceFee) {
       setYieldEarnings([0])
       return
     }
 
     debouncedFunction(
       parseFloat(amountInUSD ?? amount),
-      parseFloat(selectedTranche.apy),
-      365
+      parseFloat(selectedTranche.interestRate),
+      365,
+      performanceFee / 100
     )
-  }, [amount, amountInUSD, selectedTranche?.apy, debouncedFunction])
+  }, [
+    amount,
+    performanceFee,
+    amountInUSD,
+    selectedTranche?.interestRate,
+    debouncedFunction,
+    setYieldEarnings,
+  ])
 
   return (
     <BalanceItem

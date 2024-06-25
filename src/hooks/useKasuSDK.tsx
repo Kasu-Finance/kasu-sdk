@@ -12,15 +12,17 @@ const chain =
 
 const fallbackProvider = new JsonRpcProvider(RPC_URLS[chain][0])
 
+const fallbackSdk = new KasuSdk(sdkConfig, fallbackProvider)
+
 const useKasuSDK = () => {
   const { provider, account } = useWeb3React()
 
   const { data, error } = useSWR(
     account && provider ? ['kasuSDK', provider] : null,
-    async ([_, library]) => {
-      return new KasuSdk(sdkConfig, library.getSigner())
-    },
-    { fallbackData: new KasuSdk(sdkConfig, fallbackProvider) }
+    async ([_, library]) => new KasuSdk(sdkConfig, library.getSigner()),
+    {
+      fallbackData: fallbackSdk,
+    }
   )
 
   if (error) {

@@ -2,23 +2,23 @@ import { formatEther } from 'ethers/lib/utils'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
-import useSimulateYieldEarnings from '@/hooks/lending/useSimulateYieldEarnings'
+import useSimulateBonusYieldEarnings from '@/hooks/lending/useSimulateBonusYieldEarnings'
 import useDebounce from '@/hooks/useDebounce'
 import useTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
-import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
 import BalanceItem from '@/components/molecules/locking/BalanceOverview/BalanceItem'
 
-import { SupportedTokens } from '@/constants/tokens'
 import { convertFromUSD, formatAmount, toBigNumber } from '@/utils'
 
 type SimulatedBonusEarningsProps = {
-  apyBonus: number
+  yieldEarnings: number[]
+  bonusEpochInterest: number
 }
 
 const SimulatedBonusEarnings: React.FC<SimulatedBonusEarningsProps> = ({
-  apyBonus,
+  bonusEpochInterest,
+  yieldEarnings,
 }) => {
   const [bonusYieldEarnings, setBonusYieldEarnings] = useState([0])
 
@@ -28,16 +28,14 @@ const SimulatedBonusEarnings: React.FC<SimulatedBonusEarningsProps> = ({
 
   const { ksuPrice } = useKsuPrice()
 
-  const supportedToken = useSupportedTokenInfo()
-
-  const simulateEarnings = useSimulateYieldEarnings()
+  const simulateEarnings = useSimulateBonusYieldEarnings()
 
   const handleSimulateChange = useCallback(
-    (amount: number, apyBonus: number, duration: number) => {
+    (earnedAmounts: number[], amount: number, bonusEpochInterest: number) => {
       const bonusYieldEarnings = simulateEarnings(
+        earnedAmounts,
         amount,
-        apyBonus / 100,
-        duration
+        bonusEpochInterest
       )
 
       setBonusYieldEarnings(bonusYieldEarnings)
@@ -55,20 +53,26 @@ const SimulatedBonusEarnings: React.FC<SimulatedBonusEarningsProps> = ({
       setBonusYieldEarnings([0])
       return
     }
-
-    debouncedFunction(parseFloat(amountInUSD ?? amount), apyBonus, 365)
-  }, [amount, amountInUSD, apyBonus, debouncedFunction])
+    debouncedFunction(
+      yieldEarnings,
+      parseFloat(amountInUSD ?? amount),
+      bonusEpochInterest
+    )
+  }, [
+    amount,
+    amountInUSD,
+    yieldEarnings,
+    bonusEpochInterest,
+    debouncedFunction,
+  ])
 
   const bonusEarningsInKSU = useMemo(
     () =>
       convertFromUSD(
         toBigNumber(bonusYieldEarnings[simulatedDuration]?.toString() || '0'),
-        toBigNumber(
-          ksuPrice || '0',
-          supportedToken?.[SupportedTokens.USDC].decimals
-        )
+        toBigNumber(ksuPrice || '0')
       ),
-    [bonusYieldEarnings, simulatedDuration, ksuPrice, supportedToken]
+    [bonusYieldEarnings, simulatedDuration, ksuPrice]
   )
 
   return (
