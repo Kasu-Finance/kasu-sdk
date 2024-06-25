@@ -3,7 +3,6 @@ import { BigNumber, ContractTransaction, ethers, Signer } from 'ethers';
 import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils';
 import { GraphQLClient } from 'graphql-request';
 
-import { UNUSED_LENDING_POOL_IDS } from '../../constants';
 import {
     IERC20MetadataAbi,
     IERC20MetadataAbi__factory,
@@ -69,31 +68,34 @@ export class KSULocking {
     /**
      *
      */
-    constructor(kasuConfig: SdkConfig, signerOrProvider: Signer | Provider) {
+    constructor(
+        private _kasuConfig: SdkConfig,
+        signerOrProvider: Signer | Provider,
+    ) {
         this._contractAbi = IKSULockingAbi__factory.connect(
-            kasuConfig.contracts.IKSULocking,
+            _kasuConfig.contracts.IKSULocking,
             signerOrProvider,
         );
         this._kasuToken = IERC20MetadataAbi__factory.connect(
-            kasuConfig.contracts.KSUToken,
+            _kasuConfig.contracts.KSUToken,
             signerOrProvider,
         );
         this._userManagerAbi = IUserManagerAbi__factory.connect(
-            kasuConfig.contracts.UserManager,
+            _kasuConfig.contracts.UserManager,
             signerOrProvider,
         );
         this._systemVariablesAbi = ISystemVariablesAbi__factory.connect(
-            kasuConfig.contracts.SystemVariables,
+            _kasuConfig.contracts.SystemVariables,
             signerOrProvider,
         );
         this._ksuPriceAbi = IKsuPriceAbi__factory.connect(
-            kasuConfig.contracts.KsuPrice,
+            _kasuConfig.contracts.KsuPrice,
             signerOrProvider,
         );
-        this._kasuBonusAddress = kasuConfig.contracts.IKSULockBonus;
-        this._graph = new GraphQLClient(kasuConfig.subgraphUrl);
+        this._kasuBonusAddress = _kasuConfig.contracts.IKSULockBonus;
+        this._graph = new GraphQLClient(_kasuConfig.subgraphUrl);
         this._userLoyaltyRewardsAbi = IUserLoyaltyRewardsAbi__factory.connect(
-            kasuConfig.contracts.UserLoyaltyRewards,
+            _kasuConfig.contracts.UserLoyaltyRewards,
             signerOrProvider,
         );
     }
@@ -182,11 +184,11 @@ export class KSULocking {
         let projectedYearlyPlatformInterest = 0;
         const subgraphResults: TrancheSubgraphResult =
             await this._graph.request(getAllTranchesQuery, {
-                unusedPools: UNUSED_LENDING_POOL_IDS,
+                unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
             });
         const subgraphConfigurationResults: TrancheConfigurationSubgraph =
             await this._graph.request(getAllTrancheConfigurationsQuery, {
-                unusedPools: UNUSED_LENDING_POOL_IDS,
+                unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
             });
 
         for (const tranche of subgraphResults.lendingPoolTranches) {

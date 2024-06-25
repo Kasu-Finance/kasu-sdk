@@ -9,7 +9,6 @@ import {
 } from '@directus/sdk';
 import { GraphQLClient } from 'graphql-request';
 
-import { UNUSED_LENDING_POOL_IDS } from '../../constants';
 import { SdkConfig } from '../../sdk-config';
 import { getSystemVariablesQuery } from '../Locking/queries';
 import { SystemVariables } from '../Locking/types';
@@ -62,9 +61,9 @@ export class DataService {
         AuthenticationClient<DirectusSchema> &
         RestClient<DirectusSchema>;
 
-    constructor(kasuConfig: SdkConfig) {
-        this._graph = new GraphQLClient(kasuConfig.subgraphUrl);
-        this._directus = createDirectus<DirectusSchema>(kasuConfig.directusUrl)
+    constructor(private _kasuConfig: SdkConfig) {
+        this._graph = new GraphQLClient(_kasuConfig.subgraphUrl);
+        this._directus = createDirectus<DirectusSchema>(_kasuConfig.directusUrl)
             .with(authentication())
             .with(rest());
     }
@@ -144,15 +143,15 @@ export class DataService {
         ];
         const subgraphTrancheConfigurationResults: TrancheConfigurationSubgraph =
             await this._graph.request(getAllTrancheConfigurationsQuery, {
-                unusedPools: UNUSED_LENDING_POOL_IDS,
+                unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
             });
         const subgraphLendingPoolConfigurationResults: LendingPoolConfigurationSubgraphReturn =
             await this._graph.request(getAllLendingPoolConfigurationQuery, {
-                unusedPools: UNUSED_LENDING_POOL_IDS,
+                unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
             });
         const subgraphResults: LendingPoolSubgraphReturn =
             await this._graph.request(getAllLendingPoolsQuery, {
-                unusedPools: UNUSED_LENDING_POOL_IDS,
+                unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
             });
         const directusResults: PoolOverviewDirectus[] =
             await this._directus.request(readItems('PoolOverview'));
@@ -348,7 +347,7 @@ export class DataService {
             ids: poolDelegateProfileAndHistoryDirectus.flatMap((directus) =>
                 directus.otherPools.map((delegate) => delegate.PoolOverview_id),
             ),
-            unusedPools: UNUSED_LENDING_POOL_IDS,
+            unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
         });
 
         const retn: PoolDelegateProfileAndHistory[] = [];
@@ -377,11 +376,11 @@ export class DataService {
     async getPoolTranches(id_in?: string[]): Promise<PoolTranche[]> {
         const subgraphResults: TrancheSubgraphResult =
             await this._graph.request(getAllTranchesQuery, {
-                unusedPools: UNUSED_LENDING_POOL_IDS,
+                unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
             });
         const subgraphConfigurationResults: TrancheConfigurationSubgraph =
             await this._graph.request(getAllTrancheConfigurationsQuery, {
-                unusedPools: UNUSED_LENDING_POOL_IDS,
+                unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
             });
         const retn: PoolTranche[] = [];
         for (const trancheSubgraph of subgraphResults.lendingPoolTranches) {
@@ -440,7 +439,7 @@ export class DataService {
         const lendingPoolsWithdrawalsAndDepositsSubgraph: LendingPoolWithdrawalAndDepositSubgraph =
             await this._graph.request(
                 getLendingPoolWithdrawalAndDepositsQuery,
-                { unusedPools: UNUSED_LENDING_POOL_IDS },
+                { unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS },
             );
         const retn: PoolRepayment[] = [];
         for (const data of poolRepaymentDirectus) {

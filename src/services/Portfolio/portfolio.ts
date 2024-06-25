@@ -2,7 +2,6 @@ import { Provider } from '@ethersproject/providers';
 import { BigNumber, Signer } from 'ethers';
 import { GraphQLClient } from 'graphql-request';
 
-import { UNUSED_LENDING_POOL_IDS } from '../../constants';
 import {
     ISystemVariablesAbi,
     ISystemVariablesAbi__factory,
@@ -92,7 +91,7 @@ export class Portfolio {
             {
                 userAddress: userAddress,
                 epochId: latestEpoch.toString(),
-                unusedPools: UNUSED_LENDING_POOL_IDS,
+                unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
             },
         );
         let totalYieldEarned = 0;
@@ -186,7 +185,7 @@ export class Portfolio {
             {
                 userAddress: userAddress,
                 epochId: latestEpoch.toString(),
-                unusedPools: UNUSED_LENDING_POOL_IDS,
+                unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
             },
         );
         const userPoolBalances = await Promise.all(usePoolBalancePromises);

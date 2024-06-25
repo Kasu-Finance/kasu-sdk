@@ -10,7 +10,6 @@ import {
 import { defaultAbiCoder } from 'ethers/lib/utils';
 import { GraphQLClient } from 'graphql-request';
 
-import { UNUSED_LENDING_POOL_IDS } from '../../constants';
 import {
     IClearingCoordinatorAbi,
     IClearingCoordinatorAbi__factory,
@@ -278,13 +277,13 @@ export class UserLending {
             userRequestsQuery,
             {
                 userAddress: userAddress.toLowerCase(),
-                unusedPools: UNUSED_LENDING_POOL_IDS,
+                unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
             },
         );
 
         const lendingPoolBalances: LendingPoolsBalanceSubgraph =
             await this._graph.request(lendingPoolsBalanceQuery, {
-                unusedPools: UNUSED_LENDING_POOL_IDS,
+                unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
             });
 
         const lendingPoolSharesHelper: { id: string; shares: number }[] = [];
@@ -456,7 +455,11 @@ export class UserLending {
             this._signerOrProvider,
         );
 
-        if (UNUSED_LENDING_POOL_IDS.includes(poolId.toLowerCase())) {
+        if (
+            this._kasuConfig.UNUSED_LENDING_POOL_IDS.includes(
+                poolId.toLowerCase(),
+            )
+        ) {
             throw new Error('This pool is no longer in used');
         }
 

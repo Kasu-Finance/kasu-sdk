@@ -14,14 +14,17 @@ export class SdkConfig {
     subgraphUrl: string;
     contracts: ContractAddresses;
     directusUrl: string;
+    UNUSED_LENDING_POOL_IDS: string[];
 
     constructor(
         subgraphUrl: string,
         contracts: ContractAddresses,
         directusUrl: string,
+        UNUSED_LENDING_POOL_IDS: string[],
     ) {
         this.subgraphUrl = subgraphUrl;
         this.contracts = contracts;
         this.directusUrl = directusUrl;
+        this.UNUSED_LENDING_POOL_IDS = UNUSED_LENDING_POOL_IDS;
     }
 }
