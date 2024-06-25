@@ -1,7 +1,8 @@
 import { Provider } from '@ethersproject/providers';
-import { BigNumber, ethers, Signer } from 'ethers';
+import { BigNumber, Signer } from 'ethers';
 import { GraphQLClient } from 'graphql-request';
 
+import { UNUSED_LENDING_POOL_IDS } from '../../constants';
 import {
     ISystemVariablesAbi,
     ISystemVariablesAbi__factory,
@@ -21,7 +22,6 @@ import {
     PortfolioSummary,
     PortfolioTranche,
 } from './types';
-import { UNUSED_LENDING_POOL_IDS } from '../../constants';
 
 export class Portfolio {
     private _lockingService: KSULocking;
@@ -82,8 +82,8 @@ export class Portfolio {
         const poolOverviews = await this._dataService.getPoolOverview();
         let totalInvestments = BigNumber.from(0);
         let totalYieldEarnedLastEpoch = 0;
-        const portfolioLendingPools: PortfolioLendingPool[] = [];
-        const usePoolBalancePromises: Promise<UserPoolBalance>[] = [];
+        // const portfolioLendingPools: PortfolioLendingPool[] = [];
+        // const usePoolBalancePromises: Promise<UserPoolBalance>[] = [];
         const currentEpoch =
             await this._systemVariablesAbi.currentEpochNumber();
         const latestEpoch = currentEpoch.sub(BigNumber.from(1));

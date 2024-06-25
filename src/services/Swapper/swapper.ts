@@ -1,15 +1,15 @@
 import axios from 'axios';
-import { BigNumber, ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers';
 
-import {
-    SwapInfoStruct,
-} from '../../contracts/SwapperAbi'
+import { SwapInfoStruct } from '../../contracts/SwapperAbi';
 
 import { OneInchQuoteRes, OneInchSwapRes, SwapDepositBagStruct } from './types';
 
 export class Swapper {
-    private readonly PRECISION_DECIMALS = 18
-    private readonly PRECISION = BigNumber.from(10).pow(this.PRECISION_DECIMALS)
+    private readonly PRECISION_DECIMALS = 18;
+    private readonly PRECISION = BigNumber.from(10).pow(
+        this.PRECISION_DECIMALS,
+    );
 
     public async getSwapData(
         url: string,
@@ -19,12 +19,12 @@ export class Swapper {
         fromAddress: string,
         slippage: string,
     ): Promise<OneInchSwapRes> {
-        const res: { data: OneInchSwapRes } = await axios.get(url,{
+        const res: { data: OneInchSwapRes } = await axios.get(url, {
             params: {
-                getRequest: `/swap/v5.2/1/swap?fromTokenAddress=${fromTokenAddress}&toTokenAddress=${toTokenAddress}&amount=${amountInDecimals}&fromAddress=${fromAddress}&slippage=${slippage}&disableEstimate=true&allowPartialFill=false&includeTokensInfo=true`
-            }
+                getRequest: `/swap/v5.2/1/swap?fromTokenAddress=${fromTokenAddress}&toTokenAddress=${toTokenAddress}&amount=${amountInDecimals}&fromAddress=${fromAddress}&slippage=${slippage}&disableEstimate=true&allowPartialFill=false&includeTokensInfo=true`,
+            },
         });
-        return res.data
+        return res.data;
     }
 
     public async getConversionData(
@@ -35,10 +35,10 @@ export class Swapper {
     ): Promise<OneInchQuoteRes> {
         const res: { data: OneInchQuoteRes } = await axios.get(url, {
             params: {
-                getRequest: `/swap/v5.2/1/quote?fromTokenAddress=${fromTokenAddress}&toTokenAddress=${toTokenAddress}&amount=${amountInDecimals}&includeTokensInfo=true&includeGas=true`
-            }
+                getRequest: `/swap/v5.2/1/quote?fromTokenAddress=${fromTokenAddress}&toTokenAddress=${toTokenAddress}&amount=${amountInDecimals}&includeTokensInfo=true&includeGas=true`,
+            },
         });
-        return res.data
+        return res.data;
     }
     private async getTokenRatioAtMax(
         swapUrl: string,
@@ -51,7 +51,7 @@ export class Swapper {
             inToken,
             outToken,
             inAmount.toString(),
-        )
+        );
 
         return inAmount
             .mul(this.PRECISION)
@@ -60,7 +60,7 @@ export class Swapper {
                     data.toAmount,
                     this.PRECISION_DECIMALS - data.toToken.decimals,
                 ),
-            )
+            );
     }
 
     public async getSwap(
@@ -77,33 +77,29 @@ export class Swapper {
             inTokens.length !== inAmounts.length ||
             inTokens.length !== inDecimals.length
         ) {
-            throw new Error('Invalid input')
+            throw new Error('Invalid input');
         }
-
-
 
         const transaction: SwapDepositBagStruct = {
             tokensIn: inTokens,
             swapInfo: [],
             tokenOut: outToken,
             receiver: userAddress,
-        }
+        };
 
-        const swapDataPromises: Promise<OneInchSwapRes>[] = []
+        const swapDataPromises: Promise<OneInchSwapRes>[] = [];
         for (let i = 0; i < inTokens.length; i++) {
-                    swapDataPromises[i] = this.getSwapData(
-                        swapUrl,
-                        inTokens[i],
-                        outToken,
-                        ethers.utils.formatUnits(inAmounts[i], 0).split('.')[0],
-                        swapperAddress,
-                        slippage
-                    )
+            swapDataPromises[i] = this.getSwapData(
+                swapUrl,
+                inTokens[i],
+                outToken,
+                ethers.utils.formatUnits(inAmounts[i], 0).split('.')[0],
+                swapperAddress,
+                slippage,
+            );
         }
 
-        const promiseSwapData2D = Promise.all(
-            swapDataPromises
-        )
+        const promiseSwapData2D = Promise.all(swapDataPromises);
 
         await promiseSwapData2D.then((values) => {
             for (let i = 0; i < inTokens.length; i++) {
@@ -112,12 +108,12 @@ export class Swapper {
                         swapTarget: values[i].tx.to,
                         token: inTokens[i],
                         swapCallData: values[i].tx.data,
-                    }
-                    transaction.swapInfo.push(swapInfo)
+                    };
+                    transaction.swapInfo.push(swapInfo);
                 }
             }
-        })
-        return transaction
+        });
+        return transaction;
     }
 
     public async getSwapInfo(
@@ -134,19 +130,17 @@ export class Swapper {
             inTokens.length !== inAmounts.length ||
             inTokens.length !== inDecimals.length
         ) {
-            throw new Error('Invalid input')
+            throw new Error('Invalid input');
         }
 
+        // const transaction: SwapDepositBagStruct = {
+        //     tokensIn: inTokens,
+        //     swapInfo: [],
+        //     tokenOut: outToken,
+        //     receiver: userAddress,
+        // }
 
-
-        const transaction: SwapDepositBagStruct = {
-            tokensIn: inTokens,
-            swapInfo: [],
-            tokenOut: outToken,
-            receiver: userAddress,
-        }
-
-        const swapDataPromises: Promise<OneInchSwapRes>[] = []
+        const swapDataPromises: Promise<OneInchSwapRes>[] = [];
         for (let i = 0; i < inTokens.length; i++) {
             swapDataPromises[i] = this.getSwapData(
                 swapUrl,
@@ -154,13 +148,11 @@ export class Swapper {
                 outToken,
                 ethers.utils.formatUnits(inAmounts[i], 0).split('.')[0],
                 swapperAddress,
-                slippage
-            )
+                slippage,
+            );
         }
 
-        const promiseSwapData2D = Promise.all(
-            swapDataPromises
-        )
+        const promiseSwapData2D = Promise.all(swapDataPromises);
         return promiseSwapData2D;
     }
 }

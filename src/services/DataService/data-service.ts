@@ -9,7 +9,10 @@ import {
 } from '@directus/sdk';
 import { GraphQLClient } from 'graphql-request';
 
+import { UNUSED_LENDING_POOL_IDS } from '../../constants';
 import { SdkConfig } from '../../sdk-config';
+import { getSystemVariablesQuery } from '../Locking/queries';
+import { SystemVariables } from '../Locking/types';
 import { filterArray } from '../shared';
 
 import {
@@ -38,7 +41,6 @@ import {
     LendingPoolSubgraphReturn,
     LendingPoolWithdrawalAndDepositSubgraph,
     TrancheConfigurationSubgraph,
-    TrancheSubgraph,
     TrancheSubgraphResult,
 } from './subgraph-types';
 import {
@@ -51,12 +53,8 @@ import {
     PoolTranche,
     RiskManagement,
     RiskManagementItem,
-    RiskPerformance,
     TrancheData,
 } from './types';
-import { UNUSED_LENDING_POOL_IDS } from '../../constants';
-import { SystemVariables } from '../Locking/types';
-import { getSystemVariablesQuery } from '../Locking/queries';
 
 export class DataService {
     private readonly _graph: GraphQLClient;

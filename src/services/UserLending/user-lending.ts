@@ -10,6 +10,7 @@ import {
 import { defaultAbiCoder } from 'ethers/lib/utils';
 import { GraphQLClient } from 'graphql-request';
 
+import { UNUSED_LENDING_POOL_IDS } from '../../constants';
 import {
     IClearingCoordinatorAbi,
     IClearingCoordinatorAbi__factory,
@@ -49,7 +50,6 @@ import {
     UserRequestType,
     UserTrancheBalance,
 } from './types';
-import { UNUSED_LENDING_POOL_IDS } from '../../constants';
 
 export class UserLending {
     private readonly _graph: GraphQLClient;

@@ -3,6 +3,7 @@ import { BigNumber, ContractTransaction, ethers, Signer } from 'ethers';
 import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils';
 import { GraphQLClient } from 'graphql-request';
 
+import { UNUSED_LENDING_POOL_IDS } from '../../constants';
 import {
     IERC20MetadataAbi,
     IERC20MetadataAbi__factory,
@@ -26,8 +27,6 @@ import {
     TrancheConfigurationSubgraph,
     TrancheSubgraphResult,
 } from '../DataService/subgraph-types';
-import { totalUserLoyaltyRewardsQuery } from '../UserLending/queries';
-import { TotalUserLoyaltyRewardsSubgraph } from '../UserLending/subgraph-types';
 
 import {
     claimedFeesQuery,
@@ -56,7 +55,6 @@ import {
     UserBonusData,
     UserLock,
 } from './types';
-import { UNUSED_LENDING_POOL_IDS } from '../../constants';
 
 export class KSULocking {
     private readonly _contractAbi: IKSULockingAbi;
