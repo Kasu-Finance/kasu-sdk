@@ -49,6 +49,7 @@ import {
     UserRequestType,
     UserTrancheBalance,
 } from './types';
+import { UNUSED_LENDING_POOL_IDS } from '../../constants';
 
 export class UserLending {
     private readonly _graph: GraphQLClient;
@@ -275,11 +276,17 @@ export class UserLending {
 
         const subgraphResult: UserRequestsSubgraph = await this._graph.request(
             userRequestsQuery,
-            { userAddress: userAddress.toLowerCase() },
+            {
+                userAddress: userAddress.toLowerCase(),
+                unusedPools: UNUSED_LENDING_POOL_IDS,
+            },
         );
 
         const lendingPoolBalances: LendingPoolsBalanceSubgraph =
-            await this._graph.request(lendingPoolsBalanceQuery);
+            await this._graph.request(lendingPoolsBalanceQuery, {
+                unusedPools: UNUSED_LENDING_POOL_IDS,
+            });
+
         const lendingPoolSharesHelper: { id: string; shares: number }[] = [];
         for (const lendingPoolBalance of lendingPoolBalances.lendingPools) {
             lendingPoolSharesHelper.push({
@@ -448,6 +455,11 @@ export class UserLending {
             poolId,
             this._signerOrProvider,
         );
+
+        if (UNUSED_LENDING_POOL_IDS.includes(poolId.toLowerCase())) {
+            throw new Error('This pool is no longer in used');
+        }
+
         const userDetailsSubgraph: LendingPoolUserDetailsSubgraph =
             await this._graph.request(lendingPoolUserDetailsQuery, {
                 userAddress: `${poolId}-${user}`,

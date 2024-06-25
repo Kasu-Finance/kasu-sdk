@@ -1,8 +1,10 @@
 import { gql } from 'graphql-request';
 
 export const userRequestsQuery = gql`
-    query userRequestsQuery($userAddress: String!) {
-        userRequests(where: { user: $userAddress }) {
+    query userRequestsQuery($userAddress: String!, $unusedPools: [String]!) {
+        userRequests(
+            where: { user: $userAddress, lendingPool_not_in: $unusedPools }
+        ) {
             amountAccepted
             amountRejected
             epochId
@@ -66,20 +68,20 @@ export const trancheUserDetailsQuery = gql`
 
 export const totalUserLoyaltyRewardsQuery = gql`
     query TotalUserLoyaltyRewardsQuery($userAddress: String!) {
-      user(id: $userAddress) {
-          totalUserLoyaltyRewards
-      }
+        user(id: $userAddress) {
+            totalUserLoyaltyRewards
+        }
     }
 `;
 
 export const lendingPoolsBalanceQuery = gql`
-    query LendingPoolsBalanceQuery {
-      lendingPools {
-        id
-        balance
-        tranches {
-          shares
+    query LendingPoolsBalanceQuery($unusedPools: [String]!) {
+        lendingPools(where: { id_not_in: $unusedPools }) {
+            id
+            balance
+            tranches {
+                shares
+            }
         }
-      }
     }
-`
+`;

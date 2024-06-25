@@ -54,6 +54,7 @@ import {
     RiskPerformance,
     TrancheData,
 } from './types';
+import { UNUSED_LENDING_POOL_IDS } from '../../constants';
 
 export class DataService {
     private readonly _graph: GraphQLClient;
@@ -142,11 +143,17 @@ export class DataService {
             ['Junior', 'Mezzanine', 'Senior'],
         ];
         const subgraphTrancheConfigurationResults: TrancheConfigurationSubgraph =
-            await this._graph.request(getAllTrancheConfigurationsQuery);
+            await this._graph.request(getAllTrancheConfigurationsQuery, {
+                unusedPools: UNUSED_LENDING_POOL_IDS,
+            });
         const subgraphLendingPoolConfigurationResults: LendingPoolConfigurationSubgraphReturn =
-            await this._graph.request(getAllLendingPoolConfigurationQuery);
+            await this._graph.request(getAllLendingPoolConfigurationQuery, {
+                unusedPools: UNUSED_LENDING_POOL_IDS,
+            });
         const subgraphResults: LendingPoolSubgraphReturn =
-            await this._graph.request(getAllLendingPoolsQuery);
+            await this._graph.request(getAllLendingPoolsQuery, {
+                unusedPools: UNUSED_LENDING_POOL_IDS,
+            });
         const directusResults: PoolOverviewDirectus[] =
             await this._directus.request(readItems('PoolOverview'));
         const retn: PoolOverview[] = [];
@@ -332,6 +339,7 @@ export class DataService {
             ids: poolDelegateProfileAndHistoryDirectus.flatMap((directus) =>
                 directus.otherPools.map((delegate) => delegate.PoolOverview_id),
             ),
+            unusedPools: UNUSED_LENDING_POOL_IDS,
         });
 
         const retn: PoolDelegateProfileAndHistory[] = [];
@@ -359,9 +367,13 @@ export class DataService {
 
     async getPoolTranches(id_in?: string[]): Promise<PoolTranche[]> {
         const subgraphResults: TrancheSubgraphResult =
-            await this._graph.request(getAllTranchesQuery);
+            await this._graph.request(getAllTranchesQuery, {
+                unusedPools: UNUSED_LENDING_POOL_IDS,
+            });
         const subgraphConfigurationResults: TrancheConfigurationSubgraph =
-            await this._graph.request(getAllTrancheConfigurationsQuery);
+            await this._graph.request(getAllTrancheConfigurationsQuery, {
+                unusedPools: UNUSED_LENDING_POOL_IDS,
+            });
         const retn: PoolTranche[] = [];
         for (const trancheSubgraph of subgraphResults.lendingPoolTranches) {
             const configuration =
@@ -417,7 +429,10 @@ export class DataService {
         const poolRepaymentDirectus: PoolRepaymentDirectus[] =
             await this._directus.request(readItems('PoolRepayments'));
         const lendingPoolsWithdrawalsAndDepositsSubgraph: LendingPoolWithdrawalAndDepositSubgraph =
-            await this._graph.request(getLendingPoolWithdrawalAndDepositsQuery);
+            await this._graph.request(
+                getLendingPoolWithdrawalAndDepositsQuery,
+                { unusedPools: UNUSED_LENDING_POOL_IDS },
+            );
         const retn: PoolRepayment[] = [];
         for (const data of poolRepaymentDirectus) {
             const upcomingLendingFundsFlow_1_Value =

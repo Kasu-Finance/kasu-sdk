@@ -1,8 +1,8 @@
 import { gql } from 'graphql-request';
 
 export const getAllLendingPoolsQuery = gql`
-    query getAllLendingPools {
-        lendingPools {
+    query getAllLendingPools($unusedPools: [String]!) {
+        lendingPools(where: { id_not_in: $unusedPools }) {
             pendingPool {
                 id
                 totalPendingDepositAmounts
@@ -27,8 +27,8 @@ export const getAllLendingPoolsQuery = gql`
 `;
 
 export const getAllTranchesQuery = gql`
-    query getAllTranches {
-        lendingPoolTranches {
+    query getAllTranches($unusedPools: [String]!) {
+        lendingPoolTranches(where: { lendingPool_not_in: $unusedPools }) {
             id
             orderId
             totalInterestAmount
@@ -41,8 +41,10 @@ export const getAllTranchesQuery = gql`
 `;
 
 export const getAllTrancheConfigurationsQuery = gql`
-    query getAllTrancheConfigurations {
-        lendingPoolTrancheConfigurations {
+    query getAllTrancheConfigurations($unusedPools: [String]!) {
+        lendingPoolTrancheConfigurations(
+            where: { lendingPoolConfiguration_not_in: $unusedPools }
+        ) {
             id
             orderId
             maxDepositAmount
@@ -54,8 +56,8 @@ export const getAllTrancheConfigurationsQuery = gql`
 `;
 
 export const getPoolNameQuery = gql`
-    query getPoolName($ids: [String]) {
-        lendingPools(where: { id_in: $ids }) {
+    query getPoolName($ids: [String], $unusedPools: [String]!) {
+        lendingPools(where: { id_in: $ids, id_not_in: $unusedPools }) {
             id
             name
         }
@@ -63,8 +65,8 @@ export const getPoolNameQuery = gql`
 `;
 
 export const getAllLendingPoolConfigurationQuery = gql`
-    query getAllLendingPoolConfigurations {
-        lendingPoolConfigurations {
+    query getAllLendingPoolConfigurations($unusedPools: [String]!) {
+        lendingPoolConfigurations(where: { id_not_in: $unusedPools }) {
             desiredDrawAmount
             drawRecipient
             id
@@ -84,8 +86,8 @@ export const getAllLendingPoolConfigurationQuery = gql`
 `;
 
 export const getLendingPoolWithdrawalAndDepositsQuery = gql`
-    query getLendingPoolWithdrawalAndDeposits {
-        lendingPools {
+    query getLendingPoolWithdrawalAndDeposits($unusedPools: [String]!) {
+        lendingPools(where: { id_not_in: $unusedPools }) {
             id
             pendingPool {
                 totalPendingDepositAmounts

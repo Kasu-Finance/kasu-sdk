@@ -56,6 +56,7 @@ import {
     UserBonusData,
     UserLock,
 } from './types';
+import { UNUSED_LENDING_POOL_IDS } from '../../constants';
 
 export class KSULocking {
     private readonly _contractAbi: IKSULockingAbi;
@@ -182,9 +183,13 @@ export class KSULocking {
 
         let projectedYearlyPlatformInterest = 0;
         const subgraphResults: TrancheSubgraphResult =
-            await this._graph.request(getAllTranchesQuery);
+            await this._graph.request(getAllTranchesQuery, {
+                unusedPools: UNUSED_LENDING_POOL_IDS,
+            });
         const subgraphConfigurationResults: TrancheConfigurationSubgraph =
-            await this._graph.request(getAllTrancheConfigurationsQuery);
+            await this._graph.request(getAllTrancheConfigurationsQuery, {
+                unusedPools: UNUSED_LENDING_POOL_IDS,
+            });
 
         for (const tranche of subgraphResults.lendingPoolTranches) {
             const trancheConfig =

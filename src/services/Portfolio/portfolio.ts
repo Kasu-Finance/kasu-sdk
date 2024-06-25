@@ -21,6 +21,7 @@ import {
     PortfolioSummary,
     PortfolioTranche,
 } from './types';
+import { UNUSED_LENDING_POOL_IDS } from '../../constants';
 
 export class Portfolio {
     private _lockingService: KSULocking;
@@ -88,7 +89,11 @@ export class Portfolio {
         const latestEpoch = currentEpoch.sub(BigNumber.from(1));
         const lastEpochData: LastEpochQueryResult = await this._graph.request(
             lastEpochQuery,
-            { userAddress: userAddress, epochId: latestEpoch.toString() },
+            {
+                userAddress: userAddress,
+                epochId: latestEpoch.toString(),
+                unusedPools: UNUSED_LENDING_POOL_IDS,
+            },
         );
         let totalYieldEarned = 0;
         for (const poolOverview of poolOverviews) {
@@ -178,7 +183,11 @@ export class Portfolio {
         }
         const lastEpochData: LastEpochQueryResult = await this._graph.request(
             lastEpochQuery,
-            { userAddress: userAddress, epochId: latestEpoch.toString() },
+            {
+                userAddress: userAddress,
+                epochId: latestEpoch.toString(),
+                unusedPools: UNUSED_LENDING_POOL_IDS,
+            },
         );
         const userPoolBalances = await Promise.all(usePoolBalancePromises);
         for (const poolOverview of poolOverviews) {
