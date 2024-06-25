@@ -81,6 +81,7 @@ export interface TrancheData {
     poolCapacity: string;
     poolCapacityPercentage: string;
     name: string;
+    interestRate: string;
 }
 
 export interface PoolCreditMetrics {

@@ -201,6 +201,7 @@ export class DataService {
                     apy: this.calculateApyForTranche(
                         trancheConfig.interestRate,
                     ).toString(),
+                    interestRate: trancheConfig.interestRate,
                     maximumDeposit: trancheConfig.maxDepositAmount,
                     minimumDeposit: trancheConfig.minDepositAmount,
                     poolCapacityPercentage:
@@ -597,33 +598,47 @@ export class DataService {
         return retn;
     }
 
-    calculateCompounding(amount: number, apy: number, time: number): number[] {
+    calculateCompounding(
+        amount: number,
+        epochInterestRate: number,
+        daysInvested: number,
+        interestFee: number,
+    ): number[] {
         const COMPOUNDING_PERIOD = 7;
-        const helperCalculation: number[] = [amount];
-        const dpy = apy / 365;
+        const earnedAmount: number[] = [];
 
-        const initialAmount = amount;
+        const epochInterestRateAfterFee = epochInterestRate * (1 - interestFee);
 
-        let compoundingAmount = amount;
+        for (let i = 0; i < daysInvested + 1; i++) {
+            const investmentEpochs = i / COMPOUNDING_PERIOD;
 
-        const earnedAmount = [0];
-        for (let i = 0; i < time; i++) {
-            helperCalculation.push(
-                helperCalculation[helperCalculation.length - 1] + amount * dpy,
-            );
+            const interestEarned =
+                amount *
+                (Math.pow(1 + epochInterestRateAfterFee, investmentEpochs) - 1);
 
-            earnedAmount.push(
-                earnedAmount[earnedAmount.length - 1] + compoundingAmount * dpy,
-            );
-
-            if (i % COMPOUNDING_PERIOD === 0) {
-                amount = helperCalculation[helperCalculation.length - 1];
-
-                compoundingAmount =
-                    initialAmount + earnedAmount[earnedAmount.length - 1];
-            }
+            earnedAmount.push(interestEarned);
         }
 
         return earnedAmount;
+    }
+
+    calculateBonusInterestEarnings(
+        earnedAmounts: number[],
+        amount: number,
+        bonusEpochInterest: number,
+    ): number[] {
+        const COMPOUNDING_PERIOD = 7;
+        const dailyInterest = bonusEpochInterest / COMPOUNDING_PERIOD;
+
+        const bonusInterestEarned: number[] = [0];
+
+        for (let i = 1; i < earnedAmounts.length; i++) {
+            const bonusInterest = (amount + earnedAmounts[i]) * dailyInterest;
+            bonusInterestEarned.push(
+                bonusInterestEarned[i - 1] + bonusInterest,
+            );
+        }
+
+        return bonusInterestEarned;
     }
 }
