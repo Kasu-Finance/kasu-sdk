@@ -20,6 +20,7 @@ export const sdkConfig: SdkConfig = {
     ClearingCoordinator: sepolia.ClearingCoordinator.address,
   },
   directusUrl: 'https://kasu-finance.directus.app/',
+  UNUSED_LENDING_POOL_IDS: [''], // will be initialized later
   subgraphUrl:
     'https://api.studio.thegraph.com/query/63245/kasu-wip-sepolia/version/latest',
 }

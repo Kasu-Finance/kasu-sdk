@@ -1,35 +1,35 @@
-import { JsonRpcProvider } from '@ethersproject/providers'
 import { KasuSdk } from '@solidant/kasu-sdk'
 import { useWeb3React } from '@web3-react/core'
 import useSWR from 'swr'
+import useSWRImmutable from 'swr/immutable'
 
-import sdkConfig, { NETWORK } from '@/config/sdk'
-import { SupportedChainIds } from '@/connection/chains'
-import { RPC_URLS } from '@/connection/rpc'
-
-const chain =
-  NETWORK === 'BASE' ? SupportedChainIds.BASE : SupportedChainIds.BASE_SEPOLIA
-
-const fallbackProvider = new JsonRpcProvider(RPC_URLS[chain][0])
-
-const fallbackSdk = new KasuSdk(sdkConfig, fallbackProvider)
+import sdkConfig from '@/config/sdk'
 
 const useKasuSDK = () => {
   const { provider, account } = useWeb3React()
 
-  const { data, error } = useSWR(
-    account && provider ? ['kasuSDK', provider] : null,
-    async ([_, library]) => new KasuSdk(sdkConfig, library.getSigner()),
-    {
-      fallbackData: fallbackSdk,
-    }
-  )
+  const { data: unusedPools } = useSWRImmutable('unusedPools', async () => {
+    const res = await fetch('/api/getUnusedLendingPools')
+
+    const data: string[] = await res.json()
+
+    return data
+  })
+
+  const { data, error } = useSWR('kasuSDK', async () => {
+    if (!provider || !account) return
+
+    return new KasuSdk(
+      { ...sdkConfig, UNUSED_LENDING_POOL_IDS: unusedPools! },
+      provider.getSigner()
+    )
+  })
 
   if (error) {
     console.error(error)
   }
 
-  return data
+  return data!
 }
 
 export default useKasuSDK
