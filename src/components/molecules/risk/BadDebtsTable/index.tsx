@@ -16,15 +16,18 @@ import CustomTable from '@/components/molecules/CustomTable'
 import BadDebtsCell from '@/components/molecules/risk/BadDebtsTable/BadDebtsCell'
 import DataTypography from '@/components/molecules/risk/BadDebtsTable/DataTypography'
 
-import { formatAmount, formatPercentage } from '@/utils'
-
-interface BadDebtsTableProps {
-  data: BadAndDoubtfulDebtsDirectus[]
-}
-
-export interface ExtendedBadAndDoubtfulDebts
-  extends BadAndDoubtfulDebtsDirectus {
-  empty: string
+type BadDebtsTableProps = {
+  data: (Pick<
+    BadAndDoubtfulDebtsDirectus,
+    'id' | 'poolIdFK' | 'name' | 'tooltip'
+  > & {
+    totalAmount: string
+    totalPercentage: string
+    monthlyAverageAmount: string
+    monthlyAveragePercentage: string
+    currentStatusAmount: string
+    currentStatusPercentage: string
+  })[]
 }
 
 const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
@@ -81,7 +84,7 @@ const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
             </>
           )}
           sortKeys={['']}
-          data={data as ExtendedBadAndDoubtfulDebts[]}
+          data={data}
           pagination={false}
           defaultSortKey='' // not needed
           handleSort={() => 0} // not needed
@@ -101,14 +104,22 @@ const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
                 <BadDebtsCell
                   value={[
                     <DataTypography
-                      data={formatAmount(data.totalAmount || '0', {
-                        minDecimals: 2,
-                      })}
-                      suffix=' USDC'
+                      data={data.totalAmount}
+                      suffix=''
+                      key={1}
+                    />,
+                    <DataTypography data={data.totalPercentage} key={2} />,
+                  ]}
+                />
+                <BadDebtsCell
+                  value={[
+                    <DataTypography
+                      data={data.monthlyAverageAmount}
+                      suffix=''
                       key={1}
                     />,
                     <DataTypography
-                      data={formatPercentage(data.totalPercentage)}
+                      data={data.monthlyAveragePercentage}
                       key={2}
                     />,
                   ]}
@@ -116,29 +127,12 @@ const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
                 <BadDebtsCell
                   value={[
                     <DataTypography
-                      data={formatAmount(data.monthlyAverageAmount || '0', {
-                        minDecimals: 2,
-                      })}
-                      suffix=' USDC'
+                      data={data.currentStatusAmount}
+                      suffix=''
                       key={1}
                     />,
                     <DataTypography
-                      data={formatPercentage(data.monthlyAveragePercentage)}
-                      key={2}
-                    />,
-                  ]}
-                />
-                <BadDebtsCell
-                  value={[
-                    <DataTypography
-                      data={formatAmount(data.currentStatusAmount || '0', {
-                        minDecimals: 2,
-                      })}
-                      suffix=' USDC'
-                      key={1}
-                    />,
-                    <DataTypography
-                      data={formatPercentage(data.currentStatusPercentage)}
+                      data={data.currentStatusPercentage}
                       key={2}
                     />,
                   ]}
