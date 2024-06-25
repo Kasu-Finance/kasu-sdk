@@ -55,6 +55,8 @@ import {
     TrancheData,
 } from './types';
 import { UNUSED_LENDING_POOL_IDS } from '../../constants';
+import { SystemVariables } from '../Locking/types';
+import { getSystemVariablesQuery } from '../Locking/queries';
 
 export class DataService {
     private readonly _graph: GraphQLClient;
@@ -291,6 +293,14 @@ export class DataService {
         }
 
         return filterArray(retn, id_in);
+    }
+
+    async getPerformanceFee(): Promise<number> {
+        const systemVariables: SystemVariables = await this._graph.request(
+            getSystemVariablesQuery,
+        );
+
+        return parseFloat(systemVariables.systemVariables.performanceFee);
     }
 
     async getRiskManagement(id_in?: string[]): Promise<RiskManagement[]> {
@@ -554,8 +564,9 @@ export class DataService {
         return filterArray(retn, id_in);
     }
 
-    async getLendingTotals(): Promise<LendingTotals> {
-        const poolOverviews: PoolOverview[] = await this.getPoolOverview();
+    async getLendingTotals(
+        poolOverviews: PoolOverview[],
+    ): Promise<LendingTotals> {
         const riskManagements: RiskManagement[] =
             await this.getRiskManagement();
         const retn: LendingTotals = {
