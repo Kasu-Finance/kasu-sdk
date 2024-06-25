@@ -65,15 +65,6 @@ const LoyaltyCard: React.FC<{
 
   const userKSU = userLocks && userLocks.length > 0 ? userLocks[0] : null
 
-  const totalBonusYieldUSDC = userKSU
-    ? formatEther(
-        convertToUSD(
-          toBigNumber(totalKsuBonusAndRewards),
-          toBigNumber(ksuPrice || '0')
-        )
-      )
-    : '0'
-
   const lifetimeYieldEarnedUSDC = userKSU
     ? formatEther(
         convertToUSD(
@@ -142,32 +133,6 @@ const LoyaltyCard: React.FC<{
                         : '0.00 %'
                   }
                 />
-              }
-            />
-            <InfoRow
-              title={t(
-                'lending.poolOverview.lockingStatus.totalBonusYield.label'
-              )}
-              toolTipInfo={t(
-                'lending.poolOverview.lockingStatus.totalBonusYield.tooltip'
-              )}
-              showDivider
-              metric={
-                <div>
-                  <ContentWithSuffix
-                    textAlign='right'
-                    content={`${formatAmount(totalKsuBonusAndRewards || '0')}`}
-                    suffix='KSU'
-                  />
-                  <Typography
-                    textAlign='right'
-                    sx={{ fontSize: '12px' }}
-                    variant='caption'
-                    component='h6'
-                  >
-                    {formatAmount(totalBonusYieldUSDC || '0')} USDC
-                  </Typography>
-                </div>
               }
             />
             <InfoRow
