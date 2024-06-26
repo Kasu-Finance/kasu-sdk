@@ -476,7 +476,7 @@
         "title": "Your KSU Status",
         "lendingAndBonus": {
           "label": "Lending Bonus & Rewards",
-          "caption": "Related to This Lending Pool Only"
+          "caption": "Related to This Lending Strategy Only"
         },
         "lockedInfo": {
           "label": "Total KSU Locked",

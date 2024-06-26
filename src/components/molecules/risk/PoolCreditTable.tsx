@@ -104,21 +104,21 @@ const PoolCreditTable: React.FC<PoolCreditTableProps> = ({ data }) => {
                 <TableCell align='right'>
                   <Typography variant='body1'>
                     {index < 2
-                      ? `${formatAmount(data.previousFiscalYear || '0')} x`
+                      ? `${formatAmount(data.previousFiscalYear || '0', { minDecimals: 2 })} x`
                       : formatPercentage(data.previousFiscalYear)}
                   </Typography>
                 </TableCell>
                 <TableCell align='right'>
                   <Typography variant='body1'>
                     {index < 2
-                      ? `${formatAmount(data.mostRecentQuarter || '0')} x`
+                      ? `${formatAmount(data.mostRecentQuarter || '0', { minDecimals: 2 })} x`
                       : formatPercentage(data.mostRecentQuarter)}
                   </Typography>
                 </TableCell>
                 <TableCell align='right'>
                   <Typography variant='body1'>
                     {index < 2
-                      ? `${formatAmount(data.priorMonth || '0')} x`
+                      ? `${formatAmount(data.priorMonth || '0', { minDecimals: 2 })} x`
                       : formatPercentage(data.priorMonth)}
                   </Typography>
                 </TableCell>

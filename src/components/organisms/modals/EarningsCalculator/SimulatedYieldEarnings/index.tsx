@@ -1,6 +1,6 @@
 import { Box, Grid, Typography } from '@mui/material'
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import { LoyaltyLevel } from '@/hooks/locking/useLoyaltyLevel'
@@ -23,6 +23,8 @@ const SimulatedYieldEarnings: React.FC<SimulatedYieldEarningsProps> = ({
   loyaltyLevel,
   poolOverview,
 }) => {
+  const [yieldEarnings, setYieldEarnings] = useState([0])
+
   const { t } = useTranslation()
 
   const { modalStatus } = useModalStatusState()
@@ -37,6 +39,16 @@ const SimulatedYieldEarnings: React.FC<SimulatedYieldEarningsProps> = ({
     [loyaltyLevel]
   )
 
+  const bonusEpochInterest = useMemo(
+    () =>
+      loyaltyLevel === 1
+        ? 0.000019164956
+        : loyaltyLevel === 2
+          ? 0.000038329912
+          : 0,
+    [loyaltyLevel]
+  )
+
   return (
     <Box mt={4}>
       <Typography variant='subtitle1' component='span'>
@@ -48,7 +60,11 @@ const SimulatedYieldEarnings: React.FC<SimulatedYieldEarningsProps> = ({
             <SimulatedBaseApy poolOverview={poolOverview} />
           </Grid>
           <Grid item xs={6}>
-            <SimulatedDefaultEarnings poolOverview={poolOverview} />
+            <SimulatedDefaultEarnings
+              poolOverview={poolOverview}
+              setYieldEarnings={setYieldEarnings}
+              yieldEarnings={yieldEarnings}
+            />
           </Grid>
           <Grid item xs={6}>
             <InfoColumn
@@ -79,7 +95,10 @@ const SimulatedYieldEarnings: React.FC<SimulatedYieldEarningsProps> = ({
             />
           </Grid>
           <Grid item xs={6}>
-            <SimulatedBonusEarnings apyBonus={apyBonus} />
+            <SimulatedBonusEarnings
+              bonusEpochInterest={bonusEpochInterest}
+              yieldEarnings={yieldEarnings}
+            />
           </Grid>
         </Grid>
       </ColoredBox>
