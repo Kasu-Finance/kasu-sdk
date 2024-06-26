@@ -28,6 +28,7 @@ const ImageWithFallback: React.FC<{
           alt={alt}
           quality={85}
           style={{ objectFit: 'cover' }}
+          sizes='100vw'
           onError={handleError}
         />
       ) : (

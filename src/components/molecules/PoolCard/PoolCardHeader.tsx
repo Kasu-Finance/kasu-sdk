@@ -24,7 +24,7 @@ const PoolCardHeader: React.FC<PoolCardHeaderProps> = ({ pool, hover }) => {
     <Box>
       <Collapse in={!hover} collapsedSize={142}>
         <ImageWithFallback
-          coverProps={{ height: 238, borderRadius: 0 }}
+          coverProps={{ height: 240, borderRadius: 0 }}
           src={thumbnailImageUrl}
         />
       </Collapse>
