@@ -407,7 +407,7 @@
         },
         "security": {
           "label": "Security",
-          "tooltip": "info"
+          "tooltip": "The form of collateral or commitment provided by the Delegate's customers (end borrowers) to secure their loans, so that in the event of default, the Delegate has recourse to recover the debt."
         },
         "lendingHistory": {
           "label": "Lending History",

@@ -51,8 +51,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
 
   return (
     <Paper sx={{ borderRadius: '4px' }}>
-      <ImageWithFallback src={poolBannerImg} />
-
+      <ImageWithFallback src={poolBannerImg} coverProps={{ height: 132 }} />
       <BoxBackground
         display='flex'
         justifyContent='space-between'

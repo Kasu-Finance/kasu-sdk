@@ -1,3 +1,5 @@
+'use client'
+
 import MenuIcon from '@mui/icons-material/Menu'
 import { Box, Drawer, IconButton, useTheme } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'

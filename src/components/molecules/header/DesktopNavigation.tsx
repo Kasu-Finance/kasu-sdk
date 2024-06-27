@@ -1,5 +1,4 @@
 import { Box } from '@mui/material'
-import Link from 'next/link'
 
 import NavItem from '@/components/organisms/header/NavItem'
 
@@ -22,9 +21,7 @@ const DesktopNavigation: React.FC<DesktopNavigationProps> = ({
             key={link.label}
             isActive={isActiveLink(link.to)}
             href={link.to}
-            disableElevation
-            variant='text'
-            component={Link}
+            prefetch
           >
             {link.label}
           </NavItem>

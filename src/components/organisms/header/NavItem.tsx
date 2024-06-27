@@ -1,13 +1,14 @@
 'use client'
 
-import { Button, ButtonProps, styled } from '@mui/material'
+import { ButtonProps, styled } from '@mui/material'
+import Link from 'next/link'
 
 type NavItemProps = ButtonProps & {
   isActive: boolean
   href: string
 }
 
-const NavItem = styled(Button, {
+const NavItem = styled(Link, {
   shouldForwardProp: (prop) => prop !== 'isActive',
 })<NavItemProps>((props) => ({
   color: props.isActive
@@ -20,6 +21,7 @@ const NavItem = styled(Button, {
   fontFamily: 'Noto Sans Khmer,serif',
   fontWeight: 400,
   fontSize: '14px',
+  textDecoration: 'none',
 }))
 
 export default NavItem

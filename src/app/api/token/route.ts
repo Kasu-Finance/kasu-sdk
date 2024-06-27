@@ -66,7 +66,11 @@ export async function GET(req: NextRequest) {
   // Fetch the data from CoinMarketCap
   try {
     const res = await fetch(
-      `${COINMARKETCAP_API}?${new URLSearchParams({ id: tokenIds, aux: 'is_active', convert_id: USDC_TOKEN_ID })}`,
+      `${COINMARKETCAP_API}?${new URLSearchParams({
+        id: tokenIds,
+        aux: 'is_active',
+        convert_id: USDC_TOKEN_ID,
+      })}`,
       {
         next: {
           revalidate: 600,
@@ -105,10 +109,18 @@ export async function GET(req: NextRequest) {
       {} as Record<SupportedTokens, string>
     )
 
+    // return new NextResponse(
+    //   JSON.stringify({ success: false, message: 'authentication failed' }),
+    //   { status: 401, headers: { 'content-type': 'application/json' } },
+    //   );
+
     // Return the data
-    return NextResponse.json({
-      prices: prices,
-    })
+    const response = NextResponse.json({ prices: prices })
+
+    // Set Cache-Control headers for 1 minute
+    response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=60')
+
+    return response
   } catch (error) {
     // Return an error message
     return NextResponse.json(

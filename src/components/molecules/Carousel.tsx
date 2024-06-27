@@ -80,7 +80,7 @@ const Carousel = <T,>({
         </IconButton>
       )}
 
-      <Grid container spacing={2} justifyContent='center'>
+      <Grid container spacing={3} justifyContent='center'>
         {currentChildren.map((child, index) => (
           <Grid item key={index} xs={gridSize(childrenArray.length)}>
             {child}
