@@ -117,7 +117,6 @@ export async function GET(req: NextRequest) {
     // Return the data
     const response = NextResponse.json({ prices: prices })
 
-    // Set Cache-Control headers
     // Set Cache-Control headers for 1 minute
     response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=60')
 
