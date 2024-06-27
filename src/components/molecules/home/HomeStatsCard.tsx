@@ -15,25 +15,34 @@ const HomeStatsCard: React.FC<{
       {
         titleKey: 'home.summary.metric-1',
         tooltipKey: 'home.summary.metric-1-tooltip',
-        content: `${formatAmount(data?.totalValueLocked || '0', { minValue: 1_000_000 })}`,
+        content: `${formatAmount(data?.totalValueLocked || '0', {
+          minValue: 1_000_000,
+        })}`,
         unit: 'USDC',
       },
       {
         titleKey: 'home.summary.metric-2',
         tooltipKey: 'home.summary.metric-2-tooltip',
-        content: `${formatAmount(data?.loansUnderManagement || '0', { minValue: 1_000_000 })}`,
+        content: `${formatAmount(data?.loansUnderManagement || '0', {
+          minValue: 1_000_000,
+        })}`,
         unit: 'USDC',
       },
       {
         titleKey: 'home.summary.metric-3',
         tooltipKey: 'home.summary.metric-3-tooltip',
-        content: `${formatAmount(data?.totalLoanFundsOriginated || '0', { minValue: 1_000_000 })}`,
+        content: `${formatAmount(data?.totalLoanFundsOriginated || '0', {
+          minValue: 1_000_000,
+        })}`,
         unit: 'USDC',
       },
       {
         titleKey: 'home.summary.metric-4',
         tooltipKey: 'home.summary.metric-4-tooltip',
-        content: `${formatPercentage(data?.totalYieldEarned || '0')}`,
+        content: `${formatAmount(data?.totalYieldEarned || '0', {
+          maxDecimals: 4,
+        })}`,
+        unit: 'USDC',
       },
       {
         titleKey: 'home.summary.metric-5',
