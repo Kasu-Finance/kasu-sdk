@@ -95,6 +95,14 @@ const useSupportedTokenUserBalances = () => {
       )
     },
     {
+      onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
+        const RETRY_TIMES = 5
+        const RETRY_INTERVAL = 2000
+
+        if (retryCount >= RETRY_TIMES) return
+
+        setTimeout(() => revalidate({ retryCount }), RETRY_INTERVAL)
+      },
       dedupingInterval: TimeConversions.SECONDS_PER_MINUTE * 1000,
       refreshInterval: TimeConversions.SECONDS_PER_MINUTE * 1000,
       keepPreviousData: true,
