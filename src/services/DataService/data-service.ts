@@ -148,7 +148,13 @@ export class DataService {
 
         if (!this._directusPoolOverview) {
             this._directusPoolOverview = await this._directus.request(
-                readItems('PoolOverview'),
+                readItems('PoolOverview', {
+                    filter: {
+                        enabled: {
+                            _eq: true,
+                        },
+                    },
+                }),
             );
         }
 
