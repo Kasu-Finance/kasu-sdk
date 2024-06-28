@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { getKasuSDK } from '@/server/getKasuSDK.server'
 
+export const dynamic = 'force-dynamic'
+
 const sdk = getKasuSDK()
 
 const getPoolOverview = unstable_cache(
@@ -20,5 +22,11 @@ export async function GET(request: NextRequest) {
   const id = searchParams.getAll('id').join(',')
 
   const pools = await getPoolOverview(id)
-  return NextResponse.json({ poolOverview: pools }, { status: 200 })
+
+  const response = NextResponse.json({ poolOverview: pools }, { status: 200 })
+
+  // Set Cache-Control headers for 1 minute
+  response.headers.set('Cache-Control', 'public, max-age=600, s-maxage=600')
+
+  return response
 }
