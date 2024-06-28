@@ -56,17 +56,25 @@ const PoolTractionCard: React.FC<PoolTractionCardProps> = ({ data, title }) => {
                       justifyContent='space-between'
                       alignItems='end'
                     >
-                      <TokenAmount amount={content.toString()} symbol={unit} />
-                      {isCapacity && (
-                        <TokenAmount
-                          amount={formatAmount(data.poolCapacity, {
-                            minValue: 1_000_000,
-                          })}
-                          symbol='USDC'
-                          amountVariant='body1'
-                          symbolVariant='caption'
-                        />
-                      )}
+                      <TokenAmount
+                        amount={content.toString()}
+                        symbol={unit}
+                        usdValue={
+                          isCapacity
+                            ? formatAmount(data.poolCapacity, {
+                                minValue: 1_000_000,
+                              })
+                            : undefined
+                        }
+                        {...(isCapacity
+                          ? {
+                              display: 'flex',
+                              flexDirection: 'row',
+                              alignItems: 'end',
+                              gap: 1,
+                            }
+                          : undefined)}
+                      />
                     </Box>
                   }
                 />
