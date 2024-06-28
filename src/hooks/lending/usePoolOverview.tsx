@@ -2,6 +2,8 @@ import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
+import { TimeConversions } from '@/utils'
+
 const usePoolOverview = (poolId?: string) => {
   const sdk = useKasuSDK()
 
@@ -16,7 +18,10 @@ const usePoolOverview = (poolId?: string) => {
     return data
   }
 
-  const { data, error } = useSWR(`poolOverview/${poolId}`, fetchPoolOverview)
+  const { data, error } = useSWR(`poolOverview/${poolId}`, fetchPoolOverview, {
+    dedupingInterval: TimeConversions.SECONDS_PER_MINUTE * 60,
+    refreshInterval: TimeConversions.SECONDS_PER_MINUTE * 60,
+  })
 
   return {
     data,
