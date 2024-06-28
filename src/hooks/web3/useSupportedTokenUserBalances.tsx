@@ -24,12 +24,14 @@ const useSupportedTokenUserBalances = () => {
 
   const supportedTokens = useSupportedTokenInfo()
 
-  const { balance } = useUserBalance(
+  const { balance, isUserBalanceLoading } = useUserBalance(
     supportedTokens?.[SupportedTokens.USDC].address
   )
 
   const { data, error } = useSWR(
-    provider && account && supportedTokens && balance
+    // add isUserBalanceLoading here to prevent rerenders because
+    // useUserBalance returns a fallback data when balance is not loaded
+    provider && account && supportedTokens && balance && !isUserBalanceLoading
       ? [
           'userbalance-supported-tokens',
           provider,
@@ -49,7 +51,9 @@ const useSupportedTokenUserBalances = () => {
 
       if (filteredTokens.length) {
         const response = await fetch(
-          `/api/token?${new URLSearchParams({ tokens: filteredTokens.join(',') })}`
+          `/api/token?${new URLSearchParams({
+            tokens: filteredTokens.join(','),
+          })}`
         )
 
         const data = (await response.json()) as {
