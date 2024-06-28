@@ -26,16 +26,14 @@ import {
     RiskManagementItemDirectus,
 } from './directus-types';
 import {
-    getAllLendingPoolConfigurationQuery,
-    getAllLendingPoolsQuery,
     getAllTrancheConfigurationsQuery,
     getAllTranchesQuery,
     getLendingPoolWithdrawalAndDepositsQuery,
     getPoolNameQuery,
+    getPoolOverviewQuery,
 } from './queries';
 import {
     LendingPoolConfigurationSubgraph,
-    LendingPoolConfigurationSubgraphReturn,
     LendingPoolSubgraph,
     LendingPoolSubgraphReturn,
     LendingPoolWithdrawalAndDepositSubgraph,
@@ -60,6 +58,7 @@ export class DataService {
     private readonly _directus: DirectusClient<DirectusSchema> &
         AuthenticationClient<DirectusSchema> &
         RestClient<DirectusSchema>;
+    private _directusPoolOverview: PoolOverviewDirectus[] | undefined;
 
     constructor(private _kasuConfig: SdkConfig) {
         this._graph = new GraphQLClient(_kasuConfig.subgraphUrl);
@@ -141,33 +140,28 @@ export class DataService {
             ['Junior', 'Senior'],
             ['Junior', 'Mezzanine', 'Senior'],
         ];
-        const subgraphTrancheConfigurationResults: TrancheConfigurationSubgraph =
-            await this._graph.request(getAllTrancheConfigurationsQuery, {
+
+        const poolOverviewResults: LendingPoolSubgraphReturn =
+            await this._graph.request(getPoolOverviewQuery(id_in), {
                 unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
             });
-        const subgraphLendingPoolConfigurationResults: LendingPoolConfigurationSubgraphReturn =
-            await this._graph.request(getAllLendingPoolConfigurationQuery, {
-                unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
-            });
-        const subgraphResults: LendingPoolSubgraphReturn =
-            await this._graph.request(getAllLendingPoolsQuery, {
-                unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
-            });
-        const directusResults: PoolOverviewDirectus[] =
-            await this._directus.request(readItems('PoolOverview'));
+
+        if (!this._directusPoolOverview) {
+            this._directusPoolOverview = await this._directus.request(
+                readItems('PoolOverview'),
+            );
+        }
+
         const retn: PoolOverview[] = [];
-        for (const lendingPoolSubgraph of subgraphResults.lendingPools) {
+        for (const lendingPoolSubgraph of poolOverviewResults.lendingPools) {
             const lendingPoolDirectus: PoolOverviewDirectus | undefined =
-                directusResults.find(
+                this._directusPoolOverview.find(
                     (r) => r.id.toLowerCase() == lendingPoolSubgraph.id,
                 );
-            const lendingPoolConfig:
-                | LendingPoolConfigurationSubgraph
-                | undefined =
-                subgraphLendingPoolConfigurationResults.lendingPoolConfigurations.find(
-                    (r) => r.id == lendingPoolSubgraph.id,
-                );
-            if (!lendingPoolDirectus || !lendingPoolConfig) {
+
+            const lendingPoolConfig = lendingPoolSubgraph.configuration;
+
+            if (!lendingPoolDirectus) {
                 console.warn(
                     "Couldn't find directus pool for id: ",
                     lendingPoolSubgraph.id,
@@ -185,7 +179,7 @@ export class DataService {
             const tranches: TrancheData[] = [];
             for (const tranche of lendingPoolSubgraph.tranches) {
                 const trancheConfig =
-                    subgraphTrancheConfigurationResults.lendingPoolTrancheConfigurations.find(
+                    lendingPoolSubgraph.configuration.tranchesConfig.find(
                         (r) => r.id == tranche.id,
                     );
                 if (!trancheConfig) {
@@ -289,7 +283,7 @@ export class DataService {
             }
         }
 
-        return filterArray(retn, id_in);
+        return retn;
     }
 
     async getPerformanceFee(): Promise<number> {

@@ -1,5 +1,45 @@
 import { gql } from 'graphql-request';
 
+export const getPoolOverviewQuery = (ids?: string[]): string => gql`
+    query getAllPoolOverview($unusedPools: [String]!) {
+        lendingPools(
+            where: { 
+                id_not_in: $unusedPools
+                ${ids?.length ? `, id_in: [${ids.map((id) => `"${id}"`).join(',')}]` : ''} 
+            }
+        ) {
+            pendingPool {
+                id
+                totalPendingDepositAmounts
+                totalPendingDepositsAmount
+                totalPendingWithdrawalShares
+            }
+            id
+            totalUserInterestAmount
+            totalLossAmount
+            name
+            balance
+            firstLostCapital
+            isStopped
+            tranches(orderBy: orderId, orderDirection: asc) {
+                balance
+                id
+                totalInterestAmount
+                orderId
+            }
+            configuration {
+                desiredDrawAmount
+                tranchesConfig {
+                    desiredRatio
+                    interestRate
+                    minDepositAmount
+                    maxDepositAmount
+                }
+            }
+        }
+    }
+`;
+
 export const getAllLendingPoolsQuery = gql`
     query getAllLendingPools($unusedPools: [String]!) {
         lendingPools(where: { id_not_in: $unusedPools }) {

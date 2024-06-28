@@ -13,6 +13,7 @@ export interface LendingPoolSubgraph {
         totalPendingWithdrawalShares: string[];
     };
     tranches: TrancheSubgraph[];
+    configuration: LendingPoolConfigurationSubgraph;
 }
 
 export interface LendingPoolSubgraphReturn {

@@ -8,6 +8,7 @@ import {
 } from '../../contracts';
 import { SdkConfig } from '../../sdk-config';
 import { DataService } from '../DataService/data-service';
+import { PoolOverview } from '../DataService/types';
 import { KSULocking } from '../Locking/locking';
 import { UserPoolBalance } from '../UserLending/types';
 import { UserLending } from '../UserLending/user-lending';
@@ -75,10 +76,12 @@ export class Portfolio {
         };
     }
 
-    async getPortfolioSummary(userAddress: string): Promise<PortfolioSummary> {
+    async getPortfolioSummary(
+        userAddress: string,
+        poolOverviews: PoolOverview[],
+    ): Promise<PortfolioSummary> {
         const userLockingData =
             await this._lockingService.getUserBonusData(userAddress);
-        const poolOverviews = await this._dataService.getPoolOverview();
         let totalInvestments = BigNumber.from(0);
         let totalYieldEarnedLastEpoch = 0;
         // const portfolioLendingPools: PortfolioLendingPool[] = [];
@@ -96,20 +99,14 @@ export class Portfolio {
         );
         let totalYieldEarned = 0;
         for (const poolOverview of poolOverviews) {
-            totalInvestments = totalInvestments.add(
-                (
-                    await this._userLendingService.getUserPoolBalance(
-                        userAddress,
-                        poolOverview.id,
-                    )
-                ).balance,
-            );
-            totalYieldEarned += (
+            const userPoolBalance =
                 await this._userLendingService.getUserPoolBalance(
                     userAddress,
                     poolOverview.id,
-                )
-            ).yieldEarned;
+                );
+
+            totalInvestments = totalInvestments.add(userPoolBalance.balance);
+            totalYieldEarned += userPoolBalance.yieldEarned;
         }
         for (const lastEpochDatapoint of lastEpochData.user
             .lendingPoolUserDetails) {
@@ -163,8 +160,8 @@ export class Portfolio {
 
     async getPortfolioLendingData(
         userAddress: string,
+        poolOverviews: PoolOverview[],
     ): Promise<LendingPortfolioData> {
-        const poolOverviews = await this._dataService.getPoolOverview();
         let totalInvestments = BigNumber.from(0);
         let totalYieldEarnedLastEpoch = 0;
         const portfolioLendingPools: PortfolioLendingPool[] = [];
