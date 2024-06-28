@@ -7,6 +7,7 @@ export { default as convertToRiskStatus } from '@/utils/convert/convertToRiskSta
 export { default as convertFromUSD } from '@/utils/convertFromUSD'
 export { default as convertToUSD } from '@/utils/convertToUSD'
 export { default as escapeRegExp } from '@/utils/escapeRegExp'
+export { default as fetchWithRetry } from '@/utils/fetchWithRetry'
 export { default as formatAccount } from '@/utils/formats/formatAccount'
 export { default as formatAmount } from '@/utils/formats/formatAmount'
 export { default as formatPercentage } from '@/utils/formats/formatPercentage'
