@@ -37,7 +37,7 @@
     "@mui/material-nextjs": "^5.15.3",
     "@nexeraid/identity-sdk": "^1.1.337",
     "@nexeraprotocol/nexera-id-schemas": "^1.10.125",
-    "@solidant/kasu-sdk": "^0.0.71",
+    "@solidant/kasu-sdk": "^0.0.72",
     "@web3-react/coinbase-wallet": "^8.2.3",
     "@web3-react/core": "^8.2.3",
     "@web3-react/eip1193": "^8.2.3",
@@ -57,7 +57,8 @@
     "react-hotjar": "^6.3.1",
     "sass": "^1.69.5",
     "styled-components": "^6.1.2",
-    "swr": "^2.2.5"
+    "swr": "^2.2.5",
+    "xhr2": "^0.2.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",
@@ -82,7 +83,6 @@
     "lint-staged": "^15.2.0",
     "prettier": "^3.1.1",
     "typechain": "^8.3.2",
-    "typescript": "^5.4.5",
-    "xhr2": "^0.2.1"
+    "typescript": "^5.4.5"
   }
 }
