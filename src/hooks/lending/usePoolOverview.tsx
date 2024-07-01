@@ -12,8 +12,10 @@ const fetchPoolOverview = async (url: string) => {
 }
 
 const usePoolOverview = (poolId?: string) => {
+  const poolQuery = poolId ? `?id=${poolId}` : ''
+
   const { data, error } = useSWRImmutable(
-    `/api/pools?poolId=${poolId}`,
+    `/api/pools${poolQuery}`,
     fetchPoolOverview
   )
 
