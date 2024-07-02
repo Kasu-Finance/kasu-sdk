@@ -35,7 +35,15 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     const data = await fetch(`${baseUrl}/api/pools`)
     const pools = await data.json()
 
-    const totals: LendingTotals = await getPoolsTotals(pools.poolOverview)
+    const totals: LendingTotals = (await getPoolsTotals(
+      pools.poolOverview
+    )) ?? {
+      totalValueLocked: 0,
+      loansUnderManagement: 0,
+      totalLoanFundsOriginated: 0,
+      totalLossRate: 0,
+      totalYieldEarned: 0,
+    }
 
     const response = NextResponse.json(totals, { status: 200 })
 
