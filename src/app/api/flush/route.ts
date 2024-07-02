@@ -16,7 +16,7 @@ const flushTags = (cachedTags: string[]): Promise<void> => {
 }
 
 export async function GET(_req: Request): Promise<Response> {
-  const cachedTags: string[] = ['pools']
+  const cachedTags: string[] = ['pools', 'totals', 'poolDelegate']
 
   try {
     await flushTags(cachedTags)
