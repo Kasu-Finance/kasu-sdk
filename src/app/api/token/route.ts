@@ -19,10 +19,16 @@ type CoinMarketCapRes = {
 }
 
 const CMC_TOKEN_ID_MAP = {
-  // [SupportedTokens.DAI]: '4943',
   [SupportedTokens.USDC]: '3408',
   [SupportedTokens.ETH]: '1027',
   [SupportedTokens.WETH]: '1027',
+  [SupportedTokens.AERO]: '29270',
+  [SupportedTokens.BRETT]: '29743',
+  [SupportedTokens.BENJI]: '30193',
+  [SupportedTokens.DEGEN]: '30096',
+  [SupportedTokens.USDBC]: '27763',
+  // [SupportedTokens.WSTETH]: '27763',
+  [SupportedTokens.CBETH]: '21535',
 } as const satisfies Record<SupportedTokens, string>
 
 const USDC_TOKEN_ID = CMC_TOKEN_ID_MAP[SupportedTokens.USDC]

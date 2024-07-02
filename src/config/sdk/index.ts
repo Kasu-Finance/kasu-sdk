@@ -9,8 +9,9 @@ interface Config {
   USDC: string
 }
 
-export const NETWORK = (process.env.NEXT_PUBLIC_CURRENT_NETWORK ||
-  'TESTNET') as 'TESTNET' | 'BASE'
+export const NETWORK = (process.env.NEXT_PUBLIC_CURRENT_NETWORK || 'BASE') as
+  | 'TESTNET'
+  | 'BASE'
 
 const SDK_CONFIG: Record<typeof NETWORK, Config> = {
   BASE: mainnetConfig,
