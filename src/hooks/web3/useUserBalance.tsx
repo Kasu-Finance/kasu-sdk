@@ -11,7 +11,11 @@ const useUserBalance = (tokenAddress: string | undefined) => {
 
   const { decimals, symbol, error } = useTokenDetails(tokenAddress)
 
-  const { data: balance, error: balanceError } = useSWR(
+  const {
+    data: balance,
+    error: balanceError,
+    isLoading,
+  } = useSWR(
     provider && account && tokenAddress
       ? [`userBalance-${tokenAddress}`, provider, account, tokenAddress]
       : null,
@@ -25,7 +29,13 @@ const useUserBalance = (tokenAddress: string | undefined) => {
     { fallbackData: ethers.constants.Zero }
   )
 
-  return { balance, decimals, symbol, error: error || balanceError }
+  return {
+    balance,
+    decimals,
+    symbol,
+    error: error || balanceError,
+    isUserBalanceLoading: isLoading,
+  }
 }
 
 export default useUserBalance

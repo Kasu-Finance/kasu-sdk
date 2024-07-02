@@ -1,8 +1,6 @@
-import useSWR from 'swr'
+import useSWRImmutable from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
-
-import { FIFTEEN_MINUTES } from '@/constants/general'
 
 const useRiskManagement = (poolId: string) => {
   const sdk = useKasuSDK()
@@ -17,12 +15,9 @@ const useRiskManagement = (poolId: string) => {
     return data
   }
 
-  const { data, error, mutate } = useSWR(
+  const { data, error, mutate } = useSWRImmutable(
     poolId ? `riskManagement/${poolId}` : null,
-    fetchRiskManagement,
-    {
-      refreshInterval: FIFTEEN_MINUTES,
-    }
+    fetchRiskManagement
   )
 
   let customError = error

@@ -1,5 +1,5 @@
 import { LendingTotals } from '@solidant/kasu-sdk/src/services/DataService/types'
-import useSWR from 'swr'
+import useSWRImmutable from 'swr/immutable'
 
 import usePoolOverview from '@/hooks/lending/usePoolOverview'
 import useKasuSDK from '@/hooks/useKasuSDK'
@@ -9,7 +9,7 @@ const useLendingTotals = () => {
 
   const { data: poolOverviews } = usePoolOverview()
 
-  const { data, error, mutate } = useSWR(
+  const { data, error, mutate } = useSWRImmutable(
     poolOverviews ? ['lendingTotals', poolOverviews] : null,
     async ([_, poolOverviews]) => {
       const lendingTotals: LendingTotals =

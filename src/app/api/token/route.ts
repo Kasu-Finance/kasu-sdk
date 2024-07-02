@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
   const tokens = req.nextUrl.searchParams.get('tokens')
 
   if (!tokens) {
-    return new Response(
+    return new NextResponse(
       JSON.stringify({
         message: 'Parameter "tokens" is missing from the request',
       }),
@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
   )
 
   if (invalidTokens.length > 0) {
-    return new Response(
+    return new NextResponse(
       JSON.stringify({
         message: `Invalid tokens provided: ${invalidTokens.join(', ')}`,
       }),
@@ -115,7 +115,7 @@ export async function GET(req: NextRequest) {
     //   );
 
     // Return the data
-    const response = NextResponse.json({ prices: prices })
+    const response = NextResponse.json({ prices: prices }, { status: 200 })
 
     // Set Cache-Control headers for 1 minute
     response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=60')

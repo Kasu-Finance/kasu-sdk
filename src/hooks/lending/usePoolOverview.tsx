@@ -1,4 +1,4 @@
-import useSWR from 'swr'
+import useSWRImmutable from 'swr/immutable'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
@@ -16,7 +16,10 @@ const usePoolOverview = (poolId?: string) => {
     return data
   }
 
-  const { data, error } = useSWR(`poolOverview/${poolId}`, fetchPoolOverview)
+  const { data, error } = useSWRImmutable(
+    `poolOverview/${poolId}`,
+    fetchPoolOverview
+  )
 
   return {
     data,
