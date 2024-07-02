@@ -1,10 +1,8 @@
-import {
-  LendingTotals,
-  PoolOverview,
-} from '@solidant/kasu-sdk/src/services/DataService/types'
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { unstable_cache } from 'next/cache'
 import { NextRequest, NextResponse } from 'next/server'
 
+import { GET as fetchPools } from '@/app/api/pools/route'
 import { getKasuSDK } from '@/server/getKasuSDK.server'
 
 const sdk = getKasuSDK()
@@ -28,16 +26,17 @@ const getPoolsTotals = unstable_cache(
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
-    const protocol = req.headers.get('x-forwarded-proto') || 'https'
-    const host = req.headers.get('host')
+    const poolsResponse = await fetchPools(req)
 
-    const baseUrl = `${protocol}://${host}`
-    const data = await fetch(`${baseUrl}/api/pools`)
-    const pools = await data.json()
+    if (!poolsResponse.ok) {
+      throw new Error(
+        `Failed to fetch pools data: ${poolsResponse.status} ${poolsResponse.statusText}`
+      )
+    }
 
-    const totals: LendingTotals = (await getPoolsTotals(
-      pools.poolOverview
-    )) ?? {
+    const pools = await poolsResponse.json()
+
+    const totals = (await getPoolsTotals(pools.poolOverview)) ?? {
       totalValueLocked: 0,
       loansUnderManagement: 0,
       totalLoanFundsOriginated: 0,
@@ -45,14 +44,14 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       totalYieldEarned: 0,
     }
 
-    const response = NextResponse.json(totals, { status: 200 })
+    const nextResponse = NextResponse.json(totals, { status: 200 })
 
-    response.headers.set(
+    nextResponse.headers.set(
       'Cache-Control',
       `public, max-age=${API_ROUTE_TTL}, s-maxage=${API_ROUTE_TTL}`
     )
 
-    return response
+    return nextResponse
   } catch (error) {
     console.error('Error fetching lending totals:', error)
     return NextResponse.json(
