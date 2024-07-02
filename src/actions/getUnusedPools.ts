@@ -8,7 +8,9 @@ const getUnusedPools = async () => {
   'use server'
   const res = await fetch(
     `${sdkConfig.directusUrl}items/PoolOverview?filter[enabled][_neq]=true`,
-    { cache: 'no-store' }
+    {
+      next: { revalidate: 60 * 15, tags: ['unusedPools'] },
+    }
   )
   const unusedPools: { data: PoolOverviewDirectus[] } = await res.json()
 
