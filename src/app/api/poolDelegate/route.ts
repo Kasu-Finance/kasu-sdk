@@ -23,7 +23,8 @@ const getPoolDelegate = unstable_cache(
 
 export async function GET(_req: NextRequest): Promise<NextResponse> {
   try {
-    const pools: PoolDelegateProfileAndHistory[] = await getPoolDelegate()
+    const pools: PoolDelegateProfileAndHistory[] =
+      (await getPoolDelegate()) ?? []
 
     const response = NextResponse.json(pools, { status: 200 })
 

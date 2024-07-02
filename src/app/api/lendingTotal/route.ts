@@ -9,6 +9,8 @@ import { getKasuSDK } from '@/server/getKasuSDK.server'
 
 const sdk = getKasuSDK()
 
+export const dynamic = 'force-dynamic'
+
 const API_ROUTE_TTL = 60 * 60 // 1 hour
 const CACHE_TTL = 60 * 60 // 1 hour
 
@@ -30,7 +32,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     const host = req.headers.get('host')
 
     const baseUrl = `${protocol}://${host}`
-    const data = await fetch(baseUrl + `/api/pools`)
+    const data = await fetch(`${baseUrl}/api/pools`)
     const pools = await data.json()
 
     const totals: LendingTotals = await getPoolsTotals(pools.poolOverview)
