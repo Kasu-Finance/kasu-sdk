@@ -2,9 +2,7 @@ import { PoolDelegateProfileAndHistory } from '@solidant/kasu-sdk/src/services/D
 import { unstable_cache } from 'next/cache'
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getKasuSDK } from '@/server/getKasuSDK.server'
-
-const sdk = getKasuSDK()
+import { getKasuSDK } from '@/actions/getKasuSDK.server'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,6 +11,8 @@ const CACHE_TTL = 60 * 60 // 1 hour
 
 const getPoolDelegate = unstable_cache(
   async () => {
+    const sdk = await getKasuSDK()
+
     return await sdk.DataService.getPoolDelegateProfileAndHistory()
   },
   ['poolDelegateProfileAndHistory'],

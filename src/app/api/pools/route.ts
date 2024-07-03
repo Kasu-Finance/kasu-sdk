@@ -2,15 +2,14 @@ import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { unstable_cache } from 'next/cache'
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getKasuSDK } from '@/server/getKasuSDK.server'
-
-const sdk = getKasuSDK()
+import { getKasuSDK } from '@/actions/getKasuSDK.server'
 
 const API_ROUTE_TTL = 60 * 60 // 1 hour
 const CACHE_TTL = 60 * 60 // 1 hour
 
 const getPoolOverview = unstable_cache(
   async (poolId?: string) => {
+    const sdk = await getKasuSDK()
     const arg = poolId ? [poolId] : undefined
     return await sdk.DataService.getPoolOverview(arg)
   },

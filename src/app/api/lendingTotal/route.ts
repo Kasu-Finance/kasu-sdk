@@ -2,10 +2,8 @@ import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { unstable_cache } from 'next/cache'
 import { NextRequest, NextResponse } from 'next/server'
 
+import { getKasuSDK } from '@/actions/getKasuSDK.server'
 import { GET as fetchPools } from '@/app/api/pools/route'
-import { getKasuSDK } from '@/server/getKasuSDK.server'
-
-const sdk = getKasuSDK()
 
 export const dynamic = 'force-dynamic'
 
@@ -14,6 +12,8 @@ const CACHE_TTL = 60 * 60 // 1 hour
 
 const getPoolsTotals = unstable_cache(
   async (poolOverviews: PoolOverview[]) => {
+    const sdk = await getKasuSDK()
+
     return await sdk.DataService.getLendingTotals(poolOverviews)
   },
   ['totals'],
