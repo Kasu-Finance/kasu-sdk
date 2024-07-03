@@ -5,6 +5,8 @@ import { SupportedTokens } from '@/constants/tokens'
 
 import { ValueOf } from '@/types/utils'
 
+export const dynamic = 'force-dynamic'
+
 type Quote = {
   price: number
 }

@@ -89,7 +89,7 @@ const SwapAndDepositInfo: React.FC<SwapAndDepositInfoProps> = ({
             {t('general.slippage')}
           </Typography>
 
-          <ToolTip title='info' />
+          <ToolTip title={t('modals.earningsCalculator.slippage-tooltip')} />
           <Typography variant='subtitle2' component='p' ml={1}>
             {formatPercentage(ONE_INCH_SLIPPAGE)}
           </Typography>
