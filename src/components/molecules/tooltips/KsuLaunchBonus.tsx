@@ -11,9 +11,9 @@ const KsuLaunchBonus = () => {
   return (
     <>
       <Typography variant='inherit'>
-        Your projected KSU Launch Bonus for being an early Token Locker, based
-        on the amount and duration of KSU locked and the associated multiplier
-        as follows:
+        Your total KSU Launch Bonus received for being an early Token Locker,
+        based on the amount and duration of KSU locked and the associated
+        multiplier as follows:
       </Typography>
 
       <Table size='small' className='tooltipTable'>

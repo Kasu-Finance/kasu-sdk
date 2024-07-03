@@ -82,6 +82,11 @@ const RksuTooltip = () => {
           requirements).
         </li>
       </ul>
+      <Typography variant='inherit'>
+        Regardless of your Loyalty Level, your rKSU balance, relative to the
+        total combined rKSU balance of all Lenders in the Kasu ecosystem, also
+        determines your share of Protocol Fees.
+      </Typography>
     </>
   )
 }
