@@ -11,6 +11,7 @@ import {
   UsdBaseCoinIcon,
   USDCoinIcon,
   WrappedEtherIcon,
+  WrappedLiquidStakedEtherIcon,
 } from '@/assets/icons'
 
 import { SupportedChainIds } from '@/connection/chains'
@@ -24,7 +25,7 @@ export enum SupportedTokens {
   BENJI = 'BENJI',
   DEGEN = 'DEGEN',
   USDBC = 'USDbC',
-  // WSTETH = 'WSTETH',
+  WSTETH = 'WSTETH',
   CBETH = 'cbETH',
 }
 
@@ -94,13 +95,13 @@ export const TOKENS = {
       decimals: 6,
       icon: UsdBaseCoinIcon(),
     },
-    // [SupportedTokens.WSTETH]: {
-    //   symbol: SupportedTokens.WSTETH,
-    //   name: 'Wrapped liquid staked Ether 2.0',
-    //   address: ethers.constants.AddressZero,
-    //   decimals: 18,
-    //   icon: WrappedLiquidStakedEtherIcon(),
-    // },
+    [SupportedTokens.WSTETH]: {
+      symbol: SupportedTokens.WSTETH,
+      name: 'Wrapped liquid staked Ether 2.0',
+      address: ethers.constants.AddressZero,
+      decimals: 18,
+      icon: WrappedLiquidStakedEtherIcon(),
+    },
     [SupportedTokens.CBETH]: {
       symbol: SupportedTokens.CBETH,
       name: 'Coinbase Wrapped Staked ETH',
@@ -166,13 +167,13 @@ export const TOKENS = {
       decimals: 6,
       icon: UsdBaseCoinIcon(),
     },
-    // [SupportedTokens.WSTETH]: {
-    //   symbol: SupportedTokens.WSTETH,
-    //   name: 'Wrapped liquid staked Ether 2.0',
-    //   address: '0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452',
-    //   decimals: 18,
-    //   icon: WrappedLiquidStakedEtherIcon(),
-    // },
+    [SupportedTokens.WSTETH]: {
+      symbol: SupportedTokens.WSTETH,
+      name: 'Wrapped liquid staked Ether 2.0',
+      address: '0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452',
+      decimals: 18,
+      icon: WrappedLiquidStakedEtherIcon(),
+    },
     [SupportedTokens.CBETH]: {
       symbol: SupportedTokens.CBETH,
       name: 'Coinbase Wrapped Staked ETH',

@@ -29,7 +29,7 @@ const CMC_TOKEN_ID_MAP = {
   [SupportedTokens.BENJI]: '30193',
   [SupportedTokens.DEGEN]: '30096',
   [SupportedTokens.USDBC]: '27763',
-  // [SupportedTokens.WSTETH]: '27763',
+  [SupportedTokens.WSTETH]: '12409',
   [SupportedTokens.CBETH]: '21535',
 } as const satisfies Record<SupportedTokens, string>
 
