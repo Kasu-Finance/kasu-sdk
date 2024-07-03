@@ -1,6 +1,7 @@
 import { useWeb3React } from '@web3-react/core'
 import useSWR from 'swr'
 
+import usePoolOverview from '@/hooks/lending/usePoolOverview'
 import useKasuSDK from '@/hooks/useKasuSDK'
 
 const usePortfolioSummary = () => {
@@ -8,10 +9,17 @@ const usePortfolioSummary = () => {
 
   const { account } = useWeb3React()
 
+  const { data: poolOverviews } = usePoolOverview()
+
   const { data, error, mutate } = useSWR(
-    account ? ['portfolioSummary', account] : null,
-    async ([_, userAddress]) =>
-      sdk.Portfolio.getPortfolioSummary(userAddress.toLowerCase())
+    account && poolOverviews
+      ? ['portfolioSummary', account, poolOverviews]
+      : null,
+    async ([_, userAddress, poolOverviews]) =>
+      sdk.Portfolio.getPortfolioSummary(
+        userAddress.toLowerCase(),
+        poolOverviews
+      )
   )
 
   return {
