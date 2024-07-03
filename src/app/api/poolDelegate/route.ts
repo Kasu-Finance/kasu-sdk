@@ -2,7 +2,7 @@ import { PoolDelegateProfileAndHistory } from '@solidant/kasu-sdk/src/services/D
 import { unstable_cache } from 'next/cache'
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getKasuSDK } from '@/actions/getKasuSDK.server'
+import { getKasuSDK } from '@/actions/getKasuSDK'
 
 export const dynamic = 'force-dynamic'
 

@@ -2,7 +2,7 @@ import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { unstable_cache } from 'next/cache'
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getKasuSDK } from '@/actions/getKasuSDK.server'
+import { getKasuSDK } from '@/actions/getKasuSDK'
 
 const API_ROUTE_TTL = 60 * 60 // 1 hour
 const CACHE_TTL = 60 * 60 // 1 hour

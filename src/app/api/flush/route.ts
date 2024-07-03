@@ -21,7 +21,10 @@ export async function GET(_req: Request): Promise<Response> {
     'totals',
     'poolDelegate',
     'unusedPools',
+    'filteredUnusedPools',
   ]
+
+  console.warn('flushing cache:', cachedTags)
 
   try {
     await flushTags(cachedTags)

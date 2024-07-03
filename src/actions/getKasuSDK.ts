@@ -5,7 +5,7 @@ import { KasuSdk } from '@solidant/kasu-sdk'
 // @ts-ignore: xhr2 type exported as any
 import { XMLHttpRequest } from 'xhr2'
 
-import getUnusedPools from '@/actions/getUnusedPools'
+import { GET as getUnusedPools } from '@/app/api/unusedPools/route'
 import sdkConfig, { NETWORK } from '@/config/sdk'
 import { SupportedChainIds } from '@/connection/chains'
 import { RPC_URLS } from '@/connection/rpc'
@@ -20,7 +20,8 @@ const CURRENT_NETWORK =
 const fallbackProvider = new JsonRpcProvider(RPC_URLS[CURRENT_NETWORK][0])
 
 export const getKasuSDK = async (provider?: JsonRpcProvider) => {
-  const unusedPools: string[] = await getUnusedPools()
+  const res = await getUnusedPools()
+  const unusedPools = await res.json()
 
   const library = provider ?? fallbackProvider
   return new KasuSdk(

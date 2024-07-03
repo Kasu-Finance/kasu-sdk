@@ -2,7 +2,7 @@ import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { unstable_cache } from 'next/cache'
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getKasuSDK } from '@/actions/getKasuSDK.server'
+import { getKasuSDK } from '@/actions/getKasuSDK'
 import { GET as fetchPools } from '@/app/api/pools/route'
 
 export const dynamic = 'force-dynamic'
