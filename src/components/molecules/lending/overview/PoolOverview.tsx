@@ -1,4 +1,5 @@
 import { Card, CardContent, Typography } from '@mui/material'
+import { PoolOverview as PoolOverviewType } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useParams } from 'next/navigation'
 
 import usePoolDelegate from '@/hooks/lending/usePoolDelegate'
@@ -27,7 +28,7 @@ const PoolOverview = () => {
   const isLoading = overviewPools.isLoading || delegatePool.isLoading
   const hasData = overviewPools.data && delegatePool.data
 
-  let currentPool, currentPoolDelegate
+  let currentPool: PoolOverviewType | undefined, currentPoolDelegate
 
   if (!isLoading && hasData) {
     currentPool = getObjectById(overviewPools.data, poolId)

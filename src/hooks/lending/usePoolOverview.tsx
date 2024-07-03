@@ -1,23 +1,21 @@
 import useSWRImmutable from 'swr/immutable'
 
-import useKasuSDK from '@/hooks/useKasuSDK'
+const fetchPoolOverview = async (url: string) => {
+  const response = await fetch(url)
+  const data = await response.json()
 
-const usePoolOverview = (poolId?: string) => {
-  const sdk = useKasuSDK()
-
-  const fetchPoolOverview = async () => {
-    const argument = poolId ? [poolId] : undefined
-    const data = await sdk.DataService.getPoolOverview(argument)
-
-    if (!data?.length) {
-      throw new Error('No pool overview data found')
-    }
-
-    return data
+  if (!response.ok) {
+    throw new Error(data.error || 'Failed to fetch pool overview')
   }
 
+  return data.poolOverview
+}
+
+const usePoolOverview = (poolId?: string) => {
+  const poolQuery = poolId ? `?id=${poolId}` : ''
+
   const { data, error } = useSWRImmutable(
-    `poolOverview/${poolId}`,
+    `/api/pools${poolQuery}`,
     fetchPoolOverview
   )
 
