@@ -31,7 +31,7 @@ export const getPoolCardMetrics = (
     },
     {
       id: PoolDelegateMetricIds.TotalLossRate,
-      title: 'lending.poolOverview.detailCard.totalLossRate',
+      title: 'details.poolDelegate.totalLossRate',
       value: `${formatAmount(+poolDelegate.historicLossRate || '0')}  %`,
       suffix: '',
       showDivider: false,

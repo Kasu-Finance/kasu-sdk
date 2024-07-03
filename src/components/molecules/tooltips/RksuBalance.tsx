@@ -20,7 +20,8 @@ const RksuBalance = () => {
         lending withdrawal priority to and from Lending Strategies) and
         associated rewards (APY bonus). Regardless of your Loyalty Level, your
         rKSU balance relative to the total rKSU in the Kasu ecosystem, also
-        determines your share of Protocol Fees.
+        determines your share of Protocol Fees (noting you must participate in
+        USDC lending to be eligible for Protocol Fee sharing).
       </Typography>
 
       <Table size='small' className='tooltipTable'>

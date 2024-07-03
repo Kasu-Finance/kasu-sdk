@@ -4,15 +4,17 @@ import { PoolOverviewDirectus } from '@solidant/kasu-sdk/src/services/DataServic
 
 import sdkConfig from '@/config/sdk'
 
-const getUnusedPools = async () => {
+const deprecated_getUnusedPools = async () => {
   'use server'
   const res = await fetch(
     `${sdkConfig.directusUrl}items/PoolOverview?filter[enabled][_neq]=true`,
-    { cache: 'no-store' }
+    {
+      next: { revalidate: 60 * 15, tags: ['unusedPools'] },
+    }
   )
   const unusedPools: { data: PoolOverviewDirectus[] } = await res.json()
 
   return unusedPools.data.map((pool) => pool.id)
 }
 
-export default getUnusedPools
+export default deprecated_getUnusedPools
