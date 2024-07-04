@@ -54,7 +54,6 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
             }
           />
         </Box>
-
         <Box mt={2}>
           <Typography variant='body2'>
             {t('repayments.loanModelDescription')}
@@ -63,7 +62,6 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
             {t('repayments.borrowerFundsCSV')}
           </Typography>
         </Box>
-
         <Box mt={2}>
           <Typography variant='subtitle1'>
             {t('repayments.sections.aggregated.title')}
