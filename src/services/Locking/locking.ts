@@ -268,7 +268,7 @@ export class KSULocking {
                     18,
                 ),
                 ksuBonusAndRewardsLifetime:
-                    resultLoyaltyRewards.user?.totalUserLoyaltyRewards ?? '0',
+                    resultLoyaltyRewards.user.totalUserLoyaltyRewards || '0',
                 protocolFeesEarned: ethers.utils.formatUnits(
                     protocolFeesEarned,
                     18,
@@ -283,7 +283,7 @@ export class KSULocking {
                 18,
             ),
             ksuBonusAndRewardsLifetime:
-                resultLoyaltyRewards.user?.totalUserLoyaltyRewards ?? '0',
+                resultLoyaltyRewards.user.totalUserLoyaltyRewards || '0',
             protocolFeesEarned: ethers.utils.formatUnits(
                 protocolFeesEarned,
                 18,
