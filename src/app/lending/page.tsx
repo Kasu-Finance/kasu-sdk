@@ -1,37 +1,73 @@
-'use client'
-
+// src/app/lending/page.js
 import { Container } from '@mui/material'
 
-import useLendingTotals from '@/hooks/home/useLendingTotals'
-import usePoolDelegate from '@/hooks/lending/usePoolDelegate'
-import usePoolOverview from '@/hooks/lending/usePoolOverview'
-
+import ClientError from '@/components/atoms/ClientError'
 import HomeStatsCard from '@/components/molecules/home/HomeStatsCard'
 import LendingSkeleton from '@/components/molecules/loaders/LendingSkeleton'
 import HomeTabs from '@/components/organisms/home/HomeTabs'
 
-const Lending = () => {
-  const { data: pools, isLoading: poolsLoading } = usePoolOverview()
-  const { data: poolDelegates, isLoading: poolDelegatesLoading } =
-    usePoolDelegate()
-  const { lendingTotals } = useLendingTotals()
+import { getHostUrl } from '@/actions/getHostUrl'
 
-  if (
-    poolsLoading ||
-    poolDelegatesLoading ||
-    !pools ||
-    !poolDelegates ||
-    !lendingTotals
-  ) {
-    return <LendingSkeleton />
+const fetchPools = async (baseUrl: string) => {
+  const response = await fetch(`${baseUrl}/api/pools`, {
+    cache: 'default',
+  })
+  if (!response.ok) throw new Error('Failed to fetch pools')
+  return response.json()
+}
+
+const fetchPoolDelegates = async (baseUrl: string) => {
+  const response = await fetch(`${baseUrl}/api/poolDelegate`, {
+    cache: 'default',
+  })
+  if (!response.ok) throw new Error('Failed to fetch pool delegates')
+  return response.json()
+}
+
+const fetchLendingTotals = async (baseUrl: string) => {
+  const response = await fetch(`${baseUrl}/api/lendingTotal`, {
+    cache: 'default',
+  })
+  if (!response.ok) throw new Error('Failed to fetch lending totals')
+  return response.json()
+}
+
+const LendingPage = async () => {
+  let pools, poolDelegates, lendingTotals
+  let error: string | null = null
+
+  const baseUrl = await getHostUrl()
+
+  try {
+    ;[pools, poolDelegates, lendingTotals] = await Promise.all([
+      fetchPools(baseUrl),
+      fetchPoolDelegates(baseUrl),
+      fetchLendingTotals(baseUrl),
+    ])
+  } catch (err) {
+    console.error('SERVER ERROR:', err)
+    if (err instanceof Error) {
+      error = err.message
+    } else {
+      error = String(err)
+    }
+    return (
+      <>
+        <LendingSkeleton />
+        <ClientError error={error} />
+      </>
+    )
   }
 
   return (
     <Container maxWidth='lg'>
-      <HomeStatsCard data={lendingTotals} />
-      <HomeTabs pools={pools} poolDelegates={poolDelegates} />
+      {lendingTotals && <HomeStatsCard data={lendingTotals} />}
+
+      {pools && poolDelegates && (
+        <HomeTabs pools={pools.poolOverview} poolDelegates={poolDelegates} />
+      )}
     </Container>
   )
 }
 
-export default Lending
+export default LendingPage

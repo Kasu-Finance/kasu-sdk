@@ -1,3 +1,5 @@
+'use client'
+
 import { Box, Card, Typography } from '@mui/material'
 import { LendingTotals } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useMemo } from 'react'

@@ -1,3 +1,5 @@
+'use client'
+
 import Box from '@mui/material/Box'
 import Tabs from '@mui/material/Tabs'
 import {
