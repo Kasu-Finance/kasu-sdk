@@ -40,6 +40,8 @@ const LendingPage = async () => {
 
   const baseUrl = await getHostUrl()
 
+  console.warn('BASE URL', baseUrl)
+
   try {
     ;[pools, poolDelegates, lendingTotals] = await Promise.all([
       fetchPools(baseUrl),
