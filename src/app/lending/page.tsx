@@ -8,6 +8,8 @@ import HomeTabs from '@/components/organisms/home/HomeTabs'
 
 import { getHostUrl } from '@/actions/getHostUrl'
 
+export const dynamic = 'force-dynamic'
+
 const fetchPools = async (baseUrl: string) => {
   const response = await fetch(`${baseUrl}/api/pools`, {
     cache: 'default',
