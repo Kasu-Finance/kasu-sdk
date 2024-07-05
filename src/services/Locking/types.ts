@@ -43,26 +43,34 @@ export interface GQLGetLockingPeriods {
     lockPeriods: LockPeriod[];
 }
 export interface GQLClaimedFeesForAddress {
-    userLockDepositsInfo: {
-        feesClaimed: string;
-    } | undefined;
+    userLockDepositsInfo:
+        | {
+              feesClaimed: string;
+          }
+        | undefined;
 }
 export interface GQLStakedAmountForAddress {
-    userLockDepositsInfo: {
-        ksuLockedAmount: string;
-    } | undefined;
+    userLockDepositsInfo:
+        | {
+              ksuLockedAmount: string;
+          }
+        | undefined;
 }
 
 export interface GQLEarnedRKsuForAddress {
-    userLockDepositsInfo: {
-        rKSUAmount: string;
-    } | undefined;
+    userLockDepositsInfo:
+        | {
+              rKSUAmount: string;
+          }
+        | undefined;
 }
 
 export interface GQLTotalBonusAmountForAddress {
-    userLockDepositsInfo: {
-        totalKsuBonusAmount: string;
-    } | undefined;
+    userLockDepositsInfo:
+        | {
+              totalKsuBonusAmount: string;
+          }
+        | undefined;
 }
 
 export interface UserLockDepositsInfo {
@@ -91,14 +99,14 @@ export interface LockingSummarySubgraphResult {
         totalRKsuAmount: string;
         totalKsuLockedAmount: string;
         totalFeesEmitted: string;
-    }[]
+    }[];
 }
 
 export interface TrancheConfigurationSubgraph {
     lendingPoolTrancheConfigurations: {
         id: string;
         interestRate: string;
-    }[]
+    }[];
 }
 
 export interface TrancheSubgraph {
@@ -107,14 +115,14 @@ export interface TrancheSubgraph {
 }
 
 export interface TrancheSubgraphResult {
-    lendingPoolTranches: TrancheSubgraph[]
+    lendingPoolTranches: TrancheSubgraph[];
 }
 
 export interface totalUserLoyaltyRewards {
     user: {
         id: string;
         totalUserLoyaltyRewards: string;
-    }
+    } | null;
 }
 
 export interface SystemVariables {
@@ -129,5 +137,5 @@ export interface SystemVariables {
         ecosystemFeeRate: string;
         clearingPeriodLength: string;
         canOnlyDepositJuniorWhenUserHasRKSU: boolean;
-    }
+    };
 }
