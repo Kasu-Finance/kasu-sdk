@@ -277,6 +277,7 @@ export class KSULocking {
             this._userLoyaltyRewardsAbi.userRewards(userAddress),
         ]);
 
+        // Extract data and format with fallback
         const { userLocks } = userLocksData;
 
         const formattedKsuBonusAndRewards = ethers.utils.formatUnits(
@@ -289,24 +290,21 @@ export class KSULocking {
         );
 
         const ksuBonusAndRewardsLifetime =
-            resultLoyaltyRewards.user?.totalUserLoyaltyRewards ?? '0.0';
+            resultLoyaltyRewards.user === null
+                ? '0.0'
+                : resultLoyaltyRewards.user.totalUserLoyaltyRewards;
+
+        const totalLockedAmount =
+            userLocks.length === 0
+                ? '0.0'
+                : userLocks[0].userLockDepositsInfo.ksuLockedAmount;
 
         // Construct response data
-        if (userLocks.length === 0) {
-            return {
-                ksuBonusAndRewards: formattedKsuBonusAndRewards,
-                ksuBonusAndRewardsLifetime: ksuBonusAndRewardsLifetime,
-                protocolFeesEarned: formattedProtocolFeesEarned,
-                totalLockedAmount: '0',
-            };
-        }
-
         return {
             ksuBonusAndRewards: formattedKsuBonusAndRewards,
             ksuBonusAndRewardsLifetime: ksuBonusAndRewardsLifetime,
             protocolFeesEarned: formattedProtocolFeesEarned,
-            totalLockedAmount:
-                userLocks[0].userLockDepositsInfo.ksuLockedAmount,
+            totalLockedAmount: totalLockedAmount,
         };
     }
 
