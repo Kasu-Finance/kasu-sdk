@@ -20,6 +20,7 @@
     },
     "ignorePatterns": ["node_modules", "src/contracts", "index.ts"],
     "rules": {
+        "@typescript-eslint/no-non-null-assertion": "warn",
         "@typescript-eslint/prefer-ts-expect-error": "warn",
         "@typescript-eslint/restrict-plus-operands": "warn",
         "@typescript-eslint/ban-ts-comment": [
