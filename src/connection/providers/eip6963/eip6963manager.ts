@@ -31,7 +31,17 @@ export class EIP6963ProviderManager {
   private onAnnounceProvider(event: EIP6963AnnounceProviderEvent) {
     if (!isEIP6963ProviderDetail(event.detail)) return
 
-    const detail = event.detail
+    const provider = event.detail.provider
+
+    // Some wallets do not conform to EIP-1193 (e.g. Trust Wallet)
+    if (!provider.removeListener) {
+      // Try using `off` handler if it exists, otherwise skip connector
+      if (!('off' in provider && typeof provider.off === 'function')) return
+
+      provider.removeListener = provider.off as typeof provider.removeListener
+    }
+
+    const detail = { ...event.detail, provider }
 
     // Ignore duplicate announcements if we've already stored a provider detail for the given rdns
     if (this._map.get(detail.info.rdns)) {
