@@ -12,7 +12,9 @@ const isDataURI = (uri: string): boolean => {
 }
 
 const isEip1193Provider = (value: any): value is Provider => {
-  return Boolean(value.request && value.on && value.removeListener)
+  return Boolean(
+    value.request && value.on && (value.removeListener || value.off)
+  )
 }
 
 export const isEIP6963ProviderDetail = (

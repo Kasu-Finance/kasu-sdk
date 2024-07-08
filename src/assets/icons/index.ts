@@ -1,7 +1,11 @@
 // general
+export { default as BitgetIcon } from './connectors/BitgetIcon'
 export { default as CoinbaseIcon } from './connectors/CoinbaseIcon'
 export { default as MetamaskIcon } from './connectors/MetamaskIcon'
+export { default as OkxIcon } from './connectors/OkxIcon'
 export { default as RabbyIcon } from './connectors/RabbyIcon'
+export { default as RainbowIcon } from './connectors/RainbowIcon'
+export { default as TrustIcon } from './connectors/TrustIcon'
 export { default as WalletConnectIcon } from './connectors/WalletConnectIcon'
 export { default as AerodomeIcon } from './tokens/AerodomeIcon'
 export { default as BenjiIcon } from './tokens/BenjiIcon'
