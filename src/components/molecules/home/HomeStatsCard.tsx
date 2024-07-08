@@ -55,7 +55,7 @@ const HomeStatsCard: React.FC<{
   }, [data])
 
   return (
-    <Card sx={{ minWidth: 275, padding: 2 }} elevation={1}>
+    <Card sx={{ minWidth: 275, padding: 2, width: '100%' }} elevation={1}>
       {title && (
         <Typography variant='h6' mb={2}>
           {title}
@@ -63,7 +63,7 @@ const HomeStatsCard: React.FC<{
       )}
       <Box
         display='flex'
-        flexWrap='nowrap'
+        flexWrap='wrap'
         flexDirection={{ xs: 'column', sm: 'row' }}
         alignItems={{ xs: 'flex-start', sm: 'center' }}
       >
@@ -72,7 +72,7 @@ const HomeStatsCard: React.FC<{
             key={titleKey}
             display='flex'
             flexDirection='column'
-            width={index === 2 ? '20%' : 'inherit'}
+            width={{ xs: '100%', sm: index === 2 ? '20%' : 'inherit' }}
             flexGrow={1}
             pl={{ xs: 0, sm: index > 0 ? 1 : 0 }}
             sx={{
