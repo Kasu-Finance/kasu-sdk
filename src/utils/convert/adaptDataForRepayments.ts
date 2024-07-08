@@ -1,6 +1,7 @@
 import { PoolRepayment } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import { RepaymentsMetrics, SectionKeys } from '@/constants/repayments'
+import formatAmount from '@/utils/formats/formatAmount'
 
 interface RepaymentMetric {
   id: string
@@ -84,11 +85,6 @@ const staticMetricsMapping: { [key: string]: MetricMapping } = {
   },
 }
 
-const formatNumber = (value: string) => {
-  const num = parseFloat(value)
-  return isNaN(num) ? '0.00' : num.toFixed(2)
-}
-
 const getSectionKey = (key: string): SectionKeys | undefined => {
   if (key.includes('cumulativeLendingFundsFlow'))
     return SectionKeys.CumulativeFunds
@@ -133,7 +129,7 @@ function handleDynamicMetric(
   if (!label) return
 
   const valueKey = key.replace('Key', 'Value') as keyof typeof data
-  const metricValue = formatNumber(String(data[valueKey]))
+  const metricValue = formatAmount(String(data[valueKey]), { minDecimals: 2 })
 
   sections.upcomingFunds.metrics.push({
     id: key,
@@ -150,7 +146,10 @@ function handleStaticMetric(
 ): void {
   const mapping = staticMetricsMapping[key]
   if (mapping) {
-    const formattedValue = formatNumber(String(data[key as keyof typeof data]))
+    const formattedValue = formatAmount(
+      String(data[key as keyof typeof data]),
+      { minDecimals: 2 }
+    )
     const sectionKey = getSectionKey(key)
     if (sectionKey) {
       sections[sectionKey].metrics.push({
