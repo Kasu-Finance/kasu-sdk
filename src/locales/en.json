@@ -879,7 +879,7 @@
   "home": {
     "tabs": {
       "activePools": "Active Lending Strategies",
-      "closedPools": "Closed Strategies"
+      "closedPools": "Closed Lending Strategies"
     },
     "summary": {
       "metric-1": "Total Value Locked (TVL)",
