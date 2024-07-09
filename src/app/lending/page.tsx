@@ -14,7 +14,8 @@ const fetchPools = async (baseUrl: string) => {
   const response = await fetch(`${baseUrl}/api/pools`, {
     cache: 'default',
   })
-  if (!response.ok) throw new Error('Failed to fetch pools')
+  if (!response.ok)
+    throw new Error('Failed to fetch pools ' + JSON.stringify(response))
   return response.json()
 }
 
@@ -22,7 +23,10 @@ const fetchPoolDelegates = async (baseUrl: string) => {
   const response = await fetch(`${baseUrl}/api/poolDelegate`, {
     cache: 'default',
   })
-  if (!response.ok) throw new Error('Failed to fetch pool delegates')
+  if (!response.ok)
+    throw new Error(
+      'Failed to fetch pool delegates ' + JSON.stringify(response)
+    )
   return response.json()
 }
 
@@ -30,7 +34,10 @@ const fetchLendingTotals = async (baseUrl: string) => {
   const response = await fetch(`${baseUrl}/api/lendingTotal`, {
     cache: 'default',
   })
-  if (!response.ok) throw new Error('Failed to fetch lending totals')
+  if (!response.ok)
+    throw new Error(
+      'Failed to fetch lending totals ' + JSON.stringify(response)
+    )
   return response.json()
 }
 
