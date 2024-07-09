@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
 const API_ROUTE_TTL = 60 * 60 // 1 hour
 const CACHE_TTL = 60 * 60 // 1 hour
 
-const getPoolDelegate = unstable_cache(
+export const getPoolDelegate = unstable_cache(
   async () => {
     const sdk = await getKasuSDK()
 

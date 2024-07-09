@@ -7,7 +7,7 @@ import { getKasuSDK } from '@/actions/getKasuSDK'
 const API_ROUTE_TTL = 60 * 60 // 1 hour
 const CACHE_TTL = 60 * 60 // 1 hour
 
-const getPoolOverview = unstable_cache(
+export const getPoolOverview = unstable_cache(
   async (poolId?: string) => {
     const sdk = await getKasuSDK()
     const arg = poolId ? [poolId] : undefined
