@@ -11,32 +11,46 @@ import { getHostUrl } from '@/actions/getHostUrl'
 export const dynamic = 'force-dynamic'
 
 const fetchPools = async (baseUrl: string) => {
+  const url = `${baseUrl}/api/pools`
   const response = await fetch(`${baseUrl}/api/pools`, {
     cache: 'default',
   })
   if (!response.ok)
-    throw new Error('Failed to fetch pools ' + JSON.stringify(response))
+    throw new Error(
+      'Failed to fetch pools, URL: ' +
+        url +
+        ' JSON: ' +
+        JSON.stringify(response)
+    )
   return response.json()
 }
 
 const fetchPoolDelegates = async (baseUrl: string) => {
+  const url = `${baseUrl}/api/poolDelegate`
   const response = await fetch(`${baseUrl}/api/poolDelegate`, {
     cache: 'default',
   })
   if (!response.ok)
     throw new Error(
-      'Failed to fetch pool delegates ' + JSON.stringify(response)
+      'Failed to fetch pools, URL: ' +
+        url +
+        ' JSON: ' +
+        JSON.stringify(response)
     )
   return response.json()
 }
 
 const fetchLendingTotals = async (baseUrl: string) => {
+  const url = `${baseUrl}/api/lendingTotal`
   const response = await fetch(`${baseUrl}/api/lendingTotal`, {
     cache: 'default',
   })
   if (!response.ok)
     throw new Error(
-      'Failed to fetch lending totals ' + JSON.stringify(response)
+      'Failed to fetch pools, URL: ' +
+        url +
+        ' JSON: ' +
+        JSON.stringify(response)
     )
   return response.json()
 }
