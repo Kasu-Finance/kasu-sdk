@@ -193,33 +193,196 @@
       "description-3": "Each KSU token that you unlock will burn a proportionate amount of rKSU, which may adversely impact your rKSU to Total USDC Lending Ratio. In order to maintain your Loyalty Level and associated utility and rewards, be sure to maintain an amount of locked KSU to avoid burning rKSU to the point that it falls below the minimum required ratio (for each Loyalty Level) outlined above."
     },
     "termsAndConditions": {
-      "title": "Terms and Conditions",
-      "description-1": "The more you lock, the higher your Loyalty Level and the more utility and rewards you receive.",
-      "description-2": "However, you will be ranked behind Loyalty Level 1 and 2 Liquidity Providers in the queue for lending access priority and lending withdrawal priority to and from Lending Strategies. Additionally, you will not be eligible for any bonus APY (excluding you from earning bonus interest). Loyalty Levels are as follows:",
-      "description-3": "Should you unlock any amount of KSU, your rKSU will be burned in relative proportion. This may adversely affect your Loyalty Level, which in turn, adversely affects your access to Lending Strategies and loan Tranches, along with your position in the queue for withdrawals from your existing lending. It may also affect your APY bonus. It will also reduce your share of Protocol Fees, regardless of Loyalty Level.",
-      "loyalty-level-0": {
-        "description-1": "If the value of your rKSU balance relative to your current and pending USDC lending is less than 1%:",
-        "list": {
-          "list-0": "No priority access to Lending Strategies and loan Tranches, where you will be subject to the normal queuing system after Loyalty Level 1 and 2 Token Lockers.",
-          "list-1": "No priority for capital withdrawals from your existing lending, where you will be subject to the normal queuing system after Loyalty Level 1 and 2 Token Lockers.",
-          "list-2": "No additional APY (APY Bonus), excluding you from any bonus interest earnings on your lending."
+      "title": "Lending Terms and Conditions",
+      "subtitle": "By submitting this lending request, you acknowledge and agree to the following Terms and Conditions. It is important to read and understand these terms, as they outline the rights, responsibilities, and risks associated with your participation in the Kasu protocol.",
+      "keyRisks": "Key Risks:",
+      "subheader-1": {
+        "title": "Risk Disclosure: Senior, Mezzanine and Junior Tranches.",
+        "description": "When lending through Kasu, it is essential to understand the different types of lending tranches—Senior, Mezzanine, and Junior—and the associated risks. Each tranche has a distinct risk profile and position in the capital structure, which affects the potential returns and the likelihood of recovering the loaned capital.",
+        "subtitle": "Acknowledgment of Risks",
+        "subtitle-description": "By lending in a particular tranche, Lenders acknowledge and accept the inherent risks associated with their chosen position in terms of priority in the event of losses. It is crucial for Lenders to thoroughly assess their risk tolerance, lending objectives, and financial situation before committing capital to any tranche.",
+        "sub-subheader-1": {
+          "title": "Senior Tranche",
+          "description": "The Senior Tranche is the highest-ranking tranche. In the event of losses, Senior Tranche Lenders have the first claim on any recovered funds.",
+          "list": {
+            "list-0": {
+              "title": "Lower Yield: ",
+              "description": "Due to its priority in repayment in the event of losses, the Senior Tranche typically offers lower interest rates compared to Mezzanine and Junior tranches."
+            },
+            "list-1": {
+              "title": "Credit Risk: ",
+              "description": "In the event of the end borrower's default, Senior Tranche lenders are paid first from any recovered funds, but this still depends on the overall recovery rate."
+            }
+          }
+        },
+        "sub-subheader-2": {
+          "title": "Mezzanine Tranche",
+          "description": "The Mezzanine Tranche sits between the Senior and Junior tranches. It generally offers higher returns than the Senior Tranche but comes with increased risk.",
+          "list": {
+            "list-0": {
+              "title": "Subordination Risk in Event of Losses: ",
+              "description": "Mezzanine lenders are subordinated to Senior Tranche lenders in the event of losses, meaning they are repaid only after all Senior Tranche obligations have been met."
+            },
+            "list-1": {
+              "title": "Credit Risk: ",
+              "description": "There is a higher risk of non-payment compared to the Senior Tranche. In a default scenario, Mezzanine lenders may experience significant delays in repayment or potentially incur losses."
+            }
+          }
+        },
+        "sub-subheader-3": {
+          "title": "Junior Tranche",
+          "description": "The Junior Tranche is the lowest-ranking tranche. It offers the highest potential returns but also bears the greatest risk.",
+          "list": {
+            "list-0": {
+              "title": "Subordination Risk in Event of Losses: ",
+              "description": "Junior Tranche lenders are the last to be paid in the event of losses. They only receive repayments after all Senior and Mezzanine obligations have been fulfilled."
+            },
+            "list-1": {
+              "title": "Credit Risk: ",
+              "description": "The risk of loss is highest in the Junior Tranche. In a worst-case scenario, Junior lenders may lose their entire capital if the recovered funds are insufficient to cover higher-ranking debts."
+            }
+          }
         }
       },
-      "loyalty-level-1": {
-        "description-1": "If the value of your rKSU balance relative to your total current and pending USDC lending across all Lending Strategies is 1% or greater, but less than 5%, you will achieve Loyalty Level 1, entitling you to the following token utility and benefits:",
-        "list": {
-          "list-0": "Second order priority access to Lending Strategies and loan Tranches (behind Loyalty Level 2).",
-          "list-1": "Second order priority for capital withdrawals from your existing lending (behind Loyalty Level 2).",
-          "list-2": "Additional APY (APY Bonus) awarding you with bonus interest earnings on all your lending, awarded in KSU (subject to change according to liquidity demand and supply requirements)."
+      "subheader-2": {
+        "title": "Fees Explanation and Gross APY Disclosure",
+        "description-1": "Important Note:",
+        "description-2": "All advertised APY rates are presented on a",
+        "description-3": "gross basis (before fees)",
+        "description-4": ". This means that the actual APY received by Lenders will be net of the protocol fees outlined below.",
+        "description-5": "Overview of Fees:",
+        "description-6": "All fees taken by the Kasu protocol are derived from the interest generated by lending activities. A percentage of this interest is allocated to various components of the ecosystem to support its ongoing development and maintenance.",
+        "description-7": "Fee Structure with Example Calculation:",
+        "description-8": "For example, if a Lending Strategy offers an advertised 20% APY to Lenders, the associated fees are as follows:",
+        "description-9": "In this scenario, a Lender who participates in a Lending Strategy advertised with a 20% APY (gross) will receive 18% APY (net) after the deduction of fees.",
+        "list-1": {
+          "list-0": {
+            "title": "Protocol Fee Sharing: ",
+            "description": "5% of the total interest earned by Lenders is allocated towards Protocol Fee Sharing."
+          },
+          "list-1": {
+            "title": "Kasu Protocol Wallet: ",
+            "description": " 5% of the total interest earned by Lenders is allocated to the Kasu Protocol wallet."
+          }
+        },
+        "list-2": {
+          "list-0": "1% APY (5% of 20% APY) is allocated towards Protocol Fee Sharing.",
+          "list-1": "1% APY (5% of 20% APY) goes to the Kasu Protocol wallet."
         }
       },
-      "loyalty-level-2": {
-        "description-1": "If the value of your rKSU balance relative to your total current and pending USDC lending across all Lending Strategies is 5% or greater, you will achieve Loyalty Level 2, entitling you to the following token utility and benefits:",
+      "subheader-3": {
+        "title": "Interest Accrual",
+        "description": "Interest on loaned capital is accrued on a per epoch basis and added to each Lender's loan balance. Accordingly, accessing accrued interest occurs through the same mechanisms as accessing the initial loaned capital, requiring a withdrawal request.",
+        "subtitle": "Acknowledgment of Interest Accrual Process",
+        "subtitle-description": "By lending through Kasu, Lenders acknowledge and accept the interest accrual process. It is essential for Lenders to understand that interest is accrued on a per epoch basis and reflected in their loan balance. Access to these funds requires a withdrawal request, which applies to both the initial loaned capital and the accrued interest."
+      },
+      "subheader-4": {
+        "title": "Pending Phase Before Interest Accrual",
+        "description": "When Lenders submit a Lending Request to Kasu, their funds enter a Pending Phase until the next Clearing Period. The Clearing Period occurs at the end of an epoch, during which Lending Requests and Loan Withdrawal Requests are processed.",
+        "subtitle": "Acknowledgment of Pending Phase and Clearing Period Process",
+        "subtitle-description": "By lending through Kasu, Lenders acknowledge and accept the Pending Phase and Clearing Period process. It is crucial for Lenders to understand that their funds will only start accruing interest once their Lending Request is accepted at the end of the Clearing Period. Lenders also acknowledge that in rare circumstances, a Clearing Period could be missed, resulting in their Lending Request being processed in a future epoch.",
         "list": {
-          "list-0": "First order priority access to Lending Strategies and loan Tranches.",
-          "list-1": "First order priority for capital withdrawals from your existing lending",
-          "list-2": "Additional APY (more APY Bonus than Loyalty Level 1 Token Lockers) awarding you with bonus interest earnings on all your lending, awarded in KSU (subject to change according to liquidity demand and supply requirements)."
+          "title": "Key Points:",
+          "list-0": {
+            "title": "Pending Phase: ",
+            "description": "Funds do not start accruing interest immediately upon the submission of a Lending Request. They remain in a Pending Phase until the next Clearing Period."
+          },
+          "list-1": {
+            "title": "Clearing Period: ",
+            "description": "At the end of each epoch, during the Clearing Period, Lending Requests and Loan Withdrawal Requests are processed. Based on factors such as each Lender's Loyalty Level and the liquidity needs of each Lending Strategy, funds are either accepted or rejected."
+          },
+          "list-2": {
+            "title": "Start of Interest Accrual: ",
+            "description": "If funds from a Lending Request are accepted at the end of the epoch, the Lender will then start accruing interest from the beginning of the next epoch."
+          },
+          "list-3": {
+            "title": "Clearing Period Delays: ",
+            "description": "In rare instances, a Clearing Period could be missed, causing the Lending Request to be processed at a future epoch. "
+          }
         }
+      },
+      "subheader-5": {
+        "title": "Loan Withdrawal Requests",
+        "description": "When Lenders submit a Loan Withdrawal Request to Kasu, their request enters a Pending Hhase. The processing of these requests is contingent upon the excess liquidity within the specific Lending Strategy and may therefore remain outstanding (or partially outstanding) for more than one epoch.",
+        "subtitle": "Acknowledgment of Loan Withdrawal Request Process",
+        "subtitle-description": "By submitting a Loan Withdrawal Request through Kasu, Lenders acknowledge and accept the Pending Phase and the process based on excess liquidity. Lenders understand that:",
+        "list-0": {
+          "title": "Key Points:",
+          "list-0": {
+            "title": "Pending Phase and Excess Liquidity: ",
+            "description": "Loan Withdrawal Requests are processed based on the excess funds available within the given Lending Strategy at the time of submission. This means that Lenders may only withdraw funds up to the excess liquidity available, potentially resulting in partially fulfilled (or even unfulfilled Withdrawal Requests."
+          },
+          "list-1": {
+            "title": "Multiple Epochs: ",
+            "description": "Requests may therefore remain outstanding (or partially outstanding) for more than one epoch until sufficient liquidity is available."
+          },
+          "list-2": {
+            "title": "Priority Based on Loyalty Level: ",
+            "description": "Withdrawal Requests are prioritised according to each Lender's Loyalty Level, with higher Loyalty Levels receiving preference. Lenders with lower or no Loyalty Levels may experience longer waiting times for their Withdrawal Requests to be processed."
+          },
+          "list-3": {
+            "title": "Automatic Loyalty Level Increase: ",
+            "description": "Any Withdrawal Request left outstanding for more than five epochs will automatically receive the highest Loyalty Level status until the withdrawal is processed."
+          },
+          "list-4": {
+            "title": "Interest Accrual: ",
+            "description": "Interest continues to accrue during the Pending Phase until the Withdrawal Request is processed. Upon the successful processing of a Withdrawal Request, the withdrawing Lender's lending position stops accruing interest."
+          }
+        },
+        "list-1": {
+          "list-0": "Access to their funds is contingent upon the availability of excess liquidity within the Lending Strategy.",
+          "list-1": "Withdrawal Requests are prioritised based on Loyalty Level, potentially resulting in longer waiting times for lower or no Loyalty Level Lenders.",
+          "list-2": "Withdrawal Requests may therefore remain outstanding (or partially outstanding) for more than one epoch until sufficient liquidity is available.",
+          "list-3": "Any outstanding Withdrawal Request for more than five epochs will automatically receive the highest Loyalty Level until the withdrawal is processed.",
+          "list-4": "Interest continues to accrue during the Pending Phase and stops only upon the successful processing of a Withdrawal Request."
+        }
+      },
+      "subheader-6": {
+        "title": "Tranche Allocation and Overflow in Case of Oversubscription",
+        "description": "When Lenders submit a Lending Request for a specific tranche through Kasu, it’s possible that the requested tranche could be oversubscribed. In such cases, the following process is applied:",
+        "sub-subheader-1": "Automatic Reallocation:",
+        "sub-subheader-2": "Impact of Loyalty Levels:",
+        "description-1": "An example is given by the following Lending Strategy with three tranches: ",
+        "description-2": "In this scenario, the excess 50,000 USDC from the Junior tranche will be reallocated to the Mezzanine tranche. Once the Mezzanine tranche is filled, the remaining 40,000 USDC will be reallocated to the Senior tranche. This results in:",
+        "description-3": "This scenario leaves 30,000 USDC of the initial requests unallocated, which will be returned to the Lenders who submitted those requests.",
+        "subtitle": "Acknowledgment of Tranche Allocation and Overflow Process",
+        "subtitle-description": "By lending through Kasu, Lenders acknowledge and accept the tranche allocation and overflow process in case of oversubscription. Lenders understand that:",
+        "list-1": {
+          "list-0": {
+            "title": "Oversubscription Handling: ",
+            "description": "If a requested tranche (e.g., Junior) is oversubscribed, the excess funds are automatically reallocated to the next available tranche with capacity (e.g., Mezzanine or Senior)."
+          },
+          "list-1": {
+            "title": "Continual Reallocation: ",
+            "description": "This reallocation continues down the line until all available tranches are filled."
+          },
+          "list-2": {
+            "title": "No Opt-Out: ",
+            "description": "Lenders cannot opt-out of this reallocation process once their Lending Request is submitted. If they do not wish to participate in a lower-yielding tranche, they must submit a Loan Withdrawal Request as outlined earlier."
+          },
+          "list-3": {
+            "title": "Potential Return of Funds: ",
+            "description": "If the reallocation process reaches the Senior tranche and it is still oversubscribed, any remaining unallocated funds will be returned to the Lenders who submitted those requests."
+          }
+        },
+        "list-2": {
+          "list-0": {
+            "title": "Priority Allocation: ",
+            "description": "Higher Loyalty Levels increase the likelihood of allocation to the desired tranche but do not guarantee it."
+          }
+        },
+        "list-3": {
+          "list-0": "Their Lending Requests may be reallocated to lower-yielding tranches if the requested tranche is oversubscribed.",
+          "list-1": "Higher Loyalty Levels increase but do not guarantee priority allocation to the desired tranche.",
+          "list-2": "Reallocation is automated. If Lenders do not wish to accept a lower-yielding tranche, they must submit a Loan Withdrawal Request.",
+          "list-3": "Any unallocated funds at the end of the reallocation process will be returned to the Lenders if the Senior tranche is still oversubscribed."
+        },
+        "capacity": "Capacity",
+        "totalLendingRequests": "Total Lending Requests",
+        "acceptedDepositRequests": "Accepted Deposit Requests",
+        "junior": "Junior",
+        "mezzanine": "Mezzanine",
+        "senior": "Senior"
       }
     },
     "unlock": {
