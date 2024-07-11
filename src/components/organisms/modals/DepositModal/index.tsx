@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
+import useCurrentEpochDepositedAmount from '@/hooks/lending/useCurrentEpochDepositedAmount'
 import useRequestDeposit from '@/hooks/lending/useRequestDeposit'
 import useTranslation from '@/hooks/useTranslation'
 import useApproveToken from '@/hooks/web3/useApproveToken'
@@ -36,9 +37,16 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { modal } = useModalState()
 
-  const { amount, selectedToken, txHash } = useDepositModalState()
+  const poolData = modal.depositModal.poolData
+
+  const { amount, selectedToken, txHash, trancheId } = useDepositModalState()
 
   const supportedToken = useSupportedTokenInfo()
+
+  const { currentEpochDepositedAmount } = useCurrentEpochDepositedAmount(
+    poolData.lendingPoolId,
+    trancheId
+  )
 
   const { modalStatus, modalStatusAction, setModalStatusAction } =
     useModalStatusState()
@@ -51,14 +59,34 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const requestDeposit = useRequestDeposit()
 
-  const poolData = modal.depositModal.poolData
-
   const onCloseModal = () => {
     handleClose()
     router.push(`${Routes.lending.root.url}/${poolData.lendingPoolId}`)
   }
 
   const approvalRequired = !isApproved && selectedToken !== SupportedTokens.ETH
+
+  const handleRequestDeposit = () => {
+    if (!currentEpochDepositedAmount) {
+      return console.error(
+        'RequestDeposit:: currentEpochDepositedAmount is undefined'
+      )
+    }
+
+    const selectedTranche = poolData.tranches.find(
+      (tranche) => tranche.trancheId === trancheId
+    )
+
+    if (!selectedTranche) {
+      return console.error('RequestDeposit:: Selected tranche not found.')
+    }
+
+    requestDeposit(
+      poolData.lendingPoolId,
+      selectedTranche,
+      currentEpochDepositedAmount
+    )
+  }
 
   return (
     <>
@@ -119,9 +147,7 @@ const DepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                 variant='contained'
                 endIcon={<ChevronRightIcon />}
                 onClick={() =>
-                  !approvalRequired
-                    ? requestDeposit(poolData.lendingPoolId)
-                    : approve(amount)
+                  !approvalRequired ? handleRequestDeposit() : approve(amount)
                 }
               >
                 {!approvalRequired
