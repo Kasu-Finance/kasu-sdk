@@ -19,6 +19,8 @@ import {
     ILendingPoolManagerAbi__factory,
     ILendingPoolTrancheAbi,
     ILendingPoolTrancheAbi__factory,
+    ISystemVariablesAbi,
+    ISystemVariablesAbi__factory,
     IUserLoyaltyRewardsAbi,
     IUserLoyaltyRewardsAbi__factory,
     IUserManagerAbi,
@@ -28,6 +30,7 @@ import { SdkConfig } from '../../sdk-config';
 
 import { mapUserRequestEventType } from './helper';
 import {
+    currentEpochDepositedAmountQuery,
     lendingPoolsBalanceQuery,
     lendingPoolUserDetailsQuery,
     totalUserLoyaltyRewardsQuery,
@@ -56,6 +59,8 @@ export class UserLending {
     private readonly _lendingPoolManagerAbi: ILendingPoolManagerAbi;
     private readonly _userLoyaltyRewardsAbi: IUserLoyaltyRewardsAbi;
     private readonly _clearingCoordinatorAbi: IClearingCoordinatorAbi;
+    private readonly _systemVariablesAbi: ISystemVariablesAbi;
+
     readonly _signerOrProvider: Signer | Provider;
 
     constructor(
@@ -78,6 +83,10 @@ export class UserLending {
         );
         this._clearingCoordinatorAbi = IClearingCoordinatorAbi__factory.connect(
             _kasuConfig.contracts.ClearingCoordinator,
+            signerOrProvider,
+        );
+        this._systemVariablesAbi = ISystemVariablesAbi__factory.connect(
+            _kasuConfig.contracts.SystemVariables,
             signerOrProvider,
         );
     }
@@ -131,9 +140,8 @@ export class UserLending {
         fromAmount: string,
         routerAddress: string,
         swapCallData: string,
+        minAmountOut: string,
     ): BytesLike {
-        const MIN_AMOUNT_OUT = 0;
-
         return defaultAbiCoder.encode(
             [
                 'tuple(address[], uint256[], (address, address,bytes)[], uint256)',
@@ -143,7 +151,7 @@ export class UserLending {
                     [fromToken],
                     [fromAmount],
                     [[routerAddress, fromToken, swapCallData]],
-                    MIN_AMOUNT_OUT,
+                    minAmountOut,
                 ],
             ],
         );
@@ -152,7 +160,7 @@ export class UserLending {
     async requestDepositWithKyc(
         lendingPool: string,
         tranche: string,
-        amount: BigNumberish,
+        maxAmount: BigNumberish,
         swapData: BytesLike,
         blockExpiration: BigNumberish,
         signature: BytesLike,
@@ -161,7 +169,7 @@ export class UserLending {
         return await this._lendingPoolManagerAbi.requestDepositWithKyc(
             lendingPool,
             tranche,
-            amount,
+            maxAmount,
             swapData,
             blockExpiration,
             signature,
@@ -423,6 +431,27 @@ export class UserLending {
         }
         return retn;
     }
+
+    async getCurrentEpochDepositedAmount(
+        lendingPoolId: string,
+        trancheId: string,
+        userId: string,
+    ): Promise<string> {
+        const currentRequestEpoch =
+            await this._systemVariablesAbi.currentRequestEpoch();
+
+        const userRequestsSubgraph: UserRequestsSubgraph =
+            await this._graph.request(currentEpochDepositedAmountQuery, {
+                lendingPoolId,
+                trancheId,
+                userId,
+                epochId: currentRequestEpoch.toString(),
+            });
+
+        // eslint-disable-next-line
+        return userRequestsSubgraph?.userRequests?.[0]?.amountRequested ?? '0';
+    }
+
     convertSharesToAssets(
         sharesAmount: string,
         totalAssets: number,

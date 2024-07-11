@@ -85,3 +85,23 @@ export const lendingPoolsBalanceQuery = gql`
         }
     }
 `;
+
+export const currentEpochDepositedAmountQuery = gql`
+    query CurrentEpochDepositedAmountQuery(
+        $lendingPoolId: String
+        $trancheId: String
+        $epochId: String
+        $userId: String
+    ) {
+        userRequests(
+            where: {
+                lendingPool: $lendingPoolId
+                tranche: $trancheId
+                epochId: $epochId
+                user: $userId
+            }
+        ) {
+            amountRequested
+        }
+    }
+`;

@@ -100,7 +100,7 @@ export class Portfolio {
 
         let totalYieldEarned = 0;
 
-        let userPoolBalancePromises: Promise<UserPoolBalance>[] = [];
+        const userPoolBalancePromises: Promise<UserPoolBalance>[] = [];
         for (const poolOverview of poolOverviews) {
             userPoolBalancePromises.push(
                 this._userLendingService.getUserPoolBalance(
