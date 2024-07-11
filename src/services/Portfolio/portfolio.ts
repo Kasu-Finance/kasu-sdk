@@ -117,6 +117,7 @@ export class Portfolio {
             totalYieldEarned += userPoolBalance.yieldEarned;
         });
 
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (lastEpochData.user) {
             for (const lastEpochDatapoint of lastEpochData.user
                 .lendingPoolUserDetails) {
@@ -203,6 +204,7 @@ export class Portfolio {
             },
         );
 
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (lastEpochData.user) {
             const userPoolBalances = await Promise.all(usePoolBalancePromises);
 

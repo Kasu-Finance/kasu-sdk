@@ -252,44 +252,59 @@ export class KSULocking {
 
     async getUserBonusData(userAddress: string): Promise<UserBonusData> {
         // TODO this userLocks query is kinda bad -> change to userLocksDepositInfo as u never need user locks by themselves
-        const result: GQLUserLocks = await this._graph.request(userLocksQuery, {
-            userAddress: userAddress.toLowerCase(),
-        });
-        const resultLoyaltyRewards: totalUserLoyaltyRewards =
-            await this._graph.request(getTotalUserLoyaltsRewardsQuery, {
-                userAddress: userAddress,
-            });
+        // whole function takes between 500 - 800ms
 
-        const protocolFeesEarned = await this._contractAbi.rewards(userAddress);
-        if (result.userLocks.length == 0) {
-            return {
-                ksuBonusAndRewards: ethers.utils.formatUnits(
-                    await this._userLoyaltyRewardsAbi.userRewards(userAddress),
-                    18,
-                ),
-                ksuBonusAndRewardsLifetime:
-                    resultLoyaltyRewards.user?.totalUserLoyaltyRewards ?? '0',
-                protocolFeesEarned: ethers.utils.formatUnits(
-                    protocolFeesEarned,
-                    18,
-                ),
-                totalLockedAmount: '0',
-            };
-        }
+        const DECIMALS = 18;
 
+        // Normalized user address
+        const normalizedAddress = userAddress.toLowerCase();
+
+        // Fetch data concurrently
+        const [
+            userLocksData,
+            resultLoyaltyRewards,
+            protocolFeesEarned,
+            userRewards,
+        ] = await Promise.all([
+            this._graph.request<GQLUserLocks>(userLocksQuery, {
+                userAddress: normalizedAddress,
+            }),
+            this._graph.request<totalUserLoyaltyRewards>(
+                getTotalUserLoyaltsRewardsQuery,
+                { userAddress: normalizedAddress },
+            ),
+            this._contractAbi.rewards(userAddress),
+            this._userLoyaltyRewardsAbi.userRewards(userAddress),
+        ]);
+
+        // Extract data and format with fallback
+        const { userLocks } = userLocksData;
+
+        const formattedKsuBonusAndRewards = ethers.utils.formatUnits(
+            userRewards,
+            DECIMALS,
+        );
+        const formattedProtocolFeesEarned = ethers.utils.formatUnits(
+            protocolFeesEarned,
+            DECIMALS,
+        );
+
+        const ksuBonusAndRewardsLifetime =
+            resultLoyaltyRewards.user === null
+                ? '0.0'
+                : resultLoyaltyRewards.user.totalUserLoyaltyRewards;
+
+        const totalLockedAmount =
+            userLocks.length === 0
+                ? '0.0'
+                : userLocks[0].userLockDepositsInfo.ksuLockedAmount;
+
+        // Construct response data
         return {
-            ksuBonusAndRewards: ethers.utils.formatUnits(
-                await this._userLoyaltyRewardsAbi.userRewards(userAddress),
-                18,
-            ),
-            ksuBonusAndRewardsLifetime:
-                resultLoyaltyRewards.user?.totalUserLoyaltyRewards ?? '0',
-            protocolFeesEarned: ethers.utils.formatUnits(
-                protocolFeesEarned,
-                18,
-            ),
-            totalLockedAmount:
-                result.userLocks[0].userLockDepositsInfo.ksuLockedAmount,
+            ksuBonusAndRewards: formattedKsuBonusAndRewards,
+            ksuBonusAndRewardsLifetime: ksuBonusAndRewardsLifetime,
+            protocolFeesEarned: formattedProtocolFeesEarned,
+            totalLockedAmount: totalLockedAmount,
         };
     }
 
