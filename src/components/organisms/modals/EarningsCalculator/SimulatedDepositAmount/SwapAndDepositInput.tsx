@@ -5,6 +5,7 @@ import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { useCallback } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
+import useCurrentEpochDepositedAmount from '@/hooks/lending/useCurrentEpochDepositedAmount'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 import { SupportedTokenUserBalances } from '@/hooks/web3/useSupportedTokenUserBalances'
 
@@ -29,8 +30,13 @@ const SwapAndDepositInput: React.FC<SwapAndDepositInputProps> = ({
 }) => {
   const { chainId } = useWeb3React()
 
-  const { amount, amountInUSD, selectedToken, setAmountInUSD } =
+  const { amount, amountInUSD, selectedToken, trancheId, setAmountInUSD } =
     useDepositModalState()
+
+  const {
+    currentEpochDepositedAmount,
+    isLoading: currentEpochDepositedAmountLoading,
+  } = useCurrentEpochDepositedAmount(poolData.lendingPoolId, trancheId)
 
   const supportedTokens = useSupportedTokenInfo()
 
@@ -61,7 +67,12 @@ const SwapAndDepositInput: React.FC<SwapAndDepositInputProps> = ({
     [setAmountInUSD]
   )
 
-  if (!supportedTokenUserBalance || !supportedTokens) {
+  if (
+    !supportedTokenUserBalance ||
+    !supportedTokens ||
+    currentEpochDepositedAmountLoading ||
+    !currentEpochDepositedAmount
+  ) {
     return <Skeleton variant='rounded' height={60} />
   }
 
@@ -74,6 +85,7 @@ const SwapAndDepositInput: React.FC<SwapAndDepositInputProps> = ({
       decimals={tokenBalance.decimals}
       balance={formatUnits(tokenBalance.balance, tokenBalance.decimals)}
       poolData={poolData}
+      currentEpochDepositedAmount={currentEpochDepositedAmount}
       endAdornment={
         tokenBalance.symbol === SupportedTokens.USDC ? (
           ''

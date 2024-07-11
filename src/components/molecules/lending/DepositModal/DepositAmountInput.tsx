@@ -2,6 +2,7 @@
 
 import LoginIcon from '@mui/icons-material/Login'
 import { Box, Typography } from '@mui/material'
+import { formatEther } from 'ethers/lib/utils'
 import { ReactNode, useCallback, useMemo, useState } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
@@ -13,7 +14,7 @@ import ColoredBox from '@/components/atoms/ColoredBox'
 import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 import NumericalInput from '@/components/molecules/NumericalInput'
 
-import { toBigNumber } from '@/utils'
+import { formatAmount, toBigNumber } from '@/utils'
 
 type DepositAmountInputProps = {
   balance: string
@@ -24,6 +25,7 @@ type DepositAmountInputProps = {
   endAdornment?: ReactNode
   applyConversion?: (newAmount: string) => Promise<string>
   debounceTime?: number
+  currentEpochDepositedAmount: string
 }
 
 const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
@@ -34,6 +36,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
   startAdornment = <LoginIcon />,
   endAdornment = 'USDC',
   debounceTime = 1000,
+  currentEpochDepositedAmount,
   applyConversion,
 }) => {
   const { t } = useTranslation()
@@ -59,11 +62,24 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
       }
     }
 
-    return {
-      minDeposit: tranche ? tranche.minimumDeposit : '0',
-      maxDeposit: tranche ? tranche.maximumDeposit : '0',
+    let trancheMin = toBigNumber(tranche?.minimumDeposit ?? '0')
+    let trancheMax = toBigNumber(tranche?.maximumDeposit ?? '0')
+
+    const currentDepositedAmount = toBigNumber(currentEpochDepositedAmount)
+
+    // if user has deposited once in this epoch, they already have deposited the minimum requirement
+    // and such, the max amount he can deposit into this epoch
+    // should reflect/subtracted from his previous deposits in the same epoch
+    if (!currentDepositedAmount.isZero()) {
+      trancheMin = toBigNumber('1')
+      trancheMax = trancheMax.sub(currentDepositedAmount)
     }
-  }, [poolData.tranches, trancheId])
+
+    return {
+      minDeposit: formatEther(trancheMin),
+      maxDeposit: formatEther(trancheMax),
+    }
+  }, [poolData.tranches, trancheId, currentEpochDepositedAmount])
 
   const validate = useCallback(
     async (inputAmount: string) => {
@@ -90,7 +106,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
       if (inputUsdBN.lt(minDepositBN)) {
         setModalStatus({
           type: 'error',
-          errorMessage: `The value entered is below the minimum of ${minDeposit} USDC`,
+          errorMessage: `The value entered is below the minimum of ${formatAmount(minDeposit)} USDC`,
         })
         return
       }
@@ -98,7 +114,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
       if (inputUsdBN.gt(maxDepositBN)) {
         setModalStatus({
           type: 'error',
-          errorMessage: `The value entered is above the maximum of ${maxDeposit} USDC`,
+          errorMessage: `The value entered is above the maximum of ${formatAmount(maxDeposit)} USDC`,
         })
         return
       }
