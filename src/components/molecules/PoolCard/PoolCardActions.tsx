@@ -48,6 +48,8 @@ const PoolCardActions: React.FC<PoolCardActionsProps> = ({
 
   const currentDevice = useDeviceDetection()
 
+  const isMobile = currentDevice === Device.MOBILE
+
   const handleOpen = () =>
     openModal({
       name: ModalsKeys.EARNINGS_CALCULATOR,
@@ -56,8 +58,8 @@ const PoolCardActions: React.FC<PoolCardActionsProps> = ({
     })
 
   return (
-    <Box display='flex' justifyContent='center' mt='auto' mb={2}>
-      {currentDevice !== Device.MOBILE && (
+    <Box display='flex' justifyContent='center' mt='auto' mb={{ sm: 2, xs: 1 }}>
+      {!isMobile && (
         <AuthenticateButton
           variant='contained'
           sx={{ pl: 2.25, pr: 2.25 }}
@@ -67,21 +69,33 @@ const PoolCardActions: React.FC<PoolCardActionsProps> = ({
           {t('general.lend')}
         </AuthenticateButton>
       )}
-
-      <Collapse in={hover} timeout={250} orientation='horizontal'>
-        <Grow in={hover} timeout={500}>
-          <Button
-            ref={refBtnOverview}
-            sx={{ ml: 1 }}
-            href={link}
-            component={Link}
-            variant='contained'
-            startIcon={<ArrowForwardIcon />}
-          >
-            {t('general.overview')}
-          </Button>
-        </Grow>
-      </Collapse>
+      {isMobile ? (
+        <Button
+          ref={refBtnOverview}
+          href={link}
+          component={Link}
+          fullWidth={isMobile}
+          variant={isMobile ? 'outlined' : 'contained'}
+          sx={(theme) => ({ mx: 1, ...theme.typography.h6 })}
+        >
+          {t('general.overview')}
+        </Button>
+      ) : (
+        <Collapse in={hover} timeout={250} orientation='horizontal'>
+          <Grow in={hover} timeout={500}>
+            <Button
+              ref={refBtnOverview}
+              sx={{ ml: 1 }}
+              href={link}
+              component={Link}
+              variant="contained"
+              startIcon={<ArrowForwardIcon />}
+            >
+              {t('general.overview')}
+            </Button>
+          </Grow>
+        </Collapse>
+      )}
     </Box>
   )
 }

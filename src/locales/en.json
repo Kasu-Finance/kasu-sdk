@@ -609,6 +609,7 @@
         }
       },
       "investmentCard": {
+        "title": "Your Lending",
         "loanApy": "Loan APY",
         "tooltip": "The Annual Percentage Yield currently offered by the Delegate for this Lending Strategy, assuming all repayments will be made as expected.",
         "totalAmount": {
@@ -801,6 +802,13 @@
       }
     },
     "poolDetails": {
+      "tabs": {
+        "overview": "Overview",
+        "details": "Details",
+        "lendingStrategyDetails": "Lending Strategy Details",
+        "repayments": "Repayments",
+        "riskReporting": "Risk Reporting"
+      },
       "title": "Lending Strategy Details",
       "apy": {
         "label": "APY",

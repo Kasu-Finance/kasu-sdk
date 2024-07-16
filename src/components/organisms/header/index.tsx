@@ -17,11 +17,18 @@ const Header = () => {
   const currentDevice = useDeviceDetection()
   const logoWidth = currentDevice === Device.MOBILE ? '92px' : '125px'
   const logoHeight = currentDevice === Device.MOBILE ? '42px' : '64px'
+  const toolbarHeight = currentDevice === Device.MOBILE ? 74 : undefined
 
   return (
     <HeaderBar>
       <Container maxWidth='lg'>
-        <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
+        <Toolbar
+          disableGutters
+          sx={{
+            justifyContent: 'space-between',
+            height: toolbarHeight,
+          }}
+        >
           <Link href={BaseRoutesPaths.LENDING}>
             <KasuLogo width={logoWidth} height={logoHeight} />
           </Link>

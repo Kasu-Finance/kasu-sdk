@@ -9,6 +9,7 @@ import {
 } from '@mui/material'
 
 import useTransactionHistoryState from '@/hooks/context/useTransactionHistoryState'
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 
 import { ValueOf } from '@/types/utils'
 
@@ -33,6 +34,8 @@ export const TransactionTranches = {
 } as const
 
 const TransactionHistoryFilters = () => {
+  const currentDevice = useDeviceDetection()
+
   const {
     status,
     trancheType,
@@ -55,7 +58,12 @@ const TransactionHistoryFilters = () => {
   }
 
   return (
-    <Grid container spacing={2}>
+    <Grid
+      container
+      spacing={2}
+      columns={currentDevice === Device.MOBILE ? 4 : 12}
+      mt={currentDevice === Device.MOBILE ? 1 : 0}
+    >
       <Grid item xs={4}>
         <FormControl fullWidth={true}>
           <InputLabel shrink={true} htmlFor='transaction-status-selector'>
@@ -69,9 +77,16 @@ const TransactionHistoryFilters = () => {
             }}
             onChange={handleStatusChange}
             input={<OutlinedInput label='Status' />}
+            size={currentDevice === Device.MOBILE ? 'small' : undefined}
           >
             {Object.values(TransactionStatus).map((status) => (
-              <MenuItem key={status} value={status}>
+              <MenuItem
+                key={status}
+                value={status}
+                sx={{
+                  minHeight: currentDevice === Device.MOBILE ? 30 : undefined,
+                }}
+              >
                 {status}
               </MenuItem>
             ))}
@@ -91,9 +106,16 @@ const TransactionHistoryFilters = () => {
             }}
             onChange={handleTypeChange}
             input={<OutlinedInput label='Type' />}
+            size={currentDevice === Device.MOBILE ? 'small' : undefined}
           >
             {Object.values(TransactionType).map((type) => (
-              <MenuItem key={type} value={type}>
+              <MenuItem
+                key={type}
+                value={type}
+                sx={{
+                  minHeight: currentDevice === Device.MOBILE ? 30 : undefined,
+                }}
+              >
                 {type}
               </MenuItem>
             ))}
@@ -113,9 +135,16 @@ const TransactionHistoryFilters = () => {
             }}
             onChange={handleTrancheChange}
             input={<OutlinedInput label='Tranche' />}
+            size={currentDevice === Device.MOBILE ? 'small' : undefined}
           >
             {Object.values(TransactionTranches).map((type) => (
-              <MenuItem key={type} value={type}>
+              <MenuItem
+                key={type}
+                value={type}
+                sx={{
+                  minHeight: currentDevice === Device.MOBILE ? 30 : undefined,
+                }}
+              >
                 {type}
               </MenuItem>
             ))}

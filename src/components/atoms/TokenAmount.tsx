@@ -39,6 +39,7 @@ const TokenAmount: React.FC<TokenAmountProps> = ({
           variant={amountVariant ?? 'h6'}
           component='span'
           display='inline-block'
+          fontSize={{ xs: 20 }}
         >
           {amount}
         </Typography>
@@ -46,6 +47,7 @@ const TokenAmount: React.FC<TokenAmountProps> = ({
           pl={0.5}
           variant={symbolVariant ?? 'body1'}
           component='span'
+          fontSize={{ xs: 12 }}
         >
           {symbol}
         </Typography>

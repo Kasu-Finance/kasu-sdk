@@ -48,6 +48,15 @@ export const getPoolCardMetrics = (
       suffix: '',
       sx: {
         mt: 1,
+        ['@media (max-width:600px)']: {
+          '& > .MuiBox-root': {
+            flexDirection: 'column',
+
+            '& .MuiTypography-root': {
+              maxWidth: 'unset',
+            },
+          },
+        },
       },
       showDivider: false,
     },
@@ -62,6 +71,15 @@ export const getPoolCardMetrics = (
         transition: 'max-height 0.3s ease',
         padding: 0,
         overflow: 'hidden',
+        ['@media (max-width:600px)']: {
+          '& > .MuiBox-root': {
+            flexDirection: 'column',
+
+            '& .MuiTypography-root': {
+              maxWidth: 'unset',
+            },
+          },
+        },
       },
       showDivider: false,
     },

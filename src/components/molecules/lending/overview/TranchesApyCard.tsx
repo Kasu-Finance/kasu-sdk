@@ -1,16 +1,12 @@
 'use client'
 
 import LoginIcon from '@mui/icons-material/Login'
-import { Box, Grid } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { useRef } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useIsSticky from '@/hooks/useIsSticky'
 import useTranslation from '@/hooks/useTranslation'
-
-import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
-
-import { COLS } from '@/constants'
 
 export type PoolData = {
   poolName: string
@@ -33,11 +29,13 @@ import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
 import AuthenticateButton from '@/components/atoms/AuthenticateButton'
+import ColoredBox from '@/components/atoms/ColoredBox'
+import InfoColumn from '@/components/atoms/InfoColumn'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { SupportedTokens } from '@/constants/tokens'
-import { formatAmount, getPoolData, sortTranches } from '@/utils'
+import { formatPercentage, getPoolData, sortTranches } from '@/utils'
 
 const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
   const divRef = useRef<HTMLDivElement>(null)
@@ -76,7 +74,7 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
 
     return {
       ...item,
-      tooltip: `lending.tranche.${key}.tooltip`,
+      tooltip: t(`lending.tranche.${key}.tooltip`),
     }
   })
 
@@ -89,77 +87,86 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
         boxShadow: isStickyAndNotMobile ? 12 : 0,
         position: isStickyAndNotMobile ? 'fixed' : 'relative',
         top: isStickyAndNotMobile ? 64 : 0,
-        transform: `translate3d(0, 0, 0)`,
+        transform: `translate3d(-50%, 0, 0)`,
         transformOrigin: '0% 0%',
         background: '#fff',
         zIndex: 1200,
         transition: 'box-shadow .25s ease-in-out, top .8s ease',
         width: isStickyAndNotMobile ? '100%' : 'auto',
-        maxWidth: '1152px',
+        maxWidth: '1150px',
         backfaceVisibility: 'hidden',
         willChange: 'top, scroll-position',
         ml: 0,
         pt: 2,
-        pl: 2,
-        pr: 2,
+        px: isMobile ? 1 : 2,
+        left: '50%',
       }}
     >
-      <Box
-        borderRadius={2}
-        className='light-colored-background'
-        sx={{
-          flexGrow: 1,
-          mb: 2,
-          pb: 0.5,
-        }}
-      >
-        <Grid
-          container
-          rowSpacing={1}
-          m={0}
-          columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-          maxWidth='lg'
-          direction={isMobile ? 'column' : 'row'}
+      <ColoredBox p={{ xs: 1, sm: 0 }}>
+        <Box
+          display='grid'
+          rowGap={1}
+          columnGap={{ xs: 2, sm: 3 }}
+          gridTemplateColumns={`repeat(${tranches.length}, minmax(0, 1fr))`}
         >
           {tranches.map((tranche, index) => {
             const titleKey =
               tranches.length === 1
-                ? 'general.apy'
-                : `lending.tranche.${tranche.name.toLowerCase()}.title`
+                ? t('general.apy')
+                : t(`lending.tranche.${tranche.name.toLowerCase()}.title`)
 
             return (
-              <Grid item xs={COLS / pool.tranches.length} key={index}>
-                <MetricWithSuffix
-                  content={formatAmount(+tranche.apy * 100 || '0') + ' %'}
-                  tooltipKey={tranche.tooltip}
-                  titleKey={titleKey}
-                  variant='h5'
-                />
-              </Grid>
+              <InfoColumn
+                title={titleKey}
+                titleStyle={{
+                  display: 'block',
+                  maxWidth: { xs: 80, sm: 'unset' },
+                  fontSize: { xs: 12, sm: 14 },
+                }}
+                key={index}
+                titleContainerSx={(theme) => ({
+                  [theme.breakpoints.down('sm')]: {
+                    px: 0,
+                  },
+                })}
+                showDivider
+                metric={
+                  <Typography
+                    variant='h5'
+                    display='block'
+                    px={{ xs: 0, sm: 2 }}
+                    py={{ xs: 0, sm: '6px' }}
+                  >
+                    {formatPercentage(tranche.apy || '0')}
+                  </Typography>
+                }
+              />
             )
           })}
-        </Grid>
-      </Box>{' '}
-      <Box
-        display='flex'
-        justifyContent='center'
-        width='100%'
-        sx={{
-          pt: 0,
-          pl: 0,
-          pr: 0,
-          pb: 2,
-        }}
-      >
-        <AuthenticateButton
-          variant='contained'
-          sx={{ pl: 2.25, pr: 2.25 }}
-          startIcon={<LoginIcon />}
-          onClick={handleOpen}
+        </Box>
+      </ColoredBox>
+      {!isMobile && (
+        <Box
+          display='flex'
+          justifyContent='center'
+          width='100%'
+          sx={{
+            pt: 0,
+            pl: 0,
+            pr: 0,
+            pb: 2,
+          }}
         >
-          {t('general.lend')}
-        </AuthenticateButton>
-      </Box>
+          <AuthenticateButton
+            variant='contained'
+            sx={{ pl: 2.25, pr: 2.25 }}
+            startIcon={<LoginIcon />}
+            onClick={handleOpen}
+          >
+            {t('general.lend')}
+          </AuthenticateButton>
+        </Box>
+      )}
     </Box>
   )
 }

@@ -51,6 +51,7 @@ type CustomTableProps<T, U extends readonly any[]> = {
   tableStyles?: SxProps<Theme>
   headersStyle?: SxProps<Theme>
   footerStyle?: SxProps<Theme>
+  paginationStyle?: SxProps<Theme>
 }
 
 const CustomTable = <T, U extends readonly any[]>({
@@ -68,6 +69,7 @@ const CustomTable = <T, U extends readonly any[]>({
   tableStyles,
   headersStyle,
   footerStyle,
+  paginationStyle,
 }: CustomTableProps<T, U>) => {
   const { t } = useTranslation()
 
@@ -109,6 +111,8 @@ const CustomTable = <T, U extends readonly any[]>({
     setRowsPerPage(parseInt(event.target.value, 10))
     setPage(0)
   }
+
+  const sortedData = data.sort((a, b) => handleSort(a, b, sort))
 
   return (
     <Box>
@@ -167,9 +171,7 @@ const CustomTable = <T, U extends readonly any[]>({
             )}
           </TableHead>
           <TableBody>
-            {children(
-              paginateData(data.sort((a, b) => handleSort(a, b, sort)))
-            )}
+            {children(pagination ? paginateData(sortedData) : sortedData)}
             {emptyRows > 0 && (
               <TableRow style={{ height: 135 * emptyRows }}>
                 <TableCell colSpan={6} />
@@ -203,6 +205,34 @@ const CustomTable = <T, U extends readonly any[]>({
           onPageChange={handlePageChange}
           onRowsPerPageChange={handleRowsPerPageChange}
           labelRowsPerPage={t('general.rowsPerPage')}
+          size='small'
+          sx={[
+            (theme) => ({
+              '.MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel':
+                {
+                  fontSize: 'inherit',
+                },
+
+              [theme.breakpoints.down('sm')]: {
+                '.MuiTablePagination-spacer': {
+                  display: 'none',
+                },
+                '.MuiTablePagination-toolbar': {
+                  pl: 0,
+                },
+                '.MuiTablePagination-actions': {
+                  ml: 'auto',
+                  '.MuiSvgIcon-root': {
+                    width: 16,
+                    height: 16,
+                  },
+                },
+              },
+            }),
+            ...(Array.isArray(paginationStyle)
+              ? paginationStyle
+              : [paginationStyle]),
+          ]}
         />
       )}
     </Box>

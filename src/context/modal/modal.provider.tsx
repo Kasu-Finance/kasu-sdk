@@ -46,6 +46,10 @@ const initialState: Modals = {
     poolData: null as unknown as PoolData,
     poolOverview: null as unknown as PoolOverview,
   },
+  transactionHistoryContentModal: {
+    isOpen: false,
+    transactionHistory: null as unknown as UserRequest,
+  },
 }
 
 const ModalState: React.FC<{ children: ReactNode }> = ({ children }) => {

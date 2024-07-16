@@ -9,6 +9,7 @@ type CustomTableSortLabelProps<T extends readonly any[]> = {
   handleSortChange: (key: T[number]) => void
   flipIcon?: boolean
   variant?: TypographyProps['variant']
+  disableSort?: boolean
 }
 
 const CustomTableSortLabel = <T extends readonly any[]>({
@@ -18,10 +19,15 @@ const CustomTableSortLabel = <T extends readonly any[]>({
   handleSortChange,
   flipIcon,
   variant = 'subtitle2',
+  disableSort,
 }: CustomTableSortLabelProps<T>) => {
   const isActive = sort.key === sortKey
 
-  return (
+  return disableSort ? (
+    <Typography variant={variant} fontWeight={500}>
+      {label}
+    </Typography>
+  ) : (
     <TableSortLabel
       direction={isActive ? sort.direction : 'desc'}
       active={isActive}
