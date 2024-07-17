@@ -94,10 +94,12 @@ const InvestmentPortfolio: React.FC<{
           variant: 'h6',
           component: 'h6',
           m: 0,
+          fontSize: currentDevice === Device.MOBILE ? 16 : undefined,
         }}
         sx={(theme) => ({
           [theme.breakpoints.down('sm')]: {
             height: 42,
+            p: 1,
           },
         })}
         action={

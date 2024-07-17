@@ -41,13 +41,20 @@ const MetricDisplay: React.FC<MetricDisplayProps> = ({
       ) : (
         <Box width='100%' pr={2}>
           <InfoRow
-            showDivider={!isLastItem || isMobile}
+            showDivider={!isLastItem && !isMobile}
             title={t(titleKey)}
             toolTipInfo={t(tooltipKey)}
+            titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
+            sx={(theme) => ({
+              [theme.breakpoints.down('sm')]: {
+                flexDirection: 'column',
+                px: 0,
+              },
+            })}
             metric={
               <Typography
                 variant='body1'
-                align='right'
+                align={isMobile ? 'left' : 'right'}
                 fontSize={isMobile ? 12 : 'inherit'}
               >
                 {String(metric.content)}

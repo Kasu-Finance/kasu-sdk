@@ -4,9 +4,10 @@ import React from 'react'
 import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 
+import InfoColumn from '@/components/atoms/InfoColumn'
 import InfoRow from '@/components/atoms/InfoRow'
-import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 import NextLink from '@/components/atoms/NextLink'
+import TokenAmount from '@/components/atoms/TokenAmount'
 
 import { MetricGroupType, PoolDelegateMetricIds } from '@/constants'
 import formatDuration from '@/utils/formats/formatDuration'
@@ -28,8 +29,8 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
     index: number,
     arrayLength: number
   ) => {
-    const titleKey = `details.poolDelegate.${metric.id}.label`
-    const tooltipKey = `details.poolDelegate.${metric.id}.tooltip`
+    const titleKey = t(`details.poolDelegate.${metric.id}.label`)
+    const tooltipKey = t(`details.poolDelegate.${metric.id}.tooltip`)
 
     const uniqueKey = `${type}-${metric.id}-${index}`
 
@@ -45,32 +46,54 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
     switch (type) {
       case MetricGroupType.First:
         return (
-          <MetricWithSuffix
+          <InfoColumn
             key={uniqueKey}
-            content={String(metricContent)}
-            suffix={metric?.unit || ''}
-            titleKey={titleKey}
-            tooltipKey={tooltipKey}
+            title={titleKey}
+            toolTipInfo={tooltipKey}
+            showDivider
             containerSx={{
-              width: isMobile ? '100%' : '33%',
-              pb: 1,
-              pr: 1,
+              width: '100%',
             }}
+            titleContainerSx={(theme) => ({
+              [theme.breakpoints.down('sm')]: {
+                px: 0,
+              },
+            })}
+            titleStyle={{
+              fontSize: { xs: 12, sm: 14 },
+            }}
+            metric={
+              <TokenAmount
+                px={{ sx: 0, sm: 2 }}
+                py={{ sx: 0, sm: '6px' }}
+                amount={metricContent.toString()}
+                symbol={metric?.unit || ''}
+              />
+            }
           />
         )
       case MetricGroupType.Second:
         return (
           <Box key={uniqueKey} width='100%' pr={2}>
             <InfoRow
-              title={t(titleKey)}
+              title={titleKey}
               toolTipInfo={t(tooltipKey)}
-              showDivider={metric.id === PoolDelegateMetricIds.AssetClasses}
+              showDivider={
+                !isMobile && metric.id === PoolDelegateMetricIds.AssetClasses
+              }
+              sx={(theme) => ({
+                [theme.breakpoints.down('sm')]: {
+                  flexDirection: 'column',
+                  px: 0,
+                },
+              })}
+              titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
               metric={
                 Array.isArray(metric.content) ? (
                   <Box
                     display='flex'
                     flexDirection='column'
-                    alignItems='flex-end'
+                    alignItems={isMobile ? 'flex-start' : 'flex-end'}
                   >
                     {metric.content.length
                       ? metric.content.map((item, itemIndex) => (
@@ -84,7 +107,7 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
                             color='primary.contrastText'
                             variant='body1'
                             fontSize={isMobile ? 10 : 'inherit'}
-                            align='right'
+                            align={isMobile ? 'left' : 'right'}
                           >
                             {typeof item === 'string' ? item : item.name}
                           </NextLink>
@@ -92,7 +115,14 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
                       : 'N/A'}
                   </Box>
                 ) : (
-                  <Typography variant='body1' component='span' maxWidth={300}>
+                  <Typography
+                    variant='body1'
+                    align={isMobile ? 'left' : 'right'}
+                    component='span'
+                    maxWidth={300}
+                    fontSize={{ xs: 12, sm: 14 }}
+                    fontWeight={{ xs: 400, sm: 500 }}
+                  >
                     {metric.content || 'N/A'}
                   </Typography>
                 )
@@ -104,11 +134,23 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
         return (
           <InfoRow
             key={uniqueKey}
-            title={t(titleKey)}
+            title={titleKey}
             toolTipInfo={t(tooltipKey)}
-            showDivider={index !== arrayLength - 1}
+            showDivider={!isMobile && index !== arrayLength - 1}
+            sx={(theme) => ({
+              [theme.breakpoints.down('sm')]: {
+                px: 0,
+              },
+            })}
+            titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
             metric={
-              <Typography variant='h6'>{String(metric.content)}</Typography>
+              <Typography
+                textAlign='right'
+                variant='h6'
+                fontSize={{ xs: 14, sm: 20 }}
+              >
+                {metric.content.toString()}
+              </Typography>
             }
           />
         )
@@ -123,6 +165,7 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
       flexDirection={isMobile ? 'column' : 'row'}
       justifyContent='space-between'
       width='100%'
+      gap={type === MetricGroupType.First ? 2 : 0}
     >
       {metrics.map((metric, index) =>
         renderMetric(metric, index, metrics.length)

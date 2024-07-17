@@ -142,10 +142,12 @@ const TransactionHistory: React.FC<{ poolId: string }> = ({ poolId }) => {
           variant: 'h6',
           component: 'h6',
           m: 0,
+          fontSize: currentDevice === Device.MOBILE ? 16 : undefined,
         }}
         sx={(theme) => ({
           [theme.breakpoints.down('sm')]: {
             height: 42,
+            p: 1,
           },
         })}
         action={

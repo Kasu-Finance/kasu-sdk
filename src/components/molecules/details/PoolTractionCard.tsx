@@ -24,15 +24,49 @@ const PoolTractionCard: React.FC<PoolTractionCardProps> = ({ data, title }) => {
   const isMobile = currentDevice === Device.MOBILE
 
   return (
-    <Card sx={{ borderRadius: 0 }}>
+    <Card
+      sx={(theme) => ({
+        borderRadius: 0,
+        [theme.breakpoints.down('sm')]: {
+          mt: 2,
+        },
+      })}
+    >
       <CardHeader
-        title={title && <Typography variant='h6'>{title}</Typography>}
+        title={
+          title && (
+            <Typography variant='h6' fontSize={isMobile ? 16 : undefined}>
+              {title}
+            </Typography>
+          )
+        }
+        sx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            height: 42,
+            p: 1,
+          },
+        })}
       />
-      <CardContent sx={{ padding: 2, pr: 1 }}>
+
+      <CardContent
+        sx={(theme) => ({
+          padding: 2,
+          pr: 1,
+          [theme.breakpoints.down('sm')]: {
+            p: 1,
+          },
+        })}
+      >
         <Box
-          display='flex'
-          flexDirection={isMobile ? 'column' : 'row'}
-          alignItems='center'
+          display='grid'
+          gridTemplateColumns={{
+            xs: 'repeat(2, minmax(0, 1fr))',
+            lg: 'repeat(5, minmax(0, 1fr))',
+          }}
+          gap={{
+            xs: 1,
+            lg: 2,
+          }}
         >
           {metrics.map(({ id, content, unit = '' }, index) => {
             const isCapacity = id === PoolTractionMetricIds.Capacity
@@ -43,15 +77,23 @@ const PoolTractionCard: React.FC<PoolTractionCardProps> = ({ data, title }) => {
                 width='100%'
                 flexDirection='column'
                 pl={index > 0 && !isMobile ? 0.5 : 0}
+                order={isMobile && isCapacity ? 5 : undefined}
+                gridColumn={isMobile && isCapacity ? '1/3' : undefined}
               >
                 <InfoColumn
                   title={t(`details.poolTraction.${id}.label`)}
                   showDivider
                   toolTipInfo={t(`details.poolTraction.${id}.tooltip`)}
+                  titleContainerSx={(theme) => ({
+                    [theme.breakpoints.down('sm')]: {
+                      px: 0,
+                    },
+                  })}
+                  titleStyle={{ fontSize: { xs: 10, sm: 14 } }}
                   metric={
                     <Box
-                      px={2}
-                      py='6px'
+                      px={{ xs: 0, sm: 2 }}
+                      py={{ xs: 0, sm: '6px' }}
                       display='flex'
                       justifyContent='space-between'
                       alignItems='end'

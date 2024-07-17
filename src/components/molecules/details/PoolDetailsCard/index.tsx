@@ -17,7 +17,7 @@ import InfoColumn from '@/components/atoms/InfoColumn'
 import InfoRow from '@/components/atoms/InfoRow'
 import MetricDisplay from '@/components/molecules/details/PoolDetailsCard/MetricDisplay'
 
-import { MetricGroupType, PoolDetailsMetricIds } from '@/constants'
+import { COLS, MetricGroupType, PoolDetailsMetricIds } from '@/constants'
 import { convertToPoolDetails, formatPercentage } from '@/utils'
 
 interface PoolDetailsCardProps {
@@ -55,20 +55,40 @@ const PoolDetailsCard: React.FC<PoolDetailsCardProps> = ({ data }) => {
   )
 
   return (
-    <Card>
+    <Card
+      sx={(theme) => ({
+        [theme.breakpoints.down('sm')]: {
+          mt: 2,
+        },
+      })}
+    >
       <CardHeader
         title={
-          <Typography variant='h6'>{t('details.poolDetails.title')}</Typography>
+          <Typography variant='h6' fontSize={isMobile ? 16 : undefined}>
+            {t('details.poolDetails.title')}
+          </Typography>
         }
+        sx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            height: 42,
+            p: 1,
+          },
+        })}
       />
 
-      <CardContent sx={{ padding: 2 }}>
-        <ColoredBox>
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              {data.tranches.map((tranche) => (
+      <CardContent
+        sx={(theme) => ({
+          padding: 2,
+          [theme.breakpoints.down('sm')]: {
+            p: 1,
+          },
+        })}
+      >
+        <ColoredBox p={{ xs: 1, sm: 0 }}>
+          <Grid container spacing={isMobile ? 1 : 2}>
+            {data.tranches.map((tranche) => (
+              <Grid item xs={COLS / data.tranches.length} key={tranche.name}>
                 <InfoColumn
-                  key={tranche.name}
                   title={
                     data.tranches.length > 1
                       ? `${tranche.name} ${t('general.tranche')} ${t('general.apy')}`
@@ -79,13 +99,23 @@ const PoolDetailsCard: React.FC<PoolDetailsCardProps> = ({ data }) => {
                     `lending.tranche.${tranche.name.toLowerCase()}.tooltip`
                   )}
                   metric={
-                    <Box pt='6px' pl={2}>
+                    <Box pt='6px' pl={{ xs: 0, sm: 2 }}>
                       {formatPercentage(tranche.apy)}
                     </Box>
                   }
+                  titleStyle={{
+                    fontSize: { xs: 12, sm: 14 },
+                    maxWidth: { xs: 80, sm: 'unset' },
+                    display: 'block',
+                  }}
+                  titleContainerSx={(theme) => ({
+                    [theme.breakpoints.down('sm')]: {
+                      px: 0,
+                    },
+                  })}
                 />
-              ))}
-            </Grid>
+              </Grid>
+            ))}
           </Grid>
         </ColoredBox>
         <Box
@@ -102,8 +132,21 @@ const PoolDetailsCard: React.FC<PoolDetailsCardProps> = ({ data }) => {
             <InfoRow
               title={t('details.poolDetails.assetClass.label')}
               toolTipInfo={t('details.poolDetails.assetClass.tooltip')}
+              sx={(theme) => ({
+                [theme.breakpoints.down('sm')]: {
+                  flexDirection: 'column',
+                  px: 0,
+                },
+              })}
+              titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
               metric={
-                <Typography variant='body1' component='span' maxWidth={300}>
+                <Typography
+                  variant='body1'
+                  component='span'
+                  align={isMobile ? 'left' : 'right'}
+                  maxWidth={isMobile ? undefined : 300}
+                  fontSize={{ xs: 12, sm: 14 }}
+                >
                   {data.assetClass}
                 </Typography>
               }
