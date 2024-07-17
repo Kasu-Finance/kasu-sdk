@@ -19,6 +19,7 @@ import CsvDownloadButton from '@/components/atoms/CsvDownloadButton'
 import InfoColumn from '@/components/atoms/InfoColumn'
 import RenderMetrics from '@/components/molecules/repayments/RenderMetrics'
 
+import ColoredBox from '@/components/atoms/ColoredBox'
 import { adaptDataForRepayments, formatTimestamp } from '@/utils'
 import { RepaymentsSections } from '@/utils/convert/adaptDataForRepayments'
 
@@ -44,20 +45,38 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
   return (
     <Card sx={{ mt: 3 }}>
       <CardHeader
-        title={<Typography variant='h6'>{t('repayments.title')}</Typography>}
+        title={
+          <Typography variant='h6' fontSize={isMobile ? 16 : undefined}>
+            {t('repayments.title')}
+          </Typography>
+        }
+        sx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            height: 42,
+            p: 1,
+          },
+        })}
       />
-      <CardContent sx={{ padding: 2 }}>
-        <Box display='flex' justifyContent='space-between'>
-          <CsvDownloadButton
-            onDownload={() =>
-              window.open(data?.repaymentsFileUrl || '', '_blank')
-            }
-          />
-        </Box>
-        <Box mt={2}>
+      <CardContent
+        sx={(theme) => ({
+          p: 2,
+          [theme.breakpoints.down('sm')]: {
+            p: 1,
+          },
+        })}
+      >
+        <Box>
           <Typography variant='body2'>
             {t('repayments.loanModelDescription')}
           </Typography>
+          <Box display='flex' justifyContent='space-between' mt={2}>
+            <CsvDownloadButton
+              onDownload={() =>
+                window.open(data?.repaymentsFileUrl || '', '_blank')
+              }
+              fullWidth={isMobile}
+            />
+          </Box>
           <Typography variant='body2' mt={2}>
             {t('repayments.borrowerFundsCSV')}
           </Typography>
@@ -69,24 +88,24 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
           <Typography variant='body2' mt={2}>
             {t('repayments.sections.aggregated.description')}
           </Typography>
-          <Box
-            display='flex'
-            flexDirection={isMobile ? 'column' : 'row'}
-            width='100%'
-            className='light-colored-background'
-            mt={2}
-          >
+          <ColoredBox mt={2} p={{ xs: 1, sm: 0 }}>
             <InfoColumn
               showDivider
               containerSx={{ width: isMobile ? '100%' : '50%', pr: 1 }}
               title={t(
                 'repayments.sections.aggregated.metrics.totalBorrowers.label'
               )}
+              titleContainerSx={(theme) => ({
+                [theme.breakpoints.down('sm')]: {
+                  px: 0,
+                },
+              })}
+              titleStyle={{ fontSize: { xs: 10, sm: 14 } }}
               toolTipInfo={t(
                 'repayments.sections.aggregated.metrics.totalBorrowers.tooltip'
               )}
               metric={
-                <Typography variant='h6' pl={2} mt={1}>
+                <Typography variant='h6' pl={{ xs: 0, sm: 2 }} mt={1}>
                   {endBorrowerFunds}
                 </Typography>
               }
@@ -98,8 +117,14 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
                 pl: isMobile ? 0 : 1,
               }}
               title={t('general.nextClearingPeriodStart')}
+              titleContainerSx={(theme) => ({
+                [theme.breakpoints.down('sm')]: {
+                  px: 0,
+                },
+              })}
+              titleStyle={{ fontSize: { xs: 10, sm: 14 } }}
               metric={
-                <Box px={2} py='6px'>
+                <Box px={{ xs: 0, sm: 2 }} py='6px'>
                   {isLoading ? (
                     <>
                       <Skeleton variant='rounded' height={28} width={200} />
@@ -139,7 +164,7 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
                 </Box>
               }
             />
-          </Box>
+          </ColoredBox>
           <Grid container spacing={2} mt={1}>
             {Object.keys(repaymentsData).map((sectionKey) => (
               <Grid item xs={12} md={6} key={sectionKey}>

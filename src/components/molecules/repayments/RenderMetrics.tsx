@@ -6,8 +6,9 @@ import useTranslation from '@/hooks/useTranslation'
 import ColoredBox from '@/components/atoms/ColoredBox'
 import ContentWithSuffix from '@/components/atoms/ContentWithSuffix'
 import InfoRow from '@/components/atoms/InfoRow'
-import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
 
+import InfoColumn from '@/components/atoms/InfoColumn'
+import TokenAmount from '@/components/atoms/TokenAmount'
 import { RepaymentsMetrics } from '@/constants/repayments'
 import { RepaymentSection } from '@/utils/convert/adaptDataForRepayments'
 
@@ -48,7 +49,17 @@ const RenderMetrics: React.FC<RenderMetricsProps> = ({ data, sectionKey }) => {
                 key={baseKey}
                 title={dynamicLabel || t(labelKey)}
                 toolTipInfo={dynamicLabel ? '' : t(tooltipKey)}
-                titleStyle={{ variant: isMobile ? 'body1' : 'h6' }}
+                titleStyle={{
+                  variant: isMobile ? 'body1' : 'h6',
+                  fontSize: { xs: 10, sm: 14 },
+                }}
+                sx={(theme) => ({
+                  flexDirection: 'row',
+                  [theme.breakpoints.down('sm')]: {
+                    py: 1,
+                    px: 0,
+                  },
+                })}
                 showDivider
                 metric={
                   <ContentWithSuffix
@@ -58,20 +69,30 @@ const RenderMetrics: React.FC<RenderMetricsProps> = ({ data, sectionKey }) => {
                     suffixVariant={isMobile ? 'caption' : 'body1'}
                   />
                 }
-                sx={{ flexDirection: 'row' }}
               />
             )
           )
         } else {
           return (
-            <ColoredBox key={baseKey}>
-              <MetricWithSuffix
-                titleKey={labelKey}
-                tooltipKey={tooltipKey}
-                content={String(metric.content)}
-                suffix={metric.unit}
-                containerSx={{ mb: 1 }}
-                variant={isMobile ? 'body2' : 'h6'}
+            <ColoredBox key={baseKey} p={{ xs: 1, sm: 0 }}>
+              <InfoColumn
+                title={t(labelKey)}
+                toolTipInfo={t(tooltipKey)}
+                showDivider
+                titleContainerSx={(theme) => ({
+                  [theme.breakpoints.down('sm')]: {
+                    px: 0,
+                  },
+                })}
+                titleStyle={{ fontSize: { xs: 10, sm: 14 } }}
+                metric={
+                  <TokenAmount
+                    amount={metric.content.toString()}
+                    symbol={metric.unit}
+                    px={{ xs: 0, sm: 2 }}
+                    py='6px'
+                  />
+                }
               />
             </ColoredBox>
           )
