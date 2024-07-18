@@ -1102,15 +1102,19 @@
       }
     },
     "lendingPortfolio": {
-      "title": "Lending Portfolio"
+      "title": "Lending Portfolio",
+      "lendingBalance": "Lending Balance",
+      "interestEarningsClaimable": "Interest Earnings​ Claimable Balance",
+      "interestEarningsLifetime": "Interest Earnings​ Lifetime"
     },
     "rewards": {
       "title": "My Rewards Portfolio",
       "bonusYieldEarnings": "Bonus Interest Earnings",
       "ksuLaunchBonus": "KSU Launch Bonus",
-      "Protocol Fees": "Protocol Fees",
+      "protocolFees": "Protocol Fees",
       "totalUsdcBonus": "Total USDC Bonus/Rewards",
-      "totalKsuBonus": "Total KSU Bonus/Rewards"
+      "totalKsuBonus": "Total KSU Bonus/Rewards",
+      "claimableBalance": "Claimable Balance"
     },
     "wallet": {
       "title": "My Wallet",

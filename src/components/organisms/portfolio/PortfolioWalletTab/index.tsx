@@ -11,6 +11,7 @@ import {
 import { useWeb3React } from '@web3-react/core'
 import { formatEther, formatUnits, parseEther } from 'ethers/lib/utils'
 
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 import useUserBalance from '@/hooks/web3/useUserBalance'
@@ -20,9 +21,13 @@ import InfoColumn from '@/components/atoms/InfoColumn'
 import TokenAmount from '@/components/atoms/TokenAmount'
 
 import sdkConfig, { USDC } from '@/config/sdk'
-import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
+import { convertToUSD, formatAccount, formatAmount, toBigNumber } from '@/utils'
 
 const PortfolioWalletTab = () => {
+  const currentDevice = useDeviceDetection()
+
+  const isMobile = currentDevice === Device.MOBILE
+
   const { t } = useTranslation()
 
   const { account } = useWeb3React()
@@ -48,35 +53,74 @@ const PortfolioWalletTab = () => {
 
   return (
     <>
-      <CardHeader title={t('portfolio.wallet.title')} />
-      <CardContent>
+      <CardHeader
+        title={t('portfolio.wallet.title')}
+        titleTypographyProps={{
+          fontSize: { xs: 16, sm: 24 },
+        }}
+        sx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            height: 42,
+            p: 1,
+          },
+        })}
+      />
+      <CardContent
+        sx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            p: 1,
+          },
+        })}
+      >
         <InfoColumn
           title={t('portfolio.wallet.connectedWallet')}
           showDivider
+          titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
+          titleContainerSx={(theme) => ({
+            [theme.breakpoints.down('sm')]: {
+              px: 0,
+            },
+          })}
           metric={
             <Typography
               variant='h6'
               component='span'
               display='block'
               pt='6px'
-              pl={2}
+              pl={{ xs: 0, sm: 2 }}
             >
               {account
-                ? `0x ${account.substring(2).match(/.{4}/g)?.join(' ')}`
+                ? isMobile
+                  ? formatAccount(account)
+                  : `0x ${account.substring(2).match(/.{4}/g)?.join(' ')}`
                 : '-'}{' '}
             </Typography>
           }
         />
-        <Grid mt={2} container spacing={2}>
+        <Grid mt={2} container spacing={2} columns={{ xs: 6, sm: 12 }}>
           <Grid item xs={6}>
-            <ColoredBox>
+            <ColoredBox
+              sx={(theme) => ({
+                [theme.breakpoints.down('sm')]: {
+                  p: 1,
+                },
+              })}
+            >
               <InfoColumn
                 title={`${t('general.wallet')} ${t('general.balance')}`}
-                titleStyle={{ textTransform: 'capitalize' }}
+                titleStyle={{
+                  textTransform: 'capitalize',
+                  fontSize: { xs: 12, sm: 14 },
+                }}
+                titleContainerSx={(theme) => ({
+                  [theme.breakpoints.down('sm')]: {
+                    px: 0,
+                  },
+                })}
                 toolTipInfo={t('portfolio.wallet.metric-1-tooltip')}
-                showDivider
+                showDivider={!isMobile}
                 metric={
-                  <Box pt='6px' pl={2} textTransform='uppercase'>
+                  <Box pt='6px' pl={{ xs: 0, sm: 2 }} textTransform='uppercase'>
                     {walletWithBalance.length ? (
                       walletWithBalance.map((balance) => (
                         <TokenAmount
@@ -95,27 +139,41 @@ const PortfolioWalletTab = () => {
                 }
               />
             </ColoredBox>
-            <Button
-              variant='contained'
-              sx={{
-                mt: 2,
-                mx: 'auto',
-                display: 'flex',
-              }}
-              startIcon={<CachedIcon />}
-              disabled={!walletWithBalance.length}
-            >
-              {t('general.convertToKSU')}
-            </Button>
+            {!isMobile && (
+              <Button
+                variant='contained'
+                sx={{
+                  mt: 2,
+                  mx: 'auto',
+                  display: 'flex',
+                }}
+                startIcon={<CachedIcon />}
+                disabled={!walletWithBalance.length}
+              >
+                {t('general.convertToKSU')}
+              </Button>
+            )}
           </Grid>
           <Grid item xs={6}>
-            <ColoredBox>
-              <Grid container spacing={2}>
-                <Grid item xs={5}>
+            <ColoredBox
+              sx={(theme) => ({
+                [theme.breakpoints.down('sm')]: {
+                  p: 1,
+                },
+              })}
+            >
+              <Grid container spacing={2} columns={{ xs: 6, sm: 12 }}>
+                <Grid item xs={6}>
                   <InfoColumn
                     title={t('portfolio.wallet.metric-2')}
                     toolTipInfo={t('portfolio.wallet.metric-2-tooltip')}
+                    titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
                     showDivider
+                    titleContainerSx={(theme) => ({
+                      [theme.breakpoints.down('sm')]: {
+                        px: 0,
+                      },
+                    })}
                     metric={
                       <TokenAmount
                         amount={formatAmount(
@@ -124,16 +182,32 @@ const PortfolioWalletTab = () => {
                         symbol='KSU'
                         usdValue={formatAmount(formatEther(ksuInUSD) || '0')}
                         pt='6px'
-                        pl={2}
+                        pl={{ xs: 0, sm: 2 }}
+                        sx={(theme) => ({
+                          [theme.breakpoints.down('sm')]: {
+                            '.MuiBox-root': {
+                              display: 'inline-block',
+                              ml: '1ch',
+                            },
+                          },
+                        })}
                       />
                     }
                   />
                 </Grid>
-                <Grid item xs={5}>
+                <Grid item xs={6}>
                   <InfoColumn
                     title={t('general.availableFunds')}
-                    titleStyle={{ textTransform: 'capitalize' }}
+                    titleStyle={{
+                      textTransform: 'capitalize',
+                      fontSize: { xs: 12, sm: 14 },
+                    }}
                     toolTipInfo={t('portfolio.wallet.metric-3-toolip')}
+                    titleContainerSx={(theme) => ({
+                      [theme.breakpoints.down('sm')]: {
+                        px: 0,
+                      },
+                    })}
                     showDivider
                     metric={
                       <TokenAmount
@@ -142,21 +216,23 @@ const PortfolioWalletTab = () => {
                         )}
                         symbol='USDC'
                         pt='6px'
-                        pl={2}
+                        pl={{ xs: 0, sm: 2 }}
                       />
                     }
                   />
                 </Grid>
               </Grid>
             </ColoredBox>
-            <Button
-              variant='contained'
-              sx={{ mt: 2, mx: 'auto', display: 'flex' }}
-              startIcon={<WalletIcon />}
-              disabled={usdcBalance.isZero()}
-            >
-              {t('general.buyKSU')}
-            </Button>
+            {!isMobile && (
+              <Button
+                variant='contained'
+                sx={{ mt: 2, mx: 'auto', display: 'flex' }}
+                startIcon={<WalletIcon />}
+                disabled={usdcBalance.isZero()}
+              >
+                {t('general.buyKSU')}
+              </Button>
+            )}
           </Grid>
         </Grid>
       </CardContent>

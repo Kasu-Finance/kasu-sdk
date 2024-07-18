@@ -14,9 +14,9 @@ const useCalculatePortfolioTotal = (
 ) => {
   return lendingPortfolio.reduce((total, cur) => {
     return {
-      investedAmount: total.investedAmount.add(
-        toBigNumber(cur.totalInvestedAmount)
-      ),
+      investedAmount: total.investedAmount
+        .add(toBigNumber(cur.totalInvestedAmount))
+        .div(toBigNumber('1')),
       lastEpoch: total.lastEpoch.add(
         toBigNumber(cur.totalYieldEarningsLastEpoch)
       ),
