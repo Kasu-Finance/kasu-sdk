@@ -35,7 +35,14 @@ const LoyaltyLevelInfo: React.FC<LoyaltyLevelInfoProps> = ({
       display='grid'
       gap={2}
       sx={[
-        { px: 2, pt: 1, pb: 2 },
+        (theme) => ({
+          px: 2,
+          pt: 1,
+          pb: 2,
+          [theme.breakpoints.down('sm')]: {
+            px: 1,
+          },
+        }),
         ...(Array.isArray(rootStyles) ? rootStyles : [rootStyles]),
       ]}
     >
@@ -61,14 +68,24 @@ const LoyaltyLevelInfo: React.FC<LoyaltyLevelInfoProps> = ({
             {title}
           </Typography>
           {subtitle && (
-            <Typography variant='body1' component='span' {...subtitleProps}>
+            <Typography
+              variant='body1'
+              component='span'
+              fontSize={{ xs: 12, sm: 14 }}
+              {...subtitleProps}
+            >
               {subtitle}
             </Typography>
           )}
         </Box>
       </Box>
       {description && (
-        <Typography variant='body2' component='p' {...descriptionProps}>
+        <Typography
+          variant='body2'
+          component='p'
+          fontSize={{ xs: 10, sm: 12 }}
+          {...descriptionProps}
+        >
           {description}
         </Typography>
       )}
@@ -76,7 +93,12 @@ const LoyaltyLevelInfo: React.FC<LoyaltyLevelInfoProps> = ({
         <UnorderedList sx={listProps}>
           {list.map((label) => (
             <li key={label}>
-              <Typography variant='body2' component='p' {...listLabelProps}>
+              <Typography
+                variant='body2'
+                component='p'
+                fontSize={{ xs: 10, sm: 12 }}
+                {...listLabelProps}
+              >
                 {label}
               </Typography>
             </li>

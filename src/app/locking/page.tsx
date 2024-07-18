@@ -9,7 +9,7 @@ import UnlockOverview from '@/components/molecules/locking/UnlockOverview'
 const Locking = async () => {
   return (
     <Container maxWidth='lg'>
-      <Grid container spacing={3} mt={0}>
+      <Grid container spacing={{ xs: 2, sm: 3 }} mt={0}>
         <Grid item xs={12} md={6}>
           <BalanceOverview />
           <RewardSummary />

@@ -1,10 +1,11 @@
-import { Box, TableCell, TableRow, Typography } from '@mui/material'
+import { TableCell, TableRow, Typography } from '@mui/material'
 import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
 import { formatEther } from 'ethers/lib/utils'
 import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
+import ColoredBox from '@/components/atoms/ColoredBox'
 import TokenAmount from '@/components/atoms/TokenAmount'
 
 import { formatAmount, toBigNumber } from '@/utils'
@@ -23,7 +24,17 @@ const UnlockFooter: React.FC<UnlockFooterProps> = ({ userLocks }) => {
   return (
     <TableRow>
       <TableCell padding='none' colSpan={5}>
-        <Box px={2}>
+        <ColoredBox
+          sx={(theme) => ({
+            px: 2,
+            [theme.breakpoints.up('sm')]: {
+              background: 'unset',
+            },
+            [theme.breakpoints.down('sm')]: {
+              px: 1,
+            },
+          })}
+        >
           <Typography
             variant='subtitle2'
             component='span'
@@ -38,7 +49,7 @@ const UnlockFooter: React.FC<UnlockFooterProps> = ({ userLocks }) => {
             amount={formatAmount(formatEther(total) || '0')}
             symbol='KSU'
           />
-        </Box>
+        </ColoredBox>
       </TableCell>
     </TableRow>
   )

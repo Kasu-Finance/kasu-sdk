@@ -34,7 +34,7 @@ const TokenAmount: React.FC<TokenAmountProps> = ({
     {showSkeleton ? (
       <Skeleton variant='rounded' height={32} />
     ) : (
-      <>
+      <div>
         <Typography
           variant={amountVariant ?? 'h6'}
           component='span'
@@ -51,7 +51,7 @@ const TokenAmount: React.FC<TokenAmountProps> = ({
         >
           {symbol}
         </Typography>
-      </>
+      </div>
     )}
     {usdValue &&
       (showSkeleton ? (

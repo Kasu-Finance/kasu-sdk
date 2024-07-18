@@ -45,7 +45,7 @@ const LendingPortfolioMobileTableRow: React.FC<
           </Box>
           {portfolio.tranches.map((tranche, index) => (
             <Box key={index} mt={1}>
-              {portfolio.tranches.length >= 0 && (
+              {portfolio.tranches.length > 1 && (
                 <Typography variant='h6' component='span'>
                   {tranche.name}
                 </Typography>

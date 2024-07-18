@@ -3,12 +3,14 @@
 import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
 
 import useUserLocks from '@/hooks/locking/useUserLocks'
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 
 import CardWidget from '@/components/atoms/CardWidget'
 import CustomTable, { Sort } from '@/components/molecules/CustomTable'
 import UnlockFooter from '@/components/molecules/locking/UnlockOverview/UnlockFooter'
 import UnlockHeader from '@/components/molecules/locking/UnlockOverview/UnlockHeader'
+import UnlockMobileRow from '@/components/molecules/locking/UnlockOverview/UnlockMobileRow'
 import UnlockRow from '@/components/molecules/locking/UnlockOverview/UnlockRow'
 
 import { toBigNumber } from '@/utils'
@@ -60,6 +62,10 @@ export const UNLOCK_TABLE_KEYS = [
 ] as const
 
 const UnlockOverview = () => {
+  const currentDevice = useDeviceDetection()
+
+  const isMobile = currentDevice === Device.MOBILE
+
   const { t } = useTranslation()
 
   const { userLocks } = useUserLocks()
@@ -73,14 +79,26 @@ const UnlockOverview = () => {
         data={userLocks}
         defaultSortKey='endTime'
         handleSort={handleSort}
-        headers={UnlockHeader(t)}
+        headers={isMobile ? [] : UnlockHeader(t)}
         sortKeys={UNLOCK_TABLE_KEYS}
         footer={<UnlockFooter userLocks={userLocks} />}
+        footerStyle={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            border: 'none',
+          },
+        })}
       >
         {(data) =>
-          data.map((userLock) => (
-            <UnlockRow key={userLock.id.toString()} userLock={userLock} />
-          ))
+          data.map((userLock) =>
+            isMobile ? (
+              <UnlockMobileRow
+                key={userLock.id.toString()}
+                userLock={userLock}
+              />
+            ) : (
+              <UnlockRow key={userLock.id.toString()} userLock={userLock} />
+            )
+          )
         }
       </CustomTable>
     </CardWidget>

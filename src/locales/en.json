@@ -69,6 +69,7 @@
   "locking": {
     "widgets": {
       "overview": {
+        "title": "Your Funds",
         "metric-1-tooltip": "KSU balance currently held in your Web3 wallet, including the current estimated USDC equivalent.",
         "metric-2-tooltip": "Total USDC equivalent value of all tokens in your Web3 wallet that can be used to purchase KSU tokens.",
         "metric-3-tooltip": "Your balance of KSU currently locked."

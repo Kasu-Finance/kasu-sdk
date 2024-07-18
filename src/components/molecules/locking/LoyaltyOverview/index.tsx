@@ -5,6 +5,7 @@ import { Button, Typography } from '@mui/material'
 
 import useModalState from '@/hooks/context/useModalState'
 import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 import useEarnedRKsu from '@/hooks/web3/useEarnedRKsu'
 import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
@@ -24,6 +25,8 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 import { capitalize, formatAmount } from '@/utils'
 
 const LoyaltyOverview = () => {
+  const currentDevice = useDeviceDetection()
+
   const { openModal } = useModalState()
   const { t } = useTranslation()
   const handleOpen = () => openModal({ name: ModalsKeys.LOYALTY_LEVELS })
@@ -43,8 +46,11 @@ const LoyaltyOverview = () => {
             '& .MuiButton-startIcon > svg > path': {
               fill: theme.palette.primary.main,
             },
+            [theme.breakpoints.down('sm')]: {
+              fontSize: 14,
+            },
           })}
-          startIcon={<ArrowForwardIcon />}
+          startIcon={currentDevice !== Device.MOBILE && <ArrowForwardIcon />}
           variant='outlined'
           onClick={handleOpen}
         >
@@ -77,6 +83,12 @@ const LoyaltyOverview = () => {
       <InfoRow
         showDivider
         title={`rKSU ${capitalize(t('general.balance'))}`}
+        titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
+        sx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            px: 0,
+          },
+        })}
         toolTipInfo={<ToolTip title={<RksuBalance />} />}
         metric={
           <TokenAmount amount={formatAmount(rKsuAmount || '0')} symbol='rKSU' />
@@ -86,10 +98,18 @@ const LoyaltyOverview = () => {
       <InfoRow
         showDivider
         title={t('locking.widgets.loyalty.metric-2')}
+        titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
+        sx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            px: 0,
+          },
+        })}
         toolTipInfo={t('locking.widgets.loyalty.metric-2-toolip')}
         metric={
           <TokenAmount
-            amount={formatAmount(totalDeposits.activeDepositAmount || '0')}
+            amount={formatAmount(totalDeposits.activeDepositAmount || '0', {
+              minValue: 100_000,
+            })}
             symbol='USDC'
           />
         }
@@ -98,6 +118,12 @@ const LoyaltyOverview = () => {
       <InfoRow
         showDivider
         title={t('locking.widgets.loyalty.metric-3')}
+        titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
+        sx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            px: 0,
+          },
+        })}
         toolTipInfo={<ToolTip title={<RksuTooltip />} />}
         metric={
           <Typography variant='h6' component='span'>
