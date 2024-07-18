@@ -14,12 +14,12 @@ import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 import useNextClearingPeriod from '@/hooks/web3/useNextClearingPeriod'
 
+import ColoredBox from '@/components/atoms/ColoredBox'
 import Countdown from '@/components/atoms/Countdown'
 import CsvDownloadButton from '@/components/atoms/CsvDownloadButton'
 import InfoColumn from '@/components/atoms/InfoColumn'
 import RenderMetrics from '@/components/molecules/repayments/RenderMetrics'
 
-import ColoredBox from '@/components/atoms/ColoredBox'
 import { adaptDataForRepayments, formatTimestamp } from '@/utils'
 import { RepaymentsSections } from '@/utils/convert/adaptDataForRepayments'
 

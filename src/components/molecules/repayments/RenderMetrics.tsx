@@ -5,10 +5,10 @@ import useTranslation from '@/hooks/useTranslation'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import ContentWithSuffix from '@/components/atoms/ContentWithSuffix'
-import InfoRow from '@/components/atoms/InfoRow'
-
 import InfoColumn from '@/components/atoms/InfoColumn'
+import InfoRow from '@/components/atoms/InfoRow'
 import TokenAmount from '@/components/atoms/TokenAmount'
+
 import { RepaymentsMetrics } from '@/constants/repayments'
 import { RepaymentSection } from '@/utils/convert/adaptDataForRepayments'
 
