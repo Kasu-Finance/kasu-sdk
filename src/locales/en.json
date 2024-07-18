@@ -1071,7 +1071,12 @@
     },
     "closedPools": {
       "table": {
-        "lossRate": "Loss Rate"
+        "lossRate": "Loss Rate",
+        "tranche": {
+          "junior": "Junior Tranche",
+          "mezzanine": "Mezzanine Tranche",
+          "senior": "Senior Tranche"
+        }
       }
     }
   },

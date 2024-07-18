@@ -1,4 +1,4 @@
-import { alpha, TableCell, TableRow } from '@mui/material'
+import { alpha, TableCell, TableRow, Typography } from '@mui/material'
 import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
@@ -38,6 +38,7 @@ const ClosedPoolsTableHeader: React.FC<ClosedPoolsTableHeaderProps> = ({
           sort={sort}
           sortKey='apy'
           handleSortChange={handleSortChange}
+          flipIcon
         />
       </TableCell>
       <TableCell align='right'>
@@ -46,22 +47,45 @@ const ClosedPoolsTableHeader: React.FC<ClosedPoolsTableHeaderProps> = ({
           sort={sort}
           sortKey='totalValueLocked'
           handleSortChange={handleSortChange}
+          flipIcon
         />
       </TableCell>
       <TableCell align='right'>
         <CustomTableSortLabel
-          label={t('lending.poolOverview.detailCard.loansUnder.label')}
+          label={
+            <Typography
+              variant='inherit'
+              component='span'
+              maxWidth={75}
+              whiteSpace='normal'
+              display='block'
+            >
+              {t('lending.poolOverview.detailCard.loansUnder.label')}
+            </Typography>
+          }
           sort={sort}
           sortKey='loansUnderManagement'
           handleSortChange={handleSortChange}
+          flipIcon
         />
       </TableCell>
       <TableCell align='right'>
         <CustomTableSortLabel
-          label={t('details.poolDelegate.totalFunds.label')}
+          label={
+            <Typography
+              variant='inherit'
+              component='span'
+              maxWidth={120}
+              whiteSpace='normal'
+              display='block'
+            >
+              {t('details.poolDelegate.totalFunds.label')}
+            </Typography>
+          }
           sort={sort}
           sortKey='totalFunds'
           handleSortChange={handleSortChange}
+          flipIcon
         />
       </TableCell>
       <TableCell align='right'>
@@ -70,6 +94,7 @@ const ClosedPoolsTableHeader: React.FC<ClosedPoolsTableHeaderProps> = ({
           sort={sort}
           sortKey='totalLossRate'
           handleSortChange={handleSortChange}
+          flipIcon
         />
       </TableCell>
     </TableRow>

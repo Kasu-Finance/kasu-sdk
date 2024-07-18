@@ -1,9 +1,10 @@
 import { TableSortLabel, Typography, TypographyProps } from '@mui/material'
+import { ReactNode } from 'react'
 
 import { Sort } from '@/components/molecules/CustomTable'
 
 type CustomTableSortLabelProps<T extends readonly any[]> = {
-  label: string
+  label: ReactNode
   sort: Sort<T>
   sortKey: T[number]
   handleSortChange: (key: T[number]) => void
@@ -24,7 +25,12 @@ const CustomTableSortLabel = <T extends readonly any[]>({
   const isActive = sort.key === sortKey
 
   return disableSort ? (
-    <Typography variant={variant} fontWeight={500}>
+    <Typography
+      variant={variant}
+      fontWeight={500}
+      textTransform='capitalize'
+      width='max-content'
+    >
       {label}
     </Typography>
   ) : (
@@ -42,7 +48,12 @@ const CustomTableSortLabel = <T extends readonly any[]>({
           : undefined
       }
     >
-      <Typography variant={variant} fontWeight={500}>
+      <Typography
+        variant={variant}
+        fontWeight={500}
+        textTransform='capitalize'
+        width='max-content'
+      >
         {label}
       </Typography>
     </TableSortLabel>

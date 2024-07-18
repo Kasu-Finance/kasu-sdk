@@ -6,7 +6,10 @@ import {
 } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useMemo } from 'react'
 
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
+
 import CustomTable, { Sort } from '@/components/molecules/CustomTable'
+import ClosedPoolsMobileTableRow from '@/components/molecules/home/ClosedPoolsTable/ClosedPoolsMobileTableRow'
 import ClosedPoolsTableFooter from '@/components/molecules/home/ClosedPoolsTable/ClosedPoolsTableFooter'
 import ClosedPoolsTableHeader from '@/components/molecules/home/ClosedPoolsTable/ClosedPoolsTableHeader'
 import ClosedPoolsTableRow from '@/components/molecules/home/ClosedPoolsTable/ClosedPoolsTableRow'
@@ -60,6 +63,10 @@ const ClosedPoolsTable: React.FC<ClosedPoolsTableProps> = ({
   pools,
   poolDelegates,
 }) => {
+  const currentDevice = useDeviceDetection()
+
+  const isMobile = currentDevice === Device.MOBILE
+
   const tableData: ClosedPoolData[] = useMemo(() => {
     if (!pools.length || !poolDelegates.length) {
       return []
@@ -86,19 +93,38 @@ const ClosedPoolsTable: React.FC<ClosedPoolsTableProps> = ({
   }, [pools, poolDelegates])
 
   return (
-    <Card sx={{ minWidth: 275, padding: 2 }}>
+    <Card
+      sx={(theme) => ({
+        minWidth: 275,
+        padding: 2,
+        [theme.breakpoints.down('sm')]: {
+          p: 0,
+          bgcolor: 'transparent',
+        },
+      })}
+    >
       <CustomTable
         data={tableData}
         defaultSortKey='poolName'
         sortKeys={CLOSED_POOLS_KEYS}
         handleSort={handleSort}
-        headers={(handleSortChange, sort) => (
-          <ClosedPoolsTableHeader
-            handleSortChange={handleSortChange}
-            sort={sort}
-          />
-        )}
-        footer={<ClosedPoolsTableFooter />}
+        headers={
+          isMobile
+            ? []
+            : (handleSortChange, sort) => (
+                <ClosedPoolsTableHeader
+                  handleSortChange={handleSortChange}
+                  sort={sort}
+                />
+              )
+        }
+        footer={isMobile ? undefined : <ClosedPoolsTableFooter />}
+        tableStyles={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            borderRadius: 0,
+            border: 'none',
+          },
+        })}
         headersStyle={{
           '& > *': {
             py: 1,
@@ -109,11 +135,26 @@ const ClosedPoolsTable: React.FC<ClosedPoolsTableProps> = ({
             overflowWrap: 'break-word',
           },
         }}
+        paginationStyle={{
+          mt: 1,
+          px: '8px !important',
+          bgcolor: 'white',
+        }}
       >
         {(sortedData) =>
-          sortedData.map((data, idx) => (
-            <ClosedPoolsTableRow key={`${data.poolName}-${idx}`} data={data} />
-          ))
+          sortedData.map((data, idx) =>
+            isMobile ? (
+              <ClosedPoolsMobileTableRow
+                key={`${data.poolName}-${idx}`}
+                data={data}
+              />
+            ) : (
+              <ClosedPoolsTableRow
+                key={`${data.poolName}-${idx}`}
+                data={data}
+              />
+            )
+          )
         }
       </CustomTable>
     </Card>

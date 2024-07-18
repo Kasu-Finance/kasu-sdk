@@ -36,7 +36,13 @@ const ClosedPoolsTableRow: React.FC<RowProps> = ({ data }) => {
             showStatus
             badgeColor={theme.palette.error.main}
           />
-          <Typography variant='h6' component='h1' ml={1} fontWeight={700}>
+          <Typography
+            variant='h6'
+            component='h1'
+            ml={1}
+            fontWeight={700}
+            fontSize={18}
+          >
             {data?.poolName || 'N/A'}
           </Typography>
         </Box>
@@ -47,7 +53,12 @@ const ClosedPoolsTableRow: React.FC<RowProps> = ({ data }) => {
             title={t(`details.poolDetails.assetClass.label`)}
             toolTipInfo=''
             metric={
-              <Typography variant='subtitle2'>
+              <Typography
+                variant='subtitle2'
+                maxWidth={250}
+                whiteSpace='normal'
+                textAlign='right'
+              >
                 {data?.assetClass || 'N/A'}
               </Typography>
             }
@@ -93,7 +104,9 @@ const ClosedPoolsTableRow: React.FC<RowProps> = ({ data }) => {
                   pb={0.5}
                 >
                   {isMultiTranche
-                    ? t(`lending.tranche.${tranche.name.toLowerCase()}`)
+                    ? t(
+                        `home.closedPools.table.tranche.${tranche.name.toLowerCase()}`
+                      )
                     : ''}
                 </Typography>
 

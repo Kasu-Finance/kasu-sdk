@@ -47,7 +47,7 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
   )
 
   const closedPools = useMemo(
-    () => pools?.filter((pool) => !pool.isActive),
+    () => pools?.filter((pool) => pool.isActive),
     [pools]
   )
 

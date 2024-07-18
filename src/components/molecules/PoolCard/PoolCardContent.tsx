@@ -109,7 +109,6 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
           )
         })}
       </ColoredBox>
-
       {visibleMetrics.map((metric) => (
         <PoolCardMetricItem key={metric.id} metric={metric} t={t} />
       ))}
