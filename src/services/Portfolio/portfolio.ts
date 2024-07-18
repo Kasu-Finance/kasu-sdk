@@ -187,6 +187,7 @@ export class Portfolio {
         const currentEpoch =
             await this._systemVariablesAbi.currentEpochNumber();
         const latestEpoch = currentEpoch.sub(BigNumber.from(1));
+
         for (const poolOverview of poolOverviews) {
             usePoolBalancePromises.push(
                 this._userLendingService.getUserPoolBalance(
@@ -233,8 +234,19 @@ export class Portfolio {
                         !lastEpochDatapoint ||
                         lastEpochDatapoint.lendingPoolTrancheUserDetails
                             .length == 0
-                    )
+                    ) {
+                        tranches.push({
+                            id: tranche.id,
+                            name: tranche.name,
+                            apy: tranche.apy,
+                            investedAmount: '0',
+                            yieldEarnings: {
+                                lastEpoch: '0',
+                                lifetime: '0',
+                            },
+                        });
                         continue;
+                    }
                     const prevTrancheYield =
                         lastEpochDatapoint.lendingPoolTrancheUserDetails[0]
                             .tranche.lendingPoolTrancheEpochInterest.length > 0
