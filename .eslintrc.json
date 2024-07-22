@@ -18,7 +18,12 @@
     "parserOptions": {
         "project": ["./tsconfig.json"] // Specify it only for TypeScript files
     },
-    "ignorePatterns": ["node_modules", "src/contracts", "index.ts"],
+    "ignorePatterns": [
+        "node_modules",
+        "src/contracts",
+        "index.ts",
+        "dist/**/*"
+    ],
     "rules": {
         "@typescript-eslint/no-non-null-assertion": "warn",
         "@typescript-eslint/prefer-ts-expect-error": "warn",
