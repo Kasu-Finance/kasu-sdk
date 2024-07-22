@@ -1,6 +1,6 @@
 'use client'
 
-import MenuIcon from '@mui/icons-material/Menu'
+import SortIcon from '@mui/icons-material/Sort'
 import { Box, Drawer, IconButton, useTheme } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { usePathname } from 'next/navigation'
@@ -37,7 +37,7 @@ const Navigation = () => {
           height: '2rem',
         }}
       >
-        <MenuIcon color='primary' />
+        <SortIcon color='primary' />
       </IconButton>
 
       <Drawer

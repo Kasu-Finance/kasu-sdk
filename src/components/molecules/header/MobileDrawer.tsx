@@ -5,10 +5,15 @@ import {
   ListItemButton,
   ListItemText,
   Theme,
+  Typography,
 } from '@mui/material'
 import Link from 'next/link'
 
+import useTranslation from '@/hooks/useTranslation'
+
+import ConnectWalletButton from '@/components/atoms/ConnectWalletButton'
 import DrawerHeader from '@/components/molecules/header/DrawerHeader'
+import WalletList from '@/components/molecules/WalletList'
 
 import { NAV_ITEMS } from '@/config/navigation'
 
@@ -24,40 +29,88 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
   theme,
   handleDrawerToggle,
   isActiveLink,
-}) => (
-  <Box
-    sx={{
-      width: '100vw',
-      height: '100vh',
-      bgcolor: theme.palette.primary.contrastText,
-      color: theme.palette.common.white,
-    }}
-    onClick={handleDrawerToggle}
-  >
-    <DrawerHeader onClose={handleDrawerToggle} theme={theme} />
-    <List>
-      {NAV_ITEMS.map((link) =>
-        link.accountRequired && !account ? null : (
-          <ListItem key={link.label} disablePadding sx={{ pl: 1 }}>
-            <ListItemButton component={Link} href={link.to}>
-              <ListItemText
-                primary={link.label}
-                primaryTypographyProps={{ fontSize: 12 }}
-                sx={{
-                  pb: 1.5,
-                  mt: 0,
-                  borderBottom: `1px solid ${theme.palette.primary.main}`,
-                  color: isActiveLink(link.to)
-                    ? theme.palette.primary.main
-                    : 'inherit',
-                }}
-              />
-            </ListItemButton>
-          </ListItem>
-        )
+}) => {
+  const { t } = useTranslation()
+
+  return (
+    <Box
+      sx={{
+        width: '100vw',
+        height: '100vh',
+        bgcolor: theme.palette.primary.contrastText,
+        color: theme.palette.common.white,
+      }}
+    >
+      <DrawerHeader onClose={handleDrawerToggle} theme={theme} />
+      <List>
+        {NAV_ITEMS.map((link) =>
+          link.accountRequired && !account ? null : (
+            <ListItem key={link.label} disablePadding sx={{ pl: 1 }}>
+              <ListItemButton component={Link} href={link.to}>
+                <ListItemText
+                  primary={link.label}
+                  primaryTypographyProps={{ fontSize: 12 }}
+                  sx={{
+                    pb: 1.5,
+                    mt: 0,
+                    borderBottom: `1px solid ${theme.palette.primary.main}`,
+                    color: isActiveLink(link.to)
+                      ? theme.palette.primary.main
+                      : 'inherit',
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          )
+        )}
+      </List>
+      <Box
+        mt={3}
+        position='relative'
+        sx={{
+          '&::before': {
+            position: 'absolute',
+            content: '""',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            boxShadow: 'inset 0px -40px 20px -20px #28282A',
+            pointerEvents: 'none',
+            zIndex: 10,
+          },
+        }}
+      >
+        <Typography variant='h6' color='primary.main' px={3}>
+          {t('general.connectWallet')}
+        </Typography>
+        <WalletList
+          sx={{
+            maxHeight: 280,
+            overflow: 'auto',
+            px: 3,
+          }}
+          activateCallback={() => {}}
+        />
+      </Box>
+      {account && (
+        <ConnectWalletButton
+          size='large'
+          sx={{
+            width: 'calc(100% - 48px)',
+            ml: 3,
+            mt: 5,
+            '.MuiButton-startIcon': {
+              ml: 'auto',
+            },
+            '.MuiButton-endIcon': {
+              ml: 'auto',
+            },
+          }}
+        />
       )}
-    </List>
-  </Box>
-)
+    </Box>
+  )
+}
 
 export default MobileDrawer
