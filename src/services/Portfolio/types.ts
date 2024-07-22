@@ -1,4 +1,3 @@
-
 export interface PortfolioRewards {
     bonusYieldEarnings: {
         claimableBalance: {
@@ -23,67 +22,67 @@ export interface PortfolioRewards {
     };
 }
 
-export interface PortfolioSummary  {
+export interface PortfolioSummary {
     current: {
         totalKsuLocked: string;
         totalLendingPoolInvestments: string;
         weightedAverageApy: string;
-    }
+    };
     lifetime: {
         yieldEarnings: string;
         ksuBonusRewards: string;
         protocolFeesEarned: string;
-    }
+    };
     lastEpoch: {
         yieldEarnings: string;
-    }
+    };
 }
 
 export interface PortfolioTranche {
     name: string;
-    id:string;
+    id: string;
     apy: string;
-    investedAmount:string;
-    yieldEarnings:{
+    investedAmount: string;
+    yieldEarnings: {
         lastEpoch: string;
         lifetime: string;
-    }
+    };
 }
-export interface  PortfolioLendingPool {
+export interface PortfolioLendingPool {
     id: string;
     name: string;
     totalInvestedAmount: string;
     totalYieldEarningsLastEpoch: string;
     totalYieldEarningsLifetime: string;
     isActive: boolean;
-    tranches: PortfolioTranche[]
+    tranches: PortfolioTranche[];
 }
 export interface LendingPortfolioData {
-    lendingPools: PortfolioLendingPool[]
+    lendingPools: PortfolioLendingPool[];
 }
 
 export interface LastEpochQueryResult {
     user: {
         lendingPoolUserDetails: {
-            id: string
+            id: string;
             lendingPool: {
-                id: string
-                name: string
-            }
+                id: string;
+                name: string;
+            };
             lendingPoolTrancheUserDetails: {
                 lendingPoolTrancheUserEpochSharesUpdates: {
-                    shares: string
-                }[]
+                    shares: string;
+                }[];
                 tranche: {
-                    id: string
+                    id: string;
                     lendingPoolTrancheShareUpdates: {
-                        shares: string
-                    }[]
+                        shares: string;
+                    }[];
                     lendingPoolTrancheEpochInterest: {
-                        epochInterestAmount: string
-                    }[]
-                }
-            }[]
-        }[]
-    }
+                        epochInterestAmount: string;
+                    }[];
+                };
+            }[];
+        }[];
+    } | null;
 }
