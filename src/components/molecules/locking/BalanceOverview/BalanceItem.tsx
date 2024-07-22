@@ -1,4 +1,4 @@
-import { Grid, TypographyProps } from '@mui/material'
+import { Grid, SxProps, Theme, TypographyProps } from '@mui/material'
 import React from 'react'
 
 import InfoColumn from '@/components/atoms/InfoColumn'
@@ -11,6 +11,7 @@ type BalanceItemProps = {
   usdValue?: string
   titleStyle?: TypographyProps
   showSkeleton?: boolean
+  tokenAmountSx?: SxProps<Theme>
 }
 
 const BalanceItem: React.FC<BalanceItemProps> = ({
@@ -18,24 +19,31 @@ const BalanceItem: React.FC<BalanceItemProps> = ({
   toolTipInfo,
   value,
   usdValue,
-  titleStyle = { textTransform: 'capitalize' },
+  titleStyle = { textTransform: 'capitalize', fontSize: { xs: 12, sm: 14 } },
   showSkeleton,
+  tokenAmountSx,
 }) => {
   return (
     <Grid item xs={12}>
       <InfoColumn
         title={title}
         toolTipInfo={toolTipInfo}
+        titleContainerSx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            px: 0,
+          },
+        })}
         showDivider
         titleStyle={titleStyle}
         metric={
           <TokenAmount
             pt='6px'
-            pl={2}
+            pl={{ xs: 0, sm: 2 }}
             amount={value[0]}
             symbol={value[1]}
             usdValue={usdValue}
             showSkeleton={showSkeleton}
+            sx={tokenAmountSx}
           />
         }
       />

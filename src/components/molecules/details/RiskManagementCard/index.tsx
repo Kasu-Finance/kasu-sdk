@@ -39,16 +39,35 @@ const RiskManagementCard: React.FC<RiskManagementCardProps> = ({ data }) => {
   }, [data.items])
 
   return (
-    <Card>
+    <Card
+      sx={(theme) => ({
+        [theme.breakpoints.down('sm')]: {
+          mt: 2,
+        },
+      })}
+    >
       <CardHeader
         title={
-          <Typography variant='h6'>
+          <Typography variant='h6' fontSize={isMobile ? 16 : undefined}>
             {t('details.riskManagement.title')}
           </Typography>
         }
+        sx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            height: 42,
+            p: 1,
+          },
+        })}
       />
 
-      <CardContent sx={{ padding: 2 }}>
+      <CardContent
+        sx={(theme) => ({
+          padding: 2,
+          [theme.breakpoints.down('sm')]: {
+            p: 1,
+          },
+        })}
+      >
         <RiskStatus metrics={riskStatus.metrics} />
         <Box
           display='flex'
@@ -63,7 +82,7 @@ const RiskManagementCard: React.FC<RiskManagementCardProps> = ({ data }) => {
               flexDirection='column'
               width={isMobile ? '100%' : '50%'}
             >
-              <Typography variant='subtitle1' sx={{ mt: 3, padding: '4px' }}>
+              <Typography variant='subtitle1' p={{ xs: 0, sm: '4px' }} mt={3}>
                 {group}
               </Typography>
               {items.map((item) => (
@@ -77,9 +96,19 @@ const RiskManagementCard: React.FC<RiskManagementCardProps> = ({ data }) => {
                   <InfoColumn
                     title={item.title}
                     toolTipInfo={item.tooltip}
+                    titleStyle={{ fontSize: { xs: 10, sm: 14 } }}
+                    titleContainerSx={(theme) => ({
+                      [theme.breakpoints.down('sm')]: {
+                        px: 0,
+                      },
+                    })}
                     showDivider
                     metric={
-                      <Typography variant='body2' sx={{ pl: 2, mt: 0.5 }}>
+                      <Typography
+                        variant='body2'
+                        pl={{ xs: 0, sm: 2 }}
+                        mt={0.5}
+                      >
                         {item.description}
                       </Typography>
                     }

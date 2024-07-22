@@ -58,8 +58,18 @@ const PoolOverview = () => {
       <>
         <Card sx={{ mt: 3, minHeight: '352px', overflow: 'inherit' }}>
           <OverviewTitle pdfUrl={currentPool?.strategyDeckUrl || ''} />
-          <CardContent>
-            <Typography variant='body1' whiteSpace='pre-wrap'>
+          <CardContent
+            sx={(theme) => ({
+              [theme.breakpoints.down('sm')]: {
+                p: 1,
+              },
+            })}
+          >
+            <Typography
+              variant='body1'
+              whiteSpace='pre-wrap'
+              fontSize={{ xs: 12, sm: 14 }}
+            >
               {currentPool.description}
             </Typography>
           </CardContent>

@@ -69,6 +69,7 @@
   "locking": {
     "widgets": {
       "overview": {
+        "title": "Your Funds",
         "metric-1-tooltip": "KSU balance currently held in your Web3 wallet, including the current estimated USDC equivalent.",
         "metric-2-tooltip": "Total USDC equivalent value of all tokens in your Web3 wallet that can be used to purchase KSU tokens.",
         "metric-3-tooltip": "Your balance of KSU currently locked."
@@ -609,6 +610,7 @@
         }
       },
       "investmentCard": {
+        "title": "Your Lending",
         "loanApy": "Loan APY",
         "tooltip": "The Annual Percentage Yield currently offered by the Delegate for this Lending Strategy, assuming all repayments will be made as expected.",
         "totalAmount": {
@@ -801,6 +803,13 @@
       }
     },
     "poolDetails": {
+      "tabs": {
+        "overview": "Overview",
+        "details": "Details",
+        "lendingStrategyDetails": "Lending Strategy Details",
+        "repayments": "Repayments",
+        "riskReporting": "Risk Reporting"
+      },
       "title": "Lending Strategy Details",
       "apy": {
         "label": "APY",
@@ -1010,7 +1019,7 @@
   },
   "risk": {
     "poolCredit": {
-      "title": "Pool Credit Metrics",
+      "title": "Lending Strategy Credit Metrics",
       "headers": {
         "column-1": "Key Credit Metrics",
         "column-2": "Previous Fiscal Year",
@@ -1062,7 +1071,12 @@
     },
     "closedPools": {
       "table": {
-        "lossRate": "Loss Rate"
+        "lossRate": "Loss Rate",
+        "tranche": {
+          "junior": "Junior Tranche",
+          "mezzanine": "Mezzanine Tranche",
+          "senior": "Senior Tranche"
+        }
       }
     }
   },
@@ -1094,15 +1108,19 @@
       }
     },
     "lendingPortfolio": {
-      "title": "Lending Portfolio"
+      "title": "Lending Portfolio",
+      "lendingBalance": "Lending Balance",
+      "interestEarningsClaimable": "Interest Earnings​ Claimable Balance",
+      "interestEarningsLifetime": "Interest Earnings​ Lifetime"
     },
     "rewards": {
       "title": "My Rewards Portfolio",
       "bonusYieldEarnings": "Bonus Interest Earnings",
       "ksuLaunchBonus": "KSU Launch Bonus",
-      "Protocol Fees": "Protocol Fees",
+      "protocolFees": "Protocol Fees",
       "totalUsdcBonus": "Total USDC Bonus/Rewards",
-      "totalKsuBonus": "Total KSU Bonus/Rewards"
+      "totalKsuBonus": "Total KSU Bonus/Rewards",
+      "claimableBalance": "Claimable Balance"
     },
     "wallet": {
       "title": "My Wallet",

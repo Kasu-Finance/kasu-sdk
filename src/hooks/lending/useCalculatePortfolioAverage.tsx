@@ -20,9 +20,9 @@ const useCalculatePortfolioAverage = (
     const weightedTranchesApy = cur.tranches.reduce(
       (trancheApy, curTranche) =>
         trancheApy.add(
-          toBigNumber(curTranche.apy).mul(
-            toBigNumber(curTranche.investedAmount)
-          )
+          toBigNumber(curTranche.apy)
+            .mul(toBigNumber(curTranche.investedAmount))
+            .div(toBigNumber('1'))
         ),
       BigNumber.from(0)
     )
@@ -38,7 +38,7 @@ const useCalculatePortfolioAverage = (
       ? totalValues.lifeTime.div(lendingPortfolio.length)
       : ethers.constants.Zero,
     investedAmount: totalTranches
-      ? totalValues.investedAmount.div(totalTranches)
+      ? totalValues.investedAmount.div(toBigNumber(totalTranches.toString()))
       : ethers.constants.Zero,
     weightedApy: totalValues.investedAmount.isZero()
       ? '0'

@@ -4,6 +4,7 @@ import { Divider, Grid, Skeleton, Typography } from '@mui/material'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 
 import usePortfolioSummary from '@/hooks/portfolio/usePortfolioSummary'
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
@@ -19,6 +20,9 @@ const LifetimeSummary = () => {
   const { ksuPrice } = useKsuPrice()
 
   const { t } = useTranslation()
+  const currentDevice = useDeviceDetection()
+
+  const isMobile = currentDevice === Device.MOBILE
 
   if (isLoading || !portfolioSummary) {
     return (
@@ -47,26 +51,35 @@ const LifetimeSummary = () => {
   )
 
   return (
-    <Grid item xs={6}>
-      <ColoredBox sx={{ p: 0 }}>
+    <Grid item lg={6} xs={12}>
+      <ColoredBox p={{ xs: 1, sm: 0 }}>
         <Typography
-          variant='caption'
+          variant={isMobile ? 'h6' : 'caption'}
           component='span'
-          textAlign='center'
+          textAlign={isMobile ? 'left' : 'center'}
           width='100%'
           display='block'
-          py='6px'
+          py={isMobile ? 0 : '6px'}
           textTransform='capitalize'
         >
           {t('general.lifetime')}
         </Typography>
-        <Divider />
+        {!isMobile && <Divider />}
         <Grid container spacing={2}>
-          <Grid item xs={4}>
+          <Grid item sm={4} xs={6}>
             <InfoColumn
               title={t('portfolio.summary.yieldEarnings.title')}
               toolTipInfo={t('portfolio.summary.yieldEarnings.tooltip')}
               showDivider
+              titleStyle={{
+                whiteSpace: 'nowrap',
+                fontSize: { xs: 10, sm: 14 },
+              }}
+              titleContainerSx={(theme) => ({
+                [theme.breakpoints.down('sm')]: {
+                  px: 0,
+                },
+              })}
               metric={
                 <TokenAmount
                   amount={formatAmount(
@@ -79,12 +92,20 @@ const LifetimeSummary = () => {
               }
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item sm={4} xs={12} order={isMobile ? 3 : undefined}>
             <InfoColumn
               title={t('portfolio.summary.ksuBonusRewards.title')}
               toolTipInfo={t('portfolio.summary.ksuBonusRewards.tooltip')}
-              titleStyle={{ whiteSpace: 'nowrap' }}
               showDivider
+              titleStyle={{
+                whiteSpace: 'nowrap',
+                fontSize: { xs: 10, sm: 14 },
+              }}
+              titleContainerSx={(theme) => ({
+                [theme.breakpoints.down('sm')]: {
+                  px: 0,
+                },
+              })}
               metric={
                 <TokenAmount
                   amount={formatAmount(
@@ -94,15 +115,31 @@ const LifetimeSummary = () => {
                   usdValue={formatAmount(formatEther(ksuInUSD || '0'))}
                   pt='6px'
                   pl={2}
+                  sx={(theme) => ({
+                    [theme.breakpoints.down('sm')]: {
+                      '.MuiBox-root': {
+                        display: 'inline-block',
+                        ml: 1,
+                      },
+                    },
+                  })}
                 />
               }
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item sm={4} xs={6}>
             <InfoColumn
               title={t('portfolio.summary.protocolFeesEarned.title')}
               toolTipInfo={t('portfolio.summary.protocolFeesEarned.tooltip')}
-              titleStyle={{ whiteSpace: 'nowrap' }}
+              titleStyle={{
+                whiteSpace: 'nowrap',
+                fontSize: { xs: 10, sm: 14 },
+              }}
+              titleContainerSx={(theme) => ({
+                [theme.breakpoints.down('sm')]: {
+                  px: 0,
+                },
+              })}
               showDivider
               metric={
                 <TokenAmount

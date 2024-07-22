@@ -75,23 +75,41 @@ const LoyaltyCard: React.FC<{
     : '0'
 
   return (
-    <Card>
+    <Card
+      sx={(theme) => ({
+        [theme.breakpoints.down('sm')]: {
+          mt: 2,
+        },
+      })}
+    >
       <CardHeader
         title={t('lending.poolOverview.lockingStatus.title')}
         titleTypographyProps={{
           variant: 'h6',
           component: 'h6',
           m: 0,
+          fontSize: currentDevice === Device.MOBILE ? 16 : undefined,
         }}
+        sx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            height: 42,
+            p: 1,
+          },
+        })}
       />
-
       <Grid
         container
         direction={isMobile ? 'column' : 'row'}
         justifyContent='flex-start'
         alignItems='stretch'
         columnSpacing={3}
-        sx={{ p: 2, pb: 0 }}
+        sx={(theme) => ({
+          p: 2,
+          pb: 0,
+          [theme.breakpoints.down('sm')]: {
+            p: 1,
+          },
+        })}
       >
         <Grid item xs={6}>
           <LendingLoyalityInfo />
@@ -103,6 +121,7 @@ const LoyaltyCard: React.FC<{
             toolTipInfo={t(
               'lending.poolOverview.lockingStatus.lockedInfo.tooltip'
             )}
+            titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
           />
           <Divider />
           <ContentWithSuffix
@@ -116,12 +135,27 @@ const LoyaltyCard: React.FC<{
           <Typography variant='caption'>
             {t('lending.poolOverview.lockingStatus.lendingAndBonus.caption')}
           </Typography>
-          <ColoredBox sx={{ mt: 2, mb: 2 }}>
+          <ColoredBox
+            sx={(theme) => ({
+              mt: 2,
+              mb: 2,
+              borderRadius: 2,
+              [theme.breakpoints.down('sm')]: {
+                p: 1,
+              },
+            })}
+          >
             <InfoRow
               title={t('lending.poolOverview.lockingStatus.apyBonus.label')}
               toolTipInfo={t(
                 'lending.poolOverview.lockingStatus.apyBonus.tooltip'
               )}
+              sx={(theme) => ({
+                [theme.breakpoints.down('sm')]: {
+                  px: 0,
+                },
+              })}
+              titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
               showDivider
               metric={
                 <ContentWithSuffix
@@ -142,6 +176,12 @@ const LoyaltyCard: React.FC<{
               toolTipInfo={t(
                 'lending.poolOverview.lockingStatus.lifeTimeBonus.tooltip'
               )}
+              sx={(theme) => ({
+                [theme.breakpoints.down('sm')]: {
+                  px: 0,
+                },
+              })}
+              titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
               showDivider
               metric={
                 <div>
@@ -155,6 +195,7 @@ const LoyaltyCard: React.FC<{
                     sx={{ fontSize: '12px' }}
                     variant='caption'
                     component='h6'
+                    color={isMobile ? 'primary.main' : undefined}
                   >
                     {formatAmount(lifetimeYieldEarnedUSDC || '0')}
                     USDC
@@ -162,7 +203,16 @@ const LoyaltyCard: React.FC<{
                 </div>
               }
             />
-            <Box sx={{ display: 'flex', pl: 2, py: 1 }}>
+            <Box
+              sx={(theme) => ({
+                display: 'flex',
+                pl: 2,
+                py: 1,
+                [theme.breakpoints.down('sm')]: {
+                  pl: 0,
+                },
+              })}
+            >
               <NextLink
                 display='inline-block'
                 textTransform='none'
@@ -178,11 +228,6 @@ const LoyaltyCard: React.FC<{
                   )}
                 </Typography>
               </NextLink>
-              {/* <ToolTip
-                title={t(
-                  'lending.poolOverview.lockingStatus.allOtherRewards.tooltip'
-                )}
-              /> */}
             </Box>
           </ColoredBox>
         </Grid>

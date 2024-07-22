@@ -34,7 +34,19 @@ const PortfolioTabs = () => {
 
   return (
     <Box>
-      <Tabs value={activeTab} onChange={handleChange} sx={{ mb: 3 }}>
+      <Tabs
+        value={activeTab}
+        onChange={handleChange}
+        sx={(theme) => ({
+          mb: 3,
+          [theme.breakpoints.down('sm')]: {
+            '.MuiTabs-flexContainer': {
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+            },
+          },
+        })}
+      >
         {Object.keys(PORTFOLIO_TABS).map((label) => (
           <StyledTab key={label} label={label} />
         ))}

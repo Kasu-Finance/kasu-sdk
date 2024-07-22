@@ -30,22 +30,29 @@ const LendingPortfolioTabHeader: React.FC<LendingPortfolioTabHeaderProps> = ({
       <CardHeader
         action={
           <Box
-            sx={{
+            sx={(theme) => ({
               top: 4,
               position: 'relative',
               right: 8,
-            }}
+
+              [theme.breakpoints.down('sm')]: {
+                top: 2,
+              },
+            })}
           >
             <ButtonGroup
               disableElevation
               variant='contained'
-              sx={{
+              sx={(theme) => ({
                 mr: 2,
                 '.MuiButtonGroup-grouped': {
                   borderColor: 'inherit',
                   border: '0px',
                 },
-              }}
+                [theme.breakpoints.down('sm')]: {
+                  mr: 0,
+                },
+              })}
             >
               <Button
                 size='small'
@@ -58,6 +65,10 @@ const LendingPortfolioTabHeader: React.FC<LendingPortfolioTabHeaderProps> = ({
                     : 'rgba(130, 194, 82, 1)',
                   '&:hover': {
                     bgcolor: theme.palette.success.main,
+                  },
+                  [theme.breakpoints.down('sm')]: {
+                    fontSize: 10,
+                    width: 48,
                   },
                 })}
                 onClick={() => handleClick('activePools')}
@@ -77,6 +88,10 @@ const LendingPortfolioTabHeader: React.FC<LendingPortfolioTabHeaderProps> = ({
                   '&:hover': {
                     bgcolor: theme.palette.error.light,
                   },
+                  [theme.breakpoints.down('sm')]: {
+                    fontSize: 10,
+                    width: 48,
+                  },
                 })}
                 onClick={() => handleClick('closedPools')}
               >
@@ -90,6 +105,19 @@ const LendingPortfolioTabHeader: React.FC<LendingPortfolioTabHeaderProps> = ({
           </Box>
         }
         title={t('portfolio.lendingPortfolio.title')}
+        titleTypographyProps={{
+          sx: (theme) => ({
+            [theme.breakpoints.down('sm')]: {
+              fontSize: 16,
+            },
+          }),
+        }}
+        sx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            height: 42,
+            p: 1,
+          },
+        })}
       />
     </>
   )

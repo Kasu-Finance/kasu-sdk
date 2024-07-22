@@ -2,6 +2,8 @@ import { Grid } from '@mui/material'
 import { TrancheData } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
+import useTranslation from '@/hooks/useTranslation'
+
 import TranchDetailCard from '@/components/molecules/TranchDetailCard'
 
 import { formatAmount } from '@/utils'
@@ -17,7 +19,9 @@ const TrancheCard: React.FC<TrancheCardProps> = ({
   isSingleTranche,
   columnWidth,
 }) => {
-  const title = isSingleTranche ? '' : `${tranche.name} Tranche`
+  const { t } = useTranslation()
+
+  const title = isSingleTranche ? '' : `${tranche.name} ${t('general.tranche')}`
   const remainingAmountPct = formatAmount(
     parseFloat(tranche.poolCapacityPercentage || '0') * 100
   )

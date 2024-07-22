@@ -36,7 +36,7 @@ const khmerFontFamily = ['Noto Sans Khmer'].join(',')
 const primaryColor = '#e5c397'
 const primaryContrastColor = '#28282a'
 
-export const theme = createTheme({
+const customTheme = createTheme({
   palette: {
     background: {
       default: primaryContrastColor,
@@ -254,6 +254,15 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           padding: 0,
+        },
+      },
+    },
+    MuiDivider: {
+      styleOverrides: {
+        root: {
+          ['@media (max-width:600px)']: {
+            backgroundColor: 'rgba(224, 193, 156, 1)',
+          },
         },
       },
     },
@@ -696,3 +705,5 @@ export const theme = createTheme({
     },
   },
 })
+
+export const theme = customTheme

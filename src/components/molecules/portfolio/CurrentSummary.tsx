@@ -4,6 +4,7 @@ import { Divider, Grid, Skeleton, Typography } from '@mui/material'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 
 import usePortfolioSummary from '@/hooks/portfolio/usePortfolioSummary'
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
@@ -18,6 +19,10 @@ import {
 } from '@/utils'
 
 const CurrentSummary = () => {
+  const currentDevice = useDeviceDetection()
+
+  const isMobile = currentDevice === Device.MOBILE
+
   const { portfolioSummary, isLoading } = usePortfolioSummary()
 
   const { ksuPrice } = useKsuPrice()
@@ -44,13 +49,18 @@ const CurrentSummary = () => {
   )
 
   return (
-    <Grid item xs={6} container spacing={2} mt='auto'>
-      <Grid item xs={4}>
+    <Grid container item lg={6} xs={12} spacing={isMobile ? 0 : 2} mt='auto'>
+      <Grid item sm={4} xs={12}>
         <InfoColumn
           title={t('portfolio.summary.totalKsuLocked.title')}
           toolTipInfo={t('portfolio.summary.totalKsuLocked.tooltip')}
           showDivider
-          titleStyle={{ whiteSpace: 'nowrap' }}
+          titleStyle={{ whiteSpace: 'nowrap', fontSize: { xs: 10, sm: 14 } }}
+          titleContainerSx={(theme) => ({
+            [theme.breakpoints.down('sm')]: {
+              px: 0,
+            },
+          })}
           metric={
             <TokenAmount
               amount={formatAmount(
@@ -59,18 +69,31 @@ const CurrentSummary = () => {
               symbol='KSU'
               usdValue={formatAmount(formatEther(ksuInUSD || '0'))}
               pt='6px'
-              pl={2}
-              sx={{ width: 'fit-content' }}
+              pl={{ xs: 0, sm: 2 }}
+              sx={(theme) => ({
+                width: 'fit-content',
+                [theme.breakpoints.down('sm')]: {
+                  '.MuiBox-root': {
+                    display: 'inline-block',
+                    ml: 1,
+                  },
+                },
+              })}
             />
           }
         />
       </Grid>
-      <Grid item xs={4}>
+      <Grid item sm={4} xs={6}>
         <InfoColumn
           title={t('portfolio.summary.lendingPoolInvestment.title')}
           toolTipInfo={t('portfolio.summary.lendingPoolInvestment.tooltip')}
           showDivider
-          titleStyle={{ whiteSpace: 'nowrap' }}
+          titleStyle={{ whiteSpace: 'nowrap', fontSize: { xs: 10, sm: 14 } }}
+          titleContainerSx={(theme) => ({
+            [theme.breakpoints.down('sm')]: {
+              px: 0,
+            },
+          })}
           metric={
             <TokenAmount
               amount={formatAmount(
@@ -78,25 +101,30 @@ const CurrentSummary = () => {
               )}
               symbol='USDC'
               pt='6px'
-              pl={2}
+              pl={{ xs: 0, sm: 2 }}
               sx={{ width: 'fit-content' }}
             />
           }
         />
       </Grid>
-      <Grid item xs={4}>
+      <Grid item sm={4} xs={6}>
         <InfoColumn
           title={t('portfolio.summary.weightedApy.title')}
           toolTipInfo={t('portfolio.summary.weightedApy.tooltip')}
           showDivider
-          titleStyle={{ whiteSpace: 'nowrap' }}
+          titleStyle={{ whiteSpace: 'nowrap', fontSize: { xs: 10, sm: 14 } }}
+          titleContainerSx={(theme) => ({
+            [theme.breakpoints.down('sm')]: {
+              px: 0,
+            },
+          })}
           metric={
             <Typography
               variant='h6'
               component='span'
               display='block'
               pt='6px'
-              pl={2}
+              pl={{ xs: 0, sm: 2 }}
             >
               {formatPercentage(
                 portfolioSummary.current.weightedAverageApy || '0'

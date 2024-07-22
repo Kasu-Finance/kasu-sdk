@@ -24,10 +24,24 @@ const DialogWrapper: React.FC<{
 
   if (!modalDetails || !modal[modalName].isOpen) return
 
+  const sx = modalDetails.sx
+
   return (
     <Dialog
       open={modal[modalName].isOpen}
-      PaperProps={{ sx: { width: 600 } }}
+      PaperProps={{
+        sx: [
+          {
+            width: 600,
+            ...(modalDetails.fullscreen && {
+              margin: 0,
+              maxHeight: '100%',
+              height: '100%',
+            }),
+          },
+          ...(Array.isArray(sx) ? sx : [sx]),
+        ],
+      }}
       onClose={handleClose}
       disableEnforceFocus
       aria-labelledby={modalDetails.ariaLabel}

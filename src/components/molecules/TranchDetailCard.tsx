@@ -3,7 +3,11 @@
 import { Box, Typography } from '@mui/material'
 import React from 'react'
 
-import TrancheMetricDisplay from '@/components/molecules/TrancheMetricDisplay'
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
+import useTranslation from '@/hooks/useTranslation'
+
+import ColoredBox from '@/components/atoms/ColoredBox'
+import InfoRow from '@/components/atoms/InfoRow'
 
 interface TranchDetailCardProps {
   title: string
@@ -20,53 +24,127 @@ const TranchDetailCard: React.FC<TranchDetailCardProps> = ({
   maxDepositAmount,
   isSingleTranche,
 }) => {
+  const { t } = useTranslation()
+
+  const currentDevice = useDeviceDetection()
+
   return (
-    <Box
-      className='light-colored-background'
-      sx={{
+    <ColoredBox
+      sx={(theme) => ({
         minWidth: 275,
-        margin: 0,
         p: 0,
-        borderRadius: '8px',
+        borderRadius: 2,
         display: 'flex',
-        flexDirection: isSingleTranche ? 'row' : 'column',
-      }}
+        flexDirection:
+          isSingleTranche && currentDevice !== Device.MOBILE ? 'row' : 'column',
+
+        [theme.breakpoints.down('sm')]: {
+          p: 1,
+        },
+      })}
     >
       {title && (
         <Typography
-          sx={{ pl: 2, pt: 2, pb: 1 }}
+          sx={(theme) => ({
+            pl: 2,
+            pt: 2,
+            pb: 1,
+            [theme.breakpoints.down('sm')]: {
+              pl: 0,
+              pt: 0,
+              pb: 0,
+            },
+          })}
           variant='subtitle1'
           component='h6'
         >
           {title}
         </Typography>
       )}
-
-      <TrancheMetricDisplay
-        titleKey='lending.poolOverview.trancheCard.remainingCapacity.label'
-        tooltipKey='lending.poolOverview.trancheCard.remainingCapacity.tooltip'
-        content={remainingAmount.pct}
-        additionalContent={remainingAmount.value}
-        suffix='USDC'
-        isSingleTranche={isSingleTranche}
-        isRemainingCapacity
+      <InfoRow
+        title={t('lending.poolOverview.trancheCard.remainingCapacity.label')}
+        toolTipInfo={t(
+          'lending.poolOverview.trancheCard.remainingCapacity.tooltip'
+        )}
+        titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
+        sx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            px: 0,
+          },
+        })}
+        showDivider
+        metric={
+          <Box textAlign='right'>
+            <Typography variant='body1' component='span'>
+              {remainingAmount.pct} %
+            </Typography>
+            <Typography
+              color='text.secondary'
+              variant='caption'
+              component='span'
+              display='block'
+            >
+              {remainingAmount.value} USDC
+            </Typography>
+          </Box>
+        }
       />
-      <TrancheMetricDisplay
-        titleKey='lending.poolOverview.trancheCard.minDeposit'
-        tooltipKey=''
-        content={minimumDepositAmount}
-        suffix='USDC'
-        isSingleTranche={isSingleTranche}
+      <InfoRow
+        title={t('lending.poolOverview.trancheCard.minDeposit')}
+        titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
+        sx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            px: 0,
+          },
+        })}
+        showDivider
+        metric={
+          <Box textAlign='right'>
+            <Typography
+              variant='h6'
+              component='span'
+              fontSize={{ xs: 16, sm: 20 }}
+            >
+              {minimumDepositAmount}{' '}
+              <Typography
+                variant='body1'
+                component='span'
+                fontSize={{ xs: 12 }}
+              >
+                USDC
+              </Typography>
+            </Typography>
+          </Box>
+        }
       />
-      <TrancheMetricDisplay
-        titleKey='lending.poolOverview.trancheCard.maxDeposit'
-        tooltipKey=''
-        content={maxDepositAmount}
-        suffix='USDC'
-        isLast={true}
-        isSingleTranche={isSingleTranche}
+      <InfoRow
+        title={t('lending.poolOverview.trancheCard.maxDeposit')}
+        titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
+        sx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            px: 0,
+          },
+        })}
+        metric={
+          <Box textAlign='right'>
+            <Typography
+              variant='h6'
+              component='span'
+              fontSize={{ xs: 16, sm: 20 }}
+            >
+              {maxDepositAmount}{' '}
+              <Typography
+                variant='body1'
+                component='span'
+                fontSize={{ xs: 12 }}
+              >
+                USDC
+              </Typography>
+            </Typography>
+          </Box>
+        }
       />
-    </Box>
+    </ColoredBox>
   )
 }
 

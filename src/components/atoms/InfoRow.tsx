@@ -1,8 +1,8 @@
-import { Theme } from '@emotion/react'
 import {
   Box,
   Divider,
   SxProps,
+  Theme,
   Typography,
   TypographyProps,
 } from '@mui/material'

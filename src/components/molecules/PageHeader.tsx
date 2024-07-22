@@ -6,6 +6,7 @@ import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useMemo } from 'react'
 
 import usePoolOverview from '@/hooks/lending/usePoolOverview'
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 
 import BackButton from '@/components/atoms/BackButton'
@@ -29,6 +30,8 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   const { t } = useTranslation()
   const { data, isLoading } = usePoolOverview(poolId)
 
+  const currentDevice = useDeviceDetection()
+
   const { poolName, poolBannerImg } = useMemo(() => {
     const pool: PoolOverview | null = data?.length ? data[0] : null
     return {
@@ -51,27 +54,82 @@ const PageHeader: React.FC<PageHeaderProps> = ({
 
   return (
     <Paper sx={{ borderRadius: '4px' }}>
-      <ImageWithFallback src={poolBannerImg} coverProps={{ height: 132 }} />
+      <ImageWithFallback
+        src={poolBannerImg}
+        coverProps={(theme) => ({
+          height: 132,
+          [theme.breakpoints.down('lg')]: {
+            height: 90,
+          },
+          [theme.breakpoints.down('md')]: {
+            height: 60,
+          },
+          [theme.breakpoints.down('sm')]: {
+            height: 39,
+          },
+        })}
+      />
       <BoxBackground
         display='flex'
         justifyContent='space-between'
         alignItems='center'
-        sx={{ p: 2 }}
+        p={{ xs: 1, sm: 2 }}
       >
-        <Box display='flex' alignItems='center'>
-          <PoolAvatar name={poolName} showStatus />
-          <Typography variant='h5' sx={{ ml: 1 }}>
+        <Box
+          display='flex'
+          alignItems='center'
+          maxWidth={{ xs: 'calc(100% - 40px)', sm: '100%' }}
+        >
+          <PoolAvatar
+            sx={(theme) => ({
+              [theme.breakpoints.down('sm')]: {
+                width: 32,
+                height: 32,
+              },
+            })}
+            name={poolName}
+            showStatus
+          />
+          <Typography
+            variant='h5'
+            sx={(theme) => ({
+              ml: 1,
+              [theme.breakpoints.down('sm')]: {
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              },
+            })}
+            fontSize={{ xs: 18, sm: 24 }}
+          >
             {poolName || title}
           </Typography>
         </Box>
 
-        <BackButton variant='contained' startIcon={<ArrowBackIcon />}>
-          <Typography
-            variant='subtitle2'
-            sx={{ fontSize: 15, letterSpacing: '0.5px' }}
-          >
-            {t('general.lending')} {t('general.strategies')}
-          </Typography>
+        <BackButton
+          variant='contained'
+          startIcon={<ArrowBackIcon />}
+          sx={(theme) => ({
+            [theme.breakpoints.down('sm')]: {
+              width: 32,
+              height: '32px !important',
+              border: '1px solid #28282A',
+              '& .MuiButton-icon': {
+                m: 0,
+              },
+            },
+          })}
+        >
+          {currentDevice === Device.MOBILE ? (
+            <span />
+          ) : (
+            <Typography
+              variant='subtitle2'
+              sx={{ fontSize: 15, letterSpacing: '0.5px' }}
+            >
+              {t('general.lending')} {t('general.strategies')}
+            </Typography>
+          )}
         </BackButton>
       </BoxBackground>
     </Paper>

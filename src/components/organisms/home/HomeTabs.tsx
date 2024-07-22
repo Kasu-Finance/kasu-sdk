@@ -30,6 +30,7 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
   const [activeTab, setActiveTab] = useState(0)
   const currentDevice = useDeviceDetection()
   const isMobile = currentDevice === Device.MOBILE
+  const isTablet = currentDevice === Device.TABLET
 
   const sortPoolsByTrancheLength = (pools: PoolOverview[]) => {
     return pools?.sort((a, b) => a?.tranches?.length - b?.tranches?.length)
@@ -46,7 +47,7 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
   )
 
   const closedPools = useMemo(
-    () => pools?.filter((pool) => !pool.isActive),
+    () => pools?.filter((pool) => pool.isActive),
     [pools]
   )
 
@@ -69,6 +70,11 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
         <StyledTab
           label={t('home.tabs.activePools')}
           isActive={activeTab === 0}
+          sx={(theme) => ({
+            [theme.breakpoints.down('sm')]: {
+              padding: theme.spacing(0.5, 1),
+            },
+          })}
         />
         <StyledTab
           label={t('home.tabs.closedPools')}
@@ -78,7 +84,7 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
       <TabPanel isActive={activeTab === 0} id='home-pools-active'>
         {activePools?.length ? (
           <Carousel
-            slidesPerPage={isMobile ? 1 : 3}
+            slidesPerPage={isTablet || isMobile ? 1 : 3}
             arrowButtonStyle={{
               leftArrow: { left: isMobile ? '-20px' : '-35px' },
               rightArrow: { right: isMobile ? '-25px' : '-40px' },
