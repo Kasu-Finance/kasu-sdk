@@ -45,7 +45,12 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
       <List>
         {NAV_ITEMS.map((link) =>
           link.accountRequired && !account ? null : (
-            <ListItem key={link.label} disablePadding sx={{ pl: 1 }}>
+            <ListItem
+              key={link.label}
+              disablePadding
+              sx={{ pl: 1 }}
+              onClick={handleDrawerToggle}
+            >
               <ListItemButton component={Link} href={link.to}>
                 <ListItemText
                   primary={link.label}
