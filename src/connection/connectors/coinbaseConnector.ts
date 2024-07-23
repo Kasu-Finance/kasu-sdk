@@ -17,7 +17,7 @@ const [web3CoinbaseWallet, web3CoinbaseWalletHooks] =
         actions,
         options: {
           url: RPC_URLS[SupportedChainIds.BASE][0],
-          appName: 'Spool',
+          appName: 'Synapse',
           reloadOnDisconnect: false,
         },
         onError: web3reactError,
