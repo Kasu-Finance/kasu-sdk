@@ -18,7 +18,8 @@ export interface PoolOverview {
     assetClass: string;
     security: string;
     industryExposure: string;
-    poolApyStructure: string;
+    poolApyStructure: 'Variable' | 'Fixed';
+    apyExpiryDate: number | null;
     poolInvestmentTerm: string;
     loanStructure: string;
     loanFundsOriginated: string;

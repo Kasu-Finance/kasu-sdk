@@ -269,6 +269,7 @@ export class DataService {
                 assetClass: lendingPoolDirectus.assetClass,
                 industryExposure: lendingPoolDirectus.industryExposure,
                 poolApyStructure: lendingPoolDirectus.poolApyStructure,
+                apyExpiryDate: lendingPoolDirectus.apyExpiryDate,
                 poolInvestmentTerm: lendingPoolDirectus.poolInvestmentTerm,
                 loanStructure: lendingPoolDirectus.loanStructure,
                 poolName: lendingPoolSubgraph.name,

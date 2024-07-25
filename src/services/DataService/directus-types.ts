@@ -20,7 +20,8 @@ export interface PoolOverviewDirectus {
     strategyDeck: string;
     assetClass: string;
     industryExposure: string;
-    poolApyStructure: string;
+    poolApyStructure: 'Variable' | 'Fixed';
+    apyExpiryDate: number | null;
     poolInvestmentTerm: string;
     loanStructure: string;
     loansUnderManagement: string;
