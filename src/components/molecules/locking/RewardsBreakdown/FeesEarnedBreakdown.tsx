@@ -1,6 +1,7 @@
 import useLockingRewards from '@/hooks/locking/useLockingRewards'
 import useTranslation from '@/hooks/useTranslation'
 
+import ToolTip from '@/components/atoms/ToolTip'
 import RewardsBreakdownCard from '@/components/molecules/locking/RewardsBreakdown/RewardsBreakdownCard'
 
 import { formatAmount } from '@/utils'
@@ -16,8 +17,21 @@ const FeesEarnedBreakdown = () => {
       breakdowns={[
         {
           title: t('locking.widgets.rewardsBreakdown.rewards-3.metric-1'),
-          toolTipInfo: t(
-            'locking.widgets.rewardsBreakdown.rewards-3.metric-1-tooltip'
+          toolTipInfo: (
+            <ToolTip
+              title={
+                <>
+                  {t(
+                    'locking.widgets.rewardsBreakdown.rewards-3.metric-1-tooltip-1'
+                  )}
+                  <br />
+                  <br />
+                  {t(
+                    'locking.widgets.rewardsBreakdown.rewards-3.metric-1-tooltip-2'
+                  )}
+                </>
+              }
+            />
           ),
           metric: [
             formatAmount(lockingRewards?.claimableRewards || '0'),
@@ -27,8 +41,21 @@ const FeesEarnedBreakdown = () => {
 
         {
           title: t('locking.widgets.rewardsBreakdown.rewards-3.metric-2'),
-          toolTipInfo: t(
-            'locking.widgets.rewardsBreakdown.rewards-3.metric-2-tooltip'
+          toolTipInfo: (
+            <ToolTip
+              title={
+                <>
+                  {t(
+                    'locking.widgets.rewardsBreakdown.rewards-3.metric-2-tooltip-1'
+                  )}
+                  <br />
+                  <br />
+                  {t(
+                    'locking.widgets.rewardsBreakdown.rewards-3.metric-2-tooltip-2'
+                  )}
+                </>
+              }
+            />
           ),
           metric: [
             formatAmount(lockingRewards?.lifeTimeRewards || '0'),

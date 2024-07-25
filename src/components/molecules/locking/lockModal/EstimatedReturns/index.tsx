@@ -52,7 +52,17 @@ const EstimatedReturns = () => {
       >
         <InfoRow
           title={t('modals.lock.estimates.est-1')}
-          toolTipInfo={t('modals.lock.estimates.tooltip-1')}
+          toolTipInfo={
+            <ToolTip
+              title={
+                <>
+                  {t('modals.lock.estimates.tooltip-1-1')}
+                  <br /> <br />
+                  {t('modals.lock.estimates.tooltip-1-2')}
+                </>
+              }
+            />
+          }
           metric={
             <TokenAmount
               color={(theme) =>

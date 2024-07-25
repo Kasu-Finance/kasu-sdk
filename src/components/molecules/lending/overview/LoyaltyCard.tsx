@@ -5,6 +5,7 @@ import {
   Button,
   Card,
   CardHeader,
+  darken,
   Divider,
   Grid,
   Typography,
@@ -222,7 +223,13 @@ const LoyaltyCard: React.FC<{
                 href={Routes.locking.root.url}
                 prefetch
               >
-                <Typography variant='caption' component='span'>
+                <Typography
+                  variant='subtitle2'
+                  component='span'
+                  fontWeight={700}
+                  fontSize={12}
+                  color={(theme) => darken(theme.palette.primary.main, 0.2)}
+                >
                   {t(
                     'lending.poolOverview.lockingStatus.allOtherRewards.label'
                   )}

@@ -6,14 +6,14 @@ import {
   Typography,
   TypographyProps,
 } from '@mui/material'
-import { ReactNode } from 'react'
+import { isValidElement, ReactNode } from 'react'
 
 import ToolTip from '@/components/atoms/ToolTip'
 
 type InfoColumnProps = {
   title: string
   subtitle?: string
-  toolTipInfo?: string
+  toolTipInfo?: ReactNode
   showDivider?: boolean
   metric: ReactNode
   containerSx?: SxProps<Theme>
@@ -70,11 +70,15 @@ const InfoColumn: React.FC<InfoColumnProps> = ({
               </Typography>
             )}
           </Box>
-          {toolTipInfo && (
-            <Box pt={alignTitleItems === 'normal' ? '3px' : 'inherit'}>
-              <ToolTip title={toolTipInfo} />
-            </Box>
-          )}
+          {toolTipInfo ? (
+            isValidElement(toolTipInfo) ? (
+              toolTipInfo
+            ) : (
+              <Box pt={alignTitleItems === 'normal' ? '3px' : 'inherit'}>
+                <ToolTip title={toolTipInfo} />
+              </Box>
+            )
+          ) : null}
         </Box>
       </Box>
       {showDivider && <Divider sx={dividerStyle} />}

@@ -18,10 +18,9 @@ import ColoredBox from '@/components/atoms/ColoredBox'
 import Countdown from '@/components/atoms/Countdown'
 import CsvDownloadButton from '@/components/atoms/CsvDownloadButton'
 import InfoColumn from '@/components/atoms/InfoColumn'
-import RenderMetrics from '@/components/molecules/repayments/RenderMetrics'
+import RepaymentsDataCard from '@/components/molecules/repayments/RepaymentsDataCard'
 
 import { adaptDataForRepayments, formatTimestamp } from '@/utils'
-import { RepaymentsSections } from '@/utils/convert/adaptDataForRepayments'
 
 interface RepaymentsCardProps {
   data: PoolRepayment
@@ -88,10 +87,21 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
           <Typography variant='body2' mt={2}>
             {t('repayments.sections.aggregated.description')}
           </Typography>
-          <ColoredBox mt={2} p={{ xs: 1, sm: 0 }}>
+          <ColoredBox
+            mt={2}
+            p={{ xs: 1, sm: 0 }}
+            sx={(theme) => ({
+              [theme.breakpoints.up('sm')]: {
+                display: 'flex',
+              },
+            })}
+          >
             <InfoColumn
               showDivider
-              containerSx={{ width: isMobile ? '100%' : '50%', pr: 1 }}
+              containerSx={{
+                width: isMobile ? '100%' : '50%',
+                pl: isMobile ? 0 : 1,
+              }}
               title={t(
                 'repayments.sections.aggregated.metrics.totalBorrowers.label'
               )}
@@ -166,25 +176,33 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
             />
           </ColoredBox>
           <Grid container spacing={2} mt={1}>
-            {Object.keys(repaymentsData).map((sectionKey) => (
-              <Grid item xs={12} md={6} key={sectionKey}>
-                <Box sx={{ width: '100%' }}>
-                  <Typography variant='subtitle1'>
-                    {t(`repayments.sections.${sectionKey}.title`)}
-                  </Typography>
-                  <Typography variant='caption' sx={{ mb: 2 }} component='p'>
-                    {t(`repayments.sections.${sectionKey}.titleSuffix`)}
-                  </Typography>
-
-                  <RenderMetrics
-                    data={
-                      repaymentsData[sectionKey as keyof RepaymentsSections]
-                    }
-                    sectionKey={sectionKey}
-                  />
-                </Box>
-              </Grid>
-            ))}
+            <Grid item xs={12} md={6}>
+              <RepaymentsDataCard
+                data={repaymentsData.cumulativeFunds}
+                dataKey='cumulativeFunds'
+              />
+              <RepaymentsDataCard
+                data={repaymentsData.upcomingFunds}
+                dataKey='upcomingFunds'
+                sx={{ mt: 3 }}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <RepaymentsDataCard
+                data={repaymentsData.transactions}
+                dataKey='transactions'
+                sx={(theme) => ({
+                  [theme.breakpoints.down('sm')]: {
+                    mt: 3,
+                  },
+                })}
+              />
+              <RepaymentsDataCard
+                data={repaymentsData.fundsRequest}
+                dataKey='fundsRequest'
+                sx={{ mt: 3 }}
+              />
+            </Grid>
           </Grid>
         </Box>
       </CardContent>
