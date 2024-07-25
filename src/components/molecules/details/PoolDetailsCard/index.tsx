@@ -15,7 +15,9 @@ import useTranslation from '@/hooks/useTranslation'
 import ColoredBox from '@/components/atoms/ColoredBox'
 import InfoColumn from '@/components/atoms/InfoColumn'
 import InfoRow from '@/components/atoms/InfoRow'
+import ToolTip from '@/components/atoms/ToolTip'
 import MetricDisplay from '@/components/molecules/details/PoolDetailsCard/MetricDisplay'
+import LoanStructure from '@/components/molecules/tooltips/LoanStructure'
 
 import { COLS, MetricGroupType, PoolDetailsMetricIds } from '@/constants'
 import { convertToPoolDetails, formatPercentage } from '@/utils'
@@ -40,15 +42,11 @@ const PoolDetailsCard: React.FC<PoolDetailsCardProps> = ({ data }) => {
     [metrics]
   )
 
-  const { secondArray, thirdArray } = useMemo(
+  const { secondArray } = useMemo(
     () => ({
       secondArray: filterMetrics([
         PoolDetailsMetricIds.StructureApy,
         PoolDetailsMetricIds.Term,
-      ]),
-      thirdArray: filterMetrics([
-        PoolDetailsMetricIds.ExposureIndustry,
-        PoolDetailsMetricIds.Loan,
       ]),
     }),
     [filterMetrics]
@@ -96,7 +94,9 @@ const PoolDetailsCard: React.FC<PoolDetailsCardProps> = ({ data }) => {
                   }
                   showDivider
                   toolTipInfo={t(
-                    `lending.tranche.${tranche.name.toLowerCase()}.tooltip`
+                    data.tranches.length > 1
+                      ? `lending.tranche.${tranche.name.toLowerCase()}.tooltip`
+                      : 'lending.poolOverview.investmentCard.tooltip'
                   )}
                   metric={
                     <Box pt='6px' pl={{ xs: 0, sm: 2 }}>
@@ -162,22 +162,56 @@ const PoolDetailsCard: React.FC<PoolDetailsCardProps> = ({ data }) => {
               />
             ))}
           </Box>
-
           <Box
             display='flex'
             flexDirection='column'
             width={isMobile ? '100%' : '50%'}
           >
-            {thirdArray.map((metric) => (
-              <MetricDisplay
-                metric={metric}
-                key={metric.id}
-                type={MetricGroupType.Second}
-                isLastItem={
-                  thirdArray.indexOf(metric) === secondArray.length - 1
+            <Box width='100%' pr={2}>
+              <InfoRow
+                showDivider
+                title={t('details.poolDetails.exposureIndustry.label')}
+                toolTipInfo={t('details.poolDetails.exposureIndustry.tooltip')}
+                titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
+                sx={(theme) => ({
+                  [theme.breakpoints.down('sm')]: {
+                    flexDirection: 'column',
+                    px: 0,
+                  },
+                })}
+                metric={
+                  <Typography
+                    variant='body1'
+                    align={isMobile ? 'left' : 'right'}
+                    fontSize={isMobile ? 12 : 'inherit'}
+                  >
+                    {data.industryExposure}
+                  </Typography>
                 }
               />
-            ))}
+            </Box>
+            <Box width='100%' pr={2}>
+              <InfoRow
+                title={t('details.poolDetails.loan.label')}
+                toolTipInfo={<ToolTip title={<LoanStructure />} />}
+                titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
+                sx={(theme) => ({
+                  [theme.breakpoints.down('sm')]: {
+                    flexDirection: 'column',
+                    px: 0,
+                  },
+                })}
+                metric={
+                  <Typography
+                    variant='body1'
+                    align={isMobile ? 'left' : 'right'}
+                    fontSize={isMobile ? 12 : 'inherit'}
+                  >
+                    {data.loanStructure}
+                  </Typography>
+                }
+              />
+            </Box>
           </Box>
         </Box>
       </CardContent>

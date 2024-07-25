@@ -14,6 +14,7 @@ import CardWidget from '@/components/atoms/CardWidget'
 import ColoredBox from '@/components/atoms/ColoredBox'
 import InfoColumn from '@/components/atoms/InfoColumn'
 import TokenAmount from '@/components/atoms/TokenAmount'
+import ToolTip from '@/components/atoms/ToolTip'
 import ClaimButton from '@/components/molecules/locking/RewardSummary/ClaimButton'
 
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
@@ -94,7 +95,21 @@ const RewardSummary = () => {
           >
             <InfoColumn
               title={t('locking.widgets.rewardsSummary.metric-2')}
-              toolTipInfo={t('locking.widgets.rewardsSummary.metric-2-toolip')}
+              toolTipInfo={
+                <ToolTip
+                  title={
+                    <>
+                      {t('locking.widgets.rewardsSummary.metric-2-toolip-1')}
+                      <br />
+                      <br />
+                      {t('locking.widgets.rewardsSummary.metric-2-toolip-2')}
+                      <br />
+                      <br />
+                      {t('locking.widgets.rewardsSummary.metric-2-toolip-3')}
+                    </>
+                  }
+                />
+              }
               titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
               titleContainerSx={(theme) => ({
                 [theme.breakpoints.down('sm')]: {

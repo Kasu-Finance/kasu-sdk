@@ -13,6 +13,7 @@ import TokenAmount from '@/components/atoms/TokenAmount'
 import ToolTip from '@/components/atoms/ToolTip'
 import LoyaltyProgress from '@/components/molecules/locking/LoyaltyOverview/LoyaltyProgress'
 import LendingLoyalityLevelsTooltip from '@/components/molecules/tooltips/LendingLoyalityLevelsTooltip'
+import RksuBalance from '@/components/molecules/tooltips/RksuBalance'
 import RksuTooltip from '@/components/molecules/tooltips/RksuTooltip'
 
 import { capitalize, formatAmount } from '@/utils'
@@ -43,7 +44,7 @@ const LendingLoyalityInfo = () => {
         <InfoRow
           showDivider
           title={`rKSU ${capitalize(t('general.balance'))}`}
-          toolTipInfo={t('lending.poolOverview.rksuBalanceToolTip')}
+          toolTipInfo={<ToolTip title={<RksuBalance />} />}
           titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
           sx={(theme) => ({
             [theme.breakpoints.down('sm')]: {

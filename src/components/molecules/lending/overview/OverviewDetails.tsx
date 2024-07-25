@@ -14,6 +14,7 @@ import InfoColumn from '@/components/atoms/InfoColumn'
 import InfoRow from '@/components/atoms/InfoRow'
 import TokenAmount from '@/components/atoms/TokenAmount'
 
+import dayjs from '@/dayjs'
 import { formatAmount } from '@/utils'
 import formatDuration from '@/utils/formats/formatDuration'
 
@@ -315,6 +316,7 @@ const OverviewDetails: React.FC<{
                 )}
                 title={t('lending.poolOverview.detailCard.apyStructure.label')}
                 titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
+                showDivider={pool.poolApyStructure === 'Fixed'}
                 sx={isMobile ? { p: 0, mt: 0.5, pb: 1 } : undefined}
                 metric={
                   <Typography
@@ -327,6 +329,30 @@ const OverviewDetails: React.FC<{
                   </Typography>
                 }
               />
+              {pool.poolApyStructure === 'Fixed' && (
+                <InfoRow
+                  toolTipInfo={t(
+                    'lending.poolOverview.detailCard.fixedApyExpiry.tooltip'
+                  )}
+                  title={t(
+                    'lending.poolOverview.detailCard.fixedApyExpiry.label'
+                  )}
+                  titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
+                  sx={isMobile ? { p: 0, mt: 0.5, pb: 1 } : undefined}
+                  metric={
+                    <Typography
+                      variant='inherit'
+                      maxWidth={165}
+                      textAlign='right'
+                      fontSize={{ xs: 12, sm: 14 }}
+                    >
+                      {pool.apyExpiryDate
+                        ? dayjs(pool.apyExpiryDate).format('DD MMMM, YYYY')
+                        : 'N/A'}
+                    </Typography>
+                  }
+                />
+              )}
             </ColoredBox>
           </Card>
         </Grid>
