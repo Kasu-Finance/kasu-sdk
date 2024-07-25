@@ -29,7 +29,7 @@ const handleSort = (
 }
 
 interface PoolCreditTableProps {
-  data: PoolCreditMetricsDirectus[]
+  data: (PoolCreditMetricsDirectus & { unit: string })[]
 }
 
 const PoolCreditTable: React.FC<PoolCreditTableProps> = ({ data }) => {
@@ -179,7 +179,7 @@ const PoolCreditTable: React.FC<PoolCreditTableProps> = ({ data }) => {
                     )}
                     <Typography variant='body1'>
                       {index < 2
-                        ? `${formatAmount(data.previousFiscalYear || '0', { minDecimals: 2 })} x`
+                        ? `${formatAmount(data.previousFiscalYear || '0', { minDecimals: 2 })} ${data.unit}`
                         : formatPercentage(data.previousFiscalYear)}
                     </Typography>
                   </TableCell>
@@ -195,7 +195,7 @@ const PoolCreditTable: React.FC<PoolCreditTableProps> = ({ data }) => {
                     )}
                     <Typography variant='body1'>
                       {index < 2
-                        ? `${formatAmount(data.mostRecentQuarter || '0', { minDecimals: 2 })} x`
+                        ? `${formatAmount(data.mostRecentQuarter || '0', { minDecimals: 2 })} ${data.unit}`
                         : formatPercentage(data.mostRecentQuarter)}
                     </Typography>
                   </TableCell>
@@ -211,7 +211,7 @@ const PoolCreditTable: React.FC<PoolCreditTableProps> = ({ data }) => {
                     )}
                     <Typography variant='body1'>
                       {index < 2
-                        ? `${formatAmount(data.priorMonth || '0', { minDecimals: 2 })} x`
+                        ? `${formatAmount(data.priorMonth || '0', { minDecimals: 2 })} ${data.unit}`
                         : formatPercentage(data.priorMonth)}
                     </Typography>
                   </TableCell>
