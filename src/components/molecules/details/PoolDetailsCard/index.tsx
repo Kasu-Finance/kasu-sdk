@@ -96,7 +96,9 @@ const PoolDetailsCard: React.FC<PoolDetailsCardProps> = ({ data }) => {
                   }
                   showDivider
                   toolTipInfo={t(
-                    `lending.tranche.${tranche.name.toLowerCase()}.tooltip`
+                    data.tranches.length > 1
+                      ? `lending.tranche.${tranche.name.toLowerCase()}.tooltip`
+                      : 'lending.poolOverview.investmentCard.tooltip'
                   )}
                   metric={
                     <Box pt='6px' pl={{ xs: 0, sm: 2 }}>
@@ -162,7 +164,6 @@ const PoolDetailsCard: React.FC<PoolDetailsCardProps> = ({ data }) => {
               />
             ))}
           </Box>
-
           <Box
             display='flex'
             flexDirection='column'

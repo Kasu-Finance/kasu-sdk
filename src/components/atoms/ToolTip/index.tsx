@@ -2,18 +2,29 @@ import InfoIcon from '@mui/icons-material/Info'
 import { Tooltip, TooltipProps } from '@mui/material'
 import { SxProps, Theme } from '@mui/system'
 
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
+
 export type ToolTipProps = Omit<TooltipProps, 'children'> & {
   children?: React.ReactElement<any, any>
   iconSx?: SxProps<Theme>
 }
 
 const ToolTip: React.FC<ToolTipProps> = ({ children, iconSx, ...rest }) => {
+  const currentDevice = useDeviceDetection()
+
+  const isMobile = currentDevice === Device.MOBILE
+  const isTablet = currentDevice === Device.TABLET
+
   return (
     <Tooltip
       disableFocusListener
-      disableTouchListener
       {...rest}
-      PopperProps={{ style: { zIndex: 9999999 } }}
+      arrow={false}
+      placement={isMobile || isTablet ? 'bottom' : undefined}
+      enterTouchDelay={100}
+      PopperProps={{
+        style: { zIndex: 9999999 },
+      }}
     >
       {children ?? (
         <InfoIcon

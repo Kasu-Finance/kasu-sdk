@@ -559,8 +559,12 @@
       "title": "Lending Strategy Overview",
       "detailCard": {
         "apyStructure": {
-          "label": "Loan APY Structure",
-          "tooltip": "Indicates whether the APY offered by the Delegate is fixed for a specified period of time, or variable (subject to change upon each epoch)."
+          "label": "APY Structure",
+          "tooltip": "Indicates whether the APY offered by the Delegate to Lenders is fixed for a specified period of time, or variable.​ A variable APY will be subject to change upon each epoch."
+        },
+        "fixedApyExpiry": {
+          "label": "Fixed APY Expiry Date",
+          "tooltip": "The date that the fixed APY expires and reverts to a Variable APY, or a new fixed APY."
         },
         "assetClass": {
           "label": "Asset Class",
@@ -584,7 +588,7 @@
         },
         "tvl": {
           "label": "Total Value Locked (TVL)",
-          "tooltip": "Total USDC funds deployed by Lenders to this Lending Strategy, plus first loss capital (if contributed by the Lending Delegate)."
+          "tooltip": "Total USDC funds deployed by Lenders to this Lending Strategy, plus first loss capital (if contributed by the Delegate)."
         },
         "terms": {
           "label": "Term & Structure",
@@ -593,7 +597,7 @@
         "totalPoolYieldEarnings": {
           "label": "Total Lending Strategy",
           "sublabel": "Interest Earned",
-          "tooltip": "Cumulative total gross interest earned by Liquidity Providers from this Lending Strategy since its inception on the Kasu protocol."
+          "tooltip": "Cumulative total gross interest earned by Lenders from this Lending Strategy since its inception on the Kasu protocol."
         },
         "totalLossRate": {
           "label": "Total Loss Rate",
@@ -619,11 +623,11 @@
         },
         "weightedAvgApy": {
           "label": "Weighted Average APY",
-          "tooltip": "The average gross APY (before fees) you are currently earning within this Lending Strategy that has been adjusted to reflect your weighted contribution to each Tranche relative to your total contribution across all Tranches.​"
+          "tooltip": "The average gross APY (before fees) you are currently earning within this Lending Strategy that has been adjusted to reflect your weighted contribution to each Tranche relative to your total contribution across all Tranches. In the absence of multiple Tranches, this simply reflects the gross APY for this Lending Strategy (assuming all repayment will be made as expected).​"
         },
         "totYieldEarned": {
           "label": "Total Lifetime Interest Earned",
-          "tooltip": "The total combined amount of interest you have earned (after fees) from all tranches within this Lending Strategy (or single Lending Strategy offer in the absence of multiple Tranches) since your first started lending to this Lending Strategy. To view a breakdown of your total historical interest earned across all Lending Strategies, please visit the 'My Portfolio' tab."
+          "tooltip": "The total combined amount of interest you have earned (after fees) from all tranches within this Lending Strategy (or single Lending Strategy offer in the absence of multiple Tranches) since you first started lending to this Lending Strategy. To view a breakdown of your total historical interest earned across all Lending Strategies, please visit the 'My Portfolio' tab."
         },
         "amountInvested": {
           "label": "Lending Balance",
@@ -684,11 +688,11 @@
       },
       "mezzanine": {
         "title": "Mezzanine Tranche APY",
-        "tooltip": "The Annual Percentage Yield currently offered by the Lending Delegate for the Mezzanine Tranche of this Lending Strategy, assuming all repayments will be made as expected. The Mezzanine tranche offers a higher APY (and therefore, higher risk) than the Senior tranche, but a lower APY (and therefore, lower risk) than the Junior tranche. In the event of losses, the Mezzanine tranche has a higher ranking repayment priority than the Junior tranche, but lower than the Senior tranche. In the event of losses, if any funds are recovered, Mezzanine tranche Lenders are therefore repaid prior to Junior tranche Lenders, but after Senior tranche Lenders."
+        "tooltip": "The Annual Percentage Yield currently offered by the Delegate for the Mezzanine Tranche of this Lending Strategy, assuming all repayments will be made as expected. The Mezzanine tranche offers a higher APY (and therefore, higher risk) than the Senior tranche, but a lower APY (and therefore, lower risk) than the Junior tranche. In the event of losses, the Mezzanine tranche has a higher ranking repayment priority than the Junior tranche, but lower than the Senior tranche. In the event of losses, if any funds are recovered, Mezzanine tranche Lenders are therefore repaid prior to Junior tranche Lenders, but after Senior tranche Lenders."
       },
       "junior": {
         "title": "Junior Tranche APY",
-        "tooltip": "The Annual Percentage Yield currently offered by the Lending Delegate for the Junior Tranche of this Lending Strategy, assuming all repayments will be made as expected. The Junior tranche offers the highest APY (and therefore, the highest risk) of all tranches, as it has the lowest ranking repayment priority in the event of losses. In the event of losses, if any funds are recovered, Junior tranche Lenders are therefore repaid after Senior and Mezzanine tranche Lenders. In the absence of a Mezzanine tranche, Junior tranche Lenders simply rank behind Senior Tranche Lenders."
+        "tooltip": "The Annual Percentage Yield currently offered by the Delegate for the Junior Tranche of this Lending Strategy, assuming all repayments will be made as expected. The Junior tranche offers the highest APY (and therefore, the highest risk) of all tranches, as it has the lowest ranking repayment priority in the event of losses. In the event of losses, if any funds are recovered, Junior tranche Lenders are therefore repaid after Senior and Mezzanine tranche Lenders. In the absence of a Mezzanine tranche, Junior tranche Lenders simply rank behind Senior Tranche Lenders."
       }
     },
     "withdraw": {
@@ -829,7 +833,7 @@
       },
       "term": {
         "label": "Lending Strategy Loan Term",
-        "tooltip": "The duration of the Lending Strategy. 'Open Ended' has no fixed term or duration and is considered ongoing. A fixed term or duration has an end date, at which time it is intended that the Lending Strategy will reach maturity and all Liquidity Providers will be fully repaid (assumes all repayments will be made as expected)."
+        "tooltip": "The duration of the Lending Strategy. 'Open Ended' has no fixed term or duration and is considered ongoing. A fixed term or duration has an end date, at which time it is intended that the Lending Strategy will reach maturity and all Lenders will be fully repaid (assumes all repayments will be made as expected)."
       },
       "loan": {
         "label": "Loan Structure (End Borrowers)",
@@ -840,7 +844,7 @@
       "title": "Lending Strategy Traction",
       "valueLocked": {
         "label": "Total Value Locked (TVL)",
-        "tooltip": "Total USDC funds deployed by Lenders to this Lending Strategy, plus first loss capital (if contributed by the Lending Delegate)."
+        "tooltip": "Total USDC funds deployed by Lenders to this Lending Strategy, plus first loss capital (if contributed by the Delegate)."
       },
       "management": {
         "label": "Total Active Lending",
@@ -848,7 +852,7 @@
       },
       "yield": {
         "label": "Interest Earned",
-        "tooltip": "Cumulative total gross interest earned by Liquidity Providers from this Lending Strategy since its inception on the Kasu protocol."
+        "tooltip": "Cumulative total gross interest earned by Lenders from this Lending Strategy since its inception on the Kasu protocol."
       },
       "activeLoans": {
         "label": "Active Loans",
@@ -865,7 +869,7 @@
         "title": "Risk Status",
         "firstLoss": {
           "label": "First Loss Capital",
-          "tooltip": "The amount of capital contributed by the Delegate that will be absorbed first in the event of any losses, prior to losses being absorbed by Liquidity Providers, thereby providing a degree of loss protection to Liquidity Providers.​ First Loss Capital cannot be deployed into loans."
+          "tooltip": "The amount of capital contributed by the Delegate that will be absorbed first in the event of any losses, prior to losses being absorbed by Lenders, thereby providing a degree of loss protection to Lenders.​ First Loss Capital cannot be deployed into loans."
         },
         "lossRate": {
           "label": "Lending Strategy Loss Rate",

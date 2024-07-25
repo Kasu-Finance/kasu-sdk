@@ -115,6 +115,11 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
                 ? t('general.apy')
                 : t(`lending.tranche.${tranche.name.toLowerCase()}.title`)
 
+            const toolTipKey =
+              tranches.length === 1
+                ? t('lending.poolOverview.investmentCard.tooltip')
+                : tranche.tooltip
+
             return (
               <InfoColumn
                 title={titleKey}
@@ -129,6 +134,7 @@ const TranchesApyCard: React.FC<{ pool: PoolOverview }> = ({ pool }) => {
                     px: 0,
                   },
                 })}
+                toolTipInfo={toolTipKey}
                 showDivider
                 metric={
                   <Typography
