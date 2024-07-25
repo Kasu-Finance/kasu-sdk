@@ -14,14 +14,13 @@ const DataTypography: React.FC<DataTypographyProps> = ({
   toolTip,
   ...typographyProps
 }) => {
-  const isValidData = data !== null && data !== undefined && data !== ''
-  const content = isValidData ? data : 'N/A'
-  const color = isValidData ? 'inherit' : 'grey.400'
-
   return (
-    <Typography {...typographyProps} color={color}>
-      {content}
-      {suffix && isValidData && (
+    <Typography
+      {...typographyProps}
+      color={data === 'N/A' ? 'grey.400' : 'inherit'}
+    >
+      {data}
+      {suffix && (
         <Typography variant='caption' component='span'>
           {suffix}
         </Typography>
