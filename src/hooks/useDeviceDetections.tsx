@@ -1,4 +1,6 @@
-import { useMediaQuery, useTheme } from '@mui/material'
+import { useMediaQuery } from '@mui/material'
+
+import { theme } from '@/themes/MainTheme'
 
 export enum Device {
   MOBILE = 'mobile',
@@ -9,8 +11,6 @@ export enum Device {
 }
 
 const useDeviceDetection = () => {
-  const theme = useTheme()
-
   const isDeviceMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const isDeviceTablet = useMediaQuery(theme.breakpoints.down('md'))
   const isDeviceLaptop = useMediaQuery(theme.breakpoints.down('lg'))

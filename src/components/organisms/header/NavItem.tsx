@@ -3,7 +3,7 @@
 import { ButtonProps, styled } from '@mui/material'
 import Link from 'next/link'
 
-type NavItemProps = ButtonProps & {
+export type NavItemProps = ButtonProps & {
   isActive: boolean
   href: string
 }

@@ -33,13 +33,13 @@ const barlowSemiCondensedFontFamily = ['Barlow Semi Condensed'].join(',')
 const condensedFontFamily = ['Barlow Condensed'].join(',')
 const khmerFontFamily = ['Noto Sans Khmer'].join(',')
 
-const primaryColor = '#e5c397'
+const primaryColor = '#C4996C'
 const primaryContrastColor = '#28282a'
 
 const customTheme = createTheme({
   palette: {
     background: {
-      default: primaryContrastColor,
+      default: 'white',
     },
     primary: {
       main: primaryColor,
@@ -162,8 +162,15 @@ const customTheme = createTheme({
     MuiCssBaseline: {
       styleOverrides: `
 
+      html{
+        height: 100%;
+      }
+
       body {
         font-family: ${primaryFontFamily};
+        height: 100%;
+        display:grid;
+        grid-template-rows: max-content minmax(max-content, 1fr) max-content;
       }
 
       main {
@@ -198,12 +205,6 @@ const customTheme = createTheme({
         opacity: 0;
         transform: translateX(-100%);
         transition: opacity 500ms, transform 500ms;
-      }
-
-      .hide-overflow-mobile {
-        @media (max-width: 600px) { 
-          overflow-x: hidden; 
-        }
       }
 
       .top-layout-bg {
@@ -558,23 +559,19 @@ const customTheme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
+          fontWeight: 500,
+          minWidth: 0,
+          boxShadow: 'none',
+          borderRadius: 120,
+
           '&.MuiButton-sizeMedium': {
             height: '42px',
-            // background: 'red !important',
-            // padding: '8px 22px',
           },
           '&.MuiButton-sizeSmall': {
             height: '30px',
             pl: 1.25,
             pr: 1.25,
-            // background: 'blue !important',
           },
-
-          // textTransform: 'inherit',
-          fontWeight: 500,
-          minWidth: 0,
-          boxShadow: 'none',
-
           '&.Mui-disabled': {
             pointerEvents: 'visible',
             cursor: 'not-allowed',
@@ -588,13 +585,6 @@ const customTheme = createTheme({
           },
         },
         contained: {
-          backgroundImage: 'url("/images/seamless-noise-20.png")',
-          backgroundRepeat: 'repeat',
-          backgroundColor: 'rgba(211, 179, 139, 1)',
-          backgroundPosition: '0 0',
-          backgroundSize: '120px 86px',
-          fontWeight: 700,
-
           '&.Mui-disabled': {
             backgroundColor: 'rgba(127, 116, 102, 0.26)',
             color: '#7F7466',

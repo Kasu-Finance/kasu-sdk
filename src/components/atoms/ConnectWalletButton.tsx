@@ -8,7 +8,6 @@ import {
   Chip,
   IconButton,
   Typography,
-  useTheme,
 } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { forwardRef, useCallback, useEffect, useState } from 'react'
@@ -31,7 +30,6 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
     const { t } = useTranslation()
 
     const { account, connector, chainId } = useWeb3React()
-    const theme = useTheme()
     const { toast, setToast, removeToast } = useToastState()
     const { openModal } = useModalState()
     const switchChain = useSwitchChain()
@@ -54,10 +52,12 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
     const invalidChain = chainId && !isSupportedChain(chainId)
     const connected = account && !invalidChain
 
+    // hydration
     useEffect(() => {
       setText(formatAccount(account) || t('general.connectWallet'))
     }, [account, t])
 
+    // auto activate back to networkConnector
     useEffect(() => {
       if (
         chainId &&
@@ -68,6 +68,7 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
       }
     }, [connector, chainId])
 
+    // wrong chain listener
     useEffect(() => {
       if (account && invalidChain && toast?.title !== 'Wrong Chain') {
         setToast({
@@ -92,16 +93,17 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
           pr: 2,
           ml: 'auto',
           height: 36,
+          bgcolor: '#F0F0F0',
+          color: 'primary.main',
+          '&:hover': {
+            bgcolor: 'primary.main',
+            color: 'white',
+            '.MuiButton-startIcon svg path': {
+              fill: 'white',
+            },
+          },
         }}
-        startIcon={
-          <AccountBalanceWalletIcon
-            fill={
-              connected || invalidChain
-                ? theme.palette.primary.main
-                : theme.palette.primary.contrastText
-            }
-          />
-        }
+        startIcon={<AccountBalanceWalletIcon color='primary' />}
         endIcon={
           connected || invalidChain ? (
             <IconButton

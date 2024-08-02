@@ -4,9 +4,9 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  Theme,
   Typography,
 } from '@mui/material'
+import { useWeb3React } from '@web3-react/core'
 import Link from 'next/link'
 
 import useTranslation from '@/hooks/useTranslation'
@@ -18,30 +18,28 @@ import WalletList from '@/components/molecules/WalletList'
 import { NAV_ITEMS } from '@/config/navigation'
 
 interface MobileDrawerProps {
-  account: string | undefined
-  theme: Theme
   handleDrawerToggle: () => void
   isActiveLink: (href: string) => boolean
 }
 
 const MobileDrawer: React.FC<MobileDrawerProps> = ({
-  account,
-  theme,
   handleDrawerToggle,
   isActiveLink,
 }) => {
   const { t } = useTranslation()
+
+  const { account } = useWeb3React()
 
   return (
     <Box
       sx={{
         width: '100vw',
         height: '100vh',
-        bgcolor: theme.palette.primary.contrastText,
-        color: theme.palette.common.white,
+        bgcolor: 'primary.contrastText',
+        color: 'common.white',
       }}
     >
-      <DrawerHeader onClose={handleDrawerToggle} theme={theme} />
+      <DrawerHeader onClose={handleDrawerToggle} />
       <List>
         {NAV_ITEMS.map((link) =>
           link.accountRequired && !account ? null : (
@@ -55,14 +53,14 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
                 <ListItemText
                   primary={link.label}
                   primaryTypographyProps={{ fontSize: 12 }}
-                  sx={{
+                  sx={(theme) => ({
                     pb: 1.5,
                     mt: 0,
                     borderBottom: `1px solid ${theme.palette.primary.main}`,
                     color: isActiveLink(link.to)
                       ? theme.palette.primary.main
                       : 'inherit',
-                  }}
+                  })}
                 />
               </ListItemButton>
             </ListItem>

@@ -1,25 +1,25 @@
+'use client'
+
 import { Box } from '@mui/material'
+import { useWeb3React } from '@web3-react/core'
+import { usePathname } from 'next/navigation'
 
 import NavItem from '@/components/organisms/header/NavItem'
 
 import { NAV_ITEMS } from '@/config/navigation'
 
-interface DesktopNavigationProps {
-  account: string | undefined
-  isActiveLink: (href: string) => boolean
-}
+const DesktopNavigation = () => {
+  const pathName = usePathname()
 
-const DesktopNavigation: React.FC<DesktopNavigationProps> = ({
-  account,
-  isActiveLink,
-}) => {
+  const { account } = useWeb3React()
+
   return (
-    <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}>
+    <Box>
       {NAV_ITEMS.map((link) =>
         link.accountRequired && !account ? null : (
           <NavItem
             key={link.label}
-            isActive={isActiveLink(link.to)}
+            isActive={pathName === link.to || pathName.includes(link.to)}
             href={link.to}
             prefetch
           >

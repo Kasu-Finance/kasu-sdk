@@ -1,39 +1,30 @@
-'use client'
-
-import { Container, Toolbar } from '@mui/material'
+import { Box, Container } from '@mui/material'
+import Image from 'next/image'
 import Link from 'next/link'
-
-import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 
 import ConnectWallet from '@/components/molecules/header/ConnectWallet'
 import Navigation from '@/components/molecules/header/Navigation'
 import HeaderBar from '@/components/organisms/header/HeaderBar'
+import Toolbar from '@/components/organisms/header/Toolbar'
 
 import KasuLogo from '@/assets/logo/Kasu'
 
 import { BaseRoutesPaths } from '@/config/routes'
+import Crown from '@/images/crown.png'
 
 const Header = () => {
-  const currentDevice = useDeviceDetection()
-  const logoWidth = currentDevice === Device.MOBILE ? '92px' : '125px'
-  const logoHeight = currentDevice === Device.MOBILE ? '42px' : '64px'
-  const toolbarHeight = currentDevice === Device.MOBILE ? 74 : undefined
-
   return (
     <HeaderBar>
       <Container maxWidth='lg'>
-        <Toolbar
-          disableGutters
-          sx={{
-            justifyContent: 'space-between',
-            height: toolbarHeight,
-          }}
-        >
+        <Toolbar>
           <Link href={BaseRoutesPaths.LENDING}>
-            <KasuLogo width={logoWidth} height={logoHeight} />
+            <KasuLogo />
           </Link>
           <Navigation />
-          {currentDevice !== Device.MOBILE && <ConnectWallet />}
+          <Box display='flex' alignItems='center' ml='auto'>
+            <ConnectWallet />
+            <Box ml={1.5} component={Image} src={Crown} alt='Crown' />
+          </Box>
         </Toolbar>
       </Container>
     </HeaderBar>

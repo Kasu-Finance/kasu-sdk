@@ -5,7 +5,7 @@ import { ReactNode } from 'react'
 import '@/styles/fonts.module.css'
 
 import Tracking from '@/components/atoms/Tracking'
-import PageFooter from '@/components/molecules/PageFooter'
+import Footer from '@/components/organisms/footer'
 import Header from '@/components/organisms/header'
 import ModalsContainer from '@/components/organisms/modals/ModalsContainer'
 
@@ -67,8 +67,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         href='/favicons/android-chrome-512x512.png'
       />
       <Tracking />
-      <body className='hide-overflow-mobile'>
-        <div className='top-layout-bg'></div>
+      <body>
         <SWRProvider lockPeriods={lockPeriods} unusedPools={unusedPools}>
           <ThemeRegistry>
             <Web3Provider>
@@ -76,10 +75,8 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                 <ModalState>
                   <ToastState>
                     <Header />
-                    <Box component='main'>
-                      {children}
-                      <PageFooter />
-                    </Box>
+                    <Box component='main'>{children}</Box>
+                    <Footer />
                     <ModalsContainer />
                   </ToastState>
                 </ModalState>
@@ -87,7 +84,6 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             </Web3Provider>
           </ThemeRegistry>
         </SWRProvider>
-        <div className='bottom-layout-bg'></div>
       </body>
     </html>
   )
