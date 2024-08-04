@@ -5,6 +5,7 @@ import {
 } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { memo, useMemo } from 'react'
 
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
@@ -25,6 +26,8 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
 }) => {
   const { t } = useTranslation()
 
+  const currentDevice = useDeviceDetection()
+
   const { tranches, isMultiTranche } = useMemo(() => {
     return {
       tranches: pool?.tranches || [],
@@ -41,12 +44,14 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
   const visibleMetrics = metrics.filter((metric) => !metric.isCollapsed)
 
   return (
-    <Box pl={2} pr={2} mb={3}>
+    <Box px={{ sm: 2, xs: 1 }} mb={{ sm: 3, xs: 1 }}>
       <ColoredBox
         display='flex'
         justifyContent='center'
         alignItems='flex-start'
-        mt={3}
+        gap={1}
+        mt={{ sm: 3, xs: 1 }}
+        px={{ xs: 1.5, md: 0 }}
       >
         {tranches.map((tranche) => {
           const titleKey = isMultiTranche
@@ -72,13 +77,25 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
               toolTipInfo={tooltipKey}
               showDivider
               metric={
-                <Typography variant='subtitle2' sx={{ pl: 2, mt: 0.5 }}>
+                <Typography variant='subtitle2' pl={{ md: 2 }} mt={0.5}>
                   {formattedApy}
                 </Typography>
               }
               titleStyle={
-                !isMultiTranche ? { display: 'block', mt: '20px' } : undefined
+                !isMultiTranche
+                  ? {
+                      display: 'block',
+                      mt: '20px',
+                      fontSize:
+                        currentDevice === Device.MOBILE ? 12 : undefined,
+                    }
+                  : undefined
               }
+              titleContainerSx={(theme) => ({
+                [theme.breakpoints.down('md')]: {
+                  px: 0,
+                },
+              })}
               containerSx={{
                 width: isMultiTranche ? '50%' : '100%',
                 pb: 1,
@@ -92,7 +109,6 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({
           )
         })}
       </ColoredBox>
-
       {visibleMetrics.map((metric) => (
         <PoolCardMetricItem key={metric.id} metric={metric} t={t} />
       ))}

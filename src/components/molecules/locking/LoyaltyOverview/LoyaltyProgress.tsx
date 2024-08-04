@@ -63,7 +63,7 @@ const LoyaltyProgress: React.FC<LoyaltyProgressProps> = ({
   const isMobile = currentDevice === Device.MOBILE
 
   return (
-    <Box my={1} px='7px'>
+    <Box my={1} px={{ xs: 0, sm: '7px' }}>
       <Box
         display='grid'
         alignItems='center'
@@ -76,7 +76,11 @@ const LoyaltyProgress: React.FC<LoyaltyProgressProps> = ({
           sx={getLabelStyle(stakedPercentage !== 0)}
         >
           <ArrowDropDownIcon />
-          <Typography variant='body2' component='span'>
+          <Typography
+            variant='body2'
+            component='span'
+            fontSize={{ xs: 10, sm: 14 }}
+          >
             {t('locking.widgets.loyalty.level.level-0.title')}
           </Typography>
         </Box>
@@ -96,7 +100,11 @@ const LoyaltyProgress: React.FC<LoyaltyProgressProps> = ({
               {t('general.loyalty')}&nbsp;
             </Typography>
           )}
-          <Typography variant='subtitle2' component='span'>
+          <Typography
+            variant='subtitle2'
+            component='span'
+            fontSize={{ xs: 10, sm: 14 }}
+          >
             {t('locking.widgets.loyalty.level.level-1.level')}
           </Typography>
           <ArrowDropDownIcon />
@@ -116,7 +124,11 @@ const LoyaltyProgress: React.FC<LoyaltyProgressProps> = ({
               {t('general.loyalty')}&nbsp;
             </Typography>
           )}
-          <Typography variant='subtitle2' component='span'>
+          <Typography
+            variant='subtitle2'
+            component='span'
+            fontSize={{ xs: 10, sm: 14 }}
+          >
             {t('locking.widgets.loyalty.level.level-2.level')}
           </Typography>
           <ArrowDropDownIcon />
@@ -133,13 +145,27 @@ const LoyaltyProgress: React.FC<LoyaltyProgressProps> = ({
         }}
         value={calculateValue(stakedPercentage, level_1, level_2)}
       >
-        <Typography variant='caption' component='span'>
+        <Typography
+          variant='caption'
+          component='span'
+          fontSize={{ xs: 10, sm: 12 }}
+        >
           0%
         </Typography>
-        <Typography variant='caption' component='span' textAlign='right'>
+        <Typography
+          variant='caption'
+          component='span'
+          textAlign='right'
+          fontSize={{ xs: 10, sm: 12 }}
+        >
           1%
         </Typography>
-        <Typography variant='caption' component='span' textAlign='right'>
+        <Typography
+          variant='caption'
+          component='span'
+          textAlign='right'
+          fontSize={{ xs: 10, sm: 12 }}
+        >
           5%
         </Typography>
       </ProgressBar>

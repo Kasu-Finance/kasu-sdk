@@ -16,12 +16,17 @@ const BadDebtsCell: React.FC<BadDebtsCellProp> = ({ value }) => {
       <Grid
         container
         direction={isMobile ? 'column' : 'row'}
-        alignContent={isMobile ? 'center' : 'auto'}
+        alignContent={isMobile ? 'left' : 'auto'}
       >
-        <Grid item xs={7.8} textAlign='right'>
+        <Grid
+          item
+          xs={7.8}
+          textAlign={isMobile ? 'left' : 'right'}
+          textTransform='capitalize'
+        >
           {value[0]}
         </Grid>
-        <Grid item xs={4.2} textAlign='center'>
+        <Grid item xs={4.2} textAlign={isMobile ? 'left' : 'center'}>
           {value[1]}
         </Grid>
       </Grid>

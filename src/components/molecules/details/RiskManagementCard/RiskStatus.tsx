@@ -4,7 +4,8 @@ import { useMemo } from 'react'
 import useTranslation from '@/hooks/useTranslation'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
-import MetricWithSuffix from '@/components/atoms/MetricWithSuffix'
+import InfoColumn from '@/components/atoms/InfoColumn'
+import TokenAmount from '@/components/atoms/TokenAmount'
 
 import { RiskMetricIds } from '@/constants'
 
@@ -33,16 +34,32 @@ const RiskStatus: React.FC<RiskStatusProps> = ({ metrics }) => {
         {t('details.riskManagement.riskStatus.title')}
       </Typography>
       <ColoredBox>
-        <Grid container spacing={2}>
+        <Grid container spacing={{ xs: 1, sm: 2 }}>
           {lossMetrics.map((metric) => (
             <Grid key={metric.id} item xs={6}>
-              <MetricWithSuffix
-                content={String(metric.content)}
-                suffix={metric.unit || ''}
-                titleKey={`details.riskManagement.riskStatus.${metric.id}.label`}
-                tooltipKey={`details.riskManagement.riskStatus.${metric.id}.tooltip`}
-                color='grey.400'
-                sx={{ pb: 0.5 }}
+              <InfoColumn
+                title={t(
+                  `details.riskManagement.riskStatus.${metric.id}.label`
+                )}
+                toolTipInfo={t(
+                  `details.riskManagement.riskStatus.${metric.id}.tooltip`
+                )}
+                showDivider
+                titleContainerSx={(theme) => ({
+                  [theme.breakpoints.down('sm')]: {
+                    px: 0,
+                  },
+                })}
+                titleStyle={{ fontSize: { xs: 10, sm: 14 } }}
+                metric={
+                  <TokenAmount
+                    amount={metric.content.toString()}
+                    symbol={metric.unit || ''}
+                    px={{ sx: 0, sm: 2 }}
+                    py='6px'
+                    color='grey.400'
+                  />
+                }
               />
             </Grid>
           ))}

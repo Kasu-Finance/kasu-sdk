@@ -7,7 +7,13 @@ const RewardsTab = () => {
   return (
     <>
       <RewardsTabHeader />
-      <CardContent>
+      <CardContent
+        sx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            p: 1,
+          },
+        })}
+      >
         <PortfolioRewardsTable />
       </CardContent>
     </>

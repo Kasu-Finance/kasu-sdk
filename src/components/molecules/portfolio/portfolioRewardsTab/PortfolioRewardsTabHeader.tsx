@@ -17,6 +17,15 @@ const RewardsTabHeader = () => {
       //   // />
       // }
       title={t('portfolio.rewards.title')}
+      titleTypographyProps={{
+        fontSize: { xs: 16, sm: 24 },
+      }}
+      sx={(theme) => ({
+        [theme.breakpoints.down('sm')]: {
+          height: 42,
+          p: 1,
+        },
+      })}
     />
   )
 }

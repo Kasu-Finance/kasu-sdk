@@ -13,7 +13,13 @@ const LendingPortfolioTab = () => {
   return (
     <>
       <LendingPortfolioTabHeader filter={filter} setFilter={setFilter} />
-      <CardContent>
+      <CardContent
+        sx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            p: 1,
+          },
+        })}
+      >
         <LendingPortfolioTable filter={filter} />
       </CardContent>
     </>

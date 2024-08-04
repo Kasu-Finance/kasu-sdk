@@ -1,6 +1,6 @@
 import Avatar from '@mui/material/Avatar'
 import Badge from '@mui/material/Badge'
-import { SxProps, useTheme } from '@mui/material/styles'
+import { SxProps, Theme, useTheme } from '@mui/material/styles'
 import React from 'react'
 
 import useImageError from '@/hooks/useImageError'
@@ -12,7 +12,7 @@ interface AvatarProps {
   name?: string
   showStatus?: boolean
   badgeColor?: string
-  sx?: SxProps
+  sx?: SxProps<Theme>
 }
 
 const PoolAvatar: React.FC<AvatarProps> = ({

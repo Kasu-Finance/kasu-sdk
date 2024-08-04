@@ -6,20 +6,22 @@ import {
   Typography,
   TypographyProps,
 } from '@mui/material'
-import { ReactNode } from 'react'
+import { isValidElement, ReactNode } from 'react'
 
 import ToolTip from '@/components/atoms/ToolTip'
 
 type InfoColumnProps = {
   title: string
   subtitle?: string
-  toolTipInfo?: string
+  toolTipInfo?: ReactNode
   showDivider?: boolean
   metric: ReactNode
   containerSx?: SxProps<Theme>
+  titleContainerSx?: SxProps<Theme>
   titleStyle?: TypographyProps
   subtitleStyle?: TypographyProps
   alignTitleItems?: 'center' | 'flex-start' | 'flex-end' | 'normal'
+  dividerStyle?: SxProps<Theme>
 }
 
 const InfoColumn: React.FC<InfoColumnProps> = ({
@@ -29,9 +31,11 @@ const InfoColumn: React.FC<InfoColumnProps> = ({
   showDivider = false,
   metric,
   containerSx,
+  titleContainerSx,
   titleStyle,
   subtitleStyle,
   alignTitleItems = 'center',
+  dividerStyle,
 }) => {
   return (
     <Box sx={containerSx}>
@@ -42,6 +46,7 @@ const InfoColumn: React.FC<InfoColumnProps> = ({
         px={2}
         py='6px'
         width='100%'
+        sx={titleContainerSx}
       >
         <Box display='flex' alignItems={alignTitleItems}>
           <Box>
@@ -65,14 +70,18 @@ const InfoColumn: React.FC<InfoColumnProps> = ({
               </Typography>
             )}
           </Box>
-          {toolTipInfo && (
-            <Box pt={alignTitleItems === 'normal' ? '3px' : 'inherit'}>
-              <ToolTip title={toolTipInfo} />
-            </Box>
-          )}
+          {toolTipInfo ? (
+            isValidElement(toolTipInfo) ? (
+              toolTipInfo
+            ) : (
+              <Box pt={alignTitleItems === 'normal' ? '3px' : 'inherit'}>
+                <ToolTip title={toolTipInfo} />
+              </Box>
+            )
+          ) : null}
         </Box>
       </Box>
-      {showDivider && <Divider />}
+      {showDivider && <Divider sx={dividerStyle} />}
       {metric}
     </Box>
   )

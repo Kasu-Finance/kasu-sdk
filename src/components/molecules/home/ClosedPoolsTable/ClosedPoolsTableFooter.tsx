@@ -52,6 +52,16 @@ const ClosedPoolsTableFooter: React.FC = () => {
                 USDC
               </Typography>
             </Typography>
+            {row.name === RowName.Average && (
+              <Typography
+                variant='caption'
+                component='span'
+                textTransform='capitalize'
+                fontSize={10}
+              >
+                {t('general.perPool')}
+              </Typography>
+            )}
           </TableCell>
           <TableCell align='right'>
             <Typography variant='subtitle1' color='text.primary'>
@@ -62,7 +72,12 @@ const ClosedPoolsTableFooter: React.FC = () => {
               </Typography>
             </Typography>
             {row.name === RowName.Average && (
-              <Typography variant='caption' component='span'>
+              <Typography
+                variant='caption'
+                component='span'
+                textTransform='capitalize'
+                fontSize={10}
+              >
                 {t('general.perPool')}
               </Typography>
             )}
@@ -76,7 +91,12 @@ const ClosedPoolsTableFooter: React.FC = () => {
               </Typography>
             </Typography>
             {row.name === RowName.Average && (
-              <Typography variant='caption' component='span'>
+              <Typography
+                variant='caption'
+                component='span'
+                textTransform='capitalize'
+                fontSize={10}
+              >
                 {t('general.perPool')}
               </Typography>
             )}
@@ -88,7 +108,12 @@ const ClosedPoolsTableFooter: React.FC = () => {
                 : formatPercentage(row?.totalLossRate) || '0%'}
             </Typography>
             {row.name === RowName.Average && (
-              <Typography variant='caption' component='span'>
+              <Typography
+                variant='caption'
+                component='span'
+                textTransform='capitalize'
+                fontSize={10}
+              >
                 {t('general.weighted')}
               </Typography>
             )}

@@ -30,7 +30,13 @@ const TranchesDetails: React.FC<TranchesDetailsProps> = ({ pool }) => {
 
   return (
     <Card>
-      <CardContent>
+      <CardContent
+        sx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            p: 1,
+          },
+        })}
+      >
         <Grid
           container
           columnSpacing={3}

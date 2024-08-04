@@ -1,9 +1,20 @@
-import { Box, Card, CardContent, CardHeader, Typography } from '@mui/material'
+import FilterIcon from '@mui/icons-material/FilterAlt'
+import {
+  Box,
+  Card,
+  CardContent,
+  CardHeader,
+  Collapse,
+  IconButton,
+  Typography,
+} from '@mui/material'
 import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
-import { useCallback, useState } from 'react'
+import { useCallback, useReducer, useState } from 'react'
 
+import useModalState from '@/hooks/context/useModalState'
 import useTransactionHistoryState from '@/hooks/context/useTransactionHistoryState'
 import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 
 import ToolTip from '@/components/atoms/ToolTip'
@@ -11,6 +22,8 @@ import CustomTable, { Sort } from '@/components/molecules/CustomTable'
 import TransactionHistoryFilters from '@/components/molecules/lending/overview/TransactionHistory/TransactionHistoryFilters'
 import TransactionHistoryTableHeader from '@/components/molecules/lending/overview/TransactionHistory/TransactionHistoryTableHeader'
 import TransactionHistoryTableRow from '@/components/molecules/lending/overview/TransactionHistory/TransactionHistoryTableRow'
+
+import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { toBigNumber } from '@/utils'
 
@@ -63,9 +76,28 @@ export const TRANSACTION_HISTORY_KEYS = [
 
 const TransactionHistory: React.FC<{ poolId: string }> = ({ poolId }) => {
   const [open, setOpen] = useState<number | undefined>(undefined)
+
+  const { openModal } = useModalState()
+
   const { transactionHistory, isLoading } = useTransactionHistory()
   const { status, trancheType, transactionType } = useTransactionHistoryState()
   const { t } = useTranslation()
+
+  const [collasped, toggleCollapsed] = useReducer((prev) => !prev, false)
+
+  const currentDevice = useDeviceDetection()
+
+  const isMobile = currentDevice === Device.MOBILE
+
+  const handleOpen = useCallback(
+    (transactionHistory: UserRequest) => {
+      openModal({
+        name: ModalsKeys.TRANSACTION_HISTORY_CONTENT,
+        transactionHistory,
+      })
+    },
+    [openModal]
+  )
 
   const handleCollapse = useCallback((index: number) => {
     setOpen((prev) => (prev === index ? undefined : index))
@@ -87,7 +119,13 @@ const TransactionHistory: React.FC<{ poolId: string }> = ({ poolId }) => {
   )
 
   return (
-    <Card>
+    <Card
+      sx={(theme) => ({
+        [theme.breakpoints.down('sm')]: {
+          mt: 2,
+        },
+      })}
+    >
       <CardHeader
         title={
           <Box display='flex' alignItems='center'>
@@ -104,26 +142,66 @@ const TransactionHistory: React.FC<{ poolId: string }> = ({ poolId }) => {
           variant: 'h6',
           component: 'h6',
           m: 0,
+          fontSize: currentDevice === Device.MOBILE ? 16 : undefined,
         }}
+        sx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            height: 42,
+            p: 1,
+          },
+        })}
+        action={
+          isMobile && (
+            <IconButton
+              sx={{
+                p: 0,
+                '.MuiSvgIcon-root': {
+                  mt: '-7px',
+                  fill: collasped ? '#AD8A60' : 'background.default',
+                },
+              }}
+              onClick={toggleCollapsed}
+            >
+              <FilterIcon />
+            </IconButton>
+          )
+        }
       />
-      <CardContent>
-        <TransactionHistoryFilters />
+      <CardContent sx={{ p: isMobile ? 1 : undefined }}>
+        <Collapse in={!isMobile || collasped}>
+          <TransactionHistoryFilters />
+        </Collapse>
         <CustomTable
           tableContainerStyles={{ mt: 2 }}
           data={filteredData}
           sortKeys={TRANSACTION_HISTORY_KEYS}
           defaultSortKey='timestamp'
           handleSort={handleSort}
-          headersStyle={{
+          headersStyle={(theme) => ({
             '& .MuiTableCell-root': {
               py: '6px',
               px: 2,
 
+              [theme.breakpoints.down('sm')]: {
+                px: 0,
+                pt: 0,
+                pb: 2,
+
+                '& .MuiTypography-root': {
+                  fontSize: 10,
+                },
+              },
+
               '&.request-type': {
-                pl: 8,
+                pl: isMobile ? 0 : 8,
               },
             },
-          }}
+          })}
+          paginationStyle={(theme) => ({
+            [theme.breakpoints.down('sm')]: {
+              fontSize: 10,
+            },
+          })}
           headers={(handleSortChange, sort) => (
             <TransactionHistoryTableHeader
               handleSortChange={handleSortChange}
@@ -137,7 +215,9 @@ const TransactionHistory: React.FC<{ poolId: string }> = ({ poolId }) => {
 
               return (
                 <TransactionHistoryTableRow
-                  handleCollapse={() => handleCollapse(index)}
+                  handleCollapse={() =>
+                    isMobile ? handleOpen(transaction) : handleCollapse(index)
+                  }
                   isActive={isActive}
                   transaction={transaction}
                   key={index}

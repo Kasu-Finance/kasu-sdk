@@ -13,6 +13,7 @@ import TokenAmount from '@/components/atoms/TokenAmount'
 import ToolTip from '@/components/atoms/ToolTip'
 import LoyaltyProgress from '@/components/molecules/locking/LoyaltyOverview/LoyaltyProgress'
 import LendingLoyalityLevelsTooltip from '@/components/molecules/tooltips/LendingLoyalityLevelsTooltip'
+import RksuBalance from '@/components/molecules/tooltips/RksuBalance'
 import RksuTooltip from '@/components/molecules/tooltips/RksuTooltip'
 
 import { capitalize, formatAmount } from '@/utils'
@@ -39,11 +40,17 @@ const LendingLoyalityInfo = () => {
         />
       </Box>
       <LoyaltyProgress stakedPercentage={stakedPercentage} />
-      <ColoredBox>
+      <ColoredBox p={{ xs: 1, sm: 0 }}>
         <InfoRow
           showDivider
           title={`rKSU ${capitalize(t('general.balance'))}`}
-          toolTipInfo={t('lending.poolOverview.rksuBalanceToolTip')}
+          toolTipInfo={<ToolTip title={<RksuBalance />} />}
+          titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
+          sx={(theme) => ({
+            [theme.breakpoints.down('sm')]: {
+              px: 0,
+            },
+          })}
           metric={
             <TokenAmount
               amount={formatAmount(rKsuAmount || '0')}
@@ -55,6 +62,12 @@ const LendingLoyalityInfo = () => {
         <InfoRow
           title={t('locking.widgets.loyalty.metric-3')}
           toolTipInfo={<ToolTip title={<RksuTooltip />} />}
+          titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
+          sx={(theme) => ({
+            [theme.breakpoints.down('sm')]: {
+              px: 0,
+            },
+          })}
           metric={
             <Typography variant='h6' component='span'>
               {formatAmount(stakedPercentage || '0', {

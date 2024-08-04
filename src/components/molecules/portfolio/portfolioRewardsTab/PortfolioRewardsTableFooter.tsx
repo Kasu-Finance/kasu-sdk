@@ -40,7 +40,7 @@ const PortfolioRewardsTableFooter: React.FC<
             {t('portfolio.rewards.totalUsdcBonus')}{' '}
           </Typography>
           <Typography variant='caption' component='span'>
-            ({t('portfolio.rewards.Protocol Fees')})
+            ({t('portfolio.rewards.protocolFees')})
           </Typography>
         </TableCell>
         <TableCell align='right'>

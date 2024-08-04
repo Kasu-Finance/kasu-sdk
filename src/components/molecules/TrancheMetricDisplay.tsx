@@ -34,13 +34,9 @@ const TranchMetricDisplay: React.FC<MetricDisplayProps> = ({
   const translatedTitle = t(titleKey)
   const translatedTooltip = t(tooltipKey || '')
 
-  if (translatedTooltip) {
-    // infoRowProps.toolTipInfo = translatedTooltip;
-  }
-
   const remainingCapacityContent = (
     <Box
-      pl={2}
+      pl={{ xs: 0, sm: 2 }}
       display='flex'
       flexDirection='column'
       justifyContent='flex-start'
@@ -124,6 +120,11 @@ const TranchMetricDisplay: React.FC<MetricDisplayProps> = ({
       toolTipInfo={translatedTooltip}
       showDivider={!isLast}
       metric={multiTrancheMetric}
+      sx={(theme) => ({
+        [theme.breakpoints.down('sm')]: {
+          px: 0,
+        },
+      })}
     />
   )
 }

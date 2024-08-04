@@ -21,12 +21,19 @@ const RewardsBreakdownCard: React.FC<RewardsBreakdownCardProps> = ({
 }) => {
   return (
     <Grid item xs={4}>
-      <ColoredBox sx={{ p: 0 }}>
+      <ColoredBox
+        sx={(theme) => ({
+          p: 0,
+          [theme.breakpoints.down('sm')]: {
+            p: 1,
+          },
+        })}
+      >
         <Typography
           variant='subtitle1'
           component='span'
           display='block'
-          px={2}
+          px={{ xs: 0, sm: 2 }}
           py={1}
         >
           {title}
@@ -37,11 +44,13 @@ const RewardsBreakdownCard: React.FC<RewardsBreakdownCardProps> = ({
             </Typography>
           )}
         </Typography>
-        <Box mt={1}>
+        <Box mt={{ xs: 0, sm: 1 }}>
           {breakdowns.map(({ title, toolTipInfo, metric }, index) => (
             <InfoRow
               key={index}
               title={title}
+              titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
+              sx={(theme) => ({ [theme.breakpoints.down('sm')]: { px: 0 } })}
               toolTipInfo={toolTipInfo}
               metric={
                 <Box>

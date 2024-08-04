@@ -1,4 +1,4 @@
-import Receipt from '@mui/icons-material/Receipt'
+import ReceiptIcon from '@mui/icons-material/Receipt'
 import { Box, Button, TableCell, TableRow, Typography } from '@mui/material'
 import { UserRequestEvent } from '@solidant/kasu-sdk/src/services/UserLending/types'
 import { useWeb3React } from '@web3-react/core'
@@ -40,7 +40,7 @@ const TransactionCollapsedContent: React.FC<
     <TableRow>
       <TableCell align='left' width='18%'>
         {isReallocated ? (
-          <Box display='flex' alignItems='center' pl={1}>
+          <Box display='flex' alignItems='center' pl={6}>
             <Typography variant='caption'>
               {t('lending.poolOverview.transactionsHistory.reallocated.label')}
             </Typography>
@@ -129,7 +129,7 @@ const TransactionCollapsedContent: React.FC<
               .blockExplorerUrls[0]
           }/tx/${actionHistory.transactionHash}`}
           target='_blank'
-          startIcon={<Receipt />}
+          startIcon={<ReceiptIcon />}
           sx={{ height: 30, width: 97 }}
         >
           VIEW TX

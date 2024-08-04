@@ -24,9 +24,14 @@ const PoolCardMetricItem: React.FC<MetricItemProps> = ({ metric, t }) => {
         title={t(`${metric.title}.label`)}
         toolTipInfo={t(`${metric.title}.tooltip`)}
         showDivider={metric.showDivider}
+        titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
         metric={
           <>
-            <Typography variant='subtitle2' maxWidth={160}>
+            <Typography
+              variant='subtitle2'
+              fontWeight={{ xs: 400, sm: 500 }}
+              maxWidth={{ xs: 120, sm: 160 }}
+            >
               {metric.value}
               <Typography variant='caption' component='span'>
                 {metric.suffix || ''}

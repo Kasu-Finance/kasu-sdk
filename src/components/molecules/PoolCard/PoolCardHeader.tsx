@@ -2,6 +2,8 @@ import { Box, Collapse, Typography } from '@mui/material'
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { memo, useMemo } from 'react'
 
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
+
 import BoxBackground from '@/components/atoms/BoxBackground'
 import ImageWithFallback from '@/components/atoms/ImageWithFallback'
 import PoolAvatar from '@/components/atoms/PoolAvatar'
@@ -20,6 +22,10 @@ const PoolCardHeader: React.FC<PoolCardHeaderProps> = ({ pool, hover }) => {
     }
   }, [pool])
 
+  const currentDevice = useDeviceDetection()
+
+  const height = currentDevice === Device.MOBILE ? 48 : 72
+
   return (
     <Box>
       <Collapse in={!hover} collapsedSize={142}>
@@ -28,15 +34,20 @@ const PoolCardHeader: React.FC<PoolCardHeaderProps> = ({ pool, hover }) => {
           src={thumbnailImageUrl}
         />
       </Collapse>
-      <BoxBackground
-        display='flex'
-        alignItems='center'
-        sx={{ p: 2, height: '72px' }}
-      >
-        <PoolAvatar name={poolName} showStatus />
+      <BoxBackground display='flex' alignItems='center' sx={{ p: 2, height }}>
+        <PoolAvatar
+          name={poolName}
+          showStatus
+          sx={(theme) => ({
+            [theme.breakpoints.down('sm')]: {
+              width: 32,
+              height: 32,
+            },
+          })}
+        />
         <Typography
           variant='h5'
-          fontSize={20}
+          fontSize={{ xs: 16, sm: 20 }}
           component='div'
           sx={{
             ml: 1,

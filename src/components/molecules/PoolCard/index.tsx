@@ -27,6 +27,8 @@ const PoolCard: React.FC<PoolCardProps> = ({ pool, poolDelegate, link }) => {
 
   if (!poolDelegate) return null
 
+  const applyHover = currentDevice === Device.MOBILE ? true : cardHover
+
   return (
     <Card
       onMouseEnter={() => setCardHover(true)}
@@ -40,13 +42,13 @@ const PoolCard: React.FC<PoolCardProps> = ({ pool, poolDelegate, link }) => {
         minHeight: '760px',
       }}
     >
-      <PoolCardHeader pool={pool} hover={cardHover} />
+      <PoolCardHeader pool={pool} hover={!applyHover} />
       <PoolCardContent
         pool={pool}
         poolDelegate={poolDelegate}
-        hover={cardHover}
+        hover={applyHover}
       />
-      <PoolCardActions pool={pool} link={link} hover={cardHover} />
+      <PoolCardActions pool={pool} link={link} hover={applyHover} />
     </Card>
   )
 }

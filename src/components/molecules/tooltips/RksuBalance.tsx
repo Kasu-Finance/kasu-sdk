@@ -12,16 +12,19 @@ const RksuBalance = () => {
     <>
       <Typography variant='inherit'>
         The value of your current rKSU balance, which is derived by a multiplier
-        applied to your amount of locked KSU. This multiplier varies according
-        to your locking period, per the below table. The value of your rKSU
-        balance relative to your total current and pending USDC lending across
-        all Lending Strategies determines your Loyalty Level. Your Loyalty Level
-        determines the extent of your token utility (lending access priority and
-        lending withdrawal priority to and from Lending Strategies) and
-        associated rewards (APY bonus). Regardless of your Loyalty Level, your
-        rKSU balance relative to the total rKSU in the Kasu ecosystem, also
-        determines your share of Protocol Fees (noting you must participate in
-        USDC lending to be eligible for Protocol Fee sharing).
+        applied to your amount of locked KSU.
+        <br />
+        <br />
+        This multiplier varies according to your locking period, per the below
+        table. The value of your rKSU balance relative to your total current and
+        pending USDC lending across all Lending Strategies determines your
+        Loyalty Level. Your Loyalty Level determines the extent of your token
+        utility (lending access priority and lending withdrawal priority to and
+        from Lending Strategies) and associated rewards (APY bonus). Regardless
+        of your Loyalty Level, your rKSU balance relative to the total rKSU in
+        the Kasu ecosystem, also determines your share of Protocol Fees (noting
+        you must participate in USDC lending to be eligible for Protocol Fee
+        sharing).
       </Typography>
 
       <Table size='small' className='tooltipTable'>

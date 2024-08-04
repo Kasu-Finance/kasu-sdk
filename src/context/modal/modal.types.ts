@@ -27,6 +27,7 @@ export enum ModalsKeys {
   CANCEL_WITHDRAWAL = 'cancelWithdrawalModal',
   EARNINGS_CALCULATOR = 'earningsCalculatorModal',
   TERMS_AND_CONDITIONS = 'termsAndConditionsModal',
+  TRANSACTION_HISTORY_CONTENT = 'transactionHistoryContentModal',
 }
 
 export type ModalAction =
@@ -55,6 +56,9 @@ export type Modals = {
   [ModalsKeys.EARNINGS_CALCULATOR]: ModalData<{
     poolData: PoolData
     poolOverview: PoolOverview
+  }>
+  [ModalsKeys.TRANSACTION_HISTORY_CONTENT]: ModalData<{
+    transactionHistory: UserRequest
   }>
 }
 

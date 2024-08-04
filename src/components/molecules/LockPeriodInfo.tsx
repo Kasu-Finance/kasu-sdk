@@ -6,7 +6,7 @@ import React from 'react'
 import useLockPeriods from '@/hooks/locking/useLockPeriods'
 import useTranslation from '@/hooks/useTranslation'
 
-import { formatAmount } from '@/utils'
+import { formatAmount, TimeConversions } from '@/utils'
 
 type LockPeriodInfoProps = {
   activePeriod?: LockPeriod
@@ -61,7 +61,9 @@ const LockPeriodInfo: React.FC<LockPeriodInfoProps> = ({ activePeriod }) => {
                 display='block'
                 p={(theme) => theme.spacing('6px', 2)}
               >
-                {period.lockPeriod} {t('time.days')}
+                {parseFloat(period.lockPeriod) /
+                  TimeConversions.SECONDS_PER_DAY}{' '}
+                {t('time.days')}
               </Typography>
               <Divider />
               <Typography

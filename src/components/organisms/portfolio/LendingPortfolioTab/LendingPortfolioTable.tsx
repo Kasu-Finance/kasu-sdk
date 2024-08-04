@@ -2,9 +2,12 @@ import { TableCell, TableRow } from '@mui/material'
 import React from 'react'
 
 import useLendingPortfolioData from '@/hooks/portfolio/useLendingPortfolioData'
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 
 import CustomTable from '@/components/molecules/CustomTable'
 import TableSkeleton from '@/components/molecules/loaders/TableSkeleton'
+import LendingPortfolioMobileTableFooter from '@/components/molecules/portfolio/lendingPortfolioTab/LendingPortfolioMobileTableFooter'
+import LendingPortfolioMobileTableRow from '@/components/molecules/portfolio/lendingPortfolioTab/LendingPortfolioMobileTableRow'
 import LendingPortfolioTableFooter from '@/components/molecules/portfolio/lendingPortfolioTab/LendingPortfolioTableFooter'
 import LendingPortfolioTableHeader from '@/components/molecules/portfolio/lendingPortfolioTab/LendingPortfolioTableHeader'
 import LendingPortfolioTableRow from '@/components/molecules/portfolio/lendingPortfolioTab/LendingPortfolioTableRow'
@@ -29,6 +32,10 @@ const LendingPortfolioTable: React.FC<LendingPortfolioTableProps> = ({
 }) => {
   const { lendingPortfolioData, isLoading } = useLendingPortfolioData()
 
+  const currentDevice = useDeviceDetection()
+
+  const isMobile = currentDevice === Device.MOBILE
+
   if (isLoading || !lendingPortfolioData)
     return <TableSkeleton rows={6} columns={3} />
 
@@ -40,7 +47,7 @@ const LendingPortfolioTable: React.FC<LendingPortfolioTableProps> = ({
 
   return (
     <CustomTable
-      headers={LendingPortfolioTableHeader}
+      headers={isMobile ? [] : LendingPortfolioTableHeader}
       sortKeys={LENDING_PORTFOLIO_KEYS}
       data={filteredPools}
       defaultSortKey='weightedApy'
@@ -60,19 +67,33 @@ const LendingPortfolioTable: React.FC<LendingPortfolioTableProps> = ({
           },
         },
       }}
-      footer={<LendingPortfolioTableFooter lendingPortfolio={filteredPools} />}
-      footerStyle={{
+      footer={
+        isMobile ? (
+          <LendingPortfolioMobileTableFooter lendingPortfolio={filteredPools} />
+        ) : (
+          <LendingPortfolioTableFooter lendingPortfolio={filteredPools} />
+        )
+      }
+      footerStyle={(theme) => ({
         '& .MuiTableCell-root': {
           background: 'none',
           height: '100px',
           textTransform: 'capitalize',
         },
-      }}
+        [theme.breakpoints.down('sm')]: {
+          border: 'none',
+        },
+      })}
     >
       {(data) =>
         data.length ? (
           data.map((userPortfolio, index) => {
-            return (
+            return isMobile ? (
+              <LendingPortfolioMobileTableRow
+                portfolio={userPortfolio}
+                key={index}
+              />
+            ) : (
               <LendingPortfolioTableRow portfolio={userPortfolio} key={index} />
             )
           })

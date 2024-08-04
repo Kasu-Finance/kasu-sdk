@@ -38,20 +38,48 @@ const Pagination: React.FC<PaginationProps> = ({
         color='primary'
         hidePrevButton={isMobile ? false : true}
         hideNextButton={isMobile ? false : true}
-        sx={{
+        sx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            width: '100%',
+            '.MuiPagination-ul': {
+              justifyContent: 'space-between',
+              li: {
+                '&:first-child': {
+                  mr: 'auto',
+                },
+                '&:last-child': {
+                  ml: 'auto',
+                },
+              },
+            },
+          },
+
           '& .MuiPaginationItem-root': {
             bgcolor: 'white',
             color: 'primary.contrastText',
             boxShadow: '0 0 1px 1px black',
 
+            [theme.breakpoints.down('sm')]: {
+              borderRadius: 1,
+              bgcolor: 'primary.main',
+            },
+
             '&:hover': {
               bgcolor: 'primary.dark',
             },
+
+            '&.Mui-selected': {
+              bgcolor: 'primary.main',
+              pointerEvents: 'none',
+
+              [theme.breakpoints.down('sm')]: {
+                bgcolor: 'background.default',
+                color: 'primary.main',
+                boxShadow: '0 0 1px 1px white',
+              },
+            },
           },
-          '& .Mui-selected': {
-            bgcolor: 'primary.main',
-          },
-        }}
+        })}
       />
     </Box>
   )

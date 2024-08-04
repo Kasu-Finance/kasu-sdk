@@ -3,8 +3,11 @@ import { Divider, Grid, Skeleton } from '@mui/material'
 import usePortfolioRewards, {
   PortfolioRewardsType,
 } from '@/hooks/portfolio/usePortfolioRewards'
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 
 import CustomTable, { Sort } from '@/components/molecules/CustomTable'
+import PortfolioRewardsMobileTableFooter from '@/components/molecules/portfolio/portfolioRewardsTab/PortfolioRewardsMobileTableFooter'
+import PortfolioRewardsMobileTableRow from '@/components/molecules/portfolio/portfolioRewardsTab/PortfolioRewardsMobileTableRow'
 import PortfolioRewardsTableFooter from '@/components/molecules/portfolio/portfolioRewardsTab/PortfolioRewardsTableFooter'
 import PortfolioRewardsTableHeader from '@/components/molecules/portfolio/portfolioRewardsTab/PortfolioRewardsTableHeader'
 import PortfolioRewardsTableRow from '@/components/molecules/portfolio/portfolioRewardsTab/PortfolioRewardsTableRow'
@@ -15,6 +18,10 @@ export const PORTFOLIO_REWARDS_KEY = ['lastEpoch', 'lifeTime'] as const
 
 const PortfolioRewardsTable = () => {
   const { portfolioRewards, isLoading } = usePortfolioRewards()
+
+  const currentDevice = useDeviceDetection()
+
+  const isMobile = currentDevice === Device.MOBILE
 
   const handleSort = (
     a: PortfolioRewardsType,
@@ -33,7 +40,7 @@ const PortfolioRewardsTable = () => {
     )
   }
 
-  if (isLoading)
+  if (isLoading || !portfolioRewards)
     return (
       <Grid container spacing={2}>
         <Grid item xs={6} />
@@ -54,20 +61,35 @@ const PortfolioRewardsTable = () => {
 
   return (
     <CustomTable
-      headers={(handleSortChange, sort) => (
-        <PortfolioRewardsTableHeader
-          handleSortChange={handleSortChange}
-          sort={sort}
-        />
-      )}
+      headers={
+        isMobile
+          ? []
+          : (handleSortChange, sort) => (
+              <PortfolioRewardsTableHeader
+                handleSortChange={handleSortChange}
+                sort={sort}
+              />
+            )
+      }
       pagination={false}
-      data={portfolioRewards!}
+      data={portfolioRewards}
       sortKeys={PORTFOLIO_REWARDS_KEY}
       defaultSortKey='lastEpoch'
       handleSort={handleSort}
       footer={
-        <PortfolioRewardsTableFooter portfolioRewards={portfolioRewards!} />
+        isMobile ? (
+          <PortfolioRewardsMobileTableFooter
+            portfolioRewards={portfolioRewards}
+          />
+        ) : (
+          <PortfolioRewardsTableFooter portfolioRewards={portfolioRewards} />
+        )
       }
+      footerStyle={(theme) => ({
+        [theme.breakpoints.down('sm')]: {
+          border: 'none',
+        },
+      })}
       headersStyle={{
         '& .MuiTableCell-root': {
           py: '6px',
@@ -77,12 +99,19 @@ const PortfolioRewardsTable = () => {
       }}
     >
       {(data) =>
-        data.map((portfolioReward, index) => (
-          <PortfolioRewardsTableRow
-            portfolioReward={portfolioReward}
-            key={index}
-          />
-        ))
+        data.map((portfolioReward, index) =>
+          isMobile ? (
+            <PortfolioRewardsMobileTableRow
+              portfolioReward={portfolioReward}
+              key={index}
+            />
+          ) : (
+            <PortfolioRewardsTableRow
+              portfolioReward={portfolioReward}
+              key={index}
+            />
+          )
+        )
       }
     </CustomTable>
   )

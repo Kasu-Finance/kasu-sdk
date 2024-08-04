@@ -16,8 +16,19 @@ const RewardsBreakdown = () => {
   const isMobile = currentDevice === Device.MOBILE
 
   return (
-    <CardWidget title={t('locking.widgets.rewardsBreakdown.title')}>
-      <Grid container spacing={3} direction={isMobile ? 'column' : 'row'}>
+    <CardWidget
+      title={t('locking.widgets.rewardsBreakdown.title')}
+      cardSx={(theme) => ({
+        [theme.breakpoints.down('sm')]: {
+          mb: 2,
+        },
+      })}
+    >
+      <Grid
+        container
+        spacing={{ xs: 1, sm: 3 }}
+        direction={isMobile ? 'column' : 'row'}
+      >
         <ApyBonusBreakdown />
         <LaunchBonusBreakdown />
         <FeesEarnedBreakdown />
