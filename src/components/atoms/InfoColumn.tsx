@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Box,
   Divider,
@@ -74,9 +76,7 @@ const InfoColumn: React.FC<InfoColumnProps> = ({
             isValidElement(toolTipInfo) ? (
               toolTipInfo
             ) : (
-              <Box pt={alignTitleItems === 'normal' ? '3px' : 'inherit'}>
-                <ToolTip title={toolTipInfo} />
-              </Box>
+              <ToolTip title={toolTipInfo} />
             )
           ) : null}
         </Box>

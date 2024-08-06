@@ -36,9 +36,9 @@ const PortfolioRewardsTableRow: React.FC<PortfolioRewardsTableRowProps> = ({
                 })
               : undefined
           }
-          amountVariant='body1'
-          symbolVariant='caption'
-          usdcVariant='caption'
+          amountProps={{ variant: 'body1' }}
+          symbolProps={{ variant: 'caption' }}
+          usdcProps={{ variant: 'caption' }}
           width='100%'
         />
       ) : (
@@ -59,9 +59,9 @@ const PortfolioRewardsTableRow: React.FC<PortfolioRewardsTableRowProps> = ({
           { minValue: 1_000_000 }
         )}
         symbol={portfolioReward.lifeTime.ksuAmount ? 'KSU' : 'USDC'}
-        amountVariant='body1'
-        symbolVariant='caption'
-        usdcVariant='caption'
+        amountProps={{ variant: 'body1' }}
+        symbolProps={{ variant: 'caption' }}
+        usdcProps={{ variant: 'caption' }}
         width='100%'
       />
     </TableCell>

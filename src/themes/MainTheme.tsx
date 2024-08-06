@@ -1,8 +1,30 @@
 import { alpha, createTheme, lighten } from '@mui/material'
+import { Open_Sans } from 'next/font/google'
+
+const openSans = Open_Sans({ preload: false })
 
 declare module '@mui/material/styles' {
   interface BreakpointOverrides {
     xxl: true
+  }
+}
+
+declare module '@mui/material/Typography' {
+  interface TypographyPropsVariantOverrides {
+    baseLg: true
+    baseLgBold: true
+    baseMd: true
+    baseMdBold: true
+    baseSm: true
+    baseSmBold: true
+    baseXs: true
+    baseXsBold: true
+  }
+}
+
+declare module '@mui/material/Divider' {
+  interface DividerPropsVariantOverrides {
+    dotted: true
   }
 }
 
@@ -15,6 +37,15 @@ declare module '@mui/material/styles/createPalette' {
     icon: {
       primary: string
     }
+    gray: {
+      extraLight: string
+      light: string
+      middle: string
+      dark: string
+      extraDark: string
+      pattern: string
+      noises: string
+    }
   }
 
   interface PaletteOptions {
@@ -25,13 +56,44 @@ declare module '@mui/material/styles/createPalette' {
     icon: {
       primary: string
     }
+    gray: {
+      extraLight: string
+      light: string
+      middle: string
+      dark: string
+      extraDark: string
+      pattern: string
+      noises: string
+    }
   }
 }
 
-const primaryFontFamily = ['Barlow'].join(',')
-const barlowSemiCondensedFontFamily = ['Barlow Semi Condensed'].join(',')
-const condensedFontFamily = ['Barlow Condensed'].join(',')
-const khmerFontFamily = ['Noto Sans Khmer'].join(',')
+declare module '@mui/material/styles/createTypography' {
+  interface Typography {
+    baseLg: TypographyStyleOptions
+    baseLgBold: TypographyStyleOptions
+    baseMd: TypographyStyleOptions
+    baseMdBold: TypographyStyleOptions
+    baseSm: TypographyStyleOptions
+    baseSmBold: TypographyStyleOptions
+    baseXs: TypographyStyleOptions
+    baseXsBold: TypographyStyleOptions
+  }
+
+  interface TypographyOptions {
+    baseLg: TypographyStyleOptions
+    baseLgBold: TypographyStyleOptions
+    baseMd: TypographyStyleOptions
+    baseMdBold: TypographyStyleOptions
+    baseSm: TypographyStyleOptions
+    baseSmBold: TypographyStyleOptions
+    baseXs: TypographyStyleOptions
+    baseXsBold: TypographyStyleOptions
+  }
+}
+
+const primaryFontFamily = openSans.style.fontFamily
+const headingFontFamily = 'Barlow Condensed'
 
 const primaryColor = '#C4996C'
 const primaryContrastColor = '#28282a'
@@ -70,13 +132,13 @@ const customTheme = createTheme({
       primary: 'rgba(0, 0, 0, 0.54)',
     },
     text: {
-      primary: 'rgba(0, 0, 0, 0.87)',
+      primary: 'rgba(40, 40, 42, 1)',
       secondary: 'rgba(0,0,0, 0.6)',
       disabled: 'rgba(0, 0, 0, 0.38)',
     },
     grey: {
-      200: 'rgba(224, 224, 224, 1)',
-      300: 'rgba(0, 0, 0, 0.04)',
+      200: 'rgba(205, 206, 208, 1)',
+      300: 'rgba(142, 142, 146, 1)',
       400: 'rgba(0, 0, 0, 0.38)',
       500: 'rgba(0, 0, 0, 0.6)',
       600: 'rgba(0, 0, 0, 0.12)',
@@ -85,66 +147,94 @@ const customTheme = createTheme({
     info: {
       main: '#e5f3fa',
     },
+    gray: {
+      extraLight: 'rgba(244, 244, 244, 1)',
+      light: 'rgba(205, 206, 208, 1)',
+      middle: 'rgba(142, 142, 146, 1)',
+      dark: 'rgba(244, 244, 244, 1)',
+      extraDark: 'rgba(40, 40, 42, 1)',
+      pattern: 'rgba(255, 255, 255, 1)',
+      noises: 'rgba(244, 244, 244, 1)',
+    },
   },
   typography: {
-    fontFamily: primaryFontFamily,
-    allVariants: {
-      fontFamily: condensedFontFamily,
+    baseLg: {
+      fontFamily: primaryFontFamily,
       fontWeight: 400,
+      fontSize: 16,
     },
-    h5: {
-      fontFamily: condensedFontFamily,
-      fontSize: 24,
+    baseLgBold: {
+      fontFamily: primaryFontFamily,
+      fontWeight: 700,
+      fontSize: 16,
+    },
+    baseMd: {
+      fontFamily: primaryFontFamily,
       fontWeight: 400,
-    },
-    h6: {
-      fontFamily: condensedFontFamily,
-      fontSize: 20,
-      fontWeight: 500,
-      letterSpacing: '0.15px',
-    },
-    body1: {
-      fontFamily: khmerFontFamily,
       fontSize: 14,
       lineHeight: '21px',
-      letterSpacing: '0.15px',
     },
-    body2: {
-      fontFamily: khmerFontFamily,
-      fontSize: 12,
-      lineHeight: '17.16px',
-      letterSpacing: '0.17px',
-    },
-    caption: {
-      fontFamily: khmerFontFamily,
-      fontSize: 12,
-      lineHeight: '20px',
-      letterSpacing: '0.4px',
-    },
-    overline: {
+    baseMdBold: {
       fontFamily: primaryFontFamily,
-      letterSpacing: '1px',
-    },
-    button: {
-      fontFamily: primaryFontFamily,
-      fontSize: 15,
-      fontWeight: 500,
-      lineHeight: '26px',
-      letterSpacing: '0.46px',
-    },
-    subtitle1: {
-      fontFamily: barlowSemiCondensedFontFamily,
-      fontSize: 16,
-      fontWeight: 700,
-      lineHeight: '28px',
-      letterSpacing: '0.15px',
-    },
-    subtitle2: {
-      fontFamily: primaryFontFamily,
+      fontWeight: 600,
       fontSize: 14,
+      lineHeight: '21px',
+    },
+    baseSm: {
+      fontFamily: primaryFontFamily,
+      fontWeight: 400,
+      fontSize: 12,
+    },
+    baseSmBold: {
+      fontFamily: primaryFontFamily,
+      fontWeight: 700,
+      fontSize: 12,
+    },
+    baseXs: {
+      fontFamily: primaryFontFamily,
+      fontWeight: 400,
+      fontSize: 10,
+    },
+    baseXsBold: {
+      fontFamily: primaryFontFamily,
+      fontWeight: 700,
+      fontSize: 10,
+    },
+    fontFamily: primaryFontFamily,
+    allVariants: {
+      fontFamily: primaryFontFamily,
+      fontWeight: 400,
+    },
+    h1: {
+      fontFamily: headingFontFamily,
+      fontSize: 64,
+      fontWeight: 600,
+    },
+
+    h2: {
+      fontFamily: headingFontFamily,
+      fontSize: 48,
       fontWeight: 500,
-      lineHeight: '22px',
-      letterSpacing: '0.1px',
+    },
+    h3: {
+      fontFamily: headingFontFamily,
+      fontSize: 32,
+      fontWeight: 500,
+    },
+    h4: {
+      fontFamily: headingFontFamily,
+      fontSize: 24,
+      fontWeight: 500,
+    },
+    h5: {
+      fontFamily: headingFontFamily,
+      fontSize: 20,
+      fontWeight: 500,
+    },
+    h6: {
+      fontFamily: headingFontFamily,
+      fontSize: 16,
+      fontWeight: 500,
     },
   },
   breakpoints: {
@@ -259,6 +349,16 @@ const customTheme = createTheme({
       },
     },
     MuiDivider: {
+      variants: [
+        {
+          props: { variant: 'dotted' },
+          style: {
+            backgroundColor: 'unset',
+            borderStyle: 'dotted',
+            borderColor: primaryColor,
+          },
+        },
+      ],
       styleOverrides: {
         root: {
           ['@media (max-width:600px)']: {
@@ -585,6 +685,7 @@ const customTheme = createTheme({
           },
         },
         contained: {
+          color: 'white',
           '&.Mui-disabled': {
             backgroundColor: 'rgba(127, 116, 102, 0.26)',
             color: '#7F7466',

@@ -8,7 +8,7 @@ export enum BaseRoutesPaths {
 }
 
 export type RouteDefinition = {
-  url: BaseRoutesPaths
+  url: `${BaseRoutesPaths}${string}`
 }
 
 type RouteGroup = {
@@ -23,6 +23,9 @@ export const Routes = {
   },
   lending: {
     root: { url: BaseRoutesPaths.LENDING },
+    closedLendingStrategies: {
+      url: `${BaseRoutesPaths.LENDING}/closedLendingStrategies`,
+    },
   },
   borrow: {
     root: { url: BaseRoutesPaths.BORROW },

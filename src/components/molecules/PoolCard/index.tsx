@@ -1,54 +1,67 @@
-'use client'
-
-import { Card } from '@mui/material'
-import {
-  PoolDelegateProfileAndHistory,
-  PoolOverview,
-} from '@solidant/kasu-sdk/src/services/DataService/types'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-
-import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
+import { Box, Card, Typography } from '@mui/material'
+import Image from 'next/image'
 
 import PoolCardActions from '@/components/molecules/PoolCard/PoolCardActions'
 import PoolCardContent from '@/components/molecules/PoolCard/PoolCardContent'
-import PoolCardHeader from '@/components/molecules/PoolCard/PoolCardHeader'
+
+import { FireIcon, LockIcon } from '@/assets/icons'
+
+import { PoolOverviewWithDelegate } from '@/types/page'
 
 interface PoolCardProps {
-  pool: PoolOverview
-  poolDelegate?: PoolDelegateProfileAndHistory
-  link: string
+  pool: PoolOverviewWithDelegate
 }
 
-const PoolCard: React.FC<PoolCardProps> = ({ pool, poolDelegate, link }) => {
-  const router = useRouter()
-  const currentDevice = useDeviceDetection()
-  const [cardHover, setCardHover] = useState(false)
-
-  if (!poolDelegate) return null
-
-  const applyHover = currentDevice === Device.MOBILE ? true : cardHover
-
+const PoolCard: React.FC<PoolCardProps> = ({ pool }) => {
   return (
     <Card
-      onMouseEnter={() => setCardHover(true)}
-      onMouseLeave={() => setCardHover(false)}
-      onClick={() => {
-        currentDevice === Device.MOBILE && router.push(link)
-      }}
       sx={{
+        flex: 1,
+        bgcolor: 'gray.extraDark',
+        overflow: 'unset',
+        borderTopLeftRadius: 8,
+        borderTopRightRadius: 8,
+        borderBottomLeftRadius: 25, // to prevent extra pixels from rendering
+        borderBottomRightRadius: 25, // to prevent extra pixels from rendering
+        position: 'relative',
         display: 'flex',
         flexDirection: 'column',
-        minHeight: '760px',
+        alignItems: 'center',
+        pt: 3,
+        boxShadow: '0px 5px 20px 0px rgba(0, 0, 0, 0.1)',
       }}
     >
-      <PoolCardHeader pool={pool} hover={!applyHover} />
-      <PoolCardContent
-        pool={pool}
-        poolDelegate={poolDelegate}
-        hover={applyHover}
+      <Box position='absolute' top={16} left={16}>
+        {pool.isActive ? <FireIcon /> : <LockIcon />}
+      </Box>
+      <Image
+        src={pool.thumbnailImageUrl}
+        alt={pool.poolName}
+        width={240}
+        height={240}
       />
-      <PoolCardActions pool={pool} link={link} hover={applyHover} />
+      <Typography
+        variant='h4'
+        mt={3}
+        mb={4}
+        color='primary'
+        maxWidth='90%'
+        textAlign='center'
+      >
+        {pool.poolName}
+      </Typography>
+      <Box
+        borderRadius={2}
+        bgcolor='white'
+        display='flex'
+        flexDirection='column'
+        flexGrow={1}
+        width='100%'
+        overflow='hidden'
+      >
+        <PoolCardContent pool={pool} />
+        <PoolCardActions pool={pool} />
+      </Box>
     </Card>
   )
 }

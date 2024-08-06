@@ -1,124 +1,187 @@
-import { Box, Collapse, Typography } from '@mui/material'
-import {
-  PoolDelegateProfileAndHistory,
-  PoolOverview,
-} from '@solidant/kasu-sdk/src/services/DataService/types'
-import { memo, useMemo } from 'react'
+import { Box, CardContent, Stack, Typography } from '@mui/material'
+import React from 'react'
 
-import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import useTranslation from '@/hooks/useTranslation'
 
-import ColoredBox from '@/components/atoms/ColoredBox'
-import InfoColumn from '@/components/atoms/InfoColumn'
-import { getPoolCardMetrics } from '@/components/molecules/PoolCard/pool.card.metrics'
-import PoolCardMetricItem from '@/components/molecules/PoolCard/PoolCardMetricItem'
+import InfoRow from '@/components/atoms/InfoRow'
+import TokenAmount from '@/components/atoms/TokenAmount'
+import WaveBox from '@/components/atoms/WaveBox'
 
-interface PoolCardContentProps {
-  pool: PoolOverview
-  poolDelegate: PoolDelegateProfileAndHistory
-  hover: boolean
+import { formatAmount, formatPercentage } from '@/utils'
+import formatDuration from '@/utils/formats/formatDuration'
+
+import { PoolOverviewWithDelegate } from '@/types/page'
+
+type PoolCardContentProps = {
+  pool: PoolOverviewWithDelegate
 }
 
-const PoolCardContent: React.FC<PoolCardContentProps> = ({
-  pool,
-  poolDelegate,
-  hover,
-}) => {
+const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
   const { t } = useTranslation()
 
-  const currentDevice = useDeviceDetection()
+  const isMultiTranche = pool.tranches.length > 1
 
-  const { tranches, isMultiTranche } = useMemo(() => {
-    return {
-      tranches: pool?.tranches || [],
-      isMultiTranche: pool?.tranches.length > 1,
-    }
-  }, [pool])
-
-  const metrics = useMemo(
-    () => getPoolCardMetrics(poolDelegate, pool),
-    [poolDelegate, pool]
-  )
-
-  const collapsedMetrics = metrics.filter((metric) => metric.isCollapsed)
-  const visibleMetrics = metrics.filter((metric) => !metric.isCollapsed)
+  const isActivePool = pool.isActive
 
   return (
-    <Box px={{ sm: 2, xs: 1 }} mb={{ sm: 3, xs: 1 }}>
-      <ColoredBox
+    <WaveBox width='100%'>
+      <Box
         display='flex'
-        justifyContent='center'
-        alignItems='flex-start'
-        gap={1}
-        mt={{ sm: 3, xs: 1 }}
-        px={{ xs: 1.5, md: 0 }}
+        justifyContent='space-around'
+        alignItems='center'
+        my={3}
       >
-        {tranches.map((tranche) => {
-          const titleKey = isMultiTranche
-            ? `lending.shortcutTranche.${tranche.name.toLowerCase()}.title`
-            : 'lending.poolOverview.investmentCard.loanApy'
-
-          const tooltipKey = isMultiTranche
-            ? ''
-            : t('lending.poolOverview.investmentCard.tooltip')
-          const trancheApy = parseFloat(tranche.apy) * 100
-          const formattedApy = trancheApy.toFixed(2) + ' %'
-
-          return (
-            <InfoColumn
-              key={tranche.id}
-              title={t(titleKey)}
-              alignTitleItems='flex-end'
-              subtitle={
-                isMultiTranche
-                  ? t('lending.poolOverview.investmentCard.trancheApy.label')
-                  : ' '
-              }
-              toolTipInfo={tooltipKey}
-              showDivider
-              metric={
-                <Typography variant='subtitle2' pl={{ md: 2 }} mt={0.5}>
-                  {formattedApy}
-                </Typography>
-              }
-              titleStyle={
-                !isMultiTranche
-                  ? {
-                      display: 'block',
-                      mt: '20px',
-                      fontSize:
-                        currentDevice === Device.MOBILE ? 12 : undefined,
-                    }
-                  : undefined
-              }
-              titleContainerSx={(theme) => ({
-                [theme.breakpoints.down('md')]: {
-                  px: 0,
-                },
-              })}
-              containerSx={{
-                width: isMultiTranche ? '50%' : '100%',
-                pb: 1,
-              }}
-              subtitleStyle={{
-                component: 'p',
-                sx: { ml: 0 },
-                variant: 'caption',
-              }}
-            />
-          )
-        })}
-      </ColoredBox>
-      {visibleMetrics.map((metric) => (
-        <PoolCardMetricItem key={metric.id} metric={metric} t={t} />
-      ))}
-      <Collapse in={hover}>
-        {collapsedMetrics.map((metric) => (
-          <PoolCardMetricItem key={metric.id} metric={metric} t={t} />
+        {pool.tranches.map(({ name, apy }) => (
+          <Stack key={name} alignItems='center'>
+            <Typography
+              variant='baseMdBold'
+              color='primary.main'
+              textTransform='capitalize'
+            >
+              {isMultiTranche ? name : t('general.lendingStrategy')}
+            </Typography>
+            <Typography variant='baseSm' display='block' mt={1}>
+              {isMultiTranche && t('general.tranche')} {t('general.apy')}
+            </Typography>
+            <Typography variant='h3' color='primary.main'>
+              {formatPercentage(apy).replaceAll(' ', '')}
+            </Typography>
+          </Stack>
         ))}
-      </Collapse>
-    </Box>
+      </Box>
+      <CardContent
+        sx={{ borderRadius: 2, bgcolor: 'white', '&:last-child': { pb: 2.5 } }}
+      >
+        {!isActivePool && (
+          <InfoRow
+            title={t('general.tvl')}
+            titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
+            toolTipInfo={t('lending.poolOverview.detailCard.tvl.tooltip')}
+            showDivider
+            metric={
+              <TokenAmount
+                amount={formatAmount(
+                  pool.delegate.totalLoanFundsOriginated || '0',
+                  {
+                    minValue: 1_000_000,
+                  }
+                )}
+                symbol='USDC'
+                amountProps={{
+                  variant: 'baseMdBold',
+                  color: 'gray.extraDark',
+                }}
+                symbolProps={{ variant: 'baseMdBold' }}
+              />
+            }
+          />
+        )}
+        {!isActivePool && (
+          <InfoRow
+            title={t('lending.poolOverview.detailCard.loansUnder.label')}
+            titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
+            toolTipInfo={t(
+              'lending.poolOverview.detailCard.loansUnder.tooltip'
+            )}
+            showDivider
+            metric={
+              <TokenAmount
+                amount={formatAmount(
+                  pool.delegate.totalLoanFundsOriginated || '0',
+                  {
+                    minValue: 1_000_000,
+                  }
+                )}
+                symbol='USDC'
+                amountProps={{
+                  variant: 'baseMdBold',
+                  color: 'gray.extraDark',
+                }}
+                symbolProps={{ variant: 'baseMdBold' }}
+              />
+            }
+          />
+        )}
+        <InfoRow
+          title={t('details.poolDelegate.totalFunds.label')}
+          titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
+          toolTipInfo={t('details.poolDelegate.totalFunds.tooltip')}
+          showDivider
+          metric={
+            <TokenAmount
+              amount={formatAmount(
+                pool.delegate.totalLoanFundsOriginated || '0',
+                {
+                  minValue: 1_000_000,
+                }
+              )}
+              symbol='USDC'
+              amountProps={{
+                variant: 'baseMdBold',
+                color: 'gray.extraDark',
+              }}
+              symbolProps={{ variant: 'baseMdBold' }}
+            />
+          }
+        />
+        {isActivePool && (
+          <InfoRow
+            title={t('details.poolDelegate.history.label')}
+            titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
+            toolTipInfo={t('details.poolDelegate.history.tooltip')}
+            showDivider
+            metric={
+              <Typography variant='baseMdBold'>
+                {formatDuration(pool.delegate.delegateLendingHistory, {
+                  years: true,
+                  months: true,
+                })}
+              </Typography>
+            }
+          />
+        )}
+        <InfoRow
+          title={t('details.poolDelegate.totalLossRate.label')}
+          titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
+          toolTipInfo={t('details.poolDelegate.totalLossRate.tooltip')}
+          showDivider
+          metric={
+            <TokenAmount
+              amount={formatPercentage(pool.delegate.historicLossRate)}
+              symbol=''
+              amountProps={{
+                variant: 'baseMdBold',
+                color: 'gray.extraDark',
+              }}
+              symbolProps={{ variant: 'baseMdBold' }}
+            />
+          }
+        />
+        <InfoRow
+          title={t('details.poolDetails.assetClass.label')}
+          titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
+          toolTipInfo={t('details.poolDetails.assetClass.tooltip')}
+          showDivider
+          metric={
+            <Typography variant='baseMdBold'>{pool.assetClass}</Typography>
+          }
+          sx={{ flexWrap: 'wrap' }}
+        />
+        {isActivePool && (
+          <InfoRow
+            title={t('lending.poolOverview.detailCard.security.label')}
+            titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
+            toolTipInfo={t('lending.poolOverview.detailCard.security.tooltip')}
+            showDivider
+            metric={
+              <Typography variant='baseMdBold'>{pool.security}</Typography>
+            }
+            sx={{ flexWrap: 'wrap' }}
+          />
+        )}
+      </CardContent>
+    </WaveBox>
   )
 }
 
-export default memo(PoolCardContent)
+export default PoolCardContent

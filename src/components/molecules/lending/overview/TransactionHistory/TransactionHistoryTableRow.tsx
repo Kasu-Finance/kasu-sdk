@@ -114,9 +114,9 @@ const TransactionHistoryTableRow: React.FC<TransactionHistoryTableRowProps> = ({
           <TableCell align='right'>
             <TokenAmount
               amount={formatAmount(transaction.requestedAmount || '0')}
-              amountVariant='body1'
+              amountProps={{ variant: 'body1' }}
               symbol='USDC'
-              symbolVariant='caption'
+              symbolProps={{ variant: 'caption' }}
               sx={{ width: '100%', textAlign: 'right' }}
             />
           </TableCell>
@@ -127,9 +127,9 @@ const TransactionHistoryTableRow: React.FC<TransactionHistoryTableRowProps> = ({
         >
           <TokenAmount
             amount={formatAmount(transaction.acceptedAmount || '0')}
-            amountVariant='body1'
+            amountProps={{ variant: 'body1' }}
             symbol='USDC'
-            symbolVariant='caption'
+            symbolProps={{ variant: 'caption' }}
             width='100%'
             textAlign={isMobile ? 'left' : 'right'}
           />
@@ -138,9 +138,9 @@ const TransactionHistoryTableRow: React.FC<TransactionHistoryTableRowProps> = ({
           <TableCell align='right'>
             <TokenAmount
               amount={formatAmount(transaction.rejectedAmount || '0')}
-              amountVariant='body1'
+              amountProps={{ variant: 'body1' }}
               symbol='USDC'
-              symbolVariant='caption'
+              symbolProps={{ variant: 'caption' }}
               sx={{ width: '100%', textAlign: 'right' }}
             />
           </TableCell>

@@ -126,8 +126,8 @@ const PortfolioWalletTab = () => {
                         <TokenAmount
                           key={balance.symbol}
                           {...balance}
-                          amountVariant='body1'
-                          symbolVariant='caption'
+                          amountProps={{ variant: 'body1' }}
+                          symbolProps={{ variant: 'caption' }}
                         />
                       ))
                     ) : (

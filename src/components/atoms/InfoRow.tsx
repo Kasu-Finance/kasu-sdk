@@ -1,6 +1,9 @@
+'use client'
+
 import {
   Box,
   Divider,
+  DividerProps,
   SxProps,
   Theme,
   Typography,
@@ -18,6 +21,7 @@ type InfoRowProps = {
   metric?: ReactNode | number | string
   titleStyle?: TypographyProps
   subtitleStyle?: TypographyProps
+  dividerProps?: DividerProps
   sx?: SxProps<Theme>
 }
 
@@ -29,14 +33,14 @@ const InfoRow: React.FC<InfoRowProps> = ({
   metric,
   titleStyle,
   subtitleStyle,
+  dividerProps,
   sx,
 }) => {
   const defaultSx = {
     display: 'flex',
     justifyContent: 'space-between',
-    px: 2,
-    py: '6px',
     width: '100%',
+    py: 1,
   }
 
   const renderToolTip = (info: ReactNode | string) => {
@@ -78,7 +82,7 @@ const InfoRow: React.FC<InfoRowProps> = ({
         </Box>
         {metric && metric}
       </Box>
-      {showDivider && <Divider />}
+      {showDivider && <Divider variant='dotted' {...dividerProps} />}
     </>
   )
 }

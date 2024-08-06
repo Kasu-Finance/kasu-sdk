@@ -86,26 +86,26 @@ const TransactionCollapsedContent: React.FC<
       <TableCell align='right' width='18%'>
         <TokenAmount
           amount={formatAmount(actionHistory.totalRequested || '0')}
-          amountVariant='body1'
+          amountProps={{ variant: 'body1' }}
           symbol='USDC'
-          symbolVariant='caption'
+          symbolProps={{ variant: 'caption' }}
           sx={{ width: '100%', textAlign: 'right' }}
         />
       </TableCell>
       <TableCell align='right' width='18%'>
         <TokenAmount
           amount={formatAmount(actionHistory.totalAccepted || '0')}
-          amountVariant='body1'
+          amountProps={{ variant: 'body1' }}
           symbol='USDC'
-          symbolVariant='caption'
+          symbolProps={{ variant: 'caption' }}
           sx={{ width: '100%', textAlign: 'right' }}
         />
       </TableCell>
       <TableCell align='right' width='18%'>
         <TokenAmount
           amount={formatAmount(actionHistory.totalRejected || '0')}
-          amountVariant='body1'
-          symbolVariant='caption'
+          amountProps={{ variant: 'body1' }}
+          symbolProps={{ variant: 'caption' }}
           symbol='USDC'
           sx={{ width: '100%', textAlign: 'right' }}
         />

@@ -32,10 +32,9 @@ const ToolTip: React.FC<ToolTipProps> = ({ children, iconSx, ...rest }) => {
             (theme) => ({
               ml: 0.5,
               position: 'relative',
-              top: '2px',
               width: '18px',
               height: '18px',
-              color: theme.palette.primary.dark,
+              color: 'grey.200',
               cursor: 'help',
               transition: 'color 0.3s ease',
               '&:hover': {

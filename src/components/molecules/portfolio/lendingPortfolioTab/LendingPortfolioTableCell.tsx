@@ -14,8 +14,8 @@ const LendingPortfolioTableCell: React.FC<LendingPortfolioTableCellProps> = ({
   <TableCell sx={{ border: 'none', py: 0, height: 0 }} align='right' {...rest}>
     <Box width='max-content' ml='auto' height='100%'>
       <TokenAmount
-        amountVariant='body1'
-        symbolVariant='caption'
+        amountProps={{ variant: 'body1' }}
+        symbolProps={{ variant: 'caption' }}
         amount={value}
         symbol='USDC'
         height='100%'
