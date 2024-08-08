@@ -1,3 +1,5 @@
+'use client'
+
 import InfoIcon from '@mui/icons-material/Info'
 import { Tooltip, TooltipProps } from '@mui/material'
 import { SxProps, Theme } from '@mui/system'

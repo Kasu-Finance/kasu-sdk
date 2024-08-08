@@ -1083,6 +1083,13 @@
       "activePools": "No active Lending Strategies",
       "closedPools": "No closed Lending Strategies."
     },
+    "activePools": {
+      "table": {
+        "lossRate": "Loss Rate",
+        "loanFunds": "Total Loan Funds",
+        "loansUnder": "Loans Under Management"
+      }
+    },
     "closedPools": {
       "table": {
         "lossRate": "Loss Rate",

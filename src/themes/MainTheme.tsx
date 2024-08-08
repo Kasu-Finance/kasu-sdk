@@ -46,6 +46,17 @@ declare module '@mui/material/styles/createPalette' {
       pattern: string
       noises: string
     }
+    gold: {
+      extraLight: string
+      light: string
+      middle: string
+      dark: string
+      extraDark: string
+      pattern: string
+      noises: string
+      darkNoises: string
+      lightNoises: string
+    }
   }
 
   interface PaletteOptions {
@@ -64,6 +75,17 @@ declare module '@mui/material/styles/createPalette' {
       extraDark: string
       pattern: string
       noises: string
+    }
+    gold: {
+      extraLight: string
+      light: string
+      middle: string
+      dark: string
+      extraDark: string
+      pattern: string
+      noises: string
+      darkNoises: string
+      lightNoises: string
     }
   }
 }
@@ -144,6 +166,7 @@ const customTheme = createTheme({
       600: 'rgba(0, 0, 0, 0.12)',
       900: 'rgba(117, 117, 117, 1)',
     },
+
     info: {
       main: '#e5f3fa',
     },
@@ -151,10 +174,21 @@ const customTheme = createTheme({
       extraLight: 'rgba(244, 244, 244, 1)',
       light: 'rgba(205, 206, 208, 1)',
       middle: 'rgba(142, 142, 146, 1)',
-      dark: 'rgba(244, 244, 244, 1)',
+      dark: 'rgba(91, 91, 96, 1)',
       extraDark: 'rgba(40, 40, 42, 1)',
       pattern: 'rgba(255, 255, 255, 1)',
       noises: 'rgba(244, 244, 244, 1)',
+    },
+    gold: {
+      extraLight: 'rgba(244, 244, 244, 1)',
+      light: 'rgba(205, 206, 208, 1)',
+      middle: 'rgba(232, 192, 145, 1)',
+      dark: 'rgba(196, 153, 108, 1)',
+      extraDark: 'rgba(164, 123, 79, 1)',
+      pattern: 'rgba(255, 255, 255, 1)',
+      noises: 'rgba(244, 244, 244, 1)',
+      darkNoises: 'rgba(244, 244, 244, 1)',
+      lightNoises: 'rgba(244, 244, 244, 1)',
     },
   },
   typography: {
@@ -643,6 +677,36 @@ const customTheme = createTheme({
         },
       },
     },
+    MuiPagination: {
+      styleOverrides: {
+        root: {},
+      },
+    },
+    MuiPaginationItem: {
+      styleOverrides: {
+        root: {
+          '&:not(.MuiPaginationItem-ellipsis)': {
+            background: '#C4996C',
+            color: 'white',
+          },
+          '&.MuiPaginationItem-ellipsis': {
+            color: '#C4996C',
+          },
+          '&:hover': {
+            background: '#E8C091',
+          },
+          '&.Mui-selected': {
+            background: 'transparent',
+            color: '#C4996C',
+            border: '1px solid #C4996C',
+            pointerEvents: 'none',
+            '&:focus': {
+              background: 'transparent',
+            },
+          },
+        },
+      },
+    },
     MuiTablePagination: {
       styleOverrides: {
         root: {
@@ -656,6 +720,24 @@ const customTheme = createTheme({
         },
       },
     },
+    MuiButtonBase: {
+      styleOverrides: {
+        root: {
+          position: 'relative',
+          '&:not(.MuiIconButton-root):focus:before': {
+            content: '""',
+            width: 'calc(100% + 6px)',
+            height: 'calc(100% + 6px)',
+            border: '2px dotted #C4996C',
+            position: 'absolute',
+            borderRadius: 'inherit',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+          },
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {
@@ -663,15 +745,6 @@ const customTheme = createTheme({
           minWidth: 0,
           boxShadow: 'none',
           borderRadius: 120,
-
-          '&.MuiButton-sizeMedium': {
-            height: '42px',
-          },
-          '&.MuiButton-sizeSmall': {
-            height: '30px',
-            pl: 1.25,
-            pr: 1.25,
-          },
           '&.Mui-disabled': {
             pointerEvents: 'visible',
             cursor: 'not-allowed',
@@ -683,6 +756,14 @@ const customTheme = createTheme({
           '&:active': {
             boxShadow: 'none',
           },
+        },
+        sizeMedium: {
+          height: '42px',
+        },
+        sizeSmall: {
+          height: '30px',
+          pl: 1.25,
+          pr: 1.25,
         },
         contained: {
           color: 'white',

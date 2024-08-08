@@ -60,12 +60,9 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
             showDivider
             metric={
               <TokenAmount
-                amount={formatAmount(
-                  pool.delegate.totalLoanFundsOriginated || '0',
-                  {
-                    minValue: 1_000_000,
-                  }
-                )}
+                amount={formatAmount(pool.totalValueLocked || '0', {
+                  minValue: 1_000_000,
+                })}
                 symbol='USDC'
                 amountProps={{
                   variant: 'baseMdBold',
@@ -86,12 +83,9 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
             showDivider
             metric={
               <TokenAmount
-                amount={formatAmount(
-                  pool.delegate.totalLoanFundsOriginated || '0',
-                  {
-                    minValue: 1_000_000,
-                  }
-                )}
+                amount={formatAmount(pool.loansUnderManagement || '0', {
+                  minValue: 1_000_000,
+                })}
                 symbol='USDC'
                 amountProps={{
                   variant: 'baseMdBold',

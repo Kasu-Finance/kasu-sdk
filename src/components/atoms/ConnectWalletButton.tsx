@@ -2,13 +2,7 @@
 
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import CloseIcon from '@mui/icons-material/Close'
-import {
-  Button,
-  ButtonProps,
-  Chip,
-  IconButton,
-  Typography,
-} from '@mui/material'
+import { Box, Button, ButtonProps, Chip, Typography } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { forwardRef, useCallback, useEffect, useState } from 'react'
 
@@ -106,7 +100,7 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
         startIcon={<AccountBalanceWalletIcon color='primary' />}
         endIcon={
           connected || invalidChain ? (
-            <IconButton
+            <Box
               sx={(theme) => ({
                 '.MuiSvgIcon-root': {
                   width: 20,
@@ -117,7 +111,7 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
               onClick={disconnect}
             >
               <CloseIcon />
-            </IconButton>
+            </Box>
           ) : (
             <></>
           )

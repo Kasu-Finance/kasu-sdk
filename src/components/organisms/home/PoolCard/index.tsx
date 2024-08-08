@@ -1,8 +1,8 @@
 import { Box, Card, Typography } from '@mui/material'
 import Image from 'next/image'
 
-import PoolCardActions from '@/components/molecules/PoolCard/PoolCardActions'
-import PoolCardContent from '@/components/molecules/PoolCard/PoolCardContent'
+import PoolCardActions from '@/components/organisms/home/PoolCard/PoolCardActions'
+import PoolCardContent from '@/components/organisms/home/PoolCard/PoolCardContent'
 
 import { FireIcon, LockIcon } from '@/assets/icons'
 
@@ -40,16 +40,17 @@ const PoolCard: React.FC<PoolCardProps> = ({ pool }) => {
         width={240}
         height={240}
       />
-      <Typography
-        variant='h4'
-        mt={3}
-        mb={4}
-        color='primary'
+      <Box
+        height={72}
         maxWidth='90%'
         textAlign='center'
+        display='flex'
+        alignItems='center'
       >
-        {pool.poolName}
-      </Typography>
+        <Typography variant='h4' color='primary'>
+          {pool.poolName}
+        </Typography>
+      </Box>
       <Box
         borderRadius={2}
         bgcolor='white'

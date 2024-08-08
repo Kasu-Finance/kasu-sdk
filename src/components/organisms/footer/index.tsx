@@ -1,4 +1,4 @@
-import { Box, Link, Stack, Typography } from '@mui/material'
+import { Box, Button, Link, Stack, Typography } from '@mui/material'
 import Image from 'next/image'
 import React from 'react'
 
@@ -58,34 +58,38 @@ const Footer: React.FC = () => {
         width='100%'
         justifyContent='center'
       >
-        <a
+        <Button
           href='https://discord.gg/jm2V7vUg99'
           target='_blank'
           rel='noopener noreferrer'
+          sx={{ width: 'max-content', height: 'max-content', p: 0 }}
         >
           <DiscordIcon />
-        </a>
-        <a
+        </Button>
+        <Button
           href='https://t.me/KASU_Fi'
           target='_blank'
           rel='noopener noreferrer'
+          sx={{ width: 'max-content', height: 'max-content', p: 0 }}
         >
           <TelegramIcon />
-        </a>
-        <a
+        </Button>
+        <Button
           href='https://medium.com/@KasuFinance'
           target='_blank'
           rel='noopener noreferrer'
+          sx={{ width: 'max-content', height: 'max-content', p: 0 }}
         >
           <MediumIcon />
-        </a>
-        <a
+        </Button>
+        <Button
           href='https://twitter.com/KasuFinance'
           target='_blank'
           rel='noopener noreferrer'
+          sx={{ width: 'max-content', height: 'max-content', p: 0 }}
         >
           <TwitterIcon />
-        </a>
+        </Button>
       </Stack>
     </Box>
   )

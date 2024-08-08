@@ -36,7 +36,7 @@ const TokenAmount: React.FC<TokenAmountProps> = ({
     ) : (
       <div>
         <Typography
-          variant="h6"
+          variant='h6'
           component='span'
           display='inline-block'
           color='primary.main'
@@ -44,7 +44,7 @@ const TokenAmount: React.FC<TokenAmountProps> = ({
         >
           {amount}
         </Typography>
-        <Typography pl={1} variant="body1" component='span' {...symbolProps}>
+        <Typography pl={1} variant='body1' component='span' {...symbolProps}>
           {symbol}
         </Typography>
       </div>
@@ -55,14 +55,15 @@ const TokenAmount: React.FC<TokenAmountProps> = ({
       ) : (
         <Box color={(theme) => theme.palette.text.secondary}>
           <Typography
-            variant="body1"
+            variant='body1'
             component='span'
             display='inline-block'
             {...usdcProps}
           >
             {usdValue}
           </Typography>
-          <Typography pl={0.5} variant='caption' component='span'>
+          <Typography variant='caption' component='span'>
+            {' '}
             USDC
           </Typography>
         </Box>

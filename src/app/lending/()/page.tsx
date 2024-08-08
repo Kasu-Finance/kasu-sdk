@@ -4,7 +4,7 @@ import { Box } from '@mui/material'
 import { Suspense } from 'react'
 
 import PoolCardWrapperSkeleton from '@/components/molecules/loaders/home/PoolCardWrapperSkeleton'
-import PoolCardWrapper from '@/components/organisms/home/PoolCardWrapper'
+import PoolLayoutWrapper from '@/components/organisms/home/PoolLayoutWrapper'
 
 import { getPoolDelegate } from '@/app/api/poolDelegate/route'
 import { getPoolOverview } from '@/app/api/pools/route'
@@ -32,9 +32,9 @@ const LendingPage = async () => {
   }, [] as PoolOverviewWithDelegate[])
 
   return (
-    <Box display='flex' flexWrap='wrap' gap={3} mt={3}>
+    <Box mt={3}>
       <Suspense fallback={<PoolCardWrapperSkeleton />}>
-        <PoolCardWrapper pools={poolsWithDelegate} />
+        <PoolLayoutWrapper pools={poolsWithDelegate} />
       </Suspense>
     </Box>
   )
