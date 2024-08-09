@@ -47,7 +47,7 @@ const PoolCard: React.FC<PoolCardProps> = ({ pool }) => {
         display='flex'
         alignItems='center'
       >
-        <Typography variant='h4' color='primary'>
+        <Typography variant='h4' color='primary' lineHeight='24px'>
           {pool.poolName}
         </Typography>
       </Box>

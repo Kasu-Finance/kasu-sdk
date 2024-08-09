@@ -4,6 +4,7 @@ import { Box } from '@mui/material'
 import { Suspense } from 'react'
 
 import PoolCardWrapperSkeleton from '@/components/molecules/loaders/home/PoolCardWrapperSkeleton'
+import EmptyPoolsPlaceholder from '@/components/organisms/home/EmptyPoolsPlaceholder'
 import PoolLayoutWrapper from '@/components/organisms/home/PoolLayoutWrapper'
 
 import { getPoolDelegate } from '@/app/api/poolDelegate/route'
@@ -34,7 +35,10 @@ const LendingPage = async () => {
   return (
     <Box mt={3}>
       <Suspense fallback={<PoolCardWrapperSkeleton />}>
-        <PoolLayoutWrapper pools={poolsWithDelegate} />
+        <PoolLayoutWrapper
+          pools={poolsWithDelegate}
+          emptyPoolsPlaceholder={<EmptyPoolsPlaceholder isActivePool />}
+        />
       </Suspense>
     </Box>
   )

@@ -1080,8 +1080,8 @@
       "metric-5-tooltip": "Total unrecoverable losses expressed as a percentage of total loans associated with all Lending Strategies on the Kasu protocol."
     },
     "no-data": {
-      "activePools": "No active Lending Strategies",
-      "closedPools": "No closed Lending Strategies."
+      "activePools": "No Active Lending Strategies",
+      "closedPools": "No Closed Lending Strategies."
     },
     "activePools": {
       "table": {
