@@ -359,6 +359,22 @@ const customTheme = createTheme({
       .light-error-background {
         background-color: rgba(211, 47, 47, 0.04);
       }
+
+      a{
+        outline:none;
+        position:relative;
+
+        &:focus:before {
+          position: absolute;
+          content: "";
+          width: calc(100% + 4px);
+          height: calc(100% + 2px);
+          border: 2px dotted ${primaryColor};
+          border-radius: 4px;
+          top: 0;
+          left: -2px;
+        }
+      }
     `,
     },
     MuiAppBar: {
@@ -717,6 +733,33 @@ const customTheme = createTheme({
         },
         displayedRows: {
           fontSize: 12,
+        },
+      },
+    },
+    MuiAvatar: {
+      styleOverrides: {
+        root: {
+          '&[href]': {
+            position: 'relative',
+            overflow: 'unset',
+            outline: 'none',
+            border: 'none',
+            borderRadius: '50%',
+            img: {
+              borderRadius: 'inherit',
+            },
+            '&:focus:before': {
+              content: '""',
+              width: 'calc(100% + 6px)',
+              height: 'calc(100% + 6px)',
+              border: '2px dotted #C4996C',
+              position: 'absolute',
+              borderRadius: 'inherit',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+            },
+          },
         },
       },
     },

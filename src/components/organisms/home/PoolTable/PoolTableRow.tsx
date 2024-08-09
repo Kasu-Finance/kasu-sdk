@@ -7,14 +7,17 @@ import {
   TableRow,
   Typography,
 } from '@mui/material'
+import Link from 'next/link'
 
 import useTranslation from '@/hooks/useTranslation'
 
+import NextLink from '@/components/atoms/NextLink'
 import TokenAmount from '@/components/atoms/TokenAmount'
 import PoolTableRowApy from '@/components/organisms/home/PoolTable/PoolTableRowApy'
 
 import { BriefcaseIcon, MoneyIcon, PouchIcon, WalletIcon } from '@/assets/icons'
 
+import { Routes } from '@/config/routes'
 import { capitalize, formatAmount, formatPercentage } from '@/utils'
 import formatDuration from '@/utils/formats/formatDuration'
 
@@ -37,6 +40,8 @@ const PoolTableRow: React.FC<PoolTableRowProps> = ({ pool }) => {
 
   const isMultiTranche = pool.tranches.length > 1
 
+  const href = `${Routes.lending.root.url}/${pool.id}`
+
   return (
     <>
       <TableRow>
@@ -58,12 +63,16 @@ const PoolTableRow: React.FC<PoolTableRowProps> = ({ pool }) => {
                 objectFit: 'contain',
                 bgcolor: 'gray.extraDark',
               }}
+              component={Link}
+              href={href}
             />
             <Stack>
               <Typography
                 variant='baseMdBold'
                 color='gold.dark'
                 whiteSpace='normal'
+                component={NextLink}
+                href={href}
               >
                 {pool.poolName}
               </Typography>
