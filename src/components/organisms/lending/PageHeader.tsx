@@ -43,6 +43,7 @@ const PageHeader: React.FC<PageHeaderProps> = async ({ poolId }) => {
         startIcon={<ChevronLeftRoundedIcon />}
         sx={{
           textTransform: 'unset',
+          minWidth: 233,
           '.MuiButton-icon': {
             mr: '13px',
           },
