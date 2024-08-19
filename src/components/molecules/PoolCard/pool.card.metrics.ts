@@ -17,7 +17,7 @@ export const getPoolCardMetrics = (
     {
       id: PoolDelegateMetricIds.TotalFunds,
       title: 'details.poolDelegate.totalFunds',
-      value: formatAmount(poolDelegate?.totalLoanFundsOriginated || '0', {
+      value: formatAmount(pool.loanFundsOriginated || '0', {
         minValue: 1_000_000,
       }),
       suffix: ' USDC',
