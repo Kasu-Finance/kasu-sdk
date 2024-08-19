@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material'
+import { Box, darken, Typography } from '@mui/material'
 import React from 'react'
 
 import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
@@ -10,6 +10,7 @@ import NextLink from '@/components/atoms/NextLink'
 import TokenAmount from '@/components/atoms/TokenAmount'
 
 import { MetricGroupType, PoolDelegateMetricIds } from '@/constants'
+import { theme } from '@/themes/MainTheme'
 import formatDuration from '@/utils/formats/formatDuration'
 
 import { PoolMetric } from '@/types/lending'
@@ -104,7 +105,7 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
                                 ? '#'
                                 : `/lending/${item.id}`
                             }
-                            color='primary.contrastText'
+                            color={darken(theme.palette.primary.main, 0.2)}
                             variant='body1'
                             fontSize={isMobile ? 10 : 'inherit'}
                             align={isMobile ? 'left' : 'right'}
