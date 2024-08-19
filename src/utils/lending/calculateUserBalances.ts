@@ -26,7 +26,8 @@ export const calculateUserLendingSummary = (
 
       acc.totalInvested = acc.totalInvested.add(cur.balanceData.balance)
 
-      acc.averageApy += parseFloat(cur.apy) * parseInt(cur.poolCapacity)
+      acc.averageApy +=
+        parseFloat(cur.apy) * parseInt(cur.poolCapacityPercentage)
 
       return acc
     },

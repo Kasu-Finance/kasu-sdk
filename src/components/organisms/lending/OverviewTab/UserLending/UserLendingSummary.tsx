@@ -63,7 +63,7 @@ const UserLendingSummary: React.FC<UserLendingSummaryProps> = ({ pool }) => {
           toolTipInfo={t(
             'lending.poolOverview.investmentCard.weightedAvgApy.tooltip'
           )}
-          content={(averageApy * 100).toString()}
+          content={(averageApy * 100).toFixed(2)}
           unit='%'
           infoColumnProps={{ titleStyle: { textTransform: 'capitalize' } }}
         />
