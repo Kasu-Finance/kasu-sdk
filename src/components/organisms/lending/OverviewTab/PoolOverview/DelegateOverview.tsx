@@ -94,7 +94,7 @@ const DelegateOverview: React.FC<DelegateOverviewProps> = ({ pool }) => {
             toolTipInfo={t('lending.poolOverview.detailCard.industry.tooltip')}
             showDivider
             metric={
-              <Typography variant='baseMdBold'>
+              <Typography variant='baseMdBold' maxWidth={350} textAlign='right'>
                 {pool.industryExposure}
               </Typography>
             }

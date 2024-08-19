@@ -17,7 +17,8 @@ const UserTransactions = () => {
 
   const { isLoading, transactionHistory } = useTransactionHistory()
 
-  if (isLoading || !transactionHistory) return null
+  if (isLoading || !transactionHistory || !transactionHistory.length)
+    return null
 
   return (
     <CustomCard>
