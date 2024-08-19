@@ -20,6 +20,7 @@ import { BriefcaseIcon, MoneyIcon, PouchIcon, WalletIcon } from '@/assets/icons'
 import { Routes } from '@/config/routes'
 import { capitalize, formatAmount, formatPercentage } from '@/utils'
 import formatDuration from '@/utils/formats/formatDuration'
+import getInitials from '@/utils/getInitials'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
@@ -62,10 +63,13 @@ const PoolTableRow: React.FC<PoolTableRowProps> = ({ pool }) => {
                 height: 80,
                 objectFit: 'contain',
                 bgcolor: 'gray.extraDark',
+                textDecoration: 'none',
               }}
               component={Link}
               href={href}
-            />
+            >
+              {getInitials(pool.poolName)}
+            </Avatar>
             <Stack>
               <Typography
                 variant='baseMdBold'
