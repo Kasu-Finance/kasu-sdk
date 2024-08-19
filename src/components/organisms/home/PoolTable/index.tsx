@@ -40,6 +40,7 @@ const PoolTable: React.FC<PoolTableProps> = ({ pools }) => {
             }
           : undefined
       }
+      sx={{ boxShadow: '0px 5px 20px 0px rgba(0, 0, 0, 0.1)' }}
     />
   )
 }

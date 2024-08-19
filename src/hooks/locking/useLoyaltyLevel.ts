@@ -4,6 +4,7 @@ const LOYALTY_LEVEL_2_REQUIREMENT = 5
 export type LoyaltyLevel = -1 | 0 | 1 | 2
 
 type useLoyaltyLevelReturnType<T extends number | undefined> = {
+  isLoyal: boolean
   level_1: number
   level_2: number
   currentLevel: T extends number ? LoyaltyLevel : undefined
@@ -33,6 +34,7 @@ function useLoyaltyLevel(
     : undefined
 
   return {
+    isLoyal: currentLevel === 1 || currentLevel === 2,
     level_1: LOYALTY_LEVEL_1_REQUIREMENT,
     level_2: LOYALTY_LEVEL_2_REQUIREMENT,
     currentLevel,

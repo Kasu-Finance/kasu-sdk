@@ -1,4 +1,4 @@
-import { alpha, createTheme, lighten } from '@mui/material'
+import { alpha, createTheme } from '@mui/material'
 import { Open_Sans } from 'next/font/google'
 
 const openSans = Open_Sans({ preload: false })
@@ -120,7 +120,7 @@ const headingFontFamily = 'Barlow Condensed'
 const primaryColor = '#C4996C'
 const primaryContrastColor = '#28282a'
 
-const customTheme = createTheme({
+export const theme = createTheme({
   palette: {
     background: {
       default: 'white',
@@ -187,7 +187,7 @@ const customTheme = createTheme({
       extraDark: 'rgba(164, 123, 79, 1)',
       pattern: 'rgba(255, 255, 255, 1)',
       noises: 'rgba(244, 244, 244, 1)',
-      darkNoises: 'rgba(244, 244, 244, 1)',
+      darkNoises: 'rgba(205, 163, 112, 1)',
       lightNoises: 'rgba(244, 244, 244, 1)',
     },
   },
@@ -405,15 +405,13 @@ const customTheme = createTheme({
           style: {
             backgroundColor: 'unset',
             borderStyle: 'dotted',
-            borderColor: primaryColor,
+            borderColor: 'rgba(164, 123, 79, 1)',
           },
         },
       ],
       styleOverrides: {
         root: {
-          ['@media (max-width:600px)']: {
-            backgroundColor: 'rgba(224, 193, 156, 1)',
-          },
+          borderColor: 'rgba(40, 40, 42, 1)',
         },
       },
     },
@@ -434,61 +432,15 @@ const customTheme = createTheme({
     },
     MuiSlider: {
       styleOverrides: {
-        root: {
-          height: 4,
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          display: 'block',
-        },
+        root: {},
         mark: {
-          width: 8,
-          height: 8,
-          borderRadius: '2px',
-          backgroundImage: 'url("/images/seamless-noise-20.png")',
-          backgroundRepeat: 'repeat',
-          backgroundColor: 'rgba(211, 179, 139, 1)',
-          backgroundPosition: '0 0',
-          backgroundSize: '120px 86px',
-          '&[data-index="0"]': {
-            marginLeft: '2px',
-          },
+          '&[data-index="0"]': {},
         },
-        markActive: {
-          width: 4,
-          height: 4,
-          backgroundColor: lighten('#ffffff', 0.2),
-        },
-        rail: {
-          backgroundImage: 'url("/images/seamless-noise-20.png")',
-          backgroundRepeat: 'repeat',
-          backgroundColor: 'rgba(161, 136, 106, 1)',
-          backgroundPosition: '0 0',
-          backgroundSize: '120px 86px',
-          padding: 1,
-          border: 'none',
-        },
-        track: {
-          backgroundImage: 'url("/images/seamless-noise-20.png")',
-          backgroundRepeat: 'repeat',
-          backgroundColor: 'rgba(161, 136, 106, 1)',
-          backgroundPosition: '0 0',
-          backgroundSize: '120px 86px',
-          padding: 1,
-          border: 'none',
-        },
-        thumb: {
-          backgroundImage: 'url("/images/seamless-noise-20.png")',
-          backgroundRepeat: 'repeat',
-          backgroundColor: 'rgba(211, 179, 139, 1)',
-          backgroundPosition: '0 0',
-          backgroundSize: '120px 86px',
-        },
-        valueLabel: {
-          background: 'rgba(40, 40, 42, 0.6)',
-          '&:before': {
-            background: 'rgb(126 126 127)',
-          },
-        },
+        markActive: {},
+        rail: {},
+        track: {},
+        thumb: {},
+        valueLabel: {},
       },
     },
     MuiAlert: {
@@ -695,7 +647,16 @@ const customTheme = createTheme({
     },
     MuiPagination: {
       styleOverrides: {
-        root: {},
+        root: {
+          li: {
+            '&:first-child': {
+              marginRight: 80,
+            },
+            '&:last-child': {
+              marginLeft: 80,
+            },
+          },
+        },
       },
     },
     MuiPaginationItem: {
@@ -920,5 +881,3 @@ const customTheme = createTheme({
     },
   },
 })
-
-export const theme = customTheme

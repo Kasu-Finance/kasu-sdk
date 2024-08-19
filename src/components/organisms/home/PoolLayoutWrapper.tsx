@@ -4,8 +4,8 @@ import { ReactNode } from 'react'
 
 import useHomeState from '@/hooks/context/useHomeState'
 
-import PoolCardWrapperSkeleton from '@/components/molecules/loaders/home/PoolCardWrapperSkeleton'
 import PoolCardContainer from '@/components/organisms/home/PoolCard/PoolCardContainer'
+import PoolLayoutWrapperSkeleton from '@/components/organisms/home/PoolLayoutWrapperSkeleton'
 import PoolTable from '@/components/organisms/home/PoolTable'
 
 import { LayoutTypes } from '@/context/home/home.types'
@@ -24,7 +24,7 @@ const PoolLayoutWrapper: React.FC<PoolCardWrapperProps> = ({
   const { layout } = useHomeState()
 
   if (!layout) {
-    return <PoolCardWrapperSkeleton />
+    return <PoolLayoutWrapperSkeleton />
   }
 
   if (!pools.length) {

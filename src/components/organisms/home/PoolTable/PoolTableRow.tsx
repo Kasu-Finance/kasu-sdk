@@ -1,7 +1,6 @@
 import {
   Avatar,
   Box,
-  Divider,
   Stack,
   TableCell,
   TableRow,
@@ -11,6 +10,7 @@ import Link from 'next/link'
 
 import useTranslation from '@/hooks/useTranslation'
 
+import DottedDivider from '@/components/atoms/DottedDivider'
 import NextLink from '@/components/atoms/NextLink'
 import TokenAmount from '@/components/atoms/TokenAmount'
 import PoolTableRowApy from '@/components/organisms/home/PoolTable/PoolTableRowApy'
@@ -171,7 +171,7 @@ const PoolTableRow: React.FC<PoolTableRowProps> = ({ pool }) => {
       </TableRow>
       <TableRow>
         <TableCell colSpan={6} sx={{ py: 0 }}>
-          <Divider variant='dotted' />
+          <DottedDivider />
         </TableCell>
       </TableRow>
     </>

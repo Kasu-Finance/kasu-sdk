@@ -1,9 +1,9 @@
 import { Box } from '@mui/material'
 import { Suspense } from 'react'
 
-import PoolCardWrapperSkeleton from '@/components/molecules/loaders/home/PoolCardWrapperSkeleton'
 import EmptyPoolsPlaceholder from '@/components/organisms/home/EmptyPoolsPlaceholder'
 import PoolLayoutWrapper from '@/components/organisms/home/PoolLayoutWrapper'
+import PoolLayoutWrapperSkeleton from '@/components/organisms/home/PoolLayoutWrapperSkeleton'
 
 import { getPoolDelegate } from '@/app/api/poolDelegate/route'
 import { getPoolOverview } from '@/app/api/pools/route'
@@ -32,7 +32,7 @@ const ClosedLendingStrategies = async () => {
 
   return (
     <Box mt={3}>
-      <Suspense fallback={<PoolCardWrapperSkeleton />}>
+      <Suspense fallback={<PoolLayoutWrapperSkeleton />}>
         <PoolLayoutWrapper
           pools={poolsWithDelegate}
           emptyPoolsPlaceholder={<EmptyPoolsPlaceholder isActivePool={false} />}

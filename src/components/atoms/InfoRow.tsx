@@ -1,16 +1,11 @@
 'use client'
 
-import {
-  Box,
-  Divider,
-  DividerProps,
-  SxProps,
-  Theme,
-  Typography,
-  TypographyProps,
-} from '@mui/material'
+import { Box, SxProps, Theme, Typography, TypographyProps } from '@mui/material'
 import { isValidElement, ReactNode } from 'react'
 
+import DottedDivider, {
+  DottedDividerProps,
+} from '@/components/atoms/DottedDivider'
 import ToolTip from '@/components/atoms/ToolTip'
 
 type InfoRowProps = {
@@ -21,7 +16,7 @@ type InfoRowProps = {
   metric?: ReactNode | number | string
   titleStyle?: TypographyProps
   subtitleStyle?: TypographyProps
-  dividerProps?: DividerProps
+  dividerProps?: DottedDividerProps
   sx?: SxProps<Theme>
 }
 
@@ -40,7 +35,7 @@ const InfoRow: React.FC<InfoRowProps> = ({
     display: 'flex',
     justifyContent: 'space-between',
     width: '100%',
-    py: 1,
+    py: 2,
   }
 
   const renderToolTip = (info: ReactNode | string) => {
@@ -82,7 +77,7 @@ const InfoRow: React.FC<InfoRowProps> = ({
         </Box>
         {metric && metric}
       </Box>
-      {showDivider && <Divider variant='dotted' {...dividerProps} />}
+      {showDivider && <DottedDivider {...dividerProps} />}
     </>
   )
 }

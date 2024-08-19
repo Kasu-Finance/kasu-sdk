@@ -4,12 +4,12 @@ import { Tab } from '@mui/material'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-type HomeTabProps = {
+type CustomTabProps = {
   label: string
   value: string
 }
 
-const HomeTab: React.FC<HomeTabProps> = ({ label, value }) => {
+const CustomTab: React.FC<CustomTabProps> = ({ label, value }) => {
   const pathName = usePathname()
 
   return (
@@ -25,6 +25,8 @@ const HomeTab: React.FC<HomeTabProps> = ({ label, value }) => {
             : theme.palette.gray.middle,
         textTransform: 'capitalize',
         px: 0,
+        opacity: 1,
+        minWidth: 'unset',
         ...theme.typography.baseMd,
         '& + .MuiTab-root': {
           ml: 2,
@@ -34,4 +36,4 @@ const HomeTab: React.FC<HomeTabProps> = ({ label, value }) => {
   )
 }
 
-export default HomeTab
+export default CustomTab

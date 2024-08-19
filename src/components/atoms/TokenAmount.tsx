@@ -6,7 +6,7 @@ import {
   TypographyProps,
 } from '@mui/material'
 
-type TokenAmountProps = BoxProps & {
+export type TokenAmountProps = BoxProps & {
   amount: string
   symbol: string
   amountProps?: TypographyProps
@@ -34,9 +34,9 @@ const TokenAmount: React.FC<TokenAmountProps> = ({
     {showSkeleton ? (
       <Skeleton variant='rounded' height={32} />
     ) : (
-      <div>
+      <Box>
         <Typography
-          variant='h6'
+          variant='h4'
           component='span'
           display='inline-block'
           color='primary.main'
@@ -44,10 +44,10 @@ const TokenAmount: React.FC<TokenAmountProps> = ({
         >
           {amount}
         </Typography>
-        <Typography pl={1} variant='body1' component='span' {...symbolProps}>
+        <Typography pl={1} variant='baseMd' component='span' {...symbolProps}>
           {symbol}
         </Typography>
-      </div>
+      </Box>
     )}
     {usdValue &&
       (showSkeleton ? (

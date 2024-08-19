@@ -1,6 +1,8 @@
-import { Box, Card, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import Image from 'next/image'
 
+import CustomCard from '@/components/atoms/CustomCard'
+import CustomCardContent from '@/components/atoms/CustomCard/CustomCardContent'
 import PoolCardActions from '@/components/organisms/home/PoolCard/PoolCardActions'
 import PoolCardContent from '@/components/organisms/home/PoolCard/PoolCardContent'
 
@@ -14,21 +16,12 @@ interface PoolCardProps {
 
 const PoolCard: React.FC<PoolCardProps> = ({ pool }) => {
   return (
-    <Card
+    <CustomCard
       sx={{
-        flex: 1,
-        bgcolor: 'gray.extraDark',
-        overflow: 'unset',
-        borderTopLeftRadius: 8,
-        borderTopRightRadius: 8,
-        borderBottomLeftRadius: 25, // to prevent extra pixels from rendering
-        borderBottomRightRadius: 25, // to prevent extra pixels from rendering
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        pt: 3,
-        boxShadow: '0px 5px 20px 0px rgba(0, 0, 0, 0.1)',
       }}
     >
       <Box position='absolute' top={16} left={16}>
@@ -51,19 +44,11 @@ const PoolCard: React.FC<PoolCardProps> = ({ pool }) => {
           {pool.poolName}
         </Typography>
       </Box>
-      <Box
-        borderRadius={2}
-        bgcolor='white'
-        display='flex'
-        flexDirection='column'
-        flexGrow={1}
-        width='100%'
-        overflow='hidden'
-      >
+      <CustomCardContent>
         <PoolCardContent pool={pool} />
         <PoolCardActions pool={pool} />
-      </Box>
-    </Card>
+      </CustomCardContent>
+    </CustomCard>
   )
 }
 

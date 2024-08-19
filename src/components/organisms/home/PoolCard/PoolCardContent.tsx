@@ -1,10 +1,10 @@
-import { Box, CardContent, Stack, Typography } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
+import CustomCardContentInner from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import InfoRow from '@/components/atoms/InfoRow'
-import TokenAmount from '@/components/atoms/TokenAmount'
 import WaveBox from '@/components/atoms/WaveBox'
 
 import { formatAmount, formatPercentage } from '@/utils'
@@ -49,9 +49,7 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
           </Stack>
         ))}
       </Box>
-      <CardContent
-        sx={{ borderRadius: 2, bgcolor: 'white', '&:last-child': { pb: 2.5 } }}
-      >
+      <CustomCardContentInner>
         {!isActivePool && (
           <InfoRow
             title={t('general.tvl')}
@@ -59,17 +57,12 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
             toolTipInfo={t('lending.poolOverview.detailCard.tvl.tooltip')}
             showDivider
             metric={
-              <TokenAmount
-                amount={formatAmount(pool.totalValueLocked || '0', {
+              <Typography variant='baseMdBold'>
+                {formatAmount(pool.totalValueLocked || '0', {
                   minValue: 1_000_000,
-                })}
-                symbol='USDC'
-                amountProps={{
-                  variant: 'baseMdBold',
-                  color: 'gray.extraDark',
-                }}
-                symbolProps={{ variant: 'baseMdBold' }}
-              />
+                })}{' '}
+                USDC
+              </Typography>
             }
           />
         )}
@@ -82,17 +75,12 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
             )}
             showDivider
             metric={
-              <TokenAmount
-                amount={formatAmount(pool.loansUnderManagement || '0', {
+              <Typography variant='baseMdBold'>
+                {formatAmount(pool.loansUnderManagement || '0', {
                   minValue: 1_000_000,
-                })}
-                symbol='USDC'
-                amountProps={{
-                  variant: 'baseMdBold',
-                  color: 'gray.extraDark',
-                }}
-                symbolProps={{ variant: 'baseMdBold' }}
-              />
+                })}{' '}
+                USDC
+              </Typography>
             }
           />
         )}
@@ -102,20 +90,12 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
           toolTipInfo={t('details.poolDelegate.totalFunds.tooltip')}
           showDivider
           metric={
-            <TokenAmount
-              amount={formatAmount(
-                pool.delegate.totalLoanFundsOriginated || '0',
-                {
-                  minValue: 1_000_000,
-                }
-              )}
-              symbol='USDC'
-              amountProps={{
-                variant: 'baseMdBold',
-                color: 'gray.extraDark',
-              }}
-              symbolProps={{ variant: 'baseMdBold' }}
-            />
+            <Typography variant='baseMdBold'>
+              {formatAmount(pool.delegate.totalLoanFundsOriginated || '0', {
+                minValue: 1_000_000,
+              })}{' '}
+              USDC
+            </Typography>
           }
         />
         {isActivePool && (
@@ -140,15 +120,9 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
           toolTipInfo={t('details.poolDelegate.totalLossRate.tooltip')}
           showDivider
           metric={
-            <TokenAmount
-              amount={formatPercentage(pool.delegate.historicLossRate)}
-              symbol=''
-              amountProps={{
-                variant: 'baseMdBold',
-                color: 'gray.extraDark',
-              }}
-              symbolProps={{ variant: 'baseMdBold' }}
-            />
+            <Typography variant='baseMdBold'>
+              {formatPercentage(pool.delegate.historicLossRate)}
+            </Typography>
           }
         />
         <InfoRow
@@ -173,7 +147,7 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
             sx={{ flexWrap: 'wrap' }}
           />
         )}
-      </CardContent>
+      </CustomCardContentInner>
     </WaveBox>
   )
 }

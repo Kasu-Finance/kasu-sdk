@@ -5,9 +5,9 @@ import { usePathname } from 'next/navigation'
 
 import useTranslation from '@/hooks/useTranslation'
 
+import CustomTab from '@/components/atoms/CustomTab'
 import TabsContainer from '@/components/atoms/TabsContainer'
 import DisplayOptions from '@/components/organisms/home/DisplayOptions'
-import HomeTab from '@/components/organisms/home/HomeTab'
 
 import { Routes } from '@/config/routes'
 
@@ -27,11 +27,11 @@ const HomeTabs = () => {
           width: 'max-content',
         }}
       >
-        <HomeTab
+        <CustomTab
           label={t('home.tabs.activePools')}
           value={Routes.lending.root.url}
         />
-        <HomeTab
+        <CustomTab
           label={t('home.tabs.closedPools')}
           value={Routes.lending.closedLendingStrategies.url}
         />

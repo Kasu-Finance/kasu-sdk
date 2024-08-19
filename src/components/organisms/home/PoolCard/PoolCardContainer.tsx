@@ -25,7 +25,7 @@ const PoolCardContainer: React.FC<PoolCardContainerProps> = ({ pools }) => {
           <PoolCard pool={pool} key={pool.id} />
         ))}
       </Box>
-      {CARDS_PER_PAGE > pools.length && (
+      {pools.length > CARDS_PER_PAGE && (
         <Pagination
           color='primary'
           boundaryCount={2}

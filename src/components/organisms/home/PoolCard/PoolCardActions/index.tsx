@@ -4,7 +4,7 @@ import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
-import LendButton from '@/components/organisms/home/PoolCard/PoolCardActions/LendButton'
+import LendButton from '@/components/atoms/LendButton'
 
 import { Routes } from '@/config/routes'
 

@@ -2,16 +2,19 @@ import {
   Pagination,
   PaginationProps,
   Stack,
+  StackProps,
   SxProps,
   Table,
   TableBody,
+  TableCell,
   TableContainer,
   TableFooter,
   TableHead,
+  TableRow,
 } from '@mui/material'
 import type { ReactNode } from 'react'
 
-type CustomTableTestProps = {
+type CustomTableTestProps = StackProps & {
   tableContainerSx?: SxProps
   tableSx?: SxProps
   tableHeaderSx?: SxProps
@@ -31,16 +34,20 @@ const CustomTableTest: React.FC<CustomTableTestProps> = ({
   tableBody,
   tableFooter,
   paginationProps,
+  ...rest
 }) => {
   return (
     <Stack
-      sx={{
-        width: '100%',
-        boxShadow: '0px 5px 20px 0px rgba(0, 0, 0, 0.1)',
-        alignItems: 'center',
-      }}
       spacing={3}
       pb={2}
+      {...rest}
+      sx={[
+        {
+          width: '100%',
+          alignItems: 'center',
+        },
+        ...(Array.isArray(rest.sx) ? rest.sx : [rest.sx]),
+      ]}
     >
       <TableContainer
         sx={[
@@ -91,6 +98,10 @@ const CustomTableTest: React.FC<CustomTableTestProps> = ({
               },
             }}
           >
+            {/* add spacing before tablebody */}
+            <TableRow>
+              <TableCell sx={{ p: 1 }} colSpan={100} />
+            </TableRow>
             {tableBody}
           </TableBody>
           {tableFooter && (

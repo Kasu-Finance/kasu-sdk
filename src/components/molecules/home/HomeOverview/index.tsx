@@ -3,7 +3,7 @@ import { LendingTotals } from '@solidant/kasu-sdk/src/services/DataService/types
 
 import useTranslation from '@/hooks/useTranslation'
 
-import HomeOverviewCard from '@/components/molecules/home/HomeOverview/HomeOverviewCard'
+import WaveCard from '@/components/molecules/WaveCard'
 
 import { formatAmount } from '@/utils'
 
@@ -14,40 +14,40 @@ const HomeOverview: React.FC<{
 
   const metrics = [
     {
-      titleKey: t('home.summary.metric-1'),
-      tooltipKey: t('home.summary.metric-1-tooltip'),
+      title: t('home.summary.metric-1'),
+      toolTipInfo: t('home.summary.metric-1-tooltip'),
       content: `${formatAmount(lendingTotals?.totalValueLocked || '0', {
         minValue: 1_000_000,
       })}`,
       unit: 'USDC',
     },
     {
-      titleKey: t('home.summary.metric-2'),
-      tooltipKey: t('home.summary.metric-2-tooltip'),
+      title: t('home.summary.metric-2'),
+      toolTipInfo: t('home.summary.metric-2-tooltip'),
       content: `${formatAmount(lendingTotals?.loansUnderManagement || '0', {
         minValue: 1_000_000,
       })}`,
       unit: 'USDC',
     },
     {
-      titleKey: t('home.summary.metric-3'),
-      tooltipKey: t('home.summary.metric-3-tooltip'),
+      title: t('home.summary.metric-3'),
+      toolTipInfo: t('home.summary.metric-3-tooltip'),
       content: `${formatAmount(lendingTotals?.totalLoanFundsOriginated || '0', {
         minValue: 1_000_000,
       })}`,
       unit: 'USDC',
     },
     {
-      titleKey: t('home.summary.metric-4'),
-      tooltipKey: t('home.summary.metric-4-tooltip'),
+      title: t('home.summary.metric-4'),
+      toolTipInfo: t('home.summary.metric-4-tooltip'),
       content: `${formatAmount(lendingTotals?.totalYieldEarned || '0', {
         maxDecimals: 4,
       })}`,
       unit: 'USDC',
     },
     {
-      titleKey: t('home.summary.metric-5'),
-      tooltipKey: t('home.summary.metric-5-tooltip'),
+      title: t('home.summary.metric-5'),
+      toolTipInfo: t('home.summary.metric-5-tooltip'),
       content: `${formatAmount(lendingTotals?.totalLossRate * 100 || '0')}`,
       unit: '%',
     },
@@ -64,11 +64,7 @@ const HomeOverview: React.FC<{
         gap={{ xs: 2 }}
       >
         {metrics.map((metric, index) => (
-          <HomeOverviewCard
-            key={index}
-            {...metric}
-            isLast={index === metrics.length - 1}
-          />
+          <WaveCard key={index} {...metric} height={116} />
         ))}
       </Box>
     </Box>
