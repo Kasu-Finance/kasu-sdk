@@ -5,8 +5,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getKasuSDK } from '@/actions/getKasuSDK'
 import { GET as fetchPools } from '@/app/api/pools/route'
 
-export const dynamic = 'force-dynamic'
-
 const API_ROUTE_TTL = 60 * 60 // 1 hour
 const CACHE_TTL = 60 * 60 // 1 hour
 
