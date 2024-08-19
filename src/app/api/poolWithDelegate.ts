@@ -1,13 +1,13 @@
 import { unstable_cache } from 'next/cache'
 
-import getPoolDelegate from '@/requests/poolDelegate'
-import getPoolOverview from '@/requests/poolOverview'
+import { getPoolDelegate } from '@/app/api/poolDelegate/route'
+import { getPoolOverview } from '@/app/api/pools/route'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
 const CACHE_TTL = 60 * 60 // 1 hour
 
-const getPoolWithDelegate = unstable_cache(
+export const getPoolWithDelegate = unstable_cache(
   async (poolId?: string) => {
     const [pools, poolDelegates] = await Promise.all([
       getPoolOverview(),
@@ -41,5 +41,3 @@ const getPoolWithDelegate = unstable_cache(
     revalidate: CACHE_TTL,
   }
 )
-
-export default getPoolWithDelegate
