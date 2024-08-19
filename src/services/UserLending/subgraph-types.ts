@@ -11,8 +11,10 @@ export interface UserRequestsSubgraph {
         lendingPool: {
             id: string;
             name: string;
+            balance: string;
             tranches: {
                 orderId: string;
+                shares: string;
             }[];
         };
         tranche: {

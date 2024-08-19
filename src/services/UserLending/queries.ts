@@ -18,8 +18,10 @@ export const userRequestsQuery = gql`
             lendingPool {
                 id
                 name
+                balance
                 tranches {
                     orderId
+                    shares
                 }
             }
             tranche {
@@ -70,18 +72,6 @@ export const totalUserLoyaltyRewardsQuery = gql`
     query TotalUserLoyaltyRewardsQuery($userAddress: String!) {
         user(id: $userAddress) {
             totalUserLoyaltyRewards
-        }
-    }
-`;
-
-export const lendingPoolsBalanceQuery = gql`
-    query LendingPoolsBalanceQuery($unusedPools: [String]!) {
-        lendingPools(where: { id_not_in: $unusedPools }) {
-            id
-            balance
-            tranches {
-                shares
-            }
         }
     }
 `;
