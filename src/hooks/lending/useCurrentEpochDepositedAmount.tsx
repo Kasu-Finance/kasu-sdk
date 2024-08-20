@@ -24,7 +24,7 @@ const useCurrentEpochDepositedAmount = (
   )
 
   return {
-    currentEpochDepositedAmount: '60' || data,
+    currentEpochDepositedAmount: data,
     error,
     isLoading,
     updateCurrentEpochDepositedAmount: mutate,
