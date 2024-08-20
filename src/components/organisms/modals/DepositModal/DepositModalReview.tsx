@@ -10,12 +10,12 @@ import ColoredBox from '@/components/atoms/ColoredBox'
 import Countdown from '@/components/atoms/Countdown'
 import InfoColumn from '@/components/atoms/InfoColumn'
 import TokenAmount from '@/components/atoms/TokenAmount'
-import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 import dayjs from '@/dayjs'
 import { formatAmount, formatTimestamp } from '@/utils'
+import { PoolData } from '@/utils/lending/getPoolData'
 
 type DepositModalReviewProps = {
   poolData: PoolData

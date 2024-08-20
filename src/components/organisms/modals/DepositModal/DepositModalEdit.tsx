@@ -6,12 +6,13 @@ import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useTranslation from '@/hooks/useTranslation'
 
 import DepositTrancheSelect from '@/components/molecules/lending/DepositModal/DepositTrancheSelect'
-import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 import DepositDescription from '@/components/organisms/modals/DepositModal/DepositDescription'
 import SwapAndDeposit from '@/components/organisms/modals/DepositModal/SwapAndDeposit'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
+
+import { PoolData } from '@/utils/lending/getPoolData'
 
 type DepositModalEditProps = {
   poolData: PoolData

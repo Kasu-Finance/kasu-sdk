@@ -7,9 +7,10 @@ import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useTranslation from '@/hooks/useTranslation'
 
 import KycButton from '@/components/atoms/KycButton'
-import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
+
+import { PoolData } from '@/utils/lending/getPoolData'
 
 type EarningsCalculatorActionsProps = {
   poolData: PoolData

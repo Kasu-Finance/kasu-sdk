@@ -11,10 +11,10 @@ import useDebounce from '@/hooks/useDebounce'
 import useTranslation from '@/hooks/useTranslation'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
-import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 import NumericalInput from '@/components/molecules/NumericalInput'
 
 import { formatAmount, toBigNumber } from '@/utils'
+import { PoolData } from '@/utils/lending/getPoolData'
 
 type DepositAmountInputProps = {
   balance: string

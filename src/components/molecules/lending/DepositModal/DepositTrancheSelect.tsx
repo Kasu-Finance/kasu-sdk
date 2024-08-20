@@ -13,7 +13,7 @@ import { useMemo } from 'react'
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useTranslation from '@/hooks/useTranslation'
 
-import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
+import { PoolData } from '@/utils/lending/getPoolData'
 
 type DepositTrancheSelectProps = {
   poolData: PoolData

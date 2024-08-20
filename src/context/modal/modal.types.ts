@@ -2,9 +2,8 @@ import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
 import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
 
-import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
-
 import { SupportedTokens } from '@/constants/tokens'
+import { PoolData } from '@/utils/lending/getPoolData'
 
 export type ModalBase = {
   isOpen: boolean

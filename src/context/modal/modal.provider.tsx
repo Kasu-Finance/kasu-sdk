@@ -5,12 +5,12 @@ import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
 import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
 import { ReactNode, useReducer } from 'react'
 
-import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
-
 import useModalActions from '@/context/modal/modal.actions'
 import ModalContext from '@/context/modal/modal.context'
 import { modalReducer } from '@/context/modal/modal.reducer'
 import { Modals } from '@/context/modal/modal.types'
+
+import { PoolData } from '@/utils/lending/getPoolData'
 
 const initialState: Modals = {
   connectWalletModal: { isOpen: false },

@@ -10,8 +10,6 @@ import useKasuSDK from '@/hooks/useKasuSDK'
 import useHandleError from '@/hooks/web3/useHandleError'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
-import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
-
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
 import generateKycSignature from '@/actions/generateKycSignature'
@@ -19,6 +17,7 @@ import { ONE_INCH_SLIPPAGE } from '@/config/api.oneInch'
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { SupportedTokens } from '@/constants/tokens'
 import { toBigNumber, waitForReceipt } from '@/utils'
+import { PoolData } from '@/utils/lending/getPoolData'
 
 import { HexString } from '@/types/lending'
 

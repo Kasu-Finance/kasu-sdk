@@ -3,7 +3,18 @@ import {
   TrancheData,
 } from '@solidant/kasu-sdk/src/services/DataService/types'
 
-import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
+export type PoolData = {
+  poolName: string
+  lendingPoolId: `0x${string}`
+  totalUserInvestment: string
+  tranches: {
+    toolTip: string
+    title: string
+    trancheId: `0x${string}`
+    minimumDeposit: string
+    maximumDeposit: string
+  }[]
+}
 
 export const getPoolData = (
   pool: PoolOverview,

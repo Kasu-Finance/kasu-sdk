@@ -4,7 +4,7 @@ import {
   TransactionStatus,
   TransactionTranches,
   TransactionType,
-} from '@/components/molecules/lending/overview/TransactionHistory/TransactionHistoryFilters'
+} from '@/components/organisms/lending/OverviewTab/UserTransactions/TransactionFilters'
 
 import {
   TransactionHistoryActions,

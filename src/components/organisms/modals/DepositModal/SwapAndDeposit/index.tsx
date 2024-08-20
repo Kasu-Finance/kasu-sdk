@@ -2,9 +2,10 @@ import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
-import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 import SwapAndDepositSelect from '@/components/molecules/SwapAndDeposit/SwapAndDepositSelect'
 import SwapAndDepositInput from '@/components/organisms/modals/EarningsCalculator/SimulatedDepositAmount/SwapAndDepositInput'
+
+import { PoolData } from '@/utils/lending/getPoolData'
 
 type SwapAndDepositProps = {
   poolData: PoolData

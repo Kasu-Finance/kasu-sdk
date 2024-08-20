@@ -3,10 +3,10 @@ import { Grid } from '@mui/material'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
-import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 import BalanceItem from '@/components/molecules/locking/BalanceOverview/BalanceItem'
 
 import { formatAmount } from '@/utils'
+import { PoolData } from '@/utils/lending/getPoolData'
 
 type DepositModalOverviewProps = {
   userBalance: string

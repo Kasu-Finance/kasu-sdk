@@ -9,12 +9,12 @@ import useTranslation from '@/hooks/useTranslation'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
 import AuthenticateButton from '@/components/atoms/AuthenticateButton'
-import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { SupportedTokens } from '@/constants/tokens'
 import { getPoolData } from '@/utils'
+import { PoolData } from '@/utils/lending/getPoolData'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 

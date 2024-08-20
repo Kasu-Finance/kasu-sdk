@@ -6,7 +6,7 @@ import {
   TransactionStatus,
   TransactionTranches,
   TransactionType,
-} from '@/components/molecules/lending/overview/TransactionHistory/TransactionHistoryFilters'
+} from '@/components/organisms/lending/OverviewTab/UserTransactions/TransactionFilters'
 
 import useTransactionHistoryActions from '@/context/transactionHistory/transactionHistory.actions'
 import TransactionHistoryContext from '@/context/transactionHistory/transactionHistory.context'

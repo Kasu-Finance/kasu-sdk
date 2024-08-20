@@ -1,9 +1,10 @@
 import useTranslation from '@/hooks/useTranslation'
 import useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
 
-import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 import SwapAndDepositInfo from '@/components/molecules/SwapAndDeposit/SwapAndDepositInfo'
 import SwapAndDeposit from '@/components/organisms/modals/DepositModal/SwapAndDeposit'
+
+import { PoolData } from '@/utils/lending/getPoolData'
 
 type SimulatedSwapAndDepositProps = {
   poolData: PoolData

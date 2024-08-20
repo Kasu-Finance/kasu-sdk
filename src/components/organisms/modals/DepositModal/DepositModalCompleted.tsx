@@ -5,11 +5,11 @@ import useModalState from '@/hooks/context/useModalState'
 import useTranslation from '@/hooks/useTranslation'
 
 import UnorderedList from '@/components/atoms/UnorderedList'
-import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { formatAmount } from '@/utils'
+import { PoolData } from '@/utils/lending/getPoolData'
 
 type DepositModalCompletedProps = {
   poolData: PoolData

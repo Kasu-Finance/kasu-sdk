@@ -10,12 +10,12 @@ import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 import { SupportedTokenUserBalances } from '@/hooks/web3/useSupportedTokenUserBalances'
 
 import DepositAmountInput from '@/components/molecules/lending/DepositModal/DepositAmountInput'
-import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 
 import getSwapAmount from '@/actions/getSwapAmount'
 import { SupportedChainIds } from '@/connection/chains'
 import { SupportedTokenInfo, SupportedTokens } from '@/constants/tokens'
 import { formatAmount } from '@/utils'
+import { PoolData } from '@/utils/lending/getPoolData'
 
 type SwapAndDepositInputProps = {
   supportedTokenUserBalance:

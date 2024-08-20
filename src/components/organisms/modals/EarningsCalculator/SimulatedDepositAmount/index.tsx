@@ -3,8 +3,9 @@ import { Box, Typography } from '@mui/material'
 import { LoyaltyLevel } from '@/hooks/locking/useLoyaltyLevel'
 import useTranslation from '@/hooks/useTranslation'
 
-import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 import SimulatedSwapAndDeposit from '@/components/organisms/modals/EarningsCalculator/SimulatedDepositAmount/SimulatedSwapAndDeposit'
+
+import { PoolData } from '@/utils/lending/getPoolData'
 
 type SimulatedDepositAmountProps = {
   loyaltyLevel: LoyaltyLevel
