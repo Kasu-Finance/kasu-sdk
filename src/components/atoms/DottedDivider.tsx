@@ -1,13 +1,11 @@
 import { SVGProps } from 'react'
 
-import { theme } from '@/themes/MainTheme'
-
 export type DottedDividerProps = SVGProps<SVGSVGElement> & {
   color?: string
 }
 
 const DottedDivider: React.FC<DottedDividerProps> = ({
-  color = theme.palette.gold.dark,
+  color = 'rgba(196, 153, 108, 1)',
   ...props
 }) => (
   <svg

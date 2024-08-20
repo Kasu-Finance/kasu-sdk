@@ -53,7 +53,7 @@ const TokenAmount: React.FC<TokenAmountProps> = ({
       (showSkeleton ? (
         <Skeleton />
       ) : (
-        <Box color={(theme) => theme.palette.text.secondary}>
+        <Box color='text.secondary'>
           <Typography
             variant='body1'
             component='span'

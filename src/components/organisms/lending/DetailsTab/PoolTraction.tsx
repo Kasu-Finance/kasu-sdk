@@ -1,0 +1,96 @@
+import { Box, Grid, Typography } from '@mui/material'
+
+import useTranslation from '@/hooks/useTranslation'
+
+import CustomCard from '@/components/atoms/CustomCard'
+import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
+import InfoColumn from '@/components/atoms/InfoColumn'
+import TokenAmount from '@/components/atoms/TokenAmount'
+import WaveBox from '@/components/atoms/WaveBox'
+import WaveCard from '@/components/molecules/WaveCard'
+
+import { formatAmount } from '@/utils'
+
+import { PoolOverviewWithDelegate } from '@/types/page'
+
+type PoolTractionProps = {
+  pool: PoolOverviewWithDelegate
+}
+
+const PoolTraction: React.FC<PoolTractionProps> = ({ pool }) => {
+  const { t } = useTranslation()
+
+  return (
+    <CustomCard>
+      <Typography variant='h3' color='gold.darkNoises' px={2} mb={3}>
+        {t('details.poolTraction.title')}
+      </Typography>
+      <CustomInnerCardContent sx={{ py: 3 }}>
+        <Grid container spacing={4}>
+          <Grid item flex={1}>
+            <WaveCard
+              title={t('details.poolTraction.valueLocked.label')}
+              toolTipInfo={t('details.poolTraction.valueLocked.tooltip')}
+              content={formatAmount(pool.totalValueLocked, {
+                minValue: 1_000_000,
+              })}
+              unit='USDC'
+            />
+          </Grid>
+          <Grid item flex={1}>
+            <WaveCard
+              title={t('details.poolTraction.management.label')}
+              toolTipInfo={t('details.poolTraction.management.tooltip')}
+              content={formatAmount(pool.loansUnderManagement, {
+                minValue: 1_000_000,
+              })}
+              unit='USDC'
+            />
+          </Grid>
+          <Grid item flex={1}>
+            <WaveCard
+              title={t('details.poolTraction.yield.label')}
+              toolTipInfo={t('details.poolTraction.yield.tooltip')}
+              content={formatAmount(pool.yieldEarned, {
+                minValue: 1_000_000,
+              })}
+              unit='USDC'
+            />
+          </Grid>
+          <Grid item flex={1}>
+            <WaveCard
+              title={t('details.poolTraction.activeLoans.label')}
+              toolTipInfo={t('details.poolTraction.activeLoans.tooltip')}
+              content={formatAmount(pool.activeLoans, {
+                minValue: 1_000_000,
+              })}
+              unit=''
+            />
+          </Grid>
+          <Grid item flex={1}>
+            <WaveBox borderRadius={2} py={4} px={2}>
+              <InfoColumn
+                title={t('details.poolTraction.capacity.label')}
+                toolTipInfo={t('details.poolTraction.capacity.tooltip')}
+                metric={
+                  <Box display='flex' alignItems='end'>
+                    <TokenAmount
+                      mt={0.5}
+                      amount={formatAmount(pool.poolCapacityPercentage)}
+                      symbol='%'
+                    />
+                    <Typography variant='baseMd' color='gray.middle' ml='1ch'>
+                      ({formatAmount(pool.poolCapacity)} USDC)
+                    </Typography>
+                  </Box>
+                }
+              />
+            </WaveBox>
+          </Grid>
+        </Grid>
+      </CustomInnerCardContent>
+    </CustomCard>
+  )
+}
+
+export default PoolTraction

@@ -1,3 +1,7 @@
+import { Suspense } from 'react'
+
+import PoolDetailsTab from '@/components/organisms/lending/DetailsTab'
+
 type PageProps = {
   params: {
     slug: string
@@ -5,7 +9,11 @@ type PageProps = {
 }
 
 const PoolDetailPage = ({ params }: PageProps) => {
-  return 'detail page' + params.slug
+  return (
+    <Suspense fallback='detail skeleton'>
+      <PoolDetailsTab poolId={params.slug} />
+    </Suspense>
+  )
 }
 
 export default PoolDetailPage
