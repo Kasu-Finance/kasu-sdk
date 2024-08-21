@@ -15,7 +15,11 @@ import NextLink from '@/components/atoms/NextLink'
 import TokenAmount from '@/components/atoms/TokenAmount'
 import PoolTableRowApy from '@/components/organisms/home/PoolTable/PoolTableRowApy'
 
-import { BriefcaseIcon, MoneyIcon, PouchIcon, WalletIcon } from '@/assets/icons'
+import {
+  JuniorTrancheIcon,
+  MezzanineTrancheIcon,
+  SeniorTrancheIcon,
+} from '@/assets/icons'
 
 import { Routes } from '@/config/routes'
 import { capitalize, formatAmount, formatPercentage } from '@/utils'
@@ -29,9 +33,9 @@ export type PoolTableRowProps = {
 }
 
 const TRANCHE_ICONS = {
-  senior: <PouchIcon />,
-  mezzanine: <BriefcaseIcon />,
-  junior: <WalletIcon />,
+  senior: <SeniorTrancheIcon />,
+  mezzanine: <MezzanineTrancheIcon />,
+  junior: <JuniorTrancheIcon />,
 }
 
 const PoolTableRow: React.FC<PoolTableRowProps> = ({ pool }) => {
@@ -95,10 +99,14 @@ const PoolTableRow: React.FC<PoolTableRowProps> = ({ pool }) => {
           </Box>
         </TableCell>
         <TableCell>
-          {isMultiTranche ? (
-            pool.tranches.map((tranche) => (
+          {pool.tranches.map((tranche) => {
+            const title = isMultiTranche
+              ? `${tranche.name} ${t('general.tranche')} ${t('general.apy')}`
+              : `${capitalize(t('general.lendingStrategy'))} ${t('general.apy')}`
+
+            return (
               <PoolTableRowApy
-                title={`${tranche.name} ${t('general.tranche')} ${t('general.apy')}`}
+                title={title}
                 apy={formatPercentage(tranche.apy).replaceAll(' ', '')}
                 icon={
                   TRANCHE_ICONS[
@@ -107,14 +115,8 @@ const PoolTableRow: React.FC<PoolTableRowProps> = ({ pool }) => {
                 }
                 key={tranche.id}
               />
-            ))
-          ) : (
-            <PoolTableRowApy
-              title={`${capitalize(t('general.lendingStrategy'))} ${t('general.apy')}`}
-              apy={formatPercentage(pool.apy).replaceAll(' ', '')}
-              icon={<MoneyIcon />}
-            />
-          )}
+            )
+          })}
         </TableCell>
         {!isActivePool && (
           <TableCell>
