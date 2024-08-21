@@ -114,4 +114,6 @@ export interface PoolRepaymentDirectus {
     UpcomingLendingFundsFlow_4_Key: string | null;
     UpcomingLendingFundsFlow_4_Value: number | null;
     repaymentsFile: string;
+    UpcomingLendingFundsFlow: { label: string; value: number }[] | null;
+    CumulativeLendingFundsFlow: { label: string; value: number }[] | null;
 }

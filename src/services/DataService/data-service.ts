@@ -464,10 +464,12 @@ export class DataService {
                 data.UpcomingLendingFundsFlow_4_Key
                     ? data.UpcomingLendingFundsFlow_4_Value
                     : 0.0;
+
             const lendingPoolSubgraph =
                 lendingPoolsWithdrawalsAndDepositsSubgraph.lendingPools.find(
                     (pool) => pool.id == data.poolIdFK,
                 );
+
             if (lendingPoolSubgraph === undefined) {
                 console.error(
                     "Couldn't find lending pool for id: ",
@@ -479,14 +481,43 @@ export class DataService {
                 lendingPoolSubgraph.totalWithdrawalsAccepted;
             const cumulativeDepositsAndWithdrawals_CumulativeDeposits =
                 lendingPoolSubgraph.totalDepositsAccepted;
-            const depositAndWithdrawalRequests_CurrentDepositsRequests =
-                lendingPoolSubgraph.pendingPool.totalPendingDepositsAmount;
+            const currentDepositRequests = parseFloat(
+                lendingPoolSubgraph.pendingPool.totalPendingDepositsAmount,
+            );
+
             let sumTotalPendingWithdrawalShares = 0.0;
+
             lendingPoolSubgraph.pendingPool.totalPendingWithdrawalShares.forEach(
                 (shares) => {
                     sumTotalPendingWithdrawalShares += parseFloat(shares);
                 },
             );
+
+            const totalUpcomingFunds = {
+                label: 'Net Inflows/(Outflows)',
+                value: 0,
+            };
+
+            const totalCumulativeFunds = {
+                label: 'Closing Loans Balance',
+                value: 0,
+            };
+
+            if (data.UpcomingLendingFundsFlow) {
+                totalUpcomingFunds.value = data.UpcomingLendingFundsFlow.reduce(
+                    (total, cur) => (total += cur.value),
+                    0,
+                );
+            }
+
+            if (data.CumulativeLendingFundsFlow) {
+                totalCumulativeFunds.value =
+                    data.CumulativeLendingFundsFlow.reduce(
+                        (total, cur) => (total += cur.value),
+                        0,
+                    );
+            }
+
             const poolRepayment: PoolRepayment = {
                 id: data.id,
                 poolIdFK: data.poolIdFK.toLowerCase(),
@@ -546,16 +577,58 @@ export class DataService {
                     cumulativeDepositsAndWithdrawals_CumulativeDeposits,
                 ),
                 depositAndWithdrawalRequests_NetDeposits:
-                    parseFloat(
-                        depositAndWithdrawalRequests_CurrentDepositsRequests,
-                    ) - sumTotalPendingWithdrawalShares,
+                    currentDepositRequests - sumTotalPendingWithdrawalShares,
                 depositAndWithdrawalRequests_CurrentDepositsRequests:
-                    parseFloat(
-                        depositAndWithdrawalRequests_CurrentDepositsRequests,
-                    ),
+                    currentDepositRequests,
                 depositAndWithdrawalRequests_CurrentWithdrawalRequests:
                     sumTotalPendingWithdrawalShares,
                 repaymentsFileUrl: this.getUrlFromFile(data.repaymentsFile),
+                upcomingLendingFundsFlow: data.UpcomingLendingFundsFlow
+                    ? [totalUpcomingFunds, ...data.UpcomingLendingFundsFlow]
+                    : [totalUpcomingFunds],
+                cumulativeLendingFundsFlow: data.CumulativeLendingFundsFlow
+                    ? [totalCumulativeFunds, ...data.CumulativeLendingFundsFlow]
+                    : [totalCumulativeFunds],
+                cumulativeLendingAndWithdrawals: [
+                    {
+                        label: 'Net Lending/(Lending Withdrawals)',
+                        value:
+                            parseFloat(
+                                lendingPoolSubgraph.totalDepositsAccepted,
+                            ) -
+                            parseFloat(
+                                lendingPoolSubgraph.totalWithdrawalsAccepted,
+                            ),
+                    },
+                    {
+                        label: 'Cumulative Lending',
+                        value: parseFloat(
+                            lendingPoolSubgraph.totalDepositsAccepted,
+                        ),
+                    },
+                    {
+                        label: 'Cumulative Lending Withdrawals',
+                        value: parseFloat(
+                            lendingPoolSubgraph.totalWithdrawalsAccepted,
+                        ),
+                    },
+                ],
+                lendingAndWithdrawalRequests: [
+                    {
+                        label: 'Net Lending/(Withdrawal Requests)',
+                        value:
+                            currentDepositRequests -
+                            sumTotalPendingWithdrawalShares,
+                    },
+                    {
+                        label: 'Current Lending Requests',
+                        value: currentDepositRequests,
+                    },
+                    {
+                        label: 'Current Lending Withdrawal Requests',
+                        value: sumTotalPendingWithdrawalShares,
+                    },
+                ],
             };
             retn.push(poolRepayment);
         }

@@ -135,6 +135,22 @@ export interface PoolRepayment {
     depositAndWithdrawalRequests_CurrentDepositsRequests: number;
     depositAndWithdrawalRequests_CurrentWithdrawalRequests: number;
     repaymentsFileUrl: string;
+    upcomingLendingFundsFlow: {
+        label: string;
+        value: number;
+    }[];
+    cumulativeLendingFundsFlow: {
+        label: string;
+        value: number;
+    }[];
+    cumulativeLendingAndWithdrawals: {
+        label: string;
+        value: number;
+    }[];
+    lendingAndWithdrawalRequests: {
+        label: string;
+        value: number;
+    }[];
 }
 
 export interface LendingTotals {
