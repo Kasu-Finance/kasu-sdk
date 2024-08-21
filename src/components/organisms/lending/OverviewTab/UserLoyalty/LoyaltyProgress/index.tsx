@@ -23,7 +23,6 @@ const LoyaltyProgress = () => {
           variant='upper'
           progress={(Math.min(stakedPercentage, level_2) / level_2) * 100}
           labels={{
-            0: t('locking.widgets.loyalty.level.level-0.title'),
             20: t('locking.widgets.loyalty.level.level-1.level'),
             100: t('locking.widgets.loyalty.level.level-2.level'),
           }}
@@ -31,7 +30,6 @@ const LoyaltyProgress = () => {
         <Typography
           variant='baseXs'
           textTransform='capitalize'
-          textAlign='right'
           mt='3px'
           color='gray.middle'
         >
@@ -58,12 +56,7 @@ const LoyaltyProgress = () => {
         }}
       />
       <Stack>
-        <Typography
-          variant='baseXs'
-          textAlign='right'
-          mb='3px'
-          color='gray.middle'
-        >
+        <Typography variant='baseXs' mb='3px' color='gray.middle'>
           {t('locking.widgets.loyaltyProgress.rKsuRatio')}
         </Typography>
         <ProgressCustomRail
