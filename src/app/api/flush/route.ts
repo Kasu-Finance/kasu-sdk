@@ -23,6 +23,7 @@ export async function GET(_req: Request): Promise<Response> {
     'unusedPools',
     'filteredUnusedPools',
     'riskManagement',
+    'repayments',
   ]
 
   console.warn('flushing cache:', cachedTags)

@@ -952,97 +952,91 @@
           }
         }
       },
+      "map": {
+        "Closing Loans Balance": {
+          "label": "Closing Loans Balance",
+          "tooltip": "Total combined USD equivalent loan balance of all loan Tranches within this Lending Strategy, representing funds deployed into loans to end borrowers (outstanding loans) upon the closure of the most recent epoch. The closing loans balance is the net effect of the below funds flows and related transactions and will be updated every epoch."
+        },
+        "Opening Loans Balance": {
+          "label": "Opening Loans Balance",
+          "tooltip": "Total USD equivalent loan balance of all loan Tranches within this Lending Strategy, representing funds deployed into loans to end borrowers (outstanding loans) upon the closure of the prior epoch, being the same as the start of the current epoch."
+        },
+        "Loans Drawn": {
+          "label": "Loans Drawn",
+          "tooltip": "The USD equivalent amount within this Lending Strategy of all additional loans drawn (deployed) to end borrowers during the most recent epoch (upon closure of the most recent epoch)."
+        },
+        "Interest Accrued": {
+          "label": "Interest Accrued",
+          "tooltip": "The USD equivalent amount within this Lending Strategy of total interest accrued by end borrowers during the most recent epoch (upon closure of the most recent epoch)."
+        },
+        "Interest Payments": {
+          "label": "Interest Payments",
+          "tooltip": "The USD equivalent amount within this Lending Strategy of total actual interest paid by end borrowers during the most recent epoch (upon closure of the most recent epoch)."
+        },
+        "Principal Repayments": {
+          "label": "Principal Repayments",
+          "tooltip": "The USD equivalent amount within this Lending Strategy of total loan principal repayments made by end borrowers during the most recent epoch (upon closure of the most recent epoch)."
+        },
+        "Unrealised Losses": {
+          "label": "Unrealised Losses",
+          "tooltip": "The USD equivalent amount of loans within this Lending Strategy that became subject to formal recovery or legal action during the most recent epoch (upon closure of the most recent epoch)."
+        },
+        "Net Inflows/(Outflows)": {
+          "label": "Net Inflows/(Outflows)",
+          "tooltip": "The upcoming/expected USD equivalent net effect of the below funds flows for the current epoch (expected upon closure of the current epoch)."
+        },
+        "Upcoming Net Loan Drawdowns/(Repayments)": {
+          "label": "Upcoming Net Loan Drawdowns/(Repayments)",
+          "tooltip": ""
+        },
+        "upcomingInterest": {
+          "label": "Upcoming Interest Payments",
+          "tooltip": ""
+        },
+        "upcomingPrincipal": {
+          "label": "Upcoming Principal Repayments",
+          "tooltip": ""
+        },
+        "Net Lending/(Lending Withdrawals)": {
+          "label": "Net Lending/(Lending Withdrawals)",
+          "tooltip": "The total, cumulative net effect of USDC lending settled and lending withdrawals settled to and from this Lending Strategy since its inception, upon the closure of the most recent epoch."
+        },
+        "Cumulative Lending": {
+          "label": "Cumulative Lending",
+          "tooltip": "Total, cumulative USDC lending settled to this Lending Strategy since its inception, upon the closure of the most recent epoch."
+        },
+        "Cumulative Lending Withdrawals": {
+          "label": "Cumulative Lending Withdrawals",
+          "tooltip": "Total, cumulative USDC lending withdrawals settled from this Lending Strategy since its inception, upon the closure of the most recent epoch."
+        },
+        "Net Lending/(Withdrawal Requests)": {
+          "label": "Net Lending/(Withdrawal Requests)",
+          "tooltip": "The net effect of all current USDC lending requests and lending withdrawal requests that remain queued for this Lending Strategy for the current epoch."
+        },
+        "Current Lending Requests": {
+          "label": "Current Lending Requests",
+          "tooltip": "Total of all current USDC lending requests that remain queued for this Lending Strategy for the current epoch."
+        },
+        "Current Lending Withdrawal Requests": {
+          "label": "Current Lending Withdrawal Requests",
+          "tooltip": "Total of all current USDC lending withdrawal requests that remain queued for this Lending Strategy for the current epoch."
+        }
+      },
       "cumulativeFunds": {
         "title": "Cumulative Lending Funds Flow - End Borrowers",
-        "titleSuffix": "(Actual)",
-        "metrics": {
-          "closingLoans": {
-            "label": "Closing Loans Balance",
-            "tooltip": "Total combined USD equivalent loan balance of all loan Tranches within this Lending Strategy, representing funds deployed into loans to end borrowers (outstanding loans) upon the closure of the most recent epoch. The closing loans balance is the net effect of the below funds flows and related transactions and will be updated every epoch."
-          },
-          "openingLoans": {
-            "label": "Opening Loans Balance",
-            "tooltip": "Total USD equivalent loan balance of all loan Tranches within this Lending Strategy, representing funds deployed into loans to end borrowers (outstanding loans) upon the closure of the prior epoch, being the same as the start of the current epoch."
-          },
-          "loansDrawn": {
-            "label": "Loans Drawn",
-            "tooltip": "The USD equivalent amount within this Lending Strategy of all additional loans drawn (deployed) to end borrowers during the most recent epoch (upon closure of the most recent epoch)."
-          },
-          "interestAccrued": {
-            "label": "Interest Accrued",
-            "tooltip": "The USD equivalent amount within this Lending Strategy of total interest accrued by end borrowers during the most recent epoch (upon closure of the most recent epoch)."
-          },
-          "interestPayments": {
-            "label": "Interest Payments",
-            "tooltip": "The USD equivalent amount within this Lending Strategy of total actual interest paid by end borrowers during the most recent epoch (upon closure of the most recent epoch)."
-          },
-          "principalRepayments": {
-            "label": "Principal Repayments",
-            "tooltip": "The USD equivalent amount within this Lending Strategy of total loan principal repayments made by end borrowers during the most recent epoch (upon closure of the most recent epoch)."
-          },
-          "unrealisedLosses": {
-            "label": "Unrealised Losses",
-            "tooltip": "The USD equivalent amount of loans within this Lending Strategy that became subject to formal recovery or legal action during the most recent epoch (upon closure of the most recent epoch)."
-          }
-        }
+        "titleSuffix": "Actual"
       },
       "upcomingFunds": {
         "title": "Upcoming Lending Funds Flow - End Borrowers​",
-        "titleSuffix": "(Current Epoch)",
-        "metrics": {
-          "netInflows": {
-            "label": "Net Inflows/(Outflows)",
-            "tooltip": "The upcoming/expected USD equivalent net effect of the below funds flows for the current epoch (expected upon closure of the current epoch)."
-          },
-          "upcomingLoan": {
-            "label": "Upcoming Loan Drawdowns",
-            "tooltip": "content is missing"
-          },
-          "upcomingInterest": {
-            "label": "Upcoming Interest Payments",
-            "tooltip": "content is missing"
-          },
-          "upcomingPrincipal": {
-            "label": "Upcoming Principal Repayments",
-            "tooltip": "content is missing"
-          }
-        }
+        "titleSuffix": "Current Epoch"
       },
       "transactions": {
         "title": "Cumulative Lending & ​Withdrawals",
-        "titleSuffix": "(Actual)",
-        "metrics": {
-          "netDeposit": {
-            "label": "Net Lending/(Lending Withdrawals)",
-            "tooltip": "The total, cumulative net effect of USDC lending settled and lending withdrawals settled to and from this Lending Strategy since its inception, upon the closure of the most recent epoch."
-          },
-          "cumulativeDeposit": {
-            "label": "Cumulative Lending",
-            "tooltip": "Total, cumulative USDC lending settled to this Lending Strategy since its inception, upon the closure of the most recent epoch."
-          },
-          "cumulativeWithdraw": {
-            "label": "Cumulative Lending Withdrawals",
-            "tooltip": "Total, cumulative USDC lending withdrawals settled from this Lending Strategy since its inception, upon the closure of the most recent epoch."
-          }
-        }
+        "titleSuffix": "Actual"
       },
       "fundsRequest": {
         "title": "Lending Request & Lending Withdrawal Request",
-        "titleSuffix": "(Current Epoch)",
-        "metrics": {
-          "netDeposits": {
-            "label": "Net Lending/(Withdrawal Requests)",
-            "tooltip": "The net effect of all current USDC lending requests and lending withdrawal requests that remain queued for this Lending Strategy for the current epoch."
-          },
-          "currentDeposits": {
-            "label": "Current Lending Requests",
-            "tooltip": "Total of all current USDC lending requests that remain queued for this Lending Strategy for the current epoch."
-          },
-          "currentWithdrawal": {
-            "label": "Current Lending Withdrawal Requests",
-            "tooltip": "Total of all current USDC lending withdrawal requests that remain queued for this Lending Strategy for the current epoch."
-          }
-        }
+        "titleSuffix": "Current Epoch"
       }
     }
   },
