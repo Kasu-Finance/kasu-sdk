@@ -17,15 +17,17 @@ const CURRENT_NETWORK =
     ? SupportedChainIds['BASE']
     : SupportedChainIds['BASE_SEPOLIA']
 
-const fallbackProvider = new JsonRpcProvider(RPC_URLS[CURRENT_NETWORK][0])
+const provider = new JsonRpcProvider({
+  url: RPC_URLS[CURRENT_NETWORK][0],
+  skipFetchSetup: true,
+})
 
-export const getKasuSDK = async (provider?: JsonRpcProvider) => {
+export const getKasuSDK = async () => {
   const res = await getUnusedPools()
   const unusedPools = await res.json()
 
-  const library = provider ?? fallbackProvider
   return new KasuSdk(
     { ...sdkConfig, UNUSED_LENDING_POOL_IDS: unusedPools! },
-    library.getSigner() ?? library
+    provider
   )
 }

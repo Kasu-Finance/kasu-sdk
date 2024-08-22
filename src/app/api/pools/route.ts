@@ -3,6 +3,7 @@ import { unstable_cache } from 'next/cache'
 import { NextRequest, NextResponse } from 'next/server'
 
 import { getKasuSDK } from '@/actions/getKasuSDK'
+import { getCurrentEpoch } from '@/app/api/currentEpoch'
 
 const API_ROUTE_TTL = 60 * 60 // 1 hour
 const CACHE_TTL = 60 * 60 // 1 hour
@@ -10,8 +11,10 @@ const CACHE_TTL = 60 * 60 // 1 hour
 export const getPoolOverview = unstable_cache(
   async (poolId?: string) => {
     const sdk = await getKasuSDK()
-    const arg = poolId ? [poolId] : undefined
-    return await sdk.DataService.getPoolOverview(arg)
+
+    const currentEpoch = await getCurrentEpoch()
+    const id_in = poolId ? [poolId] : undefined
+    return await sdk.DataService.getPoolOverview(currentEpoch, id_in)
   },
   ['poolOverview'],
   {
