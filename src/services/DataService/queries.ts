@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request';
 
 export const getPoolOverviewQuery = (ids?: string[]): string => gql`
-    query getAllPoolOverview($unusedPools: [String]!) {
+    query getAllPoolOverview($epochId: String!, $unusedPools: [String]!) {
         lendingPools(
             where: { 
                 id_not_in: $unusedPools
@@ -35,6 +35,14 @@ export const getPoolOverviewQuery = (ids?: string[]): string => gql`
                     interestRate
                     minDepositAmount
                     maxDepositAmount
+                    lendingPoolTrancheInterestRateUpdates(
+                        orderDirection: desc
+                        orderBy: epochId
+                        first: 1
+                        where:{ epochId_lte: $epochId }
+                    ) {
+                        epochInterestRate
+                    }
                 }
             }
         }
@@ -82,7 +90,10 @@ export const getAllTranchesQuery = gql`
 `;
 
 export const getAllTrancheConfigurationsQuery = gql`
-    query getAllTrancheConfigurations($unusedPools: [String]!) {
+    query getAllTrancheConfigurations(
+        $epochId: String!
+        $unusedPools: [String]!
+    ) {
         lendingPoolTrancheConfigurations(
             where: { lendingPoolConfiguration_not_in: $unusedPools }
         ) {
@@ -92,6 +103,14 @@ export const getAllTrancheConfigurationsQuery = gql`
             minDepositAmount
             interestRate
             desiredRatio
+            lendingPoolTrancheInterestRateUpdates(
+                orderDirection: desc
+                orderBy: epochId
+                first: 1
+                where: { epochId_lte: $epochId }
+            ) {
+                epochInterestRate
+            }
         }
     }
 `;

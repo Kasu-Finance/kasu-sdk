@@ -33,15 +33,25 @@ export interface TrancheSubgraphResult {
     lendingPoolTranches: TrancheSubgraph[];
 }
 
+export interface TrancheInterestRateUpdateSubgraph {
+    id: string;
+    lendingPoolTrancheConfiguration: TrancheConfigurationSubgraph[];
+    epochId: number;
+    epochInterestRate: string;
+}
+
 export interface TrancheConfigurationSubgraph {
-    lendingPoolTrancheConfigurations: {
-        maxDepositAmount: string;
-        minDepositAmount: string;
-        interestRate: string;
-        id: string;
-        desiredRatio: string;
-        orderId: string;
-    }[];
+    maxDepositAmount: string;
+    minDepositAmount: string;
+    interestRate: string;
+    id: string;
+    desiredRatio: string;
+    orderId: string;
+    lendingPoolTrancheInterestRateUpdates: TrancheInterestRateUpdateSubgraph[];
+}
+
+export interface TrancheConfigurationSubgraphResult {
+    lendingPoolTrancheConfigurations: TrancheConfigurationSubgraph[];
 }
 
 export interface LendingPoolConfigurationSubgraph {
@@ -51,14 +61,7 @@ export interface LendingPoolConfigurationSubgraph {
     minimumExcessLiquidityPercentage: string;
     targetExcessLiquidityPercentage: string;
     trancheInterestChangeEpochDelay: string;
-    tranchesConfig: {
-        maxDepositAmount: string;
-        minDepositAmount: string;
-        interestRate: string;
-        id: string;
-        desiredRatio: string;
-        orderId: string;
-    }[];
+    tranchesConfig: TrancheConfigurationSubgraph[];
 }
 
 export interface LendingPoolConfigurationSubgraphReturn {

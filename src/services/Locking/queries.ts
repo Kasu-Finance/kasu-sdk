@@ -91,17 +91,6 @@ export const getAllTranchesQuery = gql`
     }
 `;
 
-export const getAllTrancheConfigurationsQuery = gql`
-    query getAllTrancheConfigurations($unusedPools: [String]!) {
-        lendingPoolTrancheConfigurations(
-            where: { lendingPoolConfiguration_not_in: $unusedPools }
-        ) {
-            id
-            interestRate
-        }
-    }
-`;
-
 export const getTotalUserLoyaltsRewardsQuery = gql`
     query getAllUserLoyaltsRewards($userAddress: String!) {
         user(id: $userAddress) {

@@ -23,7 +23,7 @@ import {
     getAllTranchesQuery,
 } from '../DataService/queries';
 import {
-    TrancheConfigurationSubgraph,
+    TrancheConfigurationSubgraphResult,
     TrancheSubgraphResult,
 } from '../DataService/subgraph-types';
 
@@ -154,6 +154,7 @@ export class KSULocking {
     }
 
     async calculateUserLockProjectedProtocolFeeRewards(
+        epochId: string,
         KSULocked: number,
         lockPeriod: BigNumber,
     ): Promise<number> {
@@ -186,9 +187,10 @@ export class KSULocking {
             await this._graph.request(getAllTranchesQuery, {
                 unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
             });
-        const subgraphConfigurationResults: TrancheConfigurationSubgraph =
+        const subgraphConfigurationResults: TrancheConfigurationSubgraphResult =
             await this._graph.request(getAllTrancheConfigurationsQuery, {
                 unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
+                epochId,
             });
 
         for (const tranche of subgraphResults.lendingPoolTranches) {
@@ -203,9 +205,17 @@ export class KSULocking {
                 );
                 continue;
             }
+
+            const interestUpdates =
+                trancheConfig.lendingPoolTrancheInterestRateUpdates;
+
+            const interestRate = interestUpdates.length
+                ? interestUpdates[0].epochInterestRate
+                : trancheConfig.interestRate;
+
             projectedYearlyPlatformInterest +=
                 parseFloat(tranche.balance) *
-                this.calculateApy(parseFloat(trancheConfig.interestRate));
+                this.calculateApy(parseFloat(interestRate));
         }
 
         const totalExpectedEcosystemFees =

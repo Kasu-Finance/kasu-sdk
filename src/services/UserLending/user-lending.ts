@@ -412,6 +412,13 @@ export class UserLending {
         return retn;
     }
 
+    async getCurrentEpoch(): Promise<string> {
+        const currentEpochNumber =
+            await this._systemVariablesAbi.currentEpochNumber();
+
+        return currentEpochNumber.toString();
+    }
+
     async getCurrentEpochDepositedAmount(
         lendingPoolId: string,
         trancheId: string,

@@ -37,7 +37,7 @@ import {
     LendingPoolSubgraph,
     LendingPoolSubgraphReturn,
     LendingPoolWithdrawalAndDepositSubgraph,
-    TrancheConfigurationSubgraph,
+    TrancheConfigurationSubgraphResult,
     TrancheSubgraphResult,
 } from './subgraph-types';
 import {
@@ -134,7 +134,10 @@ export class DataService {
         return (1 + parseFloat(interestRate)) ** EPOCHS_IN_YEAR - 1;
     }
 
-    async getPoolOverview(id_in?: string[]): Promise<PoolOverview[]> {
+    async getPoolOverview(
+        epochId: string,
+        id_in?: string[],
+    ): Promise<PoolOverview[]> {
         const trancheNames: string[][] = [
             ['Senior'],
             ['Junior', 'Senior'],
@@ -144,6 +147,7 @@ export class DataService {
         const poolOverviewResults: LendingPoolSubgraphReturn =
             await this._graph.request(getPoolOverviewQuery(id_in), {
                 unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
+                epochId,
             });
 
         if (!this._directusPoolOverview) {
@@ -195,12 +199,18 @@ export class DataService {
                     );
                     continue;
                 }
+
+                const interestUpdates =
+                    trancheConfig.lendingPoolTrancheInterestRateUpdates;
+
+                const interestRate = interestUpdates.length
+                    ? interestUpdates[0].epochInterestRate
+                    : trancheConfig.interestRate;
+
                 tranches.push({
                     id: tranche.id,
-                    apy: this.calculateApyForTranche(
-                        trancheConfig.interestRate,
-                    ).toString(),
-                    interestRate: trancheConfig.interestRate,
+                    apy: this.calculateApyForTranche(interestRate).toString(),
+                    interestRate,
                     maximumDeposit: trancheConfig.maxDepositAmount,
                     minimumDeposit: trancheConfig.minDepositAmount,
                     poolCapacityPercentage:
@@ -374,14 +384,18 @@ export class DataService {
         return filterArray(retn, id_in);
     }
 
-    async getPoolTranches(id_in?: string[]): Promise<PoolTranche[]> {
+    async getPoolTranches(
+        epochId: string,
+        id_in?: string[],
+    ): Promise<PoolTranche[]> {
         const subgraphResults: TrancheSubgraphResult =
             await this._graph.request(getAllTranchesQuery, {
                 unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
             });
-        const subgraphConfigurationResults: TrancheConfigurationSubgraph =
+        const subgraphConfigurationResults: TrancheConfigurationSubgraphResult =
             await this._graph.request(getAllTrancheConfigurationsQuery, {
                 unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
+                epochId,
             });
         const retn: PoolTranche[] = [];
         for (const trancheSubgraph of subgraphResults.lendingPoolTranches) {
@@ -396,12 +410,18 @@ export class DataService {
                 );
                 continue;
             }
+
+            const interestUpdates =
+                configuration.lendingPoolTrancheInterestRateUpdates;
+
+            const interestRate = interestUpdates.length
+                ? interestUpdates[0].epochInterestRate
+                : configuration.interestRate;
+
             const tranche: PoolTranche = {
                 id: trancheSubgraph.id,
                 poolIdFK: trancheSubgraph.lendingPool.id.toLowerCase(),
-                apy: this.calculateApyForTranche(
-                    configuration.interestRate,
-                ).toString(),
+                apy: this.calculateApyForTranche(interestRate).toString(),
                 minimalDepositThreshold: configuration.minDepositAmount,
                 maximalDepositThreshold: configuration.maxDepositAmount,
             };
