@@ -38,7 +38,7 @@
     "@nexeraid/identity-sdk": "^1.1.337",
     "@nexeraprotocol/nexera-id-schemas": "^1.10.125",
     "@nivo/pie": "^0.87.0",
-    "@solidant/kasu-sdk": "^0.0.82",
+    "@solidant/kasu-sdk": "^0.0.83",
     "@web3-react/coinbase-wallet": "^8.2.3",
     "@web3-react/core": "^8.2.3",
     "@web3-react/eip1193": "^8.2.3",
