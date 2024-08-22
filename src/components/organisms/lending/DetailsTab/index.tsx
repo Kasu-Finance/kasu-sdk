@@ -5,8 +5,8 @@ import PoolDetails from '@/components/organisms/lending/DetailsTab/PoolDetails'
 import PoolTraction from '@/components/organisms/lending/DetailsTab/PoolTraction'
 import RiskManagement from '@/components/organisms/lending/DetailsTab/RiskManagement'
 
-import { getPoolWithDelegate } from '@/app/api/poolWithDelegate'
-import { getRiskManagement } from '@/app/api/riskManagement'
+import { getPoolWithDelegate } from '@/app/requests/poolWithDelegate'
+import { getRiskManagement } from '@/app/requests/riskManagement'
 
 type PoolDetailsProps = {
   poolId: string

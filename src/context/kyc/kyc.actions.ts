@@ -1,4 +1,5 @@
 import { JsonRpcSigner } from '@ethersproject/providers'
+// @ts-ignore export error
 import { buildSignatureMessage, IdentityClient } from '@nexeraid/identity-sdk'
 import { Dispatch, useCallback, useMemo } from 'react'
 
@@ -66,7 +67,7 @@ const useKycActions = (
       ) => {
         const { userAddress, ...authInput } = initData
 
-        identityClient.onSignMessage(async (data) => {
+        identityClient.onSignMessage(async (data: any) => {
           const signedMessage = await signer.signMessage(data.message)
           return signedMessage as `0x${string}`
         })

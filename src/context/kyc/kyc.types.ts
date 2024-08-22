@@ -1,4 +1,5 @@
 import { JsonRpcSigner } from '@ethersproject/providers'
+// @ts-ignore export error
 import { IdentityClient } from '@nexeraid/identity-sdk'
 
 export type IdentityClientData = {

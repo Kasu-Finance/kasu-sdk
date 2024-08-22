@@ -5,8 +5,8 @@ import EmptyPoolsPlaceholder from '@/components/organisms/home/EmptyPoolsPlaceho
 import PoolLayoutWrapper from '@/components/organisms/home/PoolLayoutWrapper'
 import PoolLayoutWrapperSkeleton from '@/components/organisms/home/PoolLayoutWrapperSkeleton'
 
-import { getPoolDelegate } from '@/app/api/poolDelegate/route'
-import { getPoolOverview } from '@/app/api/pools/route'
+import { getPoolDelegate } from '@/app/requests/poolDelegate'
+import { getPoolOverview } from '@/app/requests/pools'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 

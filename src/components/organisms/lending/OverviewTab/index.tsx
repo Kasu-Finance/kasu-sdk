@@ -5,7 +5,7 @@ import UserLending from '@/components/organisms/lending/OverviewTab/UserLending'
 import UserLoyalty from '@/components/organisms/lending/OverviewTab/UserLoyalty'
 import UserTransactions from '@/components/organisms/lending/OverviewTab/UserTransactions'
 
-import { getPoolWithDelegate } from '@/app/api/poolWithDelegate'
+import { getPoolWithDelegate } from '@/app/requests/poolWithDelegate'
 
 type PoolOverviewProps = {
   poolId: string

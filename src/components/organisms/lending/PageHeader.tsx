@@ -5,7 +5,7 @@ import useTranslation from '@/hooks/useTranslation'
 
 import { ChevronLeftRoundedIcon } from '@/assets/icons'
 
-import { getPoolOverview } from '@/app/api/pools/route'
+import { getPoolOverview } from '@/app/requests/pools'
 import { Routes } from '@/config/routes'
 
 type PageHeaderProps = {

@@ -1,7 +1,7 @@
 import { unstable_cache } from 'next/cache'
 
-import { getPoolDelegate } from '@/app/api/poolDelegate/route'
-import { getPoolOverview } from '@/app/api/pools/route'
+import { getPoolDelegate } from '@/app/requests/poolDelegate'
+import { getPoolOverview } from '@/app/requests/pools'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 

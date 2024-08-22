@@ -1,5 +1,6 @@
 'use client'
 
+// @ts-ignore export error
 import { IdentityClient } from '@nexeraid/identity-sdk'
 import { useWeb3React } from '@web3-react/core'
 import { ReactNode, useEffect, useReducer } from 'react'
