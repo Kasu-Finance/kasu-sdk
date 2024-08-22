@@ -22,6 +22,7 @@ export async function GET(_req: Request): Promise<Response> {
     'poolDelegate',
     'unusedPools',
     'filteredUnusedPools',
+    'currentEpoch',
   ]
 
   console.warn('flushing cache:', cachedTags)
