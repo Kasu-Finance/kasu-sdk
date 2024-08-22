@@ -1041,6 +1041,12 @@
     }
   },
   "risk": {
+    "lendingStrategyData": {
+      "title": "Lending Strategy Data"
+    },
+    "portfolioLeadingIndicators": {
+      "title": "Portfolio Leading Indicators"
+    },
     "poolCredit": {
       "title": "Lending Strategy Credit Metrics",
       "headers": {

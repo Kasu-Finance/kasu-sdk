@@ -1,0 +1,66 @@
+{
+  "debtor": [
+    {
+      "id": "one_month",
+      "label": "0-29 days",
+      "value": 15,
+      "color": "rgba(249, 224, 187, 1)"
+    },
+    {
+      "id": "two_month",
+      "label": "30-59 days",
+      "value": 60,
+      "color": "rgba(232, 192, 145, 1)"
+    },
+    {
+      "id": "three_month",
+      "label": "60-89 days",
+      "value": 5,
+      "color": "rgba(196, 153, 108, 1)"
+    },
+    {
+      "id": "above_three_month",
+      "label": "90+ days",
+      "value": 20,
+      "color": "rgba(164, 123, 79, 1)"
+    }
+  ],
+  "riskSegments": [
+    {
+      "id": "very_low_risk",
+      "label": "Low Risk",
+      "value": 15,
+      "color": "rgba(247, 241, 229, 1)"
+    },
+    {
+      "id": "low_risk",
+      "label": "Low risk",
+      "value": 60,
+      "color": "rgba(249, 224, 187, 1)"
+    },
+    {
+      "id": "moderate_risk",
+      "label": "Moderate Risk",
+      "value": 5,
+      "color": "rgba(232, 192, 145, 1)"
+    },
+    {
+      "id": "high_risk",
+      "label": "High risk",
+      "value": 20,
+      "color": "rgba(196, 153, 108, 1)"
+    },
+    {
+      "id": "very_high_risk",
+      "label": "Very High risk",
+      "value": 20,
+      "color": "rgba(164, 123, 79, 1)"
+    },
+    {
+      "id": "not_applicable",
+      "label": "N/A",
+      "value": 20,
+      "color": "rgba(133, 87, 38, 1)"
+    }
+  ]
+}
