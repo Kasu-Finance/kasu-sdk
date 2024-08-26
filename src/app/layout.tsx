@@ -1,5 +1,6 @@
 import { Box } from '@mui/material'
 import type { Metadata } from 'next'
+import Script from 'next/script'
 import { ReactNode } from 'react'
 
 import '@/styles/fonts.module.css'
@@ -89,6 +90,11 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         </SWRProvider>
         <div className='bottom-layout-bg'></div>
       </body>
+      <Script
+        src='https://cdn.cookie3.co/scripts/analytics/0.11.4/cookie3.analytics.min.js'
+        defer
+        data-site-id='1441'
+      />
     </html>
   )
 }
