@@ -90,11 +90,6 @@ export interface TrancheData {
 export interface PoolCreditMetrics {
     id: string;
     poolIdFK: string;
-    keyCreditMetric: string;
-    previousFiscalYear: number;
-    mostRecentQuarter: number;
-    priorMonth: number;
-    tooltip: string;
     keyCreditMetrics: {
         keyCreditMetric: KeyCreditMetricsDirectus;
         mostRecentQuarter: number;

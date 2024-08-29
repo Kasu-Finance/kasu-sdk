@@ -68,11 +68,6 @@ export interface RiskManagementItemDirectus {
 export interface PoolCreditMetricsDirectus {
     id: string;
     poolIdFK: string;
-    keyCreditMetric: string;
-    previousFiscalYear: number;
-    mostRecentQuarter: number;
-    priorMonth: number;
-    tooltip: string;
     keyCreditMetrics:
         | {
               keyCreditMetric: {
