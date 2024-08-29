@@ -445,8 +445,9 @@ export class DataService {
                 this._directus.request(readItems('PoolCreditMetrics')),
             ]);
 
-        const keyCreditMetricsMapper: Record<number, KeyCreditMetricsDirectus> =
-            keyCreditMetricsDirectus.reduce(
+        const keyCreditMetricsMapper: Partial<
+            Record<number, KeyCreditMetricsDirectus>
+        > = keyCreditMetricsDirectus.reduce(
                 (acc, cur) => ({ ...acc, [cur.id]: cur }),
                 {},
             );
@@ -455,11 +456,12 @@ export class DataService {
             .map((pool) => {
                 if (!pool.keyCreditMetrics) return null;
 
-                const metrics = pool.keyCreditMetrics.map((data) => {
+                const metrics = pool.keyCreditMetrics
+                    .map((data) => {
                     const { keyCreditMetric, ...metric } = data;
 
                     const keyMetric =
-                        keyCreditMetricsMapper[data.keyCreditMetric.key];
+                            keyCreditMetricsMapper[keyCreditMetric.key];
 
                     if (!keyMetric) return null;
 
@@ -467,13 +469,12 @@ export class DataService {
                         ...metric,
                         keyCreditMetric: keyMetric,
                     };
-                });
+                    })
+                    .filter((metric) => metric !== null);
 
                 return {
                     ...pool,
-                    keyCreditMetrics: metrics.filter(
-                        (metric) => metric !== null,
-                    ),
+                    keyCreditMetrics: metrics,
                 };
             })
             .filter((pool) => pool !== null);

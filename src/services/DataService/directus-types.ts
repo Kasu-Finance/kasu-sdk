@@ -73,15 +73,17 @@ export interface PoolCreditMetricsDirectus {
     mostRecentQuarter: number;
     priorMonth: number;
     tooltip: string;
-    keyCreditMetrics: {
-        keyCreditMetric: {
-            key: number;
-            collection: string;
-        };
-        mostRecentQuarter: number;
-        previousFiscalYear: number;
-        priorMonth: number;
-    }[];
+    keyCreditMetrics:
+        | {
+              keyCreditMetric: {
+                  key: number;
+                  collection: string;
+              };
+              mostRecentQuarter: number;
+              previousFiscalYear: number;
+              priorMonth: number;
+          }[]
+        | null;
 }
 
 export interface KeyCreditMetricsDirectus {
