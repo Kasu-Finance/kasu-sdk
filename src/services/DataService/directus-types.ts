@@ -7,6 +7,7 @@ export interface DirectusSchema {
     BadAndDoubtfulDebts: BadAndDoubtfulDebtsDirectus[];
     FinancialReportingDocuments: FinancialReportingDocumentsDirectus[];
     PoolRepayments: PoolRepaymentDirectus[];
+    KeyCreditMetrics: KeyCreditMetricsDirectus[];
 }
 
 export interface PoolOverviewDirectus {
@@ -72,6 +73,22 @@ export interface PoolCreditMetricsDirectus {
     mostRecentQuarter: number;
     priorMonth: number;
     tooltip: string;
+    keyCreditMetrics: {
+        keyCreditMetric: {
+            key: number;
+            collection: string;
+        };
+        mostRecentQuarter: number;
+        previousFiscalYear: number;
+        priorMonth: number;
+    }[];
+}
+
+export interface KeyCreditMetricsDirectus {
+    id: number;
+    name: string;
+    tooltip?: string;
+    unit: string;
 }
 
 export interface BadAndDoubtfulDebtsDirectus {

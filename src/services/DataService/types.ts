@@ -1,3 +1,5 @@
+import { KeyCreditMetricsDirectus } from './directus-types';
+
 export interface PoolOverview {
     poolName: string;
     id: string;
@@ -93,6 +95,12 @@ export interface PoolCreditMetrics {
     mostRecentQuarter: number;
     priorMonth: number;
     tooltip: string;
+    keyCreditMetrics: {
+        keyCreditMetric: KeyCreditMetricsDirectus;
+        mostRecentQuarter: number;
+        previousFiscalYear: number;
+        priorMonth: number;
+    }[];
 }
 
 export interface BadAndDoubtfulDebts {

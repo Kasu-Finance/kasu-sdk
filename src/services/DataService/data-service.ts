@@ -18,7 +18,7 @@ import {
     BadAndDoubtfulDebtsDirectus,
     DirectusSchema,
     FinancialReportingDocumentsDirectus,
-    PoolCreditMetricsDirectus,
+    KeyCreditMetricsDirectus,
     PoolDelegateProfileAndHistoryDirectus,
     PoolOverviewDirectus,
     PoolRepaymentDirectus,
@@ -439,9 +439,46 @@ export class DataService {
     }
 
     async getPoolCreditMetrics(id_in?: string[]): Promise<PoolCreditMetrics[]> {
-        const poolCreditMetricsDirectus: PoolCreditMetricsDirectus[] =
-            await this._directus.request(readItems('PoolCreditMetrics'));
-        return filterArray(poolCreditMetricsDirectus, id_in);
+        const [keyCreditMetricsDirectus, poolCreditMetricsDirectus] =
+            await Promise.all([
+                this._directus.request(readItems('KeyCreditMetrics')),
+                this._directus.request(readItems('PoolCreditMetrics')),
+            ]);
+
+        const keyCreditMetricsMapper: Record<number, KeyCreditMetricsDirectus> =
+            keyCreditMetricsDirectus.reduce(
+                (acc, cur) => ({ ...acc, [cur.id]: cur }),
+                {},
+            );
+
+        const poolCreditMetrics = poolCreditMetricsDirectus
+            .map((pool) => {
+                if (!pool.keyCreditMetrics) return null;
+
+                const metrics = pool.keyCreditMetrics.map((data) => {
+                    const { keyCreditMetric, ...metric } = data;
+
+                    const keyMetric =
+                        keyCreditMetricsMapper[data.keyCreditMetric.key];
+
+                    if (!keyMetric) return null;
+
+                    return {
+                        ...metric,
+                        keyCreditMetric: keyMetric,
+                    };
+                });
+
+                return {
+                    ...pool,
+                    keyCreditMetrics: metrics.filter(
+                        (metric) => metric !== null,
+                    ),
+                };
+            })
+            .filter((pool) => pool !== null);
+
+        return filterArray(poolCreditMetrics, id_in);
     }
 
     async getFinancialReportingDocuments(
