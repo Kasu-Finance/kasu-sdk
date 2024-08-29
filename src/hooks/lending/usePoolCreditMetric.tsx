@@ -11,16 +11,9 @@ const usePoolCreditMetric = (poolId: string) => {
     const data = await sdk.DataService.getPoolCreditMetrics()
     if (!data?.length)
       throw new Error('No data available for pool credit metric')
-    const filteredData = data
-      .filter((item) => item.poolIdFK === poolId)
-      .map((data) => {
-        const unit =
-          data.keyCreditMetric === 'Advance Rate • LTV Ratio' ? '%' : 'x'
+    const filteredData = data.find((item) => item.poolIdFK === poolId)
 
-        return { ...data, unit }
-      })
-
-    if (!filteredData.length)
+    if (!filteredData)
       throw new Error(`No data available for pool ID: ${poolId}`)
     return filteredData
   }

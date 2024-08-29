@@ -6,7 +6,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material'
-import { PoolCreditMetricsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
+import { PoolCreditMetrics } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { Fragment, useMemo } from 'react'
 
 import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
@@ -15,21 +15,12 @@ import useTranslation from '@/hooks/useTranslation'
 import ToolTip from '@/components/atoms/ToolTip'
 import CustomTable, {
   CustomTableHeader,
-  Sort,
 } from '@/components/molecules/CustomTable'
 
 import { formatAmount, formatPercentage } from '@/utils'
 
-const handleSort = (
-  _a: PoolCreditMetricsDirectus,
-  _b: PoolCreditMetricsDirectus,
-  _sort: Sort<string[]>
-): number => {
-  return 0
-}
-
 interface PoolCreditTableProps {
-  data: (PoolCreditMetricsDirectus & { unit: string })[]
+  data: PoolCreditMetrics
 }
 
 const PoolCreditTable: React.FC<PoolCreditTableProps> = ({ data }) => {
@@ -94,10 +85,10 @@ const PoolCreditTable: React.FC<PoolCreditTableProps> = ({ data }) => {
       >
         <CustomTable
           headers={!isMobile ? headers : []}
-          data={data}
+          data={data.keyCreditMetrics}
           pagination={false}
-          defaultSortKey='poolIdFK'
-          handleSort={handleSort}
+          defaultSortKey=''
+          handleSort={() => 0}
           sortKeys={[]}
           headersStyle={{
             '& .MuiTableCell-root': {
@@ -107,117 +98,119 @@ const PoolCreditTable: React.FC<PoolCreditTableProps> = ({ data }) => {
           }}
         >
           {(sortedData) =>
-            sortedData.map((data, index) => (
-              <Fragment key={index}>
-                {isMobile && (
+            sortedData.map((data, index) => {
+              return (
+                <Fragment key={index}>
+                  {isMobile && (
+                    <TableRow
+                      sx={(theme) => ({
+                        [theme.breakpoints.down('sm')]: {
+                          '.MuiTableCell-root': {
+                            px: 0,
+                            pb: 0,
+                            border: 'none',
+                          },
+                        },
+                      })}
+                    >
+                      <TableCell
+                        width='30%'
+                        align='left'
+                        colSpan={3}
+                        sx={(theme) => ({
+                          ...theme.typography.subtitle1,
+                          fontSize: 12,
+                        })}
+                      >
+                        {data.keyCreditMetric.name}
+                        {data.keyCreditMetric.tooltip && (
+                          <ToolTip
+                            iconSx={{
+                              position: 'relative',
+                              top: '5px',
+                            }}
+                            title={data.keyCreditMetric.tooltip}
+                          />
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  )}
                   <TableRow
                     sx={(theme) => ({
                       [theme.breakpoints.down('sm')]: {
                         '.MuiTableCell-root': {
                           px: 0,
-                          pb: 0,
-                          border: 'none',
+                          pt: 0,
                         },
                       },
                     })}
                   >
-                    <TableCell
-                      width='30%'
-                      align='left'
-                      colSpan={3}
-                      sx={(theme) => ({
-                        ...theme.typography.subtitle1,
-                        fontSize: 12,
-                      })}
-                    >
-                      {data.keyCreditMetric}
-                      {data.tooltip && (
-                        <ToolTip
-                          iconSx={{
-                            position: 'relative',
-                            top: '5px',
-                          }}
-                          title={data.tooltip}
-                        />
+                    {!isMobile && (
+                      <TableCell width='30%' align='left'>
+                        {data.keyCreditMetric.name}
+                        {data.keyCreditMetric.tooltip && (
+                          <ToolTip
+                            iconSx={{
+                              position: 'relative',
+                              top: '5px',
+                            }}
+                            title={data.keyCreditMetric.tooltip}
+                          />
+                        )}
+                      </TableCell>
+                    )}
+                    <TableCell align={isMobile ? 'left' : 'right'}>
+                      {isMobile && (
+                        <Typography
+                          variant='caption'
+                          component='span'
+                          fontSize={10}
+                        >
+                          {t('risk.poolCredit.headers.column-2')}
+                        </Typography>
                       )}
+                      <Typography variant='body1'>
+                        {index < 2
+                          ? `${formatAmount(data.previousFiscalYear || '0', { minDecimals: 2 })} ${data.keyCreditMetric.unit}`
+                          : formatPercentage(data.previousFiscalYear)}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align={isMobile ? 'left' : 'right'}>
+                      {isMobile && (
+                        <Typography
+                          variant='caption'
+                          component='span'
+                          fontSize={10}
+                        >
+                          {t('risk.poolCredit.headers.column-3')}
+                        </Typography>
+                      )}
+                      <Typography variant='body1'>
+                        {index < 2
+                          ? `${formatAmount(data.mostRecentQuarter || '0', { minDecimals: 2 })} ${data.keyCreditMetric.unit}`
+                          : formatPercentage(data.mostRecentQuarter)}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align={isMobile ? 'left' : 'right'}>
+                      {isMobile && (
+                        <Typography
+                          variant='caption'
+                          component='span'
+                          fontSize={10}
+                        >
+                          {t('risk.poolCredit.headers.column-4')}
+                        </Typography>
+                      )}
+                      <Typography variant='body1'>
+                        {index < 2
+                          ? `${formatAmount(data.priorMonth || '0', { minDecimals: 2 })} ${data.keyCreditMetric.unit}`
+                          : formatPercentage(data.priorMonth)}
+                      </Typography>
                     </TableCell>
                   </TableRow>
-                )}
-                <TableRow
-                  sx={(theme) => ({
-                    [theme.breakpoints.down('sm')]: {
-                      '.MuiTableCell-root': {
-                        px: 0,
-                        pt: 0,
-                      },
-                    },
-                  })}
-                >
-                  {!isMobile && (
-                    <TableCell width='30%' align='left'>
-                      {data.keyCreditMetric}
-                      {data.tooltip && (
-                        <ToolTip
-                          iconSx={{
-                            position: 'relative',
-                            top: '5px',
-                          }}
-                          title={data.tooltip}
-                        />
-                      )}
-                    </TableCell>
-                  )}
-                  <TableCell align={isMobile ? 'left' : 'right'}>
-                    {isMobile && (
-                      <Typography
-                        variant='caption'
-                        component='span'
-                        fontSize={10}
-                      >
-                        {t('risk.poolCredit.headers.column-2')}
-                      </Typography>
-                    )}
-                    <Typography variant='body1'>
-                      {index < 2
-                        ? `${formatAmount(data.previousFiscalYear || '0', { minDecimals: 2 })} ${data.unit}`
-                        : formatPercentage(data.previousFiscalYear)}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align={isMobile ? 'left' : 'right'}>
-                    {isMobile && (
-                      <Typography
-                        variant='caption'
-                        component='span'
-                        fontSize={10}
-                      >
-                        {t('risk.poolCredit.headers.column-3')}
-                      </Typography>
-                    )}
-                    <Typography variant='body1'>
-                      {index < 2
-                        ? `${formatAmount(data.mostRecentQuarter || '0', { minDecimals: 2 })} ${data.unit}`
-                        : formatPercentage(data.mostRecentQuarter)}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align={isMobile ? 'left' : 'right'}>
-                    {isMobile && (
-                      <Typography
-                        variant='caption'
-                        component='span'
-                        fontSize={10}
-                      >
-                        {t('risk.poolCredit.headers.column-4')}
-                      </Typography>
-                    )}
-                    <Typography variant='body1'>
-                      {index < 2
-                        ? `${formatAmount(data.priorMonth || '0', { minDecimals: 2 })} ${data.unit}`
-                        : formatPercentage(data.priorMonth)}
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              </Fragment>
-            ))
+                </Fragment>
+              )
+            })
           }
         </CustomTable>
       </CardContent>
