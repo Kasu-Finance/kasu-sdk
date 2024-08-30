@@ -1,11 +1,41 @@
-'use client'
+import { Box, TableCell, TableRow } from '@mui/material'
+import { PoolCreditMetrics } from '@solidant/kasu-sdk/src/services/DataService/types'
+import React from 'react'
 
-import usePoolCreditMetric from '@/hooks/lending/usePoolCreditMetric'
+import ToolTip from '@/components/atoms/ToolTip'
 
-const PoolCreditMetricsTableBody = () => {
-  usePoolCreditMetric('0x2bf0c43659c2a9f2ca15a9c335a8f2689dff7ab2')
+import { formatAmount } from '@/utils'
 
-  return ''
+type PoolCreditMetricsTableBodyProps = {
+  poolCreditMetrics: PoolCreditMetrics
 }
+
+const PoolCreditMetricsTableBody: React.FC<PoolCreditMetricsTableBodyProps> = ({
+  poolCreditMetrics,
+}) =>
+  poolCreditMetrics.keyCreditMetrics.map((metrics, index) => (
+    <TableRow key={index}>
+      <TableCell>
+        <Box display='flex' alignItems='center'>
+          {metrics.keyCreditMetric.name}
+          {metrics.keyCreditMetric.tooltip && (
+            <ToolTip title={metrics.keyCreditMetric.tooltip} />
+          )}
+        </Box>
+      </TableCell>
+      <TableCell>
+        {formatAmount(metrics.previousFiscalYear, { minDecimals: 2 })}{' '}
+        {metrics.keyCreditMetric.unit}
+      </TableCell>
+      <TableCell>
+        {formatAmount(metrics.mostRecentQuarter, { minDecimals: 2 })}{' '}
+        {metrics.keyCreditMetric.unit}
+      </TableCell>
+      <TableCell>
+        {formatAmount(metrics.priorMonth, { minDecimals: 2 })}{' '}
+        {metrics.keyCreditMetric.unit}
+      </TableCell>
+    </TableRow>
+  ))
 
 export default PoolCreditMetricsTableBody
