@@ -1,27 +1,17 @@
-import { TableCell, TableRow } from '@mui/material'
-import { BadAndDoubtfulDebtsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
-
-import useTranslation from '@/hooks/useTranslation'
+import { TableCell, TableRow, Typography } from '@mui/material'
+import { BadAndDoubtfulDebts } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import DataTypography from '@/components/molecules/risk/BadDebtsTable/DataTypography'
 
+import { formatAmount } from '@/utils'
+
 type BadDebtsMobileRowProps = {
-  data: Pick<
-    BadAndDoubtfulDebtsDirectus,
-    'id' | 'poolIdFK' | 'name' | 'tooltip'
-  > & {
-    totalAmount: string
-    totalPercentage: string
-    monthlyAverageAmount: string
-    monthlyAveragePercentage: string
-    currentStatusAmount: string
-    currentStatusPercentage: string
-  }
+  data: BadAndDoubtfulDebts['items'][number]
 }
 const BadDebtsMobileRow: React.FC<BadDebtsMobileRowProps> = ({ data }) => {
-  const { t } = useTranslation()
-
-  const isArrears = data.name === 'Arrears'
+  const isNumber = (data: any): data is number => {
+    return typeof data === 'number' && !isNaN(data)
+  }
 
   return (
     <>
@@ -36,10 +26,121 @@ const BadDebtsMobileRow: React.FC<BadDebtsMobileRowProps> = ({ data }) => {
           },
         })}
       >
-        <TableCell align='left'>
-          <DataTypography data={data.name} toolTip={data.tooltip} />
+        <TableCell align='left' colSpan={3}>
+          <DataTypography
+            data={data.item.name}
+            toolTip={data.item.tooltip}
+            isLabel
+          />
         </TableCell>
       </TableRow>
+      <TableRow
+        sx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            '.MuiTableCell-root': {
+              p: 0,
+              border: 'none',
+              fontSize: 10,
+              textTransform: 'capitalize',
+            },
+          },
+        })}
+      >
+        <TableCell>
+          <Typography variant='caption' fontSize={10}>
+            Period
+          </Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant='caption' fontSize={10}>
+            {data.item.unit ?? 'USD'}
+          </Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant='caption' fontSize={10}>
+            {data.item.unit ? '' : '%'}
+          </Typography>
+        </TableCell>
+      </TableRow>
+      <TableRow
+        sx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            '.MuiTableCell-root': {
+              p: 0,
+              border: 'none',
+              fontSize: 10,
+              textTransform: 'capitalize',
+            },
+          },
+        })}
+      >
+        <TableCell>Current Status</TableCell>
+        <TableCell>
+          {isNumber(data.currentAmount)
+            ? formatAmount(data.currentAmount)
+            : 'N/A'}
+        </TableCell>
+        <TableCell>
+          {isNumber(data.currentPercentage)
+            ? formatAmount(data.currentPercentage)
+            : data.item.unit
+              ? ''
+              : 'N/A'}
+        </TableCell>
+      </TableRow>
+      <TableRow
+        sx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            '.MuiTableCell-root': {
+              p: 0,
+              border: 'none',
+              fontSize: 10,
+              textTransform: 'capitalize',
+            },
+          },
+        })}
+      >
+        <TableCell>Monthly Average (LTM)</TableCell>
+        <TableCell>
+          {isNumber(data.monthlyAverageAmount)
+            ? formatAmount(data.monthlyAverageAmount)
+            : 'N/A'}
+        </TableCell>
+        <TableCell>
+          {isNumber(data.monthlyAveragePercentage)
+            ? formatAmount(data.monthlyAveragePercentage)
+            : data.item.unit
+              ? ''
+              : 'N/A'}
+        </TableCell>
+      </TableRow>
+      <TableRow
+        sx={(theme) => ({
+          [theme.breakpoints.down('sm')]: {
+            '.MuiTableCell-root': {
+              p: 0,
+              border: 'none',
+              fontSize: 10,
+              textTransform: 'capitalize',
+            },
+          },
+        })}
+      >
+        <TableCell>Lifetime</TableCell>
+        <TableCell>
+          {isNumber(data.totalLifetimeAmount)
+            ? formatAmount(data.totalLifetimeAmount)
+            : 'N/A'}
+        </TableCell>
+        <TableCell>
+          {isNumber(data.totalLifetimePercentage)
+            ? formatAmount(data.totalLifetimePercentage)
+            : data.item.unit
+              ? ''
+              : 'N/A'}
+        </TableCell>
+      </TableRow>
+      {/* 
       <TableRow
         sx={(theme) => ({
           [theme.breakpoints.down('sm')]: {
@@ -55,7 +156,7 @@ const BadDebtsMobileRow: React.FC<BadDebtsMobileRowProps> = ({ data }) => {
         <TableCell width='60%'>
           {t('risk.badDebts.headers.column-3')} {t('general.amount')}
         </TableCell>
-        <TableCell width='40%'> {!isArrears && '%'}</TableCell>
+        <TableCell width='40%'> {data.item.unit?? '%'}</TableCell>
       </TableRow>
       <TableRow
         sx={(theme) => ({
@@ -69,8 +170,8 @@ const BadDebtsMobileRow: React.FC<BadDebtsMobileRowProps> = ({ data }) => {
           },
         })}
       >
-        <TableCell>{data.currentStatusAmount}</TableCell>
-        <TableCell>{!isArrears && data.currentStatusPercentage}</TableCell>
+        <TableCell>{data.currentAmount}</TableCell>
+        <TableCell>{data.currentPercentage}</TableCell>
       </TableRow>
       <TableRow
         sx={(theme) => ({
@@ -88,15 +189,15 @@ const BadDebtsMobileRow: React.FC<BadDebtsMobileRowProps> = ({ data }) => {
           {t('risk.badDebts.headers.column-2')}{' '}
           {t('risk.badDebts.headers.column-2-suffix')}
         </TableCell>
-        <TableCell>{!isArrears && '%'}</TableCell>
+        <TableCell>{data.item.unit?? '%'}</TableCell>
       </TableRow>
       <TableRow
         sx={(theme) => ({
           [theme.breakpoints.down('sm')]: {
             '.MuiTableCell-root': {
               p: 0,
-              pb: isArrears ? 1 : 2,
-              border: isArrears ? undefined : 'none',
+              // pb: isArrears ? 1 : 2,
+              // border: isArrears ? undefined : 'none',
               fontSize: 12,
               borderColor: '#E0C19C',
             },
@@ -104,7 +205,7 @@ const BadDebtsMobileRow: React.FC<BadDebtsMobileRowProps> = ({ data }) => {
         })}
       >
         <TableCell>{data.monthlyAverageAmount}</TableCell>
-        <TableCell>{!isArrears && data.monthlyAveragePercentage}</TableCell>
+        <TableCell>{data.monthlyAveragePercentage}</TableCell>
       </TableRow>
       {!isArrears && (
         <>
@@ -142,7 +243,7 @@ const BadDebtsMobileRow: React.FC<BadDebtsMobileRowProps> = ({ data }) => {
             <TableCell>{data.totalPercentage}</TableCell>
           </TableRow>
         </>
-      )}
+      )} */}
     </>
   )
 }

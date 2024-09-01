@@ -49,7 +49,7 @@ const RiskReporting: React.FC = () => {
     <Box mt={3}>
       {poolCreditHook.data && <PoolCreditTable data={poolCreditHook.data} />}
 
-      {doubtfulHook.data?.length && <BadDebtsTable data={doubtfulHook.data} />}
+      {doubtfulHook.data && <BadDebtsTable data={doubtfulHook.data} />}
 
       {reportingHook.data?.length && (
         <ReportingTable data={reportingHook.data} />

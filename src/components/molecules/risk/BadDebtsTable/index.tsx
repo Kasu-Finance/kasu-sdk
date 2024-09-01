@@ -7,7 +7,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material'
-import { BadAndDoubtfulDebtsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
+import { BadAndDoubtfulDebts } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
 import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
@@ -19,17 +19,7 @@ import BadDebtsMobileRow from '@/components/molecules/risk/BadDebtsTable/BadDebt
 import DataTypography from '@/components/molecules/risk/BadDebtsTable/DataTypography'
 
 type BadDebtsTableProps = {
-  data: (Pick<
-    BadAndDoubtfulDebtsDirectus,
-    'id' | 'poolIdFK' | 'name' | 'tooltip'
-  > & {
-    totalAmount: string
-    totalPercentage: string
-    monthlyAverageAmount: string
-    monthlyAveragePercentage: string
-    currentStatusAmount: string
-    currentStatusPercentage: string
-  })[]
+  data: BadAndDoubtfulDebts
 }
 
 const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
@@ -102,7 +92,7 @@ const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
             )
           }
           sortKeys={['']}
-          data={data}
+          data={data.items}
           pagination={false}
           defaultSortKey='' // not needed
           handleSort={() => 0} // not needed
@@ -120,27 +110,22 @@ const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
               ) : (
                 <TableRow key={index}>
                   <TableCell align='left' width='10%'>
-                    <DataTypography data={data.name} toolTip={data.tooltip} />
+                    <DataTypography
+                      data={data.item.name}
+                      toolTip={data.item.tooltip}
+                      isLabel
+                    />
                   </TableCell>
                   <BadDebtsCell
                     value={[
                       <DataTypography
-                        data={data.totalAmount}
-                        suffix=''
-                        key={1}
-                      />,
-                      <DataTypography data={data.totalPercentage} key={2} />,
-                    ]}
-                  />
-                  <BadDebtsCell
-                    value={[
-                      <DataTypography
-                        data={data.monthlyAverageAmount}
-                        suffix=''
+                        data={data.totalLifetimeAmount}
+                        suffix={data.item.unit ?? 'USDC'}
                         key={1}
                       />,
                       <DataTypography
-                        data={data.monthlyAveragePercentage}
+                        data={data.totalLifetimePercentage}
+                        suffix={data.item.unit ?? '%'}
                         key={2}
                       />,
                     ]}
@@ -148,12 +133,27 @@ const BadDebtsTable: React.FC<BadDebtsTableProps> = ({ data }) => {
                   <BadDebtsCell
                     value={[
                       <DataTypography
-                        data={data.currentStatusAmount}
-                        suffix=''
+                        data={data.monthlyAverageAmount}
+                        suffix={data.item.unit ?? 'USDC'}
                         key={1}
                       />,
                       <DataTypography
-                        data={data.currentStatusPercentage}
+                        data={data.monthlyAveragePercentage}
+                        suffix={data.item.unit ?? '%'}
+                        key={2}
+                      />,
+                    ]}
+                  />
+                  <BadDebtsCell
+                    value={[
+                      <DataTypography
+                        data={data.currentAmount}
+                        suffix={data.item.unit ?? 'USDC'}
+                        key={1}
+                      />,
+                      <DataTypography
+                        data={data.currentPercentage}
+                        suffix={data.item.unit ?? '%'}
                         key={2}
                       />,
                     ]}
