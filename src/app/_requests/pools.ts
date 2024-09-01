@@ -1,7 +1,7 @@
 import { unstable_cache } from 'next/cache'
 
 import { getKasuSDK } from '@/actions/getKasuSDK'
-import { getCurrentEpoch } from '@/app/requests/currentEpoch'
+import { getCurrentEpoch } from '@/app/_requests/currentEpoch'
 
 const CACHE_TTL = 60 * 60 // 1 hour
 

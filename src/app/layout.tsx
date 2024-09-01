@@ -16,7 +16,7 @@ import ToastState from '@/context/toast/toast.provider'
 import Web3Provider from '@/context/web3provider/web3.provider'
 
 import getLockPeriods from '@/actions/getLockPeriods'
-import { GET as getUnusedPools } from '@/app/api/unusedPools/route'
+import { getUnusedPools } from '@/app/_requests/unusedPools'
 import ThemeRegistry from '@/themes/ThemeRegistry'
 
 type RootLayoutProps = {
@@ -31,8 +31,7 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: RootLayoutProps) {
   const lockPeriods = await getLockPeriods()
-  const res = await getUnusedPools()
-  const unusedPools = await res.json()
+  const unusedPools = await getUnusedPools()
 
   return (
     <html lang='en'>

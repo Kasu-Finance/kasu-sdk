@@ -1,7 +1,7 @@
 import HomeOverview from '@/components/molecules/home/HomeOverview'
 
-import { getPoolOverview } from '@/app/requests/pools'
-import { getPoolsTotals } from '@/app/requests/poolTotals'
+import { getPoolOverview } from '@/app/_requests/pools'
+import { getPoolsTotals } from '@/app/_requests/poolTotals'
 
 const Home = async () => {
   const pools = await getPoolOverview()

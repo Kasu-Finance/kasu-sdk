@@ -5,8 +5,8 @@ import PoolCreditMetrics from '@/components/organisms/lending/RiskReportingTab/P
 import PoolData from '@/components/organisms/lending/RiskReportingTab/PoolData'
 import PortfolioLeadingIndicators from '@/components/organisms/lending/RiskReportingTab/PortfolioLeadingIndicators'
 
-import { getBadAndDoubtfulDebts } from '@/app/requests/badAndDoubltDebts'
-import { getPoolCreditMetrics } from '@/app/requests/poolCreditMetrics'
+import { getBadAndDoubtfulDebts } from '@/app/_requests/badAndDoubltDebts'
+import { getPoolCreditMetrics } from '@/app/_requests/poolCreditMetrics'
 
 type RiskReportingProps = {
   poolId: string

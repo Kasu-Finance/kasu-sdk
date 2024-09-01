@@ -7,7 +7,7 @@ import EmptyPoolsPlaceholder from '@/components/organisms/home/EmptyPoolsPlaceho
 import PoolLayoutWrapper from '@/components/organisms/home/PoolLayoutWrapper'
 import PoolLayoutWrapperSkeleton from '@/components/organisms/home/PoolLayoutWrapperSkeleton'
 
-import { getPoolWithDelegate } from '@/app/requests/poolWithDelegate'
+import { getPoolWithDelegate } from '@/app/_requests/poolWithDelegate'
 
 const LendingPage = async () => {
   const poolsWithDelegate = await getPoolWithDelegate()

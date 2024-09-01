@@ -1,6 +1,6 @@
 import useSWRImmutable from 'swr/immutable'
 
-import { getPoolOverview } from '@/app/requests/pools'
+import { getPoolOverview } from '@/app/_requests/pools'
 
 const usePoolOverview = (poolId?: string) => {
   const poolQuery = poolId ? `?id=${poolId}` : ''

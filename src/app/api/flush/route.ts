@@ -21,7 +21,6 @@ export async function GET(_req: Request): Promise<Response> {
     'totals',
     'poolDelegate',
     'unusedPools',
-    'filteredUnusedPools',
     'riskManagement',
     'repayments',
     'currentEpoch',

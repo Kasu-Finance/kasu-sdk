@@ -9,7 +9,7 @@ import AggregatedFundsFlow from '@/components/organisms/lending/RepaymentsTab/Ag
 import CsvDownloadButton from '@/components/organisms/lending/RepaymentsTab/CsvDownloadButton'
 import RepaymentSection from '@/components/organisms/lending/RepaymentsTab/RepaymentSection'
 
-import { getRepayments } from '@/app/requests/repayments'
+import { getRepayments } from '@/app/_requests/repayments'
 
 type PoolDetailsProps = {
   poolId: string
