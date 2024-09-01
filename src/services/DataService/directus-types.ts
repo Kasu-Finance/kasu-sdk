@@ -8,6 +8,7 @@ export interface DirectusSchema {
     FinancialReportingDocuments: FinancialReportingDocumentsDirectus[];
     PoolRepayments: PoolRepaymentDirectus[];
     KeyCreditMetrics: KeyCreditMetricsDirectus[];
+    BadAndDoubtfulDebtsItems: BadAndDoubtfulDebtsItems[];
 }
 
 export interface PoolOverviewDirectus {
@@ -87,18 +88,28 @@ export interface KeyCreditMetricsDirectus {
     tooltip?: string;
     unit: string;
 }
+export interface BadAndDoubtfulDebtsItems {
+    id: string;
+    name: string;
+    tooltip?: string;
+    unit?: string;
+}
 
 export interface BadAndDoubtfulDebtsDirectus {
     id: string;
     poolIdFK: string;
-    name: string;
-    totalAmount: number;
-    totalPercentage: number;
-    monthlyAverageAmount: number;
-    monthlyAveragePercentage: number;
-    currentStatusAmount: number;
-    currentStatusPercentage: number;
-    tooltip: string;
+    items: {
+        item: {
+            key: string;
+            collection: string;
+        };
+        totalLifetimeAmount: number | null;
+        totalLifetimePercentage: number | null;
+        monthlyAverageAmount: number | null;
+        monthlyAveragePercentage: number | null;
+        currentAmount: number | null;
+        currentPercentage: number | null;
+    }[];
 }
 
 export interface FinancialReportingDocumentsDirectus {

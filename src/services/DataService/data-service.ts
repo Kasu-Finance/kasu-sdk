@@ -15,7 +15,7 @@ import { SystemVariables } from '../Locking/types';
 import { filterArray } from '../shared';
 
 import {
-    BadAndDoubtfulDebtsDirectus,
+    BadAndDoubtfulDebtsItems,
     DirectusSchema,
     FinancialReportingDocumentsDirectus,
     KeyCreditMetricsDirectus,
@@ -296,7 +296,7 @@ export class DataService {
 
             // show only enabled pools from cms
             if (poolOverview.enabled) {
-                retn.push(poolOverview);
+            retn.push(poolOverview);
             }
         }
 
@@ -433,9 +433,41 @@ export class DataService {
     async getBadAndDoubtfulDebts(
         id_in?: string[],
     ): Promise<BadAndDoubtfulDebts[]> {
-        const badAndDoubtfulDebtsDirectus: BadAndDoubtfulDebtsDirectus[] =
-            await this._directus.request(readItems('BadAndDoubtfulDebts'));
-        return filterArray(badAndDoubtfulDebtsDirectus, id_in);
+        const [badAndDoubtfulDebtsItemsDirectus, badAndDoubtfulDebtsDirectus] =
+            await Promise.all([
+                this._directus.request(readItems('BadAndDoubtfulDebtsItems')),
+                this._directus.request(readItems('BadAndDoubtfulDebts')),
+            ]);
+
+        const itemsMapper: Partial<Record<string, BadAndDoubtfulDebtsItems>> =
+            badAndDoubtfulDebtsItemsDirectus.reduce(
+                (acc, cur) => ({ ...acc, [cur.id]: cur }),
+                {},
+            );
+
+        const test = badAndDoubtfulDebtsDirectus.map((debts) => {
+            const items = debts.items
+                .map((debtItem) => {
+                    const { item, ...metric } = debtItem;
+
+                    const itemMetric = itemsMapper[item.key];
+
+                    if (!itemMetric) return null;
+
+                    return {
+                        ...metric,
+                        item: itemMetric,
+                    };
+                })
+                .filter((item) => item !== null);
+
+            return {
+                ...debts,
+                items,
+            };
+        });
+
+        return filterArray(test, id_in);
     }
 
     async getPoolCreditMetrics(id_in?: string[]): Promise<PoolCreditMetrics[]> {
@@ -448,9 +480,9 @@ export class DataService {
         const keyCreditMetricsMapper: Partial<
             Record<number, KeyCreditMetricsDirectus>
         > = keyCreditMetricsDirectus.reduce(
-                (acc, cur) => ({ ...acc, [cur.id]: cur }),
-                {},
-            );
+            (acc, cur) => ({ ...acc, [cur.id]: cur }),
+            {},
+        );
 
         const poolCreditMetrics = poolCreditMetricsDirectus
             .map((pool) => {
@@ -458,17 +490,17 @@ export class DataService {
 
                 const metrics = pool.keyCreditMetrics
                     .map((data) => {
-                    const { keyCreditMetric, ...metric } = data;
+                        const { keyCreditMetric, ...metric } = data;
 
-                    const keyMetric =
+                        const keyMetric =
                             keyCreditMetricsMapper[keyCreditMetric.key];
 
-                    if (!keyMetric) return null;
+                        if (!keyMetric) return null;
 
-                    return {
-                        ...metric,
-                        keyCreditMetric: keyMetric,
-                    };
+                        return {
+                            ...metric,
+                            keyCreditMetric: keyMetric,
+                        };
                     })
                     .filter((metric) => metric !== null);
 

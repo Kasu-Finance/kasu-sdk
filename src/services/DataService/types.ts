@@ -1,4 +1,7 @@
-import { KeyCreditMetricsDirectus } from './directus-types';
+import {
+    BadAndDoubtfulDebtsItems,
+    KeyCreditMetricsDirectus,
+} from './directus-types';
 
 export interface PoolOverview {
     poolName: string;
@@ -101,14 +104,15 @@ export interface PoolCreditMetrics {
 export interface BadAndDoubtfulDebts {
     id: string;
     poolIdFK: string;
-    name: string;
-    totalAmount: number;
-    totalPercentage: number;
-    monthlyAverageAmount: number;
-    monthlyAveragePercentage: number;
-    currentStatusAmount: number;
-    currentStatusPercentage: number;
-    tooltip: string;
+    items: {
+        totalLifetimeAmount: number | null;
+        totalLifetimePercentage: number | null;
+        monthlyAverageAmount: number | null;
+        monthlyAveragePercentage: number | null;
+        currentAmount: number | null;
+        currentPercentage: number | null;
+        item: BadAndDoubtfulDebtsItems;
+    }[];
 }
 
 export interface PoolRepayment {
