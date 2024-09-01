@@ -26,6 +26,7 @@ export async function GET(_req: Request): Promise<Response> {
     'repayments',
     'currentEpoch',
     'poolCreditMetrics',
+    'badAndDoubtfulDebts',
   ]
 
   console.warn('flushing cache:', cachedTags)
