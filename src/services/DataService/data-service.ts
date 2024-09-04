@@ -519,9 +519,24 @@ export class DataService {
     ): Promise<FinancialReportingDocumentsDirectus[]> {
         const financialReportingDocumentsDirectus: FinancialReportingDocumentsDirectus[] =
             await this._directus.request(
-                readItems('FinancialReportingDocuments'),
+                readItems(
+                    'FinancialReportingDocuments',
+                    // @ts-ignore:next-line
+                    { fields: ['*', { documents: ['*'] }] },
+                ),
             );
-        return filterArray(financialReportingDocumentsDirectus, id_in);
+
+        const mapDocumentFilePath = financialReportingDocumentsDirectus.map(
+            (report) => ({
+                ...report,
+                documents: report.documents.map((document) => ({
+                    ...document,
+                    document: this.getUrlFromFile(document.document),
+                })),
+            }),
+        );
+
+        return filterArray(mapDocumentFilePath, id_in);
     }
 
     async getRepayments(id_in?: string[]): Promise<PoolRepayment[]> {

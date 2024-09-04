@@ -112,14 +112,19 @@ export interface BadAndDoubtfulDebtsDirectus {
     }[];
 }
 
-export interface FinancialReportingDocumentsDirectus {
-    id: string;
+export interface FinancialReportingDocumentsItemsDirectus {
+    id: number;
+    date_created: string;
     name: string;
     description: string;
-    uploadTimestamp: number;
-    version: string;
-    documentUrl: string;
+    document: string;
+    version: number;
+    financialReportingDocumentsFK: string;
+}
+export interface FinancialReportingDocumentsDirectus {
+    id: string;
     poolIdFK: string;
+    documents: FinancialReportingDocumentsItemsDirectus[];
 }
 export interface PoolRepaymentDirectus {
     id: string;
