@@ -2,6 +2,7 @@ import { Axes } from '@nivo/axes'
 import { BarCustomLayerProps, BarDatum } from '@nivo/bar'
 import { computeXYScalesForSeries } from '@nivo/scales'
 import { line } from 'd3-shape'
+import { Fragment } from 'react'
 
 import { groupBy } from '@/utils'
 
@@ -60,7 +61,7 @@ const CustomLine =
         })
 
       return (
-        <>
+        <Fragment key={index}>
           {lineProps.showAxis && (
             <Axes
               yScale={customScale}
@@ -80,7 +81,7 @@ const CustomLine =
             strokeWidth={2}
             style={{ pointerEvents: 'none' }}
           />
-        </>
+        </Fragment>
       )
     })
 
