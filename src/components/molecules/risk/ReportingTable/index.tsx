@@ -6,20 +6,11 @@ import useTranslation from '@/hooks/useTranslation'
 
 import CustomTable, {
   CustomTableHeader,
-  Sort,
 } from '@/components/molecules/CustomTable'
 import ReportingTableRow from '@/components/molecules/risk/ReportingTable/ReportingTableRow'
 
-const handleSort = (
-  _a: FinancialReportingDocumentsDirectus,
-  _b: FinancialReportingDocumentsDirectus,
-  _sort: Sort<string[]>
-): number => {
-  return 0
-}
-
 interface ReportingTableProps {
-  data: FinancialReportingDocumentsDirectus[]
+  data: FinancialReportingDocumentsDirectus['documents']
 }
 
 const ReportingTable: React.FC<ReportingTableProps> = ({ data }) => {
@@ -71,7 +62,7 @@ const ReportingTable: React.FC<ReportingTableProps> = ({ data }) => {
         <CustomTable
           headers={headers}
           data={data}
-          handleSort={handleSort}
+          handleSort={() => 0}
           sortKeys={[]}
           defaultSortKey='name'
           headersStyle={{

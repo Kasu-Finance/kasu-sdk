@@ -6,12 +6,13 @@ import {
   TableRow,
   Typography,
 } from '@mui/material'
-import { FinancialReportingDocumentsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
+import { FinancialReportingDocumentsItemsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import React from 'react'
 
 import ActionCell from '@/components/molecules/risk/ReportingTable/ActionCell'
 
-import { formatTimestamp } from '@/utils'
+import dayjs from '@/dayjs'
+import { formatAmount, formatTimestamp } from '@/utils'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:last-child': {
@@ -34,7 +35,7 @@ const CircularTypography = styled(Typography)(({ theme }) => ({
 }))
 
 interface ReportingTableRowProps {
-  data: FinancialReportingDocumentsDirectus
+  data: FinancialReportingDocumentsItemsDirectus
   index: number
 }
 
@@ -42,7 +43,7 @@ const ReportingTableRow: React.FC<ReportingTableRowProps> = ({
   data,
   index,
 }) => {
-  const formattedTime = formatTimestamp(data.uploadTimestamp, {
+  const formattedTime = formatTimestamp(dayjs(data.date_created).unix(), {
     format: 'DD.MM.YYYY HH:mm:ss',
     includeUtcOffset: true,
   })
@@ -71,11 +72,11 @@ const ReportingTableRow: React.FC<ReportingTableRowProps> = ({
       </TableCell>
       <TableCell align='right'>
         <Typography variant='body1'>
-          {parseFloat(data.version).toFixed(2)}
+          {formatAmount(data.version, { minDecimals: 2 })}
         </Typography>
       </TableCell>
       <TableCell align='right'>
-        <ActionCell actionUrl={data.documentUrl} />
+        <ActionCell actionUrl={data.document} />
       </TableCell>
     </StyledTableRow>
   )
