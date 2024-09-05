@@ -51,8 +51,8 @@ const RiskReporting: React.FC = () => {
 
       {doubtfulHook.data && <BadDebtsTable data={doubtfulHook.data} />}
 
-      {reportingHook.data?.length && (
-        <ReportingTable data={reportingHook.data} />
+      {reportingHook.data && (
+        <ReportingTable data={reportingHook.data.documents} />
       )}
     </Box>
   )
