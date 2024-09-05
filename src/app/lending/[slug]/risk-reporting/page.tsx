@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 
 import RiskReportingTab from '@/components/organisms/lending/RiskReportingTab'
+import RiskReportingTabSkeleton from '@/components/organisms/lending/RiskReportingTab/RiskReportingTabSkeleton'
 
 type PageProps = {
   params: {
@@ -10,7 +11,7 @@ type PageProps = {
 
 const PoolRiskReportingPage = ({ params }: PageProps) => {
   return (
-    <Suspense fallback="risk reporting skeleton">
+    <Suspense fallback={<RiskReportingTabSkeleton />}>
       <RiskReportingTab poolId={params.slug} />
     </Suspense>
   )

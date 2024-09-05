@@ -5,6 +5,7 @@ import FinancialReportingDocuments from '@/components/organisms/lending/RiskRepo
 import PoolCreditMetrics from '@/components/organisms/lending/RiskReportingTab/PoolCreditMetrics'
 import PoolData from '@/components/organisms/lending/RiskReportingTab/PoolData'
 import PortfolioLeadingIndicators from '@/components/organisms/lending/RiskReportingTab/PortfolioLeadingIndicators'
+import RiskReportingTabSkeleton from '@/components/organisms/lending/RiskReportingTab/RiskReportingTabSkeleton'
 
 import { getBadAndDoubtfulDebts } from '@/app/_requests/badAndDoubltDebts'
 import { getFinancialReportingDocuments } from '@/app/_requests/financialReportingDocuments'
@@ -22,6 +23,9 @@ const RiskReportingTab: React.FC<RiskReportingProps> = async ({ poolId }) => {
       getBadAndDoubtfulDebts(poolId),
       getFinancialReportingDocuments(poolId),
     ])
+
+  if (!poolCreditMetrics && !debts && !financialReportingDocuments)
+    return <RiskReportingTabSkeleton />
 
   return (
     <Stack spacing={3} mt={3}>
