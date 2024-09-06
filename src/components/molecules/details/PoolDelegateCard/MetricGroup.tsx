@@ -78,7 +78,7 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
           <Box key={uniqueKey} width='100%' pr={2}>
             <InfoRow
               title={titleKey}
-              toolTipInfo={t(tooltipKey)}
+              toolTipInfo={tooltipKey}
               showDivider={
                 !isMobile && metric.id === PoolDelegateMetricIds.AssetClasses
               }
@@ -136,7 +136,7 @@ const MetricGroup: React.FC<MetricGroupProps> = ({ metrics, type }) => {
           <InfoRow
             key={uniqueKey}
             title={titleKey}
-            toolTipInfo={t(tooltipKey)}
+            toolTipInfo={tooltipKey}
             showDivider={!isMobile && index !== arrayLength - 1}
             sx={(theme) => ({
               [theme.breakpoints.down('sm')]: {

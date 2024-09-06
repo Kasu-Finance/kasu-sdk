@@ -13,6 +13,8 @@ import ColoredBox from '@/components/atoms/ColoredBox'
 import InfoColumn from '@/components/atoms/InfoColumn'
 import InfoRow from '@/components/atoms/InfoRow'
 import TokenAmount from '@/components/atoms/TokenAmount'
+import ToolTip from '@/components/atoms/ToolTip'
+import TermsAndStructureTooltip from '@/components/molecules/tooltips/TermsAndStructure'
 
 import dayjs from '@/dayjs'
 import { formatAmount } from '@/utils'
@@ -295,7 +297,7 @@ const OverviewDetails: React.FC<{
                 }
               />
               <InfoRow
-                toolTipInfo={t('lending.poolOverview.detailCard.terms.tooltip')}
+                toolTipInfo={<ToolTip title={<TermsAndStructureTooltip />} />}
                 title={t('lending.poolOverview.detailCard.terms.label')}
                 titleStyle={{ fontSize: { xs: 12, sm: 14 } }}
                 sx={isMobile ? { p: 0, my: 1 } : undefined}
