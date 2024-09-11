@@ -1,6 +1,6 @@
 'use client'
 
-import { Slider, Stack, Typography } from '@mui/material'
+import { LinearProgress, Slider, Stack, Typography } from '@mui/material'
 
 import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
 import useTranslation from '@/hooks/useTranslation'
@@ -12,7 +12,7 @@ import ProgressIndicator from '@/components/organisms/lending/OverviewTab/UserLo
 const LoyaltyProgress = () => {
   const { t } = useTranslation()
 
-  const stakedPercentage = useLockingPercentage()
+  const { stakedPercentage, isLoading } = useLockingPercentage()
 
   const { level_2 } = useLoyaltyLevel(stakedPercentage)
 
@@ -43,6 +43,24 @@ const LoyaltyProgress = () => {
         disabled
         slots={{
           thumb: ({ style }) => <ProgressIndicator {...style} />,
+          track: (props) => {
+            const value = (props.ownerState.value / props.ownerState.max) * 100
+
+            return (
+              <LinearProgress
+                value={value}
+                variant={isLoading ? 'indeterminate' : 'determinate'}
+                sx={{
+                  position: 'absolute',
+                  height: 'inherit',
+                  width: '100%',
+                  borderRadius: 'inherit',
+                  border: 'none',
+                  backgroundColor: 'gray.extraDark',
+                }}
+              />
+            )
+          },
         }}
         sx={{
           '.MuiSlider-track': {

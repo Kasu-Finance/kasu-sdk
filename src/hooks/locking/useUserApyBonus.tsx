@@ -7,7 +7,7 @@ const useUserApyBonus = () => {
   const sdk = useKasuSDK()
   const { account } = useWeb3React()
 
-  const { data, error, mutate } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     account ? ['userApyBonus', account] : null,
     async ([_, userAddress]) => sdk.UserLending.getUserApyBonus(userAddress)
   )
@@ -15,7 +15,7 @@ const useUserApyBonus = () => {
   return {
     apyBonus: data,
     error,
-    isLoading: !data && !error,
+    isLoading,
     updateApyBonus: mutate,
   }
 }

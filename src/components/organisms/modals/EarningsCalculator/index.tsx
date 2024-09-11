@@ -23,7 +23,7 @@ const EarningsCalculatorModal: React.FC<DialogChildProps> = ({
 
   const { modalStatus } = useModalStatusState()
 
-  const stakedPercentage = useLockingPercentage()
+  const { stakedPercentage } = useLockingPercentage()
   const { currentLevel } = useLoyaltyLevel(stakedPercentage)
 
   const poolData = modal.earningsCalculatorModal.poolData

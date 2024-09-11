@@ -20,7 +20,7 @@ type BonusAndRewardsProps = {
 const BonusAndRewards: React.FC<BonusAndRewardsProps> = ({ poolId }) => {
   const { t } = useTranslation()
 
-  const stakedPercentage = useLockingPercentage()
+  const { stakedPercentage } = useLockingPercentage()
 
   const { currentLevel } = useLoyaltyLevel(stakedPercentage)
 

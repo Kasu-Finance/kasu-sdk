@@ -9,7 +9,7 @@ import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
 const UserLoyaltyLevel = () => {
   const { t } = useTranslation()
 
-  const stakedPercentage = useLockingPercentage()
+  const { stakedPercentage } = useLockingPercentage()
   const { currentLevel, isLoyal } = useLoyaltyLevel(stakedPercentage)
 
   return (

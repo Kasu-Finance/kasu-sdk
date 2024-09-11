@@ -20,7 +20,7 @@ const LoyaltyProgressOverview = () => {
 
   const { rKsuAmount } = useEarnedRKsu()
 
-  const stakedPercentage = useLockingPercentage()
+  const { stakedPercentage } = useLockingPercentage()
 
   const { stakedKSU } = useStakedKSU()
 
