@@ -4,6 +4,8 @@ import useSWR from 'swr'
 import usePoolOverview from '@/hooks/lending/usePoolOverview'
 import useKasuSDK from '@/hooks/useKasuSDK'
 
+import { FIVE_MINUTES } from '@/constants/general'
+
 const usePortfolioSummary = () => {
   const sdk = useKasuSDK()
 
@@ -19,7 +21,8 @@ const usePortfolioSummary = () => {
       sdk.Portfolio.getPortfolioSummary(
         userAddress.toLowerCase(),
         poolOverviews
-      )
+      ),
+    { dedupingInterval: FIVE_MINUTES }
   )
 
   return {

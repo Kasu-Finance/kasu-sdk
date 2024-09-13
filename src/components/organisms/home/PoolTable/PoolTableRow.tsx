@@ -15,13 +15,8 @@ import NextLink from '@/components/atoms/NextLink'
 import TokenAmount from '@/components/atoms/TokenAmount'
 import PoolTableRowApy from '@/components/organisms/home/PoolTable/PoolTableRowApy'
 
-import {
-  JuniorTrancheIcon,
-  MezzanineTrancheIcon,
-  SeniorTrancheIcon,
-} from '@/assets/icons'
-
 import { Routes } from '@/config/routes'
+import { TRANCHE_ICONS } from '@/constants/pool'
 import { capitalize, formatAmount, formatPercentage } from '@/utils'
 import formatDuration from '@/utils/formats/formatDuration'
 import getInitials from '@/utils/getInitials'
@@ -30,12 +25,6 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 
 export type PoolTableRowProps = {
   pool: PoolOverviewWithDelegate
-}
-
-const TRANCHE_ICONS = {
-  senior: <SeniorTrancheIcon />,
-  mezzanine: <MezzanineTrancheIcon />,
-  junior: <JuniorTrancheIcon />,
 }
 
 const PoolTableRow: React.FC<PoolTableRowProps> = ({ pool }) => {

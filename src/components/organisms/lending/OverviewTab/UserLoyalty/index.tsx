@@ -13,11 +13,14 @@ import UserLoyaltyLevel from '@/components/organisms/lending/OverviewTab/UserLoy
 
 import CrownedCat from '@/images/crowned-cat.png'
 
+import { PoolOverviewWithDelegate } from '@/types/page'
+
 type UserLoyaltyProps = {
+  pools: PoolOverviewWithDelegate[]
   poolId: string
 }
 
-const UserLoyalty: React.FC<UserLoyaltyProps> = ({ poolId }) => {
+const UserLoyalty: React.FC<UserLoyaltyProps> = ({ pools, poolId }) => {
   const { t } = useTranslation()
 
   return (
@@ -48,7 +51,7 @@ const UserLoyalty: React.FC<UserLoyaltyProps> = ({ poolId }) => {
               </Typography>
             </Box>
             <CustomInnerCardContent sx={{ py: 0 }}>
-              <BonusAndRewards poolId={poolId} />
+              <BonusAndRewards pools={pools} poolId={poolId} />
               <UserLoyaltyActions />
             </CustomInnerCardContent>
           </WaveBox>

@@ -1,0 +1,91 @@
+import { Box, TableCell, TableRow, Typography } from '@mui/material'
+import { PortfolioLendingPool } from '@solidant/kasu-sdk/src/services/Portfolio/types'
+
+import useTranslation from '@/hooks/useTranslation'
+
+import DottedDivider from '@/components/atoms/DottedDivider'
+import NextLink from '@/components/atoms/NextLink'
+
+import { Routes } from '@/config/routes'
+import { TRANCHE_ICONS } from '@/constants/pool'
+import { formatAmount, formatPercentage } from '@/utils'
+
+type LendingPortfolioTableRowProps = {
+  portfolioPool: PortfolioLendingPool
+}
+
+const LendingPortfolioTableRow: React.FC<LendingPortfolioTableRowProps> = ({
+  portfolioPool,
+}) => {
+  const { t } = useTranslation()
+
+  return (
+    <>
+      <TableRow>
+        <TableCell colSpan={5}>
+          <Typography
+            variant='baseMdBold'
+            color='gold.dark'
+            whiteSpace='normal'
+            component={NextLink}
+            href={`${Routes.lending.root.url}/${portfolioPool.id}`}
+          >
+            {portfolioPool.name}
+          </Typography>
+        </TableCell>
+      </TableRow>
+      {portfolioPool.tranches.map((tranche) => (
+        <TableRow
+          key={tranche.name}
+          sx={{
+            '.MuiTableCell-root': {
+              py: 0,
+            },
+          }}
+        >
+          <TableCell>
+            <Box display='flex' alignItems='center' gap={1}>
+              {
+                TRANCHE_ICONS[
+                  tranche.name.toLowerCase() as keyof typeof TRANCHE_ICONS
+                ]
+              }
+              {tranche.name} {t('general.tranche')}
+            </Box>
+          </TableCell>
+          <TableCell>
+            {formatPercentage(tranche.apy).replaceAll(' ', '')}
+          </TableCell>
+          <TableCell>
+            {formatAmount(tranche.investedAmount || '0', {
+              minValue: 10_000_000,
+              minDecimals: 2,
+            })}{' '}
+            USDC
+          </TableCell>
+          <TableCell>
+            {formatAmount(tranche.yieldEarnings.lastEpoch || '0', {
+              minValue: 10_000_000,
+              minDecimals: 2,
+            })}{' '}
+            USDC
+          </TableCell>
+          <TableCell>
+            {formatAmount(tranche.yieldEarnings.lifetime || '0', {
+              minValue: 10_000_000,
+              minDecimals: 2,
+            })}{' '}
+            USDC
+          </TableCell>
+        </TableRow>
+      ))}
+      <TableRow>
+        <TableCell sx={{ pb: 0 }} colSpan={5}>
+          <DottedDivider />
+        </TableCell>
+      </TableRow>
+    </>
+  )
+}
+
+export default LendingPortfolioTableRow

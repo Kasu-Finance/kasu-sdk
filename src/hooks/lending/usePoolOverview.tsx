@@ -1,11 +1,11 @@
-import useSWRImmutable from 'swr/immutable'
+import useSWR from 'swr'
 
 import { getPoolOverview } from '@/app/_requests/pools'
 
 const usePoolOverview = (poolId?: string) => {
   const poolQuery = poolId ? `?id=${poolId}` : ''
 
-  const { data, error } = useSWRImmutable(
+  const { data, isLoading, error } = useSWR(
     `/api/pools${poolQuery}`,
     getPoolOverview
   )
@@ -13,7 +13,7 @@ const usePoolOverview = (poolId?: string) => {
   return {
     data,
     error,
-    isLoading: !data && !error,
+    isLoading,
   }
 }
 

@@ -3,13 +3,17 @@
 import { Box } from '@mui/material'
 import { Suspense } from 'react'
 
-import EmptyPoolsPlaceholder from '@/components/organisms/home/EmptyPoolsPlaceholder'
+import useTranslation from '@/hooks/useTranslation'
+
+import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
 import PoolLayoutWrapper from '@/components/organisms/home/PoolLayoutWrapper'
 import PoolLayoutWrapperSkeleton from '@/components/organisms/home/PoolLayoutWrapperSkeleton'
 
 import { getPoolWithDelegate } from '@/app/_requests/poolWithDelegate'
 
 const LendingPage = async () => {
+  const { t } = useTranslation()
+
   const poolsWithDelegate = await getPoolWithDelegate()
 
   return (
@@ -17,7 +21,9 @@ const LendingPage = async () => {
       <Suspense fallback={<PoolLayoutWrapperSkeleton />}>
         <PoolLayoutWrapper
           pools={poolsWithDelegate}
-          emptyPoolsPlaceholder={<EmptyPoolsPlaceholder isActivePool />}
+          emptyPoolsPlaceholder={
+            <EmptyDataPlaceholder text={t('home.no-data.activePools')} />
+          }
         />
       </Suspense>
     </Box>

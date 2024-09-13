@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Grid, Typography } from '@mui/material'
+import { Box, Grid, Skeleton, Typography } from '@mui/material'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 
 import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
@@ -13,18 +13,21 @@ import InfoRow from '@/components/atoms/InfoRow'
 
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
+import { PoolOverviewWithDelegate } from '@/types/page'
+
 type BonusAndRewardsProps = {
+  pools: PoolOverviewWithDelegate[]
   poolId: string
 }
 
-const BonusAndRewards: React.FC<BonusAndRewardsProps> = ({ poolId }) => {
+const BonusAndRewards: React.FC<BonusAndRewardsProps> = ({ pools, poolId }) => {
   const { t } = useTranslation()
 
   const { stakedPercentage } = useLockingPercentage()
 
   const { currentLevel } = useLoyaltyLevel(stakedPercentage)
 
-  const { lendingPortfolioData } = useLendingPortfolioData()
+  const { isLoading, lendingPortfolioData } = useLendingPortfolioData(pools)
 
   const { ksuPrice } = useKsuPrice()
 
@@ -32,7 +35,7 @@ const BonusAndRewards: React.FC<BonusAndRewardsProps> = ({ poolId }) => {
 
   if (lendingPortfolioData) {
     const pool = lendingPortfolioData.lendingPools.find(
-      (pool) => pool.id === poolId
+      (portfolioPool) => portfolioPool.id === poolId
     )
 
     if (pool) {
@@ -70,15 +73,19 @@ const BonusAndRewards: React.FC<BonusAndRewardsProps> = ({ poolId }) => {
           )}
           showDivider
           metric={
-            <Box>
-              <Typography variant='baseMdBold'>
-                {formatAmount(lifetimeBonusYieldEarnings)} KSU{' '}
-              </Typography>
-              <Typography variant='baseMd' color='gray.middle'>
-                ({formatAmount(formatEther(lifetimeYieldEarnedInUSD))}
-                USD)
-              </Typography>
-            </Box>
+            isLoading ? (
+              <Skeleton width={120} />
+            ) : (
+              <Box>
+                <Typography variant='baseMdBold'>
+                  {formatAmount(lifetimeBonusYieldEarnings)} KSU{' '}
+                </Typography>
+                <Typography variant='baseMd' color='gray.middle'>
+                  ({formatAmount(formatEther(lifetimeYieldEarnedInUSD))}
+                  USD)
+                </Typography>
+              </Box>
+            )
           }
         />
       </Grid>
