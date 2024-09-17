@@ -84,8 +84,8 @@ const UserTransactionTableRow: React.FC<UserTransactionTableRowProps> = ({
         </TableCell>
         <TableCell>{transaction.trancheName}</TableCell>
         <TableCell>{formatAmount(transaction.requestedAmount)} USDC</TableCell>
-        <TableCell>{formatAmount(transaction.rejectedAmount)} USDC</TableCell>
         <TableCell>{formatAmount(transaction.acceptedAmount)} USDC</TableCell>
+        <TableCell>{formatAmount(transaction.rejectedAmount)} USDC</TableCell>
         <TableCell>{formattedTime.date}</TableCell>
         <TableCell>{transaction.status}</TableCell>
       </TableRow>
