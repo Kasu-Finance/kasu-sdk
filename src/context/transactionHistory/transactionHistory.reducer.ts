@@ -24,6 +24,11 @@ const transactionHistoryReducer = (
         ...state,
         trancheType: action.payload,
       }
+    case TransactionHistoryActionsTypes.SET_POOL_ID:
+      return {
+        ...state,
+        poolId: action.payload,
+      }
   }
 }
 

@@ -1,5 +1,3 @@
-'use client'
-
 import { TableCell, TableRow } from '@mui/material'
 import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
 
@@ -9,23 +7,25 @@ import usePagination from '@/hooks/usePagination'
 import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
 import NoMatchingFilter from '@/components/atoms/NoMatchingFilter'
 import CustomTableTest from '@/components/molecules/CustomTableTest'
-import UserTransactionTableBody from '@/components/organisms/lending/OverviewTab/UserTransactions/UserTransactionTable.tsx/UserTransactionTableBody'
-import UserTransactionTableHeader from '@/components/organisms/lending/OverviewTab/UserTransactions/UserTransactionTable.tsx/UserTransactionTableHeader'
+import PortfolioUserTransactionTableBody from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/PortfolioUserTransactionTableBody'
+import PortfolioUserTransactionsTableHeader from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/PortfolioUserTransactionTableHeader'
 
-type UserTransactionTableProps = {
+type PortfolioUserTransactionsTableProps = {
   transactionHistory: UserRequest[]
 }
 
 const ROW_PER_PAGE = 5
 
-const UserTransactionTable: React.FC<UserTransactionTableProps> = ({
-  transactionHistory,
-}) => {
-  const { status, trancheType, transactionType } = useTransactionHistoryState()
+const PortfolioUserTransactionTable: React.FC<
+  PortfolioUserTransactionsTableProps
+> = ({ transactionHistory }) => {
+  const { poolId, status, trancheType, transactionType } =
+    useTransactionHistoryState()
 
   const filteredData: UserRequest[] = transactionHistory.filter(
     (transaction) => {
       return (
+        (poolId === 'All' || poolId === transaction.lendingPool.id) &&
         (status === 'All' || transaction.status === status) &&
         (trancheType === 'All Tranches' ||
           transaction.trancheName === trancheType) &&
@@ -42,19 +42,19 @@ const UserTransactionTable: React.FC<UserTransactionTableProps> = ({
 
   return (
     <CustomTableTest
-      tableHeader={<UserTransactionTableHeader />}
+      tableHeader={<PortfolioUserTransactionsTableHeader />}
       tableBody={
         filteredData.length ? (
-          <UserTransactionTableBody
-            transactions={paginateData([...filteredData])}
+          <PortfolioUserTransactionTableBody
+            transactions={[...paginateData(filteredData)]}
           />
         ) : (
           <TableRow>
-            <TableCell colSpan={7} sx={{ py: 7 }}>
+            <TableCell colSpan={6} sx={{ py: 7 }}>
               {transactionHistory.length ? (
                 <NoMatchingFilter />
               ) : (
-                <EmptyDataPlaceholder text='You have not deposited into this lending strategy...' />
+                <EmptyDataPlaceholder text='You have not deposited into any lending strategies...' />
               )}
             </TableCell>
           </TableRow>
@@ -69,9 +69,8 @@ const UserTransactionTable: React.FC<UserTransactionTableProps> = ({
             }
           : undefined
       }
-      sx={{ pb: 0 }}
     />
   )
 }
 
-export default UserTransactionTable
+export default PortfolioUserTransactionTable

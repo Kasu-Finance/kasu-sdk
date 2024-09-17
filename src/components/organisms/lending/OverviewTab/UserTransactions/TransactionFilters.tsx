@@ -10,8 +10,14 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material'
+import React from 'react'
 
 import useTransactionHistoryState from '@/hooks/context/useTransactionHistoryState'
+import useTranslation from '@/hooks/useTranslation'
+
+import { PoolIdFilters } from '@/context/transactionHistory/transactionHistory.types'
+
+import { capitalize } from '@/utils'
 
 import { ValueOf } from '@/types/utils'
 
@@ -35,11 +41,21 @@ export const TransactionTranches = {
   SENIOR: 'Senior',
 } as const
 
-const TransactionFilters = () => {
+type TransactionFiltersProps = {
+  pools?: {
+    id: string
+    name: string
+  }[]
+}
+
+const TransactionFilters: React.FC<TransactionFiltersProps> = ({ pools }) => {
+  const { t } = useTranslation()
   const {
+    poolId,
     status,
     trancheType,
     transactionType,
+    setPoolId,
     setStatus,
     setTrancheType,
     setTransactionType,
@@ -57,10 +73,76 @@ const TransactionFilters = () => {
     setTrancheType(e.target.value as ValueOf<typeof TransactionTranches>)
   }
 
+  const handlePoolChange = (e: SelectChangeEvent) => {
+    setPoolId(e.target.value as PoolIdFilters)
+  }
+
   return (
     <Box mt={1} mb={3} px={2}>
       <Grid container spacing={4}>
-        <Grid item xs={4}>
+        {pools && poolId && (
+          <Grid item flex={1}>
+            <FormControl fullWidth={true} sx={{ maxWidth: 248 }}>
+              <InputLabel
+                shrink={true}
+                htmlFor='poolId-status-selector'
+                sx={(theme) => ({
+                  ...theme.typography.baseMd,
+                  ml: 1,
+                  mt: '1px',
+                })}
+              >
+                {capitalize(t('general.lendingStrategy'))}
+              </InputLabel>
+              <Select
+                notched={true}
+                value={poolId}
+                inputProps={{
+                  id: 'poolId-status-selector',
+                }}
+                onChange={handlePoolChange}
+                SelectDisplayProps={{
+                  style: {
+                    paddingLeft: 24,
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                    textOverflow: 'ellipsis',
+                    display: 'block',
+                  },
+                }}
+                input={
+                  <OutlinedInput
+                    sx={(theme) => ({
+                      borderRadius: 50,
+                      '.MuiOutlinedInput-notchedOutline legend': {
+                        ...theme.typography.baseXs,
+                        ml: 1.5,
+                        span: {
+                          px: 0.25,
+                        },
+                      },
+                    })}
+                    label={capitalize(t('general.lendingStrategy'))}
+                  />
+                }
+              >
+                {[{ id: 'All', name: 'All' }, ...pools].map(({ id, name }) => (
+                  <MenuItem
+                    key={id}
+                    value={id}
+                    sx={{
+                      maxWidth: 248,
+                      whiteSpace: 'wrap',
+                    }}
+                  >
+                    {name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+        )}
+        <Grid item flex={1}>
           <FormControl fullWidth={true}>
             <InputLabel
               shrink={true}
@@ -103,7 +185,7 @@ const TransactionFilters = () => {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item flex={1}>
           <FormControl fullWidth={true}>
             <InputLabel
               shrink={true}
@@ -146,7 +228,7 @@ const TransactionFilters = () => {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item flex={1}>
           <FormControl fullWidth={true}>
             <InputLabel
               shrink={true}

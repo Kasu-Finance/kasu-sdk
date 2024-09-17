@@ -63,6 +63,7 @@ const CustomTableTest: React.FC<CustomTableTestProps> = ({
               borderRadius: 2,
               overflow: 'hidden',
               background: `url("/images/wave-white.png") repeat`,
+              tableLayout: 'fixed',
             },
             ...(Array.isArray(tableSx) ? tableSx : [tableSx]),
           ]}

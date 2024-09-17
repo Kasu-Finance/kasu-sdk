@@ -15,6 +15,7 @@ import { TransactionHistoryStateType } from '@/context/transactionHistory/transa
 
 type TransactionHistoryStateProps = {
   children: ReactNode
+  withPoolIdFilter?: boolean
 }
 
 const initialState: TransactionHistoryStateType = {
@@ -25,8 +26,12 @@ const initialState: TransactionHistoryStateType = {
 
 const TransactionHistoryState: React.FC<TransactionHistoryStateProps> = ({
   children,
+  withPoolIdFilter,
 }) => {
-  const [state, dispatch] = useReducer(transactionHistoryReducer, initialState)
+  const [state, dispatch] = useReducer(transactionHistoryReducer, {
+    ...initialState,
+    poolId: withPoolIdFilter ? 'All' : undefined,
+  })
 
   const transactionHistoryActions = useTransactionHistoryActions(dispatch)
 

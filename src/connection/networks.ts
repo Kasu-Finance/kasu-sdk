@@ -39,7 +39,7 @@ export const networks: Record<SupportedChainIds, ChainDetails> = {
     chainName: 'Base',
     label: 'Base',
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-    blockExplorerUrls: ['https://basescan.org/'],
+    blockExplorerUrls: ['https://basescan.org'],
     rpcUrls: RPC_URLS[SupportedChainIds.BASE],
   },
   [SupportedChainIds.BASE_SEPOLIA]: {

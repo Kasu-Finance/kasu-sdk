@@ -50,7 +50,7 @@ const UserLoyalty: React.FC<UserLoyaltyProps> = ({ pools, poolId }) => {
                 {t('lending.poolOverview.lockingStatus.subtitle-2')}
               </Typography>
             </Box>
-            <CustomInnerCardContent sx={{ py: 0 }}>
+            <CustomInnerCardContent sx={{ pb: 0 }}>
               <BonusAndRewards pools={pools} poolId={poolId} />
               <UserLoyaltyActions />
             </CustomInnerCardContent>

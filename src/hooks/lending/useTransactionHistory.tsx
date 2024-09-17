@@ -8,7 +8,7 @@ const useTransactionHistory = () => {
 
   const { account } = useWeb3React()
 
-  const { data, error, mutate } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     account ? ['transactionHistory', account] : null,
     async ([_, userAdress]) =>
       sdk.UserLending.getUserRequests(userAdress as `0x${string}`)
@@ -17,7 +17,7 @@ const useTransactionHistory = () => {
   return {
     transactionHistory: data,
     error,
-    isLoading: !data && !error,
+    isLoading,
     updateTransactionHistory: mutate,
   }
 }

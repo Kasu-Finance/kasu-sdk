@@ -7,6 +7,7 @@ import {
 } from '@/components/organisms/lending/OverviewTab/UserTransactions/TransactionFilters'
 
 import {
+  PoolIdFilters,
   TransactionHistoryActions,
   TransactionHistoryActionsTypes,
   TransactionHistoryFunctions,
@@ -33,6 +34,11 @@ const useTransactionHistoryActions = (
         dispatch({
           type: TransactionHistoryActionsTypes.SET_TRANSACTION_TYPE,
           payload: tranasctionType,
+        }),
+      setPoolId: (poolId: PoolIdFilters) =>
+        dispatch({
+          type: TransactionHistoryActionsTypes.SET_POOL_ID,
+          payload: poolId,
         }),
     }),
     [dispatch]

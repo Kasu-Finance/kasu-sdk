@@ -2,10 +2,12 @@ import {
   Box,
   Button,
   Collapse,
+  Stack,
   Table,
   TableBody,
   TableCell,
   TableRow,
+  Typography,
 } from '@mui/material'
 import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
 
@@ -13,7 +15,7 @@ import useModalState from '@/hooks/context/useModalState'
 import useTranslation from '@/hooks/useTranslation'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
-import UserTransactionCollapsedContent from '@/components/organisms/lending/OverviewTab/UserTransactions/UserTransactionTable.tsx/UserTransactionCollapsedContent'
+import PortfolioUserTransactionCollapsedContent from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/PortfolioUserTransactionCollapsedContent'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
@@ -21,17 +23,15 @@ import { CancelIcon, ChevronDownIcon } from '@/assets/icons'
 
 import { formatAmount, formatTimestamp } from '@/utils'
 
-type UserTransactionTableRowProps = {
+type PortfolioUserTransactionTableRowProps = {
   transaction: UserRequest
   isActive: boolean
   toggle: () => void
 }
 
-const UserTransactionTableRow: React.FC<UserTransactionTableRowProps> = ({
-  transaction,
-  isActive,
-  toggle,
-}) => {
+const PortfolioUserTransactionTableRow: React.FC<
+  PortfolioUserTransactionTableRowProps
+> = ({ transaction, isActive, toggle }) => {
   const { t } = useTranslation()
 
   const { openModal } = useModalState()
@@ -61,17 +61,20 @@ const UserTransactionTableRow: React.FC<UserTransactionTableRowProps> = ({
           cursor: 'pointer',
           zIndex: 1,
           position: 'relative',
-          '.MuiTableCell-root:first-child::before': {
-            content: '""',
-            position: 'absolute',
-            width: 'calc(100% - 32px)',
-            left: 16,
-            top: 0,
-            height: '100%',
-            zIndex: -1,
-            bgcolor: 'gray.extraLight',
-            opacity: isActive ? 1 : 0,
-            transition: 'opacity 0.3s ease',
+          '.MuiTableCell-root': {
+            verticalAlign: 'top',
+            '&:first-child::before': {
+              content: '""',
+              position: 'absolute',
+              width: 'calc(100% - 32px)',
+              left: 16,
+              top: 0,
+              height: '100%',
+              zIndex: -1,
+              bgcolor: 'gray.extraLight',
+              opacity: isActive ? 1 : 0,
+              transition: 'opacity 0.3s ease',
+            },
           },
           '&.MuiTableRow-hover:hover': {
             background: 'unset',
@@ -98,15 +101,37 @@ const UserTransactionTableRow: React.FC<UserTransactionTableRowProps> = ({
             }}
           >
             <ChevronDownIcon />
-            {transaction.requestType === 'Deposit'
-              ? 'Lending'
-              : transaction.requestType}
+            {transaction.lendingPool.name}
           </Box>
         </TableCell>
+        <TableCell sx={{ textTransform: 'capitalize' }}>
+          {transaction.requestType === 'Deposit'
+            ? t('general.lending')
+            : transaction.requestType}
+        </TableCell>
         <TableCell>{transaction.trancheName}</TableCell>
-        <TableCell>{formatAmount(transaction.requestedAmount)} USDC</TableCell>
-        <TableCell>{formatAmount(transaction.acceptedAmount)} USDC</TableCell>
-        <TableCell>{formatAmount(transaction.rejectedAmount)} USDC</TableCell>
+        <TableCell>
+          <Stack spacing={0.5}>
+            <Typography variant='inherit'>
+              {t(
+                'lending.poolOverview.transactionsHistory.tableHeader.requested'
+              )}
+              : {formatAmount(transaction.requestedAmount)} USDC
+            </Typography>
+            <Typography variant='inherit'>
+              {t(
+                'lending.poolOverview.transactionsHistory.tableHeader.accepted'
+              )}
+              : {formatAmount(transaction.acceptedAmount)} USDC
+            </Typography>
+            <Typography variant='inherit'>
+              {t(
+                'lending.poolOverview.transactionsHistory.tableHeader.rejected'
+              )}
+              : {formatAmount(transaction.rejectedAmount)} USDC
+            </Typography>
+          </Stack>
+        </TableCell>
         <TableCell>{formattedTime.date}</TableCell>
         <TableCell>
           <Box
@@ -138,7 +163,7 @@ const UserTransactionTableRow: React.FC<UserTransactionTableRowProps> = ({
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell colSpan={7} padding='none'>
+        <TableCell colSpan={6} padding='none'>
           <DottedDivider
             color={isActive ? 'rgba(226, 226, 226, 1)' : undefined}
             width='calc(100% - 32px)'
@@ -148,7 +173,7 @@ const UserTransactionTableRow: React.FC<UserTransactionTableRowProps> = ({
             <Table>
               <TableBody>
                 {transaction.events.map((event) => (
-                  <UserTransactionCollapsedContent
+                  <PortfolioUserTransactionCollapsedContent
                     requestTrancheName={transaction.trancheName}
                     actionHistory={event}
                     key={event.id}
@@ -163,4 +188,4 @@ const UserTransactionTableRow: React.FC<UserTransactionTableRowProps> = ({
   )
 }
 
-export default UserTransactionTableRow
+export default PortfolioUserTransactionTableRow
