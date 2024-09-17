@@ -1,6 +1,7 @@
 'use client'
 
 import { Typography } from '@mui/material'
+import React from 'react'
 
 import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
 import useTranslation from '@/hooks/useTranslation'
@@ -12,13 +13,21 @@ import UserTransactionTable from '@/components/organisms/lending/OverviewTab/Use
 
 import TransactionHistoryState from '@/context/transactionHistory/transactionHistory.provider'
 
-const UserTransactions = () => {
+type UserTransactionsProps = {
+  poolId: string
+}
+
+const UserTransactions: React.FC<UserTransactionsProps> = ({ poolId }) => {
   const { t } = useTranslation()
 
   const { isLoading, transactionHistory } = useTransactionHistory()
 
   if (isLoading || !transactionHistory || !transactionHistory.length)
     return null
+
+  const filteredTransactions = transactionHistory.filter(
+    (transaction) => poolId === transaction.lendingPool.id
+  )
 
   return (
     <CustomCard>
@@ -28,7 +37,7 @@ const UserTransactions = () => {
       <CustomInnerCardContent sx={{ px: 0 }}>
         <TransactionHistoryState>
           <TransactionFilters />
-          <UserTransactionTable transactionHistory={transactionHistory} />
+          <UserTransactionTable transactionHistory={filteredTransactions} />
         </TransactionHistoryState>
       </CustomInnerCardContent>
     </CustomCard>

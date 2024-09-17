@@ -19,7 +19,7 @@ const PoolOverviewTab: React.FC<PoolOverviewProps> = async ({ poolId }) => {
       <PoolOverview pool={poolsWithDelegate[0]} />
       <UserLending pool={poolsWithDelegate[0]} />
       <UserLoyalty pools={poolsWithDelegate} poolId={poolId} />
-      <UserTransactions />
+      <UserTransactions poolId={poolId} />
     </Stack>
   )
 }
