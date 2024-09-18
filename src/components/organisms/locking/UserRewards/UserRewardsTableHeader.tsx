@@ -7,20 +7,25 @@ const UserRewardsTableHeader = () => {
 
   return (
     <TableRow>
-      <TableCell>
+      <TableCell
+        width='
+      36%'
+      >
         {t('locking.widgets.unlock.table.headers.amountLocked')}
       </TableCell>
-      <TableCell>
+      <TableCell width='15%'>
         {t('locking.widgets.unlock.table.headers.unlockDate')}
       </TableCell>
-      <TableCell>
+      <TableCell width='18%'>
         {t('locking.widgets.unlock.table.headers.remainingDuration.1')}{' '}
         {t('locking.widgets.unlock.table.headers.remainingDuration.2')}
       </TableCell>
-      <TableCell>
+      <TableCell width='15%'>
         {t('locking.widgets.unlock.table.headers.multiplier')}
       </TableCell>
-      <TableCell>{t('locking.widgets.unlock.table.headers.balance')}</TableCell>
+      <TableCell width='16%'>
+        {t('locking.widgets.unlock.table.headers.balance')}
+      </TableCell>
     </TableRow>
   )
 }

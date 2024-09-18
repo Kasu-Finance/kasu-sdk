@@ -1,4 +1,4 @@
-import { Box, TableCell, TableRow } from '@mui/material'
+import { Box, TableCell, TableRow, Typography } from '@mui/material'
 import { BadAndDoubtfulDebts } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
@@ -22,34 +22,46 @@ const BadAndDoubtfulDebtsTableBody: React.FC<
         </Box>
       </TableCell>
       <TableCell>
-        {isNumber(debtItem.totalLifetimeAmount)
-          ? `${formatAmount(debtItem.totalLifetimeAmount, { minDecimals: 2 })} ${debtItem.item.unit ?? 'USDC'}`
-          : 'N/A'}
+        <Box display='flex'>
+          <Typography variant='inherit' flex={1}>
+            {isNumber(debtItem.totalLifetimeAmount)
+              ? `${formatAmount(debtItem.totalLifetimeAmount, { minDecimals: 2 })} ${debtItem.item.unit ?? 'USDC'}`
+              : 'N/A'}
+          </Typography>
+          <Typography variant='inherit' width='70px'>
+            {isNumber(debtItem.totalLifetimePercentage)
+              ? `${formatAmount(debtItem.totalLifetimePercentage, { minDecimals: 2 })} ${debtItem.item.unit ?? '%'}`
+              : 'N/A'}
+          </Typography>
+        </Box>
       </TableCell>
       <TableCell>
-        {isNumber(debtItem.totalLifetimePercentage)
-          ? `${formatAmount(debtItem.totalLifetimePercentage, { minDecimals: 2 })} ${debtItem.item.unit ?? '%'}`
-          : 'N/A'}
+        <Box display='flex'>
+          <Typography variant='inherit' flex={1}>
+            {isNumber(debtItem.monthlyAverageAmount)
+              ? `${formatAmount(debtItem.monthlyAverageAmount, { minDecimals: 2 })} ${debtItem.item.unit ?? 'USDC'}`
+              : 'N/A'}
+          </Typography>
+          <Typography variant='inherit' width='70px'>
+            {isNumber(debtItem.monthlyAveragePercentage)
+              ? `${formatAmount(debtItem.monthlyAveragePercentage, { minDecimals: 2 })} ${debtItem.item.unit ?? '%'}`
+              : 'N/A'}
+          </Typography>
+        </Box>
       </TableCell>
       <TableCell>
-        {isNumber(debtItem.monthlyAverageAmount)
-          ? `${formatAmount(debtItem.monthlyAverageAmount, { minDecimals: 2 })} ${debtItem.item.unit ?? 'USDC'}`
-          : 'N/A'}
-      </TableCell>
-      <TableCell>
-        {isNumber(debtItem.monthlyAveragePercentage)
-          ? `${formatAmount(debtItem.monthlyAveragePercentage, { minDecimals: 2 })} ${debtItem.item.unit ?? '%'}`
-          : 'N/A'}
-      </TableCell>
-      <TableCell>
-        {isNumber(debtItem.currentAmount)
-          ? `${formatAmount(debtItem.currentAmount, { minDecimals: 2 })} ${debtItem.item.unit ?? 'USDC'}`
-          : 'N/A'}
-      </TableCell>
-      <TableCell>
-        {isNumber(debtItem.currentPercentage)
-          ? `${formatAmount(debtItem.currentPercentage, { minDecimals: 2 })} ${debtItem.item.unit ?? '%'}`
-          : 'N/A'}
+        <Box display='flex'>
+          <Typography variant='inherit' flex={1}>
+            {isNumber(debtItem.currentAmount)
+              ? `${formatAmount(debtItem.currentAmount, { minDecimals: 2 })} ${debtItem.item.unit ?? 'USDC'}`
+              : 'N/A'}
+          </Typography>
+          <Typography variant='inherit' width='70px'>
+            {isNumber(debtItem.currentPercentage)
+              ? `${formatAmount(debtItem.currentPercentage, { minDecimals: 2 })} ${debtItem.item.unit ?? '%'}`
+              : 'N/A'}
+          </Typography>
+        </Box>
       </TableCell>
     </TableRow>
   ))

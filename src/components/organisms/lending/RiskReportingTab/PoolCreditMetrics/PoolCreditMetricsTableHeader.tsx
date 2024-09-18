@@ -7,10 +7,18 @@ const PoolCreditMetricsTableHeader = () => {
 
   return (
     <TableRow>
-      <TableCell>{t('risk.poolCredit.headers.column-1')}</TableCell>
-      <TableCell>{t('risk.poolCredit.headers.column-2')}</TableCell>
-      <TableCell>{t('risk.poolCredit.headers.column-3')}</TableCell>
-      <TableCell>{t('risk.poolCredit.headers.column-4')}</TableCell>
+      <TableCell width='35.5%'>
+        {t('risk.poolCredit.headers.column-1')}
+      </TableCell>
+      <TableCell width='21.5%'>
+        {t('risk.poolCredit.headers.column-2')}
+      </TableCell>
+      <TableCell width='21.5%'>
+        {t('risk.poolCredit.headers.column-3')}
+      </TableCell>
+      <TableCell width='21.5%'>
+        {t('risk.poolCredit.headers.column-4')}
+      </TableCell>
     </TableRow>
   )
 }

@@ -3,16 +3,16 @@ import { TableCell, TableRow, Typography } from '@mui/material'
 const RiskConcentrationsTableHeader = () => {
   return (
     <TableRow>
-      <TableCell>
+      <TableCell width='16%'>
         <Typography variant='baseMdBold'>Risk Concentrations</Typography>
       </TableCell>
-      <TableCell>Not yet due</TableCell>
-      <TableCell>0-29 days</TableCell>
-      <TableCell>30-59 days</TableCell>
-      <TableCell>60-89 days</TableCell>
-      <TableCell>90+ days</TableCell>
-      <TableCell>Credits</TableCell>
-      <TableCell>Total</TableCell>
+      <TableCell width='12%'>Not yet due</TableCell>
+      <TableCell width='12%'>0-29 days</TableCell>
+      <TableCell width='12%'>30-59 days</TableCell>
+      <TableCell width='12%'>60-89 days</TableCell>
+      <TableCell width='12%'>90+ days</TableCell>
+      <TableCell width='12%'>Credits</TableCell>
+      <TableCell width='12%'>Total</TableCell>
     </TableRow>
   )
 }

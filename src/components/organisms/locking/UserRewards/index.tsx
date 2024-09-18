@@ -24,7 +24,7 @@ const UserRewards = () => {
         {t('locking.widgets.unlock.title')}
       </Typography>
       <CustomInnerCardContent sx={{ p: 0 }}>
-        <UserRewardsTable userLocks={userLocks} />
+        <UserRewardsTable userLocks={[]} />
       </CustomInnerCardContent>
     </CustomCard>
   )

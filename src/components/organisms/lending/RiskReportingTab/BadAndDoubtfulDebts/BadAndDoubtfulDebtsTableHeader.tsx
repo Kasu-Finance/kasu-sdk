@@ -1,4 +1,4 @@
-import { TableCell, TableRow, Typography } from '@mui/material'
+import { Box, TableCell, TableRow, Typography } from '@mui/material'
 
 const BadAndDoubtfulDebtsTableHeader = () => (
   <>
@@ -9,16 +9,16 @@ const BadAndDoubtfulDebtsTableHeader = () => (
         },
       }}
     >
-      <TableCell />
-      <TableCell colSpan={2}>
+      <TableCell width='25%' />
+      <TableCell width='25%'>
         <Typography variant='baseMdBold'>Total (Lifetime)</Typography>
       </TableCell>
-      <TableCell colSpan={2}>
+      <TableCell width='25%'>
         <Typography variant='baseMdBold'>
           Monthly Average (Last 12 Months)
         </Typography>
       </TableCell>
-      <TableCell colSpan={2}>
+      <TableCell width='25%'>
         <Typography variant='baseMdBold'>Current Status</Typography>
       </TableCell>
     </TableRow>
@@ -30,12 +30,36 @@ const BadAndDoubtfulDebtsTableHeader = () => (
       }}
     >
       <TableCell />
-      <TableCell>Amount</TableCell>
-      <TableCell width='70px'>%</TableCell>
-      <TableCell>Amount</TableCell>
-      <TableCell width='70px'>%</TableCell>
-      <TableCell>Amount</TableCell>
-      <TableCell width='70px'>%</TableCell>
+      <TableCell>
+        <Box display='flex'>
+          <Typography variant='inherit' flex={1}>
+            Amount
+          </Typography>
+          <Typography variant='inherit' width='70px'>
+            %
+          </Typography>
+        </Box>
+      </TableCell>
+      <TableCell>
+        <Box display='flex'>
+          <Typography variant='inherit' flex={1}>
+            Amount
+          </Typography>
+          <Typography variant='inherit' width='70px'>
+            %
+          </Typography>
+        </Box>
+      </TableCell>{' '}
+      <TableCell>
+        <Box display='flex'>
+          <Typography variant='inherit' flex={1}>
+            Amount
+          </Typography>
+          <Typography variant='inherit' width='70px'>
+            %
+          </Typography>
+        </Box>
+      </TableCell>
     </TableRow>
   </>
 )
