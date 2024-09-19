@@ -1158,13 +1158,16 @@
       "interestEarningsLifetime": "Interest Earnings​ Lifetime"
     },
     "rewards": {
-      "title": "My Rewards Portfolio",
+      "title-1": "My Bonus & Rewards Summary",
+      "title-2": "My Bonus & Rewards Portfolio",
+      "bonusesAndRewards": "Bonuses and Rewards",
       "bonusYieldEarnings": "Bonus Interest Earnings",
       "ksuLaunchBonus": "KSU Launch Bonus",
       "protocolFees": "Protocol Fees",
-      "totalUsdcBonus": "Total USDC Bonus/Rewards",
+      "totalUsdcBonus": "Total USDC Bonus/Rewards (Protocol Fees)",
       "totalKsuBonus": "Total KSU Bonus/Rewards",
-      "claimableBalance": "Claimable Balance"
+      "claimableBalance": "Claimable Balance",
+      "lifetimeRewards": "Lifetime Rewards"
     },
     "wallet": {
       "title": "My Wallet",

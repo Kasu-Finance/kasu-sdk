@@ -13,7 +13,6 @@ import KycModal from '@/components/organisms/modals/KycModal'
 import LockModalWrapper from '@/components/organisms/modals/LockModal/LockModalWrapper'
 import LoyaltyLevelsModal from '@/components/organisms/modals/LoyaltyLevelsModal'
 import TermsAndConditionsModal from '@/components/organisms/modals/TermsAndConditionsModal'
-import TransactionHistoryContentModal from '@/components/organisms/modals/TransactionHistoryContentModal'
 import UnlockModalWrapper from '@/components/organisms/modals/UnlockModal/UnlockModalWrapper'
 import WithdrawModalWrapper from '@/components/organisms/modals/WithdrawModal/WithdrawModalWrapper'
 
@@ -81,14 +80,6 @@ export const getModal = (
     case ModalsKeys.TERMS_AND_CONDITIONS:
       return {
         component: <TermsAndConditionsModal handleClose={handleClose} />,
-      }
-    case ModalsKeys.TRANSACTION_HISTORY_CONTENT:
-      return {
-        component: <TransactionHistoryContentModal handleClose={handleClose} />,
-        fullscreen: true,
-        sx: {
-          bgcolor: 'background.default',
-        },
       }
   }
 }

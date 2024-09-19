@@ -1,5 +1,15 @@
+import { Stack } from '@mui/material'
+
+import BonusAndRewardPortfolio from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio'
+import PortfolioRewardSummary from '@/components/organisms/portfolio/PortfolioRewardsTab/PortfolioRewardSummary'
+
 const Rewards = () => {
-  return 'rewards'
+  return (
+    <Stack spacing={3}>
+      <PortfolioRewardSummary />
+      <BonusAndRewardPortfolio />
+    </Stack>
+  )
 }
 
 export default Rewards
