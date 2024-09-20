@@ -5,8 +5,6 @@ import { SupportedTokens } from '@/constants/tokens'
 
 import { ValueOf } from '@/types/utils'
 
-export const dynamic = 'force-dynamic'
-
 type Quote = {
   price: number
 }
@@ -80,8 +78,9 @@ export async function GET(req: NextRequest) {
         convert_id: USDC_TOKEN_ID,
       })}`,
       {
+        cache: 'no-store',
         next: {
-          revalidate: 600,
+          revalidate: 0,
         },
         headers: {
           'X-CMC_PRO_API_KEY': process.env.CMC_API_KEY?.toString() || '',
