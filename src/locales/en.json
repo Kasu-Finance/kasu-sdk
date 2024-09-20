@@ -1171,7 +1171,7 @@
     },
     "wallet": {
       "title": "My Wallet",
-      "connectedWallet": "Connected Wallet",
+      "connectedWallet": "Connected Wallet Balance",
       "metric-1-tooltip": "The individual balances of all your cryptocurrencies in your connected Web3 wallet that can be instantly converted to KSU.",
       "metric-2": "Total KSU Balance",
       "metric-2-tooltip": "Your current KSU balance (and estimated USDC equivalent value) held in your Web3 wallet.",
