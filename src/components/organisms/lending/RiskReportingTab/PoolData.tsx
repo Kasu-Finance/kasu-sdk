@@ -1,8 +1,9 @@
-import { Grid, Typography } from '@mui/material'
+import { Grid } from '@mui/material'
 
 import useTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
+import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import WaveCard from '@/components/molecules/WaveCard'
 
@@ -13,9 +14,7 @@ const PoolData = () => {
 
   return (
     <CustomCard>
-      <Typography variant='h3' color='gold.darkNoises' px={2} mb={3}>
-        {t('risk.lendingStrategyData.title')}
-      </Typography>
+      <CustomCardHeader title={t('risk.lendingStrategyData.title')} />
       <CustomInnerCardContent sx={{ py: 3 }}>
         <Grid container columnSpacing={4}>
           <Grid item xs={4}>

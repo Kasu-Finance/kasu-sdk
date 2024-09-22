@@ -4,6 +4,7 @@ import React from 'react'
 import useTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
+import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import LendButton from '@/components/atoms/LendButton'
 import WaveBox from '@/components/atoms/WaveBox'
@@ -24,9 +25,7 @@ const PoolOverview: React.FC<PoolOverviewProps> = ({ pool }) => {
 
   return (
     <CustomCard>
-      <Typography variant='h3' color='gold.darkNoises' px={2} mb={3}>
-        {t('lending.poolOverview.title')}
-      </Typography>
+      <CustomCardHeader title={t('lending.poolOverview.title')} />
       <WaveBox borderRadius={2}>
         <Box px={2} py={4}>
           <Typography variant='baseMd' whiteSpace='pre-wrap'>

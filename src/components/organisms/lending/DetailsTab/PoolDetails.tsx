@@ -3,6 +3,7 @@ import { Divider, Grid, Typography } from '@mui/material'
 import useTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
+import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import InfoRow from '@/components/atoms/InfoRow'
 
@@ -21,9 +22,7 @@ const PoolDetails: React.FC<PoolDetailsProps> = ({ pool }) => {
 
   return (
     <CustomCard>
-      <Typography variant='h3' color='gold.darkNoises' px={2} mb={3}>
-        {t('details.poolDetails.title')}
-      </Typography>
+      <CustomCardHeader title={t('details.poolDetails.title')} />
       <CustomInnerCardContent sx={{ py: 3 }}>
         <Grid container columnSpacing={4}>
           {pool.tranches.map((tranche) => (

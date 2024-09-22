@@ -78,7 +78,7 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({ pools }) => {
   }
 
   return (
-    <Box mt={1} mb={3} px={2}>
+    <Box mt={4} mb={3} px={2}>
       <Grid container spacing={4}>
         {pools && poolId && (
           <Grid item flex={1}>

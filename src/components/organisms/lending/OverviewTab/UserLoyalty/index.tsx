@@ -4,6 +4,7 @@ import Image from 'next/image'
 import useTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
+import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import WaveBox from '@/components/atoms/WaveBox'
 import BonusAndRewards from '@/components/organisms/lending/OverviewTab/UserLoyalty/BonusAndRewards'
@@ -25,9 +26,7 @@ const UserLoyalty: React.FC<UserLoyaltyProps> = ({ pools, poolId }) => {
 
   return (
     <CustomCard>
-      <Typography variant='h3' color='gold.darkNoises' px={2} mb={3}>
-        {t('lending.poolOverview.lockingStatus.title')}
-      </Typography>
+      <CustomCardHeader title={t('lending.poolOverview.lockingStatus.title')} />
       <WaveBox borderRadius={2}>
         <Box px={2} py={3}>
           <Typography variant='h4'>

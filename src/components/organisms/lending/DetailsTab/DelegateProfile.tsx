@@ -3,6 +3,7 @@ import { Grid, Typography } from '@mui/material'
 import useTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
+import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import DottedDivider from '@/components/atoms/DottedDivider'
 import InfoColumn from '@/components/atoms/InfoColumn'
@@ -26,9 +27,7 @@ const DelegateProfile: React.FC<DelegateProfileProps> = ({ pool }) => {
 
   return (
     <CustomCard>
-      <Typography variant='h3' color='gold.darkNoises' px={2} mb={3}>
-        {t('details.poolDelegate.title')}
-      </Typography>
+      <CustomCardHeader title={t('details.poolDelegate.title')} />
       <CustomInnerCardContent sx={{ py: 3 }}>
         <Grid container spacing={4}>
           <Grid item xs={4}>

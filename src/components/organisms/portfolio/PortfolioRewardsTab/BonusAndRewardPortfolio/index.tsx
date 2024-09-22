@@ -1,8 +1,9 @@
-import { Box, Button, Typography } from '@mui/material'
+import { Button, Typography } from '@mui/material'
 
 import useTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
+import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import BonusAndRewardTable from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/BonusAndRewardTable'
 
@@ -12,19 +13,11 @@ const BonusAndRewardPortfolio = () => {
   const { t } = useTranslation()
 
   return (
-    <CustomCard sx={{ pt: 1 }}>
-      <Box
-        display='flex'
-        alignItems='center'
+    <CustomCard>
+      <CustomCardHeader
+        title={t('portfolio.rewards.title-2')}
         justifyContent='space-between'
-        px={2}
-        mb={1}
       >
-        <Box display='flex' alignItems='center' height={64}>
-          <Typography variant='h3' color='gold.darkNoises'>
-            {t('portfolio.rewards.title-2')}
-          </Typography>
-        </Box>
         <Button
           variant='text'
           endIcon={<DownloadRoundedIcon />}
@@ -38,7 +31,7 @@ const BonusAndRewardPortfolio = () => {
             {t('general.csvDownload')}
           </Typography>
         </Button>
-      </Box>
+      </CustomCardHeader>
       <CustomInnerCardContent sx={{ p: 0 }}>
         <BonusAndRewardTable />
       </CustomInnerCardContent>

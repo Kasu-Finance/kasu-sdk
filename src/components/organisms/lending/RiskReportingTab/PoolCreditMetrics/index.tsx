@@ -1,10 +1,10 @@
-import { Typography } from '@mui/material'
 import { PoolCreditMetrics as PoolCreditMetricsType } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
+import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import CustomTableTest from '@/components/molecules/CustomTableTest'
 import PoolCreditMetricsTableBody from '@/components/organisms/lending/RiskReportingTab/PoolCreditMetrics/PoolCreditMetricsTableBody'
@@ -21,9 +21,7 @@ const PoolCreditMetrics: React.FC<PoolCreditMetricsProps> = async ({
 
   return (
     <CustomCard>
-      <Typography variant='h3' color='gold.darkNoises' px={2} mb={3}>
-        {t('risk.poolCredit.title')}
-      </Typography>
+      <CustomCardHeader title={t('risk.poolCredit.title')} />
       <CustomInnerCardContent sx={{ p: 0 }}>
         <CustomTableTest
           tableHeader={<PoolCreditMetricsTableHeader />}

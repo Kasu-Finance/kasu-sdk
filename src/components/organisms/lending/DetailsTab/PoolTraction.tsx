@@ -3,6 +3,7 @@ import { Box, Grid, Typography } from '@mui/material'
 import useTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
+import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import InfoColumn from '@/components/atoms/InfoColumn'
 import TokenAmount from '@/components/atoms/TokenAmount'
@@ -22,9 +23,7 @@ const PoolTraction: React.FC<PoolTractionProps> = ({ pool }) => {
 
   return (
     <CustomCard>
-      <Typography variant='h3' color='gold.darkNoises' px={2} mb={3}>
-        {t('details.poolTraction.title')}
-      </Typography>
+      <CustomCardHeader title={t('details.poolTraction.title')} />
       <CustomInnerCardContent sx={{ py: 3 }}>
         <Grid container spacing={4}>
           <Grid item flex={1}>

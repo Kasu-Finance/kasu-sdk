@@ -3,6 +3,7 @@ import { Divider, Grid, Typography } from '@mui/material'
 import useTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
+import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import InfoRow from '@/components/atoms/InfoRow'
 import ClaimableKsuBonusRewards from '@/components/organisms/portfolio/PortfolioRewardsTab/PortfolioRewardSummary/ClaimableKsuBonusRewards'
@@ -15,9 +16,7 @@ const PortfolioRewardSummary = () => {
 
   return (
     <CustomCard>
-      <Typography variant='h3' color='gold.darkNoises' px={2} mb={3}>
-        {t('portfolio.rewards.title-1')}
-      </Typography>
+      <CustomCardHeader title={t('portfolio.rewards.title-1')} />
       <CustomInnerCardContent sx={{ pt: 5, pb: 3 }}>
         <Grid container columnSpacing={4}>
           <Grid item xs={6}>

@@ -1,6 +1,6 @@
 'use client'
 
-import { Pagination, Stack, Typography } from '@mui/material'
+import { Pagination, Stack } from '@mui/material'
 import { FinancialReportingDocumentsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import React from 'react'
 
@@ -8,6 +8,7 @@ import usePagination from '@/hooks/usePagination'
 import useTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
+import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import CustomTableTest from '@/components/molecules/CustomTableTest'
 import FinancialReportingDocumentsTableBody from '@/components/organisms/lending/RiskReportingTab/FinancialReportingDocuments/FinancialReportingDocumentsTableBody'
@@ -33,9 +34,7 @@ const FinancialReportingDocuments: React.FC<
 
   return (
     <CustomCard>
-      <Typography variant='h3' color='gold.darkNoises' px={2} mb={3}>
-        {t('risk.reporting.title')}
-      </Typography>
+      <CustomCardHeader title={t('risk.reporting.title')} />
       <CustomInnerCardContent sx={{ p: 0 }}>
         <Stack alignItems='center' pb={2}>
           <CustomTableTest

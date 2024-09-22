@@ -1,8 +1,9 @@
-import { Grid, Typography } from '@mui/material'
+import { Grid } from '@mui/material'
 
 import useTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
+import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import InfoRow from '@/components/atoms/InfoRow'
 import KsuBalance from '@/components/organisms/locking/UserFunds/KsuBalance'
@@ -15,9 +16,7 @@ const UserFunds = () => {
 
   return (
     <CustomCard>
-      <Typography variant='h3' color='gold.darkNoises' px={2} mb={3}>
-        {t('locking.widgets.overview.title')}
-      </Typography>
+      <CustomCardHeader title={t('locking.widgets.overview.title')} />
       <CustomInnerCardContent sx={{ py: 3 }}>
         <Grid container spacing={4}>
           <Grid item xs={4}>

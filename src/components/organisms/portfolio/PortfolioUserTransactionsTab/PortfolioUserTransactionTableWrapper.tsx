@@ -2,6 +2,7 @@
 
 import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
 
+import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
 import TransactionFilters from '@/components/organisms/lending/OverviewTab/UserTransactions/TransactionFilters'
 import PortfolioUserTransactionSkeleton from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/PortfolioUserTransactionSkeleton'
 import PortfolioUserTransactionTable from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/PortfolioUserTransactionTable'
@@ -24,6 +25,14 @@ const PortfolioUserTransactionTableWrapper = () => {
       )
     ),
   ].map((pool) => JSON.parse(pool))
+
+  if (!pools.length)
+    return (
+      <EmptyDataPlaceholder
+        pb={3}
+        text='You have not deposited into any lending strategies...'
+      />
+    )
 
   return (
     <>

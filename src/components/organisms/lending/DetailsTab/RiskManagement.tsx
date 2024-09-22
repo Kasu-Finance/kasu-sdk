@@ -5,6 +5,7 @@ import { Fragment } from 'react'
 import useTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
+import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import DottedDivider from '@/components/atoms/DottedDivider'
 import InfoColumn from '@/components/atoms/InfoColumn'
@@ -23,9 +24,7 @@ const RiskManagement: React.FC<RiskManagementProps> = ({ riskManagement }) => {
 
   return (
     <CustomCard>
-      <Typography variant='h3' color='gold.darkNoises' px={2} mb={3}>
-        {t('details.riskManagement.title')}
-      </Typography>
+      <CustomCardHeader title={t('details.riskManagement.title')} />
       <CustomInnerCardContent sx={{ py: 3 }}>
         <Typography variant='h5' textTransform='capitalize' mt={2}>
           {t('details.riskManagement.riskStatus.title')}

@@ -12,8 +12,9 @@ const CustomCard = styled(Card)({
   borderTopRightRadius: 8,
   borderBottomLeftRadius: 25, // to prevent extra pixels from rendering
   borderBottomRightRadius: 25, // to prevent extra pixels from rendering
-  paddingTop: 24,
   boxShadow: '0px 5px 20px 0px rgba(0, 0, 0, 0.1)',
+  display: 'flex',
+  flexDirection: 'column',
 })
 
 export default CustomCard

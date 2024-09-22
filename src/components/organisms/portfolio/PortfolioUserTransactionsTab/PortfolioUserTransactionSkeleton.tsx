@@ -1,7 +1,7 @@
 import { Box, Grid, Skeleton, Stack } from '@mui/material'
 
 const PortfolioUserTransactionSkeleton = () => (
-  <Box px={2}>
+  <Box px={2} pt={4} pb={2}>
     <Grid container spacing={4}>
       <Grid item xs={3}>
         <Skeleton variant='rounded' sx={{ borderRadius: 30 }} height={56} />

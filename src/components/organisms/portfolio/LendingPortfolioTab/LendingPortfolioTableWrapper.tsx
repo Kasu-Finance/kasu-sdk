@@ -1,16 +1,13 @@
 'use client'
 
-import { Stack, Typography } from '@mui/material'
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
-import Image from 'next/image'
 import React from 'react'
 
 import useLendingPortfolioData from '@/hooks/portfolio/useLendingPortfolioData'
 
+import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
 import LendingPortfolioTable from '@/components/organisms/portfolio/LendingPortfolioTab/LendingPortfolioTable'
 import LendingPortfolioTableSkeleton from '@/components/organisms/portfolio/LendingPortfolioTab/LendingPortfolioTableSkeleton'
-
-import Cat from '@/images/cat.png'
 
 type LendingPortfolioTableWrapperProps = {
   poolOverviews: PoolOverview[]
@@ -28,12 +25,10 @@ const LendingPortfolioTableWrapper: React.FC<
 
   if (!lendingPortfolioData?.lendingPools.length) {
     return (
-      <Stack alignItems='center' pb={3}>
-        <Image src={Cat} alt='Cat' />
-        <Typography variant='h4'>
-          You have not deposited into any lending strategies.
-        </Typography>
-      </Stack>
+      <EmptyDataPlaceholder
+        pb={3}
+        text='You have not deposited into any lending strategies...'
+      />
     )
   }
 

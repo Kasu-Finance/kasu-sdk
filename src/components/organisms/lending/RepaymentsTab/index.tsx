@@ -3,6 +3,7 @@ import { Box, Grid, Typography } from '@mui/material'
 import useTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
+import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import WaveBox from '@/components/atoms/WaveBox'
 import AggregatedFundsFlow from '@/components/organisms/lending/RepaymentsTab/AggregatedFundsFlow'
@@ -22,9 +23,7 @@ const RepaymentsTab: React.FC<PoolDetailsProps> = async ({ poolId }) => {
 
   return (
     <CustomCard sx={{ mt: 3 }}>
-      <Typography variant='h3' color='gold.darkNoises' px={2} mb={3}>
-        {t('repayments.title')}
-      </Typography>
+      <CustomCardHeader title={t('repayments.title')} />
       <WaveBox borderRadius={2}>
         <Box px={2} py={3} display='flex' flexDirection='column'>
           <Typography variant='baseMd' component='p'>

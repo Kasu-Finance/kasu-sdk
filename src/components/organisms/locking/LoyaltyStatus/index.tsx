@@ -1,9 +1,10 @@
-import { Grid, Typography } from '@mui/material'
+import { Grid } from '@mui/material'
 
 import useTranslation from '@/hooks/useTranslation'
 
 import CurrentLoyaltyMascot from '@/components/atoms/CurrentLoyaltyMascot'
 import CustomCard from '@/components/atoms/CustomCard'
+import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import CurrentLoyaltyDescription from '@/components/organisms/locking/LoyaltyStatus/CurrentLoyaltyDescription'
 import CurrentLoyaltyProgressDetails from '@/components/organisms/locking/LoyaltyStatus/CurrentLoyaltyProgressDetails'
@@ -13,9 +14,7 @@ const LoyaltyStatus = () => {
 
   return (
     <CustomCard>
-      <Typography variant='h3' color='gold.darkNoises' px={2} mb={3}>
-        {t('locking.widgets.loyalty.title')}
-      </Typography>
+      <CustomCardHeader title={t('locking.widgets.loyalty.title')} />
       <CustomInnerCardContent sx={{ py: 3 }}>
         <Grid container spacing={4}>
           <Grid item xs={4}>
