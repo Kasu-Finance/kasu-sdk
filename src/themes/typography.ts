@@ -1,6 +1,18 @@
 import { TypographyVariantsOptions } from '@mui/material'
 import { Open_Sans } from 'next/font/google'
 
+declare module '@mui/material/Typography' {
+  interface TypographyPropsVariantOverrides {
+    baseLg: true
+    baseLgBold: true
+    baseMd: true
+    baseMdBold: true
+    baseSm: true
+    baseSmBold: true
+    baseXs: true
+    baseXsBold: true
+  }
+}
 declare module '@mui/material/styles/createTypography' {
   interface Typography {
     baseLg: TypographyStyleOptions

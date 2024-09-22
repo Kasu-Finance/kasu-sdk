@@ -32,6 +32,9 @@ const DialogWrapper: React.FC<{
       PaperProps={{
         sx: [
           {
+            background: 'transparent',
+            position: 'unset',
+            overflow: 'auto',
             width: 600,
             ...(modalDetails.fullscreen && {
               margin: 0,
@@ -46,6 +49,13 @@ const DialogWrapper: React.FC<{
       disableEnforceFocus
       aria-labelledby={modalDetails.ariaLabel}
       aria-describedby={modalDetails.ariaDescription}
+      slotProps={{
+        backdrop: {
+          sx: {
+            background: 'rgba(0, 0, 0, 0.8)',
+          },
+        },
+      }}
     >
       {modalDetails.component}
     </Dialog>

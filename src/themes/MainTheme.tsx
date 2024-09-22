@@ -1,23 +1,11 @@
 import { alpha, createTheme } from '@mui/material'
 
+import { customPalette } from '@/themes/palette'
 import { customTypography, primaryFontFamily } from '@/themes/typography'
 
 declare module '@mui/material/styles' {
   interface BreakpointOverrides {
     xxl: true
-  }
-}
-
-declare module '@mui/material/Typography' {
-  interface TypographyPropsVariantOverrides {
-    baseLg: true
-    baseLgBold: true
-    baseMd: true
-    baseMdBold: true
-    baseSm: true
-    baseSmBold: true
-    baseXs: true
-    baseXsBold: true
   }
 }
 
@@ -27,142 +15,14 @@ declare module '@mui/material/Divider' {
   }
 }
 
-declare module '@mui/material/styles/createPalette' {
-  interface Palette {
-    highlight: {
-      background: string
-      border: string
-    }
-    icon: {
-      primary: string
-    }
-    gray: {
-      extraLight: string
-      light: string
-      middle: string
-      dark: string
-      extraDark: string
-      pattern: string
-      noises: string
-    }
-    gold: {
-      extraLight: string
-      light: string
-      middle: string
-      dark: string
-      extraDark: string
-      pattern: string
-      noises: string
-      darkNoises: string
-      lightNoises: string
-    }
-  }
-
-  interface PaletteOptions {
-    highlight: {
-      background: string
-      border: string
-    }
-    icon: {
-      primary: string
-    }
-    gray: {
-      extraLight: string
-      light: string
-      middle: string
-      dark: string
-      extraDark: string
-      pattern: string
-      noises: string
-    }
-    gold: {
-      extraLight: string
-      light: string
-      middle: string
-      dark: string
-      extraDark: string
-      pattern: string
-      noises: string
-      darkNoises: string
-      lightNoises: string
-    }
+declare module '@mui/material/Button' {
+  interface ButtonPropsColorOverrides {
+    dark: true
   }
 }
 
-const primaryColor = '#C4996C'
-const primaryContrastColor = '#28282a'
-
 export const theme = createTheme({
-  palette: {
-    background: {
-      default: 'white',
-    },
-    primary: {
-      main: primaryColor,
-      contrastText: primaryContrastColor,
-      dark: 'rgba(161, 136, 106, 1)',
-      light: 'rgba(229, 195, 151, 1)',
-    },
-    success: {
-      main: 'rgba(171, 212, 140, 1)',
-      contrastText: 'rgba(255,255,255,0.9)',
-      dark: 'rgba(27, 94, 32, 1)',
-    },
-    error: {
-      main: 'rgba(212, 98, 98, 1)',
-      contrastText: 'rgba(255,255,255, 0.9)',
-      dark: 'rgba(164, 45, 45, 1)',
-      light: 'rgba(223, 139, 139, 1)',
-    },
-    warning: {
-      main: 'rgba(212, 183, 98, 1)',
-      dark: 'rgba(230, 81, 0, 1)',
-    },
-    highlight: {
-      background: 'rgba(42, 162, 202, 0.08)',
-      border: 'rgba(42, 162, 202, 0.3)',
-    },
-    icon: {
-      primary: 'rgba(0, 0, 0, 0.54)',
-    },
-    text: {
-      primary: 'rgba(40, 40, 42, 1)',
-      secondary: 'rgba(0,0,0, 0.6)',
-      disabled: 'rgba(0, 0, 0, 0.38)',
-    },
-    grey: {
-      200: 'rgba(205, 206, 208, 1)',
-      300: 'rgba(142, 142, 146, 1)',
-      400: 'rgba(0, 0, 0, 0.38)',
-      500: 'rgba(0, 0, 0, 0.6)',
-      600: 'rgba(0, 0, 0, 0.12)',
-      900: 'rgba(117, 117, 117, 1)',
-    },
-
-    info: {
-      main: '#e5f3fa',
-    },
-    gray: {
-      extraLight: 'rgba(244, 244, 244, 1)',
-      light: 'rgba(205, 206, 208, 1)',
-      middle: 'rgba(142, 142, 146, 1)',
-      dark: 'rgba(91, 91, 96, 1)',
-      extraDark: 'rgba(40, 40, 42, 1)',
-      pattern: 'rgba(255, 255, 255, 1)',
-      noises: 'rgba(244, 244, 244, 1)',
-    },
-    gold: {
-      extraLight: 'rgba(244, 244, 244, 1)',
-      light: 'rgba(205, 206, 208, 1)',
-      middle: 'rgba(232, 192, 145, 1)',
-      dark: 'rgba(196, 153, 108, 1)',
-      extraDark: 'rgba(164, 123, 79, 1)',
-      pattern: 'rgba(255, 255, 255, 1)',
-      noises: 'rgba(244, 244, 244, 1)',
-      darkNoises: 'rgba(205, 163, 112, 1)',
-      lightNoises: 'rgba(244, 244, 244, 1)',
-    },
-  },
+  palette: customPalette,
   typography: customTypography,
   breakpoints: {
     values: {
@@ -262,7 +122,7 @@ export const theme = createTheme({
           content: "";
           width: calc(100% + 4px);
           height: calc(100% + 2px);
-          border: 2px dotted ${primaryColor};
+          border: 2px dotted ${customPalette.primary.main};
           border-radius: 4px;
           top: 0;
           left: -2px;
@@ -378,7 +238,7 @@ export const theme = createTheme({
           '&.section-card': {
             borderRadius: '8px',
             overflow: 'inherit',
-            backgroundColor: alpha(primaryColor, 0.04),
+            backgroundColor: alpha(customPalette.primary.main, 0.04),
           },
           '&.section-item-card': {
             border: '1px solid rgba(0, 0, 0, 0.12)',
@@ -499,7 +359,7 @@ export const theme = createTheme({
           },
           '&.staking-vault': {
             '&.vault-details': {
-              backgroundColor: alpha(primaryColor, 0.04),
+              backgroundColor: alpha(customPalette.primary.main, 0.04),
             },
           },
         },
@@ -511,18 +371,18 @@ export const theme = createTheme({
           // Default styles for the root element
           '&.Mui-active': {
             '.MuiTableSortLabel-icon': {
-              color: primaryColor,
+              color: customPalette.primary.main,
             },
           },
           '&:hover': {
             '.MuiTableSortLabel-icon': {
-              color: alpha(primaryColor, 0.87),
+              color: alpha(customPalette.primary.main, 0.87),
               opacity: 1,
             },
           },
           '.MuiTableSortLabel-icon': {
             // Default icon color (inactive)
-            color: alpha(primaryContrastColor, 0.54),
+            color: alpha(customPalette.primary.contrastText, 0.54),
           },
         },
 
@@ -534,7 +394,7 @@ export const theme = createTheme({
     MuiTableFooter: {
       styleOverrides: {
         root: {
-          background: alpha(primaryColor, 0.08),
+          background: alpha(customPalette.primary.main, 0.08),
         },
       },
     },
@@ -621,21 +481,35 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           position: 'relative',
-          '&:not(.MuiIconButton-root):focus:before': {
-            content: '""',
-            width: 'calc(100% + 6px)',
-            height: 'calc(100% + 6px)',
-            border: '2px dotted #C4996C',
-            position: 'absolute',
-            borderRadius: 'inherit',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
+          '&:not(.MuiIconButton-root)': {
+            '&:focus:before': {
+              content: '""',
+              width: 'calc(100% + 6px)',
+              height: 'calc(100% + 6px)',
+              border: `2px dotted ${customPalette.primary.main}`,
+              position: 'absolute',
+              borderRadius: 'inherit',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+            },
+            '&.MuiButton-colorDark:focus:before': {
+              borderColor: customPalette.gray.dark,
+            },
           },
         },
       },
     },
     MuiButton: {
+      variants: [
+        {
+          props: { color: 'dark' },
+          style: {
+            background: customPalette.gray.extraDark,
+            color: customPalette.gold.dark,
+          },
+        },
+      ],
       styleOverrides: {
         root: {
           fontWeight: 500,
@@ -702,7 +576,7 @@ export const theme = createTheme({
         root: {
           color: 'white',
           '&.hook-loading': {
-            color: primaryColor,
+            color: customPalette.primary.main,
           },
         },
       },
@@ -711,14 +585,14 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           height: '30px',
-          color: primaryColor,
+          color: customPalette.primary.main,
           fontSize: 13,
           fontWeight: 500,
           padding: '4px 10px',
           letterSpacing: '0.46px',
-          border: `1px solid ${alpha(primaryColor, 0.5)}`,
+          border: `1px solid ${alpha(customPalette.primary.main, 0.5)}`,
           '&.Mui-selected, &.Mui-selected:hover': {
-            backgroundColor: primaryColor,
+            backgroundColor: customPalette.primary.main,
             color: 'white',
           },
         },

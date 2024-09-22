@@ -1,8 +1,12 @@
-import CloseIcon from '@mui/icons-material/Close'
-import { Box, Button, DialogTitle, SxProps, Theme } from '@mui/material'
+import { Box, IconButton, SxProps, Theme } from '@mui/material'
+import Image from 'next/image'
 import { ReactNode } from 'react'
 
-import BoxImgBackground from '@/components/atoms/BoxImgBackground'
+import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
+
+import { CloseRoundedIcon } from '@/assets/icons'
+
+import PeepingCat from '@/images/peeping-cat.png'
 
 type DialogHeaderProps = {
   title: string
@@ -14,41 +18,37 @@ type DialogHeaderProps = {
 
 const DialogHeader: React.FC<DialogHeaderProps> = ({
   title,
-  children,
   showClose = true,
-  containerSx,
   onClose,
 }) => {
   return (
-    <BoxImgBackground
+    <CustomCardHeader
+      title={title}
+      titleProps={{
+        variant: 'h4',
+      }}
+      height={72}
       display='flex'
-      justifyContent='space-between'
-      alignItems='center'
-      px={2}
-      py={1}
-      sx={containerSx}
+      justifyContent='center'
     >
-      <DialogTitle sx={{ p: 0 }} variant='h5' component='span'>
-        {title}
-      </DialogTitle>
-      <Box>
-        {children}
+      <Box
+        width={600}
+        position='absolute'
+        sx={{ transform: 'translateY(-72px)' }}
+        display='flex'
+        justifyContent='center'
+      >
+        <Box component={Image} src={PeepingCat} alt='peeping cat' />
         {showClose && (
-          <Button
-            variant='text'
+          <IconButton
             onClick={onClose}
-            sx={{
-              p: 1.5,
-              width: 48,
-              height: 48,
-              color: (theme) => theme.palette.primary.contrastText,
-            }}
+            sx={{ position: 'absolute', right: 16, top: 16 }}
           >
-            <CloseIcon />
-          </Button>
+            <CloseRoundedIcon />
+          </IconButton>
         )}
       </Box>
-    </BoxImgBackground>
+    </CustomCardHeader>
   )
 }
 

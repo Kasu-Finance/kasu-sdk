@@ -25,7 +25,14 @@ const WalletList: React.FC<WalletListProps> = ({
   const { isProviderLoading, tryActivation } = useWalletActivation()
 
   return (
-    <List {...rest}>
+    <List
+      sx={{
+        'li + li': {
+          mt: 3,
+        },
+      }}
+      {...rest}
+    >
       {connections.orderedConnections.map((connection) => {
         const providerInfo = connection.getProviderInfo()
 
@@ -38,7 +45,8 @@ const WalletList: React.FC<WalletListProps> = ({
             <Button
               variant='contained'
               fullWidth
-              sx={{ mb: 2, height: 55 }}
+              color='dark'
+              sx={{ height: 48 }}
               onClick={() => tryActivation(connection, activateCallback)}
               disabled={isLoading}
             >
