@@ -1,13 +1,14 @@
 'use client'
 
-import CloseIcon from '@mui/icons-material/Close'
 import {
   Alert,
+  AlertColor,
   AlertTitle,
+  Box,
   Button,
+  IconButton,
   LinearProgress,
   Modal,
-  Typography,
 } from '@mui/material'
 import { ReactNode, useReducer } from 'react'
 
@@ -16,10 +17,13 @@ import ToastContext from '@/context/toast/toast.context'
 import toastReducer from '@/context/toast/toast.reducer'
 import { ToastActionsType, ToastStateType } from '@/context/toast/toast.types'
 
+import {
+  CloseRoundedIcon,
+  ErrorIcon,
+  InfoIcon,
+  WarningIcon,
+} from '@/assets/icons'
 import SuccessIcon from '@/assets/icons/general/SuccessIcon'
-
-import { SupportedChainIds } from '@/connection/chains'
-import { networks } from '@/connection/networks'
 
 type ToastStateProps = {
   children: ReactNode
@@ -27,6 +31,19 @@ type ToastStateProps = {
 
 const initialState: ToastStateType = {
   toast: null,
+}
+
+const getIcon = (type: AlertColor) => {
+  switch (type) {
+    case 'success':
+      return <SuccessIcon />
+    case 'info':
+      return <InfoIcon />
+    case 'warning':
+      return <WarningIcon />
+    case 'error':
+      return <ErrorIcon />
+  }
 }
 
 const ToastState: React.FC<ToastStateProps> = ({ children }) => {
@@ -55,6 +72,13 @@ const ToastState: React.FC<ToastStateProps> = ({ children }) => {
             justifyContent: 'center',
             alignItems: 'center',
           }}
+          slotProps={{
+            backdrop: {
+              sx: {
+                background: 'rgba(0, 0, 0, 0.8)',
+              },
+            },
+          }}
         >
           <Alert
             severity={state.toast.type}
@@ -63,44 +87,28 @@ const ToastState: React.FC<ToastStateProps> = ({ children }) => {
                 width: '100%',
               },
             }}
-            iconMapping={{ success: <SuccessIcon /> }}
-            action={
-              state.toast.type === 'info' ? undefined : (
-                <>
-                  {state.toast.txHash && (
-                    <Button
-                      href={`${
-                        networks[SupportedChainIds.BASE_SEPOLIA]
-                          .blockExplorerUrls[0]
-                      }/tx/${state.toast.txHash}`}
-                      target='_blank'
-                      sx={{
-                        width: 57,
-                        height: 30,
-                        px: 0.5,
-                        py: '5px',
-                        mt: -0.1,
-                      }}
-                    >
-                      <Typography variant='button' component='span'>
-                        TX LOG
-                      </Typography>
-                    </Button>
-                  )}
-                  {state.toast.isClosable && (
-                    <Button
-                      sx={{ width: 28, height: 28, p: 0.5 }}
-                      className='close-button'
-                      onClick={handleClose}
-                    >
-                      <CloseIcon />
-                    </Button>
-                  )}
-                </>
-              )
-            }
+            icon={false}
           >
-            <AlertTitle>{state.toast.title || 'Title'}</AlertTitle>
+            <Box display='flex' alignItems='center' gap={1} mb={1}>
+              {getIcon(state.toast.type)}
+              <AlertTitle
+                variant='h4'
+                color={state.toast.type === 'error' ? 'error.400' : 'gold.dark'}
+                flex={1}
+                my={0}
+              >
+                {state.toast.title || 'Title'}
+              </AlertTitle>
+              {state.toast.isClosable && (
+                <IconButton
+                  sx={{ width: 32, height: 32, p: 0.5 }}
+                  className='close-button'
+                  onClick={handleClose}
+                >
+                  <CloseRoundedIcon />
+                </IconButton>
+              )}
+            </Box>
             {state.toast.message}
             {state.toast.action && (
               <Button

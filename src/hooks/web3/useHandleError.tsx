@@ -9,7 +9,7 @@ import {
   ErrorTypes,
   TransactionError,
 } from '@/constants'
-import { userRejectedTransaction } from '@/utils'
+import { capitalize, userRejectedTransaction } from '@/utils'
 
 const useHandleError = () => {
   const { setToast } = useToastState()
@@ -24,18 +24,26 @@ const useHandleError = () => {
       txHash = error.transaction.hash
     }
 
+    if (title || message) {
+      return setToast({
+        type: 'error',
+        title: capitalize(title ?? ErrorTypes.UNEXPECTED_ERROR),
+        message: message ?? ERROR_MESSAGES[ErrorTypes.UNEXPECTED_ERROR],
+      })
+    }
+
     switch (true) {
       case userRejectedTransaction(error):
         setToast({
           type: 'error',
-          title: ActionStatus.REJECTED,
+          title: capitalize(ActionStatus.REJECTED),
           message: ACTION_MESSAGES[ActionStatus.REJECTED],
         })
         break
       case error.name === Logger.errors.CALL_EXCEPTION:
         setToast({
           type: 'error',
-          title: ErrorTypes.TRANSACTION_REVERTED,
+          title: capitalize(ErrorTypes.TRANSACTION_REVERTED),
           message: ERROR_MESSAGES[ErrorTypes.TRANSACTION_REVERTED],
           txHash,
         })
@@ -43,15 +51,15 @@ const useHandleError = () => {
       case error.name === Logger.errors.INSUFFICIENT_FUNDS:
         setToast({
           type: 'error',
-          title: ErrorTypes.INSUFFICIENT_BALANCE,
+          title: capitalize(ErrorTypes.INSUFFICIENT_BALANCE),
           message: ERROR_MESSAGES[ErrorTypes.INSUFFICIENT_BALANCE],
         })
         break
       default:
         setToast({
           type: 'error',
-          title: title ?? ErrorTypes.UNEXPECTED_ERROR,
-          message: message ?? ERROR_MESSAGES[ErrorTypes.UNEXPECTED_ERROR],
+          title: capitalize(ErrorTypes.UNEXPECTED_ERROR),
+          message: ERROR_MESSAGES[ErrorTypes.UNEXPECTED_ERROR],
         })
         console.error(error)
         break

@@ -24,10 +24,7 @@ const useLockingPercentage = () => {
     totalDeposits.activeDepositAmount || '0'
   ).add(toBigNumber(totalDeposits.pendingDepositAmount || '0'))
 
-  const ratio = useRatio(
-    parseFloat(formatEther(rKsuInUSD)),
-    parseFloat(formatEther(totalDepositsUSD))
-  )
+  const ratio = useRatio(formatEther(rKsuInUSD), formatEther(totalDepositsUSD))
 
   const stakedPercentage = parseFloat(formatEther(ratio.mul(100)))
 

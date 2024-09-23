@@ -84,6 +84,7 @@ export const customPalette = {
     contrastText: 'rgba(255,255,255, 0.9)',
     dark: 'rgba(164, 45, 45, 1)',
     light: 'rgba(223, 139, 139, 1)',
+    400: 'rgba(241, 67, 28, 1)',
   },
   warning: {
     main: 'rgba(212, 183, 98, 1)',

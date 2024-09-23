@@ -199,7 +199,21 @@ export const theme = createTheme({
     MuiAlert: {
       styleOverrides: {
         root: {
-          width: 444,
+          width: 460,
+          padding: 0,
+          backgroundColor: customPalette.gray.extraDark,
+          borderRadius: 8,
+        },
+        icon: {
+          paddingTop: 0,
+          paddingBottom: 0,
+        },
+        action: {
+          paddingTop: 0,
+        },
+        message: {
+          padding: 16,
+          color: 'white',
         },
         standardError: {
           '& .MuiAlert-action > .MuiButton-root': {
