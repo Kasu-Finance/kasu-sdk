@@ -17,6 +17,7 @@ const initialState: Modals = {
   loyaltyLevelsModal: { isOpen: false },
   termsAndConditionsModal: { isOpen: false },
   lockModal: { isOpen: false },
+  unreleasedFeatureModal: { isOpen: false },
   withdrawModal: {
     isOpen: false,
     poolOverview: null as unknown as PoolOverview,

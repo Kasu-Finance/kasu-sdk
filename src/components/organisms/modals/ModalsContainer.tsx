@@ -14,6 +14,7 @@ import LockModalWrapper from '@/components/organisms/modals/LockModal/LockModalW
 import LoyaltyLevelsModal from '@/components/organisms/modals/LoyaltyLevelsModal'
 import TermsAndConditionsModal from '@/components/organisms/modals/TermsAndConditionsModal'
 import UnlockModalWrapper from '@/components/organisms/modals/UnlockModal/UnlockModalWrapper'
+import UnreleasedFeatureModal from '@/components/organisms/modals/UnreleasedFeatureModal'
 import WithdrawModalWrapper from '@/components/organisms/modals/WithdrawModal/WithdrawModalWrapper'
 
 import { Modals, ModalsKeys } from '@/context/modal/modal.types'
@@ -80,6 +81,10 @@ export const getModal = (
     case ModalsKeys.TERMS_AND_CONDITIONS:
       return {
         component: <TermsAndConditionsModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.UNRELEASED_FEATURE:
+      return {
+        component: <UnreleasedFeatureModal handleClose={handleClose} />,
       }
   }
 }

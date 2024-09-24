@@ -14,7 +14,11 @@ const CustomCardHeader: React.FC<CustomCardHeaderProps> = ({
 }) => {
   return (
     <Box display='flex' alignItems='center' height={80} {...rest} px={2}>
-      <Typography variant='h3' color='gold.darkNoises'>
+      <Typography
+        variant='h3'
+        color='gold.darkNoises'
+        textTransform='capitalize'
+      >
         {title}
       </Typography>
       {children}

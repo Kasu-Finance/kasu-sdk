@@ -64,7 +64,8 @@
     "slippage": "Slippage",
     "strategies": "Strategies",
     "active": "Active",
-    "closed": "Closed"
+    "closed": "Closed",
+    "sorry": "sorry"
   },
   "time": {
     "days": "days",
@@ -198,6 +199,10 @@
     }
   },
   "modals": {
+    "unreleasedFeature": {
+      "message": "This feature will be released shortly",
+      "action": "Ok"
+    },
     "loyaltyLevels": {
       "title": "Loyalty Levels",
       "subtitle": "About KSU Loyalty Program",

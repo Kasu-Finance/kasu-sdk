@@ -13,6 +13,7 @@ const UserLoyaltyActions = () => {
   const { openModal } = useModalState()
 
   const handleLockKSU = () => openModal({ name: ModalsKeys.LOCK })
+  const handleBuyKSU = () => openModal({ name: ModalsKeys.UNRELEASED_FEATURE })
 
   return (
     <Grid container columnSpacing={4} justifyContent='center' mt={4}>
@@ -22,12 +23,7 @@ const UserLoyaltyActions = () => {
         </Button>
       </Grid>
       <Grid item>
-        <Button
-          href='https://www.google.com'
-          target='_blank'
-          variant='outlined'
-          sx={{ width: 368 }}
-        >
+        <Button onClick={handleBuyKSU} variant='outlined' sx={{ width: 368 }}>
           {t('general.buyKSU')}
         </Button>
       </Grid>

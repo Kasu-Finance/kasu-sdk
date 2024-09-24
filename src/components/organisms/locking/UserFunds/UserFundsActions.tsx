@@ -12,7 +12,8 @@ const UserFundsActions = () => {
 
   const { openModal } = useModalState()
 
-  const handleOpen = () => openModal({ name: ModalsKeys.LOCK })
+  const handleLockKSU = () => openModal({ name: ModalsKeys.LOCK })
+  const handleBuyKSU = () => openModal({ name: ModalsKeys.UNRELEASED_FEATURE })
 
   return (
     <>
@@ -21,8 +22,7 @@ const UserFundsActions = () => {
           variant='outlined'
           fullWidth
           sx={{ maxWidth: 368, textTransform: 'capitalize' }}
-          href='https://www.google.com'
-          target='_blank'
+          onClick={handleBuyKSU}
         >
           {t('general.buyKSU')}
         </Button>
@@ -32,7 +32,7 @@ const UserFundsActions = () => {
           variant='outlined'
           fullWidth
           sx={{ maxWidth: 368, textTransform: 'capitalize' }}
-          onClick={handleOpen}
+          onClick={handleLockKSU}
         >
           {t('general.lockKSU')}
         </Button>

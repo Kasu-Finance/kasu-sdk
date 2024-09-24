@@ -8,15 +8,13 @@ import WalletList from '@/components/molecules/WalletList'
 
 const ConnectWalletModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   return (
-    <>
-      <CustomCard>
-        <DialogHeader title='Connect your wallet' onClose={handleClose} />
+    <CustomCard>
+      <DialogHeader title='Connect your wallet' onClose={handleClose} />
 
-        <WaveBox variant='gold' px={2} py={3} borderRadius={2}>
-          <WalletList activateCallback={handleClose} />
-        </WaveBox>
-      </CustomCard>
-    </>
+      <WaveBox variant='gold' px={2} py={3} borderRadius={2}>
+        <WalletList activateCallback={handleClose} />
+      </WaveBox>
+    </CustomCard>
   )
 }
 
