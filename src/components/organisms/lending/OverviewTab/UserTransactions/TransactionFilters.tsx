@@ -1,19 +1,12 @@
 'use client'
 
-import {
-  Box,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  OutlinedInput,
-  Select,
-  SelectChangeEvent,
-} from '@mui/material'
+import { Box, Grid, SelectChangeEvent } from '@mui/material'
 import React from 'react'
 
 import useTransactionHistoryState from '@/hooks/context/useTransactionHistoryState'
 import useTranslation from '@/hooks/useTranslation'
+
+import CustomSelect from '@/components/atoms/CustomSelect'
 
 import { PoolIdFilters } from '@/context/transactionHistory/transactionHistory.types'
 
@@ -50,6 +43,7 @@ type TransactionFiltersProps = {
 
 const TransactionFilters: React.FC<TransactionFiltersProps> = ({ pools }) => {
   const { t } = useTranslation()
+
   const {
     poolId,
     status,
@@ -82,194 +76,47 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({ pools }) => {
       <Grid container spacing={4}>
         {pools && poolId && (
           <Grid item flex={1}>
-            <FormControl fullWidth={true} sx={{ maxWidth: 248 }}>
-              <InputLabel
-                shrink={true}
-                htmlFor='poolId-status-selector'
-                sx={(theme) => ({
-                  ...theme.typography.baseMd,
-                  ml: 1,
-                  mt: '1px',
-                })}
-              >
-                {capitalize(t('general.lendingStrategy'))}
-              </InputLabel>
-              <Select
-                notched={true}
-                value={poolId}
-                inputProps={{
-                  id: 'poolId-status-selector',
-                }}
-                onChange={handlePoolChange}
-                SelectDisplayProps={{
-                  style: {
-                    paddingLeft: 24,
-                    overflow: 'hidden',
-                    whiteSpace: 'nowrap',
-                    textOverflow: 'ellipsis',
-                    display: 'block',
-                  },
-                }}
-                input={
-                  <OutlinedInput
-                    sx={(theme) => ({
-                      borderRadius: 50,
-                      '.MuiOutlinedInput-notchedOutline legend': {
-                        ...theme.typography.baseXs,
-                        ml: 1.5,
-                        span: {
-                          px: 0.25,
-                        },
-                      },
-                    })}
-                    label={capitalize(t('general.lendingStrategy'))}
-                  />
-                }
-              >
-                {[{ id: 'All', name: 'All' }, ...pools].map(({ id, name }) => (
-                  <MenuItem
-                    key={id}
-                    value={id}
-                    sx={{
-                      maxWidth: 248,
-                      whiteSpace: 'wrap',
-                    }}
-                  >
-                    {name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <CustomSelect
+              label={capitalize(t('general.lendingStrategy'))}
+              value={poolId}
+              onChange={handlePoolChange}
+              options={[{ id: 'All', name: 'All' }, ...pools]}
+              maxWidth={256}
+            />
           </Grid>
         )}
         <Grid item flex={1}>
-          <FormControl fullWidth={true}>
-            <InputLabel
-              shrink={true}
-              htmlFor='transaction-status-selector'
-              sx={(theme) => ({ ...theme.typography.baseMd, ml: 1, mt: '1px' })}
-            >
-              Status
-            </InputLabel>
-            <Select
-              notched={true}
-              value={status}
-              inputProps={{
-                id: 'transaction-status-selector',
-              }}
-              onChange={handleStatusChange}
-              input={
-                <OutlinedInput
-                  sx={(theme) => ({
-                    borderRadius: 50,
-                    '.MuiSelect-select': {
-                      pl: 3,
-                    },
-                    '.MuiOutlinedInput-notchedOutline legend': {
-                      ...theme.typography.baseXs,
-                      ml: 1.5,
-                      span: {
-                        px: 0.25,
-                      },
-                    },
-                  })}
-                  label='Status'
-                />
-              }
-            >
-              {Object.values(TransactionStatus).map((status) => (
-                <MenuItem key={status} value={status}>
-                  {status}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <CustomSelect
+            label='Status'
+            value={status}
+            onChange={handleStatusChange}
+            options={Object.values(TransactionStatus).map((val) => ({
+              name: val,
+              id: val,
+            }))}
+          />
         </Grid>
         <Grid item flex={1}>
-          <FormControl fullWidth={true}>
-            <InputLabel
-              shrink={true}
-              htmlFor='transaction-type-selector'
-              sx={(theme) => ({ ...theme.typography.baseMd, ml: 1, mt: '1px' })}
-            >
-              Type
-            </InputLabel>
-            <Select
-              notched={true}
-              value={transactionType}
-              inputProps={{
-                id: 'transaction-type-selector',
-              }}
-              onChange={handleTypeChange}
-              input={
-                <OutlinedInput
-                  label='Type'
-                  sx={(theme) => ({
-                    borderRadius: 50,
-                    '.MuiSelect-select': {
-                      pl: 3,
-                    },
-                    '.MuiOutlinedInput-notchedOutline legend': {
-                      ...theme.typography.baseXs,
-                      ml: 1.5,
-                      span: {
-                        px: 0.25,
-                      },
-                    },
-                  })}
-                />
-              }
-            >
-              {Object.values(TransactionType).map((type) => (
-                <MenuItem key={type} value={type}>
-                  {type}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <CustomSelect
+            label='Type'
+            value={transactionType}
+            onChange={handleTypeChange}
+            options={Object.values(TransactionType).map((val) => ({
+              name: val,
+              id: val,
+            }))}
+          />
         </Grid>
         <Grid item flex={1}>
-          <FormControl fullWidth={true}>
-            <InputLabel
-              shrink={true}
-              htmlFor='transaction-tranche-selector'
-              sx={(theme) => ({ ...theme.typography.baseMd, ml: 1, mt: '1px' })}
-            >
-              Tranche
-            </InputLabel>
-            <Select
-              notched={true}
-              value={trancheType}
-              inputProps={{
-                id: 'transaction-tranche-selector',
-              }}
-              onChange={handleTrancheChange}
-              input={
-                <OutlinedInput
-                  label='Tranche'
-                  sx={(theme) => ({
-                    borderRadius: 50,
-                    '.MuiSelect-select': {
-                      pl: 3,
-                    },
-                    '.MuiOutlinedInput-notchedOutline legend': {
-                      ...theme.typography.baseXs,
-                      ml: 1.5,
-                      span: {
-                        px: 0.25,
-                      },
-                    },
-                  })}
-                />
-              }
-            >
-              {Object.values(TransactionTranches).map((type) => (
-                <MenuItem key={type} value={type}>
-                  {type}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <CustomSelect
+            label='Tranche'
+            value={trancheType}
+            onChange={handleTrancheChange}
+            options={Object.values(TransactionTranches).map((val) => ({
+              name: val,
+              id: val,
+            }))}
+          />
         </Grid>
       </Grid>
     </Box>

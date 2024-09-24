@@ -1,4 +1,4 @@
-import { alpha, createTheme } from '@mui/material'
+import { alpha, createTheme, keyframes } from '@mui/material'
 
 import { customPalette } from '@/themes/palette'
 import { customTypography, primaryFontFamily } from '@/themes/typography'
@@ -21,6 +21,14 @@ declare module '@mui/material/Button' {
   }
 }
 
+const selectDropdownEffect = keyframes`
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+`
 export const theme = createTheme({
   palette: customPalette,
   typography: customTypography,
@@ -128,6 +136,7 @@ export const theme = createTheme({
           left: -2px;
         }
       }
+
     `,
     },
     MuiAppBar: {
@@ -570,10 +579,38 @@ export const theme = createTheme({
     },
     MuiSelect: {
       styleOverrides: {
+        icon: {
+          color: 'black',
+        },
         select: {
           display: 'flex',
           alignItems: 'center',
           gap: '0.2rem',
+
+          '.MuiTypography-root': {
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          },
+          // removes divider
+          svg: {
+            display: 'none',
+          },
+        },
+      },
+      defaultProps: {
+        MenuProps: {
+          slotProps: {
+            paper: {
+              sx: {
+                bgcolor: customPalette.gray.extraDark,
+                transition: 'none !important',
+                animation: `${selectDropdownEffect} 0.3s ease`,
+                borderBottomLeftRadius: 24,
+                borderBottomRightRadius: 24,
+              },
+            },
+          },
         },
       },
     },
