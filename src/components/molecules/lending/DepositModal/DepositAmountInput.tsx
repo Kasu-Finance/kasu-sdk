@@ -41,7 +41,8 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
 }) => {
   const { t } = useTranslation()
 
-  const { amount, trancheId, setAmount } = useDepositModalState()
+  const { amount, trancheId, setAmount, setIsValidating } =
+    useDepositModalState()
   const { modalStatus, setModalStatus } = useModalStatusState()
 
   const [focused, setFocused] = useState(false)
@@ -83,53 +84,68 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
 
   const validate = useCallback(
     async (inputAmount: string) => {
-      let convertedAmount: string = '0'
+      try {
+        let convertedAmount: string = '0'
 
-      const inputBN = toBigNumber(inputAmount)
-      const minDepositBN = toBigNumber(minDeposit)
-      const maxDepositBN = toBigNumber(maxDeposit)
-      const balanceBN = toBigNumber(balance)
+        const inputBN = toBigNumber(inputAmount)
+        const minDepositBN = toBigNumber(minDeposit)
+        const maxDepositBN = toBigNumber(maxDeposit)
+        const balanceBN = toBigNumber(balance)
 
-      if (inputBN.isZero()) {
-        setModalStatus({ type: 'error', errorMessage: 'Invalid amount' })
-        return
+        if (inputBN.isZero()) {
+          setModalStatus({ type: 'error', errorMessage: 'Invalid amount' })
+
+          return
+        }
+
+        if (applyConversion) {
+          convertedAmount = await applyConversion(inputAmount)
+        }
+
+        const inputUsdBN = applyConversion
+          ? toBigNumber(convertedAmount)
+          : inputBN
+
+        if (inputUsdBN.lt(minDepositBN)) {
+          setModalStatus({
+            type: 'error',
+            errorMessage: `The value entered is below the minimum of ${formatAmount(minDeposit)} USDC`,
+          })
+          return
+        }
+
+        if (inputUsdBN.gt(maxDepositBN)) {
+          setModalStatus({
+            type: 'error',
+            errorMessage: `The value entered is above the maximum of ${formatAmount(maxDeposit)} USDC`,
+          })
+          return
+        }
+
+        if (inputBN.gt(balanceBN)) {
+          setModalStatus({
+            type: 'error',
+            errorMessage: 'Insufficient balance',
+          })
+
+          return
+        }
+
+        setModalStatus({ type: inputAmount ? 'success' : 'default' })
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setIsValidating(false)
       }
-
-      if (applyConversion) {
-        convertedAmount = await applyConversion(inputAmount)
-      }
-
-      const inputUsdBN = applyConversion
-        ? toBigNumber(convertedAmount)
-        : inputBN
-
-      if (inputUsdBN.lt(minDepositBN)) {
-        setModalStatus({
-          type: 'error',
-          errorMessage: `The value entered is below the minimum of ${formatAmount(minDeposit)} USDC`,
-        })
-        return
-      }
-
-      if (inputUsdBN.gt(maxDepositBN)) {
-        setModalStatus({
-          type: 'error',
-          errorMessage: `The value entered is above the maximum of ${formatAmount(maxDeposit)} USDC`,
-        })
-        return
-      }
-
-      if (inputBN.gt(balanceBN)) {
-        setModalStatus({
-          type: 'error',
-          errorMessage: 'Insufficient balance',
-        })
-        return
-      }
-
-      setModalStatus({ type: inputAmount ? 'success' : 'default' })
     },
-    [setModalStatus, minDeposit, maxDeposit, balance, applyConversion]
+    [
+      setModalStatus,
+      minDeposit,
+      maxDeposit,
+      balance,
+      applyConversion,
+      setIsValidating,
+    ]
   )
 
   const { debouncedFunction: debouncedValidate } = useDebounce(
@@ -157,11 +173,12 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
 
   const handleAmountChange = useCallback(
     (value: string) => {
+      setIsValidating(true)
       setAmount(value)
 
       applyConversion ? debouncedValidate(value) : validate(value)
     },
-    [setAmount, validate, applyConversion, debouncedValidate]
+    [setAmount, validate, applyConversion, debouncedValidate, setIsValidating]
   )
 
   const handleFocusState = useCallback(

@@ -26,6 +26,7 @@ const initialState: Omit<
   simulatedDuration: 0,
   txHash: undefined,
   termsAccepted: false,
+  isValidating: false,
 }
 
 const DepositModalState: React.FC<DepositModalStateProps> = ({

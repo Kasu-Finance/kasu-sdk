@@ -580,7 +580,7 @@
       "detailCard": {
         "apyStructure": {
           "label": "APY Structure",
-          "tooltip": "Indicates whether the APY offered by the Delegate to Lenders is fixed for a specified period of time, or variable.​ A variable APY will be subject to change upon each epoch."
+          "tooltip": "Indicates whether the APY offered by the Delegate to Lenders is fixed for a specified period of time, or variable.​ A variable APY will be subject to change every 4 epochs."
         },
         "fixedApyExpiry": {
           "label": "Fixed APY Expiry Date",
@@ -612,7 +612,7 @@
         },
         "terms": {
           "label": "Term & Structure",
-          "tooltip": "The structure of each loan provided by the Delegate to its customers (end borrowers) with regard to maturity date and repayment profile to suit the lending asset class related to this Lending Strategy. A Revolving Loan refers to a loan structure that has no defined end date as it is typically utilised to fund ongoing operations (akin to a Line of Credit, Working Capital Loan or Evergreen Facility). An Amortising loan refers to a loan structure that has defined Principal and Interest repayment periods until it is fully repaid upon a specific end/maturity date, as it is typically utilised to fund core debt, capital expenditure and long term projects."
+          "tooltip": "​The term and structure offered to Lenders, which typically matches the requirements of this Lending Strategy to suit the lending asset class and loan structure provided to end borrowers. Open Ended means that the Lending Strategy is ongoing with no defined end date upon which Lenders will be repaid. This is because the Lending Strategy facilitates Revolving Loans to end borrowers, which also have no defined end date. Such loans are typically utilised to fund ongoing operations (akin to a Line of Credit, Working Capital Loan or Evergreen Facility). Lenders must therefore submit withdrawal requests to access any capital return. Term Loan means that there is a defined end date upon which Lenders will be fully repaid. This may, or may not, also include scheduled principal repayments throughout the term of the loan. Whilst repayment(s) occur without the need to submit withdrawal requests, the repayment profile is pre-defined, with little to no flexibility to submit ad-hoc withdrawal requests. This is because Term Loans are typically used to fund longer duration assets, such as  capital expenditure or long term projects (such as property)."
         },
         "totalPoolYieldEarnings": {
           "label": "Total Lending Strategy",
@@ -859,7 +859,7 @@
       },
       "structureApy": {
         "label": "Lending Strategy APY Structure",
-        "tooltip": "Indicates whether the APY offered by the Delegate is fixed for a specified period of time, or variable (subject to change upon each epoch)."
+        "tooltip": "Indicates whether the APY offered by the Delegate is fixed for a specified period of time, or variable (subject to change every 4 epochs)."
       },
       "term": {
         "label": "Lending Strategy Loan Term",
@@ -927,7 +927,7 @@
         },
         "chargeAssets": {
           "label": "Charge over Business Assets",
-          "tooltip": "A legal security interest held by the Delegate over the assets of its customers (end borrowers), providing the Delegate with the right to enforce its interest over those assets in the event of default or insolvency."
+          "tooltip": "hello world"
         },
         "bankControl": {
           "label": "Control over Bank Accounts",
@@ -942,7 +942,7 @@
         },
         "propertyOwners": {
           "label": "Director(s)/Beneficial Owner(s) must be property owners",
-          "tooltip": "A condition enforced by the Delegate which requires at least one Director (or beneficial owner) every customer (end borrower) to be a property owner with sufficient equity. The purpose of this condition is to confirm a minimum level of wealth in order to provide comfort in the event that a Director (or beneficial owner) may become personally liable for its business loan(s) where recovery action may be required."
+          "tooltip": "A condition enforced by the Delegate which requires at least one Director (or beneficial owner) for every customer (end borrower) to be a property owner with sufficient equity. The purpose of this condition is to confirm a minimum level of wealth in order to provide comfort in the event that a Director (or beneficial owner) may become personally liable for its business loan(s) where recovery action may be required."
         }
       }
     }
@@ -1097,7 +1097,7 @@
       "metric-2": "Total Active Lending",
       "metric-2-tooltip": "Combined USDC equivalent face value of all loans across all Lending Strategies on Kasu that Delegates currently have deployed to end borrowers.",
       "metric-3": "Total Loan Funds Originated​",
-      "metric-3-tooltip": "Cumulative total USDC equivalent face value of all current and historical loans originated by Delegates to end borrowers from all Lending Strategies on Kasu.",
+      "metric-3-tooltip": "Cumulative total USDC equivalent face value of all current and historical loans originated by Delegates to end borrowers from all Lending Strategies on the Kasu protocol.",
       "metric-4": "Total Interest Earned​",
       "metric-4-tooltip": "Cumulative total gross interest earned by Lenders from all loans since the inception of the Kasu protocol.",
       "metric-5": "Total Loss Rate",
