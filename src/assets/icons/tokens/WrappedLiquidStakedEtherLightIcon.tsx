@@ -1,4 +1,4 @@
-const WrappedLiquidStakedEtherIcon = () => (
+const WrappedLiquidStakedEtherLightIcon = () => (
   <svg
     width='25'
     height='24'
@@ -8,50 +8,50 @@ const WrappedLiquidStakedEtherIcon = () => (
   >
     <path
       d='M23.971 14.9104C22.3682 21.3398 15.8563 25.2525 9.42613 23.6493C2.99871 22.0464 -0.91407 15.5341 0.689501 9.10525C2.29166 2.67519 8.80356 -1.23789 15.2317 0.364981C21.6613 1.96785 25.5739 8.48086 23.9708 14.9105L23.971 14.9104H23.971Z'
-      fill='#28282A'
+      fill='#C4996C'
     />
     <path
       d='M8.45288 9.41411L12.3311 3.50293V7.19351L8.45288 9.41411Z'
-      fill='#E8C091'
+      fill='#28282A'
     />
     <path
       d='M12.3306 7.1853V11.6656L8.46804 9.39808L12.3306 7.1853Z'
-      fill='#E8C091'
+      fill='#28282A'
       fillOpacity='0.6'
     />
     <path
       d='M12.3306 18.82V13.0027L7.85815 10.3755L12.3306 18.82Z'
-      fill='#E8C091'
+      fill='#28282A'
       fillOpacity='0.6'
     />
     <path
       fillRule='evenodd'
       clipRule='evenodd'
       d='M7.87274 10.405L12.3298 18.8204C12.3122 18.8206 12.2946 18.8206 12.2769 18.8206C9.31672 18.8206 6.91699 16.4209 6.91699 13.4607C6.91699 12.325 7.27019 11.2719 7.87274 10.405Z'
-      fill='#E8C091'
+      fill='#28282A'
     />
     <path
       d='M16.2083 9.41411L12.33 3.50293V7.19351L16.2083 9.41411Z'
-      fill='#E8C091'
+      fill='#28282A'
       fillOpacity='0.6'
     />
     <path
       d='M12.3312 7.1853V11.6656L16.1938 9.39808L12.3312 7.1853Z'
-      fill='#E8C091'
+      fill='#28282A'
       fillOpacity='0.2'
     />
     <path
       d='M12.3312 18.82V13.0027L16.8037 10.3755L12.3312 18.82Z'
-      fill='#E8C091'
+      fill='#28282A'
       fillOpacity='0.2'
     />
     <path
       fillRule='evenodd'
       clipRule='evenodd'
       d='M16.7884 10.405L12.3314 18.8204C12.349 18.8206 12.3666 18.8206 12.3842 18.8206C15.3444 18.8206 17.7441 16.4209 17.7441 13.4607C17.7441 12.325 17.3909 11.2719 16.7884 10.405Z'
-      fill='#E8C091'
+      fill='#28282A'
     />
   </svg>
 )
 
-export default WrappedLiquidStakedEtherIcon
+export default WrappedLiquidStakedEtherLightIcon

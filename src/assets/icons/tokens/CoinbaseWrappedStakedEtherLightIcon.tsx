@@ -1,4 +1,4 @@
-const CoinbaseWrappedStakedEtherIcon = () => (
+const CoinbaseWrappedStakedEtherLightIcon = () => (
   <svg
     width='25'
     height='24'
@@ -6,42 +6,42 @@ const CoinbaseWrappedStakedEtherIcon = () => (
     fill='none'
     xmlns='http://www.w3.org/2000/svg'
   >
-    <circle cx='12.1191' cy='12.0029' r='12' fill='#28282A' />
+    <circle cx='12.1191' cy='12.0029' r='12' fill='#C4996C' />
     <path
       fillRule='evenodd'
       clipRule='evenodd'
       d='M12.1191 20.0029C16.5374 20.0029 20.1191 16.4212 20.1191 12.0029C20.1191 7.58465 16.5374 4.00293 12.1191 4.00293C7.70086 4.00293 4.11914 7.58465 4.11914 12.0029C4.11914 16.4212 7.70086 20.0029 12.1191 20.0029ZM12.1191 21.0029C17.0897 21.0029 21.1191 16.9735 21.1191 12.0029C21.1191 7.03237 17.0897 3.00293 12.1191 3.00293C7.14858 3.00293 3.11914 7.03237 3.11914 12.0029C3.11914 16.9735 7.14858 21.0029 12.1191 21.0029Z'
-      fill='#E8C091'
+      fill='#28282A'
     />
     <path
       d='M12.1184 5.48926L12.031 5.78612V10.3131L16.1166 12.1234L12.1184 5.48926Z'
-      fill='#E8C091'
+      fill='#28282A'
       fillOpacity='0.8'
     />
     <path
       d='M12.1184 5.48926L8.12012 12.1234L12.1184 10.306V5.48926Z'
-      fill='#E8C091'
+      fill='#28282A'
     />
     <path
       d='M12.1188 15.2437L12.0696 15.3038V18.372L12.1188 18.5158L16.1195 12.8816L12.1188 15.2437Z'
-      fill='#E8C091'
+      fill='#28282A'
       fillOpacity='0.8'
     />
     <path
       d='M12.1184 18.5158V15.2437L8.12012 12.8816L12.1184 18.5158Z'
-      fill='#E8C091'
+      fill='#28282A'
     />
     <path
       d='M12.1187 14.4866L16.1168 12.1233L12.1187 10.3059V14.4866Z'
-      fill='#E8C091'
+      fill='#28282A'
       fillOpacity='0.4'
     />
     <path
       d='M8.12012 12.1233L12.1184 14.4866V10.3059L8.12012 12.1233Z'
-      fill='#E8C091'
+      fill='#28282A'
       fillOpacity='0.6'
     />
   </svg>
 )
 
-export default CoinbaseWrappedStakedEtherIcon
+export default CoinbaseWrappedStakedEtherLightIcon
