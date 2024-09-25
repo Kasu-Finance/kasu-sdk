@@ -9,6 +9,7 @@ type CustomCardHeaderProps = BoxProps & {
 
 const CustomCardHeader: React.FC<CustomCardHeaderProps> = ({
   title,
+  titleProps,
   children,
   ...rest
 }) => {
@@ -18,6 +19,7 @@ const CustomCardHeader: React.FC<CustomCardHeaderProps> = ({
         variant='h3'
         color='gold.darkNoises'
         textTransform='capitalize'
+        {...titleProps}
       >
         {title}
       </Typography>

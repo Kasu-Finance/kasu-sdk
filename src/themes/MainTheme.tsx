@@ -583,19 +583,7 @@ export const theme = createTheme({
           color: 'black',
         },
         select: {
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.2rem',
-
-          '.MuiTypography-root': {
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          },
-          // removes divider
-          svg: {
-            display: 'none',
-          },
+          display: 'block',
         },
       },
       defaultProps: {
@@ -608,6 +596,7 @@ export const theme = createTheme({
                 animation: `${selectDropdownEffect} 0.3s ease`,
                 borderBottomLeftRadius: 24,
                 borderBottomRightRadius: 24,
+                maxWidth: 'min-content',
               },
             },
           },

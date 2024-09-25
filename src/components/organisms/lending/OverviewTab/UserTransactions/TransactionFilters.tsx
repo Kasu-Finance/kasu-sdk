@@ -82,6 +82,8 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({ pools }) => {
               onChange={handlePoolChange}
               options={[{ id: 'All', name: 'All' }, ...pools]}
               maxWidth={256}
+              labelKey='name'
+              valueKey='id'
             />
           </Grid>
         )}
@@ -94,6 +96,8 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({ pools }) => {
               name: val,
               id: val,
             }))}
+            labelKey='name'
+            valueKey='id'
           />
         </Grid>
         <Grid item flex={1}>
@@ -105,6 +109,8 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({ pools }) => {
               name: val,
               id: val,
             }))}
+            labelKey='name'
+            valueKey='id'
           />
         </Grid>
         <Grid item flex={1}>
@@ -116,6 +122,8 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({ pools }) => {
               name: val,
               id: val,
             }))}
+            labelKey='name'
+            valueKey='id'
           />
         </Grid>
       </Grid>

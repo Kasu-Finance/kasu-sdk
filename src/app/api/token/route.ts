@@ -79,9 +79,6 @@ export async function GET(req: NextRequest) {
       })}`,
       {
         cache: 'no-store',
-        next: {
-          revalidate: 0,
-        },
         headers: {
           'X-CMC_PRO_API_KEY': process.env.CMC_API_KEY?.toString() || '',
         },

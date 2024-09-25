@@ -8,8 +8,8 @@ import DialogWrapper from '@/components/atoms/DialogWrapper'
 import CancelDepositModal from '@/components/organisms/modals/CancelDepositModal'
 import CancelWithdrawalModal from '@/components/organisms/modals/CancelWithdrawalModal'
 import DepositModalWrapper from '@/components/organisms/modals/DepositModal/DepositModalWrapper'
-import EarningsCalculatorModalWrapper from '@/components/organisms/modals/EarningsCalculator/EarningsCalculatorModalWrapper'
 import KycModal from '@/components/organisms/modals/KycModal'
+import LendingModalWrapper from '@/components/organisms/modals/LendingModal/LendingModalWrapper'
 import LockModalWrapper from '@/components/organisms/modals/LockModal/LockModalWrapper'
 import LoyaltyLevelsModal from '@/components/organisms/modals/LoyaltyLevelsModal'
 import TermsAndConditionsModal from '@/components/organisms/modals/TermsAndConditionsModal'
@@ -76,7 +76,7 @@ export const getModal = (
       }
     case ModalsKeys.EARNINGS_CALCULATOR:
       return {
-        component: <EarningsCalculatorModalWrapper handleClose={handleClose} />,
+        component: <LendingModalWrapper handleClose={handleClose} />,
       }
     case ModalsKeys.TERMS_AND_CONDITIONS:
       return {

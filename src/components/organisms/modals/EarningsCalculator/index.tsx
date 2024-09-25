@@ -14,6 +14,8 @@ import SimulatedDepositAmount from '@/components/organisms/modals/EarningsCalcul
 import SimulatedDepositDuration from '@/components/organisms/modals/EarningsCalculator/SimulatedDepositDuration'
 import SimulatedYieldEarnings from '@/components/organisms/modals/EarningsCalculator/SimulatedYieldEarnings'
 
+import { PoolData } from '@/utils/lending/getPoolData'
+
 const EarningsCalculatorModal: React.FC<DialogChildProps> = ({
   handleClose,
 }) => {
@@ -26,7 +28,7 @@ const EarningsCalculatorModal: React.FC<DialogChildProps> = ({
   const { stakedPercentage } = useLockingPercentage()
   const { currentLevel } = useLoyaltyLevel(stakedPercentage)
 
-  const poolData = modal.earningsCalculatorModal.poolData
+  const poolData = modal.earningsCalculatorModal.pool as unknown as PoolData
 
   return (
     <>
@@ -56,7 +58,7 @@ const EarningsCalculatorModal: React.FC<DialogChildProps> = ({
           <SimulatedDepositDuration />
           <SimulatedYieldEarnings
             loyaltyLevel={currentLevel}
-            poolOverview={modal.earningsCalculatorModal.poolOverview}
+            poolOverview={modal.earningsCalculatorModal.pool}
           />
         </Box>
       </DialogContent>

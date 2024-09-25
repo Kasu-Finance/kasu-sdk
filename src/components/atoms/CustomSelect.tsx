@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Box,
   FormControl,
@@ -6,36 +8,60 @@ import {
   MenuItem,
   OutlinedInput,
   Select,
+  SxProps,
+  Theme,
   Typography,
 } from '@mui/material'
 import { SelectInputProps } from '@mui/material/Select/SelectInput'
-import { useId, useReducer } from 'react'
+import { ReactNode, useId, useState } from 'react'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
 
-type CustomSelectProps<T> = {
+import { customTypography } from '@/themes/typography'
+
+type CustomSelectProps<
+  OptionKey extends string | number | symbol,
+  OptionValue,
+  Option extends Record<OptionKey, OptionValue>,
+  TValue extends OptionValue,
+> = {
   label: string
-  value: T
-  onChange: SelectInputProps<T>['onChange']
-  options: {
-    id: string
-    name: string
-  }[]
+  value: TValue
+  onChange: SelectInputProps<TValue>['onChange']
+  options: Option[]
+  valueKey: OptionKey
+  labelKey: OptionKey
   maxWidth?: number
   formControlProps?: FormControlProps
+  selectSx?: SxProps<Theme>
   variant?: 'primary' | 'secondary'
+  renderItem?: (val: Option) => ReactNode
+  renderSelected?: (val: Option) => ReactNode
 }
 
-const CustomSelect = <T,>({
+const CustomSelect = <
+  OptionKey extends string | number | symbol,
+  OptionValue,
+  Option extends Record<OptionKey, OptionValue>,
+  TValue extends OptionValue,
+>({
   label,
   value,
   onChange,
   options,
+  labelKey,
+  valueKey,
   maxWidth,
   formControlProps,
+  selectSx,
   variant = 'primary',
-}: CustomSelectProps<T>) => {
-  const [open, toggleOpen] = useReducer((prev) => !prev, false)
+  renderItem,
+  renderSelected,
+}: CustomSelectProps<OptionKey, OptionValue, Option, TValue>) => {
+  const [open, setOpen] = useState(false)
+
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
 
   const uuid = useId()
 
@@ -57,6 +83,10 @@ const CustomSelect = <T,>({
           ...theme.typography.baseMd,
           ml: 1,
           mt: '1px',
+          color: variant === 'secondary' ? 'white' : undefined,
+          '&.Mui-focused': {
+            color: variant === 'secondary' ? 'white' : undefined,
+          },
         })}
       >
         {label}
@@ -72,46 +102,70 @@ const CustomSelect = <T,>({
       )}
       <Select
         notched={true}
-        onOpen={toggleOpen}
-        onClose={toggleOpen}
+        onOpen={handleOpen}
+        onClose={handleClose}
         value={value}
-        inputProps={{
-          id: uuid,
-        }}
-        onChange={onChange}
-        SelectDisplayProps={{
-          style: {
-            paddingLeft: 24,
-            overflow: 'hidden',
-            whiteSpace: 'nowrap',
-            textOverflow: 'ellipsis',
-            display: 'block',
-          },
-        }}
-        input={
-          <OutlinedInput
-            sx={(theme) => ({
+        sx={[
+          {
+            borderRadius: 50,
+            '.MuiOutlinedInput-notchedOutline': {
               borderRadius: 50,
-              bgcolor: variant === 'secondary' ? 'gold.middle' : undefined,
-              '.MuiOutlinedInput-notchedOutline': {
-                borderColor: variant === 'secondary' ? 'white' : undefined,
-                legend: {
-                  ...theme.typography.baseXs,
-                  ml: 1.5,
-                  span: {
-                    px: 0.25,
-                  },
+              borderColor: variant === 'secondary' ? 'white' : undefined,
+              legend: {
+                ...customTypography.baseXs,
+                ml: 1.5,
+
+                span: {
+                  px: 0.25,
                 },
               },
-            })}
+            },
+          },
+          ...(Array.isArray(selectSx) ? selectSx : [selectSx]),
+        ]}
+        inputProps={{
+          id: uuid,
+          sx: {
+            borderRadius: 50,
+            bgcolor: variant === 'secondary' ? 'gold.middle' : undefined,
+          },
+        }}
+        onChange={onChange}
+        input={
+          <OutlinedInput
+            sx={{
+              '.MuiOutlinedInput-notchedOutline': {
+                background: 'blue',
+              },
+            }}
             label={label}
           />
         }
+        renderValue={(val) => {
+          const option = options.find((option) => option[valueKey] === val)
+
+          if (!option) return null
+
+          return renderSelected ? (
+            renderSelected(option)
+          ) : (
+            <Typography
+              maxWidth={maxWidth}
+              whiteSpace='nowrap'
+              overflow='hidden'
+              textOverflow='ellipsis'
+              component='span'
+              py={1}
+            >
+              {option[labelKey] as string}
+            </Typography>
+          )
+        }}
       >
-        {options.map(({ id, name }, index, originalArray) => (
+        {options.map((option, index, originalArray) => (
           <MenuItem
-            key={id}
-            value={id}
+            key={index}
+            value={option[valueKey] as string}
             sx={{
               maxWidth,
               display: 'flex',
@@ -128,15 +182,24 @@ const CustomSelect = <T,>({
               },
             }}
           >
-            <Typography
-              maxWidth={maxWidth}
-              whiteSpace='wrap'
-              component='span'
-              py={1}
-            >
-              {name}
-            </Typography>
-            {index !== originalArray.length - 1 && <DottedDivider />}
+            {renderItem ? (
+              <>
+                {renderItem(option)}
+                {index !== originalArray.length - 1 && <DottedDivider />}
+              </>
+            ) : (
+              <>
+                <Typography
+                  maxWidth={maxWidth}
+                  whiteSpace='wrap'
+                  component='span'
+                  py={1}
+                >
+                  {option[labelKey] as string}
+                </Typography>
+                {index !== originalArray.length - 1 && <DottedDivider />}
+              </>
+            )}
           </MenuItem>
         ))}
       </Select>

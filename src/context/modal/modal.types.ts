@@ -5,6 +5,8 @@ import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
 import { SupportedTokens } from '@/constants/tokens'
 import { PoolData } from '@/utils/lending/getPoolData'
 
+import { PoolOverviewWithDelegate } from '@/types/page'
+
 export type ModalBase = {
   isOpen: boolean
 }
@@ -54,8 +56,7 @@ export type Modals = {
   [ModalsKeys.CANCEL_DEPOSIT]: ModalData<{ transactionHistory: UserRequest }>
   [ModalsKeys.CANCEL_WITHDRAWAL]: ModalData<{ transactionHistory: UserRequest }>
   [ModalsKeys.EARNINGS_CALCULATOR]: ModalData<{
-    poolData: PoolData
-    poolOverview: PoolOverview
+    pool: PoolOverviewWithDelegate
   }>
 }
 

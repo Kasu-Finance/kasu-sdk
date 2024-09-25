@@ -12,6 +12,8 @@ import { Modals } from '@/context/modal/modal.types'
 
 import { PoolData } from '@/utils/lending/getPoolData'
 
+import { PoolOverviewWithDelegate } from '@/types/page'
+
 const initialState: Modals = {
   connectWalletModal: { isOpen: false },
   loyaltyLevelsModal: { isOpen: false },
@@ -44,8 +46,7 @@ const initialState: Modals = {
   },
   earningsCalculatorModal: {
     isOpen: false,
-    poolData: null as unknown as PoolData,
-    poolOverview: null as unknown as PoolOverview,
+    pool: null as unknown as PoolOverviewWithDelegate,
   },
 }
 

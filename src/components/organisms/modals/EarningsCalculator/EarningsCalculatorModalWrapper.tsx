@@ -14,7 +14,7 @@ const EarningsCalculatorModalWrapper: React.FC<DialogChildProps> = ({
   return (
     <DepositModalState
       defaultTrancheId={
-        modal.earningsCalculatorModal.poolData.tranches[0].trancheId
+        modal.earningsCalculatorModal.pool.tranches[0].id as `0x${string}`
       }
     >
       <ModalStatusState>
