@@ -8,6 +8,7 @@ export enum DepositModalActionType {
   SET_AMOUNT_IN_USD = 'SET_AMOUNT_IN_USD',
   SET_SIMULATED_DURATION = 'SET_SIMULATED_DURATION',
   SET_SELECTED_TOKEN = 'SET_SELECTED_TOKEN',
+  SET_IS_VALIDATING = 'SET_IS_VALIDATING',
 }
 
 export type DepositModalActions =
@@ -39,6 +40,10 @@ export type DepositModalActions =
       type: DepositModalActionType.SET_TERMS_ACCEPTED
       payload: boolean
     }
+  | {
+      type: DepositModalActionType.SET_IS_VALIDATING
+      payload: boolean
+    }
 
 export type DepositModalStateType = {
   amount: string
@@ -48,6 +53,7 @@ export type DepositModalStateType = {
   amountInUSD: string | undefined
   selectedToken: SupportedTokens
   termsAccepted: boolean
+  isValidating: boolean
 }
 
 export type DepositModalFunctions = {
@@ -58,6 +64,7 @@ export type DepositModalFunctions = {
   setSimulatedDuration: (simulatedDuration: number) => void
   setSelectedToken: (selectedToken: SupportedTokens) => void
   setTermsAccepted: (termsAccepted: boolean) => void
+  setIsValidating: (isValidating: boolean) => void
 }
 
 export type DepositModalTypes = DepositModalStateType & DepositModalFunctions

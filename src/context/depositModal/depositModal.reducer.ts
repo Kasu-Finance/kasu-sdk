@@ -44,6 +44,11 @@ const depositModalReducer = (
         amount: '',
         amountInUSD: undefined,
       }
+    case DepositModalActionType.SET_IS_VALIDATING:
+      return {
+        ...state,
+        isValidating: action.payload,
+      }
     case DepositModalActionType.SET_TERMS_ACCEPTED:
       return { ...state, termsAccepted: action.payload }
   }

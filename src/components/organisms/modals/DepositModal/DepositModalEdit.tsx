@@ -22,7 +22,7 @@ const DepositModalEdit: React.FC<DepositModalEditProps> = ({ poolData }) => {
 
   const { openModal } = useModalState()
 
-  const { amount, termsAccepted } = useDepositModalState()
+  const { amount, amountInUSD, termsAccepted } = useDepositModalState()
 
   const { modalStatus, setModalStatusAction } = useModalStatusState()
 
@@ -52,7 +52,11 @@ const DepositModalEdit: React.FC<DepositModalEditProps> = ({ poolData }) => {
             letterSpacing: '0.46px',
           }}
           disabled={Boolean(
-            !amount || modalStatus.type === 'error' || !termsAccepted
+            !amount ||
+              !amountInUSD ||
+              modalStatus.type === 'error' ||
+              modalStatus.type === 'focused' ||
+              !termsAccepted
           )}
           onClick={() => setModalStatusAction(ModalStatusAction.REVIEWING)}
         >
