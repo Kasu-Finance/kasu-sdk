@@ -1,7 +1,5 @@
 import { revalidateTag } from 'next/cache'
 
-export const dynamic = 'force-dynamic'
-
 const flushTags = (cachedTags: string[]): Promise<void> => {
   return new Promise((resolve, reject) => {
     try {
