@@ -5,6 +5,7 @@ import LendingModal from '@/components/organisms/modals/LendingModal'
 
 import DepositModalState from '@/context/depositModal/depositModal.provider'
 import { ModalsKeys } from '@/context/modal/modal.types'
+import ModalStatusState from '@/context/modalStatus/modalStatus.provider'
 import StepperState from '@/context/stepper/stepper.provider'
 
 const LendingModalWrapper: React.FC<DialogChildProps> = ({ handleClose }) => {
@@ -13,13 +14,14 @@ const LendingModalWrapper: React.FC<DialogChildProps> = ({ handleClose }) => {
   return (
     <DepositModalState
       defaultTrancheId={
-        modal[ModalsKeys.EARNINGS_CALCULATOR].pool.tranches[0]
-          .id as `0x${string}`
+        modal[ModalsKeys.LEND].pool.tranches[0].id as `0x${string}`
       }
     >
-      <StepperState steps={3}>
-        <LendingModal handleClose={handleClose} />
-      </StepperState>
+      <ModalStatusState>
+        <StepperState steps={3}>
+          <LendingModal handleClose={handleClose} />
+        </StepperState>
+      </ModalStatusState>
     </DepositModalState>
   )
 }

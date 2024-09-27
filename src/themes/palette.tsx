@@ -74,13 +74,17 @@ export const customPalette = {
     dark: 'rgba(161, 136, 106, 1)',
     light: 'rgba(229, 195, 151, 1)',
   },
+  secondary: {
+    main: 'rgba(40, 40, 42, 1)',
+    contrastText: 'rgba(196, 153, 108, 1)',
+  },
   success: {
     main: 'rgba(171, 212, 140, 1)',
     contrastText: 'rgba(255,255,255,0.9)',
     dark: 'rgba(27, 94, 32, 1)',
   },
   error: {
-    main: 'rgba(212, 98, 98, 1)',
+    main: 'rgba(168, 40, 13, 1)',
     contrastText: 'rgba(255,255,255, 0.9)',
     dark: 'rgba(164, 45, 45, 1)',
     light: 'rgba(223, 139, 139, 1)',

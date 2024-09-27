@@ -36,7 +36,7 @@ type CustomSelectProps<
   selectSx?: SxProps<Theme>
   variant?: 'primary' | 'secondary'
   renderItem?: (val: Option) => ReactNode
-  renderSelected?: (val: Option) => ReactNode
+  renderSelected?: (val: Option | undefined) => ReactNode
 }
 
 const CustomSelect = <
@@ -70,7 +70,14 @@ const CustomSelect = <
       fullWidth={true}
       {...formControlProps}
       sx={[
-        { maxWidth },
+        {
+          maxWidth,
+          '.MuiSelect-select.MuiOutlinedInput-input': {
+            height: 48,
+            display: 'flex',
+            alignItems: 'center',
+          },
+        },
         ...(Array.isArray(formControlProps?.sx)
           ? formControlProps.sx
           : [formControlProps?.sx]),
@@ -105,6 +112,7 @@ const CustomSelect = <
         onOpen={handleOpen}
         onClose={handleClose}
         value={value}
+        displayEmpty
         sx={[
           {
             borderRadius: 50,
@@ -112,12 +120,9 @@ const CustomSelect = <
               borderRadius: 50,
               borderColor: variant === 'secondary' ? 'white' : undefined,
               legend: {
-                ...customTypography.baseXs,
-                ml: 1.5,
-
-                span: {
-                  px: 0.25,
-                },
+                ...customTypography.baseMd,
+                fontSize: `calc(${customTypography.baseMd.fontSize}px * 0.75)`,
+                ml: 1,
               },
             },
           },
@@ -128,6 +133,8 @@ const CustomSelect = <
           sx: {
             borderRadius: 50,
             bgcolor: variant === 'secondary' ? 'gold.middle' : undefined,
+            height: 48,
+            boxSizing: 'border-box',
           },
         }}
         onChange={onChange}
@@ -144,11 +151,9 @@ const CustomSelect = <
         renderValue={(val) => {
           const option = options.find((option) => option[valueKey] === val)
 
-          if (!option) return null
-
           return renderSelected ? (
             renderSelected(option)
-          ) : (
+          ) : option ? (
             <Typography
               maxWidth={maxWidth}
               whiteSpace='nowrap'
@@ -159,7 +164,7 @@ const CustomSelect = <
             >
               {option[labelKey] as string}
             </Typography>
-          )
+          ) : null
         }}
       >
         {options.map((option, index, originalArray) => (

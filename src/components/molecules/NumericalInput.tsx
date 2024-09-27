@@ -3,6 +3,7 @@ import { useId } from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
 
+import { customPalette } from '@/themes/palette'
 import { capitalize, escapeRegExp } from '@/utils'
 
 type NumericalInputProps = {
@@ -59,7 +60,13 @@ const NumericalInput: React.FC<NumericalInputProps> = ({
   const maxButton = handleMax ? (
     <Button
       variant='outlined'
-      sx={{ textTransform: 'uppercase', height: '56px', width: '56px' }}
+      sx={{
+        textTransform: 'uppercase',
+        height: '48px',
+        width: '80',
+        borderColor: customPalette.gray.extraDark,
+        color: customPalette.gray.extraDark,
+      }}
       onClick={handleMax}
       size='large'
       disabled={disabled}
@@ -69,7 +76,7 @@ const NumericalInput: React.FC<NumericalInputProps> = ({
   ) : undefined
 
   return (
-    <Box display='flex' gap={1} alignItems='end'>
+    <Box display='flex' gap={2} alignItems='end'>
       <TextField
         value={amount}
         onChange={handleChange}

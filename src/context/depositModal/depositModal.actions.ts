@@ -53,6 +53,11 @@ const useDepositModalActions = (
           type: DepositModalActionType.SET_IS_VALIDATING,
           payload: isValidating,
         }),
+      setIsDebouncing: (isDebouncing: boolean) =>
+        dispatch({
+          type: DepositModalActionType.SET_IS_DEBOUNCING,
+          payload: isDebouncing,
+        }),
     }),
     [dispatch]
   )

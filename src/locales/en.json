@@ -20,6 +20,7 @@
     "info": "info",
     "buy": "buy",
     "withdraw": "withdraw",
+    "fixed": "fixed",
     "lock": "lock",
     "unlock": "unlock",
     "lockKSU": "lock KSU",
@@ -203,6 +204,7 @@
       "message": "This feature will be released shortly",
       "action": "Ok"
     },
+
     "loyaltyLevels": {
       "title": "Loyalty Levels",
       "subtitle": "About KSU Loyalty Program",
@@ -439,10 +441,29 @@
     "lending": {
       "title": "Lending Request",
       "buttons": {
+        "increaseLoyaltyLevel": "Increase/establish loyalty level ",
+        "review": "Review lending request ",
         "overview": "Lending Strategy Overview"
+      },
+      "select-apy": "Select APY",
+      "earningsSimulator": {
+        "title": "Earnings Simulator",
+        "subheading-1": "Simulated Lending Duration",
+        "subheading-1-description": "Example only – duration is not fixed. You can submit a withdrawal request at any time (subject to queuing)",
+        "subheading-2": "Simulated Yield Earnings"
+      },
+      "acknowledgement": {
+        "base": "I acknowledge that I have read and understood the",
+        "acknowledged": "You have acknowledged that you have read and understood the",
+        "riskWarning": "Risk Warning",
+        "termsAndConditions": "Terms and Conditions"
       },
       "terms-and-conditions-1": "By depositing funds to this Lending Strategy, you accept the",
       "terms-and-conditions-2": "Terms and Conditions.",
+      "secure-spot": {
+        "title": "How do I secure my spot in this tranche?",
+        "description": "Depending on demand, access to higher APY tranches may be based on Loyalty Levels, which increase the likelihood of securing a spot in your desired tranche, but do not guarantee it."
+      },
       "review": {
         "metric-1": "Lend To",
         "metric-1-tooltip": "The Lending Strategy that your lending request relates to.",
@@ -456,8 +477,36 @@
       },
       "completed": {
         "description-1": "You have successfully queued:",
-        "description-2": "to be deposited in the next Epoch to"
+        "description-2": "to be deposited in the next Epoch",
+        "description-3": "What happens next?​",
+        "description-4": "Because Kasu is all about transparency and choice....​",
+        "description-5": "​Once your lending request is processed:",
+        "description-6": "The above is fully detailed in the",
+        "description-7": "you accepted.",
+        "list": {
+          "list-0": {
+            "title": "Tracking",
+            "description-1": "Visit",
+            "description-2": "tab to track the status of your Lending Request. If your funds are accepted, then the next steps apply.​"
+          },
+          "list-1": {
+            "title": "Transparency",
+            "description": "look out for an email informing you exactly which end borrower your funds will be loaned to.​"
+          },
+          "list-2": {
+            "title": "Choice",
+            "description": "if you decide you don’t want your funds being loaned to the particular end borrower, you may opt out within 48 hours​."
+          },
+          "list-3": {
+            "title": "Informed",
+            "description": "the above process will repeat every time your funds are reallocated to another end borrower, keeping you fully informed across all your lending on Kasu."
+          }
+        },
+        "viewTx": "VIEW TX"
       }
+    },
+    "loanContract": {
+      "title": "Loan Contract"
     },
 
     "lock": {

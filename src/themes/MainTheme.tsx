@@ -204,6 +204,47 @@ export const theme = createTheme({
         thumb: {},
         valueLabel: {},
       },
+      variants: [
+        {
+          props: { color: 'secondary' },
+
+          style: {
+            '.MuiSlider-rail': {
+              color: 'white',
+              opacity: 1,
+            },
+            '.MuiSlider-track': {
+              color: customPalette.gray.extraDark,
+            },
+            '.MuiSlider-mark': {
+              color: customPalette.gray.extraDark,
+            },
+            '.MuiSlider-thumb': {
+              color: customPalette.gray.extraDark,
+              '&:hover, &.Mui-focusVisible, &.Mui-active': {
+                boxShadow: `0px 0px 0px 8px ${alpha(customPalette.gray.extraDark, 0.3)}`,
+              },
+            },
+            '.MuiSlider-valueLabel': {
+              backgroundColor: customPalette.gray.extraDark,
+              borderRadius: 4,
+              padding: 4,
+              ...customTypography.baseXs,
+
+              '&::before': {
+                width: 0,
+                height: 0,
+                borderLeft: '8px solid transparent',
+                borderRight: '8px solid transparent',
+                borderTop: `17px solid ${customPalette.gray.extraDark}`,
+                transform: 'translate(-50%, 50%)',
+                zIndex: -1,
+                backgroundColor: 'transparent',
+              },
+            },
+          },
+        },
+      ],
     },
     MuiAlert: {
       styleOverrides: {
@@ -530,6 +571,26 @@ export const theme = createTheme({
           style: {
             background: customPalette.gray.extraDark,
             color: customPalette.gold.dark,
+            borderColor: customPalette.gray.extraDark,
+          },
+        },
+        {
+          props: { variant: 'contained', color: 'secondary' },
+          style: {
+            background: customPalette.gray.extraDark,
+            color: customPalette.gold.dark,
+            borderColor: customPalette.gray.extraDark,
+            '&.Mui-disabled': {
+              background: customPalette.gold.dark,
+              color: customPalette.gold.middle,
+            },
+          },
+        },
+        {
+          props: { variant: 'outlined', color: 'secondary' },
+          style: {
+            color: customPalette.gray.extraDark,
+            borderColor: customPalette.gray.extraDark,
           },
         },
       ],

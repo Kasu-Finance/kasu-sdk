@@ -7,7 +7,6 @@ import useModalState from '@/hooks/context/useModalState'
 import DialogWrapper from '@/components/atoms/DialogWrapper'
 import CancelDepositModal from '@/components/organisms/modals/CancelDepositModal'
 import CancelWithdrawalModal from '@/components/organisms/modals/CancelWithdrawalModal'
-import DepositModalWrapper from '@/components/organisms/modals/DepositModal/DepositModalWrapper'
 import KycModal from '@/components/organisms/modals/KycModal'
 import LendingModalWrapper from '@/components/organisms/modals/LendingModal/LendingModalWrapper'
 import LockModalWrapper from '@/components/organisms/modals/LockModal/LockModalWrapper'
@@ -58,10 +57,6 @@ export const getModal = (
       return {
         component: <WithdrawModalWrapper handleClose={handleClose} />,
       }
-    case ModalsKeys.DEPOSIT:
-      return {
-        component: <DepositModalWrapper handleClose={handleClose} />,
-      }
     case ModalsKeys.KYC:
       return {
         component: <KycModal handleClose={handleClose} />,
@@ -74,7 +69,7 @@ export const getModal = (
       return {
         component: <CancelWithdrawalModal handleClose={handleClose} />,
       }
-    case ModalsKeys.EARNINGS_CALCULATOR:
+    case ModalsKeys.LEND:
       return {
         component: <LendingModalWrapper handleClose={handleClose} />,
       }

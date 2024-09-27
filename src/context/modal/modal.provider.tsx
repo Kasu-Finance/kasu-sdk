@@ -10,8 +10,6 @@ import ModalContext from '@/context/modal/modal.context'
 import { modalReducer } from '@/context/modal/modal.reducer'
 import { Modals } from '@/context/modal/modal.types'
 
-import { PoolData } from '@/utils/lending/getPoolData'
-
 import { PoolOverviewWithDelegate } from '@/types/page'
 
 const initialState: Modals = {
@@ -36,15 +34,11 @@ const initialState: Modals = {
     isOpen: false,
     userLock: null as unknown as UserLock,
   },
-  depositModal: {
-    isOpen: false,
-    poolData: null as unknown as PoolData,
-  },
   kycModal: {
     isOpen: false,
     callback: () => {},
   },
-  earningsCalculatorModal: {
+  lendModal: {
     isOpen: false,
     pool: null as unknown as PoolOverviewWithDelegate,
   },

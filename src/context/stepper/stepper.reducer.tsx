@@ -10,15 +10,6 @@ const stepperReducer = (
 ): StepperStateType => {
   switch (action.type) {
     case StepperActionTypes.NEXT:
-      if (state.activeStep === 1) {
-        return state
-      }
-
-      return {
-        ...state,
-        activeStep: state.activeStep - 1,
-      }
-    case StepperActionTypes.PREV:
       if (state.activeStep === state.steps.length) {
         return state
       }
@@ -26,6 +17,15 @@ const stepperReducer = (
       return {
         ...state,
         activeStep: state.activeStep + 1,
+      }
+    case StepperActionTypes.PREV:
+      if (state.activeStep === 1) {
+        return state
+      }
+
+      return {
+        ...state,
+        activeStep: state.activeStep - 1,
       }
     case StepperActionTypes.SET_STEP:
       if (action.payload < 1 || action.payload > state.steps.length) {

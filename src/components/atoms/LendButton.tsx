@@ -22,7 +22,7 @@ const LendButton: React.FC<LendButtonProps> = ({ pool }) => {
 
   const handleOpen = () =>
     openModal({
-      name: ModalsKeys.EARNINGS_CALCULATOR,
+      name: ModalsKeys.LEND,
       pool,
     })
 

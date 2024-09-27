@@ -2,9 +2,6 @@ import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
 import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
 
-import { SupportedTokens } from '@/constants/tokens'
-import { PoolData } from '@/utils/lending/getPoolData'
-
 import { PoolOverviewWithDelegate } from '@/types/page'
 
 export type ModalBase = {
@@ -22,11 +19,10 @@ export enum ModalsKeys {
   LOCK = 'lockModal',
   UNLOCK = 'unlockModal',
   WITHDRAW = 'withdrawModal',
-  DEPOSIT = 'depositModal',
   KYC = 'kycModal',
   CANCEL_DEPOSIT = 'cancelDepositModal',
   CANCEL_WITHDRAWAL = 'cancelWithdrawalModal',
-  EARNINGS_CALCULATOR = 'earningsCalculatorModal',
+  LEND = 'lendModal',
   TERMS_AND_CONDITIONS = 'termsAndConditionsModal',
   UNRELEASED_FEATURE = 'unreleasedFeatureModal',
 }
@@ -45,17 +41,10 @@ export type Modals = {
   [ModalsKeys.CONNECT_WALLET]: ModalData<{ callback?: () => void }>
   [ModalsKeys.UNLOCK]: ModalData<{ userLock: UserLock }>
   [ModalsKeys.WITHDRAW]: ModalData<{ poolOverview: PoolOverview }>
-  [ModalsKeys.DEPOSIT]: ModalData<{
-    poolData: PoolData
-    initialAmount?: string
-    initialUsdAmount?: string
-    initialTranche?: `0x${string}`
-    initialToken?: SupportedTokens
-  }>
   [ModalsKeys.KYC]: ModalData<{ callback: () => void }>
   [ModalsKeys.CANCEL_DEPOSIT]: ModalData<{ transactionHistory: UserRequest }>
   [ModalsKeys.CANCEL_WITHDRAWAL]: ModalData<{ transactionHistory: UserRequest }>
-  [ModalsKeys.EARNINGS_CALCULATOR]: ModalData<{
+  [ModalsKeys.LEND]: ModalData<{
     pool: PoolOverviewWithDelegate
   }>
 }

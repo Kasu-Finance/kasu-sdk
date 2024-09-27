@@ -17,9 +17,9 @@ import { ONE_INCH_SLIPPAGE } from '@/config/api.oneInch'
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { SupportedTokens } from '@/constants/tokens'
 import { toBigNumber, waitForReceipt } from '@/utils'
-import { PoolData } from '@/utils/lending/getPoolData'
 
 import { HexString } from '@/types/lending'
+import { PoolOverviewWithDelegate } from '@/types/page'
 
 const useRequestDeposit = () => {
   const sdk = useKasuSDK()
@@ -40,7 +40,7 @@ const useRequestDeposit = () => {
 
   return async (
     lendingPoolId: `0x${string}`,
-    selectedTranche: PoolData['tranches'][number],
+    selectedTranche: PoolOverviewWithDelegate['tranches'][number],
     currentEpochDepositedAmount: string
   ) => {
     if (!account) {

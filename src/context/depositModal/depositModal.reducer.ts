@@ -49,6 +49,11 @@ const depositModalReducer = (
         ...state,
         isValidating: action.payload,
       }
+    case DepositModalActionType.SET_IS_DEBOUNCING:
+      return {
+        ...state,
+        isDebouncing: action.payload,
+      }
     case DepositModalActionType.SET_TERMS_ACCEPTED:
       return { ...state, termsAccepted: action.payload }
   }

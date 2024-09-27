@@ -51,7 +51,12 @@ const SupportedAssetsDropdown = () => {
 
   return (
     <Stack spacing={2}>
-      <Typography display='inline-flex' alignItems='center' gap={1}>
+      <Typography
+        variant='baseMd'
+        display='inline-flex'
+        alignItems='center'
+        gap={1}
+      >
         {t('modals.earningsCalculator.simulatedAmount.metric-1')}{' '}
         {showOneInch && (
           <>
@@ -69,6 +74,8 @@ const SupportedAssetsDropdown = () => {
         valueKey='symbol'
         onChange={handleChange}
         renderSelected={(val) => {
+          if (!val) return null
+
           const { icon, symbol, decimals, balance } = val
 
           return (

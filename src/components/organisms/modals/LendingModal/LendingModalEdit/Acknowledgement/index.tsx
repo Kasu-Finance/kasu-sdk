@@ -1,0 +1,165 @@
+import {
+  Button,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormHelperText,
+  Typography,
+} from '@mui/material'
+import { useReducer } from 'react'
+
+import useDepositModalState from '@/hooks/context/useDepositModalState'
+import useModalState from '@/hooks/context/useModalState'
+import useTranslation from '@/hooks/useTranslation'
+
+import CustomCheckbox from '@/components/atoms/CustomCheckbox'
+
+import { ModalsKeys } from '@/context/modal/modal.types'
+
+import { customTypography } from '@/themes/typography'
+
+type AcknowledgementTypes = 'riskWarning' | 'termsAndConditions'
+
+type AcknowledgementStateType = Record<AcknowledgementTypes, boolean>
+
+const Acknowledgement = () => {
+  const { t } = useTranslation()
+
+  const { termsAccepted, setTermsAccepted } = useDepositModalState()
+
+  const { openModal } = useModalState()
+
+  const [checked, toggleChecked] = useReducer(
+    (prev: AcknowledgementStateType, acknowledgement: AcknowledgementTypes) => {
+      const newState = {
+        ...prev,
+        [acknowledgement]: !prev[acknowledgement],
+      }
+
+      setTermsAccepted(newState.riskWarning && newState.termsAndConditions)
+
+      return newState
+    },
+    {
+      riskWarning: termsAccepted,
+      termsAndConditions: termsAccepted,
+    }
+  )
+
+  const handleRiskWarningOpen = () =>
+    openModal({ name: ModalsKeys.UNRELEASED_FEATURE })
+
+  const handleTermsAndConditionsOpen = () =>
+    openModal({ name: ModalsKeys.TERMS_AND_CONDITIONS })
+
+  return (
+    <FormControl>
+      <FormGroup
+        sx={{
+          '.MuiFormControlLabel-root': {
+            m: 0,
+            width: 'max-content',
+            '.MuiCheckbox-root': {
+              mr: 2,
+              bgcolor: 'white',
+            },
+
+            '& + .MuiFormControlLabel-root': {
+              mt: 2,
+            },
+          },
+        }}
+      >
+        <FormControlLabel
+          control={
+            <CustomCheckbox
+              checked={checked.riskWarning}
+              onChange={() => toggleChecked('riskWarning')}
+              name='risk warning acknowledgement'
+            />
+          }
+          label={
+            <Typography variant='baseMd' component='p'>
+              {t('modals.lending.acknowledgement.base')}{' '}
+              <Button
+                variant='text'
+                sx={{
+                  p: 0,
+                  height: 'auto',
+                  textTransform: 'unset',
+                  font: 'inherit',
+                  verticalAlign: 'inherit',
+                  display: 'inline',
+                  color: 'white',
+                }}
+                onClick={handleRiskWarningOpen}
+              >
+                {t('modals.lending.acknowledgement.riskWarning')}
+              </Button>
+            </Typography>
+          }
+        />
+        <FormControlLabel
+          control={
+            <CustomCheckbox
+              checked={checked.termsAndConditions}
+              onChange={() => toggleChecked('termsAndConditions')}
+              name='terms and condition acknowledgement'
+            />
+          }
+          label={
+            <Typography variant='baseMd' component='p'>
+              {t('modals.lending.acknowledgement.base')}{' '}
+              <Button
+                variant='text'
+                sx={{
+                  p: 0,
+                  height: 'auto',
+                  textTransform: 'unset',
+                  font: 'inherit',
+                  verticalAlign: 'inherit',
+                  display: 'inline',
+                  color: 'white',
+                }}
+                onClick={handleTermsAndConditionsOpen}
+              >
+                {t('modals.lending.acknowledgement.termsAndConditions')}
+              </Button>
+            </Typography>
+          }
+        />
+      </FormGroup>
+      <FormHelperText
+        sx={{
+          margin: '16px 0 0 0',
+          color: 'gray.extraDark',
+          ...customTypography.baseSm,
+        }}
+      >
+        <Typography variant='baseSmBold' component='span'>
+          You accept that:
+        </Typography>{' '}
+        if this tranche is oversubscribed, you will be automatically reallocated
+        to a lower APY tranche (if one is available). Refer to the{' '}
+        <Button
+          variant='text'
+          sx={{
+            p: 0,
+            height: 'auto',
+            textTransform: 'unset',
+            font: 'inherit',
+            verticalAlign: 'inherit',
+            display: 'inline',
+            color: 'white',
+          }}
+          onClick={handleTermsAndConditionsOpen}
+        >
+          {t('modals.lending.acknowledgement.termsAndConditions')}
+        </Button>{' '}
+        for full details.
+      </FormHelperText>
+    </FormControl>
+  )
+}
+
+export default Acknowledgement

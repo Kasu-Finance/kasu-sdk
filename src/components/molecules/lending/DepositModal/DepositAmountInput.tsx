@@ -3,23 +3,24 @@
 import LoginIcon from '@mui/icons-material/Login'
 import { Box, Typography } from '@mui/material'
 import { formatEther } from 'ethers/lib/utils'
-import { ReactNode, useCallback, useMemo, useState } from 'react'
+import { ReactNode, useCallback, useMemo } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useDebounce from '@/hooks/useDebounce'
 import useTranslation from '@/hooks/useTranslation'
 
-import ColoredBox from '@/components/atoms/ColoredBox'
 import NumericalInput from '@/components/molecules/NumericalInput'
 
+import { customTypography } from '@/themes/typography'
 import { formatAmount, toBigNumber } from '@/utils'
-import { PoolData } from '@/utils/lending/getPoolData'
+
+import { PoolOverviewWithDelegate } from '@/types/page'
 
 type DepositAmountInputProps = {
   balance: string
   decimals?: number
-  poolData: PoolData
+  poolData: PoolOverviewWithDelegate
   disabled?: boolean
   startAdornment?: ReactNode
   endAdornment?: ReactNode
@@ -41,23 +42,19 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
 }) => {
   const { t } = useTranslation()
 
-  const { amount, trancheId, setAmount, setIsValidating } =
+  const { amount, trancheId, setAmount, setAmountInUSD, setIsValidating } =
     useDepositModalState()
   const { modalStatus, setModalStatus } = useModalStatusState()
 
-  const [focused, setFocused] = useState(false)
-
-  const showSuccess = !focused && modalStatus.type === 'success'
-
   const { minDeposit, maxDeposit } = useMemo(() => {
-    let tranche = poolData.tranches.find((t) => t.trancheId === trancheId)
+    let tranche = poolData.tranches.find((t) => t.id === trancheId)
 
     // If the tranche is not found by ID, fall back to names
     if (!tranche) {
       const tranchePriority = ['senior', 'mezzanine', 'junior']
       for (const name of tranchePriority) {
         tranche = poolData.tranches.find((t) =>
-          t.title.toLowerCase().includes(name)
+          t.name.toLowerCase().includes(name)
         )
         if (tranche) break
       }
@@ -93,7 +90,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
         const balanceBN = toBigNumber(balance)
 
         if (inputBN.isZero()) {
-          setModalStatus({ type: 'error', errorMessage: 'Invalid amount' })
+          setModalStatus({ type: 'error', errorMessage: 'Amount is required' })
 
           return
         }
@@ -161,14 +158,27 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
 
     setAmount(maxPossible)
 
-    applyConversion ? debouncedValidate(maxPossible) : validate(maxPossible)
+    if (toBigNumber(balance).isZero()) {
+      return
+    }
+
+    setIsValidating(true)
+
+    if (applyConversion) {
+      debouncedValidate(maxPossible)
+    } else {
+      validate(maxPossible)
+      setAmountInUSD(maxPossible)
+    }
   }, [
     balance,
     maxDeposit,
     setAmount,
+    setAmountInUSD,
     validate,
     applyConversion,
     debouncedValidate,
+    setIsValidating,
   ])
 
   const handleAmountChange = useCallback(
@@ -176,20 +186,29 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
       setIsValidating(true)
       setAmount(value)
 
-      applyConversion ? debouncedValidate(value) : validate(value)
+      if (applyConversion) {
+        debouncedValidate(value)
+      } else {
+        validate(value)
+        setAmountInUSD(value)
+      }
     },
-    [setAmount, validate, applyConversion, debouncedValidate, setIsValidating]
+    [
+      setAmount,
+      validate,
+      applyConversion,
+      debouncedValidate,
+      setIsValidating,
+      setAmountInUSD,
+    ]
   )
 
   const handleFocusState = useCallback(
     (state: boolean) => {
       if (state) {
-        setFocused(true)
-
         setModalStatus({ type: 'focused' })
       } else {
         applyConversion ? debouncedValidate(amount) : validate(amount)
-        setFocused(false)
       }
     },
     [amount, setModalStatus, validate, applyConversion, debouncedValidate]
@@ -205,59 +224,57 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
         decimals={decimals}
         disabled={disabled}
         rootProps={{
-          sx: (theme) => ({
+          sx: {
             mt: 1,
+            borderRadius: 30,
+            bgcolor: 'gold.middle',
 
-            ...(showSuccess && {
-              '& .MuiOutlinedInput-root fieldset': {
-                borderColor: theme.palette.success.main,
-              },
-              '& .MuiInputLabel-outlined': {
-                color: theme.palette.success.main,
-              },
-            }),
-          }),
+            '.MuiInputBase-root': {
+              bgcolor: 'inherit',
+            },
+          },
           onFocus: () => handleFocusState(true),
           onBlur: () => handleFocusState(false),
           error: modalStatus.type === 'error',
           InputLabelProps: {
             shrink: true,
+            sx: {
+              ...customTypography.baseMd,
+              color: 'white',
+              ml: 1.3,
+            },
           },
           InputProps: {
             startAdornment,
             endAdornment,
-            sx: (theme) => ({
+            sx: {
+              height: 48,
+              borderRadius: 'inherit',
+
+              '.MuiOutlinedInput-notchedOutline': {
+                borderColor: 'white',
+
+                legend: {
+                  ...customTypography.baseMd,
+                  fontSize: `calc(${customTypography.baseMd.fontSize}px * 0.75)`,
+                  ml: 1.3,
+                },
+              },
               '& .MuiInputBase-input': {
                 px: 1,
               },
-              '& svg > path': {
-                fill: theme.palette.icon.primary,
-              },
-            }),
+            },
           },
         }}
       />
-
-      {modalStatus.type === 'error' && (
-        <ColoredBox
-          mt='3px'
-          mb={1}
-          sx={{
-            px: 1.5,
-            py: 0,
-            background: modalStatus.bgColor,
-            maxWidth: 'calc(100% - 64px)',
-          }}
-        >
-          <Typography
-            variant='caption'
-            component='span'
-            color={(theme) => theme.palette.error.main}
-          >
-            {modalStatus.errorMessage}
-          </Typography>
-        </ColoredBox>
-      )}
+      <Typography
+        variant='caption'
+        component='span'
+        color={(theme) => theme.palette.error.main}
+        visibility={modalStatus.type === 'error' ? 'visible' : 'hidden'}
+      >
+        {modalStatus.type === 'error' ? modalStatus.errorMessage : 'message'}
+      </Typography>
     </Box>
   )
 }

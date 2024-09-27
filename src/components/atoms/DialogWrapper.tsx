@@ -36,6 +36,8 @@ const DialogWrapper: React.FC<{
             position: 'unset',
             overflow: 'auto',
             width: 600,
+            maxHeight: 'calc(100% - 260px)', // accodomate for floating cat
+            marginTop: '88px', // accodomate for floating cat
             ...(modalDetails.fullscreen && {
               margin: 0,
               maxHeight: '100%',
