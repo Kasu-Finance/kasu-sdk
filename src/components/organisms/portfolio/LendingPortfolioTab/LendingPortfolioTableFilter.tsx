@@ -32,7 +32,6 @@ const LendingPortfolioTableFilter: React.FC<
         sx={{
           borderRadius: 'inherit',
           width: 96,
-          height: 48,
           bgcolor: !filter.activePools ? 'gray.extraDark' : undefined,
         }}
         onClick={() => setFilter('activePools')}
@@ -44,7 +43,6 @@ const LendingPortfolioTableFilter: React.FC<
         sx={{
           borderRadius: 'inherit',
           width: 96,
-          height: 48,
           bgcolor: !filter.closedPools ? 'gray.extraDark' : undefined,
         }}
         onClick={() => setFilter('closedPools')}

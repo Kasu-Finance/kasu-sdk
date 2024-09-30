@@ -26,12 +26,21 @@ export const calculateUserLendingSummary = (
 
       acc.totalInvested = acc.totalInvested.add(cur.balanceData.balance)
 
+      acc.totalAvailableToWithdraw = acc.totalAvailableToWithdraw.add(
+        cur.balanceData.availableToWithdraw
+      )
+
       acc.averageApy +=
         parseFloat(cur.apy) * parseInt(cur.poolCapacityPercentage)
 
       return acc
     },
-    { totalInvested: ethers.constants.Zero, totalYieldEarned: 0, averageApy: 0 }
+    {
+      totalInvested: ethers.constants.Zero,
+      totalAvailableToWithdraw: ethers.constants.Zero,
+      totalYieldEarned: 0,
+      averageApy: 0,
+    }
   )
 }
 

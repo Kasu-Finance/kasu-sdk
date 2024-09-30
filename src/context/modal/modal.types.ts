@@ -1,6 +1,9 @@
-import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
+import { TrancheData } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
-import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
+import {
+  UserRequest,
+  UserTrancheBalance,
+} from '@solidant/kasu-sdk/src/services/UserLending/types'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
@@ -40,7 +43,10 @@ export type Modals = {
   [ModalsKeys.UNRELEASED_FEATURE]: ModalData
   [ModalsKeys.CONNECT_WALLET]: ModalData<{ callback?: () => void }>
   [ModalsKeys.UNLOCK]: ModalData<{ userLock: UserLock }>
-  [ModalsKeys.WITHDRAW]: ModalData<{ poolOverview: PoolOverview }>
+  [ModalsKeys.WITHDRAW]: ModalData<{
+    pool: PoolOverviewWithDelegate
+    trancheBalance: (TrancheData & { balanceData: UserTrancheBalance })[]
+  }>
   [ModalsKeys.KYC]: ModalData<{ callback: () => void }>
   [ModalsKeys.CANCEL_DEPOSIT]: ModalData<{ transactionHistory: UserRequest }>
   [ModalsKeys.CANCEL_WITHDRAWAL]: ModalData<{ transactionHistory: UserRequest }>

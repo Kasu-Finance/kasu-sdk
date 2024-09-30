@@ -1,8 +1,11 @@
 'use client'
 
-import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
+import { TrancheData } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
-import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
+import {
+  UserRequest,
+  UserTrancheBalance,
+} from '@solidant/kasu-sdk/src/services/UserLending/types'
 import { ReactNode, useReducer } from 'react'
 
 import useModalActions from '@/context/modal/modal.actions'
@@ -20,7 +23,10 @@ const initialState: Modals = {
   unreleasedFeatureModal: { isOpen: false },
   withdrawModal: {
     isOpen: false,
-    poolOverview: null as unknown as PoolOverview,
+    pool: null as unknown as PoolOverviewWithDelegate,
+    trancheBalance: null as unknown as (TrancheData & {
+      balanceData: UserTrancheBalance
+    })[],
   },
   cancelDepositModal: {
     isOpen: false,

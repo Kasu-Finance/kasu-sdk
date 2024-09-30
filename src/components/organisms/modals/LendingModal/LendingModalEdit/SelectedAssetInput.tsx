@@ -11,7 +11,7 @@ import useSupportedTokenUserBalances, {
   SupportedTokenUserBalances,
 } from '@/hooks/web3/useSupportedTokenUserBalances'
 
-import DepositAmountInput from '@/components/molecules/lending/DepositModal/DepositAmountInput'
+import DepositAmountInput from '@/components/molecules/lending/lendingModal/DepositAmountInput'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 

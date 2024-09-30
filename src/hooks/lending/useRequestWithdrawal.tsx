@@ -1,39 +1,43 @@
 import { useWeb3React } from '@web3-react/core'
-import { BigNumberish, ContractTransaction } from 'ethers'
-import { useState } from 'react'
+import { ContractTransaction } from 'ethers'
 
+import useModalStatusState from '@/hooks/context/useModalStatusState'
+import useStepperState from '@/hooks/context/useStepperState'
 import useToastState from '@/hooks/context/useToastState'
+import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import useKasuSDK from '@/hooks/useKasuSDK'
 import useHandleError from '@/hooks/web3/useHandleError'
+
+import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { waitForReceipt } from '@/utils'
 
-const useWithdrawRequest = () => {
+const useRequestWithdrawal = () => {
   const sdk = useKasuSDK()
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [data, setData] = useState<ContractTransaction | null>(null)
 
   const { account } = useWeb3React()
+
   const handleError = useHandleError()
+
+  const { nextStep } = useStepperState()
+
+  const { setTxHash } = useWithdrawModalState()
+
+  const { setModalStatusAction } = useModalStatusState()
+
   const { setToast, removeToast } = useToastState()
 
-  const requestWithdrawal = async (
+  return async (
     lendingPool: string,
-    tranche: string,
-    amount: BigNumberish,
-    options?: { isWithdrawMax: boolean }
+    trancheId: string,
+    amount: string,
+    isWithdrawMax: boolean
   ) => {
     if (!account) {
-      handleError(
-        'Account is undefined',
-        `${ActionType.WITHDRAW} ${ActionStatus.ERROR}`,
-        ACTION_MESSAGES[ActionType.WITHDRAW][ActionStatus.ERROR]
-      )
       return console.error('RequestWithdraw:: Account is undefined')
     }
 
-    setIsLoading(true)
     try {
       setToast({
         type: 'info',
@@ -42,40 +46,38 @@ const useWithdrawRequest = () => {
         isClosable: false,
       })
 
-      let txResponse
-      if (options?.isWithdrawMax) {
+      let txResponse: ContractTransaction
+
+      if (isWithdrawMax) {
         txResponse = await sdk.UserLending.requestWithdrawalMax(
           lendingPool,
-          tranche,
+          trancheId,
           account
         )
       } else {
         txResponse = await sdk.UserLending.requestWithdrawalInUSDC(
           lendingPool,
-          tranche,
+          trancheId,
           amount
         )
       }
 
-      await waitForReceipt(txResponse)
-      setData(txResponse)
+      const receipt = await waitForReceipt(txResponse)
+      setTxHash(receipt.transactionHash)
+
+      setModalStatusAction(ModalStatusAction.COMPLETED)
+
       removeToast()
 
-      return txResponse
+      nextStep()
     } catch (error) {
-      console.error('Failed to request withdrawal:', error)
-      setData(null)
       handleError(
         error,
         `${ActionType.WITHDRAW} ${ActionStatus.ERROR}`,
         ACTION_MESSAGES[ActionType.WITHDRAW][ActionStatus.ERROR]
       )
-    } finally {
-      setIsLoading(false)
     }
   }
-
-  return { requestWithdrawal, isLoading, data }
 }
 
-export default useWithdrawRequest
+export default useRequestWithdrawal

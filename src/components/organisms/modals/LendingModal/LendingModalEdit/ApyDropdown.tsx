@@ -58,7 +58,7 @@ const ApyDropdown = () => {
       value={apy}
       selectSx={{
         '.MuiOutlinedInput-input': {
-          pl: 2,
+          pl: 2.5,
         },
       }}
       renderSelected={(val) => (

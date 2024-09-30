@@ -22,8 +22,15 @@ const WithdrawButton: React.FC<WithdrawButtonProps> = ({ pool }) => {
 
   const { userLendingTrancheBalance } = useUserLendingTrancheBalance(pool)
 
-  const handleWithdraw = () =>
-    openModal({ name: ModalsKeys.WITHDRAW, poolOverview: pool })
+  const handleWithdraw = () => {
+    if (!userLendingTrancheBalance) return
+
+    openModal({
+      name: ModalsKeys.WITHDRAW,
+      pool,
+      trancheBalance: userLendingTrancheBalance,
+    })
+  }
 
   const hasBalance = userLendingTrancheBalance?.find(
     (tranche) => !tranche.balanceData.availableToWithdraw.isZero()
@@ -36,7 +43,7 @@ const WithdrawButton: React.FC<WithdrawButtonProps> = ({ pool }) => {
         onClick={handleWithdraw}
         fullWidth
         sx={{ textTransform: 'capitalize' }}
-        disabled={Boolean(!hasBalance)}
+        disabled={Boolean(!hasBalance || !userLendingTrancheBalance)}
       >
         {t('general.withdraw')}
       </Button>

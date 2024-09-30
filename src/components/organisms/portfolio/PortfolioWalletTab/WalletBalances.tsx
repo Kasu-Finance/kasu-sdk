@@ -45,7 +45,7 @@ const WalletBalances = () => {
           <Button
             variant='contained'
             fullWidth
-            sx={{ maxWidth: 368, height: 48, textTransform: 'capitalize' }}
+            sx={{ maxWidth: 368, textTransform: 'capitalize' }}
           >
             {t('general.convertToKSU')}
           </Button>

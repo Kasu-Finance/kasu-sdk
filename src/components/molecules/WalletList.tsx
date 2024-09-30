@@ -46,7 +46,6 @@ const WalletList: React.FC<WalletListProps> = ({
               variant='contained'
               fullWidth
               color='dark'
-              sx={{ height: 48 }}
               onClick={() => tryActivation(connection, activateCallback)}
               disabled={isLoading}
             >

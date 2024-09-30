@@ -49,7 +49,8 @@ const useSwitchChain = () => {
           handleError(
             error,
             'Connection Error',
-            'Chain switching request denied.'
+            'Chain switching request denied.',
+            true
           )
         } else {
           handleError(error)

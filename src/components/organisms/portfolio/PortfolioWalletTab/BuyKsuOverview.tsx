@@ -83,11 +83,7 @@ const BuyKsuOverview = () => {
         />
       </Grid>
       <Grid item xs={12} display='flex' justifyContent='center' mt={4}>
-        <Button
-          variant='contained'
-          fullWidth
-          sx={{ maxWidth: 368, height: 48 }}
-        >
+        <Button variant='contained' fullWidth sx={{ maxWidth: 368 }}>
           {t('general.buyKSU')}
         </Button>
       </Grid>

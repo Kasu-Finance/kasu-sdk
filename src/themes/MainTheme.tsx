@@ -613,7 +613,7 @@ export const theme = createTheme({
           },
         },
         sizeMedium: {
-          height: '42px',
+          height: '48px',
         },
         sizeSmall: {
           height: '30px',

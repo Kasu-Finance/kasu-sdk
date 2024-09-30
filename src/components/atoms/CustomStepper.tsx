@@ -2,7 +2,7 @@ import { Grid, Step, Stepper } from '@mui/material'
 
 import useStepperState from '@/hooks/context/useStepperState'
 
-const LendingModalStepper = () => {
+const CustomStepper = () => {
   const { steps, activeStep } = useStepperState()
 
   return (
@@ -61,4 +61,4 @@ const LendingModalStepper = () => {
   )
 }
 
-export default LendingModalStepper
+export default CustomStepper

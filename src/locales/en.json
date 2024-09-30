@@ -18,6 +18,7 @@
     "close": "close",
     "return": "return",
     "info": "info",
+    "from": "from",
     "buy": "buy",
     "withdraw": "withdraw",
     "fixed": "fixed",
@@ -780,9 +781,10 @@
       "fromPool": "From Lending Strategy",
       "toWallet": "To Wallet",
       "epochEnds": "Epoch ends in",
-      "withdrawalSchedule": "Withdrawal will be scheduled for the end of the current Epoch. The final Withdrawal Amount may vary due to Pool conditions.",
+      "withdrawalSchedule-1": "Withdrawal will be scheduled for the end of the current Epoch.",
+      "withdrawalSchedule-2": "The final Withdrawal Amount may vary due to Lending Strategy conditions.",
       "amountInput": {
-        "label": "Withdraw Request Amount",
+        "label": "Withdrawal Request Amount",
         "tooltip": "The USDC lending amount you would like to request for withdrawal from this Lending Strategy."
       },
       "button": {
@@ -802,11 +804,11 @@
       },
       "metrics": {
         "totalInvestment": {
-          "label": "Total Lending Balance",
+          "label": "Total Balance",
           "tooltip": "Your current USDC lending balance in this Lending Strategy."
         },
         "trancheInvestment": {
-          "label": "Tranche Lending Balance",
+          "label": "Tranche Balance",
           "tooltip": "Your current USDC lending balance in this loan Tranche related of this Lending Strategy."
         },
         "tranche": {
@@ -815,7 +817,7 @@
         }
       },
       "confirmStep": {
-        "withdrawInfo": "You have successfully queued:",
+        "withdrawInfo": "Your Withdrawal Request​ has been successfully queued:​",
         "amountLabel": "to be withdrawn in the next Epoch",
         "subjectLiquidity": "(subject to available liquidity)",
         "depositedLabel": "to be deposited to the wallet address"

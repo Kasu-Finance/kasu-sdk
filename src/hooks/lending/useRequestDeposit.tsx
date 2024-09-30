@@ -4,6 +4,7 @@ import { parseUnits } from 'ethers/lib/utils'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
+import useStepperState from '@/hooks/context/useStepperState'
 import useToastState from '@/hooks/context/useToastState'
 import useGenerateSwapData from '@/hooks/lending/useGenerateSwapData'
 import useKasuSDK from '@/hooks/useKasuSDK'
@@ -31,6 +32,8 @@ const useRequestDeposit = () => {
   const { setTxHash, trancheId, amount, selectedToken } = useDepositModalState()
 
   const supportedTokens = useSupportedTokenInfo()
+
+  const { nextStep } = useStepperState()
 
   const { setModalStatusAction } = useModalStatusState()
 
@@ -153,6 +156,8 @@ const useRequestDeposit = () => {
       setModalStatusAction(ModalStatusAction.COMPLETED)
 
       removeToast()
+
+      nextStep()
     } catch (error) {
       handleError(
         error,

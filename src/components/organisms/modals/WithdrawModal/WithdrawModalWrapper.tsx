@@ -1,17 +1,12 @@
-import { ethers } from 'ethers'
-import { useMemo } from 'react'
-
 import useModalState from '@/hooks/context/useModalState'
 
 import WithdrawModal from '@/components/organisms/modals/WithdrawModal'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
 import ModalStatusState from '@/context/modalStatus/modalStatus.provider'
 import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
+import StepperState from '@/context/stepper/stepper.provider'
 import WithdrawModalProvider from '@/context/withdrawModal/withdrawModal.provider'
-
-import { Tranche } from '@/constants/pool'
-
-import { HexString } from '@/types/lending'
 
 interface WithdrawModalWrapperProps {
   handleClose: () => void
@@ -22,27 +17,16 @@ const WithdrawModalWrapper: React.FC<WithdrawModalWrapperProps> = ({
 }) => {
   const { modal } = useModalState()
 
-  const defaultTrancheId = useMemo(() => {
-    const tranches = modal.withdrawModal.poolOverview.tranches
-
-    if (tranches?.length === 0) return ethers.constants.AddressZero
-
-    const defaultTranche =
-      tranches.find((tranche) =>
-        tranche.name.toLowerCase().includes(Tranche.SENIOR)
-      ) ||
-      tranches?.find((tranche) =>
-        tranche.name.toLowerCase().includes(Tranche.MEZZANINE)
-      ) ||
-      tranches?.[0]
-
-    return defaultTranche.id
-  }, [modal.withdrawModal.poolOverview])
-
   return (
-    <WithdrawModalProvider defaultTrancheId={defaultTrancheId as HexString}>
+    <WithdrawModalProvider
+      defaultTrancheId={
+        modal[ModalsKeys.WITHDRAW].pool.tranches[0].id as `0x${string}`
+      }
+    >
       <ModalStatusState defaultStatus={ModalStatusAction.REQUEST}>
-        <WithdrawModal handleClose={handleClose} />
+        <StepperState steps={3}>
+          <WithdrawModal handleClose={handleClose} />
+        </StepperState>
       </ModalStatusState>
     </WithdrawModalProvider>
   )

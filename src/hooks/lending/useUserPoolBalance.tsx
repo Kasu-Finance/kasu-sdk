@@ -23,16 +23,16 @@ const useUserPoolBalance = (poolId: string) => {
     return data
   }
 
-  const { data, error, mutate } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     `userPoolBalance/${poolId}`,
     fetchUserBalance
   )
 
   return {
-    data,
+    userPoolBalance: data,
     error,
-    isLoading: !data && !error,
-    mutate,
+    isLoading,
+    updateUserPoolBalance: mutate,
   }
 }
 

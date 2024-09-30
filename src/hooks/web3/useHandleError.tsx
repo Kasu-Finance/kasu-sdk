@@ -15,7 +15,12 @@ const useHandleError = () => {
   const { setToast } = useToastState()
 
   // refer to https://docs.ethers.org/v5/troubleshooting/errors/
-  return (_error: unknown, title?: string, message?: string) => {
+  return (
+    _error: unknown,
+    title?: string,
+    message?: string,
+    overrideDefault?: boolean
+  ) => {
     const error = _error as Error
 
     let txHash: string | undefined = undefined
@@ -24,15 +29,14 @@ const useHandleError = () => {
       txHash = error.transaction.hash
     }
 
-    if (title || message) {
-      return setToast({
-        type: 'error',
-        title: capitalize(title ?? ErrorTypes.UNEXPECTED_ERROR),
-        message: message ?? ERROR_MESSAGES[ErrorTypes.UNEXPECTED_ERROR],
-      })
-    }
-
     switch (true) {
+      case overrideDefault:
+        setToast({
+          type: 'error',
+          title: capitalize(title ?? ErrorTypes.UNEXPECTED_ERROR),
+          message: message ?? ERROR_MESSAGES[ErrorTypes.UNEXPECTED_ERROR],
+        })
+        return
       case userRejectedTransaction(error):
         setToast({
           type: 'error',
@@ -58,8 +62,8 @@ const useHandleError = () => {
       default:
         setToast({
           type: 'error',
-          title: capitalize(ErrorTypes.UNEXPECTED_ERROR),
-          message: ERROR_MESSAGES[ErrorTypes.UNEXPECTED_ERROR],
+          title: capitalize(title ?? ErrorTypes.UNEXPECTED_ERROR),
+          message: message ?? ERROR_MESSAGES[ErrorTypes.UNEXPECTED_ERROR],
         })
         console.error(error)
         break

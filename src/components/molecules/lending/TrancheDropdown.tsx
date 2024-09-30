@@ -1,23 +1,24 @@
 import { SelectChangeEvent, Typography } from '@mui/material'
+import { TrancheData } from '@solidant/kasu-sdk/src/services/DataService/types'
 
-import useDepositModalState from '@/hooks/context/useDepositModalState'
-import useModalState from '@/hooks/context/useModalState'
 import useTranslation from '@/hooks/useTranslation'
 
 import CustomSelect from '@/components/atoms/CustomSelect'
 
-import { ModalsKeys } from '@/context/modal/modal.types'
+type TrancheDropdownProps = {
+  tranches: TrancheData[]
+  selectedTranche: `0x${string}`
+  setSelectedTranche: (selectedTranche: `0x${string}`) => void
+}
 
-const TrancheDropdown = () => {
+const TrancheDropdown: React.FC<TrancheDropdownProps> = ({
+  selectedTranche,
+  setSelectedTranche,
+  tranches,
+}) => {
   const { t } = useTranslation()
 
-  const { modal } = useModalState()
-
-  const { trancheId, setSelectedTranche } = useDepositModalState()
-
-  const pool = modal[ModalsKeys.LEND].pool
-
-  if (pool.tranches.length <= 1) {
+  if (tranches.length <= 1) {
     return null
   }
 
@@ -28,12 +29,12 @@ const TrancheDropdown = () => {
 
   return (
     <CustomSelect
-      options={pool.tranches}
+      options={tranches}
       label={t('general.tranche')}
       labelKey='name'
       valueKey='id'
       onChange={handleChange}
-      value={trancheId}
+      value={selectedTranche}
       variant='secondary'
       renderItem={(val) => (
         <Typography variant='baseMd' py={1}>
@@ -42,7 +43,7 @@ const TrancheDropdown = () => {
       )}
       selectSx={{
         '.MuiOutlinedInput-input': {
-          pl: 2,
+          pl: 3,
         },
       }}
       renderSelected={(val) =>
