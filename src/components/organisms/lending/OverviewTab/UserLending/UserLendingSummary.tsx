@@ -1,6 +1,6 @@
 'use client'
 
-import { Grid } from '@mui/material'
+import { Grid, Skeleton } from '@mui/material'
 import { formatUnits } from 'ethers/lib/utils'
 
 import useUserLendingTrancheBalance from '@/hooks/lending/useUserLendingTrancheBalance'
@@ -28,7 +28,19 @@ const UserLendingSummary: React.FC<UserLendingSummaryProps> = ({ pool }) => {
   const supportedToken = useSupportedTokenInfo()
 
   if (isLoading) {
-    return 'skeleton'
+    return (
+      <Grid container spacing={4}>
+        <Grid item flex={1}>
+          <Skeleton variant='rounded' height={122} />
+        </Grid>
+        <Grid item flex={1}>
+          <Skeleton variant='rounded' height={122} />
+        </Grid>
+        <Grid item flex={1}>
+          <Skeleton variant='rounded' height={122} />
+        </Grid>
+      </Grid>
+    )
   }
 
   const isMultiTranche = pool.tranches.length > 1

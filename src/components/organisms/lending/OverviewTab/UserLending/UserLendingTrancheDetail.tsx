@@ -9,6 +9,7 @@ import useTranslation from '@/hooks/useTranslation'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
 import InfoRow from '@/components/atoms/InfoRow'
+import UserLendingTrancheDetailSkeleton from '@/components/organisms/lending/OverviewTab/UserLending/UserLendingTrancheDetailSkeleton'
 
 import { SupportedTokens } from '@/constants/tokens'
 import { formatAmount, formatPercentage } from '@/utils'
@@ -30,7 +31,7 @@ const UserLendingTrancheDetail: React.FC<UserLendingTrancheDetailProps> = ({
   const supportedToken = useSupportedTokenInfo()
 
   if (isLoading) {
-    return 'skeleton'
+    return <UserLendingTrancheDetailSkeleton />
   }
 
   const dataWithFallback = pool.tranches.map((tranche) => ({
@@ -45,7 +46,7 @@ const UserLendingTrancheDetail: React.FC<UserLendingTrancheDetailProps> = ({
   }))
 
   return (
-    <Grid container spacing={4}>
+    <Grid container spacing={4} mt={2}>
       {(userLendingTrancheBalance ?? dataWithFallback).map((tranche) => (
         <Grid item flex={1} key={tranche.id}>
           <Typography variant='h5'>
