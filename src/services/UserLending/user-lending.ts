@@ -446,20 +446,29 @@ export class UserLending {
     ): number {
         return (parseFloat(sharesAmount) * totalAssets) / totalSupply;
     }
+
+    async isClearingPending(poolId: string): Promise<boolean> {
+        return await this._clearingCoordinatorAbi.isLendingPoolClearingPending(
+            poolId,
+        );
+    }
+
     async isCancelable(
         type: string,
         status: string,
         lendingPoolId: string,
     ): Promise<boolean> {
+        const isClearingPending = await this.isClearingPending(lendingPoolId);
+
         if (
             type === (UserRequestType.DEPOSIT as string) &&
-            status !== 'Processed'
+            status !== 'Processed' &&
+            !isClearingPending
         ) {
             return true;
         }
-        return !(await this._clearingCoordinatorAbi.isLendingPoolClearingPending(
-            lendingPoolId,
-        ));
+
+        return !isClearingPending;
     }
 
     async getUserPoolBalance(
