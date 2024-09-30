@@ -14,7 +14,7 @@ export enum ActionType {
   UNLOCK = 'UNLOCK',
   DEPOSIT = 'DEPOSIT',
   WITHDRAW = 'WITHDRAW',
-  CANCELATION = 'CANCELATION',
+  CANCELLATION = 'CANCELLATION',
 }
 
 export const ACTION_MESSAGES = {
@@ -59,8 +59,8 @@ export const ACTION_MESSAGES = {
     [ActionStatus.ERROR]:
       'An error has occurred in the withdraw request. Please review log for more details.',
   },
-  [ActionType.CANCELATION]: {
+  [ActionType.CANCELLATION]: {
     [ActionStatus.ERROR]:
-      'An error has occurred in the transaction cancelation request. Please review log for more details.',
+      'An error has occurred in the transaction cancellation request. Please review log for more details.',
   },
 } as const

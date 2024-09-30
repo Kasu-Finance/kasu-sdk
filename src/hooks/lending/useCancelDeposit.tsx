@@ -33,8 +33,8 @@ const useCancelDeposit = () => {
     } catch (error) {
       handleError(
         error,
-        `${ActionType.CANCELATION} ${ActionStatus.ERROR}`,
-        ACTION_MESSAGES[ActionType.CANCELATION][ActionStatus.ERROR]
+        `${ActionType.CANCELLATION} ${ActionStatus.ERROR}`,
+        ACTION_MESSAGES[ActionType.CANCELLATION][ActionStatus.ERROR]
       )
     }
   }

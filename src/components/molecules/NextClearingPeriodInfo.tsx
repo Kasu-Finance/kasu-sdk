@@ -31,18 +31,17 @@ const NextClearingPeriodInfo = () => {
             height={21}
           />
         ) : (
-          <>
-            {formattedNextClearingPeriod.date} •
+          <Typography variant='baseMdBold' display='inline' ml='1ch'>
+            {formattedNextClearingPeriod.date} •{' '}
             <Typography
               variant='inherit'
               color='rgba(133, 87, 38, 1)'
               display='inline'
-              ml='1ch'
             >
               {formattedNextClearingPeriod.timestamp}{' '}
               {formattedNextClearingPeriod.utcOffset}
             </Typography>
-          </>
+          </Typography>
         )}
       </Typography>
     </Box>
