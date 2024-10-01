@@ -1,4 +1,7 @@
-import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
+import {
+  LockPeriod,
+  UserLock,
+} from '@solidant/kasu-sdk/src/services/Locking/types'
 import React from 'react'
 
 import usePagination from '@/hooks/usePagination'
@@ -9,11 +12,15 @@ import UserRewardsTableRow from '@/components/organisms/locking/UserRewards/User
 
 type UserRewardsTableProps = {
   userLocks: UserLock[]
+  lockPeriods: LockPeriod[]
 }
 
 const ROW_PER_PAGE = 10
 
-const UserRewardsTable: React.FC<UserRewardsTableProps> = ({ userLocks }) => {
+const UserRewardsTable: React.FC<UserRewardsTableProps> = ({
+  userLocks,
+  lockPeriods,
+}) => {
   const { currentPage, setPage, paginateData } = usePagination(
     ROW_PER_PAGE,
     userLocks.length
@@ -23,7 +30,11 @@ const UserRewardsTable: React.FC<UserRewardsTableProps> = ({ userLocks }) => {
     <CustomTableTest
       tableHeader={<UserRewardsTableHeader />}
       tableBody={[...paginateData(userLocks)].map((userLock) => (
-        <UserRewardsTableRow key={userLock.id.toString()} userLock={userLock} />
+        <UserRewardsTableRow
+          key={userLock.id.toString()}
+          userLock={userLock}
+          lockPeriods={lockPeriods}
+        />
       ))}
       paginationProps={
         userLocks.length > ROW_PER_PAGE

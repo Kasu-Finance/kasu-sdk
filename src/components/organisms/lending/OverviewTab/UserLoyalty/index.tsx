@@ -1,4 +1,5 @@
 import { Box, Grid, Typography } from '@mui/material'
+import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
 import Image from 'next/image'
 
 import useTranslation from '@/hooks/useTranslation'
@@ -19,9 +20,14 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 type UserLoyaltyProps = {
   pools: PoolOverviewWithDelegate[]
   poolId: string
+  lockPeriods: LockPeriod[]
 }
 
-const UserLoyalty: React.FC<UserLoyaltyProps> = ({ pools, poolId }) => {
+const UserLoyalty: React.FC<UserLoyaltyProps> = async ({
+  pools,
+  poolId,
+  lockPeriods,
+}) => {
   const { t } = useTranslation()
 
   return (
@@ -51,7 +57,7 @@ const UserLoyalty: React.FC<UserLoyaltyProps> = ({ pools, poolId }) => {
             </Box>
             <CustomInnerCardContent sx={{ pb: 0 }}>
               <BonusAndRewards pools={pools} poolId={poolId} />
-              <UserLoyaltyActions />
+              <UserLoyaltyActions lockPeriods={lockPeriods} />
             </CustomInnerCardContent>
           </WaveBox>
         </CustomInnerCardContent>

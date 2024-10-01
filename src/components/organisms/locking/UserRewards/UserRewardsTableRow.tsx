@@ -1,5 +1,8 @@
 import { Box, Button, TableCell, TableRow, Typography } from '@mui/material'
-import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
+import {
+  LockPeriod,
+  UserLock,
+} from '@solidant/kasu-sdk/src/services/Locking/types'
 import React from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
@@ -18,10 +21,12 @@ import { formatAmount, formatTimestamp } from '@/utils'
 
 type UserRewardsTableRowProps = {
   userLock: UserLock
+  lockPeriods: LockPeriod[]
 }
 
 const UserRewardsTableRow: React.FC<UserRewardsTableRowProps> = ({
   userLock,
+  lockPeriods,
 }) => {
   const { t } = useTranslation()
 
@@ -32,7 +37,7 @@ const UserRewardsTableRow: React.FC<UserRewardsTableRowProps> = ({
   }).split(' ')
 
   const handleOpen = () => {
-    openModal({ name: ModalsKeys.UNLOCK, userLock })
+    openModal({ name: ModalsKeys.UNLOCK, userLock, lockPeriods })
   }
 
   const formattedTime = formatTimestamp(userLock.startTime, {

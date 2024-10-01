@@ -1,12 +1,14 @@
 import { Box, Button, Slider, Typography } from '@mui/material'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
+import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
-import useLockPeriods from '@/hooks/locking/useLockPeriods'
 import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
+
+import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { DATE_FORMAT } from '@/constants'
 import dayjs from '@/dayjs'
@@ -25,7 +27,9 @@ const getAlignment = (index: number, arrayLength: number) => {
 }
 
 const LockModalDuration = () => {
-  const { lockPeriods } = useLockPeriods()
+  const { modal } = useModalState()
+
+  const { lockPeriods } = modal[ModalsKeys.LOCK]
 
   const { selectedLockPeriod, setSelectedLockPeriod } = useLockModalState()
 

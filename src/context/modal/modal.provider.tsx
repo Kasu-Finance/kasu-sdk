@@ -1,7 +1,10 @@
 'use client'
 
 import { TrancheData } from '@solidant/kasu-sdk/src/services/DataService/types'
-import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
+import {
+  LockPeriod,
+  UserLock,
+} from '@solidant/kasu-sdk/src/services/Locking/types'
 import {
   UserRequest,
   UserTrancheBalance,
@@ -19,7 +22,7 @@ const initialState: Modals = {
   connectWalletModal: { isOpen: false },
   loyaltyLevelsModal: { isOpen: false },
   termsAndConditionsModal: { isOpen: false },
-  lockModal: { isOpen: false },
+  lockModal: { isOpen: false, lockPeriods: null as unknown as LockPeriod[] },
   unreleasedFeatureModal: { isOpen: false },
   withdrawModal: {
     isOpen: false,
@@ -39,6 +42,7 @@ const initialState: Modals = {
   unlockModal: {
     isOpen: false,
     userLock: null as unknown as UserLock,
+    lockPeriods: null as unknown as LockPeriod[],
   },
   kycModal: {
     isOpen: false,

@@ -11,12 +11,9 @@ import ModalsContainer from '@/components/organisms/modals/ModalsContainer'
 
 import KycState from '@/context/kyc/kyc.provider'
 import ModalState from '@/context/modal/modal.provider'
-import { SWRProvider } from '@/context/swrProvider/swr.provider'
 import ToastState from '@/context/toast/toast.provider'
 import Web3Provider from '@/context/web3provider/web3.provider'
 
-import getLockPeriods from '@/actions/getLockPeriods'
-import { getUnusedPools } from '@/app/_requests/unusedPools'
 import ThemeRegistry from '@/themes/ThemeRegistry'
 
 type RootLayoutProps = {
@@ -30,9 +27,6 @@ export const metadata: Metadata = {
 }
 
 export default async function RootLayout({ children }: RootLayoutProps) {
-  const lockPeriods = await getLockPeriods()
-  const unusedPools = await getUnusedPools()
-
   return (
     <html lang='en'>
       <link rel='shortcut icon' href='/favicon.ico' />
@@ -67,22 +61,20 @@ export default async function RootLayout({ children }: RootLayoutProps) {
       />
       <Tracking />
       <body>
-        <SWRProvider lockPeriods={lockPeriods} unusedPools={unusedPools}>
-          <ThemeRegistry>
-            <Web3Provider>
-              <KycState>
-                <ModalState>
-                  <ToastState>
-                    <Header />
-                    <Box component='main'>{children}</Box>
-                    <Footer />
-                    <ModalsContainer />
-                  </ToastState>
-                </ModalState>
-              </KycState>
-            </Web3Provider>
-          </ThemeRegistry>
-        </SWRProvider>
+        <ThemeRegistry>
+          <Web3Provider>
+            <KycState>
+              <ModalState>
+                <ToastState>
+                  <Header />
+                  <Box component='main'>{children}</Box>
+                  <Footer />
+                  <ModalsContainer />
+                </ToastState>
+              </ModalState>
+            </KycState>
+          </Web3Provider>
+        </ThemeRegistry>
       </body>
     </html>
   )

@@ -1,5 +1,7 @@
 import { revalidateTag } from 'next/cache'
 
+export const dynamic = 'force-dynamic'
+
 const flushTags = (cachedTags: string[]): Promise<void> => {
   return new Promise((resolve, reject) => {
     try {
@@ -25,6 +27,7 @@ export async function GET(_req: Request): Promise<Response> {
     'poolCreditMetrics',
     'badAndDoubtfulDebts',
     'financialReportingDocuments',
+    'lockPeriods',
   ]
 
   console.warn('flushing cache:', cachedTags)

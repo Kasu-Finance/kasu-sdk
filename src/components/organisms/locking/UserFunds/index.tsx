@@ -11,8 +11,12 @@ import TotalKsuLocked from '@/components/organisms/locking/UserFunds/TotalKsuLoc
 import UsdcBalance from '@/components/organisms/locking/UserFunds/UsdcBalance'
 import UserFundsActions from '@/components/organisms/locking/UserFunds/UserFundsActions'
 
-const UserFunds = () => {
+import { getLockPeriods } from '@/app/_requests/lockPeriods'
+
+const UserFunds = async () => {
   const { t } = useTranslation()
+
+  const lockPeriods = await getLockPeriods()
 
   return (
     <CustomCard>
@@ -46,7 +50,7 @@ const UserFunds = () => {
               showDivider
             />
           </Grid>
-          <UserFundsActions />
+          <UserFundsActions lockPeriods={lockPeriods} />
         </Grid>
       </CustomInnerCardContent>
     </CustomCard>
