@@ -1,15 +1,19 @@
 'use client'
 
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import { Box, Button, DialogActions, Typography } from '@mui/material'
+import { Button, Stack, Typography } from '@mui/material'
 
 import useTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
+import UnorderedList from '@/components/atoms/UnorderedList'
 import DialogContent from '@/components/molecules/DialogContent'
 import DialogHeader from '@/components/molecules/DialogHeader'
 import LoyaltyLevelInfo from '@/components/molecules/locking/LoyaltyOverview/LoyaltyLevelInfo'
+
+import { TrophyIcon } from '@/assets/icons'
+
+import { customTypography } from '@/themes/typography'
 
 const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { t } = useTranslation()
@@ -20,32 +24,62 @@ const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         title={t('modals.loyaltyLevels.title')}
         onClose={handleClose}
       />
-      <DialogContent sx={{ px: 3, py: 1 }}>
-        <Box display='grid' gap={2}>
-          <Typography variant='h6' component='span' display='block'>
-            {t('modals.loyaltyLevels.subtitle')}
-          </Typography>
-          <Typography variant='body2' component='p'>
-            {t('modals.loyaltyLevels.description-1')}
-          </Typography>
-          <Typography
-            variant='subtitle1'
-            fontSize={14}
-            lineHeight='20px'
-            component='p'
+      <DialogContent>
+        <Stack spacing={2}>
+          <Stack spacing={3}>
+            <Typography variant='h4'>
+              {t('modals.loyaltyLevels.subtitle')}
+            </Typography>
+            <Typography variant='baseSmBold'>
+              {t('modals.loyaltyLevels.description-1')}
+            </Typography>
+          </Stack>
+          <UnorderedList
+            sx={{
+              listStyleType: 'none',
+              pl: 0,
+              li: {
+                ...customTypography.baseSmBold,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+
+                '+ li': {
+                  mt: 1,
+                },
+              },
+            }}
           >
-            {t('modals.loyaltyLevels.description-2')}
-          </Typography>
+            <li>
+              <TrophyIcon />
+              {t('modals.loyaltyLevels.benefits.list-0')}
+            </li>
+            <li>
+              <TrophyIcon />
+              {t('modals.loyaltyLevels.benefits.list-1')}
+            </li>
+            <li>
+              <TrophyIcon />
+              {t('modals.loyaltyLevels.benefits.list-2')}
+            </li>
+            <li>
+              <TrophyIcon />
+              {t('modals.loyaltyLevels.benefits.list-3')}
+            </li>
+          </UnorderedList>
           <LoyaltyLevelInfo
+            loyaltyLevel={0}
             title={t('locking.widgets.loyalty.level.level-0.title')}
             subtitle={t('locking.widgets.loyalty.level.level-0.subtitle')}
             list={[
               t('locking.widgets.loyalty.level.level-0.list.list-0'),
               t('locking.widgets.loyalty.level.level-0.list.list-1'),
               t('locking.widgets.loyalty.level.level-0.list.list-2'),
+              t('locking.widgets.loyalty.level.level-0.list.list-3'),
             ]}
           />
           <LoyaltyLevelInfo
+            loyaltyLevel={1}
             title={t('locking.widgets.loyalty.level.level-1.title')}
             subtitle={t('locking.widgets.loyalty.level.level-1.subtitle')}
             list={[
@@ -55,6 +89,7 @@ const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             ]}
           />
           <LoyaltyLevelInfo
+            loyaltyLevel={2}
             title={t('locking.widgets.loyalty.level.level-2.title')}
             subtitle={t('locking.widgets.loyalty.level.level-2.subtitle')}
             list={[
@@ -63,21 +98,19 @@ const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               t('locking.widgets.loyalty.level.level-2.list.list-2'),
             ]}
           />
-        </Box>
-        <Typography variant='subtitle2' fontWeight={700} component='p' mt={1}>
-          {t('modals.loyaltyLevels.description-3')}
-        </Typography>
+          <Typography variant='baseSm'>
+            {t('modals.loyaltyLevels.description-3')}
+          </Typography>
+          <Button
+            variant='contained'
+            color='secondary'
+            onClick={handleClose}
+            sx={{ textTransform: 'capitalize' }}
+          >
+            {t('general.return')}
+          </Button>
+        </Stack>
       </DialogContent>
-      <DialogActions sx={{ justifyContent: 'center' }}>
-        <Button
-          variant='contained'
-          startIcon={<ChevronLeftIcon />}
-          onClick={handleClose}
-          sx={{ width: 130 }}
-        >
-          {t('general.return')}
-        </Button>
-      </DialogActions>
     </CustomCard>
   )
 }

@@ -1,96 +1,64 @@
-import VerifiedIcon from '@mui/icons-material/Verified'
 import { Box, SxProps, Theme, Typography, TypographyProps } from '@mui/material'
+import Image from 'next/image'
 import React from 'react'
 
-import ColoredBox from '@/components/atoms/ColoredBox'
+import { LoyaltyLevel } from '@/hooks/locking/useLoyaltyLevel'
+
 import UnorderedList from '@/components/atoms/UnorderedList'
+import { getCrown } from '@/components/organisms/header/CurrentLoyaltyCrown'
+
+import { customTypography } from '@/themes/typography'
 
 type LoyaltyLevelInfoProps = {
+  loyaltyLevel: LoyaltyLevel
   title: string
-  subtitle?: string
-  description?: string
+  subtitle: string
   list?: string[]
   rootStyles?: SxProps<Theme>
   titleProps?: TypographyProps
   subtitleProps?: TypographyProps
-  descriptionProps?: TypographyProps
   listProps?: SxProps<Theme>
   listLabelProps?: TypographyProps
 }
 
 const LoyaltyLevelInfo: React.FC<LoyaltyLevelInfoProps> = ({
+  loyaltyLevel,
   title,
   subtitle,
-  description,
   list,
   rootStyles,
   titleProps,
   subtitleProps,
-  descriptionProps,
   listProps,
   listLabelProps,
 }) => {
   return (
-    <ColoredBox
-      display='grid'
-      gap={2}
-      sx={[
-        (theme) => ({
-          px: 2,
-          pt: 1,
-          pb: 2,
-          [theme.breakpoints.down('sm')]: {
-            px: 1,
-          },
-        }),
-        ...(Array.isArray(rootStyles) ? rootStyles : [rootStyles]),
-      ]}
-    >
-      <Box
-        display='grid'
-        gridTemplateColumns='max-content minmax(0, 1fr)'
-        alignItems='start'
-        gap={1}
-      >
-        <Box pt='5px'>
-          <VerifiedIcon
-            fontSize='small'
-            sx={{ color: 'rgba(127, 116, 102, 0.54)' }}
-          />
-        </Box>
-        <Box>
-          <Typography
-            variant='subtitle1'
-            display='block'
-            component='span'
-            {...titleProps}
-          >
-            {title}
-          </Typography>
-          {subtitle && (
-            <Typography
-              variant='body1'
-              component='span'
-              fontSize={{ xs: 12, sm: 14 }}
-              {...subtitleProps}
-            >
-              {subtitle}
-            </Typography>
-          )}
-        </Box>
-      </Box>
-      {description && (
-        <Typography
-          variant='body2'
-          component='p'
-          fontSize={{ xs: 10, sm: 12 }}
-          {...descriptionProps}
-        >
-          {description}
+    <Box bgcolor='gold.dark' borderRadius={2} p={2} sx={rootStyles}>
+      <Box display='flex' alignItems='center'>
+        <Image
+          src={getCrown(loyaltyLevel)}
+          alt={`crown-level_${loyaltyLevel}`}
+        />
+        <Typography variant='h4' {...titleProps}>
+          {title}
         </Typography>
-      )}
+      </Box>
+      <Typography variant='baseSm' component='span' {...subtitleProps}>
+        {subtitle}
+      </Typography>
       {list && (
-        <UnorderedList sx={listProps}>
+        <UnorderedList
+          sx={[
+            {
+              mt: 1,
+              pl: 2,
+              li: {
+                ...customTypography.baseSm,
+              },
+            },
+            ...(Array.isArray(listProps) ? listProps : [listProps]),
+          ]}
+        >
           {list.map((label) => (
             <li key={label}>
               <Typography
@@ -105,7 +73,7 @@ const LoyaltyLevelInfo: React.FC<LoyaltyLevelInfoProps> = ({
           ))}
         </UnorderedList>
       )}
-    </ColoredBox>
+    </Box>
   )
 }
 

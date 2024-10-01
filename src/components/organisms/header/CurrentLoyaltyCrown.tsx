@@ -11,7 +11,7 @@ import Crown_0 from '@/images/crown-0.png'
 import Crown_1 from '@/images/crown-1.png'
 import Crown_2 from '@/images/crown-2.png'
 
-const getCrown = (currentLevel: LoyaltyLevel) => {
+export const getCrown = (currentLevel: LoyaltyLevel) => {
   switch (currentLevel) {
     case 2:
       return Crown_2
