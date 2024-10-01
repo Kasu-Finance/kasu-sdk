@@ -88,7 +88,7 @@ const PoolDetails: React.FC<PoolDetailsProps> = ({ pool }) => {
           <Grid item xs={6}>
             <InfoRow
               title={t('details.poolDetails.loan.label')}
-              toolTipInfo={t('details.poolDetails.loan.tooltip')}
+              toolTipInfo={t('details.poolDetails.loan.tooltip-1')}
               metric={
                 <Typography variant='baseMdBold'>
                   {pool.loanStructure}

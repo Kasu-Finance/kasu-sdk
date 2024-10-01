@@ -64,7 +64,7 @@ const RiskManagement: React.FC<RiskManagementProps> = ({ riskManagement }) => {
             <Divider sx={{ mt: 1.5 }} />
             <Grid container rowSpacing={3} columnSpacing={4} mt={4}>
               {items.map((item) => (
-                <Fragment key={item.id}>
+                <Fragment key={item.name}>
                   <Grid
                     item
                     xs={6}
@@ -73,7 +73,7 @@ const RiskManagement: React.FC<RiskManagementProps> = ({ riskManagement }) => {
                     gap={2.5}
                   >
                     <InfoColumn
-                      title={item.title}
+                      title={item.name}
                       toolTipInfo={item.tooltip}
                       titleStyle={{ variant: 'baseMd' }}
                       metric={

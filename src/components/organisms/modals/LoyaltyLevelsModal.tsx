@@ -1,17 +1,13 @@
 'use client'
 
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import {
-  Box,
-  Button,
-  DialogActions,
-  DialogContent,
-  Typography,
-} from '@mui/material'
+import { Box, Button, DialogActions, Typography } from '@mui/material'
 
 import useTranslation from '@/hooks/useTranslation'
 
+import CustomCard from '@/components/atoms/CustomCard'
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
+import DialogContent from '@/components/molecules/DialogContent'
 import DialogHeader from '@/components/molecules/DialogHeader'
 import LoyaltyLevelInfo from '@/components/molecules/locking/LoyaltyOverview/LoyaltyLevelInfo'
 
@@ -19,7 +15,7 @@ const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { t } = useTranslation()
 
   return (
-    <>
+    <CustomCard>
       <DialogHeader
         title={t('modals.loyaltyLevels.title')}
         onClose={handleClose}
@@ -82,7 +78,7 @@ const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           {t('general.return')}
         </Button>
       </DialogActions>
-    </>
+    </CustomCard>
   )
 }
 

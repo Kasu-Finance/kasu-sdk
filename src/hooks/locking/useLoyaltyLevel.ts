@@ -1,6 +1,8 @@
 const LOYALTY_LEVEL_1_REQUIREMENT = 1
 const LOYALTY_LEVEL_2_REQUIREMENT = 5
 
+export type LoyalLoyaltyLevels = Extract<LoyaltyLevel, 1 | 2>
+
 export type LoyaltyLevel = -1 | 0 | 1 | 2
 
 type useLoyaltyLevelReturnType<T extends number | undefined> = {

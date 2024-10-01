@@ -2,7 +2,9 @@
 
 import { Typography } from '@mui/material'
 
-import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
+import useLoyaltyLevel, {
+  LoyalLoyaltyLevels,
+} from '@/hooks/locking/useLoyaltyLevel'
 import useTranslation from '@/hooks/useTranslation'
 import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
 
@@ -15,7 +17,7 @@ const UserLoyaltyLevel = () => {
   return (
     <Typography variant='h4' textAlign='center'>
       {t(
-        `locking.widgets.loyalty.level.level-${isLoyal ? currentLevel : 0}.title`
+        `locking.widgets.loyalty.level.level-${isLoyal ? (currentLevel as LoyalLoyaltyLevels) : 0}.title`
       )}
     </Typography>
   )

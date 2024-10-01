@@ -49,7 +49,7 @@ const BadAndDoubtfulDebtsTableHeader = () => (
             %
           </Typography>
         </Box>
-      </TableCell>{' '}
+      </TableCell>
       <TableCell>
         <Box display='flex'>
           <Typography variant='inherit' flex={1}>

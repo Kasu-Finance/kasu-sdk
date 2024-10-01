@@ -2,7 +2,9 @@
 
 import { Box, Skeleton, Typography } from '@mui/material'
 
-import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
+import useLoyaltyLevel, {
+  LoyalLoyaltyLevels,
+} from '@/hooks/locking/useLoyaltyLevel'
 import useTranslation from '@/hooks/useTranslation'
 import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
 
@@ -33,12 +35,12 @@ const CurrentLoyaltyDescription = () => {
     <Box>
       <Typography variant='h4' mb={4.25}>
         {t(
-          `locking.widgets.loyalty.level.level-${isLoyal ? currentLevel : 0}.title`
+          `locking.widgets.loyalty.level.level-${isLoyal ? (currentLevel as LoyalLoyaltyLevels) : 0}.title`
         )}
       </Typography>
       <Typography variant='baseSm' component='p' mb={2}>
         {t(
-          `locking.widgets.loyalty.level.level-${isLoyal ? currentLevel : 0}.subtitle`
+          `locking.widgets.loyalty.level.level-${isLoyal ? (currentLevel as LoyalLoyaltyLevels) : 0}.subtitle`
         )}
       </Typography>
       <UnorderedList
@@ -52,17 +54,17 @@ const CurrentLoyaltyDescription = () => {
       >
         <li>
           {t(
-            `locking.widgets.loyalty.level.level-${isLoyal ? currentLevel : 0}.list.list-0`
+            `locking.widgets.loyalty.level.level-${isLoyal ? (currentLevel as LoyalLoyaltyLevels) : 0}.list.list-0`
           )}
         </li>
         <li>
           {t(
-            `locking.widgets.loyalty.level.level-${isLoyal ? currentLevel : 0}.list.list-1`
+            `locking.widgets.loyalty.level.level-${isLoyal ? (currentLevel as LoyalLoyaltyLevels) : 0}.list.list-1`
           )}
         </li>
         <li>
           {t(
-            `locking.widgets.loyalty.level.level-${isLoyal ? currentLevel : 0}.list.list-2`
+            `locking.widgets.loyalty.level.level-${isLoyal ? (currentLevel as LoyalLoyaltyLevels) : 0}.list.list-2`
           )}
         </li>
       </UnorderedList>

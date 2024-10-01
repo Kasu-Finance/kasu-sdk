@@ -5,7 +5,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material'
-import { FinancialReportingDocumentsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
+import { FinancialReportingDocuments } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { Fragment } from 'react'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
@@ -16,7 +16,7 @@ import dayjs from '@/dayjs'
 import { formatAmount, formatTimestamp } from '@/utils'
 
 type FinancialReportingDocumentsTableBodyProps = {
-  documents: FinancialReportingDocumentsDirectus['documents']
+  documents: FinancialReportingDocuments['documents']
 }
 
 const FinancialReportingDocumentsTableBody: React.FC<

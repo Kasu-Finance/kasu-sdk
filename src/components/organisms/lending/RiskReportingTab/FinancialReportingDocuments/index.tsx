@@ -1,7 +1,7 @@
 'use client'
 
 import { Pagination, Stack } from '@mui/material'
-import { FinancialReportingDocumentsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
+import { FinancialReportingDocuments as FinancialReportingDocumentsType } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
 import usePagination from '@/hooks/usePagination'
@@ -15,7 +15,7 @@ import FinancialReportingDocumentsTableBody from '@/components/organisms/lending
 import FinancialReportingDocumentsTableHeader from '@/components/organisms/lending/RiskReportingTab/FinancialReportingDocuments/FinancialReportingDocumentsTableHeader'
 
 type FinancialReportingDocumentsProps = {
-  documents: FinancialReportingDocumentsDirectus
+  documents: FinancialReportingDocumentsType
 }
 
 const ROWS_PER_PAGE = 5

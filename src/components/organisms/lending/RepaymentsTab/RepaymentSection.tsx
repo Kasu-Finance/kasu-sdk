@@ -1,13 +1,14 @@
 import { Box, BoxProps, Divider, Typography } from '@mui/material'
 import React from 'react'
 
-import useTranslation from '@/hooks/useTranslation'
-
 import InfoRow from '@/components/atoms/InfoRow'
+
+import { formatAmount } from '@/utils'
 
 type RepaymentSectionProps = BoxProps & {
   data: {
-    label: string
+    tooltip: string
+    name: string
     value: number
   }[]
   title: string
@@ -22,8 +23,6 @@ const RepaymentSection: React.FC<RepaymentSectionProps> = ({
   unit,
   ...rest
 }) => {
-  const { t } = useTranslation()
-
   return (
     <Box {...rest}>
       <Box display='flex' alignItems='center' justifyContent='space-between'>
@@ -33,15 +32,15 @@ const RepaymentSection: React.FC<RepaymentSectionProps> = ({
         </Typography>
       </Box>
       <Divider sx={{ mt: 1.5 }} />
-      {data.map(({ label, value }) => (
+      {data.map(({ name, tooltip, value }) => (
         <InfoRow
-          key={label}
-          title={t(`repayments.sections.map.${label}.label`)}
-          toolTipInfo={t(`repayments.sections.map.${label}.tooltip`)}
+          key={name}
+          title={name}
+          toolTipInfo={tooltip}
           showDivider
           metric={
             <Typography variant='baseMdBold'>
-              {value} {unit}
+              {formatAmount(value, { minDecimals: 2 })} {unit}
             </Typography>
           }
         />

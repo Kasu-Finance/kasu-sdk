@@ -16,11 +16,11 @@ export type TranslateFunction = {
   // For known translation keys
   <K extends TranslationKeys>(key: K): string
   // For any string
-  (key: string): string
+  // (key: string): string
 }
 
 const useTranslation = () => {
-  const t: TranslateFunction = (key: any) => {
+  const t: TranslateFunction = (key: TranslationKeys) => {
     const translation = getNestedTranslation(key, TRANSLATIONS[defaultLocale])
 
     return translation || key
