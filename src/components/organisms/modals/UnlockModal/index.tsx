@@ -1,107 +1,48 @@
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import EditIcon from '@mui/icons-material/Edit'
-import { Button, DialogActions, DialogContent } from '@mui/material'
-import { parseUnits } from 'ethers/lib/utils'
+import useStepperState from '@/hooks/context/useStepperState'
+import useTranslation, { TranslateFunction } from '@/hooks/useTranslation'
 
-import useLockModalState from '@/hooks/context/useLockModalState'
-import useModalState from '@/hooks/context/useModalState'
-import useModalStatusState from '@/hooks/context/useModalStatusState'
-import useUnlockKSU from '@/hooks/locking/useUnlockKSU'
-import useTranslation from '@/hooks/useTranslation'
-import useUserBalance from '@/hooks/web3/useUserBalance'
-
+import CustomCard from '@/components/atoms/CustomCard'
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
+import DialogContent from '@/components/molecules/DialogContent'
 import DialogHeader from '@/components/molecules/DialogHeader'
-import UnlockModalCompleted from '@/components/organisms/modals/UnlockModal/UnlockModalCompleted'
-import UnlockModalEdit from '@/components/organisms/modals/UnlockModal/UnlockModalEdit'
-import UnlockModalReview from '@/components/organisms/modals/UnlockModal/UnlockModalReview'
+import UnlockModalConfirmed from '@/components/organisms/modals/UnlockModal/UnlockModalConfirmed'
+import UnlockModalEdit from '@/components/organisms/modals/UnlockModal/UnlockModalEdit/index'
+import UnlockModalReview from '@/components/organisms/modals/UnlockModal/UnlockModalReview/index'
 
-import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
+const getActiveComponent = (activeStep: number) => {
+  switch (activeStep) {
+    case 1:
+      return <UnlockModalEdit />
+    case 2:
+      return <UnlockModalReview />
+    case 3:
+      return <UnlockModalConfirmed />
+    default:
+      return null
+  }
+}
 
-import sdkConfig from '@/config/sdk'
-import { capitalize } from '@/utils'
+const getTitle = (activeStep: number, t: TranslateFunction) => {
+  switch (activeStep) {
+    case 2:
+      return t('modals.unlock.reviewTitle')
+    case 3:
+      return t('modals.unlock.confirmedTitle')
+    default:
+      return t('modals.unlock.title')
+  }
+}
 
 const UnlockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { t } = useTranslation()
 
-  const { modal } = useModalState()
-
-  const { amount } = useLockModalState()
-
-  const { modalStatus, modalStatusAction, setModalStatusAction } =
-    useModalStatusState()
-
-  const { decimals } = useUserBalance(sdkConfig.contracts.KSUToken)
-
-  const userLock = modal.unlockModal.userLock
-
-  const unlockKSU = useUnlockKSU()
+  const { activeStep } = useStepperState()
 
   return (
-    <>
-      <DialogHeader
-        title={capitalize(t('general.unlock'))}
-        onClose={handleClose}
-      />
-      <DialogContent>
-        {modalStatusAction === ModalStatusAction.REVIEWING ? (
-          <UnlockModalReview
-            lockedAmount={userLock.lockedAmount}
-            unlockAmount={amount}
-          />
-        ) : modalStatusAction === ModalStatusAction.EDITING ? (
-          <UnlockModalEdit userLock={userLock} />
-        ) : (
-          <UnlockModalCompleted userLock={userLock} />
-        )}
-      </DialogContent>
-      <DialogActions sx={{ justifyContent: 'center', pb: 3 }}>
-        {modalStatusAction === ModalStatusAction.REVIEWING ? (
-          <>
-            <Button
-              variant='outlined'
-              startIcon={<EditIcon />}
-              onClick={() => setModalStatusAction(ModalStatusAction.EDITING)}
-            >
-              {t('general.adjust')}
-            </Button>
-            <Button
-              variant='contained'
-              endIcon={<ChevronRightIcon />}
-              onClick={() =>
-                unlockKSU(parseUnits(amount, decimals), userLock.id)
-              }
-            >
-              {t('general.confirm')}
-            </Button>
-          </>
-        ) : modalStatusAction === ModalStatusAction.EDITING ? (
-          <Button
-            sx={{
-              width: 191,
-              textTransform: 'uppercase',
-              mx: 'auto',
-              '& .MuiButton-endIcon': {
-                ml: 1.5,
-              },
-              '&:disabled .MuiButton-endIcon svg path': {
-                fill: 'rgba(0, 0, 0, 0.26)',
-              },
-            }}
-            variant='contained'
-            endIcon={<ChevronRightIcon />}
-            onClick={() => setModalStatusAction(ModalStatusAction.REVIEWING)}
-            disabled={modalStatus.type === 'error'}
-          >
-            {t('modals.unlock.buttons.reviewUnlock')}
-          </Button>
-        ) : (
-          <Button variant='contained' sx={{ width: 191 }} onClick={handleClose}>
-            {t('modals.lock.completed.lockingOverview')}
-          </Button>
-        )}
-      </DialogActions>
-    </>
+    <CustomCard>
+      <DialogHeader title={getTitle(activeStep, t)} onClose={handleClose} />
+      <DialogContent>{getActiveComponent(activeStep)}</DialogContent>
+    </CustomCard>
   )
 }
 

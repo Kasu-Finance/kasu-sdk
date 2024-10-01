@@ -1,87 +1,67 @@
-import { Box, Typography } from '@mui/material'
-import { formatUnits } from 'ethers/lib/utils'
-import { useCallback } from 'react'
+import { Typography } from '@mui/material'
+import { Box } from '@mui/system'
+import { formatEther } from 'ethers/lib/utils'
 
+import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
-import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import useTranslation from '@/hooks/useTranslation'
-import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
+import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
 import NumericalInput from '@/components/molecules/NumericalInput'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
-import { ModalStatus } from '@/context/modalStatus/modalStatus.types'
 
-import { SupportedTokens } from '@/constants/tokens'
+import { KsuIcon } from '@/assets/icons'
+
 import { customTypography } from '@/themes/typography'
-import { toBigNumber } from '@/utils'
+import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
-const WithdrawAmountInput = () => {
+const UnlockModalInput = () => {
   const { t } = useTranslation()
 
   const { modal } = useModalState()
 
-  const { trancheBalance } = modal[ModalsKeys.WITHDRAW]
+  const { userLock } = modal[ModalsKeys.UNLOCK]
 
-  const supportedToken = useSupportedTokenInfo()
-  const usdcDecimals = supportedToken?.[SupportedTokens.USDC].decimals
-
-  const { amount, trancheId, setAmount } = useWithdrawModalState()
+  const { amount, setAmount } = useLockModalState()
 
   const { modalStatus, setModalStatus } = useModalStatusState()
 
-  const selectedTranche = trancheBalance.find(
-    (tranche) => tranche.id === trancheId
+  const { ksuPrice } = useKsuPrice()
+
+  const ksuInUSD = convertToUSD(
+    toBigNumber(amount || '0'),
+    toBigNumber(ksuPrice || '0')
   )
-
-  const balance = formatUnits(
-    selectedTranche?.balanceData.availableToWithdraw || '0',
-    usdcDecimals
-  )
-
-  const validateAmount = useCallback(
-    (inputAmount: string) => {
-      const inputBN = toBigNumber(inputAmount)
-
-      if (inputBN.isZero()) {
-        setModalStatus({
-          type: ModalStatus.ERROR,
-          errorMessage: 'Amount is required',
-        })
-
-        return
-      }
-
-      if (toBigNumber(inputAmount).gt(toBigNumber(balance))) {
-        setModalStatus({
-          type: ModalStatus.ERROR,
-          errorMessage: 'Insufficient Balance',
-        })
-        return
-      }
-
-      setModalStatus({ type: inputAmount ? 'success' : 'default' })
-      return
-    },
-    [balance, setModalStatus]
-  )
-
-  const handleAmountChange = (value: string) => {
-    setAmount(value)
-    validateAmount(value)
-  }
 
   const handleMax = () => {
-    setAmount(balance)
-    validateAmount(balance)
+    setAmount(userLock.lockedAmount)
+    validate(userLock.lockedAmount)
+  }
+
+  const validate = (amount: string) => {
+    if (toBigNumber(amount).isZero()) {
+      setModalStatus({ type: 'error', errorMessage: 'Amount is required' })
+      return
+    }
+
+    if (toBigNumber(amount).gt(toBigNumber(userLock.lockedAmount))) {
+      setModalStatus({
+        type: 'error',
+        errorMessage: 'Insufficient balance',
+      })
+      return
+    }
+
+    setModalStatus({ type: amount ? 'success' : 'default' })
   }
 
   const handleFocusState = (state: boolean) => {
     if (state) {
-      setModalStatus({ type: ModalStatus.FOCUSED })
+      setModalStatus({ type: 'focused' })
     } else {
-      validateAmount(amount)
+      validate(amount)
     }
   }
 
@@ -89,9 +69,9 @@ const WithdrawAmountInput = () => {
     <Box>
       <NumericalInput
         amount={amount}
+        label={t('modals.unlock.withdraw.input-label')}
+        setAmount={setAmount}
         handleMax={handleMax}
-        setAmount={handleAmountChange}
-        label={t('lending.withdraw.amountInput.label')}
         rootProps={{
           sx: {
             mt: 1,
@@ -114,6 +94,7 @@ const WithdrawAmountInput = () => {
             },
           },
           InputProps: {
+            startAdornment: <KsuIcon />,
             endAdornment: (
               <Typography
                 whiteSpace='nowrap'
@@ -121,6 +102,8 @@ const WithdrawAmountInput = () => {
                 component='span'
                 color='gold.extraDark'
               >
+                ~{' '}
+                {formatAmount(formatEther(ksuInUSD || '0'), { minDecimals: 2 })}{' '}
                 USDC
               </Typography>
             ),
@@ -138,12 +121,11 @@ const WithdrawAmountInput = () => {
                 },
               },
               '& .MuiInputBase-input': {
-                px: 3,
+                px: 1,
               },
             },
           },
         }}
-        decimals={supportedToken?.[SupportedTokens.USDC].decimals}
       />
       <Typography
         variant='caption'
@@ -157,4 +139,4 @@ const WithdrawAmountInput = () => {
   )
 }
 
-export default WithdrawAmountInput
+export default UnlockModalInput

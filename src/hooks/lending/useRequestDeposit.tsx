@@ -3,15 +3,12 @@ import { BigNumber, BytesLike } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
-import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useStepperState from '@/hooks/context/useStepperState'
 import useToastState from '@/hooks/context/useToastState'
 import useGenerateSwapData from '@/hooks/lending/useGenerateSwapData'
 import useKasuSDK from '@/hooks/useKasuSDK'
 import useHandleError from '@/hooks/web3/useHandleError'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
-
-import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
 import generateKycSignature from '@/actions/generateKycSignature'
 import { ONE_INCH_SLIPPAGE } from '@/config/api.oneInch'
@@ -34,8 +31,6 @@ const useRequestDeposit = () => {
   const supportedTokens = useSupportedTokenInfo()
 
   const { nextStep } = useStepperState()
-
-  const { setModalStatusAction } = useModalStatusState()
 
   const { setToast, removeToast } = useToastState()
 
@@ -152,8 +147,6 @@ const useRequestDeposit = () => {
       const receipt = await waitForReceipt(deposit)
 
       setTxHash(receipt.transactionHash)
-
-      setModalStatusAction(ModalStatusAction.COMPLETED)
 
       removeToast()
 

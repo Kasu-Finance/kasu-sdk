@@ -1,4 +1,3 @@
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { Box, Divider, Typography } from '@mui/material'
 import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
 import React from 'react'
@@ -24,7 +23,7 @@ const LockPeriodInfo: React.FC<LockPeriodInfoProps> = ({ activePeriod }) => {
   return (
     <Box
       display='grid'
-      gridTemplateColumns='minmax(0,1fr) max-content minmax(0,1fr) max-content minmax(0,1fr) max-content minmax(0,1fr)'
+      gridTemplateColumns='minmax(0, 0.5fr) minmax(0,1fr)  minmax(0,1fr) minmax(0, 0.5fr)'
       gap={1}
       sx={{
         'svg ': {
@@ -53,7 +52,6 @@ const LockPeriodInfo: React.FC<LockPeriodInfoProps> = ({ activePeriod }) => {
             })}
             key={period.lockPeriod}
           >
-            {index !== 0 && <ArrowForwardIcon />}
             <Box textAlign='center'>
               <Typography
                 variant='subtitle2'

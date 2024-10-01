@@ -1,6 +1,7 @@
 import { BigNumber } from 'ethers'
 
-import useModalStatusState from '@/hooks/context/useModalStatusState'
+import useLockModalState from '@/hooks/context/useLockModalState'
+import useStepperState from '@/hooks/context/useStepperState'
 import useToastState from '@/hooks/context/useToastState'
 import useEarnedBonusLockingAmount from '@/hooks/locking/useEarnedBonusLockingAmount'
 import useUserLocks from '@/hooks/locking/useUserLocks'
@@ -8,19 +9,19 @@ import useKasuSDK from '@/hooks/useKasuSDK'
 import useEarnedRKsu from '@/hooks/web3/useEarnedRKsu'
 import useHandleError from '@/hooks/web3/useHandleError'
 
-import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
-
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { waitForReceipt } from '@/utils'
 
 const useLockKSU = () => {
   const sdk = useKasuSDK()
   const handleError = useHandleError()
+
+  const { setTxHash } = useLockModalState()
   const { updateUserLocks } = useUserLocks()
   const { updateEarnedRKsu } = useEarnedRKsu()
   const { updateEarnedBonusLockingAmount } = useEarnedBonusLockingAmount()
-  const { setModalStatusAction } = useModalStatusState()
   const { setToast, removeToast } = useToastState()
+  const { nextStep } = useStepperState()
 
   return async (amount: BigNumber, duration: string) => {
     try {
@@ -36,7 +37,9 @@ const useLockKSU = () => {
         BigNumber.from(duration)
       )
 
-      await waitForReceipt(lock)
+      const receipt = await waitForReceipt(lock)
+
+      setTxHash(receipt.transactionHash)
 
       await Promise.all([
         updateUserLocks(),
@@ -44,9 +47,9 @@ const useLockKSU = () => {
         updateEarnedBonusLockingAmount(),
       ])
 
-      setModalStatusAction(ModalStatusAction.COMPLETED)
-
       removeToast()
+
+      nextStep()
     } catch (error) {
       handleError(
         error,

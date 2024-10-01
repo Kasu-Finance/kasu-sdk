@@ -1,14 +1,11 @@
 import { useWeb3React } from '@web3-react/core'
 import { ContractTransaction } from 'ethers'
 
-import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useStepperState from '@/hooks/context/useStepperState'
 import useToastState from '@/hooks/context/useToastState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import useKasuSDK from '@/hooks/useKasuSDK'
 import useHandleError from '@/hooks/web3/useHandleError'
-
-import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { waitForReceipt } from '@/utils'
@@ -23,8 +20,6 @@ const useRequestWithdrawal = () => {
   const { nextStep } = useStepperState()
 
   const { setTxHash } = useWithdrawModalState()
-
-  const { setModalStatusAction } = useModalStatusState()
 
   const { setToast, removeToast } = useToastState()
 
@@ -64,8 +59,6 @@ const useRequestWithdrawal = () => {
 
       const receipt = await waitForReceipt(txResponse)
       setTxHash(receipt.transactionHash)
-
-      setModalStatusAction(ModalStatusAction.COMPLETED)
 
       removeToast()
 

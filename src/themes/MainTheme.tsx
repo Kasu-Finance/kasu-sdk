@@ -228,7 +228,7 @@ export const theme = createTheme({
             '.MuiSlider-valueLabel': {
               backgroundColor: customPalette.gray.extraDark,
               borderRadius: 4,
-              padding: 4,
+              padding: 5,
               ...customTypography.baseXs,
 
               '&::before': {

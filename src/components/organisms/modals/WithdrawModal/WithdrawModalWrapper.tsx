@@ -4,7 +4,6 @@ import WithdrawModal from '@/components/organisms/modals/WithdrawModal'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 import ModalStatusState from '@/context/modalStatus/modalStatus.provider'
-import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 import StepperState from '@/context/stepper/stepper.provider'
 import WithdrawModalProvider from '@/context/withdrawModal/withdrawModal.provider'
 
@@ -23,7 +22,7 @@ const WithdrawModalWrapper: React.FC<WithdrawModalWrapperProps> = ({
         modal[ModalsKeys.WITHDRAW].pool.tranches[0].id as `0x${string}`
       }
     >
-      <ModalStatusState defaultStatus={ModalStatusAction.REQUEST}>
+      <ModalStatusState>
         <StepperState steps={3}>
           <WithdrawModal handleClose={handleClose} />
         </StepperState>

@@ -5,6 +5,7 @@ import LockModal from '@/components/organisms/modals/LockModal'
 
 import LockModalState from '@/context/lockModal/lockModal.provider'
 import ModalStatusState from '@/context/modalStatus/modalStatus.provider'
+import StepperState from '@/context/stepper/stepper.provider'
 
 const LockModalWrapper: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { lockPeriods } = useLockPeriods()
@@ -12,7 +13,9 @@ const LockModalWrapper: React.FC<DialogChildProps> = ({ handleClose }) => {
   return (
     <LockModalState defaultLockPeriod={lockPeriods[0]}>
       <ModalStatusState>
-        <LockModal handleClose={handleClose} />
+        <StepperState steps={3}>
+          <LockModal handleClose={handleClose} />
+        </StepperState>
       </ModalStatusState>
     </LockModalState>
   )

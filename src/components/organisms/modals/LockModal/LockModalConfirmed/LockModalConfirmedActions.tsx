@@ -1,0 +1,54 @@
+import { Box, Button } from '@mui/material'
+import { useWeb3React } from '@web3-react/core'
+
+import useLockModalState from '@/hooks/context/useLockModalState'
+import useModalState from '@/hooks/context/useModalState'
+import useTranslation from '@/hooks/useTranslation'
+
+import { ModalsKeys } from '@/context/modal/modal.types'
+
+import { Routes } from '@/config/routes'
+import { SupportedChainIds } from '@/connection/chains'
+import { networks } from '@/connection/networks'
+
+const LockModalConfirmedActions = () => {
+  const { t } = useTranslation()
+
+  const { chainId } = useWeb3React()
+
+  const { txHash } = useLockModalState()
+
+  const { closeModal } = useModalState()
+
+  const handleClose = () => closeModal(ModalsKeys.LOCK)
+
+  return (
+    <Box display='flex' gap={4}>
+      {txHash && (
+        <Button
+          variant='outlined'
+          color='secondary'
+          href={`${
+            networks[(chainId as SupportedChainIds) || SupportedChainIds.BASE]
+              .blockExplorerUrls[0]
+          }/tx/${txHash}`}
+          target='_blank'
+          fullWidth
+          sx={{ textTransform: 'capitalize' }}
+        >
+          {t('modals.lock.actions.viewTx')}
+        </Button>
+      )}
+      <Button
+        href={Routes.locking.root.url}
+        onClick={handleClose}
+        variant='contained'
+        color='secondary'
+      >
+        {t('modals.lock.completed.lockingOverview')}
+      </Button>
+    </Box>
+  )
+}
+
+export default LockModalConfirmedActions
