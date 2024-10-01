@@ -1,6 +1,4 @@
-import LockClockIcon from '@mui/icons-material/LockClock'
-import UploadFileIcon from '@mui/icons-material/UploadFile'
-import { Button, DialogActions, DialogContent, Typography } from '@mui/material'
+import { Button, Stack, Typography } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { useCallback } from 'react'
 
@@ -9,7 +7,9 @@ import useModalState from '@/hooks/context/useModalState'
 import useToastState from '@/hooks/context/useToastState'
 import useHandleError from '@/hooks/web3/useHandleError'
 
+import CustomCard from '@/components/atoms/CustomCard'
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
+import DialogContent from '@/components/molecules/DialogContent'
 import DialogHeader from '@/components/molecules/DialogHeader'
 
 import checkUserKycState from '@/actions/checkUserKycState'
@@ -145,47 +145,47 @@ const KycModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   }
 
   return (
-    <>
+    <CustomCard>
       <DialogHeader title='Identity Verification' onClose={handleClose} />
       <DialogContent>
-        <Typography variant='body1' component='p'>
+        <Stack spacing={3}>
+          <Typography variant='baseMd' component='p'>
+            {isAuthenticated ? (
+              <>
+                The verification process will be undertaken by our third party
+                KYC provider via an integrated widget.
+                <br />
+                <br />
+                Once completed, please return to this browser window{' '}
+                <strong>(do not close this window).</strong>
+              </>
+            ) : (
+              'In order to initiate the KYC process, you must authorise your wallet in order to interact with Kasu’s external KYC provider to complete the verification process.​'
+            )}
+          </Typography>
           {isAuthenticated ? (
-            <>
-              The verification process will be undertaken by our third party KYC
-              provider via an integrated widget.
-              <br />
-              <br />
-              Once completed, please return to this browser window{' '}
-              <strong>(do not close this window).</strong>
-            </>
+            <Button
+              variant='contained'
+              color='secondary'
+              fullWidth
+              onClick={() => handleVerification()}
+              disabled={!identityClient.polygonIdDID}
+            >
+              Submit Kyc Documents
+            </Button>
           ) : (
-            'In order to initiate the KYC process, you must authorise your wallet in order to interact with Kasu’s external KYC provider to complete the verification process.​'
+            <Button
+              fullWidth
+              variant='contained'
+              color='secondary'
+              onClick={handleAuth}
+            >
+              Authorise KYC Process
+            </Button>
           )}
-        </Typography>
+        </Stack>
       </DialogContent>
-      <DialogActions
-        sx={{ justifyContent: 'center', textTransform: 'uppercase', pb: 2 }}
-      >
-        {isAuthenticated ? (
-          <Button
-            variant='contained'
-            startIcon={<UploadFileIcon />}
-            onClick={() => handleVerification()}
-            disabled={!identityClient.polygonIdDID}
-          >
-            Submit Kyc Documents
-          </Button>
-        ) : (
-          <Button
-            variant='contained'
-            startIcon={<LockClockIcon />}
-            onClick={handleAuth}
-          >
-            Authorise KYC Process
-          </Button>
-        )}
-      </DialogActions>
-    </>
+    </CustomCard>
   )
 }
 
