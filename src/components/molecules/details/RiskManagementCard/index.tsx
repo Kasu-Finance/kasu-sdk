@@ -87,14 +87,14 @@ const RiskManagementCard: React.FC<RiskManagementCardProps> = ({ data }) => {
               </Typography>
               {items.map((item) => (
                 <Box
-                  key={item.id}
+                  key={item.name}
                   display='flex'
                   width='100%'
                   flexDirection='column'
                   sx={{ pr: 2, py: 0.5 }}
                 >
                   <InfoColumn
-                    title={item.title}
+                    title={item.name}
                     toolTipInfo={item.tooltip}
                     titleStyle={{ fontSize: { xs: 10, sm: 14 } }}
                     titleContainerSx={(theme) => ({
