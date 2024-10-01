@@ -17,13 +17,12 @@ import { filterArray } from '../shared';
 import {
     BadAndDoubtfulDebtsItems,
     DirectusSchema,
-    FinancialReportingDocumentsDirectus,
+    FinancialReportingDocumentsItemsDirectus,
     KeyCreditMetricsDirectus,
     PoolDelegateProfileAndHistoryDirectus,
     PoolOverviewDirectus,
-    PoolRepaymentDirectus,
-    RiskManagementDirectus,
-    RiskManagementItemDirectus,
+    PoolRepaymentItemsDirectus,
+    RiskManagementGroupDirectus,
 } from './directus-types';
 import {
     getAllTrancheConfigurationsQuery,
@@ -42,6 +41,7 @@ import {
 } from './subgraph-types';
 import {
     BadAndDoubtfulDebts,
+    FinancialReportingDocuments,
     LendingTotals,
     PoolCreditMetrics,
     PoolDelegateProfileAndHistory,
@@ -312,33 +312,69 @@ export class DataService {
     }
 
     async getRiskManagement(id_in?: string[]): Promise<RiskManagement[]> {
-        const resultDirectusRiskManagement: RiskManagementDirectus[] =
-            await this._directus.request(readItems('RiskManagement'));
-        const resultDirectusRiskManagementItem: RiskManagementItemDirectus[] =
-            await this._directus.request(readItems('RiskManagementItems'));
-        const retn: RiskManagement[] = [];
-        for (const riskManagementDirectus of resultDirectusRiskManagement) {
-            const items = resultDirectusRiskManagementItem.filter(
-                (r) => r.riskManagementFK == riskManagementDirectus.id,
-            );
-            const itemsList: RiskManagementItem[] = items.sort(
-                (a, b) => a.priority - b.priority,
-            );
-            retn.push({
-                id: riskManagementDirectus.id,
-                poolIdFK: riskManagementDirectus.poolIdFK.toLowerCase(),
-                items: itemsList,
+        const [
+            resultDirectusRiskManagement,
+            resultDirectusRiskManagementItem,
+            resultDirectusRiskManagementGroups,
+        ] = await Promise.all([
+            this._directus.request(readItems('RiskManagement')),
+            this._directus.request(readItems('RiskManagementItems')),
+            this._directus.request(readItems('RiskManagementGroups')),
+        ]);
+
+        const groupMapper: Partial<
+            Record<string, RiskManagementGroupDirectus>
+        > = resultDirectusRiskManagementGroups.reduce(
+            (acc, cur) => ({ ...acc, [cur.name]: cur }),
+            {},
+        );
+
+        const itemMapper: Partial<Record<string, RiskManagementItem>> =
+            resultDirectusRiskManagementItem.reduce((acc, cur) => {
+                const groupName = groupMapper[cur.group.key]?.name;
+
+                if (!groupName) return acc;
+
+                return {
+                    ...acc,
+                    [cur.name]: {
+                        ...cur,
+                        group: groupName,
+                    },
+                };
+            }, {});
+
+        const riskManagement = resultDirectusRiskManagement.map((risk) => {
+            const items = risk.riskManagementItems
+                .map((data) => {
+                    const { riskManagementItem, ...rest } = data;
+
+                    const item = itemMapper[riskManagementItem.key];
+
+                    if (!item) return null;
+
+                    return {
+                        ...rest,
+                        ...item,
+                    };
+                })
+                .filter((item) => item !== null);
+
+            return {
+                id: risk.id,
+                poolIdFK: risk.poolIdFK.toLowerCase(),
+                items,
                 riskPerformance: {
-                    id: riskManagementDirectus.id,
-                    firstLossCapital: riskManagementDirectus.firstLossCapital,
-                    poolLossRate: riskManagementDirectus.poolLossRate,
-                    independentRiskScore:
-                        riskManagementDirectus.independentRiskScore,
-                    communityRating: riskManagementDirectus.communityRating,
+                    id: risk.id,
+                    firstLossCapital: risk.firstLossCapital,
+                    poolLossRate: risk.poolLossRate,
+                    independentRiskScore: risk.independentRiskScore,
+                    communityRating: risk.communityRating,
                 },
-            });
-        }
-        return filterArray(retn, id_in);
+            };
+        });
+
+        return filterArray(riskManagement, id_in);
     }
 
     async getPoolDelegateProfileAndHistory(
@@ -480,20 +516,18 @@ export class DataService {
         const keyCreditMetricsMapper: Partial<
             Record<number, KeyCreditMetricsDirectus>
         > = keyCreditMetricsDirectus.reduce(
-            (acc, cur) => ({ ...acc, [cur.id]: cur }),
+            (acc, cur) => ({ ...acc, [cur.name]: cur }),
             {},
         );
 
-        const poolCreditMetrics = poolCreditMetricsDirectus
-            .map((pool) => {
-                if (!pool.keyCreditMetrics) return null;
-
+        const poolCreditMetrics = poolCreditMetricsDirectus.map((pool) => {
                 const metrics = pool.keyCreditMetrics
                     .map((data) => {
                         const { keyCreditMetric, ...metric } = data;
 
-                        const keyMetric =
-                            keyCreditMetricsMapper[keyCreditMetric.key];
+                    const keyMetric = keyCreditMetricsMapper[
+                        keyCreditMetric.key
+                    ] as KeyCreditMetricsDirectus | undefined;
 
                         if (!keyMetric) return null;
 
@@ -516,32 +550,65 @@ export class DataService {
 
     async getFinancialReportingDocuments(
         id_in?: string[],
-    ): Promise<FinancialReportingDocumentsDirectus[]> {
-        const financialReportingDocumentsDirectus: FinancialReportingDocumentsDirectus[] =
-            await this._directus.request(
-                readItems(
-                    'FinancialReportingDocuments',
-                    // @ts-ignore:next-line
-                    { fields: ['*', { documents: ['*'] }] },
-                ),
+    ): Promise<FinancialReportingDocuments[]> {
+        const [
+            financialReportingDocumentsDirectus,
+            financialReportingDocumentsItemsDirectus,
+        ] = await Promise.all([
+            this._directus.request(readItems('FinancialReportingDocuments')),
+            this._directus.request(
+                readItems('FinancialReportingDocumentsItems'),
+            ),
+        ]);
+
+        const documentItemsMapper: Partial<
+            Record<number, FinancialReportingDocumentsItemsDirectus>
+        > = financialReportingDocumentsItemsDirectus.reduce(
+            (acc, cur) => ({ ...acc, [cur.id]: cur }),
+            {},
             );
 
-        const mapDocumentFilePath = financialReportingDocumentsDirectus.map(
-            (report) => ({
-                ...report,
-                documents: report.documents.map((document) => ({
+        const mapDocumentFilePath = financialReportingDocumentsDirectus
+            .map((report) => {
+                if (!report.documents) return null;
+
+                const documents = report.documents
+                    .map((documentId) => {
+                        const document = documentItemsMapper[documentId];
+
+                        if (!document) return null;
+
+                        return {
                     ...document,
                     document: this.getUrlFromFile(document.document),
-                })),
-            }),
-        );
+                        };
+                    })
+                    .filter((document) => document !== null);
+
+                return {
+                    ...report,
+                    documents,
+                };
+            })
+            .filter((report) => report !== null);
 
         return filterArray(mapDocumentFilePath, id_in);
     }
 
     async getRepayments(id_in?: string[]): Promise<PoolRepayment[]> {
-        const poolRepaymentDirectus: PoolRepaymentDirectus[] =
-            await this._directus.request(readItems('PoolRepayments'));
+        const [poolRepaymentDirectus, poolRepaymentItemsDirectus] =
+            await Promise.all([
+                this._directus.request(readItems('PoolRepayments')),
+                this._directus.request(readItems('PoolRepaymentItems')),
+            ]);
+
+        const repaymentItemsMapper: Partial<
+            Record<number, PoolRepaymentItemsDirectus>
+        > = poolRepaymentItemsDirectus.reduce(
+            (acc, cur) => ({ ...acc, [cur.name]: cur }),
+            {},
+        );
+
         const lendingPoolsWithdrawalsAndDepositsSubgraph: LendingPoolWithdrawalAndDepositSubgraph =
             await this._graph.request(
                 getLendingPoolWithdrawalAndDepositsQuery,
@@ -549,27 +616,6 @@ export class DataService {
             );
         const retn: PoolRepayment[] = [];
         for (const data of poolRepaymentDirectus) {
-            const upcomingLendingFundsFlow_1_Value =
-                data.UpcomingLendingFundsFlow_1_Value &&
-                data.UpcomingLendingFundsFlow_1_Key
-                    ? data.UpcomingLendingFundsFlow_1_Value
-                    : 0.0;
-            const upcomingLendingFundsFlow_2_Value =
-                data.UpcomingLendingFundsFlow_2_Value &&
-                data.UpcomingLendingFundsFlow_2_Key
-                    ? data.UpcomingLendingFundsFlow_2_Value
-                    : 0.0;
-            const upcomingLendingFundsFlow_3_Value =
-                data.UpcomingLendingFundsFlow_3_Value &&
-                data.UpcomingLendingFundsFlow_3_Key
-                    ? data.UpcomingLendingFundsFlow_3_Value
-                    : 0.0;
-            const upcomingLendingFundsFlow_4_Value =
-                data.UpcomingLendingFundsFlow_4_Value &&
-                data.UpcomingLendingFundsFlow_4_Key
-                    ? data.UpcomingLendingFundsFlow_4_Value
-                    : 0.0;
-
             const lendingPoolSubgraph =
                 lendingPoolsWithdrawalsAndDepositsSubgraph.lendingPools.find(
                     (pool) => pool.id == data.poolIdFK,
@@ -582,10 +628,7 @@ export class DataService {
                 );
                 continue;
             }
-            const cumulativeDepositsAndWithdrawals_CumulativeWithdrawals =
-                lendingPoolSubgraph.totalWithdrawalsAccepted;
-            const cumulativeDepositsAndWithdrawals_CumulativeDeposits =
-                lendingPoolSubgraph.totalDepositsAccepted;
+
             const currentDepositRequests = parseFloat(
                 lendingPoolSubgraph.pendingPool.totalPendingDepositsAmount,
             );
@@ -598,143 +641,103 @@ export class DataService {
                 },
             );
 
-            const totalUpcomingFunds = {
-                label: 'Net Inflows/(Outflows)',
-                value: 0,
-            };
+            const cumulativeLendingAndWithdrawals =
+                data.CumulativeLendingAndWithdrawals.map((fund) => {
+                    let calculatedValue = 0;
 
-            const totalCumulativeFunds = {
-                label: 'Closing Loans Balance',
-                value: 0,
-            };
-
-            if (data.UpcomingLendingFundsFlow) {
-                totalUpcomingFunds.value = data.UpcomingLendingFundsFlow.reduce(
-                    (total, cur) => (total += cur.value),
-                    0,
-                );
-            }
-
-            if (data.CumulativeLendingFundsFlow) {
-                totalCumulativeFunds.value =
-                    data.CumulativeLendingFundsFlow.reduce(
-                        (total, cur) => (total += cur.value),
-                        0,
-                    );
-            }
-
-            const poolRepayment: PoolRepayment = {
-                id: data.id,
-                poolIdFK: data.poolIdFK.toLowerCase(),
-                currentTotalEndBorrowers: 0,
-                cumulativeLendingFundsFlow_InterestAccrued:
-                    data.CumulativeLendingFundsFlow_InterestAccrued,
-                cumulativeLendingFundsFlow_InterestPayments:
-                    data.CumulativeLendingFundsFlow_InterestPayments,
-                cumulativeLendingFundsFlow_LoansDrawn:
-                    data.CumulativeLendingFundsFlow_LoansDrawn,
-                cumulativeLendingFundsFlow_OpeningLoansBalance:
-                    data.CumulativeLendingFundsFlow_OpeningLoansBalance,
-                cumulativeLendingFundsFlow_PrincipalRepayments:
-                    data.CumulativeLendingFundsFlow_PrincipalRepayments,
-                cumulativeLendingFundsFlow_UnrealisedLosses:
-                    data.CumulativeLendingFundsFlow_UnrealisedLosses,
-                upcomingLendingFundsFlow_1_Key:
-                    data.UpcomingLendingFundsFlow_1_Key,
-                upcomingLendingFundsFlow_2_Key:
-                    data.UpcomingLendingFundsFlow_2_Key,
-                upcomingLendingFundsFlow_3_Key:
-                    data.UpcomingLendingFundsFlow_3_Key,
-                upcomingLendingFundsFlow_4_Key:
-                    data.UpcomingLendingFundsFlow_4_Key,
-                upcomingLendingFundsFlow_1_Value:
-                    upcomingLendingFundsFlow_1_Value,
-                upcomingLendingFundsFlow_2_Value:
-                    upcomingLendingFundsFlow_2_Value,
-                upcomingLendingFundsFlow_3_Value:
-                    upcomingLendingFundsFlow_3_Value,
-                upcomingLendingFundsFlow_4_Value:
-                    upcomingLendingFundsFlow_4_Value,
-                cumulativeLendingFundsFlow_ClosingLoansBalance:
-                    data.CumulativeLendingFundsFlow_InterestAccrued +
-                    data.CumulativeLendingFundsFlow_InterestPayments +
-                    data.CumulativeLendingFundsFlow_LoansDrawn +
-                    data.CumulativeLendingFundsFlow_OpeningLoansBalance +
-                    data.CumulativeLendingFundsFlow_PrincipalRepayments +
-                    data.CumulativeLendingFundsFlow_UnrealisedLosses,
-                upcomingLendingFundsFlow_NetInflows:
-                    upcomingLendingFundsFlow_1_Value +
-                    upcomingLendingFundsFlow_2_Value +
-                    upcomingLendingFundsFlow_3_Value +
-                    upcomingLendingFundsFlow_4_Value,
-                cumulativeDepositsAndWithdrawals_NetDeposits:
-                    parseFloat(
-                        cumulativeDepositsAndWithdrawals_CumulativeDeposits,
-                    ) -
-                    parseFloat(
-                        cumulativeDepositsAndWithdrawals_CumulativeWithdrawals,
-                    ),
-                cumulativeDepositsAndWithdrawals_CumulativeWithdrawals:
-                    parseFloat(
-                        cumulativeDepositsAndWithdrawals_CumulativeWithdrawals,
-                    ),
-                cumulativeDepositsAndWithdrawals_CumulativeDeposits: parseFloat(
-                    cumulativeDepositsAndWithdrawals_CumulativeDeposits,
-                ),
-                depositAndWithdrawalRequests_NetDeposits:
-                    currentDepositRequests - sumTotalPendingWithdrawalShares,
-                depositAndWithdrawalRequests_CurrentDepositsRequests:
-                    currentDepositRequests,
-                depositAndWithdrawalRequests_CurrentWithdrawalRequests:
-                    sumTotalPendingWithdrawalShares,
-                repaymentsFileUrl: this.getUrlFromFile(data.repaymentsFile),
-                upcomingLendingFundsFlow: data.UpcomingLendingFundsFlow
-                    ? [totalUpcomingFunds, ...data.UpcomingLendingFundsFlow]
-                    : [totalUpcomingFunds],
-                cumulativeLendingFundsFlow: data.CumulativeLendingFundsFlow
-                    ? [totalCumulativeFunds, ...data.CumulativeLendingFundsFlow]
-                    : [totalCumulativeFunds],
-                cumulativeLendingAndWithdrawals: [
-                    {
-                        label: 'Net Lending/(Lending Withdrawals)',
-                        value:
+                    if (fund.key === 'netLendingWithdrawals') {
+                        calculatedValue =
                             parseFloat(
                                 lendingPoolSubgraph.totalDepositsAccepted,
                             ) -
                             parseFloat(
                                 lendingPoolSubgraph.totalWithdrawalsAccepted,
-                            ),
-                    },
-                    {
-                        label: 'Cumulative Lending',
-                        value: parseFloat(
+                            );
+                    }
+
+                    if (fund.key === 'cumulativeLending') {
+                        calculatedValue = parseFloat(
                             lendingPoolSubgraph.totalDepositsAccepted,
-                        ),
-                    },
-                    {
-                        label: 'Cumulative Lending Withdrawals',
-                        value: parseFloat(
+                        );
+                    }
+
+                    if (fund.key === 'cumulativeLendingWithdrawals') {
+                        calculatedValue = parseFloat(
                             lendingPoolSubgraph.totalWithdrawalsAccepted,
-                        ),
-                    },
-                ],
-                lendingAndWithdrawalRequests: [
-                    {
-                        label: 'Net Lending/(Withdrawal Requests)',
-                        value:
+                        );
+                    }
+
+                    const repaymentItem = repaymentItemsMapper[
+                        fund.repaymentItem.key
+                    ] as PoolRepaymentItemsDirectus;
+
+                    return {
+                        value: fund.value ?? calculatedValue,
+                        ...repaymentItem,
+                    };
+                });
+
+            const lendingAndWithdrawalRequests =
+                data.LendingAndWithdrawalRequests.map((fund) => {
+                    let calculatedValue = 0;
+
+                    if (fund.key === 'netLendingWithdrawalRequests') {
+                        calculatedValue =
                             currentDepositRequests -
-                            sumTotalPendingWithdrawalShares,
+                            sumTotalPendingWithdrawalShares;
+                    }
+
+                    if (fund.key === 'currentLendingRequests') {
+                        calculatedValue = currentDepositRequests;
+                    }
+
+                    if (fund.key === 'currentLendingWithdrawalRequests') {
+                        calculatedValue = sumTotalPendingWithdrawalShares;
+                    }
+
+                    const repaymentItem = repaymentItemsMapper[
+                        fund.repaymentItem.key
+                    ] as PoolRepaymentItemsDirectus;
+
+                    return {
+                        value: fund.value ?? calculatedValue,
+                        ...repaymentItem,
+                    };
+                });
+
+            const poolRepayment: PoolRepayment = {
+                id: data.id,
+                poolIdFK: data.poolIdFK.toLowerCase(),
+                currentTotalEndBorrowers: data.currentTotalEndBorrowers,
+                repaymentsFileUrl: this.getUrlFromFile(data.repaymentsFile),
+                upcomingLendingFundsFlow: data.UpcomingLendingFundsFlow.map(
+                    (fund) => {
+                        const repaymentItem = repaymentItemsMapper[
+                            fund.repaymentItem.key
+                        ] as PoolRepaymentItemsDirectus;
+
+                        return {
+                            value: fund.value,
+                            ...repaymentItem,
+                        };
                     },
-                    {
-                        label: 'Current Lending Requests',
-                        value: currentDepositRequests,
+                ),
+                cumulativeLendingFundsFlow: data.CumulativeLendingFundsFlow.map(
+                    (fund) => {
+                        const repaymentItem = repaymentItemsMapper[
+                            fund.repaymentItem.key
+                        ] as PoolRepaymentItemsDirectus;
+
+                        return {
+                            value: fund.value,
+                            ...repaymentItem,
+                        };
                     },
-                    {
-                        label: 'Current Lending Withdrawal Requests',
-                        value: sumTotalPendingWithdrawalShares,
-                    },
-                ],
+                ),
+                cumulativeLendingAndWithdrawals,
+                lendingAndWithdrawalRequests,
             };
+
             retn.push(poolRepayment);
         }
         return filterArray(retn, id_in);

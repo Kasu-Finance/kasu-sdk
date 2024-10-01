@@ -62,13 +62,10 @@ export interface RiskManagement {
 }
 
 export interface RiskManagementItem {
-    id: string;
-    title: string;
-    tooltip: string;
     description: string;
+    name: string;
     group: string;
-    priority: number;
-    riskManagementFK: string;
+    tooltip: string;
 }
 
 export interface RiskPerformance {
@@ -88,6 +85,20 @@ export interface TrancheData {
     poolCapacityPercentage: string;
     name: string;
     interestRate: string;
+}
+
+export interface FinancialReportingDocuments {
+    id: string;
+    poolIdFK: string;
+    documents: {
+        id: number;
+        date_created: string;
+        name: string;
+        description: string;
+        document: string;
+        version: number;
+        financialReportingDocumentsFK: string;
+    }[];
 }
 
 export interface PoolCreditMetrics {
@@ -119,43 +130,25 @@ export interface PoolRepayment {
     id: string;
     poolIdFK: string;
     currentTotalEndBorrowers: number;
-    cumulativeLendingFundsFlow_ClosingLoansBalance: number;
-    cumulativeLendingFundsFlow_InterestAccrued: number;
-    cumulativeLendingFundsFlow_InterestPayments: number;
-    cumulativeLendingFundsFlow_LoansDrawn: number;
-    cumulativeLendingFundsFlow_OpeningLoansBalance: number;
-    cumulativeLendingFundsFlow_PrincipalRepayments: number;
-    cumulativeLendingFundsFlow_UnrealisedLosses: number;
-    upcomingLendingFundsFlow_NetInflows: number;
-    upcomingLendingFundsFlow_1_Key: string | null;
-    upcomingLendingFundsFlow_1_Value: number;
-    upcomingLendingFundsFlow_2_Key: string | null;
-    upcomingLendingFundsFlow_2_Value: number;
-    upcomingLendingFundsFlow_3_Key: string | null;
-    upcomingLendingFundsFlow_3_Value: number;
-    upcomingLendingFundsFlow_4_Key: string | null;
-    upcomingLendingFundsFlow_4_Value: number;
-    cumulativeDepositsAndWithdrawals_NetDeposits: number;
-    cumulativeDepositsAndWithdrawals_CumulativeWithdrawals: number;
-    cumulativeDepositsAndWithdrawals_CumulativeDeposits: number;
-    depositAndWithdrawalRequests_NetDeposits: number;
-    depositAndWithdrawalRequests_CurrentDepositsRequests: number;
-    depositAndWithdrawalRequests_CurrentWithdrawalRequests: number;
     repaymentsFileUrl: string;
     upcomingLendingFundsFlow: {
-        label: string;
+        tooltip: string;
+        name: string;
         value: number;
     }[];
     cumulativeLendingFundsFlow: {
-        label: string;
+        tooltip: string;
+        name: string;
         value: number;
     }[];
     cumulativeLendingAndWithdrawals: {
-        label: string;
+        tooltip: string;
+        name: string;
         value: number;
     }[];
     lendingAndWithdrawalRequests: {
-        label: string;
+        tooltip: string;
+        name: string;
         value: number;
     }[];
 }

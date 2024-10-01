@@ -3,10 +3,13 @@ export interface DirectusSchema {
     PoolDelegateProfileAndHistory: PoolDelegateProfileAndHistoryDirectus[];
     RiskManagement: RiskManagementDirectus[];
     RiskManagementItems: RiskManagementItemDirectus[];
+    RiskManagementGroups: RiskManagementGroupDirectus[];
     PoolCreditMetrics: PoolCreditMetricsDirectus[];
     BadAndDoubtfulDebts: BadAndDoubtfulDebtsDirectus[];
     FinancialReportingDocuments: FinancialReportingDocumentsDirectus[];
+    FinancialReportingDocumentsItems: FinancialReportingDocumentsItemsDirectus[];
     PoolRepayments: PoolRepaymentDirectus[];
+    PoolRepaymentItems: PoolRepaymentItemsDirectus[];
     KeyCreditMetrics: KeyCreditMetricsDirectus[];
     BadAndDoubtfulDebtsItems: BadAndDoubtfulDebtsItems[];
 }
@@ -54,36 +57,43 @@ export interface RiskManagementDirectus {
     poolLossRate: number;
     independentRiskScore: number;
     communityRating: number;
+    riskManagementItems: {
+        riskManagementItem: {
+            key: string;
+            collection: string;
+        };
+        description: string;
+    }[];
 }
 
 export interface RiskManagementItemDirectus {
-    id: string;
-    title: string;
+    name: string;
+    group: {
+        key: string;
+        collection: string;
+    };
     tooltip: string;
-    description: string;
-    group: string;
-    priority: number;
-    riskManagementFK: string;
+}
+
+export interface RiskManagementGroupDirectus {
+    name: string;
 }
 
 export interface PoolCreditMetricsDirectus {
     id: string;
     poolIdFK: string;
-    keyCreditMetrics:
-        | {
-              keyCreditMetric: {
-                  key: number;
-                  collection: string;
-              };
-              mostRecentQuarter: number;
-              previousFiscalYear: number;
-              priorMonth: number;
-          }[]
-        | null;
+    keyCreditMetrics: {
+        keyCreditMetric: {
+            key: string;
+            collection: string;
+        };
+        mostRecentQuarter: number;
+        previousFiscalYear: number;
+        priorMonth: number;
+    }[];
 }
 
 export interface KeyCreditMetricsDirectus {
-    id: number;
     name: string;
     tooltip?: string;
     unit: string;
@@ -124,26 +134,46 @@ export interface FinancialReportingDocumentsItemsDirectus {
 export interface FinancialReportingDocumentsDirectus {
     id: string;
     poolIdFK: string;
-    documents: FinancialReportingDocumentsItemsDirectus[];
+    documents: number[] | null;
+}
+
+export interface PoolRepaymentItemsDirectus {
+    name: string;
+    tooltip: string;
 }
 export interface PoolRepaymentDirectus {
     id: string;
     poolIdFK: string;
-    CumulativeLendingFundsFlow_InterestAccrued: number;
-    CumulativeLendingFundsFlow_InterestPayments: number;
-    CumulativeLendingFundsFlow_LoansDrawn: number;
-    CumulativeLendingFundsFlow_OpeningLoansBalance: number;
-    CumulativeLendingFundsFlow_PrincipalRepayments: number;
-    CumulativeLendingFundsFlow_UnrealisedLosses: number;
-    UpcomingLendingFundsFlow_1_Key: string | null;
-    UpcomingLendingFundsFlow_1_Value: number | null;
-    UpcomingLendingFundsFlow_2_Key: string | null;
-    UpcomingLendingFundsFlow_2_Value: number | null;
-    UpcomingLendingFundsFlow_3_Key: string | null;
-    UpcomingLendingFundsFlow_3_Value: number | null;
-    UpcomingLendingFundsFlow_4_Key: string | null;
-    UpcomingLendingFundsFlow_4_Value: number | null;
     repaymentsFile: string;
-    UpcomingLendingFundsFlow: { label: string; value: number }[] | null;
-    CumulativeLendingFundsFlow: { label: string; value: number }[] | null;
+    currentTotalEndBorrowers: number;
+    UpcomingLendingFundsFlow: {
+        repaymentItem: {
+            key: string;
+            collection: string;
+        };
+        value: number;
+    }[];
+    CumulativeLendingFundsFlow: {
+        repaymentItem: {
+            key: string;
+            collection: string;
+        };
+        value: number;
+    }[];
+    CumulativeLendingAndWithdrawals: {
+        repaymentItem: {
+            key: string;
+            collection: string;
+        };
+        value?: number;
+        key?: string;
+    }[];
+    LendingAndWithdrawalRequests: {
+        repaymentItem: {
+            key: string;
+            collection: string;
+        };
+        value?: number;
+        key?: string;
+    }[];
 }
