@@ -602,7 +602,7 @@ export class DataService {
             ]);
 
         const repaymentItemsMapper: Partial<
-            Record<number, PoolRepaymentItemsDirectus>
+            Record<string, PoolRepaymentItemsDirectus>
         > = poolRepaymentItemsDirectus.reduce(
             (acc, cur) => ({ ...acc, [cur.name]: cur }),
             {},
