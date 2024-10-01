@@ -521,29 +521,28 @@ export class DataService {
         );
 
         const poolCreditMetrics = poolCreditMetricsDirectus.map((pool) => {
-                const metrics = pool.keyCreditMetrics
-                    .map((data) => {
-                        const { keyCreditMetric, ...metric } = data;
+            const metrics = pool.keyCreditMetrics
+                .map((data) => {
+                    const { keyCreditMetric, ...metric } = data;
 
                     const keyMetric = keyCreditMetricsMapper[
                         keyCreditMetric.key
                     ] as KeyCreditMetricsDirectus | undefined;
 
-                        if (!keyMetric) return null;
+                    if (!keyMetric) return null;
 
-                        return {
-                            ...metric,
-                            keyCreditMetric: keyMetric,
-                        };
-                    })
-                    .filter((metric) => metric !== null);
+                    return {
+                        ...metric,
+                        keyCreditMetric: keyMetric,
+                    };
+                })
+                .filter((metric) => metric !== null);
 
-                return {
-                    ...pool,
-                    keyCreditMetrics: metrics,
-                };
-            })
-            .filter((pool) => pool !== null);
+            return {
+                ...pool,
+                keyCreditMetrics: metrics,
+            };
+        });
 
         return filterArray(poolCreditMetrics, id_in);
     }
@@ -566,7 +565,7 @@ export class DataService {
         > = financialReportingDocumentsItemsDirectus.reduce(
             (acc, cur) => ({ ...acc, [cur.id]: cur }),
             {},
-            );
+        );
 
         const mapDocumentFilePath = financialReportingDocumentsDirectus
             .map((report) => {
@@ -579,8 +578,8 @@ export class DataService {
                         if (!document) return null;
 
                         return {
-                    ...document,
-                    document: this.getUrlFromFile(document.document),
+                            ...document,
+                            document: this.getUrlFromFile(document.document),
                         };
                     })
                     .filter((document) => document !== null);
