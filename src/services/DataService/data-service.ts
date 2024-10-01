@@ -525,9 +525,8 @@ export class DataService {
                 .map((data) => {
                     const { keyCreditMetric, ...metric } = data;
 
-                    const keyMetric = keyCreditMetricsMapper[
-                        keyCreditMetric.key
-                    ] as KeyCreditMetricsDirectus | undefined;
+                    const keyMetric =
+                        keyCreditMetricsMapper[keyCreditMetric.key];
 
                     if (!keyMetric) return null;
 
@@ -666,15 +665,16 @@ export class DataService {
                         );
                     }
 
-                    const repaymentItem = repaymentItemsMapper[
-                        fund.repaymentItem.key
-                    ] as PoolRepaymentItemsDirectus;
+                    const repaymentItem =
+                        repaymentItemsMapper[fund.repaymentItem.key];
+
+                    if (!repaymentItem) return null;
 
                     return {
                         value: fund.value ?? calculatedValue,
                         ...repaymentItem,
                     };
-                });
+                }).filter((item) => item !== null);
 
             const lendingAndWithdrawalRequests =
                 data.LendingAndWithdrawalRequests.map((fund) => {
@@ -694,15 +694,16 @@ export class DataService {
                         calculatedValue = sumTotalPendingWithdrawalShares;
                     }
 
-                    const repaymentItem = repaymentItemsMapper[
-                        fund.repaymentItem.key
-                    ] as PoolRepaymentItemsDirectus;
+                    const repaymentItem =
+                        repaymentItemsMapper[fund.repaymentItem.key];
+
+                    if (!repaymentItem) return null;
 
                     return {
                         value: fund.value ?? calculatedValue,
                         ...repaymentItem,
                     };
-                });
+                }).filter((item) => item !== null);
 
             const poolRepayment: PoolRepayment = {
                 id: data.id,
@@ -711,28 +712,30 @@ export class DataService {
                 repaymentsFileUrl: this.getUrlFromFile(data.repaymentsFile),
                 upcomingLendingFundsFlow: data.UpcomingLendingFundsFlow.map(
                     (fund) => {
-                        const repaymentItem = repaymentItemsMapper[
-                            fund.repaymentItem.key
-                        ] as PoolRepaymentItemsDirectus;
+                        const repaymentItem =
+                            repaymentItemsMapper[fund.repaymentItem.key];
+
+                        if (!repaymentItem) return null;
 
                         return {
                             value: fund.value,
                             ...repaymentItem,
                         };
                     },
-                ),
+                ).filter((item) => item !== null),
                 cumulativeLendingFundsFlow: data.CumulativeLendingFundsFlow.map(
                     (fund) => {
-                        const repaymentItem = repaymentItemsMapper[
-                            fund.repaymentItem.key
-                        ] as PoolRepaymentItemsDirectus;
+                        const repaymentItem =
+                            repaymentItemsMapper[fund.repaymentItem.key];
+
+                        if (!repaymentItem) return null;
 
                         return {
                             value: fund.value,
                             ...repaymentItem,
                         };
                     },
-                ),
+                ).filter((item) => item !== null),
                 cumulativeLendingAndWithdrawals,
                 lendingAndWithdrawalRequests,
             };
