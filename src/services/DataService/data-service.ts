@@ -514,7 +514,7 @@ export class DataService {
             ]);
 
         const keyCreditMetricsMapper: Partial<
-            Record<number, KeyCreditMetricsDirectus>
+            Record<string, KeyCreditMetricsDirectus>
         > = keyCreditMetricsDirectus.reduce(
             (acc, cur) => ({ ...acc, [cur.name]: cur }),
             {},
