@@ -6,13 +6,13 @@ import {
   TableRow,
   Typography,
 } from '@mui/material'
-import { FinancialReportingDocumentsItemsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import React from 'react'
 
 import ActionCell from '@/components/molecules/risk/ReportingTable/ActionCell'
 
 import dayjs from '@/dayjs'
 import { formatAmount, formatTimestamp } from '@/utils'
+import { FinancialReportingDocuments } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:last-child': {
@@ -35,7 +35,7 @@ const CircularTypography = styled(Typography)(({ theme }) => ({
 }))
 
 interface ReportingTableRowProps {
-  data: FinancialReportingDocumentsItemsDirectus
+  data: FinancialReportingDocuments['documents'][number]
   index: number
 }
 

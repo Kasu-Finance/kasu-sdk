@@ -1,15 +1,15 @@
-import { FinancialReportingDocumentsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
 import { FIVE_MINUTES } from '@/constants/general'
+import { FinancialReportingDocuments } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 const useFinancialReporting = (poolId: string) => {
   const sdk = useKasuSDK()
 
   const fetchFinancialReporting =
-    async (): Promise<FinancialReportingDocumentsDirectus> => {
+    async (): Promise<FinancialReportingDocuments> => {
       const data = await sdk.DataService.getFinancialReportingDocuments()
       if (!data?.length)
         throw new Error('No data available for financial reporting documents')
