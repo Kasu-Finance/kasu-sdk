@@ -10,7 +10,7 @@ import useTranslation from '@/hooks/useTranslation'
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
-import CustomTableTest from '@/components/molecules/CustomTableTest'
+import CustomTable from '@/components/molecules/CustomTable'
 import FinancialReportingDocumentsTableBody from '@/components/organisms/lending/RiskReportingTab/FinancialReportingDocuments/FinancialReportingDocumentsTableBody'
 import FinancialReportingDocumentsTableHeader from '@/components/organisms/lending/RiskReportingTab/FinancialReportingDocuments/FinancialReportingDocumentsTableHeader'
 
@@ -37,7 +37,7 @@ const FinancialReportingDocuments: React.FC<
       <CustomCardHeader title={t('risk.reporting.title')} />
       <CustomInnerCardContent sx={{ p: 0 }}>
         <Stack alignItems='center' pb={2}>
-          <CustomTableTest
+          <CustomTable
             tableHeader={<FinancialReportingDocumentsTableHeader />}
             tableBody={
               <FinancialReportingDocumentsTableBody

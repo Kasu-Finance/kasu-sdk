@@ -3,7 +3,7 @@
 import usePortfolioRewards from '@/hooks/portfolio/usePortfolioRewards'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
-import CustomTableTest from '@/components/molecules/CustomTableTest'
+import CustomTable from '@/components/molecules/CustomTable'
 import BonusAndRewardSkeleton from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/BonusAndRewardSkeleton'
 import BonusAndRewardTableBody from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/BonusAndRewardTableBody'
 import BonusAndRewardTableHeader from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/BonusAndRewardTableHeader'
@@ -19,7 +19,7 @@ const BonusAndRewardTable = () => {
   if (!portfolioRewards) return null
 
   return (
-    <CustomTableTest
+    <CustomTable
       tableHeader={<BonusAndRewardTableHeader />}
       tableBody={
         <BonusAndRewardTableBody

@@ -6,7 +6,7 @@ import React from 'react'
 
 import usePagination from '@/hooks/usePagination'
 
-import CustomTableTest from '@/components/molecules/CustomTableTest'
+import CustomTable from '@/components/molecules/CustomTable'
 import UserRewardsTableHeader from '@/components/organisms/locking/UserRewards/UserRewardsTableHeader'
 import UserRewardsTableRow from '@/components/organisms/locking/UserRewards/UserRewardsTableRow'
 
@@ -27,7 +27,7 @@ const UserRewardsTable: React.FC<UserRewardsTableProps> = ({
   )
 
   return (
-    <CustomTableTest
+    <CustomTable
       tableHeader={<UserRewardsTableHeader />}
       tableBody={[...paginateData(userLocks)].map((userLock) => (
         <UserRewardsTableRow

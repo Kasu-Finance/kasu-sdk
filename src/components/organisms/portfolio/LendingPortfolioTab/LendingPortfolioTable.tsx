@@ -7,7 +7,7 @@ import usePagination from '@/hooks/usePagination'
 
 import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
 import NoMatchingFilter from '@/components/atoms/NoMatchingFilter'
-import CustomTableTest from '@/components/molecules/CustomTableTest'
+import CustomTable from '@/components/molecules/CustomTable'
 import LendingPortfolioTableHeader from '@/components/organisms/portfolio/LendingPortfolioTab/LendingPortfolioTableHeader'
 import LendingPortfolioTableRow from '@/components/organisms/portfolio/LendingPortfolioTab/LendingPortfolioTableRow'
 
@@ -34,7 +34,7 @@ const LendingPortfolioTable: React.FC<LendingPortfolioTableProps> = ({
   )
 
   return (
-    <CustomTableTest
+    <CustomTable
       tableHeader={<LendingPortfolioTableHeader />}
       tableBody={
         filteredPools.length ? (

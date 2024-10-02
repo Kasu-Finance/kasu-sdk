@@ -2,7 +2,7 @@ import React from 'react'
 
 import usePagination from '@/hooks/usePagination'
 
-import CustomTableTest from '@/components/molecules/CustomTableTest'
+import CustomTable from '@/components/molecules/CustomTable'
 import ActivePoolTableHeader from '@/components/organisms/home/PoolTable/ActivePoolTableHeader'
 import ClosedPoolTableHeader from '@/components/organisms/home/PoolTable/ClosedPoolTableHeader'
 import PoolTableBody from '@/components/organisms/home/PoolTable/PoolTableBody'
@@ -22,7 +22,7 @@ const PoolTable: React.FC<PoolTableProps> = ({ pools }) => {
   )
 
   return (
-    <CustomTableTest
+    <CustomTable
       tableHeader={
         pools[0].isActive ? (
           <ActivePoolTableHeader />

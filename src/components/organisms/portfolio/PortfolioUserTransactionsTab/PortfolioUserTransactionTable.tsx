@@ -6,7 +6,7 @@ import usePagination from '@/hooks/usePagination'
 
 import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
 import NoMatchingFilter from '@/components/atoms/NoMatchingFilter'
-import CustomTableTest from '@/components/molecules/CustomTableTest'
+import CustomTable from '@/components/molecules/CustomTable'
 import PortfolioUserTransactionTableBody from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/PortfolioUserTransactionTableBody'
 import PortfolioUserTransactionsTableHeader from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/PortfolioUserTransactionTableHeader'
 
@@ -41,7 +41,7 @@ const PortfolioUserTransactionTable: React.FC<
   )
 
   return (
-    <CustomTableTest
+    <CustomTable
       tableHeader={<PortfolioUserTransactionsTableHeader />}
       tableBody={
         filteredData.length ? (

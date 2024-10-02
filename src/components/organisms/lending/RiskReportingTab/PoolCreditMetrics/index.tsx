@@ -6,7 +6,7 @@ import useTranslation from '@/hooks/useTranslation'
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
-import CustomTableTest from '@/components/molecules/CustomTableTest'
+import CustomTable from '@/components/molecules/CustomTable'
 import PoolCreditMetricsTableBody from '@/components/organisms/lending/RiskReportingTab/PoolCreditMetrics/PoolCreditMetricsTableBody'
 import PoolCreditMetricsTableHeader from '@/components/organisms/lending/RiskReportingTab/PoolCreditMetrics/PoolCreditMetricsTableHeader'
 
@@ -23,7 +23,7 @@ const PoolCreditMetrics: React.FC<PoolCreditMetricsProps> = async ({
     <CustomCard>
       <CustomCardHeader title={t('risk.poolCredit.title')} />
       <CustomInnerCardContent sx={{ p: 0 }}>
-        <CustomTableTest
+        <CustomTable
           tableHeader={<PoolCreditMetricsTableHeader />}
           tableBody={
             <PoolCreditMetricsTableBody poolCreditMetrics={poolCreditMetrics} />

@@ -6,7 +6,7 @@ import useTranslation from '@/hooks/useTranslation'
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
-import CustomTableTest from '@/components/molecules/CustomTableTest'
+import CustomTable from '@/components/molecules/CustomTable'
 import BadAndDoubtfulDebtsTableBody from '@/components/organisms/lending/RiskReportingTab/BadAndDoubtfulDebts/BadAndDoubtfulDebtsTableBody'
 import BadAndDoubtfulDebtsTableHeader from '@/components/organisms/lending/RiskReportingTab/BadAndDoubtfulDebts/BadAndDoubtfulDebtsTableHeader'
 
@@ -23,7 +23,7 @@ const BadAndDoubtfulDebts: React.FC<BadAndDoubtfulDebtsProps> = ({
     <CustomCard>
       <CustomCardHeader title={t('risk.badDebts.title')} />
       <CustomInnerCardContent sx={{ p: 0 }}>
-        <CustomTableTest
+        <CustomTable
           tableHeader={<BadAndDoubtfulDebtsTableHeader />}
           tableBody={
             <BadAndDoubtfulDebtsTableBody

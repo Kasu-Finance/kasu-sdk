@@ -4,7 +4,7 @@ import useTranslation from '@/hooks/useTranslation'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
 import UnorderedList from '@/components/atoms/UnorderedList'
-import CustomTableTest from '@/components/molecules/CustomTableTest'
+import CustomTable from '@/components/molecules/CustomTable'
 import Subheading from '@/components/organisms/termsAndConditions/Subheading'
 
 import { customTypography } from '@/themes/typography'
@@ -62,7 +62,7 @@ const TrancheAllocation = () => {
         <Typography variant='h6'>
           {t('modals.termsAndConditions.subheader-7.sub-subheader-2')}
         </Typography>
-        <CustomTableTest
+        <CustomTable
           tableHeader={
             <TableRow>
               <TableCell width='33.33%'>{t('general.tranche')}</TableCell>
@@ -132,7 +132,7 @@ const TrancheAllocation = () => {
         <Typography variant='h6'>
           {t('modals.termsAndConditions.subheader-7.description-2')}
         </Typography>
-        <CustomTableTest
+        <CustomTable
           tableHeader={
             <TableRow>
               <TableCell width='33.33%'>{t('general.tranche')}</TableCell>

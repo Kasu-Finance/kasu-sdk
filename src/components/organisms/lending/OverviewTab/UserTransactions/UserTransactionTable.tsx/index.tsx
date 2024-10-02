@@ -8,7 +8,7 @@ import usePagination from '@/hooks/usePagination'
 
 import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
 import NoMatchingFilter from '@/components/atoms/NoMatchingFilter'
-import CustomTableTest from '@/components/molecules/CustomTableTest'
+import CustomTable from '@/components/molecules/CustomTable'
 import UserTransactionTableBody from '@/components/organisms/lending/OverviewTab/UserTransactions/UserTransactionTable.tsx/UserTransactionTableBody'
 import UserTransactionTableHeader from '@/components/organisms/lending/OverviewTab/UserTransactions/UserTransactionTable.tsx/UserTransactionTableHeader'
 
@@ -41,7 +41,7 @@ const UserTransactionTable: React.FC<UserTransactionTableProps> = ({
   )
 
   return (
-    <CustomTableTest
+    <CustomTable
       tableHeader={<UserTransactionTableHeader />}
       tableBody={
         filteredData.length ? (

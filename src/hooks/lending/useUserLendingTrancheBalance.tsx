@@ -15,7 +15,7 @@ const useUserLendingTrancheBalance = (pool: PoolOverviewWithDelegate) => {
   const sdk = useKasuSDK()
 
   const { data, error, isLoading } = useSWR(
-    account ? ['userLendingTrancheBalanceTest', account, pool] : null,
+    account ? ['userLendingTrancheBalance', account, pool] : null,
     async ([_, userId]) =>
       Promise.all(
         pool.tranches.map(async (tranche) => ({
