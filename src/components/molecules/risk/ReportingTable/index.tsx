@@ -1,4 +1,5 @@
 import { Box, Card, CardContent, CardHeader, Typography } from '@mui/material'
+import { FinancialReportingDocuments } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
@@ -7,7 +8,6 @@ import CustomTable, {
   CustomTableHeader,
 } from '@/components/molecules/CustomTable'
 import ReportingTableRow from '@/components/molecules/risk/ReportingTable/ReportingTableRow'
-import { FinancialReportingDocuments } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 interface ReportingTableProps {
   data: FinancialReportingDocuments['documents']

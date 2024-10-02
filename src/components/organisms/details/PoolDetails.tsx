@@ -46,7 +46,9 @@ const PoolDetails: React.FC = () => {
 
   return (
     <Box>
-      {delegateHook.data && <PoolDelegateCard data={delegateHook.data} />}
+      {delegateHook.data && (
+        <PoolDelegateCard data={delegateHook.data} poolId={poolId} />
+      )}
       {overviewHook.data?.length && (
         <PoolDetailsCard data={overviewHook.data[0]} />
       )}

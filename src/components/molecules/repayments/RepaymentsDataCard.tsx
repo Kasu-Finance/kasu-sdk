@@ -1,13 +1,13 @@
 import { Box, BoxProps, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import ContentWithSuffix from '@/components/atoms/ContentWithSuffix'
 import InfoColumn from '@/components/atoms/InfoColumn'
 import InfoRow from '@/components/atoms/InfoRow'
 import TokenAmount from '@/components/atoms/TokenAmount'
-import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
+
 import { formatAmount } from '@/utils'
 
 type RepaymentsDataCardProps = BoxProps & {
@@ -28,8 +28,6 @@ const RepaymentsDataCard: React.FC<RepaymentsDataCardProps> = ({
   unit,
   ...rest
 }) => {
-  const { t } = useTranslation()
-
   const currentDevice = useDeviceDetection()
   const isMobile = currentDevice === Device.MOBILE
 

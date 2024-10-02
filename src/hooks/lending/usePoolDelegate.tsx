@@ -32,7 +32,9 @@ function usePoolDelegate(poolId?: string | undefined): unknown {
 
   // Filter the results by poolId if provided, otherwise, return all results
   if (poolId && data) {
-    filteredData = data.find((item) => item.poolIdFK === poolId)
+    filteredData = data.find((item) =>
+      item.otherKASUPools.find((otherPool) => otherPool.id === poolId)
+    )
 
     // Handling case when no matching data is found for the provided poolId
     if (!filteredData) {

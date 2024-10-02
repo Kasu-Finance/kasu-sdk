@@ -73,8 +73,8 @@ const ClosedPoolsTable: React.FC<ClosedPoolsTableProps> = ({
     }
 
     return pools.map((pool) => {
-      const delegate = poolDelegates.find(
-        (delegate) => delegate.poolIdFK === pool.id
+      const delegate = poolDelegates.find((delegate) =>
+        delegate.otherKASUPools.find((otherPool) => otherPool.id === pool.id)
       )
 
       return {

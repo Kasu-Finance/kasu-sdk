@@ -7,7 +7,8 @@ import formatPercentage from '@/utils/formats/formatPercentage'
 import { PoolMetric } from '@/types/lending'
 
 const convertToPoolDelegate = (
-  delegateProfile: PoolDelegateProfileAndHistory
+  delegateProfile: PoolDelegateProfileAndHistory,
+  poolId: string
 ): PoolMetric[] => [
   {
     id: PoolDelegateMetricIds.History,
@@ -32,7 +33,9 @@ const convertToPoolDelegate = (
   },
   {
     id: PoolDelegateMetricIds.OtherPools,
-    content: delegateProfile.otherKASUPools,
+    content: delegateProfile.otherKASUPools.filter(
+      (otherPools) => otherPools.id !== poolId
+    ),
   },
   {
     id: PoolDelegateMetricIds.Loans,

@@ -1,9 +1,9 @@
+import { FinancialReportingDocuments } from '@solidant/kasu-sdk/src/services/DataService/types'
 import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
 import { FIVE_MINUTES } from '@/constants/general'
-import { FinancialReportingDocuments } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 const useFinancialReporting = (poolId: string) => {
   const sdk = useKasuSDK()

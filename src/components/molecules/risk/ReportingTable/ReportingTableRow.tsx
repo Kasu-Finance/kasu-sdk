@@ -6,13 +6,13 @@ import {
   TableRow,
   Typography,
 } from '@mui/material'
+import { FinancialReportingDocuments } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
 import ActionCell from '@/components/molecules/risk/ReportingTable/ActionCell'
 
 import dayjs from '@/dayjs'
 import { formatAmount, formatTimestamp } from '@/utils'
-import { FinancialReportingDocuments } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:last-child': {
