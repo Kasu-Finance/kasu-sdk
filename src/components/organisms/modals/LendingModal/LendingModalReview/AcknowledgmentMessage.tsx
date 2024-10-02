@@ -5,6 +5,8 @@ import useTranslation from '@/hooks/useTranslation'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
+import { Routes } from '@/config/routes'
+
 const AcknowledgementMessage = () => {
   const { t } = useTranslation()
 
@@ -12,9 +14,6 @@ const AcknowledgementMessage = () => {
 
   const handleRiskWarningOpen = () =>
     openModal({ name: ModalsKeys.UNRELEASED_FEATURE })
-
-  const handleTermsAndConditionsOpen = () =>
-    openModal({ name: ModalsKeys.TERMS_AND_CONDITIONS })
 
   return (
     <Stack spacing={1}>
@@ -49,7 +48,8 @@ const AcknowledgementMessage = () => {
             display: 'inline',
             color: 'white',
           }}
-          onClick={handleTermsAndConditionsOpen}
+          href={Routes.lending.termsAndConditions.url}
+          target='_blank'
         >
           {t('modals.lending.acknowledgement.termsAndConditions')}
         </Button>

@@ -26,6 +26,9 @@ export const Routes = {
     closedLendingStrategies: {
       url: `${BaseRoutesPaths.LENDING}/closedLendingStrategies`,
     },
+    termsAndConditions: {
+      url: `${BaseRoutesPaths.LENDING}/terms-and-conditions`,
+    },
   },
   borrow: {
     root: { url: BaseRoutesPaths.BORROW },

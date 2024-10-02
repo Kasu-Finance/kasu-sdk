@@ -21,7 +21,6 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 const initialState: Modals = {
   connectWalletModal: { isOpen: false },
   loyaltyLevelsModal: { isOpen: false },
-  termsAndConditionsModal: { isOpen: false },
   lockModal: { isOpen: false, lockPeriods: null as unknown as LockPeriod[] },
   unreleasedFeatureModal: { isOpen: false },
   withdrawModal: {

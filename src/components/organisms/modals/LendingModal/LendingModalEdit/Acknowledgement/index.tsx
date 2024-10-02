@@ -16,6 +16,7 @@ import CustomCheckbox from '@/components/atoms/CustomCheckbox'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
+import { Routes } from '@/config/routes'
 import { customTypography } from '@/themes/typography'
 
 type AcknowledgementTypes = 'riskWarning' | 'termsAndConditions'
@@ -48,9 +49,6 @@ const Acknowledgement = () => {
 
   const handleRiskWarningOpen = () =>
     openModal({ name: ModalsKeys.UNRELEASED_FEATURE })
-
-  const handleTermsAndConditionsOpen = () =>
-    openModal({ name: ModalsKeys.TERMS_AND_CONDITIONS })
 
   return (
     <FormControl>
@@ -121,7 +119,8 @@ const Acknowledgement = () => {
                   display: 'inline',
                   color: 'white',
                 }}
-                onClick={handleTermsAndConditionsOpen}
+                href={Routes.lending.termsAndConditions.url}
+                target='_blank'
               >
                 {t('modals.lending.acknowledgement.termsAndConditions')}
               </Button>
@@ -152,7 +151,8 @@ const Acknowledgement = () => {
             display: 'inline',
             color: 'white',
           }}
-          onClick={handleTermsAndConditionsOpen}
+          href={Routes.lending.termsAndConditions.url}
+          target='_blank'
         >
           {t('modals.lending.acknowledgement.termsAndConditions')}
         </Button>{' '}

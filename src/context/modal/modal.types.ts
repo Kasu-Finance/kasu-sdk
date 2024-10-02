@@ -29,7 +29,6 @@ export enum ModalsKeys {
   CANCEL_DEPOSIT = 'cancelDepositModal',
   CANCEL_WITHDRAWAL = 'cancelWithdrawalModal',
   LEND = 'lendModal',
-  TERMS_AND_CONDITIONS = 'termsAndConditionsModal',
   UNRELEASED_FEATURE = 'unreleasedFeatureModal',
 }
 
@@ -41,7 +40,6 @@ export type ModalData<T = void> = T extends void ? ModalBase : T & ModalBase
 
 export type Modals = {
   [ModalsKeys.LOYALTY_LEVELS]: ModalData
-  [ModalsKeys.TERMS_AND_CONDITIONS]: ModalData
   [ModalsKeys.UNRELEASED_FEATURE]: ModalData
   [ModalsKeys.CONNECT_WALLET]: ModalData<{ callback?: () => void }>
   [ModalsKeys.LOCK]: ModalData<{ lockPeriods: LockPeriod[] }>
