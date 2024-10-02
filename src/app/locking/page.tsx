@@ -2,6 +2,7 @@ import { Container, Stack } from '@mui/material'
 import { Suspense } from 'react'
 
 import BonusRewardSummary from '@/components/organisms/locking/BonusRewardSummary'
+import LockingSkeleton from '@/components/organisms/locking/LockingSkeleton'
 import LoyaltyStatus from '@/components/organisms/locking/LoyaltyStatus'
 import RewardsBreakdown from '@/components/organisms/locking/RewardsBreakdown'
 import UserFunds from '@/components/organisms/locking/UserFunds'
@@ -11,7 +12,7 @@ const Locking = async () => {
   return (
     <Container maxWidth='lg'>
       <Stack spacing={3}>
-        <Suspense fallback='loading'>
+        <Suspense fallback={<LockingSkeleton />}>
           <BonusRewardSummary />
           <UserFunds />
           <LoyaltyStatus />
