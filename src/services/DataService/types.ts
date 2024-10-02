@@ -7,7 +7,6 @@ export interface PoolOverview {
     poolName: string;
     id: string;
     enabled: boolean;
-    poolAddress: string;
     apy: number;
     description: string;
     bannerImageUrl: string;

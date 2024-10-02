@@ -68,7 +68,7 @@ export class DataService {
     }
 
     private getUrlFromFile(fileName: string): string {
-        return `https://kasu-finance.directus.app/assets/${fileName}`;
+        return `${this._kasuConfig.directusUrl}assets/${fileName}`;
     }
 
     calculatePoolCapacity(
@@ -265,7 +265,6 @@ export class DataService {
                 security: lendingPoolDirectus.security,
                 enabled: lendingPoolDirectus.enabled,
                 apy: averageApy,
-                poolAddress: lendingPoolSubgraph.id,
                 description: lendingPoolDirectus.description,
                 bannerImageUrl: this.getUrlFromFile(
                     lendingPoolDirectus.bannerImage,
