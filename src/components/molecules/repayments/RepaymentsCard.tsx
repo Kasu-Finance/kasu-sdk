@@ -20,7 +20,7 @@ import CsvDownloadButton from '@/components/atoms/CsvDownloadButton'
 import InfoColumn from '@/components/atoms/InfoColumn'
 import RepaymentsDataCard from '@/components/molecules/repayments/RepaymentsDataCard'
 
-import { adaptDataForRepayments, formatTimestamp } from '@/utils'
+import { formatTimestamp } from '@/utils'
 
 interface RepaymentsCardProps {
   data: PoolRepayment
@@ -33,7 +33,6 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
 
   const { nextClearingPeriod, isLoading } = useNextClearingPeriod()
 
-  const repaymentsData = adaptDataForRepayments(data)
   const endBorrowerFunds = data?.currentTotalEndBorrowers ?? 0
 
   const formattedTime = formatTimestamp(nextClearingPeriod, {
@@ -178,19 +177,25 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
           <Grid container spacing={2} mt={1}>
             <Grid item xs={12} md={6}>
               <RepaymentsDataCard
-                data={repaymentsData.cumulativeFunds}
-                dataKey='cumulativeFunds'
+                title={t('repayments.sections.cumulativeFunds.title')}
+                subtitle={t('repayments.sections.cumulativeFunds.titleSuffix')}
+                data={data.cumulativeLendingFundsFlow}
+                unit='USD'
               />
               <RepaymentsDataCard
-                data={repaymentsData.upcomingFunds}
-                dataKey='upcomingFunds'
+                title={t('repayments.sections.upcomingFunds.title')}
+                subtitle={t('repayments.sections.upcomingFunds.titleSuffix')}
+                data={data.upcomingLendingFundsFlow}
+                unit='USD'
                 sx={{ mt: 3 }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
               <RepaymentsDataCard
-                data={repaymentsData.transactions}
-                dataKey='transactions'
+                title={t('repayments.sections.transactions.title')}
+                subtitle={t('repayments.sections.transactions.titleSuffix')}
+                data={data.cumulativeLendingAndWithdrawals}
+                unit='USDC'
                 sx={(theme) => ({
                   [theme.breakpoints.down('sm')]: {
                     mt: 3,
@@ -198,8 +203,10 @@ const RepaymentsCard: React.FC<RepaymentsCardProps> = ({ data }) => {
                 })}
               />
               <RepaymentsDataCard
-                data={repaymentsData.fundsRequest}
-                dataKey='fundsRequest'
+                title={t('repayments.sections.fundsRequest.title')}
+                subtitle={t('repayments.sections.fundsRequest.titleSuffix')}
+                data={data.lendingAndWithdrawalRequests}
+                unit='USDC'
                 sx={{ mt: 3 }}
               />
             </Grid>

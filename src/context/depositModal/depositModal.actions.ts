@@ -48,6 +48,11 @@ const useDepositModalActions = (
           type: DepositModalActionType.SET_TX_HASH,
           payload: txHash,
         }),
+      setIsValidating: (isValidating: boolean) =>
+        dispatch({
+          type: DepositModalActionType.SET_IS_VALIDATING,
+          payload: isValidating,
+        }),
     }),
     [dispatch]
   )

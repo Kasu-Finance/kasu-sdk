@@ -13,16 +13,20 @@ import { convertToPoolDelegate } from '@/utils'
 
 interface PoolDelegateCardProps {
   data: PoolDelegateProfileAndHistory
+  poolId: string
 }
 
-const PoolDelegateCard: React.FC<PoolDelegateCardProps> = ({ data }) => {
+const PoolDelegateCard: React.FC<PoolDelegateCardProps> = ({
+  data,
+  poolId,
+}) => {
   const { t } = useTranslation()
   const currentDevice = useDeviceDetection()
   const isMobile = currentDevice === Device.MOBILE
 
   const metrics = useMemo(
-    () => (data ? convertToPoolDelegate(data) : []),
-    [data]
+    () => (data ? convertToPoolDelegate(data, poolId) : []),
+    [data, poolId]
   )
 
   const filterMetrics = useCallback(

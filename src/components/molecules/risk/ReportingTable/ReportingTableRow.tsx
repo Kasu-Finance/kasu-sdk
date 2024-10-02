@@ -6,7 +6,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material'
-import { FinancialReportingDocumentsItemsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
+import { FinancialReportingDocuments } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
 import ActionCell from '@/components/molecules/risk/ReportingTable/ActionCell'
@@ -35,7 +35,7 @@ const CircularTypography = styled(Typography)(({ theme }) => ({
 }))
 
 interface ReportingTableRowProps {
-  data: FinancialReportingDocumentsItemsDirectus
+  data: FinancialReportingDocuments['documents'][number]
   index: number
 }
 

@@ -60,7 +60,9 @@ const HomeTabs: React.FC<PoolCardProps> = ({ pools, poolDelegates }) => {
 
   const getDelegateByPoolId = useCallback(
     (poolId: string) =>
-      poolDelegates?.find((delegate) => delegate.poolIdFK === poolId),
+      poolDelegates?.find((delegate) =>
+        delegate.otherKASUPools.find((otherPool) => otherPool.id === poolId)
+      ),
     [poolDelegates]
   )
 

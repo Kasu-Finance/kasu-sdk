@@ -50,7 +50,8 @@ const NumericalInput: React.FC<NumericalInputProps> = ({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
 
-    if (value === '' || INPUT_REGEX(decimals).test(escapeRegExp(value))) {
+    // adding `.` here because we don't want the digit to start with "." without preceeding a 0 even if its a valid number
+    if (value !== '.' && INPUT_REGEX(decimals).test(escapeRegExp(value))) {
       setAmount(value)
     }
   }

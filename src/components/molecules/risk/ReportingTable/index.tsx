@@ -1,5 +1,5 @@
 import { Box, Card, CardContent, CardHeader, Typography } from '@mui/material'
-import { FinancialReportingDocumentsDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
+import { FinancialReportingDocuments } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
 import useTranslation from '@/hooks/useTranslation'
@@ -10,7 +10,7 @@ import CustomTable, {
 import ReportingTableRow from '@/components/molecules/risk/ReportingTable/ReportingTableRow'
 
 interface ReportingTableProps {
-  data: FinancialReportingDocumentsDirectus['documents']
+  data: FinancialReportingDocuments['documents']
 }
 
 const ReportingTable: React.FC<ReportingTableProps> = ({ data }) => {
