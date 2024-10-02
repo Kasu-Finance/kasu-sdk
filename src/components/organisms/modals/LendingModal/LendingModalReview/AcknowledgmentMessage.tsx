@@ -1,19 +1,11 @@
 import { Button, Stack, Typography } from '@mui/material'
 
-import useModalState from '@/hooks/context/useModalState'
 import useTranslation from '@/hooks/useTranslation'
-
-import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { Routes } from '@/config/routes'
 
 const AcknowledgementMessage = () => {
   const { t } = useTranslation()
-
-  const { openModal } = useModalState()
-
-  const handleRiskWarningOpen = () =>
-    openModal({ name: ModalsKeys.UNRELEASED_FEATURE })
 
   return (
     <Stack spacing={1}>
@@ -30,7 +22,8 @@ const AcknowledgementMessage = () => {
             display: 'inline',
             color: 'white',
           }}
-          onClick={handleRiskWarningOpen}
+          href={Routes.lending.riskWarning.url}
+          target='_blank'
         >
           {t('modals.lending.acknowledgement.riskWarning')}
         </Button>

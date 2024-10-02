@@ -9,12 +9,9 @@ import {
 import { useReducer } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
-import useModalState from '@/hooks/context/useModalState'
 import useTranslation from '@/hooks/useTranslation'
 
 import CustomCheckbox from '@/components/atoms/CustomCheckbox'
-
-import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { Routes } from '@/config/routes'
 import { customTypography } from '@/themes/typography'
@@ -27,8 +24,6 @@ const Acknowledgement = () => {
   const { t } = useTranslation()
 
   const { termsAccepted, setTermsAccepted } = useDepositModalState()
-
-  const { openModal } = useModalState()
 
   const [checked, toggleChecked] = useReducer(
     (prev: AcknowledgementStateType, acknowledgement: AcknowledgementTypes) => {
@@ -46,9 +41,6 @@ const Acknowledgement = () => {
       termsAndConditions: termsAccepted,
     }
   )
-
-  const handleRiskWarningOpen = () =>
-    openModal({ name: ModalsKeys.UNRELEASED_FEATURE })
 
   return (
     <FormControl>
@@ -90,7 +82,8 @@ const Acknowledgement = () => {
                   display: 'inline',
                   color: 'white',
                 }}
-                onClick={handleRiskWarningOpen}
+                href={Routes.lending.riskWarning.url}
+                target='_blank'
               >
                 {t('modals.lending.acknowledgement.riskWarning')}
               </Button>

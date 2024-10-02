@@ -29,6 +29,9 @@ export const Routes = {
     termsAndConditions: {
       url: `${BaseRoutesPaths.LENDING}/terms-and-conditions`,
     },
+    riskWarning: {
+      url: `${BaseRoutesPaths.LENDING}/risk-warning`,
+    },
   },
   borrow: {
     root: { url: BaseRoutesPaths.BORROW },

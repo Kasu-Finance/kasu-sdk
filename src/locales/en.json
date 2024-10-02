@@ -206,7 +206,6 @@
       "message": "This feature will be released shortly",
       "action": "Ok"
     },
-
     "loyaltyLevels": {
       "title": "KSU Loyalty Program​",
       "subtitle": "About KSU Loyalty Program",
@@ -218,6 +217,77 @@
         "list-1": "Access to higher APY tranches",
         "list-2": "Priority capital withdrawal​",
         "list-3": "Bonus APY"
+      }
+    },
+    "riskWarning": {
+      "title": "Risk Warning",
+      "description": "All lending carries risk. Different Lending Strategies may also carry different levels of risk. The significant risks of lending on Kasu are as follows:",
+      "subheader-1": {
+        "title": "General Risks",
+        "description-1": "When lending on Kasu, you should understand that all lending carries a degree of risk, including the potential for loss of income and/or capital, a less than expected interest rate return (APY), delay in End Borrower repayments and Lender Withdrawals. Lending on Kasu is subject to these and other specific risks. When considering your Lending decision on Kaus, it is important that you consider such things as:",
+        "description-2": "It is generally considered that investments offering a higher level of interest returns (APY) potentially carry a higher level of risk. Accordingly, the term “risk” can mean different things to different people. It may refer to the likelihood that a loan may fail to achieve its expected interest returns, or where losses incurred by End Borrowers affect the balance of the loan incurring losses to Lenders. Lenders should seek their own independent financial advice before Leding on Kasu.",
+        "list": {
+          "list-0": "The risks involved in Lending in a particular Lending Strategy;",
+          "list-1": "The extent that the Lending Strategy fits your financial objectives and goals;",
+          "list-2": "Your risk appetite; and,",
+          "list-3": "The risks that other Lending (or competing investment) opportunities have."
+        }
+      },
+      "subheader-2": {
+        "title": "Warning",
+        "description-1": "Risks attaching to the Lending on Kasu include (but are not limited to):",
+        "description-2": "The degree of risk associated with Lending on Kasu as to the loss of capital or interest returns relate to the financial performance of Delegates and their End Borrower customers, to which your funds are on-lent. This will be affected by factors including End Borrowers’ ability to repay their Loans and Delegates’ competence credit diligence,  lending and risk management.",
+        "description-3": "Lonas to Kasu, which are on-lent to Delegates to originate loans to End Borrowers are also  influenced by external factors such as general economic conditions and government policy. While we are unable to eliminate all risks, Delegates are  able to reduce the impact of risk through their established management procedures, risk management and credit risk structuring.",
+        "description-4": "Neither Kasu, nor its employees and contracted, nor any other related company, nor Delegates, guarantee the performance of the loans or the repayment of capital invested. Loans on Kasu subject to credit (and other) risks. This could involve delays in repayment of Loans, loss of interest returns and capital, and interest returns that fluctuate.",
+        "list": {
+          "list-0": "You may not receive the interest return you expected; and,",
+          "list-1": "You may lose some or all of your capital."
+        }
+      },
+      "subheader-3": {
+        "title": "Performance Risk",
+        "description": "Your lending balance can increase based on interest earned, and it can decrease based on any losses and defaults caused by End Borrowers. Interest earnings are not guaranteed, and you may lose money. Interest rates (APY) vary, so future interest returns may differ from past interest returns. Risk impacts vary for individual Lenders depending on age, lending time frame, other investments held and risk tolerance."
+      },
+      "subheader-4": {
+        "title": "Market Risk",
+        "description": "Changes in financial markets, interest rate markets, the economy, political changes, technological developments, global or local-specific events and changes in market sentiment continually affect the risk of lending. These market risks can affect End Borrowers’ ability to repay loans, which in turn, may cause losses and defaults. Consequently, this can affect your lending balance and the amount you can withdraw after such a risk event, versus the amount you could withdraw prior to such a risk event."
+      },
+      "subheader-5": {
+        "title": "Interest Rate Risk",
+        "description": "Changes in interest rates can directly and indirectly affect your lending balance and interest returns. For example, an increase in official interest rates can result in increased default risk to End Borrowers, affecting their ability to repay loans, which in turn, may cause losses and defaults."
+      },
+      "subheader-6": {
+        "title": "Credit Risk",
+        "description-1": "Credit risk is the risk that the Underlying Borrowers (End Borrowers) may not meet their obligations in full and not pay interest and repay capital or other financial obligations on time. In the case that this results in losses, the balance of your lending may reduce. Examples of credit risk include where the End Borrower is a business and becomes insolvent or under external administration, or guarantor is an individual and becomes bankrupt, or dies.",
+        "description-2": "All lending to Kasu is completely unsecured, which increases risk. Kasu on-lends Lenders’ funds to Delegates, who on-lend to End Borrowers. There is no direct security taken by Lenders over Kasu or Delegates. Delegates seek to reduce credit risk by taking security over End Borrowers for the benefit of Lenders. Delegates also provide choice of loans across a range of End Borrowers, industries and geographic sectors. Delegates employ a range of risk management strategies and credit structuring to reduce credit risk where possible."
+      },
+      "subheader-7": {
+        "title": "Delegate Counterparty Risk",
+        "description": "Kasu cannot guarantee the performance of Delegates and their End Borrower customers to safeguard your funds. All credit due diligence, credit underwriting and credit risk management is undertaken by Delegates. Kasu accepts no responsibility for any losses. This includes the potential failure and credit risk of a Delegate."
+      },
+      "subheader-8": {
+        "title": "Protocol Risks",
+        "description": "The Kasu protocol could terminate. Fees could increase. There is no guarantee that the Lending Strategies offered on Kasu will perform successfully. Lending on Kasu is governed by the laws of Australia, which may be amended from time to time."
+      },
+      "subheader-9": {
+        "title": "Smart Contract Risk",
+        "description": "..."
+      },
+      "subheader-10": {
+        "title": "Concentration Risk",
+        "description": "Lending Strategies will be subject to some degree of concentration risk, being the risk associated with Delegates that may only on-lend to a limited number of End Borrowers, or that an End Borrower fails to repay its loan."
+      },
+      "subheader-11": {
+        "title": "Currency Exchange Risk",
+        "description": "..."
+      },
+      "subheader-12": {
+        "title": "No Guarantee",
+        "description": "Kasu and its related entities, officers or personnel, or Delegates on Kasu, guarantee the performance of your loans, or the repayment of any loan amount, or the interest returns. No one makes any representation as to the success or otherwise of your lending on Kasu."
+      },
+      "subheader-13": {
+        "title": "Data Security and Electronic Delivery Risk",
+        "description": "Because your lending on Kasu is on the blockchain and fully online, which relies on computers, information technology (IT) networks and the internet, it is subject to inherent IT risks including (but not limited to) software and smart contract bugs, computer viruses and malware, unauthorised interference with data, loss of data, unavailability or unreliability of the internet, computer malfunction, network vulnerabilities, latency, and cyber hacking resulting in the theft of data. Kasu may be unavailable from time to time. Your data is stored on secured servers in Australia. You will need to consider the potential for disruption or other difficulties when planning to use Kasu and the dApp."
       }
     },
     "termsAndConditions": {
