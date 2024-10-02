@@ -21,6 +21,11 @@ const nextConfig = {
         hostname: 'kasu-finance.directus.app',
         pathname: '**',
       },
+      {
+        protocol: 'https',
+        hostname: 'kasu-dev.directus.app',
+        pathname: '**',
+      },
     ],
   },
   async redirects() {
