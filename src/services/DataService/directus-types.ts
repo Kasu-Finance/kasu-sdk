@@ -36,7 +36,6 @@ export interface PoolOverviewDirectus {
 
 export interface PoolDelegateProfileAndHistoryDirectus {
     id: string;
-    poolIdFK: string;
     delegateLendingHistory: number;
     assetClasses: string;
     otherPools: {

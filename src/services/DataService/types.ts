@@ -33,7 +33,6 @@ export interface PoolOverview {
 
 export interface PoolDelegateProfileAndHistory {
     id: string;
-    poolIdFK: string;
     delegateLendingHistory: number;
     assetClasses: string;
     otherKASUPools: {

@@ -401,7 +401,6 @@ export class DataService {
         for (const data of poolDelegateProfileAndHistoryDirectus) {
             retn.push({
                 id: data.id,
-                poolIdFK: data.poolIdFK.toLowerCase(),
                 delegateLendingHistory: data.delegateLendingHistory,
                 assetClasses: data.assetClasses,
                 otherKASUPools: data.otherPools.map((pool) => ({
