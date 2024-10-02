@@ -79,17 +79,19 @@ const DelegateProfile: React.FC<DelegateProfileProps> = ({ pool }) => {
               metric={
                 pool.delegate.otherKASUPools.length ? (
                   <UnorderedList sx={{ fontSize: 12, pl: 2 }}>
-                    {pool.delegate.otherKASUPools.map((otherPool) => (
-                      <li key={otherPool.name}>
-                        <NextLink
-                          href={`${Routes.lending.root.url}/${otherPool.id}`}
-                          display='block'
-                          fontWeight={600}
-                        >
-                          {otherPool.name}
-                        </NextLink>
-                      </li>
-                    ))}
+                    {pool.delegate.otherKASUPools
+                      .filter((otherPool) => otherPool.id !== pool.id)
+                      .map((otherPool) => (
+                        <li key={otherPool.name}>
+                          <NextLink
+                            href={`${Routes.lending.root.url}/${otherPool.id}`}
+                            display='block'
+                            fontWeight={600}
+                          >
+                            {otherPool.name}
+                          </NextLink>
+                        </li>
+                      ))}
                   </UnorderedList>
                 ) : (
                   <Typography variant='baseMdBold'>N/A</Typography>

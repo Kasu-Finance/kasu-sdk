@@ -21,8 +21,8 @@ export const getPoolWithDelegate = unstable_cache(
         return pool.id === poolId
       })
       .reduce((acc, cur) => {
-        const delegate = poolDelegates.find(
-          (delegate) => delegate.poolIdFK === cur.id
+        const delegate = poolDelegates.find((delegate) =>
+          delegate.otherKASUPools.find((pool) => pool.id === cur.id)
         )
 
         if (delegate) {

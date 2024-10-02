@@ -22,8 +22,8 @@ const ClosedLendingStrategies = async () => {
 
   const poolsWithDelegate = pools.reduce((acc, cur) => {
     if (!cur.isActive) {
-      const delegate = poolDelegates.find(
-        (delegate) => delegate.poolIdFK === cur.id
+      const delegate = poolDelegates.find((delegate) =>
+        delegate.otherKASUPools.find((pool) => pool.id === cur.id)
       )
 
       if (delegate) {
