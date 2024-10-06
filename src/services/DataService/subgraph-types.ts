@@ -48,6 +48,18 @@ export interface TrancheConfigurationSubgraph {
     desiredRatio: string;
     orderId: string;
     lendingPoolTrancheInterestRateUpdates: TrancheInterestRateUpdateSubgraph[];
+    lendingPoolTrancheFixedTermConfigs: {
+        configId: string;
+        epochLockDuration: string;
+        epochInterestRate: string;
+        fixedTermDepositStatus: 'Everyone' | 'AllowlistedOnly';
+        fixedTermDepositAllowlist: {
+            isAllowlisted: boolean;
+            user: {
+                id: string;
+            };
+        }[];
+    }[];
 }
 
 export interface TrancheConfigurationSubgraphResult {

@@ -160,6 +160,7 @@ export class UserLending {
         tranche: string,
         maxAmount: BigNumberish,
         swapData: BytesLike,
+        fixedTermConfigId: BigNumberish,
         blockExpiration: BigNumberish,
         signature: BytesLike,
         ethValue: string,
@@ -169,6 +170,7 @@ export class UserLending {
             tranche,
             maxAmount,
             swapData,
+            fixedTermConfigId,
             blockExpiration,
             signature,
             {
@@ -182,12 +184,14 @@ export class UserLending {
         tranche: string,
         amount: BigNumberish,
         swapData: BytesLike,
+        fixedTermConfigId: BigNumberish,
     ): Promise<ContractTransaction> {
         return await this._lendingPoolManagerAbi.requestDeposit(
             lendingPool,
             tranche,
             amount,
             swapData,
+            fixedTermConfigId,
         );
     }
     async cancelDepositRequest(

@@ -76,13 +76,26 @@ export interface RiskPerformance {
 
 export interface TrancheData {
     id: string;
+    minApy: string;
+    maxApy: string;
     apy: string;
+    averageApy: string;
     maximumDeposit: string;
     minimumDeposit: string;
     poolCapacity: string;
     poolCapacityPercentage: string;
     name: string;
     interestRate: string;
+    fixedTermConfig: {
+        configId: string;
+        apy: string;
+        epochLockDuration: string;
+        fixedTermDepositStatus: 'Everyone' | 'AllowlistedOnly';
+        fixedTermDepositAllowlist: {
+            isAllowlisted: boolean;
+            userId: string;
+        }[];
+    }[];
 }
 
 export interface FinancialReportingDocuments {

@@ -43,6 +43,18 @@ export const getPoolOverviewQuery = (ids?: string[]): string => gql`
                     ) {
                         epochInterestRate
                     }
+                    lendingPoolTrancheFixedTermConfigs{
+                        configId
+                        epochLockDuration
+                        epochInterestRate
+                        fixedTermDepositStatus
+                        fixedTermDepositAllowlist{
+                            id
+                            user{
+                                id
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -120,27 +132,6 @@ export const getPoolNameQuery = gql`
         lendingPools(where: { id_in: $ids, id_not_in: $unusedPools }) {
             id
             name
-        }
-    }
-`;
-
-export const getAllLendingPoolConfigurationQuery = gql`
-    query getAllLendingPoolConfigurations($unusedPools: [String]!) {
-        lendingPoolConfigurations(where: { id_not_in: $unusedPools }) {
-            desiredDrawAmount
-            drawRecipient
-            id
-            minimumExcessLiquidityPercentage
-            targetExcessLiquidityPercentage
-            trancheInterestChangeEpochDelay
-            tranchesConfig {
-                desiredRatio
-                interestRate
-                id
-                maxDepositAmount
-                minDepositAmount
-                orderId
-            }
         }
     }
 `;

@@ -207,9 +207,53 @@ export class DataService {
                     ? interestUpdates[0].epochInterestRate
                     : trancheConfig.interestRate;
 
+                const baseApy = this.calculateApyForTranche(interestRate);
+
+                let minApy = baseApy;
+                let maxApy = baseApy;
+
+                const fixedTermConfig =
+                    trancheConfig.lendingPoolTrancheFixedTermConfigs.map(
+                        (fixedTermConfig) => {
+                            const fixedTermApy = this.calculateApyForTranche(
+                                fixedTermConfig.epochInterestRate,
+                            );
+
+                            minApy = Math.min(minApy, fixedTermApy);
+                            maxApy = Math.max(maxApy, fixedTermApy);
+
+                            return {
+                                configId: fixedTermConfig.configId,
+                                apy: fixedTermApy.toString(),
+                                epochLockDuration:
+                                    fixedTermConfig.epochLockDuration,
+                                fixedTermDepositStatus:
+                                    fixedTermConfig.fixedTermDepositStatus,
+                                fixedTermDepositAllowlist:
+                                    fixedTermConfig.fixedTermDepositAllowlist.map(
+                                        (allowList) => ({
+                                            isAllowlisted:
+                                                allowList.isAllowlisted,
+                                            userId: allowList.user.id,
+                                        }),
+                                    ),
+                            };
+                        },
+                    );
+
+                const averageApy = fixedTermConfig.length
+                    ? fixedTermConfig.reduce(
+                          (total, cur) => (total += parseFloat(cur.apy)),
+                          0,
+                      ) / fixedTermConfig.length
+                    : baseApy;
+
                 tranches.push({
                     id: tranche.id,
-                    apy: this.calculateApyForTranche(interestRate).toString(),
+                    apy: baseApy.toString(),
+                    minApy: minApy.toString(),
+                    maxApy: maxApy.toString(),
+                    averageApy: averageApy.toString(),
                     interestRate,
                     maximumDeposit: trancheConfig.maxDepositAmount,
                     minimumDeposit: trancheConfig.minDepositAmount,
@@ -224,6 +268,7 @@ export class DataService {
                     name: trancheNames[lendingPoolSubgraph.tranches.length - 1][
                         parseInt(tranche.orderId)
                     ],
+                    fixedTermConfig,
                 });
             }
             const poolCapacitySum = poolCapacities.poolCapacity.reduce(
@@ -258,8 +303,9 @@ export class DataService {
                     trancheBalanceSum == 0
                         ? 0
                         : parseFloat(tranche.balance) / trancheBalanceSum;
-                averageApy += parseFloat(trancheData.apy) * weight;
+                averageApy += parseFloat(trancheData.averageApy) * weight;
             }
+
             const poolOverview: PoolOverview = {
                 id: lendingPoolSubgraph.id,
                 security: lendingPoolDirectus.security,
