@@ -10,6 +10,8 @@ export enum DepositModalActionType {
   SET_SELECTED_TOKEN = 'SET_SELECTED_TOKEN',
   SET_IS_VALIDATING = 'SET_IS_VALIDATING',
   SET_IS_DEBOUNCING = 'SET_IS_DEBOUNCING',
+  SET_FIXED_TERM_CONFIG_ID = 'SET_FIXED_TERM_CONFIG_ID',
+  SET_LOAN_CONTRACT_ACCEPTED = 'SET_LOAN_CONTRACT_ACCEPTED',
 }
 
 export type DepositModalActions =
@@ -49,15 +51,25 @@ export type DepositModalActions =
       type: DepositModalActionType.SET_IS_DEBOUNCING
       payload: boolean
     }
+  | {
+      type: DepositModalActionType.SET_FIXED_TERM_CONFIG_ID
+      payload: string
+    }
+  | {
+      type: DepositModalActionType.SET_LOAN_CONTRACT_ACCEPTED
+      payload: boolean
+    }
 
 export type DepositModalStateType = {
   amount: string
   simulatedDuration: number
   trancheId: `0x${string}`
+  fixedTermConfigId: string | undefined
   txHash: string | undefined
   amountInUSD: string | undefined
   selectedToken: SupportedTokens
   termsAccepted: boolean
+  loanContractAccepted: boolean
   isValidating: boolean
   isDebouncing: boolean
 }
@@ -66,12 +78,14 @@ export type DepositModalFunctions = {
   setAmount: (amount: string) => void
   setAmountInUSD: (amountInUSD: string | undefined) => void
   setSelectedTranche: (selectedTranche: `0x${string}`) => void
+  setFixedTermConfigId: (fixedTermConfigId: string) => void
   setTxHash: (txHash: string) => void
   setSimulatedDuration: (simulatedDuration: number) => void
   setSelectedToken: (selectedToken: SupportedTokens) => void
   setTermsAccepted: (termsAccepted: boolean) => void
   setIsValidating: (isValidating: boolean) => void
   setIsDebouncing: (isDebouncing: boolean) => void
+  setLoanContractAcccepted: (loanContractAccepted: boolean) => void
 }
 
 export type DepositModalTypes = DepositModalStateType & DepositModalFunctions

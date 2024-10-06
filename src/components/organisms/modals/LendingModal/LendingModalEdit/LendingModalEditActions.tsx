@@ -15,7 +15,8 @@ const LendingModalEditActions = () => {
 
   const { nextStep } = useStepperState()
 
-  const { amount, amountInUSD, termsAccepted } = useDepositModalState()
+  const { amount, amountInUSD, termsAccepted, fixedTermConfigId } =
+    useDepositModalState()
 
   const { modalStatus } = useModalStatusState()
 
@@ -33,6 +34,7 @@ const LendingModalEditActions = () => {
         disabled={Boolean(
           !amount ||
             !amountInUSD ||
+            !fixedTermConfigId ||
             modalStatus.type === 'error' ||
             modalStatus.type === 'focused' ||
             !termsAccepted

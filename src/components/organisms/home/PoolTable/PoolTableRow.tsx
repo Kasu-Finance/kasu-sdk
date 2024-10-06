@@ -96,7 +96,8 @@ const PoolTableRow: React.FC<PoolTableRowProps> = ({ pool }) => {
             return (
               <PoolTableRowApy
                 title={title}
-                apy={formatPercentage(tranche.apy).replaceAll(' ', '')}
+                minApy={tranche.minApy}
+                maxApy={tranche.maxApy}
                 icon={
                   TRANCHE_ICONS[
                     tranche.name.toLowerCase() as keyof typeof TRANCHE_ICONS

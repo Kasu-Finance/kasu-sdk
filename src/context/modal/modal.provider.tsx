@@ -51,6 +51,10 @@ const initialState: Modals = {
     isOpen: false,
     pool: null as unknown as PoolOverviewWithDelegate,
   },
+  loanContractModal: {
+    isOpen: false,
+    acceptLoanContract: () => {},
+  },
 }
 
 const ModalState: React.FC<{ children: ReactNode }> = ({ children }) => {

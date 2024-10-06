@@ -24,6 +24,7 @@ import {
   WrappedLiquidStakedEtherLightIcon,
 } from '@/assets/icons'
 
+import { USDC } from '@/config/sdk'
 import { SupportedChainIds } from '@/connection/chains'
 
 export enum SupportedTokens {
@@ -55,7 +56,7 @@ export const TOKENS = {
     [SupportedTokens.USDC]: {
       symbol: SupportedTokens.USDC,
       name: 'USD Coin',
-      address: '0x15B22C46A37e2fFc1135d143fd3d47d889ad13Ff',
+      address: USDC as `0x${string}`,
       decimals: 6,
       icon: {
         dark: UsdCoinIcon(),

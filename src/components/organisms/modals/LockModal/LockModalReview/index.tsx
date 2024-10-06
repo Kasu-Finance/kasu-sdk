@@ -8,7 +8,7 @@ import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
 import LockModalReviewActions from '@/components/organisms/modals/LockModal/LockModalReview/LockModalReviewActions'
 
-import { formatAmount, formatTimestamp, TimeConversions } from '@/utils'
+import { formatAmount, formatTimestamp, formatToNearestTime } from '@/utils'
 
 const LockModalReview = () => {
   const { t } = useTranslation()
@@ -66,9 +66,9 @@ const LockModalReview = () => {
           }
           metric={
             <Typography variant='baseMdBold'>
-              {parseFloat(selectedLockPeriod.lockPeriod) /
-                TimeConversions.SECONDS_PER_DAY}{' '}
-              {t('time.days')}
+              {formatToNearestTime(
+                parseFloat(selectedLockPeriod.lockPeriod) * 1000
+              )}
             </Typography>
           }
           showDivider

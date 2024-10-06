@@ -1,6 +1,6 @@
 import { Stack, Typography } from '@mui/material'
 
-import useDepositModalState from '@/hooks/context/useDepositModalState'
+import useLockModalState from '@/hooks/context/useLockModalState'
 import useTranslation from '@/hooks/useTranslation'
 
 import LockModalConfirmedActions from '@/components/organisms/modals/LockModal/LockModalConfirmed/LockModalConfirmedActions'
@@ -10,7 +10,7 @@ import { formatAmount } from '@/utils'
 const LockModalConfirmed = () => {
   const { t } = useTranslation()
 
-  const { amount } = useDepositModalState()
+  const { amount } = useLockModalState()
 
   return (
     <Stack spacing={3}>

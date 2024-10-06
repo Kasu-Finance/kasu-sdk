@@ -9,8 +9,8 @@ const ClosedPoolTableHeader = () => {
 
   return (
     <TableRow>
-      <PoolTableHeaderCell label={t('general.lendingStrategy')} width='46%' />
-      <PoolTableHeaderCell label={t('general.apy')} width='8%' />
+      <PoolTableHeaderCell label={t('general.lendingStrategy')} width='42%' />
+      <PoolTableHeaderCell label={t('general.apy')} width='12%' />
       <PoolTableHeaderCell
         label={t('home.activePools.table.loansUnder')}
         toolTip={t('details.poolTraction.management.tooltip')}

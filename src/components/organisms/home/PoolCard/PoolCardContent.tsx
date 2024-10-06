@@ -31,7 +31,7 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
         alignItems='center'
         my={3}
       >
-        {pool.tranches.map(({ name, apy }) => (
+        {pool.tranches.map(({ name, minApy, maxApy }) => (
           <Stack key={name} alignItems='center'>
             <Typography
               variant='baseMdBold'
@@ -44,7 +44,8 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
               {isMultiTranche && t('general.tranche')} {t('general.apy')}
             </Typography>
             <Typography variant='h3' color='primary.main'>
-              {formatPercentage(apy).replaceAll(' ', '')}
+              {formatPercentage(minApy).replaceAll(' %', '')} -{' '}
+              {formatPercentage(maxApy).replaceAll(' ', '')}
             </Typography>
           </Stack>
         ))}

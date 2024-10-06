@@ -13,7 +13,7 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 import { DATE_FORMAT } from '@/constants'
 import dayjs from '@/dayjs'
 import { customTypography } from '@/themes/typography'
-import { formatAmount, TimeConversions } from '@/utils'
+import { formatAmount, formatToNearestTime, TimeConversions } from '@/utils'
 
 const getAlignment = (index: number, arrayLength: number) => {
   switch (true) {
@@ -51,12 +51,12 @@ const LockModalDuration = () => {
 
   const disabled = modalStatus.type === 'error'
 
+  // in the wild events a new lock period is added ( more than 4 )
+  const gridTemplateColumns = `minmax(0, 0.5fr) ${[...new Array(lockPeriods.length - 2)].map(() => 'minmax(0,1fr)').join(' ')} minmax(0, 0.5fr)`
+
   return (
     <Box display='flex' flexDirection='column'>
-      <Box
-        display='grid'
-        gridTemplateColumns='minmax(0, 0.5fr) minmax(0,1fr)  minmax(0,1fr) minmax(0, 0.5fr)'
-      >
+      <Box display='grid' gridTemplateColumns={gridTemplateColumns}>
         {lockPeriods.map((period, index) => (
           <Button
             key={index}
@@ -72,8 +72,7 @@ const LockModalDuration = () => {
               height: 'max-content',
             }}
           >
-            {parseFloat(period.lockPeriod) / TimeConversions.SECONDS_PER_DAY}{' '}
-            {t('time.days')}
+            {formatToNearestTime(parseFloat(period.lockPeriod) * 1000)}
           </Button>
         ))}
       </Box>
@@ -123,10 +122,7 @@ const LockModalDuration = () => {
         onChange={handleChange}
         onChangeCommitted={() => setModalStatus({ type: 'default' })}
       />
-      <Box
-        display='grid'
-        gridTemplateColumns='minmax(0, 0.5fr) minmax(0,1fr)  minmax(0,1fr) minmax(0, 0.5fr)'
-      >
+      <Box display='grid' gridTemplateColumns={gridTemplateColumns}>
         {lockPeriods.map((lockPeriod, index) => (
           <Box
             key={lockPeriod.id}

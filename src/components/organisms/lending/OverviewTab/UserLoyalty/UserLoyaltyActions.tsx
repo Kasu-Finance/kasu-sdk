@@ -1,10 +1,12 @@
 'use client'
 
-import { Button, Grid } from '@mui/material'
+import { Grid } from '@mui/material'
 import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
 
 import useModalState from '@/hooks/context/useModalState'
 import useTranslation from '@/hooks/useTranslation'
+
+import AuthenticateButton from '@/components/atoms/AuthenticateButton'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
@@ -25,14 +27,22 @@ const UserLoyaltyActions: React.FC<UserLoyaltyActionsProps> = ({
   return (
     <Grid container columnSpacing={4} justifyContent='center' mt={4}>
       <Grid item>
-        <Button onClick={handleLockKSU} variant='outlined' sx={{ width: 368 }}>
+        <AuthenticateButton
+          onClick={handleLockKSU}
+          variant='outlined'
+          sx={{ width: 368 }}
+        >
           {t('general.lockKSU')}
-        </Button>
+        </AuthenticateButton>
       </Grid>
       <Grid item>
-        <Button onClick={handleBuyKSU} variant='outlined' sx={{ width: 368 }}>
+        <AuthenticateButton
+          onClick={handleBuyKSU}
+          variant='outlined'
+          sx={{ width: 368 }}
+        >
           {t('general.buyKSU')}
-        </Button>
+        </AuthenticateButton>
       </Grid>
     </Grid>
   )

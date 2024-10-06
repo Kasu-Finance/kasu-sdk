@@ -7,7 +7,7 @@ import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import InfoRow from '@/components/atoms/InfoRow'
 
-import { formatPercentage } from '@/utils'
+import { formatEpoch, formatPercentage, TimeConversions } from '@/utils'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
@@ -34,17 +34,42 @@ const PoolDetails: React.FC<PoolDetailsProps> = ({ pool }) => {
               </Typography>
               <Divider sx={{ mt: 1.5 }} />
               <InfoRow
-                title={t('general.apy')}
+                title={t('general.variableApy')}
                 titleStyle={{
-                  variant: 'h3',
+                  variant: 'h5',
                 }}
                 metric={
-                  <Typography variant='h3' color='gold.dark'>
+                  <Typography variant='h5' color='gold.dark'>
                     {formatPercentage(tranche.apy).replaceAll(' ', '')}
                   </Typography>
                 }
                 showDivider
               />
+
+              {tranche.fixedTermConfig.map(
+                ({ epochLockDuration, apy, configId }) => {
+                  const durationInMonths =
+                    (parseFloat(epochLockDuration) *
+                      TimeConversions.DAYS_PER_WEEK) /
+                    TimeConversions.DAYS_PER_MONTH
+
+                  return (
+                    <InfoRow
+                      key={configId}
+                      title={`${t('general.fixedApy')}, ~ ${formatEpoch(durationInMonths)}`}
+                      titleStyle={{
+                        variant: 'h5',
+                      }}
+                      metric={
+                        <Typography variant='h5' color='gold.dark'>
+                          {formatPercentage(apy).replaceAll(' ', '')}
+                        </Typography>
+                      }
+                      showDivider
+                    />
+                  )
+                }
+              )}
             </Grid>
           ))}
         </Grid>

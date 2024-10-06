@@ -29,7 +29,7 @@ const usePoolTrancheBalance = (poolId: string, trancheId: HexString) => {
     return data
   }
 
-  const { data, error, mutate } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     `userTrancheBalance/${trancheId}`,
     fetchUserTrancheBalance
   )
@@ -37,7 +37,7 @@ const usePoolTrancheBalance = (poolId: string, trancheId: HexString) => {
   return {
     data,
     error,
-    isLoading: !data && !error,
+    isLoading,
     mutate,
   }
 }

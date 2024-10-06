@@ -1,4 +1,5 @@
 import { Box } from '@mui/material'
+import { PoolOverviewDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import type { Metadata } from 'next'
 import { ReactNode } from 'react'
 
@@ -11,9 +12,11 @@ import ModalsContainer from '@/components/organisms/modals/ModalsContainer'
 
 import KycState from '@/context/kyc/kyc.provider'
 import ModalState from '@/context/modal/modal.provider'
+import SwrProvider from '@/context/swr.provider'
 import ToastState from '@/context/toast/toast.provider'
 import Web3Provider from '@/context/web3provider/web3.provider'
 
+import sdkConfig from '@/config/sdk'
 import ThemeRegistry from '@/themes/ThemeRegistry'
 
 type RootLayoutProps = {
@@ -27,6 +30,13 @@ export const metadata: Metadata = {
 }
 
 export default async function RootLayout({ children }: RootLayoutProps) {
+  const res = await fetch(
+    `${sdkConfig.directusUrl}items/PoolOverview?filter[enabled][_neq]=true`
+  )
+
+  const unusedPools: { data: PoolOverviewDirectus[] } = await res.json()
+  const filteredPools = unusedPools.data.map((pool) => pool.id)
+
   return (
     <html lang='en'>
       <link rel='shortcut icon' href='/favicon.ico' />
@@ -62,18 +72,20 @@ export default async function RootLayout({ children }: RootLayoutProps) {
       <Tracking />
       <body>
         <ThemeRegistry>
-          <Web3Provider>
-            <KycState>
-              <ModalState>
-                <ToastState>
-                  <Header />
-                  <Box component='main'>{children}</Box>
-                  <Footer />
-                  <ModalsContainer />
-                </ToastState>
-              </ModalState>
-            </KycState>
-          </Web3Provider>
+          <SwrProvider unusedPools={filteredPools}>
+            <Web3Provider>
+              <KycState>
+                <ModalState>
+                  <ToastState>
+                    <Header />
+                    <Box component='main'>{children}</Box>
+                    <Footer />
+                    <ModalsContainer />
+                  </ToastState>
+                </ModalState>
+              </KycState>
+            </Web3Provider>
+          </SwrProvider>
         </ThemeRegistry>
       </body>
     </html>

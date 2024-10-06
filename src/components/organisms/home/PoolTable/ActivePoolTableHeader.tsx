@@ -9,8 +9,8 @@ const ActivePoolTableHeader = () => {
 
   return (
     <TableRow>
-      <PoolTableHeaderCell label={t('general.lendingStrategy')} width='35%' />
-      <PoolTableHeaderCell label={t('general.apy')} width='8%' />
+      <PoolTableHeaderCell label={t('general.lendingStrategy')} width='33%' />
+      <PoolTableHeaderCell label={t('general.apy')} width='12%' />
       <PoolTableHeaderCell
         label={t('home.activePools.table.loanFunds')}
         toolTip={t('details.poolDelegate.totalFunds.tooltip')}
@@ -29,7 +29,7 @@ const ActivePoolTableHeader = () => {
       <PoolTableHeaderCell
         label={t('lending.poolOverview.detailCard.security.label')}
         toolTip={t('lending.poolOverview.detailCard.security.tooltip')}
-        width='23%'
+        width='21%'
       />
     </TableRow>
   )

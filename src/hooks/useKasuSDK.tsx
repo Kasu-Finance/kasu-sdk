@@ -37,19 +37,15 @@ const useKasuSDK = () => {
   )
 
   const { data, error } = useSWR(
-    provider && account && unusedPools
-      ? ['kasuSDK', provider, unusedPools]
-      : null,
-    async ([_, provider, unusedPools]) => {
+    provider && account ? ['kasuSDK', provider, account] : null,
+    async ([_, provider]) => {
       return new KasuSdk(
-        { ...sdkConfig, UNUSED_LENDING_POOL_IDS: unusedPools },
+        { ...sdkConfig, UNUSED_LENDING_POOL_IDS: unusedPools! },
         provider.getSigner()
       )
     },
     {
-      fallback: async () => {
-        const unusedPools = await unusedPoolsFetcher()
-
+      fallback: () => {
         const chain =
           NETWORK === 'BASE'
             ? SupportedChainIds.BASE
@@ -58,7 +54,7 @@ const useKasuSDK = () => {
         const fallbackProvider = new JsonRpcProvider(RPC_URLS[chain][0])
 
         return new KasuSdk(
-          { ...sdkConfig, UNUSED_LENDING_POOL_IDS: unusedPools },
+          { ...sdkConfig, UNUSED_LENDING_POOL_IDS: unusedPools! },
           fallbackProvider
         )
       },

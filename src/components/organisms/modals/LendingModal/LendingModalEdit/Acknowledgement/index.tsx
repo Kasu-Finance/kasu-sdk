@@ -6,7 +6,7 @@ import {
   FormHelperText,
   Typography,
 } from '@mui/material'
-import { useReducer } from 'react'
+import { useEffect, useReducer } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useTranslation from '@/hooks/useTranslation'
@@ -26,21 +26,23 @@ const Acknowledgement = () => {
   const { termsAccepted, setTermsAccepted } = useDepositModalState()
 
   const [checked, toggleChecked] = useReducer(
-    (prev: AcknowledgementStateType, acknowledgement: AcknowledgementTypes) => {
-      const newState = {
-        ...prev,
-        [acknowledgement]: !prev[acknowledgement],
-      }
-
-      setTermsAccepted(newState.riskWarning && newState.termsAndConditions)
-
-      return newState
-    },
+    (
+      prev: AcknowledgementStateType,
+      acknowledgement: AcknowledgementTypes
+    ) => ({ ...prev, [acknowledgement]: !prev[acknowledgement] }),
     {
       riskWarning: termsAccepted,
       termsAndConditions: termsAccepted,
     }
   )
+
+  useEffect(() => {
+    if (checked.riskWarning && checked.termsAndConditions) {
+      setTermsAccepted(true)
+    } else {
+      setTermsAccepted(false)
+    }
+  }, [checked, setTermsAccepted])
 
   return (
     <FormControl>

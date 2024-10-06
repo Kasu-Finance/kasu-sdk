@@ -5,7 +5,12 @@ import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 
-import { formatAmount, formatPercentage } from '@/utils'
+import {
+  formatAmount,
+  formatEpoch,
+  formatPercentage,
+  TimeConversions,
+} from '@/utils'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
@@ -21,7 +26,13 @@ const LoanOverview: React.FC<LoanOverviewProps> = ({ pool }) => {
   return (
     <Grid container spacing={4}>
       {pool.tranches.map((tranche) => (
-        <Grid item key={tranche.id} flex={1}>
+        <Grid
+          item
+          key={tranche.id}
+          flex={1}
+          display='flex'
+          flexDirection='column'
+        >
           <Typography variant='h5'>
             {isMultiTranche
               ? `${tranche.name} ${t('general.tranche')}`
@@ -29,17 +40,41 @@ const LoanOverview: React.FC<LoanOverviewProps> = ({ pool }) => {
           </Typography>
           <Divider sx={{ mt: 1.5 }} />
           <InfoRow
-            title={t('general.apy')}
+            title={t('general.variableApy')}
             titleStyle={{
-              variant: 'h3',
+              variant: 'h5',
             }}
             metric={
-              <Typography variant='h3' color='gold.dark'>
+              <Typography variant='h5' color='gold.dark'>
                 {formatPercentage(tranche.apy).replaceAll(' ', '')}
               </Typography>
             }
             showDivider
           />
+          {tranche.fixedTermConfig.map(
+            ({ epochLockDuration, apy, configId }) => {
+              const durationInMonths =
+                (parseFloat(epochLockDuration) *
+                  TimeConversions.DAYS_PER_WEEK) /
+                TimeConversions.DAYS_PER_MONTH
+
+              return (
+                <InfoRow
+                  key={configId}
+                  title={`${t('general.fixedApy')}, ~ ${formatEpoch(durationInMonths)}`}
+                  titleStyle={{
+                    variant: 'h5',
+                  }}
+                  metric={
+                    <Typography variant='h5' color='gold.dark'>
+                      {formatPercentage(apy).replaceAll(' ', '')}
+                    </Typography>
+                  }
+                  showDivider
+                />
+              )
+            }
+          )}
           <InfoRow
             title={t(
               'lending.poolOverview.trancheCard.remainingCapacity.label'
@@ -61,6 +96,9 @@ const LoanOverview: React.FC<LoanOverviewProps> = ({ pool }) => {
                 </Typography>
               </Box>
             }
+            sx={{
+              mt: 'auto',
+            }}
           />
           <InfoRow
             title={t('lending.poolOverview.trancheCard.minDeposit')}

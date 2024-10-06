@@ -1,5 +1,6 @@
 import { Box, Button } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
+import Link from 'next/link'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalState from '@/hooks/context/useModalState'
@@ -44,6 +45,7 @@ const UnlockModalConfirmedActions = () => {
         color='secondary'
         fullWidth
         onClick={handleClose}
+        LinkComponent={Link}
         href={Routes.locking.root.url}
         sx={{ textTransform: 'capitalize' }}
       >

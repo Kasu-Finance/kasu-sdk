@@ -11,7 +11,7 @@ import StepperState from '@/context/stepper/stepper.provider'
 const UnlockModalWrapper: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { modal } = useModalState()
 
-  const { lockPeriods } = modal[ModalsKeys.LOCK]
+  const { lockPeriods } = modal[ModalsKeys.UNLOCK]
 
   return (
     // we don't need lockPeriods but refactoring LockModalState is

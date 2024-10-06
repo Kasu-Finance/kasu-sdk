@@ -39,6 +39,7 @@ const useRequestDeposit = () => {
   return async (
     lendingPoolId: `0x${string}`,
     selectedTranche: PoolOverviewWithDelegate['tranches'][number],
+    fixedTermConfigId: string,
     currentEpochDepositedAmount: string
   ) => {
     if (!account) {
@@ -139,6 +140,7 @@ const useRequestDeposit = () => {
         trancheId,
         maxAmount.toString(),
         swapData,
+        fixedTermConfigId,
         kycData.blockExpiration,
         kycData.signature,
         isETH ? fromAmount : '0' // when using ETH, pass the value  directly here

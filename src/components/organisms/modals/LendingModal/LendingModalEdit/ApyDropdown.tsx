@@ -1,5 +1,5 @@
 import { Box, SelectChangeEvent, Typography } from '@mui/material'
-import { useState } from 'react'
+import { useMemo } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
@@ -9,16 +9,15 @@ import CustomSelect from '@/components/atoms/CustomSelect'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import { formatPercentage } from '@/utils'
+import { formatEpoch, formatPercentage, TimeConversions } from '@/utils'
 
 const ApyDropdown = () => {
   const { t } = useTranslation()
 
   const { modal } = useModalState()
 
-  const { trancheId } = useDepositModalState()
-
-  const [apy, setApy] = useState('')
+  const { trancheId, fixedTermConfigId, setFixedTermConfigId } =
+    useDepositModalState()
 
   const pool = modal[ModalsKeys.LEND].pool
 
@@ -26,26 +25,39 @@ const ApyDropdown = () => {
     (tranche) => tranche.id === trancheId
   )
 
-  if (!selectedTranche) return null
+  const apyOptions = useMemo(
+    () =>
+      selectedTranche
+        ? [
+            {
+              label: t('general.variableApy'),
+              id: '0',
+              value: selectedTranche.apy,
+            },
+            ...selectedTranche.fixedTermConfig.map((fixedTermConfig) => {
+              const durationInMonths =
+                (parseFloat(fixedTermConfig.epochLockDuration) *
+                  TimeConversions.DAYS_PER_WEEK) /
+                TimeConversions.DAYS_PER_MONTH
+
+              return {
+                label: `${t('general.fixedApy')}, ~ ${formatEpoch(durationInMonths)} ${fixedTermConfig.fixedTermDepositStatus === 'AllowlistedOnly' ? '(Whitelisted)' : ''}`,
+                id: fixedTermConfig.configId,
+                value: fixedTermConfig.apy,
+              }
+            }),
+          ]
+        : null,
+    [t, selectedTranche]
+  )
+
+  if (!apyOptions) return null
 
   const handleChange = (e: SelectChangeEvent) => {
     const apyValue = e.target.value
 
-    setApy(apyValue)
+    setFixedTermConfigId(apyValue)
   }
-
-  const apyOptions = [
-    {
-      label: `Variable ${t('general.apy')}`,
-      id: 'variable',
-      value: selectedTranche.apy,
-    },
-    {
-      label: `Fixed ${t('general.apy')}, 6 months`,
-      id: 'fixed',
-      value: selectedTranche.apy,
-    },
-  ]
 
   return (
     <CustomSelect
@@ -55,7 +67,7 @@ const ApyDropdown = () => {
       labelKey='label'
       valueKey='id'
       onChange={handleChange}
-      value={apy}
+      value={fixedTermConfigId ?? ''}
       selectSx={{
         '.MuiOutlinedInput-input': {
           pl: 2.5,
@@ -63,7 +75,9 @@ const ApyDropdown = () => {
       }}
       renderSelected={(val) => (
         <Typography variant='baseMd'>
-          {val ? val.label : t('modals.lending.select-apy')}
+          {val
+            ? `${val.label} (${formatPercentage(val.value)})`
+            : t('modals.lending.select-apy')}
         </Typography>
       )}
       renderItem={(val) => (

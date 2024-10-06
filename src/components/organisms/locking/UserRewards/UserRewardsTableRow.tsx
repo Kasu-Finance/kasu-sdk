@@ -63,7 +63,12 @@ const UserRewardsTableRow: React.FC<UserRewardsTableRowProps> = ({
               <Button
                 startIcon={<UnlockIcon />}
                 variant='text'
-                sx={{ color: 'gold.dark', ml: 'auto' }}
+                sx={{
+                  color: 'gold.dark',
+                  ml: 'auto',
+                  py: 0,
+                  height: 'max-content',
+                }}
                 onClick={handleOpen}
               >
                 {t('general.unlock')}

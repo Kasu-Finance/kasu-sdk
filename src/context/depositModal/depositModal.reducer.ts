@@ -20,10 +20,16 @@ const depositModalReducer = (
         ...state,
         amountInUSD: action.payload,
       }
+    case DepositModalActionType.SET_FIXED_TERM_CONFIG_ID:
+      return {
+        ...state,
+        fixedTermConfigId: action.payload,
+      }
     case DepositModalActionType.SET_SELECTED_TRANCHE:
       return {
         ...state,
         trancheId: action.payload,
+        fixedTermConfigId: undefined,
         amount: '',
         amountInUSD: undefined,
       }
@@ -56,6 +62,8 @@ const depositModalReducer = (
       }
     case DepositModalActionType.SET_TERMS_ACCEPTED:
       return { ...state, termsAccepted: action.payload }
+    case DepositModalActionType.SET_LOAN_CONTRACT_ACCEPTED:
+      return { ...state, loanContractAccepted: action.payload }
   }
 }
 

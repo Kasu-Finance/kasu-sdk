@@ -9,6 +9,7 @@ import CancelDepositModal from '@/components/organisms/modals/CancelDepositModal
 import CancelWithdrawalModal from '@/components/organisms/modals/CancelWithdrawalModal'
 import KycModal from '@/components/organisms/modals/KycModal'
 import LendingModalWrapper from '@/components/organisms/modals/LendingModal/LendingModalWrapper'
+import LoanContractModal from '@/components/organisms/modals/LoanContractModal'
 import LockModalWrapper from '@/components/organisms/modals/LockModal/LockModalWrapper'
 import LoyaltyLevelsModal from '@/components/organisms/modals/LoyaltyLevelsModal'
 import UnlockModalWrapper from '@/components/organisms/modals/UnlockModal/UnlockModalWrapper'
@@ -71,6 +72,10 @@ export const getModal = (
     case ModalsKeys.LEND:
       return {
         component: <LendingModalWrapper handleClose={handleClose} />,
+      }
+    case ModalsKeys.LOAN_CONTRACT:
+      return {
+        component: <LoanContractModal handleClose={handleClose} />,
       }
     case ModalsKeys.UNRELEASED_FEATURE:
       return {

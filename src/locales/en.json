@@ -6,6 +6,8 @@
     "amounts": "amounts",
     "cancel": "cancel",
     "balance": "balance",
+    "variableApy": "Variable APY",
+    "fixedApy": "Fixed APY",
     "basic": "basic",
     "lending": "lending",
     "buyKSU": "buy KSU",
@@ -70,6 +72,8 @@
     "sorry": "sorry"
   },
   "time": {
+    "years": "years",
+    "months": "months",
     "days": "days",
     "hours": "hours",
     "minutes": "minutes"

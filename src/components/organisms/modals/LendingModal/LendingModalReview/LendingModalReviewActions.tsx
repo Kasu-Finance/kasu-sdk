@@ -19,7 +19,7 @@ const LendingModalReviewActions = () => {
 
   const { prevStep } = useStepperState()
 
-  const { modal } = useModalState()
+  const { modal, openModal } = useModalState()
 
   const pool = modal[ModalsKeys.LEND].pool
 
@@ -27,12 +27,20 @@ const LendingModalReviewActions = () => {
 
   const requestDeposit = useRequestDeposit()
 
-  const { amount, selectedToken, trancheId } = useDepositModalState()
+  const {
+    amount,
+    selectedToken,
+    trancheId,
+    loanContractAccepted,
+    fixedTermConfigId,
+    setLoanContractAcccepted,
+  } = useDepositModalState()
 
   const { currentEpochDepositedAmount } = useCurrentEpochDepositedAmount(
     pool.id,
     trancheId
   )
+
   const { isApproved, approve } = useApproveToken(
     supportedToken?.[selectedToken].address,
     sdkConfig.contracts.LendingPoolManager,
@@ -41,7 +49,17 @@ const LendingModalReviewActions = () => {
 
   const approvalRequired = !isApproved && selectedToken !== SupportedTokens.ETH
 
+  const handleOpen = () =>
+    openModal({
+      name: ModalsKeys.LOAN_CONTRACT,
+      acceptLoanContract: () => setLoanContractAcccepted(true),
+    })
+
   const handleRequestDeposit = () => {
+    if (!fixedTermConfigId) {
+      return console.error('RequestDeposit:: FixedTermConfigID is undefined')
+    }
+
     if (!currentEpochDepositedAmount) {
       return console.error(
         'RequestDeposit:: currentEpochDepositedAmount is undefined'
@@ -59,6 +77,7 @@ const LendingModalReviewActions = () => {
     requestDeposit(
       pool.id as `0x${string}`,
       selectedTranche,
+      fixedTermConfigId,
       currentEpochDepositedAmount
     )
   }
@@ -74,17 +93,29 @@ const LendingModalReviewActions = () => {
       >
         {t('general.adjust')}
       </Button>
-      <Button
-        variant='contained'
-        color='secondary'
-        fullWidth
-        onClick={() =>
-          !approvalRequired ? handleRequestDeposit() : approve(amount)
-        }
-        sx={{ textTransform: 'capitalize' }}
-      >
-        {!approvalRequired ? t('general.confirm') : t('general.approve')}
-      </Button>
+      {loanContractAccepted ? (
+        <Button
+          variant='contained'
+          color='secondary'
+          fullWidth
+          onClick={() =>
+            !approvalRequired ? handleRequestDeposit() : approve(amount)
+          }
+          sx={{ textTransform: 'capitalize' }}
+        >
+          {!approvalRequired ? t('general.confirm') : t('general.approve')}
+        </Button>
+      ) : (
+        <Button
+          variant='contained'
+          color='secondary'
+          fullWidth
+          sx={{ textTransform: 'capitalize' }}
+          onClick={handleOpen}
+        >
+          View & Accept Loan Contract
+        </Button>
+      )}
     </Box>
   )
 }
