@@ -26,7 +26,10 @@ export const getKasuSDK = async () => {
   const unusedPools = await getUnusedPools()
 
   return new KasuSdk(
-    { ...sdkConfig, UNUSED_LENDING_POOL_IDS: unusedPools! },
+    {
+      ...sdkConfig,
+      UNUSED_LENDING_POOL_IDS: unusedPools.length ? unusedPools : [''],
+    },
     provider
   )
 }

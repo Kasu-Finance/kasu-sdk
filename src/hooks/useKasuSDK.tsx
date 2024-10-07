@@ -40,7 +40,10 @@ const useKasuSDK = () => {
     provider && account ? ['kasuSDK', provider, account] : null,
     async ([_, provider]) => {
       return new KasuSdk(
-        { ...sdkConfig, UNUSED_LENDING_POOL_IDS: unusedPools! },
+        {
+          ...sdkConfig,
+          UNUSED_LENDING_POOL_IDS: unusedPools?.length ? unusedPools : [''],
+        },
         provider.getSigner()
       )
     },
@@ -54,7 +57,10 @@ const useKasuSDK = () => {
         const fallbackProvider = new JsonRpcProvider(RPC_URLS[chain][0])
 
         return new KasuSdk(
-          { ...sdkConfig, UNUSED_LENDING_POOL_IDS: unusedPools! },
+          {
+            ...sdkConfig,
+            UNUSED_LENDING_POOL_IDS: unusedPools?.length ? unusedPools : [''],
+          },
           fallbackProvider
         )
       },
