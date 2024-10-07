@@ -4,6 +4,7 @@ import { useCallback, useEffect } from 'react'
 import useToastState from '@/hooks/context/useToastState'
 import useSwitchChain from '@/hooks/web3/useSwitchChain'
 
+import { NETWORK } from '@/config/sdk'
 import { SupportedChainIds } from '@/connection/chains'
 import { networkConnection } from '@/connection/connectors/networkConnector'
 import { isSupportedChain } from '@/utils'
@@ -18,7 +19,11 @@ const useChainStatus = () => {
   const invalidChain = chainId && !isSupportedChain(chainId)
 
   const handleSwitchChain = useCallback(async () => {
-    const switched = await switchChain(SupportedChainIds.BASE)
+    const switched = await switchChain(
+      NETWORK === 'BASE'
+        ? SupportedChainIds.BASE
+        : SupportedChainIds.BASE_SEPOLIA
+    )
 
     if (switched) {
       removeToast()
