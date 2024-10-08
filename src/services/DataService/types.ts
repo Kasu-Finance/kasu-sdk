@@ -90,6 +90,7 @@ export interface TrancheData {
         configId: string;
         apy: string;
         epochLockDuration: string;
+        epochInterestRate: string;
         fixedTermDepositStatus: 'Everyone' | 'AllowlistedOnly';
         fixedTermDepositAllowlist: {
             isAllowlisted: boolean;

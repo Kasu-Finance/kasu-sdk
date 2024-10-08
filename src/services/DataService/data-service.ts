@@ -227,6 +227,8 @@ export class DataService {
                                 apy: fixedTermApy.toString(),
                                 epochLockDuration:
                                     fixedTermConfig.epochLockDuration,
+                                epochInterestRate:
+                                    fixedTermConfig.epochInterestRate,
                                 fixedTermDepositStatus:
                                     fixedTermConfig.fixedTermDepositStatus,
                                 fixedTermDepositAllowlist:
