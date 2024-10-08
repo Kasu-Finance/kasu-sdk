@@ -43,8 +43,6 @@ const UserLendingSummary: React.FC<UserLendingSummaryProps> = ({ pool }) => {
     )
   }
 
-  const isMultiTranche = pool.tranches.length > 1
-
   const { totalInvested, totalYieldEarned, averageApy } =
     calculateUserLendingSummary(userLendingTrancheBalance ?? [])
 
@@ -67,11 +65,7 @@ const UserLendingSummary: React.FC<UserLendingSummaryProps> = ({ pool }) => {
       </Grid>
       <Grid item sm={4}>
         <WaveCard
-          title={
-            isMultiTranche
-              ? t('lending.poolOverview.investmentCard.weightedAvgApy.label')
-              : `${t('general.lendingStrategy')} ${t('general.apy')}`
-          }
+          title={t('lending.poolOverview.investmentCard.weightedAvgApy.label')}
           toolTipInfo={t(
             'lending.poolOverview.investmentCard.weightedAvgApy.tooltip'
           )}

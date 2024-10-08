@@ -20,13 +20,13 @@ const ToolTip: React.FC<ToolTipProps> = ({ children, iconSx, ...rest }) => {
   return (
     <Tooltip
       disableFocusListener
-      {...rest}
       arrow={false}
       placement={isMobile || isTablet ? 'bottom' : undefined}
       enterTouchDelay={100}
       PopperProps={{
         style: { zIndex: 9999999 },
       }}
+      {...rest}
     >
       {children ?? (
         <InfoIcon

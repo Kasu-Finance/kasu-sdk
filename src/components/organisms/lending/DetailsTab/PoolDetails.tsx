@@ -6,8 +6,10 @@ import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import InfoRow from '@/components/atoms/InfoRow'
+import ToolTip from '@/components/atoms/ToolTip'
+import GrossApyTooltip from '@/components/molecules/tooltips/GrossApyTooltip'
 
-import { formatEpoch, formatPercentage, TimeConversions } from '@/utils'
+import { formatPercentage, formatToNearestTime, TimeConversions } from '@/utils'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
@@ -38,6 +40,7 @@ const PoolDetails: React.FC<PoolDetailsProps> = ({ pool }) => {
                 titleStyle={{
                   variant: 'h5',
                 }}
+                toolTipInfo={<ToolTip title={<GrossApyTooltip />} />}
                 metric={
                   <Typography variant='h5' color='gold.dark'>
                     {formatPercentage(tranche.apy).replaceAll(' ', '')}
@@ -48,18 +51,20 @@ const PoolDetails: React.FC<PoolDetailsProps> = ({ pool }) => {
 
               {tranche.fixedTermConfig.map(
                 ({ epochLockDuration, apy, configId }) => {
-                  const durationInMonths =
-                    (parseFloat(epochLockDuration) *
-                      TimeConversions.DAYS_PER_WEEK) /
-                    TimeConversions.DAYS_PER_MONTH
+                  const durationInMs =
+                    parseFloat(epochLockDuration) *
+                    TimeConversions.DAYS_PER_WEEK *
+                    TimeConversions.SECONDS_PER_DAY *
+                    1000
 
                   return (
                     <InfoRow
                       key={configId}
-                      title={`${t('general.fixedApy')}, ~ ${formatEpoch(durationInMonths)}`}
+                      title={`${t('general.fixedApy')}, ~ ${formatToNearestTime(durationInMs)}`}
                       titleStyle={{
                         variant: 'h5',
                       }}
+                      toolTipInfo={<ToolTip title={<GrossApyTooltip />} />}
                       metric={
                         <Typography variant='h5' color='gold.dark'>
                           {formatPercentage(apy).replaceAll(' ', '')}

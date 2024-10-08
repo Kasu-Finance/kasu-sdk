@@ -6,11 +6,18 @@ import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
+import GrossApyTooltip from '@/components/molecules/tooltips/GrossApyTooltip'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 import dayjs from '@/dayjs'
-import { formatAmount, formatTimestamp } from '@/utils'
+import {
+  formatAmount,
+  formatPercentage,
+  formatTimestamp,
+  formatToNearestTime,
+  TimeConversions,
+} from '@/utils'
 
 const LendingModalReviewOverview = () => {
   const { t } = useTranslation()
@@ -19,7 +26,8 @@ const LendingModalReviewOverview = () => {
 
   const pool = modal[ModalsKeys.LEND].pool
 
-  const { amount, amountInUSD, trancheId } = useDepositModalState()
+  const { amount, amountInUSD, trancheId, fixedTermConfigId } =
+    useDepositModalState()
 
   const formattedTimeNow = formatTimestamp(dayjs().unix(), {
     format: 'DD.MM.YYYY HH:mm:ss',
@@ -28,6 +36,10 @@ const LendingModalReviewOverview = () => {
 
   const selectedTranche = pool.tranches.find(
     (tranche) => tranche.id === trancheId
+  )
+
+  const fixedTermApy = selectedTranche?.fixedTermConfig.find(
+    ({ configId }) => configId === fixedTermConfigId
   )
 
   return (
@@ -76,6 +88,50 @@ const LendingModalReviewOverview = () => {
           }}
         />
       )}
+
+      <InfoRow
+        title={`${pool.tranches.length > 1 ? t('general.tranche') : ''} ${t('general.apy')}`}
+        toolTipInfo={
+          <ToolTip
+            title='info'
+            iconSx={{
+              color: 'gold.extraDark',
+              '&:hover': {
+                color: 'rgba(133, 87, 38, 1)',
+              },
+            }}
+          />
+        }
+        metric={
+          <Typography variant='baseMdBold' display='flex' alignItems='center'>
+            {fixedTermApy
+              ? `${t('general.fixedApy')}, ~ ${formatToNearestTime(
+                  parseFloat(fixedTermApy.epochLockDuration) *
+                    TimeConversions.DAYS_PER_WEEK *
+                    TimeConversions.SECONDS_PER_DAY *
+                    1000
+                )}`
+              : t('general.variableApy')}
+            <ToolTip
+              title={<GrossApyTooltip />}
+              iconSx={{
+                color: 'gold.extraDark',
+                '&:hover': {
+                  color: 'rgba(133, 87, 38, 1)',
+                },
+              }}
+            />
+            {formatPercentage(
+              fixedTermApy ? fixedTermApy.apy : selectedTranche?.apy || '0'
+            )}
+          </Typography>
+        }
+        showDivider
+        dividerProps={{
+          color: 'white',
+        }}
+      />
+
       <InfoRow
         title={t('modals.lending.review.metric-3')}
         toolTipInfo={

@@ -37,7 +37,7 @@ const SimulatedBaseApy = () => {
 
   return (
     <InfoRow
-      title={`${t('general.apy')} (${capitalize(t('general.base'))})`}
+      title={`${t('general.grossApy')} (${capitalize(t('general.base'))})`}
       toolTipInfo={
         <ToolTip
           title={t(

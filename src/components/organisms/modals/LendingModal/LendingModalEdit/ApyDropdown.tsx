@@ -9,7 +9,7 @@ import CustomSelect from '@/components/atoms/CustomSelect'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import { formatEpoch, formatPercentage, TimeConversions } from '@/utils'
+import { formatPercentage, formatToNearestTime, TimeConversions } from '@/utils'
 
 const ApyDropdown = () => {
   const { t } = useTranslation()
@@ -35,13 +35,14 @@ const ApyDropdown = () => {
               value: selectedTranche.apy,
             },
             ...selectedTranche.fixedTermConfig.map((fixedTermConfig) => {
-              const durationInMonths =
-                (parseFloat(fixedTermConfig.epochLockDuration) *
-                  TimeConversions.DAYS_PER_WEEK) /
-                TimeConversions.DAYS_PER_MONTH
+              const durationInMs =
+                parseFloat(fixedTermConfig.epochLockDuration) *
+                TimeConversions.DAYS_PER_WEEK *
+                TimeConversions.SECONDS_PER_DAY *
+                1000
 
               return {
-                label: `${t('general.fixedApy')}, ~ ${formatEpoch(durationInMonths)} ${fixedTermConfig.fixedTermDepositStatus === 'AllowlistedOnly' ? '(Whitelisted)' : ''}`,
+                label: `${t('general.fixedApy')}, ~ ${formatToNearestTime(durationInMs)} ${fixedTermConfig.fixedTermDepositStatus === 'AllowlistedOnly' ? '(Whitelisted)' : ''}`,
                 id: fixedTermConfig.configId,
                 value: fixedTermConfig.apy,
               }
