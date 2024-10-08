@@ -5,7 +5,9 @@ import useTranslation from '@/hooks/useTranslation'
 
 import CustomCardContentInner from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import InfoRow from '@/components/atoms/InfoRow'
+import ToolTip from '@/components/atoms/ToolTip'
 import WaveBox from '@/components/atoms/WaveBox'
+import GrossApyTooltip from '@/components/molecules/tooltips/GrossApyTooltip'
 
 import { formatAmount, formatPercentage } from '@/utils'
 import formatDuration from '@/utils/formats/formatDuration'
@@ -40,8 +42,14 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
             >
               {isMultiTranche ? name : t('general.lendingStrategy')}
             </Typography>
-            <Typography variant='baseSm' display='block' mt={1}>
-              {isMultiTranche && t('general.tranche')} {t('general.apy')}
+            <Typography
+              variant='baseSm'
+              display='flex'
+              alignItems='center'
+              mt={1}
+            >
+              {isMultiTranche && t('general.tranche')} {t('general.grossApy')}{' '}
+              <ToolTip title={<GrossApyTooltip />} />
             </Typography>
             <Typography variant='h3' color='primary.main'>
               {formatPercentage(minApy).replaceAll(' %', '')} -{' '}

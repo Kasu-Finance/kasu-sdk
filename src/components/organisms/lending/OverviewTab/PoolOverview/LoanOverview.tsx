@@ -4,11 +4,13 @@ import React from 'react'
 import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
+import ToolTip from '@/components/atoms/ToolTip'
+import GrossApyTooltip from '@/components/molecules/tooltips/GrossApyTooltip'
 
 import {
   formatAmount,
-  formatEpoch,
   formatPercentage,
+  formatToNearestTime,
   TimeConversions,
 } from '@/utils'
 
@@ -44,6 +46,7 @@ const LoanOverview: React.FC<LoanOverviewProps> = ({ pool }) => {
             titleStyle={{
               variant: 'h5',
             }}
+            toolTipInfo={<ToolTip title={<GrossApyTooltip />} />}
             metric={
               <Typography variant='h5' color='gold.dark'>
                 {formatPercentage(tranche.apy).replaceAll(' ', '')}
@@ -53,15 +56,17 @@ const LoanOverview: React.FC<LoanOverviewProps> = ({ pool }) => {
           />
           {tranche.fixedTermConfig.map(
             ({ epochLockDuration, apy, configId }) => {
-              const durationInMonths =
-                (parseFloat(epochLockDuration) *
-                  TimeConversions.DAYS_PER_WEEK) /
-                TimeConversions.DAYS_PER_MONTH
+              const durationInMs =
+                parseFloat(epochLockDuration) *
+                TimeConversions.DAYS_PER_WEEK *
+                TimeConversions.SECONDS_PER_DAY *
+                1000
 
               return (
                 <InfoRow
                   key={configId}
-                  title={`${t('general.fixedApy')}, ~ ${formatEpoch(durationInMonths)}`}
+                  title={`${t('general.fixedApy')}, ~ ${formatToNearestTime(durationInMs)}`}
+                  toolTipInfo={<ToolTip title={<GrossApyTooltip />} />}
                   titleStyle={{
                     variant: 'h5',
                   }}

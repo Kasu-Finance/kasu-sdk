@@ -6,8 +6,10 @@
     "amounts": "amounts",
     "cancel": "cancel",
     "balance": "balance",
-    "variableApy": "Variable APY",
-    "fixedApy": "Fixed APY",
+    "variableApy": "Variable Gross APY",
+    "netApy": "Net APY",
+    "grossApy": "Gross APY",
+    "fixedApy": "Fixed Gross APY",
     "basic": "basic",
     "lending": "lending",
     "buyKSU": "buy KSU",
@@ -77,6 +79,10 @@
     "days": "days",
     "hours": "hours",
     "minutes": "minutes"
+  },
+  "grossApy": {
+    "tooltip-1": "The Gross Annual Percentage Yield  (before Kasu protocol fees) currently offered by the Delegate for this Lending Strategy, assuming all repayments will be made as expected.​",
+    "tooltip-2": "The Net Annual Percentage Yield  (after Kasu protocol fees) currently offered by the Delegate for this Lending Strategy, assuming all repayments will be made as expected."
   },
   "locking": {
     "widgets": {
@@ -795,7 +801,7 @@
           "tooltip": "Your combined total USDC lending balance across all Tranches (or single Lending Strategy offer in the absence of multiple Tranches) within this Lending Strategy."
         },
         "weightedAvgApy": {
-          "label": "Weighted Average APY",
+          "label": "Weighted Average Gross APY",
           "tooltip": "The average gross APY (before fees) you are currently earning within this Lending Strategy that has been adjusted to reflect your weighted contribution to each Tranche relative to your total contribution across all Tranches. In the absence of multiple Tranches, this simply reflects the gross APY for this Lending Strategy (assuming all repayment will be made as expected).​"
         },
         "totYieldEarned": {
@@ -807,7 +813,7 @@
           "tooltip": "Your current USDC lending balance in this Tranche."
         },
         "trancheApy": {
-          "label": "Tranche APY",
+          "label": "Tranche Gross APY",
           "tooltip": "The Annual Percentage Yield currently offered by the Delegate for this Tranche of this Lending Strategy, assuming all repayments will be made as expected."
         },
         "yieldEarned": {

@@ -19,16 +19,25 @@ const SimulatedBaseApy = () => {
 
   const pool = modal[ModalsKeys.LEND].pool
 
-  const { trancheId } = useDepositModalState()
+  const { trancheId, fixedTermConfigId } = useDepositModalState()
 
-  const selectedTranche = useMemo(
-    () => pool.tranches.find((tranche) => tranche.id === trancheId),
-    [pool.tranches, trancheId]
-  )
+  const selectedApy = useMemo(() => {
+    const selectedTranche = pool.tranches.find(
+      (tranche) => tranche.id === trancheId
+    )
+
+    if (!selectedTranche?.fixedTermConfig.length) return selectedTranche?.apy
+
+    const fixedTermApy = selectedTranche.fixedTermConfig.find(
+      ({ configId }) => configId === fixedTermConfigId
+    )
+
+    return fixedTermApy?.apy
+  }, [pool.tranches, trancheId, fixedTermConfigId])
 
   return (
     <InfoRow
-      title={`${t('general.apy')} (${capitalize(t('general.base'))})`}
+      title={`${t('general.grossApy')} (${capitalize(t('general.base'))})`}
       toolTipInfo={
         <ToolTip
           title={t(
@@ -48,7 +57,7 @@ const SimulatedBaseApy = () => {
       }}
       metric={
         <Typography variant='baseMdBold'>
-          {formatPercentage(selectedTranche?.apy || 0)}
+          {formatPercentage(selectedApy || 0)}
         </Typography>
       }
     />

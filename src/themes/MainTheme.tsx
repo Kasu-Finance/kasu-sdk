@@ -706,18 +706,16 @@ export const theme = createTheme({
       },
       styleOverrides: {
         tooltip: {
-          maxWidth: '460px',
+          maxWidth: '300px',
           maxHeight: '360px',
           overflow: 'auto',
           lineHeight: 1.5,
           padding: '4px 8px 6px 8px',
-          backgroundColor: 'rgba(97, 97, 97, 0.9)',
+          backgroundColor: 'rgba(40, 40, 42, 0.9)',
           color: '#ffffff',
-          backdropFilter: 'blur(3px)',
+          backdropFilter: 'blur(1px)',
           borderRadius: '4px',
-          boxShadow: '0px 3px 5px -1px rgba(0, 0, 0, 0.2)',
-          filter:
-            'drop-shadow(0px 6px 10px rgba(0, 0, 0, 0.14)) drop-shadow(0px 1px 18px rgba(0, 0, 0, 0.12))',
+          boxShadow: '0px 8px 12px 0px rgba(0, 0, 0, 0.25)',
         },
 
         arrow: {
