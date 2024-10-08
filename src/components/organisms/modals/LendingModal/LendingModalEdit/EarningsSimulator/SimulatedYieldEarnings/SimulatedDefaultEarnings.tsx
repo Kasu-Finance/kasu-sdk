@@ -29,27 +29,43 @@ const SimulatedDefaultEarnings: React.FC<SimulatedDefaultEarningsProps> = ({
 
   const pool = modal[ModalsKeys.LEND].pool
 
-  const { amount, amountInUSD, trancheId, simulatedDuration, isDebouncing } =
-    useDepositModalState()
+  const {
+    amount,
+    amountInUSD,
+    trancheId,
+    fixedTermConfigId,
+    simulatedDuration,
+    isDebouncing,
+  } = useDepositModalState()
 
   const { performanceFee } = usePerformanceFee()
 
   const simulateEarnings = useSimulateYieldEarnings()
 
-  const selectedTranche = useMemo(
-    () => pool.tranches.find((tranche) => tranche.id === trancheId),
-    [pool.tranches, trancheId]
-  )
+  const selectedInterestRate = useMemo(() => {
+    const selectedTranche = pool.tranches.find(
+      (tranche) => tranche.id === trancheId
+    )
+
+    if (!selectedTranche?.fixedTermConfig.length)
+      return selectedTranche?.interestRate
+
+    const fixedTermApy = selectedTranche.fixedTermConfig.find(
+      ({ configId }) => configId === fixedTermConfigId
+    )
+
+    return fixedTermApy?.epochInterestRate
+  }, [pool.tranches, trancheId, fixedTermConfigId])
 
   useEffect(() => {
-    if (!amount || !selectedTranche?.interestRate || !performanceFee) {
+    if (!amount || !selectedInterestRate || !performanceFee) {
       setYieldEarnings([0])
       return
     }
 
     const simulatedEarnings = simulateEarnings(
       parseFloat(amountInUSD ?? amount),
-      parseFloat(selectedTranche.interestRate),
+      parseFloat(selectedInterestRate),
       365,
       performanceFee / 100
     )
@@ -59,7 +75,7 @@ const SimulatedDefaultEarnings: React.FC<SimulatedDefaultEarningsProps> = ({
     amount,
     performanceFee,
     amountInUSD,
-    selectedTranche?.interestRate,
+    selectedInterestRate,
     simulateEarnings,
     setYieldEarnings,
   ])
