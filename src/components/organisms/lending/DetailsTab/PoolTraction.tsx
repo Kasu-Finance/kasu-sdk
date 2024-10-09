@@ -10,7 +10,7 @@ import TokenAmount from '@/components/atoms/TokenAmount'
 import WaveBox from '@/components/atoms/WaveBox'
 import WaveCard from '@/components/molecules/WaveCard'
 
-import { formatAmount } from '@/utils'
+import { formatAmount, formatPercentage } from '@/utils'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
@@ -58,11 +58,9 @@ const PoolTraction: React.FC<PoolTractionProps> = ({ pool }) => {
           </Grid>
           <Grid item flex={1}>
             <WaveCard
-              title={t('details.poolTraction.activeLoans.label')}
-              toolTipInfo={t('details.poolTraction.activeLoans.tooltip')}
-              content={formatAmount(pool.activeLoans, {
-                minValue: 1_000_000,
-              })}
+              title={t('details.poolDelegate.totalLossRate.label')}
+              toolTipInfo={t('details.poolDelegate.totalLossRate.tooltip')}
+              content={formatPercentage(pool.delegate.historicLossRate)}
               unit=''
             />
           </Grid>
