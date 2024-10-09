@@ -10,7 +10,6 @@ export interface PoolOverview {
     apy: number;
     description: string;
     bannerImageUrl: string;
-    thumbnailImageUrl: string;
     strategyDeckUrl: string;
     tranches: TrancheData[];
     totalValueLocked: string;

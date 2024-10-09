@@ -317,9 +317,6 @@ export class DataService {
                 bannerImageUrl: this.getUrlFromFile(
                     lendingPoolDirectus.bannerImage,
                 ),
-                thumbnailImageUrl: this.getUrlFromFile(
-                    lendingPoolDirectus.thumbnailImage,
-                ),
                 strategyDeckUrl: this.getUrlFromFile(
                     lendingPoolDirectus.strategyDeck,
                 ),
