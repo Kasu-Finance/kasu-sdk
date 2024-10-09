@@ -13,10 +13,12 @@ import useTranslation from '@/hooks/useTranslation'
 import DottedDivider from '@/components/atoms/DottedDivider'
 import NextLink from '@/components/atoms/NextLink'
 import TokenAmount from '@/components/atoms/TokenAmount'
+import UnorderedList from '@/components/atoms/UnorderedList'
 import PoolTableRowApy from '@/components/organisms/home/PoolTable/PoolTableRowApy'
 
 import { Routes } from '@/config/routes'
 import { TRANCHE_ICONS } from '@/constants/pool'
+import { customTypography } from '@/themes/typography'
 import { capitalize, formatAmount, formatPercentage } from '@/utils'
 import formatDuration from '@/utils/formats/formatDuration'
 import getInitials from '@/utils/getInitials'
@@ -159,9 +161,11 @@ const PoolTableRow: React.FC<PoolTableRowProps> = ({ pool }) => {
         </TableCell>
         {isActivePool && (
           <TableCell>
-            <Typography variant='baseSm' whiteSpace='normal'>
-              {pool.security}
-            </Typography>
+            <UnorderedList sx={{ ...customTypography.baseSm, pl: 2 }}>
+              {pool.security.map((security, index) => (
+                <li key={index}>{security}</li>
+              ))}
+            </UnorderedList>
           </TableCell>
         )}
       </TableRow>

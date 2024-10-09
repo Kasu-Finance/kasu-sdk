@@ -6,9 +6,11 @@ import useTranslation from '@/hooks/useTranslation'
 import CustomCardContentInner from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
+import UnorderedList from '@/components/atoms/UnorderedList'
 import WaveBox from '@/components/atoms/WaveBox'
 import GrossApyTooltip from '@/components/molecules/tooltips/GrossApyTooltip'
 
+import { customTypography } from '@/themes/typography'
 import { formatAmount, formatPercentage } from '@/utils'
 import formatDuration from '@/utils/formats/formatDuration'
 
@@ -142,7 +144,7 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
           metric={
             <Typography variant='baseMdBold'>{pool.assetClass}</Typography>
           }
-          sx={{ flexWrap: 'wrap' }}
+          sx={{ flexDirection: 'column' }}
         />
         {isActivePool && (
           <InfoRow
@@ -151,9 +153,13 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
             toolTipInfo={t('lending.poolOverview.detailCard.security.tooltip')}
             showDivider
             metric={
-              <Typography variant='baseMdBold'>{pool.security}</Typography>
+              <UnorderedList sx={{ ...customTypography.baseMdBold, pl: 2 }}>
+                {pool.security.map((security, index) => (
+                  <li key={index}>{security}</li>
+                ))}
+              </UnorderedList>
             }
-            sx={{ flexWrap: 'wrap' }}
+            sx={{ flexDirection: 'column' }}
           />
         )}
       </CustomCardContentInner>
