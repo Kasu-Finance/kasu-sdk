@@ -314,8 +314,8 @@ export class DataService {
                 enabled: lendingPoolDirectus.enabled,
                 apy: averageApy,
                 description: lendingPoolDirectus.description,
-                bannerImageUrl: this.getUrlFromFile(
-                    lendingPoolDirectus.bannerImage,
+                thumbnailImageUrl: this.getUrlFromFile(
+                    lendingPoolDirectus.thumbnailImage,
                 ),
                 strategyDeckUrl: this.getUrlFromFile(
                     lendingPoolDirectus.strategyDeck,

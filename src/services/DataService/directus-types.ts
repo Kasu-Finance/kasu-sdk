@@ -20,7 +20,7 @@ export interface PoolOverviewDirectus {
     security: string[];
     apy: number;
     description: string;
-    bannerImage: string;
+    thumbnailImage: string;
     strategyDeck: string;
     assetClass: string;
     industryExposure: string;
