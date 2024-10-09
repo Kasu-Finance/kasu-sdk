@@ -2,10 +2,10 @@ import { Container, Stack } from '@mui/material'
 
 import useTranslation from '@/hooks/useTranslation'
 
-import BackButton from '@/components/atoms/BackButton'
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
+import CloseButton from '@/components/organisms/termsAndConditions/CloseButton'
 import FeesExplanation from '@/components/organisms/termsAndConditions/FeesExplanation'
 import InterestAccrual from '@/components/organisms/termsAndConditions/InterestAccrual'
 import LoanWithdrawalRequests from '@/components/organisms/termsAndConditions/LoanWithdrawalRequests'
@@ -30,17 +30,7 @@ const TermsAndConditionsPage = () => {
             <PendingPhase />
             <LoanWithdrawalRequests />
             <TrancheAllocation />
-            <BackButton
-              variant='contained'
-              sx={{
-                maxWidth: 368,
-                textTransform: 'capitalize',
-                alignSelf: 'center',
-              }}
-              fullWidth
-            >
-              Back
-            </BackButton>
+            <CloseButton />
           </Stack>
         </CustomInnerCardContent>
       </CustomCard>

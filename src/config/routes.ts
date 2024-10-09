@@ -27,7 +27,7 @@ export const Routes = {
       url: `${BaseRoutesPaths.LENDING}/closedLendingStrategies`,
     },
     termsAndConditions: {
-      url: `${BaseRoutesPaths.LENDING}/terms-and-conditions`,
+      url: `${BaseRoutesPaths.LENDING}/important-information-document`,
     },
     riskWarning: {
       url: `${BaseRoutesPaths.LENDING}/risk-warning`,

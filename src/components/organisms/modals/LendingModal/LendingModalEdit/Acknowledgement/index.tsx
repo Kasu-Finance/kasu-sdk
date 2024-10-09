@@ -50,10 +50,14 @@ const Acknowledgement = () => {
         sx={{
           '.MuiFormControlLabel-root': {
             m: 0,
-            width: 'max-content',
+            alignItems: 'flex-start',
             '.MuiCheckbox-root': {
               mr: 2,
               bgcolor: 'white',
+            },
+
+            '.MuiTypography-root': {
+              mt: 0.25,
             },
 
             '& + .MuiFormControlLabel-root': {
@@ -97,7 +101,7 @@ const Acknowledgement = () => {
             <CustomCheckbox
               checked={checked.termsAndConditions}
               onChange={() => toggleChecked('termsAndConditions')}
-              name='terms and condition acknowledgement'
+              name='Important Information Document acknowledgement'
             />
           }
           label={
