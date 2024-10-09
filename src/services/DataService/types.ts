@@ -20,7 +20,7 @@ export interface PoolOverview {
     poolCapacityPercentage: string;
     activeLoans: string;
     assetClass: string;
-    security: string;
+    security: string[];
     industryExposure: string;
     poolApyStructure: 'Variable' | 'Fixed';
     apyExpiryDate: number | null;

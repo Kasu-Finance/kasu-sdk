@@ -343,7 +343,7 @@ export class DataService {
 
             // show only enabled pools from cms
             if (poolOverview.enabled) {
-            retn.push(poolOverview);
+                retn.push(poolOverview);
             }
         }
 
