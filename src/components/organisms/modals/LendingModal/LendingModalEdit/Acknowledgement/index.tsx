@@ -135,10 +135,9 @@ const Acknowledgement = () => {
         }}
       >
         <Typography variant='baseSmBold' component='span'>
-          You accept that:
+          {t('modals.lending.acknowledgement.edit.description-1')}
         </Typography>{' '}
-        if this tranche is oversubscribed, you will be automatically reallocated
-        to a lower APY tranche (if one is available). Refer to the{' '}
+        {t('modals.lending.acknowledgement.edit.description-2')}{' '}
         <Button
           variant='text'
           sx={{
@@ -155,7 +154,7 @@ const Acknowledgement = () => {
         >
           {t('modals.lending.acknowledgement.termsAndConditions')}
         </Button>{' '}
-        for full details.
+        {t('modals.lending.acknowledgement.edit.description-3')}
       </FormHelperText>
     </FormControl>
   )

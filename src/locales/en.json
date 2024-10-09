@@ -559,6 +559,11 @@
         "subheading-2": "Simulated Yield Earnings"
       },
       "acknowledgement": {
+        "edit": {
+          "description-1": "You accept that:",
+          "description-2": "if this tranche is oversubscribed, you will be automatically reallocated to a lower APY tranche (if one is available) but with higher protection (ranking priority) protection against losses. Refer to the",
+          "description-3": "for full details."
+        },
         "base": "I acknowledge that I have read and understood the",
         "acknowledged": "You have acknowledged that you have read and understood the",
         "riskWarning": "Risk Warning",
