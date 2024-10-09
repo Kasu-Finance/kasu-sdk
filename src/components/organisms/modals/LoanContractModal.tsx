@@ -1,6 +1,7 @@
 import { Box, Button, Stack, Typography } from '@mui/material'
 
 import useModalState from '@/hooks/context/useModalState'
+import useTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
@@ -10,12 +11,14 @@ import DialogHeader from '@/components/molecules/DialogHeader'
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
+  const { t } = useTranslation()
+
   const { modal } = useModalState()
 
-  const { acceptLoanContract } = modal[ModalsKeys.LOAN_CONTRACT]
+  const { acceptLoanContract, canAccept } = modal[ModalsKeys.LOAN_CONTRACT]
 
   const handleClick = () => {
-    acceptLoanContract()
+    acceptLoanContract && acceptLoanContract()
     handleClose()
   }
 
@@ -26,7 +29,6 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         <Stack spacing={2}>
           <Stack spacing={3}>
             <Typography variant='h4'>Loan Agreement</Typography>
-
             <Typography variant='baseSmBold'>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam
               vel dolor ut risus venenatis consectetur et in ipsum.
@@ -42,24 +44,38 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             </Typography>
           </Stack>
           <Box display='flex' gap={4}>
-            <Button
-              variant='outlined'
-              color='secondary'
-              onClick={handleClose}
-              fullWidth
-              sx={{ textTransform: 'capitalize' }}
-            >
-              Back to Lend Request
-            </Button>
-            <Button
-              variant='contained'
-              color='secondary'
-              fullWidth
-              onClick={handleClick}
-              sx={{ textTransform: 'capitalize' }}
-            >
-              Accept Loan Contract
-            </Button>
+            {canAccept ? (
+              <>
+                <Button
+                  variant='outlined'
+                  color='secondary'
+                  onClick={handleClose}
+                  fullWidth
+                  sx={{ textTransform: 'capitalize' }}
+                >
+                  Back to Lend Request
+                </Button>
+                <Button
+                  variant='contained'
+                  color='secondary'
+                  fullWidth
+                  onClick={handleClick}
+                  sx={{ textTransform: 'capitalize' }}
+                >
+                  Accept Loan Contract
+                </Button>
+              </>
+            ) : (
+              <Button
+                variant='contained'
+                color='secondary'
+                fullWidth
+                onClick={handleClose}
+                sx={{ textTransform: 'capitalize' }}
+              >
+                {t('general.close')}
+              </Button>
+            )}
           </Box>
         </Stack>
       </DialogContent>

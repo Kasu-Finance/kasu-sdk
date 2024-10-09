@@ -42,7 +42,10 @@ export type ModalData<T = void> = T extends void ? ModalBase : T & ModalBase
 export type Modals = {
   [ModalsKeys.LOYALTY_LEVELS]: ModalData
   [ModalsKeys.UNRELEASED_FEATURE]: ModalData
-  [ModalsKeys.LOAN_CONTRACT]: ModalData<{ acceptLoanContract: () => void }>
+  [ModalsKeys.LOAN_CONTRACT]: ModalData<{
+    acceptLoanContract?: () => void
+    canAccept: boolean
+  }>
   [ModalsKeys.CONNECT_WALLET]: ModalData<{ callback?: () => void }>
   [ModalsKeys.LOCK]: ModalData<{ lockPeriods: LockPeriod[] }>
   [ModalsKeys.UNLOCK]: ModalData<{

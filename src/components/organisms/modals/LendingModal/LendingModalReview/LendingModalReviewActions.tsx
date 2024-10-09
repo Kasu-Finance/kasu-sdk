@@ -53,6 +53,7 @@ const LendingModalReviewActions = () => {
     openModal({
       name: ModalsKeys.LOAN_CONTRACT,
       acceptLoanContract: () => setLoanContractAcccepted(true),
+      canAccept: true,
     })
 
   const handleRequestDeposit = () => {

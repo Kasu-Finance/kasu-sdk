@@ -9,7 +9,8 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 const LoanContractButton = () => {
   const { openModal } = useModalState()
 
-  const handleOpen = () => openModal({ name: ModalsKeys.UNRELEASED_FEATURE })
+  const handleOpen = () =>
+    openModal({ name: ModalsKeys.LOAN_CONTRACT, canAccept: false })
 
   return (
     <Button

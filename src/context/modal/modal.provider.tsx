@@ -53,6 +53,7 @@ const initialState: Modals = {
   },
   loanContractModal: {
     isOpen: false,
+    canAccept: false,
     acceptLoanContract: () => {},
   },
 }

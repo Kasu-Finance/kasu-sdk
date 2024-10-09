@@ -1,28 +1,16 @@
-import {
-  Box,
-  Button,
-  CircularProgress,
-  List,
-  ListItem,
-  ListProps,
-} from '@mui/material'
+import { Box, Button, List, ListItem, ListProps } from '@mui/material'
 import Image from 'next/image'
 import { isValidElement } from 'react'
 
 import { useOrderedConnections } from '@/hooks/web3/useOrderedConnections'
 import useWalletActivation from '@/hooks/web3/useWalletActivation'
 
-type WalletListProps = ListProps & {
-  activateCallback: () => void
-}
+type WalletListProps = ListProps
 
-const WalletList: React.FC<WalletListProps> = ({
-  activateCallback,
-  ...rest
-}) => {
+const WalletList: React.FC<WalletListProps> = (listProps) => {
   const connections = useOrderedConnections()
 
-  const { isProviderLoading, tryActivation } = useWalletActivation()
+  const { tryActivation } = useWalletActivation()
 
   return (
     <List
@@ -31,12 +19,10 @@ const WalletList: React.FC<WalletListProps> = ({
           mt: 3,
         },
       }}
-      {...rest}
+      {...listProps}
     >
       {connections.orderedConnections.map((connection) => {
         const providerInfo = connection.getProviderInfo()
-
-        const isLoading = isProviderLoading[providerInfo.name]
 
         const icon = providerInfo.icon
 
@@ -46,12 +32,9 @@ const WalletList: React.FC<WalletListProps> = ({
               variant='contained'
               fullWidth
               color='dark'
-              onClick={() => tryActivation(connection, activateCallback)}
-              disabled={isLoading}
+              onClick={() => tryActivation(connection)}
             >
-              {isLoading ? (
-                <CircularProgress size={24} />
-              ) : isValidElement(providerInfo.customIcon) ? (
+              {isValidElement(providerInfo.customIcon) ? (
                 providerInfo.customIcon
               ) : (
                 <Box gap={1} display='flex' alignItems='center' color='white'>

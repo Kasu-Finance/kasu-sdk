@@ -93,7 +93,6 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
             overflow: 'auto',
             px: 3,
           }}
-          activateCallback={() => {}}
         />
       </Box>
       {account && (

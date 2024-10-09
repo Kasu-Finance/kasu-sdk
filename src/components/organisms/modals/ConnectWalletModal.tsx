@@ -11,7 +11,7 @@ const ConnectWalletModal: React.FC<DialogChildProps> = ({ handleClose }) => {
     <CustomCard>
       <DialogHeader title='Connect your wallet' onClose={handleClose} />
       <DialogContent>
-        <WalletList activateCallback={handleClose} />
+        <WalletList />
       </DialogContent>
     </CustomCard>
   )

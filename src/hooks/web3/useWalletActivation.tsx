@@ -1,51 +1,70 @@
 import { useWeb3React } from '@web3-react/core'
-import { useCallback, useEffect, useState } from 'react'
+import { ProviderRpcError } from '@web3-react/types'
+import { useCallback, useEffect } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
+import useToastState from '@/hooks/context/useToastState'
+import useHandleError from '@/hooks/web3/useHandleError'
+
+import { ModalsKeys } from '@/context/modal/modal.types'
 
 import {
   setRecentWeb3Connection,
   setRecentWeb3ConnectionDisconnected,
 } from '@/connection/connection.helper'
 import { getConnection } from '@/connection/connectors'
+import { ErrorCode } from '@/constants'
 import { userRejectedConnection, web3reactError } from '@/utils'
 
 import { Connection } from '@/types/connectors'
 
-interface LoadingState {
-  [key: string]: boolean
-}
-
 const useWalletActivation = () => {
   const { chainId, account, connector, ENSName } = useWeb3React()
 
-  const { modal } = useModalState()
+  const { modal, closeModal } = useModalState()
 
-  const [loading, setLoading] = useState<LoadingState>({})
+  const { setToast, removeToast } = useToastState()
+
+  const handleError = useHandleError()
 
   const connection = getConnection(connector)
 
   const tryActivation = useCallback(
-    async (connection: Connection, callback: () => void) => {
-      const providerName = connection.getProviderInfo().name
-
+    async (connection: Connection) => {
       try {
-        setLoading((prev) => ({ ...prev, [providerName]: true }))
+        setToast({
+          type: 'info',
+          title: 'Connection',
+          message: 'We are connecting your wallet...',
+        })
         if (connection.overrideActivate?.()) return
 
         await connection.connector.activate()
 
         modal.connectWalletModal.callback?.()
       } catch (error) {
+        if (
+          (error as ProviderRpcError)?.code === ErrorCode.MM_ALREADY_PENDING
+        ) {
+          setToast({
+            type: 'info',
+            title: 'Connection',
+            message: 'Wallet connection already pending...',
+          })
+          return
+        }
         // Ideally set to setError global context.
         web3reactError(error as Error)
-
         if (userRejectedConnection(connection, error)) {
-          console.warn('user rejected')
+          setToast({
+            type: 'error',
+            title: 'Connection Error',
+            message: 'Wallet connection request rejected.',
+          })
+          return
         }
-      } finally {
-        setLoading((prev) => ({ ...prev, [providerName]: false }))
-        callback()
+
+        handleError(error)
       }
     },
     // eslint-disable-next-line
@@ -73,8 +92,14 @@ const useWalletActivation = () => {
     }
   }, [ENSName, account, connection])
 
+  useEffect(() => {
+    if (account) {
+      closeModal(ModalsKeys.CONNECT_WALLET)
+      removeToast()
+    }
+  }, [account, closeModal, removeToast])
+
   return {
-    isProviderLoading: loading,
     tryActivation,
     disconnect,
   }
