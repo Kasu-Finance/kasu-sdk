@@ -1,13 +1,22 @@
 'use client'
 
 import { Button } from '@mui/material'
+import { useRouter } from 'next/navigation'
 
 import useTranslation from '@/hooks/useTranslation'
 
 const CloseButton = () => {
   const { t } = useTranslation()
 
-  const handleClick = () => window.close()
+  const router = useRouter()
+
+  const handleClick = () => {
+    if (window.history?.length && window.history.length > 1) {
+      router.back()
+    } else {
+      window.close()
+    }
+  }
 
   return (
     <Button
@@ -20,7 +29,7 @@ const CloseButton = () => {
       fullWidth
       onClick={handleClick}
     >
-      {t('general.close')}
+      {t('general.back')}
     </Button>
   )
 }
