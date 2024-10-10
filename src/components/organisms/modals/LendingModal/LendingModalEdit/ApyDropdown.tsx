@@ -1,4 +1,5 @@
 import { Box, SelectChangeEvent, Typography } from '@mui/material'
+import { useWeb3React } from '@web3-react/core'
 import { useMemo } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
@@ -13,6 +14,8 @@ import { formatPercentage, formatToNearestTime, TimeConversions } from '@/utils'
 
 const ApyDropdown = () => {
   const { t } = useTranslation()
+
+  const { account } = useWeb3React()
 
   const { modal } = useModalState()
 
@@ -34,22 +37,31 @@ const ApyDropdown = () => {
               id: '0',
               value: selectedTranche.apy,
             },
-            ...selectedTranche.fixedTermConfig.map((fixedTermConfig) => {
-              const durationInMs =
-                parseFloat(fixedTermConfig.epochLockDuration) *
-                TimeConversions.DAYS_PER_WEEK *
-                TimeConversions.SECONDS_PER_DAY *
-                1000
+            ...selectedTranche.fixedTermConfig
+              .filter(
+                (fixedTermConfig) =>
+                  fixedTermConfig.fixedTermDepositStatus === 'Everyone' ||
+                  fixedTermConfig.fixedTermDepositAllowlist.find(
+                    (allowList) =>
+                      allowList.userId.toLowerCase() === account?.toLowerCase()
+                  )
+              )
+              .map((fixedTermConfig) => {
+                const durationInMs =
+                  parseFloat(fixedTermConfig.epochLockDuration) *
+                  TimeConversions.DAYS_PER_WEEK *
+                  TimeConversions.SECONDS_PER_DAY *
+                  1000
 
-              return {
-                label: `${t('general.fixedApy')}, ~ ${formatToNearestTime(durationInMs)} ${fixedTermConfig.fixedTermDepositStatus === 'AllowlistedOnly' ? '(Whitelisted)' : ''}`,
-                id: fixedTermConfig.configId,
-                value: fixedTermConfig.apy,
-              }
-            }),
+                return {
+                  label: `${t('general.fixedApy')}, ~ ${formatToNearestTime(durationInMs)} ${fixedTermConfig.fixedTermDepositStatus === 'AllowlistedOnly' ? '(Whitelisted)' : ''}`,
+                  id: fixedTermConfig.configId,
+                  value: fixedTermConfig.apy,
+                }
+              }),
           ]
         : null,
-    [t, selectedTranche]
+    [t, account, selectedTranche]
   )
 
   if (!apyOptions) return null
