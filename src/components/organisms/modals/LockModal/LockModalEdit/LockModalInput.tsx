@@ -184,6 +184,20 @@ const LockModalInput = () => {
           </Typography>
         }
       />
+      <Typography variant='baseMd' mt={3} display='block'>
+        {t('modals.lock.deposit.amount-metric-3')}{' '}
+        <ToolTip
+          title='info'
+          iconSx={{
+            verticalAlign: 'sub',
+            color: 'gold.extraDark',
+            '&:hover': {
+              color: 'rgba(133, 87, 38, 1)',
+            },
+          }}
+        />{' '}
+        {t('modals.lock.deposit.amount-metric-4')}
+      </Typography>
     </Box>
   )
 }
