@@ -9,7 +9,7 @@ import { DialogChildProps } from '@/components/atoms/DialogWrapper'
 import UnorderedList from '@/components/atoms/UnorderedList'
 import DialogContent from '@/components/molecules/DialogContent'
 import DialogHeader from '@/components/molecules/DialogHeader'
-import LoyaltyLevelInfo from '@/components/molecules/locking/LoyaltyOverview/LoyaltyLevelInfo'
+import LoyaltyLevelInfo from '@/components/organisms/modals/LoyaltyLevelsModal/LoyaltyLevelInfo'
 
 import { TrophyIcon } from '@/assets/icons'
 
