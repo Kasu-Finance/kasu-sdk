@@ -29,7 +29,7 @@ export const getPoolOverviewQuery = (ids?: string[]): string => gql`
             }
             configuration {
                 desiredDrawAmount
-                tranchesConfig(orderBy: orderId, orderDirection: asc){
+                tranchesConfig(orderBy: orderId, orderDirection: asc) {
                     id
                     desiredRatio
                     interestRate

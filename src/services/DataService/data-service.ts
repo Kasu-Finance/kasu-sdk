@@ -188,60 +188,90 @@ export class DataService {
             );
             const tranches: TrancheData[] = lendingPoolSubgraph.tranches
                 .map((tranche) => {
-                const trancheConfig =
-                    lendingPoolSubgraph.configuration.tranchesConfig.find(
-                        (r) => r.id == tranche.id,
-                    );
-                if (!trancheConfig) {
-                    console.warn(
-                        "Couldn't find tranche config for id: ",
-                        tranche.id,
-                    );
+                    const trancheConfig =
+                        lendingPoolSubgraph.configuration.tranchesConfig.find(
+                            (r) => r.id == tranche.id,
+                        );
+                    if (!trancheConfig) {
+                        console.warn(
+                            "Couldn't find tranche config for id: ",
+                            tranche.id,
+                        );
                         return null;
-                }
+                    }
 
-                const interestUpdates =
-                    trancheConfig.lendingPoolTrancheInterestRateUpdates;
+                    const interestUpdates =
+                        trancheConfig.lendingPoolTrancheInterestRateUpdates;
 
-                const interestRate = interestUpdates.length
-                    ? interestUpdates[0].epochInterestRate
-                    : trancheConfig.interestRate;
+                    const interestRate = interestUpdates.length
+                        ? interestUpdates[0].epochInterestRate
+                        : trancheConfig.interestRate;
 
-                const baseApy = this.calculateApyForTranche(interestRate);
+                    const baseApy = this.calculateApyForTranche(interestRate);
 
-                    const minApy = baseApy;
-                    const maxApy = baseApy;
+                    let minApy = baseApy;
+                    let maxApy = baseApy;
 
-                    const fixedTermConfig: TrancheData['fixedTermConfig'] = [];
+                    const fixedTermConfig =
+                        trancheConfig.lendingPoolTrancheFixedTermConfigs.map(
+                            (fixedTermConfig) => {
+                                const fixedTermApy =
+                                    this.calculateApyForTranche(
+                                        fixedTermConfig.epochInterestRate,
+                                    );
 
-                const averageApy = fixedTermConfig.length
-                    ? fixedTermConfig.reduce(
-                          (total, cur) => (total += parseFloat(cur.apy)),
-                          0,
-                      ) / fixedTermConfig.length
-                    : baseApy;
+                                minApy = Math.min(minApy, fixedTermApy);
+                                maxApy = Math.max(maxApy, fixedTermApy);
+
+                                return {
+                                    configId: fixedTermConfig.configId,
+                                    apy: fixedTermApy.toString(),
+                                    epochLockDuration:
+                                        fixedTermConfig.epochLockDuration,
+                                    epochInterestRate:
+                                        fixedTermConfig.epochInterestRate,
+                                    fixedTermDepositStatus:
+                                        fixedTermConfig.fixedTermDepositStatus,
+                                    fixedTermDepositAllowlist:
+                                        fixedTermConfig.fixedTermDepositAllowlist.map(
+                                            (allowList) => ({
+                                                isAllowlisted:
+                                                    allowList.isAllowlisted,
+                                                userId: allowList.user.id,
+                                            }),
+                                        ),
+                                };
+                            },
+                        );
+
+                    const averageApy = fixedTermConfig.length
+                        ? fixedTermConfig.reduce(
+                              (total, cur) => (total += parseFloat(cur.apy)),
+                              0,
+                          ) / fixedTermConfig.length
+                        : baseApy;
 
                     return {
-                    id: tranche.id,
-                    apy: baseApy.toString(),
-                    minApy: minApy.toString(),
-                    maxApy: maxApy.toString(),
-                    averageApy: averageApy.toString(),
-                    interestRate,
-                    maximumDeposit: trancheConfig.maxDepositAmount,
-                    minimumDeposit: trancheConfig.minDepositAmount,
-                    poolCapacityPercentage:
-                        poolCapacities.poolCapacityPercentage[
+                        id: tranche.id,
+                        apy: baseApy.toString(),
+                        minApy: minApy.toString(),
+                        maxApy: maxApy.toString(),
+                        averageApy: averageApy.toString(),
+                        interestRate,
+                        maximumDeposit: trancheConfig.maxDepositAmount,
+                        minimumDeposit: trancheConfig.minDepositAmount,
+                        poolCapacityPercentage:
+                            poolCapacities.poolCapacityPercentage[
                                 parseInt(tranche.orderId)
-                        ].toString(),
-                    poolCapacity:
-                        poolCapacities.poolCapacity[
-                        parseInt(tranche.orderId)
+                            ].toString(),
+                        poolCapacity:
+                            poolCapacities.poolCapacity[
+                                parseInt(tranche.orderId)
                             ].toString(),
                         name: trancheNames[
                             lendingPoolSubgraph.tranches.length - 1
                         ][parseInt(tranche.orderId)],
-                    fixedTermConfig,
+                        fixedTermConfig,
                     };
                 })
                 .filter((tranche) => tranche !== null);
@@ -316,7 +346,7 @@ export class DataService {
 
             // show only enabled pools from cms
             if (poolOverview.enabled) {
-                retn.push(poolOverview);
+            retn.push(poolOverview);
             }
         }
 
