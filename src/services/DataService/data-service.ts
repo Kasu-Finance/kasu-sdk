@@ -113,7 +113,7 @@ export class DataService {
 
         poolCapacities.push(remainingCapacity);
         poolCapacityPercentages.push(remainingCapacityPercentage);
-        if (index == lendingPoolConfig.tranchesConfig.length - 1) {
+        if (index === lendingPoolConfig.tranchesConfig.length - 1) {
             return {
                 poolCapacity: poolCapacities,
                 poolCapacityPercentage: poolCapacityPercentages,
@@ -186,8 +186,8 @@ export class DataService {
                 lendingPoolSubgraph,
                 lendingPoolConfig,
             );
-            const tranches: TrancheData[] = [];
-            for (const tranche of lendingPoolSubgraph.tranches) {
+            const tranches: TrancheData[] = lendingPoolSubgraph.tranches
+                .map((tranche) => {
                 const trancheConfig =
                     lendingPoolSubgraph.configuration.tranchesConfig.find(
                         (r) => r.id == tranche.id,
@@ -197,7 +197,7 @@ export class DataService {
                         "Couldn't find tranche config for id: ",
                         tranche.id,
                     );
-                    continue;
+                        return null;
                 }
 
                 const interestUpdates =
@@ -212,36 +212,7 @@ export class DataService {
                 let minApy = baseApy;
                 let maxApy = baseApy;
 
-                const fixedTermConfig =
-                    trancheConfig.lendingPoolTrancheFixedTermConfigs.map(
-                        (fixedTermConfig) => {
-                            const fixedTermApy = this.calculateApyForTranche(
-                                fixedTermConfig.epochInterestRate,
-                            );
-
-                            minApy = Math.min(minApy, fixedTermApy);
-                            maxApy = Math.max(maxApy, fixedTermApy);
-
-                            return {
-                                configId: fixedTermConfig.configId,
-                                apy: fixedTermApy.toString(),
-                                epochLockDuration:
-                                    fixedTermConfig.epochLockDuration,
-                                epochInterestRate:
-                                    fixedTermConfig.epochInterestRate,
-                                fixedTermDepositStatus:
-                                    fixedTermConfig.fixedTermDepositStatus,
-                                fixedTermDepositAllowlist:
-                                    fixedTermConfig.fixedTermDepositAllowlist.map(
-                                        (allowList) => ({
-                                            isAllowlisted:
-                                                allowList.isAllowlisted,
-                                            userId: allowList.user.id,
-                                        }),
-                                    ),
-                            };
-                        },
-                    );
+                    const fixedTermConfig: any[] = [];
 
                 const averageApy = fixedTermConfig.length
                     ? fixedTermConfig.reduce(
@@ -250,7 +221,7 @@ export class DataService {
                       ) / fixedTermConfig.length
                     : baseApy;
 
-                tranches.push({
+                    return {
                     id: tranche.id,
                     apy: baseApy.toString(),
                     minApy: minApy.toString(),
@@ -261,18 +232,20 @@ export class DataService {
                     minimumDeposit: trancheConfig.minDepositAmount,
                     poolCapacityPercentage:
                         poolCapacities.poolCapacityPercentage[
-                            lendingPoolSubgraph.tranches.indexOf(tranche)
+                                parseInt(tranche.orderId)
                         ].toString(),
                     poolCapacity:
                         poolCapacities.poolCapacity[
-                            lendingPoolSubgraph.tranches.indexOf(tranche)
-                        ].toString(),
-                    name: trancheNames[lendingPoolSubgraph.tranches.length - 1][
                         parseInt(tranche.orderId)
-                    ],
+                            ].toString(),
+                        name: trancheNames[
+                            lendingPoolSubgraph.tranches.length - 1
+                        ][parseInt(tranche.orderId)],
                     fixedTermConfig,
-                });
-            }
+                    };
+                })
+                .filter((tranche) => tranche !== null);
+
             const poolCapacitySum = poolCapacities.poolCapacity.reduce(
                 (a, b) => a + b,
                 0,

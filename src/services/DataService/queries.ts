@@ -29,7 +29,7 @@ export const getPoolOverviewQuery = (ids?: string[]): string => gql`
             }
             configuration {
                 desiredDrawAmount
-                tranchesConfig {
+                tranchesConfig(orderBy: orderId, orderDirection: asc){
                     id
                     desiredRatio
                     interestRate
@@ -43,18 +43,7 @@ export const getPoolOverviewQuery = (ids?: string[]): string => gql`
                     ) {
                         epochInterestRate
                     }
-                    lendingPoolTrancheFixedTermConfigs{
-                        configId
-                        epochLockDuration
-                        epochInterestRate
-                        fixedTermDepositStatus
-                        fixedTermDepositAllowlist{
-                            id
-                            user{
-                                id
-                            }
-                        }
-                    }
+                
                 }
             }
         }
