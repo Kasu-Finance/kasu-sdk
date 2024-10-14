@@ -209,10 +209,10 @@ export class DataService {
 
                 const baseApy = this.calculateApyForTranche(interestRate);
 
-                let minApy = baseApy;
-                let maxApy = baseApy;
+                    const minApy = baseApy;
+                    const maxApy = baseApy;
 
-                    const fixedTermConfig: any[] = [];
+                    const fixedTermConfig: TrancheData['fixedTermConfig'] = [];
 
                 const averageApy = fixedTermConfig.length
                     ? fixedTermConfig.reduce(
