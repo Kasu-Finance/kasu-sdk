@@ -41,7 +41,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
 }) => {
   const { t } = useTranslation()
 
-  const { amount, trancheId, setAmount, setIsValidating } =
+  const { amount, trancheId, setAmount, setAmountInUSD, setIsValidating } =
     useDepositModalState()
   const { modalStatus, setModalStatus } = useModalStatusState()
 
@@ -161,11 +161,17 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
 
     setAmount(maxPossible)
 
-    applyConversion ? debouncedValidate(maxPossible) : validate(maxPossible)
+    if (applyConversion) {
+      debouncedValidate(maxPossible)
+    } else {
+      validate(maxPossible)
+      setAmountInUSD(maxPossible)
+    }
   }, [
     balance,
     maxDeposit,
     setAmount,
+    setAmountInUSD,
     validate,
     applyConversion,
     debouncedValidate,
@@ -176,9 +182,21 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
       setIsValidating(true)
       setAmount(value)
 
-      applyConversion ? debouncedValidate(value) : validate(value)
+      if (applyConversion) {
+        debouncedValidate(value)
+      } else {
+        validate(value)
+        setAmountInUSD(value)
+      }
     },
-    [setAmount, validate, applyConversion, debouncedValidate, setIsValidating]
+    [
+      setAmount,
+      setAmountInUSD,
+      validate,
+      applyConversion,
+      debouncedValidate,
+      setIsValidating,
+    ]
   )
 
   const handleFocusState = useCallback(
