@@ -290,6 +290,9 @@ export class DataService {
                 thumbnailImageUrl: this.getUrlFromFile(
                     lendingPoolDirectus.thumbnailImage,
                 ),
+                bannerImageUrl: this.getUrlFromFile(
+                    lendingPoolDirectus.bannerImage,
+                ),
                 strategyDeckUrl: this.getUrlFromFile(
                     lendingPoolDirectus.strategyDeck,
                 ),
