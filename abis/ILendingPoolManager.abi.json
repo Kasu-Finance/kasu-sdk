@@ -676,11 +676,6 @@
                 "name": "fixedTermConfigId",
                 "type": "uint256",
                 "internalType": "uint256"
-            },
-            {
-                "name": "depositData",
-                "type": "bytes",
-                "internalType": "bytes"
             }
         ],
         "outputs": [
@@ -722,26 +717,14 @@
                 "internalType": "uint256"
             },
             {
-                "name": "depositData",
-                "type": "bytes",
-                "internalType": "bytes"
+                "name": "blockExpiration",
+                "type": "uint256",
+                "internalType": "uint256"
             },
             {
-                "name": "kycData",
-                "type": "tuple",
-                "internalType": "struct KycData",
-                "components": [
-                    {
-                        "name": "blockExpiration",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    },
-                    {
-                        "name": "signature",
-                        "type": "bytes",
-                        "internalType": "bytes"
-                    }
-                ]
+                "name": "signature",
+                "type": "bytes",
+                "internalType": "bytes"
             }
         ],
         "outputs": [
@@ -1093,31 +1076,6 @@
         ],
         "outputs": [],
         "stateMutability": "nonpayable"
-    },
-    {
-        "type": "event",
-        "name": "DepositDataAdded",
-        "inputs": [
-            {
-                "name": "lendingPool",
-                "type": "address",
-                "indexed": true,
-                "internalType": "address"
-            },
-            {
-                "name": "dNftID",
-                "type": "uint256",
-                "indexed": true,
-                "internalType": "uint256"
-            },
-            {
-                "name": "data",
-                "type": "bytes",
-                "indexed": false,
-                "internalType": "bytes"
-            }
-        ],
-        "anonymous": false
     },
     {
         "type": "event",
