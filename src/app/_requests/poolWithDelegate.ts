@@ -16,6 +16,8 @@ export const getPoolWithDelegate = unstable_cache(
 
     const poolsWithDelegate = pools
       .filter((pool) => {
+        if (!pool.isActive) return false
+
         if (!poolId) return true
 
         return pool.id === poolId

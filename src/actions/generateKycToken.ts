@@ -1,6 +1,6 @@
 'use server'
 
-import NEXERA_API_BASE_URL from '@/config/api.nexera'
+import NEXERA_API_BASE_URL from '@/config/nexera/api.nexera'
 
 type ApiRes =
   | {

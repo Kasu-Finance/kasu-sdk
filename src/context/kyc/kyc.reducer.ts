@@ -7,23 +7,20 @@ const kycReducer = (state: KycStateType, action: KycActions): KycStateType => {
         ...state,
         isVerifying: action.payload,
       }
-    case 'AUTHENTICATE':
+    case 'SET_CUSTOMER_STATUS':
       return {
         ...state,
-        isAuthenticated: true,
-        authenticatedUser: action.payload,
+        status: action.payload,
       }
     case 'RESET_AUTHENTICATION':
       return {
         ...state,
-        isAuthenticated: false,
         kycCompleted: false,
         authenticatedUser: undefined,
       }
     case 'SET_KYC_COMPLETED':
       return {
         ...state,
-        isAuthenticated: true,
         kycCompleted: true,
         authenticatedUser: action.payload,
       }

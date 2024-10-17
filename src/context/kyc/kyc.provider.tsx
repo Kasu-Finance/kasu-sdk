@@ -1,16 +1,16 @@
 'use client'
 
 // @ts-ignore export error
-import { IdentityClient } from '@nexeraid/identity-sdk'
 import { useWeb3React } from '@web3-react/core'
 import { ReactNode, useEffect, useReducer } from 'react'
 
-import useKycActions from '@/context/kyc/kyc.actions'
 import KycContext from '@/context/kyc/kyc.context'
 import kycReducer from '@/context/kyc/kyc.reducer'
 import { KycStateType } from '@/context/kyc/kyc.types'
 
 import checkUserKycState from '@/actions/checkUserKycState'
+
+import useKycActions from './kyc.actions'
 
 type KycStateProps = {
   children: ReactNode
@@ -19,9 +19,8 @@ type KycStateProps = {
 const initialState: KycStateType = {
   isVerifying: false,
   authenticatedUser: undefined,
-  isAuthenticated: false,
+  status: null,
   kycCompleted: false,
-  identityClient: new IdentityClient(),
 }
 
 const KycState: React.FC<KycStateProps> = ({ children }) => {
@@ -29,42 +28,46 @@ const KycState: React.FC<KycStateProps> = ({ children }) => {
 
   const [state, dispatch] = useReducer(kycReducer, initialState)
 
-  const kycActions = useKycActions(dispatch, state.identityClient)
+  const kycActions = useKycActions(dispatch)
 
+  const {
+    resetAuthenticatedUser,
+    setCustomerStatus,
+    setIsVerifying,
+    setKycCompleted,
+  } = kycActions
+
+  // reset auth when account is changed
   useEffect(() => {
     if (account && account.toLowerCase() !== state.authenticatedUser) {
-      dispatch({ type: 'RESET_AUTHENTICATION' })
+      resetAuthenticatedUser()
     }
-  }, [account, state.authenticatedUser])
+  }, [account, state.authenticatedUser, resetAuthenticatedUser])
 
+  // verify user kyc status upon account connect / change
   useEffect(() => {
     if (account) {
       ;(async () => {
         try {
-          dispatch({
-            type: 'SET_IS_VERIFYING',
-            payload: true,
-          })
+          setIsVerifying(true)
 
           const status = await checkUserKycState(account)
 
-          if (status === 'Active') {
-            dispatch({
-              type: 'SET_KYC_COMPLETED',
-              payload: account.toLowerCase(),
-            })
-          }
+          if (!status) return
+
+          setCustomerStatus(status)
+
+          if (status !== 'Active') return
+
+          setKycCompleted(account.toLowerCase())
         } catch (error) {
           console.error(error)
         } finally {
-          dispatch({
-            type: 'SET_IS_VERIFYING',
-            payload: false,
-          })
+          setIsVerifying(false)
         }
       })()
     }
-  }, [account])
+  }, [account, setCustomerStatus, setIsVerifying, setKycCompleted])
 
   return (
     <KycContext.Provider value={{ ...state, ...kycActions }}>

@@ -74,16 +74,16 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <ThemeRegistry>
           <SwrProvider unusedPools={filteredPools}>
             <Web3Provider>
-              <KycState>
-                <ModalState>
-                  <ToastState>
+              <ToastState>
+                <KycState>
+                  <ModalState>
                     <Header />
                     <Box component='main'>{children}</Box>
                     <Footer />
                     <ModalsContainer />
-                  </ToastState>
-                </ModalState>
-              </KycState>
+                  </ModalState>
+                </KycState>
+              </ToastState>
             </Web3Provider>
           </SwrProvider>
         </ThemeRegistry>

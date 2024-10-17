@@ -1,4 +1,8 @@
+import { useEffect } from 'react'
+
+import useKycState from '@/hooks/context/useKycState'
 import useModalState from '@/hooks/context/useModalState'
+import useToastState from '@/hooks/context/useToastState'
 
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
 import LendingModal from '@/components/organisms/modals/LendingModal'
@@ -9,7 +13,46 @@ import ModalStatusState from '@/context/modalStatus/modalStatus.provider'
 import StepperState from '@/context/stepper/stepper.provider'
 
 const LendingModalWrapper: React.FC<DialogChildProps> = ({ handleClose }) => {
-  const { modal } = useModalState()
+  const { modal, openModal } = useModalState()
+
+  const { setToast, removeToast } = useToastState()
+
+  const { isVerifying, kycCompleted } = useKycState()
+
+  const pool = modal[ModalsKeys.LEND].pool
+
+  // handle account change admist lending (new account may not be kyc-ed)
+  useEffect(() => {
+    if (kycCompleted) {
+      removeToast()
+      return
+    }
+
+    if (isVerifying) {
+      setToast({
+        type: 'info',
+        title: 'Account change detected',
+        message: 'Verifying status of new account...',
+        isClosable: false,
+      })
+      return
+    }
+
+    removeToast()
+    handleClose()
+    openModal({
+      name: ModalsKeys.KYC,
+      callback: () => openModal({ name: ModalsKeys.LEND, pool }),
+    })
+  }, [
+    isVerifying,
+    kycCompleted,
+    pool,
+    removeToast,
+    setToast,
+    handleClose,
+    openModal,
+  ])
 
   return (
     <DepositModalState

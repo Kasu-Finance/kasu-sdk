@@ -1,19 +1,16 @@
 'use server'
 
-import NEXERA_API_BASE_URL, { NEXERA_PROJECT_ID } from '@/config/api.nexera'
+import { getCustomerStatus } from '@compilot/react-sdk'
 
-type NexeraCustomerStatus =
-  | 'Active'
-  | 'Rejected'
-  | 'Dormant'
-  | 'To be reviewed'
-  | 'Failed'
-  | 'Escalated'
-  | 'Terminated'
+import NEXERA_API_BASE_URL, {
+  NEXERA_PROJECT_ID,
+} from '@/config/nexera/api.nexera'
+
+export type CustomerStatus = Awaited<ReturnType<typeof getCustomerStatus>>
 
 type ApiRes =
   | {
-      status: NexeraCustomerStatus
+      status: CustomerStatus
     }
   | {
       message: string
@@ -27,12 +24,12 @@ type ApiRes =
 
 const checkUserKycState = async (
   userAddress: string
-): Promise<NexeraCustomerStatus | undefined> => {
+): Promise<CustomerStatus | undefined> => {
   const projectId = process.env.NEXERA_PROJECT_ID || NEXERA_PROJECT_ID
 
   try {
     const response = await fetch(
-      `${NEXERA_API_BASE_URL}/customers/project/${projectId}/wallet-address/${userAddress.toLowerCase()}`,
+      `${NEXERA_API_BASE_URL}/projects/${projectId}/customer-wallets/${userAddress.toLowerCase()}/customer`,
       {
         headers: {
           Authorization: `Bearer ${process.env.NEXERA_API_KEY}`,

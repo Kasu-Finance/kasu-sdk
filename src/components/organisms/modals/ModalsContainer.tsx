@@ -7,7 +7,6 @@ import useModalState from '@/hooks/context/useModalState'
 import DialogWrapper from '@/components/atoms/DialogWrapper'
 import CancelDepositModal from '@/components/organisms/modals/CancelDepositModal'
 import CancelWithdrawalModal from '@/components/organisms/modals/CancelWithdrawalModal'
-import KycModal from '@/components/organisms/modals/KycModal'
 import LendingModalWrapper from '@/components/organisms/modals/LendingModal/LendingModalWrapper'
 import LoanContractModal from '@/components/organisms/modals/LoanContractModal'
 import LockModalWrapper from '@/components/organisms/modals/LockModal/LockModalWrapper'
@@ -19,6 +18,7 @@ import WithdrawModalWrapper from '@/components/organisms/modals/WithdrawModal/Wi
 import { Modals, ModalsKeys } from '@/context/modal/modal.types'
 
 import ConnectWalletModal from './ConnectWalletModal'
+import KycModalWrapper from './KycModal/KycModalWrapper'
 
 type ModalDetails = {
   component: JSX.Element
@@ -59,7 +59,7 @@ export const getModal = (
       }
     case ModalsKeys.KYC:
       return {
-        component: <KycModal handleClose={handleClose} />,
+        component: <KycModalWrapper handleClose={handleClose} />,
       }
     case ModalsKeys.CANCEL_DEPOSIT:
       return {

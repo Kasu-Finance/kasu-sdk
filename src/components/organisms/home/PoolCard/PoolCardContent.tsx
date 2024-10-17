@@ -36,24 +36,20 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
         my={3}
       >
         {pool.tranches.map(({ name, minApy, maxApy }) => (
-          <Stack key={name} alignItems='center'>
+          <Stack key={name} alignItems='center' spacing={0.5}>
             <Typography
-              variant='baseMdBold'
+              variant='baseSmBold'
               color='primary.main'
               textTransform='capitalize'
             >
-              {isMultiTranche ? name : t('general.lendingStrategy')}
+              {isMultiTranche
+                ? `${name} ${t('general.tranche')}`
+                : t('general.lendingStrategy')}
             </Typography>
-            <Typography
-              variant='baseSm'
-              display='flex'
-              alignItems='center'
-              mt={1}
-            >
-              {isMultiTranche && t('general.tranche')} {t('general.grossApy')}{' '}
-              <ToolTip title={<GrossApyTooltip />} />
+            <Typography variant='baseXs' display='flex' alignItems='center'>
+              {t('general.grossApy')} <ToolTip title={<GrossApyTooltip />} />
             </Typography>
-            <Typography variant='h3' color='primary.main'>
+            <Typography variant='h5' color='primary.main'>
               {formatPercentage(minApy).replaceAll(' %', '')} -{' '}
               {formatPercentage(maxApy).replaceAll(' ', '')}
             </Typography>

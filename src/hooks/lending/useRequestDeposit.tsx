@@ -141,8 +141,8 @@ const useRequestDeposit = () => {
         maxAmount.toString(),
         swapData,
         fixedTermConfigId,
-        kycData.blockExpiration,
-        kycData.signature,
+        '0x',
+        kycData,
         isETH ? fromAmount : '0' // when using ETH, pass the value  directly here
       )
 

@@ -1,9 +1,9 @@
-import { Box, Button, Link, Typography } from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
+import Link from 'next/link'
 
 import useModalState from '@/hooks/context/useModalState'
 import useTranslation from '@/hooks/useTranslation'
 
-import NextLink from '@/components/atoms/NextLink'
 import OrderedList from '@/components/atoms/OrderedList'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
@@ -31,7 +31,6 @@ const WhatsNext = () => {
           <br />
           {t('modals.lending.completed.description-5')}
         </Typography>
-
         <OrderedList
           sx={{
             mt: 2,
@@ -47,9 +46,10 @@ const WhatsNext = () => {
               {t('modals.lending.completed.list.list-0.title')}:{' '}
             </Typography>
             {t('modals.lending.completed.list.list-0.description-1')}{' '}
-            <Link
-              component={NextLink}
+            <Typography
+              component={Link}
               href={Routes.portfolio.root.url}
+              variant='baseMd'
               sx={{
                 textDecoration: 'none',
                 color: 'white',
@@ -57,7 +57,7 @@ const WhatsNext = () => {
               onClick={handleClose}
             >
               My Portfolio
-            </Link>{' '}
+            </Typography>{' '}
             {t('modals.lending.completed.list.list-0.description-2')}
           </li>
           <li>
