@@ -90,7 +90,7 @@ const LendingModalReviewOverview = () => {
       )}
 
       <InfoRow
-        title={`${pool.tranches.length > 1 ? t('general.tranche') : ''} ${t('general.apy')}`}
+        title={`${pool.tranches.length > 1 ? t('general.tranche') : ''} ${t('general.grossApy')}`}
         toolTipInfo={
           <ToolTip
             title='info'

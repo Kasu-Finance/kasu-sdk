@@ -36,7 +36,7 @@ const PortfolioTabs = () => {
           value={Routes.portfolio.yourTransactions.url}
         />
         <CustomTab
-          label={t('general.rewards')}
+          label={t('portfolio.tabs.bonusAndRewards')}
           value={Routes.portfolio.rewards.url}
         />
         <CustomTab

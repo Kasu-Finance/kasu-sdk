@@ -53,7 +53,7 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                   fullWidth
                   sx={{ textTransform: 'capitalize' }}
                 >
-                  Back to Lend Request
+                  Back to Lending Request
                 </Button>
                 <Button
                   variant='contained'

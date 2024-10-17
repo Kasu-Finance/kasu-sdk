@@ -22,7 +22,7 @@ export const ACTION_MESSAGES = {
   [ActionStatus.PROCESSING]: 'Your transaction request is being processed...',
   [ActionType.APPROVE]: {
     [ActionStatus.ERROR]:
-      'An error has occurred in the approval request. Please review log for more details.',
+      'An error has occurred in the Approval Request. Please review log for more details.',
   },
   [ActionType.KYC_AUTH]: {
     [ActionStatus.PROCESSING]:
@@ -44,23 +44,23 @@ export const ACTION_MESSAGES = {
   [ActionType.LOCK]: {
     [ActionStatus.SUCCESS]: 'Lock request has been successfull.',
     [ActionStatus.ERROR]:
-      'An error has occurred in the lock request. Please review log for more details.',
+      'An error has occurred in the KSU Lock Request. Please review log for more details.',
   },
   [ActionType.UNLOCK]: {
     [ActionStatus.ERROR]:
-      'An error has occurred during the unlock request. Please review log for more details.',
+      'An error has occurred during the Unlock Request. Please review log for more details.',
   },
   [ActionType.CLAIM_REWARDS]: {
-    [ActionStatus.SUCCESS]: 'Claim request has been successfull.',
+    [ActionStatus.SUCCESS]: 'Claim Request has been successfull.',
     [ActionStatus.ERROR]:
-      'An error has occurred in the claim request. Please review log for more details.',
+      'An error has occurred in the Claim Request. Please review log for more details.',
   },
   [ActionType.WITHDRAW]: {
     [ActionStatus.ERROR]:
-      'An error has occurred in the withdraw request. Please review log for more details.',
+      'An error has occurred in the Withdraw Request. Please review log for more details.',
   },
   [ActionType.CANCELLATION]: {
     [ActionStatus.ERROR]:
-      'An error has occurred in the transaction cancellation request. Please review log for more details.',
+      'An error has occurred in the transaction Cancellation Request. Please review log for more details.',
   },
 } as const
