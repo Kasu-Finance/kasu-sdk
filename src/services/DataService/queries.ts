@@ -43,7 +43,18 @@ export const getPoolOverviewQuery = (ids?: string[]): string => gql`
                     ) {
                         epochInterestRate
                     }
-                
+                    lendingPoolTrancheFixedTermConfigs{
+                        configId
+                        epochLockDuration
+                        epochInterestRate
+                        fixedTermDepositStatus
+                        fixedTermDepositAllowlist{
+                            id
+                            user{
+                                id
+                            }
+                        }
+                    }
                 }
             }
         }

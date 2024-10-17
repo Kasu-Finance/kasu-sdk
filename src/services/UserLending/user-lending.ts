@@ -160,8 +160,12 @@ export class UserLending {
         tranche: string,
         maxAmount: BigNumberish,
         swapData: BytesLike,
-        blockExpiration: BigNumberish,
-        signature: BytesLike,
+        fixedTermConfigId: BigNumberish,
+        depositData: BytesLike,
+        kycData: {
+            blockExpiration: BigNumberish;
+            signature: BytesLike;
+        },
         ethValue: string,
     ): Promise<ContractTransaction> {
         return await this._lendingPoolManagerAbi.requestDepositWithKyc(
@@ -169,8 +173,9 @@ export class UserLending {
             tranche,
             maxAmount,
             swapData,
-            blockExpiration,
-            signature,
+            fixedTermConfigId,
+            depositData,
+            kycData,
             {
                 value: ethValue,
             },
@@ -182,15 +187,18 @@ export class UserLending {
         tranche: string,
         amount: BigNumberish,
         swapData: BytesLike,
+        fixedTermConfigId: BigNumberish,
+        depositData: BytesLike,
     ): Promise<ContractTransaction> {
         return await this._lendingPoolManagerAbi.requestDeposit(
             lendingPool,
             tranche,
             amount,
             swapData,
+            fixedTermConfigId,
+            depositData,
         );
     }
-
     async cancelDepositRequest(
         lendingPool: string,
         dNftID: BigNumberish,
