@@ -1,31 +1,23 @@
 'use client'
 
 import { Button } from '@mui/material'
-import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import useModalState from '@/hooks/context/useModalState'
-import useLendingPortfolioData from '@/hooks/portfolio/useLendingPortfolioData'
+import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
 import useTranslation from '@/hooks/useTranslation'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { DownloadRoundedIcon } from '@/assets/icons'
 
-type CsvDownloadButtonProps = {
-  poolOverviews: PoolOverview[]
-}
-
-const CsvDownloadButton: React.FC<CsvDownloadButtonProps> = ({
-  poolOverviews,
-}) => {
+const CsvDownloadButton = () => {
   const { t } = useTranslation()
 
-  const { lendingPortfolioData, isLoading } =
-    useLendingPortfolioData(poolOverviews)
+  const { transactionHistory, isLoading } = useTransactionHistory()
 
   const { openModal } = useModalState()
 
-  if (isLoading || !lendingPortfolioData?.lendingPools.length) {
+  if (isLoading || !transactionHistory?.length) {
     return null
   }
 
@@ -36,7 +28,7 @@ const CsvDownloadButton: React.FC<CsvDownloadButtonProps> = ({
       variant='text'
       sx={{
         maxWidth: 368,
-        mx: 'auto',
+        ml: 'auto',
         textTransform: 'capitalize',
         height: 'auto',
       }}
