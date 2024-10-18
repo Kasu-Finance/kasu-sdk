@@ -20,10 +20,19 @@ const LoyaltyStatus = () => {
           <Grid item xs={4}>
             <CurrentLoyaltyDescription />
           </Grid>
-          <Grid item xs={4}>
+          <Grid
+            item
+            xs={4}
+            display='flex'
+            sx={{
+              img: {
+                mt: 'auto',
+              },
+            }}
+          >
             <CurrentLoyaltyMascot />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={4} display='flex'>
             <CurrentLoyaltyProgressDetails />
           </Grid>
         </Grid>

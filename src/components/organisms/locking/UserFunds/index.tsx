@@ -22,8 +22,8 @@ const UserFunds = async () => {
     <CustomCard>
       <CustomCardHeader title={t('locking.widgets.overview.title')} />
       <CustomInnerCardContent sx={{ py: 3 }}>
-        <Grid container spacing={4}>
-          <Grid item xs={4}>
+        <Grid container columnSpacing={4}>
+          <Grid item xs={6}>
             <InfoRow
               title={`${t('general.wallet')}  ${t('general.balance')}`}
               toolTipInfo={t('locking.widgets.overview.metric-1-tooltip')}
@@ -32,16 +32,15 @@ const UserFunds = async () => {
               showDivider
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={6}>
             <InfoRow
               title={t('general.totalKsuLocked')}
               toolTipInfo={t('locking.widgets.overview.metric-3-tooltip')}
               titleStyle={{ textTransform: 'capitalize' }}
               metric={<TotalKsuLocked />}
-              showDivider
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={6}>
             <InfoRow
               title={t('general.availableFunds')}
               toolTipInfo={t('locking.widgets.overview.metric-2-tooltip')}

@@ -3,9 +3,9 @@ import { Box, Divider, Typography } from '@mui/material'
 import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
-import ApyBonus from '@/components/organisms/locking/RewardsBreakdown/ApyBonusBreakdown/ApyBonus'
-import CurrentInterestBalance from '@/components/organisms/locking/RewardsBreakdown/ApyBonusBreakdown/CurrentInterestBalance'
-import LifetimeInterestBalance from '@/components/organisms/locking/RewardsBreakdown/ApyBonusBreakdown/LifetimeInterestBalance'
+import ApyBonus from '@/components/organisms/locking/BonusRewardSummary/ApyBonusBreakdown/ApyBonus'
+import CurrentInterestBalance from '@/components/organisms/locking/BonusRewardSummary/ApyBonusBreakdown/CurrentInterestBalance'
+import LifetimeInterestBalance from '@/components/organisms/locking/BonusRewardSummary/ApyBonusBreakdown/LifetimeInterestBalance'
 
 const ApyBonusBreakdown = () => {
   const { t } = useTranslation()

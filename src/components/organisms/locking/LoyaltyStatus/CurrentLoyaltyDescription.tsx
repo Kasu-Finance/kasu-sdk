@@ -47,6 +47,7 @@ const CurrentLoyaltyDescription = () => {
         sx={{
           ...customTypography.baseSm,
           pl: 2,
+          mb: 2,
           'li + li': {
             mt: 1,
           },
@@ -68,6 +69,9 @@ const CurrentLoyaltyDescription = () => {
           )}
         </li>
       </UnorderedList>
+      <Typography variant='baseSm' component='p'>
+        {t('locking.widgets.loyalty.description')}
+      </Typography>
     </Box>
   )
 }

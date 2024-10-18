@@ -17,7 +17,7 @@ const CurrentLoyaltyProgressDetails = () => {
   const { t } = useTranslation()
 
   return (
-    <Stack spacing={2}>
+    <Stack spacing={2} mt='auto' width='100%'>
       <LoyaltyProgress />
       <Box>
         <InfoRow
@@ -27,18 +27,17 @@ const CurrentLoyaltyProgressDetails = () => {
           metric={<RKsuAmount />}
           sx={{ mt: 'auto' }}
         />
-
-        <InfoRow
-          title={t('locking.widgets.loyalty.metric-3')}
-          toolTipInfo={<ToolTip title={<RksuTooltip />} />}
-          showDivider
-          metric={<LendingRatio />}
-        />
         <InfoRow
           title={t('locking.widgets.loyalty.metric-2')}
           toolTipInfo={t('locking.widgets.loyalty.metric-2-toolip')}
           showDivider
           metric={<ActiveDepositAmount />}
+        />
+        <InfoRow
+          title={t('locking.widgets.loyalty.metric-3')}
+          toolTipInfo={<ToolTip title={<RksuTooltip />} />}
+          showDivider
+          metric={<LendingRatio />}
         />
       </Box>
     </Stack>

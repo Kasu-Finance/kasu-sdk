@@ -5,11 +5,9 @@ import useTranslation from '@/hooks/useTranslation'
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
-import InfoRow from '@/components/atoms/InfoRow'
-import ToolTip from '@/components/atoms/ToolTip'
-import BonusRewardSummaryActions from '@/components/organisms/locking/BonusRewardSummary/BonusRewardSummaryActions'
-import KsuBonusAndRewards from '@/components/organisms/locking/BonusRewardSummary/KsuBonusAndRewards'
-import ProtocolFeeSharingBalance from '@/components/organisms/locking/BonusRewardSummary/ProtocolFeeSharingBalance'
+import ApyBonusBreakdown from '@/components/organisms/locking/BonusRewardSummary/ApyBonusBreakdown'
+import FeesEarnedBreakdown from '@/components/organisms/locking/BonusRewardSummary/FeesEarnedBreakdown'
+import LaunchBonusBreakdown from '@/components/organisms/locking/BonusRewardSummary/LaunchBonusBreakdown'
 
 const BonusRewardSummary = () => {
   const { t } = useTranslation()
@@ -18,37 +16,15 @@ const BonusRewardSummary = () => {
       <CustomCardHeader title={t('locking.widgets.rewardsSummary.title')} />
       <CustomInnerCardContent sx={{ py: 3 }}>
         <Grid container spacing={4}>
-          <Grid item xs={6}>
-            <InfoRow
-              title={t('locking.widgets.rewardsSummary.metric-1')}
-              toolTipInfo={t('locking.widgets.rewardsSummary.metric-1-tooltip')}
-              showDivider
-              metric={<ProtocolFeeSharingBalance />}
-            />
+          <Grid item xs={4}>
+            <ApyBonusBreakdown />
           </Grid>
-          <Grid item xs={6}>
-            <InfoRow
-              title={t('locking.widgets.rewardsSummary.metric-2')}
-              toolTipInfo={
-                <ToolTip
-                  title={
-                    <>
-                      {t('locking.widgets.rewardsSummary.metric-2-toolip-1')}
-                      <br />
-                      <br />
-                      {t('locking.widgets.rewardsSummary.metric-2-toolip-2')}
-                      <br />
-                      <br />
-                      {t('locking.widgets.rewardsSummary.metric-2-toolip-3')}
-                    </>
-                  }
-                />
-              }
-              showDivider
-              metric={<KsuBonusAndRewards />}
-            />
+          <Grid item xs={4}>
+            <LaunchBonusBreakdown />
           </Grid>
-          <BonusRewardSummaryActions />
+          <Grid item xs={4}>
+            <FeesEarnedBreakdown />
+          </Grid>
         </Grid>
       </CustomInnerCardContent>
     </CustomCard>

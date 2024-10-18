@@ -4,14 +4,15 @@ import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
-import ClaimableFeesBalance from '@/components/organisms/locking/RewardsBreakdown/FeesEarnedBreakdown/ClaimableFeesBalance'
-import LifetimeFeesEarned from '@/components/organisms/locking/RewardsBreakdown/FeesEarnedBreakdown/LifetimeFeesEarned'
+import ClaimableFeesBalance from '@/components/organisms/locking/BonusRewardSummary/FeesEarnedBreakdown/ClaimableFeesBalance'
+import ClaimFeesButton from '@/components/organisms/locking/BonusRewardSummary/FeesEarnedBreakdown/ClaimFeesButton'
+import LifetimeFeesEarned from '@/components/organisms/locking/BonusRewardSummary/FeesEarnedBreakdown/LifetimeFeesEarned'
 
 const FeesEarnedBreakdown = () => {
   const { t } = useTranslation()
 
   return (
-    <Box>
+    <Box height='100%' display='flex' flexDirection='column'>
       <Typography variant='h5'>
         {t('locking.widgets.rewardsBreakdown.rewards-3.title')}
       </Typography>
@@ -38,7 +39,8 @@ const FeesEarnedBreakdown = () => {
         showDivider
       />
       <InfoRow
-        title={t('locking.widgets.rewardsBreakdown.rewards-3.metric-2')}
+        title={t('general.lifetime')}
+        titleStyle={{ textTransform: 'capitalize' }}
         toolTipInfo={
           <ToolTip
             title={
@@ -56,8 +58,8 @@ const FeesEarnedBreakdown = () => {
           />
         }
         metric={<LifetimeFeesEarned />}
-        showDivider
       />
+      <ClaimFeesButton />
     </Box>
   )
 }

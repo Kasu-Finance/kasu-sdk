@@ -23,28 +23,31 @@ const UserFundsActions: React.FC<UserFundsActionsProps> = ({ lockPeriods }) => {
   const handleBuyKSU = () => openModal({ name: ModalsKeys.UNRELEASED_FEATURE })
 
   return (
-    <>
-      <Grid item xs={6} textAlign='right'>
-        <AuthenticateButton
-          variant='outlined'
-          fullWidth
-          sx={{ maxWidth: 368, textTransform: 'capitalize' }}
-          onClick={handleBuyKSU}
-        >
-          {t('general.buyKSU')}
-        </AuthenticateButton>
-      </Grid>
-      <Grid item xs={6}>
-        <AuthenticateButton
-          variant='outlined'
-          fullWidth
-          sx={{ maxWidth: 368, textTransform: 'capitalize' }}
-          onClick={handleLockKSU}
-        >
-          {t('general.lockKSU')}
-        </AuthenticateButton>
-      </Grid>
-    </>
+    <Grid
+      item
+      xs={6}
+      display='grid'
+      gridTemplateColumns='25fr 75fr'
+      gap={2}
+      alignItems='end'
+    >
+      <AuthenticateButton
+        variant='outlined'
+        fullWidth
+        sx={{ maxWidth: 368, textTransform: 'capitalize' }}
+        onClick={handleBuyKSU}
+      >
+        {t('general.buyKSU')}
+      </AuthenticateButton>
+      <AuthenticateButton
+        variant='contained'
+        fullWidth
+        sx={{ textTransform: 'capitalize' }}
+        onClick={handleLockKSU}
+      >
+        {t('general.lockKSU')}
+      </AuthenticateButton>
+    </Grid>
   )
 }
 

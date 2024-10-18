@@ -1,27 +1,36 @@
-import { Box, Divider, Typography } from '@mui/material'
+import { Box, Button, Divider, Typography } from '@mui/material'
 
 import useTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
 import KsuLaunchBonus from '@/components/molecules/tooltips/KsuLaunchBonus'
-import TotalLaunchBonus from '@/components/organisms/locking/RewardsBreakdown/LaunchBonusBreakdown/TotalLaunchBonus'
+import TotalLaunchBonus from '@/components/organisms/locking/BonusRewardSummary/LaunchBonusBreakdown/TotalLaunchBonus'
 
 const LaunchBonusBreakdown = () => {
   const { t } = useTranslation()
 
   return (
-    <Box>
+    <Box height='100%' display='flex' flexDirection='column'>
       <Typography variant='h5'>
         {t('locking.widgets.rewardsBreakdown.rewards-2.title')}
       </Typography>
       <Divider sx={{ mt: 1.5 }} />
       <InfoRow
-        title={t('locking.widgets.rewardsBreakdown.rewards-2.metric')}
+        title={t('general.lifetime')}
+        titleStyle={{ textTransform: 'capitalize' }}
         toolTipInfo={<ToolTip title={<KsuLaunchBonus />} />}
         metric={<TotalLaunchBonus />}
         showDivider
       />
+      <Button
+        variant='outlined'
+        fullWidth
+        sx={{ maxWidth: 368, textTransform: 'capitalize', mt: 'auto' }}
+        disabled
+      >
+        {t('general.claim')} KSU
+      </Button>
     </Box>
   )
 }
