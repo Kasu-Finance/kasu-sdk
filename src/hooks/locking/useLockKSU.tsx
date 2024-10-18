@@ -10,7 +10,7 @@ import useEarnedRKsu from '@/hooks/web3/useEarnedRKsu'
 import useHandleError from '@/hooks/web3/useHandleError'
 
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
-import { waitForReceipt } from '@/utils'
+import { capitalize, waitForReceipt } from '@/utils'
 
 const useLockKSU = () => {
   const sdk = useKasuSDK()
@@ -27,7 +27,7 @@ const useLockKSU = () => {
     try {
       setToast({
         type: 'info',
-        title: ActionStatus.PROCESSING,
+        title: capitalize(ActionStatus.PROCESSING),
         message: ACTION_MESSAGES[ActionStatus.PROCESSING],
         isClosable: false,
       })
@@ -53,7 +53,7 @@ const useLockKSU = () => {
     } catch (error) {
       handleError(
         error,
-        `${ActionType.LOCK} ${ActionStatus.ERROR}`,
+        capitalize(`${ActionType.LOCK} ${ActionStatus.ERROR}`),
         ACTION_MESSAGES[ActionType.LOCK][ActionStatus.ERROR]
       )
     }

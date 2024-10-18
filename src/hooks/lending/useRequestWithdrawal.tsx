@@ -8,7 +8,7 @@ import useKasuSDK from '@/hooks/useKasuSDK'
 import useHandleError from '@/hooks/web3/useHandleError'
 
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
-import { waitForReceipt } from '@/utils'
+import { capitalize, waitForReceipt } from '@/utils'
 
 const useRequestWithdrawal = () => {
   const sdk = useKasuSDK()
@@ -66,7 +66,7 @@ const useRequestWithdrawal = () => {
     } catch (error) {
       handleError(
         error,
-        `${ActionType.WITHDRAW} ${ActionStatus.ERROR}`,
+        capitalize(`${ActionType.WITHDRAW} ${ActionStatus.ERROR}`),
         ACTION_MESSAGES[ActionType.WITHDRAW][ActionStatus.ERROR]
       )
     }

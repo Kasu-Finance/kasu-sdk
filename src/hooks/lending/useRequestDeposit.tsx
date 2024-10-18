@@ -14,7 +14,7 @@ import generateKycSignature from '@/actions/generateKycSignature'
 import { ONE_INCH_SLIPPAGE } from '@/config/api.oneInch'
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { SupportedTokens } from '@/constants/tokens'
-import { toBigNumber, waitForReceipt } from '@/utils'
+import { capitalize, toBigNumber, waitForReceipt } from '@/utils'
 
 import { HexString } from '@/types/lending'
 import { PoolOverviewWithDelegate } from '@/types/page'
@@ -156,7 +156,7 @@ const useRequestDeposit = () => {
     } catch (error) {
       handleError(
         error,
-        `${ActionType.DEPOSIT} ${ActionStatus.ERROR}`,
+        capitalize(`${ActionType.DEPOSIT} ${ActionStatus.ERROR}`),
         ACTION_MESSAGES[ActionType.DEPOSIT][ActionStatus.ERROR]
       )
     }

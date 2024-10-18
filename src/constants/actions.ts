@@ -10,10 +10,10 @@ export enum ActionType {
   KYC_AUTH = 'KYC Authorisation',
   KYC = 'IDENTITY VERIFICATION',
   CLAIM_REWARDS = 'CLAIM REWARDS',
-  LOCK = 'LOCK',
+  LOCK = 'LOCKING',
   UNLOCK = 'UNLOCK',
-  DEPOSIT = 'DEPOSIT',
-  WITHDRAW = 'WITHDRAW',
+  DEPOSIT = 'LENDING REQUEST',
+  WITHDRAW = 'WITHDRAWAL REQUEST',
   CANCELLATION = 'CANCELLATION',
 }
 
@@ -21,6 +21,7 @@ export const ACTION_MESSAGES = {
   [ActionStatus.REJECTED]: 'The transaction has been rejected.',
   [ActionStatus.PROCESSING]: 'Your transaction request is being processed...',
   [ActionType.APPROVE]: {
+    [ActionStatus.PROCESSING]: 'Please approve transaction in your wallet...',
     [ActionStatus.ERROR]:
       'An error has occurred in the Approval Request. Please review log for more details.',
   },
@@ -39,16 +40,16 @@ export const ACTION_MESSAGES = {
   },
   [ActionType.DEPOSIT]: {
     [ActionStatus.ERROR]:
-      'An error has occurred in the deposit request. Please review log for more details.',
+      'An error has occurred during the Lending Request. Please review log for more details.',
   },
   [ActionType.LOCK]: {
     [ActionStatus.SUCCESS]: 'Lock request has been successfull.',
     [ActionStatus.ERROR]:
-      'An error has occurred in the KSU Lock Request. Please review log for more details.',
+      'An error has occurred during the KSU Lock Request. Please review log for more details.',
   },
   [ActionType.UNLOCK]: {
     [ActionStatus.ERROR]:
-      'An error has occurred during the Unlock Request. Please review log for more details.',
+      'An error has occurred during the KSU Unlock Request. Please review log for more details.',
   },
   [ActionType.CLAIM_REWARDS]: {
     [ActionStatus.SUCCESS]: 'Claim Request has been successfull.',
@@ -57,7 +58,7 @@ export const ACTION_MESSAGES = {
   },
   [ActionType.WITHDRAW]: {
     [ActionStatus.ERROR]:
-      'An error has occurred in the Withdraw Request. Please review log for more details.',
+      'An error has occurred during the Withdrawal Request. Please review log for more details.',
   },
   [ActionType.CANCELLATION]: {
     [ActionStatus.ERROR]:
