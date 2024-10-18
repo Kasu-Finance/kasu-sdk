@@ -8,16 +8,13 @@ const GrossApyTooltip = () => {
   return (
     <Stack spacing={2}>
       <Typography variant='baseXs'>
-        <Typography variant='baseXsBold' color='gold.dark'>
-          {t('general.grossApy')}:{' '}
-        </Typography>
         {t('grossApy.tooltip-1')}
-      </Typography>
-      <Typography variant='baseXs'>
-        <Typography variant='baseXsBold' color='gold.dark'>
-          {t('general.netApy')}:{' '}
-        </Typography>
+        <br />
+        <br />
         {t('grossApy.tooltip-2')}
+        <br />
+        <br />
+        {t('grossApy.tooltip-3')}
       </Typography>
     </Stack>
   )
