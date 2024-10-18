@@ -507,7 +507,7 @@
       "reviewTitle": "Confirm KSU Unlock Request",
       "confirmedTitle": "KSU Unlock Request Confirmed",
       "buttons": {
-        "reviewUnlock": "Review Unlock",
+        "reviewUnlock": "Review KSU Unlock Request",
         "viewTx": "View Transaction (TX)"
       },
       "editLock": {
@@ -518,7 +518,7 @@
         }
       },
       "reviewLock": {
-        "unlockingSchedule": "Your KSU unlock request is schedules for the end of the current Epoch.",
+        "unlockingSchedule": "Your KSU unlock request is scheduled for the end of the current Epoch.",
         "metric-2-tooltip": "The amount of KSU you request to unlock at the end of the current locking period.",
         "epochEnds": "Epoch Ends in"
       },
@@ -538,7 +538,7 @@
         "withdraw-metric-2-tooltip": "The amount of rKSU you will have have left after processing your KSU unlock request. rKSU will be burned in relative proportion to the amount of KSU that will be unlocked, which may adversely affect your Loyalty Level and associated token utility and benefits.",
         "withdraw-metric-3": "KSU Unlock Request Amount",
         "withdraw-metric-3-tooltip": "The amount of KSU you request to unlock at the end of the current locking period.",
-        "input-label": "Unlock Amount"
+        "input-label": "Unlock Request Amount"
       },
       "completed": {
         "description-1": "Your KSU Unlock Request is confirmed:​",

@@ -135,9 +135,9 @@ const LockModalDuration = () => {
                 hideTrailingZero: false,
               })}{' '}
               ✕
-              <Typography variant='baseSm'>
+              <Typography variant='baseSm' whiteSpace='nowrap'>
                 <br />
-                {t('general.multiplier')}
+                rKSU {t('general.multiplier')}
               </Typography>
             </Typography>
           </Box>

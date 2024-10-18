@@ -10,6 +10,7 @@ import useUserBalance from '@/hooks/web3/useUserBalance'
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
 import NumericalInput from '@/components/molecules/NumericalInput'
+import LendingLoyalityLevelsTooltip from '@/components/molecules/tooltips/LendingLoyalityLevelsTooltip'
 import MinKsuLockLoyalityOne from '@/components/molecules/tooltips/MinKsuLockLoyalityOne'
 import MinKsuLockLoyalityTwo from '@/components/molecules/tooltips/MinKsuLockLoyalityTwo'
 
@@ -187,7 +188,7 @@ const LockModalInput = () => {
       <Typography variant='baseMd' mt={3} display='block'>
         {t('modals.lock.deposit.amount-metric-3')}{' '}
         <ToolTip
-          title='info'
+          title={<LendingLoyalityLevelsTooltip />}
           iconSx={{
             verticalAlign: 'sub',
             color: 'gold.extraDark',
