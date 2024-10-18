@@ -504,8 +504,8 @@
     },
     "unlock": {
       "title": "Unlock KSU",
-      "reviewTitle": "Confirm Unlocking KSU",
-      "confirmedTitle": "Unlocking Confirmed",
+      "reviewTitle": "Confirm KSU Unlock Request",
+      "confirmedTitle": "KSU Unlock Request Confirmed",
       "buttons": {
         "reviewUnlock": "Review Unlock",
         "viewTx": "View Transaction (TX)"
@@ -518,7 +518,7 @@
         }
       },
       "reviewLock": {
-        "unlockingSchedule": "Unlocking request will be scheduled to the end of the current Epoch.",
+        "unlockingSchedule": "Your KSU unlock request is schedules for the end of the current Epoch.",
         "metric-2-tooltip": "The amount of KSU you request to unlock at the end of the current locking period.",
         "epochEnds": "Epoch Ends in"
       },
@@ -529,19 +529,21 @@
         "metric-3-tooltip": "The start date you locked this particular amount of KSU."
       },
       "withdraw": {
-        "withdraw-title": "Unlocking",
+        "withdraw-title": "KSU Unlock Request",
+        "withdraw-description": "Should you unlock any amount of KSU, your rKSU will be burned in relative proportion. This may adversely affect your Loyalty Level, which in turn, adversely affects your access to Lending Strategies and loan Tranches, along with your position in the queue for withdrawals from your exiting lending. It may also affect your APY bonus. It will also reduce your share of Protocol Fees, regardless of Loyalty Level.",
+        "viewLoyaltylevels-button": "View KSU Loyalty Levels",
         "withdraw-metric-1": "KSU Remaining",
         "withdraw-metric-1-tooltip": "The amount of KSU you will have have left after processing your KSU unlock request.",
         "withdraw-metric-2": "rKSU Remaining",
         "withdraw-metric-2-tooltip": "The amount of rKSU you will have have left after processing your KSU unlock request. rKSU will be burned in relative proportion to the amount of KSU that will be unlocked, which may adversely affect your Loyalty Level and associated token utility and benefits.",
-        "withdraw-metric-3": "Your KSU Unlock Amount",
+        "withdraw-metric-3": "KSU Unlock Request Amount",
         "withdraw-metric-3-tooltip": "The amount of KSU you request to unlock at the end of the current locking period.",
         "input-label": "Unlock Amount"
       },
       "completed": {
-        "description-1": "You have successfully requested",
+        "description-1": "Your KSU Unlock Request is confirmed:​",
         "description-2": "to be unlocked in the next Epoch.",
-        "description-3": "to remain locked and",
+        "description-3": "to remain locked,",
         "description-4": "to be burned and",
         "description-5": "to be withdrawn to the wallet",
         "description-6": "in the next Epoch"

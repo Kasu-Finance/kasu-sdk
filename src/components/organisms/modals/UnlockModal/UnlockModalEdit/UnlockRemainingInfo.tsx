@@ -126,6 +126,7 @@ const UnlockRemainingInfo = () => {
             }}
           />
         }
+        sx={{ pb: 0 }}
         metric={
           <Typography variant='baseMdBold'>
             {formatAmount(userLock.lockedAmount || 0, {
