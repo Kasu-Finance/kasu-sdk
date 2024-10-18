@@ -304,8 +304,8 @@
       }
     },
     "termsAndConditions": {
-      "title": "Important Information Document",
-      "subtitle": "By submitting this lending request, you acknowledge and agree to the following Important Information Document. It is important to read and understand these terms, as they outline the rights, responsibilities, and risks associated with your participation in the Kasu protocol.",
+      "title": "Important Information",
+      "subtitle": "By submitting this lending request, you acknowledge and agree to the following Important Information. It is important to read and understand these terms, as they outline the rights, responsibilities, and risks associated with your participation in the Kasu protocol.",
       "keyRisks": "Key Risks:",
       "subheader-1": {
         "title": "Risk Disclosure: Senior, Mezzanine and Junior Tranches.",
@@ -566,16 +566,16 @@
       "acknowledgement": {
         "edit": {
           "description-1": "You accept that:",
-          "description-2": "if this tranche is oversubscribed, you will be automatically reallocated to a lower APY tranche (if one is available) but with higher protection (ranking priority) protection against losses. Refer to the",
+          "description-2": "if this tranche is oversubscribed, you will be automatically reallocated to a lower APY tranche (if one is available) but with higher protection (ranking priority) against losses. Refer to the",
           "description-3": "for full details."
         },
         "base": "I acknowledge that I have read and understood the",
         "acknowledged": "You have acknowledged that you have read and understood the",
         "riskWarning": "Risk Warning",
-        "termsAndConditions": "Important Information Document"
+        "termsAndConditions": "Important Information"
       },
       "terms-and-conditions-1": "By depositing funds to this Lending Strategy, you accept the",
-      "terms-and-conditions-2": "Important Information Document.",
+      "terms-and-conditions-2": "Important Information.",
       "secure-spot": {
         "title": "How do I secure my spot in this tranche?",
         "description": "Depending on demand, access to higher APY tranches may be based on Loyalty Levels, which increase the likelihood of securing a spot in your desired tranche, but do not guarantee it."
@@ -651,7 +651,7 @@
         "metric": "Locking Amount at Current Exchange Rate",
         "description": {
           "metric-1": "By depositing funds to this Lending Strategy, you accept the following",
-          "metric-2": "Important Information Document.",
+          "metric-2": "Important Information.",
           "metric-3": "NOTE: YOU ACCEPT THAT:",
           "metric-4": "IF THIS TRANCHE IS OVERSUBSCRIBED, YOU WILL BE AUTOMATICALLY REALLOCATED TO THE NEXT AVAILABLE TRANCHE WITH A LOWER APY WITHOUT THE OPPORTUNITY TO OPT OUT. YOU WILL THEN BE SUBJECT TO QUEUING SYSTEM SHOULD YOU WISH TO WITHDRAW YOUR FUNDS.",
           "metric-5": "YOU WILL BE SUBJECT TO A QUEUING SYSTEM SHOULD YOU WISH TO WITHDRAW YOUR FUNDS FROM ANY TRANCHE. YOU CAN ACHIEVE WITHDRAWAL PRIORITY IN THE QUEUE BY LOCKING KSU TO ESTABLISH /INCREASE YOUR LOYALTY LEVEL​.",
@@ -733,7 +733,7 @@
     },
     "cancelDeposit": {
       "title": "Cancel Lending Request",
-      "metric-1": "Lend To",
+      "metric-1": "To Lending Strategy",
       "metric-1-tooltip": "The Lending Strategy that your lending cancellation request relates to.",
       "metric-2-tooltip": "The loan Tranche related to this Lending Strategy that you request a lending cancellation from.",
       "metric-3": "Lending Request Amount",
