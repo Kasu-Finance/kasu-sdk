@@ -1,6 +1,7 @@
 import { Box, Button, Collapse, Stack, Typography } from '@mui/material'
 import { useReducer } from 'react'
 
+import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useTranslation from '@/hooks/useTranslation'
 
 import SimulatedLendingDuration from '@/components/organisms/modals/LendingModal/LendingModalEdit/EarningsSimulator/SimulatedLendingDuration'
@@ -11,8 +12,13 @@ import { ChevronDownIcon } from '@/assets/icons'
 const EarningsSimulator = () => {
   const { t } = useTranslation()
 
+  const { fixedTermConfigId } = useDepositModalState()
+
   const [collapsed, toggleCollapsed] = useReducer((prev) => !prev, false)
 
+  const isFixedTermSelected = Boolean(
+    fixedTermConfigId && fixedTermConfigId !== '0'
+  )
   return (
     <Box bgcolor='gold.dark' borderRadius={2}>
       <Button
@@ -42,9 +48,13 @@ const EarningsSimulator = () => {
             {t('modals.lending.earningsSimulator.subheading-1')}
           </Typography>
           <Typography variant='baseMd'>
-            {t('modals.lending.earningsSimulator.subheading-1-description')}
+            {isFixedTermSelected
+              ? t('modals.lending.earningsSimulator.subheading-1-description-2')
+              : t(
+                  'modals.lending.earningsSimulator.subheading-1-description-1'
+                )}
           </Typography>
-          <SimulatedLendingDuration />
+          {!isFixedTermSelected && <SimulatedLendingDuration />}
           <Typography variant='h5' color='white'>
             {t('modals.lending.earningsSimulator.subheading-2')}
           </Typography>

@@ -559,9 +559,10 @@
       "select-apy": "Select APY",
       "earningsSimulator": {
         "title": "Earnings Simulator",
-        "subheading-1": "Simulated Lending Duration",
-        "subheading-1-description": "Example only – duration is not fixed. You can submit a withdrawal request at any time (subject to queuing)",
-        "subheading-2": "Simulated Yield Earnings"
+        "subheading-1": "Simulated Loan Duration",
+        "subheading-1-description-1": "Example only – duration is not fixed. You can submit a withdrawal request at any time (subject to queuing)",
+        "subheading-1-description-2": "Example only, based on fixed APY selected. You will not be able to submit a Withdrawal Request during the fixed APY duration.",
+        "subheading-2": "Simulated Interest Earnings"
       },
       "acknowledgement": {
         "edit": {
