@@ -4,7 +4,6 @@ const TabsContainer = styled(Box)({
   display: 'flex',
   justifyContent: 'space-between',
   width: '100%',
-  marginTop: 4,
   position: 'relative',
   '&::before': {
     content: '""',

@@ -53,7 +53,6 @@ export const theme = createTheme({
 
       body {
         font-family: ${primaryFontFamily};
-        height: 100%;
         display:grid;
         grid-template-rows: max-content minmax(max-content, 1fr) max-content;
       }
@@ -64,6 +63,7 @@ export const theme = createTheme({
         overflow-x: hidden;
         position: relative;
         z-index: 1;
+        min-height: calc(100vh - 436px); // header + footer height + main margin
       }
 
       ul{

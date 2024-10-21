@@ -38,7 +38,7 @@ const useIsSticky = ({
       prevScrollY.current = currentScrollY
     }
 
-    const throttledCheckIfShouldStick = throttle(checkIfShouldStick, 10)
+    const throttledCheckIfShouldStick = throttle(checkIfShouldStick, 100)
     window.addEventListener('scroll', throttledCheckIfShouldStick)
 
     // Initial check

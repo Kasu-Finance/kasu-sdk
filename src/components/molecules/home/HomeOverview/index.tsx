@@ -54,7 +54,7 @@ const HomeOverview: React.FC<{
   ]
 
   return (
-    <Box>
+    <Box mb={4}>
       <Box
         display={{ xs: 'grid' }}
         gridTemplateColumns={{
