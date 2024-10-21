@@ -170,7 +170,7 @@
         "metric-2-toolip-3": "2) KSU Launch Bonus (only applicable for early Token Lockers until the KSU bonus pool (5% of total supply) is fully consumed, which is based on the amount and duration of KSU locked and the associated multiplier)."
       },
       "rewardsBreakdown": {
-        "title": "Bonus & Rewards Breakdown",
+        "title": "Bonuses & Rewards Breakdown",
         "rewards-1": {
           "title": "APY Bonus",
           "subtitle": "(Bonus Interest Paid in KSU)",
@@ -839,7 +839,7 @@
         "subtitle": "KSU Loyalty Status",
         "subtitle-2": "Bonuses & Rewards – Related to this Lending Strategy Only​",
         "lendingAndBonus": {
-          "label": "Lending Bonus & Rewards",
+          "label": "Lending Bonuses & Rewards",
           "caption": "Related to This Lending Strategy Only"
         },
         "lockedInfo": {
@@ -1328,7 +1328,7 @@
     "tabs": {
       "lendingPortflio": "Lending Portfolio",
       "yourTransactions": "Transactions",
-      "bonusAndRewards": "Bonus & Rewards"
+      "bonusAndRewards": "Bonuses & Rewards"
     },
     "lendingPortfolio": {
       "title": "My Lending Portfolio",
@@ -1337,8 +1337,8 @@
       "interestEarningsLifetime": "Interest Earnings​ Lifetime"
     },
     "rewards": {
-      "title-1": "My Bonus & Rewards Summary",
-      "title-2": "My Bonus & Rewards Portfolio",
+      "title-1": "My Bonuses & Rewards Summary",
+      "title-2": "My Bonuses & Rewards Portfolio",
       "bonusesAndRewards": "Bonuses and Rewards",
       "bonusYieldEarnings": "Bonus Interest Earnings",
       "ksuLaunchBonus": "KSU Launch Bonus",
