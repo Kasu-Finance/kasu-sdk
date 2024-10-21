@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 
 import useTranslation from '@/hooks/useTranslation'
 
-const CloseButton = () => {
+const BackButton = () => {
   const { t } = useTranslation()
 
   const router = useRouter()
@@ -34,4 +34,4 @@ const CloseButton = () => {
   )
 }
 
-export default CloseButton
+export default BackButton

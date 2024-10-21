@@ -23,7 +23,6 @@ const GeneralRisks = () => {
             <li>{t('modals.riskWarning.subheader-1.list.list-0')}</li>
             <li>{t('modals.riskWarning.subheader-1.list.list-1')}</li>
             <li>{t('modals.riskWarning.subheader-1.list.list-2')}</li>
-            <li>{t('modals.riskWarning.subheader-1.list.list-3')}</li>
           </UnorderedList>
           <Typography variant='baseMd'>
             {t('modals.riskWarning.subheader-1.description-2')}

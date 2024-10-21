@@ -9,10 +9,10 @@ const NoGuarantee = () => {
 
   return (
     <Stack spacing={2}>
-      <Subheading title={t('modals.riskWarning.subheader-12.title')} />
+      <Subheading title={t('modals.riskWarning.subheader-16.title')} />
       <Stack spacing={1}>
         <Typography variant='baseMd'>
-          {t('modals.riskWarning.subheader-12.description')}
+          {t('modals.riskWarning.subheader-16.description')}
         </Typography>
       </Stack>
     </Stack>

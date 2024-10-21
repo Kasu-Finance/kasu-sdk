@@ -7,7 +7,7 @@ import Subheading from '@/components/organisms/riskWarning/Subheading'
 
 import { customTypography } from '@/themes/typography'
 
-const Warning = () => {
+const IncomeAndCapitalRisk = () => {
   const { t } = useTranslation()
 
   return (
@@ -27,12 +27,9 @@ const Warning = () => {
         <Typography variant='baseMd'>
           {t('modals.riskWarning.subheader-2.description-3')}
         </Typography>
-        <Typography variant='baseMd'>
-          {t('modals.riskWarning.subheader-2.description-4')}
-        </Typography>
       </Stack>
     </Stack>
   )
 }
 
-export default Warning
+export default IncomeAndCapitalRisk

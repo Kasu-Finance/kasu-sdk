@@ -5,7 +5,7 @@ import useTranslation from '@/hooks/useTranslation'
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
-import CloseButton from '@/components/organisms/termsAndConditions/CloseButton'
+import BackButton from '@/components/organisms/termsAndConditions/BackButton'
 import FeesExplanation from '@/components/organisms/termsAndConditions/FeesExplanation'
 import InterestAccrual from '@/components/organisms/termsAndConditions/InterestAccrual'
 import LoanWithdrawalRequests from '@/components/organisms/termsAndConditions/LoanWithdrawalRequests'
@@ -30,7 +30,7 @@ const TermsAndConditionsPage = () => {
             <PendingPhase />
             <LoanWithdrawalRequests />
             <TrancheAllocation />
-            <CloseButton />
+            <BackButton />
           </Stack>
         </CustomInnerCardContent>
       </CustomCard>
