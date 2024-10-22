@@ -30,6 +30,7 @@ export enum ModalsKeys {
   CANCEL_WITHDRAWAL = 'cancelWithdrawalModal',
   LEND = 'lendModal',
   LOAN_CONTRACT = 'loanContractModal',
+  BORROWER_IDENTIGIED = 'borrowIdentifiedModal',
   UNRELEASED_FEATURE = 'unreleasedFeatureModal',
 }
 
@@ -42,6 +43,7 @@ export type ModalData<T = void> = T extends void ? ModalBase : T & ModalBase
 export type Modals = {
   [ModalsKeys.LOYALTY_LEVELS]: ModalData
   [ModalsKeys.UNRELEASED_FEATURE]: ModalData
+  [ModalsKeys.BORROWER_IDENTIGIED]: ModalData
   [ModalsKeys.LOAN_CONTRACT]: ModalData<{
     acceptLoanContract?: () => void
     canAccept: boolean

@@ -26,6 +26,8 @@
     "from": "from",
     "buy": "buy",
     "withdraw": "withdraw",
+    "optIn": "Opt In",
+    "optOut": "Opt Out",
     "fixed": "fixed",
     "lock": "lock",
     "unlock": "unlock",
@@ -79,7 +81,8 @@
     "months": "months",
     "days": "days",
     "hours": "hours",
-    "minutes": "minutes"
+    "minutes": "minutes",
+    "seconds": "seconds"
   },
   "grossApy": {
     "tooltip-1": "The Gross Annual Percentage Yield (before Kasu protocol fees) currently offered by the Delegate for this Lending Strategy, assuming all repayments will be made as expected.",
@@ -637,6 +640,13 @@
         },
         "viewTx": "View Transaction (TX)"
       }
+    },
+    "borrowerIdentified": {
+      "title": "Borrower Identified",
+      "description-1": "Kasu is all about transparency, so we sent you an email stating which end borrower(s) your funds will be loaned to.​",
+      "description-2": "We’re also about providing you with choice, which is why you can Opt In or Out.​",
+      "description-3": "We can’t keep end borrowers waiting too long, so we can only keep the opt-out window open for 48 hours. If you don’t opt out within this time, you agree to an automatic opt-in",
+      "description-4": "Don’t forget to adjust your email spam filter to accept emails from"
     },
     "loanContract": {
       "title": "Loan Contract",

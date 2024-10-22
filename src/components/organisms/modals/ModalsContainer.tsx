@@ -5,6 +5,7 @@ import { SxProps, Theme } from '@mui/material'
 import useModalState from '@/hooks/context/useModalState'
 
 import DialogWrapper from '@/components/atoms/DialogWrapper'
+import BorrowerIdentifiedModal from '@/components/organisms/modals/BorrowIdentifiedModal'
 import CancelDepositModal from '@/components/organisms/modals/CancelDepositModal'
 import CancelWithdrawalModal from '@/components/organisms/modals/CancelWithdrawalModal'
 import LendingModalWrapper from '@/components/organisms/modals/LendingModal/LendingModalWrapper'
@@ -76,6 +77,10 @@ export const getModal = (
     case ModalsKeys.LOAN_CONTRACT:
       return {
         component: <LoanContractModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.BORROWER_IDENTIGIED:
+      return {
+        component: <BorrowerIdentifiedModal handleClose={handleClose} />,
       }
     case ModalsKeys.UNRELEASED_FEATURE:
       return {
