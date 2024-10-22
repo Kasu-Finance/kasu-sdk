@@ -1662,6 +1662,56 @@
       "interestEarningsClaimable": "Interest Earnings​ Claimable Balance",
       "interestEarningsLifetime": "Interest Earnings​ Lifetime"
     },
+    "transactions": {
+      "notification": {
+        "title": "You have {count} 'Opt In/Out' decisions pending",
+        "action": "View All"
+      },
+      "lendingStatusSummary": {
+        "title": "Lending Status Summary Totals",
+        "lendingRequests": {
+          "title": "Lending Requests",
+          "metric-1": "Requested",
+          "metric-1-tooltip": "info",
+          "metric-2": "Accepted",
+          "metric-2-tooltip": "info",
+          "metric-3": "Rejected",
+          "metric-3-tooltip": "info",
+          "metric-4": "Reallocations In",
+          "metric-4-tooltip": "info",
+          "metric-5": "Reallocations Out",
+          "metric-5-tooltip": "info"
+        },
+        "subsequentTransactions": {
+          "title": "Subsequent Transactions (Post Acceptance)",
+          "metric-1": "Funds Returned",
+          "metric-1-tooltip": "info",
+          "metric-2": "Current Opt In/Out Pending",
+          "metric-2-tooltip": "info",
+          "metric-3": "Opted In",
+          "metric-3-tooltip": "info",
+          "metric-4": "Opted Out",
+          "metric-4-tooltip": "info"
+        }
+      },
+      "withdrawalStatusSummary": {
+        "title": "Withdrawals Status Summary Totals",
+        "withdrawalRequests": {
+          "title": "Withdrawal Requests",
+          "metric-1": "Requested",
+          "metric-1-tooltip": "info",
+          "metric-2": "Queued",
+          "metric-2-tooltip": "info",
+          "metric-3": "Accepted",
+          "metric-3-tooltip": "info",
+          "metric-4": "Prioritised",
+          "metric-4-tooltip": "info"
+        }
+      },
+      "detailedTransactions": {
+        "title": "Detailed Transactions"
+      }
+    },
     "rewards": {
       "title-1": "My Bonuses & Rewards Summary",
       "title-2": "My Bonuses & Rewards Portfolio",

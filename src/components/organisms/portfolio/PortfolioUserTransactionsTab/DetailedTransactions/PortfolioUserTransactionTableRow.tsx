@@ -15,7 +15,7 @@ import useModalState from '@/hooks/context/useModalState'
 import useTranslation from '@/hooks/useTranslation'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
-import PortfolioUserTransactionCollapsedContent from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/PortfolioUserTransactionCollapsedContent'
+import PortfolioUserTransactionCollapsedContent from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedTransactions/PortfolioUserTransactionCollapsedContent'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 

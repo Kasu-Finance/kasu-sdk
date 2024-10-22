@@ -1,7 +1,7 @@
 import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
 import { useState } from 'react'
 
-import PortfolioUserTransactionTableRow from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/PortfolioUserTransactionTableRow'
+import PortfolioUserTransactionTableRow from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedTransactions/PortfolioUserTransactionTableRow'
 
 type PortfolioUserTransactionTableBodyProps = {
   transactions: UserRequest[]

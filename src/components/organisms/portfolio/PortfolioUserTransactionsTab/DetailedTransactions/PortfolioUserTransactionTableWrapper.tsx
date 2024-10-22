@@ -4,8 +4,8 @@ import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
 
 import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
 import TransactionFilters from '@/components/organisms/lending/OverviewTab/UserTransactions/TransactionFilters'
-import PortfolioUserTransactionSkeleton from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/PortfolioUserTransactionSkeleton'
-import PortfolioUserTransactionTable from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/PortfolioUserTransactionTable'
+import PortfolioUserTransactionSkeleton from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedTransactions/PortfolioUserTransactionSkeleton'
+import PortfolioUserTransactionTable from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedTransactions/PortfolioUserTransactionTable'
 
 const PortfolioUserTransactionTableWrapper = () => {
   const { transactionHistory, isLoading } = useTransactionHistory()

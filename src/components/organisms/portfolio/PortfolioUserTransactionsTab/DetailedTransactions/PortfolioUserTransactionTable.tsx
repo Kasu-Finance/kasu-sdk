@@ -7,8 +7,8 @@ import usePagination from '@/hooks/usePagination'
 import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
 import NoMatchingFilter from '@/components/atoms/NoMatchingFilter'
 import CustomTable from '@/components/molecules/CustomTable'
-import PortfolioUserTransactionTableBody from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/PortfolioUserTransactionTableBody'
-import PortfolioUserTransactionsTableHeader from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/PortfolioUserTransactionTableHeader'
+import PortfolioUserTransactionTableBody from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedTransactions/PortfolioUserTransactionTableBody'
+import PortfolioUserTransactionsTableHeader from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedTransactions/PortfolioUserTransactionTableHeader'
 
 type PortfolioUserTransactionsTableProps = {
   transactionHistory: UserRequest[]
