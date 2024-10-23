@@ -14,6 +14,7 @@ import LockModalWrapper from '@/components/organisms/modals/LockModal/LockModalW
 import LoyaltyLevelsModal from '@/components/organisms/modals/LoyaltyLevelsModal'
 import OptInModal from '@/components/organisms/modals/OptInModal'
 import OptOutModal from '@/components/organisms/modals/OptOutModal'
+import RequestDetailsModal from '@/components/organisms/modals/RequestDetailsModal'
 import UnlockModalWrapper from '@/components/organisms/modals/UnlockModal/UnlockModalWrapper'
 import UnreleasedFeatureModal from '@/components/organisms/modals/UnreleasedFeatureModal'
 import WithdrawModalWrapper from '@/components/organisms/modals/WithdrawModal/WithdrawModalWrapper'
@@ -91,6 +92,10 @@ export const getModal = (
     case ModalsKeys.OPT_OUT:
       return {
         component: <OptOutModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.REQUEST_DETAILS:
+      return {
+        component: <RequestDetailsModal handleClose={handleClose} />,
       }
     case ModalsKeys.UNRELEASED_FEATURE:
       return {

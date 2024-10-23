@@ -24,6 +24,7 @@ const initialState: Modals = {
   borrowIdentifiedModal: { isOpen: false },
   optInModal: { isOpen: false },
   optOutModal: { isOpen: false },
+  requestDetailsModal: { isOpen: false },
   lockModal: { isOpen: false, lockPeriods: null as unknown as LockPeriod[] },
   unreleasedFeatureModal: { isOpen: false },
   withdrawModal: {

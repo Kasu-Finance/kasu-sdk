@@ -1,7 +1,6 @@
 import { Box, Button, Stack, Typography } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 
-import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
 import useTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
@@ -16,9 +15,7 @@ const OptOutModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { account } = useWeb3React()
 
-  const { nextEpochTime } = useNextEpochTime()
-
-  const formattedNextEpochTime = formatTimestamp(nextEpochTime, {
+  const formattedNextEpochTime = formatTimestamp(1729675848, {
     format: 'DD.MM.YYYY HH:mm:ss',
     includeUtcOffset: true,
   })

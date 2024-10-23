@@ -54,7 +54,7 @@ const InfoRow: React.FC<InfoRowProps> = ({
         <Box display='flex' alignItems='center'>
           <Box>
             <Typography
-              variant='subtitle2'
+              variant='baseMd'
               component='span'
               color='text.primary'
               {...titleStyle}
@@ -63,7 +63,7 @@ const InfoRow: React.FC<InfoRowProps> = ({
             </Typography>
             {subtitle && (
               <Typography
-                variant='body2'
+                variant='baseMd'
                 component='span'
                 color='text.primary'
                 ml='4px'

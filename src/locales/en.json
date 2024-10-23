@@ -28,6 +28,7 @@
     "withdraw": "withdraw",
     "optIn": "Opt In",
     "optOut": "Opt Out",
+    "optInOut": "Opt In/out",
     "fixed": "fixed",
     "lock": "lock",
     "unlock": "unlock",
@@ -654,6 +655,22 @@
       "description-2": "from",
       "description-3": " for deposit to wallet address",
       "nextEpoch": "Your funds will be returned to you at the start of the next Epoch.​"
+    },
+    "requestDetails": {
+      "title": "Request Details",
+      "metric-1": "Lending Request Date",
+      "metric-1-tooltip": "info",
+      "metric-2": "Total Requested",
+      "metric-2-tooltip": "info",
+      "metric-3": "Currently Queued",
+      "metric-3-tooltip": "info",
+      "metric-4": "Total Rejected",
+      "metric-4-tooltip": "info",
+      "metric-5": "Total Reallocated Out",
+      "metric-5-tooltip": "info",
+      "metric-6": "Final Accepted",
+      "metric-6-tooltip": "info",
+      "subtitle": "Subsequent Transactions (Post Acceptance)"
     },
     "borrowerIdentified": {
       "title": "Borrower Identified",
