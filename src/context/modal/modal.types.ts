@@ -31,6 +31,8 @@ export enum ModalsKeys {
   LEND = 'lendModal',
   LOAN_CONTRACT = 'loanContractModal',
   BORROWER_IDENTIGIED = 'borrowIdentifiedModal',
+  OPT_IN = 'optInModal',
+  OPT_OUT = 'optOutModal',
   UNRELEASED_FEATURE = 'unreleasedFeatureModal',
 }
 
@@ -44,6 +46,8 @@ export type Modals = {
   [ModalsKeys.LOYALTY_LEVELS]: ModalData
   [ModalsKeys.UNRELEASED_FEATURE]: ModalData
   [ModalsKeys.BORROWER_IDENTIGIED]: ModalData
+  [ModalsKeys.OPT_IN]: ModalData
+  [ModalsKeys.OPT_OUT]: ModalData
   [ModalsKeys.LOAN_CONTRACT]: ModalData<{
     acceptLoanContract?: () => void
     canAccept: boolean

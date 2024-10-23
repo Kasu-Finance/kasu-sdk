@@ -228,6 +228,7 @@
       "message": "This feature will be released shortly",
       "action": "Ok"
     },
+
     "loyaltyLevels": {
       "title": "KSU Loyalty Program​",
       "subtitle": "About KSU Loyalty Program",
@@ -640,6 +641,17 @@
         },
         "viewTx": "View Transaction (TX)"
       }
+    },
+    "optIn": {
+      "title": "Opt In: Loan Deployed",
+      "description": "Your funds have been loaned to the end borrower."
+    },
+    "optOut": {
+      "title": "Opt Out: Funds Will Be Returned​",
+      "description-1": "Opt Out​ Request submitted for the next Epoch",
+      "description-2": "from",
+      "description-3": " for deposit to wallet address",
+      "nextEpoch": "Your funds will be returned to you at the start of the next Epoch.​"
     },
     "borrowerIdentified": {
       "title": "Borrower Identified",

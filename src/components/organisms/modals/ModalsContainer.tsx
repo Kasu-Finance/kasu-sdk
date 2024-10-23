@@ -12,6 +12,8 @@ import LendingModalWrapper from '@/components/organisms/modals/LendingModal/Lend
 import LoanContractModal from '@/components/organisms/modals/LoanContractModal'
 import LockModalWrapper from '@/components/organisms/modals/LockModal/LockModalWrapper'
 import LoyaltyLevelsModal from '@/components/organisms/modals/LoyaltyLevelsModal'
+import OptInModal from '@/components/organisms/modals/OptInModal'
+import OptOutModal from '@/components/organisms/modals/OptOutModal'
 import UnlockModalWrapper from '@/components/organisms/modals/UnlockModal/UnlockModalWrapper'
 import UnreleasedFeatureModal from '@/components/organisms/modals/UnreleasedFeatureModal'
 import WithdrawModalWrapper from '@/components/organisms/modals/WithdrawModal/WithdrawModalWrapper'
@@ -81,6 +83,14 @@ export const getModal = (
     case ModalsKeys.BORROWER_IDENTIGIED:
       return {
         component: <BorrowerIdentifiedModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.OPT_IN:
+      return {
+        component: <OptInModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.OPT_OUT:
+      return {
+        component: <OptOutModal handleClose={handleClose} />,
       }
     case ModalsKeys.UNRELEASED_FEATURE:
       return {

@@ -22,6 +22,8 @@ const initialState: Modals = {
   connectWalletModal: { isOpen: false },
   loyaltyLevelsModal: { isOpen: false },
   borrowIdentifiedModal: { isOpen: false },
+  optInModal: { isOpen: false },
+  optOutModal: { isOpen: false },
   lockModal: { isOpen: false, lockPeriods: null as unknown as LockPeriod[] },
   unreleasedFeatureModal: { isOpen: false },
   withdrawModal: {
