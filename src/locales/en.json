@@ -74,7 +74,9 @@
     "strategies": "Strategies",
     "active": "Active",
     "closed": "Closed",
-    "sorry": "sorry"
+    "sorry": "sorry",
+    "currentEpoch": "Current Epoch",
+    "totalLifetime": "Total Lifetime"
   },
   "time": {
     "years": "years",
@@ -1705,7 +1707,8 @@
           "metric-5-tooltip": "info"
         },
         "subsequentTransactions": {
-          "title": "Subsequent Transactions (Post Acceptance)",
+          "title": "Subsequent Transactions",
+          "subtitle": "(Post Acceptance)",
           "metric-1": "Funds Returned",
           "metric-1-tooltip": "info",
           "metric-2": "Current Opt In/Out Pending",

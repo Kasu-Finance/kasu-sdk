@@ -1,91 +1,85 @@
-import { Divider, Typography } from '@mui/material'
-
 import useTranslation from '@/hooks/useTranslation'
 
-import InfoRow from '@/components/atoms/InfoRow'
+import CustomTable from '@/components/molecules/CustomTable'
+import LendingRequestsTableHeader from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/LendingStatusSummary/LendingRequests/LendingRequestsTableHeader'
+import LendingRequestsTableRow from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/LendingStatusSummary/LendingRequests/LendingRequestsTableRow'
 
+import { customPalette } from '@/themes/palette'
 import { formatAmount } from '@/utils'
 
 const LendingRequests = () => {
   const { t } = useTranslation()
 
   return (
-    <>
-      <Typography variant='h5'>
-        {t('portfolio.transactions.lendingStatusSummary.lendingRequests.title')}
-      </Typography>
-      <Divider sx={{ mt: 1.5 }} />
-      <InfoRow
-        title={t(
-          'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-1'
-        )}
-        toolTipInfo={t(
-          'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-1-tooltip'
-        )}
-        showDivider
-        metric={
-          <Typography variant='baseMdBold'>
-            {formatAmount(100, { minDecimals: 2 })} USDC
-          </Typography>
-        }
-      />
-      <InfoRow
-        title={t(
-          'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-2'
-        )}
-        toolTipInfo={t(
-          'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-2-tooltip'
-        )}
-        showDivider
-        metric={
-          <Typography variant='baseMdBold'>
-            {formatAmount(100, { minDecimals: 2 })} USDC
-          </Typography>
-        }
-      />
-      <InfoRow
-        title={t(
-          'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-3'
-        )}
-        toolTipInfo={t(
-          'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-3-tooltip'
-        )}
-        showDivider
-        metric={
-          <Typography variant='baseMdBold'>
-            {formatAmount(100, { minDecimals: 2 })} USDC
-          </Typography>
-        }
-      />
-      <InfoRow
-        title={t(
-          'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-4'
-        )}
-        toolTipInfo={t(
-          'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-4-tooltip'
-        )}
-        showDivider
-        metric={
-          <Typography variant='baseMdBold'>
-            {formatAmount(100, { minDecimals: 2 })} USDC
-          </Typography>
-        }
-      />
-      <InfoRow
-        title={t(
-          'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-5'
-        )}
-        toolTipInfo={t(
-          'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-5-tooltip'
-        )}
-        showDivider
-        metric={
-          <Typography variant='baseMdBold'>
-            {formatAmount(100, { minDecimals: 2 })} USDC
-          </Typography>
-        }
-      />
-    </>
+    <CustomTable
+      tableSx={{ background: 'none' }}
+      tableHeaderSx={{
+        '& .MuiTableCell-root': {
+          px: 0,
+          borderBottom: `1px solid ${customPalette.gray.extraDark}`,
+        },
+      }}
+      tableBodySx={{
+        '& .MuiTableRow-root:first-child': {
+          display: 'none',
+        },
+      }}
+      tableHeader={<LendingRequestsTableHeader />}
+      tableBody={
+        <>
+          <LendingRequestsTableRow
+            title={t(
+              'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-1'
+            )}
+            tooltipInfo={t(
+              'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-1-tooltip'
+            )}
+            currentEpochValue={`${formatAmount(10_000, { minDecimals: 2 })} USDC`}
+            totalLifetimeValue={`${formatAmount(10_000, { minDecimals: 2 })} USDC`}
+          />
+          <LendingRequestsTableRow
+            title={t(
+              'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-2'
+            )}
+            tooltipInfo={t(
+              'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-2-tooltip'
+            )}
+            currentEpochValue={`${formatAmount(8_000, { minDecimals: 2 })} USDC`}
+            totalLifetimeValue={`${formatAmount(8_000, { minDecimals: 2 })} USDC`}
+          />
+          <LendingRequestsTableRow
+            title={t(
+              'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-3'
+            )}
+            tooltipInfo={t(
+              'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-3-tooltip'
+            )}
+            currentEpochValue={`${formatAmount(1_000, { minDecimals: 2 })} USDC`}
+            totalLifetimeValue={`${formatAmount(1_000, { minDecimals: 2 })} USDC`}
+          />
+          <LendingRequestsTableRow
+            title={t(
+              'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-4'
+            )}
+            tooltipInfo={t(
+              'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-4-tooltip'
+            )}
+            currentEpochValue={`${formatAmount(500, { minDecimals: 2 })} USDC`}
+            totalLifetimeValue={`${formatAmount(500, { minDecimals: 2 })} USDC`}
+          />
+          <LendingRequestsTableRow
+            title={t(
+              'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-5'
+            )}
+            tooltipInfo={t(
+              'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-5-tooltip'
+            )}
+            currentEpochValue={`${formatAmount(500, { minDecimals: 2 })} USDC`}
+            totalLifetimeValue={`${formatAmount(500, { minDecimals: 2 })} USDC`}
+          />
+        </>
+      }
+    />
   )
 }
 

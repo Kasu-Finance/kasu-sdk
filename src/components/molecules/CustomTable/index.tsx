@@ -18,6 +18,7 @@ type CustomTableProps = StackProps & {
   tableContainerSx?: SxProps
   tableSx?: SxProps
   tableHeaderSx?: SxProps
+  tableBodySx?: SxProps
   tableFooterSx?: SxProps
   tableHeader: ReactNode
   tableBody: ReactNode
@@ -29,6 +30,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
   tableContainerSx,
   tableSx,
   tableHeaderSx,
+  tableBodySx,
   tableFooterSx,
   tableHeader,
   tableBody,
@@ -84,20 +86,23 @@ const CustomTable: React.FC<CustomTableProps> = ({
             {tableHeader}
           </TableHead>
           <TableBody
-            sx={{
-              bgcolor: 'white',
-              'tr:first-child': {
-                'td:first-child': {
-                  borderTopLeftRadius: 8,
+            sx={[
+              {
+                bgcolor: 'white',
+                'tr:first-child': {
+                  'td:first-child': {
+                    borderTopLeftRadius: 8,
+                  },
+                  'td:last-child': {
+                    borderTopRightRadius: 8,
+                  },
                 },
-                'td:last-child': {
-                  borderTopRightRadius: 8,
+                '.MuiTableCell-root': {
+                  border: 'none',
                 },
               },
-              '.MuiTableCell-root': {
-                border: 'none',
-              },
-            }}
+              ...(Array.isArray(tableBodySx) ? tableBodySx : [tableBodySx]),
+            ]}
           >
             {/* add spacing before tablebody */}
             <TableRow>

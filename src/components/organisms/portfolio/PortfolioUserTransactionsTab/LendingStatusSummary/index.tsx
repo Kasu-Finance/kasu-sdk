@@ -1,4 +1,4 @@
-import { Grid } from '@mui/material'
+import { Stack } from '@mui/material'
 
 import useTranslation from '@/hooks/useTranslation'
 
@@ -17,14 +17,10 @@ const LendingStatusSummary = () => {
         title={t('portfolio.transactions.lendingStatusSummary.title')}
       />
       <CustomInnerCardContent>
-        <Grid container columnSpacing={4} mt={3}>
-          <Grid item xs={6}>
-            <LendingRequests />
-          </Grid>
-          <Grid item xs={6}>
-            <SubsequentTransactions />
-          </Grid>
-        </Grid>
+        <Stack spacing={6}>
+          <LendingRequests />
+          <SubsequentTransactions />
+        </Stack>
       </CustomInnerCardContent>
     </CustomCard>
   )

@@ -1,12 +1,13 @@
-import { Divider, Grid, Typography } from '@mui/material'
-
 import useTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
-import InfoRow from '@/components/atoms/InfoRow'
+import CustomTable from '@/components/molecules/CustomTable'
+import WithdrawalRequestsTableHeader from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/WithdrawalStatusSummary/WithdrawalRequestsTableHeader'
+import WithdrawalRequestsTableRow from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/WithdrawalStatusSummary/WithdrawalRequestsTableRow'
 
+import { customPalette } from '@/themes/palette'
 import { formatAmount } from '@/utils'
 
 const WithdrawalStatusSummary = () => {
@@ -18,79 +19,65 @@ const WithdrawalStatusSummary = () => {
         title={t('portfolio.transactions.withdrawalStatusSummary.title')}
       />
       <CustomInnerCardContent>
-        <Grid container columnSpacing={4} mt={3}>
-          <Grid item xs={6}>
-            <Typography variant='h5'>
-              {t(
-                'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.title'
-              )}
-            </Typography>
-            <Divider sx={{ mt: 1.5 }} />
-          </Grid>
-          <Grid item xs={6} display='flex' flexDirection='column'>
-            <Divider sx={{ mt: 'auto' }} />
-          </Grid>
-          <Grid item xs={6}>
-            <InfoRow
-              title={t(
-                'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-1'
-              )}
-              toolTipInfo={t(
-                'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-1-tooltip'
-              )}
-              showDivider
-              metric={
-                <Typography variant='baseMdBold'>
-                  {formatAmount(100, { minDecimals: 2 })} USDC
-                </Typography>
-              }
-            />
-            <InfoRow
-              title={t(
-                'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-3'
-              )}
-              toolTipInfo={t(
-                'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-3-tooltip'
-              )}
-              showDivider
-              metric={
-                <Typography variant='baseMdBold'>
-                  {formatAmount(100, { minDecimals: 2 })} USDC
-                </Typography>
-              }
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <InfoRow
-              title={t(
-                'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-2'
-              )}
-              toolTipInfo={t(
-                'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-2-tooltip'
-              )}
-              showDivider
-              metric={
-                <Typography variant='baseMdBold'>
-                  {formatAmount(100, { minDecimals: 2 })} USDC
-                </Typography>
-              }
-            />
-            <InfoRow
-              title={t(
-                'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-4'
-              )}
-              toolTipInfo={t(
-                'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-4-tooltip'
-              )}
-              showDivider
-              metric={
-                <Typography variant='baseMdBold'>
-                  {formatAmount(100, { minDecimals: 2 })} USDC
-                </Typography>
-              }
-            />
-          </Grid>
-        </Grid>
+        <CustomTable
+          tableSx={{ background: 'none' }}
+          tableHeaderSx={{
+            '& .MuiTableCell-root': {
+              px: 0,
+              borderBottom: `1px solid ${customPalette.gray.extraDark}`,
+            },
+          }}
+          tableBodySx={{
+            '& .MuiTableRow-root:first-child': {
+              display: 'none',
+            },
+          }}
+          tableHeader={<WithdrawalRequestsTableHeader />}
+          tableBody={
+            <>
+              <WithdrawalRequestsTableRow
+                title={t(
+                  'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-1'
+                )}
+                tooltipInfo={t(
+                  'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-1-tooltip'
+                )}
+                currentEpochValue={`${formatAmount(10_000, { minDecimals: 2 })} USDC`}
+                totalLifetimeValue={`${formatAmount(10_000, { minDecimals: 2 })} USDC`}
+              />
+              <WithdrawalRequestsTableRow
+                title={t(
+                  'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-2'
+                )}
+                tooltipInfo={t(
+                  'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-2-tooltip'
+                )}
+                currentEpochValue={`${formatAmount(8_000, { minDecimals: 2 })} USDC`}
+                totalLifetimeValue='N/A'
+              />
+              <WithdrawalRequestsTableRow
+                title={t(
+                  'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-3'
+                )}
+                tooltipInfo={t(
+                  'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-3-tooltip'
+                )}
+                currentEpochValue={`${formatAmount(1_000, { minDecimals: 2 })} USDC`}
+                totalLifetimeValue={`${formatAmount(1_000, { minDecimals: 2 })} USDC`}
+              />
+              <WithdrawalRequestsTableRow
+                title={t(
+                  'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-4'
+                )}
+                tooltipInfo={t(
+                  'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-4-tooltip'
+                )}
+                currentEpochValue={`${formatAmount(500, { minDecimals: 2 })} USDC`}
+                totalLifetimeValue='N/A'
+              />
+            </>
+          }
+        />
       </CustomInnerCardContent>
     </CustomCard>
   )
