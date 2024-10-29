@@ -1,3 +1,5 @@
+import { Button, TableCell, TableRow, Typography } from '@mui/material'
+
 import useModalState from '@/hooks/context/useModalState'
 import useTranslation from '@/hooks/useTranslation'
 
@@ -45,12 +47,33 @@ const PendingDecisionModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           },
         }}
         tableHeader={<PendingDecisionsTableHeader />}
-        tableBody={pendingDecisions.map((pendingDecision) => (
-          <PendingDecisionsTableRow
-            key={pendingDecision.id}
-            pendingDecision={pendingDecision}
-          />
-        ))}
+        tableBody={
+          pendingDecisions.length ? (
+            pendingDecisions.map((pendingDecision) => (
+              <PendingDecisionsTableRow
+                key={pendingDecision.id}
+                pendingDecision={pendingDecision}
+              />
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={4}>
+                <Typography variant='h4' textAlign='center' mb={4} mt={2}>
+                  {t('modals.pendingDecisions.emptyDataMessage')}
+                </Typography>
+                <Button
+                  variant='contained'
+                  color='secondary'
+                  fullWidth
+                  onClick={handleClose}
+                  sx={{ textTransform: 'capitalize' }}
+                >
+                  {t('general.close')}
+                </Button>
+              </TableCell>
+            </TableRow>
+          )
+        }
       />
     </CustomCard>
   )
