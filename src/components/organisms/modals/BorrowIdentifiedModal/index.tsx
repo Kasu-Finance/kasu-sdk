@@ -1,6 +1,7 @@
 import { Box, Button, Stack, Typography } from '@mui/material'
 
 import useModalState from '@/hooks/context/useModalState'
+import useFundingConsent from '@/hooks/lending/useFundingConsent'
 import useTranslation from '@/hooks/useTranslation'
 
 import Countdown from '@/components/atoms/Countdown'
@@ -13,6 +14,7 @@ import CountdownSeparator from '@/components/organisms/modals/BorrowIdentifiedMo
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
+import { LoanTicketStatus } from '@/config/api.lendersAgreement'
 import dayjs from '@/dayjs'
 
 const BorrowerIdentifiedModal: React.FC<DialogChildProps> = ({
@@ -20,9 +22,35 @@ const BorrowerIdentifiedModal: React.FC<DialogChildProps> = ({
 }) => {
   const { t } = useTranslation()
 
-  const { openModal } = useModalState()
+  const { modal, openModal } = useModalState()
 
-  const handleClick = () => openModal({ name: ModalsKeys.UNRELEASED_FEATURE })
+  const fundingConsent = useFundingConsent()
+
+  const { loanTicket, pools } = modal[ModalsKeys.BORROWER_IDENTIFIED]
+
+  const handleConsent = async (
+    decision: LoanTicketStatus.optedIn | LoanTicketStatus.optedOut
+  ) => {
+    await fundingConsent(
+      {
+        endBorrowerID: loanTicket.endBorrowerID,
+        poolID: loanTicket.poolID,
+        trancheID: loanTicket.trancheID,
+        status: decision,
+      },
+      pools,
+      () => {
+        handleClose()
+
+        openModal({
+          name:
+            decision === LoanTicketStatus.optedIn
+              ? ModalsKeys.OPT_IN
+              : ModalsKeys.OPT_OUT,
+        })
+      }
+    )
+  }
 
   return (
     <CustomCard>
@@ -51,7 +79,7 @@ const BorrowerIdentifiedModal: React.FC<DialogChildProps> = ({
                 justifyContent='center'
               >
                 <Countdown
-                  endTime={dayjs().add(2, 'days').unix()}
+                  endTime={dayjs(loanTicket.createdOn).add(2, 'days').unix()}
                   format='HH:mm:ss'
                   render={(countdown) => {
                     const [hours, minutes, seconds] = countdown.split(':')
@@ -120,7 +148,7 @@ const BorrowerIdentifiedModal: React.FC<DialogChildProps> = ({
               variant='contained'
               color='secondary'
               fullWidth
-              onClick={handleClick}
+              onClick={() => handleConsent(LoanTicketStatus.optedIn)}
               sx={{ textTransform: 'capitalize' }}
             >
               {t('general.optIn')}
@@ -129,7 +157,7 @@ const BorrowerIdentifiedModal: React.FC<DialogChildProps> = ({
               variant='outlined'
               color='secondary'
               fullWidth
-              onClick={handleClick}
+              onClick={() => handleConsent(LoanTicketStatus.optedOut)}
               sx={{ textTransform: 'capitalize' }}
             >
               {t('general.optOut')}

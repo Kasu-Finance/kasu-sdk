@@ -4,4 +4,6 @@ export {
   getTranchesWithUserBalances,
 } from '@/utils/lending/calculateUserBalances'
 export { default as getAverageApyAndTotal } from '@/utils/lending/getAverageApyAndTotal'
-export { default as getPoolData } from '@/utils/lending/getPoolData'
+export * from '@/utils/lending/getPendingDecisions'
+export { default as getPendingDecisions } from '@/utils/lending/getPendingDecisions'
+export { default as mapLoanTicketsTranche } from '@/utils/lending/mapLoanTicketsTranche'

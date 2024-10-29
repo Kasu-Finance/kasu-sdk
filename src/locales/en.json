@@ -672,6 +672,15 @@
       "metric-6-tooltip": "info",
       "subtitle": "Subsequent Transactions (Post Acceptance)"
     },
+    "pendingDecisions": {
+      "title": "Pending Decisions",
+      "tableHeader": {
+        "cell-1": "Date",
+        "cell-2": "Lending Amount",
+        "cell-3": "Time Remaining",
+        "cell-4": "Decision Pending"
+      }
+    },
     "borrowerIdentified": {
       "title": "Borrower Identified",
       "description-1": "Kasu is all about transparency, so we sent you an email stating which end borrower(s) your funds will be loaned to.​",

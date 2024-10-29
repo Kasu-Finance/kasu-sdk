@@ -26,7 +26,12 @@ const SubsequentTransactions = () => {
 
   const { openModal } = useModalState()
 
-  const handleOpen = () => openModal({ name: ModalsKeys.BORROWER_IDENTIGIED })
+  const handleOpen = () =>
+    openModal({
+      name: ModalsKeys.BORROWER_IDENTIFIED,
+      loanTicket: {} as any,
+      pools: [],
+    })
 
   return (
     <>

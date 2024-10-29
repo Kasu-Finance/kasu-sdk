@@ -57,7 +57,7 @@ const useRequestDeposit = () => {
     try {
       setToast({
         type: 'info',
-        title: ActionStatus.PROCESSING,
+        title: capitalize(ActionStatus.PROCESSING),
         message: ACTION_MESSAGES[ActionStatus.PROCESSING],
         isClosable: false,
       })

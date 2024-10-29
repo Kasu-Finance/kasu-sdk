@@ -1,4 +1,7 @@
-import { TrancheData } from '@solidant/kasu-sdk/src/services/DataService/types'
+import {
+  PoolOverview,
+  TrancheData,
+} from '@solidant/kasu-sdk/src/services/DataService/types'
 import {
   LockPeriod,
   UserLock,
@@ -7,6 +10,11 @@ import {
   UserRequest,
   UserTrancheBalance,
 } from '@solidant/kasu-sdk/src/services/UserLending/types'
+
+import {
+  LoanTicket,
+  PendingDecision,
+} from '@/utils/lending/getPendingDecisions'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
@@ -30,10 +38,11 @@ export enum ModalsKeys {
   CANCEL_WITHDRAWAL = 'cancelWithdrawalModal',
   LEND = 'lendModal',
   LOAN_CONTRACT = 'loanContractModal',
-  BORROWER_IDENTIGIED = 'borrowIdentifiedModal',
+  BORROWER_IDENTIFIED = 'borrowerIdentifiedModal',
   OPT_IN = 'optInModal',
   OPT_OUT = 'optOutModal',
   REQUEST_DETAILS = 'requestDetailsModal',
+  PENDING_DECISIONS = 'pendingDecisionsModal',
   UNRELEASED_FEATURE = 'unreleasedFeatureModal',
 }
 
@@ -46,9 +55,16 @@ export type ModalData<T = void> = T extends void ? ModalBase : T & ModalBase
 export type Modals = {
   [ModalsKeys.LOYALTY_LEVELS]: ModalData
   [ModalsKeys.UNRELEASED_FEATURE]: ModalData
-  [ModalsKeys.BORROWER_IDENTIGIED]: ModalData
   [ModalsKeys.OPT_IN]: ModalData
   [ModalsKeys.OPT_OUT]: ModalData
+  [ModalsKeys.BORROWER_IDENTIFIED]: ModalData<{
+    loanTicket: LoanTicket
+    pools: PoolOverview[]
+  }>
+  [ModalsKeys.PENDING_DECISIONS]: ModalData<{
+    pendingDecisions: PendingDecision[]
+    pools: PoolOverview[]
+  }>
   [ModalsKeys.REQUEST_DETAILS]: ModalData
   [ModalsKeys.LOAN_CONTRACT]: ModalData<{
     acceptLoanContract?: () => void

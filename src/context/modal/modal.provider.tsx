@@ -1,6 +1,9 @@
 'use client'
 
-import { TrancheData } from '@solidant/kasu-sdk/src/services/DataService/types'
+import {
+  PoolOverview,
+  TrancheData,
+} from '@solidant/kasu-sdk/src/services/DataService/types'
 import {
   LockPeriod,
   UserLock,
@@ -16,15 +19,26 @@ import ModalContext from '@/context/modal/modal.context'
 import { modalReducer } from '@/context/modal/modal.reducer'
 import { Modals } from '@/context/modal/modal.types'
 
+import { LoanTicket, PendingDecision } from '@/utils'
+
 import { PoolOverviewWithDelegate } from '@/types/page'
 
 const initialState: Modals = {
   connectWalletModal: { isOpen: false },
   loyaltyLevelsModal: { isOpen: false },
-  borrowIdentifiedModal: { isOpen: false },
+  borrowerIdentifiedModal: {
+    isOpen: false,
+    loanTicket: null as unknown as LoanTicket,
+    pools: null as unknown as PoolOverview[],
+  },
   optInModal: { isOpen: false },
   optOutModal: { isOpen: false },
   requestDetailsModal: { isOpen: false },
+  pendingDecisionsModal: {
+    isOpen: false,
+    pendingDecisions: null as unknown as PendingDecision[],
+    pools: null as unknown as PoolOverview[],
+  },
   lockModal: { isOpen: false, lockPeriods: null as unknown as LockPeriod[] },
   unreleasedFeatureModal: { isOpen: false },
   withdrawModal: {

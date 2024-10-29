@@ -49,10 +49,9 @@ const formatTotals = (
 
   const formatWithoutLargestUnit = format.replace(unit, '')
 
-  return (
-    Math.floor(largestTimeLeft).toString() +
-    timeLeft.format(formatWithoutLargestUnit)
-  )
+  const largestTimeFloored = Math.floor(largestTimeLeft)
+
+  return `${largestTimeFloored < 10 ? '0' : ''}${largestTimeFloored} ${timeLeft.format(formatWithoutLargestUnit)}`
 }
 
 const useCountdown = (

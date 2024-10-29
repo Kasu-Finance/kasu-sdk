@@ -1,19 +1,37 @@
 'use client'
 
 import { Button, Typography } from '@mui/material'
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import useModalState from '@/hooks/context/useModalState'
+import useLoanTickets from '@/hooks/lending/useLoanTickets'
 import useTranslation from '@/hooks/useTranslation'
 
 import WaveBox from '@/components/atoms/WaveBox'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-const NotificationBanner = () => {
+import { getPendingDecisions } from '@/utils'
+
+type NotificationBannerProps = {
+  pools: PoolOverview[]
+}
+
+const NotificationBanner: React.FC<NotificationBannerProps> = ({ pools }) => {
   const { t } = useTranslation()
 
   const { openModal } = useModalState()
-  const handleOpen = () => openModal({ name: ModalsKeys.UNRELEASED_FEATURE })
+
+  const { loanTickets } = useLoanTickets()
+
+  if (!loanTickets?.length) return
+
+  const { count, pendingDecisions } = getPendingDecisions(loanTickets, pools)
+
+  if (!count) return
+
+  const handleOpen = () =>
+    openModal({ name: ModalsKeys.PENDING_DECISIONS, pendingDecisions, pools })
 
   return (
     <WaveBox
@@ -28,7 +46,7 @@ const NotificationBanner = () => {
       <Typography variant='h3'>
         {t('portfolio.transactions.notification.title').replace(
           '{count}',
-          '(X)'
+          count.toString()
         )}
       </Typography>
       <Button

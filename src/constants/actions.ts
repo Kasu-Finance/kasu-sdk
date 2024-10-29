@@ -3,6 +3,7 @@ export enum ActionStatus {
   REJECTED = 'REJECTED',
   SUCCESS = 'SUCCESSFUL',
   ERROR = 'ERROR',
+  SIGNING = 'SIGNING',
 }
 
 export enum ActionType {
@@ -15,6 +16,7 @@ export enum ActionType {
   DEPOSIT = 'LENDING REQUEST',
   WITHDRAW = 'WITHDRAWAL REQUEST',
   CANCELLATION = 'CANCELLATION',
+  FUNDING_CONSENT = 'FUNDING_CONSNET',
 }
 
 export const ACTION_MESSAGES = {
@@ -63,5 +65,10 @@ export const ACTION_MESSAGES = {
   [ActionType.CANCELLATION]: {
     [ActionStatus.ERROR]:
       'An error has occurred in the transaction Cancellation Request. Please review log for more details.',
+  },
+  [ActionType.FUNDING_CONSENT]: {
+    [ActionStatus.SIGNING]:
+      'Please sign the transaction in your wallet to register your choice',
+    [ActionStatus.PROCESSING]: 'Your choice submission is being processed',
   },
 } as const

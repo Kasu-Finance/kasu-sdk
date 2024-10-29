@@ -2,13 +2,13 @@ import { Stack } from '@mui/material'
 
 import DetailedTransactions from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedTransactions'
 import LendingStatusSummary from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/LendingStatusSummary'
-import NotificationBanner from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/NotificationBanner'
+import NotificationBannerWrapper from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/NotificationBanner/NotificationBannerWrapper'
 import WithdrawalStatusSummary from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/WithdrawalStatusSummary'
 
-const YourTransactions = () => {
+const YourTransactions = async () => {
   return (
     <Stack spacing={3}>
-      <NotificationBanner />
+      <NotificationBannerWrapper />
       <LendingStatusSummary />
       <WithdrawalStatusSummary />
       <DetailedTransactions />
