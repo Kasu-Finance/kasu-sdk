@@ -1,6 +1,7 @@
 import { Dispatch, useMemo } from 'react'
 
 import {
+  TranasctionDecisions,
   TransactionStatus,
   TransactionTranches,
   TransactionType,
@@ -34,6 +35,13 @@ const useTransactionHistoryActions = (
         dispatch({
           type: TransactionHistoryActionsTypes.SET_TRANSACTION_TYPE,
           payload: tranasctionType,
+        }),
+      setTransactionDecisons: (
+        decisions: ValueOf<typeof TranasctionDecisions>
+      ) =>
+        dispatch({
+          type: TransactionHistoryActionsTypes.SET_PENDING_DECISIONS,
+          payload: decisions,
         }),
       setPoolId: (poolId: PoolIdFilters) =>
         dispatch({

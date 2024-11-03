@@ -35,8 +35,6 @@ const KycModal: React.FC<DialogChildProps> = ({ handleClose }) => {
     openWidget()
   }
 
-  const successCallback = modal[ModalsKeys.KYC].callback
-
   useEffect(() => {
     if (userRejectedSignature) {
       setToast({
@@ -59,12 +57,7 @@ const KycModal: React.FC<DialogChildProps> = ({ handleClose }) => {
       })
       return
     }
-
-    if (kycCompleted) {
-      successCallback()
-      handleClose()
-    }
-  }, [isVerifying, kycCompleted, handleClose, setToast, successCallback])
+  }, [isVerifying, kycCompleted, setToast])
 
   return (
     <CustomCard>

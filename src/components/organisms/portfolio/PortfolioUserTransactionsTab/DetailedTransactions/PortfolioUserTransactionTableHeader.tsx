@@ -2,6 +2,8 @@ import { TableCell, TableRow } from '@mui/material'
 
 import useTranslation from '@/hooks/useTranslation'
 
+import { customTypography } from '@/themes/typography'
+
 const PortfolioUserTransactionsTableHeader = () => {
   const { t } = useTranslation()
 
@@ -10,18 +12,32 @@ const PortfolioUserTransactionsTableHeader = () => {
       sx={{
         '.MuiTableCell-root': {
           textTransform: 'capitalize',
+          whiteSpace: 'normal',
+          ...customTypography.baseSm,
+          lineHeight: '18px',
+          verticalAlign: 'bottom',
+          px: 1.5,
         },
       }}
     >
-      <TableCell width='34%'>{t('general.lendingStrategy')}</TableCell>
-      <TableCell width='12%'>{t('general.request')}</TableCell>
-      <TableCell width='10%'>{t('general.tranche')}</TableCell>
-      <TableCell width='18%'>{t('general.amounts')}</TableCell>
+      <TableCell width='22%'>{t('general.lendingStrategy')}</TableCell>
       <TableCell width='10%'>
-        {t('lending.poolOverview.transactionsHistory.tableHeader.requestdate')}
+        {t('portfolio.transactions.detailedTransactions.tableHeader.cell-1')}
       </TableCell>
-      <TableCell width='16%'>
-        {t('lending.poolOverview.transactionsHistory.tableHeader.status')}
+      <TableCell width='11%'>
+        {t('portfolio.transactions.detailedTransactions.tableHeader.cell-2')}
+      </TableCell>
+      <TableCell width='11%'>
+        {t('portfolio.transactions.detailedTransactions.tableHeader.cell-3')}
+      </TableCell>
+      <TableCell width='19%'>
+        {t('portfolio.transactions.detailedTransactions.tableHeader.cell-4')}
+      </TableCell>
+      <TableCell width='15%'>
+        {t('portfolio.transactions.detailedTransactions.tableHeader.cell-5')}
+      </TableCell>
+      <TableCell width='12%'>
+        {t('portfolio.transactions.detailedTransactions.tableHeader.cell-6')}
       </TableCell>
     </TableRow>
   )

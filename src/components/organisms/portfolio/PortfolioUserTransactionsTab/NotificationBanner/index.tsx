@@ -11,7 +11,7 @@ import WaveBox from '@/components/atoms/WaveBox'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import { getPendingDecisions } from '@/utils'
+import { mapPendingDecisionsToPools } from '@/utils'
 
 type NotificationBannerProps = {
   pools: PoolOverview[]
@@ -26,7 +26,10 @@ const NotificationBanner: React.FC<NotificationBannerProps> = ({ pools }) => {
 
   if (!loanTickets?.length) return
 
-  const { count, pendingDecisions } = getPendingDecisions(loanTickets, pools)
+  const { count, pendingDecisions } = mapPendingDecisionsToPools(
+    loanTickets,
+    pools
+  )
 
   if (!count) return
 

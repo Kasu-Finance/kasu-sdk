@@ -1,6 +1,8 @@
 import { Box, Button, Stack, Typography } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 
+import useModalState from '@/hooks/context/useModalState'
+import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
 import useTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
@@ -8,14 +10,22 @@ import { DialogChildProps } from '@/components/atoms/DialogWrapper'
 import WaveBox from '@/components/atoms/WaveBox'
 import DialogHeader from '@/components/molecules/DialogHeader'
 
-import { formatAmount, formatTimestamp } from '@/utils'
+import { ModalsKeys } from '@/context/modal/modal.types'
+
+import { formatAccount, formatAmount, formatTimestamp } from '@/utils'
 
 const OptOutModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { t } = useTranslation()
 
+  const { modal } = useModalState()
+
   const { account } = useWeb3React()
 
-  const formattedNextEpochTime = formatTimestamp(1729675848, {
+  const { loanTicket, poolName } = modal[ModalsKeys.OPT_OUT]
+
+  const { nextEpochTime } = useNextEpochTime()
+
+  const formattedNextEpochTime = formatTimestamp(nextEpochTime, {
     format: 'DD.MM.YYYY HH:mm:ss',
     includeUtcOffset: true,
   })
@@ -27,15 +37,17 @@ const OptOutModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         <Stack alignItems='center' spacing={3}>
           <Typography variant='baseMd'>
             <Typography variant='baseMdBold'>
-              {formatAmount(1_000, { minDecimals: 2 })} USDC{' '}
+              {formatAmount(loanTicket.assets, { minDecimals: 2 })} USDC{' '}
             </Typography>
             {t('modals.optOut.description-1')} ({formattedNextEpochTime.date} •{' '}
             {formattedNextEpochTime.timestamp}{' '}
             {formattedNextEpochTime.utcOffset}){' '}
             {t('modals.optOut.description-2')}{' '}
-            <Typography variant='baseMdBold'>Lending Strategy </Typography>
+            <Typography variant='baseMdBold'>{poolName}</Typography>
             {t('modals.optOut.description-3')}{' '}
-            <Typography variant='baseMdBold'>{account}</Typography>
+            <Typography variant='baseMdBold'>
+              {formatAccount(account)}
+            </Typography>
           </Typography>
           <Box bgcolor='gold.dark' p={2} borderRadius={2} width='100%'>
             <Typography variant='baseMd'>

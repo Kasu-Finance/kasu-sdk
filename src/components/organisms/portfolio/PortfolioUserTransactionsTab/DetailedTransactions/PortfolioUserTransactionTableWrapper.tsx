@@ -1,5 +1,6 @@
 'use client'
 
+import useLoanTickets from '@/hooks/lending/useLoanTickets'
 import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
 
 import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
@@ -7,10 +8,14 @@ import TransactionFilters from '@/components/organisms/lending/OverviewTab/UserT
 import PortfolioUserTransactionSkeleton from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedTransactions/PortfolioUserTransactionSkeleton'
 import PortfolioUserTransactionTable from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedTransactions/PortfolioUserTransactionTable'
 
+import { getDetailedTransactions } from '@/utils'
+
 const PortfolioUserTransactionTableWrapper = () => {
   const { transactionHistory, isLoading } = useTransactionHistory()
 
-  if (isLoading || !transactionHistory) {
+  const { loanTickets, isLoading: loanTicketsLoading } = useLoanTickets()
+
+  if (isLoading || !transactionHistory || !loanTickets || loanTicketsLoading) {
     return <PortfolioUserTransactionSkeleton />
   }
 
@@ -34,10 +39,17 @@ const PortfolioUserTransactionTableWrapper = () => {
       />
     )
 
+  const detailedTransactions = getDetailedTransactions(
+    transactionHistory,
+    loanTickets
+  )
+
   return (
     <>
-      <TransactionFilters pools={pools} />
-      <PortfolioUserTransactionTable transactionHistory={transactionHistory} />
+      <TransactionFilters pools={pools} withReallocation />
+      <PortfolioUserTransactionTable
+        detailedTransactions={detailedTransactions}
+      />
     </>
   )
 }

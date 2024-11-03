@@ -14,12 +14,12 @@ const DetailedTransactions = () => {
   return (
     <CustomCard>
       <CustomCardHeader
-        title={t('lending.poolOverview.transactionsHistory.title')}
+        title={t('portfolio.transactions.detailedTransactions.title')}
       >
         <CsvDownloadButton />
       </CustomCardHeader>
       <CustomInnerCardContent sx={{ p: 0 }}>
-        <TransactionHistoryState withPoolIdFilter>
+        <TransactionHistoryState withPoolIdFilter withPendingDecisions>
           <PortfolioUserTransactionTableWrapper />
         </TransactionHistoryState>
       </CustomInnerCardContent>

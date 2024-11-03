@@ -43,7 +43,7 @@
     "@nivo/pie": "^0.87.0",
     "@nivo/tooltip": "^0.87.0",
     "@nivo/voronoi": "^0.87.0",
-    "@solidant/kasu-sdk": "^0.0.102",
+    "@solidant/kasu-sdk": "^0.0.103",
     "@web3-react/coinbase-wallet": "^8.2.3",
     "@web3-react/core": "^8.2.3",
     "@web3-react/eip1193": "^8.2.3",

@@ -1,5 +1,4 @@
 import { TableCell, TableRow } from '@mui/material'
-import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
 
 import useTransactionHistoryState from '@/hooks/context/useTransactionHistoryState'
 import usePagination from '@/hooks/usePagination'
@@ -10,27 +9,29 @@ import CustomTable from '@/components/molecules/CustomTable'
 import PortfolioUserTransactionTableBody from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedTransactions/PortfolioUserTransactionTableBody'
 import PortfolioUserTransactionsTableHeader from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedTransactions/PortfolioUserTransactionTableHeader'
 
+import { DetailedTransaction } from '@/utils/lending/getDetailedTransactions'
+
 type PortfolioUserTransactionsTableProps = {
-  transactionHistory: UserRequest[]
+  detailedTransactions: DetailedTransaction[]
 }
 
 const ROW_PER_PAGE = 5
 
 const PortfolioUserTransactionTable: React.FC<
   PortfolioUserTransactionsTableProps
-> = ({ transactionHistory }) => {
-  const { poolId, status, trancheType, transactionType } =
+> = ({ detailedTransactions }) => {
+  const { poolId, trancheType, transactionType, pendingDecision } =
     useTransactionHistoryState()
 
-  const filteredData: UserRequest[] = transactionHistory.filter(
+  const filteredData: DetailedTransaction[] = detailedTransactions.filter(
     (transaction) => {
       return (
         (poolId === 'All' || poolId === transaction.lendingPool.id) &&
-        (status === 'All' || transaction.status === status) &&
         (trancheType === 'All Tranches' ||
           transaction.trancheName === trancheType) &&
         (transactionType === 'All Transactions' ||
-          transaction.requestType === transactionType)
+          transaction.requestType === transactionType) &&
+        (pendingDecision === 'All' || transaction.pendingDecisions.length > 0)
       )
     }
   )
@@ -46,12 +47,12 @@ const PortfolioUserTransactionTable: React.FC<
       tableBody={
         filteredData.length ? (
           <PortfolioUserTransactionTableBody
-            transactions={[...paginateData(filteredData)]}
+            detailedTransactions={[...paginateData(filteredData)]}
           />
         ) : (
           <TableRow>
-            <TableCell colSpan={6} sx={{ py: 7 }}>
-              {transactionHistory.length ? (
+            <TableCell colSpan={7} sx={{ py: 7 }}>
+              {detailedTransactions.length ? (
                 <NoMatchingFilter />
               ) : (
                 <EmptyDataPlaceholder text='You have not deposited into any lending strategies...' />

@@ -5,6 +5,7 @@
     "amount": "amount",
     "amounts": "amounts",
     "cancel": "cancel",
+    "cancelled": "cancelled",
     "balance": "balance",
     "variableApy": "Variable Gross APY",
     "netApy": "Net APY",
@@ -28,6 +29,8 @@
     "withdraw": "withdraw",
     "optIn": "Opt In",
     "optOut": "Opt Out",
+    "optedIn": "Opted In",
+    "optedOut": "Opted Out",
     "optInOut": "Opt In/out",
     "fixed": "fixed",
     "lock": "lock",
@@ -49,6 +52,7 @@
     "apy": "APY",
     "base": "base",
     "tvl": "TVL",
+    "timeLeft": "Time left",
     "lifetime": "lifetime",
     "investment": "investment",
     "average": "average",
@@ -77,7 +81,13 @@
     "closed": "Closed",
     "sorry": "sorry",
     "currentEpoch": "Current Epoch",
-    "totalLifetime": "Total Lifetime"
+    "totalLifetime": "Total Lifetime",
+    "requested": "Requested",
+    "accepted": "Accepted",
+    "rejected": "Rejected",
+    "queued": "Queued",
+    "reallocatedIn": "Reallocated (In)",
+    "reallocatedOut": "Reallocated (Out)"
   },
   "time": {
     "years": "years",
@@ -668,9 +678,12 @@
       "metric-4-tooltip": "info",
       "metric-5": "Total Reallocated Out",
       "metric-5-tooltip": "info",
-      "metric-6": "Final Accepted",
+      "metric-6": "Total Accepted",
       "metric-6-tooltip": "info",
-      "subtitle": "Subsequent Transactions (Post Acceptance)"
+      "metric-7": "Total Reallocated In",
+      "metric-7-tooltip": "info",
+      "subtitle": "Subsequent Transactions (Post Acceptance)",
+      "notAcceptedMessage": "This request has not been accepted, more details will be shown when accepted"
     },
     "pendingDecisions": {
       "title": "Pending Decisions",
@@ -1728,10 +1741,8 @@
           "metric-2-tooltip": "info",
           "metric-3": "Rejected",
           "metric-3-tooltip": "info",
-          "metric-4": "Reallocations In",
-          "metric-4-tooltip": "info",
-          "metric-5": "Reallocations Out",
-          "metric-5-tooltip": "info"
+          "metric-4": "Reallocations In/Out",
+          "metric-4-tooltip": "info"
         },
         "subsequentTransactions": {
           "title": "Subsequent Transactions",
@@ -1761,7 +1772,21 @@
         }
       },
       "detailedTransactions": {
-        "title": "Detailed Transactions"
+        "title": "Detailed Transactions",
+        "tableHeader": {
+          "cell-1": "Loan Tranche/ Single Loan",
+          "cell-2": "Transaction",
+          "cell-3": "Transaction Date",
+          "cell-4": "Status and/or Amount",
+          "cell-5": "Lender Decision Pending",
+          "cell-6": "Loan Deployment/ Withdrawal Status"
+        },
+        "lendingRequest": "Lending Request",
+        "withdrawalRequest": "Withdrawal Request",
+        "reallocation": "Reallocation",
+        "actions": {
+          "seeDetails": "See details"
+        }
       }
     },
     "rewards": {

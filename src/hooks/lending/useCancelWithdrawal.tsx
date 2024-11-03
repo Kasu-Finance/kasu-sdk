@@ -10,13 +10,13 @@ const useCancelWithdrawal = () => {
 
   const handleError = useHandleError()
 
-  const { setToast, removeToast } = useToastState()
+  const { setToast } = useToastState()
 
   return async (lendingPoolId: `0x${string}`, dNft: string) => {
     try {
       setToast({
         type: 'info',
-        title: ActionStatus.PROCESSING,
+        title: capitalize(ActionStatus.PROCESSING),
         message: ACTION_MESSAGES[ActionStatus.PROCESSING],
         isClosable: false,
       })
@@ -27,8 +27,6 @@ const useCancelWithdrawal = () => {
       )
 
       await waitForReceipt(cancel)
-
-      removeToast()
     } catch (error) {
       handleError(
         error,

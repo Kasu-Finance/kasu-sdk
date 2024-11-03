@@ -14,7 +14,7 @@ export type Paginated<T> = {
   limit?: number
 }
 
-export type LoanTicketDto = {
+export type LoanTicketDtoRaw = {
   id: string
   endBorrowerID: string
   poolID: `0x${string}`
@@ -26,6 +26,11 @@ export type LoanTicketDto = {
   status: LoanTicketStatus
   statusDescription: string
   createdOn: string
+  epochID: string
+}
+
+export type LoanTicketDto = LoanTicketDtoRaw & {
+  dailyGroupID: string
 }
 
 export type LoanTicketRes = Paginated<LoanTicketDto>
@@ -35,5 +40,5 @@ export const LENDERS_AGREEMENT_API = 'https://allocations.api.kasu.finance'
 export const LENDERS_AGREEMENT_CHAIN_ID_MAP: Record<SupportedChainIds, string> =
   {
     [SupportedChainIds.BASE]: '8453X',
-    [SupportedChainIds.BASE_SEPOLIA]: '84532X',
+    [SupportedChainIds.BASE_SEPOLIA]: '84532Y',
   }

@@ -1,4 +1,5 @@
 import { Stack } from '@mui/material'
+import { Suspense } from 'react'
 
 import DetailedTransactions from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedTransactions'
 import LendingStatusSummary from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/LendingStatusSummary'
@@ -9,8 +10,10 @@ const YourTransactions = async () => {
   return (
     <Stack spacing={3}>
       <NotificationBannerWrapper />
-      <LendingStatusSummary />
-      <WithdrawalStatusSummary />
+      <Suspense fallback={null}>
+        <LendingStatusSummary />
+        <WithdrawalStatusSummary />
+      </Suspense>
       <DetailedTransactions />
     </Stack>
   )

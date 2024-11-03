@@ -19,9 +19,9 @@ const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { modal } = useModalState()
 
-  const transactionHistory = modal.cancelWithdrawalModal.transactionHistory
+  const { transaction } = modal.cancelWithdrawalModal
 
-  const transactionEvents = transactionHistory.events
+  const transactionEvents = transaction.events
 
   const latestEvent = transactionEvents[transactionEvents.length - 1]
 
@@ -57,11 +57,11 @@ const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               showDivider
               metric={
                 <Typography variant='baseMdBold'>
-                  {transactionHistory.lendingPool.name}
+                  {transaction.lendingPool.name}
                 </Typography>
               }
             />
-            {transactionHistory.lendingPool.tranches.length > 1 && (
+            {transaction.lendingPool.tranches.length > 1 && (
               <InfoRow
                 title={`${t('general.tranche')} ${t('general.tranche')}`}
                 toolTipInfo={
@@ -138,8 +138,8 @@ const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             color='secondary'
             onClick={() =>
               cancelWithdrawal(
-                transactionHistory.lendingPool.id as `0x${string}`,
-                transactionHistory.nftId
+                transaction.lendingPool.id as `0x${string}`,
+                transaction.nftId
               )
             }
             sx={{ textTransform: 'capitalize' }}

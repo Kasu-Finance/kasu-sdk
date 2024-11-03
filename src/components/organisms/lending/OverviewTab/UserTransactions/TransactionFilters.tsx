@@ -25,6 +25,7 @@ export const TransactionType = {
   ALL: 'All Transactions',
   DEPOSIT: 'Deposit',
   WITHDRAW: 'Withdrawal',
+  REALLOCATION: 'Reallocation',
 } as const
 
 export const TransactionTranches = {
@@ -34,14 +35,23 @@ export const TransactionTranches = {
   SENIOR: 'Senior',
 } as const
 
+export const TranasctionDecisions = {
+  ALL: 'All',
+  CONSENT_REQUIRED: 'Opt in / Out',
+}
+
 type TransactionFiltersProps = {
   pools?: {
     id: string
     name: string
   }[]
+  withReallocation?: boolean
 }
 
-const TransactionFilters: React.FC<TransactionFiltersProps> = ({ pools }) => {
+const TransactionFilters: React.FC<TransactionFiltersProps> = ({
+  pools,
+  withReallocation,
+}) => {
   const { t } = useTranslation()
 
   const {
@@ -49,10 +59,12 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({ pools }) => {
     status,
     trancheType,
     transactionType,
+    pendingDecision,
     setPoolId,
     setStatus,
     setTrancheType,
     setTransactionType,
+    setTransactionDecisons,
   } = useTransactionHistoryState()
 
   const handleStatusChange = (e: SelectChangeEvent) => {
@@ -65,6 +77,12 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({ pools }) => {
 
   const handleTrancheChange = (e: SelectChangeEvent) => {
     setTrancheType(e.target.value as ValueOf<typeof TransactionTranches>)
+  }
+
+  const handleDecisionChange = (e: SelectChangeEvent) => {
+    setTransactionDecisons(
+      e.target.value as ValueOf<typeof TranasctionDecisions>
+    )
   }
 
   const handlePoolChange = (e: SelectChangeEvent) => {
@@ -87,28 +105,34 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({ pools }) => {
             />
           </Grid>
         )}
-        <Grid item flex={1}>
-          <CustomSelect
-            label='Status'
-            value={status}
-            onChange={handleStatusChange}
-            options={Object.values(TransactionStatus).map((val) => ({
-              name: val,
-              id: val,
-            }))}
-            labelKey='name'
-            valueKey='id'
-          />
-        </Grid>
+        {!pendingDecision && (
+          <Grid item flex={1}>
+            <CustomSelect
+              label='Status'
+              value={status}
+              onChange={handleStatusChange}
+              options={Object.values(TransactionStatus).map((val) => ({
+                name: val,
+                id: val,
+              }))}
+              labelKey='name'
+              valueKey='id'
+            />
+          </Grid>
+        )}
         <Grid item flex={1}>
           <CustomSelect
             label='Type'
             value={transactionType}
             onChange={handleTypeChange}
-            options={Object.values(TransactionType).map((val) => ({
-              name: val,
-              id: val,
-            }))}
+            options={Object.values(TransactionType)
+              .filter((value) =>
+                withReallocation ? value : value !== 'Reallocation'
+              )
+              .map((val) => ({
+                name: val,
+                id: val,
+              }))}
             labelKey='name'
             valueKey='id'
           />
@@ -126,6 +150,21 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({ pools }) => {
             valueKey='id'
           />
         </Grid>
+        {pendingDecision && (
+          <Grid item flex={1}>
+            <CustomSelect
+              label='Pending Decisions'
+              value={pendingDecision}
+              onChange={handleDecisionChange}
+              options={Object.values(TranasctionDecisions).map((val) => ({
+                name: val,
+                id: val,
+              }))}
+              labelKey='name'
+              valueKey='id'
+            />
+          </Grid>
+        )}
       </Grid>
     </Box>
   )

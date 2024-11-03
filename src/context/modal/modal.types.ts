@@ -1,20 +1,16 @@
-import {
-  PoolOverview,
-  TrancheData,
-} from '@solidant/kasu-sdk/src/services/DataService/types'
+import { TrancheData } from '@solidant/kasu-sdk/src/services/DataService/types'
 import {
   LockPeriod,
   UserLock,
 } from '@solidant/kasu-sdk/src/services/Locking/types'
 import {
-  UserRequest,
+  UserRequestEvent,
   UserTrancheBalance,
 } from '@solidant/kasu-sdk/src/services/UserLending/types'
 
-import {
-  LoanTicket,
-  PendingDecision,
-} from '@/utils/lending/getPendingDecisions'
+import { LoanTicketDto } from '@/config/api.lendersAgreement'
+import { LoanTicket, PendingDecision, PendingDecisionPool } from '@/utils'
+import { DetailedTransaction } from '@/utils/lending/getDetailedTransactions'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
@@ -56,16 +52,19 @@ export type Modals = {
   [ModalsKeys.LOYALTY_LEVELS]: ModalData
   [ModalsKeys.UNRELEASED_FEATURE]: ModalData
   [ModalsKeys.OPT_IN]: ModalData
-  [ModalsKeys.OPT_OUT]: ModalData
+  [ModalsKeys.OPT_OUT]: ModalData<{ loanTicket: LoanTicket; poolName: string }>
   [ModalsKeys.BORROWER_IDENTIFIED]: ModalData<{
+    poolName: string
     loanTicket: LoanTicket
-    pools: PoolOverview[]
+    callback: (newLoanTickets: LoanTicketDto[]) => void
   }>
   [ModalsKeys.PENDING_DECISIONS]: ModalData<{
     pendingDecisions: PendingDecision[]
-    pools: PoolOverview[]
+    pools: PendingDecisionPool[]
   }>
-  [ModalsKeys.REQUEST_DETAILS]: ModalData
+  [ModalsKeys.REQUEST_DETAILS]: ModalData<{
+    detailedTransaction: DetailedTransaction
+  }>
   [ModalsKeys.LOAN_CONTRACT]: ModalData<{
     acceptLoanContract?: () => void
     canAccept: boolean
@@ -81,8 +80,34 @@ export type Modals = {
     trancheBalance: (TrancheData & { balanceData: UserTrancheBalance })[]
   }>
   [ModalsKeys.KYC]: ModalData<{ callback: () => void }>
-  [ModalsKeys.CANCEL_DEPOSIT]: ModalData<{ transactionHistory: UserRequest }>
-  [ModalsKeys.CANCEL_WITHDRAWAL]: ModalData<{ transactionHistory: UserRequest }>
+  [ModalsKeys.CANCEL_DEPOSIT]: ModalData<{
+    transaction: {
+      timestamp: EpochTimeStamp
+      lendingPool: {
+        id: string
+        name: string
+        tranches: { orderId: string }[]
+      }
+      requestType: 'Deposit' | 'Withdrawal'
+      events: UserRequestEvent[]
+      nftId: string
+      trancheName: string
+    }
+  }>
+  [ModalsKeys.CANCEL_WITHDRAWAL]: ModalData<{
+    transaction: {
+      timestamp: EpochTimeStamp
+      lendingPool: {
+        id: string
+        name: string
+        tranches: { orderId: string }[]
+      }
+      requestType: 'Deposit' | 'Withdrawal'
+      events: UserRequestEvent[]
+      nftId: string
+      trancheName: string
+    }
+  }>
   [ModalsKeys.LEND]: ModalData<{
     pool: PoolOverviewWithDelegate
   }>

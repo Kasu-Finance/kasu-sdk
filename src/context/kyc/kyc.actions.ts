@@ -2,6 +2,7 @@
 import {
   Config,
   getCustomerStatus,
+  getIdentityWallets,
   watchWidgetVisibleState,
 } from '@compilot/react-sdk'
 import { watchIsAuthenticated } from '@compilot/web-sdk'
@@ -50,6 +51,7 @@ const useKycActions = (dispatch: Dispatch<KycActions>): KycFunctions => {
             // widget close
             if (!isVisible) {
               const status = await getCustomerStatus(compilotConfig)
+              const account = await getIdentityWallets(compilotConfig)
 
               if (status !== 'To be reviewed' && status !== 'Active') {
                 setToast({
@@ -73,6 +75,11 @@ const useKycActions = (dispatch: Dispatch<KycActions>): KycFunctions => {
               } else {
                 // recursively call setToast to update timer
                 let timer = 10 // in seconds
+
+                dispatch({
+                  type: 'SET_KYC_COMPLETED',
+                  payload: account[0].address,
+                })
 
                 const handleToastClose = (clearInterval?: () => void) => {
                   clearInterval?.()

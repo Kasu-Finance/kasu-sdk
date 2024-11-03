@@ -9,7 +9,7 @@ import {
   UserLock,
 } from '@solidant/kasu-sdk/src/services/Locking/types'
 import {
-  UserRequest,
+  UserRequestEvent,
   UserTrancheBalance,
 } from '@solidant/kasu-sdk/src/services/UserLending/types'
 import { ReactNode, useReducer } from 'react'
@@ -20,6 +20,7 @@ import { modalReducer } from '@/context/modal/modal.reducer'
 import { Modals } from '@/context/modal/modal.types'
 
 import { LoanTicket, PendingDecision } from '@/utils'
+import { DetailedTransaction } from '@/utils/lending/getDetailedTransactions'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
@@ -29,11 +30,19 @@ const initialState: Modals = {
   borrowerIdentifiedModal: {
     isOpen: false,
     loanTicket: null as unknown as LoanTicket,
-    pools: null as unknown as PoolOverview[],
+    poolName: '',
+    callback: () => {},
   },
   optInModal: { isOpen: false },
-  optOutModal: { isOpen: false },
-  requestDetailsModal: { isOpen: false },
+  optOutModal: {
+    isOpen: false,
+    loanTicket: null as unknown as LoanTicket,
+    poolName: '',
+  },
+  requestDetailsModal: {
+    isOpen: false,
+    detailedTransaction: null as unknown as DetailedTransaction,
+  },
   pendingDecisionsModal: {
     isOpen: false,
     pendingDecisions: null as unknown as PendingDecision[],
@@ -50,11 +59,33 @@ const initialState: Modals = {
   },
   cancelDepositModal: {
     isOpen: false,
-    transactionHistory: null as unknown as UserRequest,
+    transaction: null as unknown as {
+      timestamp: EpochTimeStamp
+      lendingPool: {
+        id: string
+        name: string
+        tranches: { orderId: string }[]
+      }
+      requestType: 'Deposit' | 'Withdrawal'
+      events: UserRequestEvent[]
+      nftId: string
+      trancheName: string
+    },
   },
   cancelWithdrawalModal: {
     isOpen: false,
-    transactionHistory: null as unknown as UserRequest,
+    transaction: null as unknown as {
+      timestamp: EpochTimeStamp
+      lendingPool: {
+        id: string
+        name: string
+        tranches: { orderId: string }[]
+      }
+      requestType: 'Deposit' | 'Withdrawal'
+      events: UserRequestEvent[]
+      nftId: string
+      trancheName: string
+    },
   },
   unlockModal: {
     isOpen: false,

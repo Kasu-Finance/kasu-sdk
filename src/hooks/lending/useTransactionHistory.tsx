@@ -10,8 +10,12 @@ const useTransactionHistory = () => {
 
   const { data, error, isLoading, mutate } = useSWR(
     account ? ['transactionHistory', account] : null,
-    async ([_, userAdress]) =>
-      sdk.UserLending.getUserRequests(userAdress as `0x${string}`)
+    async ([_, userAdress]) => {
+      const userRequests = await sdk.UserLending.getUserRequests(
+        userAdress as `0x${string}`
+      )
+      return userRequests.sort((a, b) => b.timestamp - a.timestamp)
+    }
   )
 
   return {

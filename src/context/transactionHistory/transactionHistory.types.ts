@@ -1,4 +1,5 @@
 import {
+  TranasctionDecisions,
   TransactionStatus,
   TransactionTranches,
   TransactionType,
@@ -11,6 +12,7 @@ export enum TransactionHistoryActionsTypes {
   SET_TRANSACTION_TYPE = 'SET_TRANSACTION_TYPE',
   SET_TRANCHE_TYPE = 'SET_TRANCHE_TYPE',
   SET_POOL_ID = 'SET_POOL_ID',
+  SET_PENDING_DECISIONS = 'SET_PENDING_DECISIONS',
 }
 
 export type PoolIdFilters = 'All' | `0x${string}` | undefined
@@ -32,9 +34,14 @@ export type TransactionHistoryActions =
       type: TransactionHistoryActionsTypes.SET_POOL_ID
       payload: PoolIdFilters
     }
+  | {
+      type: TransactionHistoryActionsTypes.SET_PENDING_DECISIONS
+      payload: ValueOf<typeof TranasctionDecisions>
+    }
 
 export type TransactionHistoryStateType = {
   poolId?: PoolIdFilters
+  pendingDecision?: ValueOf<typeof TranasctionDecisions>
   status: ValueOf<typeof TransactionStatus>
   transactionType: ValueOf<typeof TransactionType>
   trancheType: ValueOf<typeof TransactionTranches>
@@ -44,6 +51,9 @@ export type TransactionHistoryFunctions = {
   setStatus: (status: ValueOf<typeof TransactionStatus>) => void
   setTransactionType: (transactionType: ValueOf<typeof TransactionType>) => void
   setTrancheType: (trancheType: ValueOf<typeof TransactionTranches>) => void
+  setTransactionDecisons: (
+    decisions: ValueOf<typeof TranasctionDecisions>
+  ) => void
   setPoolId: (poolId: PoolIdFilters) => void
 }
 

@@ -16,6 +16,7 @@ import { TransactionHistoryStateType } from '@/context/transactionHistory/transa
 type TransactionHistoryStateProps = {
   children: ReactNode
   withPoolIdFilter?: boolean
+  withPendingDecisions?: boolean
 }
 
 const initialState: TransactionHistoryStateType = {
@@ -27,10 +28,12 @@ const initialState: TransactionHistoryStateType = {
 const TransactionHistoryState: React.FC<TransactionHistoryStateProps> = ({
   children,
   withPoolIdFilter,
+  withPendingDecisions,
 }) => {
   const [state, dispatch] = useReducer(transactionHistoryReducer, {
     ...initialState,
     poolId: withPoolIdFilter ? 'All' : undefined,
+    pendingDecision: withPendingDecisions ? 'All' : undefined,
   })
 
   const transactionHistoryActions = useTransactionHistoryActions(dispatch)

@@ -11,12 +11,14 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { OptInOutIcon } from '@/assets/icons'
 
+import { LoanTicketDto } from '@/config/api.lendersAgreement'
 import dayjs from '@/dayjs'
 import { customTypography } from '@/themes/typography'
 import {
   formatAmount,
   formatTimestamp,
   LoanTicket,
+  mapPendingDecisionsToPools,
   PendingDecision,
 } from '@/utils'
 
@@ -34,7 +36,19 @@ const PendingDecisionsTableRow: React.FC<PendingDecisionsTableRowProps> = ({
   const { pools } = modal[ModalsKeys.PENDING_DECISIONS]
 
   const handleOpen = (loanTicket: LoanTicket) =>
-    openModal({ name: ModalsKeys.BORROWER_IDENTIFIED, loanTicket, pools })
+    openModal({
+      name: ModalsKeys.BORROWER_IDENTIFIED,
+      loanTicket,
+      poolName: pendingDecision.poolName,
+      callback: (newLoanTickets: LoanTicketDto[]) => {
+        openModal({
+          name: ModalsKeys.PENDING_DECISIONS,
+          pendingDecisions: mapPendingDecisionsToPools(newLoanTickets, pools)
+            .pendingDecisions,
+          pools: pools,
+        })
+      },
+    })
 
   return (
     <>
@@ -75,7 +89,7 @@ const PendingDecisionsTableRow: React.FC<PendingDecisionsTableRowProps> = ({
                 </TableCell>
                 <TableCell>
                   <Countdown
-                    endTime={dayjs(ticket.createdOn).add(2, 'days').unix()}
+                    endTime={dayjs.unix(ticket.createdOn).add(2, 'days').unix()}
                     format='HH:mm:ss'
                     render={(countDown) => {
                       const [hours, minutes, seconds] = countDown.split(':')

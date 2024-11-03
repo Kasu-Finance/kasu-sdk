@@ -22,34 +22,20 @@ const BorrowerIdentifiedModal: React.FC<DialogChildProps> = ({
 }) => {
   const { t } = useTranslation()
 
-  const { modal, openModal } = useModalState()
+  const { modal } = useModalState()
 
   const fundingConsent = useFundingConsent()
 
-  const { loanTicket, pools } = modal[ModalsKeys.BORROWER_IDENTIFIED]
+  const { loanTicket, poolName, callback } =
+    modal[ModalsKeys.BORROWER_IDENTIFIED]
 
   const handleConsent = async (
     decision: LoanTicketStatus.optedIn | LoanTicketStatus.optedOut
   ) => {
-    await fundingConsent(
-      {
-        endBorrowerID: loanTicket.endBorrowerID,
-        poolID: loanTicket.poolID,
-        trancheID: loanTicket.trancheID,
-        status: decision,
-      },
-      pools,
-      () => {
-        handleClose()
-
-        openModal({
-          name:
-            decision === LoanTicketStatus.optedIn
-              ? ModalsKeys.OPT_IN
-              : ModalsKeys.OPT_OUT,
-        })
-      }
-    )
+    await fundingConsent(poolName, loanTicket, decision, (newLoanTickets) => {
+      callback(newLoanTickets)
+      handleClose()
+    })
   }
 
   return (
@@ -79,7 +65,10 @@ const BorrowerIdentifiedModal: React.FC<DialogChildProps> = ({
                 justifyContent='center'
               >
                 <Countdown
-                  endTime={dayjs(loanTicket.createdOn).add(2, 'days').unix()}
+                  endTime={dayjs
+                    .unix(loanTicket.createdOn)
+                    .add(2, 'days')
+                    .unix()}
                   format='HH:mm:ss'
                   render={(countdown) => {
                     const [hours, minutes, seconds] = countdown.split(':')

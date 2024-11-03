@@ -1,4 +1,3 @@
-import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useWeb3React } from '@web3-react/core'
 
 import useModalState from '@/hooks/context/useModalState'
@@ -8,13 +7,11 @@ import useHandleError from '@/hooks/web3/useHandleError'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import {
-  FundingConsentPayload,
-  FundingConsentReturn,
-} from '@/app/api/loan-tickets/route'
+import { FundingConsentReturn } from '@/app/api/loan-tickets/route'
+import { LoanTicketDto, LoanTicketStatus } from '@/config/api.lendersAgreement'
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import dayjs from '@/dayjs'
-import { capitalize, getPendingDecisions } from '@/utils'
+import { capitalize, LoanTicket } from '@/utils'
 
 const useFundingConsent = () => {
   const { account, chainId, provider } = useWeb3React()
@@ -28,9 +25,10 @@ const useFundingConsent = () => {
   const { updateLoanTickets } = useLoanTickets()
 
   return async (
-    payload: FundingConsentPayload['payload'],
-    pools: PoolOverview[],
-    callback: () => void
+    poolName: string,
+    loanTicket: LoanTicket,
+    decision: LoanTicketStatus,
+    callback: (newLoanTickets: LoanTicketDto[]) => void
   ) => {
     if (!account) {
       return console.error('FundingConsent:: Account is undefined')
@@ -52,6 +50,13 @@ const useFundingConsent = () => {
           ACTION_MESSAGES[ActionType.FUNDING_CONSENT][ActionStatus.SIGNING],
         isClosable: false,
       })
+
+      const payload = {
+        endBorrowerID: loanTicket.endBorrowerID,
+        poolID: loanTicket.poolID,
+        trancheID: loanTicket.trancheID,
+        status: decision,
+      }
 
       let signature: string
 
@@ -113,17 +118,20 @@ const useFundingConsent = () => {
       )
 
       if (loanTickets) {
+        callback(loanTickets)
+      }
+
+      if (decision === LoanTicketStatus.optedIn) {
+        openModal({ name: ModalsKeys.OPT_IN })
+      } else {
         openModal({
-          name: ModalsKeys.PENDING_DECISIONS,
-          pendingDecisions: getPendingDecisions(loanTickets, pools)
-            .pendingDecisions,
-          pools: pools,
+          name: ModalsKeys.OPT_OUT,
+          loanTicket,
+          poolName,
         })
       }
 
       removeToast()
-
-      callback()
     } catch (error) {
       handleError(error)
     }

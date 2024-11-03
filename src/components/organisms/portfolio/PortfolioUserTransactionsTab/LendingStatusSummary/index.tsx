@@ -6,10 +6,15 @@ import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import LendingRequests from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/LendingStatusSummary/LendingRequests'
+import LendingStatusSummarySkeleton from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/LendingStatusSummary/LendingStatusSummarySkeleton'
 import SubsequentTransactions from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/LendingStatusSummary/SubsequentTransactions'
 
-const LendingStatusSummary = () => {
+import { getCurrentEpoch } from '@/app/_requests/currentEpoch'
+
+const LendingStatusSummary = async () => {
   const { t } = useTranslation()
+
+  const currentEpoch = await getCurrentEpoch()
 
   return (
     <CustomCard>
@@ -17,10 +22,14 @@ const LendingStatusSummary = () => {
         title={t('portfolio.transactions.lendingStatusSummary.title')}
       />
       <CustomInnerCardContent>
-        <Stack spacing={6}>
-          <LendingRequests />
-          <SubsequentTransactions />
-        </Stack>
+        {currentEpoch ? (
+          <Stack spacing={6}>
+            <LendingRequests />
+            <SubsequentTransactions currentEpoch={currentEpoch} />
+          </Stack>
+        ) : (
+          <LendingStatusSummarySkeleton />
+        )}
       </CustomInnerCardContent>
     </CustomCard>
   )

@@ -48,7 +48,7 @@ const UserTransactionTableRow: React.FC<UserTransactionTableRowProps> = ({
         transaction.requestType === 'Deposit'
           ? ModalsKeys.CANCEL_DEPOSIT
           : ModalsKeys.CANCEL_WITHDRAWAL,
-      transactionHistory: transaction,
+      transaction,
     })
   }
 

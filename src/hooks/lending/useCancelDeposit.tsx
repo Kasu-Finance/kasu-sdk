@@ -3,7 +3,7 @@ import useKasuSDK from '@/hooks/useKasuSDK'
 import useHandleError from '@/hooks/web3/useHandleError'
 
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
-import { waitForReceipt } from '@/utils'
+import { capitalize, waitForReceipt } from '@/utils'
 
 const useCancelDeposit = () => {
   const sdk = useKasuSDK()
@@ -16,7 +16,7 @@ const useCancelDeposit = () => {
     try {
       setToast({
         type: 'info',
-        title: ActionStatus.PROCESSING,
+        title: capitalize(ActionStatus.PROCESSING),
         message: ACTION_MESSAGES[ActionStatus.PROCESSING],
         isClosable: false,
       })
