@@ -297,6 +297,7 @@ export class UserLending {
         );
 
         const retn: UserRequest[] = [];
+
         for (const userRequest of subgraphResult.userRequests) {
             const trancheName =
                 trancheNames[userRequest.lendingPool.tranches.length - 1][
@@ -311,9 +312,9 @@ export class UserLending {
             );
 
             for (const event of userRequest.userRequestEvents) {
-                let totalRequested = 0;
-                let totalAccepted = 0;
-                let totalRejected = 0;
+                let totalRequested = '0';
+                let totalAccepted = '0';
+                let totalRejected = '0';
 
                 const totalAssets = parseFloat(userRequest.lendingPool.balance);
 
@@ -327,61 +328,43 @@ export class UserLending {
                     event.type = 'DepositReallocated';
                 }
 
-                if (
-                    event.type === 'DepositAccepted' ||
-                    event.type === 'WithdrawalAccepted' ||
-                    event.type === 'DepositReallocated'
-                ) {
-                    totalAccepted = event.assetAmount
-                        ? parseFloat(event.assetAmount)
-                        : this.convertSharesToAssets(
-                              event.sharesAmount,
-                              totalAssets,
-                              totalSupply,
-                          );
-                }
-                if (
-                    event.type === 'DepositCancelled' ||
-                    event.type === 'WithdrawalCancelled' ||
-                    event.type === 'DepositRejected'
-                ) {
-                    totalRejected = event.assetAmount
-                        ? parseFloat(event.assetAmount)
-                        : this.convertSharesToAssets(
-                              event.sharesAmount,
-                              totalAssets,
-                              totalSupply,
-                          );
-                }
-                if (
-                    event.type === 'DepositInitiated' ||
-                    event.type === 'WithdrawalInitiated' ||
-                    event.type === 'DepositIncreased' ||
-                    event.type === 'WithdrawalIncreased'
-                ) {
-                    totalRequested = event.assetAmount
-                        ? parseFloat(event.assetAmount)
-                        : this.convertSharesToAssets(
-                              event.sharesAmount,
-                              totalAssets,
-                              totalSupply,
-                          );
+                const assetAmount =
+                    event.assetAmount ??
+                    this.convertSharesToAssets(
+                        event.sharesAmount,
+                        totalAssets,
+                        totalSupply,
+                    ).toString();
+
+                switch (event.type) {
+                    case 'DepositAccepted':
+                    case 'WithdrawalAccepted':
+                    case 'DepositReallocated':
+                        totalAccepted = assetAmount;
+                        break;
+                    case 'DepositCancelled':
+                    case 'WithdrawalCancelled':
+                    case 'DepositRejected':
+                        totalRejected = assetAmount;
+                        break;
+
+                    case 'DepositInitiated':
+                    case 'WithdrawalInitiated':
+                    case 'DepositIncreased':
+                    case 'WithdrawalIncreased':
+                        totalRequested = assetAmount;
+
+                        break;
                 }
 
                 events.push({
                     id: event.id,
                     requestType: mapUserRequestEventType(event.type),
                     timestamp: parseInt(event.createdOn),
-                    totalRequested: totalRequested.toString(),
-                    totalAccepted: totalAccepted.toString(),
-                    totalRejected: totalRejected.toString(),
-                    assetAmount:
-                        event.assetAmount ??
-                        this.convertSharesToAssets(
-                            event.sharesAmount,
-                            totalAssets,
-                            totalSupply,
-                        ).toString(),
+                    totalRequested,
+                    totalAccepted,
+                    totalRejected,
+                    assetAmount,
                     index: parseInt(event.index),
                     transactionHash: event.transactionHash,
                     trancheName: eventTrancheName,
