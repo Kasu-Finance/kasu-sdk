@@ -385,6 +385,7 @@ export class UserLending {
                     index: parseInt(event.index),
                     transactionHash: event.transactionHash,
                     trancheName: eventTrancheName,
+                    trancheId: event.tranche.id,
                 });
             }
 
@@ -401,6 +402,7 @@ export class UserLending {
                         ? 'Deposit'
                         : 'Withdrawal',
                 trancheName: trancheName,
+                trancheId: userRequest.tranche.id,
                 requestedAmount: userRequest.amountRequested,
                 acceptedAmount: userRequest.amountAccepted,
                 rejectedAmount: userRequest.amountRejected,

@@ -37,6 +37,7 @@ export interface UserRequest {
         tranches: { orderId: string }[];
     };
     requestType: 'Deposit' | 'Withdrawal';
+    trancheId: string;
     trancheName: string;
     requestedAmount: string;
     acceptedAmount: string;
@@ -65,6 +66,7 @@ export interface UserRequestEvent {
     timestamp: EpochTimeStamp;
     transactionHash: string;
     trancheName: string;
+    trancheId: string;
 }
 export interface UserTrancheBalance {
     userId: string;
