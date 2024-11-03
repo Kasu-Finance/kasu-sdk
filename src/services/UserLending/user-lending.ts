@@ -409,7 +409,6 @@ export class UserLending {
                 status: userRequest.status,
                 timestamp: parseInt(userRequest.createdOn),
                 canCancel: await this.isCancelable(
-                    userRequest.type,
                     userRequest.status,
                     userRequest.lendingPool.id,
                 ),
@@ -465,19 +464,12 @@ export class UserLending {
     }
 
     async isCancelable(
-        type: string,
         status: string,
         lendingPoolId: string,
     ): Promise<boolean> {
-        const isClearingPending = await this.isClearingPending(lendingPoolId);
+        if (status === 'Processed') return false;
 
-        if (
-            type === (UserRequestType.DEPOSIT as string) &&
-            status !== 'Processed' &&
-            !isClearingPending
-        ) {
-            return true;
-        }
+        const isClearingPending = await this.isClearingPending(lendingPoolId);
 
         return !isClearingPending;
     }
