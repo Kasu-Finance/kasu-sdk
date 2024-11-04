@@ -31,6 +31,19 @@ const CMC_TOKEN_ID_MAP = {
   [SupportedTokens.CBETH]: '21535',
 } as const satisfies Record<SupportedTokens, string>
 
+const FALLBACK_PRICES: Record<SupportedTokens, string> = {
+  AERO: '0',
+  BENJI: '0',
+  BRETT: '0',
+  cbETH: '0',
+  DEGEN: '0',
+  ETH: '0',
+  USDbC: '0',
+  USDC: '0',
+  WETH: '0',
+  WSTETH: '0',
+}
+
 const USDC_TOKEN_ID = CMC_TOKEN_ID_MAP[SupportedTokens.USDC]
 
 export async function GET(req: NextRequest) {
@@ -77,8 +90,11 @@ export async function GET(req: NextRequest) {
         aux: 'is_active',
         convert_id: USDC_TOKEN_ID,
       })}`,
+
       {
-        cache: 'no-store',
+        next: {
+          revalidate: 60,
+        },
         headers: {
           'X-CMC_PRO_API_KEY': process.env.CMC_API_KEY?.toString() || '',
         },
@@ -94,47 +110,26 @@ export async function GET(req: NextRequest) {
 
     const { data }: CoinMarketCapRes = await res.json()
 
-    const prices = splitTokens.reduce(
-      (acc, cur) => {
-        const tokenId = CMC_TOKEN_ID_MAP[cur]
-        const quoteData = data[tokenId]?.quote[USDC_TOKEN_ID]
-        if (quoteData) {
-          return {
-            ...acc,
-            [cur]: quoteData.price.toString(),
-          }
-        } else {
-          return {
-            ...acc,
-            [cur]: 'Data not available',
-          }
-        }
-      },
-      {} as Record<SupportedTokens, string>
-    )
+    const prices = { ...FALLBACK_PRICES }
 
-    // return new NextResponse(
-    //   JSON.stringify({ success: false, message: 'authentication failed' }),
-    //   { status: 401, headers: { 'content-type': 'application/json' } },
-    //   );
+    for (const token of splitTokens) {
+      const tokenId = CMC_TOKEN_ID_MAP[token]
 
-    // Return the data
-    const response = NextResponse.json({ prices: prices }, { status: 200 })
+      const quoteData = data[tokenId]?.quote[USDC_TOKEN_ID]
 
-    // Set Cache-Control headers for 1 minute
-    response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=60')
+      if (quoteData) {
+        prices[token] = quoteData.price.toString()
+      }
+    }
 
-    return response
+    return NextResponse.json({ prices }, { status: 200 })
   } catch (error) {
     // Return an error message
     return NextResponse.json(
       {
         message: 'An error occurred while fetching data',
         error: (error as Error).message,
-        prices: splitTokens.reduce(
-          (acc, token) => ({ ...acc, [token]: '0.0' }),
-          {} as Record<SupportedTokens, string>
-        ),
+        prices: FALLBACK_PRICES,
       },
       { status: 500 }
     )
