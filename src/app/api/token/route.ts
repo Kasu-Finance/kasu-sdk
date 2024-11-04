@@ -123,14 +123,14 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    return NextResponse.json({ prices }, { status: 200 })
+    return new NextResponse(JSON.stringify(prices), { status: 200 })
   } catch (error) {
-    return NextResponse.json(
-      {
+    return new NextResponse(
+      JSON.stringify({
         message: 'An error occurred while fetching data',
         error: (error as Error).message,
         prices: FALLBACK_PRICES,
-      },
+      }),
       { status: 500 }
     )
   }
