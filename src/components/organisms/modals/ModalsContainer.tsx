@@ -81,6 +81,9 @@ export const getModal = (
     case ModalsKeys.LOAN_CONTRACT:
       return {
         component: <LoanContractModal handleClose={handleClose} />,
+        sx: {
+          overflow: 'hidden',
+        },
       }
     case ModalsKeys.BORROWER_IDENTIFIED:
       return {

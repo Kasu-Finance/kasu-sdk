@@ -27,7 +27,7 @@ const DialogHeader: React.FC<DialogHeaderProps> = ({
       titleProps={{
         variant: 'h4',
       }}
-      height={72}
+      minHeight={72}
       display='flex'
       justifyContent='center'
     >

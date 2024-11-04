@@ -1,4 +1,5 @@
-import { Box, Button, Stack, Typography } from '@mui/material'
+import { Box, Button, IconButton, Stack, Typography } from '@mui/material'
+import { useRef, useState } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useTranslation from '@/hooks/useTranslation'
@@ -15,10 +16,14 @@ import Witnesses from '@/components/organisms/modals/LoanContractModal/Witnesses
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
+import { ScrollDownIcon } from '@/assets/icons'
+
 const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { t } = useTranslation()
 
   const { modal } = useModalState()
+
+  const [showScrollDown, setShowScrollDown] = useState(true)
 
   const { acceptLoanContract, canAccept } = modal[ModalsKeys.LOAN_CONTRACT]
 
@@ -27,10 +32,48 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
     handleClose()
   }
 
+  const ref = useRef<HTMLDivElement>()
+
+  const scrollDown = () => {
+    ref.current?.scrollTo(0, ref.current.scrollHeight)
+  }
+
   return (
     <CustomCard>
       <DialogHeader title='Loan Contract' onClose={handleClose} />
-      <DialogContent>
+      <DialogContent
+        sx={{
+          position: 'relative',
+        }}
+        innerBoxProps={{
+          ref,
+          sx: {
+            minHeight: '300px',
+            maxHeight: 'calc(100vh - 600px)',
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            scrollBehavior: 'smooth',
+          },
+          onScroll: () => {
+            setShowScrollDown((ref.current?.scrollTop ?? 0) < 4200)
+          },
+        }}
+      >
+        <IconButton
+          onClick={scrollDown}
+          sx={{
+            transition: 'opacity 0.3s ease',
+            opacity: showScrollDown ? 100 : 0,
+            zIndex: 2,
+            position: 'absolute',
+            height: 42,
+            bottom: 0,
+            right: 0,
+            p: 0,
+          }}
+        >
+          <ScrollDownIcon />
+        </IconButton>
         <Stack spacing={2}>
           <Box borderRadius={2} bgcolor='gold.dark' p={2}>
             <Stack spacing={2}>
