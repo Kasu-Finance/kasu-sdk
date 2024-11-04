@@ -48,43 +48,43 @@ const USDC_TOKEN_ID = CMC_TOKEN_ID_MAP[SupportedTokens.USDC]
 
 export async function GET(req: NextRequest) {
   console.log(process.version)
-  const tokens = req.nextUrl.searchParams.get('tokens')
-
-  if (!tokens) {
-    return new NextResponse(
-      JSON.stringify({
-        message: 'Parameter "tokens" is missing from the request',
-      }),
-      { status: 400, headers: { 'Content-Type': 'application/json' } }
-    )
-  }
-
-  const splitTokens = tokens.split(',') as SupportedTokens[]
-
-  // Validate the provided tokens
-  const invalidTokens = splitTokens.filter(
-    (token) => !Object.keys(CMC_TOKEN_ID_MAP).includes(token)
-  )
-
-  if (invalidTokens.length > 0) {
-    return new NextResponse(
-      JSON.stringify({
-        message: `Invalid tokens provided: ${invalidTokens.join(', ')}`,
-      }),
-      { status: 400, headers: { 'Content-Type': 'application/json' } }
-    )
-  }
-
-  let tokenIds: string
-
-  if (splitTokens.length > 1) {
-    tokenIds = splitTokens.map((token) => CMC_TOKEN_ID_MAP[token]).join(',')
-  } else {
-    tokenIds = CMC_TOKEN_ID_MAP[splitTokens[0]]
-  }
-
-  // Fetch the data from CoinMarketCap
   try {
+    const tokens = req.nextUrl.searchParams.get('tokens')
+
+    if (!tokens) {
+      return new NextResponse(
+        JSON.stringify({
+          message: 'Parameter "tokens" is missing from the request',
+        }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
+
+    const splitTokens = tokens.split(',') as SupportedTokens[]
+
+    // Validate the provided tokens
+    const invalidTokens = splitTokens.filter(
+      (token) => !Object.keys(CMC_TOKEN_ID_MAP).includes(token)
+    )
+
+    if (invalidTokens.length > 0) {
+      return new NextResponse(
+        JSON.stringify({
+          message: `Invalid tokens provided: ${invalidTokens.join(', ')}`,
+        }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
+
+    let tokenIds: string
+
+    if (splitTokens.length > 1) {
+      tokenIds = splitTokens.map((token) => CMC_TOKEN_ID_MAP[token]).join(',')
+    } else {
+      tokenIds = CMC_TOKEN_ID_MAP[splitTokens[0]]
+    }
+
+    // Fetch the data from CoinMarketCap
     const res = await fetch(
       `${COINMARKETCAP_API}?${new URLSearchParams({
         id: tokenIds,
