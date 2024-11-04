@@ -225,15 +225,19 @@ export class Portfolio {
                 const tranches: PortfolioTranche[] = [];
                 for (const tranche of poolOverview.tranches) {
                     const lastEpochDatapoint =
-                        lastEpochData.user.lendingPoolUserDetails.find(
-                            (l) =>
-                                l.lendingPoolTrancheUserDetails[0].tranche.id ==
-                                tranche.id,
+                        lastEpochData.user.lendingPoolUserDetails.find((l) =>
+                            Boolean(
+                                l.lendingPoolTrancheUserDetails.find(
+                                    (lendingPoolTranche) =>
+                                        lendingPoolTranche.tranche.id ==
+                                        tranche.id,
+                                ),
+                            ),
                         );
                     if (
                         !lastEpochDatapoint ||
                         lastEpochDatapoint.lendingPoolTrancheUserDetails
-                            .length == 0
+                            .length === 0
                     ) {
                         tranches.push({
                             id: tranche.id,
