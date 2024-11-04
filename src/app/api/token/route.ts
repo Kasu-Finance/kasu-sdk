@@ -47,6 +47,7 @@ const FALLBACK_PRICES: Record<SupportedTokens, string> = {
 const USDC_TOKEN_ID = CMC_TOKEN_ID_MAP[SupportedTokens.USDC]
 
 export async function GET(req: NextRequest) {
+  console.log(process.version)
   const tokens = req.nextUrl.searchParams.get('tokens')
 
   if (!tokens) {
@@ -124,7 +125,6 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ prices }, { status: 200 })
   } catch (error) {
-    // Return an error message
     return NextResponse.json(
       {
         message: 'An error occurred while fetching data',
