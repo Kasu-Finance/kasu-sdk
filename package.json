@@ -66,6 +66,7 @@
     "sharp": "^0.33.5",
     "styled-components": "^6.1.2",
     "swr": "^2.2.5",
+    "typescript": "^5.6.3",
     "xhr2": "^0.2.1"
   },
   "devDependencies": {
@@ -91,7 +92,6 @@
     "husky": "^8.0.3",
     "lint-staged": "^15.2.0",
     "prettier": "^3.1.1",
-    "typechain": "^8.3.2",
-    "typescript": "^5.4.5"
+    "typechain": "^8.3.2"
   }
 }
