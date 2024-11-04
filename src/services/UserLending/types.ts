@@ -72,7 +72,7 @@ export interface UserTrancheBalance {
     userId: string;
     address: string;
     yieldEarned: number;
-    balance: BigNumber;
+    balance: string;
     availableToWithdraw: BigNumber;
 }
 

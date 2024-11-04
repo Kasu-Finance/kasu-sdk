@@ -542,7 +542,7 @@ export class UserLending {
             userId: user,
             address: trancheId,
             yieldEarned,
-            balance: balance,
+            balance: balanceNumber.toString(),
             availableToWithdraw,
         };
     }

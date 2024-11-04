@@ -295,7 +295,7 @@ export class Portfolio {
                         id: tranche.id,
                         name: tranche.name,
                         apy: tranche.apy,
-                        investedAmount: userTrancheBalance.balance.toString(),
+                        investedAmount: userTrancheBalance.balance,
                         yieldEarnings: {
                             lastEpoch: yieldEarningsLastEpoch.toString(),
                             lifetime: yieldEarned.toString(),
