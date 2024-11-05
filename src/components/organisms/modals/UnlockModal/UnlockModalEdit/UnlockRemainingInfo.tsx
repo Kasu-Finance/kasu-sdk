@@ -4,7 +4,7 @@ import { formatEther } from 'ethers/lib/utils'
 import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalState from '@/hooks/context/useModalState'
 import useRatio from '@/hooks/useRatio'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
@@ -14,7 +14,7 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 import { formatAmount, toBigNumber } from '@/utils'
 
 const UnlockRemainingInfo = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { modal } = useModalState()
 

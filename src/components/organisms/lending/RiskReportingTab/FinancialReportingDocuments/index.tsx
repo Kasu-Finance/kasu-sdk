@@ -5,7 +5,7 @@ import { FinancialReportingDocuments as FinancialReportingDocumentsType } from '
 import React from 'react'
 
 import usePagination from '@/hooks/usePagination'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
@@ -23,7 +23,7 @@ const ROWS_PER_PAGE = 5
 const FinancialReportingDocuments: React.FC<
   FinancialReportingDocumentsProps
 > = ({ documents }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const documentsCount = documents.documents.length
 

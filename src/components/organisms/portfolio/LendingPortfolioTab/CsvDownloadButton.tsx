@@ -5,7 +5,7 @@ import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import useModalState from '@/hooks/context/useModalState'
 import useLendingPortfolioData from '@/hooks/portfolio/useLendingPortfolioData'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
@@ -18,7 +18,7 @@ type CsvDownloadButtonProps = {
 const CsvDownloadButton: React.FC<CsvDownloadButtonProps> = ({
   poolOverviews,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { lendingPortfolioData, isLoading } =
     useLendingPortfolioData(poolOverviews)

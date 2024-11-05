@@ -5,7 +5,7 @@ import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import usePortfolioState from '@/hooks/context/usePortfolioState'
 import useLendingPortfolioData from '@/hooks/portfolio/useLendingPortfolioData'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 type LendingPortfolioTableFilterProps = {
   poolOverviews: PoolOverview[]
@@ -14,7 +14,7 @@ type LendingPortfolioTableFilterProps = {
 const LendingPortfolioTableFilter: React.FC<
   LendingPortfolioTableFilterProps
 > = ({ poolOverviews }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { lendingPortfolioData, isLoading } =
     useLendingPortfolioData(poolOverviews)

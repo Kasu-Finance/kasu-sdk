@@ -2,7 +2,7 @@
 
 import { Button, Divider, Grid, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 import useWalletBalances from '@/hooks/web3/useWalletBalances'
 
 import InfoRow from '@/components/atoms/InfoRow'
@@ -11,7 +11,7 @@ import WalletBalancesSkeleton from '@/components/organisms/portfolio/PortfolioWa
 import { formatAmount } from '@/utils'
 
 const WalletBalances = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { walletWithBalance, isLoading } = useWalletBalances()
 

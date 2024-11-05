@@ -7,7 +7,7 @@ import React from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useCountdown from '@/hooks/useCountdown'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
 
@@ -28,7 +28,7 @@ const UserRewardsTableRow: React.FC<UserRewardsTableRowProps> = ({
   userLock,
   lockPeriods,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { openModal } = useModalState()
 

@@ -1,13 +1,13 @@
 import { Stack, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import OrderedList from '@/components/atoms/OrderedList'
 
 import { customTypography } from '@/themes/typography'
 
 const Background = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <Stack spacing={3}>

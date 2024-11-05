@@ -8,7 +8,7 @@ import {
 } from '@mui/material'
 import Link from 'next/link'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
 import NextLink from '@/components/atoms/NextLink'
@@ -30,7 +30,7 @@ export type PoolTableRowProps = {
 }
 
 const PoolTableRow: React.FC<PoolTableRowProps> = ({ pool }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const isActivePool = pool.isActive
 

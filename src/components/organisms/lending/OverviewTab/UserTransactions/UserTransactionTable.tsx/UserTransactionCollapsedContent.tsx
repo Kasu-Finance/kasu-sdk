@@ -3,7 +3,7 @@ import { UserRequestEvent } from '@solidant/kasu-sdk/src/services/UserLending/ty
 import { useWeb3React } from '@web3-react/core'
 import React from 'react'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
 import ToolTip from '@/components/atoms/ToolTip'
@@ -23,7 +23,7 @@ type UserTransactionCollapsedContentProps = {
 const UserTransactionCollapsedContent: React.FC<
   UserTransactionCollapsedContentProps
 > = ({ actionHistory, requestTrancheName }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { chainId } = useWeb3React()
 

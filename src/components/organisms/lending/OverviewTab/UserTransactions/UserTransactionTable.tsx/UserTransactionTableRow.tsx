@@ -10,7 +10,7 @@ import {
 import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
 
 import useModalState from '@/hooks/context/useModalState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
 import UserTransactionCollapsedContent from '@/components/organisms/lending/OverviewTab/UserTransactions/UserTransactionTable.tsx/UserTransactionCollapsedContent'
@@ -32,7 +32,7 @@ const UserTransactionTableRow: React.FC<UserTransactionTableRowProps> = ({
   isActive,
   toggle,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { openModal } = useModalState()
 

@@ -2,7 +2,7 @@ import { Box, Typography } from '@mui/material'
 import { useMemo } from 'react'
 
 import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
 
 import InfoRow from '@/components/atoms/InfoRow'
@@ -11,7 +11,7 @@ import ToolTip from '@/components/atoms/ToolTip'
 import { formatPercentage } from '@/utils'
 
 const SimulatedBonusApy = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { stakedPercentage } = useLockingPercentage()
 

@@ -2,7 +2,7 @@ import { Button } from '@mui/material'
 import { Box } from '@mui/system'
 
 import useModalState from '@/hooks/context/useModalState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
@@ -17,7 +17,7 @@ const RequestDetailsAction: React.FC<RequestDetailsActionProps> = ({
   detailedTransaction,
   handleClose,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { openModal } = useModalState()
 

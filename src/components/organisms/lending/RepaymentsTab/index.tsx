@@ -1,6 +1,6 @@
 import { Box, Grid, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
@@ -19,7 +19,7 @@ type PoolDetailsProps = {
 const RepaymentsTab: React.FC<PoolDetailsProps> = async ({ poolId }) => {
   const repayment = await getRepayments(poolId)
 
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <CustomCard sx={{ mt: 3 }}>

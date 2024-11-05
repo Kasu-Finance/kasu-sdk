@@ -5,7 +5,7 @@ import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useAvailableKsuBonus from '@/hooks/locking/useAvailableKsuBonus'
 import useCalculateLaunchBonusAmount from '@/hooks/locking/useCalculateLaunchBonusAmount'
 import useProjectedUsdcEarning from '@/hooks/locking/useProjectedUsdcEarning'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
@@ -14,7 +14,7 @@ import ModalLaunchBonus from '@/components/molecules/tooltips/ModalLaunchBonus'
 import { formatAmount } from '@/utils'
 
 const EstimatedBonusRewards = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
   const { amount, selectedLockPeriod } = useLockModalState()
   const { modalStatus } = useModalStatusState()
   const { availableKsuBonus } = useAvailableKsuBonus()

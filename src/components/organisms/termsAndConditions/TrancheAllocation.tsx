@@ -1,6 +1,6 @@
 import { Stack, TableCell, TableRow, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
 import UnorderedList from '@/components/atoms/UnorderedList'
@@ -11,7 +11,7 @@ import { customTypography } from '@/themes/typography'
 import { formatAmount } from '@/utils'
 
 const TrancheAllocation = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <Stack spacing={2}>

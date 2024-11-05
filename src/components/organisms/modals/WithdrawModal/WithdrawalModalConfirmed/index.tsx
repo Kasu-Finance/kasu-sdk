@@ -4,7 +4,7 @@ import { useWeb3React } from '@web3-react/core'
 import useModalState from '@/hooks/context/useModalState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import WithdrawalModalConfirmedActions from '@/components/organisms/modals/WithdrawModal/WithdrawalModalConfirmed/WithdrawalModalConfirmedActions'
 
@@ -13,7 +13,7 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 import { formatAccount, formatAmount, formatTimestamp } from '@/utils'
 
 const WithdrawalModalConfirmed = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { account } = useWeb3React()
 

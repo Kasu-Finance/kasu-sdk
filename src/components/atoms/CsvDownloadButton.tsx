@@ -1,7 +1,7 @@
 import DownloadIcon from '@mui/icons-material/Download'
 import { Button, ButtonProps } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 type CsvDownloadButtonProps = ButtonProps & {
   text?: string
@@ -13,7 +13,7 @@ const CsvDownloadButton: React.FC<CsvDownloadButtonProps> = ({
   text,
   ...rest
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <Button

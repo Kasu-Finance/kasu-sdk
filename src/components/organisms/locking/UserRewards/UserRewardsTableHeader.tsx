@@ -1,9 +1,9 @@
 import { TableCell, TableRow } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 const UserRewardsTableHeader = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <TableRow>

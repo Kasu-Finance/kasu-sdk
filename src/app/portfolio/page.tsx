@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
@@ -14,7 +14,7 @@ import { getPoolOverview } from '@/app/_requests/pools'
 const Portfolio = async () => {
   const pools = await getPoolOverview()
 
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <CustomCard>

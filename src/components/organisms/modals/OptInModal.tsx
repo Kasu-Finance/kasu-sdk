@@ -1,6 +1,6 @@
 import { Button, Stack, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
@@ -8,7 +8,7 @@ import WaveBox from '@/components/atoms/WaveBox'
 import DialogHeader from '@/components/molecules/DialogHeader'
 
 const OptInModal: React.FC<DialogChildProps> = ({ handleClose }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <CustomCard>

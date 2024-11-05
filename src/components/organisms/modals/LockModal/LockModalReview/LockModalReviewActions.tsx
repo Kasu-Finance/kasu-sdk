@@ -4,14 +4,14 @@ import { parseUnits } from 'ethers/lib/utils'
 import useLockModalState from '@/hooks/context/useLockModalState'
 import useStepperState from '@/hooks/context/useStepperState'
 import useLockKSU from '@/hooks/locking/useLockKSU'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 import useApproveToken from '@/hooks/web3/useApproveToken'
 import useTokenDetails from '@/hooks/web3/useTokenDetails'
 
 import sdkConfig from '@/config/sdk'
 
 const LockModalReviewActions = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { prevStep } = useStepperState()
 

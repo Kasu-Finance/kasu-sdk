@@ -3,10 +3,10 @@
 import { Button } from '@mui/material'
 import { useRouter } from 'next/navigation'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 const BackButton = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const router = useRouter()
 

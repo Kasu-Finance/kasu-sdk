@@ -3,7 +3,7 @@
 import { Box } from '@mui/material'
 import { Suspense } from 'react'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
 import PoolLayoutWrapper from '@/components/organisms/home/PoolLayoutWrapper'
@@ -12,7 +12,7 @@ import PoolLayoutWrapperSkeleton from '@/components/organisms/home/PoolLayoutWra
 import { getPoolWithDelegate } from '@/app/_requests/poolWithDelegate'
 
 const LendingPage = async () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const poolsWithDelegate = await getPoolWithDelegate()
 

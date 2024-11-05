@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useSimulateBonusYieldEarnings from '@/hooks/lending/useSimulateBonusYieldEarnings'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
 import InfoRow from '@/components/atoms/InfoRow'
@@ -21,7 +21,7 @@ const SimulatedBonusEarnings: React.FC<SimulatedBonusEarningsProps> = ({
   yieldEarnings,
   bonusEpochInterest,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const [bonusYieldEarnings, setBonusYieldEarnings] = useState([0])
 

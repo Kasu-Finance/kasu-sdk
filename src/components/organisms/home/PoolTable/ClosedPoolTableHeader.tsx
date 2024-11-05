@@ -1,11 +1,11 @@
 import { TableRow } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import PoolTableHeaderCell from '@/components/organisms/home/PoolTable/PoolTableHeaderCell'
 
 const ClosedPoolTableHeader = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <TableRow>

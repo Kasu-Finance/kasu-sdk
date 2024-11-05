@@ -1,12 +1,12 @@
 import { Box, Skeleton, Typography } from '@mui/material'
 
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import { formatTimestamp } from '@/utils'
 
 const EpochEndInfo = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { nextEpochTime, isLoading } = useNextEpochTime()
 

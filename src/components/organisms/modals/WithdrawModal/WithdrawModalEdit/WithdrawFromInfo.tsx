@@ -3,7 +3,7 @@ import { formatUnits } from 'ethers/lib/utils'
 
 import useModalState from '@/hooks/context/useModalState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
 import InfoRow from '@/components/atoms/InfoRow'
@@ -16,7 +16,7 @@ import { formatAmount } from '@/utils'
 import { calculateUserLendingSummary } from '@/utils/lending/calculateUserBalances'
 
 const WithdrawFromInfo = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { modal } = useModalState()
 
@@ -75,7 +75,7 @@ const WithdrawFromInfo = () => {
         }}
         metric={
           <Typography variant='baseMdBold'>
-            {formatAmount(formatUnits(totalInvested, usdcDecimals), {
+            {formatAmount(formatUnits(totalInvested), {
               minDecimals: 2,
             })}{' '}
             USDC

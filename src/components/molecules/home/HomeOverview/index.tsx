@@ -1,7 +1,7 @@
 import { Box } from '@mui/material'
 import { LendingTotals } from '@solidant/kasu-sdk/src/services/DataService/types'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import WaveCard from '@/components/molecules/WaveCard'
 
@@ -10,7 +10,7 @@ import { formatAmount } from '@/utils'
 const HomeOverview: React.FC<{
   lendingTotals: LendingTotals
 }> = async ({ lendingTotals }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const metrics = [
     {

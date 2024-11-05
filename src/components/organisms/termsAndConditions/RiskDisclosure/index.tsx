@@ -1,6 +1,6 @@
 import { Stack, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import NextLink from '@/components/atoms/NextLink'
 import WaveBox from '@/components/atoms/WaveBox'
@@ -11,7 +11,7 @@ import { Routes } from '@/config/routes'
 import { customPalette } from '@/themes/palette'
 
 const RiskDisclosure = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <WaveBox px={2} py={3}>

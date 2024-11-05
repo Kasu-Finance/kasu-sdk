@@ -4,7 +4,7 @@ import { Box, Grid, SelectChangeEvent } from '@mui/material'
 import React from 'react'
 
 import useTransactionHistoryState from '@/hooks/context/useTransactionHistoryState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomSelect from '@/components/atoms/CustomSelect'
 
@@ -52,7 +52,7 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
   pools,
   withReallocation,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const {
     poolId,

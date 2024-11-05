@@ -1,6 +1,6 @@
 import { Stack, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import OrderedList from '@/components/atoms/OrderedList'
 import ApplicationLoanAmount from '@/components/organisms/modals/LoanContractModal/Witnesses/ApplicationLoanAmount'
@@ -15,7 +15,7 @@ import WithdrawalRights from '@/components/organisms/modals/LoanContractModal/Wi
 import { customTypography } from '@/themes/typography'
 
 const Witnesses = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <Stack spacing={3}>

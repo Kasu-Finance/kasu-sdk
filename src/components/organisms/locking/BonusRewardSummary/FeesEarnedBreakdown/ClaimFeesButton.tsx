@@ -4,12 +4,12 @@ import { Button } from '@mui/material'
 
 import useClaimLockingRewards from '@/hooks/locking/useClaimLockingRewards'
 import useUserBonusData from '@/hooks/locking/useUserBonusData'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import { toBigNumber } from '@/utils'
 
 const ClaimFeesButton = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const claimRewards = useClaimLockingRewards()
 

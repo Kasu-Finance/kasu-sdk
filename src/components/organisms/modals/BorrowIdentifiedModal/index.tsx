@@ -2,7 +2,7 @@ import { Box, Button, Stack, Typography } from '@mui/material'
 
 import useModalState from '@/hooks/context/useModalState'
 import useFundingConsent from '@/hooks/lending/useFundingConsent'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import Countdown from '@/components/atoms/Countdown'
 import CustomCard from '@/components/atoms/CustomCard'
@@ -20,7 +20,7 @@ import dayjs from '@/dayjs'
 const BorrowerIdentifiedModal: React.FC<DialogChildProps> = ({
   handleClose,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { modal } = useModalState()
 

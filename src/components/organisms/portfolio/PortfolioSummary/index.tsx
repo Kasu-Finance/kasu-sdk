@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import InfoColumn from '@/components/atoms/InfoColumn'
 import WaveBox from '@/components/atoms/WaveBox'
@@ -12,7 +12,7 @@ import TotalLendingBalance from '@/components/organisms/portfolio/PortfolioSumma
 import WeightedAverageApy from '@/components/organisms/portfolio/PortfolioSummary/WeightedAverageApy'
 
 const PortfolioSummary = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <Grid container spacing={4} mb={1}>

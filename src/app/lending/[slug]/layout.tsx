@@ -6,16 +6,14 @@ import PoolTabs from '@/components/organisms/lending/PoolTabs'
 
 type LendingLayoutProps = {
   children: ReactNode
-  params: {
-    slug: string
-  }
+  params: Promise<{ slug: string }>
 }
 
 export default async function LendingSlugLayout({
   children,
   params,
 }: LendingLayoutProps) {
-  const poolId = params.slug
+  const { slug: poolId } = await params
 
   return (
     <Container maxWidth='lg'>

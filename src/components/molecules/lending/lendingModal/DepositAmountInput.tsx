@@ -8,7 +8,7 @@ import { ReactNode, useCallback, useMemo } from 'react'
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useDebounce from '@/hooks/useDebounce'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import NumericalInput from '@/components/molecules/NumericalInput'
 
@@ -40,7 +40,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
   currentEpochDepositedAmount,
   applyConversion,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { amount, trancheId, setAmount, setAmountInUSD, setIsValidating } =
     useDepositModalState()
@@ -270,7 +270,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
       <Typography
         variant='caption'
         component='span'
-        color={(theme) => theme.palette.error.main}
+        sx={{ color: (theme) => theme.palette.error.main }}
         visibility={modalStatus.type === 'error' ? 'visible' : 'hidden'}
       >
         {modalStatus.type === 'error' ? modalStatus.errorMessage : 'message'}

@@ -1,7 +1,7 @@
 'use client'
 
 import useLoanTickets from '@/hooks/lending/useLoanTickets'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import SubsequentTransactionsTableRow from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/LendingStatusSummary/SubsequentTransactions/SubsequentTransactionsTableRow'
 
@@ -14,7 +14,7 @@ type SubsequentTransactionsTableBodyProps = {
 const SubsequentTransactionsTableBody: React.FC<
   SubsequentTransactionsTableBodyProps
 > = ({ currentEpoch }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { loanTickets } = useLoanTickets()
 

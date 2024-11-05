@@ -1,6 +1,6 @@
 import { Stack } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
@@ -12,7 +12,7 @@ import SubsequentTransactions from '@/components/organisms/portfolio/PortfolioUs
 import { getCurrentEpoch } from '@/app/_requests/currentEpoch'
 
 const LendingStatusSummary = async () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const currentEpoch = await getCurrentEpoch()
 

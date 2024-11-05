@@ -1,6 +1,6 @@
 import { Box, Stack } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
@@ -14,7 +14,7 @@ import RKsuAmount from '@/components/organisms/locking/LoyaltyStatus/RKsuAmount'
 import { capitalize } from '@/utils'
 
 const CurrentLoyaltyProgressDetails = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <Stack spacing={2} mt='auto' width='100%'>

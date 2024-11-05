@@ -12,7 +12,7 @@ import { useWeb3React } from '@web3-react/core'
 import { formatEther, formatUnits, parseEther } from 'ethers/lib/utils'
 
 import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 import useUserBalance from '@/hooks/web3/useUserBalance'
 
@@ -28,7 +28,7 @@ const PortfolioWalletTab = () => {
 
   const isMobile = currentDevice === Device.MOBILE
 
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { account } = useWeb3React()
 

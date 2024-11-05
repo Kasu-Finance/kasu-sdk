@@ -3,14 +3,14 @@ import { Typography } from '@mui/material'
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { formatAmount, formatTimestamp } from '@/utils'
 
 const LendingInfo = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { modal } = useModalState()
 

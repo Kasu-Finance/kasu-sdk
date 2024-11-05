@@ -3,7 +3,7 @@
 import { Box, Button, Divider, Grid, Typography } from '@mui/material'
 import { formatEther, formatUnits, parseEther } from 'ethers/lib/utils'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 import useUserBalance from '@/hooks/web3/useUserBalance'
@@ -16,7 +16,7 @@ import { SupportedTokens } from '@/constants/tokens'
 import { convertToUSD, formatAmount } from '@/utils'
 
 const BuyKsuOverview = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
   const supportedToken = useSupportedTokenInfo()
 
   const {

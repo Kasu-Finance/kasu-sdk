@@ -9,7 +9,7 @@ import { formatUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 import useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
 
 import CustomSelect from '@/components/atoms/CustomSelect'
@@ -20,7 +20,7 @@ import { SupportedTokens } from '@/constants/tokens'
 import { capitalize, formatAmount } from '@/utils'
 
 const SupportedAssetsDropdown = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { supportedTokenUserBalances } = useSupportedTokenUserBalances()
 

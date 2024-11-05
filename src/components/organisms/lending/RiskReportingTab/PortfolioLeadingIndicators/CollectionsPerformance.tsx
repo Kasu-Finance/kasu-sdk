@@ -1,11 +1,8 @@
 'use client'
 
-import { Box, Divider, Paper, Stack, Typography } from '@mui/material'
+import { Box, Divider, Stack, Typography } from '@mui/material'
 
-import BarLineChart from '@/components/organisms/lending/RiskReportingTab/PortfolioLeadingIndicators/BarLineChart'
 import data from '@/components/organisms/lending/RiskReportingTab/PortfolioLeadingIndicators/data.json'
-
-import { formatAmount } from '@/utils'
 
 const CollectionsPerformance = () => {
   return (
@@ -18,7 +15,7 @@ const CollectionsPerformance = () => {
           <Divider sx={{ mt: 1.5 }} />
         </Box>
         <Box width='100%' height={237} position='relative' pt={2}>
-          <BarLineChart
+          {/* <BarLineChart
             keys={['funded']}
             colors={['rgba(164, 123, 79, 1)']}
             data={data.collectionsPerformance.data}
@@ -83,7 +80,7 @@ const CollectionsPerformance = () => {
                 </Stack>
               </Paper>
             )}
-          />
+          /> */}
         </Box>
         <Stack spacing={1} pb={3} mt={3}>
           {data.collectionsPerformance.legend.map(({ color, label, type }) => (

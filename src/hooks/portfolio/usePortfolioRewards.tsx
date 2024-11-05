@@ -5,7 +5,7 @@ import { useMemo } from 'react'
 import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import { toBigNumber } from '@/utils'
 
@@ -42,7 +42,7 @@ const usePortfolioRewards = () => {
 
   const { account } = useWeb3React()
 
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const mapKeyToLabel = useMemo(
     () =>

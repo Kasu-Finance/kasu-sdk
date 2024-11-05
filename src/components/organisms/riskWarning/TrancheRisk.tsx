@@ -1,11 +1,11 @@
 import { Stack, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import Subheading from '@/components/organisms/riskWarning/Subheading'
 
 const TrancheRisk = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <Stack spacing={2}>

@@ -5,7 +5,7 @@ import { Box } from '@mui/system'
 
 import useModalState from '@/hooks/context/useModalState'
 import useUserLendingTrancheBalance from '@/hooks/lending/useUserLendingTrancheBalance'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
@@ -16,7 +16,7 @@ type WithdrawButtonProps = {
 }
 
 const WithdrawButton: React.FC<WithdrawButtonProps> = ({ pool }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { openModal } = useModalState()
 

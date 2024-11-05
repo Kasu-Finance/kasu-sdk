@@ -4,12 +4,10 @@ import { Grid, Skeleton } from '@mui/material'
 import { formatUnits } from 'ethers/lib/utils'
 
 import useUserLendingTrancheBalance from '@/hooks/lending/useUserLendingTrancheBalance'
-import useTranslation from '@/hooks/useTranslation'
-import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
+import getTranslation from '@/hooks/useTranslation'
 
 import WaveCard from '@/components/molecules/WaveCard'
 
-import { SupportedTokens } from '@/constants/tokens'
 import { formatAmount } from '@/utils'
 import { calculateUserLendingSummary } from '@/utils/lending/calculateUserBalances'
 
@@ -20,12 +18,10 @@ type UserLendingSummaryProps = {
 }
 
 const UserLendingSummary: React.FC<UserLendingSummaryProps> = ({ pool }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { userLendingTrancheBalance, isLoading } =
     useUserLendingTrancheBalance(pool)
-
-  const supportedToken = useSupportedTokenInfo()
 
   if (isLoading) {
     return (
@@ -54,12 +50,7 @@ const UserLendingSummary: React.FC<UserLendingSummaryProps> = ({ pool }) => {
           toolTipInfo={t(
             'lending.poolOverview.investmentCard.totalAmount.tooltip'
           )}
-          content={formatAmount(
-            formatUnits(
-              totalInvested,
-              supportedToken?.[SupportedTokens.USDC].decimals
-            )
-          )}
+          content={formatAmount(formatUnits(totalInvested))}
           unit='USDC'
         />
       </Grid>

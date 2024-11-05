@@ -4,7 +4,7 @@ import { Grid } from '@mui/material'
 import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
 
 import useModalState from '@/hooks/context/useModalState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import AuthenticateButton from '@/components/atoms/AuthenticateButton'
 
@@ -17,7 +17,7 @@ type UserLoyaltyActionsProps = {
 const UserLoyaltyActions: React.FC<UserLoyaltyActionsProps> = ({
   lockPeriods,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { openModal } = useModalState()
 

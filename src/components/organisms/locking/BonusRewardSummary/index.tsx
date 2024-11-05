@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
@@ -10,7 +10,7 @@ import FeesEarnedBreakdown from '@/components/organisms/locking/BonusRewardSumma
 import LaunchBonusBreakdown from '@/components/organisms/locking/BonusRewardSummary/LaunchBonusBreakdown'
 
 const BonusRewardSummary = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
   return (
     <CustomCard>
       <CustomCardHeader title={t('locking.widgets.rewardsSummary.title')} />

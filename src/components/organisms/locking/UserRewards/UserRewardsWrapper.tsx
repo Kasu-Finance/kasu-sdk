@@ -3,7 +3,7 @@
 import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
 
 import useUserLocks from '@/hooks/locking/useUserLocks'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
@@ -17,7 +17,7 @@ type UserRewardsTableWrapperProps = {
 const UserRewardsWrapper: React.FC<UserRewardsTableWrapperProps> = ({
   lockPeriods,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { userLocks, isLoading } = useUserLocks()
 

@@ -3,10 +3,10 @@ import { Button } from '@mui/material'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useStepperState from '@/hooks/context/useStepperState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 const WithdrawModalEditActions = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { amount } = useWithdrawModalState()
 

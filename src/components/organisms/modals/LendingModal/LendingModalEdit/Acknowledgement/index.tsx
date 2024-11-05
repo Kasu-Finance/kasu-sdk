@@ -9,7 +9,7 @@ import {
 import { useEffect, useReducer } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCheckbox from '@/components/atoms/CustomCheckbox'
 
@@ -21,7 +21,7 @@ type AcknowledgementTypes = 'riskWarning' | 'termsAndConditions'
 type AcknowledgementStateType = Record<AcknowledgementTypes, boolean>
 
 const Acknowledgement = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { termsAccepted, setTermsAccepted } = useDepositModalState()
 

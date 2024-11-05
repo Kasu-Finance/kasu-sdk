@@ -1,7 +1,6 @@
 import { Box, Divider, Stack, Typography } from '@mui/material'
 
 import data from '@/components/organisms/lending/RiskReportingTab/PortfolioLeadingIndicators/data.json'
-import PieChart from '@/components/organisms/lending/RiskReportingTab/PortfolioLeadingIndicators/PieChart'
 
 const RiskSegments = () => {
   return (
@@ -28,7 +27,7 @@ const RiskSegments = () => {
         </Stack>
       </Stack>
       <Box width={220} height={220} position='relative'>
-        <PieChart data={data.riskSegments} />
+        {/* <PieChart data={data.riskSegments} /> */}
       </Box>
     </Box>
   )

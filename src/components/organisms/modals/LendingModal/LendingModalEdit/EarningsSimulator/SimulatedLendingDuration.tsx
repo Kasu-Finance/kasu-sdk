@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useDebounce from '@/hooks/useDebounce'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 const MIN = 0
 const MAX = 365
@@ -21,7 +21,7 @@ const marks = [
 ]
 
 const SimulatedLendingDuration = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { setModalStatus } = useModalStatusState()
 

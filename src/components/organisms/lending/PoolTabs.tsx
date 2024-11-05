@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { memo, useRef } from 'react'
 
 import useIsSticky from '@/hooks/useIsSticky'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomTab from '@/components/atoms/CustomTab'
 import TabsContainer from '@/components/atoms/TabsContainer'
@@ -20,7 +20,7 @@ type PoolTabsProps = {
 const PoolTabs: React.FC<PoolTabsProps> = ({ poolId }) => {
   const ref = useRef(null)
 
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const pathName = usePathname()
 

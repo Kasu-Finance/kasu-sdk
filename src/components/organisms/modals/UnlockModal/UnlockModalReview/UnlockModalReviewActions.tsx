@@ -5,7 +5,7 @@ import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalState from '@/hooks/context/useModalState'
 import useStepperState from '@/hooks/context/useStepperState'
 import useUnlockKSU from '@/hooks/locking/useUnlockKSU'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 import useTokenDetails from '@/hooks/web3/useTokenDetails'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
@@ -13,7 +13,7 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 import sdkConfig from '@/config/sdk'
 
 const UnlockModalReviewActions = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { modal } = useModalState()
 

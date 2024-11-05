@@ -1,7 +1,7 @@
 import { Box, Divider, Stack, Typography } from '@mui/material'
 import { RiskManagement as RiskManagementType } from '@solidant/kasu-sdk/src/services/DataService/types'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
@@ -16,7 +16,7 @@ type RiskManagementProps = {
 }
 
 const RiskManagement: React.FC<RiskManagementProps> = ({ riskManagement }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const groupedItems = groupBy(riskManagement.items, ({ group }) => group)
 

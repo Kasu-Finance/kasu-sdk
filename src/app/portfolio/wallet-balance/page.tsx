@@ -1,6 +1,6 @@
 import { Grid, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
@@ -9,7 +9,7 @@ import BuyKsuOverview from '@/components/organisms/portfolio/PortfolioWalletTab/
 import WalletBalances from '@/components/organisms/portfolio/PortfolioWalletTab/WalletBalances'
 
 const WalletBalance = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <CustomCard>

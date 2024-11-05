@@ -3,7 +3,7 @@ import { Box } from '@mui/system'
 
 import useModalState from '@/hooks/context/useModalState'
 import useStakedKSU from '@/hooks/locking/useStakedKSU'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
@@ -13,7 +13,7 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 import { capitalize, formatAmount, formatTimestamp } from '@/utils'
 
 const UnlockModalOverview = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { modal } = useModalState()
 

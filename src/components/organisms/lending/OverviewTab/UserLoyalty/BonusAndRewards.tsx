@@ -5,7 +5,7 @@ import { formatEther, parseEther } from 'ethers/lib/utils'
 
 import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
 import useLendingPortfolioData from '@/hooks/portfolio/useLendingPortfolioData'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
 
@@ -21,7 +21,7 @@ type BonusAndRewardsProps = {
 }
 
 const BonusAndRewards: React.FC<BonusAndRewardsProps> = ({ pools, poolId }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { stakedPercentage } = useLockingPercentage()
 

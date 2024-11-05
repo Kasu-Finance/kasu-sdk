@@ -8,7 +8,7 @@ import useToastState from '@/hooks/context/useToastState'
 import useCurrentEpochDepositedAmount from '@/hooks/lending/useCurrentEpochDepositedAmount'
 import useGenerateContract from '@/hooks/lending/useGenerateContract'
 import useRequestDeposit from '@/hooks/lending/useRequestDeposit'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 import useApproveToken from '@/hooks/web3/useApproveToken'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
@@ -19,7 +19,7 @@ import { SupportedTokens } from '@/constants/tokens'
 import dayjs from '@/dayjs'
 
 const LendingModalReviewActions = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { generatedContract, generateContract, resetGeneratedContract } =
     useGenerateContract()

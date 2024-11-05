@@ -5,7 +5,7 @@ import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import useModalState from '@/hooks/context/useModalState'
 import useLoanTickets from '@/hooks/lending/useLoanTickets'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import WaveBox from '@/components/atoms/WaveBox'
 
@@ -18,7 +18,7 @@ type NotificationBannerProps = {
 }
 
 const NotificationBanner: React.FC<NotificationBannerProps> = ({ pools }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { openModal } = useModalState()
 

@@ -5,7 +5,7 @@ import useModalState from '@/hooks/context/useModalState'
 import useStepperState from '@/hooks/context/useStepperState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import useRequestWithdrawal from '@/hooks/lending/useRequestWithdrawal'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
@@ -13,7 +13,7 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 import { SupportedTokens } from '@/constants/tokens'
 
 const WithdrawModalReviewActions = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { modal } = useModalState()
 

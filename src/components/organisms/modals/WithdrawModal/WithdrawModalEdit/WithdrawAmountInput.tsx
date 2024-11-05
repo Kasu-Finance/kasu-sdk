@@ -5,7 +5,7 @@ import { useCallback } from 'react'
 import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
 import NumericalInput from '@/components/molecules/NumericalInput'
@@ -18,7 +18,7 @@ import { customTypography } from '@/themes/typography'
 import { toBigNumber } from '@/utils'
 
 const WithdrawAmountInput = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { modal } = useModalState()
 
@@ -148,7 +148,7 @@ const WithdrawAmountInput = () => {
       <Typography
         variant='caption'
         component='span'
-        color={(theme) => theme.palette.error.main}
+        sx={{ color: (theme) => theme.palette.error.main }}
         visibility={modalStatus.type === 'error' ? 'visible' : 'hidden'}
       >
         {modalStatus.type === 'error' ? modalStatus.errorMessage : 'message'}

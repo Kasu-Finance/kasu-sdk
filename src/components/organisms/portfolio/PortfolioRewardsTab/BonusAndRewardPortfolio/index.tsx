@@ -1,6 +1,6 @@
 import { Button, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
@@ -10,7 +10,7 @@ import BonusAndRewardTable from '@/components/organisms/portfolio/PortfolioRewar
 import { DownloadRoundedIcon } from '@/assets/icons'
 
 const BonusAndRewardPortfolio = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <CustomCard>

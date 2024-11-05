@@ -1,7 +1,7 @@
 import { Box, IconButton, TableCell, TableRow, Typography } from '@mui/material'
 import { PortfolioLendingPool } from '@solidant/kasu-sdk/src/services/Portfolio/types'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
 import NextLink from '@/components/atoms/NextLink'
@@ -25,7 +25,7 @@ type LendingPortfolioTableRowProps = {
 const LendingPortfolioTableRow: React.FC<LendingPortfolioTableRowProps> = ({
   portfolioPool,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <>

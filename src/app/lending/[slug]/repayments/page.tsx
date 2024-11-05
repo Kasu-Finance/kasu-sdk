@@ -4,15 +4,14 @@ import RepaymentsTab from '@/components/organisms/lending/RepaymentsTab'
 import RepaymentsTabSkeleton from '@/components/organisms/lending/RepaymentsTab/RepaymentsTabSkeleton'
 
 type PageProps = {
-  params: {
-    slug: string
-  }
+  params: Promise<{ slug: string }>
 }
 
-const PoolRepaymentsPage = ({ params }: PageProps) => {
+const PoolRepaymentsPage = async ({ params }: PageProps) => {
+  const { slug } = await params
   return (
     <Suspense fallback={<RepaymentsTabSkeleton />}>
-      <RepaymentsTab poolId={params.slug} />
+      <RepaymentsTab poolId={slug} />
     </Suspense>
   )
 }

@@ -9,7 +9,7 @@ import {
 import { useWeb3React } from '@web3-react/core'
 import Link from 'next/link'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import ConnectWalletButton from '@/components/atoms/ConnectWalletButton'
 import DrawerHeader from '@/components/molecules/header/DrawerHeader'
@@ -26,7 +26,7 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
   handleDrawerToggle,
   isActiveLink,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { account } = useWeb3React()
 

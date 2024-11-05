@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction, useEffect, useMemo } from 'react'
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
 import useSimulateYieldEarnings from '@/hooks/lending/useSimulateYieldEarnings'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 import usePerformanceFee from '@/hooks/web3/usePerformanceFee'
 
 import InfoRow from '@/components/atoms/InfoRow'
@@ -23,7 +23,7 @@ const SimulatedDefaultEarnings: React.FC<SimulatedDefaultEarningsProps> = ({
   yieldEarnings,
   setYieldEarnings,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { modal } = useModalState()
 

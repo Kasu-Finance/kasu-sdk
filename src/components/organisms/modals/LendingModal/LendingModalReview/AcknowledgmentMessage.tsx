@@ -1,11 +1,11 @@
 import { Button, Stack, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import { Routes } from '@/config/routes'
 
 const AcknowledgementMessage = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <Stack spacing={1}>

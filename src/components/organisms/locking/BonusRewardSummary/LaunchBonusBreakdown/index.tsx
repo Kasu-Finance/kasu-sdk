@@ -1,6 +1,6 @@
 import { Box, Button, Divider, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
@@ -8,7 +8,7 @@ import KsuLaunchBonus from '@/components/molecules/tooltips/KsuLaunchBonus'
 import TotalLaunchBonus from '@/components/organisms/locking/BonusRewardSummary/LaunchBonusBreakdown/TotalLaunchBonus'
 
 const LaunchBonusBreakdown = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <Box height='100%' display='flex' flexDirection='column'>

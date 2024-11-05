@@ -3,7 +3,7 @@ import { useWeb3React } from '@web3-react/core'
 
 import useModalState from '@/hooks/context/useModalState'
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
@@ -15,7 +15,7 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 import { formatAccount, formatAmount, formatTimestamp } from '@/utils'
 
 const OptOutModal: React.FC<DialogChildProps> = ({ handleClose }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { modal } = useModalState()
 

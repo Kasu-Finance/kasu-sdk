@@ -3,7 +3,7 @@
 import { Tabs } from '@mui/material'
 import { usePathname } from 'next/navigation'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomTab from '@/components/atoms/CustomTab'
 import TabsContainer from '@/components/atoms/TabsContainer'
@@ -12,7 +12,7 @@ import DisplayOptions from '@/components/organisms/home/DisplayOptions'
 import { Routes } from '@/config/routes'
 
 const HomeTabs = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const pathName = usePathname()
 

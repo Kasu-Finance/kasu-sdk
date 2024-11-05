@@ -1,4 +1,4 @@
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
@@ -9,7 +9,7 @@ import PortfolioUserTransactionTableWrapper from '@/components/organisms/portfol
 import TransactionHistoryState from '@/context/transactionHistory/transactionHistory.provider'
 
 const DetailedTransactions = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <CustomCard>

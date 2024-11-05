@@ -1,7 +1,7 @@
 import { Avatar, Box, Button, Typography } from '@mui/material'
 import Link from 'next/link'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import { ChevronLeftRoundedIcon } from '@/assets/icons'
 
@@ -13,7 +13,7 @@ type PageHeaderProps = {
 }
 
 const PageHeader: React.FC<PageHeaderProps> = async ({ poolId }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const pools = await getPoolOverview()
 

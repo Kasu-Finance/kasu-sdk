@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
@@ -10,7 +10,7 @@ import WaveCard from '@/components/molecules/WaveCard'
 import { capitalize } from '@/utils'
 
 const PoolData = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <CustomCard>
