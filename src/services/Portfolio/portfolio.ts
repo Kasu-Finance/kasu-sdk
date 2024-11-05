@@ -248,6 +248,7 @@ export class Portfolio {
                                 lastEpoch: '0',
                                 lifetime: '0',
                             },
+                            fixedTermConfig: tranche.fixedTermConfig,
                         });
                         continue;
                     }
@@ -300,6 +301,7 @@ export class Portfolio {
                             lastEpoch: yieldEarningsLastEpoch.toString(),
                             lifetime: yieldEarned.toString(),
                         },
+                        fixedTermConfig: tranche.fixedTermConfig,
                     });
                 }
                 portfolioLendingPools.push({

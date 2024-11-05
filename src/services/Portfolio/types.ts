@@ -1,3 +1,5 @@
+import { TrancheData } from '../DataService/types';
+
 export interface PortfolioRewards {
     bonusYieldEarnings: {
         claimableBalance: {
@@ -47,6 +49,7 @@ export interface PortfolioTranche {
         lastEpoch: string;
         lifetime: string;
     };
+    fixedTermConfig: TrancheData['fixedTermConfig'];
 }
 export interface PortfolioLendingPool {
     id: string;
