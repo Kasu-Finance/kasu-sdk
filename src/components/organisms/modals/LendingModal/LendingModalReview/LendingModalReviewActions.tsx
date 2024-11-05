@@ -1,9 +1,12 @@
 import { Box, Button } from '@mui/material'
+import { useState } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
 import useStepperState from '@/hooks/context/useStepperState'
+import useToastState from '@/hooks/context/useToastState'
 import useCurrentEpochDepositedAmount from '@/hooks/lending/useCurrentEpochDepositedAmount'
+import useGenerateContract from '@/hooks/lending/useGenerateContract'
 import useRequestDeposit from '@/hooks/lending/useRequestDeposit'
 import useTranslation from '@/hooks/useTranslation'
 import useApproveToken from '@/hooks/web3/useApproveToken'
@@ -13,19 +16,29 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 
 import sdkConfig from '@/config/sdk'
 import { SupportedTokens } from '@/constants/tokens'
+import dayjs from '@/dayjs'
 
 const LendingModalReviewActions = () => {
   const { t } = useTranslation()
 
+  const { generatedContract, generateContract, resetGeneratedContract } =
+    useGenerateContract()
+
+  const [contractAcceptedSignature, setContractAcceptedSignature] = useState<
+    string | undefined
+  >(undefined)
+
   const { prevStep } = useStepperState()
 
-  const { modal, openModal } = useModalState()
+  const { setToast } = useToastState()
 
-  const pool = modal[ModalsKeys.LEND].pool
+  const requestDeposit = useRequestDeposit()
 
   const supportedToken = useSupportedTokenInfo()
 
-  const requestDeposit = useRequestDeposit()
+  const { modal, openModal } = useModalState()
+
+  const { pool } = modal[ModalsKeys.LEND]
 
   const {
     amount,
@@ -49,22 +62,56 @@ const LendingModalReviewActions = () => {
 
   const approvalRequired = !isApproved && selectedToken !== SupportedTokens.ETH
 
-  const handleOpen = () =>
+  const handleOpen = () => {
+    if (!generatedContract.contractMessage) {
+      console.error('OpenContractModal:: Contract message is undefined')
+      return
+    }
+
     openModal({
       name: ModalsKeys.LOAN_CONTRACT,
-      acceptLoanContract: () => setLoanContractAcccepted(true),
       canAccept: true,
+      generatedContract: generatedContract,
+      acceptLoanContract: (contractSignature: string) => {
+        setContractAcceptedSignature(contractSignature)
+        setLoanContractAcccepted(true)
+      },
     })
+  }
 
   const handleRequestDeposit = () => {
     if (!fixedTermConfigId) {
       return console.error('RequestDeposit:: FixedTermConfigID is undefined')
     }
 
+    if (!contractAcceptedSignature) {
+      return console.error(
+        'RequestDeposit:: contractAcceptedSignature is undefined'
+      )
+    }
+
     if (!currentEpochDepositedAmount) {
       return console.error(
         'RequestDeposit:: currentEpochDepositedAmount is undefined'
       )
+    }
+
+    if (
+      dayjs
+        .unix(generatedContract.createdAt / 1000)
+        .add(5, 'minutes')
+        .isBefore(dayjs())
+    ) {
+      setToast({
+        type: 'error',
+        title: 'Contract Expired',
+        message: 'The contract you generated has expired. Please try again.',
+      })
+
+      resetGeneratedContract()
+      setContractAcceptedSignature(undefined)
+      setLoanContractAcccepted(false)
+      return
     }
 
     const selectedTranche = pool.tranches.find(
@@ -79,7 +126,9 @@ const LendingModalReviewActions = () => {
       pool.id as `0x${string}`,
       selectedTranche,
       fixedTermConfigId,
-      currentEpochDepositedAmount
+      currentEpochDepositedAmount,
+      contractAcceptedSignature,
+      generatedContract.createdAt
     )
   }
 
@@ -112,9 +161,11 @@ const LendingModalReviewActions = () => {
           color='secondary'
           fullWidth
           sx={{ textTransform: 'capitalize' }}
-          onClick={handleOpen}
+          onClick={generatedContract.status ? handleOpen : generateContract}
         >
-          View & Accept Loan Contract
+          {generatedContract.status
+            ? t('modals.loanContract.actions.view')
+            : t('modals.loanContract.actions.generate')}
         </Button>
       )}
     </Box>

@@ -47,7 +47,6 @@ const FALLBACK_PRICES: Record<SupportedTokens, string> = {
 const USDC_TOKEN_ID = CMC_TOKEN_ID_MAP[SupportedTokens.USDC]
 
 export async function GET(req: NextRequest) {
-  console.log(process.version)
   try {
     const tokens = req.nextUrl.searchParams.get('tokens')
 

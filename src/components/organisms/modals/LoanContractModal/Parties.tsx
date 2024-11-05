@@ -6,7 +6,11 @@ import OrderedList from '@/components/atoms/OrderedList'
 
 import { customTypography } from '@/themes/typography'
 
-const Parties = () => {
+type PartiesProp = {
+  fullName: string | undefined
+}
+
+const Parties: React.FC<PartiesProp> = ({ fullName }) => {
   const { t } = useTranslation()
 
   return (
@@ -34,7 +38,9 @@ const Parties = () => {
           }}
         >
           <li>
-            {t('modals.loanContract.subheader-1.list.list-0.description')}{' '}
+            {t(
+              'modals.loanContract.subheader-1.list.list-0.description'
+            ).replace(fullName ? '[Lender’s name]' : '', fullName || '')}{' '}
             <Typography variant='baseSm' component='span'>
               {t('modals.loanContract.subheader-1.list.list-0.label')}
             </Typography>

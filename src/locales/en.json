@@ -704,6 +704,12 @@
     },
     "loanContract": {
       "title": "Loan Contract",
+      "signingDate": "Date of signing the contract:",
+      "actions": {
+        "view": "View & Accept Loan Contract",
+        "accept": "Accept Loan Contract",
+        "generate": "Generate Loan Contract"
+      },
       "importantNote": {
         "title": "Important note:",
         "description": "Repayments under this loan agreement are contingent upon the financial performance of a third party, which limits the borrower’s obligations to you.  It is important to read in full, and you should seek independent legal and financial advice."
@@ -1724,7 +1730,14 @@
       "title": "My Lending Portfolio",
       "lendingBalance": "Lending Balance",
       "interestEarningsClaimable": "Interest Earnings​ Claimable Balance",
-      "interestEarningsLifetime": "Interest Earnings​ Lifetime"
+      "interestEarningsLifetime": "Interest Earnings​ Lifetime",
+      "tableHeader": {
+        "cell-1": "APY Structure",
+        "cell-2": "Loan Balance",
+        "cell-3": "Interest Earnings - Last Epoch",
+        "cell-4": "Interest Earnings Lifetime",
+        "cell-5": "Actions"
+      }
     },
     "transactions": {
       "notification": {

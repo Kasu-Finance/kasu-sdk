@@ -1,8 +1,11 @@
 import { Box, Button, IconButton, Stack, Typography } from '@mui/material'
+import { useWeb3React } from '@web3-react/core'
 import { useRef, useState } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
+import useToastState from '@/hooks/context/useToastState'
 import useTranslation from '@/hooks/useTranslation'
+import useHandleError from '@/hooks/web3/useHandleError'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
@@ -18,24 +21,69 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { ScrollDownIcon } from '@/assets/icons'
 
+import dayjs from '@/dayjs'
+import { userRejectedTransaction } from '@/utils'
+
 const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { t } = useTranslation()
 
   const { modal } = useModalState()
 
-  const [showScrollDown, setShowScrollDown] = useState(true)
+  const { provider } = useWeb3React()
 
-  const { acceptLoanContract, canAccept } = modal[ModalsKeys.LOAN_CONTRACT]
+  const { setToast, removeToast } = useToastState()
 
-  const handleClick = () => {
-    acceptLoanContract && acceptLoanContract()
-    handleClose()
-  }
+  const handleError = useHandleError()
 
   const ref = useRef<HTMLDivElement>()
 
+  const [showScrollDown, setShowScrollDown] = useState(true)
+
+  const { acceptLoanContract, canAccept, generatedContract } =
+    modal[ModalsKeys.LOAN_CONTRACT]
+
   const scrollDown = () => {
     ref.current?.scrollTo(0, ref.current.scrollHeight)
+  }
+
+  const handleClick = async () => {
+    if (!provider) {
+      return console.error('Accept Contract:: Provider is undefined')
+    }
+
+    if (!generatedContract) {
+      return console.error('Accept Contract:: generatedContract is undefined')
+    }
+
+    try {
+      setToast({
+        type: 'info',
+        title: 'Accepting Contract...',
+        message:
+          'Please sign the transaction in your wallet to accept the Lending Contract.',
+        isClosable: false,
+      })
+
+      const signature = await provider
+        .getSigner()
+        .signMessage(generatedContract.contractMessage)
+
+      acceptLoanContract && acceptLoanContract(signature)
+
+      removeToast()
+      handleClose()
+    } catch (error) {
+      if (userRejectedTransaction(error)) {
+        handleError(
+          error,
+          'Accept Contract Error',
+          'Message signature request declined. Unable to accept Loan contract.',
+          true
+        )
+      } else {
+        handleError(error)
+      }
+    }
   }
 
   return (
@@ -85,12 +133,27 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               </Typography>
             </Stack>
           </Box>
-          <Parties />
+          <Parties fullName={generatedContract?.fullName} />
           <Background />
           <Witnesses />
           <LoyaltyStatusCriteria />
           <MultiplierTable />
         </Stack>
+        {canAccept && (
+          <Box
+            display='flex'
+            alignItems='center'
+            justifyContent='space-between'
+            mt={6}
+          >
+            <Typography variant='h5'>
+              {t('modals.loanContract.signingDate')}
+            </Typography>
+            <Typography variant='h5'>
+              {dayjs(generatedContract?.createdAt).format('DD.MM.YYYY')}
+            </Typography>
+          </Box>
+        )}
         <Box display='flex' gap={4} mt={5}>
           {canAccept ? (
             <>
@@ -101,7 +164,7 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                 fullWidth
                 sx={{ textTransform: 'capitalize' }}
               >
-                Back to Lending Request
+                {t('general.back')}
               </Button>
               <Button
                 variant='contained'
@@ -110,7 +173,7 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                 onClick={handleClick}
                 sx={{ textTransform: 'capitalize' }}
               >
-                Accept Loan Contract
+                {t('modals.loanContract.actions.accept')}
               </Button>
             </>
           ) : (

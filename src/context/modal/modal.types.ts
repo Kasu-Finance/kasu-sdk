@@ -66,7 +66,12 @@ export type Modals = {
     detailedTransaction: DetailedTransaction
   }>
   [ModalsKeys.LOAN_CONTRACT]: ModalData<{
-    acceptLoanContract?: () => void
+    acceptLoanContract?: (contractSignature: string) => void
+    generatedContract?: {
+      contractMessage: string
+      fullName: string
+      createdAt: EpochTimeStamp
+    }
     canAccept: boolean
   }>
   [ModalsKeys.CONNECT_WALLET]: ModalData<{ callback?: () => void }>
