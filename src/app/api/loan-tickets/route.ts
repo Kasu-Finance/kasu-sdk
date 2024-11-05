@@ -126,5 +126,7 @@ export async function GET(req: NextRequest) {
 
   const data: LoanTicketRes = await res.json()
 
+  console.log(data)
+
   return Response.json(data.items)
 }
