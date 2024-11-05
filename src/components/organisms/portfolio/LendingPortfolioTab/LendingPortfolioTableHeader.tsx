@@ -2,23 +2,37 @@ import { TableCell, TableRow } from '@mui/material'
 
 import useTranslation from '@/hooks/useTranslation'
 
+import { customTypography } from '@/themes/typography'
+
 const LendingPortfolioTableHeader = () => {
   const { t } = useTranslation()
 
   return (
-    <TableRow>
-      <TableCell sx={{ textTransform: 'capitalize' }} width='30%'>
+    <TableRow
+      sx={{
+        '.MuiTableCell-root': {
+          ...customTypography.baseSm,
+        },
+      }}
+    >
+      <TableCell sx={{ textTransform: 'capitalize' }} width='26%'>
         {t('general.lendingStrategy')}
       </TableCell>
-      <TableCell width='8%'>{t('general.apy')}</TableCell>
-      <TableCell width='20%'>
-        {t('portfolio.lendingPortfolio.lendingBalance')}
+      <TableCell width='9%'>{t('general.grossApy')}</TableCell>
+      <TableCell width='10%'>
+        {t('portfolio.lendingPortfolio.tableHeader.cell-1')}
       </TableCell>
-      <TableCell width='22%' sx={{ textTransform: 'capitalize' }}>
-        {t('portfolio.summary.yieldEarnings.title')} - {t('general.lastEpoch')}
+      <TableCell width='13%'>
+        {t('portfolio.lendingPortfolio.tableHeader.cell-2')}
       </TableCell>
-      <TableCell width='20%' sx={{ textTransform: 'capitalize' }}>
-        {t('general.lifetime')} {t('portfolio.summary.yieldEarnings.title')}
+      <TableCell width='16%'>
+        {t('portfolio.lendingPortfolio.tableHeader.cell-3')}
+      </TableCell>
+      <TableCell width='15%'>
+        {t('portfolio.lendingPortfolio.tableHeader.cell-4')}
+      </TableCell>
+      <TableCell width='11%'>
+        {t('portfolio.lendingPortfolio.tableHeader.cell-5')}
       </TableCell>
     </TableRow>
   )

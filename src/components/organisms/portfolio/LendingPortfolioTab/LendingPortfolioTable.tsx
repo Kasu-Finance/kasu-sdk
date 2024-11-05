@@ -56,6 +56,11 @@ const LendingPortfolioTable: React.FC<LendingPortfolioTableProps> = ({
           </TableRow>
         )
       }
+      tableBodySx={{
+        '& .MuiTableRow-root:first-child': {
+          display: 'none',
+        },
+      }}
       paginationProps={
         filteredPools.length > ROW_PER_PAGE
           ? {

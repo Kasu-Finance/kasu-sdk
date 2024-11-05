@@ -1,10 +1,18 @@
-import { Box, TableCell, TableRow, Typography } from '@mui/material'
+import { Box, IconButton, TableCell, TableRow, Typography } from '@mui/material'
 import { PortfolioLendingPool } from '@solidant/kasu-sdk/src/services/Portfolio/types'
 
 import useTranslation from '@/hooks/useTranslation'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
 import NextLink from '@/components/atoms/NextLink'
+
+import {
+  FixApyIcon,
+  FixRateIcon,
+  PaperIcon,
+  UploadMoneyIcon,
+  WithdrawMoneyIcon,
+} from '@/assets/icons'
 
 import { Routes } from '@/config/routes'
 import { TRANCHE_ICONS } from '@/constants/pool'
@@ -22,7 +30,7 @@ const LendingPortfolioTableRow: React.FC<LendingPortfolioTableRowProps> = ({
   return (
     <>
       <TableRow>
-        <TableCell colSpan={5}>
+        <TableCell colSpan={7} sx={{ pt: 4 }}>
           <Typography
             variant='baseMdBold'
             color='gold.dark'
@@ -34,12 +42,17 @@ const LendingPortfolioTableRow: React.FC<LendingPortfolioTableRowProps> = ({
           </Typography>
         </TableCell>
       </TableRow>
+      <TableRow>
+        <TableCell sx={{ pt: 0 }} colSpan={7}>
+          <DottedDivider />
+        </TableCell>
+      </TableRow>
       {portfolioPool.tranches.map((tranche) => (
         <TableRow
           key={tranche.name}
           sx={{
             '.MuiTableCell-root': {
-              py: 0,
+              py: 0.5,
             },
           }}
         >
@@ -55,6 +68,9 @@ const LendingPortfolioTableRow: React.FC<LendingPortfolioTableRowProps> = ({
           </TableCell>
           <TableCell>
             {formatPercentage(tranche.apy).replaceAll(' ', '')}
+          </TableCell>
+          <TableCell>
+            {tranche.fixedTermConfig.length ? 'Fixed' : 'Variable'}
           </TableCell>
           <TableCell>
             {formatAmount(tranche.investedAmount || '0', {
@@ -77,13 +93,35 @@ const LendingPortfolioTableRow: React.FC<LendingPortfolioTableRowProps> = ({
             })}{' '}
             USDC
           </TableCell>
+          <TableCell
+            sx={{
+              '.MuiIconButton-root': {
+                p: 0,
+
+                '+ .MuiIconButton-root': {
+                  ml: 1,
+                },
+              },
+            }}
+          >
+            <IconButton>
+              <PaperIcon />
+            </IconButton>
+            <IconButton>
+              <FixApyIcon />
+            </IconButton>
+            <IconButton>
+              <UploadMoneyIcon />
+            </IconButton>
+            <IconButton>
+              <WithdrawMoneyIcon />
+            </IconButton>
+            <IconButton>
+              <FixRateIcon />
+            </IconButton>
+          </TableCell>
         </TableRow>
       ))}
-      <TableRow>
-        <TableCell sx={{ pb: 0 }} colSpan={5}>
-          <DottedDivider />
-        </TableCell>
-      </TableRow>
     </>
   )
 }

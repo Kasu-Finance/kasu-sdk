@@ -5,7 +5,6 @@ import React from 'react'
 
 import useLendingPortfolioData from '@/hooks/portfolio/useLendingPortfolioData'
 
-import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
 import LendingPortfolioTable from '@/components/organisms/portfolio/LendingPortfolioTab/LendingPortfolioTable'
 import LendingPortfolioTableSkeleton from '@/components/organisms/portfolio/LendingPortfolioTab/LendingPortfolioTableSkeleton'
 
@@ -19,17 +18,8 @@ const LendingPortfolioTableWrapper: React.FC<
   const { lendingPortfolioData, isLoading } =
     useLendingPortfolioData(poolOverviews)
 
-  if (isLoading) {
+  if (isLoading || !lendingPortfolioData?.lendingPools) {
     return <LendingPortfolioTableSkeleton />
-  }
-
-  if (!lendingPortfolioData?.lendingPools.length) {
-    return (
-      <EmptyDataPlaceholder
-        pb={3}
-        text='You have not deposited into any lending strategies...'
-      />
-    )
   }
 
   return (
