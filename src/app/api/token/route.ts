@@ -110,7 +110,11 @@ export async function GET(req: NextRequest) {
 
     console.log(res)
 
-    const { data }: CoinMarketCapRes = await res.json()
+    const test: CoinMarketCapRes = await res.json()
+
+    console.log(test)
+
+    const data = test.data
 
     const prices = { ...FALLBACK_PRICES }
 
