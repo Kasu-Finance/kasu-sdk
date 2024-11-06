@@ -1,7 +1,7 @@
 import { Box, Stack, Typography } from '@mui/material'
 import React from 'react'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCardContentInner from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import InfoRow from '@/components/atoms/InfoRow'
@@ -21,7 +21,7 @@ type PoolCardContentProps = {
 }
 
 const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const isMultiTranche = pool.tranches.length > 1
 

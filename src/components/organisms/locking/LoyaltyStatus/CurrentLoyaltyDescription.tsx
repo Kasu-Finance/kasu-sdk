@@ -5,7 +5,7 @@ import { Box, Skeleton, Typography } from '@mui/material'
 import useLoyaltyLevel, {
   LoyalLoyaltyLevels,
 } from '@/hooks/locking/useLoyaltyLevel'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
 
 import UnorderedList from '@/components/atoms/UnorderedList'
@@ -13,7 +13,7 @@ import UnorderedList from '@/components/atoms/UnorderedList'
 import { customTypography } from '@/themes/typography'
 
 const CurrentLoyaltyDescription = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { stakedPercentage, isLoading } = useLockingPercentage()
 

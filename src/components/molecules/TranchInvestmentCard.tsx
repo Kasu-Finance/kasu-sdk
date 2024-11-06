@@ -2,7 +2,7 @@
 
 import { Box, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import InfoRow from '@/components/atoms/InfoRow'
@@ -20,7 +20,7 @@ const TranchInvestmentCard: React.FC<InvestmentCardProps> = ({
   apy,
   yieldEarned,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <ColoredBox borderRadius={2} p={{ xs: 1.5, sm: 0 }}>

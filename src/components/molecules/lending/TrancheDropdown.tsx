@@ -1,7 +1,7 @@
 import { SelectChangeEvent, Typography } from '@mui/material'
 import { TrancheData } from '@solidant/kasu-sdk/src/services/DataService/types'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomSelect from '@/components/atoms/CustomSelect'
 
@@ -16,7 +16,7 @@ const TrancheDropdown: React.FC<TrancheDropdownProps> = ({
   setSelectedTranche,
   tranches,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   if (tranches.length <= 1) {
     return null

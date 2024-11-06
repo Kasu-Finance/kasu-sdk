@@ -1,7 +1,7 @@
 import { Box, Divider, Grid, Typography } from '@mui/material'
 import React from 'react'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
@@ -21,7 +21,7 @@ type LoanOverviewProps = {
 }
 
 const LoanOverview: React.FC<LoanOverviewProps> = ({ pool }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const isMultiTranche = pool.tranches.length > 1
 

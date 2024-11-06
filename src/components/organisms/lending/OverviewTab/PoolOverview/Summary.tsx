@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import WaveCard from '@/components/molecules/WaveCard'
 
@@ -13,7 +13,7 @@ type SummaryProps = {
 }
 
 const Summary: React.FC<SummaryProps> = ({ pool }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <Grid container spacing={4}>

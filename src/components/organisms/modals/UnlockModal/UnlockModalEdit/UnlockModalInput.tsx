@@ -5,7 +5,7 @@ import { formatEther } from 'ethers/lib/utils'
 import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
 import NumericalInput from '@/components/molecules/NumericalInput'
@@ -18,7 +18,7 @@ import { customTypography } from '@/themes/typography'
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
 const UnlockModalInput = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { modal } = useModalState()
 
@@ -130,7 +130,7 @@ const UnlockModalInput = () => {
       <Typography
         variant='caption'
         component='span'
-        color={(theme) => theme.palette.error.main}
+        sx={{ color: (theme) => theme.palette.error.main }}
         visibility={modalStatus.type === 'error' ? 'visible' : 'hidden'}
       >
         {modalStatus.type === 'error' ? modalStatus.errorMessage : 'message'}

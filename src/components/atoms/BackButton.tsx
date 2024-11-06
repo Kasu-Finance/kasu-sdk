@@ -4,11 +4,11 @@ import { Button, ButtonProps } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 const BackButton: React.FC<ButtonProps> = ({ startIcon, ...props }) => {
   const router = useRouter()
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const handleBack = () => {
     router.back()

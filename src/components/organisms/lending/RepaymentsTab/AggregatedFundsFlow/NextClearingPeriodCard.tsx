@@ -2,7 +2,7 @@
 
 import { Box, Skeleton, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 import useNextClearingPeriod from '@/hooks/web3/useNextClearingPeriod'
 
 import Countdown from '@/components/atoms/Countdown'
@@ -12,7 +12,7 @@ import WaveBox from '@/components/atoms/WaveBox'
 import { formatTimestamp } from '@/utils'
 
 const NextClearingPeriodCard = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
   const { nextClearingPeriod, isLoading } = useNextClearingPeriod()
 
   const formattedTime = formatTimestamp(nextClearingPeriod, {

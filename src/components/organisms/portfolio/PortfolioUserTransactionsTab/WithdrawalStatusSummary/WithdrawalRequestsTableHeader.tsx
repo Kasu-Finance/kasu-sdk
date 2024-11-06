@@ -1,9 +1,9 @@
 import { TableCell, TableRow, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 const WithdrawalRequestsTableHeader = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <TableRow>

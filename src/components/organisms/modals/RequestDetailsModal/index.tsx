@@ -1,7 +1,7 @@
 import { Box, Stack, Typography } from '@mui/material'
 
 import useModalState from '@/hooks/context/useModalState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
@@ -14,7 +14,7 @@ import SubsequentTransactions from '@/components/organisms/modals/RequestDetails
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 const RequestDetailsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { modal } = useModalState()
 

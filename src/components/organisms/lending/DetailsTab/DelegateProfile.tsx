@@ -1,6 +1,6 @@
 import { Grid, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
@@ -23,7 +23,7 @@ type DelegateProfileProps = {
 }
 
 const DelegateProfile: React.FC<DelegateProfileProps> = ({ pool }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <CustomCard>

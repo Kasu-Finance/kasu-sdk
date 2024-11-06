@@ -2,7 +2,7 @@ import { Box, Skeleton, Stack, Typography } from '@mui/material'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
@@ -11,7 +11,7 @@ import LockModalReviewActions from '@/components/organisms/modals/LockModal/Lock
 import { formatAmount, formatTimestamp, formatToNearestTime } from '@/utils'
 
 const LockModalReview = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { amount, selectedLockPeriod } = useLockModalState()
 

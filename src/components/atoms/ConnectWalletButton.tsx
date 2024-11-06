@@ -13,7 +13,7 @@ import { useWeb3React } from '@web3-react/core'
 import { forwardRef } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 import useChainStatus from '@/hooks/web3/useChainStatus'
 import useWalletActivation from '@/hooks/web3/useWalletActivation'
 
@@ -27,7 +27,7 @@ import formatAccount from '@/utils/formats/formatAccount'
 
 const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
-    const { t } = useTranslation()
+    const { t } = getTranslation()
 
     const { account } = useWeb3React()
 

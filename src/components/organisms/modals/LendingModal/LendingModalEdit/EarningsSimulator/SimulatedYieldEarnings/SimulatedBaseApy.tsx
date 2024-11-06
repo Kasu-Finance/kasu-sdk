@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
@@ -13,7 +13,7 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 import { capitalize, formatPercentage } from '@/utils'
 
 const SimulatedBaseApy = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { modal } = useModalState()
 

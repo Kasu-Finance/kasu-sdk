@@ -5,14 +5,14 @@ import { formatEther } from 'ethers/lib/utils'
 import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalState from '@/hooks/context/useModalState'
 import useRatio from '@/hooks/useRatio'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { formatAccount, formatAmount, toBigNumber } from '@/utils'
 
 const PartialUnlockMessage = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { account } = useWeb3React()
 

@@ -1,9 +1,9 @@
 import { Stack, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 const GrossApyTooltip = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <Stack spacing={2}>

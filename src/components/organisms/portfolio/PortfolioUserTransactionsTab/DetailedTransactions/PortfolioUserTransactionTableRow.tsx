@@ -8,7 +8,7 @@ import {
 } from '@mui/material'
 
 import useModalState from '@/hooks/context/useModalState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
 
@@ -28,7 +28,7 @@ type PortfolioUserTransactionTableRowProps = {
 const PortfolioUserTransactionTableRow: React.FC<
   PortfolioUserTransactionTableRowProps
 > = ({ transaction }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { openModal } = useModalState()
 

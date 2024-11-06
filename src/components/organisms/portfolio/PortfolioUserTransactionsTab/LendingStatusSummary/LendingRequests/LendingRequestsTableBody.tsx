@@ -2,7 +2,7 @@
 
 import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import LendingRequestsTableRow from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/LendingStatusSummary/LendingRequests/LendingRequestsTableRow'
 
@@ -13,7 +13,7 @@ import {
 } from '@/utils'
 
 const LendingRequestsTableBody = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { transactionHistory } = useTransactionHistory()
 

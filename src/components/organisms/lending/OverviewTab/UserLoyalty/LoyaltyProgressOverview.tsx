@@ -3,7 +3,7 @@
 import { Stack, Typography } from '@mui/material'
 
 import useStakedKSU from '@/hooks/locking/useStakedKSU'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 import useEarnedRKsu from '@/hooks/web3/useEarnedRKsu'
 import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
 
@@ -16,7 +16,7 @@ import LoyaltyProgress from '@/components/organisms/lending/OverviewTab/UserLoya
 import { capitalize, formatAmount } from '@/utils'
 
 const LoyaltyProgressOverview = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { rKsuAmount } = useEarnedRKsu()
 

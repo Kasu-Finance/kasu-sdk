@@ -4,7 +4,7 @@ import { Tabs } from '@mui/material'
 import { usePathname } from 'next/navigation'
 import { memo } from 'react'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomTab from '@/components/atoms/CustomTab'
 import TabsContainer from '@/components/atoms/TabsContainer'
@@ -12,7 +12,7 @@ import TabsContainer from '@/components/atoms/TabsContainer'
 import { Routes } from '@/config/routes'
 
 const PortfolioTabs = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const pathName = usePathname()
 

@@ -120,11 +120,16 @@ export async function GET(req: NextRequest) {
       headers: {
         'x-api-key': process.env.LENDERS_AGREEMENT_API_KEY || '',
         'x-chain-id': LENDERS_AGREEMENT_CHAIN_ID_MAP[chain] || '',
+        'Content-Type': 'application/json',
       },
     }
   )
 
   const data: LoanTicketRes = await res.json()
+
+  if ('statusCode' in data) {
+    return Response.json(data.message)
+  }
 
   return Response.json(data.items)
 }

@@ -1,6 +1,6 @@
 import { Container, Stack, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
@@ -24,7 +24,7 @@ import SmartContractRisk from '@/components/organisms/riskWarning/SmartContractR
 import TrancheRisk from '@/components/organisms/riskWarning/TrancheRisk'
 
 const RiskWarningPage = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <Container maxWidth='lg'>

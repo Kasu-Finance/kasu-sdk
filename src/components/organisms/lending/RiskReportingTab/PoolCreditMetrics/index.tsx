@@ -1,7 +1,7 @@
 import { PoolCreditMetrics as PoolCreditMetricsType } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
@@ -17,7 +17,7 @@ type PoolCreditMetricsProps = {
 const PoolCreditMetrics: React.FC<PoolCreditMetricsProps> = async ({
   poolCreditMetrics,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <CustomCard>

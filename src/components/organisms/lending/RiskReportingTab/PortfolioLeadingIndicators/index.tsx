@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
@@ -12,7 +12,7 @@ import RiskConcentrationsTable from '@/components/organisms/lending/RiskReportin
 import RiskSegments from '@/components/organisms/lending/RiskReportingTab/PortfolioLeadingIndicators/RiskSegments'
 
 const PortfolioLeadingIndicators = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <CustomCard>

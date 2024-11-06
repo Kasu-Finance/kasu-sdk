@@ -1,6 +1,6 @@
 import { Box, Divider, Grid, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 
@@ -14,7 +14,7 @@ type DelegateOverviewProps = {
 }
 
 const DelegateOverview: React.FC<DelegateOverviewProps> = ({ pool }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <Box mt={6}>

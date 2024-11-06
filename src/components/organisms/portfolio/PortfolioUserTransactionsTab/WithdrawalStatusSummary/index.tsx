@@ -1,4 +1,4 @@
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
@@ -10,7 +10,7 @@ import WithdrawalRequestsTableHeader from '@/components/organisms/portfolio/Port
 import { customPalette } from '@/themes/palette'
 
 const WithdrawalStatusSummary = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <CustomCard>

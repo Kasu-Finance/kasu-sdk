@@ -4,15 +4,14 @@ import PoolDetailsTab from '@/components/organisms/lending/DetailsTab'
 import DetailTabSkeleton from '@/components/organisms/lending/DetailsTab/DetailTabSkeleton'
 
 type PageProps = {
-  params: {
-    slug: string
-  }
+  params: Promise<{ slug: string }>
 }
 
-const PoolDetailPage = ({ params }: PageProps) => {
+const PoolDetailPage = async ({ params }: PageProps) => {
+  const { slug } = await params
   return (
     <Suspense fallback={<DetailTabSkeleton />}>
-      <PoolDetailsTab poolId={params.slug} />
+      <PoolDetailsTab poolId={slug} />
     </Suspense>
   )
 }

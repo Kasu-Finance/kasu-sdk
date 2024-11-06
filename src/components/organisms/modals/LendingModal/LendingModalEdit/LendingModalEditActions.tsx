@@ -4,12 +4,12 @@ import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useStepperState from '@/hooks/context/useStepperState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 const LendingModalEditActions = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { openModal } = useModalState()
 

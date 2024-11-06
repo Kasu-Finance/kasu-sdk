@@ -1,6 +1,6 @@
 import { Stack, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import OrderedList from '@/components/atoms/OrderedList'
 
@@ -11,7 +11,7 @@ type PartiesProp = {
 }
 
 const Parties: React.FC<PartiesProp> = ({ fullName }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <>

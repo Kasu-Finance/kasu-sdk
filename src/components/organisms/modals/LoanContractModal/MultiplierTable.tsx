@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
 
@@ -8,7 +8,7 @@ import { customPalette } from '@/themes/palette'
 import { customTypography } from '@/themes/typography'
 
 const MultiplierTable = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <Table size='small'>

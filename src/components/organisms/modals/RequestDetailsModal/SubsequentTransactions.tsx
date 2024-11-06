@@ -11,7 +11,7 @@ import {
 import { Fragment } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import Countdown from '@/components/atoms/Countdown'
 import DottedDivider from '@/components/atoms/DottedDivider'
@@ -42,7 +42,7 @@ const SubsequentTransactions: React.FC<SubsequentTransactionsProps> = ({
   transaction,
   poolName,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { openModal } = useModalState()
 

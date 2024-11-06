@@ -3,6 +3,7 @@ import { UserTrancheBalance } from '@solidant/kasu-sdk/src/services/UserLending/
 import { BigNumber, ethers } from 'ethers'
 
 import hexToUSD from '@/utils/hexToUSD'
+import toBigNumber from '@/utils/toBigNumber'
 
 interface Tranche {
   id: string
@@ -24,7 +25,9 @@ export const calculateUserLendingSummary = (
     (acc, cur) => {
       acc.totalYieldEarned += acc.totalYieldEarned + cur.balanceData.yieldEarned
 
-      acc.totalInvested = acc.totalInvested.add(cur.balanceData.balance)
+      acc.totalInvested = acc.totalInvested.add(
+        toBigNumber(cur.balanceData.balance)
+      )
 
       acc.totalAvailableToWithdraw = acc.totalAvailableToWithdraw.add(
         cur.balanceData.availableToWithdraw

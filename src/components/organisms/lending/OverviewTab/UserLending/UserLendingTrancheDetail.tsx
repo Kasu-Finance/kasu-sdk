@@ -2,16 +2,13 @@
 
 import { Divider, Grid, Typography } from '@mui/material'
 import { ethers } from 'ethers'
-import { formatUnits } from 'ethers/lib/utils'
 
 import useUserLendingTrancheBalance from '@/hooks/lending/useUserLendingTrancheBalance'
-import useTranslation from '@/hooks/useTranslation'
-import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
+import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import UserLendingTrancheDetailSkeleton from '@/components/organisms/lending/OverviewTab/UserLending/UserLendingTrancheDetailSkeleton'
 
-import { SupportedTokens } from '@/constants/tokens'
 import { formatAmount, formatPercentage } from '@/utils'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
@@ -23,12 +20,10 @@ type UserLendingTrancheDetailProps = {
 const UserLendingTrancheDetail: React.FC<UserLendingTrancheDetailProps> = ({
   pool,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { userLendingTrancheBalance, isLoading } =
     useUserLendingTrancheBalance(pool)
-
-  const supportedToken = useSupportedTokenInfo()
 
   if (isLoading) {
     return <UserLendingTrancheDetailSkeleton />
@@ -40,7 +35,7 @@ const UserLendingTrancheDetail: React.FC<UserLendingTrancheDetailProps> = ({
       address: tranche.id,
       userId: ethers.constants.AddressZero,
       availableToWithdraw: '0',
-      balance: ethers.constants.Zero,
+      balance: '0',
       yieldEarned: 0,
     },
   }))
@@ -65,13 +60,7 @@ const UserLendingTrancheDetail: React.FC<UserLendingTrancheDetailProps> = ({
             }}
             metric={
               <Typography variant='baseMdBold'>
-                {formatAmount(
-                  formatUnits(
-                    tranche.balanceData.balance,
-                    supportedToken?.[SupportedTokens.USDC].decimals
-                  )
-                )}{' '}
-                USDC
+                {formatAmount(tranche.balanceData.balance)} USDC
               </Typography>
             }
             showDivider

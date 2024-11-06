@@ -1,6 +1,6 @@
 import { Stack, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import UnorderedList from '@/components/atoms/UnorderedList'
 import Subheading from '@/components/organisms/termsAndConditions/Subheading'
@@ -8,7 +8,7 @@ import Subheading from '@/components/organisms/termsAndConditions/Subheading'
 import { customTypography } from '@/themes/typography'
 
 const LoanWithdrawalRequests = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <Stack spacing={2}>

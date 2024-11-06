@@ -1,6 +1,6 @@
 import { Box, Divider, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
@@ -9,7 +9,7 @@ import ClaimFeesButton from '@/components/organisms/locking/BonusRewardSummary/F
 import LifetimeFeesEarned from '@/components/organisms/locking/BonusRewardSummary/FeesEarnedBreakdown/LifetimeFeesEarned'
 
 const FeesEarnedBreakdown = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <Box height='100%' display='flex' flexDirection='column'>

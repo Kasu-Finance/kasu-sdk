@@ -1,5 +1,5 @@
 import useStepperState from '@/hooks/context/useStepperState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomStepper from '@/components/atoms/CustomStepper'
@@ -24,7 +24,7 @@ const getActiveComponent = (activeStep: number) => {
 }
 
 const LendingModal: React.FC<DialogChildProps> = ({ handleClose }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { activeStep } = useStepperState()
 

@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CurrentLoyaltyMascot from '@/components/atoms/CurrentLoyaltyMascot'
 import CustomCard from '@/components/atoms/CustomCard'
@@ -10,7 +10,7 @@ import CurrentLoyaltyDescription from '@/components/organisms/locking/LoyaltySta
 import CurrentLoyaltyProgressDetails from '@/components/organisms/locking/LoyaltyStatus/CurrentLoyaltyProgressDetails'
 
 const LoyaltyStatus = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <CustomCard>

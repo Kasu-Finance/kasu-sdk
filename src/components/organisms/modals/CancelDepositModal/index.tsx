@@ -3,7 +3,7 @@ import { Box, Button, Stack, Typography } from '@mui/material'
 import useModalState from '@/hooks/context/useModalState'
 import useCancelDeposit from '@/hooks/lending/useCancelDeposit'
 import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
@@ -16,7 +16,7 @@ import NextClearingPeriodInfo from '@/components/molecules/NextClearingPeriodInf
 import { formatAmount, formatTimestamp } from '@/utils'
 
 const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { modal } = useModalState()
 

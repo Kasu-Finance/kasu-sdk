@@ -2,7 +2,7 @@ import { Box, Grid, Typography } from '@mui/material'
 import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
 import Image from 'next/image'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
@@ -28,7 +28,7 @@ const UserLoyalty: React.FC<UserLoyaltyProps> = async ({
   poolId,
   lockPeriods,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <CustomCard>

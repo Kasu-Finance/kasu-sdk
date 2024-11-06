@@ -2,7 +2,7 @@ import { Button, TableCell, TableRow } from '@mui/material'
 import { Fragment } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import Countdown from '@/components/atoms/Countdown'
 import DottedDivider from '@/components/atoms/DottedDivider'
@@ -29,7 +29,7 @@ type PendingDecisionsTableRowProps = {
 const PendingDecisionsTableRow: React.FC<PendingDecisionsTableRowProps> = ({
   pendingDecision,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { openModal, modal } = useModalState()
 

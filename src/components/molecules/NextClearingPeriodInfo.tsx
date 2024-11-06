@@ -1,12 +1,12 @@
 import { Box, Skeleton, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 import useNextClearingPeriod from '@/hooks/web3/useNextClearingPeriod'
 
 import { formatTimestamp } from '@/utils'
 
 const NextClearingPeriodInfo = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { nextClearingPeriod, isLoading } = useNextClearingPeriod()
 

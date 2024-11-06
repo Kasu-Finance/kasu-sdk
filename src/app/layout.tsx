@@ -29,6 +29,10 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
 }
 
+// Since this is the root layout, all fetch requests in the app
+// that don't set their own cache option will be cached.
+export const fetchCache = 'default-cache'
+
 export default async function RootLayout({ children }: RootLayoutProps) {
   const res = await fetch(
     `${sdkConfig.directusUrl}items/PoolOverview?filter[enabled][_neq]=true`

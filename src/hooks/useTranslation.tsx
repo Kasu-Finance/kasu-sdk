@@ -19,7 +19,7 @@ export type TranslateFunction = {
   // (key: string): string
 }
 
-const useTranslation = () => {
+const getTranslation = () => {
   const t: TranslateFunction = (key: TranslationKeys) => {
     const translation = getNestedTranslation(key, TRANSLATIONS[defaultLocale])
 
@@ -28,4 +28,4 @@ const useTranslation = () => {
   return { t }
 }
 
-export default useTranslation
+export default getTranslation

@@ -1,9 +1,9 @@
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import OrderedList from '@/components/atoms/OrderedList'
 
 const ProvisionLoanAmount = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <li>

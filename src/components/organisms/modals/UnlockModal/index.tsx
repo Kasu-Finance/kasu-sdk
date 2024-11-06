@@ -1,5 +1,5 @@
 import useStepperState from '@/hooks/context/useStepperState'
-import useTranslation, { TranslateFunction } from '@/hooks/useTranslation'
+import getTranslation, { TranslateFunction } from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
@@ -34,7 +34,7 @@ const getTitle = (activeStep: number, t: TranslateFunction) => {
 }
 
 const UnlockModal: React.FC<DialogChildProps> = ({ handleClose }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { activeStep } = useStepperState()
 

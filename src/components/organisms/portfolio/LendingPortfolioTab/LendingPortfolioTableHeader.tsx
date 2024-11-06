@@ -1,11 +1,11 @@
 import { TableCell, TableRow } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import { customTypography } from '@/themes/typography'
 
 const LendingPortfolioTableHeader = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <TableRow

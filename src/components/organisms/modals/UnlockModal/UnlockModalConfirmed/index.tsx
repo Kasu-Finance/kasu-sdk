@@ -2,7 +2,7 @@ import { Stack, Typography } from '@mui/material'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalState from '@/hooks/context/useModalState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import PartialUnlockMessage from '@/components/organisms/modals/UnlockModal/UnlockModalConfirmed/PartialUnlockMessage'
 import UnlockModalConfirmedActions from '@/components/organisms/modals/UnlockModal/UnlockModalConfirmed/UnlockModalConfirmedActions'
@@ -12,7 +12,7 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 import { formatAmount, toBigNumber } from '@/utils'
 
 const UnlockModalConfirmed = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { amount } = useLockModalState()
 

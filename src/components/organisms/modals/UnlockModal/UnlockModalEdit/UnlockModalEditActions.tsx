@@ -3,10 +3,10 @@ import { Button } from '@mui/material'
 import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useStepperState from '@/hooks/context/useStepperState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 const UnlockModalEditActions = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { nextStep } = useStepperState()
 

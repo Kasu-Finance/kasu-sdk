@@ -1,6 +1,6 @@
 import { Stack, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import UnorderedList from '@/components/atoms/UnorderedList'
 import WaveBox from '@/components/atoms/WaveBox'
@@ -9,7 +9,7 @@ import Subheading from '@/components/organisms/riskWarning/Subheading'
 import { customTypography } from '@/themes/typography'
 
 const GeneralRisks = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <WaveBox px={2} py={3}>

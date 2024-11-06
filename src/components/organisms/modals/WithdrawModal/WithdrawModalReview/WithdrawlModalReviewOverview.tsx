@@ -3,7 +3,7 @@ import { useWeb3React } from '@web3-react/core'
 
 import useModalState from '@/hooks/context/useModalState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
@@ -13,7 +13,7 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 import { formatAmount } from '@/utils'
 
 const WithdrawModalReviewOverview = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { account } = useWeb3React()
 

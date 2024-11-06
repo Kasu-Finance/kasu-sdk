@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomSelect from '@/components/atoms/CustomSelect'
 
@@ -13,7 +13,7 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 import { formatPercentage, formatToNearestTime, TimeConversions } from '@/utils'
 
 const ApyDropdown = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { account } = useWeb3React()
 

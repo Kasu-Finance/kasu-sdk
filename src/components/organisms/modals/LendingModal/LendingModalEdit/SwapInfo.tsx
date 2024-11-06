@@ -2,7 +2,7 @@ import { Skeleton, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 import useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
 
 import ToolTip from '@/components/atoms/ToolTip'
@@ -14,7 +14,7 @@ import { SupportedTokens } from '@/constants/tokens'
 import { formatAmount, formatPercentage } from '@/utils'
 
 const SwapInfo = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { amount, amountInUSD, isValidating, selectedToken } =
     useDepositModalState()

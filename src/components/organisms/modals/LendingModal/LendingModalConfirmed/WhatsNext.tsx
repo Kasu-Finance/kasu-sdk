@@ -2,7 +2,7 @@ import { Box, Button, Typography } from '@mui/material'
 import Link from 'next/link'
 
 import useModalState from '@/hooks/context/useModalState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import OrderedList from '@/components/atoms/OrderedList'
 
@@ -12,7 +12,7 @@ import { Routes } from '@/config/routes'
 import { customTypography } from '@/themes/typography'
 
 const WhatsNext = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { openModal, closeModal } = useModalState()
 

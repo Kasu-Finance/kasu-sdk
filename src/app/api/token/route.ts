@@ -10,12 +10,19 @@ type Quote = {
 }
 
 type CoinMarketCapRes = {
-  data: Record<
+  data?: Record<
     ValueOf<typeof CMC_TOKEN_ID_MAP>,
     {
       quote: Record<ValueOf<typeof CMC_TOKEN_ID_MAP>, Quote>
     }
   >
+  status: {
+    timestamp: string
+    error_code: number
+    error_message: string
+    elapsed: number
+    credit_count: number
+  }
 }
 
 const CMC_TOKEN_ID_MAP = {
@@ -108,7 +115,13 @@ export async function GET(req: NextRequest) {
       )
     }
 
-    const { data }: CoinMarketCapRes = await res.json()
+    const response: CoinMarketCapRes = await res.json()
+
+    if (!response.data) {
+      return new NextResponse(response.status.error_message, { status: 400 })
+    }
+
+    const { data } = response
 
     const prices = { ...FALLBACK_PRICES }
 

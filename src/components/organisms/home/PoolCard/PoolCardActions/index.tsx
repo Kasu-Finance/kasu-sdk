@@ -2,7 +2,7 @@ import { Button, CardActions } from '@mui/material'
 import Link from 'next/link'
 import React from 'react'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import LendButton from '@/components/atoms/LendButton'
 
@@ -15,7 +15,7 @@ type PoolCardActionsProps = {
 }
 
 const PoolCardActions: React.FC<PoolCardActionsProps> = ({ pool }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <CardActions

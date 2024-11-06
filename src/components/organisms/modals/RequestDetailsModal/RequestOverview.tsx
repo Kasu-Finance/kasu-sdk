@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
@@ -17,7 +17,7 @@ const RequestOverview: React.FC<RequestOverviewProps> = ({
   transaction,
   isCancellable,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const formattedTime = formatTimestamp(transaction.timestamp, {
     format: 'DD.MM.YYYY HH:mm:ss',

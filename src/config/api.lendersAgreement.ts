@@ -33,7 +33,12 @@ export type LoanTicketDto = LoanTicketDtoRaw & {
   dailyGroupID: string
 }
 
-export type LoanTicketRes = Paginated<LoanTicketDto>
+export type LoanTicketRes =
+  | {
+      message: string
+      statusCode: number
+    }
+  | Paginated<LoanTicketDto>
 
 export const LENDERS_AGREEMENT_API = 'https://allocations.api.kasu.finance'
 

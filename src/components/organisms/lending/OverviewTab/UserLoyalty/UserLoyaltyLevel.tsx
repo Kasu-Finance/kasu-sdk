@@ -5,11 +5,11 @@ import { Typography } from '@mui/material'
 import useLoyaltyLevel, {
   LoyalLoyaltyLevels,
 } from '@/hooks/locking/useLoyaltyLevel'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
 
 const UserLoyaltyLevel = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { stakedPercentage } = useLockingPercentage()
   const { currentLevel, isLoyal } = useLoyaltyLevel(stakedPercentage)

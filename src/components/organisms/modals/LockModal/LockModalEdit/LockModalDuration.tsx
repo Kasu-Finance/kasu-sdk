@@ -3,7 +3,7 @@ import { Box, Button, Slider, Typography } from '@mui/material'
 import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
@@ -35,7 +35,7 @@ const LockModalDuration = () => {
 
   const { modalStatus, setModalStatus } = useModalStatusState()
 
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const handleChange = (_: Event, value: number | number[]) => {
     setSelectedLockPeriod(lockPeriods[value as number])

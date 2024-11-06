@@ -1,11 +1,11 @@
 import { Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import UnorderedList from '@/components/atoms/UnorderedList'
 
 const LoanStructure = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <>

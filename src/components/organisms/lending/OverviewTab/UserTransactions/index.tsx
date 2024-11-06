@@ -3,7 +3,7 @@
 import React from 'react'
 
 import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
@@ -18,7 +18,7 @@ type UserTransactionsProps = {
 }
 
 const UserTransactions: React.FC<UserTransactionsProps> = ({ poolId }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { isLoading, transactionHistory } = useTransactionHistory()
 

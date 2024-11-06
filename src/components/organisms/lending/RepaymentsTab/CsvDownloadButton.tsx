@@ -3,14 +3,14 @@
 import { Button } from '@mui/material'
 import { PoolRepayment } from '@solidant/kasu-sdk/src/services/DataService/types'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 type CsvDownloadButtonProps = {
   repayment: PoolRepayment
 }
 
 const CsvDownloadButton: React.FC<CsvDownloadButtonProps> = ({ repayment }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <Button

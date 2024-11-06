@@ -3,7 +3,7 @@
 import React from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import KycButton from '@/components/atoms/KycButton'
 
@@ -16,7 +16,7 @@ type LendButtonProps = {
 }
 
 const LendButton: React.FC<LendButtonProps> = ({ pool }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { openModal } = useModalState()
 

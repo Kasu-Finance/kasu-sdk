@@ -4,14 +4,14 @@ import { Button } from '@mui/material'
 
 import useModalState from '@/hooks/context/useModalState'
 import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { DownloadRoundedIcon } from '@/assets/icons'
 
 const CsvDownloadButton = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { transactionHistory, isLoading } = useTransactionHistory()
 

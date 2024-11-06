@@ -2,7 +2,7 @@ import { Box, Button, Collapse, Stack, Typography } from '@mui/material'
 import { useReducer } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import SimulatedLendingDuration from '@/components/organisms/modals/LendingModal/LendingModalEdit/EarningsSimulator/SimulatedLendingDuration'
 import SimulatedYieldEarnings from '@/components/organisms/modals/LendingModal/LendingModalEdit/EarningsSimulator/SimulatedYieldEarnings'
@@ -10,7 +10,7 @@ import SimulatedYieldEarnings from '@/components/organisms/modals/LendingModal/L
 import { ChevronDownIcon } from '@/assets/icons'
 
 const EarningsSimulator = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { fixedTermConfigId } = useDepositModalState()
 

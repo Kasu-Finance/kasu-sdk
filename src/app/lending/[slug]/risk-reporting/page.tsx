@@ -4,15 +4,15 @@ import RiskReportingTab from '@/components/organisms/lending/RiskReportingTab'
 import RiskReportingTabSkeleton from '@/components/organisms/lending/RiskReportingTab/RiskReportingTabSkeleton'
 
 type PageProps = {
-  params: {
-    slug: string
-  }
+  params: Promise<{ slug: string }>
 }
 
-const PoolRiskReportingPage = ({ params }: PageProps) => {
+const PoolRiskReportingPage = async ({ params }: PageProps) => {
+  const { slug } = await params
+
   return (
     <Suspense fallback={<RiskReportingTabSkeleton />}>
-      <RiskReportingTab poolId={params.slug} />
+      <RiskReportingTab poolId={slug} />
     </Suspense>
   )
 }

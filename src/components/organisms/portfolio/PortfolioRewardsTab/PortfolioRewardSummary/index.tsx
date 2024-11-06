@@ -1,6 +1,6 @@
 import { Divider, Grid, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
@@ -12,7 +12,7 @@ import LifetimeKsuBonusRewards from '@/components/organisms/portfolio/PortfolioR
 import LiftimeProtocolFees from '@/components/organisms/portfolio/PortfolioRewardsTab/PortfolioRewardSummary/LifetimeProtocolFees'
 
 const PortfolioRewardSummary = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <CustomCard>

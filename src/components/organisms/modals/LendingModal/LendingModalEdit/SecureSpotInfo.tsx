@@ -1,9 +1,9 @@
 import { Box, Typography } from '@mui/material'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 const SecureSpotInfo = () => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <Box bgcolor='gold.dark' borderRadius={2} p={2}>

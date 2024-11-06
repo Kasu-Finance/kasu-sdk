@@ -4,7 +4,7 @@ import { useRef, useState } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useToastState from '@/hooks/context/useToastState'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 import useHandleError from '@/hooks/web3/useHandleError'
 
 import CustomCard from '@/components/atoms/CustomCard'
@@ -25,7 +25,7 @@ import dayjs from '@/dayjs'
 import { userRejectedTransaction } from '@/utils'
 
 const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const { modal } = useModalState()
 

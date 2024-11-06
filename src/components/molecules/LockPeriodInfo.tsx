@@ -2,7 +2,7 @@ import { Box, Divider, Typography } from '@mui/material'
 import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
 import React from 'react'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import { formatAmount, TimeConversions } from '@/utils'
 
@@ -15,7 +15,7 @@ const LockPeriodInfo: React.FC<LockPeriodInfoProps> = ({
   activePeriod,
   lockPeriods,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const currentIndex = activePeriod
     ? lockPeriods.findIndex((period) => period.id === activePeriod.id)

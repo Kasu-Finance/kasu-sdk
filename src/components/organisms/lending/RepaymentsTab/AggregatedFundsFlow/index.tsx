@@ -2,7 +2,7 @@ import { Box, Divider, Grid, Typography } from '@mui/material'
 import { PoolRepayment } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import WaveCard from '@/components/molecules/WaveCard'
 import NextClearingPeriodCard from '@/components/organisms/lending/RepaymentsTab/AggregatedFundsFlow/NextClearingPeriodCard'
@@ -14,7 +14,7 @@ type AggregatedFundsFlowProps = {
 const AggregatedFundsFlow: React.FC<AggregatedFundsFlowProps> = ({
   repayment,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   return (
     <Box>
