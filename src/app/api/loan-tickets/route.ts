@@ -111,16 +111,6 @@ export async function GET(req: NextRequest) {
     )
   }
 
-  console.log(
-    `${LENDERS_AGREEMENT_API}/allocations/loan-tickets?` +
-      new URLSearchParams({
-        userID: userAddress,
-      })
-  )
-
-  console.log(process.env.LENDERS_AGREEMENT_API_KEY)
-  console.log(LENDERS_AGREEMENT_CHAIN_ID_MAP[chain])
-
   const res = await fetch(
     `${LENDERS_AGREEMENT_API}/allocations/loan-tickets?` +
       new URLSearchParams({
