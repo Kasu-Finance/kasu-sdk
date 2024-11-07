@@ -87,7 +87,8 @@
     "rejected": "Rejected",
     "queued": "Queued",
     "reallocatedIn": "Reallocated (In)",
-    "reallocatedOut": "Reallocated (Out)"
+    "reallocatedOut": "Reallocated (Out)",
+    "myPortfolio": "My Portfolio"
   },
   "time": {
     "years": "years",
@@ -241,7 +242,43 @@
       "message": "This feature will be released shortly",
       "action": "Ok"
     },
-
+    "fixedLoan": {
+      "title": "Fixed Loan & APY​",
+      "tableHeader": {
+        "cell-1": "Start Date",
+        "cell-2": "Loan Balance",
+        "cell-3": "Fixed Loan & APY Term Expiry"
+      },
+      "description": "No Withdrawal Request can be submitted during this period",
+      "fixedUntil": "Fixed until"
+    },
+    "withdrawFundsAtExpiry": {
+      "title": "Withdraw Funds at Expiry",
+      "description-1": "You can request Withdrawal Funds",
+      "description-2": "no later than {{ epoch }} epochs",
+      "description-3": "before the end of the loan term. Otherwise, your fixed loan will be converted to a regular floating loan, where you will have to submit a withdrawal request and join the queue like everyone else.",
+      "action": "Withdraw Funds at Expiry"
+    },
+    "autoConversionToVariable": {
+      "title": "Auto Conversion to Variable​",
+      "description": "You did not provide Fixed Loan Expiry instructions within the required notice period of {{ epoch }} epochs. Your loan will therefore automatically convert to the prevailing Variable APY. Should you require your capital returned at this point, then you must submit a Withdrawal Request where you will be subject to the queuing system."
+    },
+    "fixApy": {
+      "title": "Fixed Loan & APY Conversion​",
+      "availableToFix": "Variable APY Loans Available to Fix",
+      "availableToFix-tooltip": "info",
+      "inputLabel": "Fixed Loan & APY Conversion Amount​",
+      "selectLabel": "Select Fixed APY​",
+      "selectPlaceholder": "Select Fixed Gross APY",
+      "description-1": "You accept that no Withdrawal Requests can be submitted during the Fixed Term Period. Once your loan and APY is fixed, please visit",
+      "description-2": "for further details.",
+      "description-3": "Your Fixed Loan & APY Conversion​ Request has been successfully processed:",
+      "description-4": "Your Fixed Loan & APY Conversion​ Request was processed ({{ time }}) to",
+      "description-5": "No Withdrawal Requests can be submitted during the Fixed Term Period. Once your loan and APY is fixed, please visit",
+      "description-6": "for further details.",
+      "action": "Fix APY",
+      "viewTx": "View Transaction (TX)"
+    },
     "loyaltyLevels": {
       "title": "KSU Loyalty Program​",
       "subtitle": "About KSU Loyalty Program",
