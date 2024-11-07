@@ -15,23 +15,23 @@ const LendingPortfolioTableHeader = () => {
         },
       }}
     >
-      <TableCell sx={{ textTransform: 'capitalize' }} width='26%'>
+      <TableCell sx={{ textTransform: 'capitalize' }} width='19%'>
         {t('general.lendingStrategy')}
       </TableCell>
       <TableCell width='9%'>{t('general.grossApy')}</TableCell>
       <TableCell width='10%'>
         {t('portfolio.lendingPortfolio.tableHeader.cell-1')}
       </TableCell>
-      <TableCell width='13%'>
+      <TableCell width='12%'>
         {t('portfolio.lendingPortfolio.tableHeader.cell-2')}
       </TableCell>
       <TableCell width='16%'>
         {t('portfolio.lendingPortfolio.tableHeader.cell-3')}
       </TableCell>
-      <TableCell width='15%'>
+      <TableCell width='14%'>
         {t('portfolio.lendingPortfolio.tableHeader.cell-4')}
       </TableCell>
-      <TableCell width='11%'>
+      <TableCell width='20%'>
         {t('portfolio.lendingPortfolio.tableHeader.cell-5')}
       </TableCell>
     </TableRow>

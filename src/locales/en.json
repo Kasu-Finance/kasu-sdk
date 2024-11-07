@@ -1737,6 +1737,13 @@
         "cell-3": "Interest Earnings - Last Epoch",
         "cell-4": "Interest Earnings Lifetime",
         "cell-5": "Actions"
+      },
+      "actions": {
+        "action-1": "Withdraw Funds at Expiry",
+        "action-2": "Increase Lend",
+        "action-3": "Fix My APY",
+        "action-4": "View Fixed Loan​",
+        "action-5": "Auto Conversion to Variable​"
       }
     },
     "transactions": {
