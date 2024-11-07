@@ -5,9 +5,12 @@ import { SxProps, Theme } from '@mui/material'
 import useModalState from '@/hooks/context/useModalState'
 
 import DialogWrapper from '@/components/atoms/DialogWrapper'
+import AutoConversionToVariableModal from '@/components/organisms/modals/AutoConversionToVariableModal'
 import BorrowerIdentifiedModal from '@/components/organisms/modals/BorrowIdentifiedModal'
 import CancelDepositModal from '@/components/organisms/modals/CancelDepositModal'
 import CancelWithdrawalModal from '@/components/organisms/modals/CancelWithdrawalModal'
+import FixApyModalWrapper from '@/components/organisms/modals/FixApyModal/FixApyModalWrapper'
+import FixedLoanModal from '@/components/organisms/modals/FixedLoanModal'
 import LendingModalWrapper from '@/components/organisms/modals/LendingModal/LendingModalWrapper'
 import LoanContractModal from '@/components/organisms/modals/LoanContractModal'
 import LockModalWrapper from '@/components/organisms/modals/LockModal/LockModalWrapper'
@@ -18,6 +21,7 @@ import PendingDecisionModal from '@/components/organisms/modals/PendingDecisions
 import RequestDetailsModal from '@/components/organisms/modals/RequestDetailsModal'
 import UnlockModalWrapper from '@/components/organisms/modals/UnlockModal/UnlockModalWrapper'
 import UnreleasedFeatureModal from '@/components/organisms/modals/UnreleasedFeatureModal'
+import WithdrawFundsAtExpiryModal from '@/components/organisms/modals/WithdrawFundsAtExpiryModal'
 import WithdrawModalWrapper from '@/components/organisms/modals/WithdrawModal/WithdrawModalWrapper'
 
 import { Modals, ModalsKeys } from '@/context/modal/modal.types'
@@ -104,6 +108,22 @@ export const getModal = (
     case ModalsKeys.PENDING_DECISIONS:
       return {
         component: <PendingDecisionModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.FIXED_LOAN:
+      return {
+        component: <FixedLoanModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.WITHDRAW_FUNDS_AT_EXPIRY:
+      return {
+        component: <WithdrawFundsAtExpiryModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.AUTO_CONVERSION_TO_VARIABLE:
+      return {
+        component: <AutoConversionToVariableModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.FIX_APY:
+      return {
+        component: <FixApyModalWrapper handleClose={handleClose} />,
       }
     case ModalsKeys.UNRELEASED_FEATURE:
       return {

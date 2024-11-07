@@ -39,6 +39,10 @@ export enum ModalsKeys {
   OPT_OUT = 'optOutModal',
   REQUEST_DETAILS = 'requestDetailsModal',
   PENDING_DECISIONS = 'pendingDecisionsModal',
+  FIXED_LOAN = 'fixedLoanModal',
+  WITHDRAW_FUNDS_AT_EXPIRY = 'withdrawFundsAtExpiryModal',
+  AUTO_CONVERSION_TO_VARIABLE = 'autoConversionToVariableModal',
+  FIX_APY = 'fixApyModal',
   UNRELEASED_FEATURE = 'unreleasedFeatureModal',
 }
 
@@ -51,6 +55,10 @@ export type ModalData<T = void> = T extends void ? ModalBase : T & ModalBase
 export type Modals = {
   [ModalsKeys.LOYALTY_LEVELS]: ModalData
   [ModalsKeys.UNRELEASED_FEATURE]: ModalData
+  [ModalsKeys.WITHDRAW_FUNDS_AT_EXPIRY]: ModalData
+  [ModalsKeys.AUTO_CONVERSION_TO_VARIABLE]: ModalData
+  [ModalsKeys.FIX_APY]: ModalData
+  [ModalsKeys.FIXED_LOAN]: ModalData
   [ModalsKeys.OPT_IN]: ModalData
   [ModalsKeys.OPT_OUT]: ModalData<{ loanTicket: LoanTicket; poolName: string }>
   [ModalsKeys.BORROWER_IDENTIFIED]: ModalData<{
