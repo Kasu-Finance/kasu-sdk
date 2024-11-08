@@ -39,10 +39,11 @@ const calculateSubsequentTransactionSummary = (
     )
       continue
 
-    const totalAssets = sortedGroupedTickets.reduce(
-      (total, cur) => total + parseFloat(cur.assets),
-      0
-    )
+    const totalAssets = sortedGroupedTickets.reduce((total, cur) => {
+      if (cur.status === LoanTicketStatus.optedOut) return total
+
+      return total + parseFloat(cur.assets)
+    }, 0)
 
     const amountKey: keyof Amounts =
       currentLatestTicket.status === LoanTicketStatus.optedIn

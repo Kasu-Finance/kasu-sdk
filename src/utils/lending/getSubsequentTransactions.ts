@@ -47,6 +47,9 @@ const getSubsequentTransactions = (loanTicketGroups: LoanTicketDto[]) => {
       let shares = 0
 
       for (const group of endBorrowerGroup) {
+        // opted out events have a negative assets that we dont want to calculate
+        if (group.status === LoanTicketStatus.optedOut) continue
+
         assets += parseFloat(group.assets)
         shares += parseFloat(group.shares)
       }
