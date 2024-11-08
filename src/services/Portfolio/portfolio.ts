@@ -181,7 +181,16 @@ export class Portfolio {
         poolOverviews: PoolOverview[],
         currentEpoch: string,
     ): Promise<LendingPortfolioData> {
-        const portfolioLendingPools: PortfolioLendingPool[] = [];
+        const portfolioLendingPoolsPromise: (Omit<
+            PortfolioLendingPool,
+            'tranches'
+        > & {
+            tranches: (Omit<PortfolioTranche, 'investedAmount'> & {
+                investedAmount: Promise<{
+                    balance: string;
+                }>;
+            })[];
+        })[] = [];
         const usePoolBalancePromises: Promise<UserPoolBalance>[] = [];
         const latestEpoch = BigNumber.from(currentEpoch).sub(BigNumber.from(1));
 
@@ -222,7 +231,12 @@ export class Portfolio {
             }
             totalInvestments = userPoolBalance.balance.add(totalInvestments);
             const yieldEarned = userPoolBalance.yieldEarned;
-            const tranches: PortfolioTranche[] = [];
+            const tranches: (Omit<PortfolioTranche, 'investedAmount'> & {
+                investedAmount: Promise<{
+                    balance: string;
+                }>;
+            })[] = [];
+
             for (const tranche of poolOverview.tranches) {
                 const lastEpochDatapoint =
                     lastEpochData.user.lendingPoolUserDetails.find((l) =>
@@ -242,7 +256,7 @@ export class Portfolio {
                         id: tranche.id,
                         name: tranche.name,
                         apy: tranche.apy,
-                        investedAmount: '0',
+                        investedAmount: Promise.resolve({ balance: '0' }),
                         yieldEarnings: {
                             lastEpoch: '0',
                             lifetime: '0',
@@ -286,16 +300,18 @@ export class Portfolio {
                           prevTrancheShares
                         : 0;
                 totalYieldEarnedLastEpoch += yieldEarningsLastEpoch;
+
                 const userTrancheBalance =
-                    await this._userLendingService.getUserTrancheBalance(
+                    this._userLendingService.getUserTrancheBalance(
                         userAddress,
                         tranche.id,
                     );
+
                 tranches.push({
                     id: tranche.id,
                     name: tranche.name,
                     apy: tranche.apy,
-                    investedAmount: userTrancheBalance.balance,
+                    investedAmount: userTrancheBalance,
                     yieldEarnings: {
                         lastEpoch: yieldEarningsLastEpoch.toString(),
                         lifetime: yieldEarned.toString(),
@@ -303,7 +319,7 @@ export class Portfolio {
                     fixedTermConfig: tranche.fixedTermConfig,
                 });
             }
-            portfolioLendingPools.push({
+            portfolioLendingPoolsPromise.push({
                 id: poolOverview.id,
                 totalYieldEarningsLastEpoch:
                     totalYieldEarnedLastEpoch.toString(),
@@ -315,6 +331,18 @@ export class Portfolio {
                 tranches: tranches,
             });
         }
+
+        const portfolioLendingPools: PortfolioLendingPool[] = await Promise.all(
+            portfolioLendingPoolsPromise.map(async (pool) => ({
+                ...pool,
+                tranches: await Promise.all(
+                    pool.tranches.map(async (tranche) => ({
+                        ...tranche,
+                        investedAmount: (await tranche.investedAmount).balance,
+                    })),
+                ),
+            })),
+        );
 
         return {
             lendingPools: portfolioLendingPools.filter(
