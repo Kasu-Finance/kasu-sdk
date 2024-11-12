@@ -48,7 +48,7 @@ const useKasuSDK = () => {
       )
     },
     {
-      fallback: () => {
+      fallbackData: (() => {
         const chain =
           NETWORK === 'BASE'
             ? SupportedChainIds.BASE
@@ -63,7 +63,7 @@ const useKasuSDK = () => {
           },
           fallbackProvider
         )
-      },
+      })(),
     }
   )
 

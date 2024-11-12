@@ -4,7 +4,10 @@ import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
-const useLendingPortfolioData = (poolOverviews: PoolOverview[]) => {
+const useLendingPortfolioData = (
+  poolOverviews: PoolOverview[],
+  currentEpoch: string
+) => {
   const sdk = useKasuSDK()
 
   const { account } = useWeb3React()
@@ -14,12 +17,13 @@ const useLendingPortfolioData = (poolOverviews: PoolOverview[]) => {
     async ([_, userAddress, poolOverviews]) =>
       await sdk.Portfolio.getPortfolioLendingData(
         userAddress.toLowerCase(),
-        poolOverviews
+        poolOverviews,
+        currentEpoch
       )
   )
 
   return {
-    lendingPortfolioData: data,
+    portfolioLendingPools: data,
     error,
     isLoading,
     updateLendingPortfolioData: mutate,

@@ -1,6 +1,8 @@
 import { TableCell, TableRow, Typography } from '@mui/material'
 import { PortfolioLendingPool } from '@solidant/kasu-sdk/src/services/Portfolio/types'
 
+import useUserLendingTrancheBalance from '@/hooks/lending/useUserLendingTrancheBalance'
+
 import DottedDivider from '@/components/atoms/DottedDivider'
 import NextLink from '@/components/atoms/NextLink'
 import LendingPortfolioTableTrancheRow from '@/components/organisms/portfolio/LendingPortfolioTab/LendingPortfolioTableTrancheRow'
@@ -9,11 +11,17 @@ import { Routes } from '@/config/routes'
 
 type LendingPortfolioTableRowProps = {
   portfolioPool: PortfolioLendingPool
+  currentEpoch: string
 }
 
 const LendingPortfolioTableRow: React.FC<LendingPortfolioTableRowProps> = ({
   portfolioPool,
+  currentEpoch,
 }) => {
+  const { userLendingTrancheBalance } = useUserLendingTrancheBalance(
+    portfolioPool.tranches
+  )
+
   return (
     <>
       <TableRow>
@@ -25,7 +33,7 @@ const LendingPortfolioTableRow: React.FC<LendingPortfolioTableRowProps> = ({
             component={NextLink}
             href={`${Routes.lending.root.url}/${portfolioPool.id}`}
           >
-            {portfolioPool.name}
+            {portfolioPool.poolName}
           </Typography>
         </TableCell>
       </TableRow>
@@ -34,8 +42,13 @@ const LendingPortfolioTableRow: React.FC<LendingPortfolioTableRowProps> = ({
           <DottedDivider />
         </TableCell>
       </TableRow>
-      {portfolioPool.tranches.map((tranche) => (
-        <LendingPortfolioTableTrancheRow tranche={tranche} key={tranche.name} />
+      {(userLendingTrancheBalance ?? portfolioPool.tranches).map((tranche) => (
+        <LendingPortfolioTableTrancheRow
+          pool={portfolioPool}
+          tranche={tranche}
+          currentEpoch={currentEpoch}
+          key={tranche.name}
+        />
       ))}
     </>
   )

@@ -18,23 +18,31 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 type BonusAndRewardsProps = {
   pools: PoolOverviewWithDelegate[]
   poolId: string
+  currentEpoch: string
 }
 
-const BonusAndRewards: React.FC<BonusAndRewardsProps> = ({ pools, poolId }) => {
+const BonusAndRewards: React.FC<BonusAndRewardsProps> = ({
+  pools,
+  poolId,
+  currentEpoch,
+}) => {
   const { t } = getTranslation()
 
   const { stakedPercentage } = useLockingPercentage()
 
   const { currentLevel } = useLoyaltyLevel(stakedPercentage)
 
-  const { isLoading, lendingPortfolioData } = useLendingPortfolioData(pools)
+  const { isLoading, portfolioLendingPools } = useLendingPortfolioData(
+    pools,
+    currentEpoch
+  )
 
   const { ksuPrice } = useKsuPrice()
 
   let lifetimeBonusYieldEarnings = '0'
 
-  if (lendingPortfolioData) {
-    const pool = lendingPortfolioData.lendingPools.find(
+  if (portfolioLendingPools) {
+    const pool = portfolioLendingPools.find(
       (portfolioPool) => portfolioPool.id === poolId
     )
 

@@ -7,18 +7,18 @@ import useKasuSDK from '@/hooks/useKasuSDK'
 
 import { FIVE_MINUTES } from '@/constants/general'
 
-import { PoolOverviewWithDelegate } from '@/types/page'
-
-const useUserLendingTrancheBalance = (pool: PoolOverviewWithDelegate) => {
+const useUserLendingTrancheBalance = <T extends { id: string }>(
+  tranches: T[]
+) => {
   const { account } = useWeb3React()
 
   const sdk = useKasuSDK()
 
   const { data, error, isLoading } = useSWR(
-    account ? ['userLendingTrancheBalance', account, pool] : null,
+    account ? ['userLendingTrancheBalance', account, tranches] : null,
     async ([_, userId]) =>
       Promise.all(
-        pool.tranches.map(async (tranche) => ({
+        tranches.map(async (tranche) => ({
           ...tranche,
           balanceData: await sdk.UserLending.getUserTrancheBalance(
             userId.toLowerCase(),

@@ -1,6 +1,8 @@
 import { Button, Stack, Typography } from '@mui/material'
-import { useState } from 'react'
 
+import useFixApyState from '@/hooks/context/useFixApyState'
+import useModalState from '@/hooks/context/useModalState'
+import useFixApy from '@/hooks/lending/useFixApy'
 import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
@@ -8,14 +10,35 @@ import ToolTip from '@/components/atoms/ToolTip'
 import FixAmountInput from '@/components/organisms/modals/FixApyModal/FixAmountInput'
 import FixAmountSelect from '@/components/organisms/modals/FixApyModal/FixAmountSelect'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
 import { Routes } from '@/config/routes'
 import { formatAmount } from '@/utils'
 
 const FixApyEdit = () => {
   const { t } = getTranslation()
 
-  const [amount, setAmount] = useState('')
-  const [fixedTermConfigId, setFixedTermConfigId] = useState('')
+  const { modal } = useModalState()
+
+  const { pool } = modal[ModalsKeys.FIX_APY]
+
+  const balance = pool.selectedTranche.balanceData.balance
+
+  const { amount, fixedTermConfigId } = useFixApyState()
+
+  const fixApy = useFixApy()
+
+  const handleClick = async () => {
+    if (!amount) {
+      return console.error('FixApy:: Amount is undefined')
+    }
+
+    if (!fixedTermConfigId) {
+      return console.error('FixApy:: fixedTermConfigId is undefined')
+    }
+
+    await fixApy(pool.id, pool.selectedTranche.id, amount, fixedTermConfigId)
+  }
 
   return (
     <Stack spacing={1}>
@@ -35,16 +58,17 @@ const FixApyEdit = () => {
         titleStyle={{ variant: 'h5' }}
         metric={
           <Typography variant='h5'>
-            {formatAmount(10_000, { minDecimals: 2 })} USDC
+            {formatAmount(balance, {
+              minDecimals: 2,
+            })}{' '}
+            USDC
           </Typography>
         }
       />
       <Stack spacing={2}>
-        <FixAmountInput amount={amount} setAmount={setAmount} />
+        <FixAmountInput balance={balance} />
         <FixAmountSelect
-          fixedTermConfigs={[]}
-          fixedTermConfigId={fixedTermConfigId}
-          setFixedTermConfigId={setFixedTermConfigId}
+          fixedTermConfigs={pool.selectedTranche.fixedTermConfig}
         />
         <Typography variant='baseSm'>
           {t('modals.fixApy.description-1')}{' '}
@@ -72,6 +96,8 @@ const FixApyEdit = () => {
           color='secondary'
           fullWidth
           sx={{ textTransform: 'capitalize' }}
+          disabled={Boolean(!amount || !fixedTermConfigId)}
+          onClick={handleClick}
         >
           {t('modals.fixApy.action')}
         </Button>

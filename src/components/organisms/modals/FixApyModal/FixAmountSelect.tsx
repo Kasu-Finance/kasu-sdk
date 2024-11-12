@@ -1,8 +1,9 @@
 import { Box, SelectChangeEvent, Typography } from '@mui/material'
 import { TrancheData } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useWeb3React } from '@web3-react/core'
-import React, { Dispatch, SetStateAction, useMemo } from 'react'
+import React, { useMemo } from 'react'
 
+import useFixApyState from '@/hooks/context/useFixApyState'
 import getTranslation from '@/hooks/useTranslation'
 
 import CustomSelect from '@/components/atoms/CustomSelect'
@@ -11,16 +12,14 @@ import { formatPercentage, formatToNearestTime, TimeConversions } from '@/utils'
 
 type FixAmountSelectProps = {
   fixedTermConfigs: TrancheData['fixedTermConfig']
-  fixedTermConfigId: string
-  setFixedTermConfigId: Dispatch<SetStateAction<string>>
 }
 
 const FixAmountSelect: React.FC<FixAmountSelectProps> = ({
-  fixedTermConfigId,
   fixedTermConfigs,
-  setFixedTermConfigId,
 }) => {
   const { t } = getTranslation()
+
+  const { fixedTermConfigId, setFixedTermConfigId } = useFixApyState()
 
   const { account } = useWeb3React()
 

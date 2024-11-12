@@ -20,12 +20,14 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 type UserLoyaltyProps = {
   pools: PoolOverviewWithDelegate[]
   poolId: string
+  currentEpoch: string
   lockPeriods: LockPeriod[]
 }
 
 const UserLoyalty: React.FC<UserLoyaltyProps> = async ({
   pools,
   poolId,
+  currentEpoch,
   lockPeriods,
 }) => {
   const { t } = getTranslation()
@@ -56,7 +58,11 @@ const UserLoyalty: React.FC<UserLoyaltyProps> = async ({
               </Typography>
             </Box>
             <CustomInnerCardContent sx={{ pb: 0 }}>
-              <BonusAndRewards pools={pools} poolId={poolId} />
+              <BonusAndRewards
+                pools={pools}
+                poolId={poolId}
+                currentEpoch={currentEpoch}
+              />
               <UserLoyaltyActions lockPeriods={lockPeriods} />
             </CustomInnerCardContent>
           </WaveBox>

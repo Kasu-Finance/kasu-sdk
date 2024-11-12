@@ -21,7 +21,7 @@ import PendingDecisionModal from '@/components/organisms/modals/PendingDecisions
 import RequestDetailsModal from '@/components/organisms/modals/RequestDetailsModal'
 import UnlockModalWrapper from '@/components/organisms/modals/UnlockModal/UnlockModalWrapper'
 import UnreleasedFeatureModal from '@/components/organisms/modals/UnreleasedFeatureModal'
-import WithdrawFundsAtExpiryModal from '@/components/organisms/modals/WithdrawFundsAtExpiryModal'
+import WIthdrawFundsAtExpiryModalWrapper from '@/components/organisms/modals/WithdrawFundsAtExpiryModal/WithdrawFundsAtExpiryModalWrapper'
 import WithdrawModalWrapper from '@/components/organisms/modals/WithdrawModal/WithdrawModalWrapper'
 
 import { Modals, ModalsKeys } from '@/context/modal/modal.types'
@@ -115,7 +115,9 @@ export const getModal = (
       }
     case ModalsKeys.WITHDRAW_FUNDS_AT_EXPIRY:
       return {
-        component: <WithdrawFundsAtExpiryModal handleClose={handleClose} />,
+        component: (
+          <WIthdrawFundsAtExpiryModalWrapper handleClose={handleClose} />
+        ),
       }
     case ModalsKeys.AUTO_CONVERSION_TO_VARIABLE:
       return {

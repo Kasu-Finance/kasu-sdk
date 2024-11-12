@@ -249,7 +249,8 @@
         "cell-2": "Loan Balance",
         "cell-3": "Fixed Loan & APY Term Expiry"
       },
-      "description": "No Withdrawal Request can be submitted during this period",
+      "description-1": "You accept that no Withdrawal Requests can be submitted during the Fixed Term Period. Once your loan and APY is fixed, please visit",
+      "description-2": "for further details.",
       "fixedUntil": "Fixed until"
     },
     "withdrawFundsAtExpiry": {
@@ -257,7 +258,8 @@
       "description-1": "You can request Withdrawal Funds",
       "description-2": "no later than {{ epoch }} epochs",
       "description-3": "before the end of the loan term. Otherwise, your fixed loan will be converted to a regular floating loan, where you will have to submit a withdrawal request and join the queue like everyone else.",
-      "action": "Withdraw Funds at Expiry"
+      "description-4": "Withdrawal request successfully submitted. Your funds will be returned immediately after the expiration date.",
+      "action": "Withdraw Selected Funds at Expiry"
     },
     "autoConversionToVariable": {
       "title": "Auto Conversion to Variable​",
@@ -273,9 +275,11 @@
       "description-1": "You accept that no Withdrawal Requests can be submitted during the Fixed Term Period. Once your loan and APY is fixed, please visit",
       "description-2": "for further details.",
       "description-3": "Your Fixed Loan & APY Conversion​ Request has been successfully processed:",
-      "description-4": "Your Fixed Loan & APY Conversion​ Request was processed ({{ time }}) to",
+      "description-4": "Fixed Loan & APY Conversion Request submitted for the next Epoch ({{ time }}) to",
       "description-5": "No Withdrawal Requests can be submitted during the Fixed Term Period. Once your loan and APY is fixed, please visit",
       "description-6": "for further details.",
+      "description-7": "Fixed Loan & APY conversion is not possible during the Clearing Period.​",
+      "description-8": "Please return once the Clearing Period ends in",
       "action": "Fix APY",
       "viewTx": "View Transaction (TX)"
     },

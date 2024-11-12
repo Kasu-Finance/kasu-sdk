@@ -8,11 +8,13 @@ import DottedDivider from '@/components/atoms/DottedDivider'
 import dayjs from '@/dayjs'
 import { formatAmount } from '@/utils'
 
-type FixedLoanTableRowProps = {
+type AutoConversionTableRowProps = {
   fixedLoan: PortfolioTranche['fixedLoans'][number]
 }
 
-const FixedLoanTableRow: React.FC<FixedLoanTableRowProps> = ({ fixedLoan }) => {
+const AutoConversionTableRow: React.FC<AutoConversionTableRowProps> = ({
+  fixedLoan,
+}) => {
   const { t } = getTranslation()
 
   return (
@@ -44,4 +46,4 @@ const FixedLoanTableRow: React.FC<FixedLoanTableRowProps> = ({ fixedLoan }) => {
   )
 }
 
-export default FixedLoanTableRow
+export default AutoConversionTableRow

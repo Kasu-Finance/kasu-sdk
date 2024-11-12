@@ -10,20 +10,26 @@ import LendingPortfolioTableSkeleton from '@/components/organisms/portfolio/Lend
 
 type LendingPortfolioTableWrapperProps = {
   poolOverviews: PoolOverview[]
+  currentEpoch: string
 }
 
 const LendingPortfolioTableWrapper: React.FC<
   LendingPortfolioTableWrapperProps
-> = ({ poolOverviews }) => {
-  const { lendingPortfolioData, isLoading } =
-    useLendingPortfolioData(poolOverviews)
+> = ({ poolOverviews, currentEpoch }) => {
+  const { portfolioLendingPools, isLoading } = useLendingPortfolioData(
+    poolOverviews,
+    currentEpoch
+  )
 
-  if (isLoading || !lendingPortfolioData?.lendingPools) {
+  if (isLoading || !portfolioLendingPools) {
     return <LendingPortfolioTableSkeleton />
   }
 
   return (
-    <LendingPortfolioTable portfolioPools={lendingPortfolioData.lendingPools} />
+    <LendingPortfolioTable
+      currentEpoch={currentEpoch}
+      portfolioPools={portfolioLendingPools}
+    />
   )
 }
 

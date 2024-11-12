@@ -2,6 +2,7 @@
 
 import LoginIcon from '@mui/icons-material/Login'
 import { Box, Typography } from '@mui/material'
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { formatEther } from 'ethers/lib/utils'
 import { ReactNode, useCallback, useMemo } from 'react'
 
@@ -15,12 +16,10 @@ import NumericalInput from '@/components/molecules/NumericalInput'
 import { customTypography } from '@/themes/typography'
 import { formatAmount, toBigNumber } from '@/utils'
 
-import { PoolOverviewWithDelegate } from '@/types/page'
-
 type DepositAmountInputProps = {
   balance: string
   decimals?: number
-  poolData: PoolOverviewWithDelegate
+  poolData: PoolOverview
   disabled?: boolean
   startAdornment?: ReactNode
   endAdornment?: ReactNode

@@ -17,6 +17,8 @@ export enum ActionType {
   WITHDRAW = 'WITHDRAWAL REQUEST',
   CANCELLATION = 'CANCELLATION',
   FUNDING_CONSENT = 'FUNDING_CONSNET',
+  FIX_APY = 'FIX APY',
+  WITHDRAW_AT_EXPIRY = 'WITHDRAW_AT_EXPIRY',
 }
 
 export const ACTION_MESSAGES = {
@@ -70,5 +72,13 @@ export const ACTION_MESSAGES = {
     [ActionStatus.SIGNING]:
       'Please sign the transaction in your wallet to register your choice',
     [ActionStatus.PROCESSING]: 'Your choice submission is being processed',
+  },
+  [ActionType.FIX_APY]: {
+    [ActionStatus.ERROR]:
+      'An error has occurred in the Fix Apy Request. Please review log for more details.',
+  },
+  [ActionType.WITHDRAW_AT_EXPIRY]: {
+    [ActionStatus.ERROR]:
+      'An error has occurred in the Withdraw at Expiry Request. Please review log for more details.',
   },
 } as const

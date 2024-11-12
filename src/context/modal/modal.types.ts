@@ -1,8 +1,15 @@
-import { TrancheData } from '@solidant/kasu-sdk/src/services/DataService/types'
+import {
+  PoolOverview,
+  TrancheData,
+} from '@solidant/kasu-sdk/src/services/DataService/types'
 import {
   LockPeriod,
   UserLock,
 } from '@solidant/kasu-sdk/src/services/Locking/types'
+import {
+  PortfolioLendingPool,
+  PortfolioTranche,
+} from '@solidant/kasu-sdk/src/services/Portfolio/types'
 import {
   UserRequestEvent,
   UserTrancheBalance,
@@ -55,10 +62,23 @@ export type ModalData<T = void> = T extends void ? ModalBase : T & ModalBase
 export type Modals = {
   [ModalsKeys.LOYALTY_LEVELS]: ModalData
   [ModalsKeys.UNRELEASED_FEATURE]: ModalData
-  [ModalsKeys.WITHDRAW_FUNDS_AT_EXPIRY]: ModalData
-  [ModalsKeys.AUTO_CONVERSION_TO_VARIABLE]: ModalData
-  [ModalsKeys.FIX_APY]: ModalData
-  [ModalsKeys.FIXED_LOAN]: ModalData
+  [ModalsKeys.WITHDRAW_FUNDS_AT_EXPIRY]: ModalData<{
+    pool: PortfolioLendingPool
+    fixedLoans: PortfolioTranche['fixedLoans']
+  }>
+  [ModalsKeys.AUTO_CONVERSION_TO_VARIABLE]: ModalData<{
+    epochNumber: string
+    fixedLoans: PortfolioTranche['fixedLoans']
+  }>
+  [ModalsKeys.FIX_APY]: ModalData<{
+    pool: PortfolioLendingPool & {
+      selectedTranche: PortfolioTranche & { balanceData: UserTrancheBalance }
+    }
+    nextEpochTime: number
+  }>
+  [ModalsKeys.FIXED_LOAN]: ModalData<{
+    fixedLoans: PortfolioTranche['fixedLoans']
+  }>
   [ModalsKeys.OPT_IN]: ModalData
   [ModalsKeys.OPT_OUT]: ModalData<{ loanTicket: LoanTicket; poolName: string }>
   [ModalsKeys.BORROWER_IDENTIFIED]: ModalData<{
@@ -122,7 +142,7 @@ export type Modals = {
     }
   }>
   [ModalsKeys.LEND]: ModalData<{
-    pool: PoolOverviewWithDelegate
+    pool: PoolOverview
   }>
 }
 

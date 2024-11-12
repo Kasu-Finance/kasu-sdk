@@ -13,12 +13,14 @@ import LendingPortfolioTableRow from '@/components/organisms/portfolio/LendingPo
 
 type LendingPortfolioTableProps = {
   portfolioPools: PortfolioLendingPool[]
+  currentEpoch: string
 }
 
 const ROW_PER_PAGE = 5
 
 const LendingPortfolioTable: React.FC<LendingPortfolioTableProps> = ({
   portfolioPools,
+  currentEpoch,
 }) => {
   const { filter } = usePortfolioState()
 
@@ -42,11 +44,12 @@ const LendingPortfolioTable: React.FC<LendingPortfolioTableProps> = ({
             <LendingPortfolioTableRow
               key={portfolioPool.id}
               portfolioPool={portfolioPool}
+              currentEpoch={currentEpoch}
             />
           ))
         ) : (
           <TableRow>
-            <TableCell colSpan={5} sx={{ pt: 7, pb: 7 }}>
+            <TableCell colSpan={7} sx={{ pt: 7, pb: 7 }}>
               {portfolioPools.length ? (
                 <NoMatchingFilter />
               ) : (

@@ -9,6 +9,10 @@ import {
   UserLock,
 } from '@solidant/kasu-sdk/src/services/Locking/types'
 import {
+  PortfolioLendingPool,
+  PortfolioTranche,
+} from '@solidant/kasu-sdk/src/services/Portfolio/types'
+import {
   UserRequestEvent,
   UserTrancheBalance,
 } from '@solidant/kasu-sdk/src/services/UserLending/types'
@@ -27,10 +31,29 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 const initialState: Modals = {
   connectWalletModal: { isOpen: false },
   loyaltyLevelsModal: { isOpen: false },
-  fixedLoanModal: { isOpen: false },
-  withdrawFundsAtExpiryModal: { isOpen: false },
-  autoConversionToVariableModal: { isOpen: false },
-  fixApyModal: { isOpen: false },
+  fixedLoanModal: {
+    isOpen: false,
+    fixedLoans: null as unknown as PortfolioTranche['fixedLoans'],
+  },
+  withdrawFundsAtExpiryModal: {
+    isOpen: false,
+    fixedLoans: null as unknown as PortfolioTranche['fixedLoans'],
+    pool: null as unknown as PortfolioLendingPool,
+  },
+  autoConversionToVariableModal: {
+    isOpen: false,
+    epochNumber: '',
+    fixedLoans: null as unknown as PortfolioTranche['fixedLoans'],
+  },
+  fixApyModal: {
+    isOpen: false,
+    nextEpochTime: null as unknown as number,
+    pool: null as unknown as PortfolioLendingPool & {
+      selectedTranche: PortfolioTranche & {
+        balanceData: UserTrancheBalance
+      }
+    },
+  },
   borrowerIdentifiedModal: {
     isOpen: false,
     loanTicket: null as unknown as LoanTicket,

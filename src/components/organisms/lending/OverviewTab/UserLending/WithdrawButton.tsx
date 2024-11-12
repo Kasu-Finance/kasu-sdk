@@ -20,7 +20,9 @@ const WithdrawButton: React.FC<WithdrawButtonProps> = ({ pool }) => {
 
   const { openModal } = useModalState()
 
-  const { userLendingTrancheBalance } = useUserLendingTrancheBalance(pool)
+  const { userLendingTrancheBalance } = useUserLendingTrancheBalance(
+    pool.tranches
+  )
 
   const handleWithdraw = () => {
     if (!userLendingTrancheBalance) return

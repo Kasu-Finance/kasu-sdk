@@ -9,10 +9,14 @@ import CsvDownloadButton from '@/components/organisms/portfolio/LendingPortfolio
 import LendingPortfolioTableFilter from '@/components/organisms/portfolio/LendingPortfolioTab/LendingPortfolioTableFilter'
 import LendingPortfolioTableWrapper from '@/components/organisms/portfolio/LendingPortfolioTab/LendingPortfolioTableWrapper'
 
+import { getCurrentEpoch } from '@/app/_requests/currentEpoch'
 import { getPoolOverview } from '@/app/_requests/pools'
 
 const Portfolio = async () => {
-  const pools = await getPoolOverview()
+  const [pools, currentEpoch] = await Promise.all([
+    getPoolOverview(),
+    getCurrentEpoch(),
+  ])
 
   const { t } = getTranslation()
 
@@ -23,12 +27,21 @@ const Portfolio = async () => {
         justifyContent='space-between'
       >
         <Box display='flex' alignItems='center' gap={1}>
-          <LendingPortfolioTableFilter poolOverviews={pools} />
-          <CsvDownloadButton poolOverviews={pools} />
+          <LendingPortfolioTableFilter
+            poolOverviews={pools}
+            currentEpoch={currentEpoch}
+          />
+          <CsvDownloadButton
+            poolOverviews={pools}
+            currentEpoch={currentEpoch}
+          />
         </Box>
       </CustomCardHeader>
       <CustomInnerCardContent sx={{ p: 0 }}>
-        <LendingPortfolioTableWrapper poolOverviews={pools} />
+        <LendingPortfolioTableWrapper
+          poolOverviews={pools}
+          currentEpoch={currentEpoch}
+        />
       </CustomInnerCardContent>
     </CustomCard>
   )

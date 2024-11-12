@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material'
-import { formatUnits } from 'ethers/lib/utils'
-import React, { Dispatch, SetStateAction, useCallback } from 'react'
+import React, { useCallback } from 'react'
 
+import useFixApyState from '@/hooks/context/useFixApyState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import getTranslation from '@/hooks/useTranslation'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
@@ -17,23 +17,17 @@ import { customTypography } from '@/themes/typography'
 import { toBigNumber } from '@/utils'
 
 type FixAmountInputProps = {
-  amount: string
-  setAmount: Dispatch<SetStateAction<string>>
+  balance: string
 }
 
-const FixAmountInput: React.FC<FixAmountInputProps> = ({
-  amount,
-  setAmount,
-}) => {
+const FixAmountInput: React.FC<FixAmountInputProps> = ({ balance }) => {
   const { t } = getTranslation()
+
+  const { amount, setAmount } = useFixApyState()
 
   const { modalStatus, setModalStatus } = useModalStatusState()
 
   const supportedToken = useSupportedTokenInfo()
-
-  const usdcDecimals = supportedToken?.[SupportedTokens.USDC].decimals
-
-  const balance = formatUnits('0', usdcDecimals)
 
   const validateAmount = useCallback(
     (inputAmount: string) => {

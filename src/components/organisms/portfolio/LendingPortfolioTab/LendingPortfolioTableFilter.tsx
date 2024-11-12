@@ -9,19 +9,22 @@ import getTranslation from '@/hooks/useTranslation'
 
 type LendingPortfolioTableFilterProps = {
   poolOverviews: PoolOverview[]
+  currentEpoch: string
 }
 
 const LendingPortfolioTableFilter: React.FC<
   LendingPortfolioTableFilterProps
-> = ({ poolOverviews }) => {
+> = ({ poolOverviews, currentEpoch }) => {
   const { t } = getTranslation()
 
-  const { lendingPortfolioData, isLoading } =
-    useLendingPortfolioData(poolOverviews)
+  const { portfolioLendingPools, isLoading } = useLendingPortfolioData(
+    poolOverviews,
+    currentEpoch
+  )
 
   const { filter, setFilter } = usePortfolioState()
 
-  if (isLoading || !lendingPortfolioData?.lendingPools.length) {
+  if (isLoading || !portfolioLendingPools?.length) {
     return null
   }
 

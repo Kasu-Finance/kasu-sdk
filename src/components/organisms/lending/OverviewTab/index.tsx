@@ -6,6 +6,7 @@ import UserLoyalty from '@/components/organisms/lending/OverviewTab/UserLoyalty'
 import UserTransactions from '@/components/organisms/lending/OverviewTab/UserTransactions'
 
 import getLockPeriods from '@/actions/getLockPeriods'
+import { getCurrentEpoch } from '@/app/_requests/currentEpoch'
 import { getPoolWithDelegate } from '@/app/_requests/poolWithDelegate'
 
 type PoolOverviewProps = {
@@ -13,9 +14,10 @@ type PoolOverviewProps = {
 }
 
 const PoolOverviewTab: React.FC<PoolOverviewProps> = async ({ poolId }) => {
-  const [poolsWithDelegate, lockPeriods] = await Promise.all([
+  const [poolsWithDelegate, lockPeriods, currentEpoch] = await Promise.all([
     getPoolWithDelegate(poolId),
     getLockPeriods(),
+    getCurrentEpoch(),
   ])
 
   return (
@@ -25,6 +27,7 @@ const PoolOverviewTab: React.FC<PoolOverviewProps> = async ({ poolId }) => {
       <UserLoyalty
         pools={poolsWithDelegate}
         poolId={poolId}
+        currentEpoch={currentEpoch}
         lockPeriods={lockPeriods}
       />
       <UserTransactions poolId={poolId} />

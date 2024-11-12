@@ -1,5 +1,6 @@
 import { Button, Stack, Typography } from '@mui/material'
 
+import useModalState from '@/hooks/context/useModalState'
 import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
@@ -10,8 +11,16 @@ import DialogHeader from '@/components/molecules/DialogHeader'
 import FixedLoanTableHeader from '@/components/organisms/modals/FixedLoanModal/FixedLoanTableHeader'
 import FixedLoanTableRow from '@/components/organisms/modals/FixedLoanModal/FixedLoanTableRow'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
+import { Routes } from '@/config/routes'
+
 const FixedLoanModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { t } = getTranslation()
+
+  const { modal } = useModalState()
+
+  const { fixedLoans } = modal[ModalsKeys.FIXED_LOAN]
 
   return (
     <CustomCard>
@@ -40,17 +49,32 @@ const FixedLoanModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           },
         }}
         tableHeader={<FixedLoanTableHeader />}
-        tableBody={[1, 2].map((_, index) => (
-          <FixedLoanTableRow key={index} />
+        tableBody={fixedLoans.map((fixedLoan, index) => (
+          <FixedLoanTableRow fixedLoan={fixedLoan} key={index} />
         ))}
       />
       <WaveBox variant='gold' sx={{ px: 2, pt: 1, pb: 3 }}>
         <Stack spacing={3}>
           <Typography variant='baseSm'>
-            <Typography variant='inherit' color='error' component='span'>
-              *{' '}
-            </Typography>
-            {t('modals.fixedLoan.description')}
+            {t('modals.fixedLoan.description-1')}{' '}
+            <Button
+              variant='text'
+              sx={{
+                p: 0,
+                height: 'auto',
+                textTransform: 'unset',
+                font: 'inherit',
+                verticalAlign: 'inherit',
+                display: 'inline',
+                color: 'white',
+              }}
+              href={Routes.portfolio.root.url}
+              target='_blank'
+              style={{ font: 'inherit', color: 'white' }}
+            >
+              {t('general.myPortfolio')}
+            </Button>{' '}
+            {t('modals.fixedLoan.description-2')}
           </Typography>
           <Button
             variant='contained'

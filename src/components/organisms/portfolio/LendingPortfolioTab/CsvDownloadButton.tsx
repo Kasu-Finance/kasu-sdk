@@ -13,19 +13,23 @@ import { DownloadRoundedIcon } from '@/assets/icons'
 
 type CsvDownloadButtonProps = {
   poolOverviews: PoolOverview[]
+  currentEpoch: string
 }
 
 const CsvDownloadButton: React.FC<CsvDownloadButtonProps> = ({
   poolOverviews,
+  currentEpoch,
 }) => {
   const { t } = getTranslation()
 
-  const { lendingPortfolioData, isLoading } =
-    useLendingPortfolioData(poolOverviews)
+  const { portfolioLendingPools, isLoading } = useLendingPortfolioData(
+    poolOverviews,
+    currentEpoch
+  )
 
   const { openModal } = useModalState()
 
-  if (isLoading || !lendingPortfolioData?.lendingPools.length) {
+  if (isLoading || !portfolioLendingPools?.length) {
     return null
   }
 

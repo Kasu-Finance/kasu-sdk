@@ -20,8 +20,9 @@ type UserLendingSummaryProps = {
 const UserLendingSummary: React.FC<UserLendingSummaryProps> = ({ pool }) => {
   const { t } = getTranslation()
 
-  const { userLendingTrancheBalance, isLoading } =
-    useUserLendingTrancheBalance(pool)
+  const { userLendingTrancheBalance, isLoading } = useUserLendingTrancheBalance(
+    pool.tranches
+  )
 
   if (isLoading) {
     return (
