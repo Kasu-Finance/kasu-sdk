@@ -51,7 +51,7 @@ export interface PortfolioTranche extends TrancheData {
         epochLockStart: string;
         epochLockEnd: string;
         epochLockDuration: string;
-        isWithdrawalRequested;
+        isWithdrawalRequested: boolean;
         startTime: EpochTimeStamp;
         amount: string;
         endTime: EpochTimeStamp;
