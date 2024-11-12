@@ -14,6 +14,16 @@ export const lastEpochQuery = gql`
                 lendingPool {
                     id
                     name
+                    balance
+                    configuration {
+                        lendingPoolWithdrawalConfig {
+                            requestEpochsInAdvance
+                            cancelRequestEpochsInAdvance
+                        }
+                    }
+                    tranches {
+                        shares
+                    }
                 }
                 lendingPoolTrancheUserDetails {
                     lendingPoolTrancheUserEpochSharesUpdates(
@@ -23,6 +33,17 @@ export const lastEpochQuery = gql`
                         first: 1
                     ) {
                         shares
+                    }
+                    userLendingPoolTrancheFixedTermDepositLocks {
+                        lockId
+                        initialTrancheShares
+                        isWithdrawalRequested
+                        createdOn
+                        epochLockStart
+                        epochLockEnd
+                        lendingPoolTrancheFixedTermConfig {
+                            epochLockDuration
+                        }
                     }
                     tranche {
                         id

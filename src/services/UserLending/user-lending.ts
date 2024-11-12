@@ -47,7 +47,6 @@ import {
     UserPoolBalance,
     UserRequest,
     UserRequestEvent,
-    UserRequestType,
     UserTrancheBalance,
 } from './types';
 
@@ -199,6 +198,39 @@ export class UserLending {
             depositData,
         );
     }
+
+    async withdrawAtExpiry(
+        lendingPool: string,
+        fixedTermDepositId: string,
+    ): Promise<ContractTransaction> {
+        return await this._lendingPoolManagerAbi.requestFixedTermDepositWithdrawal(
+            lendingPool,
+            fixedTermDepositId,
+        );
+    }
+
+    async lockDepositForFixedTerm(
+        lendingPool: string,
+        tranche: string,
+        amount: BigNumberish,
+        fixedTermConfigId: BigNumberish,
+    ): Promise<ContractTransaction> {
+        const trancheContract: ILendingPoolTrancheAbi =
+            ILendingPoolTrancheAbi__factory.connect(
+                tranche,
+                this._signerOrProvider,
+            );
+
+        const shareAmount = await trancheContract.convertToShares(amount);
+
+        return await this._lendingPoolManagerAbi.lockDepositForFixedTerm(
+            lendingPool,
+            tranche,
+            shareAmount,
+            fixedTermConfigId,
+        );
+    }
+
     async cancelDepositRequest(
         lendingPool: string,
         dNftID: BigNumberish,

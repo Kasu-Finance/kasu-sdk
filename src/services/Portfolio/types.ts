@@ -1,4 +1,4 @@
-import { TrancheData } from '../DataService/types';
+import { PoolOverview, TrancheData } from '../DataService/types';
 
 export interface PortfolioRewards {
     bonusYieldEarnings: {
@@ -40,25 +40,30 @@ export interface PortfolioSummary {
     };
 }
 
-export interface PortfolioTranche {
-    name: string;
-    id: string;
-    apy: string;
+export interface PortfolioTranche extends TrancheData {
     investedAmount: string;
     yieldEarnings: {
         lastEpoch: string;
         lifetime: string;
     };
-    fixedTermConfig: TrancheData['fixedTermConfig'];
+    fixedLoans: {
+        lockId: string;
+        epochLockStart: string;
+        epochLockEnd: string;
+        epochLockDuration: string;
+        isWithdrawalRequested;
+        startTime: EpochTimeStamp;
+        amount: string;
+        endTime: EpochTimeStamp;
+    }[];
 }
-export interface PortfolioLendingPool {
-    id: string;
-    name: string;
+export interface PortfolioLendingPool extends Omit<PoolOverview, 'tranches'> {
     totalInvestedAmount: string;
     totalYieldEarningsLastEpoch: string;
     totalYieldEarningsLifetime: string;
     isActive: boolean;
     tranches: PortfolioTranche[];
+    requestEpochsInAdvance: string;
 }
 export interface LendingPortfolioData {
     lendingPools: PortfolioLendingPool[];
@@ -71,8 +76,29 @@ export interface LastEpochQueryResult {
             lendingPool: {
                 id: string;
                 name: string;
+                balance: string;
+                configuration: {
+                    lendingPoolWithdrawalConfig: {
+                        requestEpochsInAdvance: string;
+                        cancelRequestEpochsInAdvance: string;
+                    };
+                };
+                tranches: {
+                    shares: string;
+                }[];
             };
             lendingPoolTrancheUserDetails: {
+                userLendingPoolTrancheFixedTermDepositLocks: {
+                    lockId: string;
+                    createdOn: string;
+                    isWithdrawalRequested: boolean;
+                    initialTrancheShares: string;
+                    epochLockStart: string;
+                    epochLockEnd: string;
+                    lendingPoolTrancheFixedTermConfig: {
+                        epochLockDuration: string;
+                    };
+                }[];
                 lendingPoolTrancheUserEpochSharesUpdates: {
                     shares: string;
                 }[];
