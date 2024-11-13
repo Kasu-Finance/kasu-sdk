@@ -57,9 +57,10 @@ const KycState: React.FC<KycStateProps> = ({ children }) => {
 
           setCustomerStatus(status)
 
-          if (status !== 'Active') return
-
-          setKycCompleted(account.toLowerCase())
+          // no email status means kyc completed but email is not present ( edge case for users that setup KYC before email was setup )
+          if (status === 'Active' || status === 'No Email') {
+            setKycCompleted(account.toLowerCase())
+          }
         } catch (error) {
           console.error(error)
         } finally {

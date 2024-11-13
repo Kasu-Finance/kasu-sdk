@@ -31,6 +31,7 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 const initialState: Modals = {
   connectWalletModal: { isOpen: false },
   loyaltyLevelsModal: { isOpen: false },
+  missingEmailModal: { isOpen: false },
   fixedLoanModal: {
     isOpen: false,
     fixedLoans: null as unknown as PortfolioTranche['fixedLoans'],

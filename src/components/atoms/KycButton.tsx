@@ -31,6 +31,14 @@ const KycButton: React.FC<ButtonProps> = ({ children, ...rest }) => {
     }
 
     if (kycCompleted) {
+      if (status === 'No Email') {
+        openModal({
+          name: ModalsKeys.MISSING_EMAIL,
+        })
+
+        return
+      }
+
       return rest.onClick?.(e)
     }
 

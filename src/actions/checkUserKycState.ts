@@ -6,11 +6,16 @@ import NEXERA_API_BASE_URL, {
   NEXERA_PROJECT_ID,
 } from '@/config/nexera/api.nexera'
 
-export type CustomerStatus = Awaited<ReturnType<typeof getCustomerStatus>>
+export type CustomerStatus =
+  | Awaited<ReturnType<typeof getCustomerStatus>>
+  | 'No Email'
 
 type ApiRes =
   | {
       status: CustomerStatus
+      customerEmails: {
+        email: string
+      }[]
     }
   | {
       message: string
@@ -45,6 +50,10 @@ const checkUserKycState = async (
       }
 
       return undefined
+    }
+
+    if (!data.customerEmails[0]?.email) {
+      return 'No Email'
     }
 
     return data.status

@@ -50,6 +50,7 @@ export enum ModalsKeys {
   WITHDRAW_FUNDS_AT_EXPIRY = 'withdrawFundsAtExpiryModal',
   AUTO_CONVERSION_TO_VARIABLE = 'autoConversionToVariableModal',
   FIX_APY = 'fixApyModal',
+  MISSING_EMAIL = 'missingEmailModal',
   UNRELEASED_FEATURE = 'unreleasedFeatureModal',
 }
 
@@ -62,6 +63,7 @@ export type ModalData<T = void> = T extends void ? ModalBase : T & ModalBase
 export type Modals = {
   [ModalsKeys.LOYALTY_LEVELS]: ModalData
   [ModalsKeys.UNRELEASED_FEATURE]: ModalData
+  [ModalsKeys.MISSING_EMAIL]: ModalData
   [ModalsKeys.WITHDRAW_FUNDS_AT_EXPIRY]: ModalData<{
     pool: PortfolioLendingPool
     fixedLoans: PortfolioTranche['fixedLoans']

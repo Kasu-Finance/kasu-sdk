@@ -15,6 +15,7 @@ import LendingModalWrapper from '@/components/organisms/modals/LendingModal/Lend
 import LoanContractModal from '@/components/organisms/modals/LoanContractModal'
 import LockModalWrapper from '@/components/organisms/modals/LockModal/LockModalWrapper'
 import LoyaltyLevelsModal from '@/components/organisms/modals/LoyaltyLevelsModal'
+import MissingEmailModal from '@/components/organisms/modals/MissingEmailModal'
 import OptInModal from '@/components/organisms/modals/OptInModal'
 import OptOutModal from '@/components/organisms/modals/OptOutModal'
 import PendingDecisionModal from '@/components/organisms/modals/PendingDecisionsModal'
@@ -53,6 +54,10 @@ export const getModal = (
         component: <LoyaltyLevelsModal handleClose={handleClose} />,
         ariaLabel: 'Loyalty Levels',
         ariaDescription: 'Information about loyalty levels',
+      }
+    case ModalsKeys.MISSING_EMAIL:
+      return {
+        component: <MissingEmailModal handleClose={handleClose} />,
       }
     case ModalsKeys.LOCK:
       return {

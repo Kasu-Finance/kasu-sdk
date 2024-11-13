@@ -268,6 +268,11 @@
       "message": "This feature will be released shortly",
       "action": "Ok"
     },
+    "missingEmail": {
+      "title": "Email Address",
+      "description-1": "Kasu is all about transparency and choice.​",
+      "description-2": "Please contact us via the feedback link to provide your email. We require this so that we can keep you fully informed of which end borrower(s) your funds are being loaned to."
+    },
     "fixedLoan": {
       "title": "Fixed Loan & APY​",
       "tableHeader": {
