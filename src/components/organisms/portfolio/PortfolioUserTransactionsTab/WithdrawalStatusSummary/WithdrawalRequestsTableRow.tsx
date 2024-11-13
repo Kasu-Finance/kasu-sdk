@@ -1,11 +1,12 @@
 import { Box, TableCell, TableRow, Typography } from '@mui/material'
+import { ReactNode } from 'react'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
 import ToolTip from '@/components/atoms/ToolTip'
 
 type WithdrawalRequestsTableRowProps = {
   title: string
-  tooltipInfo: string
+  tooltipInfo: ReactNode
   currentEpochValue: string
   totalLifetimeValue: string
 }

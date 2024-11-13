@@ -4,6 +4,9 @@ import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
 import getTranslation from '@/hooks/useTranslation'
 
+import WithdrawalStatusSummaryAcceptedTooltip from '@/components/molecules/tooltips/WithdrawalStatusSummary/WithdrawalStatusSummaryAcceptedTooltip'
+import WithdrawalStatusSummaryQueuedTooltip from '@/components/molecules/tooltips/WithdrawalStatusSummary/WithdrawalStatusSummaryQueuedTooltip'
+import WithdrawalStatusSummaryRequestedTooltip from '@/components/molecules/tooltips/WithdrawalStatusSummary/WithdrawalStatusSummaryRequestedTooltip'
 import WithdrawalRequestsTableRow from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/WithdrawalStatusSummary/WithdrawalRequestsTableRow'
 
 import {
@@ -33,9 +36,7 @@ const WithdrawalRequestsTableBody = () => {
         title={t(
           'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-1'
         )}
-        tooltipInfo={t(
-          'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-1-tooltip'
-        )}
+        tooltipInfo={<WithdrawalStatusSummaryRequestedTooltip />}
         currentEpochValue={`${formatAmount(currentEpochAmounts.requested, { minDecimals: 2 })} USDC`}
         totalLifetimeValue={`${formatAmount(lifetimeAmounts.requested, { minDecimals: 2 })} USDC`}
       />
@@ -43,9 +44,7 @@ const WithdrawalRequestsTableBody = () => {
         title={t(
           'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-2'
         )}
-        tooltipInfo={t(
-          'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-2-tooltip'
-        )}
+        tooltipInfo={<WithdrawalStatusSummaryQueuedTooltip />}
         currentEpochValue={`${formatAmount(currentEpochAmounts.queued, { minDecimals: 2 })} USDC`}
         totalLifetimeValue='N/A'
       />
@@ -53,9 +52,7 @@ const WithdrawalRequestsTableBody = () => {
         title={t(
           'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-3'
         )}
-        tooltipInfo={t(
-          'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-3-tooltip'
-        )}
+        tooltipInfo={<WithdrawalStatusSummaryAcceptedTooltip />}
         currentEpochValue={`${formatAmount(currentEpochAmounts.accepted, { minDecimals: 2 })} USDC`}
         totalLifetimeValue={`${formatAmount(lifetimeAmounts.accepted, { minDecimals: 2 })} USDC`}
       />

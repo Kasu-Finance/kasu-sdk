@@ -3,6 +3,9 @@
 import useLoanTickets from '@/hooks/lending/useLoanTickets'
 import getTranslation from '@/hooks/useTranslation'
 
+import SubsequentTransactionsOptedInTooltip from '@/components/molecules/tooltips/SubsequentTransactions/SubsequentTransactionsOptedInTooltip'
+import SubsequentTransactionsOptedOutTooltip from '@/components/molecules/tooltips/SubsequentTransactions/SubsequentTransactionsOptedOutTooltip'
+import SubsequentTransactionsPendingTooltip from '@/components/molecules/tooltips/SubsequentTransactions/SubsequentTransactionsPendingTooltip'
 import SubsequentTransactionsTableRow from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/LendingStatusSummary/SubsequentTransactions/SubsequentTransactionsTableRow'
 
 import { calculateSubsequentTransactionSummary, formatAmount } from '@/utils'
@@ -27,9 +30,7 @@ const SubsequentTransactionsTableBody: React.FC<
         title={t(
           'portfolio.transactions.lendingStatusSummary.subsequentTransactions.metric-2'
         )}
-        tooltipInfo={t(
-          'portfolio.transactions.lendingStatusSummary.subsequentTransactions.metric-2-tooltip'
-        )}
+        tooltipInfo={<SubsequentTransactionsPendingTooltip />}
         currentEpochValue={`${formatAmount(currentEpochAmounts.pendingDecisionAmount, { minDecimals: 2 })} USDC`}
         totalLifetimeValue={`${formatAmount(lifetimeAmounts.pendingDecisionAmount, { minDecimals: 2 })} USDC`}
       />
@@ -37,9 +38,7 @@ const SubsequentTransactionsTableBody: React.FC<
         title={t(
           'portfolio.transactions.lendingStatusSummary.subsequentTransactions.metric-3'
         )}
-        tooltipInfo={t(
-          'portfolio.transactions.lendingStatusSummary.subsequentTransactions.metric-3-tooltip'
-        )}
+        tooltipInfo={<SubsequentTransactionsOptedInTooltip />}
         currentEpochValue={`${formatAmount(currentEpochAmounts.optedInAmount, { minDecimals: 2 })} USDC`}
         totalLifetimeValue={`${formatAmount(lifetimeAmounts.optedInAmount, { minDecimals: 2 })} USDC`}
       />
@@ -47,9 +46,7 @@ const SubsequentTransactionsTableBody: React.FC<
         title={t(
           'portfolio.transactions.lendingStatusSummary.subsequentTransactions.metric-4'
         )}
-        tooltipInfo={t(
-          'portfolio.transactions.lendingStatusSummary.subsequentTransactions.metric-4-tooltip'
-        )}
+        tooltipInfo={<SubsequentTransactionsOptedOutTooltip />}
         currentEpochValue={`${formatAmount(currentEpochAmounts.optedOutAmount, { minDecimals: 2 })} USDC`}
         totalLifetimeValue={`${formatAmount(lifetimeAmounts.optedOutAmount, { minDecimals: 2 })} USDC`}
       />

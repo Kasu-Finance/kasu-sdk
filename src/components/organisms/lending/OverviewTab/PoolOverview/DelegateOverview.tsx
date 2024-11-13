@@ -3,6 +3,8 @@ import { Box, Divider, Grid, Typography } from '@mui/material'
 import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
+import ToolTip from '@/components/atoms/ToolTip'
+import TermsAndStructureTooltip from '@/components/molecules/tooltips/TermsAndStructureTooltip'
 
 import { formatAmount } from '@/utils'
 import formatDuration from '@/utils/formats/formatDuration'
@@ -67,7 +69,7 @@ const DelegateOverview: React.FC<DelegateOverviewProps> = ({ pool }) => {
           <InfoRow
             title={t('lending.poolOverview.detailCard.terms.label')}
             titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
-            toolTipInfo={t('lending.poolOverview.detailCard.terms.tooltip')}
+            toolTipInfo={<ToolTip title={<TermsAndStructureTooltip />} />}
             showDivider
             metric={
               <Typography variant='baseMdBold'>

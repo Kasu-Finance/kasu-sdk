@@ -4,6 +4,10 @@ import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
 import getTranslation from '@/hooks/useTranslation'
 
+import LendingStatusSummaryAcceptedTooltip from '@/components/molecules/tooltips/LendingStatusSummary/LendingStatusSummaryAcceptedTooltip'
+import LendingStatusSummaryReallocationTooltip from '@/components/molecules/tooltips/LendingStatusSummary/LendingStatusSummaryReallocations'
+import LendingStatusSummaryRejectedTooltip from '@/components/molecules/tooltips/LendingStatusSummary/LendingStatusSummaryRejectedTooltip'
+import LendingStatusSummaryRequestedTooltip from '@/components/molecules/tooltips/LendingStatusSummary/LendingStatusSummaryRequestedTooltip'
 import LendingRequestsTableRow from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/LendingStatusSummary/LendingRequests/LendingRequestsTableRow'
 
 import {
@@ -33,9 +37,7 @@ const LendingRequestsTableBody = () => {
         title={t(
           'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-1'
         )}
-        tooltipInfo={t(
-          'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-1-tooltip'
-        )}
+        tooltipInfo={<LendingStatusSummaryRequestedTooltip />}
         currentEpochValue={`${formatAmount(currentEpochAmounts.requested, { minDecimals: 2 })} USDC`}
         totalLifetimeValue={`${formatAmount(lifetimeAmounts.requested, { minDecimals: 2 })} USDC`}
       />
@@ -43,9 +45,7 @@ const LendingRequestsTableBody = () => {
         title={t(
           'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-2'
         )}
-        tooltipInfo={t(
-          'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-2-tooltip'
-        )}
+        tooltipInfo={<LendingStatusSummaryAcceptedTooltip />}
         currentEpochValue={`${formatAmount(currentEpochAmounts.accepted, { minDecimals: 2 })} USDC`}
         totalLifetimeValue={`${formatAmount(lifetimeAmounts.accepted, { minDecimals: 2 })} USDC`}
       />
@@ -53,9 +53,7 @@ const LendingRequestsTableBody = () => {
         title={t(
           'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-3'
         )}
-        tooltipInfo={t(
-          'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-3-tooltip'
-        )}
+        tooltipInfo={<LendingStatusSummaryRejectedTooltip />}
         currentEpochValue={`${formatAmount(currentEpochAmounts.rejected, { minDecimals: 2 })} USDC`}
         totalLifetimeValue={`${formatAmount(lifetimeAmounts.rejected, { minDecimals: 2 })} USDC`}
       />
@@ -63,9 +61,7 @@ const LendingRequestsTableBody = () => {
         title={t(
           'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-4'
         )}
-        tooltipInfo={t(
-          'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-4-tooltip'
-        )}
+        tooltipInfo={<LendingStatusSummaryReallocationTooltip />}
         currentEpochValue={`${formatAmount(currentEpochAmounts.reallocated, { minDecimals: 2 })} USDC`}
         totalLifetimeValue={`${formatAmount(lifetimeAmounts.reallocated, { minDecimals: 2 })} USDC`}
       />

@@ -5,7 +5,7 @@ import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
-import GrossApyTooltip from '@/components/molecules/tooltips/GrossApyTooltip'
+import VariableAndFixedApyTooltip from '@/components/molecules/tooltips/VariableAndFixedApyTooltip'
 
 import {
   formatAmount,
@@ -46,7 +46,7 @@ const LoanOverview: React.FC<LoanOverviewProps> = ({ pool }) => {
             titleStyle={{
               variant: 'h5',
             }}
-            toolTipInfo={<ToolTip title={<GrossApyTooltip />} />}
+            toolTipInfo={<ToolTip title={<VariableAndFixedApyTooltip />} />}
             metric={
               <Typography variant='h5' color='gold.dark'>
                 {formatPercentage(tranche.apy).replaceAll(' ', '')}
@@ -66,7 +66,9 @@ const LoanOverview: React.FC<LoanOverviewProps> = ({ pool }) => {
                 <InfoRow
                   key={configId}
                   title={`${t('general.fixedApy')}, ~ ${formatToNearestTime(durationInMs)}`}
-                  toolTipInfo={<ToolTip title={<GrossApyTooltip />} />}
+                  toolTipInfo={
+                    <ToolTip title={<VariableAndFixedApyTooltip />} />
+                  }
                   titleStyle={{
                     variant: 'h5',
                   }}
@@ -107,7 +109,9 @@ const LoanOverview: React.FC<LoanOverviewProps> = ({ pool }) => {
           />
           <InfoRow
             title={t('lending.poolOverview.trancheCard.minDeposit')}
-            toolTipInfo='info'
+            toolTipInfo={t(
+              'lending.poolOverview.trancheCard.minDeposit-tooltip'
+            )}
             showDivider
             metric={
               <Typography variant='baseMdBold'>
@@ -121,7 +125,9 @@ const LoanOverview: React.FC<LoanOverviewProps> = ({ pool }) => {
           />
           <InfoRow
             title={t('lending.poolOverview.trancheCard.maxDeposit')}
-            toolTipInfo='info'
+            toolTipInfo={t(
+              'lending.poolOverview.trancheCard.maxDeposit-tooltip'
+            )}
             showDivider
             metric={
               <Typography variant='baseMdBold'>

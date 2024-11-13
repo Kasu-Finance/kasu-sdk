@@ -6,6 +6,9 @@ import { formatUnits } from 'ethers/lib/utils'
 import useUserLendingTrancheBalance from '@/hooks/lending/useUserLendingTrancheBalance'
 import getTranslation from '@/hooks/useTranslation'
 
+import ToolTip from '@/components/atoms/ToolTip'
+import LifetimeInterestEarnedTooltip from '@/components/molecules/tooltips/LifetimeInterestEarnedTooltip'
+import WeightedAverageApyTooltip from '@/components/molecules/tooltips/WeightAverageApyTooltip'
 import WaveCard from '@/components/molecules/WaveCard'
 
 import { formatAmount } from '@/utils'
@@ -58,9 +61,7 @@ const UserLendingSummary: React.FC<UserLendingSummaryProps> = ({ pool }) => {
       <Grid item sm={4}>
         <WaveCard
           title={t('lending.poolOverview.investmentCard.weightedAvgApy.label')}
-          toolTipInfo={t(
-            'lending.poolOverview.investmentCard.weightedAvgApy.tooltip'
-          )}
+          toolTipInfo={<ToolTip title={<WeightedAverageApyTooltip />} />}
           content={(averageApy * 100).toFixed(2)}
           unit='%'
           infoColumnProps={{ titleStyle: { textTransform: 'capitalize' } }}
@@ -69,9 +70,7 @@ const UserLendingSummary: React.FC<UserLendingSummaryProps> = ({ pool }) => {
       <Grid item sm={4}>
         <WaveCard
           title={t('lending.poolOverview.investmentCard.totYieldEarned.label')}
-          toolTipInfo={t(
-            'lending.poolOverview.investmentCard.totYieldEarned.tooltip'
-          )}
+          toolTipInfo={<ToolTip title={<LifetimeInterestEarnedTooltip />} />}
           content={formatAmount(totalYieldEarned)}
           unit='USDC'
         />

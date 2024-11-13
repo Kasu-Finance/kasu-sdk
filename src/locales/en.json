@@ -99,9 +99,34 @@
     "seconds": "seconds"
   },
   "grossApy": {
-    "tooltip-1": "The Gross Annual Percentage Yield (before Kasu protocol fees) currently offered by the Delegate for this Lending Strategy, assuming all repayments will be made as expected.",
-    "tooltip-2": "Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 12.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).",
-    "tooltip-3": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee to fund the Kasu protocol operations."
+    "tooltip-1": "The expected interest earned by Lenders on an annualised basis, prior to Kasu protocol fees being deducted, assuming all repayments will be made as expected. This does not account for the additional APY earned from compound interest, which accrues every Epoch (every seven days).",
+    "tooltip-2": "Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 13.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).​",
+    "tooltip-3": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations.",
+    "tooltip-4": "In the event of losses, Senior Tranche Lenders have the first claim on any recovered funds, followed by Mezzanine (if applicable) and Junior Tranche Lenders."
+  },
+  "variableAndFixedApy": {
+    "tooltip-1": "The expected interest earned by Lenders on an annualised basis, prior to Kasu protocol fees being deducted, assuming all repayments will be made as expected. This does not account for the additional APY earned from compound interest, which accrues every Epoch (every seven days).",
+    "tooltip-2": "A variable APY will be subject to change every {{ epoch }} epochs.",
+    "tooltip-3": "​A fixed APY will be locked for the specified period of time. ​During a fixed APY period, no Withdrawal Requests can be submitted.",
+    "tooltip-4": "Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 13.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).​",
+    "tooltip-5": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations.​",
+    "tooltip-6": "In the event of losses, Senior Tranche Lenders have the first claim on any recovered funds, followed by Mezzanine (if applicable) and Junior Tranche Lenders​"
+  },
+  "weightedAverageApy": {
+    "tooltip-1": "The average gross APY (prior to Kasu protocol fees being deducted) you are currently earning within this Lending Strategy that has been adjusted to reflect your weighted contribution to each Tranche relative to your total contribution across all Tranches (assuming all repayment will be made as expected). In the absence of multiple Tranches, this simply reflects the gross APY for the Single Loan Offer within this Lending Strategy",
+    "tooltip-2": "This does not account for the additional APY earned from compound interest, which accrues every Epoch (every seven days).",
+    "tooltip-3": "Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 13.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).​",
+    "tooltip-4": "​Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations.​"
+  },
+  "lifetimeInterestEarned": {
+    "tooltip-1": "The total combined amount of interest you have earned (after fees) from all tranches within this Lending Strategy (or Single Loan Offer in the absence of multiple Tranches) since you first started lending to this Lending Strategy. To view a breakdown of your total historical interest earned across all Lending Strategies, please visit the 'My Portfolio' tab.​",
+    "tooltip-2": "Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 13.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).​",
+    "tooltip-3": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations.​"
+  },
+  "apyStructure": {
+    "tooltip-1": "Indicates whether the APY(s) offered by the Delegate to Lenders is fixed for a specified period of time, or variable, or a mixture of both.",
+    "tooltip-2": "A variable APY will be subject to change every 4 epochs.",
+    "tooltip-3": "A fixed APY will be locked for the specified period of time. During a fixed APY period, no Withdrawal Requests can be submitted."
   },
   "locking": {
     "widgets": {
@@ -198,7 +223,7 @@
           "title": "APY Bonus",
           "subtitle": "(Bonus Interest Paid in KSU)",
           "metric-1": "APY Bonus Based on Loyalty Level",
-          "metric-1-tooltip": "Your APY bonus (paid in KSU) in addition to the APY associated with your current USDC lending balances, which is only applicable to Loyalty Level 1 and 2 KSU Token Lockers. Loyalty Level 2 Token Lockers receive a higher APY bonus than Loyalty Level 1. The APY bonus is variable and will change from time to time to meet liquidity demand and supply requirements.",
+          "metric-1-tooltip": "Your APY bonus (paid in KSU) in addition to the APY associated with your current USDC lending balances, which is only applicable to Loyalty Level 1 and 2 KSU Token Lockers. Loyalty Level 2 Token Lockers receive a higher APY bonus than Loyalty Level 1. The APY bonus is variable and will change from time to time to meet liquidity demand and supply requirements.​ There are no fees deducted from your APY bonus.​ There are no fees deducted from your APY bonus.",
           "metric-2-tooltip": "The balance of your APY bonus interest earnings that is available to claim.",
           "metric-3-tooltip": "The total amount of APY bonus interest your have received since the very first time you achieved (and maintained) Loyalty Level 1 or 2."
         },
@@ -1213,7 +1238,7 @@
         },
         "loansUnder": {
           "label": "Total Active Lending",
-          "tooltip": "Total USDC equivalent face value of all loans that the Delegate currently has deployed to end borrowers from this Lending Strategy."
+          "tooltip": "Total USDC equivalent face value of all outstanding loans that the Delegate currently has deployed to end borrowers from this Lending Strategy.​"
         },
         "tvl": {
           "label": "Total Value Locked (TVL)",
@@ -1226,7 +1251,7 @@
         "totalPoolYieldEarnings": {
           "label": "Total Interest Earned",
           "sublabel": "Interest Earned",
-          "tooltip": "Cumulative total gross interest earned by Lenders from this Lending Strategy since its inception on the Kasu protocol."
+          "tooltip": "Cumulative total gross interest earned by Lenders from this Lending Strategy since its inception on the Kasu protocol, prior to Kasu protocol fees being deducted.​"
         },
         "totalLossRate": {
           "label": "Total Loss Rate",
@@ -1236,7 +1261,9 @@
       },
       "trancheCard": {
         "minDeposit": "Minimum Lending Amount",
+        "minDeposit-tooltip": "The minimum Lending Request amount the Delegate will accept from a single Lender​",
         "maxDeposit": "Maximum Lending Amount",
+        "maxDeposit-tooltip": "The maximum Lending Request amount the Delegate will accept from a single Lender​",
         "remainingCapacity": {
           "label": "Remaining Capacity",
           "tooltip": "Amount of additional USDC funds the Delegate can accept within this Lending Strategy, also represented as a percentage of the maximum Lending Strategy target amount.​"
@@ -1285,7 +1312,7 @@
         },
         "apyBonus": {
           "label": "APY Bonus",
-          "tooltip": "Your APY bonus (paid in KSU) in addition to the APY associated with your current USDC lending balances, which is only applicable to Loyalty Level 1 and 2 KSU Token Lockers. Loyalty Level 2 Token Lockers receive a higher APY bonus than Loyalty Level 1. The APY bonus is variable and will change from time to time to meet liquidity demand and supply requirements."
+          "tooltip": "Your APY bonus (paid in KSU) in addition to the APY associated with your current USDC lending balances, which is only applicable to Loyalty Level 1 and 2 KSU Token Lockers. Loyalty Level 2 Token Lockers receive a higher APY bonus than Loyalty Level 1. The APY bonus is variable and will change from time to time to meet liquidity demand and supply requirements.​ There are no fees deducted from your APY bonus.​ There are no fees deducted from your APY bonus."
         },
         "totalBonusYield": {
           "label": "Total Bonus Interest Earnings",
@@ -1419,11 +1446,11 @@
       },
       "totalFunds": {
         "label": "Total Loan Funds Originated",
-        "tooltip": "Cumulative total USDC equivalent face value of all current and historical loans originated by the Delegate to end borrowers for this particular lending asset class, regardless of whether the loans have been made available on Kasu or not.​"
+        "tooltip": "Cumulative total USDC equivalent face value of all current and historical loans originated by the Delegate to end borrowers across all lending asset class, regardless of whether the loans have been made available on Kasu or not.​​​"
       },
       "totalLoans": {
         "label": "Total Loans Originated",
-        "tooltip": "Cumulative total number of all current and historical loans originated by the Delegate to end borrowers, regardless of whether the loans were made available on Kasu or not."
+        "tooltip": "Cumulative total number of all current and historical loans originated by the Delegate to end borrowers across all lending asset classes, regardless of whether the loans were made available on Kasu or not.​"
       },
       "assetClass": {
         "label": "Asset Class(es)",
@@ -1435,7 +1462,7 @@
       },
       "loans": {
         "label": "Total Active Lending",
-        "tooltip": "Total USDC equivalent face value of all loans that the Delegate currently has deployed to end borrowers, regardless of whether the loans have been made available on Kasu or not."
+        "tooltip": "Total USDC equivalent face value of all outstanding loans that the Delegate currently has deployed to end borrowers across all lending asset classes, regardless of whether the loans have been made available on Kasu or not.​"
       },
       "loss": {
         "label": "Historical Loss Rate",
@@ -1493,15 +1520,15 @@
       },
       "management": {
         "label": "Total Active Lending",
-        "tooltip": "Total USDC equivalent face value of all loans that the Delegate currently has deployed to end borrowers from this Lending Strategy."
+        "tooltip": "Total USDC equivalent face value of all outstanding loans that the Delegate currently has deployed to end borrowers from this Lending Strategy.​"
       },
       "yield": {
         "label": "Total Interest Earned",
-        "tooltip": "Cumulative total gross interest earned by Lenders from this Lending Strategy since its inception on the Kasu protocol."
+        "tooltip": "Cumulative total gross interest earned by Lenders from this Lending Strategy since its inception on the Kasu protocol, prior to Kasu protocol fees being deducted.​"
       },
       "activeLoans": {
         "label": "Active Loans",
-        "tooltip": "The total number of all current (active) loans originated by the Delegate within this Lending Strategy to end borrowers."
+        "tooltip": "Total number of all current outstanding loans that the Delegate currently has deployed to end borrowers from this Lending Strategy."
       },
       "capacity": {
         "label": "Remaining Capacity",
@@ -1797,13 +1824,18 @@
         "lendingRequests": {
           "title": "Lending Requests",
           "metric-1": "Requested",
-          "metric-1-tooltip": "info",
+          "metric-1-tooltip-1": "The total USDC amount of Lending Requests you have submitted across all Lending Strategies.",
+          "metric-1-tooltip-2": "If a Lending Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Delegate will accept/reject the Lending Request in full by the end of this epoch. Otherwise, a Lending Request will remain queued (‘Requested’ status) until the next clearing period (to be Accepted/Rejected at the end of the next epoch). Similarly, if a Lending Request is submitted during the clearing period of the current epoch, it will also remain queued until the next epoch.",
           "metric-2": "Accepted",
-          "metric-2-tooltip": "info",
+          "metric-2-tooltip-1": "The total USDC amount of Lending Requests that has been accepted by the Delegate(s) across all Lending Strategies.",
+          "metric-2-tooltip-2": "If a Lending Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Delegate will accept/reject the Lending Requests in full by the end of this epoch. Otherwise, a Lending Request will remain queued (‘Requested’ status) until the next clearing period (to be Accepted/Rejected at the end of the next epoch). Similarly, if a Lending Request is submitted during the clearing period of the current epoch, it will also remain queued until the next epoch.",
           "metric-3": "Rejected",
-          "metric-3-tooltip": "info",
+          "metric-3-tooltip-1": "The total USDC amount of Lending Requests that has been rejected by the Delegate(s) across all Lending Strategies, due to lack of end borrower demand, or excess liquidity.",
+          "metric-3-tooltip-2": "If a Lending Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Delegate will accept/reject the Lending Requests in full by the end of this epoch. Otherwise, a Lending Request will remain queued (‘Requested’ status)  until the next clearing period (to be Accepted/Rejected at the end of the next epoch). Similarly, if a Lending Request is submitted during the clearing period of the current epoch, it will also remain queued until the next epoch.",
           "metric-4": "Reallocations In/Out",
-          "metric-4-tooltip": "info"
+          "metric-4-tooltip-1": "The total USDC amount of accepted Lending Requests that has been reallocated out from your initial requested Tranche(s) to the next available Tranche(s), due to the initial requested Tranche(s) being oversubscribed (full).​",
+          "metric-4-tooltip-2": "Please refer to the",
+          "metric-4-tooltip-3": " you acknowledged during the Loan Contract Acceptance process for more details.​"
         },
         "subsequentTransactions": {
           "title": "Subsequent Transactions",
@@ -1811,11 +1843,17 @@
           "metric-1": "Funds Returned",
           "metric-1-tooltip": "info",
           "metric-2": "Current Opt In/Out Pending",
-          "metric-2-tooltip": "info",
+          "metric-2-tooltip-1": "The total USDC amount currently awaiting your instructions for the Delegate to either deploy to end borrowers, or return your funds to you instead.",
+          "metric-2-tooltip-2": "As per your acknowledgement in the",
+          "metric-2-tooltip-3": "if you do not provide any ‘Opt In/Out’ instructions within 48 hours of receiving an email requesting your decision, then you will be deemed to have automatically opted in (otherwise known as ‘negative consent’).",
           "metric-3": "Opted In",
-          "metric-3-tooltip": "info",
+          "metric-3-tooltip-1": "The total USDC amount that you have ‘Opted In’ for the Delegate to deploy to end borrowers.",
+          "metric-3-tooltip-2": "As per your acknowledgement in the",
+          "metric-3-tooltip-3": "if you did not provide any ‘Opt In/Out’ instructions within 48 hours of receiving an email requesting your decision, then you are deemed to have automatically opted in (otherwise known as ‘negative consent’).",
           "metric-4": "Opted Out",
-          "metric-4-tooltip": "info"
+          "metric-4-tooltip-1": "The total USDC amount that you have ‘Opted Out’ from the Delegate deploying to end borrowers, where funds will be returned to you instead.",
+          "metric-4-tooltip-2": "Refer to the",
+          "metric-4-tooltip-3": "for further details as to how the ‘Opt In/Out’ process works."
         }
       },
       "withdrawalStatusSummary": {
@@ -1823,13 +1861,17 @@
         "withdrawalRequests": {
           "title": "Withdrawal Requests",
           "metric-1": "Requested",
-          "metric-1-tooltip": "info",
+          "metric-1-tooltip-1": "If a Withdrawal Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Delegate will process the Withdrawal Request by the end of this epoch, by submitting it to a queue to accept nil, part, or all of the Request . Otherwise, a Withdrawal Request will not be submitted to the queue until the next clearing period (end of the next epoch). Similarly, if a Withdrawal Request is submitted during the clearing period of the current epoch, it will also not be submitted to the queue until the next epoch.",
+          "metric-1-tooltip-2": "As per your acknowledgement in the",
+          "metric-1-tooltip-3": "the processing of your Withdrawal Requests is contingent upon the excess liquidity within each specific Lending Strategy, and may therefore remain outstanding (or partially outstanding) for one or more epochs.",
           "metric-2": "Queued",
-          "metric-2-tooltip": "info",
+          "metric-2-tooltip-1": "The current USDC amount of Withdrawal Requests you have submitted across all Lending Strategies that remains queued (where a Delegate will accept nil, part, of all of the Request). The Delegate will continually accept nil, part, or all of the Withdrawal Requests at the end of each epoch, until the funds are fully returned to the Lender (assuming no losses or defaults by end borrowers).",
+          "metric-2-tooltip-2": "Should any amount(s) of your Withdrawal Request(s)  remain queued for more than five epochs, they will automatically be prioritised above all Loyalty Levels.​",
+          "metric-2-tooltip-3": "As per your acknowledgement in the",
+          "metric-2-tooltip-4": "the acceptance of Withdrawal Requests is contingent upon the excess liquidity within each specific Lending Strategy, and may therefore remain outstanding (or partially outstanding) for one or more epochs.",
           "metric-3": "Accepted",
-          "metric-3-tooltip": "info",
-          "metric-4": "Prioritised",
-          "metric-4-tooltip": "info"
+          "metric-3-tooltip-1": "The total USDC amount of Withdrawal Requests that has been accepted (in part or full) by the Delegate(s) across all Lending Strategies.​",
+          "metric-3-tooltip-2": "The Delegate will continually accept nil, part, or all of the Withdrawal Requests at the end of each epoch until funds are fully returned to the Lender (assuming no losses or defaults by end borrowers)."
         }
       },
       "detailedTransactions": {
@@ -1845,6 +1887,55 @@
         "lendingRequest": "Lending Request",
         "withdrawalRequest": "Withdrawal Request",
         "reallocation": "Reallocation",
+        "tooltips": {
+          "reallocation": {
+            "tooltip-1": "Funds received into this tranche are a result of your initial requested tranche being oversubscribed (full). In such a case, funds are reallocated to the next available tranche.​",
+            "tooltip-2": "Please refer to the",
+            "tooltip-3": "you acknowledged during the Loan Contract Acceptance process for more details."
+          },
+          "reallocatedOut": {
+            "tooltip-1": "The portion of this single accepted Lending Request that has been reallocated out from this initial requested tranche to the next available Tranche, due to this initial requested Tranche being oversubscribed (full).",
+            "tooltip-2": "Please refer to the",
+            "tooltip-3": "you acknowledged during the Loan Contract Acceptance process for more details."
+          },
+          "reallocatedIn": {
+            "tooltip-1": "The portion of accepted Lending Requests associated with another tranche that has been reallocated to this next available tranche, due to your initial requested tranche(s) being oversubscribed (full).",
+            "tooltip-2": "Please refer to the",
+            "tooltip-3": "you acknowledged during the Loan Contract Acceptance process for more details."
+          },
+          "deposit": {
+            "requested": {
+              "tooltip-1": "The USDC amount of this single Lending request.",
+              "tooltip-2": "If a Lending Request is submitted prior to the commencement of the learing period of the current epoch (which occurs at the end of each poch), then the Delegate will accept/reject the Lending Request in full y the end of this epoch. Otherwise, a Lending Request will remain queued ‘Requested’ status) until the next clearing period (to be ccepted/Rejected at the end of the next epoch). Similarly, if a Lending equest is submitted during the clearing period of the current epoch, it ill also remain queued until the next epoch."
+            },
+            "accepted": {
+              "tooltip-1": "The portion of the single Lending Request that has been accepted by the Delegate.",
+              "tooltip-2": "If a Lending Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Delegate will accept/reject the Lending Requests in full by the end of this epoch. Otherwise, a Lending Request will remain queued (‘Requested’ status) until the next clearing period (to be Accepted/Rejected at the end of the next epoch). Similarly, if a Lending Request is submitted during the clearing period of the current epoch, it will also remain queued until the next epoch."
+            },
+            "rejected": {
+              "tooltip-1": "The portion of the single Lending Request that has been rejected by the Delegate, due to factors such as lack of end borrower demand or excess liquidity within this Lending Strategy.",
+              "tooltip-2": "If a Lending Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Delegate will accept/reject the Lending Request in full by the end of this epoch. Otherwise, a Lending Request will remain queued (‘Requested’ status) until the next clearing period (to be Accepted/Rejected at the end of the next epoch). Similarly, if a Lending Request is submitted during the clearing period of the current epoch, it will also remain queued until the next epoch."
+            }
+          },
+          "withdrawal": {
+            "requested": {
+              "tooltip-1": "The USDC amount of this single Withdrawal Request.",
+              "tooltip-2": "If a Withdrawal Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Delegate will process the Withdrawal Request by the end of this epoch, by submitting it to a queue to accept nil, part, or all of the Request . Otherwise, a Withdrawal Request will not be submitted to the queue until the next clearing period (end of the next epoch). Similarly, if a Withdrawal Request is submitted during the clearing period of the current epoch, it will also not be submitted to the queue until the next epoch.",
+              "tooltip-3": "As per your acknowledgement in the",
+              "tooltip-4": "the processing of your Withdrawal Requests is contingent upon the excess liquidity within each specific Lending Strategy, and may therefore remain outstanding (or partially outstanding) for one or more epochs."
+            },
+            "accepted": {
+              "tooltip-1": "The portion of the single Withdrawal Requests that has been accepted (in part or full) by the Delegate.",
+              "tooltip-2": "If a Lending Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Delegate will accept/reject the Lending Requests in full by the end of this epoch. Otherwise, a Lending Request will remain queued (‘Requested’ status) until the next clearing period (to be Accepted/Rejected at the end of the next epoch). Similarly, if a Lending Request is submitted during the clearing period of the current epoch, it will also remain queued until the next epoch."
+            },
+            "queued": {
+              "tooltip-1": "The portion of the single Withdrawal Requests that remains queued (where a Delegate will accept nil, part, of all of the Request). The Delegate will continually accept nil, part, or all of the Withdrawal Requests at the end of each epoch, until the funds are fully returned to the Lender (assuming no losses or defaults by end borrowers).",
+              "tooltip-2": "Should any amount(s) of your Withdrawal Request(s) remain queued for more than five epochs, they will automatically be prioritised above all Loyalty Levels.",
+              "tooltip-3": "As per your acknowledgement in the",
+              "tooltip-4": "the acceptance of Withdrawal Requests is contingent upon the excess liquidity within each specific Lending Strategy, and may therefore remain outstanding (or partially outstanding) for one or more epochs."
+            }
+          }
+        },
         "actions": {
           "seeDetails": "See details"
         }

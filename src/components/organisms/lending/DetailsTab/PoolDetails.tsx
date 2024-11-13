@@ -7,6 +7,7 @@ import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
+import ApyStructureTooltip from '@/components/molecules/tooltips/ApyStructureTooltip'
 import GrossApyTooltip from '@/components/molecules/tooltips/GrossApyTooltip'
 
 import { formatPercentage, formatToNearestTime, TimeConversions } from '@/utils'
@@ -82,7 +83,7 @@ const PoolDetails: React.FC<PoolDetailsProps> = ({ pool }) => {
           <Grid item xs={6}>
             <InfoRow
               title={t('details.poolDetails.structureApy.label')}
-              toolTipInfo={t('details.poolDetails.structureApy.tooltip')}
+              toolTipInfo={<ToolTip title={<ApyStructureTooltip />} />}
               metric={
                 <Typography variant='baseMdBold'>
                   {pool.poolApyStructure}

@@ -1,4 +1,5 @@
 import { BoxProps } from '@mui/material'
+import { ReactNode } from 'react'
 
 import InfoColumn, { InfoColumnProps } from '@/components/atoms/InfoColumn'
 import TokenAmount, { TokenAmountProps } from '@/components/atoms/TokenAmount'
@@ -6,7 +7,7 @@ import WaveBox from '@/components/atoms/WaveBox'
 
 type WaveCardProps = BoxProps & {
   title: string
-  toolTipInfo: string
+  toolTipInfo: ReactNode
   content: string
   unit: string
   infoColumnProps?: Omit<InfoColumnProps, 'title' | 'toolTipInfo' | 'metric'>
