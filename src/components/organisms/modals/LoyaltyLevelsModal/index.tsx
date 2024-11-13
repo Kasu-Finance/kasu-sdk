@@ -66,37 +66,48 @@ const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               <TrophyIcon />
               {t('modals.loyaltyLevels.benefits.list-3')}
             </li>
+            <li>
+              <TrophyIcon />
+              {t('modals.loyaltyLevels.benefits.list-4')}
+            </li>
           </UnorderedList>
           <LoyaltyLevelInfo
             loyaltyLevel={0}
             title={t('locking.widgets.loyalty.level.level-0.title')}
-            subtitle={t('locking.widgets.loyalty.level.level-0.subtitle')}
-            list={[
-              t('locking.widgets.loyalty.level.level-0.list.list-0'),
-              t('locking.widgets.loyalty.level.level-0.list.list-1'),
-              t('locking.widgets.loyalty.level.level-0.list.list-2'),
-              t('locking.widgets.loyalty.level.level-0.list.list-3'),
-            ]}
+            subtitle={
+              <>
+                {t('locking.widgets.loyalty.level.level-0.description-1')}
+                <br />
+                <br />
+                {t('locking.widgets.loyalty.level.level-0.description-2')}
+              </>
+            }
           />
           <LoyaltyLevelInfo
             loyaltyLevel={1}
             title={t('locking.widgets.loyalty.level.level-1.title')}
-            subtitle={t('locking.widgets.loyalty.level.level-1.subtitle')}
+            subtitle={t('locking.widgets.loyalty.level.level-1.description-1')}
             list={[
               t('locking.widgets.loyalty.level.level-1.list.list-0'),
               t('locking.widgets.loyalty.level.level-1.list.list-1'),
               t('locking.widgets.loyalty.level.level-1.list.list-2'),
             ]}
+            description={t(
+              'locking.widgets.loyalty.level.level-1.description-2'
+            )}
           />
           <LoyaltyLevelInfo
             loyaltyLevel={2}
             title={t('locking.widgets.loyalty.level.level-2.title')}
-            subtitle={t('locking.widgets.loyalty.level.level-2.subtitle')}
+            subtitle={t('locking.widgets.loyalty.level.level-2.description-1')}
             list={[
               t('locking.widgets.loyalty.level.level-2.list.list-0'),
               t('locking.widgets.loyalty.level.level-2.list.list-1'),
               t('locking.widgets.loyalty.level.level-2.list.list-2'),
             ]}
+            description={t(
+              'locking.widgets.loyalty.level.level-2.description-1'
+            )}
           />
           <Typography variant='baseSm'>
             {t('modals.loyaltyLevels.description-3')}

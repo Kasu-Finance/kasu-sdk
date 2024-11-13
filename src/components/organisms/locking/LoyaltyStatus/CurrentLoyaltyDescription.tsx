@@ -40,35 +40,37 @@ const CurrentLoyaltyDescription = () => {
       </Typography>
       <Typography variant='baseSm' component='p' mb={2}>
         {t(
-          `locking.widgets.loyalty.level.level-${isLoyal ? (currentLevel as LoyalLoyaltyLevels) : 0}.subtitle`
+          `locking.widgets.loyalty.level.level-${isLoyal ? (currentLevel as LoyalLoyaltyLevels) : 0}.description-1`
         )}
       </Typography>
-      <UnorderedList
-        sx={{
-          ...customTypography.baseSm,
-          pl: 2,
-          mb: 2,
-          'li + li': {
-            mt: 1,
-          },
-        }}
-      >
-        <li>
-          {t(
-            `locking.widgets.loyalty.level.level-${isLoyal ? (currentLevel as LoyalLoyaltyLevels) : 0}.list.list-0`
-          )}
-        </li>
-        <li>
-          {t(
-            `locking.widgets.loyalty.level.level-${isLoyal ? (currentLevel as LoyalLoyaltyLevels) : 0}.list.list-1`
-          )}
-        </li>
-        <li>
-          {t(
-            `locking.widgets.loyalty.level.level-${isLoyal ? (currentLevel as LoyalLoyaltyLevels) : 0}.list.list-2`
-          )}
-        </li>
-      </UnorderedList>
+      {isLoyal && (
+        <UnorderedList
+          sx={{
+            ...customTypography.baseSm,
+            pl: 2,
+            mb: 2,
+            'li + li': {
+              mt: 1,
+            },
+          }}
+        >
+          <li>
+            {t(
+              `locking.widgets.loyalty.level.level-${currentLevel as LoyalLoyaltyLevels}.list.list-0`
+            )}
+          </li>
+          <li>
+            {t(
+              `locking.widgets.loyalty.level.level-${currentLevel as LoyalLoyaltyLevels}.list.list-1`
+            )}
+          </li>
+          <li>
+            {t(
+              `locking.widgets.loyalty.level.level-${currentLevel as LoyalLoyaltyLevels}.list.list-2`
+            )}
+          </li>
+        </UnorderedList>
+      )}
       <Typography variant='baseSm' component='p'>
         {t('locking.widgets.loyalty.description')}
       </Typography>

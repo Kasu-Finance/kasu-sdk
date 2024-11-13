@@ -1,6 +1,6 @@
 import { Box, SxProps, Theme, Typography, TypographyProps } from '@mui/material'
 import Image from 'next/image'
-import React from 'react'
+import React, { ReactNode } from 'react'
 
 import { LoyaltyLevel } from '@/hooks/locking/useLoyaltyLevel'
 
@@ -11,12 +11,14 @@ import { customTypography } from '@/themes/typography'
 
 type LoyaltyLevelInfoProps = {
   loyaltyLevel: LoyaltyLevel
-  title: string
-  subtitle: string
-  list?: string[]
+  title: ReactNode
+  subtitle: ReactNode
+  description?: ReactNode
+  list?: ReactNode[]
   rootStyles?: SxProps<Theme>
   titleProps?: TypographyProps
   subtitleProps?: TypographyProps
+  descriptionProps?: TypographyProps
   listProps?: SxProps<Theme>
   listLabelProps?: TypographyProps
 }
@@ -25,16 +27,18 @@ const LoyaltyLevelInfo: React.FC<LoyaltyLevelInfoProps> = ({
   loyaltyLevel,
   title,
   subtitle,
+  description,
   list,
   rootStyles,
   titleProps,
   subtitleProps,
+  descriptionProps,
   listProps,
   listLabelProps,
 }) => {
   return (
     <Box bgcolor='gold.dark' borderRadius={2} p={2} sx={rootStyles}>
-      <Box display='flex' alignItems='center'>
+      <Box display='flex' alignItems='center' mb={1}>
         <Image
           src={getCrown(loyaltyLevel)}
           alt={`crown-level_${loyaltyLevel}`}
@@ -43,7 +47,12 @@ const LoyaltyLevelInfo: React.FC<LoyaltyLevelInfoProps> = ({
           {title}
         </Typography>
       </Box>
-      <Typography variant='baseSm' component='span' {...subtitleProps}>
+      <Typography
+        display='inline-block'
+        variant='baseSm'
+        component='span'
+        {...subtitleProps}
+      >
         {subtitle}
       </Typography>
       {list && (
@@ -59,8 +68,8 @@ const LoyaltyLevelInfo: React.FC<LoyaltyLevelInfoProps> = ({
             ...(Array.isArray(listProps) ? listProps : [listProps]),
           ]}
         >
-          {list.map((label) => (
-            <li key={label}>
+          {list.map((label, index) => (
+            <li key={index}>
               <Typography
                 variant='body2'
                 component='p'
@@ -72,6 +81,17 @@ const LoyaltyLevelInfo: React.FC<LoyaltyLevelInfoProps> = ({
             </li>
           ))}
         </UnorderedList>
+      )}
+      {description && (
+        <Typography
+          display='inline-block'
+          variant='baseSm'
+          component='span'
+          mt={1}
+          {...descriptionProps}
+        >
+          {description}
+        </Typography>
       )}
     </Box>
   )

@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from '@mui/material'
+import { Box, Grid2, Typography } from '@mui/material'
 import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
 import Image from 'next/image'
 
@@ -11,7 +11,7 @@ import WaveBox from '@/components/atoms/WaveBox'
 import BonusAndRewards from '@/components/organisms/lending/OverviewTab/UserLoyalty/BonusAndRewards'
 import LoyaltyProgressOverview from '@/components/organisms/lending/OverviewTab/UserLoyalty/LoyaltyProgressOverview'
 import UserLoyaltyActions from '@/components/organisms/lending/OverviewTab/UserLoyalty/UserLoyaltyActions'
-import UserLoyaltyLevel from '@/components/organisms/lending/OverviewTab/UserLoyalty/UserLoyaltyLevel'
+import CurrentLoyaltyDescription from '@/components/organisms/locking/LoyaltyStatus/CurrentLoyaltyDescription'
 
 import CrownedCat from '@/images/crowned-cat.png'
 
@@ -42,15 +42,17 @@ const UserLoyalty: React.FC<UserLoyaltyProps> = async ({
           </Typography>
         </Box>
         <CustomInnerCardContent sx={{ py: 3, px: 0 }}>
-          <Grid container spacing={4} mb={7} px={2}>
-            <Grid item px={1}>
+          <Grid2 container spacing={4} mb={7} px={2} alignItems='end'>
+            <Grid2 flex={1} alignSelf='start'>
+              <CurrentLoyaltyDescription />
+            </Grid2>
+            <Grid2 px={1}>
               <Image src={CrownedCat} alt='Crowned Cat' />
-              <UserLoyaltyLevel />
-            </Grid>
-            <Grid item flex={1}>
+            </Grid2>
+            <Grid2 flex={1}>
               <LoyaltyProgressOverview />
-            </Grid>
-          </Grid>
+            </Grid2>
+          </Grid2>
           <WaveBox borderRadius={2}>
             <Box px={2} py={3}>
               <Typography variant='h4'>
