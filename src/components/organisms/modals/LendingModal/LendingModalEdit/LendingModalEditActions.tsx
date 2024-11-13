@@ -24,13 +24,19 @@ const LendingModalEditActions = () => {
 
   return (
     <Stack spacing={2}>
-      <Button variant='outlined' color='secondary' onClick={handleOpen}>
+      <Button
+        variant='outlined'
+        color='secondary'
+        onClick={handleOpen}
+        sx={{ textTransform: 'capitalize' }}
+      >
         {t('modals.lending.buttons.increaseLoyaltyLevel')}
       </Button>
       <Button
         variant='contained'
         color='secondary'
         onClick={nextStep}
+        sx={{ textTransform: 'capitalize' }}
         disabled={Boolean(
           !amount ||
             !amountInUSD ||

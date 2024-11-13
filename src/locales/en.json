@@ -655,7 +655,7 @@
     "lending": {
       "title": "Lending Request",
       "buttons": {
-        "increaseLoyaltyLevel": "Establish/Increase loyalty level ",
+        "increaseLoyaltyLevel": "Why Establish/Increase loyalty level",
         "review": "Review lending request ",
         "overview": "Lending Strategy Overview"
       },
@@ -682,7 +682,7 @@
       "terms-and-conditions-2": "Important Information.",
       "secure-spot": {
         "title": "How do I secure my spot in this tranche?",
-        "description": "Depending on demand, access to higher APY tranches may be based on Loyalty Levels, which increase the likelihood of securing a spot in your desired tranche, but do not guarantee it."
+        "description": "Depending on demand, access to certain loan tranches may be based on Loyalty Levels, which increase the likelihood of securing a spot in your desired tranche, but do not guarantee it."
       },
       "review": {
         "metric-1": "Lend To",
