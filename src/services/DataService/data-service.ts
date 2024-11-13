@@ -342,6 +342,9 @@ export class DataService {
                 loanFundsOriginated: lendingPoolDirectus.loanFundsOriginated,
                 tranches: tranches,
                 isActive: !lendingPoolSubgraph.isStopped,
+                requestEpochsInAdvance:
+                    lendingPoolSubgraph.configuration
+                        .lendingPoolWithdrawalConfig.requestEpochsInAdvance,
             };
 
             // show only enabled pools from cms

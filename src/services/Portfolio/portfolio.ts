@@ -358,6 +358,7 @@ export class Portfolio {
                         ),
                 });
             }
+
             portfolioLendingPoolsPromise.push({
                 ...poolOverview,
                 totalYieldEarningsLastEpoch:
@@ -366,9 +367,6 @@ export class Portfolio {
                 totalYieldEarningsLifetime:
                     userPoolBalance.yieldEarned.toString(),
                 tranches,
-                requestEpochsInAdvance:
-                    lendingPoolUserDetails.lendingPool.configuration
-                        .lendingPoolWithdrawalConfig.requestEpochsInAdvance,
             });
         }
 

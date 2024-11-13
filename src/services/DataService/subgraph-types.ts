@@ -74,6 +74,9 @@ export interface LendingPoolConfigurationSubgraph {
     targetExcessLiquidityPercentage: string;
     trancheInterestChangeEpochDelay: string;
     tranchesConfig: TrancheConfigurationSubgraph[];
+    lendingPoolWithdrawalConfig: {
+        requestEpochsInAdvance: string;
+    };
 }
 
 export interface LendingPoolConfigurationSubgraphReturn {

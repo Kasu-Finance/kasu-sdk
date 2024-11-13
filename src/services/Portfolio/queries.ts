@@ -15,12 +15,6 @@ export const lastEpochQuery = gql`
                     id
                     name
                     balance
-                    configuration {
-                        lendingPoolWithdrawalConfig {
-                            requestEpochsInAdvance
-                            cancelRequestEpochsInAdvance
-                        }
-                    }
                     tranches {
                         shares
                     }

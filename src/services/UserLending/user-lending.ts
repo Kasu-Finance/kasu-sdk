@@ -7,7 +7,7 @@ import {
     ethers,
     Signer,
 } from 'ethers';
-import { defaultAbiCoder } from 'ethers/lib/utils';
+import { defaultAbiCoder, formatUnits, parseUnits } from 'ethers/lib/utils';
 import { GraphQLClient } from 'graphql-request';
 
 import {
@@ -468,8 +468,12 @@ export class UserLending {
         sharesAmount: string,
         totalAssets: number,
         totalSupply: number,
-    ): number {
-        return (parseFloat(sharesAmount) * totalAssets) / totalSupply;
+    ): string {
+        return formatUnits(
+            parseUnits(sharesAmount)
+                .mul(parseUnits(totalAssets.toString()))
+                .div(parseUnits(totalSupply.toString())),
+        );
     }
 
     async isClearingPending(poolId: string): Promise<boolean> {

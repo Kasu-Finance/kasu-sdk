@@ -27,6 +27,7 @@ export interface PoolOverview {
     poolInvestmentTerm: string;
     loanStructure: string;
     loanFundsOriginated: string;
+    requestEpochsInAdvance: string;
     isActive: boolean;
 }
 

@@ -29,6 +29,9 @@ export const getPoolOverviewQuery = (ids?: string[]): string => gql`
             }
             configuration {
                 desiredDrawAmount
+                lendingPoolWithdrawalConfig{
+                    requestEpochsInAdvance
+                }
                 tranchesConfig(orderBy: orderId, orderDirection: asc) {
                     id
                     desiredRatio
