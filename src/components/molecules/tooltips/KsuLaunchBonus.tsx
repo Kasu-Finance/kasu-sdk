@@ -30,7 +30,7 @@ const KsuLaunchBonus = () => {
         <TableBody>
           <TableRow>
             <TableCell>30 days</TableCell>
-            <TableCell>0.00x multiplier (1%)</TableCell>
+            <TableCell>0.00x multiplier (0%)</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>180 days</TableCell>
