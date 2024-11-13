@@ -61,7 +61,8 @@ const PoolDetails: React.FC<PoolDetailsProps> = ({ pool }) => {
                   return (
                     <InfoRow
                       key={configId}
-                      title={`${t('general.fixedApy')}, ~ ${formatToNearestTime(durationInMs)}`}
+                      title={`${t('general.fixedApy')}, ${epochLockDuration} ${t('general.epoch')}`}
+                      subtitle={`(~${formatToNearestTime(durationInMs)})`}
                       titleStyle={{
                         variant: 'h5',
                       }}

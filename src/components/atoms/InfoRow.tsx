@@ -52,7 +52,7 @@ const InfoRow: React.FC<InfoRowProps> = ({
     <>
       <Box sx={[defaultSx, ...(Array.isArray(sx) ? sx : [sx])]}>
         <Box display='flex' alignItems='center'>
-          <Box>
+          <Box display='flex' alignItems='center'>
             <Typography
               variant='baseMd'
               component='span'

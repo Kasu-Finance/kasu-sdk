@@ -88,7 +88,8 @@
     "queued": "Queued",
     "reallocatedIn": "Reallocated (In)",
     "reallocatedOut": "Reallocated (Out)",
-    "myPortfolio": "My Portfolio"
+    "myPortfolio": "My Portfolio",
+    "epoch": "Epochs"
   },
   "time": {
     "years": "years",

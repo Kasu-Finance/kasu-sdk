@@ -105,12 +105,12 @@ const LendingModalReviewOverview = () => {
         metric={
           <Typography variant='baseMdBold' display='flex' alignItems='center'>
             {fixedTermApy
-              ? `${t('general.fixedApy')}, ~ ${formatToNearestTime(
+              ? `${t('general.fixedApy')}, ${fixedTermApy.epochLockDuration} ${t('general.epoch')} (~${formatToNearestTime(
                   parseFloat(fixedTermApy.epochLockDuration) *
                     TimeConversions.DAYS_PER_WEEK *
                     TimeConversions.SECONDS_PER_DAY *
                     1000
-                )}`
+                )})`
               : t('general.variableApy')}
             <ToolTip
               title={<GrossApyTooltip />}

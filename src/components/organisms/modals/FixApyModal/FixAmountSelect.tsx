@@ -42,7 +42,7 @@ const FixAmountSelect: React.FC<FixAmountSelectProps> = ({
             1000
 
           return {
-            label: `${t('general.fixedApy')}, ~ ${formatToNearestTime(durationInMs)} ${fixedTermConfig.fixedTermDepositStatus === 'AllowlistedOnly' ? '(Whitelisted)' : ''}`,
+            label: `${t('general.fixedApy')}, ${fixedTermConfig.epochLockDuration} ${t('general.epoch')} (~${formatToNearestTime(durationInMs)})`,
             id: fixedTermConfig.configId,
             value: fixedTermConfig.apy,
           }

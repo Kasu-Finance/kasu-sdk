@@ -65,12 +65,16 @@ const LoanOverview: React.FC<LoanOverviewProps> = ({ pool }) => {
               return (
                 <InfoRow
                   key={configId}
-                  title={`${t('general.fixedApy')}, ~ ${formatToNearestTime(durationInMs)}`}
+                  title={`${t('general.fixedApy')}, ${epochLockDuration} ${t('general.epoch')}`}
+                  subtitle={`(~${formatToNearestTime(durationInMs)})`}
                   toolTipInfo={
                     <ToolTip title={<VariableAndFixedApyTooltip />} />
                   }
                   titleStyle={{
                     variant: 'h5',
+                  }}
+                  subtitleStyle={{
+                    color: 'gray.middle',
                   }}
                   metric={
                     <Typography variant='h5' color='gold.dark'>
