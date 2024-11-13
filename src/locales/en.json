@@ -1808,7 +1808,7 @@
         "cell-5": "Actions"
       },
       "actions": {
-        "action-1": "Withdraw Funds at Expiry",
+        "action-1": "Repay my funds upon expiry",
         "action-2": "Increase Lend",
         "action-3": "Fix My APY",
         "action-4": "View Fixed Loan​",
