@@ -3,10 +3,13 @@
 import { Button } from '@mui/material'
 
 import useModalState from '@/hooks/context/useModalState'
+import getTranslation from '@/hooks/useTranslation'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 const LoanContractButton = () => {
+  const { t } = getTranslation()
+
   const { openModal } = useModalState()
 
   const handleOpen = () =>
@@ -26,7 +29,7 @@ const LoanContractButton = () => {
       }}
       onClick={handleOpen}
     >
-      Loan Contract
+      {t('modals.loanContract.title')}
     </Button>
   )
 }

@@ -89,7 +89,9 @@
     "reallocatedIn": "Reallocated (In)",
     "reallocatedOut": "Reallocated (Out)",
     "myPortfolio": "My Portfolio",
-    "epoch": "Epochs"
+    "epoch": "Epochs",
+    "userDocs": "User Docs",
+    "and": "and"
   },
   "time": {
     "years": "years",
@@ -411,59 +413,60 @@
       "subtitle": "By submitting this lending request, you acknowledge and agree to the following Important Information. It is important to read and understand these terms, as they outline the rights, responsibilities, and risks associated with your participation in the Kasu protocol.",
       "keyRisks": "Key Risks:",
       "subheader-1": {
-        "title": "Risk Disclosure: Senior, Mezzanine and Junior Tranches.",
+        "title": "Important Information",
         "description-1": "This is a summary of some key information  for Lenders on the Kasu protocol. It is important to read and understand this Important Information, as it summarises some of the important rights, responsibilities, and risks associated with lending using the Kasu protocol.",
-        "description-2": "However it is important to note that this Important Information is a summary only and does not contain all the risks and features associated with Lending through Kasu. In addition to reading and understanding this Important Information, prospective Lenders should also read and understand the: ",
+        "description-2": "However it is important to note that this Important Information is a summary only and does not contain all the risks and features associated with Lending through Kasu. In addition to reading and understanding this Important Information, prospective Lenders should also read and understand the:",
         "description-3": "The Loan Contract will be presented in the next steps of your Lending Request."
       },
       "subheader-2": {
-        "title": "Warning",
-        "description": "When lending through Kasu, it is essential to understand the different types of lending tranches that may be made available—Senior, Mezzanine, and Junior—and the different risks associated with each tranche. Each tranche has a distinct risk profile and position in the capital structure, which affects the potential returns and the risk to Lenders’ capital.",
+        "title": "Risk Disclosure: Senior, Mezzanine and Junior Tranches",
+        "description": "When lending through Kasu, it is essential to understand the different types of lending Tranches that may be made available—Senior, Mezzanine, and Junior—and the different risks associated with each Tranche. Each Tranche has a distinct risk profile and position in the capital structure, which affects the potential returns and the risk to Lenders’ capital.",
         "sub-subheader-1": {
           "title": "Senior Tranche",
-          "description": "The Senior Tranche is the highest-ranking tranche. In the event of losses, Senior Tranche Lenders have the first claim on any recovered funds.",
+          "description": "The Senior Tranche is the highest-ranking Tranche. In the event of losses, Senior Tranche Lenders have the first claim on any recovered funds.",
           "list": {
             "list-0": {
               "title": "Lower Yield: ",
-              "description": "Due to its priority in repayment in the event of losses, the Senior Tranche typically offers lower interest rates compared to Mezzanine and Junior tranches."
+              "description": "Due to its highest ranking priority in repayment in the event of losses, the Senior Tranche typically offers lower interest rates compared to Mezzanine and Junior Tranches."
             },
             "list-1": {
               "title": "Credit Risk: ",
-              "description": "In the event of the end borrower's default, Senior Tranche lenders are paid first from any recovered funds, but this still depends on the overall recovery rate."
+              "description": "In the event of any end borrower defaults, Senior Tranche Lenders are paid first from any recovered funds, but this still depends on the overall recovery rate. In the event that less than 100% is recovered, losses are proportionately applied across Lenders in the lowest ranking Tranche first (Junior Tranche), proceeding up the line through Mezzanine Tranche (if applicable) and finally to Senior Tranche. This proportionality is applied in line with the abovementioned ranking order, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to (i.e.any losses borne by the Lending Strategy are mutualised across Lenders starting from the lowest ranking Tranche).In the absence of Junior and Mezzanine Tranches, losses are proportionately applied across all Lenders in the single available Tranche."
             }
           }
         },
         "sub-subheader-2": {
           "title": "Mezzanine Tranche",
-          "description": "The Mezzanine Tranche sits between the Senior and Junior tranches. It generally offers higher returns than the Senior Tranche but comes with increased risk.",
+          "description": "The Mezzanine Tranche sits between the Senior and Junior Tranches. It generally offers higher returns (interest rate) than the Senior Tranche but comes with increased risk.",
           "list": {
             "list-0": {
               "title": "Subordination Risk in Event of Losses: ",
-              "description": "Mezzanine lenders are subordinated to Senior Tranche lenders in the event of losses, meaning they are repaid only after all Senior Tranche obligations have been met."
+              "description": "Mezzanine Lenders are subordinated to Senior Tranche Lenders in the event of losses. This means that in the event of losses, they are repaid only after all Senior Tranche obligations have been met."
             },
             "list-1": {
               "title": "Credit Risk: ",
-              "description": "There is a higher risk of non-payment compared to the Senior Tranche. In a default scenario, Mezzanine lenders may experience significant delays in repayment or potentially incur losses."
+              "description": "There is a higher risk of non-payment (capital risk) compared to the Senior Tranche. In a default scenario, Mezzanine Lenders may experience significant delays in repayment and an increased risk of capital loss (compared to Senior Tranche Lenders). In such an event, after Senior Tranche Lenders have been repaid in full, if there is not enough recovered to pay all Mezzanine Tranche Lenders in full, losses are proportionately mutualised across all Lenders in the Mezzanine Tranche, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to. Similarly, recoveries (if any), after Senior Tranche Lenders have been repaid in full, are proportionately applied across all Lenders in the Mezzanine Tranche, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to. Only after Senior Tranche and Mezzanine Tranche Lenders have been repaid in full are any remaining recoveries allocated to the repayment of Junior Tranche Lenders (see below)."
             }
           }
         },
         "sub-subheader-3": {
           "title": "Junior Tranche",
-          "description": "The Junior Tranche is the lowest-ranking tranche. It offers the highest potential returns but also bears the greatest risk.",
+          "description": "The Junior Tranche is the lowest-ranking Tranche. It generally offers the highest potential returns (interest rate) but also bears the greatest risk.",
           "list": {
             "list-0": {
               "title": "Subordination Risk in Event of Losses: ",
-              "description": "Junior Tranche lenders are the last to be paid in the event of losses. They only receive repayments after all Senior and Mezzanine obligations have been fulfilled."
+              "description": "Junior Tranche Lenders are the last to be paid in the event of losses. They only receive repayments after all obligations to Senior and Mezzanine Lenders have been fulfilled."
             },
             "list-1": {
               "title": "Credit Risk: ",
-              "description": "The risk of loss is highest in the Junior Tranche. In a worst-case scenario, Junior lenders may lose their entire capital if the recovered funds are insufficient to cover higher-ranking debts."
-            }
+              "description": "The risk of capital loss is highest in the Junior Tranche. In a loss scenario, Junior Tranche Lenders may experience significant delays in repayment and the greatest risk of capital loss (compared to Senior Tranche and Mezzanine Tranche Lenders). In such an event, after Senior Tranche Lenders and Mezzanine Tranche Lenders have been repaid in full, if there is not enough recovered to pay all Junior Tranche Lenders in full, losses are proportionately mutualised across all Lenders in the Junior Tranche, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to. Similarly, recoveries (if any), after Senior Tranche Lenders and Mezzanine Tranche Lenders have been repaid in full, are proportionately applied across all Lenders in the Junior Tranche, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to."
+            },
+            "list-3": "In the event that a Lending Strategy commences with Senior and Junior Tranches only, but a Mezzanine Tranche is subsequently added, the Junior Tranche Lenders will move from a second ranking position (second to the Senior Tranche) to a third ranking position (ranking behind both Senior and Mezzanine Tranches)."
           }
         },
         "sub-subheader-4": {
           "title": "Acknowledgment of Risks",
-          "description": "By lending in a particular tranche, Lenders acknowledge and accept the inherent risks associated with their chosen position in terms of priority in the event of losses. It is crucial for Lenders to thoroughly assess their risk tolerance, lending objectives, and financial situation before committing capital to any tranche."
+          "description": "By lending in a particular Tranche, Lenders acknowledge and accept the inherent risks associated with their chosen position in terms of priority in the event of losses and recoveries. It is crucial for Lenders to thoroughly assess their risk tolerance, lending objectives, and financial situation before committing capital to any Tranche."
         }
       },
       "subheader-3": {
@@ -492,9 +495,9 @@
       },
       "subheader-4": {
         "title": "Interest Accrual",
-        "description": "Interest on loaned capital is accrued on a per epoch basis and added to each Lender's loan balance. Accordingly, accessing accrued interest occurs through the same mechanisms as accessing the initial loaned capital, requiring a withdrawal request.",
+        "description": "Interest on loaned capital is accrued on a “per epoch” basis (an epoch being every 7 days) and added to each Lender's loan balance (commonly referred to as capitalised interest). Accessing accrued interest occurs through the same mechanisms as accessing the initial loaned capital, requiring Lenders to submit a withdrawal request.",
         "subtitle": "Acknowledgment of Interest Accrual Process",
-        "subtitle-description": "By lending through Kasu, Lenders acknowledge and accept the interest accrual process. It is essential for Lenders to understand that interest is accrued on a per epoch basis and reflected in their loan balance. Access to these funds requires a withdrawal request, which applies to both the initial loaned capital and the accrued interest."
+        "subtitle-description": "By lending through Kasu, Lenders acknowledge and accept the interest accrual process. It is essential for Lenders to understand that interest is accrued on a per epoch basis and reflected in their loan balance (i.e. capitalised interest). Access to these funds requires a withdrawal request, which applies to both the initial loaned capital and the accrued interest, thereby reflective of a Lender’s total balance."
       },
       "subheader-5": {
         "title": "Pending Phase Before Interest Accrual",
@@ -517,20 +520,20 @@
           },
           "list-3": {
             "title": "Clearing Period Delays: ",
-            "description": "In rare instances, a Clearing Period could be missed, causing the Lending Request to be processed at a future epoch. "
+            "description": "There is a risk that  a Clearing Period could be missed, causing the Lending Request to be processed at a future epoch."
           }
         }
       },
       "subheader-6": {
         "title": "Loan Withdrawal Requests",
-        "description": "When Lenders submit a Loan Withdrawal Request to Kasu, their request enters a Pending Hhase. The processing of these requests is contingent upon the excess liquidity within the specific Lending Strategy and may therefore remain outstanding (or partially outstanding) for more than one epoch.",
+        "description": "When Lenders submit a Loan Withdrawal Request to Kasu, their request enters a Pending Phase. The processing of these Loan Withdrawal Requests is contingent upon the excess liquidity within the specific Lending Strategy, and may therefore remain outstanding (or partially outstanding) for one or more epochs. Excess liquidity is based on various factors outside of Kasu and Delegates’ control, such as (but not limited to) demand for Lending Strategies and End Borrowers meeting repayment requirements.",
         "subtitle": "Acknowledgment of Loan Withdrawal Request Process",
         "subtitle-description": "By submitting a Loan Withdrawal Request through Kasu, Lenders acknowledge and accept the Pending Phase and the process based on excess liquidity. Lenders understand that:",
         "list-0": {
           "title": "Key Points:",
           "list-0": {
             "title": "Pending Phase and Excess Liquidity: ",
-            "description": "Loan Withdrawal Requests are processed based on the excess funds available within the given Lending Strategy at the time of submission. This means that Lenders may only withdraw funds up to the excess liquidity available, potentially resulting in partially fulfilled (or even unfulfilled Withdrawal Requests."
+            "description": "Loan Withdrawal Requests are processed based on the excess funds available within the given Lending Strategy at the time of submission. This means that Lenders may only withdraw funds up to the excess liquidity available, potentially resulting in partially fulfilled (or even unfulfilled) Withdrawal Requests."
           },
           "list-1": {
             "title": "Multiple Epochs: ",
@@ -542,7 +545,7 @@
           },
           "list-3": {
             "title": "Automatic Loyalty Level Increase: ",
-            "description": "Any Withdrawal Request left outstanding for more than five epochs will automatically receive the highest Loyalty Level status until the withdrawal is processed."
+            "description": "Any Withdrawal Request left outstanding for more than five epochs will automatically be prioritised above all Loyalty Levels until the withdrawal is processed."
           },
           "list-4": {
             "title": "Interest Accrual: ",
@@ -550,7 +553,7 @@
           }
         },
         "list-1": {
-          "list-0": "Access to their funds is contingent upon the availability of excess liquidity within the Lending Strategy.",
+          "list-0": "Access to their funds is contingent upon the availability of excess liquidity within the Lending Strategy. Excess liquidity is based on various factors outside of Kasu and Delegates’ control, such as (but not limited to) demand for Lending Strategies and End Borrowers meeting repayment requirements.",
           "list-1": "Withdrawal Requests are prioritised based on Loyalty Level, potentially resulting in longer waiting times for lower or no Loyalty Level Lenders.",
           "list-2": "Withdrawal Requests may therefore remain outstanding (or partially outstanding) for more than one epoch until sufficient liquidity is available.",
           "list-3": "Any outstanding Withdrawal Request for more than five epochs will automatically receive the highest Loyalty Level until the withdrawal is processed.",
@@ -559,50 +562,83 @@
       },
       "subheader-7": {
         "title": "Tranche Allocation and Overflow in Case of Oversubscription",
-        "description": "When Lenders submit a Lending Request for a specific tranche through Kasu, it’s possible that the requested tranche could be oversubscribed. In such cases, the following process is applied:",
+        "description": "When Lenders submit a Lending Request for a specific Tranche through Kasu, it’s possible that the requested Tranche could be oversubscribed. In such cases, the following process is applied:",
         "sub-subheader-1": "Automatic Reallocation:",
         "sub-subheader-2": "Impact of Loyalty Levels:",
-        "description-1": "An example is given by the following Lending Strategy with three tranches: ",
-        "description-2": "In this scenario, the excess 50,000 USDC from the Junior tranche will be reallocated to the Mezzanine tranche. Once the Mezzanine tranche is filled, the remaining 40,000 USDC will be reallocated to the Senior tranche. This results in:",
+        "description-1": "An example is given by the following Lending Strategy with three Tranches:",
+        "description-2": "In this scenario, the excess 50,000 USDC from the Junior Tranche will be reallocated to the Mezzanine Tranche. Once the Mezzanine Tranche is filled, the remaining 40,000 USDC will be reallocated to the Senior Tranche. This results in:",
         "description-3": "This scenario leaves 30,000 USDC of the initial requests unallocated, which will be returned to the Lenders who submitted those requests.",
         "subtitle": "Acknowledgment of Tranche Allocation and Overflow Process",
-        "subtitle-description": "By lending through Kasu, Lenders acknowledge and accept the tranche allocation and overflow process in case of oversubscription. Lenders understand that:",
+        "subtitle-description": "By lending through Kasu, Lenders acknowledge and accept the Tranche allocation and overflow process in case of oversubscription. Lenders understand that:",
         "list-1": {
           "list-0": {
             "title": "Oversubscription Handling: ",
-            "description": "If a requested tranche (e.g., Junior) is oversubscribed, the excess funds are automatically reallocated to the next available tranche with capacity (e.g., Mezzanine or Senior)."
+            "description": "If a requested Tranche (e.g., Junior) is oversubscribed, the excess funds are automatically reallocated to the next higher-ranking Tranche available with capacity (e.g., Mezzanine or Senior)."
           },
           "list-1": {
             "title": "Continual Reallocation: ",
-            "description": "This reallocation continues down the line until all available tranches are filled."
+            "description": "This reallocation continues up the line until all available Tranches are filled."
           },
           "list-2": {
-            "title": "No Opt-Out: ",
-            "description": "Lenders cannot opt-out of this reallocation process once their Lending Request is submitted. If they do not wish to participate in a lower-yielding tranche, they must submit a Loan Withdrawal Request as outlined earlier."
+            "title": "APY Impact: ",
+            "description": "Next available Tranches will have a lower APY (interest return), but will be higher ranking in terms of repayment priority in the event of losses (see ‘Risk Disclosure: Senior, Mezzanine and Junior Tranches’ Section)."
           },
           "list-3": {
+            "title": "No Opt-Out: ",
+            "description": "Lenders cannot opt-out of this reallocation process once their Lending Request is submitted. If they are not satisfied with their participation in a lower-yielding Tranche, they may either ‘opt-out’ within 48 hours of being informed by Kasu of the end borrower(s) to which their funds will be loaned, or they must submit a Loan Withdrawal Request as outlined earlier."
+          },
+          "list-4": {
             "title": "Potential Return of Funds: ",
-            "description": "If the reallocation process reaches the Senior tranche and it is still oversubscribed, any remaining unallocated funds will be returned to the Lenders who submitted those requests."
+            "description": "If the reallocation process reaches the Senior Tranche and it is still oversubscribed, any remaining unallocated funds will be returned to the Lenders who submitted those requests."
           }
         },
         "list-2": {
           "list-0": {
             "title": "Priority Allocation: ",
-            "description": "Higher Loyalty Levels increase the likelihood of allocation to the desired tranche but do not guarantee it."
+            "description": "Higher Loyalty Levels increase the likelihood of allocation to the desired Tranche but do not guarantee it."
           }
         },
         "list-3": {
-          "list-0": "Their Lending Requests may be reallocated to lower-yielding tranches if the requested tranche is oversubscribed.",
-          "list-1": "Higher Loyalty Levels increase but do not guarantee priority allocation to the desired tranche.",
-          "list-2": "Reallocation is automated. If Lenders do not wish to accept a lower-yielding tranche, they must submit a Loan Withdrawal Request.",
-          "list-3": "Any unallocated funds at the end of the reallocation process will be returned to the Lenders if the Senior tranche is still oversubscribed."
+          "list-0": "Their Lending Requests may be reallocated to higher-ranking/lower-yielding Tranches if the requested Tranche is oversubscribed.",
+          "list-1": "The lower-yielding Tranche will have higher ranking in terms of repayment priority in the event of losses (see ‘Risk Disclosure: Senior, Mezzanine and Junior Tranches’ Section).",
+          "list-2": "Higher Loyalty Levels increase but do not guarantee priority allocation to the desired Tranche.",
+          "list-3": "Reallocation is automated. If Lenders are not satisfied with their participation in a lower-yielding Tranche, they may either ‘opt-out’ within 48 hours of being informed by Kasu of the end borrower(s) to which their funds will be loaned, or they must submit a Loan Withdrawal Request as outlined earlier.",
+          "list-4": "Any unallocated funds at the end of the reallocation process will be returned to the Lenders that have been rejected if the Senior Tranche is still oversubscribed."
         },
         "capacity": "Capacity",
         "totalLendingRequests": "Total Lending Requests",
+        "excessLendingRequests": "Excess Lending Requests",
         "acceptedDepositRequests": "Accepted Deposit Requests",
+        "unallocatedLendingRequests": "Unallocated Lending Requests",
         "junior": "Junior",
         "mezzanine": "Mezzanine",
         "senior": "Senior"
+      },
+      "subheader-8": {
+        "title": "Automated Opt-In",
+        "subtitle": "Acknowledgment of Automated Opt-In",
+        "subtitle-description": "By lending through Kasu, Lenders acknowledge and accept that if they do not select Opt-out within the 48 hour timeframe of being informed of the identity of the end borrower(s) to which their funds will be loaned, their funds will be automatically deployed. At that point, funds can only be returned via the normal Withdrawal Request process.",
+        "description-1": "Once a Lending Request is accepted, the Delegate has 30 days to identify an end borrower to which a Lender’s funds will be deployed. Once the Delegate identifies a suitable end borrower(s), the Lender is informed via email of the identity of the end borrower(s) to which their funds will be loaned.",
+        "description-2": "The Lender is offered the following choices:",
+        "description-3": "Lenders are able to select Opt-in or Opt-out requests via the",
+        "description-4": "in the Kasu dApp once their wallet is connected.",
+        "description-5": "The above process repeats each time a Lender’s funds are deployed to another end borrower(s).",
+        "description-6": "It is each Lender's responsibility to ensure their email spam filters are adjusted to accept emails from the address:",
+        "description-7": "Kasu accepts no responsibility for any emails that have been missed.",
+        "list-1": {
+          "list-0": {
+            "title": "Opt-out: ",
+            "description": "the Lender has 48 hours to opt out from the lending, in which case, their funds will be returned; or,"
+          },
+          "list-1": {
+            "title": "Instant Opt-in: ",
+            "description": "the Lender may opt in immediately (prior to the end of the 48 hour period); or,"
+          },
+          "list-2": {
+            "title": "Automated Opt-in: ",
+            "description": "if the Lender provides no instruction within the 48 hour period, they are deemed to have automatically opted in (otherwise known as ‘negative consent’)."
+          }
+        }
       }
     },
     "unlock": {

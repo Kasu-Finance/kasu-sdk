@@ -4,13 +4,13 @@ import getTranslation from '@/hooks/useTranslation'
 
 import NextLink from '@/components/atoms/NextLink'
 import WaveBox from '@/components/atoms/WaveBox'
-import LoanContractButton from '@/components/organisms/termsAndConditions/RiskDisclosure/LoanContractButton'
+import LoanContractButton from '@/components/organisms/termsAndConditions/ImportantInformation/LoanContractButton'
 import Subheading from '@/components/organisms/termsAndConditions/Subheading'
 
 import { Routes } from '@/config/routes'
 import { customPalette } from '@/themes/palette'
 
-const RiskDisclosure = () => {
+const ImportantInformation = () => {
   const { t } = getTranslation()
 
   return (
@@ -28,9 +28,9 @@ const RiskDisclosure = () => {
             href={Routes.docs.root.url}
             style={{ font: 'inherit', color: customPalette.gold.dark }}
           >
-            User Docs
+            {t('general.userDocs')}
           </NextLink>{' '}
-          and <LoanContractButton />.
+          {t('general.and')} <LoanContractButton />.
         </Typography>
         <Typography variant='baseMdBold'>
           {t('modals.termsAndConditions.subheader-1.description-3')}
@@ -40,4 +40,4 @@ const RiskDisclosure = () => {
   )
 }
 
-export default RiskDisclosure
+export default ImportantInformation

@@ -57,6 +57,14 @@ const TrancheAllocation = () => {
                 'modals.termsAndConditions.subheader-7.list-1.list-3.description'
               )}
             </li>
+            <li>
+              <Typography variant='baseMdBold'>
+                {t('modals.termsAndConditions.subheader-7.list-1.list-4.title')}
+              </Typography>
+              {t(
+                'modals.termsAndConditions.subheader-7.list-1.list-4.description'
+              )}
+            </li>
           </UnorderedList>
         </Stack>
         <Typography variant='h6'>
@@ -65,13 +73,18 @@ const TrancheAllocation = () => {
         <CustomTable
           tableHeader={
             <TableRow>
-              <TableCell width='33.33%'>{t('general.tranche')}</TableCell>
-              <TableCell width='33.33%'>
+              <TableCell width='25%'>{t('general.tranche')}</TableCell>
+              <TableCell width='25%'>
                 {t('modals.termsAndConditions.subheader-7.capacity')}
               </TableCell>
-              <TableCell width='33.33%'>
+              <TableCell width='25%'>
                 {t(
                   'modals.termsAndConditions.subheader-7.totalLendingRequests'
+                )}
+              </TableCell>
+              <TableCell width='25%'>
+                {t(
+                  'modals.termsAndConditions.subheader-7.excessLendingRequests'
                 )}
               </TableCell>
             </TableRow>
@@ -83,14 +96,15 @@ const TrancheAllocation = () => {
                   {t('modals.termsAndConditions.subheader-7.junior')}
                 </TableCell>
                 <TableCell>
-                  {formatAmount(20_000, { minDecimals: 2 })} USDC
+                  {formatAmount(50_000, { minDecimals: 2 })} USDC
                 </TableCell>
                 <TableCell>
-                  {formatAmount(70_000, { minDecimals: 2 })} USDC
+                  {formatAmount(40_000, { minDecimals: 2 })} USDC
                 </TableCell>
+                <TableCell>N/A</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell colSpan={3} sx={{ py: 0 }}>
+                <TableCell colSpan={4} sx={{ py: 0 }}>
                   <DottedDivider />
                 </TableCell>
               </TableRow>
@@ -104,9 +118,10 @@ const TrancheAllocation = () => {
                 <TableCell>
                   {formatAmount(20_000, { minDecimals: 2 })} USDC
                 </TableCell>
+                <TableCell>N/A</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell colSpan={3} sx={{ py: 0 }}>
+                <TableCell colSpan={4} sx={{ py: 0 }}>
                   <DottedDivider />
                 </TableCell>
               </TableRow>
@@ -115,14 +130,17 @@ const TrancheAllocation = () => {
                   {t('modals.termsAndConditions.subheader-7.senior')}
                 </TableCell>
                 <TableCell>
-                  {formatAmount(50_000, { minDecimals: 2 })} USDC
+                  {formatAmount(20_000, { minDecimals: 2 })} USDC
                 </TableCell>
                 <TableCell>
-                  {formatAmount(40_000, { minDecimals: 2 })} USDC
+                  {formatAmount(70_000, { minDecimals: 2 })} USDC
+                </TableCell>
+                <TableCell>
+                  {formatAmount(50_000, { minDecimals: 2 })} USDC
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell colSpan={3} sx={{ py: 0 }}>
+                <TableCell colSpan={4} sx={{ py: 0 }}>
                   <DottedDivider />
                 </TableCell>
               </TableRow>
@@ -135,13 +153,18 @@ const TrancheAllocation = () => {
         <CustomTable
           tableHeader={
             <TableRow>
-              <TableCell width='33.33%'>{t('general.tranche')}</TableCell>
-              <TableCell width='33.33%'>
+              <TableCell width='25%'>{t('general.tranche')}</TableCell>
+              <TableCell width='25%'>
                 {t('modals.termsAndConditions.subheader-7.capacity')}
               </TableCell>
-              <TableCell width='33.33%'>
+              <TableCell width='25%'>
                 {t(
                   'modals.termsAndConditions.subheader-7.totalLendingRequests'
+                )}
+              </TableCell>
+              <TableCell width='25%'>
+                {t(
+                  'modals.termsAndConditions.subheader-7.unallocatedLendingRequests'
                 )}
               </TableCell>
             </TableRow>
@@ -153,14 +176,17 @@ const TrancheAllocation = () => {
                   {t('modals.termsAndConditions.subheader-7.junior')}
                 </TableCell>
                 <TableCell>
-                  {formatAmount(20_000, { minDecimals: 2 })} USDC
+                  {formatAmount(50_000, { minDecimals: 2 })} USDC
                 </TableCell>
                 <TableCell>
-                  {formatAmount(20_000, { minDecimals: 2 })} USDC
+                  {formatAmount(40_000, { minDecimals: 2 })} USDC
+                </TableCell>
+                <TableCell>
+                  {formatAmount(30_000, { minDecimals: 2 })} USDC
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell colSpan={3} sx={{ py: 0 }}>
+                <TableCell colSpan={4} sx={{ py: 0 }}>
                   <DottedDivider />
                 </TableCell>
               </TableRow>
@@ -172,11 +198,12 @@ const TrancheAllocation = () => {
                   {formatAmount(30_000, { minDecimals: 2 })} USDC
                 </TableCell>
                 <TableCell>
-                  {formatAmount(30_000, { minDecimals: 2 })} USDC
+                  {formatAmount(20_000, { minDecimals: 2 })} USDC
                 </TableCell>
+                <TableCell>N/A</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell colSpan={3} sx={{ py: 0 }}>
+                <TableCell colSpan={4} sx={{ py: 0 }}>
                   <DottedDivider />
                 </TableCell>
               </TableRow>
@@ -185,14 +212,15 @@ const TrancheAllocation = () => {
                   {t('modals.termsAndConditions.subheader-7.senior')}
                 </TableCell>
                 <TableCell>
-                  {formatAmount(50_000, { minDecimals: 2 })} USDC
+                  {formatAmount(20_000, { minDecimals: 2 })} USDC
                 </TableCell>
                 <TableCell>
-                  {formatAmount(50_000, { minDecimals: 2 })} USDC
+                  {formatAmount(70_000, { minDecimals: 2 })} USDC
                 </TableCell>
+                <TableCell>N/A</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell colSpan={3} sx={{ py: 0 }}>
+                <TableCell colSpan={4} sx={{ py: 0 }}>
                   <DottedDivider />
                 </TableCell>
               </TableRow>
@@ -215,6 +243,7 @@ const TrancheAllocation = () => {
             <li>{t('modals.termsAndConditions.subheader-7.list-3.list-1')}</li>
             <li>{t('modals.termsAndConditions.subheader-7.list-3.list-2')}</li>
             <li>{t('modals.termsAndConditions.subheader-7.list-3.list-3')}</li>
+            <li>{t('modals.termsAndConditions.subheader-7.list-3.list-4')}</li>
           </UnorderedList>
         </Stack>
       </Stack>

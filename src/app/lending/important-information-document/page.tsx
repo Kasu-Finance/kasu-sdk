@@ -5,14 +5,15 @@ import getTranslation from '@/hooks/useTranslation'
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
+import AutomatedOptIn from '@/components/organisms/termsAndConditions/AutomatedOptIn'
 import BackButton from '@/components/organisms/termsAndConditions/BackButton'
 import FeesExplanation from '@/components/organisms/termsAndConditions/FeesExplanation'
+import ImportantInformation from '@/components/organisms/termsAndConditions/ImportantInformation'
 import InterestAccrual from '@/components/organisms/termsAndConditions/InterestAccrual'
 import LoanWithdrawalRequests from '@/components/organisms/termsAndConditions/LoanWithdrawalRequests'
 import PendingPhase from '@/components/organisms/termsAndConditions/PendingPhase'
 import RiskDisclosure from '@/components/organisms/termsAndConditions/RiskDisclosure'
 import TrancheAllocation from '@/components/organisms/termsAndConditions/TrancheAllocation'
-import Warning from '@/components/organisms/termsAndConditions/Warning'
 
 const TermsAndConditionsPage = () => {
   const { t } = getTranslation()
@@ -23,8 +24,9 @@ const TermsAndConditionsPage = () => {
         <CustomCardHeader title={t('modals.termsAndConditions.title')} />
         <CustomInnerCardContent>
           <Stack spacing={4}>
+            <ImportantInformation />
             <RiskDisclosure />
-            <Warning />
+            <AutomatedOptIn />
             <FeesExplanation />
             <InterestAccrual />
             <PendingPhase />

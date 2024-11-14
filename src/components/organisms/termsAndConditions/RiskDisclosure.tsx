@@ -7,7 +7,7 @@ import Subheading from '@/components/organisms/termsAndConditions/Subheading'
 
 import { customTypography } from '@/themes/typography'
 
-const Warning = () => {
+const RiskDisclosure = () => {
   const { t } = getTranslation()
 
   return (
@@ -127,6 +127,11 @@ const Warning = () => {
               'modals.termsAndConditions.subheader-2.sub-subheader-3.list.list-1.description'
             )}
           </li>
+          <li>
+            {t(
+              'modals.termsAndConditions.subheader-2.sub-subheader-3.list.list-3'
+            )}
+          </li>
         </UnorderedList>
       </Stack>
 
@@ -144,4 +149,4 @@ const Warning = () => {
   )
 }
 
-export default Warning
+export default RiskDisclosure
