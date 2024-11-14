@@ -48,7 +48,7 @@ const WhatsNext = () => {
             {t('modals.lending.completed.list.list-0.description-1')}{' '}
             <Typography
               component={Link}
-              href={Routes.portfolio.root.url}
+              href={Routes.portfolio.yourTransactions.url}
               variant='baseMd'
               sx={{
                 textDecoration: 'none',
@@ -56,7 +56,8 @@ const WhatsNext = () => {
               }}
               onClick={handleClose}
             >
-              My Portfolio
+              {t('general.myPortfolio')} &gt;{' '}
+              {t('portfolio.tabs.yourTransactions')}
             </Typography>{' '}
             {t('modals.lending.completed.list.list-0.description-2')}
           </li>
@@ -64,7 +65,12 @@ const WhatsNext = () => {
             <Typography variant='baseMdBold'>
               {t('modals.lending.completed.list.list-1.title')}:{' '}
             </Typography>
-            {t('modals.lending.completed.list.list-1.description')}
+            {t('modals.lending.completed.list.list-1.description-1')}
+            <Typography variant='baseMd' color='white'>
+              {' '}
+              no-reply@kasu.finance{' '}
+            </Typography>
+            {t('modals.lending.completed.list.list-1.description-2')}
           </li>
           <li>
             <Typography variant='baseMdBold'>

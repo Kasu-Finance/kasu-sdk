@@ -711,7 +711,8 @@
           },
           "list-1": {
             "title": "Transparency",
-            "description": "look out for an email informing you exactly which end borrower your funds will be loaned to.​"
+            "description-1": "look out for an email from",
+            "description-2": "informing you exactly which end borrower(s) your funds will be loaned to. Be sure to adjust your spam filter to accept emails this address.​"
           },
           "list-2": {
             "title": "Choice",
