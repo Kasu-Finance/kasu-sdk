@@ -18,7 +18,8 @@ const WhatsNext = () => {
 
   const handleClose = () => closeModal(ModalsKeys.LEND)
 
-  const handleOpen = () => openModal({ name: ModalsKeys.UNRELEASED_FEATURE })
+  const handleOpen = () =>
+    openModal({ name: ModalsKeys.LOAN_CONTRACT, canAccept: false })
 
   return (
     <>
