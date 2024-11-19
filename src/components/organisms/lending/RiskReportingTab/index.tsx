@@ -3,8 +3,6 @@ import { Stack } from '@mui/material'
 import BadAndDoubtfulDebts from '@/components/organisms/lending/RiskReportingTab/BadAndDoubtfulDebts'
 import FinancialReportingDocuments from '@/components/organisms/lending/RiskReportingTab/FinancialReportingDocuments'
 import PoolCreditMetrics from '@/components/organisms/lending/RiskReportingTab/PoolCreditMetrics'
-import PoolData from '@/components/organisms/lending/RiskReportingTab/PoolData'
-import PortfolioLeadingIndicators from '@/components/organisms/lending/RiskReportingTab/PortfolioLeadingIndicators'
 import RiskReportingTabSkeleton from '@/components/organisms/lending/RiskReportingTab/RiskReportingTabSkeleton'
 
 import { getBadAndDoubtfulDebts } from '@/app/_requests/badAndDoubltDebts'
@@ -29,8 +27,8 @@ const RiskReportingTab: React.FC<RiskReportingProps> = async ({ poolId }) => {
 
   return (
     <Stack spacing={3} mt={3}>
-      <PoolData />
-      <PortfolioLeadingIndicators />
+      {/* <PoolData /> */}
+      {/* <PortfolioLeadingIndicators /> */}
       {isFulfilledPromise(poolCreditMetrics) && poolCreditMetrics.value && (
         <PoolCreditMetrics poolCreditMetrics={poolCreditMetrics.value} />
       )}
