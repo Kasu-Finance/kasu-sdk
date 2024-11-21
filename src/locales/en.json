@@ -32,6 +32,7 @@
     "optedIn": "Opted In",
     "optedOut": "Opted Out",
     "optInOut": "Opt In/out",
+    "fundsReturned": "Funds Returned",
     "fixed": "fixed",
     "lock": "lock",
     "unlock": "unlock",
@@ -1882,7 +1883,7 @@
           "title": "Subsequent Transactions",
           "subtitle": "(Post Acceptance)",
           "metric-1": "Funds Returned",
-          "metric-1-tooltip": "info",
+          "metric-1-tooltip": "The total USDC amount returned to you by the Delegate(s), due to lack of demand for funding from end borrowers.",
           "metric-2": "Current Opt In/Out Pending",
           "metric-2-tooltip-1": "The total USDC amount currently awaiting your instructions for the Delegate to either deploy to end borrowers, or return your funds to you instead.",
           "metric-2-tooltip-2": "As per your acknowledgement in the",
@@ -1943,6 +1944,10 @@
             "tooltip-1": "The portion of accepted Lending Requests associated with another tranche that has been reallocated to this next available tranche, due to your initial requested tranche(s) being oversubscribed (full).",
             "tooltip-2": "Please refer to the",
             "tooltip-3": "you acknowledged during the Loan Contract Acceptance process for more details."
+          },
+          "fundsReturned": {
+            "tooltip-1": "Funds will be returned to you by the Delegate due to lack of demand for funding from end borrowers, or the Delegate’s being unable to identify a suitable end borrower.",
+            "tooltip-2": "The USDC amount of a single Lending Request that was previously accepted, but will now be returned to you by the Delegate due to lack of demand for funding from end borrowers, or the Delegate being unable to identify a suitable end borrower."
           },
           "deposit": {
             "requested": {

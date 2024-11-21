@@ -120,6 +120,9 @@ const SubsequentTransactions: React.FC<SubsequentTransactionsProps> = ({
                       ) : transaction.currentStatus ===
                         LoanTicketStatus.optedOut ? (
                         t('general.optedOut')
+                      ) : transaction.currentStatus ===
+                        LoanTicketStatus.fundsReturned ? (
+                        t('general.fundsReturned')
                       ) : (
                         <Box display='flex' alignItems='center'>
                           <Button

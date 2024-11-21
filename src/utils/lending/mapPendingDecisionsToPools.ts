@@ -24,7 +24,6 @@ export type LoanTicket = {
   trancheID: `0x${string}`
   userID: `0x${string}`
   assets: number
-  shares: number
   currentStatus: LoanTicketStatus
   currentStatusDescription: string
   createdOn: EpochTimeStamp

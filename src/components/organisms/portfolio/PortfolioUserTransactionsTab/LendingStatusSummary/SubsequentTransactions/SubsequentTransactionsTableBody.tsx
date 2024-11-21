@@ -28,6 +28,16 @@ const SubsequentTransactionsTableBody: React.FC<
     <>
       <SubsequentTransactionsTableRow
         title={t(
+          'portfolio.transactions.lendingStatusSummary.subsequentTransactions.metric-1'
+        )}
+        tooltipInfo={t(
+          'portfolio.transactions.lendingStatusSummary.subsequentTransactions.metric-1-tooltip'
+        )}
+        currentEpochValue={`${formatAmount(currentEpochAmounts.fundsReturnedAmount, { minDecimals: 2 })} USDC`}
+        totalLifetimeValue={`${formatAmount(lifetimeAmounts.fundsReturnedAmount, { minDecimals: 2 })} USDC`}
+      />
+      <SubsequentTransactionsTableRow
+        title={t(
           'portfolio.transactions.lendingStatusSummary.subsequentTransactions.metric-2'
         )}
         tooltipInfo={<SubsequentTransactionsPendingTooltip />}

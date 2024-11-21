@@ -17,7 +17,6 @@ const getPendingDecisions = (loanTicketGroups: LoanTicketDto[]) => {
     const groupedByID = groupBy(endBorrowerGroup, ({ id }) => id)
 
     let assets = 0
-    let shares = 0
     let latestTicket: LoanTicketDto | undefined = undefined
 
     for (const group of Object.values(groupedByID)) {
@@ -40,7 +39,6 @@ const getPendingDecisions = (loanTicketGroups: LoanTicketDto[]) => {
       if (!createdEventTicket) continue
 
       assets += parseFloat(createdEventTicket.assets)
-      shares += parseFloat(createdEventTicket.shares)
 
       if (
         !latestTicket ||
@@ -66,7 +64,6 @@ const getPendingDecisions = (loanTicketGroups: LoanTicketDto[]) => {
         userID: latestTicket.userID,
         events: endBorrowerGroup,
         assets,
-        shares,
       })
     }
   }

@@ -63,6 +63,10 @@ const DetailedTransactionRequestedTooltip: React.FC<
         'portfolio.transactions.detailedTransactions.tooltips.withdrawal.requested.tooltip-4'
       )}{' '}
     </>
+  ) : requestType === 'Funds Returned' ? (
+    t(
+      'portfolio.transactions.detailedTransactions.tooltips.fundsReturned.tooltip-1'
+    )
   ) : (
     <>
       {t(

@@ -54,7 +54,8 @@ const RequestOverview: React.FC<RequestOverviewProps> = ({
           </Typography>
         }
       />
-      {transaction.requestType !== 'Reallocation' && (
+      {(transaction.requestType === 'Deposit' ||
+        transaction.requestType === 'Withdrawal') && (
         <>
           <InfoRow
             title={t('modals.requestDetails.metric-2')}

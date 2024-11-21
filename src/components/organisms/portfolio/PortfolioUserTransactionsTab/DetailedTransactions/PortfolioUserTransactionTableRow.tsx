@@ -87,7 +87,7 @@ const PortfolioUserTransactionTableRow: React.FC<
             ...customTypography.baseSm,
             lineHeight: '18px',
             verticalAlign: 'top',
-            px: 1.5,
+            px: 1,
             whiteSpace: 'normal',
           },
         }}
@@ -99,6 +99,17 @@ const PortfolioUserTransactionTableRow: React.FC<
             t('portfolio.transactions.detailedTransactions.lendingRequest')
           ) : transaction.requestType === 'Withdrawal' ? (
             t('portfolio.transactions.detailedTransactions.withdrawalRequest')
+          ) : transaction.requestType === 'Funds Returned' ? (
+            <Box display='flex' alignItems='center'>
+              {t('general.fundsReturned')}
+              <ToolTip
+                title={
+                  <DetailedTransactionRequestedTooltip
+                    requestType={transaction.requestType}
+                  />
+                }
+              />
+            </Box>
           ) : (
             <Box display='flex' alignItems='center'>
               {t('portfolio.transactions.detailedTransactions.reallocation')}
@@ -118,7 +129,8 @@ const PortfolioUserTransactionTableRow: React.FC<
             capitalize(t('general.cancelled'))
           ) : (
             <Stack>
-              {transaction.requestType !== 'Reallocation' && (
+              {(transaction.requestType === 'Deposit' ||
+                transaction.requestType === 'Withdrawal') && (
                 <>
                   <Box display='flex' justifyContent='space-between'>
                     <Box>
@@ -225,6 +237,29 @@ const PortfolioUserTransactionTableRow: React.FC<
                   </Typography>
                   <Typography variant='inherit'>
                     {formatAmount(transaction.reallocatedInAmount, {
+                      minDecimals: 2,
+                    })}{' '}
+                    USDC
+                  </Typography>
+                </Box>
+              )}
+              {transaction.requestType === 'Funds Returned' && (
+                <Box display='flex' justifyContent='space-between'>
+                  <Typography
+                    variant='inherit'
+                    component={Box}
+                    display='flex'
+                    alignItems='center'
+                  >
+                    {t('general.fundsReturned')}{' '}
+                    <ToolTip
+                      title={t(
+                        'portfolio.transactions.detailedTransactions.tooltips.fundsReturned.tooltip-2'
+                      )}
+                    />
+                  </Typography>
+                  <Typography variant='inherit'>
+                    {formatAmount(transaction.fundsReturnedAmount, {
                       minDecimals: 2,
                     })}{' '}
                     USDC

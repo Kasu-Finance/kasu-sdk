@@ -22,11 +22,11 @@ const PortfolioUserTransactionsTableHeader = () => {
         },
       }}
     >
-      <TableCell width='20%'>{t('general.lendingStrategy')}</TableCell>
+      <TableCell width='19%'>{t('general.lendingStrategy')}</TableCell>
       <TableCell width='10%'>
         {t('portfolio.transactions.detailedTransactions.tableHeader.cell-1')}
       </TableCell>
-      <TableCell width='11%'>
+      <TableCell width='12%'>
         <Box display='flex' alignItems='center'>
           {t('portfolio.transactions.detailedTransactions.tableHeader.cell-2')}
           <ToolTip

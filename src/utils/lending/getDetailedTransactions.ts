@@ -3,7 +3,7 @@ import {
   UserRequestEvent,
 } from '@solidant/kasu-sdk/src/services/UserLending/types'
 
-import { LoanTicketDto } from '@/config/api.lendersAgreement'
+import { LoanTicketDto, LoanTicketStatus } from '@/config/api.lendersAgreement'
 import getPendingDecisions from '@/utils/lending/getPendingDecisions'
 import getSubsequentTransactions from '@/utils/lending/getSubsequentTransactions'
 import mapLoanTicketsTranche from '@/utils/lending/mapLoanTicketsTranche'
@@ -53,11 +53,17 @@ type DetailedTransactionReallocationRequest = {
   reallocatedInAmount: string
 }
 
+type DetailedTransactionFundsReturned = {
+  requestType: 'Funds Returned'
+  fundsReturnedAmount: string
+}
+
 export type DetailedTransaction = DetailedTransactionBase &
   (
     | CancellableRequest<DetailTransactionDepositRequest>
     | CancellableRequest<DetailTransactionWithdrawalRequest>
     | DetailedTransactionReallocationRequest
+    | DetailedTransactionFundsReturned
   )
 
 const getDetailedTransactions = (
@@ -65,6 +71,9 @@ const getDetailedTransactions = (
   loanTickets: LoanTicketDto[]
 ) => {
   const detailedTransactions: DetailedTransaction[] = []
+
+  // funds returned transaction that has already been added to transactions
+  const addedFundsReturned: string[] = []
 
   const trancheMap = mapLoanTicketsTranche(loanTickets)
 
@@ -157,6 +166,24 @@ const getDetailedTransactions = (
         trancheName: event.trancheName,
         trancheId: event.trancheId,
       })
+    }
+
+    const fundsReturnedAction = detailedTransaction.subsequentTransactions.find(
+      (ticket) => ticket.currentStatus === LoanTicketStatus.fundsReturned
+    )
+
+    if (
+      fundsReturnedAction &&
+      !addedFundsReturned.includes(fundsReturnedAction.id)
+    ) {
+      const fundsReturnedTransaction: DetailedTransaction = {
+        ...detailedTransactionBase,
+        requestType: 'Funds Returned',
+        fundsReturnedAmount: fundsReturnedAction.assets.toString(),
+      }
+
+      addedFundsReturned.push(fundsReturnedAction.id)
+      transactions.push(fundsReturnedTransaction)
     }
 
     transactions.unshift(detailedTransaction)

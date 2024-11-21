@@ -44,14 +44,13 @@ const getSubsequentTransactions = (loanTicketGroups: LoanTicketDto[]) => {
 
     for (const endBorrowerGroup of Object.values(groupedByEndBorrower)) {
       let assets = 0
-      let shares = 0
 
       for (const group of endBorrowerGroup) {
-        // opted out events have a negative assets that we dont want to calculate
-        if (group.status === LoanTicketStatus.optedOut) continue
+        if (group.status === LoanTicketStatus.fundsReturned)
+          // funds returned events have negative assets that we dont want to calculate
+          continue
 
         assets += parseFloat(group.assets)
-        shares += parseFloat(group.shares)
       }
 
       const lastConsentAction = endBorrowerGroup.findLast((ticket) =>
@@ -60,11 +59,36 @@ const getSubsequentTransactions = (loanTicketGroups: LoanTicketDto[]) => {
         )
       )
 
-      if (!lastConsentAction) continue
+      const fundsReturnedAction = endBorrowerGroup.find(
+        (ticket) => ticket.status === LoanTicketStatus.fundsReturned
+      )
+
+      let fundsReturnedTicket: LoanTicket | undefined
+
+      if (fundsReturnedAction) {
+        fundsReturnedTicket = {
+          assets,
+          createdOn: dayjs(fundsReturnedAction.createdOn).unix(),
+          poolID: fundsReturnedAction.poolID,
+          endBorrowerID: fundsReturnedAction.endBorrowerID,
+          trancheID: fundsReturnedAction.trancheID,
+          userID: fundsReturnedAction.userID,
+          currentStatus: fundsReturnedAction.status,
+          currentStatusDescription: fundsReturnedAction.statusDescription,
+          events: endBorrowerGroup,
+          id: fundsReturnedAction.id, // can belong to mulitple but doesnt matter here since it won't be used elsewhere
+        }
+      }
+
+      if (!lastConsentAction) {
+        if (fundsReturnedTicket) {
+          subsequentTransactions.push(fundsReturnedTicket)
+        }
+        continue
+      }
 
       subsequentTransactions.push({
         assets,
-        shares,
         createdOn: dayjs(lastConsentAction.createdOn).unix(),
         poolID: lastConsentAction.poolID,
         endBorrowerID: lastConsentAction.endBorrowerID,
@@ -75,6 +99,10 @@ const getSubsequentTransactions = (loanTicketGroups: LoanTicketDto[]) => {
         events: endBorrowerGroup,
         id: lastConsentAction.id, // can belong to mulitple but doesnt matter here since it won't be used elsewhere
       })
+
+      if (fundsReturnedTicket) {
+        subsequentTransactions.push(fundsReturnedTicket)
+      }
     }
   }
 

@@ -6,6 +6,7 @@ export enum LoanTicketStatus {
   emailSent = 'emailSent',
   created = 'created',
   valueChanged = 'valueChanged',
+  fundsReturned = 'fundsReturned',
 }
 
 export type Paginated<T> = {
@@ -21,7 +22,6 @@ export type LoanTicketDtoRaw = {
   trancheID: `0x${string}`
   userID: `0x${string}`
   assets: string
-  shares: string
   depositRequestID: string
   status: LoanTicketStatus
   statusDescription: string

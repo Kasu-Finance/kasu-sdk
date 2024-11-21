@@ -25,7 +25,11 @@ const calculateLendingStatusSummary = (
   const currentEpochStartTime = nextEpochTime - TimeConversions.SECONDS_PER_WEEK
 
   for (const transaction of detailedTransactions) {
-    if (transaction.requestType === 'Withdrawal') continue
+    if (
+      transaction.requestType === 'Withdrawal' ||
+      transaction.requestType === 'Funds Returned'
+    )
+      continue
 
     const isCurrentEpoch = transaction.timestamp > currentEpochStartTime
 

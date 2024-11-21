@@ -5,12 +5,27 @@ type Amounts = {
   pendingDecisionAmount: number
   optedInAmount: number
   optedOutAmount: number
+  fundsReturnedAmount: number
 }
 
 const initialState: Amounts = {
   pendingDecisionAmount: 0,
   optedInAmount: 0,
   optedOutAmount: 0,
+  fundsReturnedAmount: 0,
+}
+
+const getAmountKey = (status: LoanTicketStatus): keyof Amounts => {
+  switch (status) {
+    case LoanTicketStatus.optedOut:
+      return 'optedOutAmount'
+    case LoanTicketStatus.optedIn:
+      return 'optedInAmount'
+    case LoanTicketStatus.fundsReturned:
+      return 'fundsReturnedAmount'
+    default:
+      return 'pendingDecisionAmount'
+  }
 }
 
 const calculateSubsequentTransactionSummary = (
@@ -23,10 +38,31 @@ const calculateSubsequentTransactionSummary = (
   const lifetimeAmounts: Amounts = { ...initialState }
 
   for (const group of Object.values(groupedByID)) {
-    const sortedGroupedTickets = group.sort(
-      (a, b) =>
-        new Date(b.createdOn).getTime() - new Date(a.createdOn).getTime()
+    // handle funds returned separately
+    const hasFundsReturned = group.find(
+      ({ status }) => status === LoanTicketStatus.fundsReturned
     )
+
+    if (hasFundsReturned) {
+      lifetimeAmounts.fundsReturnedAmount += parseFloat(hasFundsReturned.assets)
+
+      if (
+        parseFloat(hasFundsReturned.epochID) ===
+        parseFloat(currentEpoch) - 1
+      ) {
+        currentEpochAmounts.fundsReturnedAmount += parseFloat(
+          hasFundsReturned.assets
+        )
+      }
+    }
+
+    // remove funds returned and check latest events
+    const sortedGroupedTickets = group
+      .filter(({ status }) => status !== LoanTicketStatus.fundsReturned)
+      .sort(
+        (a, b) =>
+          new Date(b.createdOn).getTime() - new Date(a.createdOn).getTime()
+      )
 
     const currentLatestTicket = sortedGroupedTickets[0]
 
@@ -39,18 +75,12 @@ const calculateSubsequentTransactionSummary = (
     )
       continue
 
-    const totalAssets = sortedGroupedTickets.reduce((total, cur) => {
-      if (cur.status === LoanTicketStatus.optedOut) return total
+    const totalAssets = sortedGroupedTickets.reduce(
+      (total, cur) => total + parseFloat(cur.assets),
+      0
+    )
 
-      return total + parseFloat(cur.assets)
-    }, 0)
-
-    const amountKey: keyof Amounts =
-      currentLatestTicket.status === LoanTicketStatus.optedIn
-        ? 'optedInAmount'
-        : currentLatestTicket.status === LoanTicketStatus.optedOut
-          ? 'optedOutAmount'
-          : 'pendingDecisionAmount'
+    const amountKey: keyof Amounts = getAmountKey(currentLatestTicket.status)
 
     lifetimeAmounts[amountKey] += totalAssets
 
