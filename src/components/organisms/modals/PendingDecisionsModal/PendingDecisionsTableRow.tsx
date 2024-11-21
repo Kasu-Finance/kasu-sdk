@@ -79,7 +79,7 @@ const PendingDecisionsTableRow: React.FC<PendingDecisionsTableRowProps> = ({
               >
                 <TableCell>
                   {
-                    formatTimestamp(dayjs(ticket.createdOn).unix(), {
+                    formatTimestamp(ticket.createdOn, {
                       format: 'DD.MM.YYYY',
                     }).date
                   }
