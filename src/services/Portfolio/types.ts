@@ -55,6 +55,10 @@ export interface PortfolioTranche extends TrancheData {
         startTime: EpochTimeStamp;
         amount: string;
         endTime: EpochTimeStamp;
+        yieldEarnings: {
+            lastEpoch: string;
+            lifetime: string;
+        };
     }[];
 }
 export interface PortfolioLendingPool extends Omit<PoolOverview, 'tranches'> {
@@ -67,6 +71,25 @@ export interface PortfolioLendingPool extends Omit<PoolOverview, 'tranches'> {
 }
 export interface LendingPortfolioData {
     lendingPools: PortfolioLendingPool[];
+}
+
+export interface UserLendingPoolTrancheFixedTermDepositLock {
+    isLocked: boolean;
+    lockId: string;
+    createdOn: string;
+    isWithdrawalRequested: boolean;
+    initialTrancheShares: string;
+    epochLockStart: string;
+    epochLockEnd: string;
+    lendingPoolTrancheFixedTermConfig: {
+        epochLockDuration: string;
+    };
+    unlockAmount: string | null;
+    initialAmount: string;
+    trancheShares: string;
+    userLendingPoolTrancheFixedTermDepositLockShareUpdate: {
+        shares: string;
+    }[];
 }
 
 export interface LastEpochQueryResult {
@@ -104,6 +127,47 @@ export interface LastEpochQueryResult {
                 }[];
                 tranche: {
                     id: string;
+                    lendingPoolTrancheShareUpdates: {
+                        shares: string;
+                    }[];
+                    lendingPoolTrancheEpochInterest: {
+                        epochInterestAmount: string;
+                    }[];
+                };
+            }[];
+        }[];
+    } | null;
+}
+
+export interface LendingPortfolioQueryResult {
+    user: {
+        lendingPoolUserDetails: {
+            id: string;
+            lendingPool: {
+                id: string;
+                name: string;
+                balance: string;
+                configuration: {
+                    lendingPoolWithdrawalConfig: {
+                        requestEpochsInAdvance: string;
+                        cancelRequestEpochsInAdvance: string;
+                    };
+                };
+                tranches: {
+                    shares: string;
+                }[];
+            };
+            lendingPoolTrancheUserDetails: {
+                userLendingPoolTrancheFixedTermDepositLocks: UserLendingPoolTrancheFixedTermDepositLock[];
+                lendingPoolTrancheUserEpochSharesUpdates: {
+                    shares: string;
+                }[];
+                totalAcceptedDeposits: string;
+                totalAcceptedWithdrawnAmount: string;
+                tranche: {
+                    id: string;
+                    shares: string;
+                    balance: string;
                     lendingPoolTrancheShareUpdates: {
                         shares: string;
                     }[];

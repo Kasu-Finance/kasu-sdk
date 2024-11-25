@@ -60,3 +60,81 @@ export const lastEpochQuery = gql`
         }
     }
 `;
+
+export const lendingPortfolioQuery = gql`
+    query LastEpochQuery(
+        $userAddress: String!
+        $epochId: String!
+        $unusedPools: [String]!
+    ) {
+        user(id: $userAddress) {
+            lendingPoolUserDetails(
+                where: { lendingPool_not_in: $unusedPools }
+            ) {
+                id
+                lendingPool {
+                    id
+                    name
+                    balance
+                    tranches {
+                        shares
+                    }
+                }
+                lendingPoolTrancheUserDetails {
+                    lendingPoolTrancheUserEpochSharesUpdates(
+                        orderDirection: desc
+                        orderBy: shareUpdatesIndex
+                        where: { epochId_lte: $epochId }
+                        first: 1
+                    ) {
+                        shares
+                    }
+                    userLendingPoolTrancheFixedTermDepositLocks {
+                        isLocked
+                        unlockAmount
+                        initialAmount
+                        lockId
+                        initialTrancheShares
+                        isWithdrawalRequested
+                        createdOn
+                        epochLockStart
+                        epochLockEnd
+                        trancheShares
+                        lendingPoolTrancheFixedTermConfig {
+                            epochLockDuration
+                        }
+                        userLendingPoolTrancheFixedTermDepositLockShareUpdate(
+                            orderBy: shareUpdatesIndex
+                            orderDirection: desc
+                            first: 1
+                            where: { epochId_lt: $epochId }
+                        ) {
+                            shares
+                        }
+                    }
+                    tranche {
+                        id
+                        shares
+                        balance
+                        lendingPoolTrancheShareUpdates(
+                            first: 1
+                            orderBy: shareUpdatesIndex
+                            orderDirection: desc
+                            where: { epochId_lt: $epochId }
+                        ) {
+                            shares
+                        }
+                        lendingPoolTrancheEpochInterest(
+                            first: 1
+                            orderBy: epochId
+                            orderDirection: desc
+                            where: { epochId_lt: $epochId }
+                        ) {
+                            epochInterestAmount
+                        }
+                    }
+                }
+            }
+        }
+    }
+`;
