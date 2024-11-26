@@ -115,6 +115,8 @@ export async function GET(req: NextRequest) {
     `${LENDERS_AGREEMENT_API}/allocations/loan-tickets?` +
       new URLSearchParams({
         userID: userAddress,
+        offset: '0',
+        limit: '10000',
       }),
     {
       headers: {
