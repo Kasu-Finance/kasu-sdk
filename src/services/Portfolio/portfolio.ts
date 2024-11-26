@@ -196,12 +196,14 @@ export class Portfolio {
             })[];
         })[] = [];
         const usePoolBalancePromises: Promise<UserPoolBalance>[] = [];
-        const latestEpoch = BigNumber.from(currentEpoch).sub(BigNumber.from(1));
+        const previousEpoch = BigNumber.from(currentEpoch).sub(
+            BigNumber.from(1),
+        );
 
         const lastEpochData: LendingPortfolioQueryResult =
             await this._graph.request(lendingPortfolioQuery, {
-                userAddress: userAddress,
-                epochId: latestEpoch.toString(),
+                userAddress: userAddress.toLowerCase(),
+                epochId: parseFloat(currentEpoch),
                 unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
             });
 
@@ -273,45 +275,12 @@ export class Portfolio {
                     });
                     continue;
                 }
-
-                // const prevTrancheYield =
-                //     lastEpochUserTrancheDetails.tranche
-                //         .lendingPoolTrancheEpochInterest.length > 0
-                //         ? parseFloat(
-                //               lastEpochUserTrancheDetails.tranche
-                //                   .lendingPoolTrancheEpochInterest[0]
-                //                   .epochInterestAmount,
-                //           )
-                //         : 0;
-                // const prevUserShares =
-                //     lastEpochUserTrancheDetails
-                //         .lendingPoolTrancheUserEpochSharesUpdates.length > 0
-                //         ? parseFloat(
-                //               lastEpochUserTrancheDetails
-                //                   .lendingPoolTrancheUserEpochSharesUpdates[0]
-                //                   .shares,
-                //           )
-                //         : 0;
-                // const prevTrancheShares =
-                //     lastEpochUserTrancheDetails.tranche
-                //         .lendingPoolTrancheShareUpdates.length > 0
-                //         ? parseFloat(
-                //               lastEpochUserTrancheDetails.tranche
-                //                   .lendingPoolTrancheShareUpdates[0].shares,
-                //           )
-                //         : 0;
-                // const yieldEarningsLastEpoch =
-                //     prevTrancheShares != 0
-                //         ? (prevUserShares * prevTrancheYield) /
-                //           prevTrancheShares
-                //         : 0;
-                // totalYieldEarnedLastEpoch += yieldEarningsLastEpoch;
-
                 const lastEpochTotalYield = parseFloat(
                     lastEpochUserTrancheDetails.tranche
                         .lendingPoolTrancheEpochInterest?.[0]
                         ?.epochInterestAmount ?? '0',
                 );
+
                 const lastEpochUserShares = parseFloat(
                     lastEpochUserTrancheDetails
                         .lendingPoolTrancheUserEpochSharesUpdates?.[0]
@@ -337,46 +306,60 @@ export class Portfolio {
                 const userTrancheBalance =
                     this._userLendingService.getUserTrancheBalance(
                         userAddress,
+                        poolOverview.id,
                         tranche.id,
                     );
 
                 let totalLifetimeFtdYield = 0;
 
-                let lastEpochVaraiableBaseYield = lastEpochTotalBaseYield;
+                let lastEpochVariableBaseYield = lastEpochTotalBaseYield;
 
                 const fixedLoans =
                     lastEpochUserTrancheDetails.userLendingPoolTrancheFixedTermDepositLocks.map(
                         (fixedTermDeposit) => {
-                            console.log(fixedTermDeposit);
+                            let lastEpochYieldEarned = 0;
+                            let lifetimeYieldEarned = 0;
 
-                            const currentEpochFtdShares = parseFloat(
-                                fixedTermDeposit.trancheShares,
-                            );
+                            if (
+                                parseFloat(fixedTermDeposit.epochLockStart) <
+                                    previousEpoch.toNumber() &&
+                                parseFloat(fixedTermDeposit.epochLockEnd) >=
+                                    previousEpoch.toNumber() &&
+                                Boolean(
+                                    lastEpochUserTrancheDetails
+                                        .lendingPoolTrancheUserEpochSharesUpdates
+                                        ?.length,
+                                )
+                            ) {
+                                const currentEpochFtdShares = parseFloat(
+                                    fixedTermDeposit.trancheShares,
+                                );
 
-                            const lastEpochFtdShares = parseFloat(
-                                fixedTermDeposit
-                                    .userLendingPoolTrancheFixedTermDepositLockShareUpdate?.[0]
-                                    ?.shares ?? '0',
-                            );
+                                const lastEpochFtdShares = parseFloat(
+                                    fixedTermDeposit
+                                        .userLendingPoolTrancheFixedTermDepositLockShareUpdate?.[0]
+                                        ?.shares ?? '0',
+                                );
 
-                            const additionalFtdYield =
-                                ((currentEpochFtdShares - lastEpochFtdShares) *
-                                    currentTotalAmount) /
-                                currentTotalShares;
+                                const additionalFtdYield =
+                                    ((currentEpochFtdShares -
+                                        lastEpochFtdShares) *
+                                        currentTotalAmount) /
+                                    currentTotalShares;
 
-                            const lastEpochFtdBaseYield =
-                                (lastEpochTotalBaseYield * lastEpochFtdShares) /
-                                lastEpochUserShares;
+                                const lastEpochFtdBaseYield =
+                                    (lastEpochTotalBaseYield *
+                                        lastEpochFtdShares) /
+                                    lastEpochUserShares;
 
-                            console.log(lastEpochFtdBaseYield);
+                                lastEpochVariableBaseYield -=
+                                    lastEpochFtdBaseYield;
 
-                            lastEpochVaraiableBaseYield -=
-                                lastEpochFtdBaseYield;
+                                lastEpochYieldEarned =
+                                    lastEpochFtdBaseYield + additionalFtdYield;
+                            }
 
-                            const lastEpochYieldEarned =
-                                lastEpochFtdBaseYield + additionalFtdYield;
-
-                            const lifetimeYieldEarned =
+                            lifetimeYieldEarned =
                                 this.calculateFixedTermDepositEarnings(
                                     fixedTermDeposit,
                                     parseFloat(
@@ -391,6 +374,8 @@ export class Portfolio {
 
                             totalLifetimeFtdYield += lifetimeYieldEarned;
 
+                            totalYieldEarnedLastEpoch += lastEpochYieldEarned;
+
                             const lockDuration =
                                 parseFloat(
                                     fixedTermDeposit
@@ -400,6 +385,10 @@ export class Portfolio {
 
                             return {
                                 lockId: fixedTermDeposit.lockId,
+                                configId:
+                                    fixedTermDeposit
+                                        .lendingPoolTrancheFixedTermConfig
+                                        .configId,
                                 epochLockDuration:
                                     fixedTermDeposit
                                         .lendingPoolTrancheFixedTermConfig
@@ -424,20 +413,23 @@ export class Portfolio {
                                 startTime: parseInt(fixedTermDeposit.createdOn),
                                 yieldEarnings: {
                                     lastEpoch: lastEpochYieldEarned.toString(),
-                                    lifetime: lifetimeYieldEarned.toString(),
+                                    lifetime:
+                                        this.precisionToString(
+                                            lifetimeYieldEarned,
+                                        ),
                                 },
                             };
                         },
                     );
 
-                console.log(totalLifetimeFtdYield);
+                totalYieldEarnedLastEpoch += lastEpochTotalBaseYield;
 
                 tranches.push({
                     ...tranche,
                     investedAmount: userTrancheBalance,
                     yieldEarnings: {
-                        lastEpoch: lastEpochVaraiableBaseYield.toString(),
-                        lifetime: totalLifetimeFtdYield.toString(),
+                        lastEpoch: lastEpochVariableBaseYield.toString(),
+                        lifetime: this.precisionToString(totalLifetimeFtdYield), // passing in total FTD yield to be subtracted by total trache lifetime later down
                     },
                     fixedLoans,
                 });
@@ -460,15 +452,18 @@ export class Portfolio {
                 tranches: await Promise.all(
                     pool.tranches.map(async (tranche) => {
                         const trancheBalance = await tranche.investedAmount;
+
                         return {
                             ...tranche,
                             investedAmount: trancheBalance.balance,
                             yieldEarnings: {
                                 ...tranche.yieldEarnings,
-                                lifetime: (
+                                lifetime: this.precisionToString(
                                     trancheBalance.yieldEarned -
-                                    parseFloat(tranche.yieldEarnings.lifetime)
-                                ).toString(),
+                                        parseFloat(
+                                            tranche.yieldEarnings.lifetime,
+                                        ),
+                                ),
                             },
                         };
                     }),
@@ -481,6 +476,14 @@ export class Portfolio {
                 !BigNumber.from(pool.totalInvestedAmount).isZero() ||
                 !BigNumber.from(pool.totalYieldEarningsLifetime).isZero(),
         );
+    }
+
+    precisionToString(val: number): string {
+        if (val < 0 && val > -0.0001) {
+            return '0';
+        }
+
+        return val.toString();
     }
 
     calculateFixedTermDepositEarnings(

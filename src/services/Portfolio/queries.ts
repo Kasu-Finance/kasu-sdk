@@ -63,9 +63,9 @@ export const lastEpochQuery = gql`
 
 export const lendingPortfolioQuery = gql`
     query LastEpochQuery(
-        $userAddress: String!
-        $epochId: String!
-        $unusedPools: [String]!
+        $userAddress: ID!
+        $epochId: BigInt!
+        $unusedPools: [String!]!
     ) {
         user(id: $userAddress) {
             lendingPoolUserDetails(
@@ -84,7 +84,7 @@ export const lendingPortfolioQuery = gql`
                     lendingPoolTrancheUserEpochSharesUpdates(
                         orderDirection: desc
                         orderBy: shareUpdatesIndex
-                        where: { epochId_lte: $epochId }
+                        where: { epochId_lt: $epochId }
                         first: 1
                     ) {
                         shares
@@ -102,6 +102,7 @@ export const lendingPortfolioQuery = gql`
                         trancheShares
                         lendingPoolTrancheFixedTermConfig {
                             epochLockDuration
+                            configId
                         }
                         userLendingPoolTrancheFixedTermDepositLockShareUpdate(
                             orderBy: shareUpdatesIndex

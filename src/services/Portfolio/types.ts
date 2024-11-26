@@ -48,6 +48,7 @@ export interface PortfolioTranche extends TrancheData {
     };
     fixedLoans: {
         lockId: string;
+        configId: string;
         epochLockStart: string;
         epochLockEnd: string;
         epochLockDuration: string;
@@ -83,13 +84,16 @@ export interface UserLendingPoolTrancheFixedTermDepositLock {
     epochLockEnd: string;
     lendingPoolTrancheFixedTermConfig: {
         epochLockDuration: string;
+        configId: string;
     };
     unlockAmount: string | null;
     initialAmount: string;
     trancheShares: string;
-    userLendingPoolTrancheFixedTermDepositLockShareUpdate: {
-        shares: string;
-    }[];
+    userLendingPoolTrancheFixedTermDepositLockShareUpdate:
+        | {
+              shares: string;
+          }[]
+        | undefined;
 }
 
 export interface LastEpochQueryResult {
@@ -159,21 +163,27 @@ export interface LendingPortfolioQueryResult {
             };
             lendingPoolTrancheUserDetails: {
                 userLendingPoolTrancheFixedTermDepositLocks: UserLendingPoolTrancheFixedTermDepositLock[];
-                lendingPoolTrancheUserEpochSharesUpdates: {
-                    shares: string;
-                }[];
+                lendingPoolTrancheUserEpochSharesUpdates:
+                    | {
+                          shares: string;
+                      }[]
+                    | undefined;
                 totalAcceptedDeposits: string;
                 totalAcceptedWithdrawnAmount: string;
                 tranche: {
                     id: string;
                     shares: string;
                     balance: string;
-                    lendingPoolTrancheShareUpdates: {
-                        shares: string;
-                    }[];
-                    lendingPoolTrancheEpochInterest: {
-                        epochInterestAmount: string;
-                    }[];
+                    lendingPoolTrancheShareUpdates:
+                        | {
+                              shares: string;
+                          }[]
+                        | undefined;
+                    lendingPoolTrancheEpochInterest:
+                        | {
+                              epochInterestAmount: string;
+                          }[]
+                        | undefined;
                 };
             }[];
         }[];
