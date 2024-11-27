@@ -537,6 +537,7 @@ export class UserLending {
 
     async getUserTrancheBalance(
         user: string,
+        poolId: string,
         trancheId: string,
     ): Promise<UserTrancheBalance> {
         const tranche = ILendingPoolTrancheAbi__factory.connect(
@@ -548,7 +549,7 @@ export class UserLending {
             tranche.userActiveAssets(user),
             tranche.maxWithdraw(user),
             this._graph.request(trancheUserDetailsQuery, {
-                userAddress: `${trancheId}-${user}`,
+                userAddress: `${poolId}-${user}-${trancheId}`,
             }),
         ]);
 
