@@ -29,7 +29,7 @@ export const customWalletConfig = (connector: Connector): Web3Wallet => {
 
       const signature = (await provider.request({
         method: 'personal_sign',
-        params: [account, message],
+        params: [message, account],
       })) as string
 
       return {
@@ -51,14 +51,15 @@ export const customWalletConfig = (connector: Connector): Web3Wallet => {
   }
 }
 
-export const generateChallenge = async (params: any) => {
-  const res = await fetch('/api/kyc-challenge', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(params),
-  })
+export const generateChallenge =
+  (isIndividual: boolean) => async (params: any) => {
+    const res = await fetch('/api/kyc-challenge', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ...params, isIndividual }),
+    })
 
-  return res.json()
-}
+    return res.json()
+  }
