@@ -48,7 +48,7 @@ const useGenerateContract = () => {
           type: 'info',
           title: 'Generating Contract...',
           message:
-            'Please sign the transaction in your wallet to generate the Lending Contract.',
+            'Please sign the transaction in your wallet to generate the Loan Contract.',
           isClosable: false,
         })
 

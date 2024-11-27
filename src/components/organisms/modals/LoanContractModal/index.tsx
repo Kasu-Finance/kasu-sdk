@@ -60,7 +60,7 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         type: 'info',
         title: 'Accepting Contract...',
         message:
-          'Please sign the transaction in your wallet to accept the Lending Contract.',
+          'Please sign the transaction in your wallet to accept the Loan Contract.',
         isClosable: false,
       })
 
