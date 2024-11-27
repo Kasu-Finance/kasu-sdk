@@ -204,6 +204,7 @@ export class Portfolio {
             await this._graph.request(lendingPortfolioQuery, {
                 userAddress: userAddress.toLowerCase(),
                 epochId: parseFloat(currentEpoch),
+                lastEpochId: previousEpoch.toNumber(),
                 unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
             });
 
@@ -408,6 +409,7 @@ export class Portfolio {
                                 endTime:
                                     parseInt(fixedTermDeposit.createdOn) +
                                     lockDuration,
+                                isLocked: fixedTermDeposit.isLocked,
                                 isWithdrawalRequested:
                                     fixedTermDeposit.isWithdrawalRequested,
                                 startTime: parseInt(fixedTermDeposit.createdOn),
@@ -453,9 +455,21 @@ export class Portfolio {
                     pool.tranches.map(async (tranche) => {
                         const trancheBalance = await tranche.investedAmount;
 
+                        const lockedAmount = tranche.fixedLoans.reduce(
+                            (total, cur) => {
+                                if (!cur.isLocked) return total;
+
+                                return (total += parseFloat(cur.amount));
+                            },
+                            0,
+                        );
+
                         return {
                             ...tranche,
-                            investedAmount: trancheBalance.balance,
+                            investedAmount: (
+                                parseFloat(trancheBalance.balance) -
+                                lockedAmount
+                            ).toString(),
                             yieldEarnings: {
                                 ...tranche.yieldEarnings,
                                 lifetime: this.precisionToString(

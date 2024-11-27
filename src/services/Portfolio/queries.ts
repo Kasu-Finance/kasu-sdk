@@ -65,6 +65,7 @@ export const lendingPortfolioQuery = gql`
     query LastEpochQuery(
         $userAddress: ID!
         $epochId: BigInt!
+        $lastEpochId: BigInt!
         $unusedPools: [String!]!
     ) {
         user(id: $userAddress) {
@@ -108,7 +109,7 @@ export const lendingPortfolioQuery = gql`
                             orderBy: shareUpdatesIndex
                             orderDirection: desc
                             first: 1
-                            where: { epochId_lt: $epochId }
+                            where: { epochId_lt: $lastEpochId }
                         ) {
                             shares
                         }

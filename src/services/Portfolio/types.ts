@@ -47,6 +47,7 @@ export interface PortfolioTranche extends TrancheData {
         lifetime: string;
     };
     fixedLoans: {
+        isLocked: boolean;
         lockId: string;
         configId: string;
         epochLockStart: string;
