@@ -27,15 +27,17 @@ const calculateWithdrawalStatusSummary = (
 
     const isCurrentEpoch = transaction.timestamp > currentEpochStartTime
 
-    lifetimeAmounts.accepted += parseFloat(transaction.acceptedAmount)
     lifetimeAmounts.requested += parseFloat(transaction.requestedAmount)
 
     if (isCurrentEpoch) {
-      currentEpochAmounts.accepted += parseFloat(transaction.acceptedAmount)
       currentEpochAmounts.requested += parseFloat(transaction.requestedAmount)
       currentEpochAmounts.queued += parseFloat(transaction.queuedAmount)
     }
   }
+
+  currentEpochAmounts.requested =
+    currentEpochAmounts.accepted + currentEpochAmounts.queued
+  lifetimeAmounts.requested = lifetimeAmounts.accepted + lifetimeAmounts.queued
 
   return { currentEpochAmounts, lifetimeAmounts }
 }

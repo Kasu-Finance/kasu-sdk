@@ -44,15 +44,22 @@ const calculateLendingStatusSummary = (
     } else {
       lifetimeAmounts.accepted += parseFloat(transaction.acceptedAmount)
       lifetimeAmounts.rejected += parseFloat(transaction.rejectedAmount)
-      lifetimeAmounts.requested += parseFloat(transaction.requestedAmount)
 
       if (isCurrentEpoch) {
         currentEpochAmounts.accepted += parseFloat(transaction.acceptedAmount)
         currentEpochAmounts.rejected += parseFloat(transaction.rejectedAmount)
-        currentEpochAmounts.requested += parseFloat(transaction.requestedAmount)
       }
     }
   }
+
+  currentEpochAmounts.requested =
+    currentEpochAmounts.accepted +
+    currentEpochAmounts.rejected +
+    currentEpochAmounts.reallocated
+  lifetimeAmounts.requested =
+    lifetimeAmounts.accepted +
+    lifetimeAmounts.rejected +
+    lifetimeAmounts.reallocated
 
   return { currentEpochAmounts, lifetimeAmounts }
 }
