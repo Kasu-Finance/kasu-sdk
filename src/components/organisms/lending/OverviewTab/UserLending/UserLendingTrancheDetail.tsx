@@ -23,6 +23,7 @@ const UserLendingTrancheDetail: React.FC<UserLendingTrancheDetailProps> = ({
   const { t } = getTranslation()
 
   const { userLendingTrancheBalance, isLoading } = useUserLendingTrancheBalance(
+    pool.id,
     pool.tranches
   )
 

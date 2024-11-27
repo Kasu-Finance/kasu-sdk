@@ -24,6 +24,7 @@ const UserLendingSummary: React.FC<UserLendingSummaryProps> = ({ pool }) => {
   const { t } = getTranslation()
 
   const { userLendingTrancheBalance, isLoading } = useUserLendingTrancheBalance(
+    pool.id,
     pool.tranches
   )
 

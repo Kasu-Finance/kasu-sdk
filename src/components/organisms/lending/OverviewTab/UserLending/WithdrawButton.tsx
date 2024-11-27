@@ -21,6 +21,7 @@ const WithdrawButton: React.FC<WithdrawButtonProps> = ({ pool }) => {
   const { openModal } = useModalState()
 
   const { userLendingTrancheBalance } = useUserLendingTrancheBalance(
+    pool.id,
     pool.tranches
   )
 

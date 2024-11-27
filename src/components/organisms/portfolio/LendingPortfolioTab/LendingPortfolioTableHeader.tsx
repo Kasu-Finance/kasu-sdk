@@ -19,7 +19,7 @@ const LendingPortfolioTableHeader = () => {
         {t('general.lendingStrategy')}
       </TableCell>
       <TableCell width='9%'>{t('general.grossApy')}</TableCell>
-      <TableCell width='10%'>
+      <TableCell width='8%'>
         {t('portfolio.lendingPortfolio.tableHeader.cell-1')}
       </TableCell>
       <TableCell width='12%'>
@@ -31,7 +31,7 @@ const LendingPortfolioTableHeader = () => {
       <TableCell width='14%'>
         {t('portfolio.lendingPortfolio.tableHeader.cell-4')}
       </TableCell>
-      <TableCell width='20%'>
+      <TableCell width='22%'>
         {t('portfolio.lendingPortfolio.tableHeader.cell-5')}
       </TableCell>
     </TableRow>

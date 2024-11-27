@@ -8,6 +8,7 @@ import useKasuSDK from '@/hooks/useKasuSDK'
 import { FIVE_MINUTES } from '@/constants/general'
 
 const useUserLendingTrancheBalance = <T extends { id: string }>(
+  poolId: string,
   tranches: T[]
 ) => {
   const { account } = useWeb3React()
@@ -22,6 +23,7 @@ const useUserLendingTrancheBalance = <T extends { id: string }>(
           ...tranche,
           balanceData: await sdk.UserLending.getUserTrancheBalance(
             userId.toLowerCase(),
+            poolId,
             tranche.id
           ),
         }))
