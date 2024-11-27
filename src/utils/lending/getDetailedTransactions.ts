@@ -23,7 +23,7 @@ type DetailedTransactionBase = {
   pendingDecisions: LoanTicket[]
   subsequentTransactions: LoanTicket[]
   events: UserRequestEvent[]
-  latestEventStatus: UserRequestEvent['requestType']
+  latestEvent: UserRequestEvent
 }
 
 type CancellableRequest<T> = T & {
@@ -90,9 +90,9 @@ const getDetailedTransactions = (
       pendingDecisions: [],
       subsequentTransactions: [],
       events: transaction.events,
-      latestEventStatus: transaction.events.sort(
+      latestEvent: transaction.events.sort(
         (a, b) => b.timestamp - a.timestamp
-      )[0].requestType,
+      )[0],
     }
 
     let detailedTransaction: DetailedTransaction | undefined = undefined

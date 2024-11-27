@@ -125,8 +125,18 @@ const PortfolioUserTransactionTableRow: React.FC<
         </TableCell>
         <TableCell>{formattedTime.date}</TableCell>
         <TableCell>
-          {transaction.latestEventStatus === 'Cancelled' ? (
-            capitalize(t('general.cancelled'))
+          {transaction.latestEvent.requestType === 'Cancelled' ? (
+            <Box display='flex' justifyContent='space-between'>
+              <Typography variant='inherit'>
+                {capitalize(t('general.cancelled'))}
+              </Typography>
+              <Typography variant='inherit'>
+                {formatAmount(transaction.latestEvent.assetAmount, {
+                  minDecimals: 2,
+                })}{' '}
+                USDC
+              </Typography>
+            </Box>
           ) : (
             <Stack>
               {(transaction.requestType === 'Deposit' ||
@@ -311,7 +321,7 @@ const PortfolioUserTransactionTableRow: React.FC<
           )}
         </TableCell>
         <TableCell>
-          {transaction.latestEventStatus === 'Cancelled' ? (
+          {transaction.latestEvent.requestType === 'Cancelled' ? (
             'N/A'
           ) : (
             <Button
