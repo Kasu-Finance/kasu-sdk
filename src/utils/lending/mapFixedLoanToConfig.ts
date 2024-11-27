@@ -26,7 +26,9 @@ const mapFixedLoanToConfig = (
 
     if (item) {
       fixLoanMap.set(loan.configId, {
-        investedAmount: item.investedAmount + parseFloat(loan.amount),
+        investedAmount: loan.isLocked
+          ? item.investedAmount + parseFloat(loan.amount)
+          : item.investedAmount,
         lastEpochYield:
           item.lastEpochYield + parseFloat(loan.yieldEarnings.lastEpoch),
         lifetimeYield:
@@ -37,7 +39,7 @@ const mapFixedLoanToConfig = (
     }
 
     fixLoanMap.set(loan.configId, {
-      investedAmount: parseFloat(loan.amount),
+      investedAmount: loan.isLocked ? parseFloat(loan.amount) : 0,
       lastEpochYield: parseFloat(loan.yieldEarnings.lastEpoch),
       lifetimeYield: parseFloat(loan.yieldEarnings.lifetime),
     })
