@@ -10,7 +10,20 @@ export type CustomerStatus =
   | Awaited<ReturnType<typeof getCustomerStatus>>
   | 'No Email'
 
-type ApiRes =
+type KybRes =
+  | {
+      status: CustomerStatus
+      companyClaims: {
+        email: string
+      }[]
+    }
+  | {
+      message: string
+      code: string
+      traceId: string
+    }
+
+type KycRes =
   | {
       status: CustomerStatus
       customerEmails: {
@@ -33,8 +46,8 @@ const checkUserKycState = async (
   const projectId = process.env.NEXERA_PROJECT_ID || NEXERA_PROJECT_ID
 
   try {
-    const response = await fetch(
-      `${NEXERA_API_BASE_URL}/projects/${projectId}/customer-wallets/${userAddress.toLowerCase()}/customer`,
+    const kybRes = await fetch(
+      `${NEXERA_API_BASE_URL}/companies/details?address=${userAddress.toLowerCase()}`,
       {
         headers: {
           Authorization: `Bearer ${process.env.NEXERA_API_KEY}`,
@@ -42,21 +55,40 @@ const checkUserKycState = async (
       }
     )
 
-    const data: ApiRes = await response.json()
+    const data: KybRes = await kybRes.json()
 
-    if (!('status' in data)) {
-      if (data.message !== 'Customer not found.') {
-        throw new Error(data.message, { cause: data })
+    if ('status' in data) {
+      return data.status
+    }
+
+    try {
+      const kycRes = await fetch(
+        `${NEXERA_API_BASE_URL}/projects/${projectId}/customer-wallets/${userAddress.toLowerCase()}/customer`,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.NEXERA_API_KEY}`,
+          },
+        }
+      )
+
+      const data: KycRes = await kycRes.json()
+
+      if (!('status' in data)) {
+        if (data.message !== 'Customer not found.') {
+          throw new Error(data.message, { cause: data })
+        }
+
+        return undefined
       }
 
-      return undefined
-    }
+      if (data.status === 'Active' && !data.customerEmails[0]?.email) {
+        return 'No Email'
+      }
 
-    if (!data.customerEmails[0]?.email) {
-      return 'No Email'
+      return data.status
+    } catch (error) {
+      console.error(error)
     }
-
-    return data.status
   } catch (error) {
     console.error(error)
   }
