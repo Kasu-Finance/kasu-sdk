@@ -28,8 +28,8 @@
   },
   "dependencies": {
     "@coinbase/wallet-sdk": "^3.7.2",
-    "@compilot/js-sdk": "^2.3.24",
-    "@compilot/react-sdk": "^2.3.26",
+    "@compilot/js-sdk": "^2.15.2",
+    "@compilot/react-sdk": "^2.15.2",
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.4",
     "@emotion/server": "^11.11.0",

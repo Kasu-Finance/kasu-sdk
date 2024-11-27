@@ -52,7 +52,7 @@ const checkUserKycState = async (
       return undefined
     }
 
-    if (!data.customerEmails[0]?.email) {
+    if (data.status === 'Active' && !data.customerEmails[0]?.email) {
       return 'No Email'
     }
 
