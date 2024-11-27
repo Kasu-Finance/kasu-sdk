@@ -19,6 +19,7 @@ const LendingPortfolioTableRow: React.FC<LendingPortfolioTableRowProps> = ({
   currentEpoch,
 }) => {
   const { userLendingTrancheBalance } = useUserLendingTrancheBalance(
+    portfolioPool.id,
     portfolioPool.tranches
   )
 

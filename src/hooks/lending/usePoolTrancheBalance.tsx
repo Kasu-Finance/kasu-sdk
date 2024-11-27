@@ -19,6 +19,7 @@ const usePoolTrancheBalance = (poolId: string, trancheId: HexString) => {
 
     const data = await sdk.UserLending.getUserTrancheBalance(
       userAddress,
+      poolId,
       trancheId
     )
 
