@@ -12,9 +12,13 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 
 type PoolCardActionsProps = {
   pool: PoolOverviewWithDelegate
+  currentEpoch: string
 }
 
-const PoolCardActions: React.FC<PoolCardActionsProps> = ({ pool }) => {
+const PoolCardActions: React.FC<PoolCardActionsProps> = ({
+  pool,
+  currentEpoch,
+}) => {
   const { t } = getTranslation()
 
   return (
@@ -40,7 +44,7 @@ const PoolCardActions: React.FC<PoolCardActionsProps> = ({ pool }) => {
       >
         {t('general.overview')}
       </Button>
-      {pool.isActive && <LendButton pool={pool} />}
+      {pool.isActive && <LendButton pool={pool} currentEpoch={currentEpoch} />}
     </CardActions>
   )
 }

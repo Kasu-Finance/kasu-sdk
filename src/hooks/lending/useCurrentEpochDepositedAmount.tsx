@@ -12,19 +12,21 @@ const useCurrentEpochDepositedAmount = (
   const { account } = useWeb3React()
 
   const { data, error, isLoading, mutate } = useSWRImmutable(
-    account
-      ? [`currentEpochDepositedAmount/${lendingPoolId}/${trancheId}`, account]
-      : null,
-    async ([_, userAddress]) =>
-      sdk.UserLending.getCurrentEpochDepositedAmount(
+    account ? [`currentEpochDepositedAmount/${lendingPoolId}`, account] : null,
+    async ([_, userAddress]) => {
+      const amountMap = await sdk.UserLending.getCurrentEpochDepositedAmount(
         lendingPoolId,
-        trancheId,
         userAddress.toLowerCase()
       )
+
+      return amountMap
+    }
   )
 
   return {
-    currentEpochDepositedAmount: data,
+    currentEpochDepositedAmount: data
+      ? data.get(trancheId.toLowerCase()) ?? '0'
+      : undefined,
     error,
     isLoading,
     updateCurrentEpochDepositedAmount: mutate,

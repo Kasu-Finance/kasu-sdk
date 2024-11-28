@@ -13,9 +13,10 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 
 type LendButtonProps = {
   pool: PoolOverviewWithDelegate
+  currentEpoch: string
 }
 
-const LendButton: React.FC<LendButtonProps> = ({ pool }) => {
+const LendButton: React.FC<LendButtonProps> = ({ pool, currentEpoch }) => {
   const { t } = getTranslation()
 
   const { openModal } = useModalState()
@@ -24,6 +25,7 @@ const LendButton: React.FC<LendButtonProps> = ({ pool }) => {
     openModal({
       name: ModalsKeys.LEND,
       pool,
+      currentEpoch,
     })
 
   return (

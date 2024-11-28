@@ -22,7 +22,7 @@ const PoolOverviewTab: React.FC<PoolOverviewProps> = async ({ poolId }) => {
 
   return (
     <Stack spacing={3} mt={3}>
-      <PoolOverview pool={poolsWithDelegate[0]} />
+      <PoolOverview pool={poolsWithDelegate[0]} currentEpoch={currentEpoch} />
       <UserLending pool={poolsWithDelegate[0]} />
       <UserLoyalty
         pools={poolsWithDelegate}

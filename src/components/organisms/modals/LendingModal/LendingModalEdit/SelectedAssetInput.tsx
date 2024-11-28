@@ -6,6 +6,7 @@ import { useCallback } from 'react'
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
 import useCurrentEpochDepositedAmount from '@/hooks/lending/useCurrentEpochDepositedAmount'
+import useCurrentEpochFtdAmount from '@/hooks/lending/useCurrentEpochFtdAmount'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 import useSupportedTokenUserBalances, {
   SupportedTokenUserBalances,
@@ -25,7 +26,7 @@ const SelectedAssetInput = () => {
 
   const { modal } = useModalState()
 
-  const pool = modal[ModalsKeys.LEND].pool
+  const { pool, currentEpoch } = modal[ModalsKeys.LEND]
 
   const {
     amountInUSD,
@@ -41,6 +42,9 @@ const SelectedAssetInput = () => {
     currentEpochDepositedAmount,
     isLoading: currentEpochDepositedAmountLoading,
   } = useCurrentEpochDepositedAmount(pool.id, trancheId)
+
+  const { currentEpochFtdAmount, isLoading: currentEpochFtdAmountLoading } =
+    useCurrentEpochFtdAmount(pool.id, currentEpoch, trancheId)
 
   const supportedTokens = useSupportedTokenInfo()
 
@@ -75,7 +79,8 @@ const SelectedAssetInput = () => {
     !supportedTokenUserBalances ||
     !supportedTokens ||
     currentEpochDepositedAmountLoading ||
-    !currentEpochDepositedAmount
+    !currentEpochDepositedAmount ||
+    currentEpochFtdAmountLoading
   ) {
     return (
       <Skeleton
@@ -98,6 +103,7 @@ const SelectedAssetInput = () => {
       balance={formatUnits(tokenBalance.balance, tokenBalance.decimals)}
       poolData={pool}
       currentEpochDepositedAmount={currentEpochDepositedAmount}
+      currentEpochFtdAmount={currentEpochFtdAmount ?? []}
       endAdornment={
         tokenBalance.symbol === SupportedTokens.USDC ? (
           ''

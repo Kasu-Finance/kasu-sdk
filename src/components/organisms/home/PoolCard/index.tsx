@@ -12,9 +12,10 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 
 interface PoolCardProps {
   pool: PoolOverviewWithDelegate
+  currentEpoch: string
 }
 
-const PoolCard: React.FC<PoolCardProps> = ({ pool }) => {
+const PoolCard: React.FC<PoolCardProps> = ({ pool, currentEpoch }) => {
   return (
     <CustomCard
       sx={{
@@ -44,7 +45,7 @@ const PoolCard: React.FC<PoolCardProps> = ({ pool }) => {
       </Box>
       <CustomCardContent>
         <PoolCardContent pool={pool} />
-        <PoolCardActions pool={pool} />
+        <PoolCardActions pool={pool} currentEpoch={currentEpoch} />
       </CustomCardContent>
     </CustomCard>
   )

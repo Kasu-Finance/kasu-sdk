@@ -191,6 +191,7 @@ const LendingPortfolioTableActionColumn: React.FC<
               handleMenuItemClick({
                 name: ModalsKeys.LEND,
                 pool,
+                currentEpoch,
               })
             }
           >

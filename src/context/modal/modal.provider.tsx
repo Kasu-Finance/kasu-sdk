@@ -127,6 +127,7 @@ const initialState: Modals = {
   lendModal: {
     isOpen: false,
     pool: null as unknown as PoolOverviewWithDelegate,
+    currentEpoch: '',
   },
   loanContractModal: {
     isOpen: false,
