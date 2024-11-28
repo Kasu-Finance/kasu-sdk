@@ -19,7 +19,7 @@ const LendingModalWrapper: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { isVerifying, kycCompleted } = useKycState()
 
-  const pool = modal[ModalsKeys.LEND].pool
+  const { pool, currentEpoch } = modal[ModalsKeys.LEND]
 
   // handle account change admist lending (new account may not be kyc-ed)
   useEffect(() => {
@@ -42,12 +42,13 @@ const LendingModalWrapper: React.FC<DialogChildProps> = ({ handleClose }) => {
     handleClose()
     openModal({
       name: ModalsKeys.KYC,
-      callback: () => openModal({ name: ModalsKeys.LEND, pool }),
+      callback: () => openModal({ name: ModalsKeys.LEND, pool, currentEpoch }),
     })
   }, [
     isVerifying,
     kycCompleted,
     pool,
+    currentEpoch,
     removeToast,
     setToast,
     handleClose,

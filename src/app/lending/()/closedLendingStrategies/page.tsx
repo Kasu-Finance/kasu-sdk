@@ -7,6 +7,7 @@ import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
 import PoolLayoutWrapper from '@/components/organisms/home/PoolLayoutWrapper'
 import PoolLayoutWrapperSkeleton from '@/components/organisms/home/PoolLayoutWrapperSkeleton'
 
+import { getCurrentEpoch } from '@/app/_requests/currentEpoch'
 import { getPoolDelegate } from '@/app/_requests/poolDelegate'
 import { getPoolOverview } from '@/app/_requests/pools'
 
@@ -15,9 +16,10 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 const ClosedLendingStrategies = async () => {
   const { t } = getTranslation()
 
-  const [pools, poolDelegates] = await Promise.all([
+  const [pools, poolDelegates, currentEpoch] = await Promise.all([
     getPoolOverview(),
     getPoolDelegate(),
+    getCurrentEpoch(),
   ])
 
   const poolsWithDelegate = pools.reduce((acc, cur) => {
@@ -39,6 +41,7 @@ const ClosedLendingStrategies = async () => {
       <Suspense fallback={<PoolLayoutWrapperSkeleton />}>
         <PoolLayoutWrapper
           pools={poolsWithDelegate}
+          currentEpoch={currentEpoch}
           emptyPoolsPlaceholder={
             <EmptyDataPlaceholder text={t(`home.no-data.closedPools`)} />
           }

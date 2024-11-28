@@ -15,10 +15,12 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 type PoolCardWrapperProps = {
   pools: PoolOverviewWithDelegate[]
   emptyPoolsPlaceholder: ReactNode
+  currentEpoch: string
 }
 
 const PoolLayoutWrapper: React.FC<PoolCardWrapperProps> = ({
   pools,
+  currentEpoch,
   emptyPoolsPlaceholder,
 }) => {
   const { layout } = useHomeState()
@@ -32,7 +34,7 @@ const PoolLayoutWrapper: React.FC<PoolCardWrapperProps> = ({
   }
 
   return layout === LayoutTypes.CARD ? (
-    <PoolCardContainer pools={pools} />
+    <PoolCardContainer pools={pools} currentEpoch={currentEpoch} />
   ) : (
     <PoolTable pools={pools} />
   )

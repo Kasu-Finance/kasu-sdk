@@ -26,6 +26,7 @@ type DepositAmountInputProps = {
   applyConversion?: (newAmount: string) => Promise<string>
   debounceTime?: number
   currentEpochDepositedAmount: string
+  currentEpochFtdAmount: string[]
 }
 
 const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
@@ -37,12 +38,19 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
   endAdornment = 'USDC',
   debounceTime = 1000,
   currentEpochDepositedAmount,
+  currentEpochFtdAmount,
   applyConversion,
 }) => {
   const { t } = getTranslation()
 
-  const { amount, trancheId, setAmount, setAmountInUSD, setIsValidating } =
-    useDepositModalState()
+  const {
+    amount,
+    trancheId,
+    fixedTermConfigId,
+    setAmount,
+    setAmountInUSD,
+    setIsValidating,
+  } = useDepositModalState()
   const { modalStatus, setModalStatus } = useModalStatusState()
 
   const { minDeposit, maxDeposit } = useMemo(() => {
@@ -68,7 +76,12 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
     // and such, the max amount he can deposit into this epoch
     // should reflect/subtracted from his previous deposits in the same epoch
     if (!currentDepositedAmount.isZero()) {
-      trancheMin = toBigNumber('1')
+      const ftdDepositedAmount =
+        currentEpochFtdAmount[parseFloat(fixedTermConfigId ?? '0')]
+
+      if (ftdDepositedAmount) {
+        trancheMin = toBigNumber('1')
+      }
       trancheMax = trancheMax.sub(currentDepositedAmount)
     }
 
@@ -76,7 +89,13 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
       minDeposit: formatEther(trancheMin),
       maxDeposit: formatEther(trancheMax),
     }
-  }, [poolData.tranches, trancheId, currentEpochDepositedAmount])
+  }, [
+    poolData.tranches,
+    trancheId,
+    fixedTermConfigId,
+    currentEpochFtdAmount,
+    currentEpochDepositedAmount,
+  ])
 
   const validate = useCallback(
     async (inputAmount: string) => {

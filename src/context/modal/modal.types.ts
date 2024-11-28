@@ -145,6 +145,7 @@ export type Modals = {
   }>
   [ModalsKeys.LEND]: ModalData<{
     pool: PoolOverview
+    currentEpoch: string
   }>
 }
 

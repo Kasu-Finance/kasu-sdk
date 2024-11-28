@@ -16,9 +16,10 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 
 type PoolOverviewProps = {
   pool: PoolOverviewWithDelegate
+  currentEpoch: string
 }
 
-const PoolOverview: React.FC<PoolOverviewProps> = ({ pool }) => {
+const PoolOverview: React.FC<PoolOverviewProps> = ({ pool, currentEpoch }) => {
   const { t } = getTranslation()
 
   const isMultiTranche = pool.tranches.length > 1
@@ -43,7 +44,7 @@ const PoolOverview: React.FC<PoolOverviewProps> = ({ pool }) => {
           </Grid>
           <DelegateOverview pool={pool} />
           <Box width={368} display='flex' mt={4} mx='auto'>
-            <LendButton pool={pool} />
+            <LendButton pool={pool} currentEpoch={currentEpoch} />
           </Box>
         </CustomInnerCardContent>
       </WaveBox>
