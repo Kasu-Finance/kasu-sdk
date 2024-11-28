@@ -31,12 +31,15 @@ import { SdkConfig } from '../../sdk-config';
 import { mapUserRequestEventType } from './helper';
 import {
     currentEpochDepositedAmountQuery,
+    currentEpochFtdAmountQuery,
     lendingPoolUserDetailsQuery,
     totalUserLoyaltyRewardsQuery,
     trancheUserDetailsQuery,
     userRequestsQuery,
 } from './queries';
 import {
+    CurrentEpochDepositedAmountSubgraph,
+    CurrentEpochFtdAmountSubgraph,
     LendingPoolUserDetailsSubgraph,
     TotalUserLoyaltyRewardsSubgraph,
     TrancheUserDetailsSubgraph,
@@ -444,24 +447,69 @@ export class UserLending {
         return currentEpochNumber.toString();
     }
 
-    async getCurrentEpochDepositedAmount(
-        lendingPoolId: string,
-        trancheId: string,
+    async getCurrentEpochFtdAmount(
+        poolId: string,
         userId: string,
-    ): Promise<string> {
-        const currentRequestEpoch =
-            await this._systemVariablesAbi.currentRequestEpoch();
-
-        const userRequestsSubgraph: UserRequestsSubgraph =
-            await this._graph.request(currentEpochDepositedAmountQuery, {
-                lendingPoolId,
-                trancheId,
-                userId,
-                epochId: currentRequestEpoch.toString(),
+        currentEpoch: string,
+    ): Promise<Map<string, string[]>> {
+        const currentEpochFtdAmountRes: CurrentEpochFtdAmountSubgraph =
+            await this._graph.request(currentEpochFtdAmountQuery, {
+                userId: userId.toLowerCase(),
+                poolId: poolId.toLowerCase(),
+                currentEpoch: parseFloat(currentEpoch),
             });
 
-        // eslint-disable-next-line
-        return userRequestsSubgraph?.userRequests?.[0]?.amountRequested ?? '0';
+        const currentEpochFtdAmounts = new Map<string, string[]>();
+
+        for (const userRequest of currentEpochFtdAmountRes.userRequests) {
+            const ftdID = parseFloat(userRequest.fixedTermConfigId);
+
+            const item = currentEpochFtdAmounts.get(userRequest.tranche.id);
+
+            if (item) {
+                const clonedItem = [...item];
+
+                clonedItem[ftdID] = userRequest.amountRequested;
+
+                currentEpochFtdAmounts.set(userRequest.tranche.id, clonedItem);
+
+                continue;
+            }
+            const ftdAmounts: string[] = [];
+
+            ftdAmounts[ftdID] = userRequest.amountRequested;
+
+            currentEpochFtdAmounts.set(userRequest.tranche.id, ftdAmounts);
+        }
+
+        return currentEpochFtdAmounts;
+    }
+
+    async getCurrentEpochDepositedAmount(
+        lendingPoolId: string,
+        userId: string,
+    ): Promise<Map<string, string>> {
+        const currentEpochDepositedAmountRes: CurrentEpochDepositedAmountSubgraph =
+            await this._graph.request(currentEpochDepositedAmountQuery, {
+                id: `${lendingPoolId}-${userId}`,
+            });
+
+        const amountMap = new Map<string, string>();
+
+        if (!currentEpochDepositedAmountRes.lendingPoolUserDetails)
+            return amountMap;
+
+        const { lendingPoolTrancheUserDetails } =
+            currentEpochDepositedAmountRes.lendingPoolUserDetails;
+
+        for (const {
+            tranche,
+            totalPendingDepositAmount,
+        } of lendingPoolTrancheUserDetails) {
+            amountMap.set(tranche.id.toLowerCase(), totalPendingDepositAmount);
+        }
+
+        return amountMap;
     }
 
     convertSharesToAssets(

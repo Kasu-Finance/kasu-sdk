@@ -77,21 +77,36 @@ export const totalUserLoyaltyRewardsQuery = gql`
 `;
 
 export const currentEpochDepositedAmountQuery = gql`
-    query CurrentEpochDepositedAmountQuery(
-        $lendingPoolId: String
-        $trancheId: String
-        $epochId: String
+    query CurrentEpochDepositedAmountQuery($id: String) {
+        lendingPoolUserDetails(id: $id) {
+            lendingPoolTrancheUserDetails {
+                tranche {
+                    id
+                }
+                totalPendingDepositAmount
+            }
+        }
+    }
+`;
+
+export const currentEpochFtdAmountQuery = gql`
+    query CurrentEpochFtdAmountQuery(
         $userId: String
+        $poolId: String
+        $currentEpoch: BigInt
     ) {
         userRequests(
             where: {
-                lendingPool: $lendingPoolId
-                tranche: $trancheId
-                epochId: $epochId
                 user: $userId
+                lendingPool: $poolId
+                epochId: $currentEpoch
             }
         ) {
+            fixedTermConfigId
             amountRequested
+            tranche {
+                id
+            }
         }
     }
 `;

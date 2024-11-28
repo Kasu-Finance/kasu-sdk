@@ -41,6 +41,27 @@ export interface UserRequestsSubgraph {
     }[];
 }
 
+export interface CurrentEpochDepositedAmountSubgraph {
+    lendingPoolUserDetails: {
+        lendingPoolTrancheUserDetails: {
+            tranche: {
+                id: string;
+            };
+            totalPendingDepositAmount: string;
+        }[];
+    } | null;
+}
+
+export interface CurrentEpochFtdAmountSubgraph {
+    userRequests: {
+        fixedTermConfigId: string;
+        amountRequested: string;
+        tranche: {
+            id: string;
+        };
+    }[];
+}
+
 export enum UserRequestStatus {
     REQUESTED = 'Requested',
     PROCESSING = 'Processing',
