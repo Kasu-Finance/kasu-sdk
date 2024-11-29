@@ -4,7 +4,7 @@ import LoginIcon from '@mui/icons-material/Login'
 import { Box, Typography } from '@mui/material'
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { formatEther } from 'ethers/lib/utils'
-import { ReactNode, useCallback, useMemo } from 'react'
+import { ReactNode, useCallback, useEffect, useMemo } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
@@ -231,6 +231,11 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
     },
     [amount, setModalStatus, validate, applyConversion, debouncedValidate]
   )
+
+  useEffect(() => {
+    applyConversion ? debouncedValidate(amount) : validate(amount)
+    // eslint-disable-next-line
+  }, [trancheId, applyConversion, validate, debouncedValidate])
 
   return (
     <Box>
