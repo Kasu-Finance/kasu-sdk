@@ -10,6 +10,7 @@ import AuthenticateButton from '@/components/atoms/AuthenticateButton'
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { ActionStatus } from '@/constants'
+import { capitalize } from '@/utils'
 
 const KycButton: React.FC<ButtonProps> = ({ children, ...rest }) => {
   const { account } = useWeb3React()
@@ -23,9 +24,24 @@ const KycButton: React.FC<ButtonProps> = ({ children, ...rest }) => {
     if (status === 'To be reviewed') {
       setToast({
         type: 'warning',
-        title: ActionStatus.PROCESSING,
+        title: capitalize(ActionStatus.PROCESSING),
         message:
           'Your identity is being reviewed by our team. Please return to this page later.',
+      })
+
+      return
+    }
+    // force toast and prevent further action
+    if (
+      status === 'Rejected' ||
+      status === 'Failed' ||
+      status === 'Terminated'
+    ) {
+      setToast({
+        type: 'error',
+        title: capitalize(ActionStatus.REJECTED),
+        message:
+          'Your identity was rejected. Please contact our team for more information.',
       })
 
       return
