@@ -77,8 +77,13 @@ const useKycActions = (dispatch: Dispatch<KycActions>): KycFunctions => {
                 let timer = 10 // in seconds
 
                 dispatch({
-                  type: 'SET_KYC_COMPLETED',
+                  type: 'SET_LAST_VERIFIED_ACCOUNT',
                   payload: account[0].address,
+                })
+
+                dispatch({
+                  type: 'SET_KYC_COMPLETED',
+                  payload: true,
                 })
 
                 const handleToastClose = (clearInterval?: () => void) => {
@@ -122,13 +127,17 @@ const useKycActions = (dispatch: Dispatch<KycActions>): KycFunctions => {
           },
         })
       },
-      resetAuthenticatedUser: () => dispatch({ type: 'RESET_AUTHENTICATION' }),
+      setLastVerifiedAccount: (account: string) =>
+        dispatch({
+          type: 'SET_LAST_VERIFIED_ACCOUNT',
+          payload: account,
+        }),
       setCustomerStatus: (customerStatus: CustomerStatus) =>
         dispatch({ type: 'SET_CUSTOMER_STATUS', payload: customerStatus }),
       setIsVerifying: (isVerifying: boolean) =>
         dispatch({ type: 'SET_IS_VERIFYING', payload: isVerifying }),
-      setKycCompleted: (account: string) =>
-        dispatch({ type: 'SET_KYC_COMPLETED', payload: account }),
+      setKycCompleted: (kycCompleted: boolean) =>
+        dispatch({ type: 'SET_KYC_COMPLETED', payload: kycCompleted }),
     }),
 
     [dispatch, removeToast, setToast]

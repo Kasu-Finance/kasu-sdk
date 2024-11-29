@@ -4,6 +4,8 @@
 import { useWeb3React } from '@web3-react/core'
 import { ReactNode, useEffect, useReducer } from 'react'
 
+import useToastState from '@/hooks/context/useToastState'
+
 import KycContext from '@/context/kyc/kyc.context'
 import kycReducer from '@/context/kyc/kyc.reducer'
 import { KycStateType } from '@/context/kyc/kyc.types'
@@ -18,7 +20,7 @@ type KycStateProps = {
 
 const initialState: KycStateType = {
   isVerifying: false,
-  authenticatedUser: undefined,
+  lastVerifiedAccount: undefined,
   status: null,
   kycCompleted: false,
 }
@@ -28,28 +30,40 @@ const KycState: React.FC<KycStateProps> = ({ children }) => {
 
   const [state, dispatch] = useReducer(kycReducer, initialState)
 
+  const { setToast, removeToast } = useToastState()
+
   const kycActions = useKycActions(dispatch)
 
   const {
-    resetAuthenticatedUser,
+    setLastVerifiedAccount,
     setCustomerStatus,
     setIsVerifying,
     setKycCompleted,
   } = kycActions
 
-  // reset auth when account is changed
   useEffect(() => {
-    if (account && account.toLowerCase() !== state.authenticatedUser) {
-      resetAuthenticatedUser()
+    if (
+      account &&
+      state.lastVerifiedAccount &&
+      account.toLowerCase() !== state.lastVerifiedAccount.toLowerCase()
+    ) {
+      setToast({
+        type: 'info',
+        title: 'Account change detected',
+        message: 'Verifying status of new account...',
+        isClosable: false,
+      })
     }
-  }, [account, state.authenticatedUser, resetAuthenticatedUser])
+  }, [account, state.lastVerifiedAccount, setToast])
 
-  // verify user kyc status upon account connect / change
   useEffect(() => {
     if (account) {
       ;(async () => {
         try {
           setIsVerifying(true)
+          setKycCompleted(false)
+
+          setLastVerifiedAccount(account)
 
           const status = await checkUserKycState(account)
 
@@ -59,16 +73,26 @@ const KycState: React.FC<KycStateProps> = ({ children }) => {
 
           // no email status means kyc completed but email is not present ( edge case for users that setup KYC before email was setup )
           if (status === 'Active' || status === 'No Email') {
-            setKycCompleted(account.toLowerCase())
+            setKycCompleted(true)
+          } else {
+            setKycCompleted(false)
           }
         } catch (error) {
           console.error(error)
         } finally {
           setIsVerifying(false)
+          removeToast()
         }
       })()
     }
-  }, [account, setCustomerStatus, setIsVerifying, setKycCompleted])
+  }, [
+    account,
+    setCustomerStatus,
+    setLastVerifiedAccount,
+    setIsVerifying,
+    setKycCompleted,
+    removeToast,
+  ])
 
   return (
     <KycContext.Provider value={{ ...state, ...kycActions }}>
