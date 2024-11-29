@@ -15,7 +15,8 @@ import { capitalize } from '@/utils'
 const KycButton: React.FC<ButtonProps> = ({ children, ...rest }) => {
   const { account } = useWeb3React()
   const { openModal } = useModalState()
-  const { isVerifying, status, kycCompleted } = useKycState()
+  const { isVerifying, status, lastVerifiedAccount, kycCompleted } =
+    useKycState()
   const { setToast } = useToastState()
 
   const handleKyc = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -56,6 +57,15 @@ const KycButton: React.FC<ButtonProps> = ({ children, ...rest }) => {
       }
 
       return rest.onClick?.(e)
+    }
+
+    if (!lastVerifiedAccount) {
+      setToast({
+        type: 'info',
+        title: 'Account connected',
+        message: 'Verifying status of account...',
+        isClosable: false,
+      })
     }
 
     openModal({

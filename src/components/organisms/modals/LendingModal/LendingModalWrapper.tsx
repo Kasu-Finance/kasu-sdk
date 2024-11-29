@@ -15,7 +15,7 @@ import StepperState from '@/context/stepper/stepper.provider'
 const LendingModalWrapper: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { modal, openModal } = useModalState()
 
-  const { setToast, removeToast } = useToastState()
+  const { removeToast } = useToastState()
 
   const { isVerifying, kycCompleted } = useKycState()
 
@@ -23,36 +23,22 @@ const LendingModalWrapper: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   // handle account change admist lending (new account may not be kyc-ed)
   useEffect(() => {
-    if (kycCompleted) {
-      removeToast()
-      return
-    }
-
-    if (isVerifying) {
-      setToast({
-        type: 'info',
-        title: 'Account change detected',
-        message: 'Verifying status of new account...',
-        isClosable: false,
+    if (!kycCompleted) {
+      handleClose()
+      openModal({
+        name: ModalsKeys.KYC,
+        callback: () =>
+          openModal({ name: ModalsKeys.LEND, pool, currentEpoch }),
       })
-      return
     }
-
-    removeToast()
-    handleClose()
-    openModal({
-      name: ModalsKeys.KYC,
-      callback: () => openModal({ name: ModalsKeys.LEND, pool, currentEpoch }),
-    })
   }, [
     isVerifying,
     kycCompleted,
-    pool,
     currentEpoch,
-    removeToast,
-    setToast,
-    handleClose,
+    pool,
     openModal,
+    handleClose,
+    removeToast,
   ])
 
   return (

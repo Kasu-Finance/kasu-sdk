@@ -71,6 +71,7 @@ const ToastState: React.FC<ToastStateProps> = ({ children }) => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
+            zIndex: 1301,
           }}
           slotProps={{
             backdrop: {

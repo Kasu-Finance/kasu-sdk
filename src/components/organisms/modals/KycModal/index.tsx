@@ -39,7 +39,7 @@ const KycModal: React.FC<KycModalProps> = ({
 }) => {
   const config = useComPilotConfig()
 
-  const { handleOpenWidget, isVerifying, kycCompleted } = useKycState()
+  const { handleOpenWidget, kycCompleted } = useKycState()
 
   const { modal } = useModalState()
 
@@ -49,8 +49,10 @@ const KycModal: React.FC<KycModalProps> = ({
 
   const { setToast } = useToastState()
 
+  const { callback } = modal[ModalsKeys.KYC]
+
   const handleOpen = async () => {
-    handleOpenWidget(config, handleClose, modal[ModalsKeys.KYC].callback)
+    handleOpenWidget(config, handleClose, callback)
     openWidget()
   }
 
@@ -67,16 +69,11 @@ const KycModal: React.FC<KycModalProps> = ({
 
   // handle account changes admist kyc modal
   useEffect(() => {
-    if (isVerifying) {
-      setToast({
-        type: 'info',
-        title: 'Account change detected',
-        message: 'Verifying status of new account...',
-        isClosable: false,
-      })
-      return
+    if (kycCompleted) {
+      callback()
+      handleClose()
     }
-  }, [isVerifying, kycCompleted, setToast])
+  }, [kycCompleted, handleClose, callback])
 
   return (
     <CustomCard>

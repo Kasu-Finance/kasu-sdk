@@ -11,11 +11,12 @@ export type IdentityClientData = {
 
 export type KycActions =
   | {
-      type: 'RESET_AUTHENTICATION'
+      type: 'SET_LAST_VERIFIED_ACCOUNT'
+      payload: string
     }
   | {
       type: 'SET_KYC_COMPLETED'
-      payload: string
+      payload: boolean
     }
   | {
       type: 'SET_IS_VERIFYING'
@@ -29,7 +30,7 @@ export type KycActions =
 export type KycStateType = {
   isVerifying: boolean
   status: CustomerStatus
-  authenticatedUser: string | undefined
+  lastVerifiedAccount: string | undefined
   kycCompleted: boolean
 }
 
@@ -41,8 +42,8 @@ export type KycFunctions = {
   ) => void
   setIsVerifying: (isVerifying: boolean) => void
   setCustomerStatus: (customStatus: CustomerStatus) => void
-  setKycCompleted: (account: string) => void
-  resetAuthenticatedUser: () => void
+  setKycCompleted: (kycCompleted: boolean) => void
+  setLastVerifiedAccount: (account: string) => void
 }
 
 export type KycTypes = KycStateType & KycFunctions
