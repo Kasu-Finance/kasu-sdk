@@ -110,3 +110,25 @@ export const currentEpochFtdAmountQuery = gql`
         }
     }
 `;
+
+export const currentFtdBalanceQuery = gql`
+    query CurrentFtdBalanceQuery($userId: String, $poolId: String) {
+        userLendingPoolTrancheFixedTermDepositLocks(
+            where: { user: $userId, lendingPool: $poolId, isLocked: true }
+        ) {
+            trancheShares
+            lendingPoolTrancheFixedTermConfig {
+                configId
+                lendingPoolTranche {
+                    id
+                }
+            }
+            lendingPool {
+                balance
+                tranches {
+                    shares
+                }
+            }
+        }
+    }
+`;

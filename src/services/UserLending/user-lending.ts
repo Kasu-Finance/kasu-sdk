@@ -32,6 +32,7 @@ import { mapUserRequestEventType } from './helper';
 import {
     currentEpochDepositedAmountQuery,
     currentEpochFtdAmountQuery,
+    currentFtdBalanceQuery,
     lendingPoolUserDetailsQuery,
     totalUserLoyaltyRewardsQuery,
     trancheUserDetailsQuery,
@@ -40,6 +41,7 @@ import {
 import {
     CurrentEpochDepositedAmountSubgraph,
     CurrentEpochFtdAmountSubgraph,
+    CurrentFtdBalanceSubgraph,
     LendingPoolUserDetailsSubgraph,
     TotalUserLoyaltyRewardsSubgraph,
     TrancheUserDetailsSubgraph,
@@ -445,6 +447,51 @@ export class UserLending {
             await this._systemVariablesAbi.currentEpochNumber();
 
         return currentEpochNumber.toString();
+    }
+
+    async getCurrentFtdBalance(
+        poolId: string,
+        userId: string,
+    ): Promise<Map<string, number[]>> {
+        const currentFtdBalance: CurrentFtdBalanceSubgraph =
+            await this._graph.request(currentFtdBalanceQuery, {
+                userId: userId.toLowerCase(),
+                poolId: poolId.toLowerCase(),
+            });
+
+        const trancheMap = new Map<string, number[]>();
+
+        for (const userFTD of currentFtdBalance.userLendingPoolTrancheFixedTermDepositLocks) {
+            const ftdID = parseFloat(
+                userFTD.lendingPoolTrancheFixedTermConfig.configId,
+            );
+
+            const trancheID =
+                userFTD.lendingPoolTrancheFixedTermConfig.lendingPoolTranche.id.toLowerCase();
+
+            const totalSupply = userFTD.lendingPool.tranches.reduce(
+                (total, cur) => (total += parseFloat(cur.shares)),
+                0,
+            );
+
+            const amount = this.convertSharesToAssets(
+                userFTD.trancheShares,
+                parseFloat(userFTD.lendingPool.balance),
+                totalSupply,
+            );
+
+            const item = trancheMap.get(trancheID) ?? [];
+
+            if (item[ftdID]) {
+                item[ftdID] += parseFloat(amount);
+            } else {
+                item[ftdID] = parseFloat(amount);
+            }
+
+            trancheMap.set(trancheID, item);
+        }
+
+        return trancheMap;
     }
 
     async getCurrentEpochFtdAmount(

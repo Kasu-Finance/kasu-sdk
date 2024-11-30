@@ -110,3 +110,21 @@ export interface LendingPoolsBalanceSubgraph {
         }[];
     }[];
 }
+
+export interface CurrentFtdBalanceSubgraph {
+    userLendingPoolTrancheFixedTermDepositLocks: {
+        trancheShares: string;
+        lendingPoolTrancheFixedTermConfig: {
+            configId: string;
+            lendingPoolTranche: {
+                id: string;
+            };
+        };
+        lendingPool: {
+            balance: string;
+            tranches: {
+                shares: string;
+            }[];
+        };
+    }[];
+}
