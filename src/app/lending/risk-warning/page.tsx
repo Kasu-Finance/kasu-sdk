@@ -10,6 +10,7 @@ import ConcentrationRisk from '@/components/organisms/riskWarning/ConcentrationR
 import CreditRisk from '@/components/organisms/riskWarning/CreditRisk'
 import CurrencyExchangeRisk from '@/components/organisms/riskWarning/CurrencyExchangeRisk'
 import DataSecurity from '@/components/organisms/riskWarning/DataSecurity'
+import DelegateConcentrationRisk from '@/components/organisms/riskWarning/DelegateConcentrationRisk'
 import DelegateCounterPartyRisk from '@/components/organisms/riskWarning/DelegateCounterPartyRisk'
 import GeneralRisks from '@/components/organisms/riskWarning/GeneralRisks'
 import IncomeAndCapitalRisk from '@/components/organisms/riskWarning/IncomeAndCapitalRisk'
@@ -21,6 +22,7 @@ import PerformanceRisk from '@/components/organisms/riskWarning/PerformanceRisk'
 import PoliticalRisk from '@/components/organisms/riskWarning/PoliticalRisk'
 import ProtocolRisks from '@/components/organisms/riskWarning/ProtocolRisks'
 import SmartContractRisk from '@/components/organisms/riskWarning/SmartContractRisk'
+import TokenPriceRisk from '@/components/organisms/riskWarning/TokenPriceRisk'
 import TrancheRisk from '@/components/organisms/riskWarning/TrancheRisk'
 
 const RiskWarningPage = () => {
@@ -43,8 +45,10 @@ const RiskWarningPage = () => {
             <CreditRisk />
             <DelegateCounterPartyRisk />
             <ProtocolRisks />
+            <TokenPriceRisk />
             <SmartContractRisk />
             <ConcentrationRisk />
+            <DelegateConcentrationRisk />
             <TrancheRisk />
             <CurrencyExchangeRisk />
             <PoliticalRisk />

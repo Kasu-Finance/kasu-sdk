@@ -381,7 +381,7 @@
         "description": "As with any RWA (real world asset) lending protocol, bugs or errors in the code, as well as malicious actors exploiting vulnerabilities, could lead to unexpected or incorrect results and financial losses to Lenders. Smart Contracts on Kasu have undergone audits to address such potential risks; however there is no guarantee that audits are or will be successful in identifying errors in the code and Lenders use the protocol at their own risk."
       },
       "subheader-10": {
-        "title": "Concentration Risk",
+        "title": "End Borrower Concentration Risk",
         "description": "Lending Strategies may be subject to some degree of concentration risk, being the risk associated with Delegates that may only on-lend to a limited number of End Borrowers, thus increasing the risk if an End Borrower fails to repay its loan."
       },
       "subheader-11": {
@@ -407,6 +407,14 @@
       "subheader-16": {
         "title": "No Guarantee",
         "description": "None of Kasu and its related entities, officers or personnel, or Delegates on Kasu, guarantee the performance of your loans, or the repayment of any loan amount, or the interest returns. Lending on Kasu is entirely at the risk of Lenders. No one and no entity makes any representation as to the success or otherwise of your lending on Kasu."
+      },
+      "subheader-17": {
+        "title": "KSU Token Price Risk",
+        "description": "The KSU token is subject to price volatility. If you lock KSU to avail of the token’s utility and benefits, negative price fluctuations in the token may negate some, or all, of these benefits and may even fluctuate to the point where you may be in a less favourable overall position than if you didn’t purchase and lock KSU to achieve utility and benefits."
+      },
+      "subheader-18": {
+        "title": "Delegate Concentration and KSU Token Price Risk",
+        "description": "At the current point in time, Apxium is the only Delegate Kasu has partnered with. This not only presents concentration risk in the event that the Delegate and/or its End Borrower clients fail, but also presents risk to KSU token holders. For example, if Apxium ceased participating as a Delegate on Kasu, then the KSU token may no longer have utility, which in turn, may affect the KSU token price significantly."
       }
     },
     "termsAndConditions": {
