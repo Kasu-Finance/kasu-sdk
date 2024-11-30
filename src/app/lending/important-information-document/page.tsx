@@ -8,6 +8,7 @@ import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCar
 import AutomatedOptIn from '@/components/organisms/termsAndConditions/AutomatedOptIn'
 import BackButton from '@/components/organisms/termsAndConditions/BackButton'
 import FeesExplanation from '@/components/organisms/termsAndConditions/FeesExplanation'
+import FixedApyLoan from '@/components/organisms/termsAndConditions/FixedApyLoan'
 import ImportantInformation from '@/components/organisms/termsAndConditions/ImportantInformation'
 import InterestAccrual from '@/components/organisms/termsAndConditions/InterestAccrual'
 import LoanWithdrawalRequests from '@/components/organisms/termsAndConditions/LoanWithdrawalRequests'
@@ -32,6 +33,7 @@ const TermsAndConditionsPage = () => {
             <PendingPhase />
             <LoanWithdrawalRequests />
             <TrancheAllocation />
+            <FixedApyLoan />
             <BackButton />
           </Stack>
         </CustomInnerCardContent>

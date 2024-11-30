@@ -62,6 +62,14 @@ const LoanWithdrawalRequests = () => {
                 'modals.termsAndConditions.subheader-6.list-0.list-4.description'
               )}
             </li>
+            <li>
+              <Typography variant='baseMdBold'>
+                {t('modals.termsAndConditions.subheader-6.list-0.list-5.title')}
+              </Typography>
+              {t(
+                'modals.termsAndConditions.subheader-6.list-0.list-5.description'
+              )}
+            </li>
           </UnorderedList>
         </Stack>
 
@@ -78,6 +86,7 @@ const LoanWithdrawalRequests = () => {
             <li>{t('modals.termsAndConditions.subheader-6.list-1.list-2')}</li>
             <li>{t('modals.termsAndConditions.subheader-6.list-1.list-3')}</li>
             <li>{t('modals.termsAndConditions.subheader-6.list-1.list-4')}</li>
+            <li>{t('modals.termsAndConditions.subheader-6.list-1.list-5')}</li>
           </UnorderedList>
         </Stack>
       </Stack>

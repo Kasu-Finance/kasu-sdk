@@ -415,7 +415,7 @@
       "keyRisks": "Key Risks:",
       "subheader-1": {
         "title": "Important Information",
-        "description-1": "This is a summary of some key information  for Lenders on the Kasu protocol. It is important to read and understand this Important Information, as it summarises some of the important rights, responsibilities, and risks associated with lending using the Kasu protocol.",
+        "description-1": "This is a summary of some key information  for Lenders on the Kasu protocol. It is important to read and understand this Important Information, as it summarises some of the important rights, responsibilities, and risks associated with lending using the Kasu protocol.",
         "description-2": "However it is important to note that this Important Information is a summary only and does not contain all the risks and features associated with Lending through Kasu. In addition to reading and understanding this Important Information, prospective Lenders should also read and understand the:",
         "description-3": "The Loan Contract will be presented in the next steps of your Lending Request."
       },
@@ -486,7 +486,7 @@
           },
           "list-1": {
             "title": "Kasu Protocol Wallet: ",
-            "description": " 5% of the total interest earned by Lenders is allocated to the Kasu Protocol wallet."
+            "description": "5% of the total interest earned by Lenders is allocated to the Kasu Protocol wallet."
           }
         },
         "list-2": {
@@ -509,7 +509,7 @@
           "title": "Key Points:",
           "list-0": {
             "title": "Pending Phase: ",
-            "description": "Funds do not start accruing interest immediately upon the submission of a Lending Request. They remain in a Pending Phase until the next Clearing Period."
+            "description": "Funds do not start accruing interest immediately upon the submission of a Lending Request. They remain in a Pending Phase until the next Clearing Period, which occurs at the end of each epoch."
           },
           "list-1": {
             "title": "Clearing Period: ",
@@ -517,48 +517,53 @@
           },
           "list-2": {
             "title": "Start of Interest Accrual: ",
-            "description": "If funds from a Lending Request are accepted at the end of the epoch, the Lender will then start accruing interest from the beginning of the next epoch."
+            "description": "If funds from a Lending Request are accepted during a Clearing Period (end of an epoch), the Lender will then start accruing interest from the beginning of the next epoch."
           },
           "list-3": {
             "title": "Clearing Period Delays: ",
-            "description": "There is a risk that  a Clearing Period could be missed, causing the Lending Request to be processed at a future epoch."
+            "description": "There is a risk that a Clearing Period could be missed, causing the Lending Request to be processed at a future epoch."
           }
         }
       },
       "subheader-6": {
         "title": "Loan Withdrawal Requests",
-        "description": "When Lenders submit a Loan Withdrawal Request to Kasu, their request enters a Pending Phase. The processing of these Loan Withdrawal Requests is contingent upon the excess liquidity within the specific Lending Strategy, and may therefore remain outstanding (or partially outstanding) for one or more epochs. Excess liquidity is based on various factors outside of Kasu and Delegates’ control, such as (but not limited to) demand for Lending Strategies and End Borrowers meeting repayment requirements.",
+        "description": "When Lenders submit a Loan Withdrawal Request to Kasu, their request enters a Pending Phase (queued). Acceptance of these Loan Withdrawal Requests is evaluated during each Clearing Period (end of each epoch) and is contingent upon the excess liquidity within the specific Lending Strategy, and may therefore remain outstanding (or partially outstanding) for one or more epochs. Excess liquidity is based on various factors outside of Kasu and Delegates’ control, such as (but not limited to) demand for Lending Strategies and End Borrowers meeting repayment requirements.",
         "subtitle": "Acknowledgment of Loan Withdrawal Request Process",
         "subtitle-description": "By submitting a Loan Withdrawal Request through Kasu, Lenders acknowledge and accept the Pending Phase and the process based on excess liquidity. Lenders understand that:",
         "list-0": {
           "title": "Key Points:",
           "list-0": {
             "title": "Pending Phase and Excess Liquidity: ",
-            "description": "Loan Withdrawal Requests are processed based on the excess funds available within the given Lending Strategy at the time of submission. This means that Lenders may only withdraw funds up to the excess liquidity available, potentially resulting in partially fulfilled (or even unfulfilled) Withdrawal Requests."
+            "description": "Loan Withdrawal Requests remain in Pending Phase (queued) until they are accepted as part of each Clearing Period (end of each epoch), which is dependent on the excess funds available within the given Lending Strategy. This means that Lenders may only withdraw funds up to the excess liquidity available, potentially resulting in partially fulfilled (or even unfulfilled) Withdrawal Requests until the next Clearing Period."
           },
           "list-1": {
             "title": "Multiple Epochs: ",
-            "description": "Requests may therefore remain outstanding (or partially outstanding) for more than one epoch until sufficient liquidity is available."
+            "description": "Withdrawal Requests may therefore remain outstanding/queued (or partially outstanding/queued) for more than one epoch until sufficient liquidity is available, which will be determined during each Clearing Period (end of each epoch)."
           },
           "list-2": {
             "title": "Priority Based on Loyalty Level: ",
-            "description": "Withdrawal Requests are prioritised according to each Lender's Loyalty Level, with higher Loyalty Levels receiving preference. Lenders with lower or no Loyalty Levels may experience longer waiting times for their Withdrawal Requests to be processed."
+            "description": "Withdrawal Requests are prioritised according to each Lender's Loyalty Level, with higher Loyalty Levels receiving preference. Lenders with lower or no Loyalty Levels may experience longer waiting times for their Withdrawal Requests to be accepted."
           },
           "list-3": {
             "title": "Automatic Loyalty Level Increase: ",
-            "description": "Any Withdrawal Request left outstanding for more than five epochs will automatically be prioritised above all Loyalty Levels until the withdrawal is processed."
+            "description": "Any Withdrawal Request left outstanding for more than five epochs will automatically be prioritised above all Loyalty Levels until the withdrawal is accepted."
           },
           "list-4": {
             "title": "Interest Accrual: ",
-            "description": "Interest continues to accrue during the Pending Phase until the Withdrawal Request is processed. Upon the successful processing of a Withdrawal Request, the withdrawing Lender's lending position stops accruing interest."
+            "description": "Interest continues to accrue during the Pending Phase until the Withdrawal Request is accepted. Upon the successful processing of a Withdrawal Request, the withdrawing Lender's lending position stops accruing interest."
+          },
+          "list-5": {
+            "title": "Losses: ",
+            "description": "should a loss occur within a Lender’s selected Lending Strategy whilst a Lender’s Withdrawal Request is in Pending Phase (queued), the loss(es) will adversely impact the Lender’s loan and potentially the ability for the Lender to be repaid in whole or in part."
           }
         },
         "list-1": {
-          "list-0": "Access to their funds is contingent upon the availability of excess liquidity within the Lending Strategy. Excess liquidity is based on various factors outside of Kasu and Delegates’ control, such as (but not limited to) demand for Lending Strategies and End Borrowers meeting repayment requirements.",
+          "list-0": "Access to their funds is contingent upon the availability of excess liquidity within the Lending Strategy, which is determined during each Clearing Period (end of each epoch). Excess liquidity is based on various factors outside of Kasu and Delegates’ control, such as (but not limited to) demand for Lending Strategies and End Borrowers meeting repayment requirements.",
           "list-1": "Withdrawal Requests are prioritised based on Loyalty Level, potentially resulting in longer waiting times for lower or no Loyalty Level Lenders.",
           "list-2": "Withdrawal Requests may therefore remain outstanding (or partially outstanding) for more than one epoch until sufficient liquidity is available.",
-          "list-3": "Any outstanding Withdrawal Request for more than five epochs will automatically receive the highest Loyalty Level until the withdrawal is processed.",
-          "list-4": "Interest continues to accrue during the Pending Phase and stops only upon the successful processing of a Withdrawal Request."
+          "list-3": "Any Withdrawal Request that has been outstanding for more than five epochs will automatically receive the highest Loyalty Level until the withdrawal is processed.",
+          "list-4": "Interest continues to accrue during the Pending Phase and stops only upon the successful acceptance of a Withdrawal Request.",
+          "list-5": "Funds that remain in Pending Phase (queued) will still be affected by losses within Lending Strategies, given that the WIthdrawal Request is yet to be accepted."
         }
       },
       "subheader-7": {
@@ -609,7 +614,7 @@
         "capacity": "Capacity",
         "totalLendingRequests": "Total Lending Requests",
         "excessLendingRequests": "Excess Lending Requests",
-        "acceptedDepositRequests": "Accepted Deposit Requests",
+        "acceptedDepositRequests": "Accepted Lending Requests",
         "unallocatedLendingRequests": "Unallocated Lending Requests",
         "junior": "Junior",
         "mezzanine": "Mezzanine",
@@ -638,6 +643,30 @@
           "list-2": {
             "title": "Automated Opt-in: ",
             "description": "if the Lender provides no instruction within the 48 hour period, they are deemed to have automatically opted in (otherwise known as ‘negative consent’)."
+          }
+        }
+      },
+      "subheader-9": {
+        "title": "Fixed APY Loans - Withdrawal Restrictions & Other Conditions",
+        "description": "Loans with a fixed APY are fixed for the loan term made available to, and selected by, Lenders. During the fixed term, Lenders are unable to submit Withdrawal Requests. However, Lenders can request their funds be fully returned upon the expiry of the fixed term period by providing notice prior to the four epochs leading up to the fixed loan expiry date. Should a lender not provide such notice, their loan will automatically convert to the prevailing variable APY, and Lenders will be subjected to the normal Withdrawal Request process.",
+        "subtitle": "Acknowledgment of Fixed APY Withdrawal Restrictions & Other Conditions",
+        "subtitle-description": "By lending through Kasu, Lenders acknowledge and accept the restrictions and other conditions associated with fixed APY loans. Lenders understand that:",
+        "list-1": {
+          "list-0": {
+            "title": "Fixed Loan Term and Fixed APY: ",
+            "description": "the period which the APY is fixed for is the same period the loan term is fixed."
+          },
+          "list-1": {
+            "title": "No Withdrawal Requests: ",
+            "description": "no Withdraw Requests can be made during the fixed term period."
+          },
+          "list-2": {
+            "title": "Notice Period for Return of Funds: ",
+            "description": "Lenders can request their funds be fully returned upon the expiry of the fixed term period, without having to undergo the normal Withdrawal Request process and the associated queueing system; however Lenders must notify Kasu prior to the four epochs leading up to the fixed term expiry date by following the notification process outlined on the Kasu platform (see ‘My Portfolio’ by the ‘My Lending Portfolio’ section on the Kasu platform)."
+          },
+          "list-3": {
+            "title": "No Notice Provided for Return of Funds: ",
+            "description": "should a Lender not provide notice as required, their loan will automatically convert to the prevailing variable APY, and which will be subjected to the normal Withdrawal Request process."
           }
         }
       }
