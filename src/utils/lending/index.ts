@@ -3,6 +3,8 @@ export { default as calculateSubsequentTransactionSummary } from '@/utils/lendin
 export {
   calculateTotalInvested,
   calculateTotalYieldEarned,
+  calculateUserLendingSummary,
+  calculateWithdrawSummary,
   getTranchesWithUserBalances,
 } from '@/utils/lending/calculateUserBalances'
 export { default as calculateWithdrawalStatusSummary } from '@/utils/lending/calculateWithdrawalStatusSummary'

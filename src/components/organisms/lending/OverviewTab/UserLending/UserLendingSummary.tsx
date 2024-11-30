@@ -3,6 +3,7 @@
 import { Grid, Skeleton } from '@mui/material'
 import { formatUnits } from 'ethers/lib/utils'
 
+import useCurrentFtdBalance from '@/hooks/lending/useCurrentFtdBalance'
 import useUserLendingTrancheBalance from '@/hooks/lending/useUserLendingTrancheBalance'
 import getTranslation from '@/hooks/useTranslation'
 
@@ -11,8 +12,7 @@ import LifetimeInterestEarnedTooltip from '@/components/molecules/tooltips/Lifet
 import WeightedAverageApyTooltip from '@/components/molecules/tooltips/WeightAverageApyTooltip'
 import WaveCard from '@/components/molecules/WaveCard'
 
-import { formatAmount } from '@/utils'
-import { calculateUserLendingSummary } from '@/utils/lending/calculateUserBalances'
+import { calculateUserLendingSummary, formatAmount } from '@/utils'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
@@ -28,7 +28,10 @@ const UserLendingSummary: React.FC<UserLendingSummaryProps> = ({ pool }) => {
     pool.tranches
   )
 
-  if (isLoading) {
+  const { currentFtdBalance, isLoading: currentFtdBalanceLoading } =
+    useCurrentFtdBalance(pool.id)
+
+  if (isLoading || currentFtdBalanceLoading || !currentFtdBalance) {
     return (
       <Grid container spacing={4}>
         <Grid item flex={1}>
@@ -45,7 +48,10 @@ const UserLendingSummary: React.FC<UserLendingSummaryProps> = ({ pool }) => {
   }
 
   const { totalInvested, totalYieldEarned, averageApy } =
-    calculateUserLendingSummary(userLendingTrancheBalance ?? [])
+    calculateUserLendingSummary(
+      userLendingTrancheBalance ?? [],
+      currentFtdBalance
+    )
 
   return (
     <Grid container spacing={4}>

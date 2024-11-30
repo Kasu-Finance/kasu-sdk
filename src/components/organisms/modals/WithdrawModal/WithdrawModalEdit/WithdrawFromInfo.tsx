@@ -13,7 +13,7 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { SupportedTokens } from '@/constants/tokens'
 import { formatAmount } from '@/utils'
-import { calculateUserLendingSummary } from '@/utils/lending/calculateUserBalances'
+import { calculateWithdrawSummary } from '@/utils/lending/calculateUserBalances'
 
 const WithdrawFromInfo = () => {
   const { t } = getTranslation()
@@ -26,8 +26,9 @@ const WithdrawFromInfo = () => {
 
   const supportedToken = useSupportedTokenInfo()
 
-  const { totalInvested, totalAvailableToWithdraw } =
-    calculateUserLendingSummary(trancheBalance ?? [])
+  const { totalInvested, totalAvailableToWithdraw } = calculateWithdrawSummary(
+    trancheBalance ?? []
+  )
 
   const usdcDecimals = supportedToken?.[SupportedTokens.USDC].decimals
 
