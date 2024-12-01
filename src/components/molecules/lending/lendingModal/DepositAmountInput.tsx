@@ -213,11 +213,11 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
     },
     [
       setAmount,
+      setAmountInUSD,
       validate,
       applyConversion,
       debouncedValidate,
       setIsValidating,
-      setAmountInUSD,
     ]
   )
 
