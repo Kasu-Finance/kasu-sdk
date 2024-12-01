@@ -44,6 +44,6 @@ export const LENDERS_AGREEMENT_API = 'https://allocations.api.kasu.finance'
 
 export const LENDERS_AGREEMENT_CHAIN_ID_MAP: Record<SupportedChainIds, string> =
   {
-    [SupportedChainIds.BASE]: '8453X',
+    [SupportedChainIds.BASE]: '8453',
     [SupportedChainIds.BASE_SEPOLIA]: '84532',
   }
