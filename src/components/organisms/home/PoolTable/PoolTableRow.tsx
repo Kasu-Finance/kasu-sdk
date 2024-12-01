@@ -161,7 +161,15 @@ const PoolTableRow: React.FC<PoolTableRowProps> = ({ pool }) => {
         </TableCell>
         {isActivePool && (
           <TableCell>
-            <UnorderedList sx={{ ...customTypography.baseSm, pl: 2 }}>
+            <UnorderedList
+              sx={{
+                ...customTypography.baseSm,
+                pl: 2,
+                li: {
+                  whiteSpace: 'normal',
+                },
+              }}
+            >
               {pool.security.map((security, index) => (
                 <li key={index}>{security}</li>
               ))}

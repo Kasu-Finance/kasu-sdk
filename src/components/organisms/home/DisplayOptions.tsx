@@ -4,16 +4,26 @@ import { Box, IconButton } from '@mui/material'
 
 import useHomeState from '@/hooks/context/useHomeState'
 
+import { CARDS_PER_PAGE } from '@/components/organisms/home/PoolCard/PoolCardContainer'
+import { ROW_PER_PAGE } from '@/components/organisms/home/PoolTable'
+
 import { LayoutTypes } from '@/context/home/home.types'
 
 import { CardIcon, TableIcon } from '@/assets/icons'
 
 const DisplayOptions = () => {
-  const { layout, setLayout } = useHomeState()
+  const { layout, totalPoolCount, currentPage, setLayout } = useHomeState()
+
+  const ITEMS_PER_PAGE =
+    layout === LayoutTypes.CARD ? CARDS_PER_PAGE : ROW_PER_PAGE
 
   return (
     <Box display='flex' alignItems='center'>
-      <Box mr={1}>1-3 of 10</Box>
+      <Box mr={1}>
+        {Math.max(currentPage * ITEMS_PER_PAGE - ITEMS_PER_PAGE, 1)}-
+        {Math.min(currentPage * ITEMS_PER_PAGE, totalPoolCount)} of{' '}
+        {totalPoolCount}
+      </Box>
       <Box>
         <IconButton
           sx={(theme) => ({

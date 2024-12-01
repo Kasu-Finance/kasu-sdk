@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 
 import useHomeState from '@/hooks/context/useHomeState'
 
@@ -23,7 +23,11 @@ const PoolLayoutWrapper: React.FC<PoolCardWrapperProps> = ({
   currentEpoch,
   emptyPoolsPlaceholder,
 }) => {
-  const { layout } = useHomeState()
+  const { layout, setTotalPoolCount } = useHomeState()
+
+  useEffect(() => {
+    setTotalPoolCount(pools.length)
+  }, [pools, setTotalPoolCount])
 
   if (!layout) {
     return <PoolLayoutWrapperSkeleton />

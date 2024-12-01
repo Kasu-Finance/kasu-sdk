@@ -18,6 +18,16 @@ const useHomeActions = (dispatch: Dispatch<HomeActions>): HomeFunctions =>
           payload: layout,
         })
       },
+      setCurrentPage: (currentPage: number) =>
+        dispatch({
+          type: HomeActionsTypes.SET_CURRENT_PAGE,
+          payload: currentPage,
+        }),
+      setTotalPoolCount: (totalPoolCount: number) =>
+        dispatch({
+          type: HomeActionsTypes.SET_TOTAL_POOL_COUNT,
+          payload: totalPoolCount,
+        }),
     }),
     [dispatch]
   )

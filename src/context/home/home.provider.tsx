@@ -13,6 +13,8 @@ type HomeStateProps = {
 
 const initialState: HomeStateType = {
   layout: null,
+  totalPoolCount: 0,
+  currentPage: 0,
 }
 
 const HomeState: React.FC<HomeStateProps> = ({ children }) => {

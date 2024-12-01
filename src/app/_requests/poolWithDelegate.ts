@@ -8,7 +8,7 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 const CACHE_TTL = 60 * 60 // 1 hour
 
 export const getPoolWithDelegate = unstable_cache(
-  async (poolId?: string) => {
+  async (poolId?: string, activePools: boolean = true) => {
     const [pools, poolDelegates] = await Promise.all([
       getPoolOverview(),
       getPoolDelegate(),
@@ -16,7 +16,8 @@ export const getPoolWithDelegate = unstable_cache(
 
     const poolsWithDelegate = pools
       .filter((pool) => {
-        if (!pool.isActive) return false
+        if (!pool.isActive && activePools) return false
+        if (pool.isActive && !activePools) return false
 
         if (!poolId) return true
 

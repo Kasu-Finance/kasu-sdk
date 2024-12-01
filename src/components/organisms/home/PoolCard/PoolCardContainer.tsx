@@ -1,5 +1,7 @@
 import { Box, Pagination, Stack } from '@mui/material'
+import { useEffect } from 'react'
 
+import useHomeState from '@/hooks/context/useHomeState'
 import usePagination from '@/hooks/usePagination'
 
 import PoolCard from '@/components/organisms/home/PoolCard'
@@ -11,7 +13,7 @@ type PoolCardContainerProps = {
   currentEpoch: string
 }
 
-const CARDS_PER_PAGE = 3
+export const CARDS_PER_PAGE = 3
 
 const PoolCardContainer: React.FC<PoolCardContainerProps> = ({
   pools,
@@ -21,6 +23,12 @@ const PoolCardContainer: React.FC<PoolCardContainerProps> = ({
     CARDS_PER_PAGE,
     pools.length
   )
+
+  const { setCurrentPage } = useHomeState()
+
+  useEffect(() => {
+    setCurrentPage(currentPage)
+  }, [currentPage, setCurrentPage])
 
   return (
     <Stack spacing={4} alignItems='center'>

@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
+import useHomeState from '@/hooks/context/useHomeState'
 import usePagination from '@/hooks/usePagination'
 
 import CustomTable from '@/components/molecules/CustomTable'
@@ -13,13 +14,19 @@ type PoolTableProps = {
   pools: PoolOverviewWithDelegate[]
 }
 
-const ROW_PER_PAGE = 10
+export const ROW_PER_PAGE = 10
 
 const PoolTable: React.FC<PoolTableProps> = ({ pools }) => {
   const { currentPage, setPage, paginateData } = usePagination(
     ROW_PER_PAGE,
     pools.length
   )
+
+  const { setCurrentPage } = useHomeState()
+
+  useEffect(() => {
+    setCurrentPage(currentPage)
+  }, [currentPage, setCurrentPage])
 
   return (
     <CustomTable

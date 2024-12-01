@@ -14,6 +14,16 @@ const homeReducer = (
         ...state,
         layout: action.payload,
       }
+    case HomeActionsTypes.SET_TOTAL_POOL_COUNT:
+      return {
+        ...state,
+        totalPoolCount: action.payload,
+      }
+    case HomeActionsTypes.SET_CURRENT_PAGE:
+      return {
+        ...state,
+        currentPage: action.payload,
+      }
   }
 }
 
