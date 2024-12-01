@@ -1,27 +1,23 @@
-import { Container, Grid } from '@mui/material'
+import { Container, Stack } from '@mui/material'
+import { Suspense } from 'react'
 
-import BalanceOverview from '@/components/molecules/locking/BalanceOverview'
-import LoyaltyOverview from '@/components/molecules/locking/LoyaltyOverview'
-import RewardsBreakdown from '@/components/molecules/locking/RewardsBreakdown'
-import RewardSummary from '@/components/molecules/locking/RewardSummary'
-import UnlockOverview from '@/components/molecules/locking/UnlockOverview'
+import BonusRewardSummary from '@/components/organisms/locking/BonusRewardSummary'
+import LockingSkeleton from '@/components/organisms/locking/LockingSkeleton'
+import LoyaltyStatus from '@/components/organisms/locking/LoyaltyStatus'
+import UserFunds from '@/components/organisms/locking/UserFunds'
+import UserRewards from '@/components/organisms/locking/UserRewards'
 
 const Locking = async () => {
   return (
     <Container maxWidth='lg'>
-      <Grid container spacing={{ xs: 2, sm: 3 }} mt={0}>
-        <Grid item xs={12} md={6}>
-          <BalanceOverview />
-          <RewardSummary />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <LoyaltyOverview />
-        </Grid>
-        <Grid item xs={12}>
-          <RewardsBreakdown />
-          <UnlockOverview />
-        </Grid>
-      </Grid>
+      <Stack spacing={3}>
+        <Suspense fallback={<LockingSkeleton />}>
+          <BonusRewardSummary />
+          <UserFunds />
+          <LoyaltyStatus />
+          <UserRewards />
+        </Suspense>
+      </Stack>
     </Container>
   )
 }

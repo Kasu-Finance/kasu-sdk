@@ -1,12 +1,14 @@
 import { Dispatch, useMemo } from 'react'
 
 import {
+  TranasctionDecisions,
   TransactionStatus,
   TransactionTranches,
   TransactionType,
-} from '@/components/molecules/lending/overview/TransactionHistory/TransactionHistoryFilters'
+} from '@/components/organisms/lending/OverviewTab/UserTransactions/TransactionFilters'
 
 import {
+  PoolIdFilters,
   TransactionHistoryActions,
   TransactionHistoryActionsTypes,
   TransactionHistoryFunctions,
@@ -33,6 +35,18 @@ const useTransactionHistoryActions = (
         dispatch({
           type: TransactionHistoryActionsTypes.SET_TRANSACTION_TYPE,
           payload: tranasctionType,
+        }),
+      setTransactionDecisons: (
+        decisions: ValueOf<typeof TranasctionDecisions>
+      ) =>
+        dispatch({
+          type: TransactionHistoryActionsTypes.SET_PENDING_DECISIONS,
+          payload: decisions,
+        }),
+      setPoolId: (poolId: PoolIdFilters) =>
+        dispatch({
+          type: TransactionHistoryActionsTypes.SET_POOL_ID,
+          payload: poolId,
         }),
     }),
     [dispatch]

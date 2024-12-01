@@ -1,0 +1,246 @@
+{
+  "debtor": [
+    {
+      "id": "one_month",
+      "label": "0-29 days",
+      "value": 15,
+      "color": "rgba(249, 224, 187, 1)"
+    },
+    {
+      "id": "two_month",
+      "label": "30-59 days",
+      "value": 60,
+      "color": "rgba(232, 192, 145, 1)"
+    },
+    {
+      "id": "three_month",
+      "label": "60-89 days",
+      "value": 5,
+      "color": "rgba(196, 153, 108, 1)"
+    },
+    {
+      "id": "above_three_month",
+      "label": "90+ days",
+      "value": 20,
+      "color": "rgba(164, 123, 79, 1)"
+    }
+  ],
+  "riskSegments": [
+    {
+      "id": "very_low_risk",
+      "label": "Low Risk",
+      "value": 15,
+      "color": "rgba(247, 241, 229, 1)"
+    },
+    {
+      "id": "low_risk",
+      "label": "Low risk",
+      "value": 60,
+      "color": "rgba(249, 224, 187, 1)"
+    },
+    {
+      "id": "moderate_risk",
+      "label": "Moderate Risk",
+      "value": 5,
+      "color": "rgba(232, 192, 145, 1)"
+    },
+    {
+      "id": "high_risk",
+      "label": "High risk",
+      "value": 20,
+      "color": "rgba(196, 153, 108, 1)"
+    },
+    {
+      "id": "very_high_risk",
+      "label": "Very High risk",
+      "value": 20,
+      "color": "rgba(164, 123, 79, 1)"
+    },
+    {
+      "id": "not_applicable",
+      "label": "N/A",
+      "value": 20,
+      "color": "rgba(133, 87, 38, 1)"
+    }
+  ],
+  "creditRiskExposureStatus": {
+    "legend": [
+      {
+        "id": "outstanding",
+        "label": "Total Invoices Outstanding ($)",
+        "color": "rgba(232, 192, 145, 1)",
+        "type": "bar"
+      },
+      {
+        "id": "funded",
+        "label": "Total Invoices Funded ($)",
+        "color": "rgba(164, 123, 79, 1)",
+        "type": "bar"
+      },
+      {
+        "id": "ltvRatio",
+        "label": "Loan to Value (LTV) Ratio",
+        "color": "rgba(40, 40, 42, 1)",
+        "type": "line"
+      }
+    ],
+    "data": [
+      {
+        "x": 1,
+        "y": 23,
+        "outstanding": 1000000,
+        "funded": 500000
+      },
+      {
+        "x": 2,
+        "y": 7,
+        "outstanding": 8000000,
+        "funded": 600000
+      },
+      {
+        "x": 3,
+        "y": 9,
+        "outstanding": 4900000,
+        "funded": 500000
+      },
+      {
+        "x": 4,
+        "y": 6,
+        "outstanding": 700000,
+        "funded": 450000
+      },
+      {
+        "x": 5,
+        "y": 30,
+        "outstanding": 450000,
+        "funded": 450000
+      },
+      {
+        "x": 6,
+        "y": 26,
+        "outstanding": 3200000,
+        "funded": 1000000
+      },
+      {
+        "x": 7,
+        "y": 14,
+        "outstanding": 230000,
+        "funded": 230000
+      },
+      {
+        "x": 8,
+        "y": 11,
+        "outstanding": 750000,
+        "funded": 250000
+      },
+      {
+        "x": 9,
+        "y": 20,
+        "outstanding": 47000000,
+        "funded": 9300000
+      },
+      {
+        "x": 10,
+        "y": 40,
+        "outstanding": 7100000,
+        "funded": 2300000
+      },
+      {
+        "x": 11,
+        "y": 15,
+        "outstanding": 3100000,
+        "funded": 420000
+      }
+    ]
+  },
+  "collectionsPerformance": {
+    "legend": [
+      {
+        "id": "funded",
+        "label": "Total Invoices Funded ($)",
+        "color": "rgba(232, 192, 145, 1)",
+        "type": "bar"
+      },
+      {
+        "id": "invoicesLossed",
+        "label": "Losses on Funded Invoices ($)",
+        "color": "rgba(164, 123, 79, 1)",
+        "type": "line"
+      },
+      {
+        "id": "recoveryAction",
+        "label": "Recovery Action on Funded Invoices ($)",
+        "color": "rgba(40, 40, 42, 1)",
+        "type": "line"
+      }
+    ],
+    "data": [
+      {
+        "x": 1,
+        "invoicesLossed": 230000,
+        "funded": 500000,
+        "recoveryAction": 1500000
+      },
+      {
+        "x": 2,
+        "invoicesLossed": 700000,
+        "funded": 600000,
+        "recoveryAction": 3500000
+      },
+      {
+        "x": 3,
+        "invoicesLossed": 400000,
+        "funded": 500000,
+        "recoveryAction": 1500000
+      },
+      {
+        "x": 4,
+        "invoicesLossed": 120000,
+        "funded": 1450000,
+        "recoveryAction": 4500000
+      },
+      {
+        "x": 5,
+        "invoicesLossed": 8210000,
+        "funded": 450000,
+        "recoveryAction": 4210000
+      },
+      {
+        "x": 6,
+        "invoicesLossed": 1500000,
+        "funded": 1000000,
+        "recoveryAction": 1500000
+      },
+      {
+        "x": 7,
+        "invoicesLossed": 21300000,
+        "funded": 9300000,
+        "recoveryAction": 1500000
+      },
+      {
+        "x": 8,
+        "invoicesLossed": 11,
+        "funded": 250000,
+        "recoveryAction": 1500000
+      },
+      {
+        "x": 9,
+        "invoicesLossed": 20,
+        "funded": 9300000,
+        "recoveryAction": 1500000
+      },
+      {
+        "x": 10,
+        "invoicesLossed": 40,
+        "funded": 2300000,
+        "recoveryAction": 1500000
+      },
+      {
+        "x": 11,
+        "invoicesLossed": 15,
+        "funded": 420000,
+        "recoveryAction": 1500000
+      }
+    ]
+  }
+}

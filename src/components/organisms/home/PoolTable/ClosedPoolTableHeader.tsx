@@ -1,0 +1,33 @@
+import { TableRow } from '@mui/material'
+
+import getTranslation from '@/hooks/useTranslation'
+
+import PoolTableHeaderCell from '@/components/organisms/home/PoolTable/PoolTableHeaderCell'
+
+const ClosedPoolTableHeader = () => {
+  const { t } = getTranslation()
+
+  return (
+    <TableRow>
+      <PoolTableHeaderCell label={t('general.lendingStrategy')} width='42%' />
+      <PoolTableHeaderCell label={t('general.apy')} width='12%' />
+      <PoolTableHeaderCell
+        label={t('home.activePools.table.loansUnder')}
+        toolTip={t('details.poolTraction.management.tooltip')}
+        width='18%'
+      />
+      <PoolTableHeaderCell
+        label={t('home.activePools.table.loanFunds')}
+        toolTip={t('details.poolDelegate.totalFunds.tooltip')}
+        width='18%'
+      />
+
+      <PoolTableHeaderCell
+        label={t('home.activePools.table.lossRate')}
+        toolTip={t('details.poolDelegate.totalLossRate.tooltip')}
+        width='10%'
+      />
+    </TableRow>
+  )
+}
+export default ClosedPoolTableHeader

@@ -19,6 +19,11 @@ const lockModalReducer = (
         ...state,
         selectedLockPeriod: action.payload,
       }
+    case LockModalActionType.SET_TX_HASH:
+      return {
+        ...state,
+        txHash: action.payload,
+      }
     default:
       return state
   }

@@ -15,6 +15,7 @@ type LockModalStateProps = {
 
 const initialState: Omit<LockModalStateType, 'selectedLockPeriod'> = {
   amount: '',
+  txHash: undefined,
 }
 
 const LockModalState: React.FC<LockModalStateProps> = ({

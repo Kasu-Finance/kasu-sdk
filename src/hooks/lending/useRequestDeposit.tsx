@@ -3,24 +3,21 @@ import { BigNumber, BytesLike } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
-import useModalStatusState from '@/hooks/context/useModalStatusState'
+import useStepperState from '@/hooks/context/useStepperState'
 import useToastState from '@/hooks/context/useToastState'
-import useGenerateSwapData from '@/hooks/lending/useGenerateSwapData'
+import useBuildDepositData from '@/hooks/lending/useBuildDepositData'
+import useBuildSwapData from '@/hooks/lending/useBuildSwapData'
 import useKasuSDK from '@/hooks/useKasuSDK'
 import useHandleError from '@/hooks/web3/useHandleError'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
-import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
-
-import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
-
 import generateKycSignature from '@/actions/generateKycSignature'
-import { ONE_INCH_SLIPPAGE } from '@/config/api.oneInch'
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { SupportedTokens } from '@/constants/tokens'
-import { toBigNumber, waitForReceipt } from '@/utils'
+import { capitalize, toBigNumber, waitForReceipt } from '@/utils'
 
 import { HexString } from '@/types/lending'
+import { PoolOverviewWithDelegate } from '@/types/page'
 
 const useRequestDeposit = () => {
   const sdk = useKasuSDK()
@@ -33,16 +30,21 @@ const useRequestDeposit = () => {
 
   const supportedTokens = useSupportedTokenInfo()
 
-  const { setModalStatusAction } = useModalStatusState()
+  const { nextStep } = useStepperState()
 
   const { setToast, removeToast } = useToastState()
 
-  const generateSwapData = useGenerateSwapData()
+  const buildSwapData = useBuildSwapData()
+
+  const buildDepositData = useBuildDepositData()
 
   return async (
     lendingPoolId: `0x${string}`,
-    selectedTranche: PoolData['tranches'][number],
-    currentEpochDepositedAmount: string
+    selectedTranche: PoolOverviewWithDelegate['tranches'][number],
+    fixedTermConfigId: string,
+    currentEpochDepositedAmount: string,
+    contractAcceptedSignature: string,
+    contractAcceptedTimstamp: EpochTimeStamp
   ) => {
     if (!account) {
       return console.error('RequestDeposit:: Account is undefined')
@@ -59,7 +61,7 @@ const useRequestDeposit = () => {
     try {
       setToast({
         type: 'info',
-        title: ActionStatus.PROCESSING,
+        title: capitalize(ActionStatus.PROCESSING),
         message: ACTION_MESSAGES[ActionStatus.PROCESSING],
         isClosable: false,
       })
@@ -93,57 +95,35 @@ const useRequestDeposit = () => {
       let swapData: BytesLike = '0x'
 
       if (selectedToken !== SupportedTokens.USDC) {
-        const toToken = supportedTokens[SupportedTokens.USDC].address
-
-        const res = await generateSwapData(
+        const data = await buildSwapData({
+          account,
           chainId,
-          fromToken.address,
-          toToken,
+          currentDepositedAmount,
           fromAmount,
-          account as `0x${string}`,
-          (parseFloat(ONE_INCH_SLIPPAGE) * 100).toString()
-        )
+          fromToken: fromToken.address,
+          isETH,
+          minimumDeposit: selectedTranche.minimumDeposit,
+          supportedTokens,
+          trancheMax,
+        })
 
-        if ('error' in res) {
-          throw new Error(
-            `RequestDeposit:: Error generating swap data. ${res.error}`
-          )
-        }
-
-        const dstAmount = res.dstAmount // returned from one_inch
-
-        const maxSwapAmount = toBigNumber(
-          (parseFloat(dstAmount) * 1.05).toString(),
-          6
-        )
-
-        // if the swapped amount is less than the maxmium tranche allowed, use the swap amount
-        if (maxSwapAmount.lt(trancheMax)) {
-          maxAmount = maxSwapAmount.toString()
-        } else {
-          maxAmount = trancheMax.toString()
-        }
-
-        const minAmountOut = currentDepositedAmount.isZero()
-          ? selectedTranche.minimumDeposit
-          : '1'
-
-        swapData = sdk.UserLending.buildDepositSwapData(
-          fromToken.address,
-          isETH ? '0' : fromAmount, // when using ETH, we pass in ethValue during transaction instead
-          res.tx.to,
-          res.tx.data,
-          minAmountOut
-        )
+        maxAmount = data.maxAmount
+        swapData = data.swapData
       }
+
+      const depositData = buildDepositData(
+        contractAcceptedSignature,
+        contractAcceptedTimstamp
+      )
 
       const deposit = await sdk.UserLending.requestDepositWithKyc(
         lendingPoolId,
         trancheId,
         maxAmount.toString(),
         swapData,
-        kycData.blockExpiration,
-        kycData.signature,
+        fixedTermConfigId,
+        depositData,
+        kycData,
         isETH ? fromAmount : '0' // when using ETH, pass the value  directly here
       )
 
@@ -151,13 +131,13 @@ const useRequestDeposit = () => {
 
       setTxHash(receipt.transactionHash)
 
-      setModalStatusAction(ModalStatusAction.COMPLETED)
-
       removeToast()
+
+      nextStep()
     } catch (error) {
       handleError(
         error,
-        `${ActionType.DEPOSIT} ${ActionStatus.ERROR}`,
+        capitalize(`${ActionType.DEPOSIT} ${ActionStatus.ERROR}`),
         ACTION_MESSAGES[ActionType.DEPOSIT][ActionStatus.ERROR]
       )
     }

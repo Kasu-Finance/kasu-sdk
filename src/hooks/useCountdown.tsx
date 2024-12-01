@@ -1,11 +1,13 @@
+import { Duration } from 'dayjs/plugin/duration'
 import { useEffect, useMemo, useState } from 'react'
 
 import dayjs from '@/dayjs'
-import { TimeConversions } from '@/utils'
+import { formatToNearestTime } from '@/utils'
 
 type CountdownOptionsBase = {
   format?: string
   intervalMs?: number
+  largestUnit?: string
 }
 
 type WithNearestUnit = {
@@ -20,48 +22,43 @@ type WithoutNearestUnit = {
 type CountdownOptions = CountdownOptionsBase &
   (WithNearestUnit | WithoutNearestUnit)
 
-const formatToNearestUnit = (timeLeft: number, defaultUnit: string) => {
-  if (!Math.floor(timeLeft)) {
-    return defaultUnit
+const formatTotals = (
+  timeLeft: Duration,
+  format: string,
+  largestUnit: string
+) => {
+  const units = format.split(':')
+
+  const unit = units.find((unit) => unit.includes(largestUnit)) ?? units[0]
+
+  let largestTimeLeft: number
+
+  if (unit.includes('Y')) {
+    largestTimeLeft = timeLeft.asYears()
+  } else if (unit.includes('M')) {
+    largestTimeLeft = timeLeft.asMonths()
+  } else if (unit.includes('D')) {
+    largestTimeLeft = timeLeft.asDays()
+  } else if (unit.includes('H')) {
+    largestTimeLeft = timeLeft.asHours()
+  } else if (unit.includes('m')) {
+    largestTimeLeft = timeLeft.asMinutes()
+  } else {
+    largestTimeLeft = timeLeft.asSeconds()
   }
 
-  const timeLeftInSeconds = timeLeft / 1000
+  const formatWithoutLargestUnit = format.replace(unit, '')
 
-  let output: string
-  let suffix: string
+  const largestTimeFloored = Math.floor(largestTimeLeft)
 
-  switch (true) {
-    case timeLeftInSeconds > TimeConversions.SECONDS_PER_DAY:
-      output = dayjs.duration(timeLeft).format('D')
-      suffix = 'day'
-      break
-    case timeLeftInSeconds > TimeConversions.SECONDS_PER_HOUR:
-      output = dayjs.duration(timeLeft).format('H')
-      suffix = 'hour'
-      break
-    case timeLeftInSeconds > TimeConversions.SECONDS_PER_MINUTE:
-      output = dayjs.duration(timeLeft).format('m')
-      suffix = 'minute'
-      break
-    default:
-      output = dayjs.duration(timeLeft).format('s')
-      suffix = 'second'
-  }
-
-  const isSingular = output === '1'
-
-  if (!isSingular) {
-    suffix += 's'
-  }
-
-  return `${output} ${suffix}`
+  return `${largestTimeFloored < 10 ? '0' : ''}${largestTimeFloored} ${timeLeft.format(formatWithoutLargestUnit)}`
 }
 
 const useCountdown = (
   futureTimestamp: EpochTimeStamp,
   options: CountdownOptions = {}
 ) => {
-  const { format = 'DD:HH:mm', intervalMs = 1000 } = options
+  const { format = 'DD:HH:mm', intervalMs = 1000, largestUnit = 'D' } = options
 
   const initialState = useMemo(() => 0, [])
 
@@ -91,8 +88,8 @@ const useCountdown = (
   }, [initialState, futureTimestamp, format, intervalMs])
 
   return options.toNearestUnit
-    ? formatToNearestUnit(timeLeft, options.defaultUnit ?? '0 days')
-    : dayjs.duration(timeLeft).format(format)
+    ? formatToNearestTime(timeLeft, options.defaultUnit ?? '0 days')
+    : formatTotals(dayjs.duration(timeLeft), format, largestUnit)
 }
 
 export default useCountdown

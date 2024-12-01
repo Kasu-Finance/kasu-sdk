@@ -20,12 +20,16 @@ const depositModalReducer = (
         ...state,
         amountInUSD: action.payload,
       }
+    case DepositModalActionType.SET_FIXED_TERM_CONFIG_ID:
+      return {
+        ...state,
+        fixedTermConfigId: action.payload,
+      }
     case DepositModalActionType.SET_SELECTED_TRANCHE:
       return {
         ...state,
         trancheId: action.payload,
-        amount: '',
-        amountInUSD: undefined,
+        fixedTermConfigId: undefined,
       }
     case DepositModalActionType.SET_TX_HASH:
       return {
@@ -49,8 +53,15 @@ const depositModalReducer = (
         ...state,
         isValidating: action.payload,
       }
+    case DepositModalActionType.SET_IS_DEBOUNCING:
+      return {
+        ...state,
+        isDebouncing: action.payload,
+      }
     case DepositModalActionType.SET_TERMS_ACCEPTED:
       return { ...state, termsAccepted: action.payload }
+    case DepositModalActionType.SET_LOAN_CONTRACT_ACCEPTED:
+      return { ...state, loanContractAccepted: action.payload }
   }
 }
 

@@ -1,19 +1,19 @@
-import { Container } from '@mui/material'
+import { Suspense } from 'react'
 
-import PageHeader from '@/components/molecules/PageHeader'
-import PoolTabs from '@/components/organisms/lending/PoolTabs'
+import PoolOverviewTab from '@/components/organisms/lending/OverviewTab'
+import OverviewTabSkeleton from '@/components/organisms/lending/OverviewTab/OverviewTabSkeleton'
 
-const SinglePoolPage = ({ params }: { params: { slug: string } }) => {
+type PageProps = {
+  params: Promise<{ slug: string }>
+}
+
+const PoolOverviewPage = async ({ params }: PageProps) => {
+  const { slug } = await params
   return (
-    <Container maxWidth='lg'>
-      <PageHeader
-        title={'Lending Strategy: ' + params.slug}
-        poolId={params.slug}
-        variant='hero'
-      />
-      <PoolTabs />
-    </Container>
+    <Suspense fallback={<OverviewTabSkeleton />}>
+      <PoolOverviewTab poolId={slug} />
+    </Suspense>
   )
 }
 
-export default SinglePoolPage
+export default PoolOverviewPage

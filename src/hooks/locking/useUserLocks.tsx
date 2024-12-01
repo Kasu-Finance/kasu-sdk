@@ -7,7 +7,7 @@ const useUserLocks = () => {
   const sdk = useKasuSDK()
   const { account } = useWeb3React()
 
-  const { data, error, mutate } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     account ? ['userLocks', account] : null,
     async ([_, userAddress]) => sdk.Locking.getUserLocks(userAddress)
   )
@@ -15,7 +15,7 @@ const useUserLocks = () => {
   return {
     userLocks: data,
     error,
-    isLoading: !data && !error,
+    isLoading,
     updateUserLocks: mutate,
   }
 }

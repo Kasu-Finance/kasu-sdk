@@ -15,15 +15,15 @@ const usePagination = (
   rowPerPage: number,
   totalCount: number
 ): PaginationType => {
-  const [currentPage, setCurrentPage] = useState(0)
+  const [currentPage, setCurrentPage] = useState(1)
 
   const totalPages = Math.ceil(totalCount / rowPerPage)
 
   const pages = [...Array(totalPages)].map((_, index) => index + 1)
 
-  const hasPrevPage = currentPage !== 0
+  const hasPrevPage = currentPage !== 1
 
-  const hasNextPage = currentPage !== totalPages - 1
+  const hasNextPage = currentPage !== totalPages
 
   const setPage = (page: number) => setCurrentPage(page)
 
@@ -32,11 +32,11 @@ const usePagination = (
   const prevPage = () => setCurrentPage((prev) => prev - 1)
 
   const paginateData = <T,>(data: T[]): T[] =>
-    [...data].slice(currentPage * rowPerPage, (currentPage + 1) * rowPerPage)
+    [...data].slice((currentPage - 1) * rowPerPage, currentPage * rowPerPage)
 
   useEffect(() => {
-    if (!pages.includes(currentPage + 1)) {
-      setCurrentPage(0)
+    if (!pages.includes(currentPage)) {
+      setCurrentPage(1)
     }
   }, [currentPage, pages])
 

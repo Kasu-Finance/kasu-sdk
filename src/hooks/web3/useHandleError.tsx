@@ -9,13 +9,18 @@ import {
   ErrorTypes,
   TransactionError,
 } from '@/constants'
-import { userRejectedTransaction } from '@/utils'
+import { capitalize, userRejectedTransaction } from '@/utils'
 
 const useHandleError = () => {
   const { setToast } = useToastState()
 
   // refer to https://docs.ethers.org/v5/troubleshooting/errors/
-  return (_error: unknown, title?: string, message?: string) => {
+  return (
+    _error: unknown,
+    title?: string,
+    message?: string,
+    overrideDefault?: boolean
+  ) => {
     const error = _error as Error
 
     let txHash: string | undefined = undefined
@@ -25,17 +30,24 @@ const useHandleError = () => {
     }
 
     switch (true) {
+      case overrideDefault:
+        setToast({
+          type: 'error',
+          title: capitalize(title ?? ErrorTypes.UNEXPECTED_ERROR),
+          message: message ?? ERROR_MESSAGES[ErrorTypes.UNEXPECTED_ERROR],
+        })
+        return
       case userRejectedTransaction(error):
         setToast({
           type: 'error',
-          title: ActionStatus.REJECTED,
+          title: capitalize(ActionStatus.REJECTED),
           message: ACTION_MESSAGES[ActionStatus.REJECTED],
         })
         break
       case error.name === Logger.errors.CALL_EXCEPTION:
         setToast({
           type: 'error',
-          title: ErrorTypes.TRANSACTION_REVERTED,
+          title: capitalize(ErrorTypes.TRANSACTION_REVERTED),
           message: ERROR_MESSAGES[ErrorTypes.TRANSACTION_REVERTED],
           txHash,
         })
@@ -43,14 +55,14 @@ const useHandleError = () => {
       case error.name === Logger.errors.INSUFFICIENT_FUNDS:
         setToast({
           type: 'error',
-          title: ErrorTypes.INSUFFICIENT_BALANCE,
+          title: capitalize(ErrorTypes.INSUFFICIENT_BALANCE),
           message: ERROR_MESSAGES[ErrorTypes.INSUFFICIENT_BALANCE],
         })
         break
       default:
         setToast({
           type: 'error',
-          title: title ?? ErrorTypes.UNEXPECTED_ERROR,
+          title: capitalize(title ?? ErrorTypes.UNEXPECTED_ERROR),
           message: message ?? ERROR_MESSAGES[ErrorTypes.UNEXPECTED_ERROR],
         })
         console.error(error)

@@ -1,0 +1,10 @@
+{
+  "riskConcentrations": [
+    ["N/A", 0, 0, 0, 0, 0, 0, 0],
+    ["Very low risk", 0, 0, 0, 0, 0, 0, 0],
+    ["Low risk", 0, 0, 0, 0, 0, 0, 0],
+    ["Moderate risk", 0, 0, 0, 0, 0, 0, 0],
+    ["High risk", 0, 0, 0, 0, 0, 0, 0],
+    ["Very high risk", 0, 0, 0, 0, 0, 0, 0]
+  ]
+}

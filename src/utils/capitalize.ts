@@ -1,4 +1,7 @@
 const capitalize = (str: string) =>
-  `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}`
+  str
+    .split(' ')
+    .map((parts) => `${parts[0].toUpperCase()}${parts.slice(1).toLowerCase()}`)
+    .join(' ')
 
 export default capitalize

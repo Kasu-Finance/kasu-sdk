@@ -1,13 +1,11 @@
-import {
-  Box,
-  Divider,
-  SxProps,
-  Theme,
-  Typography,
-  TypographyProps,
-} from '@mui/material'
+'use client'
+
+import { Box, SxProps, Theme, Typography, TypographyProps } from '@mui/material'
 import { isValidElement, ReactNode } from 'react'
 
+import DottedDivider, {
+  DottedDividerProps,
+} from '@/components/atoms/DottedDivider'
 import ToolTip from '@/components/atoms/ToolTip'
 
 type InfoRowProps = {
@@ -18,6 +16,7 @@ type InfoRowProps = {
   metric?: ReactNode | number | string
   titleStyle?: TypographyProps
   subtitleStyle?: TypographyProps
+  dividerProps?: DottedDividerProps
   sx?: SxProps<Theme>
 }
 
@@ -29,14 +28,14 @@ const InfoRow: React.FC<InfoRowProps> = ({
   metric,
   titleStyle,
   subtitleStyle,
+  dividerProps,
   sx,
 }) => {
   const defaultSx = {
     display: 'flex',
     justifyContent: 'space-between',
-    px: 2,
-    py: '6px',
     width: '100%',
+    py: 2,
   }
 
   const renderToolTip = (info: ReactNode | string) => {
@@ -53,9 +52,9 @@ const InfoRow: React.FC<InfoRowProps> = ({
     <>
       <Box sx={[defaultSx, ...(Array.isArray(sx) ? sx : [sx])]}>
         <Box display='flex' alignItems='center'>
-          <Box>
+          <Box display='flex' alignItems='center'>
             <Typography
-              variant='subtitle2'
+              variant='baseMd'
               component='span'
               color='text.primary'
               {...titleStyle}
@@ -64,7 +63,7 @@ const InfoRow: React.FC<InfoRowProps> = ({
             </Typography>
             {subtitle && (
               <Typography
-                variant='body2'
+                variant='baseMd'
                 component='span'
                 color='text.primary'
                 ml='4px'
@@ -78,7 +77,7 @@ const InfoRow: React.FC<InfoRowProps> = ({
         </Box>
         {metric && metric}
       </Box>
-      {showDivider && <Divider />}
+      {showDivider && <DottedDivider {...dividerProps} />}
     </>
   )
 }

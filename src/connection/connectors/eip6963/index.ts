@@ -29,6 +29,7 @@ enum Rdns {
   TRUST = 'com.trustwallet.app',
   RAINBOW = 'me.rainbow',
   BITGET = 'com.bitget.web3',
+  PHANTOM = 'app.phantom',
 }
 
 const CUSTOM_ICON_MAP: { [rdns in string]?: ReactNode } = {

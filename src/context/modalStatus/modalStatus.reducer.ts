@@ -14,11 +14,6 @@ const modalStatusReducer = (
         ...state,
         modalStatus: action.payload,
       }
-    case ModalStatusActionsType.SET_MODAL_STATUS_ACTON:
-      return {
-        ...state,
-        modalStatusAction: action.payload,
-      }
   }
 }
 

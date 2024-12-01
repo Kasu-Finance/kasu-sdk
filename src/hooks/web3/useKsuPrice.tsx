@@ -6,14 +6,14 @@ import useKasuSDK from '@/hooks/useKasuSDK'
 const useKsuPrice = () => {
   const sdk = useKasuSDK()
 
-  const { data, error } = useSWR('ksuPrice', async () =>
+  const { data, error, isLoading } = useSWR('ksuPrice', async () =>
     sdk.Locking.getKasuTokenPrice()
   )
 
   return {
     ksuPrice: data ? formatUnits(data.price, data.decimals) : undefined,
     error,
-    isLoading: !data && !error,
+    isLoading,
   }
 }
 

@@ -14,10 +14,16 @@ const withdrawModalReducer = (
         ...state,
         amount: action.payload,
       }
+    case WithdrawModalActionTypes.SET_TX_HASH:
+      return {
+        ...state,
+        txHash: action.payload,
+      }
     case WithdrawModalActionTypes.SET_SELECTED_TRANCHE:
       return {
         ...state,
-        selectedTranche: action.payload,
+        trancheId: action.payload,
+        amount: '',
       }
   }
 }

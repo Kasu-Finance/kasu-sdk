@@ -21,8 +21,4 @@ export const NAV_ITEMS: NavItemType[] = [
     to: Routes.portfolio.root.url,
     accountRequired: true,
   },
-  {
-    label: 'Docs',
-    to: Routes.docs.root.url,
-  },
 ]

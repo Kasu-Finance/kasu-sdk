@@ -4,9 +4,6 @@
 const path = require('path')
 
 const nextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   images: {
     remotePatterns: [
       {
@@ -22,6 +19,11 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'kasu-finance.directus.app',
+        pathname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'kasu-dev.directus.app',
         pathname: '**',
       },
     ],
@@ -51,7 +53,7 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
-  reactStrictMode: false,
+  reactStrictMode: true,
   async headers() {
     return [
       {

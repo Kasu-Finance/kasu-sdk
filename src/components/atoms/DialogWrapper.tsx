@@ -32,7 +32,12 @@ const DialogWrapper: React.FC<{
       PaperProps={{
         sx: [
           {
+            background: 'transparent',
+            position: 'unset',
+            overflow: 'auto',
             width: 600,
+            maxHeight: 'calc(100% - 200px)', // accodomate for floating cat
+            marginTop: '88px', // accodomate for floating cat
             ...(modalDetails.fullscreen && {
               margin: 0,
               maxHeight: '100%',
@@ -46,6 +51,13 @@ const DialogWrapper: React.FC<{
       disableEnforceFocus
       aria-labelledby={modalDetails.ariaLabel}
       aria-describedby={modalDetails.ariaDescription}
+      slotProps={{
+        backdrop: {
+          sx: {
+            background: 'rgba(0, 0, 0, 0.8)',
+          },
+        },
+      }}
     >
       {modalDetails.component}
     </Dialog>

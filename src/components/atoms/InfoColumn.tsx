@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Box,
   Divider,
@@ -10,7 +12,7 @@ import { isValidElement, ReactNode } from 'react'
 
 import ToolTip from '@/components/atoms/ToolTip'
 
-type InfoColumnProps = {
+export type InfoColumnProps = {
   title: string
   subtitle?: string
   toolTipInfo?: ReactNode
@@ -43,15 +45,13 @@ const InfoColumn: React.FC<InfoColumnProps> = ({
         display='flex'
         justifyContent='space-between'
         alignItems='normal'
-        px={2}
-        py='6px'
         width='100%'
         sx={titleContainerSx}
       >
         <Box display='flex' alignItems={alignTitleItems}>
           <Box>
             <Typography
-              variant='subtitle2'
+              variant='baseSm'
               component='span'
               color='text.primary'
               {...titleStyle}
@@ -60,7 +60,7 @@ const InfoColumn: React.FC<InfoColumnProps> = ({
             </Typography>
             {subtitle && (
               <Typography
-                variant='body2'
+                variant='baseSm'
                 component='span'
                 color='text.primary'
                 ml='4px'
@@ -74,9 +74,7 @@ const InfoColumn: React.FC<InfoColumnProps> = ({
             isValidElement(toolTipInfo) ? (
               toolTipInfo
             ) : (
-              <Box pt={alignTitleItems === 'normal' ? '3px' : 'inherit'}>
-                <ToolTip title={toolTipInfo} />
-              </Box>
+              <ToolTip title={toolTipInfo} />
             )
           ) : null}
         </Box>

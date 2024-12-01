@@ -19,6 +19,11 @@ const useWithdrawModalActions = (
           payload: amount,
         })
       },
+      setTxHash: (txHash: string) =>
+        dispatch({
+          type: WithdrawModalActionTypes.SET_TX_HASH,
+          payload: txHash,
+        }),
       setSelectedTranche: (selectedTranche: HexString) =>
         dispatch({
           type: WithdrawModalActionTypes.SET_SELECTED_TRANCHE,

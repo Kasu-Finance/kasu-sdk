@@ -24,6 +24,11 @@ const useLockModalActions = (
           payload: selectedLockPeriod,
         })
       },
+      setTxHash: (txHash: string) =>
+        dispatch({
+          type: LockModalActionType.SET_TX_HASH,
+          payload: txHash,
+        }),
     }),
     [dispatch]
   )
