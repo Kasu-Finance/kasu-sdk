@@ -1,5 +1,6 @@
 import { Provider } from '@ethersproject/providers';
 import { BigNumber, Signer } from 'ethers';
+import { formatEther, parseEther } from 'ethers/lib/utils';
 import { GraphQLClient } from 'graphql-request';
 
 import {
@@ -14,6 +15,7 @@ import { UserPoolBalance } from '../UserLending/types';
 import { UserLending } from '../UserLending/user-lending';
 
 import { lendingPortfolioQuery } from './queries';
+
 import {
     LastEpochQueryResult,
     LendingPortfolioQueryResult,
@@ -23,7 +25,6 @@ import {
     PortfolioTranche,
     UserLendingPoolTrancheFixedTermDepositLock,
 } from './types';
-import { formatEther, parseEther } from 'ethers/lib/utils';
 
 export class Portfolio {
     private _lockingService: KSULocking;
