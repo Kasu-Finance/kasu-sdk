@@ -5,12 +5,14 @@ type Amounts = {
   requested: number
   accepted: number
   queued: number
+  cancelled: number
 }
 
 const initialState: Amounts = {
   accepted: 0,
   requested: 0,
   queued: 0,
+  cancelled: 0,
 }
 
 const calculateWithdrawalStatusSummary = (
@@ -32,6 +34,18 @@ const calculateWithdrawalStatusSummary = (
     if (isCurrentEpoch) {
       currentEpochAmounts.requested += parseFloat(transaction.requestedAmount)
       currentEpochAmounts.queued += parseFloat(transaction.queuedAmount)
+    }
+
+    if (transaction.latestEvent.requestType === 'Cancelled') {
+      lifetimeAmounts.cancelled += parseFloat(
+        transaction.latestEvent.assetAmount
+      )
+
+      if (transaction.latestEvent.timestamp > currentEpochStartTime) {
+        currentEpochAmounts.cancelled += parseFloat(
+          transaction.latestEvent.assetAmount
+        )
+      }
     }
   }
 

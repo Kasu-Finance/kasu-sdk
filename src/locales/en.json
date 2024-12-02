@@ -1914,7 +1914,8 @@
           "metric-4": "Reallocations In/Out",
           "metric-4-tooltip-1": "The total USDC amount of accepted Lending Requests that has been reallocated out from your initial requested Tranche(s) to the next available Tranche(s), due to the initial requested Tranche(s) being oversubscribed (full).​",
           "metric-4-tooltip-2": "Please refer to the",
-          "metric-4-tooltip-3": " you acknowledged during the Loan Contract Acceptance process for more details.​"
+          "metric-4-tooltip-3": " you acknowledged during the Loan Contract Acceptance process for more details.​",
+          "metric-5": "Cancelled"
         },
         "subsequentTransactions": {
           "title": "Subsequent Transactions",
@@ -1950,7 +1951,8 @@
           "metric-2-tooltip-4": "the acceptance of Withdrawal Requests is contingent upon the excess liquidity within each specific Lending Strategy, and may therefore remain outstanding (or partially outstanding) for one or more epochs.",
           "metric-3": "Accepted",
           "metric-3-tooltip-1": "The total USDC amount of Withdrawal Requests that has been accepted (in part or full) by the Delegate(s) across all Lending Strategies.​",
-          "metric-3-tooltip-2": "The Delegate will continually accept nil, part, or all of the Withdrawal Requests at the end of each epoch until funds are fully returned to the Lender (assuming no losses or defaults by end borrowers)."
+          "metric-3-tooltip-2": "The Delegate will continually accept nil, part, or all of the Withdrawal Requests at the end of each epoch until funds are fully returned to the Lender (assuming no losses or defaults by end borrowers).",
+          "metric-4": "Cancelled"
         }
       },
       "detailedTransactions": {
