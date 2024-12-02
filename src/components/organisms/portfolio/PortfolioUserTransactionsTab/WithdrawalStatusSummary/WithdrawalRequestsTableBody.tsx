@@ -39,6 +39,7 @@ const WithdrawalRequestsTableBody = () => {
         tooltipInfo={<WithdrawalStatusSummaryRequestedTooltip />}
         currentEpochValue={`${formatAmount(currentEpochAmounts.requested, { minDecimals: 2 })} USDC`}
         totalLifetimeValue={`${formatAmount(lifetimeAmounts.requested, { minDecimals: 2 })} USDC`}
+        variant='secondary'
       />
       <WithdrawalRequestsTableRow
         title={t(
@@ -55,6 +56,14 @@ const WithdrawalRequestsTableBody = () => {
         tooltipInfo={<WithdrawalStatusSummaryAcceptedTooltip />}
         currentEpochValue={`${formatAmount(currentEpochAmounts.accepted, { minDecimals: 2 })} USDC`}
         totalLifetimeValue={`${formatAmount(lifetimeAmounts.accepted, { minDecimals: 2 })} USDC`}
+      />
+      <WithdrawalRequestsTableRow
+        title={t(
+          'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-4'
+        )}
+        tooltipInfo='info'
+        currentEpochValue={`${formatAmount(currentEpochAmounts.cancelled, { minDecimals: 2 })} USDC`}
+        totalLifetimeValue={`${formatAmount(lifetimeAmounts.cancelled, { minDecimals: 2 })} USDC`}
       />
     </>
   )

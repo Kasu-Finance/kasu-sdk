@@ -6,6 +6,7 @@ type Amounts = {
   accepted: number
   rejected: number
   reallocated: number
+  cancelled: number
 }
 
 const initialState: Amounts = {
@@ -13,6 +14,7 @@ const initialState: Amounts = {
   requested: 0,
   rejected: 0,
   reallocated: 0,
+  cancelled: 0,
 }
 
 const calculateLendingStatusSummary = (
@@ -42,6 +44,18 @@ const calculateLendingStatusSummary = (
         )
       }
     } else {
+      if (transaction.latestEvent.requestType === 'Cancelled') {
+        lifetimeAmounts.cancelled += parseFloat(
+          transaction.latestEvent.assetAmount
+        )
+
+        if (transaction.latestEvent.timestamp > currentEpochStartTime) {
+          currentEpochAmounts.cancelled += parseFloat(
+            transaction.latestEvent.assetAmount
+          )
+        }
+      }
+
       lifetimeAmounts.accepted += parseFloat(transaction.acceptedAmount)
       lifetimeAmounts.rejected += parseFloat(transaction.rejectedAmount)
 

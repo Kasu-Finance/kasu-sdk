@@ -9,6 +9,7 @@ type LendingRequestsTableRowProps = {
   tooltipInfo: ReactNode
   currentEpochValue: string
   totalLifetimeValue: string
+  variant?: 'primary' | 'secondary'
 }
 
 const LendingRequestsTableRow: React.FC<LendingRequestsTableRowProps> = ({
@@ -16,10 +17,17 @@ const LendingRequestsTableRow: React.FC<LendingRequestsTableRowProps> = ({
   tooltipInfo,
   currentEpochValue,
   totalLifetimeValue,
+  variant = 'primary',
 }) => {
   return (
     <>
-      <TableRow sx={{ '.MuiTableCell-root': { px: 0 } }}>
+      <TableRow
+        sx={{
+          '.MuiTableCell-root': {
+            bgcolor: variant === 'primary' ? 'gray.extraLight' : undefined,
+          },
+        }}
+      >
         <TableCell>
           <Box display='flex' alignItems='center'>
             {title}

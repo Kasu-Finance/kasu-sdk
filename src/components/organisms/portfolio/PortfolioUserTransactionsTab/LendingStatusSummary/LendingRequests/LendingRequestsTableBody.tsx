@@ -40,6 +40,7 @@ const LendingRequestsTableBody = () => {
         tooltipInfo={<LendingStatusSummaryRequestedTooltip />}
         currentEpochValue={`${formatAmount(currentEpochAmounts.requested, { minDecimals: 2 })} USDC`}
         totalLifetimeValue={`${formatAmount(lifetimeAmounts.requested, { minDecimals: 2 })} USDC`}
+        variant='secondary'
       />
       <LendingRequestsTableRow
         title={t(
@@ -64,6 +65,14 @@ const LendingRequestsTableBody = () => {
         tooltipInfo={<LendingStatusSummaryReallocationTooltip />}
         currentEpochValue={`${formatAmount(currentEpochAmounts.reallocated, { minDecimals: 2 })} USDC`}
         totalLifetimeValue={`${formatAmount(lifetimeAmounts.reallocated, { minDecimals: 2 })} USDC`}
+      />
+      <LendingRequestsTableRow
+        title={t(
+          'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-5'
+        )}
+        tooltipInfo='info'
+        currentEpochValue={`${formatAmount(currentEpochAmounts.cancelled, { minDecimals: 2 })} USDC`}
+        totalLifetimeValue={`${formatAmount(lifetimeAmounts.cancelled, { minDecimals: 2 })} USDC`}
       />
     </>
   )

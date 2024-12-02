@@ -294,7 +294,7 @@
     },
     "autoConversionToVariable": {
       "title": "Auto Conversion to Variable​",
-      "description": "You did not provide Fixed Loan Expiry instructions within the required notice period of {{ epoch }} epochs. Your loan will therefore automatically convert to the prevailing Variable APY. Should you require your capital returned at this point, then you must submit a Withdrawal Request where you will be subject to the queuing system."
+      "description": "You did not request full repayment of your loan funds within the required notice period of at least 4 epochs  leading up to the expiry date of your fixed term loan. Your fixed loan will therefore automatically convert to the prevailing variable APY, where you will be subject to the normal queuing system."
     },
     "fixApy": {
       "title": "Fixed Loan & APY Conversion​",
@@ -771,7 +771,7 @@
       },
       "completed": {
         "description-1": "You have successfully queued:",
-        "description-2": "to be deposited in the next Epoch",
+        "description-2": "Lending Request submitted for the next Epoch",
         "description-3": "What happens next?​",
         "description-4": "Because Kasu is all about transparency and choice....​",
         "description-5": "​Once your lending request is processed:",
@@ -786,7 +786,7 @@
           "list-1": {
             "title": "Transparency",
             "description-1": "look out for an email from",
-            "description-2": "informing you exactly which end borrower(s) your funds will be loaned to. Be sure to adjust your spam filter to accept emails this address.​"
+            "description-2": "informing you exactly which end borrower(s) your funds will be loaned to. Be sure to adjust your spam filter to accept emails from this address.​"
           },
           "list-2": {
             "title": "Choice",
@@ -1453,7 +1453,7 @@
         "tooltip": "The USDC lending amount you would like to request for withdrawal from this Lending Strategy."
       },
       "button": {
-        "review": "REVIEW WITHDRAWAL",
+        "review": "Review Withdrawal",
         "adjust": "ADJUST",
         "confirm": "CONFIRM",
         "strategyOverview": "LENDING STRATEGY OVERVIEW",
@@ -1914,7 +1914,8 @@
           "metric-4": "Reallocations In/Out",
           "metric-4-tooltip-1": "The total USDC amount of accepted Lending Requests that has been reallocated out from your initial requested Tranche(s) to the next available Tranche(s), due to the initial requested Tranche(s) being oversubscribed (full).​",
           "metric-4-tooltip-2": "Please refer to the",
-          "metric-4-tooltip-3": " you acknowledged during the Loan Contract Acceptance process for more details.​"
+          "metric-4-tooltip-3": " you acknowledged during the Loan Contract Acceptance process for more details.​",
+          "metric-5": "Cancelled"
         },
         "subsequentTransactions": {
           "title": "Subsequent Transactions",
@@ -1950,7 +1951,8 @@
           "metric-2-tooltip-4": "the acceptance of Withdrawal Requests is contingent upon the excess liquidity within each specific Lending Strategy, and may therefore remain outstanding (or partially outstanding) for one or more epochs.",
           "metric-3": "Accepted",
           "metric-3-tooltip-1": "The total USDC amount of Withdrawal Requests that has been accepted (in part or full) by the Delegate(s) across all Lending Strategies.​",
-          "metric-3-tooltip-2": "The Delegate will continually accept nil, part, or all of the Withdrawal Requests at the end of each epoch until funds are fully returned to the Lender (assuming no losses or defaults by end borrowers)."
+          "metric-3-tooltip-2": "The Delegate will continually accept nil, part, or all of the Withdrawal Requests at the end of each epoch until funds are fully returned to the Lender (assuming no losses or defaults by end borrowers).",
+          "metric-4": "Cancelled"
         }
       },
       "detailedTransactions": {
@@ -2020,7 +2022,7 @@
           }
         },
         "actions": {
-          "seeDetails": "See details"
+          "seeDetails": "View Transactions"
         }
       }
     },

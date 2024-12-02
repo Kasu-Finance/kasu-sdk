@@ -2,13 +2,9 @@ import { Stack, Typography } from '@mui/material'
 
 import getTranslation from '@/hooks/useTranslation'
 
-import NextLink from '@/components/atoms/NextLink'
 import WaveBox from '@/components/atoms/WaveBox'
 import LoanContractButton from '@/components/organisms/termsAndConditions/ImportantInformation/LoanContractButton'
 import Subheading from '@/components/organisms/termsAndConditions/Subheading'
-
-import { Routes } from '@/config/routes'
-import { customPalette } from '@/themes/palette'
 
 const ImportantInformation = () => {
   const { t } = getTranslation()
@@ -24,13 +20,14 @@ const ImportantInformation = () => {
           {t('modals.termsAndConditions.subheader-1.description-2')}
         </Typography>
         <Typography variant='baseMdBold'>
-          <NextLink
+          {/* <NextLink
             href={Routes.docs.root.url}
             style={{ font: 'inherit', color: customPalette.gold.dark }}
           >
             {t('general.userDocs')}
           </NextLink>{' '}
-          {t('general.and')} <LoanContractButton />.
+          {t('general.and')}{' '} */}
+          <LoanContractButton />.
         </Typography>
         <Typography variant='baseMdBold'>
           {t('modals.termsAndConditions.subheader-1.description-3')}

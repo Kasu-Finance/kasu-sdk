@@ -130,15 +130,9 @@ const WithdrawFromInfo = () => {
         }}
         metric={
           <Typography variant='baseMdBold'>
-            {formatAmount(
-              formatUnits(
-                selectedTranche?.balanceData.balance || '0',
-                usdcDecimals
-              ),
-              {
-                minDecimals: 2,
-              }
-            )}{' '}
+            {formatAmount(selectedTranche?.balanceData.balance || 0, {
+              minDecimals: 2,
+            })}{' '}
             USDC
           </Typography>
         }

@@ -2,6 +2,7 @@ import { Box, Button, Stack, Typography } from '@mui/material'
 
 import useModalState from '@/hooks/context/useModalState'
 import useCancelWithdrawal from '@/hooks/lending/useCancelWithdrawal'
+import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
 import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
@@ -30,7 +31,21 @@ const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
     includeUtcOffset: true,
   })
 
+  const { updateTransactionHistory } = useTransactionHistory()
+
   const cancelWithdrawal = useCancelWithdrawal()
+
+  const handleCancel = async () => {
+    const res = await cancelWithdrawal(
+      transaction.lendingPool.id as `0x${string}`,
+      transaction.nftId
+    )
+
+    if (res?.transactionHash) {
+      handleClose()
+      await updateTransactionHistory()
+    }
+  }
 
   return (
     <CustomCard>
@@ -136,12 +151,7 @@ const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           <Button
             variant='contained'
             color='secondary'
-            onClick={() =>
-              cancelWithdrawal(
-                transaction.lendingPool.id as `0x${string}`,
-                transaction.nftId
-              )
-            }
+            onClick={handleCancel}
             sx={{ textTransform: 'capitalize' }}
           >
             {t('modals.cancelWithdrawal.cancel-button')}
