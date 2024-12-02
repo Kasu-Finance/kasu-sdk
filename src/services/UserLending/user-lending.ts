@@ -7,7 +7,13 @@ import {
     ethers,
     Signer,
 } from 'ethers';
-import { defaultAbiCoder, formatUnits, parseUnits } from 'ethers/lib/utils';
+import {
+    defaultAbiCoder,
+    formatEther,
+    formatUnits,
+    parseEther,
+    parseUnits,
+} from 'ethers/lib/utils';
 import { GraphQLClient } from 'graphql-request';
 
 import {
@@ -344,8 +350,8 @@ export class UserLending {
             const events: UserRequestEvent[] = [];
 
             const totalSupply = userRequest.lendingPool.tranches.reduce(
-                (acc, tranche) => acc + parseFloat(tranche.shares),
-                0,
+                (acc, tranche) => acc.add(parseEther(tranche.shares)),
+                BigNumber.from(0),
             );
 
             for (const event of userRequest.userRequestEvents) {
@@ -353,7 +359,7 @@ export class UserLending {
                 let totalAccepted = '0';
                 let totalRejected = '0';
 
-                const totalAssets = parseFloat(userRequest.lendingPool.balance);
+                const totalAssets = userRequest.lendingPool.balance;
 
                 const eventTrancheId = event.tranche.id;
                 const eventTrancheName =
@@ -370,7 +376,7 @@ export class UserLending {
                     this.convertSharesToAssets(
                         event.sharesAmount,
                         totalAssets,
-                        totalSupply,
+                        formatEther(totalSupply),
                     ).toString();
 
                 switch (event.type) {
@@ -470,14 +476,14 @@ export class UserLending {
                 userFTD.lendingPoolTrancheFixedTermConfig.lendingPoolTranche.id.toLowerCase();
 
             const totalSupply = userFTD.lendingPool.tranches.reduce(
-                (total, cur) => (total += parseFloat(cur.shares)),
-                0,
+                (total, cur) => total.add(parseEther(cur.shares)),
+                BigNumber.from(0),
             );
 
             const amount = this.convertSharesToAssets(
                 userFTD.trancheShares,
-                parseFloat(userFTD.lendingPool.balance),
-                totalSupply,
+                userFTD.lendingPool.balance,
+                formatEther(totalSupply),
             );
 
             const item = trancheMap.get(trancheID) ?? [];
@@ -561,8 +567,8 @@ export class UserLending {
 
     convertSharesToAssets(
         sharesAmount: string,
-        totalAssets: number,
-        totalSupply: number,
+        totalAssets: string,
+        totalSupply: string,
     ): string {
         return formatUnits(
             parseUnits(sharesAmount)
@@ -648,7 +654,7 @@ export class UserLending {
             }),
         ]);
 
-        const balanceNumber = parseFloat(ethers.utils.formatUnits(balance, 6));
+        const userBalance = ethers.utils.formatUnits(balance, 6);
         const userDetailsSubgraph = userDetails as TrancheUserDetailsSubgraph;
 
         let yieldEarned = 0;
@@ -665,7 +671,7 @@ export class UserLending {
             );
 
             yieldEarned =
-                balanceNumber -
+                parseFloat(userBalance) -
                 totalAcceptedDeposits -
                 totalAcceptedWithdrawals;
         }
@@ -674,7 +680,7 @@ export class UserLending {
             userId: user,
             address: trancheId,
             yieldEarned,
-            balance: balanceNumber.toString(),
+            balance: userBalance.toString(),
             availableToWithdraw,
         };
     }

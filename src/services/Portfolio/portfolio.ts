@@ -23,6 +23,7 @@ import {
     PortfolioTranche,
     UserLendingPoolTrancheFixedTermDepositLock,
 } from './types';
+import { formatEther, parseEther } from 'ethers/lib/utils';
 
 export class Portfolio {
     private _lockingService: KSULocking;
@@ -251,8 +252,8 @@ export class Portfolio {
 
             const totalSupply =
                 lendingPoolUserDetails.lendingPool.tranches.reduce(
-                    (acc, tranche) => acc + parseFloat(tranche.shares),
-                    0,
+                    (acc, tranche) => acc.add(parseEther(tranche.shares)),
+                    BigNumber.from(0),
                 );
 
             for (const tranche of poolOverview.tranches) {
@@ -363,14 +364,8 @@ export class Portfolio {
                             lifetimeYieldEarned =
                                 this.calculateFixedTermDepositEarnings(
                                     fixedTermDeposit,
-                                    parseFloat(
-                                        lastEpochUserTrancheDetails.tranche
-                                            .balance,
-                                    ),
-                                    parseFloat(
-                                        lastEpochUserTrancheDetails.tranche
-                                            .shares,
-                                    ),
+                                    lastEpochUserTrancheDetails.tranche.balance,
+                                    lastEpochUserTrancheDetails.tranche.shares,
                                 );
 
                             totalLifetimeFtdYield += lifetimeYieldEarned;
@@ -398,12 +393,10 @@ export class Portfolio {
                                 epochLockStart: fixedTermDeposit.epochLockStart,
                                 amount: this._userLendingService
                                     .convertSharesToAssets(
-                                        fixedTermDeposit.initialTrancheShares,
-                                        parseFloat(
-                                            lendingPoolUserDetails.lendingPool
-                                                .balance,
-                                        ),
-                                        totalSupply,
+                                        fixedTermDeposit.trancheShares,
+                                        lendingPoolUserDetails.lendingPool
+                                            .balance,
+                                        formatEther(totalSupply),
                                     )
                                     .toString(),
                                 endTime:
@@ -459,17 +452,18 @@ export class Portfolio {
                             (total, cur) => {
                                 if (!cur.isLocked) return total;
 
-                                return (total += parseFloat(cur.amount));
+                                return total.add(parseEther(cur.amount));
                             },
-                            0,
+                            BigNumber.from(0),
                         );
 
                         return {
                             ...tranche,
-                            investedAmount: (
-                                parseFloat(trancheBalance.balance) -
-                                lockedAmount
-                            ).toString(),
+                            investedAmount: formatEther(
+                                parseEther(trancheBalance.balance).sub(
+                                    lockedAmount,
+                                ),
+                            ),
                             yieldEarnings: {
                                 ...tranche.yieldEarnings,
                                 lifetime: this.precisionToString(
@@ -502,8 +496,8 @@ export class Portfolio {
 
     calculateFixedTermDepositEarnings(
         fixedTermDepositLock: UserLendingPoolTrancheFixedTermDepositLock,
-        totalTrancheBalance: number,
-        totalTrancheShares: number,
+        totalTrancheBalance: string,
+        totalTrancheShares: string,
     ): number {
         const { isLocked, unlockAmount, initialAmount, trancheShares } =
             fixedTermDepositLock;

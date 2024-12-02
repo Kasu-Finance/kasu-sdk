@@ -442,7 +442,10 @@ export class DataService {
             )) as unknown as PoolDelegateProfileAndHistoryDirectus[];
 
         const poolNames: {
-            lendingPools: Pick<LendingPoolSubgraph, 'name' | 'id'>[];
+            lendingPools: Pick<
+                LendingPoolSubgraph,
+                'name' | 'id' | 'isStopped'
+            >[];
         } = await this._graph.request(getPoolNameQuery, {
             ids: poolDelegateProfileAndHistoryDirectus.flatMap((directus) =>
                 directus.otherPools.map((delegate) => delegate.PoolOverview_id),
@@ -452,17 +455,27 @@ export class DataService {
 
         const retn: PoolDelegateProfileAndHistory[] = [];
         for (const data of poolDelegateProfileAndHistoryDirectus) {
+            const otherKASUPools: PoolDelegateProfileAndHistory['otherKASUPools'] =
+                [];
+
+            for (const otherPool of data.otherPools) {
+                const found = poolNames.lendingPools.find(
+                    ({ id }) => otherPool.PoolOverview_id === id,
+                );
+
+                if (!found || found.isStopped) continue;
+
+                otherKASUPools.push({
+                    id: found.id,
+                    name: found.name,
+                });
+            }
+
             retn.push({
                 id: data.id,
                 delegateLendingHistory: data.delegateLendingHistory,
                 assetClasses: data.assetClasses,
-                otherKASUPools: data.otherPools.map((pool) => ({
-                    id: pool.PoolOverview_id,
-                    name:
-                        poolNames.lendingPools.find(
-                            ({ id }) => pool.PoolOverview_id === id,
-                        )?.name ?? pool.PoolOverview_id,
-                })),
+                otherKASUPools,
                 totalLoanFundsOriginated: data.totalLoanFundsOriginated,
                 totalLoansOriginated: data.totalLoansOriginated,
                 loansUnderManagement: data.loansUnderManagement,

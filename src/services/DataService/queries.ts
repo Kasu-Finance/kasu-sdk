@@ -135,6 +135,7 @@ export const getPoolNameQuery = gql`
         lendingPools(where: { id_in: $ids, id_not_in: $unusedPools }) {
             id
             name
+            isStopped
         }
     }
 `;
