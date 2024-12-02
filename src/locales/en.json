@@ -1453,7 +1453,7 @@
         "tooltip": "The USDC lending amount you would like to request for withdrawal from this Lending Strategy."
       },
       "button": {
-        "review": "REVIEW WITHDRAWAL",
+        "review": "Review Withdrawal",
         "adjust": "ADJUST",
         "confirm": "CONFIRM",
         "strategyOverview": "LENDING STRATEGY OVERVIEW",

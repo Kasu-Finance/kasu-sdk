@@ -24,7 +24,10 @@ const RequestDetailsAction: React.FC<RequestDetailsActionProps> = ({
   const handleCancel = () => {
     if ('canCancel' in detailedTransaction) {
       openModal({
-        name: ModalsKeys.CANCEL_DEPOSIT,
+        name:
+          detailedTransaction.requestType === 'Deposit'
+            ? ModalsKeys.CANCEL_DEPOSIT
+            : ModalsKeys.CANCEL_WITHDRAWAL,
         transaction: detailedTransaction,
       })
       handleClose()

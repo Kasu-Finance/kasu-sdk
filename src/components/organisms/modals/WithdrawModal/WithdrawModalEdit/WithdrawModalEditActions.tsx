@@ -24,6 +24,7 @@ const WithdrawModalEditActions = () => {
           modalStatus.type === 'error' ||
           modalStatus.type === 'focused'
       )}
+      sx={{ textTransform: 'capitalize' }}
     >
       {t('lending.withdraw.button.review')}
     </Button>
