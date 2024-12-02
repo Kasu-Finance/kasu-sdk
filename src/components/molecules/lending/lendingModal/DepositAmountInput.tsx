@@ -233,9 +233,17 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
   )
 
   useEffect(() => {
+    if (!fixedTermConfigId) return
+
     applyConversion ? debouncedValidate(amount) : validate(amount)
     // eslint-disable-next-line
-  }, [trancheId, applyConversion, validate, debouncedValidate])
+  }, [
+    trancheId,
+    fixedTermConfigId,
+    applyConversion,
+    validate,
+    debouncedValidate,
+  ])
 
   return (
     <Box>

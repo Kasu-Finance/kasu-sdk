@@ -1,5 +1,5 @@
 import { Box, Button } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
@@ -132,20 +132,18 @@ const LendingModalReviewActions = () => {
     )
   }
 
-  useEffect(
-    () => () => {
-      resetGeneratedContract()
-      setLoanContractAcccepted(false)
-    },
-    [resetGeneratedContract, setLoanContractAcccepted]
-  )
+  const adjust = () => {
+    resetGeneratedContract()
+    setLoanContractAcccepted(false)
+    prevStep()
+  }
 
   return (
     <Box display='flex' gap={4}>
       <Button
         variant='outlined'
         color='secondary'
-        onClick={prevStep}
+        onClick={adjust}
         fullWidth
         sx={{ textTransform: 'capitalize' }}
       >
