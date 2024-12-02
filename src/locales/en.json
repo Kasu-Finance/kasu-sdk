@@ -771,7 +771,7 @@
       },
       "completed": {
         "description-1": "You have successfully queued:",
-        "description-2": "to be deposited in the next Epoch",
+        "description-2": "Lending Request submitted for the next Epoch",
         "description-3": "What happens next?​",
         "description-4": "Because Kasu is all about transparency and choice....​",
         "description-5": "​Once your lending request is processed:",
@@ -786,7 +786,7 @@
           "list-1": {
             "title": "Transparency",
             "description-1": "look out for an email from",
-            "description-2": "informing you exactly which end borrower(s) your funds will be loaned to. Be sure to adjust your spam filter to accept emails this address.​"
+            "description-2": "informing you exactly which end borrower(s) your funds will be loaned to. Be sure to adjust your spam filter to accept emails from this address.​"
           },
           "list-2": {
             "title": "Choice",
