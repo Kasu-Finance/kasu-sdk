@@ -22,7 +22,7 @@ const PortfolioUserTransactionsTableHeader = () => {
         },
       }}
     >
-      <TableCell width='19%'>{t('general.lendingStrategy')}</TableCell>
+      <TableCell width='18%'>{t('general.lendingStrategy')}</TableCell>
       <TableCell width='10%'>
         {t('portfolio.transactions.detailedTransactions.tableHeader.cell-1')}
       </TableCell>
@@ -55,7 +55,7 @@ const PortfolioUserTransactionsTableHeader = () => {
       <TableCell width='15%'>
         {t('portfolio.transactions.detailedTransactions.tableHeader.cell-5')}
       </TableCell>
-      <TableCell width='12%'>
+      <TableCell width='15%'>
         {t('portfolio.transactions.detailedTransactions.tableHeader.cell-6')}
       </TableCell>
     </TableRow>

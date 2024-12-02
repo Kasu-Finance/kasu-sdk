@@ -97,11 +97,15 @@ const getDetailedTransactions = (
 
     let detailedTransaction: DetailedTransaction | undefined = undefined
 
+    const totalRequestedAmount = transaction.events.reduce((total, cur) => {
+      return (total += parseFloat(cur.totalRequested))
+    }, 0)
+
     if (transaction.requestType === 'Deposit') {
       detailedTransaction = {
         ...detailedTransactionBase,
         requestType: transaction.requestType,
-        requestedAmount: transaction.requestedAmount,
+        requestedAmount: totalRequestedAmount.toString(),
         acceptedAmount: transaction.acceptedAmount,
         rejectedAmount: transaction.rejectedAmount,
         reallocatedOutAmount: '0',
@@ -112,7 +116,7 @@ const getDetailedTransactions = (
       detailedTransaction = {
         ...detailedTransactionBase,
         requestType: transaction.requestType,
-        requestedAmount: transaction.requestedAmount,
+        requestedAmount: totalRequestedAmount.toString(),
         acceptedAmount: transaction.acceptedAmount,
         queuedAmount:
           // only calculate and show queued if theres any been accepted

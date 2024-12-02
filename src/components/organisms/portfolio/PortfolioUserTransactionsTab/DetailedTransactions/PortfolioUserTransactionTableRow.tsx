@@ -39,7 +39,7 @@ const PortfolioUserTransactionTableRow: React.FC<
 
   const { openModal } = useModalState()
 
-  const formattedTime = formatTimestamp(transaction.timestamp, {
+  const formattedTime = formatTimestamp(transaction.latestEvent.timestamp, {
     format: 'DD.MM.YYYY',
   })
 
