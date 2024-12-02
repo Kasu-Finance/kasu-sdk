@@ -250,12 +250,6 @@ export class Portfolio {
 
             if (!lendingPoolUserDetails) continue;
 
-            const totalSupply =
-                lendingPoolUserDetails.lendingPool.tranches.reduce(
-                    (acc, tranche) => acc.add(parseEther(tranche.shares)),
-                    BigNumber.from(0),
-                );
-
             for (const tranche of poolOverview.tranches) {
                 const lastEpochUserTrancheDetails =
                     lendingPoolUserDetails.lendingPoolTrancheUserDetails.find(
@@ -394,9 +388,10 @@ export class Portfolio {
                                 amount: this._userLendingService
                                     .convertSharesToAssets(
                                         fixedTermDeposit.trancheShares,
-                                        lendingPoolUserDetails.lendingPool
+                                        lastEpochUserTrancheDetails.tranche
                                             .balance,
-                                        formatEther(totalSupply),
+                                        lastEpochUserTrancheDetails.tranche
+                                            .shares,
                                     )
                                     .toString(),
                                 endTime:
@@ -457,6 +452,12 @@ export class Portfolio {
                             BigNumber.from(0),
                         );
 
+                        const totalTrancheYieldEarned =
+                            trancheBalance.yieldEarned.toFixed(6);
+                        const totalTrancheFtdYieldEarned = parseFloat(
+                            tranche.yieldEarnings.lifetime,
+                        ).toFixed(6);
+
                         return {
                             ...tranche,
                             investedAmount: formatEther(
@@ -467,10 +468,8 @@ export class Portfolio {
                             yieldEarnings: {
                                 ...tranche.yieldEarnings,
                                 lifetime: this.precisionToString(
-                                    trancheBalance.yieldEarned -
-                                        parseFloat(
-                                            tranche.yieldEarnings.lifetime,
-                                        ),
+                                    parseFloat(totalTrancheYieldEarned) -
+                                        parseFloat(totalTrancheFtdYieldEarned),
                                 ),
                             },
                         };

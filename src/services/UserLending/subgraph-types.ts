@@ -93,6 +93,11 @@ export interface TrancheUserDetailsSubgraph {
         id: string;
         totalAcceptedDeposits: string;
         totalAcceptedWithdrawnAmount: string;
+        shares: string;
+        tranche: {
+            shares: string;
+            balance: string;
+        };
     };
 }
 

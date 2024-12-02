@@ -163,6 +163,7 @@ export interface LendingPortfolioQueryResult {
                 }[];
             };
             lendingPoolTrancheUserDetails: {
+                shares: string;
                 userLendingPoolTrancheFixedTermDepositLocks: UserLendingPoolTrancheFixedTermDepositLock[];
                 lendingPoolTrancheUserEpochSharesUpdates:
                     | {

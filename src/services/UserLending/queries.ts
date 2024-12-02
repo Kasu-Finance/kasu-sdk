@@ -64,6 +64,11 @@ export const trancheUserDetailsQuery = gql`
             id
             totalAcceptedDeposits
             totalAcceptedWithdrawnAmount
+            shares
+            tranche {
+                shares
+                balance
+            }
         }
     }
 `;

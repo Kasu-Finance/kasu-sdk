@@ -82,6 +82,7 @@ export const lendingPortfolioQuery = gql`
                     }
                 }
                 lendingPoolTrancheUserDetails {
+                    shares
                     lendingPoolTrancheUserEpochSharesUpdates(
                         orderDirection: desc
                         orderBy: shareUpdatesIndex

@@ -646,20 +646,28 @@ export class UserLending {
             this._signerOrProvider,
         );
 
-        const [balance, availableToWithdraw, userDetails] = await Promise.all([
-            tranche.userActiveAssets(user),
+        const [availableToWithdraw, userDetails] = await Promise.all([
             tranche.maxWithdraw(user),
             this._graph.request(trancheUserDetailsQuery, {
                 userAddress: `${poolId}-${user}-${trancheId}`,
             }),
         ]);
 
-        const userBalance = ethers.utils.formatUnits(balance, 6);
         const userDetailsSubgraph = userDetails as TrancheUserDetailsSubgraph;
 
         let yieldEarned = 0;
 
+        let userBalance = '0';
+
         if (userDetailsSubgraph.lendingPoolTrancheUserDetails) {
+            userBalance = this.convertSharesToAssets(
+                userDetailsSubgraph.lendingPoolTrancheUserDetails.shares,
+                userDetailsSubgraph.lendingPoolTrancheUserDetails.tranche
+                    .balance,
+                userDetailsSubgraph.lendingPoolTrancheUserDetails.tranche
+                    .shares,
+            );
+
             const totalAcceptedDeposits = parseFloat(
                 userDetailsSubgraph.lendingPoolTrancheUserDetails
                     .totalAcceptedDeposits,
@@ -680,7 +688,7 @@ export class UserLending {
             userId: user,
             address: trancheId,
             yieldEarned,
-            balance: userBalance.toString(),
+            balance: userBalance,
             availableToWithdraw,
         };
     }
