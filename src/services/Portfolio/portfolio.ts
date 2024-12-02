@@ -15,7 +15,6 @@ import { UserPoolBalance } from '../UserLending/types';
 import { UserLending } from '../UserLending/user-lending';
 
 import { lendingPortfolioQuery } from './queries';
-
 import {
     LastEpochQueryResult,
     LendingPortfolioQueryResult,
