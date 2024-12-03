@@ -17,12 +17,12 @@ const DisplayOptions = () => {
   const ITEMS_PER_PAGE =
     layout === LayoutTypes.CARD ? CARDS_PER_PAGE : ROW_PER_PAGE
 
+  const displayedItems = `${Math.max(currentPage * ITEMS_PER_PAGE - ITEMS_PER_PAGE, 1)}-${Math.min(currentPage * ITEMS_PER_PAGE, totalPoolCount)}`
+
   return (
     <Box display='flex' alignItems='center'>
       <Box mr={1}>
-        {Math.max(currentPage * ITEMS_PER_PAGE - ITEMS_PER_PAGE, 1)}-
-        {Math.min(currentPage * ITEMS_PER_PAGE, totalPoolCount)} of{' '}
-        {totalPoolCount}
+        {totalPoolCount ? displayedItems : '0'} of {totalPoolCount}
       </Box>
       <Box>
         <IconButton
