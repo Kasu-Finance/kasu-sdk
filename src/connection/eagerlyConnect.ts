@@ -71,4 +71,4 @@ const eagerlyConnect = () => {
   }
 }
 
-eagerlyConnect()
+export default eagerlyConnect

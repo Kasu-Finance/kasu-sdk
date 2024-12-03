@@ -1,4 +1,5 @@
 import { Box } from '@mui/material'
+import { PoolOverviewDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import type { Metadata } from 'next'
 import Script from 'next/script'
 import { ReactNode } from 'react'
@@ -6,18 +7,17 @@ import { ReactNode } from 'react'
 import '@/styles/fonts.module.css'
 
 import Tracking from '@/components/atoms/Tracking'
-import PageFooter from '@/components/molecules/PageFooter'
+import Footer from '@/components/organisms/footer'
 import Header from '@/components/organisms/header'
 import ModalsContainer from '@/components/organisms/modals/ModalsContainer'
 
 import KycState from '@/context/kyc/kyc.provider'
 import ModalState from '@/context/modal/modal.provider'
-import { SWRProvider } from '@/context/swrProvider/swr.provider'
+import SwrProvider from '@/context/swr.provider'
 import ToastState from '@/context/toast/toast.provider'
 import Web3Provider from '@/context/web3provider/web3.provider'
 
-import getLockPeriods from '@/actions/getLockPeriods'
-import { GET as getUnusedPools } from '@/app/api/unusedPools/route'
+import sdkConfig from '@/config/sdk'
 import ThemeRegistry from '@/themes/ThemeRegistry'
 
 type RootLayoutProps = {
@@ -30,10 +30,17 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
 }
 
+// Since this is the root layout, all fetch requests in the app
+// that don't set their own cache option will be cached.
+export const fetchCache = 'default-cache'
+
 export default async function RootLayout({ children }: RootLayoutProps) {
-  const lockPeriods = await getLockPeriods()
-  const res = await getUnusedPools()
-  const unusedPools = await res.json()
+  const res = await fetch(
+    `${sdkConfig.directusUrl}items/PoolOverview?filter[enabled][_neq]=true`
+  )
+
+  const unusedPools: { data: PoolOverviewDirectus[] } = await res.json()
+  const filteredPools = unusedPools.data.map((pool) => pool.id)
 
   return (
     <html lang='en'>
@@ -68,27 +75,23 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         href='/favicons/android-chrome-512x512.png'
       />
       <Tracking />
-      <body className='hide-overflow-mobile'>
-        <div className='top-layout-bg'></div>
-        <SWRProvider lockPeriods={lockPeriods} unusedPools={unusedPools}>
-          <ThemeRegistry>
+      <body>
+        <ThemeRegistry>
+          <SwrProvider unusedPools={filteredPools}>
             <Web3Provider>
-              <KycState>
-                <ModalState>
-                  <ToastState>
+              <ToastState>
+                <KycState>
+                  <ModalState>
                     <Header />
-                    <Box component='main'>
-                      {children}
-                      <PageFooter />
-                    </Box>
+                    <Box component='main'>{children}</Box>
+                    <Footer />
                     <ModalsContainer />
-                  </ToastState>
-                </ModalState>
-              </KycState>
+                  </ModalState>
+                </KycState>
+              </ToastState>
             </Web3Provider>
-          </ThemeRegistry>
-        </SWRProvider>
-        <div className='bottom-layout-bg'></div>
+          </SwrProvider>
+        </ThemeRegistry>
       </body>
       <Script
         src='https://cdn.cookie3.co/scripts/analytics/0.11.4/cookie3.analytics.min.js'

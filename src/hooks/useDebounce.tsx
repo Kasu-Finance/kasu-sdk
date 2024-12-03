@@ -14,7 +14,7 @@ const useDebounce = (
   delayMs = 1000,
   memoize: boolean = false
 ) => {
-  const timer = useRef<Timer>()
+  const timer = useRef<Timer | null>(null)
 
   const [isDebouncing, setIsDebouncing] = useState(false)
 
@@ -38,7 +38,7 @@ const useDebounce = (
 
         setIsDebouncing(false)
       }, delayMs)
-      clearTimeout(timer.current)
+      clearTimeout(timer.current ?? undefined)
       timer.current = newTimer
     },
     // eslint-disable-next-line

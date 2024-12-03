@@ -25,8 +25,11 @@ const initialState: Omit<
   amountInUSD: undefined,
   simulatedDuration: 0,
   txHash: undefined,
+  fixedTermConfigId: undefined,
   termsAccepted: false,
   isValidating: false,
+  isDebouncing: false,
+  loanContractAccepted: false,
 }
 
 const DepositModalState: React.FC<DepositModalStateProps> = ({

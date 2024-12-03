@@ -7,7 +7,7 @@ const useUserBonusData = () => {
   const sdk = useKasuSDK()
   const { account } = useWeb3React()
 
-  const { data, error, mutate } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     account ? ['userBonus', account] : null,
     async ([_, userAddress]) => sdk.Locking.getUserBonusData(userAddress)
   )
@@ -15,7 +15,7 @@ const useUserBonusData = () => {
   return {
     userBonus: data,
     error,
-    isLoading: !data && !error,
+    isLoading,
     updateUserBonus: mutate,
   }
 }

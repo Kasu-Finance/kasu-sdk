@@ -1,5 +1,6 @@
-import { JsonRpcSigner } from '@ethersproject/providers'
-import { IdentityClient } from '@nexeraid/identity-sdk'
+import { Config } from '@compilot/react-sdk'
+
+import { CustomerStatus } from '@/actions/checkUserKycState'
 
 export type IdentityClientData = {
   accessToken: string
@@ -10,40 +11,39 @@ export type IdentityClientData = {
 
 export type KycActions =
   | {
-      type: 'AUTHENTICATE'
+      type: 'SET_LAST_VERIFIED_ACCOUNT'
       payload: string
-    }
-  | {
-      type: 'RESET_AUTHENTICATION'
     }
   | {
       type: 'SET_KYC_COMPLETED'
-      payload: string
+      payload: boolean
     }
   | {
       type: 'SET_IS_VERIFYING'
       payload: boolean
     }
+  | {
+      type: 'SET_CUSTOMER_STATUS'
+      payload: CustomerStatus
+    }
 
 export type KycStateType = {
   isVerifying: boolean
-  isAuthenticated: boolean
-  authenticatedUser: string | undefined
-  identityClient: IdentityClient
+  status: CustomerStatus
+  lastVerifiedAccount: string | undefined
   kycCompleted: boolean
 }
 
 export type KycFunctions = {
-  authenticate: (
-    signer: JsonRpcSigner,
-    callback: () => void
-  ) => Promise<IdentityClientData>
-  initializeClient: (
-    signer: JsonRpcSigner,
-    initData: IdentityClientData,
-    sdkReadyCallback: () => void,
-    closeScreenCallback: (kycCompleted: boolean) => void
+  handleOpenWidget: (
+    compilotConfig: Config,
+    handleClose: () => void,
+    successCallback?: () => void
   ) => void
+  setIsVerifying: (isVerifying: boolean) => void
+  setCustomerStatus: (customStatus: CustomerStatus) => void
+  setKycCompleted: (kycCompleted: boolean) => void
+  setLastVerifiedAccount: (account: string) => void
 }
 
 export type KycTypes = KycStateType & KycFunctions

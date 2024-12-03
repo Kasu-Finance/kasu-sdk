@@ -28,6 +28,11 @@ const useDepositModalActions = (
           type: DepositModalActionType.SET_SELECTED_TOKEN,
           payload: selectedToken,
         }),
+      setFixedTermConfigId: (fixedTermConfigId: string) =>
+        dispatch({
+          type: DepositModalActionType.SET_FIXED_TERM_CONFIG_ID,
+          payload: fixedTermConfigId,
+        }),
       setSelectedTranche: (selectedTranche: `0x${string}`) =>
         dispatch({
           type: DepositModalActionType.SET_SELECTED_TRANCHE,
@@ -52,6 +57,16 @@ const useDepositModalActions = (
         dispatch({
           type: DepositModalActionType.SET_IS_VALIDATING,
           payload: isValidating,
+        }),
+      setIsDebouncing: (isDebouncing: boolean) =>
+        dispatch({
+          type: DepositModalActionType.SET_IS_DEBOUNCING,
+          payload: isDebouncing,
+        }),
+      setLoanContractAcccepted: (loanContractAccepted: boolean) =>
+        dispatch({
+          type: DepositModalActionType.SET_LOAN_CONTRACT_ACCEPTED,
+          payload: loanContractAccepted,
         }),
     }),
     [dispatch]

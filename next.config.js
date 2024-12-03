@@ -4,9 +4,6 @@
 const path = require('path')
 
 const nextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   images: {
     remotePatterns: [
       {
@@ -24,6 +21,11 @@ const nextConfig = {
         hostname: 'kasu-finance.directus.app',
         pathname: '**',
       },
+      {
+        protocol: 'https',
+        hostname: 'kasu-dev.directus.app',
+        pathname: '**',
+      },
     ],
   },
   async redirects() {
@@ -35,15 +37,17 @@ const nextConfig = {
       },
     ]
   },
+
   experimental: {
+    serverComponentsHmrCache: false,
     optimizePackageImports: ['dayjs', 'ethers'],
-    // needed for turbo dev mode for locally linked packages
-    ...(process.env.NODE_ENV === 'development'
-      ? {
-          outputFileTracingRoot: path.join(__dirname, '../../'),
-        }
-      : {}),
   },
+  // needed for turbo dev mode for locally linked packages
+  ...(process.env.NODE_ENV === 'development'
+    ? {
+        outputFileTracingRoot: path.join(__dirname, '../../'),
+      }
+    : {}),
   i18n: {
     locales: ['en'],
     defaultLocale: 'en',
@@ -51,7 +55,7 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
-  reactStrictMode: false,
+  reactStrictMode: true,
   async headers() {
     return [
       {

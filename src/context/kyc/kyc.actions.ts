@@ -1,90 +1,146 @@
-import { JsonRpcSigner } from '@ethersproject/providers'
-import { buildSignatureMessage, IdentityClient } from '@nexeraid/identity-sdk'
-import { Dispatch, useCallback, useMemo } from 'react'
-
+// @ts-ignore export error
 import {
-  IdentityClientData,
-  KycActions,
-  KycFunctions,
-} from '@/context/kyc/kyc.types'
+  Config,
+  getCustomerStatus,
+  getIdentityWallets,
+  watchWidgetVisibleState,
+} from '@compilot/react-sdk'
+import { watchIsAuthenticated } from '@compilot/web-sdk'
+import { Dispatch, useMemo } from 'react'
 
-import checkUserKycState from '@/actions/checkUserKycState'
-import generateKycToken from '@/actions/generateKycToken'
+import useToastState from '@/hooks/context/useToastState'
 
-const useKycActions = (
-  dispatch: Dispatch<KycActions>,
-  identityClient: IdentityClient
-): KycFunctions => {
-  const verifyUserKyc = useCallback(
-    async (userAddress: string) => {
-      const status = await checkUserKycState(userAddress)
+import { KycActions, KycFunctions } from '@/context/kyc/kyc.types'
 
-      if (status === 'Active') {
-        dispatch({
-          type: 'SET_KYC_COMPLETED',
-          payload: userAddress.toLowerCase(),
-        })
-      }
+import { CustomerStatus } from '@/actions/checkUserKycState'
+import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
+import { capitalize } from '@/utils'
 
-      return status
-    },
-    [dispatch]
-  )
+const useKycActions = (dispatch: Dispatch<KycActions>): KycFunctions => {
+  const { setToast, removeToast } = useToastState()
 
   return useMemo(
     () => ({
-      authenticate: async (
-        signer: JsonRpcSigner
-      ): Promise<IdentityClientData> => {
-        const account = (await signer.getAddress()).toLowerCase()
-
-        const signingMessage = buildSignatureMessage(account as `0x${string}`)
-
-        const signature = await signer.signMessage(signingMessage)
-
-        const accessToken = await generateKycToken(account)
-
-        if (!accessToken) throw new Error('Error getting access token')
-
-        dispatch({
-          type: 'AUTHENTICATE',
-          payload: account,
-        })
-
-        return {
-          accessToken,
-          signature,
-          signingMessage,
-          userAddress: account,
-        }
-      },
-      initializeClient: async (
-        signer: JsonRpcSigner,
-        initData: IdentityClientData,
-        sdkReadyCallback: () => void,
-        closeScreenCallback: (kycCompleted: boolean) => void
+      handleOpenWidget: (
+        compilotConfig: Config,
+        handleClose: () => void,
+        successCallback?: () => void
       ) => {
-        const { userAddress, ...authInput } = initData
-
-        identityClient.onSignMessage(async (data) => {
-          const signedMessage = await signer.signMessage(data.message)
-          return signedMessage as `0x${string}`
+        setToast({
+          type: 'info',
+          title: capitalize(ActionStatus.PROCESSING),
+          message: 'Waiting for message signature to be signed...',
+          isClosable: false,
         })
 
-        identityClient.onSdkReady(sdkReadyCallback)
-
-        identityClient.onCloseScreen(async () => {
-          const status = await verifyUserKyc(userAddress)
-
-          closeScreenCallback(status === 'Active')
-
-          return new Promise((resolve) => resolve(''))
+        watchIsAuthenticated(compilotConfig, {
+          onIsAuthenticatedChange: (isAuthenticated) => {
+            if (isAuthenticated) {
+              setToast({
+                type: 'info',
+                title: 'Identity Verification in Progress',
+                message: 'Waiting for third party provider...',
+                isClosable: false,
+              })
+            }
+          },
         })
 
-        await identityClient.init(authInput)
+        watchWidgetVisibleState(compilotConfig, {
+          onChange: async (isVisible) => {
+            // widget close
+            if (!isVisible) {
+              const status = await getCustomerStatus(compilotConfig)
+              const account = await getIdentityWallets(compilotConfig)
+
+              if (status !== 'To be reviewed' && status !== 'Active') {
+                setToast({
+                  type: 'warning',
+                  title: capitalize(ActionStatus.PROCESSING),
+                  message:
+                    'Identity verification process is not yet completed.',
+                })
+                return
+              }
+
+              if (status === 'To be reviewed') {
+                setToast({
+                  type: 'warning',
+                  title: capitalize(ActionStatus.PROCESSING),
+                  message:
+                    'Your identity is being reviewed by our team. Please return to this page later.',
+                })
+
+                handleClose()
+              } else {
+                // recursively call setToast to update timer
+                let timer = 10 // in seconds
+
+                dispatch({
+                  type: 'SET_LAST_VERIFIED_ACCOUNT',
+                  payload: account[0].address,
+                })
+
+                dispatch({
+                  type: 'SET_KYC_COMPLETED',
+                  payload: true,
+                })
+
+                const handleToastClose = (clearInterval?: () => void) => {
+                  clearInterval?.()
+                  handleClose()
+                  successCallback && successCallback()
+                }
+
+                const updateTime = (clearInterval?: () => void) => {
+                  if (timer === 0) {
+                    removeToast()
+
+                    handleToastClose(clearInterval)
+
+                    return
+                  }
+
+                  setToast({
+                    type: 'success',
+                    title: capitalize(
+                      `${ActionType.KYC} ${ActionStatus.SUCCESS}`
+                    ),
+                    message:
+                      ACTION_MESSAGES[ActionType.KYC][ActionStatus.SUCCESS](
+                        timer
+                      ),
+                    onCloseCallback: () => handleToastClose(clearInterval),
+                  })
+
+                  timer--
+                }
+
+                updateTime()
+
+                const interval = setInterval(() => {
+                  updateTime(() => clearInterval(interval))
+                  return
+                }, 1000)
+              }
+            }
+          },
+        })
       },
+      setLastVerifiedAccount: (account: string) =>
+        dispatch({
+          type: 'SET_LAST_VERIFIED_ACCOUNT',
+          payload: account,
+        }),
+      setCustomerStatus: (customerStatus: CustomerStatus) =>
+        dispatch({ type: 'SET_CUSTOMER_STATUS', payload: customerStatus }),
+      setIsVerifying: (isVerifying: boolean) =>
+        dispatch({ type: 'SET_IS_VERIFYING', payload: isVerifying }),
+      setKycCompleted: (kycCompleted: boolean) =>
+        dispatch({ type: 'SET_KYC_COMPLETED', payload: kycCompleted }),
     }),
-    [dispatch, identityClient, verifyUserKyc]
+
+    [dispatch, removeToast, setToast]
   )
 }
 

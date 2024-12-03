@@ -4,7 +4,7 @@ import { Box, Typography } from '@mui/material'
 import React from 'react'
 
 import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
-import useTranslation from '@/hooks/useTranslation'
+import getTranslation from '@/hooks/useTranslation'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
 import InfoRow from '@/components/atoms/InfoRow'
@@ -24,7 +24,7 @@ const TranchDetailCard: React.FC<TranchDetailCardProps> = ({
   maxDepositAmount,
   isSingleTranche,
 }) => {
-  const { t } = useTranslation()
+  const { t } = getTranslation()
 
   const currentDevice = useDeviceDetection()
 

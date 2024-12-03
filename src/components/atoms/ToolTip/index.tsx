@@ -1,3 +1,5 @@
+'use client'
+
 import InfoIcon from '@mui/icons-material/Info'
 import { Tooltip, TooltipProps } from '@mui/material'
 import { SxProps, Theme } from '@mui/system'
@@ -18,13 +20,13 @@ const ToolTip: React.FC<ToolTipProps> = ({ children, iconSx, ...rest }) => {
   return (
     <Tooltip
       disableFocusListener
-      {...rest}
       arrow={false}
       placement={isMobile || isTablet ? 'bottom' : undefined}
       enterTouchDelay={100}
       PopperProps={{
         style: { zIndex: 9999999 },
       }}
+      {...rest}
     >
       {children ?? (
         <InfoIcon
@@ -32,10 +34,9 @@ const ToolTip: React.FC<ToolTipProps> = ({ children, iconSx, ...rest }) => {
             (theme) => ({
               ml: 0.5,
               position: 'relative',
-              top: '2px',
               width: '18px',
               height: '18px',
-              color: theme.palette.primary.dark,
+              color: 'grey.200',
               cursor: 'help',
               transition: 'color 0.3s ease',
               '&:hover': {

@@ -29,7 +29,7 @@ const useTotalLendingPoolDeposits = () => {
     return result
   }
 
-  const { data, error, mutate } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     account ? ['totalPoolDeposits', account] : null,
     fetchTotalPoolDeposits,
     {
@@ -59,7 +59,7 @@ const useTotalLendingPoolDeposits = () => {
   return {
     totalDeposits: { activeDepositAmount, pendingDepositAmount },
     error,
-    isLoading: !data && !error,
+    isLoading,
     refresh: mutate,
   }
 }

@@ -1,0 +1,33 @@
+import { TableCell, TableRow } from '@mui/material'
+
+import getTranslation from '@/hooks/useTranslation'
+
+const UserRewardsTableHeader = () => {
+  const { t } = getTranslation()
+
+  return (
+    <TableRow>
+      <TableCell
+        width='
+      36%'
+      >
+        {t('locking.widgets.unlock.table.headers.amountLocked')}
+      </TableCell>
+      <TableCell width='15%'>
+        {t('locking.widgets.unlock.table.headers.unlockDate')}
+      </TableCell>
+      <TableCell width='18%'>
+        {t('locking.widgets.unlock.table.headers.remainingDuration.1')}{' '}
+        {t('locking.widgets.unlock.table.headers.remainingDuration.2')}
+      </TableCell>
+      <TableCell width='15%'>
+        {t('locking.widgets.unlock.table.headers.multiplier')}
+      </TableCell>
+      <TableCell width='16%'>
+        {t('locking.widgets.unlock.table.headers.balance')}
+      </TableCell>
+    </TableRow>
+  )
+}
+
+export default UserRewardsTableHeader

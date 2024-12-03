@@ -2,7 +2,7 @@
 
 import { IKasuAllowListAbi__factory } from '@solidant/kasu-sdk/src/contracts'
 
-import NEXERA_API_BASE_URL from '@/config/api.nexera'
+import NEXERA_API_BASE_URL from '@/config/nexera/api.nexera'
 
 type ApiRes =
   | {

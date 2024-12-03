@@ -2,7 +2,6 @@ import { alpha, useTheme } from '@mui/material'
 import { Dispatch, useMemo } from 'react'
 
 import {
-  ModalStatusAction,
   ModalStatusActions,
   ModalStatusActionsType,
   ModalStatusFunctions,
@@ -40,12 +39,6 @@ const useModalStatusActions = (
         dispatch({
           type: ModalStatusActionsType.SET_MODAL_STATUS_STATE,
           payload: newLockState,
-        })
-      },
-      setModalStatusAction: (lockProgress: ModalStatusAction) => {
-        dispatch({
-          type: ModalStatusActionsType.SET_MODAL_STATUS_ACTON,
-          payload: lockProgress,
         })
       },
     }),

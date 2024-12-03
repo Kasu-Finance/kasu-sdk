@@ -9,7 +9,7 @@ import useTokenDetails from '@/hooks/web3/useTokenDetails'
 
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { IERC20__factory } from '@/contracts/output'
-import { calculateMargin, userRejectedTransaction } from '@/utils'
+import { calculateMargin, capitalize, userRejectedTransaction } from '@/utils'
 
 const useApproveToken = (
   tokenAddress: string | undefined,
@@ -69,8 +69,8 @@ const useApproveToken = (
 
       setToast({
         type: 'info',
-        title: ActionStatus.PROCESSING,
-        message: ACTION_MESSAGES[ActionStatus.PROCESSING],
+        title: capitalize(ActionStatus.PROCESSING),
+        message: ACTION_MESSAGES[ActionType.APPROVE][ActionStatus.PROCESSING],
         isClosable: false,
       })
 
@@ -114,10 +114,10 @@ const useApproveToken = (
 
       if (userRejectedTransaction(error)) {
         message = ACTION_MESSAGES[ActionStatus.REJECTED]
-        title = `${ActionType.APPROVE} ${ActionStatus.REJECTED}`
+        title = capitalize(`${ActionType.APPROVE} ${ActionStatus.REJECTED}`)
       } else {
         message = ACTION_MESSAGES[ActionType.APPROVE][ActionStatus.ERROR]
-        title = `${ActionType.APPROVE} ${ActionStatus.ERROR}`
+        title = capitalize(`${ActionType.APPROVE} ${ActionStatus.ERROR}`)
       }
 
       setToast({

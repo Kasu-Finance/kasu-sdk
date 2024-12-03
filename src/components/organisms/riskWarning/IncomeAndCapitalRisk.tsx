@@ -1,0 +1,35 @@
+import { Stack, Typography } from '@mui/material'
+
+import getTranslation from '@/hooks/useTranslation'
+
+import UnorderedList from '@/components/atoms/UnorderedList'
+import Subheading from '@/components/organisms/riskWarning/Subheading'
+
+import { customTypography } from '@/themes/typography'
+
+const IncomeAndCapitalRisk = () => {
+  const { t } = getTranslation()
+
+  return (
+    <Stack spacing={2}>
+      <Subheading title={t('modals.riskWarning.subheader-2.title')} />
+      <Stack spacing={1}>
+        <Typography variant='baseMd'>
+          {t('modals.riskWarning.subheader-2.description-1')}
+        </Typography>
+        <UnorderedList sx={{ ...customTypography.baseMd }}>
+          <li>{t('modals.riskWarning.subheader-2.list.list-0')}</li>
+          <li>{t('modals.riskWarning.subheader-2.list.list-1')}</li>
+        </UnorderedList>
+        <Typography variant='baseMd'>
+          {t('modals.riskWarning.subheader-2.description-2')}
+        </Typography>
+        <Typography variant='baseMd'>
+          {t('modals.riskWarning.subheader-2.description-3')}
+        </Typography>
+      </Stack>
+    </Stack>
+  )
+}
+
+export default IncomeAndCapitalRisk

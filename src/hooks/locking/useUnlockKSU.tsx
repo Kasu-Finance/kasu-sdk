@@ -1,13 +1,12 @@
 import { BigNumber } from 'ethers'
 
-import useModalStatusState from '@/hooks/context/useModalStatusState'
+import useLockModalState from '@/hooks/context/useLockModalState'
+import useStepperState from '@/hooks/context/useStepperState'
 import useToastState from '@/hooks/context/useToastState'
 import useUserLocks from '@/hooks/locking/useUserLocks'
 import useKasuSDK from '@/hooks/useKasuSDK'
 import useEarnedRKsu from '@/hooks/web3/useEarnedRKsu'
 import useHandleError from '@/hooks/web3/useHandleError'
-
-import { ModalStatusAction } from '@/context/modalStatus/modalStatus.types'
 
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { waitForReceipt } from '@/utils'
@@ -17,13 +16,15 @@ const useUnlockKSU = () => {
 
   const handleError = useHandleError()
 
+  const { setTxHash } = useLockModalState()
+
   const { updateUserLocks } = useUserLocks()
 
   const { updateEarnedRKsu } = useEarnedRKsu()
 
-  const { setModalStatusAction } = useModalStatusState()
-
   const { setToast, removeToast } = useToastState()
+
+  const { nextStep } = useStepperState()
 
   return async (unlockAmount: BigNumber, userLockId: BigNumber) => {
     try {
@@ -36,13 +37,15 @@ const useUnlockKSU = () => {
 
       const lock = await sdk.Locking.unlockKSU(unlockAmount, userLockId)
 
-      await waitForReceipt(lock)
+      const receipt = await waitForReceipt(lock)
+
+      setTxHash(receipt.transactionHash)
 
       await Promise.all([updateUserLocks(), updateEarnedRKsu()])
 
-      setModalStatusAction(ModalStatusAction.COMPLETED)
-
       removeToast()
+
+      nextStep()
     } catch (error) {
       handleError(
         error,

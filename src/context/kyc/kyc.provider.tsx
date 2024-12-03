@@ -1,15 +1,18 @@
 'use client'
 
-import { IdentityClient } from '@nexeraid/identity-sdk'
+// @ts-ignore export error
 import { useWeb3React } from '@web3-react/core'
 import { ReactNode, useEffect, useReducer } from 'react'
 
-import useKycActions from '@/context/kyc/kyc.actions'
+import useToastState from '@/hooks/context/useToastState'
+
 import KycContext from '@/context/kyc/kyc.context'
 import kycReducer from '@/context/kyc/kyc.reducer'
 import { KycStateType } from '@/context/kyc/kyc.types'
 
 import checkUserKycState from '@/actions/checkUserKycState'
+
+import useKycActions from './kyc.actions'
 
 type KycStateProps = {
   children: ReactNode
@@ -17,10 +20,9 @@ type KycStateProps = {
 
 const initialState: KycStateType = {
   isVerifying: false,
-  authenticatedUser: undefined,
-  isAuthenticated: false,
+  lastVerifiedAccount: undefined,
+  status: null,
   kycCompleted: false,
-  identityClient: new IdentityClient(),
 }
 
 const KycState: React.FC<KycStateProps> = ({ children }) => {
@@ -28,42 +30,69 @@ const KycState: React.FC<KycStateProps> = ({ children }) => {
 
   const [state, dispatch] = useReducer(kycReducer, initialState)
 
-  const kycActions = useKycActions(dispatch, state.identityClient)
+  const { setToast, removeToast } = useToastState()
+
+  const kycActions = useKycActions(dispatch)
+
+  const {
+    setLastVerifiedAccount,
+    setCustomerStatus,
+    setIsVerifying,
+    setKycCompleted,
+  } = kycActions
 
   useEffect(() => {
-    if (account && account.toLowerCase() !== state.authenticatedUser) {
-      dispatch({ type: 'RESET_AUTHENTICATION' })
+    if (
+      account &&
+      state.lastVerifiedAccount &&
+      account.toLowerCase() !== state.lastVerifiedAccount.toLowerCase()
+    ) {
+      setToast({
+        type: 'info',
+        title: 'Account change detected',
+        message: 'Verifying status of new account...',
+        isClosable: false,
+      })
     }
-  }, [account, state.authenticatedUser])
+  }, [account, state.lastVerifiedAccount, setToast])
 
   useEffect(() => {
     if (account) {
       ;(async () => {
         try {
-          dispatch({
-            type: 'SET_IS_VERIFYING',
-            payload: true,
-          })
+          setIsVerifying(true)
+          setKycCompleted(false)
+
+          setLastVerifiedAccount(account)
 
           const status = await checkUserKycState(account)
 
-          if (status === 'Active') {
-            dispatch({
-              type: 'SET_KYC_COMPLETED',
-              payload: account.toLowerCase(),
-            })
+          if (!status) return
+
+          setCustomerStatus(status)
+
+          // no email status means kyc completed but email is not present ( edge case for users that setup KYC before email was setup )
+          if (status === 'Active' || status === 'No Email') {
+            setKycCompleted(true)
+          } else {
+            setKycCompleted(false)
           }
         } catch (error) {
           console.error(error)
         } finally {
-          dispatch({
-            type: 'SET_IS_VERIFYING',
-            payload: false,
-          })
+          setIsVerifying(false)
+          removeToast()
         }
       })()
     }
-  }, [account])
+  }, [
+    account,
+    setCustomerStatus,
+    setLastVerifiedAccount,
+    setIsVerifying,
+    setKycCompleted,
+    removeToast,
+  ])
 
   return (
     <KycContext.Provider value={{ ...state, ...kycActions }}>

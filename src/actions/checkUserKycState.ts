@@ -1,19 +1,34 @@
 'use server'
 
-import NEXERA_API_BASE_URL, { NEXERA_PROJECT_ID } from '@/config/api.nexera'
+import { getCustomerStatus } from '@compilot/react-sdk'
 
-type NexeraCustomerStatus =
-  | 'Active'
-  | 'Rejected'
-  | 'Dormant'
-  | 'To be reviewed'
-  | 'Failed'
-  | 'Escalated'
-  | 'Terminated'
+import NEXERA_API_BASE_URL, {
+  NEXERA_PROJECT_ID,
+} from '@/config/nexera/api.nexera'
 
-type ApiRes =
+export type CustomerStatus =
+  | Awaited<ReturnType<typeof getCustomerStatus>>
+  | 'No Email'
+
+type KybRes =
   | {
-      status: NexeraCustomerStatus
+      status: CustomerStatus
+      companyClaims: {
+        email: string
+      }[]
+    }
+  | {
+      message: string
+      code: string
+      traceId: string
+    }
+
+type KycRes =
+  | {
+      status: CustomerStatus
+      customerEmails: {
+        email: string
+      }[]
     }
   | {
       message: string
@@ -27,12 +42,12 @@ type ApiRes =
 
 const checkUserKycState = async (
   userAddress: string
-): Promise<NexeraCustomerStatus | undefined> => {
+): Promise<CustomerStatus | undefined> => {
   const projectId = process.env.NEXERA_PROJECT_ID || NEXERA_PROJECT_ID
 
   try {
-    const response = await fetch(
-      `${NEXERA_API_BASE_URL}/customers/project/${projectId}/wallet-address/${userAddress.toLowerCase()}`,
+    const kybRes = await fetch(
+      `${NEXERA_API_BASE_URL}/companies/details?address=${userAddress.toLowerCase()}`,
       {
         headers: {
           Authorization: `Bearer ${process.env.NEXERA_API_KEY}`,
@@ -40,17 +55,40 @@ const checkUserKycState = async (
       }
     )
 
-    const data: ApiRes = await response.json()
+    const data: KybRes = await kybRes.json()
 
-    if (!('status' in data)) {
-      if (data.message !== 'Customer not found.') {
-        throw new Error(data.message, { cause: data })
-      }
-
-      return undefined
+    if ('status' in data) {
+      return data.status
     }
 
-    return data.status
+    try {
+      const kycRes = await fetch(
+        `${NEXERA_API_BASE_URL}/projects/${projectId}/customer-wallets/${userAddress.toLowerCase()}/customer`,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.NEXERA_API_KEY}`,
+          },
+        }
+      )
+
+      const data: KycRes = await kycRes.json()
+
+      if (!('status' in data)) {
+        if (data.message !== 'Customer not found.') {
+          throw new Error(data.message, { cause: data })
+        }
+
+        return undefined
+      }
+
+      if (data.status === 'Active' && !data.customerEmails[0]?.email) {
+        return 'No Email'
+      }
+
+      return data.status
+    } catch (error) {
+      console.error(error)
+    }
   } catch (error) {
     console.error(error)
   }

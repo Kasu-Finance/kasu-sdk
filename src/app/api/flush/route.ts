@@ -21,8 +21,13 @@ export async function GET(_req: Request): Promise<Response> {
     'totals',
     'poolDelegate',
     'unusedPools',
-    'filteredUnusedPools',
+    'riskManagement',
+    'repayments',
     'currentEpoch',
+    'poolCreditMetrics',
+    'badAndDoubtfulDebts',
+    'financialReportingDocuments',
+    'lockPeriods',
   ]
 
   console.warn('flushing cache:', cachedTags)

@@ -1,54 +1,138 @@
 'use client'
 
-import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
-import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
-import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
+import {
+  PoolOverview,
+  TrancheData,
+} from '@solidant/kasu-sdk/src/services/DataService/types'
+import {
+  LockPeriod,
+  UserLock,
+} from '@solidant/kasu-sdk/src/services/Locking/types'
+import {
+  PortfolioLendingPool,
+  PortfolioTranche,
+} from '@solidant/kasu-sdk/src/services/Portfolio/types'
+import {
+  UserRequestEvent,
+  UserTrancheBalance,
+} from '@solidant/kasu-sdk/src/services/UserLending/types'
 import { ReactNode, useReducer } from 'react'
-
-import { PoolData } from '@/components/molecules/lending/overview/TranchesApyCard'
 
 import useModalActions from '@/context/modal/modal.actions'
 import ModalContext from '@/context/modal/modal.context'
 import { modalReducer } from '@/context/modal/modal.reducer'
 import { Modals } from '@/context/modal/modal.types'
 
+import { LoanTicket, PendingDecision } from '@/utils'
+import { DetailedTransaction } from '@/utils/lending/getDetailedTransactions'
+
+import { PoolOverviewWithDelegate } from '@/types/page'
+
 const initialState: Modals = {
   connectWalletModal: { isOpen: false },
   loyaltyLevelsModal: { isOpen: false },
-  termsAndConditionsModal: { isOpen: false },
-  lockModal: { isOpen: false },
+  missingEmailModal: { isOpen: false },
+  fixedLoanModal: {
+    isOpen: false,
+    fixedLoans: null as unknown as PortfolioTranche['fixedLoans'],
+  },
+  withdrawFundsAtExpiryModal: {
+    isOpen: false,
+    fixedLoans: null as unknown as PortfolioTranche['fixedLoans'],
+    pool: null as unknown as PortfolioLendingPool,
+  },
+  autoConversionToVariableModal: {
+    isOpen: false,
+    epochNumber: '',
+    fixedLoans: null as unknown as PortfolioTranche['fixedLoans'],
+  },
+  fixApyModal: {
+    isOpen: false,
+    nextEpochTime: null as unknown as number,
+    pool: null as unknown as PortfolioLendingPool & {
+      selectedTranche: PortfolioTranche & {
+        balanceData: UserTrancheBalance
+      }
+    },
+  },
+  borrowerIdentifiedModal: {
+    isOpen: false,
+    loanTicket: null as unknown as LoanTicket,
+    poolName: '',
+    callback: () => {},
+  },
+  optInModal: { isOpen: false },
+  optOutModal: {
+    isOpen: false,
+    loanTicket: null as unknown as LoanTicket,
+    poolName: '',
+  },
+  requestDetailsModal: {
+    isOpen: false,
+    detailedTransaction: null as unknown as DetailedTransaction,
+  },
+  pendingDecisionsModal: {
+    isOpen: false,
+    pendingDecisions: null as unknown as PendingDecision[],
+    pools: null as unknown as PoolOverview[],
+  },
+  lockModal: { isOpen: false, lockPeriods: null as unknown as LockPeriod[] },
+  unreleasedFeatureModal: { isOpen: false },
   withdrawModal: {
     isOpen: false,
-    poolOverview: null as unknown as PoolOverview,
+    pool: null as unknown as PoolOverviewWithDelegate,
+    trancheBalance: null as unknown as (TrancheData & {
+      balanceData: UserTrancheBalance
+    })[],
   },
   cancelDepositModal: {
     isOpen: false,
-    transactionHistory: null as unknown as UserRequest,
+    transaction: null as unknown as {
+      timestamp: EpochTimeStamp
+      lendingPool: {
+        id: string
+        name: string
+        tranches: { orderId: string }[]
+      }
+      requestType: 'Deposit' | 'Withdrawal'
+      events: UserRequestEvent[]
+      nftId: string
+      trancheName: string
+    },
   },
   cancelWithdrawalModal: {
     isOpen: false,
-    transactionHistory: null as unknown as UserRequest,
+    transaction: null as unknown as {
+      timestamp: EpochTimeStamp
+      lendingPool: {
+        id: string
+        name: string
+        tranches: { orderId: string }[]
+      }
+      requestType: 'Deposit' | 'Withdrawal'
+      events: UserRequestEvent[]
+      nftId: string
+      trancheName: string
+    },
   },
   unlockModal: {
     isOpen: false,
     userLock: null as unknown as UserLock,
-  },
-  depositModal: {
-    isOpen: false,
-    poolData: null as unknown as PoolData,
+    lockPeriods: null as unknown as LockPeriod[],
   },
   kycModal: {
     isOpen: false,
     callback: () => {},
   },
-  earningsCalculatorModal: {
+  lendModal: {
     isOpen: false,
-    poolData: null as unknown as PoolData,
-    poolOverview: null as unknown as PoolOverview,
+    pool: null as unknown as PoolOverviewWithDelegate,
+    currentEpoch: '',
   },
-  transactionHistoryContentModal: {
+  loanContractModal: {
     isOpen: false,
-    transactionHistory: null as unknown as UserRequest,
+    canAccept: false,
+    acceptLoanContract: () => {},
   },
 }
 

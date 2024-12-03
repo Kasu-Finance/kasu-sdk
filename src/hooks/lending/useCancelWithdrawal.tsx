@@ -3,7 +3,7 @@ import useKasuSDK from '@/hooks/useKasuSDK'
 import useHandleError from '@/hooks/web3/useHandleError'
 
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
-import { waitForReceipt } from '@/utils'
+import { capitalize, waitForReceipt } from '@/utils'
 
 const useCancelWithdrawal = () => {
   const sdk = useKasuSDK()
@@ -16,7 +16,7 @@ const useCancelWithdrawal = () => {
     try {
       setToast({
         type: 'info',
-        title: ActionStatus.PROCESSING,
+        title: capitalize(ActionStatus.PROCESSING),
         message: ACTION_MESSAGES[ActionStatus.PROCESSING],
         isClosable: false,
       })
@@ -26,14 +26,16 @@ const useCancelWithdrawal = () => {
         dNft
       )
 
-      await waitForReceipt(cancel)
+      const response = await waitForReceipt(cancel)
 
       removeToast()
+
+      return response
     } catch (error) {
       handleError(
         error,
-        `${ActionType.CANCELATION} ${ActionStatus.ERROR}`,
-        ACTION_MESSAGES[ActionType.CANCELATION][ActionStatus.ERROR]
+        capitalize(`${ActionType.CANCELLATION} ${ActionStatus.ERROR}`),
+        ACTION_MESSAGES[ActionType.CANCELLATION][ActionStatus.ERROR]
       )
     }
   }

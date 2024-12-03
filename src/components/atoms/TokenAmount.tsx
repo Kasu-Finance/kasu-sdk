@@ -3,15 +3,15 @@ import {
   BoxProps,
   Skeleton,
   Typography,
-  TypographyVariant,
+  TypographyProps,
 } from '@mui/material'
 
-type TokenAmountProps = BoxProps & {
+export type TokenAmountProps = BoxProps & {
   amount: string
   symbol: string
-  amountVariant?: TypographyVariant
-  symbolVariant?: TypographyVariant
-  usdcVariant?: TypographyVariant
+  amountProps?: TypographyProps
+  symbolProps?: TypographyProps
+  usdcProps?: TypographyProps
   usdValue?: string
   showSkeleton?: boolean
 }
@@ -19,9 +19,9 @@ type TokenAmountProps = BoxProps & {
 const TokenAmount: React.FC<TokenAmountProps> = ({
   amount,
   symbol,
-  amountVariant,
-  symbolVariant,
-  usdcVariant,
+  amountProps,
+  symbolProps,
+  usdcProps,
   usdValue,
   showSkeleton,
   ...rest
@@ -34,38 +34,36 @@ const TokenAmount: React.FC<TokenAmountProps> = ({
     {showSkeleton ? (
       <Skeleton variant='rounded' height={32} />
     ) : (
-      <div>
+      <Box>
         <Typography
-          variant={amountVariant ?? 'h6'}
+          variant='h4'
           component='span'
           display='inline-block'
-          fontSize={{ xs: 20 }}
+          color='primary.main'
+          {...amountProps}
         >
           {amount}
         </Typography>
-        <Typography
-          pl={0.5}
-          variant={symbolVariant ?? 'body1'}
-          component='span'
-          fontSize={{ xs: 12 }}
-        >
+        <Typography pl={1} variant='baseMd' component='span' {...symbolProps}>
           {symbol}
         </Typography>
-      </div>
+      </Box>
     )}
     {usdValue &&
       (showSkeleton ? (
         <Skeleton />
       ) : (
-        <Box color={(theme) => theme.palette.text.secondary}>
+        <Box color='text.secondary'>
           <Typography
-            variant={usdcVariant ?? 'body1'}
+            variant='body1'
             component='span'
             display='inline-block'
+            {...usdcProps}
           >
             {usdValue}
           </Typography>
-          <Typography pl={0.5} variant='caption' component='span'>
+          <Typography variant='caption' component='span'>
+            {' '}
             USDC
           </Typography>
         </Box>

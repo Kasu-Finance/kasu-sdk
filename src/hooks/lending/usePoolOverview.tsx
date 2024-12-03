@@ -1,28 +1,19 @@
-import useSWRImmutable from 'swr/immutable'
+import useSWR from 'swr'
 
-const fetchPoolOverview = async (url: string) => {
-  const response = await fetch(url)
-  const data = await response.json()
-
-  if (!response.ok) {
-    throw new Error(data.error || 'Failed to fetch pool overview')
-  }
-
-  return data.poolOverview
-}
+import { getPoolOverview } from '@/app/_requests/pools'
 
 const usePoolOverview = (poolId?: string) => {
   const poolQuery = poolId ? `?id=${poolId}` : ''
 
-  const { data, error } = useSWRImmutable(
+  const { data, isLoading, error } = useSWR(
     `/api/pools${poolQuery}`,
-    fetchPoolOverview
+    getPoolOverview
   )
 
   return {
     data,
     error,
-    isLoading: !data && !error,
+    isLoading,
   }
 }
 

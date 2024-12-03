@@ -6,7 +6,7 @@ import {
   TransactionStatus,
   TransactionTranches,
   TransactionType,
-} from '@/components/molecules/lending/overview/TransactionHistory/TransactionHistoryFilters'
+} from '@/components/organisms/lending/OverviewTab/UserTransactions/TransactionFilters'
 
 import useTransactionHistoryActions from '@/context/transactionHistory/transactionHistory.actions'
 import TransactionHistoryContext from '@/context/transactionHistory/transactionHistory.context'
@@ -15,6 +15,8 @@ import { TransactionHistoryStateType } from '@/context/transactionHistory/transa
 
 type TransactionHistoryStateProps = {
   children: ReactNode
+  withPoolIdFilter?: boolean
+  withPendingDecisions?: boolean
 }
 
 const initialState: TransactionHistoryStateType = {
@@ -25,8 +27,14 @@ const initialState: TransactionHistoryStateType = {
 
 const TransactionHistoryState: React.FC<TransactionHistoryStateProps> = ({
   children,
+  withPoolIdFilter,
+  withPendingDecisions,
 }) => {
-  const [state, dispatch] = useReducer(transactionHistoryReducer, initialState)
+  const [state, dispatch] = useReducer(transactionHistoryReducer, {
+    ...initialState,
+    poolId: withPoolIdFilter ? 'All' : undefined,
+    pendingDecision: withPendingDecisions ? 'All' : undefined,
+  })
 
   const transactionHistoryActions = useTransactionHistoryActions(dispatch)
 

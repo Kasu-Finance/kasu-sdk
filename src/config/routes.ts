@@ -8,7 +8,7 @@ export enum BaseRoutesPaths {
 }
 
 export type RouteDefinition = {
-  url: BaseRoutesPaths
+  url: `${BaseRoutesPaths}${string}`
 }
 
 type RouteGroup = {
@@ -23,6 +23,15 @@ export const Routes = {
   },
   lending: {
     root: { url: BaseRoutesPaths.LENDING },
+    closedLendingStrategies: {
+      url: `${BaseRoutesPaths.LENDING}/closedLendingStrategies`,
+    },
+    termsAndConditions: {
+      url: `${BaseRoutesPaths.LENDING}/important-information-document`,
+    },
+    riskWarning: {
+      url: `${BaseRoutesPaths.LENDING}/risk-warning`,
+    },
   },
   borrow: {
     root: { url: BaseRoutesPaths.BORROW },
@@ -35,5 +44,8 @@ export const Routes = {
   },
   portfolio: {
     root: { url: BaseRoutesPaths.PORTFOLIO },
+    yourTransactions: { url: `${BaseRoutesPaths.PORTFOLIO}/my-transactions` },
+    rewards: { url: `${BaseRoutesPaths.PORTFOLIO}/bonus-and-rewards` },
+    wallet: { url: `${BaseRoutesPaths.PORTFOLIO}/wallet-balance` },
   },
 } as const satisfies RouteGroup

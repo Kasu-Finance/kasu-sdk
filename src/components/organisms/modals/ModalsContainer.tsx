@@ -5,21 +5,30 @@ import { SxProps, Theme } from '@mui/material'
 import useModalState from '@/hooks/context/useModalState'
 
 import DialogWrapper from '@/components/atoms/DialogWrapper'
+import AutoConversionToVariableModal from '@/components/organisms/modals/AutoConversionToVariableModal'
+import BorrowerIdentifiedModal from '@/components/organisms/modals/BorrowIdentifiedModal'
 import CancelDepositModal from '@/components/organisms/modals/CancelDepositModal'
 import CancelWithdrawalModal from '@/components/organisms/modals/CancelWithdrawalModal'
-import DepositModalWrapper from '@/components/organisms/modals/DepositModal/DepositModalWrapper'
-import EarningsCalculatorModalWrapper from '@/components/organisms/modals/EarningsCalculator/EarningsCalculatorModalWrapper'
-import KycModal from '@/components/organisms/modals/KycModal'
+import FixApyModalWrapper from '@/components/organisms/modals/FixApyModal/FixApyModalWrapper'
+import FixedLoanModal from '@/components/organisms/modals/FixedLoanModal'
+import LendingModalWrapper from '@/components/organisms/modals/LendingModal/LendingModalWrapper'
+import LoanContractModal from '@/components/organisms/modals/LoanContractModal'
 import LockModalWrapper from '@/components/organisms/modals/LockModal/LockModalWrapper'
 import LoyaltyLevelsModal from '@/components/organisms/modals/LoyaltyLevelsModal'
-import TermsAndConditionsModal from '@/components/organisms/modals/TermsAndConditionsModal'
-import TransactionHistoryContentModal from '@/components/organisms/modals/TransactionHistoryContentModal'
+import MissingEmailModal from '@/components/organisms/modals/MissingEmailModal'
+import OptInModal from '@/components/organisms/modals/OptInModal'
+import OptOutModal from '@/components/organisms/modals/OptOutModal'
+import PendingDecisionModal from '@/components/organisms/modals/PendingDecisionsModal'
+import RequestDetailsModal from '@/components/organisms/modals/RequestDetailsModal'
 import UnlockModalWrapper from '@/components/organisms/modals/UnlockModal/UnlockModalWrapper'
+import UnreleasedFeatureModal from '@/components/organisms/modals/UnreleasedFeatureModal'
+import WIthdrawFundsAtExpiryModalWrapper from '@/components/organisms/modals/WithdrawFundsAtExpiryModal/WithdrawFundsAtExpiryModalWrapper'
 import WithdrawModalWrapper from '@/components/organisms/modals/WithdrawModal/WithdrawModalWrapper'
 
 import { Modals, ModalsKeys } from '@/context/modal/modal.types'
 
 import ConnectWalletModal from './ConnectWalletModal'
+import KycModalWrapper from './KycModal/KycModalWrapper'
 
 type ModalDetails = {
   component: JSX.Element
@@ -46,6 +55,10 @@ export const getModal = (
         ariaLabel: 'Loyalty Levels',
         ariaDescription: 'Information about loyalty levels',
       }
+    case ModalsKeys.MISSING_EMAIL:
+      return {
+        component: <MissingEmailModal handleClose={handleClose} />,
+      }
     case ModalsKeys.LOCK:
       return {
         component: <LockModalWrapper handleClose={handleClose} />,
@@ -58,13 +71,9 @@ export const getModal = (
       return {
         component: <WithdrawModalWrapper handleClose={handleClose} />,
       }
-    case ModalsKeys.DEPOSIT:
-      return {
-        component: <DepositModalWrapper handleClose={handleClose} />,
-      }
     case ModalsKeys.KYC:
       return {
-        component: <KycModal handleClose={handleClose} />,
+        component: <KycModalWrapper handleClose={handleClose} />,
       }
     case ModalsKeys.CANCEL_DEPOSIT:
       return {
@@ -74,21 +83,58 @@ export const getModal = (
       return {
         component: <CancelWithdrawalModal handleClose={handleClose} />,
       }
-    case ModalsKeys.EARNINGS_CALCULATOR:
+    case ModalsKeys.LEND:
       return {
-        component: <EarningsCalculatorModalWrapper handleClose={handleClose} />,
+        component: <LendingModalWrapper handleClose={handleClose} />,
       }
-    case ModalsKeys.TERMS_AND_CONDITIONS:
+    case ModalsKeys.LOAN_CONTRACT:
       return {
-        component: <TermsAndConditionsModal handleClose={handleClose} />,
-      }
-    case ModalsKeys.TRANSACTION_HISTORY_CONTENT:
-      return {
-        component: <TransactionHistoryContentModal handleClose={handleClose} />,
-        fullscreen: true,
+        component: <LoanContractModal handleClose={handleClose} />,
         sx: {
-          bgcolor: 'background.default',
+          overflow: 'hidden',
         },
+      }
+    case ModalsKeys.BORROWER_IDENTIFIED:
+      return {
+        component: <BorrowerIdentifiedModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.OPT_IN:
+      return {
+        component: <OptInModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.OPT_OUT:
+      return {
+        component: <OptOutModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.REQUEST_DETAILS:
+      return {
+        component: <RequestDetailsModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.PENDING_DECISIONS:
+      return {
+        component: <PendingDecisionModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.FIXED_LOAN:
+      return {
+        component: <FixedLoanModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.WITHDRAW_FUNDS_AT_EXPIRY:
+      return {
+        component: (
+          <WIthdrawFundsAtExpiryModalWrapper handleClose={handleClose} />
+        ),
+      }
+    case ModalsKeys.AUTO_CONVERSION_TO_VARIABLE:
+      return {
+        component: <AutoConversionToVariableModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.FIX_APY:
+      return {
+        component: <FixApyModalWrapper handleClose={handleClose} />,
+      }
+    case ModalsKeys.UNRELEASED_FEATURE:
+      return {
+        component: <UnreleasedFeatureModal handleClose={handleClose} />,
       }
   }
 }
