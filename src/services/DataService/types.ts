@@ -38,6 +38,7 @@ export interface PoolDelegateProfileAndHistory {
     otherKASUPools: {
         id: string;
         name: string;
+        isActive: boolean;
     }[];
     totalLoanFundsOriginated: number;
     totalLoansOriginated: number;

@@ -463,11 +463,12 @@ export class DataService {
                     ({ id }) => otherPool.PoolOverview_id === id,
                 );
 
-                if (!found || found.isStopped) continue;
+                if (!found) continue;
 
                 otherKASUPools.push({
                     id: found.id,
                     name: found.name,
+                    isActive: found.isStopped,
                 });
             }
 
