@@ -468,7 +468,7 @@ export class DataService {
                 otherKASUPools.push({
                     id: found.id,
                     name: found.name,
-                    isActive: found.isStopped,
+                    isActive: !found.isStopped,
                 });
             }
 
