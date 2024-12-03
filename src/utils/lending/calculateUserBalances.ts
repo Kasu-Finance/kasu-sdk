@@ -99,8 +99,9 @@ export const calculateUserLendingSummary = (
 
   const { totalWeightedApy, ...rest } = result
 
-  const averageApy =
-    totalWeightedApy / parseFloat(formatUnits(result.totalInvested))
+  const averageApy = result.totalInvested.isZero()
+    ? 0
+    : totalWeightedApy / parseFloat(formatUnits(result.totalInvested))
 
   return { ...rest, averageApy }
 }
