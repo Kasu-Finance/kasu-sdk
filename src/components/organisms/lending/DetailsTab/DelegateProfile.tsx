@@ -80,7 +80,10 @@ const DelegateProfile: React.FC<DelegateProfileProps> = ({ pool }) => {
                 pool.delegate.otherKASUPools.length ? (
                   <UnorderedList sx={{ fontSize: 12, pl: 2 }}>
                     {pool.delegate.otherKASUPools
-                      .filter((otherPool) => otherPool.id !== pool.id)
+                      .filter(
+                        (otherPool) =>
+                          otherPool.id !== pool.id && otherPool.isActive
+                      )
                       .map((otherPool) => (
                         <li key={otherPool.name}>
                           <NextLink

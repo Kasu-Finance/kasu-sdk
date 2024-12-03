@@ -16,12 +16,11 @@ export const getPoolWithDelegate = unstable_cache(
 
     const poolsWithDelegate = pools
       .filter((pool) => {
-        if (!pool.isActive && activePools) return false
-        if (pool.isActive && !activePools) return false
+        if (poolId) {
+          return pool.id === poolId
+        }
 
-        if (!poolId) return true
-
-        return pool.id === poolId
+        return activePools ? pool.isActive : !pool.isActive
       })
       .reduce((acc, cur) => {
         const delegate = poolDelegates.find((delegate) =>
