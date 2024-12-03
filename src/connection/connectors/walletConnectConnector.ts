@@ -3,6 +3,8 @@ import { WalletConnect as WalletConnectV2 } from '@web3-react/walletconnect-v2'
 
 import { WalletConnectIcon } from '@/assets/icons'
 
+import { NETWORK } from '@/config/sdk'
+
 import { SupportedChainIds } from '../chains'
 
 import { Connection, ConnectionType } from '@/types/connectors'
@@ -23,7 +25,11 @@ const [walletConnectV2, walletConnectV2hooks] =
         actions,
         options: {
           projectId: '5c42aeed3e2601d7df2464a8303b7d37',
-          chains: [SupportedChainIds.BASE_SEPOLIA],
+          chains: [
+            NETWORK === 'BASE'
+              ? SupportedChainIds.BASE
+              : SupportedChainIds.BASE_SEPOLIA,
+          ],
           showQrModal: true,
           qrModalOptions: {
             themeVariables: {
