@@ -18,7 +18,7 @@ const PortfolioUserTransactionsTableHeader = () => {
           ...customTypography.baseSm,
           lineHeight: '18px',
           verticalAlign: 'bottom',
-          px: 1.5,
+          px: 1,
         },
       }}
     >
