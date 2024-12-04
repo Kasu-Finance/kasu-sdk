@@ -4,10 +4,15 @@ import getTranslation from '@/hooks/useTranslation'
 
 import { Routes } from '@/config/routes'
 import { customPalette } from '@/themes/palette'
-import { DetailedTransaction } from '@/utils/lending/getDetailedTransactions'
+import {
+  DetailedTransaction,
+  DetailedTransactionReallocationRequest,
+} from '@/utils/lending/getDetailedTransactions'
 
 type DetailedTransactionRequestedTooltipProps = {
-  requestType: DetailedTransaction['requestType']
+  requestType:
+    | DetailedTransaction['requestType']
+    | DetailedTransactionReallocationRequest['requestType']
 }
 
 const DetailedTransactionRequestedTooltip: React.FC<

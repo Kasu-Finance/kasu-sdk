@@ -17,7 +17,10 @@ import {
 
 import { LoanTicketDto } from '@/config/api.lendersAgreement'
 import { LoanTicket, PendingDecision, PendingDecisionPool } from '@/utils'
-import { DetailedTransaction } from '@/utils/lending/getDetailedTransactions'
+import {
+  DetailedTransaction,
+  DetailedTransactionReallocationRequest,
+} from '@/utils/lending/getDetailedTransactions'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
@@ -93,7 +96,9 @@ export type Modals = {
     pools: PendingDecisionPool[]
   }>
   [ModalsKeys.REQUEST_DETAILS]: ModalData<{
-    detailedTransaction: DetailedTransaction
+    detailedTransaction:
+      | DetailedTransaction
+      | DetailedTransactionReallocationRequest
   }>
   [ModalsKeys.LOAN_CONTRACT]: ModalData<{
     acceptLoanContract?: (contractSignature: string) => void
