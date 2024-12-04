@@ -56,9 +56,13 @@ const PoolTableRow: React.FC<PoolTableRowProps> = ({ pool }) => {
               sx={{
                 width: 80,
                 height: 80,
-                objectFit: 'contain',
                 bgcolor: 'gray.extraDark',
                 textDecoration: 'none',
+
+                img: {
+                  width: 64,
+                  height: 64,
+                },
               }}
               component={Link}
               href={href}
