@@ -22,8 +22,11 @@ const WithdrawalStatusSummary = () => {
           tableSx={{ background: 'none' }}
           tableHeaderSx={{
             '& .MuiTableCell-root': {
-              px: 0,
               borderBottom: `1px solid ${customPalette.gray.extraDark}`,
+
+              '&:first-child': {
+                pl: 0,
+              },
             },
           }}
           tableBodySx={{
