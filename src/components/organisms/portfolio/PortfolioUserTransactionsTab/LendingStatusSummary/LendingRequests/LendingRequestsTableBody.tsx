@@ -5,6 +5,7 @@ import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
 import getTranslation from '@/hooks/useTranslation'
 
 import LendingStatusSummaryAcceptedTooltip from '@/components/molecules/tooltips/LendingStatusSummary/LendingStatusSummaryAcceptedTooltip'
+import LendingStatusSummaryCancelledTooltip from '@/components/molecules/tooltips/LendingStatusSummary/LendingStatusSummaryCancelledTooltip'
 import LendingStatusSummaryReallocationTooltip from '@/components/molecules/tooltips/LendingStatusSummary/LendingStatusSummaryReallocations'
 import LendingStatusSummaryRejectedTooltip from '@/components/molecules/tooltips/LendingStatusSummary/LendingStatusSummaryRejectedTooltip'
 import LendingStatusSummaryRequestedTooltip from '@/components/molecules/tooltips/LendingStatusSummary/LendingStatusSummaryRequestedTooltip'
@@ -70,7 +71,7 @@ const LendingRequestsTableBody = () => {
         title={t(
           'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-5'
         )}
-        tooltipInfo='info'
+        tooltipInfo={<LendingStatusSummaryCancelledTooltip />}
         currentEpochValue={`${formatAmount(currentEpochAmounts.cancelled, { minDecimals: 2 })} USDC`}
         totalLifetimeValue={`${formatAmount(lifetimeAmounts.cancelled, { minDecimals: 2 })} USDC`}
       />
