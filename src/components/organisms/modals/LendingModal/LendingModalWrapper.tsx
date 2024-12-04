@@ -46,6 +46,11 @@ const LendingModalWrapper: React.FC<DialogChildProps> = ({ handleClose }) => {
       defaultTrancheId={
         modal[ModalsKeys.LEND].pool.tranches[0].id as `0x${string}`
       }
+      initialFixedTermConfigId={
+        modal[ModalsKeys.LEND].pool.tranches[0].fixedTermConfig.length
+          ? undefined
+          : '0'
+      }
     >
       <ModalStatusState>
         <StepperState steps={3}>

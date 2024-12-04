@@ -25,7 +25,10 @@ export type DepositModalActions =
     }
   | {
       type: DepositModalActionType.SET_SELECTED_TRANCHE
-      payload: `0x${string}`
+      payload: {
+        trancheId: `0x${string}`
+        defaultFixedTermConfigId: string | undefined
+      }
     }
   | {
       type: DepositModalActionType.SET_TX_HASH
@@ -77,7 +80,10 @@ export type DepositModalStateType = {
 export type DepositModalFunctions = {
   setAmount: (amount: string) => void
   setAmountInUSD: (amountInUSD: string | undefined) => void
-  setSelectedTranche: (selectedTranche: `0x${string}`) => void
+  setSelectedTranche: (
+    selectedTranche: `0x${string}`,
+    defaultFixedTermConfigId: string | undefined
+  ) => void
   setFixedTermConfigId: (fixedTermConfigId: string) => void
   setTxHash: (txHash: string) => void
   setSimulatedDuration: (simulatedDuration: number) => void
