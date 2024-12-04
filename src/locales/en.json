@@ -1407,7 +1407,7 @@
         }
       },
       "transactionsHistory": {
-        "title": "My Transactions",
+        "title": "Your Transactions",
         "tooltip": "The status of your lending requests and lending withdrawal requests to and from this Lending Strategy.",
         "reallocated": {
           "label": "Reallocated",
@@ -1826,7 +1826,10 @@
     "activePools": {
       "table": {
         "lossRate": "Loss Rate",
-        "loanFunds": "Total Loan Funds",
+        "loanFunds": {
+          "part-1": "Total Loan",
+          "part-2": "Funds Originated"
+        },
         "loansUnder": "Loans Under Management"
       }
     },

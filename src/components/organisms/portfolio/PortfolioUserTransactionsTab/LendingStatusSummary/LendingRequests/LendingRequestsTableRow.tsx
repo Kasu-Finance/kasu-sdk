@@ -25,12 +25,19 @@ const LendingRequestsTableRow: React.FC<LendingRequestsTableRowProps> = ({
         sx={{
           '.MuiTableCell-root': {
             bgcolor: variant === 'primary' ? 'gray.extraLight' : undefined,
+            '&:first-child': {
+              pl: variant === 'primary' ? 4 : 2,
+            },
           },
         }}
       >
         <TableCell>
           <Box display='flex' alignItems='center'>
-            {title}
+            <Typography
+              variant={variant === 'primary' ? 'baseMd' : 'baseMdBold'}
+            >
+              {title}
+            </Typography>
             <ToolTip title={tooltipInfo} />
           </Box>
         </TableCell>

@@ -33,10 +33,16 @@ const useDepositModalActions = (
           type: DepositModalActionType.SET_FIXED_TERM_CONFIG_ID,
           payload: fixedTermConfigId,
         }),
-      setSelectedTranche: (selectedTranche: `0x${string}`) =>
+      setSelectedTranche: (
+        selectedTranche: `0x${string}`,
+        defaultFixedTermConfigId: string | undefined
+      ) =>
         dispatch({
           type: DepositModalActionType.SET_SELECTED_TRANCHE,
-          payload: selectedTranche,
+          payload: {
+            trancheId: selectedTranche,
+            defaultFixedTermConfigId,
+          },
         }),
       setSimulatedDuration: (simulatedDuration: number) =>
         dispatch({

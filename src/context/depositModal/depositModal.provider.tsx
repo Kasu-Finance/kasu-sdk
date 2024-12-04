@@ -12,6 +12,7 @@ import { SupportedTokens } from '@/constants/tokens'
 type DepositModalStateProps = {
   children: ReactNode
   defaultTrancheId: `0x${string}`
+  initialFixedTermConfigId?: string
   initialAmount?: string
   initialUsdAmount?: string
   initialTranche?: `0x${string}`
@@ -39,6 +40,7 @@ const DepositModalState: React.FC<DepositModalStateProps> = ({
   initialUsdAmount,
   initialTranche,
   initialToken,
+  initialFixedTermConfigId,
 }) => {
   const [state, dispatch] = useReducer(depositModalReducer, {
     ...initialState,
@@ -46,6 +48,7 @@ const DepositModalState: React.FC<DepositModalStateProps> = ({
     amount: initialAmount ?? '',
     amountInUSD: initialUsdAmount ?? '',
     selectedToken: initialToken ?? SupportedTokens.USDC,
+    fixedTermConfigId: initialFixedTermConfigId ?? undefined,
   })
 
   const depositModalActions = useDepositModalActions(dispatch)

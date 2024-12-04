@@ -25,9 +25,8 @@ const ImportantInformation = () => {
             style={{ font: 'inherit', color: customPalette.gold.dark }}
           >
             {t('general.userDocs')}
-          </NextLink>{' '}
-          {t('general.and')}{' '} */}
-          <LoanContractButton />.
+            </NextLink>{' '} */}
+          {t('general.userDocs')} {t('general.and')} <LoanContractButton />.
         </Typography>
         <Typography variant='baseMdBold'>
           {t('modals.termsAndConditions.subheader-1.description-3')}

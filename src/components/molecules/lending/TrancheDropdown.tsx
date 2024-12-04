@@ -8,7 +8,10 @@ import CustomSelect from '@/components/atoms/CustomSelect'
 type TrancheDropdownProps = {
   tranches: TrancheData[]
   selectedTranche: `0x${string}`
-  setSelectedTranche: (selectedTranche: `0x${string}`) => void
+  setSelectedTranche: (
+    selectedTranche: `0x${string}`,
+    defaultFixedTermConfigId: string | undefined
+  ) => void
 }
 
 const TrancheDropdown: React.FC<TrancheDropdownProps> = ({
@@ -24,7 +27,13 @@ const TrancheDropdown: React.FC<TrancheDropdownProps> = ({
 
   const handleChange = (e: SelectChangeEvent) => {
     const trancheValue = e.target.value
-    setSelectedTranche(trancheValue as `0x${string}`)
+
+    const tranche = tranches.find((tranche) => tranche.id === trancheValue)
+
+    setSelectedTranche(
+      trancheValue as `0x${string}`,
+      tranche?.fixedTermConfig.length ? undefined : '0'
+    )
   }
 
   return (
