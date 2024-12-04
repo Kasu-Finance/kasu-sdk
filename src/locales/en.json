@@ -1826,7 +1826,10 @@
     "activePools": {
       "table": {
         "lossRate": "Loss Rate",
-        "loanFunds": "Total Loan Funds",
+        "loanFunds": {
+          "part-1": "Total Loan",
+          "part-2": "Funds Originated"
+        },
         "loansUnder": "Loans Under Management"
       }
     },
