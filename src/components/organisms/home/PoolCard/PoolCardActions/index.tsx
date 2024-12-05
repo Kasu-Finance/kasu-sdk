@@ -28,7 +28,6 @@ const PoolCardActions: React.FC<PoolCardActionsProps> = ({
         bgcolor: 'white',
         width: '100%',
         justifyContent: 'center',
-        mt: 'auto',
         px: 2,
         pt: 0,
         pb: 2,

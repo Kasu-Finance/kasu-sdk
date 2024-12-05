@@ -5,18 +5,15 @@ const apiClient = createSdk({
   apiKey: process.env.NEXERA_API_KEY || '',
 })
 
-const KYC_WORKFLOW = 'c8493d6c-48e5-4884-b87e-c3eaf371d314'
-const KYB_WORKFLOW = 'e73e3fc4-1396-4267-87e9-6f828f87c2aa'
+const EMAIL_WORKFLOW = 'a95f52b0-7017-4745-ab92-4106b8e89e33'
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
 
-    const { isIndividual, ...args } = body
-
     const sessionRes = await apiClient.createWeb3Challenge({
-      workflowId: isIndividual ? KYC_WORKFLOW : KYB_WORKFLOW,
-      ...args,
+      workflowId: EMAIL_WORKFLOW,
+      ...body,
     })
 
     return NextResponse.json(sessionRes, { status: 200 })
