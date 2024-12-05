@@ -66,7 +66,9 @@ export type ModalData<T = void> = T extends void ? ModalBase : T & ModalBase
 export type Modals = {
   [ModalsKeys.LOYALTY_LEVELS]: ModalData
   [ModalsKeys.UNRELEASED_FEATURE]: ModalData
-  [ModalsKeys.MISSING_EMAIL]: ModalData
+  [ModalsKeys.MISSING_EMAIL]: ModalData<{
+    callback: () => void
+  }>
   [ModalsKeys.WITHDRAW_FUNDS_AT_EXPIRY]: ModalData<{
     pool: PortfolioLendingPool
     fixedLoans: PortfolioTranche['fixedLoans']
