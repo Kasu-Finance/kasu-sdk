@@ -28,7 +28,7 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
   const isActivePool = pool.isActive
 
   return (
-    <WaveBox width='100%'>
+    <WaveBox width='100%' height='100%' display='flex' flexDirection='column'>
       <Box
         display='flex'
         justifyContent='space-around'
@@ -56,7 +56,7 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
           </Stack>
         ))}
       </Box>
-      <CustomCardContentInner>
+      <CustomCardContentInner display='flex' flexDirection='column' flex={1}>
         {!isActivePool && (
           <InfoRow
             title={t('general.tvl')}
@@ -138,7 +138,9 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
           toolTipInfo={t('details.poolDetails.assetClass.tooltip')}
           showDivider
           metric={
-            <Typography variant='baseMdBold'>{pool.assetClass}</Typography>
+            <Typography height={63} variant='baseMdBold'>
+              {pool.assetClass}
+            </Typography>
           }
           sx={{ flexDirection: 'column' }}
         />
@@ -147,6 +149,11 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
             title={t('lending.poolOverview.detailCard.security.label')}
             titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
             toolTipInfo={t('lending.poolOverview.detailCard.security.tooltip')}
+            dividerProps={{
+              style: {
+                marginTop: 'auto',
+              },
+            }}
             showDivider
             metric={
               <UnorderedList sx={{ ...customTypography.baseMdBold, pl: 2 }}>
@@ -155,7 +162,11 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
                 ))}
               </UnorderedList>
             }
-            sx={{ flexDirection: 'column' }}
+            sx={{
+              flexDirection: 'column',
+              height: '100%',
+              justifyContent: 'unset',
+            }}
           />
         )}
       </CustomCardContentInner>
