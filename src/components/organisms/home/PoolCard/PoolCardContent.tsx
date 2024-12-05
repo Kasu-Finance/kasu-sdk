@@ -35,7 +35,7 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
         alignItems='center'
         my={3}
       >
-        {pool.tranches.map(({ name, minApy, maxApy }) => (
+        {pool.tranches.toReversed().map(({ name, minApy, maxApy }) => (
           <Stack key={name} alignItems='center' spacing={0.5}>
             <Typography
               variant='baseSmBold'

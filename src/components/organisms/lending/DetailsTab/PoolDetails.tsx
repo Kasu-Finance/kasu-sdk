@@ -28,7 +28,7 @@ const PoolDetails: React.FC<PoolDetailsProps> = ({ pool }) => {
       <CustomCardHeader title={t('details.poolDetails.title')} />
       <CustomInnerCardContent sx={{ py: 3 }}>
         <Grid container columnSpacing={4}>
-          {pool.tranches.map((tranche) => (
+          {pool.tranches.toReversed().map((tranche) => (
             <Grid item flex={1} key={tranche.name}>
               <Typography variant='h5' textTransform='capitalize'>
                 {isMultiTranche

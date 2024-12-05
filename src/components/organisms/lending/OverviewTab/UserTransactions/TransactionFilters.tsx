@@ -30,9 +30,9 @@ export const TransactionType = {
 
 export const TransactionTranches = {
   ALL: 'All Tranches',
-  JUNIOR: 'Junior',
-  MEZZANINE: 'Mezzanine',
   SENIOR: 'Senior',
+  MEZZANINE: 'Mezzanine',
+  JUNIOR: 'Junior',
 } as const
 
 export const TranasctionDecisions = {

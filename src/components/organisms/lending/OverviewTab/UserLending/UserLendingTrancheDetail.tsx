@@ -24,14 +24,14 @@ const UserLendingTrancheDetail: React.FC<UserLendingTrancheDetailProps> = ({
 
   const { userLendingTrancheBalance, isLoading } = useUserLendingTrancheBalance(
     pool.id,
-    pool.tranches
+    pool.tranches.toReversed()
   )
 
   if (isLoading) {
     return <UserLendingTrancheDetailSkeleton />
   }
 
-  const dataWithFallback = pool.tranches.map((tranche) => ({
+  const dataWithFallback = pool.tranches.toReversed().map((tranche) => ({
     ...tranche,
     balanceData: {
       address: tranche.id,
