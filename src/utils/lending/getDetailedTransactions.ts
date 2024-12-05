@@ -39,6 +39,7 @@ type DetailTransactionDepositRequest = {
   reallocatedOutAmount: string
   canCancel: boolean
   nftId: string
+  reallocatedEvents: DetailedTransactionReallocationRequest[]
 }
 
 type DetailTransactionWithdrawalRequest = {
@@ -48,7 +49,7 @@ type DetailTransactionWithdrawalRequest = {
   queuedAmount: string
 }
 
-type DetailedTransactionReallocationRequest = {
+export type DetailedTransactionReallocationRequest = DetailedTransactionBase & {
   requestType: 'Reallocation'
   reallocatedInAmount: string
 }
@@ -62,7 +63,6 @@ export type DetailedTransaction = DetailedTransactionBase &
   (
     | CancellableRequest<DetailTransactionDepositRequest>
     | CancellableRequest<DetailTransactionWithdrawalRequest>
-    | DetailedTransactionReallocationRequest
     | DetailedTransactionFundsReturned
   )
 
@@ -76,6 +76,19 @@ const getDetailedTransactions = (
   const addedFundsReturned: string[] = []
 
   const trancheMap = mapLoanTicketsTranche(loanTickets)
+
+  const pendingDecisionMap = new Map<string, LoanTicket[]>()
+  const subsequentTransactionMap = new Map<string, LoanTicket[]>()
+
+  for (const [trancheId, loanTicketGroups] of trancheMap.entries()) {
+    const { loanTickets } = getPendingDecisions(loanTicketGroups)
+
+    pendingDecisionMap.set(trancheId, loanTickets)
+
+    const subsequentTransactions = getSubsequentTransactions(loanTicketGroups)
+
+    subsequentTransactionMap.set(trancheId, subsequentTransactions)
+  }
 
   for (const transaction of transactionHistory) {
     const transactions: DetailedTransaction[] = []
@@ -111,6 +124,7 @@ const getDetailedTransactions = (
         reallocatedOutAmount: '0',
         canCancel: transaction.canCancel,
         nftId: transaction.nftId,
+        reallocatedEvents: [],
       }
     } else {
       detailedTransaction = {
@@ -131,18 +145,20 @@ const getDetailedTransactions = (
       }
     }
 
-    const loanTicketGroups = trancheMap.get(transaction.trancheId.toLowerCase())
+    const trancheId = transaction.trancheId.toLowerCase()
 
-    if (loanTicketGroups) {
-      const { loanTickets } = getPendingDecisions(loanTicketGroups)
+    const pendingDecisions = pendingDecisionMap.get(trancheId)
 
-      detailedTransaction.pendingDecisions = loanTickets
+    if (pendingDecisions) {
+      detailedTransaction.pendingDecisions = pendingDecisions
+    }
 
-      const subsequentTransactions = getSubsequentTransactions(loanTicketGroups)
+    const subsequentTransactions = subsequentTransactionMap.get(trancheId)
 
+    if (subsequentTransactions) {
       detailedTransaction.subsequentTransactions = [
         ...subsequentTransactions,
-        ...loanTickets, // add pending decisions to last
+        ...(pendingDecisions ?? []), // add pending decisions to last
       ].sort((a, b) => a.createdOn - b.createdOn)
     }
 
@@ -163,12 +179,25 @@ const getDetailedTransactions = (
         parseFloat(event.totalAccepted)
       ).toString()
 
-      transactions.push({
+      const reallocatedTrancheId = event.trancheId.toLowerCase()
+
+      const pendingDecisions = pendingDecisionMap.get(reallocatedTrancheId)
+      const subsequentTransactions =
+        subsequentTransactionMap.get(reallocatedTrancheId)
+
+      detailedTransaction.reallocatedEvents.push({
         ...detailedTransactionBase,
         requestType: 'Reallocation',
+        id: `${transaction.id}-${event.id}`,
+        timestamp: event.timestamp,
         reallocatedInAmount: event.totalAccepted,
         trancheName: event.trancheName,
         trancheId: event.trancheId,
+        pendingDecisions: pendingDecisions ?? [],
+        subsequentTransactions: [
+          ...(subsequentTransactions ?? []),
+          ...(pendingDecisions ?? []), // add pending decisions to last
+        ].sort((a, b) => a.createdOn - b.createdOn),
       })
     }
 

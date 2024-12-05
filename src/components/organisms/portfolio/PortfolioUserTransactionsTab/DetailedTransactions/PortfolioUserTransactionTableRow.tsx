@@ -6,6 +6,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material'
+import { Fragment } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import getTranslation from '@/hooks/useTranslation'
@@ -26,7 +27,10 @@ import { OptInOutIcon, PaperIcon } from '@/assets/icons'
 import { customPalette } from '@/themes/palette'
 import { customTypography } from '@/themes/typography'
 import { capitalize, formatAmount, formatTimestamp } from '@/utils'
-import { DetailedTransaction } from '@/utils/lending/getDetailedTransactions'
+import {
+  DetailedTransaction,
+  DetailedTransactionReallocationRequest,
+} from '@/utils/lending/getDetailedTransactions'
 
 type PortfolioUserTransactionTableRowProps = {
   transaction: DetailedTransaction
@@ -43,40 +47,48 @@ const PortfolioUserTransactionTableRow: React.FC<
     format: 'DD.MM.YYYY',
   })
 
-  const handlePendingDecisionClick = () =>
+  const handlePendingDecisionClick = (
+    detailedTransaction:
+      | DetailedTransaction
+      | DetailedTransactionReallocationRequest
+  ) =>
     openModal({
       name: ModalsKeys.PENDING_DECISIONS,
       pendingDecisions: [
         {
-          id: transaction.lendingPool.id,
-          poolName: transaction.lendingPool.name,
+          id: detailedTransaction.lendingPool.id,
+          poolName: detailedTransaction.lendingPool.name,
           tranches: [
             {
-              id: transaction.trancheId,
-              name: transaction.trancheName,
-              tickets: transaction.pendingDecisions,
+              id: detailedTransaction.trancheId,
+              name: detailedTransaction.trancheName,
+              tickets: detailedTransaction.pendingDecisions,
             },
           ],
         },
       ],
       pools: [
         {
-          id: transaction.lendingPool.id,
-          poolName: transaction.lendingPool.name,
+          id: detailedTransaction.lendingPool.id,
+          poolName: detailedTransaction.lendingPool.name,
           tranches: [
             {
-              id: transaction.trancheId,
-              name: transaction.trancheName,
+              id: detailedTransaction.trancheId,
+              name: detailedTransaction.trancheName,
             },
           ],
         },
       ],
     })
 
-  const handleDetailsClick = () =>
+  const handleDetailsClick = (
+    detailedTransaction:
+      | DetailedTransaction
+      | DetailedTransactionReallocationRequest
+  ) =>
     openModal({
       name: ModalsKeys.REQUEST_DETAILS,
-      detailedTransaction: transaction,
+      detailedTransaction,
     })
 
   return (
@@ -99,20 +111,9 @@ const PortfolioUserTransactionTableRow: React.FC<
             t('portfolio.transactions.detailedTransactions.lendingRequest')
           ) : transaction.requestType === 'Withdrawal' ? (
             t('portfolio.transactions.detailedTransactions.withdrawalRequest')
-          ) : transaction.requestType === 'Funds Returned' ? (
-            <Box display='flex' alignItems='center'>
-              {t('general.fundsReturned')}
-              <ToolTip
-                title={
-                  <DetailedTransactionRequestedTooltip
-                    requestType={transaction.requestType}
-                  />
-                }
-              />
-            </Box>
           ) : (
             <Box display='flex' alignItems='center'>
-              {t('portfolio.transactions.detailedTransactions.reallocation')}
+              {t('general.fundsReturned')}
               <ToolTip
                 title={
                   <DetailedTransactionRequestedTooltip
@@ -232,27 +233,6 @@ const PortfolioUserTransactionTableRow: React.FC<
                   </Box>
                 </>
               )}
-              {transaction.requestType === 'Reallocation' && (
-                <Box display='flex' justifyContent='space-between'>
-                  <Typography
-                    variant='inherit'
-                    component={Box}
-                    display='flex'
-                    alignItems='center'
-                  >
-                    {t('general.reallocatedIn')}{' '}
-                    <ToolTip
-                      title={<DetailedTransactionReallocationInTooltip />}
-                    />
-                  </Typography>
-                  <Typography variant='inherit'>
-                    {formatAmount(transaction.reallocatedInAmount, {
-                      minDecimals: 2,
-                    })}{' '}
-                    USDC
-                  </Typography>
-                </Box>
-              )}
               {transaction.requestType === 'Funds Returned' && (
                 <Box display='flex' justifyContent='space-between'>
                   <Typography
@@ -312,7 +292,7 @@ const PortfolioUserTransactionTableRow: React.FC<
                 },
               }}
               startIcon={<OptInOutIcon />}
-              onClick={handlePendingDecisionClick}
+              onClick={() => handlePendingDecisionClick(transaction)}
             >
               {t('general.optInOut')}
             </Button>
@@ -336,7 +316,7 @@ const PortfolioUserTransactionTableRow: React.FC<
                 },
               }}
               startIcon={<PaperIcon />}
-              onClick={() => handleDetailsClick()}
+              onClick={() => handleDetailsClick(transaction)}
             >
               {t(
                 'portfolio.transactions.detailedTransactions.actions.seeDetails'
@@ -345,8 +325,192 @@ const PortfolioUserTransactionTableRow: React.FC<
           )}
         </TableCell>
       </TableRow>
+      {transaction.requestType === 'Deposit' &&
+      transaction.reallocatedEvents.length
+        ? transaction.reallocatedEvents.map((reallocatedTransaction) => (
+            <Fragment key={reallocatedTransaction.id}>
+              <TableRow>
+                <TableCell
+                  sx={{
+                    py: 0,
+                    zIndex: 2,
+                  }}
+                  colSpan={7}
+                >
+                  <Box
+                    sx={{
+                      position: 'relative',
+                      borderBottom: '2px solid white !important',
+                      zIndex: 2,
+
+                      '&::before': {
+                        zIndex: 2,
+                        width: 16,
+                        height: 16,
+                        content: '""',
+                        position: 'absolute',
+                        left: '50%',
+                        transform: 'translate(-50%, -8px) rotate(45deg)',
+                        bgcolor: 'gray.extraLight',
+                        borderTop: '2px solid white',
+                        borderLeft: '2px solid white',
+                        borderTopLeftRadius: 2,
+                      },
+                    }}
+                  />
+                </TableCell>
+              </TableRow>
+              <TableRow
+                sx={{
+                  '.MuiTableCell-root': {
+                    ...customTypography.baseSm,
+                    lineHeight: '18px',
+                    verticalAlign: 'top',
+                    px: 1,
+                    whiteSpace: 'normal',
+                    position: 'relative',
+                    zIndex: 1,
+
+                    '&:first-of-type::before': {
+                      width: 'calc(100% - 12px)',
+                      left: 12,
+                    },
+                    '&:last-of-type::before': {
+                      width: 'calc(100% - 12px)',
+                      left: 'unset',
+                      right: 12,
+                    },
+
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      bgcolor: 'gray.extraLight',
+                    },
+                  },
+                }}
+              >
+                <TableCell />
+                <TableCell>
+                  <Typography variant='inherit' position='relative'>
+                    {reallocatedTransaction.trancheName}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Box position='relative' display='flex' alignItems='center'>
+                    {t(
+                      'portfolio.transactions.detailedTransactions.reallocation'
+                    )}
+                    <ToolTip
+                      title={
+                        <DetailedTransactionRequestedTooltip
+                          requestType={reallocatedTransaction.requestType}
+                        />
+                      }
+                    />
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Typography variant='inherit' position='relative'>
+                    {
+                      formatTimestamp(reallocatedTransaction.timestamp, {
+                        format: 'DD.MM.YYYY',
+                      }).date
+                    }
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Box
+                    display='flex'
+                    justifyContent='space-between'
+                    position='relative'
+                  >
+                    <Typography
+                      variant='inherit'
+                      component={Box}
+                      display='flex'
+                      alignItems='center'
+                    >
+                      {t('general.reallocatedIn')}{' '}
+                      <ToolTip
+                        title={<DetailedTransactionReallocationInTooltip />}
+                      />
+                    </Typography>
+                    <Typography variant='inherit'>
+                      {formatAmount(
+                        reallocatedTransaction.reallocatedInAmount,
+                        {
+                          minDecimals: 2,
+                        }
+                      )}{' '}
+                      USDC
+                    </Typography>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  {reallocatedTransaction.pendingDecisions.length ? (
+                    <Button
+                      variant='text'
+                      sx={{
+                        ...customTypography.baseSm,
+                        color: 'gold.dark',
+                        textTransform: 'capitalize',
+                        height: 21,
+                        position: 'relative',
+                        '.MuiButton-startIcon path': {
+                          fill: customPalette.gold.dark,
+                        },
+                      }}
+                      startIcon={<OptInOutIcon />}
+                      onClick={() =>
+                        handlePendingDecisionClick(reallocatedTransaction)
+                      }
+                    >
+                      {t('general.optInOut')}
+                    </Button>
+                  ) : (
+                    <Typography variant='inherit' position='relative'>
+                      N/A
+                    </Typography>
+                  )}
+                </TableCell>
+                <TableCell>
+                  {reallocatedTransaction.latestEvent.requestType ===
+                  'Cancelled' ? (
+                    <Typography variant='inherit' position='relative'>
+                      N/A
+                    </Typography>
+                  ) : (
+                    <Button
+                      variant='text'
+                      sx={{
+                        ...customTypography.baseSm,
+                        color: 'gold.dark',
+                        textTransform: 'capitalize',
+                        height: 21,
+                        position: 'relative',
+                        '.MuiButton-startIcon path': {
+                          fill: customPalette.gold.dark,
+                        },
+                      }}
+                      startIcon={<PaperIcon />}
+                      onClick={() => handleDetailsClick(reallocatedTransaction)}
+                    >
+                      {t(
+                        'portfolio.transactions.detailedTransactions.actions.seeDetails'
+                      )}
+                    </Button>
+                  )}
+                </TableCell>
+              </TableRow>
+            </Fragment>
+          ))
+        : null}
       <TableRow>
-        <TableCell sx={{ py: 0 }} colSpan={7}>
+        <TableCell sx={{ py: 0, px: 1.5 }} colSpan={7}>
           <DottedDivider />
         </TableCell>
       </TableRow>

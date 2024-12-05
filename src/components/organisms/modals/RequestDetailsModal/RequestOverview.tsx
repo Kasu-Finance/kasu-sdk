@@ -6,10 +6,13 @@ import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
 
 import { formatAmount, formatTimestamp } from '@/utils'
-import { DetailedTransaction } from '@/utils/lending/getDetailedTransactions'
+import {
+  DetailedTransaction,
+  DetailedTransactionReallocationRequest,
+} from '@/utils/lending/getDetailedTransactions'
 
 type RequestOverviewProps = {
-  transaction: DetailedTransaction
+  transaction: DetailedTransaction | DetailedTransactionReallocationRequest
   isCancellable: boolean
 }
 

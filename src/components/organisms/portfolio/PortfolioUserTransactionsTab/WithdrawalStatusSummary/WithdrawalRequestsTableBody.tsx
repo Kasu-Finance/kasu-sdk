@@ -5,6 +5,7 @@ import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
 import getTranslation from '@/hooks/useTranslation'
 
 import WithdrawalStatusSummaryAcceptedTooltip from '@/components/molecules/tooltips/WithdrawalStatusSummary/WithdrawalStatusSummaryAcceptedTooltip'
+import WithdrawalStatusSummaryCancelledTooltip from '@/components/molecules/tooltips/WithdrawalStatusSummary/WithdrawalStatusSummaryCancelledTooltip'
 import WithdrawalStatusSummaryQueuedTooltip from '@/components/molecules/tooltips/WithdrawalStatusSummary/WithdrawalStatusSummaryQueuedTooltip'
 import WithdrawalStatusSummaryRequestedTooltip from '@/components/molecules/tooltips/WithdrawalStatusSummary/WithdrawalStatusSummaryRequestedTooltip'
 import WithdrawalRequestsTableRow from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/WithdrawalStatusSummary/WithdrawalRequestsTableRow'
@@ -61,7 +62,7 @@ const WithdrawalRequestsTableBody = () => {
         title={t(
           'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-4'
         )}
-        tooltipInfo='info'
+        tooltipInfo={<WithdrawalStatusSummaryCancelledTooltip />}
         currentEpochValue={`${formatAmount(currentEpochAmounts.cancelled, { minDecimals: 2 })} USDC`}
         totalLifetimeValue={`${formatAmount(lifetimeAmounts.cancelled, { minDecimals: 2 })} USDC`}
       />

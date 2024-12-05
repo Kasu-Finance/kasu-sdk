@@ -28,8 +28,8 @@ const depositModalReducer = (
     case DepositModalActionType.SET_SELECTED_TRANCHE:
       return {
         ...state,
-        trancheId: action.payload,
-        fixedTermConfigId: undefined,
+        trancheId: action.payload.trancheId,
+        fixedTermConfigId: action.payload.defaultFixedTermConfigId,
       }
     case DepositModalActionType.SET_TX_HASH:
       return {

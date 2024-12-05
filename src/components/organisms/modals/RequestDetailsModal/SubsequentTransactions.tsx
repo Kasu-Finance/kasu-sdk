@@ -29,12 +29,15 @@ import {
   LoanTicket,
   mapLoanTicketsTranche,
 } from '@/utils'
-import { DetailedTransaction } from '@/utils/lending/getDetailedTransactions'
+import {
+  DetailedTransaction,
+  DetailedTransactionReallocationRequest,
+} from '@/utils/lending/getDetailedTransactions'
 import getPendingDecisions from '@/utils/lending/getPendingDecisions'
 import getSubsequentTransactions from '@/utils/lending/getSubsequentTransactions'
 
 type SubsequentTransactionsProps = {
-  transaction: DetailedTransaction
+  transaction: DetailedTransaction | DetailedTransactionReallocationRequest
   poolName: string
 }
 

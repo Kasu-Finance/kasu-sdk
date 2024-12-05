@@ -2,6 +2,7 @@ import { TableRow } from '@mui/material'
 
 import getTranslation from '@/hooks/useTranslation'
 
+import GrossApyTooltip from '@/components/molecules/tooltips/GrossApyTooltip'
 import PoolTableHeaderCell from '@/components/organisms/home/PoolTable/PoolTableHeaderCell'
 
 const ActivePoolTableHeader = () => {
@@ -9,17 +10,26 @@ const ActivePoolTableHeader = () => {
 
   return (
     <TableRow>
-      <PoolTableHeaderCell label={t('general.lendingStrategy')} width='33%' />
-      <PoolTableHeaderCell label={t('general.apy')} width='12%' />
+      <PoolTableHeaderCell label={t('general.lendingStrategy')} width='30%' />
       <PoolTableHeaderCell
-        label={t('home.activePools.table.loanFunds')}
+        label={t('general.grossApy')}
+        toolTip={<GrossApyTooltip />}
+        width='12%'
+      />
+      <PoolTableHeaderCell
+        label={
+          <>
+            {t('home.activePools.table.loanFunds.part-1')} <br />
+            {t('home.activePools.table.loanFunds.part-2')}
+          </>
+        }
         toolTip={t('details.poolDelegate.totalFunds.tooltip')}
-        width='13%'
+        width='14%'
       />
       <PoolTableHeaderCell
         label={t('details.poolDelegate.history.label')}
         toolTip={t('details.poolDelegate.history.tooltip')}
-        width='12%'
+        width='14%'
       />
       <PoolTableHeaderCell
         label={t('home.activePools.table.lossRate')}

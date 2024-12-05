@@ -9,7 +9,7 @@ const ClosedPoolTableHeader = () => {
 
   return (
     <TableRow>
-      <PoolTableHeaderCell label={t('general.lendingStrategy')} width='42%' />
+      <PoolTableHeaderCell label={t('general.lendingStrategy')} width='40%' />
       <PoolTableHeaderCell label={t('general.apy')} width='12%' />
       <PoolTableHeaderCell
         label={t('home.activePools.table.loansUnder')}
@@ -17,7 +17,13 @@ const ClosedPoolTableHeader = () => {
         width='18%'
       />
       <PoolTableHeaderCell
-        label={t('home.activePools.table.loanFunds')}
+        label={
+          <>
+            {t('home.activePools.table.loanFunds.part-1')}
+            <br />
+            {t('home.activePools.table.loanFunds.part-2')}
+          </>
+        }
         toolTip={t('details.poolDelegate.totalFunds.tooltip')}
         width='18%'
       />
@@ -25,7 +31,7 @@ const ClosedPoolTableHeader = () => {
       <PoolTableHeaderCell
         label={t('home.activePools.table.lossRate')}
         toolTip={t('details.poolDelegate.totalLossRate.tooltip')}
-        width='10%'
+        width='12%'
       />
     </TableRow>
   )

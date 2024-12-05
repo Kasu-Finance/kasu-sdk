@@ -1,4 +1,7 @@
-import { DetailedTransaction } from '@/utils/lending/getDetailedTransactions'
+import {
+  DetailedTransaction,
+  DetailedTransactionReallocationRequest,
+} from '@/utils/lending/getDetailedTransactions'
 import TimeConversions from '@/utils/timeConversions'
 
 type Amounts = {
@@ -18,7 +21,10 @@ const initialState: Amounts = {
 }
 
 const calculateLendingStatusSummary = (
-  detailedTransactions: DetailedTransaction[],
+  detailedTransactions: (
+    | DetailedTransaction
+    | DetailedTransactionReallocationRequest
+  )[],
   nextEpochTime: number
 ) => {
   const currentEpochAmounts: Amounts = { ...initialState }
