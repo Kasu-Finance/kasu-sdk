@@ -36,16 +36,8 @@ const UserLoyalty: React.FC<UserLoyaltyProps> = async ({
     <CustomCard>
       <CustomCardHeader title={t('lending.poolOverview.lockingStatus.title')} />
       <WaveBox borderRadius={2}>
-        <Box px={2} py={3}>
-          <Typography variant='h4'>
-            {t('lending.poolOverview.lockingStatus.subtitle')}
-          </Typography>
-        </Box>
         <CustomInnerCardContent sx={{ py: 3, px: 0 }}>
           <Grid2 container spacing={4} mb={7} px={2} alignItems='end'>
-            {/* <Grid2 flex={1} alignSelf='start'>
-              <CurrentLoyaltyDescription />
-            </Grid2> */}
             <Grid2 px={1}>
               <Image src={CrownedCat} alt='Crowned Cat' />
               <UserLoyaltyLevel />
