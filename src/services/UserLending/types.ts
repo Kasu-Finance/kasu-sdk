@@ -47,6 +47,15 @@ export interface UserRequest {
     canCancel: boolean;
     events: UserRequestEvent[];
     nftId: string;
+    apy: string;
+    fixedTermConfig:
+        | {
+              configId: string;
+              apy: string;
+              epochLockDuration: string;
+              epochInterestRate: string;
+          }
+        | undefined;
 }
 
 export interface UserRequestEvent {

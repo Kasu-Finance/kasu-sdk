@@ -1,3 +1,8 @@
+import {
+    TrancheConfigurationSubgraph,
+    TrancheInterestRateUpdateSubgraph,
+} from '../DataService/subgraph-types';
+
 export interface UserRequestsSubgraph {
     userRequests: {
         id: string;
@@ -16,10 +21,21 @@ export interface UserRequestsSubgraph {
                 orderId: string;
                 shares: string;
             }[];
+            configuration: {
+                tranchesConfig: {
+                    id: string;
+                    interestRate: string;
+                    lendingPoolTrancheInterestRateUpdates: TrancheInterestRateUpdateSubgraph[];
+                    lendingPoolTrancheFixedTermConfigs: TrancheConfigurationSubgraph['lendingPoolTrancheFixedTermConfigs'];
+                }[];
+            };
         };
+        fixedTermConfigId: string;
         tranche: {
             orderId: string;
             id: string;
+            shares: string;
+            balance: string;
         };
         user: {
             id: string;

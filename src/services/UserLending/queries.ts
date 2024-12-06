@@ -1,7 +1,11 @@
 import { gql } from 'graphql-request';
 
 export const userRequestsQuery = gql`
-    query userRequestsQuery($userAddress: String!, $unusedPools: [String]!) {
+    query userRequestsQuery(
+        $userAddress: String!
+        $unusedPools: [String]!
+        $epochId: BigInt!
+    ) {
         userRequests(
             where: { user: $userAddress, lendingPool_not_in: $unusedPools }
         ) {
@@ -15,6 +19,7 @@ export const userRequestsQuery = gql`
             status
             type
             updatedOn
+            fixedTermConfigId
             lendingPool {
                 id
                 name
@@ -23,10 +28,31 @@ export const userRequestsQuery = gql`
                     orderId
                     shares
                 }
+                configuration {
+                    tranchesConfig {
+                        interestRate
+                        lendingPoolTrancheInterestRateUpdates(
+                            orderDirection: desc
+                            orderBy: epochId
+                            first: 1
+                            where: { epochId_lte: $epochId }
+                        ) {
+                            epochInterestRate
+                        }
+                        id
+                        lendingPoolTrancheFixedTermConfigs {
+                            epochLockDuration
+                            epochInterestRate
+                            configId
+                        }
+                    }
+                }
             }
             tranche {
                 id
                 orderId
+                shares
+                balance
             }
             user {
                 id

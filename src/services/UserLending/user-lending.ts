@@ -33,6 +33,7 @@ import {
     IUserManagerAbi__factory,
 } from '../../contracts';
 import { SdkConfig } from '../../sdk-config';
+import { DataService } from '../DataService/data-service';
 
 import { mapUserRequestEventType } from './helper';
 import {
@@ -63,6 +64,7 @@ import {
 
 export class UserLending {
     private readonly _graph: GraphQLClient;
+    private _dataService: DataService;
     private readonly _userManagerAbi: IUserManagerAbi;
     private readonly _lendingPoolManagerAbi: ILendingPoolManagerAbi;
     private readonly _userLoyaltyRewardsAbi: IUserLoyaltyRewardsAbi;
@@ -97,6 +99,7 @@ export class UserLending {
             _kasuConfig.contracts.SystemVariables,
             signerOrProvider,
         );
+        this._dataService = new DataService(_kasuConfig);
     }
 
     async getUserTotalPendingAndActiveDepositedAmount(
@@ -324,7 +327,10 @@ export class UserLending {
         );
     }
 
-    async getUserRequests(userAddress: `0x${string}`): Promise<UserRequest[]> {
+    async getUserRequests(
+        userAddress: `0x${string}`,
+        epochId: string,
+    ): Promise<UserRequest[]> {
         const trancheNames: string[][] = [
             ['Senior'],
             ['Junior', 'Senior'],
@@ -336,6 +342,7 @@ export class UserLending {
             {
                 userAddress: userAddress.toLowerCase(),
                 unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
+                epochId,
             },
         );
 
@@ -349,17 +356,10 @@ export class UserLending {
 
             const events: UserRequestEvent[] = [];
 
-            const totalSupply = userRequest.lendingPool.tranches.reduce(
-                (acc, tranche) => acc.add(parseEther(tranche.shares)),
-                BigNumber.from(0),
-            );
-
             for (const event of userRequest.userRequestEvents) {
                 let totalRequested = '0';
                 let totalAccepted = '0';
                 let totalRejected = '0';
-
-                const totalAssets = userRequest.lendingPool.balance;
 
                 const eventTrancheId = event.tranche.id;
                 const eventTrancheName =
@@ -375,8 +375,8 @@ export class UserLending {
                     event.assetAmount ??
                     this.convertSharesToAssets(
                         event.sharesAmount,
-                        totalAssets,
-                        formatEther(totalSupply),
+                        userRequest.tranche.balance,
+                        userRequest.tranche.shares,
                     ).toString();
 
                 switch (event.type) {
@@ -415,6 +415,43 @@ export class UserLending {
                 });
             }
 
+            const tranche =
+                userRequest.lendingPool.configuration.tranchesConfig.find(
+                    (trancheConfig) =>
+                        trancheConfig.id === userRequest.tranche.id,
+                );
+
+            // shouldn't be possible, just adding type checking here
+            if (!tranche) continue;
+
+            const interestRate = tranche.lendingPoolTrancheInterestRateUpdates
+                .length
+                ? tranche.lendingPoolTrancheInterestRateUpdates[0]
+                      .epochInterestRate
+                : tranche.interestRate;
+
+            const baseApy =
+                this._dataService.calculateApyForTranche(interestRate);
+
+            const ftdConfig = tranche.lendingPoolTrancheFixedTermConfigs.find(
+                (config) => config.configId === userRequest.fixedTermConfigId,
+            );
+
+            let fixedTermConfig: UserRequest['fixedTermConfig'];
+
+            if (ftdConfig) {
+                const fixedTermApy = this._dataService.calculateApyForTranche(
+                    ftdConfig.epochInterestRate,
+                );
+
+                fixedTermConfig = {
+                    configId: ftdConfig.configId,
+                    apy: fixedTermApy.toString(),
+                    epochLockDuration: ftdConfig.epochLockDuration,
+                    epochInterestRate: ftdConfig.epochInterestRate,
+                };
+            }
+
             const userRequestBase: UserRequest = {
                 id: userRequest.id,
                 userId: userRequest.user.id,
@@ -440,6 +477,8 @@ export class UserLending {
                 ),
                 nftId: userRequest.nftId,
                 events: events,
+                fixedTermConfig,
+                apy: baseApy.toString(),
             };
 
             retn.push(userRequestBase);
