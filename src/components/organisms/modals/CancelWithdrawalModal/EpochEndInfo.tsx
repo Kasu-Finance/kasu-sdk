@@ -5,7 +5,11 @@ import getTranslation from '@/hooks/useTranslation'
 
 import { formatTimestamp } from '@/utils'
 
-const EpochEndInfo = () => {
+type EpochEndInfoProps = {
+  beforeText?: string
+}
+
+const EpochEndInfo: React.FC<EpochEndInfoProps> = ({ beforeText }) => {
   const { t } = getTranslation()
 
   const { nextEpochTime, isLoading } = useNextEpochTime()
@@ -17,7 +21,8 @@ const EpochEndInfo = () => {
 
   return (
     <Box bgcolor='gold.dark' borderRadius={2} p={2} textAlign='center'>
-      <Typography variant='baseMd' display='inline-flex' alignItems='center'>
+      <Typography variant='baseMd' alignItems='center'>
+        {beforeText ? `${beforeText} ` : null}
         {t('modals.cancelWithdrawal.epochEnds')}
         {isLoading ? (
           <Skeleton
@@ -31,16 +36,10 @@ const EpochEndInfo = () => {
             height={21}
           />
         ) : (
-          <Typography variant='baseMdBold' display='inline' ml='1ch'>
-            {formattedNextEpochTime.date} •{' '}
-            <Typography
-              variant='inherit'
-              color='rgba(133, 87, 38, 1)'
-              display='inline'
-            >
-              {formattedNextEpochTime.timestamp}{' '}
-              {formattedNextEpochTime.utcOffset}
-            </Typography>
+          <Typography variant='baseMdBold' display='inline'>
+            {' '}
+            {formattedNextEpochTime.timestamp}{' '}
+            {formattedNextEpochTime.utcOffset} • {formattedNextEpochTime.date}
           </Typography>
         )}
       </Typography>

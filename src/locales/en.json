@@ -75,7 +75,7 @@
     "request": "Request",
     "approved": "Approved",
     "confirmed": "Confirmed",
-    "nextClearingPeriodStart": "Next Clearing Period Starts in",
+    "nextClearingPeriodStart": "Next Clearing Period Starts at",
     "slippage": "Slippage",
     "strategies": "Strategies",
     "active": "Active",
@@ -828,7 +828,10 @@
       "metric-7": "Total Reallocated In",
       "metric-7-tooltip": "info",
       "subtitle": "Subsequent Transactions (Post Acceptance)",
-      "notAcceptedMessage": "This request has not been accepted, more details will be shown when accepted"
+      "notAcceptedMessage": {
+        "lending": "The outcome of your Lending Request will be determined at the end of the epoch clearing period.​",
+        "withdrawal": "The outcome of your Withdrawal Request will be determined at the end of the epoch clearing period.​"
+      }
     },
     "pendingDecisions": {
       "title": "Pending Decisions",
@@ -1270,18 +1273,20 @@
       "metric-3": "Withdrawal Request Date",
       "metric-3-tooltip": "The date of your original lending withdrawal request.",
       "metric-4-tooltip": "The loan Tranche related to this Lending Strategy that you request a withdrawal cancellation from.",
+      "epochEndsText": "Tho Outcome of this Withdrawal Request will be determined at the end of the epoch clearing period.",
       "epochEnds": "Epoch Ends in",
       "cancel-button": "Cancel Withdrawal Request"
     },
     "cancelDeposit": {
       "title": "Cancel Lending Request",
-      "metric-1": "To Lending Strategy",
+      "metric-1": "Lend To",
       "metric-1-tooltip": "The Lending Strategy that your lending cancellation request relates to.",
       "metric-2-tooltip": "The loan Tranche related to this Lending Strategy that you request a lending cancellation from.",
       "metric-3": "Lending Request Amount",
       "metric-3-tooltip": "The USDC lending request amount that you would like to cancel.",
       "metric-4": "Lending Request Date",
       "metric-4-tooltip": "The date of your original lending request.",
+      "nextClearingText": "This Lending Request will be either Accepted or Rejected at the end of the epoch clearing period.",
       "cancel-button": "Cancel Lending Request"
     }
   },

@@ -15,12 +15,16 @@ import TransactionHistoryState from '@/context/transactionHistory/transactionHis
 
 type UserTransactionsProps = {
   poolId: string
+  currentEpoch: string
 }
 
-const UserTransactions: React.FC<UserTransactionsProps> = ({ poolId }) => {
+const UserTransactions: React.FC<UserTransactionsProps> = ({
+  poolId,
+  currentEpoch,
+}) => {
   const { t } = getTranslation()
 
-  const { isLoading, transactionHistory } = useTransactionHistory()
+  const { isLoading, transactionHistory } = useTransactionHistory(currentEpoch)
 
   if (isLoading || !transactionHistory || !transactionHistory.length)
     return null
@@ -37,7 +41,10 @@ const UserTransactions: React.FC<UserTransactionsProps> = ({ poolId }) => {
       <CustomInnerCardContent sx={{ px: 0 }}>
         <TransactionHistoryState>
           <TransactionFilters />
-          <UserTransactionTable transactionHistory={filteredTransactions} />
+          <UserTransactionTable
+            currentEpoch={currentEpoch}
+            transactionHistory={filteredTransactions}
+          />
         </TransactionHistoryState>
       </CustomInnerCardContent>
     </CustomCard>

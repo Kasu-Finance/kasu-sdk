@@ -22,12 +22,14 @@ import { CancelIcon, ChevronDownIcon } from '@/assets/icons'
 import { formatAmount, formatTimestamp } from '@/utils'
 
 type UserTransactionTableRowProps = {
+  currentEpoch: string
   transaction: UserRequest
   isActive: boolean
   toggle: () => void
 }
 
 const UserTransactionTableRow: React.FC<UserTransactionTableRowProps> = ({
+  currentEpoch,
   transaction,
   isActive,
   toggle,
@@ -49,6 +51,7 @@ const UserTransactionTableRow: React.FC<UserTransactionTableRowProps> = ({
           ? ModalsKeys.CANCEL_DEPOSIT
           : ModalsKeys.CANCEL_WITHDRAWAL,
       transaction,
+      currentEpoch,
     })
   }
 

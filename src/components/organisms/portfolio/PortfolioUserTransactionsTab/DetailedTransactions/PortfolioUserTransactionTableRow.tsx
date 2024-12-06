@@ -34,11 +34,12 @@ import {
 
 type PortfolioUserTransactionTableRowProps = {
   transaction: DetailedTransaction
+  currentEpoch: string
 }
 
 const PortfolioUserTransactionTableRow: React.FC<
   PortfolioUserTransactionTableRowProps
-> = ({ transaction }) => {
+> = ({ transaction, currentEpoch }) => {
   const { t } = getTranslation()
 
   const { openModal } = useModalState()
@@ -89,6 +90,7 @@ const PortfolioUserTransactionTableRow: React.FC<
     openModal({
       name: ModalsKeys.REQUEST_DETAILS,
       detailedTransaction,
+      currentEpoch,
     })
 
   return (

@@ -24,7 +24,7 @@ const LendingStatusSummary = async () => {
       <CustomInnerCardContent>
         {currentEpoch ? (
           <Stack spacing={6}>
-            <LendingRequests />
+            <LendingRequests currentEpoch={currentEpoch} />
             <SubsequentTransactions currentEpoch={currentEpoch} />
           </Stack>
         ) : (

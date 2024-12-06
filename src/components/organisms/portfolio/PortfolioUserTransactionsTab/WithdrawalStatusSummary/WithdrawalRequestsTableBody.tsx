@@ -16,10 +16,16 @@ import {
   getDetailedTransactions,
 } from '@/utils'
 
-const WithdrawalRequestsTableBody = () => {
+type WithdrawalRequestsTableBodyProps = {
+  currentEpoch: string
+}
+
+const WithdrawalRequestsTableBody: React.FC<
+  WithdrawalRequestsTableBodyProps
+> = ({ currentEpoch }) => {
   const { t } = getTranslation()
 
-  const { transactionHistory } = useTransactionHistory()
+  const { transactionHistory } = useTransactionHistory(currentEpoch)
 
   const detailedTransactions = getDetailedTransactions(
     transactionHistory ?? [],

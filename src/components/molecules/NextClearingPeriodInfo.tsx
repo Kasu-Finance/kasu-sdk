@@ -5,7 +5,13 @@ import useNextClearingPeriod from '@/hooks/web3/useNextClearingPeriod'
 
 import { formatTimestamp } from '@/utils'
 
-const NextClearingPeriodInfo = () => {
+type NextClearingPeriodInfoProps = {
+  beforeText?: string
+}
+
+const NextClearingPeriodInfo: React.FC<NextClearingPeriodInfoProps> = ({
+  beforeText,
+}) => {
   const { t } = getTranslation()
 
   const { nextClearingPeriod, isLoading } = useNextClearingPeriod()
@@ -17,7 +23,8 @@ const NextClearingPeriodInfo = () => {
 
   return (
     <Box bgcolor='gold.dark' borderRadius={2} p={2} textAlign='center'>
-      <Typography variant='baseMd' display='inline-flex' alignItems='center'>
+      <Typography variant='baseMd' display='inline' alignItems='center'>
+        {beforeText ? `${beforeText} ` : null}
         {t('general.nextClearingPeriodStart')}{' '}
         {isLoading ? (
           <Skeleton
@@ -31,16 +38,10 @@ const NextClearingPeriodInfo = () => {
             height={21}
           />
         ) : (
-          <Typography variant='baseMdBold' display='inline' ml='1ch'>
-            {formattedNextClearingPeriod.date} •{' '}
-            <Typography
-              variant='inherit'
-              color='rgba(133, 87, 38, 1)'
-              display='inline'
-            >
-              {formattedNextClearingPeriod.timestamp}{' '}
-              {formattedNextClearingPeriod.utcOffset}
-            </Typography>
+          <Typography variant='baseMdBold'>
+            {formattedNextClearingPeriod.timestamp}{' '}
+            {formattedNextClearingPeriod.utcOffset} •{' '}
+            {formattedNextClearingPeriod.date}
           </Typography>
         )}
       </Typography>

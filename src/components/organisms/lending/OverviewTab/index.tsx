@@ -30,7 +30,7 @@ const PoolOverviewTab: React.FC<PoolOverviewProps> = async ({ poolId }) => {
         currentEpoch={currentEpoch}
         lockPeriods={lockPeriods}
       />
-      <UserTransactions poolId={poolId} />
+      <UserTransactions poolId={poolId} currentEpoch={currentEpoch} />
     </Stack>
   )
 }

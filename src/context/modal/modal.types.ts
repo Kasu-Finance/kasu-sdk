@@ -11,6 +11,7 @@ import {
   PortfolioTranche,
 } from '@solidant/kasu-sdk/src/services/Portfolio/types'
 import {
+  UserRequest,
   UserRequestEvent,
   UserTrancheBalance,
 } from '@solidant/kasu-sdk/src/services/UserLending/types'
@@ -101,6 +102,7 @@ export type Modals = {
     detailedTransaction:
       | DetailedTransaction
       | DetailedTransactionReallocationRequest
+    currentEpoch: string
   }>
   [ModalsKeys.LOAN_CONTRACT]: ModalData<{
     acceptLoanContract?: (contractSignature: string) => void
@@ -123,7 +125,10 @@ export type Modals = {
   }>
   [ModalsKeys.KYC]: ModalData<{ callback: () => void }>
   [ModalsKeys.CANCEL_DEPOSIT]: ModalData<{
+    currentEpoch: string
     transaction: {
+      apy: string
+      fixedTermConfig: UserRequest['fixedTermConfig']
       timestamp: EpochTimeStamp
       lendingPool: {
         id: string
@@ -137,6 +142,7 @@ export type Modals = {
     }
   }>
   [ModalsKeys.CANCEL_WITHDRAWAL]: ModalData<{
+    currentEpoch: string
     transaction: {
       timestamp: EpochTimeStamp
       lendingPool: {

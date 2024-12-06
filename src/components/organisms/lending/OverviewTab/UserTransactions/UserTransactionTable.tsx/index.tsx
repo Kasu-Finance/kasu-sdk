@@ -14,12 +14,14 @@ import UserTransactionTableHeader from '@/components/organisms/lending/OverviewT
 
 type UserTransactionTableProps = {
   transactionHistory: UserRequest[]
+  currentEpoch: string
 }
 
 const ROW_PER_PAGE = 5
 
 const UserTransactionTable: React.FC<UserTransactionTableProps> = ({
   transactionHistory,
+  currentEpoch,
 }) => {
   const { status, trancheType, transactionType } = useTransactionHistoryState()
 
@@ -46,6 +48,7 @@ const UserTransactionTable: React.FC<UserTransactionTableProps> = ({
       tableBody={
         filteredData.length ? (
           <UserTransactionTableBody
+            currentEpoch={currentEpoch}
             transactions={paginateData([...filteredData])}
           />
         ) : (

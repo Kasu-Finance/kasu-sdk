@@ -13,13 +13,14 @@ import { DetailedTransaction } from '@/utils/lending/getDetailedTransactions'
 
 type PortfolioUserTransactionsTableProps = {
   detailedTransactions: DetailedTransaction[]
+  currentEpoch: string
 }
 
 const ROW_PER_PAGE = 5
 
 const PortfolioUserTransactionTable: React.FC<
   PortfolioUserTransactionsTableProps
-> = ({ detailedTransactions }) => {
+> = ({ detailedTransactions, currentEpoch }) => {
   const { poolId, trancheType, transactionType, pendingDecision } =
     useTransactionHistoryState()
 
@@ -47,6 +48,7 @@ const PortfolioUserTransactionTable: React.FC<
       tableBody={
         filteredData.length ? (
           <PortfolioUserTransactionTableBody
+            currentEpoch={currentEpoch}
             detailedTransactions={[...paginateData(filteredData)]}
           />
         ) : (
