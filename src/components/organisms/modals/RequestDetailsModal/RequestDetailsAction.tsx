@@ -9,11 +9,13 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 import { DetailedTransaction } from '@/utils/lending/getDetailedTransactions'
 
 type RequestDetailsActionProps = {
+  currentEpoch: string
   detailedTransaction: DetailedTransaction
   handleClose: () => void
 }
 
 const RequestDetailsAction: React.FC<RequestDetailsActionProps> = ({
+  currentEpoch,
   detailedTransaction,
   handleClose,
 }) => {
@@ -29,6 +31,7 @@ const RequestDetailsAction: React.FC<RequestDetailsActionProps> = ({
             ? ModalsKeys.CANCEL_DEPOSIT
             : ModalsKeys.CANCEL_WITHDRAWAL,
         transaction: detailedTransaction,
+        currentEpoch,
       })
       handleClose()
     }

@@ -4,8 +4,9 @@ import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
+import VariableAndFixedApyTooltip from '@/components/molecules/tooltips/VariableAndFixedApyTooltip'
 
-import { formatAmount, formatTimestamp } from '@/utils'
+import { formatAmount, formatPercentage, formatTimestamp } from '@/utils'
 import {
   DetailedTransaction,
   DetailedTransactionReallocationRequest,
@@ -29,6 +30,35 @@ const RequestOverview: React.FC<RequestOverviewProps> = ({
 
   return (
     <Box>
+      <InfoRow
+        title={t(
+          transaction.fixedTermConfig
+            ? 'general.fixedApy'
+            : 'general.variableApy'
+        )}
+        showDivider
+        dividerProps={{ color: 'white' }}
+        toolTipInfo={
+          <ToolTip
+            title={<VariableAndFixedApyTooltip />}
+            iconSx={{
+              color: 'gold.extraDark',
+              '&:hover': {
+                color: 'rgba(133, 87, 38, 1)',
+              },
+            }}
+          />
+        }
+        metric={
+          <Typography variant='h4'>
+            {formatPercentage(
+              transaction.fixedTermConfig
+                ? transaction.fixedTermConfig.apy
+                : transaction.apy
+            )}
+          </Typography>
+        }
+      />
       <InfoRow
         title={t('modals.requestDetails.metric-1')}
         showDivider
@@ -57,6 +87,7 @@ const RequestOverview: React.FC<RequestOverviewProps> = ({
           </Typography>
         }
       />
+
       {(transaction.requestType === 'Deposit' ||
         transaction.requestType === 'Withdrawal') && (
         <>

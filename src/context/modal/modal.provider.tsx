@@ -13,6 +13,7 @@ import {
   PortfolioTranche,
 } from '@solidant/kasu-sdk/src/services/Portfolio/types'
 import {
+  UserRequest,
   UserRequestEvent,
   UserTrancheBalance,
 } from '@solidant/kasu-sdk/src/services/UserLending/types'
@@ -70,6 +71,7 @@ const initialState: Modals = {
   requestDetailsModal: {
     isOpen: false,
     detailedTransaction: null as unknown as DetailedTransaction,
+    currentEpoch: '',
   },
   pendingDecisionsModal: {
     isOpen: false,
@@ -87,13 +89,17 @@ const initialState: Modals = {
   },
   cancelDepositModal: {
     isOpen: false,
+    currentEpoch: '',
     transaction: null as unknown as {
+      apy: string
+      fixedTermConfig: UserRequest['fixedTermConfig']
       timestamp: EpochTimeStamp
       lendingPool: {
         id: string
         name: string
         tranches: { orderId: string }[]
       }
+
       requestType: 'Deposit' | 'Withdrawal'
       events: UserRequestEvent[]
       nftId: string
@@ -102,6 +108,7 @@ const initialState: Modals = {
   },
   cancelWithdrawalModal: {
     isOpen: false,
+    currentEpoch: '',
     transaction: null as unknown as {
       timestamp: EpochTimeStamp
       lendingPool: {

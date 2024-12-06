@@ -7,6 +7,7 @@ import CustomCard from '@/components/atoms/CustomCard'
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
 import WaveBox from '@/components/atoms/WaveBox'
 import DialogHeader from '@/components/molecules/DialogHeader'
+import NextClearingPeriodInfo from '@/components/molecules/NextClearingPeriodInfo'
 import RequestDetailsAction from '@/components/organisms/modals/RequestDetailsModal/RequestDetailsAction'
 import RequestOverview from '@/components/organisms/modals/RequestDetailsModal/RequestOverview'
 import SubsequentTransactions from '@/components/organisms/modals/RequestDetailsModal/SubsequentTransactions'
@@ -18,7 +19,8 @@ const RequestDetailsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { modal } = useModalState()
 
-  const { detailedTransaction } = modal[ModalsKeys.REQUEST_DETAILS]
+  const { detailedTransaction, currentEpoch } =
+    modal[ModalsKeys.REQUEST_DETAILS]
 
   const isCancellable =
     'canCancel' in detailedTransaction && detailedTransaction.canCancel
@@ -63,14 +65,21 @@ const RequestDetailsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           <SubsequentTransactions
             poolName={detailedTransaction.lendingPool.name}
             transaction={detailedTransaction}
+            currentEpoch={currentEpoch}
           />
           {isCancellable && (
             <Stack spacing={5}>
               <Typography variant='h4'>
-                {t('modals.requestDetails.notAcceptedMessage')}
+                {t(
+                  detailedTransaction.requestType === 'Deposit'
+                    ? 'modals.requestDetails.notAcceptedMessage.lending'
+                    : 'modals.requestDetails.notAcceptedMessage.withdrawal'
+                )}
               </Typography>
+              <NextClearingPeriodInfo />
               <RequestDetailsAction
                 detailedTransaction={detailedTransaction}
+                currentEpoch={currentEpoch}
                 handleClose={handleClose}
               />
             </Stack>

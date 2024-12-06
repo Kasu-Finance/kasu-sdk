@@ -38,11 +38,13 @@ import getSubsequentTransactions from '@/utils/lending/getSubsequentTransactions
 
 type SubsequentTransactionsProps = {
   transaction: DetailedTransaction | DetailedTransactionReallocationRequest
+  currentEpoch: string
   poolName: string
 }
 
 const SubsequentTransactions: React.FC<SubsequentTransactionsProps> = ({
   transaction,
+  currentEpoch,
   poolName,
 }) => {
   const { t } = getTranslation()
@@ -82,6 +84,7 @@ const SubsequentTransactions: React.FC<SubsequentTransactionsProps> = ({
         openModal({
           name: ModalsKeys.REQUEST_DETAILS,
           detailedTransaction: newTransaction,
+          currentEpoch,
         })
       },
     })

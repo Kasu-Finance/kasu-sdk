@@ -8,7 +8,13 @@ import PortfolioUserTransactionTableWrapper from '@/components/organisms/portfol
 
 import TransactionHistoryState from '@/context/transactionHistory/transactionHistory.provider'
 
-const DetailedTransactions = () => {
+type DetailedTransactionProps = {
+  currentEpoch: string
+}
+
+const DetailedTransactions: React.FC<DetailedTransactionProps> = ({
+  currentEpoch,
+}) => {
   const { t } = getTranslation()
 
   return (
@@ -16,11 +22,11 @@ const DetailedTransactions = () => {
       <CustomCardHeader
         title={t('portfolio.transactions.detailedTransactions.title')}
       >
-        <CsvDownloadButton />
+        <CsvDownloadButton currentEpoch={currentEpoch} />
       </CustomCardHeader>
       <CustomInnerCardContent sx={{ p: 0 }}>
         <TransactionHistoryState withPoolIdFilter withPendingDecisions>
-          <PortfolioUserTransactionTableWrapper />
+          <PortfolioUserTransactionTableWrapper currentEpoch={currentEpoch} />
         </TransactionHistoryState>
       </CustomInnerCardContent>
     </CustomCard>

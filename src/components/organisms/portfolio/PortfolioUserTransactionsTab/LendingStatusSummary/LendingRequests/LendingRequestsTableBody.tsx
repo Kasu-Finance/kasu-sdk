@@ -17,10 +17,16 @@ import {
   getDetailedTransactions,
 } from '@/utils'
 
-const LendingRequestsTableBody = () => {
+type LendingRequestsTableBodyProps = {
+  currentEpoch: string
+}
+
+const LendingRequestsTableBody: React.FC<LendingRequestsTableBodyProps> = ({
+  currentEpoch,
+}) => {
   const { t } = getTranslation()
 
-  const { transactionHistory } = useTransactionHistory()
+  const { transactionHistory } = useTransactionHistory(currentEpoch)
 
   const detailedTransactions = getDetailedTransactions(
     transactionHistory ?? [],

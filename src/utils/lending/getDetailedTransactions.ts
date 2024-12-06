@@ -24,6 +24,8 @@ type DetailedTransactionBase = {
   subsequentTransactions: LoanTicket[]
   events: UserRequestEvent[]
   latestEvent: UserRequestEvent
+  apy: string
+  fixedTermConfig: UserRequest['fixedTermConfig']
 }
 
 type CancellableRequest<T> = T & {
@@ -103,6 +105,8 @@ const getDetailedTransactions = (
       pendingDecisions: [],
       subsequentTransactions: [],
       events: transaction.events,
+      apy: transaction.apy,
+      fixedTermConfig: transaction.fixedTermConfig,
       latestEvent: transaction.events.sort(
         (a, b) => b.timestamp - a.timestamp
       )[0],
