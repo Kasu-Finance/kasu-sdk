@@ -1,4 +1,13 @@
-import { Box, Skeleton, Typography } from '@mui/material'
+'use client'
+
+import {
+  Box,
+  Skeleton,
+  SxProps,
+  Theme,
+  Typography,
+  TypographyProps,
+} from '@mui/material'
 
 import getTranslation from '@/hooks/useTranslation'
 import useNextClearingPeriod from '@/hooks/web3/useNextClearingPeriod'
@@ -7,10 +16,16 @@ import { formatTimestamp } from '@/utils'
 
 type NextClearingPeriodInfoProps = {
   beforeText?: string
+  sx?: SxProps<Theme>
+  typographyProps?: TypographyProps
+  timeTypographyProps?: TypographyProps
 }
 
 const NextClearingPeriodInfo: React.FC<NextClearingPeriodInfoProps> = ({
   beforeText,
+  sx,
+  typographyProps,
+  timeTypographyProps,
 }) => {
   const { t } = getTranslation()
 
@@ -22,8 +37,19 @@ const NextClearingPeriodInfo: React.FC<NextClearingPeriodInfoProps> = ({
   })
 
   return (
-    <Box bgcolor='gold.dark' borderRadius={2} p={2} textAlign='center'>
-      <Typography variant='baseMd' display='inline' alignItems='center'>
+    <Box
+      bgcolor='gold.dark'
+      borderRadius={2}
+      p={2}
+      textAlign='center'
+      sx={Array.isArray(sx) ? sx : [sx]}
+    >
+      <Typography
+        variant='baseMd'
+        display='inline'
+        alignItems='center'
+        {...typographyProps}
+      >
         {beforeText ? `${beforeText} ` : null}
         {t('general.nextClearingPeriodStart')}{' '}
         {isLoading ? (
@@ -38,7 +64,7 @@ const NextClearingPeriodInfo: React.FC<NextClearingPeriodInfoProps> = ({
             height={21}
           />
         ) : (
-          <Typography variant='baseMdBold'>
+          <Typography variant='baseMdBold' {...timeTypographyProps}>
             {formattedNextClearingPeriod.timestamp}{' '}
             {formattedNextClearingPeriod.utcOffset} •{' '}
             {formattedNextClearingPeriod.date}

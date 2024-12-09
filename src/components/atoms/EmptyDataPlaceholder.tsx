@@ -9,12 +9,14 @@ type EmptyDataPlaceholderProps = StackProps & {
 
 const EmptyDataPlaceholder: React.FC<EmptyDataPlaceholderProps> = ({
   text,
+  children,
   ...rest
 }) => {
   return (
     <Stack alignItems='center' {...rest}>
       <Image src={Cat} alt='Cat' />
       <Typography variant='h4'>{text ?? 'No data...'}</Typography>
+      {children}
     </Stack>
   )
 }
