@@ -466,9 +466,21 @@ export class UserLending {
                         : 'Withdrawal',
                 trancheName: trancheName,
                 trancheId: userRequest.tranche.id,
-                requestedAmount: userRequest.amountRequested,
-                acceptedAmount: userRequest.amountAccepted,
-                rejectedAmount: userRequest.amountRejected,
+                requestedAmount: this.convertSharesToAssets(
+                    userRequest.amountRequested,
+                    userRequest.tranche.balance,
+                    userRequest.tranche.shares,
+                ).toString(),
+                acceptedAmount: this.convertSharesToAssets(
+                    userRequest.amountAccepted,
+                    userRequest.tranche.balance,
+                    userRequest.tranche.shares,
+                ).toString(),
+                rejectedAmount: this.convertSharesToAssets(
+                    userRequest.amountRejected,
+                    userRequest.tranche.balance,
+                    userRequest.tranche.shares,
+                ).toString(),
                 status: userRequest.status,
                 timestamp: parseInt(userRequest.createdOn),
                 canCancel: await this.isCancelable(
@@ -558,10 +570,16 @@ export class UserLending {
 
             const item = currentEpochFtdAmounts.get(userRequest.tranche.id);
 
+            const amountRequested = this.convertSharesToAssets(
+                userRequest.amountRequested,
+                userRequest.tranche.balance,
+                userRequest.tranche.shares,
+            );
+
             if (item) {
                 const clonedItem = [...item];
 
-                clonedItem[ftdID] = userRequest.amountRequested;
+                clonedItem[ftdID] = amountRequested;
 
                 currentEpochFtdAmounts.set(userRequest.tranche.id, clonedItem);
 
@@ -569,7 +587,7 @@ export class UserLending {
             }
             const ftdAmounts: string[] = [];
 
-            ftdAmounts[ftdID] = userRequest.amountRequested;
+            ftdAmounts[ftdID] = amountRequested;
 
             currentEpochFtdAmounts.set(userRequest.tranche.id, ftdAmounts);
         }

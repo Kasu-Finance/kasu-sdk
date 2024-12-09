@@ -137,6 +137,8 @@ export const currentEpochFtdAmountQuery = gql`
             amountRequested
             tranche {
                 id
+                balance
+                shares
             }
         }
     }

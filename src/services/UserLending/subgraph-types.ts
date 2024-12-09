@@ -74,6 +74,8 @@ export interface CurrentEpochFtdAmountSubgraph {
         amountRequested: string;
         tranche: {
             id: string;
+            balance: string;
+            shares: string;
         };
     }[];
 }
