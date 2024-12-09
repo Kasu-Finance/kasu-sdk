@@ -1529,7 +1529,7 @@
         "tooltip": "​The total length of time the Delegate has been operating as a lending business.​"
       },
       "totalFunds": {
-        "label": "Total Loan Funds Originated",
+        "label": "Loan Origination Volume",
         "tooltip": "Cumulative total USDC equivalent face value of all current and historical loans originated by the Delegate to end borrowers across all lending asset class, regardless of whether the loans have been made available on Kasu or not.​​​"
       },
       "totalLoans": {
@@ -1817,7 +1817,7 @@
       "metric-1-tooltip": "Total Combined USDC funds deployed by Lenders across all Lending Strategies, plus the current value of all KSU locked in the Kasu protocol.",
       "metric-2": "Total Active Lending",
       "metric-2-tooltip": "Combined USDC equivalent face value of all loans across all Lending Strategies on Kasu that Delegates currently have deployed to end borrowers.",
-      "metric-3": "Total Loan Funds Originated​",
+      "metric-3": "Loan Origination Volume",
       "metric-3-tooltip": "Cumulative total USDC equivalent face value of all current and historical loans originated by Delegates to end borrowers from all Lending Strategies on the Kasu protocol.",
       "metric-4": "Total Interest Earned​",
       "metric-4-tooltip": "Cumulative total gross interest earned by Lenders from all loans since the inception of the Kasu protocol.",
@@ -1827,6 +1827,11 @@
     "no-data": {
       "activePools": "No Active Lending Strategies",
       "closedPools": "No Closed Lending Strategies."
+    },
+    "card": {
+      "loanTranches": "Loan Tranches",
+      "lendingAssetClass": "Lending Asset Class",
+      "singleLoanOffer": "Single Loan Offer"
     },
     "activePools": {
       "table": {
