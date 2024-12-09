@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import React from 'react'
 
 import getTranslation from '@/hooks/useTranslation'
@@ -27,36 +27,73 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
 
   const isActivePool = pool.isActive
 
+  const { minApy, maxApy } = pool.tranches.reduce(
+    (total, cur) => {
+      total.minApy =
+        total.minApy === 0 // check for initial value
+          ? parseFloat(cur.minApy)
+          : Math.min(total.minApy, parseFloat(cur.minApy))
+      total.maxApy = Math.max(total.maxApy, parseFloat(cur.maxApy))
+
+      return total
+    },
+    { minApy: 0, maxApy: 0 }
+  )
+
   return (
     <WaveBox width='100%' height='100%' display='flex' flexDirection='column'>
       <Box
         display='flex'
-        justifyContent='space-around'
-        alignItems='center'
+        justifyContent='space-between'
+        alignItems='end'
         my={3}
+        px={2}
       >
-        {pool.tranches.toReversed().map(({ name, minApy, maxApy }) => (
-          <Stack key={name} alignItems='center' spacing={0.5}>
-            <Typography
-              variant='baseSmBold'
-              color='primary.main'
-              textTransform='capitalize'
-            >
-              {isMultiTranche
-                ? `${name} ${t('general.tranche')}`
-                : t('general.lendingStrategy')}
-            </Typography>
-            <Typography variant='baseXs' display='flex' alignItems='center'>
-              {t('general.grossApy')} <ToolTip title={<GrossApyTooltip />} />
-            </Typography>
-            <Typography variant='h5' color='primary.main'>
-              {formatPercentage(minApy).replaceAll(' %', '')} -{' '}
-              {formatPercentage(maxApy).replaceAll(' ', '')}
-            </Typography>
-          </Stack>
-        ))}
+        <Typography variant='h5' display='flex' alignItems='center'>
+          {t('general.grossApy')} <ToolTip title={<GrossApyTooltip />} />
+        </Typography>
+        <Typography variant='h2' color='gold.dark'>
+          {minApy === maxApy
+            ? formatPercentage(maxApy, 0).replaceAll(' %', '%')
+            : `${formatPercentage(minApy, 0).replaceAll(' %', '')}-${formatPercentage(maxApy, 0).replaceAll(' %', '%')}`}
+        </Typography>
       </Box>
       <CustomCardContentInner display='flex' flexDirection='column' flex={1}>
+        <InfoRow
+          title={t('home.card.loanTranches')}
+          titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
+          toolTipInfo={t('lending.poolOverview.detailCard.tvl.tooltip')}
+          showDivider
+          metric={
+            <Typography variant='baseMdBold'>
+              {isMultiTranche
+                ? pool.tranches
+                    .toReversed()
+                    .map((tranche) => tranche.name)
+                    .join(', ')
+                : t('home.card.singleLoanOffer')}
+            </Typography>
+          }
+        />
+        <InfoRow
+          title={t('home.card.lendingAssetClass')}
+          titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
+          toolTipInfo={t('details.poolDetails.assetClass.tooltip')}
+          showDivider
+          metric={
+            <Typography
+              textAlign='right'
+              maxWidth={180}
+              height={63}
+              variant='baseMdBold'
+            >
+              {pool.assetClass}
+            </Typography>
+          }
+          sx={{
+            alignItems: 'start',
+          }}
+        />
         {!isActivePool && (
           <InfoRow
             title={t('general.tvl')}
@@ -105,6 +142,17 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
             </Typography>
           }
         />
+        <InfoRow
+          title={t('details.poolDelegate.totalLossRate.label')}
+          titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
+          toolTipInfo={t('details.poolDelegate.totalLossRate.tooltip')}
+          showDivider
+          metric={
+            <Typography variant='baseMdBold'>
+              {formatPercentage(pool.delegate.historicLossRate)}
+            </Typography>
+          }
+        />
         {isActivePool && (
           <InfoRow
             title={t('details.poolDelegate.history.label')}
@@ -121,29 +169,6 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
             }
           />
         )}
-        <InfoRow
-          title={t('details.poolDelegate.totalLossRate.label')}
-          titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
-          toolTipInfo={t('details.poolDelegate.totalLossRate.tooltip')}
-          showDivider
-          metric={
-            <Typography variant='baseMdBold'>
-              {formatPercentage(pool.delegate.historicLossRate)}
-            </Typography>
-          }
-        />
-        <InfoRow
-          title={t('details.poolDetails.assetClass.label')}
-          titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
-          toolTipInfo={t('details.poolDetails.assetClass.tooltip')}
-          showDivider
-          metric={
-            <Typography height={63} variant='baseMdBold'>
-              {pool.assetClass}
-            </Typography>
-          }
-          sx={{ flexDirection: 'column' }}
-        />
         {isActivePool && (
           <InfoRow
             title={t('lending.poolOverview.detailCard.security.label')}
@@ -156,16 +181,34 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
             }}
             showDivider
             metric={
-              <UnorderedList sx={{ ...customTypography.baseMdBold, pl: 2 }}>
-                {pool.security.map((security, index) => (
-                  <li key={index}>{security}</li>
-                ))}
+              <UnorderedList
+                sx={{
+                  ...customTypography.baseMdBold,
+                  pl: 2,
+                  textAlign: 'right',
+                  listStyleType: 'none',
+                }}
+              >
+                {pool.security.length > 3 ? (
+                  <>
+                    <li key={0}>{pool.security[0]}</li>
+                    <li key={1}>{pool.security[1]}</li>
+                    <li key={2}>
+                      <Typography variant='inherit' color='gray.middle'>
+                        Other
+                      </Typography>
+                    </li>
+                  </>
+                ) : (
+                  pool.security.map((security, index) => (
+                    <li key={index}>{security}</li>
+                  ))
+                )}
               </UnorderedList>
             }
             sx={{
-              flexDirection: 'column',
               height: '100%',
-              justifyContent: 'unset',
+              alignItems: 'start',
             }}
           />
         )}

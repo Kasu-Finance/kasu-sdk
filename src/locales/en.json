@@ -1828,6 +1828,11 @@
       "activePools": "No Active Lending Strategies",
       "closedPools": "No Closed Lending Strategies."
     },
+    "card": {
+      "loanTranches": "Loan Tranches",
+      "lendingAssetClass": "Lending Asset Class",
+      "singleLoanOffer": "Single Loan Offer"
+    },
     "activePools": {
       "table": {
         "lossRate": "Loss Rate",
