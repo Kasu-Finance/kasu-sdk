@@ -471,16 +471,8 @@ export class UserLending {
                     userRequest.tranche.balance,
                     userRequest.tranche.shares,
                 ).toString(),
-                acceptedAmount: this.convertSharesToAssets(
-                    userRequest.amountAccepted,
-                    userRequest.tranche.balance,
-                    userRequest.tranche.shares,
-                ).toString(),
-                rejectedAmount: this.convertSharesToAssets(
-                    userRequest.amountRejected,
-                    userRequest.tranche.balance,
-                    userRequest.tranche.shares,
-                ).toString(),
+                acceptedAmount: userRequest.amountAccepted,
+                rejectedAmount: userRequest.amountRejected,
                 status: userRequest.status,
                 timestamp: parseInt(userRequest.createdOn),
                 canCancel: await this.isCancelable(
