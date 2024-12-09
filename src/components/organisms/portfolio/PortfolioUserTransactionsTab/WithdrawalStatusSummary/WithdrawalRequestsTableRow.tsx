@@ -41,10 +41,10 @@ const WithdrawalRequestsTableRow: React.FC<WithdrawalRequestsTableRowProps> = ({
             <ToolTip title={tooltipInfo} />
           </Box>
         </TableCell>
-        <TableCell>
+        <TableCell align='right'>
           <Typography variant='baseMdBold'>{currentEpochValue}</Typography>
         </TableCell>
-        <TableCell>
+        <TableCell align='right'>
           <Typography variant='baseMdBold'>{totalLifetimeValue}</Typography>
         </TableCell>
       </TableRow>
