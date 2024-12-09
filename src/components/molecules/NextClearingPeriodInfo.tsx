@@ -3,6 +3,7 @@
 import {
   Box,
   Skeleton,
+  SkeletonProps,
   SxProps,
   Theme,
   Typography,
@@ -17,6 +18,7 @@ import { formatTimestamp } from '@/utils'
 type NextClearingPeriodInfoProps = {
   beforeText?: string
   sx?: SxProps<Theme>
+  skeletonProps?: SkeletonProps
   typographyProps?: TypographyProps
   timeTypographyProps?: TypographyProps
 }
@@ -26,6 +28,7 @@ const NextClearingPeriodInfo: React.FC<NextClearingPeriodInfoProps> = ({
   sx,
   typographyProps,
   timeTypographyProps,
+  skeletonProps,
 }) => {
   const { t } = getTranslation()
 
@@ -55,13 +58,20 @@ const NextClearingPeriodInfo: React.FC<NextClearingPeriodInfoProps> = ({
         {isLoading ? (
           <Skeleton
             variant='rounded'
-            sx={{
-              bgcolor: 'gold.extraDark',
-              display: 'inline-block',
-              ml: '1ch',
-            }}
             width={200}
             height={21}
+            {...skeletonProps}
+            sx={[
+              {
+                bgcolor: 'gold.extraDark',
+                display: 'inline-block',
+                ml: '1ch',
+                verticalAlign: 'middle',
+              },
+              ...(Array.isArray(skeletonProps?.sx)
+                ? skeletonProps.sx
+                : [skeletonProps?.sx]),
+            ]}
           />
         ) : (
           <Typography variant='baseMdBold' {...timeTypographyProps}>

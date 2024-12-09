@@ -78,6 +78,11 @@ const LendingPortfolioTable: React.FC<LendingPortfolioTableProps> = ({
                       variant: 'baseSm',
                       whiteSpace: 'normal',
                     }}
+                    skeletonProps={{
+                      sx: {
+                        bgcolor: 'rgba(40, 40, 42, 0.11)',
+                      },
+                    }}
                   />
                 </EmptyDataPlaceholder>
               )}

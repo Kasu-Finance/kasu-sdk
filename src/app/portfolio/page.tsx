@@ -38,6 +38,11 @@ const Portfolio = async () => {
             variant: 'baseSmBold',
             display: 'inline-block',
           }}
+          skeletonProps={{
+            sx: {
+              bgcolor: 'rgba(40, 40, 42, 0.11)',
+            },
+          }}
         />
       </WaveBox>
       <CustomCard>
