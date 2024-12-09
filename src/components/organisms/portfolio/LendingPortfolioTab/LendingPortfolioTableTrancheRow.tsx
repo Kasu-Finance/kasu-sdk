@@ -90,6 +90,7 @@ const LendingPortfolioTableTrancheRow: React.FC<
             currentEpoch={currentEpoch}
             pool={pool}
             tranche={tranche}
+            isVariable
           />
         </TableRow>
       )}

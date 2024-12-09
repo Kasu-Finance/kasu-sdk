@@ -29,8 +29,10 @@ import {
 import { customTypography } from '@/themes/typography'
 
 const LendingPortfolioTableActionColumn: React.FC<
-  LendingPortfolioTableTrancheRowProps
-> = ({ tranche, currentEpoch, pool }) => {
+  LendingPortfolioTableTrancheRowProps & {
+    isVariable?: boolean
+  }
+> = ({ tranche, currentEpoch, pool, isVariable = false }) => {
   const { t } = getTranslation()
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -84,7 +86,7 @@ const LendingPortfolioTableActionColumn: React.FC<
       }}
     >
       <Box display='flex' alignItems='center' gap={2} height={26}>
-        {unexpiredLoans.length ? (
+        {!isVariable && unexpiredLoans.length ? (
           <Button
             variant='text'
             startIcon={<WithdrawMoneyIcon />}
@@ -218,32 +220,36 @@ const LendingPortfolioTableActionColumn: React.FC<
               {t('portfolio.lendingPortfolio.actions.action-3')}
             </MenuItem>
           ) : null}
-          {tranche.fixedLoans.length ? (
-            <MenuItem
-              onClick={() =>
-                handleMenuItemClick({
-                  name: ModalsKeys.FIXED_LOAN,
-                  fixedLoans: tranche.fixedLoans,
-                })
-              }
-            >
-              <PaperIcon />
-              {t('portfolio.lendingPortfolio.actions.action-4')}
-            </MenuItem>
-          ) : null}
-          {autoConvertedLoans.length ? (
-            <MenuItem
-              onClick={() =>
-                handleMenuItemClick({
-                  name: ModalsKeys.AUTO_CONVERSION_TO_VARIABLE,
-                  epochNumber: pool.requestEpochsInAdvance,
-                  fixedLoans: autoConvertedLoans,
-                })
-              }
-            >
-              <FixRateIcon />
-              {t('portfolio.lendingPortfolio.actions.action-5')}
-            </MenuItem>
+          {!isVariable ? (
+            <>
+              {tranche.fixedLoans.length ? (
+                <MenuItem
+                  onClick={() =>
+                    handleMenuItemClick({
+                      name: ModalsKeys.FIXED_LOAN,
+                      fixedLoans: tranche.fixedLoans,
+                    })
+                  }
+                >
+                  <PaperIcon />
+                  {t('portfolio.lendingPortfolio.actions.action-4')}
+                </MenuItem>
+              ) : null}
+              {autoConvertedLoans.length ? (
+                <MenuItem
+                  onClick={() =>
+                    handleMenuItemClick({
+                      name: ModalsKeys.AUTO_CONVERSION_TO_VARIABLE,
+                      epochNumber: pool.requestEpochsInAdvance,
+                      fixedLoans: autoConvertedLoans,
+                    })
+                  }
+                >
+                  <FixRateIcon />
+                  {t('portfolio.lendingPortfolio.actions.action-5')}
+                </MenuItem>
+              ) : null}
+            </>
           ) : null}
         </Menu>
       </Box>
