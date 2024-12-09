@@ -46,8 +46,11 @@ const LendingPortfolioTableTrancheRow: React.FC<
         <TableRow
           sx={{
             '.MuiTableCell-root': {
-              py: 0,
               ...customTypography.baseSm,
+              py: 0,
+              '&:not(:first-child):not(:last-child)': {
+                px: 1,
+              },
             },
           }}
         >
@@ -99,8 +102,11 @@ const LendingPortfolioTableTrancheRow: React.FC<
             <TableRow
               sx={{
                 '.MuiTableCell-root': {
-                  py: 0,
                   ...customTypography.baseSm,
+                  py: 0,
+                  '&:not(:first-child):not(:last-child)': {
+                    px: 1,
+                  },
                 },
               }}
               key={index}

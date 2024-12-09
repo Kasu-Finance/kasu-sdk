@@ -12,22 +12,25 @@ const LendingPortfolioTableHeader = () => {
       sx={{
         '.MuiTableCell-root': {
           ...customTypography.baseSm,
+          '&:not(:first-child):not(:last-child)': {
+            px: 1,
+          },
         },
       }}
     >
       <TableCell sx={{ textTransform: 'capitalize' }} width='19%'>
         {t('general.lendingStrategy')}
       </TableCell>
-      <TableCell width='9%' align='right'>
+      <TableCell width='8%' align='right'>
         {t('general.grossApy')}
       </TableCell>
-      <TableCell width='8%'>
+      <TableCell width='7%'>
         {t('portfolio.lendingPortfolio.tableHeader.cell-1')}
       </TableCell>
       <TableCell width='12%' align='right'>
         {t('portfolio.lendingPortfolio.tableHeader.cell-2')}
       </TableCell>
-      <TableCell width='16%' align='right'>
+      <TableCell width='18%' align='right'>
         {t('portfolio.lendingPortfolio.tableHeader.cell-3')}
       </TableCell>
       <TableCell width='14%' align='right'>
