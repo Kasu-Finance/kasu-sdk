@@ -4,10 +4,12 @@ import React from 'react'
 
 import usePortfolioState from '@/hooks/context/usePortfolioState'
 import usePagination from '@/hooks/usePagination'
+import getTranslation from '@/hooks/useTranslation'
 
 import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
 import NoMatchingFilter from '@/components/atoms/NoMatchingFilter'
 import CustomTable from '@/components/molecules/CustomTable'
+import NextClearingPeriodInfo from '@/components/molecules/NextClearingPeriodInfo'
 import LendingPortfolioTableHeader from '@/components/organisms/portfolio/LendingPortfolioTab/LendingPortfolioTableHeader'
 import LendingPortfolioTableRow from '@/components/organisms/portfolio/LendingPortfolioTab/LendingPortfolioTableRow'
 
@@ -22,6 +24,8 @@ const LendingPortfolioTable: React.FC<LendingPortfolioTableProps> = ({
   portfolioPools,
   currentEpoch,
 }) => {
+  const { t } = getTranslation()
+
   const { filter } = usePortfolioState()
 
   const filteredPools = portfolioPools.filter(
@@ -49,16 +53,44 @@ const LendingPortfolioTable: React.FC<LendingPortfolioTableProps> = ({
           ))
         ) : (
           <TableRow>
-            <TableCell colSpan={7} sx={{ pt: 7, pb: 7 }}>
+            <TableCell colSpan={7} sx={{ pt: 4, pb: 4 }}>
               {portfolioPools.length ? (
                 <NoMatchingFilter />
               ) : (
-                <EmptyDataPlaceholder text='You have not deposited into any lending strategies...' />
+                <EmptyDataPlaceholder
+                  text='You have not deposited into any lending strategies...'
+                  sx={{
+                    img: {
+                      maxWidth: 348,
+                      height: 'auto',
+                    },
+                  }}
+                >
+                  <NextClearingPeriodInfo
+                    beforeText={t('portfolio.lendingPortfolio.dataUpdateTime')}
+                    sx={{
+                      bgcolor: 'unset',
+                      maxWidth: 680,
+                      textAlign: 'center',
+                      pt: 1,
+                    }}
+                    typographyProps={{
+                      variant: 'baseSm',
+                      whiteSpace: 'normal',
+                    }}
+                    skeletonProps={{
+                      sx: {
+                        bgcolor: 'rgba(40, 40, 42, 0.11)',
+                      },
+                    }}
+                  />
+                </EmptyDataPlaceholder>
               )}
             </TableCell>
           </TableRow>
         )
       }
+      tableHeaderSx={portfolioPools.length ? undefined : { display: 'none' }}
       tableBodySx={{
         '& .MuiTableRow-root:first-child': {
           display: 'none',
