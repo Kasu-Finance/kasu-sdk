@@ -57,7 +57,7 @@ const PendingDecisionsTableRow: React.FC<PendingDecisionsTableRowProps> = ({
           {pendingDecision.poolName}
         </TableCell>
       </TableRow>
-      {pendingDecision.tranches.map((tranche) => (
+      {pendingDecision.tranches.toReversed().map((tranche) => (
         <Fragment key={tranche.id}>
           <TableRow>
             <TableCell

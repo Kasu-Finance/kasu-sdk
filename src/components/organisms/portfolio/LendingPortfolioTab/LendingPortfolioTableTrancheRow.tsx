@@ -46,8 +46,11 @@ const LendingPortfolioTableTrancheRow: React.FC<
         <TableRow
           sx={{
             '.MuiTableCell-root': {
-              py: 0,
               ...customTypography.baseSm,
+              py: 0,
+              '&:not(:first-child):not(:last-child)': {
+                px: 1,
+              },
             },
           }}
         >
@@ -61,25 +64,25 @@ const LendingPortfolioTableTrancheRow: React.FC<
               {tranche.name} {t('general.tranche')}
             </Box>
           </TableCell>
-          <TableCell>
+          <TableCell align='right'>
             {formatPercentage(tranche.apy).replaceAll(' ', '')}
           </TableCell>
           <TableCell>Variable</TableCell>
-          <TableCell>
+          <TableCell align='right'>
             {formatAmount(tranche.investedAmount || '0', {
               minValue: 10_000_000,
               minDecimals: 2,
             })}{' '}
             USDC
           </TableCell>
-          <TableCell>
+          <TableCell align='right'>
             {formatAmount(tranche.yieldEarnings.lastEpoch || '0', {
               minValue: 10_000_000,
               minDecimals: 2,
             })}{' '}
             USDC
           </TableCell>
-          <TableCell>
+          <TableCell align='right'>
             {formatAmount(tranche.yieldEarnings.lifetime || '0', {
               minValue: 10_000_000,
               minDecimals: 2,
@@ -90,6 +93,7 @@ const LendingPortfolioTableTrancheRow: React.FC<
             currentEpoch={currentEpoch}
             pool={pool}
             tranche={tranche}
+            isVariable
           />
         </TableRow>
       )}
@@ -98,8 +102,11 @@ const LendingPortfolioTableTrancheRow: React.FC<
             <TableRow
               sx={{
                 '.MuiTableCell-root': {
-                  py: 0,
                   ...customTypography.baseSm,
+                  py: 0,
+                  '&:not(:first-child):not(:last-child)': {
+                    px: 1,
+                  },
                 },
               }}
               key={index}
@@ -114,25 +121,25 @@ const LendingPortfolioTableTrancheRow: React.FC<
                   {tranche.name} {t('general.tranche')}
                 </Box>
               </TableCell>
-              <TableCell>
+              <TableCell align='right'>
                 {formatPercentage(fixedTermConfig.apy).replaceAll(' ', '')}
               </TableCell>
               <TableCell>Fixed</TableCell>
-              <TableCell>
+              <TableCell align='right'>
                 {formatAmount(fixedTermConfig.investedAmount || '0', {
                   minValue: 10_000_000,
                   minDecimals: 2,
                 })}{' '}
                 USDC
               </TableCell>
-              <TableCell>
+              <TableCell align='right'>
                 {formatAmount(fixedTermConfig.yieldEarnings.lastEpoch || '0', {
                   minValue: 10_000_000,
                   minDecimals: 2,
                 })}{' '}
                 USDC
               </TableCell>
-              <TableCell>
+              <TableCell align='right'>
                 {formatAmount(fixedTermConfig.yieldEarnings.lifetime || '0', {
                   minValue: 10_000_000,
                   minDecimals: 2,

@@ -34,7 +34,7 @@ const useWalletActivation = () => {
       try {
         setToast({
           type: 'info',
-          title: 'Connection',
+          title: 'Connecting Wallet',
           message: 'We are connecting your wallet...',
         })
         if (connection.overrideActivate?.()) return
@@ -48,7 +48,7 @@ const useWalletActivation = () => {
         ) {
           setToast({
             type: 'info',
-            title: 'Connection',
+            title: 'Connecting Wallet',
             message: 'Wallet connection already pending...',
           })
           return

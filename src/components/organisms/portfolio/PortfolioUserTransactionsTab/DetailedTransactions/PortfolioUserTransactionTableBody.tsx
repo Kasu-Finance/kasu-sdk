@@ -4,13 +4,18 @@ import { DetailedTransaction } from '@/utils/lending/getDetailedTransactions'
 
 type PortfolioUserTransactionTableBodyProps = {
   detailedTransactions: DetailedTransaction[]
+  currentEpoch: string
 }
 
 const PortfolioUserTransactionTableBody: React.FC<
   PortfolioUserTransactionTableBodyProps
-> = ({ detailedTransactions: transactions }) => {
-  return transactions.map((transaction, index) => (
-    <PortfolioUserTransactionTableRow transaction={transaction} key={index} />
+> = ({ detailedTransactions, currentEpoch }) => {
+  return detailedTransactions.map((transaction, index) => (
+    <PortfolioUserTransactionTableRow
+      currentEpoch={currentEpoch}
+      transaction={transaction}
+      key={index}
+    />
   ))
 }
 

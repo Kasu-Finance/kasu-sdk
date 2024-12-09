@@ -13,6 +13,8 @@ import DialogContent from '@/components/molecules/DialogContent'
 import DialogHeader from '@/components/molecules/DialogHeader'
 import EpochEndInfo from '@/components/organisms/modals/CancelWithdrawalModal/EpochEndInfo'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
 import { formatAmount, formatTimestamp } from '@/utils'
 
 const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
@@ -20,7 +22,7 @@ const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { modal } = useModalState()
 
-  const { transaction } = modal.cancelWithdrawalModal
+  const { transaction, currentEpoch } = modal[ModalsKeys.CANCEL_WITHDRAWAL]
 
   const transactionEvents = transaction.events
 
@@ -31,7 +33,7 @@ const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
     includeUtcOffset: true,
   })
 
-  const { updateTransactionHistory } = useTransactionHistory()
+  const { updateTransactionHistory } = useTransactionHistory(currentEpoch)
 
   const cancelWithdrawal = useCancelWithdrawal()
 
@@ -78,7 +80,7 @@ const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             />
             {transaction.lendingPool.tranches.length > 1 && (
               <InfoRow
-                title={`${t('general.tranche')} ${t('general.tranche')}`}
+                title={t('general.tranche')}
                 toolTipInfo={
                   <ToolTip
                     title={t('modals.cancelWithdrawal.metric-4-tooltip')}
@@ -147,7 +149,9 @@ const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               }
             />
           </Box>
-          <EpochEndInfo />
+          <EpochEndInfo
+            beforeText={t('modals.cancelWithdrawal.epochEndsText')}
+          />
           <Button
             variant='contained'
             color='secondary'

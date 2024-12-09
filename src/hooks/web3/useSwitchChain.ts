@@ -24,7 +24,7 @@ const useSwitchChain = () => {
 
       try {
         setToast({
-          title: 'Connection',
+          title: 'Wrong Chain',
           message: 'Please switch to the correct chain.',
           type: 'info',
           isClosable: false,

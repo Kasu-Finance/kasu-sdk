@@ -7,10 +7,12 @@ import UserTransactionTableRow from '@/components/organisms/lending/OverviewTab/
 
 type UserTransactionTableBodyProps = {
   transactions: UserRequest[]
+  currentEpoch: string
 }
 
 const UserTransactionTableBody: React.FC<UserTransactionTableBodyProps> = ({
   transactions,
+  currentEpoch,
 }) => {
   const [collapsed, setCollapsed] = useState<number | undefined>(undefined)
 
@@ -21,6 +23,7 @@ const UserTransactionTableBody: React.FC<UserTransactionTableBodyProps> = ({
   return transactions.map((transaction, index) => (
     <UserTransactionTableRow
       transaction={transaction}
+      currentEpoch={currentEpoch}
       isActive={collapsed === index}
       toggle={() => handleCollapse(index)}
       key={transaction.id}

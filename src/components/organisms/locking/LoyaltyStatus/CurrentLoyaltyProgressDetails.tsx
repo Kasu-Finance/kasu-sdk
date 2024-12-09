@@ -6,6 +6,7 @@ import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
 import RksuBalance from '@/components/molecules/tooltips/RksuBalance'
 import RksuTooltip from '@/components/molecules/tooltips/RksuTooltip'
+import LearnButton from '@/components/organisms/lending/OverviewTab/UserLoyalty/LearnButton'
 import LoyaltyProgress from '@/components/organisms/lending/OverviewTab/UserLoyalty/LoyaltyProgress'
 import ActiveDepositAmount from '@/components/organisms/locking/LoyaltyStatus/ActiveDepositAmount'
 import LendingRatio from '@/components/organisms/locking/LoyaltyStatus/LendingRatio'
@@ -40,6 +41,7 @@ const CurrentLoyaltyProgressDetails = () => {
           metric={<LendingRatio />}
         />
       </Box>
+      <LearnButton />
     </Stack>
   )
 }

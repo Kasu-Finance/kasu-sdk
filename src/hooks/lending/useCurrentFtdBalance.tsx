@@ -11,7 +11,8 @@ const useCurrentFtdBalance = (poolId: string) => {
   const { data, error, isLoading, mutate } = useSWR(
     account ? ['currentFtdBalance', account, poolId] : null,
     async ([_, userAddress, poolId]) =>
-      await sdk.UserLending.getCurrentFtdBalance(poolId, userAddress)
+      await sdk.UserLending.getCurrentFtdBalance(poolId, userAddress),
+    { fallbackData: new Map() }
   )
 
   return {

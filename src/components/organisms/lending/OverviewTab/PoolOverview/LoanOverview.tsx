@@ -27,7 +27,7 @@ const LoanOverview: React.FC<LoanOverviewProps> = ({ pool }) => {
 
   return (
     <Grid container spacing={4}>
-      {pool.tranches.map((tranche) => (
+      {pool.tranches.toReversed().map((tranche) => (
         <Grid
           item
           key={tranche.id}

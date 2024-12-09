@@ -94,7 +94,7 @@ const PoolTableRow: React.FC<PoolTableRowProps> = ({ pool }) => {
           </Box>
         </TableCell>
         <TableCell>
-          {pool.tranches.map((tranche) => {
+          {pool.tranches.toReversed().map((tranche) => {
             const title = isMultiTranche
               ? `${tranche.name} ${t('general.tranche')} ${t('general.apy')}`
               : `${capitalize(t('general.lendingStrategy'))} ${t('general.apy')}`

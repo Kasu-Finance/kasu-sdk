@@ -10,8 +10,14 @@ import PortfolioUserTransactionTable from '@/components/organisms/portfolio/Port
 
 import { getDetailedTransactions } from '@/utils'
 
-const PortfolioUserTransactionTableWrapper = () => {
-  const { transactionHistory, isLoading } = useTransactionHistory()
+type PortfolioUserTransactionTableWrapperProps = {
+  currentEpoch: string
+}
+
+const PortfolioUserTransactionTableWrapper: React.FC<
+  PortfolioUserTransactionTableWrapperProps
+> = ({ currentEpoch }) => {
+  const { transactionHistory, isLoading } = useTransactionHistory(currentEpoch)
 
   const { loanTickets, isLoading: loanTicketsLoading } = useLoanTickets()
 
@@ -48,6 +54,7 @@ const PortfolioUserTransactionTableWrapper = () => {
     <>
       <TransactionFilters pools={pools} withReallocation />
       <PortfolioUserTransactionTable
+        currentEpoch={currentEpoch}
         detailedTransactions={detailedTransactions}
       />
     </>

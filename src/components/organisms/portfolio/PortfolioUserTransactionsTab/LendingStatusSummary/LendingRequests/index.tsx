@@ -4,7 +4,11 @@ import LendingRequestsTableHeader from '@/components/organisms/portfolio/Portfol
 
 import { customPalette } from '@/themes/palette'
 
-const LendingRequests = () => {
+type LendingRequestsProps = {
+  currentEpoch: string
+}
+
+const LendingRequests: React.FC<LendingRequestsProps> = ({ currentEpoch }) => {
   return (
     <CustomTable
       tableSx={{ background: 'none' }}
@@ -23,7 +27,7 @@ const LendingRequests = () => {
         },
       }}
       tableHeader={<LendingRequestsTableHeader />}
-      tableBody={<LendingRequestsTableBody />}
+      tableBody={<LendingRequestsTableBody currentEpoch={currentEpoch} />}
     />
   )
 }

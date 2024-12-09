@@ -3,7 +3,7 @@ import useSWR from 'swr'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
-const useTransactionHistory = () => {
+const useTransactionHistory = (epochId: string) => {
   const sdk = useKasuSDK()
 
   const { account } = useWeb3React()
@@ -12,8 +12,10 @@ const useTransactionHistory = () => {
     account ? ['transactionHistory', account] : null,
     async ([_, userAdress]) => {
       const userRequests = await sdk.UserLending.getUserRequests(
-        userAdress as `0x${string}`
+        userAdress as `0x${string}`,
+        epochId
       )
+
       return userRequests.sort((a, b) => b.timestamp - a.timestamp)
     }
   )

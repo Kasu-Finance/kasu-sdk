@@ -10,10 +10,16 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { DownloadRoundedIcon } from '@/assets/icons'
 
-const CsvDownloadButton = () => {
+type CsvDownloadButtonProps = {
+  currentEpoch: string
+}
+
+const CsvDownloadButton: React.FC<CsvDownloadButtonProps> = ({
+  currentEpoch,
+}) => {
   const { t } = getTranslation()
 
-  const { transactionHistory, isLoading } = useTransactionHistory()
+  const { transactionHistory, isLoading } = useTransactionHistory(currentEpoch)
 
   const { openModal } = useModalState()
 

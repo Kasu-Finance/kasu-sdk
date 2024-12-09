@@ -9,7 +9,11 @@ import WithdrawalRequestsTableHeader from '@/components/organisms/portfolio/Port
 
 import { customPalette } from '@/themes/palette'
 
-const WithdrawalStatusSummary = () => {
+type WithdrawalStatusSummaryProps = { currentEpoch: string }
+
+const WithdrawalStatusSummary: React.FC<WithdrawalStatusSummaryProps> = ({
+  currentEpoch,
+}) => {
   const { t } = getTranslation()
 
   return (
@@ -35,7 +39,9 @@ const WithdrawalStatusSummary = () => {
             },
           }}
           tableHeader={<WithdrawalRequestsTableHeader />}
-          tableBody={<WithdrawalRequestsTableBody />}
+          tableBody={
+            <WithdrawalRequestsTableBody currentEpoch={currentEpoch} />
+          }
         />
       </CustomInnerCardContent>
     </CustomCard>

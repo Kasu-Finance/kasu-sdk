@@ -47,7 +47,7 @@ const useChainStatus = () => {
       account &&
       invalidChain &&
       toast?.title !== 'Wrong Chain' &&
-      toast?.title !== 'Connection' &&
+      toast?.title !== 'Connecting Wallet' &&
       toast?.type !== 'error'
     ) {
       setToast({

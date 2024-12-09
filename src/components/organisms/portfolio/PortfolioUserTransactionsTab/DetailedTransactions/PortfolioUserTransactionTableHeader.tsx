@@ -18,7 +18,10 @@ const PortfolioUserTransactionsTableHeader = () => {
           ...customTypography.baseSm,
           lineHeight: '18px',
           verticalAlign: 'bottom',
-          px: 1,
+
+          '&:not(:first-child):not(:last-child)': {
+            px: 1,
+          },
         },
       }}
     >

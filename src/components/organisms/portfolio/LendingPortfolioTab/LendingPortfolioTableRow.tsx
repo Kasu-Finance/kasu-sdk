@@ -43,14 +43,16 @@ const LendingPortfolioTableRow: React.FC<LendingPortfolioTableRowProps> = ({
           <DottedDivider />
         </TableCell>
       </TableRow>
-      {(userLendingTrancheBalance ?? portfolioPool.tranches).map((tranche) => (
-        <LendingPortfolioTableTrancheRow
-          pool={portfolioPool}
-          tranche={tranche}
-          currentEpoch={currentEpoch}
-          key={tranche.name}
-        />
-      ))}
+      {(userLendingTrancheBalance ?? portfolioPool.tranches)
+        .toReversed()
+        .map((tranche) => (
+          <LendingPortfolioTableTrancheRow
+            pool={portfolioPool}
+            tranche={tranche}
+            currentEpoch={currentEpoch}
+            key={tranche.name}
+          />
+        ))}
     </>
   )
 }
