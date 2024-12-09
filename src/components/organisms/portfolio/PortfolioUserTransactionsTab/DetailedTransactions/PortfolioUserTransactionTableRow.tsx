@@ -101,8 +101,10 @@ const PortfolioUserTransactionTableRow: React.FC<
             ...customTypography.baseSm,
             lineHeight: '18px',
             verticalAlign: 'top',
-            px: 1,
             whiteSpace: 'normal',
+            '&:not(:first-child):not(:last-child)': {
+              px: 1,
+            },
           },
         }}
       >

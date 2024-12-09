@@ -85,7 +85,7 @@ const LendingPortfolioTableActionColumn: React.FC<
         },
       }}
     >
-      <Box display='flex' alignItems='center' gap={2} height={26}>
+      <Box display='flex' alignItems='center' height={26}>
         {!isVariable && unexpiredLoans.length ? (
           <Button
             variant='text'
