@@ -49,6 +49,9 @@ const RequestOverview: React.FC<RequestOverviewProps> = ({
             }}
           />
         }
+        titleStyle={{
+          variant: 'baseMdBold',
+        }}
         metric={
           <Typography variant='h4'>
             {formatPercentage(
