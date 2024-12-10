@@ -10,9 +10,13 @@ import { customTypography } from '@/themes/typography'
 const UnlockModalEditDescription = () => {
   const { t } = getTranslation()
 
-  const { openModal } = useModalState()
+  const { openModal, closeModal } = useModalState()
 
-  const handleOpen = () => openModal({ name: ModalsKeys.LOYALTY_LEVELS })
+  const handleOpen = () =>
+    openModal({
+      name: ModalsKeys.LOYALTY_LEVELS,
+      callback: () => closeModal(ModalsKeys.UNLOCK),
+    })
 
   return (
     <Stack>

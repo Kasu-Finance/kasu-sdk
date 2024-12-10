@@ -65,8 +65,10 @@ export type ModalAction =
 export type ModalData<T = void> = T extends void ? ModalBase : T & ModalBase
 
 export type Modals = {
-  [ModalsKeys.LOYALTY_LEVELS]: ModalData
   [ModalsKeys.UNRELEASED_FEATURE]: ModalData
+  [ModalsKeys.LOYALTY_LEVELS]: ModalData<{
+    callback?: () => void
+  }>
   [ModalsKeys.MISSING_EMAIL]: ModalData<{
     callback: () => void
   }>
