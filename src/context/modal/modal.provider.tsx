@@ -137,7 +137,7 @@ const initialState: Modals = {
     currentEpoch: '',
   },
   loanContractModal: {
-    isOpen: false,
+    isOpen: true,
     canAccept: false,
     acceptLoanContract: () => {},
   },

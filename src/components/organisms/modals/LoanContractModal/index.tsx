@@ -19,7 +19,7 @@ import Witnesses from '@/components/organisms/modals/LoanContractModal/Witnesses
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import { ScrollDownIcon } from '@/assets/icons'
+import { ExpandIcon, ScrollDownIcon } from '@/assets/icons'
 
 import dayjs from '@/dayjs'
 import { userRejectedTransaction } from '@/utils'
@@ -38,6 +38,7 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const ref = useRef<HTMLDivElement>()
 
   const [showScrollDown, setShowScrollDown] = useState(true)
+  const [isFullscreen, setIsFullScreen] = useState(false)
 
   const { acceptLoanContract, canAccept, generatedContract } =
     modal[ModalsKeys.LOAN_CONTRACT]
@@ -97,7 +98,9 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           ref,
           sx: {
             minHeight: '300px',
-            maxHeight: 'calc(100vh - 600px)',
+            maxHeight: isFullscreen
+              ? 'calc(100vh - 251px)'
+              : 'calc(100vh - 600px)',
             overflowY: 'auto',
             overflowX: 'hidden',
             scrollBehavior: 'smooth',
@@ -122,6 +125,21 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         >
           <ScrollDownIcon />
         </IconButton>
+        {!isFullscreen && (
+          <IconButton
+            sx={{
+              zIndex: 2,
+              position: 'absolute',
+              height: 42,
+              bottom: 0,
+              right: 89,
+              p: 0,
+            }}
+            onClick={() => setIsFullScreen(true)}
+          >
+            <ExpandIcon text={t('modals.loanContract.actions.expand')} />
+          </IconButton>
+        )}
         <Stack spacing={2}>
           <Box borderRadius={2} bgcolor='gold.dark' p={2}>
             <Stack spacing={2}>
