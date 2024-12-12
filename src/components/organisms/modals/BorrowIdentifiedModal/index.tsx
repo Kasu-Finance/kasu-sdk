@@ -129,7 +129,7 @@ const BorrowerIdentifiedModal: React.FC<DialogChildProps> = ({
               {t('modals.borrowerIdentified.description-4')}
             </Typography>
             <Typography variant='baseMd' color='white'>
-              no-reply@kasu.finance
+              no-reply@lenders.kasu.finance
             </Typography>
           </Stack>
           <Box display='flex' gap={4} width='100%'>

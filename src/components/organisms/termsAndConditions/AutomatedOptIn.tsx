@@ -74,7 +74,7 @@ const AutomatedOptIn = () => {
         <Typography variant='baseMd'>
           {t('modals.termsAndConditions.subheader-8.description-6')}{' '}
           <Typography variant='inherit' color='gold.dark' display='inline'>
-            no-reply@kasu.finance
+            no-reply@lenders.kasu.finance
           </Typography>
           . {t('modals.termsAndConditions.subheader-8.description-7')}
         </Typography>
