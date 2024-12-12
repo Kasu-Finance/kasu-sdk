@@ -11,7 +11,7 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 const LendingModalEditActions = () => {
   const { t } = getTranslation()
 
-  const { openModal } = useModalState()
+  const { openModal, closeModal } = useModalState()
 
   const { nextStep } = useStepperState()
 
@@ -20,7 +20,11 @@ const LendingModalEditActions = () => {
 
   const { modalStatus } = useModalStatusState()
 
-  const handleOpen = () => openModal({ name: ModalsKeys.LOYALTY_LEVELS })
+  const handleOpen = () =>
+    openModal({
+      name: ModalsKeys.LOYALTY_LEVELS,
+      callback: () => closeModal(ModalsKeys.LEND),
+    })
 
   return (
     <Stack spacing={2}>

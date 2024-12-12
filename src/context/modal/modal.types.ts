@@ -27,6 +27,7 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 
 export type ModalBase = {
   isOpen: boolean
+  isFullscreen?: boolean
 }
 
 export enum ModalsActionTypes {
@@ -59,14 +60,21 @@ export enum ModalsKeys {
 }
 
 export type ModalAction =
-  | { type: ModalsActionTypes.OPEN_MODAL; name: keyof Modals; content?: any }
+  | {
+      type: ModalsActionTypes.OPEN_MODAL
+      name: keyof Modals
+      content?: any
+      isFullscreen?: boolean
+    }
   | { type: ModalsActionTypes.CLOSE_MODAL; name: keyof Modals }
 
 export type ModalData<T = void> = T extends void ? ModalBase : T & ModalBase
 
 export type Modals = {
-  [ModalsKeys.LOYALTY_LEVELS]: ModalData
   [ModalsKeys.UNRELEASED_FEATURE]: ModalData
+  [ModalsKeys.LOYALTY_LEVELS]: ModalData<{
+    callback?: () => void
+  }>
   [ModalsKeys.MISSING_EMAIL]: ModalData<{
     callback: () => void
   }>

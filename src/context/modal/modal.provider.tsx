@@ -138,6 +138,7 @@ const initialState: Modals = {
   },
   loanContractModal: {
     isOpen: false,
+    isFullscreen: false,
     canAccept: false,
     acceptLoanContract: () => {},
   },

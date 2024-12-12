@@ -1,9 +1,12 @@
 'use client'
 
 import { Button, Stack, Typography } from '@mui/material'
+import Link from 'next/link'
 
+import useModalState from '@/hooks/context/useModalState'
 import getTranslation from '@/hooks/useTranslation'
 
+import ColoredBox from '@/components/atoms/ColoredBox'
 import CustomCard from '@/components/atoms/CustomCard'
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
 import UnorderedList from '@/components/atoms/UnorderedList'
@@ -11,12 +14,24 @@ import DialogContent from '@/components/molecules/DialogContent'
 import DialogHeader from '@/components/molecules/DialogHeader'
 import LoyaltyLevelInfo from '@/components/organisms/modals/LoyaltyLevelsModal/LoyaltyLevelInfo'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
 import { TrophyIcon } from '@/assets/icons'
 
+import { Routes } from '@/config/routes'
 import { customTypography } from '@/themes/typography'
 
 const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { t } = getTranslation()
+
+  const { modal } = useModalState()
+
+  const { callback } = modal[ModalsKeys.LOYALTY_LEVELS]
+
+  const handleClick = () => {
+    handleClose()
+    callback?.()
+  }
 
   return (
     <CustomCard>
@@ -27,6 +42,14 @@ const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
       <DialogContent>
         <Stack spacing={2}>
           <Stack spacing={3}>
+            <ColoredBox
+              sx={{ bgcolor: 'gold.dark', textAlign: 'center', py: 1.5 }}
+            >
+              <Typography variant='h4'>
+                COMING SOON PLESE <br />
+                COME BACK ONCE WE LAUNCH OUR KSU TOKEN
+              </Typography>
+            </ColoredBox>
             <Typography variant='h4'>
               {t('modals.loyaltyLevels.subtitle')}
             </Typography>
@@ -112,6 +135,16 @@ const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           <Typography variant='baseSm'>
             {t('modals.loyaltyLevels.description-3')}
           </Typography>
+          <Button
+            variant='outlined'
+            color='secondary'
+            onClick={handleClick}
+            sx={{ textTransform: 'capitalize' }}
+            LinkComponent={Link}
+            href={Routes.locking.root.url}
+          >
+            {t('modals.lock.actions.action-1')}
+          </Button>
           <Button
             variant='contained'
             color='secondary'
