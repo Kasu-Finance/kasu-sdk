@@ -46,7 +46,7 @@ const useGenerateContract = () => {
       try {
         setToast({
           type: 'info',
-          title: 'Generating Contract...',
+          title: 'Generating Loan Contract...',
           message:
             'Please sign the transaction in your wallet to generate the Loan Contract.',
           isClosable: false,
@@ -94,7 +94,7 @@ const useGenerateContract = () => {
         if (userRejectedTransaction(error)) {
           handleError(
             error,
-            'Generate Contract Error',
+            'Generate Loan Contract Error',
             'Message signature request declined. Unable to generate Loan Contract.',
             true
           )
