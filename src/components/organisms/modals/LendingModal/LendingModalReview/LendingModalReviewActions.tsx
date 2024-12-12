@@ -104,8 +104,9 @@ const LendingModalReviewActions = () => {
     ) {
       setToast({
         type: 'error',
-        title: 'Contract Expired',
-        message: 'The contract you generated has expired. Please try again.',
+        title: 'Loan Contract Expired',
+        message:
+          'The Loan Contract you generated has expired. Please try again.',
       })
 
       resetGeneratedContract()

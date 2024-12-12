@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useToastState from '@/hooks/context/useToastState'
+import useDebounce from '@/hooks/useDebounce'
 import getTranslation from '@/hooks/useTranslation'
 import useHandleError from '@/hooks/web3/useHandleError'
 
@@ -19,7 +20,7 @@ import Witnesses from '@/components/organisms/modals/LoanContractModal/Witnesses
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import { ScrollDownIcon } from '@/assets/icons'
+import { ExpandIcon, ScrollDownIcon } from '@/assets/icons'
 
 import dayjs from '@/dayjs'
 import { userRejectedTransaction } from '@/utils'
@@ -27,7 +28,7 @@ import { userRejectedTransaction } from '@/utils'
 const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { t } = getTranslation()
 
-  const { modal } = useModalState()
+  const { modal, openModal } = useModalState()
 
   const { provider } = useWeb3React()
 
@@ -35,16 +36,33 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const handleError = useHandleError()
 
-  const ref = useRef<HTMLDivElement>()
+  const containerRef = useRef<HTMLDivElement>()
+  const targetRef = useRef<HTMLButtonElement>(null)
 
   const [showScrollDown, setShowScrollDown] = useState(true)
 
-  const { acceptLoanContract, canAccept, generatedContract } =
+  const { acceptLoanContract, canAccept, generatedContract, isFullscreen } =
     modal[ModalsKeys.LOAN_CONTRACT]
 
   const scrollDown = () => {
-    ref.current?.scrollTo(0, ref.current.scrollHeight)
+    if (!containerRef.current) return
+
+    containerRef.current.scrollTo(0, containerRef.current.scrollHeight)
   }
+
+  const handleOnScroll = () => {
+    if (!containerRef.current) return
+
+    setShowScrollDown(
+      containerRef.current.offsetHeight + containerRef.current.scrollTop <
+        containerRef.current.scrollHeight
+    )
+  }
+
+  const { debouncedFunction: debouncedScroll } = useDebounce(
+    handleOnScroll,
+    100
+  )
 
   const handleClick = async () => {
     if (!provider) {
@@ -86,25 +104,39 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
     }
   }
 
+  const handleFullscreen = () => {
+    openModal({
+      name: ModalsKeys.LOAN_CONTRACT,
+      acceptLoanContract,
+      canAccept,
+      generatedContract,
+      isFullscreen: true,
+    })
+  }
+
   return (
     <CustomCard>
-      <DialogHeader title='Loan Contract' onClose={handleClose} />
+      <DialogHeader
+        isFullscreen={modal[ModalsKeys.LOAN_CONTRACT].isFullscreen}
+        title='Loan Contract'
+        onClose={handleClose}
+      />
       <DialogContent
         sx={{
           position: 'relative',
         }}
         innerBoxProps={{
-          ref,
+          ref: containerRef,
           sx: {
             minHeight: '300px',
-            maxHeight: 'calc(100vh - 600px)',
+            maxHeight: isFullscreen
+              ? 'calc(100vh - 224px)'
+              : 'calc(100vh - 600px)',
             overflowY: 'auto',
             overflowX: 'hidden',
             scrollBehavior: 'smooth',
           },
-          onScroll: () => {
-            setShowScrollDown((ref.current?.scrollTop ?? 0) < 4200)
-          },
+          onScroll: debouncedScroll,
         }}
       >
         <IconButton
@@ -122,6 +154,21 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         >
           <ScrollDownIcon />
         </IconButton>
+        {!isFullscreen && (
+          <IconButton
+            sx={{
+              zIndex: 2,
+              position: 'absolute',
+              height: 42,
+              bottom: 0,
+              right: 89,
+              p: 0,
+            }}
+            onClick={handleFullscreen}
+          >
+            <ExpandIcon text={t('modals.loanContract.actions.expand')} />
+          </IconButton>
+        )}
         <Stack spacing={2}>
           <Box borderRadius={2} bgcolor='gold.dark' p={2}>
             <Stack spacing={2}>
@@ -183,6 +230,7 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               fullWidth
               onClick={handleClose}
               sx={{ textTransform: 'capitalize' }}
+              ref={targetRef}
             >
               {t('general.close')}
             </Button>

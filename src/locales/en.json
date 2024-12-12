@@ -856,7 +856,8 @@
       "actions": {
         "view": "View & Accept Loan Contract",
         "accept": "Accept Loan Contract",
-        "generate": "Generate Loan Contract"
+        "generate": "Generate Loan Contract",
+        "expand": "Expand"
       },
       "importantNote": {
         "title": "Important note:",
@@ -1235,7 +1236,7 @@
         "lockingOverview": "KSU Locking Overview"
       },
       "actions": {
-        "action-1": "INCREASE/ESTABLISH LOYALTY LEVEL",
+        "action-1": "Establish/Increase Loyalty Level ",
         "action-2": "REVIEW LENDING REQUEST",
         "viewTx": "View Transaction (TX)"
       }

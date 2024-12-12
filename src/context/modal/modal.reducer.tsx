@@ -11,6 +11,7 @@ export const modalReducer = (state: Modals, action: ModalAction): Modals => {
         ...state,
         [action.name]: {
           isOpen: true,
+          isFullscreen: action.isFullscreen,
           ...action.content,
         },
       }
