@@ -12,12 +12,14 @@ type DialogHeaderProps = {
   title: string
   children?: ReactNode
   showClose?: boolean
+  isFullscreen?: boolean
   containerSx?: SxProps<Theme>
   onClose: () => void
 }
 
 const DialogHeader: React.FC<DialogHeaderProps> = ({
   title,
+  isFullscreen,
   showClose = true,
   onClose,
 }) => {
@@ -32,7 +34,7 @@ const DialogHeader: React.FC<DialogHeaderProps> = ({
       justifyContent='center'
     >
       <Box
-        width={600}
+        width={isFullscreen ? '100%' : 600}
         position='absolute'
         sx={{ transform: 'translateY(-72px)' }}
         display='flex'

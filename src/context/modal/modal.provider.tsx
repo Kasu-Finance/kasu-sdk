@@ -137,7 +137,8 @@ const initialState: Modals = {
     currentEpoch: '',
   },
   loanContractModal: {
-    isOpen: true,
+    isOpen: false,
+    isFullscreen: false,
     canAccept: false,
     acceptLoanContract: () => {},
   },

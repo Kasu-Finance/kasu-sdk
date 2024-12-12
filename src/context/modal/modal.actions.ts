@@ -15,6 +15,7 @@ const useModalActions = (dispatch: Dispatch<ModalAction>): ModalFunctions =>
         dispatch({
           type: ModalsActionTypes.OPEN_MODAL,
           name: args.name,
+          isFullscreen: args.isFullscreen,
           content: args,
         })
       },

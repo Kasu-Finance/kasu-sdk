@@ -38,11 +38,11 @@ const DialogWrapper: React.FC<{
             width: 600,
             maxHeight: 'calc(100% - 200px)', // accodomate for floating cat
             marginTop: '88px', // accodomate for floating cat
-            ...((modalDetails.fullscreen || 2 > 1) && {
+            ...(modal[modalName].isFullscreen && {
               width: '100%',
               maxWidth: '100%',
               margin: 0,
-              maxHeight: 'calc(100% - 123px)',
+              maxHeight: 'calc(100% - 95px)',
               alignSelf: 'end',
               height: '100%',
             }),
