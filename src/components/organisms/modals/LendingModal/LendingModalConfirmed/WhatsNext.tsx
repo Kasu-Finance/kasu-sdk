@@ -69,7 +69,7 @@ const WhatsNext = () => {
             {t('modals.lending.completed.list.list-1.description-1')}
             <Typography variant='baseMd' color='white'>
               {' '}
-              no-reply@kasu.finance{' '}
+              no-reply@lenders.kasu.finance{' '}
             </Typography>
             {t('modals.lending.completed.list.list-1.description-2')}
           </li>
