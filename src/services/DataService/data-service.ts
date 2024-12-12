@@ -332,7 +332,8 @@ export class DataService {
                 apyExpiryDate: lendingPoolDirectus.apyExpiryDate,
                 poolInvestmentTerm: lendingPoolDirectus.poolInvestmentTerm,
                 loanStructure: lendingPoolDirectus.loanStructure,
-                poolName: lendingPoolSubgraph.name,
+                poolName:
+                    lendingPoolDirectus.poolName ?? lendingPoolSubgraph.name,
                 totalValueLocked: lendingPoolSubgraph.balance,
                 loansUnderManagement: lendingPoolDirectus.loansUnderManagement,
                 yieldEarned: lendingPoolSubgraph.totalUserInterestAmount,
@@ -436,22 +437,30 @@ export class DataService {
         const poolDelegateProfileAndHistoryDirectus: PoolDelegateProfileAndHistoryDirectus[] =
             (await this._directus.request(
                 readItems('PoolDelegateProfileAndHistory', {
-                    // @ts-expect-error typing
                     fields: ['*', { otherPools: ['*'] }],
                 }),
             )) as unknown as PoolDelegateProfileAndHistoryDirectus[];
 
-        const poolNames: {
-            lendingPools: Pick<
-                LendingPoolSubgraph,
-                'name' | 'id' | 'isStopped'
-            >[];
-        } = await this._graph.request(getPoolNameQuery, {
-            ids: poolDelegateProfileAndHistoryDirectus.flatMap((directus) =>
-                directus.otherPools.map((delegate) => delegate.PoolOverview_id),
+        const [poolNames, directusPoolNames] = await Promise.all([
+            this._graph.request(getPoolNameQuery, {
+                ids: poolDelegateProfileAndHistoryDirectus.flatMap((directus) =>
+                    directus.otherPools.map(
+                        (delegate) => delegate.PoolOverview_id,
+                    ),
+                ),
+                unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
+            }) as unknown as Promise<{
+                lendingPools: Pick<
+                    LendingPoolSubgraph,
+                    'name' | 'id' | 'isStopped'
+                >[];
+            }>,
+            this._directus.request(
+                readItems('PoolOverview', {
+                    fields: ['id', 'poolName'],
+                }),
             ),
-            unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
-        });
+        ]);
 
         const retn: PoolDelegateProfileAndHistory[] = [];
         for (const data of poolDelegateProfileAndHistoryDirectus) {
@@ -465,9 +474,13 @@ export class DataService {
 
                 if (!found) continue;
 
+                const directusName = directusPoolNames.find(
+                    ({ id }) => id === found.id,
+                );
+
                 otherKASUPools.push({
                     id: found.id,
-                    name: found.name,
+                    name: directusName?.poolName ?? found.name,
                     isActive: !found.isStopped,
                 });
             }

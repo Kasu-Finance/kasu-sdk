@@ -16,6 +16,7 @@ export interface DirectusSchema {
 
 export interface PoolOverviewDirectus {
     id: string;
+    poolName?: string;
     enabled: boolean;
     security: string[];
     apy: number;
