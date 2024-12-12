@@ -350,7 +350,7 @@ export class DataService {
 
             // show only enabled pools from cms
             if (poolOverview.enabled) {
-            retn.push(poolOverview);
+                retn.push(poolOverview);
             }
         }
 
@@ -437,6 +437,7 @@ export class DataService {
         const poolDelegateProfileAndHistoryDirectus: PoolDelegateProfileAndHistoryDirectus[] =
             (await this._directus.request(
                 readItems('PoolDelegateProfileAndHistory', {
+                    // @ts-expect-error typing
                     fields: ['*', { otherPools: ['*'] }],
                 }),
             )) as unknown as PoolDelegateProfileAndHistoryDirectus[];
