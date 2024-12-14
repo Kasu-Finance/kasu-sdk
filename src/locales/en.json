@@ -286,10 +286,11 @@
     },
     "withdrawFundsAtExpiry": {
       "title": "Repay My Funds at Fixed Loan Expiry",
+      "confirmedTitle": "Loan Repayment Request Submitted",
       "description-1": "You can request full repayment of your loan funds if you provide",
       "description-2": "at least {{ epoch }} epochs",
       "description-3": "notice leading up to the expiry date of your fixed term loan. Otherwise, your fixed loan will automatically convert to the prevailing variable APY, where you will be subject to the normal queuing system.",
-      "description-4": "Withdrawal request successfully submitted. Your funds will be returned immediately after the expiration date.",
+      "description-4": "Your loan repayment request has been successfully submitted for the return of your funds at the end of the epoch following the expiry of your fixed term loan",
       "action": "Repay Selected Funds at Fixed Loan Expiry",
       "selectFunds": "Select Funds"
     },
