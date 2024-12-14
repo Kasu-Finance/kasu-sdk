@@ -285,12 +285,13 @@
       "fixedUntil": "Fixed until"
     },
     "withdrawFundsAtExpiry": {
-      "title": "Withdraw Funds at Expiry",
-      "description-1": "You can request Withdrawal Funds",
-      "description-2": "no later than {{ epoch }} epochs",
-      "description-3": "before the end of the loan term. Otherwise, your fixed loan will be converted to a regular floating loan, where you will have to submit a withdrawal request and join the queue like everyone else.",
+      "title": "Repay My Funds at Fixed Loan Expiry",
+      "description-1": "You can request full repayment of your loan funds if you provide",
+      "description-2": "at least {{ epoch }} epochs",
+      "description-3": "notice leading up to the expiry date of your fixed term loan. Otherwise, your fixed loan will automatically convert to the prevailing variable APY, where you will be subject to the normal queuing system.",
       "description-4": "Withdrawal request successfully submitted. Your funds will be returned immediately after the expiration date.",
-      "action": "Withdraw Selected Funds at Expiry"
+      "action": "Repay Selected Funds at Fixed Loan Expiry",
+      "selectFunds": "Select Funds"
     },
     "autoConversionToVariable": {
       "title": "Auto Conversion to Variable​",
@@ -1902,7 +1903,7 @@
       },
       "actions": {
         "action-1": "Repay my funds upon expiry",
-        "action-2": "Increase Lend",
+        "action-2": "Increase Loan",
         "action-3": "Fix My APY",
         "action-4": "View Fixed Loan​",
         "action-5": "Auto Conversion to Variable​"
