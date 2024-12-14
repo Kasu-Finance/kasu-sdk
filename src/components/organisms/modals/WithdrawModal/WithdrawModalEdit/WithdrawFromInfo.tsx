@@ -12,7 +12,7 @@ import ToolTip from '@/components/atoms/ToolTip'
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { SupportedTokens } from '@/constants/tokens'
-import { formatAmount } from '@/utils'
+import { formatAmount, mergeSubheading } from '@/utils'
 import { calculateWithdrawSummary } from '@/utils/lending/calculateUserBalances'
 
 const WithdrawFromInfo = () => {
@@ -55,7 +55,11 @@ const WithdrawFromInfo = () => {
         dividerProps={{
           color: 'white',
         }}
-        metric={<Typography variant='baseMdBold'>{pool.poolName}</Typography>}
+        metric={
+          <Typography variant='baseMdBold'>
+            {mergeSubheading(pool.poolName, pool.subheading)}
+          </Typography>
+        }
       />
       <InfoRow
         title={t('lending.withdraw.metrics.totalInvestment.label')}

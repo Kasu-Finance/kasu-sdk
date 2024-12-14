@@ -10,7 +10,7 @@ import ToolTip from '@/components/atoms/ToolTip'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import { formatAmount } from '@/utils'
+import { formatAmount, mergeSubheading } from '@/utils'
 
 const WithdrawModalReviewOverview = () => {
   const { t } = getTranslation()
@@ -42,7 +42,11 @@ const WithdrawModalReviewOverview = () => {
             }}
           />
         }
-        metric={<Typography variant='baseMdBold'>{pool.poolName}</Typography>}
+        metric={
+          <Typography variant='baseMdBold'>
+            {mergeSubheading(pool.poolName, pool.subheading)}
+          </Typography>
+        }
         showDivider
         dividerProps={{
           color: 'white',

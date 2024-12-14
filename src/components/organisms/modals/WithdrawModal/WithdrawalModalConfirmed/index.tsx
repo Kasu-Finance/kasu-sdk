@@ -10,7 +10,12 @@ import WithdrawalModalConfirmedActions from '@/components/organisms/modals/Withd
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import { formatAccount, formatAmount, formatTimestamp } from '@/utils'
+import {
+  formatAccount,
+  formatAmount,
+  formatTimestamp,
+  mergeSubheading,
+} from '@/utils'
 
 const WithdrawalModalConfirmed = () => {
   const { t } = getTranslation()
@@ -48,7 +53,7 @@ const WithdrawalModalConfirmed = () => {
           • {formattedTime.timestamp} {formattedTime.utcOffset}){' '}
           {t('general.from')}{' '}
           <Typography variant='baseMdBold'>
-            {pool.poolName}
+            {mergeSubheading(pool.poolName, pool.subheading)}
             {pool.tranches.length > 1
               ? `, ${selectedTranche?.name} ${t('general.tranche')}`
               : null}

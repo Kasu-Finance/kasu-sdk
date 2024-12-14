@@ -296,7 +296,7 @@
     },
     "autoConversionToVariable": {
       "title": "Auto Conversion to Variable​",
-      "description": "You did not request full repayment of your loan funds within the required notice period of at least 4 epochs  leading up to the expiry date of your fixed term loan. Your fixed loan will therefore automatically convert to the prevailing variable APY, where you will be subject to the normal queuing system."
+      "description": "You did not request full repayment of your loan funds within the required notice period of at least {{ epoch }} epochs leading up to the expiry date of your fixed term loan. Your fixed loan will therefore automatically convert to the prevailing variable APY, where you will be subject to the normal queuing system."
     },
     "fixApy": {
       "title": "Fixed Loan & APY Conversion​",

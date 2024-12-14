@@ -16,6 +16,7 @@ import {
   formatPercentage,
   formatTimestamp,
   formatToNearestTime,
+  mergeSubheading,
   TimeConversions,
 } from '@/utils'
 
@@ -57,7 +58,11 @@ const LendingModalReviewOverview = () => {
             }}
           />
         }
-        metric={<Typography variant='baseMdBold'>{pool.poolName}</Typography>}
+        metric={
+          <Typography variant='baseMdBold'>
+            {mergeSubheading(pool.poolName, pool.subheading)}
+          </Typography>
+        }
         showDivider
         dividerProps={{
           color: 'white',
