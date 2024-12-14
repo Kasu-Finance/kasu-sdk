@@ -743,6 +743,7 @@
         "subheading-1-description-2": "Example only, based on fixed APY selected. You will not be able to submit a Withdrawal Request during the fixed APY duration.",
         "subheading-2": "Simulated Interest Earnings"
       },
+      "nextClearingText": "The outcome of your Lending Request will be determined at the end of the epoch clearing period.",
       "acknowledgement": {
         "edit": {
           "description-1": "You accept that:",
