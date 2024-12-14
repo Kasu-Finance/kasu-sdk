@@ -334,6 +334,7 @@ export class DataService {
                 loanStructure: lendingPoolDirectus.loanStructure,
                 poolName:
                     lendingPoolDirectus.poolName ?? lendingPoolSubgraph.name,
+                subheading: lendingPoolDirectus.subheading,
                 totalValueLocked: lendingPoolSubgraph.balance,
                 loansUnderManagement: lendingPoolDirectus.loansUnderManagement,
                 yieldEarned: lendingPoolSubgraph.totalUserInterestAmount,
@@ -443,22 +444,22 @@ export class DataService {
             )) as unknown as PoolDelegateProfileAndHistoryDirectus[];
 
         const [poolNames, directusPoolNames] = await Promise.all([
-            this._graph.request(getPoolNameQuery, {
+            this._graph.request<{
+                lendingPools: Pick<
+                    LendingPoolSubgraph,
+                    'name' | 'id' | 'isStopped'
+                >[];
+            }>(getPoolNameQuery, {
                 ids: poolDelegateProfileAndHistoryDirectus.flatMap((directus) =>
                     directus.otherPools.map(
                         (delegate) => delegate.PoolOverview_id,
                     ),
                 ),
                 unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
-            }) as unknown as Promise<{
-                lendingPools: Pick<
-                    LendingPoolSubgraph,
-                    'name' | 'id' | 'isStopped'
-                >[];
-            }>,
+            }),
             this._directus.request(
                 readItems('PoolOverview', {
-                    fields: ['id', 'poolName'],
+                    fields: ['id', 'poolName', 'subheading'],
                 }),
             ),
         ]);
@@ -479,9 +480,13 @@ export class DataService {
                     ({ id }) => id === found.id,
                 );
 
+                const poolName = directusName?.poolName ?? found.name;
+
                 otherKASUPools.push({
                     id: found.id,
-                    name: directusName?.poolName ?? found.name,
+                    name: directusName?.subheading
+                        ? `${poolName} - ${directusName.subheading}`
+                        : poolName,
                     isActive: !found.isStopped,
                 });
             }

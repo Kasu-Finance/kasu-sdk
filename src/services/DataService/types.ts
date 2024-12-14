@@ -5,6 +5,7 @@ import {
 
 export interface PoolOverview {
     poolName: string;
+    subheading?: string;
     id: string;
     enabled: boolean;
     apy: number;

@@ -1,3 +1,12 @@
+import {
+    authentication,
+    AuthenticationClient,
+    createDirectus,
+    DirectusClient,
+    readItems,
+    rest,
+    RestClient,
+} from '@directus/sdk';
 import { Provider } from '@ethersproject/providers';
 import {
     BigNumber,
@@ -34,6 +43,7 @@ import {
 } from '../../contracts';
 import { SdkConfig } from '../../sdk-config';
 import { DataService } from '../DataService/data-service';
+import { DirectusSchema } from '../DataService/directus-types';
 
 import { mapUserRequestEventType } from './helper';
 import {
@@ -64,6 +74,10 @@ import {
 
 export class UserLending {
     private readonly _graph: GraphQLClient;
+
+    private readonly _directus: DirectusClient<DirectusSchema> &
+        AuthenticationClient<DirectusSchema> &
+        RestClient<DirectusSchema>;
     private _dataService: DataService;
     private readonly _userManagerAbi: IUserManagerAbi;
     private readonly _lendingPoolManagerAbi: ILendingPoolManagerAbi;
@@ -100,6 +114,9 @@ export class UserLending {
             signerOrProvider,
         );
         this._dataService = new DataService(_kasuConfig);
+        this._directus = createDirectus<DirectusSchema>(_kasuConfig.directusUrl)
+            .with(authentication())
+            .with(rest());
     }
 
     async getUserTotalPendingAndActiveDepositedAmount(
@@ -337,18 +354,26 @@ export class UserLending {
             ['Junior', 'Mezzanine', 'Senior'],
         ];
 
-        const subgraphResult: UserRequestsSubgraph = await this._graph.request(
-            userRequestsQuery,
-            {
+        const [subgraphResult, directusResult] = await Promise.all([
+            this._graph.request<UserRequestsSubgraph>(userRequestsQuery, {
                 userAddress: userAddress.toLowerCase(),
                 unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
                 epochId,
-            },
-        );
+            }),
+            this._directus.request(
+                readItems('PoolOverview', {
+                    fields: ['id', 'poolName', 'subheading'],
+                }),
+            ),
+        ]);
 
         const retn: UserRequest[] = [];
 
         for (const userRequest of subgraphResult.userRequests) {
+            const directusPool = directusResult.find(
+                ({ id }) => id === userRequest.lendingPool.id,
+            );
+
             const trancheName =
                 trancheNames[userRequest.lendingPool.tranches.length - 1][
                     parseInt(userRequest.tranche.orderId)
@@ -452,12 +477,17 @@ export class UserLending {
                 };
             }
 
+            const poolName =
+                directusPool?.poolName ?? userRequest.lendingPool.name;
+
             const userRequestBase: UserRequest = {
                 id: userRequest.id,
                 userId: userRequest.user.id,
                 lendingPool: {
                     id: userRequest.lendingPool.id,
-                    name: userRequest.lendingPool.name,
+                    name: directusPool?.subheading
+                        ? `${poolName} - ${directusPool.subheading}`
+                        : poolName,
                     tranches: userRequest.lendingPool.tranches,
                 },
                 requestType:
