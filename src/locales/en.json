@@ -1902,7 +1902,7 @@
       },
       "actions": {
         "action-1": "Repay my funds upon expiry",
-        "action-2": "Increase Lend",
+        "action-2": "Increase Loan",
         "action-3": "Fix My APY",
         "action-4": "View Fixed Loan​",
         "action-5": "Auto Conversion to Variable​"
