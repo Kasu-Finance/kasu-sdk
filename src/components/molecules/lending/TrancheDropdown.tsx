@@ -7,7 +7,7 @@ import CustomSelect from '@/components/atoms/CustomSelect'
 
 type TrancheDropdownProps = {
   tranches: TrancheData[]
-  selectedTranche: `0x${string}`
+  selectedTranche?: `0x${string}`
   setSelectedTranche: (
     selectedTranche: `0x${string}`,
     defaultFixedTermConfigId: string | undefined
@@ -43,7 +43,7 @@ const TrancheDropdown: React.FC<TrancheDropdownProps> = ({
       labelKey='name'
       valueKey='id'
       onChange={handleChange}
-      value={selectedTranche}
+      value={selectedTranche ?? ''}
       variant='secondary'
       renderItem={(val) => (
         <Typography variant='baseMd' py={1}>
@@ -60,7 +60,9 @@ const TrancheDropdown: React.FC<TrancheDropdownProps> = ({
           <Typography variant='baseMd'>
             {val.name} {t('general.tranche')}
           </Typography>
-        ) : null
+        ) : (
+          t('modals.withdrawal.selectTranche')
+        )
       }
     />
   )

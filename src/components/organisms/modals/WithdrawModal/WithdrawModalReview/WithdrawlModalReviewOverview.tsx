@@ -30,10 +30,10 @@ const WithdrawModalReviewOverview = () => {
   return (
     <Box>
       <InfoRow
-        title={t('lending.withdraw.fromPool')}
+        title={t('modals.withdrawal.metric-1')}
         toolTipInfo={
           <ToolTip
-            title='info'
+            title={t('modals.withdrawal.metric-1-tooltip')}
             iconSx={{
               color: 'gold.extraDark',
               '&:hover': {
@@ -51,32 +51,6 @@ const WithdrawModalReviewOverview = () => {
         dividerProps={{
           color: 'white',
         }}
-      />
-      <InfoRow
-        title={t('lending.withdraw.subtitle')}
-        toolTipInfo={
-          <ToolTip
-            title='info'
-            iconSx={{
-              color: 'gold.extraDark',
-              '&:hover': {
-                color: 'rgba(133, 87, 38, 1)',
-              },
-            }}
-          />
-        }
-        showDivider
-        dividerProps={{
-          color: 'white',
-        }}
-        metric={
-          <Typography variant='baseMdBold'>
-            {formatAmount(amount, {
-              minDecimals: 2,
-            })}{' '}
-            USDC
-          </Typography>
-        }
       />
       {pool.tranches.length > 1 && selectedTranche && (
         <InfoRow
@@ -103,6 +77,32 @@ const WithdrawModalReviewOverview = () => {
           }}
         />
       )}
+      <InfoRow
+        title={t('modals.withdrawal.metric-5')}
+        toolTipInfo={
+          <ToolTip
+            title={t('modals.withdrawal.metric-5-tooltip')}
+            iconSx={{
+              color: 'gold.extraDark',
+              '&:hover': {
+                color: 'rgba(133, 87, 38, 1)',
+              },
+            }}
+          />
+        }
+        showDivider
+        dividerProps={{
+          color: 'white',
+        }}
+        metric={
+          <Typography variant='baseMdBold'>
+            {formatAmount(amount, {
+              minDecimals: 2,
+            })}{' '}
+            USDC
+          </Typography>
+        }
+      />
       <InfoRow
         title={t('lending.withdraw.toWallet')}
         toolTipInfo={

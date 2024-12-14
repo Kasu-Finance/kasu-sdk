@@ -9,7 +9,7 @@ import { HexString } from '@/types/lending'
 
 type WithdrawModalProviderProps = {
   children: ReactNode
-  defaultTrancheId: HexString
+  defaultTrancheId?: HexString
 }
 
 const initialState: Omit<WithdrawModalStateType, 'trancheId'> = {

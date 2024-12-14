@@ -31,7 +31,7 @@ export type WithdrawModalActions =
 
 export type WithdrawModalStateType = {
   amount: string
-  trancheId: HexString
+  trancheId: HexString | undefined
   txHash: string | undefined
 }
 
