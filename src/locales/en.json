@@ -766,8 +766,10 @@
         "metric-3": "Lending Amount",
         "metric-3-tooltip": "The USDC amount you have requested for lending to this Lending Strategy.",
         "metric-4": "Total Existing Lending",
-        "metric-4-tooltip": "Your current USDC lending balance in this Lending Strategy",
-        "metric-5-tooltip": "The loan Tranche that you have made a lending request for."
+        "metric-4-tooltip": "The loan Tranche that you have made a lending request for.",
+        "metric-5": "Fixed Loan Term Expiry Date",
+        "metric-5-tooltip": "A fixed APY will be locked for the specified period of time. During a fixed APY period, no Withdrawal Requests can be submitted.",
+        "nextClearingText": "The outcome of your Lending Request will be determined at the end of the epoch clearing period."
       },
       "completed": {
         "description-1": "You have successfully queued:",
