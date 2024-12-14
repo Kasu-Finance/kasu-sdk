@@ -8,6 +8,7 @@ import NextLink from '@/components/atoms/NextLink'
 import LendingPortfolioTableTrancheRow from '@/components/organisms/portfolio/LendingPortfolioTab/LendingPortfolioTableTrancheRow'
 
 import { Routes } from '@/config/routes'
+import { mergeSubheading } from '@/utils'
 
 type LendingPortfolioTableRowProps = {
   portfolioPool: PortfolioLendingPool
@@ -34,7 +35,7 @@ const LendingPortfolioTableRow: React.FC<LendingPortfolioTableRowProps> = ({
             component={NextLink}
             href={`${Routes.lending.root.url}/${portfolioPool.id}`}
           >
-            {portfolioPool.poolName}
+            {mergeSubheading(portfolioPool.poolName, portfolioPool.subheading)}
           </Typography>
         </TableCell>
       </TableRow>

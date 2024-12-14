@@ -41,6 +41,11 @@ const PoolCard: React.FC<PoolCardProps> = ({ pool, currentEpoch }) => {
       >
         <Typography variant='h4' color='primary' lineHeight='24px'>
           {pool.poolName}
+          {pool.subheading && (
+            <Typography variant='baseSm' display='block'>
+              {pool.subheading}
+            </Typography>
+          )}
         </Typography>
       </Box>
       <CustomCardContent>

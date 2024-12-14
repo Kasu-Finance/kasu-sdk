@@ -296,7 +296,7 @@
     },
     "autoConversionToVariable": {
       "title": "Auto Conversion to Variable​",
-      "description": "You did not request full repayment of your loan funds within the required notice period of at least 4 epochs  leading up to the expiry date of your fixed term loan. Your fixed loan will therefore automatically convert to the prevailing variable APY, where you will be subject to the normal queuing system."
+      "description": "You did not request full repayment of your loan funds within the required notice period of at least {{ epoch }} epochs leading up to the expiry date of your fixed term loan. Your fixed loan will therefore automatically convert to the prevailing variable APY, where you will be subject to the normal queuing system."
     },
     "fixApy": {
       "title": "Fixed Loan & APY Conversion​",
@@ -743,6 +743,7 @@
         "subheading-1-description-2": "Example only, based on fixed APY selected. You will not be able to submit a Withdrawal Request during the fixed APY duration.",
         "subheading-2": "Simulated Interest Earnings"
       },
+      "nextClearingText": "The outcome of your Lending Request will be determined at the end of the epoch clearing period.",
       "acknowledgement": {
         "edit": {
           "description-1": "You accept that:",
@@ -1291,6 +1292,28 @@
       "metric-4-tooltip": "The date of your original lending request.",
       "nextClearingText": "This Lending Request will be either Accepted or Rejected at the end of the epoch clearing period.",
       "cancel-button": "Cancel Lending Request"
+    },
+    "withdrawal": {
+      "title": "Withdrawal Request",
+      "reviewTitle": "Confirm Withdrawal Request",
+      "confirmedTitle": "Withdrawal Request Confirmed",
+      "metric-1": "Withdraw from",
+      "metric-1-tooltip": "The Lending Strategy that you are requesting a withdrawal from",
+      "metric-2": "Total Loan Balance",
+      "metric-2-tooltip": "Your current USDC lending balance across all Tranches in this lending strategy",
+      "metric-3": "Tranche Loan Balance",
+      "metric-3-tooltip": "Your current USDC lending balance in the Tranche selected below",
+      "metric-4": "Available to Withdraw",
+      "metric-4-tooltip": "The USDC amount available for withdrawal from the Tranche selected below, after accounting for existing Withdrawal Requests that are currently queued and fixed APY loans (if applicable). i.e. Fixed APY loans can only be withdrawn uppon the fixed term expiry.",
+      "metric-5": "Withdrawal Request Amount",
+      "metric-5-tooltip": "The USDC amount you are requesting to withdraw",
+      "selectTranche": "Select Tranche",
+      "schedule": {
+        "description-1": "The fulfilment of Withdrawal Requests is contingent upon excess liquidity within a Lending Strategy, and may therefore remain outstanding (or partially outstanding) for more than one epoch. Any Withdrawal Request left outstanding for more than five epochs will be prioritised above all Loyalty Levels until it is fulfilled. Refer to the",
+        "description-2": "for more details.",
+        "description-3": "The outcome of Withdrawal Requests is determined during the clearing period of each 7-day epoch.​"
+      },
+      "action": "Review Withdrawl Request"
     }
   },
   "lending": {
@@ -1491,9 +1514,10 @@
       },
       "confirmStep": {
         "withdrawInfo": "Your Withdrawal Request​ has been successfully queued:​",
-        "amountLabel": "to be withdrawn in the next Epoch",
-        "subjectLiquidity": "(subject to available liquidity)",
-        "depositedLabel": "to be deposited to the wallet address"
+        "description-1": "Withdrawal Request from",
+        "description-2": "submitted. The withdrawal amount fulfilled is subject to availably liquidity and will be determined during the",
+        "description-3": "clearing period of each 7-day epoch.",
+        "description-4": "Subject to available liquidity, Funds will be deposited to the wallet address"
       },
       "errors": {
         "invalidCriteria": "The value entered does not meet the criteria required for this field.",

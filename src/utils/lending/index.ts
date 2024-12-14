@@ -14,3 +14,4 @@ export { default as mapFixedLoanToConfig } from '@/utils/lending/mapFixedLoanToC
 export { default as mapLoanTicketsTranche } from '@/utils/lending/mapLoanTicketsTranche'
 export * from '@/utils/lending/mapPendingDecisionsToPools'
 export { default as mapPendingDecisionsToPools } from '@/utils/lending/mapPendingDecisionsToPools'
+export { default as mergeSubheading } from '@/utils/lending/mergeSubheading'
