@@ -1,34 +1,49 @@
-import { Box, Typography } from '@mui/material'
+import { Box, Button, Stack, Typography } from '@mui/material'
 
-import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
 import getTranslation from '@/hooks/useTranslation'
 
-import { formatTimestamp } from '@/utils'
+import NextClearingPeriodInfo from '@/components/molecules/NextClearingPeriodInfo'
+
+import { Routes } from '@/config/routes'
 
 const WithdrawalScheduleInfo = () => {
   const { t } = getTranslation()
 
-  const { nextEpochTime } = useNextEpochTime()
-
-  const formattedTime = formatTimestamp(nextEpochTime, {
-    format: 'DD.MM.YYYY HH:mm:ss',
-    includeUtcOffset: true,
-  })
-
   return (
-    <Box bgcolor='gold.dark' borderRadius={2} p={2} textAlign='center'>
-      <Typography variant='baseSm' color='white' component='p'>
-        {t('lending.withdraw.withdrawalSchedule-1')} <br />
-        {t('lending.withdraw.withdrawalSchedule-2')}
-      </Typography>
-
-      <Typography variant='baseMd' mt={2} display='block'>
-        {t('lending.withdraw.epochEnds')}
-        <Typography variant='baseMdBold' ml='1ch'>
-          {formattedTime.date} • {formattedTime.timestamp}{' '}
-          {formattedTime.utcOffset}
+    <Box
+      bgcolor='gold.dark'
+      borderRadius={2}
+      py={2}
+      px={3.5}
+      textAlign='center'
+    >
+      <Stack spacing={2}>
+        <Typography variant='baseSm' component='p'>
+          {t('modals.withdrawal.schedule.description-1')}{' '}
+          <Button
+            variant='text'
+            sx={{
+              p: 0,
+              height: 'auto',
+              textTransform: 'unset',
+              font: 'inherit',
+              verticalAlign: 'inherit',
+              display: 'inline',
+              color: 'white',
+            }}
+            href={Routes.lending.termsAndConditions.url}
+            target='_blank'
+            style={{ font: 'inherit', color: 'white' }}
+          >
+            {t('modals.termsAndConditions.title')}
+          </Button>{' '}
+          {t('modals.withdrawal.schedule.description-2')}
         </Typography>
-      </Typography>
+        <Typography variant='baseSm' component='p'>
+          {t('modals.withdrawal.schedule.description-3')}
+        </Typography>
+        <NextClearingPeriodInfo sx={{ p: 0 }} />
+      </Stack>
     </Box>
   )
 }

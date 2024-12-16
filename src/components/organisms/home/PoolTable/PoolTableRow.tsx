@@ -19,7 +19,12 @@ import PoolTableRowApy from '@/components/organisms/home/PoolTable/PoolTableRowA
 import { Routes } from '@/config/routes'
 import { TRANCHE_ICONS } from '@/constants/pool'
 import { customTypography } from '@/themes/typography'
-import { capitalize, formatAmount, formatPercentage } from '@/utils'
+import {
+  capitalize,
+  formatAmount,
+  formatPercentage,
+  mergeSubheading,
+} from '@/utils'
 import formatDuration from '@/utils/formats/formatDuration'
 import getInitials from '@/utils/getInitials'
 
@@ -77,7 +82,7 @@ const PoolTableRow: React.FC<PoolTableRowProps> = ({ pool }) => {
                 component={NextLink}
                 href={href}
               >
-                {pool.poolName}
+                {mergeSubheading(pool.poolName, pool.subheading)}
               </Typography>
               <Typography
                 variant='baseSmBold'

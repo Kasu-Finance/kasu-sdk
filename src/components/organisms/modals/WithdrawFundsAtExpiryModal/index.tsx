@@ -18,7 +18,11 @@ const WithdrawFundsAtExpiryModal: React.FC<DialogChildProps> = ({
   return (
     <CustomCard>
       <DialogHeader
-        title={t('modals.withdrawFundsAtExpiry.title')}
+        title={t(
+          activeStep === 1
+            ? 'modals.withdrawFundsAtExpiry.title'
+            : 'modals.withdrawFundsAtExpiry.confirmedTitle'
+        )}
         onClose={handleClose}
       />
       <DialogContent p={0}>
