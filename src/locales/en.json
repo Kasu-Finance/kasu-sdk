@@ -743,7 +743,6 @@
         "subheading-1-description-2": "Example only, based on fixed APY selected. You will not be able to submit a Withdrawal Request during the fixed APY duration.",
         "subheading-2": "Simulated Interest Earnings"
       },
-      "nextClearingText": "The outcome of your Lending Request will be determined at the end of the epoch clearing period.",
       "acknowledgement": {
         "edit": {
           "description-1": "You accept that:",
@@ -769,8 +768,10 @@
         "metric-3": "Lending Amount",
         "metric-3-tooltip": "The USDC amount you have requested for lending to this Lending Strategy.",
         "metric-4": "Total Existing Lending",
-        "metric-4-tooltip": "Your current USDC lending balance in this Lending Strategy",
-        "metric-5-tooltip": "The loan Tranche that you have made a lending request for."
+        "metric-4-tooltip": "The loan Tranche that you have made a lending request for.",
+        "metric-5": "Fixed Loan Term Expiry Date",
+        "metric-5-tooltip": "A Fixed APY Term Loan will be fixed (locked) for the specified period of time. The fixed term start date will be on the first day of the next epoch after the Lending Request is accepted. During a Fixed APY Term, no Withdrawal Request can be submitted.",
+        "nextClearingText": "The outcome of your Lending Request will be determined at the end of the epoch clearing period."
       },
       "completed": {
         "description-1": "You have successfully queued:",

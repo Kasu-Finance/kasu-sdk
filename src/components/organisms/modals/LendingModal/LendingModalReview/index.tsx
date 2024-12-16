@@ -15,7 +15,7 @@ const LendingModalReview = () => {
       <LendingModalReviewOverview />
       <AcknowledgementMessage />
       <NextClearingPeriodInfo
-        beforeText={t('modals.lending.nextClearingText')}
+        beforeText={t('modals.lending.review.nextClearingText')}
       />
       <LendingModalReviewActions />
     </Stack>
