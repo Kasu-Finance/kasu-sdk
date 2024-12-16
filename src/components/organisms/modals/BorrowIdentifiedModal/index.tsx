@@ -125,12 +125,14 @@ const BorrowerIdentifiedModal: React.FC<DialogChildProps> = ({
                 {t('modals.borrowerIdentified.description-3')}
               </Typography>
             </Box>
-            <Typography variant='baseMd'>
-              {t('modals.borrowerIdentified.description-4')}
-            </Typography>
-            <Typography variant='baseMd' color='white'>
-              no-reply@lenders.kasu.finance
-            </Typography>
+            <Stack spacing={1}>
+              <Typography variant='baseMd'>
+                {t('modals.borrowerIdentified.description-4')}
+              </Typography>
+              <Typography variant='baseMd' color='white'>
+                no-reply@lenders.kasu.finance
+              </Typography>
+            </Stack>
           </Stack>
           <Box display='flex' gap={4} width='100%'>
             <Button
