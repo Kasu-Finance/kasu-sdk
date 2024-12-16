@@ -2,6 +2,7 @@ import { Box, Typography } from '@mui/material'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
+import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
 import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
@@ -34,6 +35,8 @@ const LendingModalReviewOverview = () => {
     includeUtcOffset: true,
   })
 
+  const { nextEpochTime } = useNextEpochTime()
+
   const selectedTranche = pool.tranches.find(
     (tranche) => tranche.id === trancheId
   )
@@ -43,12 +46,13 @@ const LendingModalReviewOverview = () => {
   )
 
   const ftdExpiryTime = formatTimestamp(
-    dayjs()
+    dayjs
+      .unix(nextEpochTime)
       .add(
         fixedTermApy?.epochLockDuration
           ? parseFloat(fixedTermApy.epochLockDuration)
           : 0,
-        'days'
+        'weeks'
       )
       .unix(),
     {
