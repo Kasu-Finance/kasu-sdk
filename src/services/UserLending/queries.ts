@@ -62,6 +62,7 @@ export const userRequestsQuery = gql`
                     orderId
                     id
                 }
+                epochId
                 sharesAmount
                 index
                 id

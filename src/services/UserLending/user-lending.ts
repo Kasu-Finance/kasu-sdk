@@ -425,6 +425,24 @@ export class UserLending {
                         break;
                 }
 
+                const eventTranche =
+                    userRequest.lendingPool.configuration.tranchesConfig.find(
+                        (trancheConfig) =>
+                            trancheConfig.id === event.tranche.id,
+                    );
+
+                // shouldn't be possible, just adding type checking here
+                if (!eventTranche) continue;
+
+                const interestRate = eventTranche
+                    .lendingPoolTrancheInterestRateUpdates.length
+                    ? eventTranche.lendingPoolTrancheInterestRateUpdates[0]
+                          .epochInterestRate
+                    : eventTranche.interestRate;
+
+                const baseApy =
+                    this._dataService.calculateApyForTranche(interestRate);
+
                 events.push({
                     id: event.id,
                     requestType: mapUserRequestEventType(event.type),
@@ -437,6 +455,8 @@ export class UserLending {
                     transactionHash: event.transactionHash,
                     trancheName: eventTrancheName,
                     trancheId: event.tranche.id,
+                    apy: baseApy.toString(),
+                    epochId: event.epochId,
                 });
             }
 

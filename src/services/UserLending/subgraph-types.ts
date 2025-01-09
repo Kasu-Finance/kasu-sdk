@@ -49,6 +49,7 @@ export interface UserRequestsSubgraph {
             type: UserRequestEventType;
             transactionHash: string;
             sharesAmount: string;
+            epochId: string;
             tranche: {
                 id: string;
                 orderId: string;

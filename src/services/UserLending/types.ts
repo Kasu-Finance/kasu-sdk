@@ -76,6 +76,8 @@ export interface UserRequestEvent {
     transactionHash: string;
     trancheName: string;
     trancheId: string;
+    apy: string;
+    epochId: string;
 }
 export interface UserTrancheBalance {
     userId: string;
