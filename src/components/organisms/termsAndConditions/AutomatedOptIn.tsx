@@ -17,6 +17,9 @@ const AutomatedOptIn = () => {
     <Stack spacing={2}>
       <Subheading title={t('modals.termsAndConditions.subheader-8.title')} />
       <Typography variant='baseMd'>
+        {t('modals.termsAndConditions.subheader-8.description-8')}
+      </Typography>
+      <Typography variant='baseMd'>
         {t('modals.termsAndConditions.subheader-8.description-1')}
       </Typography>
       <Stack spacing={4}>
@@ -69,6 +72,9 @@ const AutomatedOptIn = () => {
       </Stack>
       <Typography variant='baseMd'>
         {t('modals.termsAndConditions.subheader-8.description-5')}
+      </Typography>
+      <Typography variant='baseMd'>
+        {t('modals.termsAndConditions.subheader-8.description-9')}
       </Typography>
       <Stack spacing={4}>
         <Typography variant='baseMd'>

@@ -7,6 +7,7 @@ import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import AutomatedOptIn from '@/components/organisms/termsAndConditions/AutomatedOptIn'
 import BackButton from '@/components/organisms/termsAndConditions/BackButton'
+import Exemption from '@/components/organisms/termsAndConditions/Exemption'
 import FeesExplanation from '@/components/organisms/termsAndConditions/FeesExplanation'
 import FixedApyLoan from '@/components/organisms/termsAndConditions/FixedApyLoan'
 import ImportantInformation from '@/components/organisms/termsAndConditions/ImportantInformation'
@@ -28,6 +29,7 @@ const TermsAndConditionsPage = () => {
             <ImportantInformation />
             <RiskDisclosure />
             <AutomatedOptIn />
+            <Exemption />
             <FeesExplanation />
             <InterestAccrual />
             <PendingPhase />
