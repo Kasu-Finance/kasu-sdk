@@ -109,6 +109,10 @@ export const getModal = (
     case ModalsKeys.REQUEST_DETAILS:
       return {
         component: <RequestDetailsModal handleClose={handleClose} />,
+        sx: {
+          maxWidth: 1000,
+          width: '100%',
+        },
       }
     case ModalsKeys.PENDING_DECISIONS:
       return {

@@ -1,112 +1,103 @@
 import { LoanTicketDto, LoanTicketStatus } from '@/config/api.lendersAgreement'
 import dayjs from '@/dayjs'
 import groupBy from '@/utils/groupBy'
-import { LoanTicket } from '@/utils/lending/mapPendingDecisionsToPools'
-import TimeConversions from '@/utils/timeConversions'
 
-const getSubsequentTransactions = (loanTicketGroups: LoanTicketDto[]) => {
-  const subsequentTransactions: LoanTicket[] = []
+export type SubsequentTransaction = {
+  amount: number
+  action: string
+  status: 'completed' | 'pending'
+  depositRequestID: string
+  timestamp: EpochTimeStamp
+  id: string
+  trancheID: string
+  poolID: string
+  userID: string
+  epochID: string
+  endBorrowerID: string
+}
 
-  const consentedTickets = loanTicketGroups.filter((ticket) =>
-    [LoanTicketStatus.optedIn, LoanTicketStatus.optedOut].includes(
-      ticket.status
-    )
+const getSubsequentTransactions = (loanTickets: LoanTicketDto[]) => {
+  const groupedByDeposit = groupBy(
+    loanTickets,
+    (ticket) => ticket.depositRequestID
   )
 
-  const groupedByDay = groupBy(consentedTickets, ({ createdOn }) =>
-    (
-      Math.round(
-        (new Date(createdOn).getTime() / TimeConversions.SECONDS_PER_MINUTE) *
-          1000
-      ) *
-      TimeConversions.SECONDS_PER_MINUTE *
-      1000
-    ).toString()
-  )
+  const depositGroupMap = new Map<string, SubsequentTransaction[]>()
 
-  for (const dayGroup of Object.values(groupedByDay)) {
-    const consentedGroup: LoanTicketDto[][] = []
+  for (const depositGroup of Object.values(groupedByDeposit)) {
+    const groupedByID = groupBy(depositGroup, (ticket) => ticket.id)
 
-    for (const consentedLoanTicket of dayGroup) {
-      const consentedLoanTicketGroup = loanTicketGroups.filter(
-        (ticket) => ticket.id === consentedLoanTicket.id
-      )
+    const ticketGroup = Object.values(groupedByID)
 
-      if (!consentedLoanTicketGroup) continue
+    for (const group of ticketGroup) {
+      const groupID = group[0].depositRequestID
 
-      consentedGroup.push(consentedLoanTicketGroup)
-    }
-
-    const groupedByEndBorrower = groupBy(
-      consentedGroup.flatMap((group) => group),
-      ({ endBorrowerID }) => endBorrowerID
-    )
-
-    for (const endBorrowerGroup of Object.values(groupedByEndBorrower)) {
-      let assets = 0
-
-      for (const group of endBorrowerGroup) {
-        if (group.status === LoanTicketStatus.fundsReturned)
-          // funds returned events have negative assets that we dont want to calculate
-          continue
-
-        assets += parseFloat(group.assets)
-      }
-
-      const lastConsentAction = endBorrowerGroup.findLast((ticket) =>
-        [LoanTicketStatus.optedIn, LoanTicketStatus.optedOut].includes(
+      const validGroups = group.filter((ticket) =>
+        [LoanTicketStatus.created, LoanTicketStatus.emailSent].includes(
           ticket.status
         )
       )
 
-      const fundsReturnedAction = endBorrowerGroup.find(
-        (ticket) => ticket.status === LoanTicketStatus.fundsReturned
+      // If the group does not have 2 tickets with status created and emailSent, skip
+      if (validGroups.length !== 2) continue
+
+      const sortedGroup = group.sort(
+        (a, b) =>
+          new Date(a.createdOn).getTime() - new Date(b.createdOn).getTime()
       )
 
-      let fundsReturnedTicket: LoanTicket | undefined
+      let tickets = sortedGroup
 
-      if (fundsReturnedAction) {
-        fundsReturnedTicket = {
-          assets,
-          createdOn: dayjs(fundsReturnedAction.createdOn).unix(),
-          poolID: fundsReturnedAction.poolID,
-          endBorrowerID: fundsReturnedAction.endBorrowerID,
-          trancheID: fundsReturnedAction.trancheID,
-          userID: fundsReturnedAction.userID,
-          currentStatus: fundsReturnedAction.status,
-          currentStatusDescription: fundsReturnedAction.statusDescription,
-          events: endBorrowerGroup,
-          id: fundsReturnedAction.id, // can belong to mulitple but doesnt matter here since it won't be used elsewhere
-        }
+      const index = sortedGroup.findLastIndex((ticket) =>
+        [
+          LoanTicketStatus.optedIn,
+          LoanTicketStatus.optedOut,
+          LoanTicketStatus.fundsReturned,
+        ].includes(ticket.status)
+      )
+
+      if (index !== -1) {
+        tickets = sortedGroup.slice(0, index + 1)
       }
 
-      if (!lastConsentAction) {
-        if (fundsReturnedTicket) {
-          subsequentTransactions.push(fundsReturnedTicket)
-        }
-        continue
+      const amount = tickets.reduce((acc, ticket) => {
+        if (ticket.status === LoanTicketStatus.fundsReturned) return acc
+
+        return acc + parseFloat(ticket.assets)
+      }, 0)
+
+      if (amount <= 0) continue
+
+      const subsequentTransactions: SubsequentTransaction[] = []
+
+      for (const ticket of tickets) {
+        if (ticket.status === 'created') continue
+
+        subsequentTransactions.push({
+          amount,
+          action: ticket.status,
+          status: index !== -1 ? 'completed' : 'pending',
+          depositRequestID: groupID,
+          timestamp: dayjs(ticket.createdOn).unix(),
+          id: ticket.id,
+          trancheID: ticket.trancheID,
+          poolID: ticket.poolID,
+          userID: ticket.userID,
+          epochID: ticket.epochID,
+          endBorrowerID: ticket.endBorrowerID,
+        })
       }
 
-      subsequentTransactions.push({
-        assets,
-        createdOn: dayjs(lastConsentAction.createdOn).unix(),
-        poolID: lastConsentAction.poolID,
-        endBorrowerID: lastConsentAction.endBorrowerID,
-        trancheID: lastConsentAction.trancheID,
-        userID: lastConsentAction.userID,
-        currentStatus: lastConsentAction.status,
-        currentStatusDescription: lastConsentAction.statusDescription,
-        events: endBorrowerGroup,
-        id: lastConsentAction.id, // can belong to mulitple but doesnt matter here since it won't be used elsewhere
-      })
+      const existingTickets = depositGroupMap.get(groupID)
 
-      if (fundsReturnedTicket) {
-        subsequentTransactions.push(fundsReturnedTicket)
-      }
+      depositGroupMap.set(groupID, [
+        ...(existingTickets ?? []),
+        ...subsequentTransactions,
+      ])
     }
   }
 
-  return subsequentTransactions
+  return depositGroupMap
 }
 
 export default getSubsequentTransactions

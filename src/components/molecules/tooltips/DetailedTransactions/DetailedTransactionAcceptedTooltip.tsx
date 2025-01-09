@@ -14,23 +14,23 @@ const DetailedTransactionAcceptedTooltip: React.FC<
   return requestType === 'Deposit' ? (
     <>
       {t(
-        'portfolio.transactions.detailedTransactions.tooltips.deposit.accepted.tooltip-1'
+        'portfolio.transactions.detailedLendingRequestTransactions.tooltips.deposit.accepted.tooltip-1'
       )}
       <br />
       <br />
       {t(
-        'portfolio.transactions.detailedTransactions.tooltips.deposit.accepted.tooltip-2'
+        'portfolio.transactions.detailedLendingRequestTransactions.tooltips.deposit.accepted.tooltip-2'
       )}
     </>
   ) : (
     <>
       {t(
-        'portfolio.transactions.detailedTransactions.tooltips.withdrawal.accepted.tooltip-1'
+        'portfolio.transactions.detailedLendingRequestTransactions.tooltips.withdrawal.accepted.tooltip-1'
       )}
       <br />
       <br />
       {t(
-        'portfolio.transactions.detailedTransactions.tooltips.withdrawal.accepted.tooltip-2'
+        'portfolio.transactions.detailedLendingRequestTransactions.tooltips.withdrawal.accepted.tooltip-2'
       )}
     </>
   )

@@ -1,9 +1,10 @@
 import { Stack } from '@mui/material'
 
+import LendingRequestionTransactions from '@/components/organisms/lending/OverviewTab/LendingRequestTransactions'
 import PoolOverview from '@/components/organisms/lending/OverviewTab/PoolOverview'
 import UserLending from '@/components/organisms/lending/OverviewTab/UserLending'
 import UserLoyalty from '@/components/organisms/lending/OverviewTab/UserLoyalty'
-import UserTransactions from '@/components/organisms/lending/OverviewTab/UserTransactions'
+import WithdrawalRequestTransactions from '@/components/organisms/lending/OverviewTab/WithdrawalRequestTransactions'
 
 import getLockPeriods from '@/actions/getLockPeriods'
 import { getCurrentEpoch } from '@/app/_requests/currentEpoch'
@@ -30,7 +31,14 @@ const PoolOverviewTab: React.FC<PoolOverviewProps> = async ({ poolId }) => {
         currentEpoch={currentEpoch}
         lockPeriods={lockPeriods}
       />
-      <UserTransactions poolId={poolId} currentEpoch={currentEpoch} />
+      <LendingRequestionTransactions
+        poolId={poolId}
+        currentEpoch={currentEpoch}
+      />
+      <WithdrawalRequestTransactions
+        poolId={poolId}
+        currentEpoch={currentEpoch}
+      />
     </Stack>
   )
 }

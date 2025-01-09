@@ -1,5 +1,4 @@
-import { DetailedTransaction } from '@/utils/lending/getDetailedTransactions'
-import TimeConversions from '@/utils/timeConversions'
+import { WithdrawalTransactionWrapper } from '@/utils/lending/getWithdrawalTransactions'
 
 type Amounts = {
   requested: number
@@ -16,42 +15,57 @@ const initialState: Amounts = {
 }
 
 const calculateWithdrawalStatusSummary = (
-  detailedTransactions: DetailedTransaction[],
-  nextEpochTime: number
+  detailedTransactions: WithdrawalTransactionWrapper[],
+  currentEpoch: string
 ) => {
   const currentEpochAmounts: Amounts = { ...initialState }
   const lifetimeAmounts: Amounts = { ...initialState }
 
-  const currentEpochStartTime = nextEpochTime - TimeConversions.SECONDS_PER_WEEK
+  for (const withdrawalGroup of detailedTransactions) {
+    for (const withdrawalTx of withdrawalGroup.transactions) {
+      if (withdrawalTx.epochId === currentEpoch) {
+        if (withdrawalTx.requestStatus === 'Requested') {
+          currentEpochAmounts.requested += parseFloat(
+            withdrawalTx.requestedAmount
+          )
+          currentEpochAmounts.queued += parseFloat(withdrawalTx.requestedAmount)
+        }
 
-  for (const transaction of detailedTransactions) {
-    if (transaction.requestType !== 'Withdrawal') continue
+        if (withdrawalTx.requestStatus === 'Cancelled') {
+          currentEpochAmounts.cancelled += parseFloat(
+            withdrawalTx.requestedAmount
+          )
+          currentEpochAmounts.requested += parseFloat(
+            withdrawalTx.requestedAmount
+          )
+        }
+      }
+      if (parseFloat(withdrawalTx.epochId) === parseFloat(currentEpoch) - 1) {
+        if (withdrawalTx.requestStatus === 'Processed') {
+          currentEpochAmounts.requested += parseFloat(
+            withdrawalTx.requestedAmount
+          )
+          currentEpochAmounts.accepted += parseFloat(
+            withdrawalTx.acceptedAmount
+          )
+        }
+      }
 
-    const isCurrentEpoch = transaction.timestamp > currentEpochStartTime
+      if (withdrawalTx.requestStatus === 'Processed') {
+        lifetimeAmounts.requested += parseFloat(withdrawalTx.requestedAmount)
+        lifetimeAmounts.accepted += parseFloat(withdrawalTx.acceptedAmount)
+      }
 
-    lifetimeAmounts.requested += parseFloat(transaction.requestedAmount)
+      if (withdrawalTx.requestStatus === 'Requested') {
+        lifetimeAmounts.requested += parseFloat(withdrawalTx.requestedAmount)
+      }
 
-    if (isCurrentEpoch) {
-      currentEpochAmounts.requested += parseFloat(transaction.requestedAmount)
-      currentEpochAmounts.queued += parseFloat(transaction.queuedAmount)
-    }
-
-    if (transaction.latestEvent.requestType === 'Cancelled') {
-      lifetimeAmounts.cancelled += parseFloat(
-        transaction.latestEvent.assetAmount
-      )
-
-      if (transaction.latestEvent.timestamp > currentEpochStartTime) {
-        currentEpochAmounts.cancelled += parseFloat(
-          transaction.latestEvent.assetAmount
-        )
+      if (withdrawalTx.requestStatus === 'Cancelled') {
+        lifetimeAmounts.cancelled += parseFloat(withdrawalTx.requestedAmount)
+        lifetimeAmounts.requested += parseFloat(withdrawalTx.requestedAmount)
       }
     }
   }
-
-  currentEpochAmounts.requested =
-    currentEpochAmounts.accepted + currentEpochAmounts.queued
-  lifetimeAmounts.requested = lifetimeAmounts.accepted + lifetimeAmounts.queued
 
   return { currentEpochAmounts, lifetimeAmounts }
 }

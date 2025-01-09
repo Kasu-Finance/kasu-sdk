@@ -1,7 +1,6 @@
 'use client'
 
 import { TableCell, TableRow } from '@mui/material'
-import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
 
 import useTransactionHistoryState from '@/hooks/context/useTransactionHistoryState'
 import usePagination from '@/hooks/usePagination'
@@ -9,30 +8,28 @@ import usePagination from '@/hooks/usePagination'
 import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
 import NoMatchingFilter from '@/components/atoms/NoMatchingFilter'
 import CustomTable from '@/components/molecules/CustomTable'
-import UserTransactionTableBody from '@/components/organisms/lending/OverviewTab/UserTransactions/UserTransactionTable.tsx/UserTransactionTableBody'
-import UserTransactionTableHeader from '@/components/organisms/lending/OverviewTab/UserTransactions/UserTransactionTable.tsx/UserTransactionTableHeader'
+import LendingRequestsTransactionsTableBody from '@/components/organisms/lending/OverviewTab/LendingRequestTransactions/LendingRequestsTransactionsTable/LendingRequestsTransactionsTableBody'
+import LendingRequestsTransactionsTableHeader from '@/components/organisms/lending/OverviewTab/LendingRequestTransactions/LendingRequestsTransactionsTable/LendingRequestsTransactionsTableHeader'
 
-type UserTransactionTableProps = {
-  transactionHistory: UserRequest[]
+import { DetailedTransactionWrapper } from '@/utils/lending/getDetailedTransactions'
+
+type LendingRequestsTransactionsTableProps = {
+  transactionHistory: DetailedTransactionWrapper[]
   currentEpoch: string
 }
 
 const ROW_PER_PAGE = 5
 
-const UserTransactionTable: React.FC<UserTransactionTableProps> = ({
-  transactionHistory,
-  currentEpoch,
-}) => {
-  const { status, trancheType, transactionType } = useTransactionHistoryState()
+const LendingRequestsTransactionsTable: React.FC<
+  LendingRequestsTransactionsTableProps
+> = ({ transactionHistory, currentEpoch }) => {
+  const { trancheType } = useTransactionHistoryState()
 
-  const filteredData: UserRequest[] = transactionHistory.filter(
+  const filteredData: DetailedTransactionWrapper[] = transactionHistory.filter(
     (transaction) => {
       return (
-        (status === 'All' || transaction.status === status) &&
-        (trancheType === 'All Tranches' ||
-          transaction.trancheName === trancheType) &&
-        (transactionType === 'All Transactions' ||
-          transaction.requestType === transactionType)
+        trancheType === 'All Tranches' ||
+        transaction.trancheName === trancheType
       )
     }
   )
@@ -44,10 +41,10 @@ const UserTransactionTable: React.FC<UserTransactionTableProps> = ({
 
   return (
     <CustomTable
-      tableHeader={<UserTransactionTableHeader />}
+      tableHeader={<LendingRequestsTransactionsTableHeader />}
       tableBody={
         filteredData.length ? (
-          <UserTransactionTableBody
+          <LendingRequestsTransactionsTableBody
             currentEpoch={currentEpoch}
             transactions={paginateData([...filteredData])}
           />
@@ -77,4 +74,4 @@ const UserTransactionTable: React.FC<UserTransactionTableProps> = ({
   )
 }
 
-export default UserTransactionTable
+export default LendingRequestsTransactionsTable

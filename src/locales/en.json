@@ -816,7 +816,7 @@
       "nextEpoch": "Your funds will be returned to you at the start of the next Epoch.​"
     },
     "requestDetails": {
-      "title": "Request Details",
+      "title": "Lending Request & RWA Loan Deployment Transaction History",
       "metric-1": "Lending Request Date",
       "metric-1-tooltip": "info",
       "metric-2": "Total Requested",
@@ -831,7 +831,7 @@
       "metric-6-tooltip": "info",
       "metric-7": "Total Reallocated In",
       "metric-7-tooltip": "info",
-      "subtitle": "Subsequent Transactions (Post Acceptance)",
+      "subtitle": "RWA Loan Deployment Status (Post Acceptance)",
       "notAcceptedMessage": {
         "lending": "The outcome of your Lending Request will be determined at the end of the epoch clearing period.​",
         "withdrawal": "The outcome of your Withdrawal Request will be determined at the end of the epoch clearing period.​"
@@ -1440,6 +1440,8 @@
       },
       "transactionsHistory": {
         "title": "Your Transactions",
+        "depositTitle": "Your Lending Request Transactions",
+        "withdrawTitle": "Your Withdrawal Request Transactions",
         "tooltip": "The status of your lending requests and lending withdrawal requests to and from this Lending Strategy.",
         "reallocated": {
           "label": "Reallocated",
@@ -1959,7 +1961,8 @@
           "metric-4-tooltip-3": " you acknowledged during the Loan Contract Acceptance process for more details.​",
           "metric-5": "Cancelled",
           "metric-5-tooltip-1": "The total USDC amount of Lending Requests that you have cancelled across all Lending Strategies.",
-          "metric-5-tooltip-2": "Lending Request Cancellations can only be submitted prior to the closure of the clearing period of the current epoch."
+          "metric-5-tooltip-2": "Lending Request Cancellations can only be submitted prior to the closure of the clearing period of the current epoch.",
+          "metric-6": "Queued"
         },
         "subsequentTransactions": {
           "title": "Subsequent Transactions",
@@ -2001,15 +2004,14 @@
           "metric-4-tooltip-2": "Withdrawal Request Cancellations can only be submitted prior to the closure of the clearing period of the current epoch."
         }
       },
-      "detailedTransactions": {
-        "title": "Detailed Transactions",
+      "detailedLendingRequestTransactions": {
+        "title": "Detailed Lending Request Transactions",
         "tableHeader": {
-          "cell-1": "Loan Tranche/ Single Loan",
-          "cell-2": "Transaction",
-          "cell-3": "Transaction Date",
-          "cell-4": "Status and/or Amount",
-          "cell-5": "Lender Decision Pending",
-          "cell-6": "Loan Deployment/ Withdrawal Status"
+          "cell-1": "Last Transaction Date",
+          "cell-2": "Loan Tranche",
+          "cell-3": "Lending Request Status",
+          "cell-4": "Opt In/Out Decision Pending",
+          "cell-5": "Transaction Details"
         },
         "lendingRequest": "Lending Request",
         "withdrawalRequest": "Withdrawal Request",
@@ -2068,7 +2070,16 @@
           }
         },
         "actions": {
-          "seeDetails": "View Transactions"
+          "seeDetails": "View Details"
+        }
+      },
+      "detailedWithdrawalRequestTransaction": {
+        "title": "Detailed Withdrawal Request Transactions",
+        "tableHeader": {
+          "cell-1": "Last Transaction Date",
+          "cell-2": "Loan Tranche",
+          "cell-3": "Withdrawal Request Status",
+          "cell-4": "Transaction Details"
         }
       }
     },

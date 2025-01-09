@@ -5,7 +5,7 @@ import {
   TransactionStatus,
   TransactionTranches,
   TransactionType,
-} from '@/components/organisms/lending/OverviewTab/UserTransactions/TransactionFilters'
+} from '@/components/organisms/lending/OverviewTab/LendingRequestTransactions/TransactionFilters'
 
 import {
   PoolIdFilters,

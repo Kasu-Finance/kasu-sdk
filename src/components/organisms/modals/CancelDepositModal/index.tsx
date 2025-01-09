@@ -26,11 +26,7 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { transaction, currentEpoch } = modal[ModalsKeys.CANCEL_DEPOSIT]
 
-  const transactionEvents = transaction.events
-
-  const latestEvent = transactionEvents[transactionEvents.length - 1]
-
-  const formattedTime = formatTimestamp(latestEvent.timestamp, {
+  const formattedTime = formatTimestamp(transaction.timestamp, {
     format: 'DD.MM.YYYY HH:mm:ss',
     includeUtcOffset: true,
   })
@@ -165,7 +161,7 @@ const CancelDepositModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               }}
               metric={
                 <Typography variant='baseMdBold'>
-                  {formatAmount(latestEvent.assetAmount || '0')} USDC
+                  {formatAmount(transaction.amount || '0')} USDC
                 </Typography>
               }
             />

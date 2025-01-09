@@ -1,7 +1,6 @@
 'use client'
 
 import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
-import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
 import getTranslation from '@/hooks/useTranslation'
 
 import WithdrawalStatusSummaryAcceptedTooltip from '@/components/molecules/tooltips/WithdrawalStatusSummary/WithdrawalStatusSummaryAcceptedTooltip'
@@ -13,7 +12,7 @@ import WithdrawalRequestsTableRow from '@/components/organisms/portfolio/Portfol
 import {
   calculateWithdrawalStatusSummary,
   formatAmount,
-  getDetailedTransactions,
+  getWithdrawalTransactions,
 } from '@/utils'
 
 type WithdrawalRequestsTableBodyProps = {
@@ -27,15 +26,12 @@ const WithdrawalRequestsTableBody: React.FC<
 
   const { transactionHistory } = useTransactionHistory(currentEpoch)
 
-  const detailedTransactions = getDetailedTransactions(
-    transactionHistory ?? [],
-    []
+  const withdrawalTransactions = getWithdrawalTransactions(
+    transactionHistory ?? []
   )
 
-  const { nextEpochTime } = useNextEpochTime()
-
   const { currentEpochAmounts, lifetimeAmounts } =
-    calculateWithdrawalStatusSummary(detailedTransactions, nextEpochTime)
+    calculateWithdrawalStatusSummary(withdrawalTransactions, currentEpoch)
 
   return (
     <>

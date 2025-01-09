@@ -2,48 +2,57 @@
 
 import React from 'react'
 
+import useLoanTickets from '@/hooks/lending/useLoanTickets'
 import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
 import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
-import TransactionFilters from '@/components/organisms/lending/OverviewTab/UserTransactions/TransactionFilters'
-import UserTransactionTable from '@/components/organisms/lending/OverviewTab/UserTransactions/UserTransactionTable.tsx'
+import LendingRequestsTransactionsTable from '@/components/organisms/lending/OverviewTab/LendingRequestTransactions/LendingRequestsTransactionsTable'
+import TransactionFilters from '@/components/organisms/lending/OverviewTab/LendingRequestTransactions/TransactionFilters'
 
 import TransactionHistoryState from '@/context/transactionHistory/transactionHistory.provider'
 
-type UserTransactionsProps = {
+import { getDetailedTransactions } from '@/utils'
+
+type LendingRequestTransactionsProps = {
   poolId: string
   currentEpoch: string
 }
 
-const UserTransactions: React.FC<UserTransactionsProps> = ({
-  poolId,
-  currentEpoch,
-}) => {
+const LendingRequestionTransactions: React.FC<
+  LendingRequestTransactionsProps
+> = ({ poolId, currentEpoch }) => {
   const { t } = getTranslation()
 
   const { isLoading, transactionHistory } = useTransactionHistory(currentEpoch)
 
-  if (isLoading || !transactionHistory || !transactionHistory.length)
+  const { loanTickets, isLoading: loanTicketsLoading } = useLoanTickets()
+
+  if (isLoading || !transactionHistory || !loanTickets || loanTicketsLoading)
     return null
 
   const filteredTransactions = transactionHistory.filter(
     (transaction) => poolId === transaction.lendingPool.id
   )
 
+  const detailedTransactions = getDetailedTransactions(
+    filteredTransactions,
+    loanTickets
+  )
+
   return (
     <CustomCard>
       <CustomCardHeader
-        title={t('lending.poolOverview.transactionsHistory.title')}
+        title={t('lending.poolOverview.transactionsHistory.depositTitle')}
       />
       <CustomInnerCardContent sx={{ px: 0 }}>
         <TransactionHistoryState>
           <TransactionFilters />
-          <UserTransactionTable
+          <LendingRequestsTransactionsTable
             currentEpoch={currentEpoch}
-            transactionHistory={filteredTransactions}
+            transactionHistory={detailedTransactions}
           />
         </TransactionHistoryState>
       </CustomInnerCardContent>
@@ -51,4 +60,4 @@ const UserTransactions: React.FC<UserTransactionsProps> = ({
   )
 }
 
-export default UserTransactions
+export default LendingRequestionTransactions

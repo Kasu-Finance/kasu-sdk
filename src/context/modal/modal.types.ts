@@ -12,16 +12,16 @@ import {
 } from '@solidant/kasu-sdk/src/services/Portfolio/types'
 import {
   UserRequest,
-  UserRequestEvent,
   UserTrancheBalance,
 } from '@solidant/kasu-sdk/src/services/UserLending/types'
 
 import { LoanTicketDto } from '@/config/api.lendersAgreement'
-import { LoanTicket, PendingDecision, PendingDecisionPool } from '@/utils'
+import { PendingDecision, PendingDecisionPool } from '@/utils'
 import {
-  DetailedTransaction,
   DetailedTransactionReallocationRequest,
+  DetailedTransactionWrapper,
 } from '@/utils/lending/getDetailedTransactions'
+import { WithdrawalTransactionWrapper } from '@/utils/lending/getWithdrawalTransactions'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
@@ -96,10 +96,25 @@ export type Modals = {
     fixedLoans: PortfolioTranche['fixedLoans']
   }>
   [ModalsKeys.OPT_IN]: ModalData
-  [ModalsKeys.OPT_OUT]: ModalData<{ loanTicket: LoanTicket; poolName: string }>
+  [ModalsKeys.OPT_OUT]: ModalData<{
+    subsequentTransaction: {
+      amount: number
+      timestamp: EpochTimeStamp
+      endBorrowerID: string
+      poolID: string
+      trancheID: string
+    }
+    poolName: string
+  }>
   [ModalsKeys.BORROWER_IDENTIFIED]: ModalData<{
     poolName: string
-    loanTicket: LoanTicket
+    subsequentTransaction: {
+      amount: number
+      timestamp: EpochTimeStamp
+      endBorrowerID: string
+      poolID: string
+      trancheID: string
+    }
     callback: (newLoanTickets: LoanTicketDto[]) => void
   }>
   [ModalsKeys.PENDING_DECISIONS]: ModalData<{
@@ -108,8 +123,9 @@ export type Modals = {
   }>
   [ModalsKeys.REQUEST_DETAILS]: ModalData<{
     detailedTransaction:
-      | DetailedTransaction
+      | DetailedTransactionWrapper
       | DetailedTransactionReallocationRequest
+      | WithdrawalTransactionWrapper
     currentEpoch: string
   }>
   [ModalsKeys.LOAN_CONTRACT]: ModalData<{
@@ -144,7 +160,7 @@ export type Modals = {
         tranches: { orderId: string }[]
       }
       requestType: 'Deposit' | 'Withdrawal'
-      events: UserRequestEvent[]
+      amount: string
       nftId: string
       trancheName: string
     }
@@ -159,7 +175,7 @@ export type Modals = {
         tranches: { orderId: string }[]
       }
       requestType: 'Deposit' | 'Withdrawal'
-      events: UserRequestEvent[]
+      amount: string
       nftId: string
       trancheName: string
     }

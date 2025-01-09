@@ -6,11 +6,12 @@ import getTranslation from '@/hooks/useTranslation'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import { DetailedTransaction } from '@/utils/lending/getDetailedTransactions'
+import { DetailedTransactionWrapper } from '@/utils/lending/getDetailedTransactions'
+import { WithdrawalTransactionWrapper } from '@/utils/lending/getWithdrawalTransactions'
 
 type RequestDetailsActionProps = {
   currentEpoch: string
-  detailedTransaction: DetailedTransaction
+  detailedTransaction: DetailedTransactionWrapper | WithdrawalTransactionWrapper
   handleClose: () => void
 }
 
@@ -24,17 +25,31 @@ const RequestDetailsAction: React.FC<RequestDetailsActionProps> = ({
   const { openModal } = useModalState()
 
   const handleCancel = () => {
-    if ('canCancel' in detailedTransaction) {
-      openModal({
-        name:
-          detailedTransaction.requestType === 'Deposit'
-            ? ModalsKeys.CANCEL_DEPOSIT
-            : ModalsKeys.CANCEL_WITHDRAWAL,
-        transaction: detailedTransaction,
-        currentEpoch,
-      })
-      handleClose()
-    }
+    const totalAmount = detailedTransaction.transactions.reduce(
+      (total, cur) => total + parseFloat(cur.requestedAmount),
+      0
+    )
+
+    const transaction = detailedTransaction.transactions[0]
+
+    openModal({
+      name:
+        detailedTransaction.type === 'Deposit'
+          ? ModalsKeys.CANCEL_DEPOSIT
+          : ModalsKeys.CANCEL_WITHDRAWAL,
+      transaction: {
+        timestamp: detailedTransaction.lastTransactionDate,
+        apy: transaction.apy,
+        amount: totalAmount.toString(),
+        fixedTermConfig: detailedTransaction.fixedTermConfig,
+        lendingPool: transaction.lendingPool,
+        nftId: transaction.nftId,
+        requestType: detailedTransaction.type,
+        trancheName: detailedTransaction.trancheName,
+      },
+      currentEpoch,
+    })
+    handleClose()
   }
 
   return (
@@ -55,7 +70,7 @@ const RequestDetailsAction: React.FC<RequestDetailsActionProps> = ({
         onClick={handleCancel}
         sx={{ textTransform: 'capitalize' }}
       >
-        {detailedTransaction.requestType === 'Deposit'
+        {detailedTransaction.type === 'Deposit'
           ? t('modals.cancelDeposit.cancel-button')
           : t('modals.cancelWithdrawal.cancel-button')}
       </Button>

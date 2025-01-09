@@ -38,7 +38,13 @@ const PendingDecisionsTableRow: React.FC<PendingDecisionsTableRowProps> = ({
   const handleOpen = (loanTicket: LoanTicket) =>
     openModal({
       name: ModalsKeys.BORROWER_IDENTIFIED,
-      loanTicket,
+      subsequentTransaction: {
+        amount: loanTicket.assets,
+        endBorrowerID: loanTicket.endBorrowerID,
+        poolID: loanTicket.poolID,
+        timestamp: loanTicket.createdOn,
+        trancheID: loanTicket.trancheID,
+      },
       poolName: pendingDecision.poolName,
       callback: (newLoanTickets: LoanTicketDto[]) => {
         openModal({

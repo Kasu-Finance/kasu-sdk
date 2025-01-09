@@ -6,13 +6,14 @@ import usePagination from '@/hooks/usePagination'
 import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
 import NoMatchingFilter from '@/components/atoms/NoMatchingFilter'
 import CustomTable from '@/components/molecules/CustomTable'
-import PortfolioUserTransactionTableBody from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedTransactions/PortfolioUserTransactionTableBody'
-import PortfolioUserTransactionsTableHeader from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedTransactions/PortfolioUserTransactionTableHeader'
+import PortfolioUserTransactionTableBody from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedLendingRequestTransactions/PortfolioUserTransactionTableBody'
+import PortfolioUserTransactionsTableHeader from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedLendingRequestTransactions/PortfolioUserTransactionTableHeader'
 
-import { DetailedTransaction } from '@/utils/lending/getDetailedTransactions'
+import { LoanTicketStatus } from '@/config/api.lendersAgreement'
+import { DetailedTransactionWrapper } from '@/utils/lending/getDetailedTransactions'
 
 type PortfolioUserTransactionsTableProps = {
-  detailedTransactions: DetailedTransaction[]
+  detailedTransactions: DetailedTransactionWrapper[]
   currentEpoch: string
 }
 
@@ -21,21 +22,19 @@ const ROW_PER_PAGE = 5
 const PortfolioUserTransactionTable: React.FC<
   PortfolioUserTransactionsTableProps
 > = ({ detailedTransactions, currentEpoch }) => {
-  const { poolId, trancheType, transactionType, pendingDecision } =
-    useTransactionHistoryState()
+  const { poolId, trancheType, pendingDecision } = useTransactionHistoryState()
 
-  const filteredData: DetailedTransaction[] = detailedTransactions.filter(
-    (transaction) => {
+  const filteredData: DetailedTransactionWrapper[] =
+    detailedTransactions.filter((transaction) => {
       return (
-        (poolId === 'All' || poolId === transaction.lendingPool.id) &&
+        (poolId === 'All' || poolId === transaction.poolId) &&
         (trancheType === 'All Tranches' ||
           transaction.trancheName === trancheType) &&
-        (transactionType === 'All Transactions' ||
-          transaction.requestType === transactionType) &&
-        (pendingDecision === 'All' || transaction.pendingDecisions.length > 0)
+        (pendingDecision === 'All' ||
+          transaction.currentDecisionStatus?.status ===
+            LoanTicketStatus.emailSent)
       )
-    }
-  )
+    })
 
   const { currentPage, setPage, paginateData } = usePagination(
     ROW_PER_PAGE,

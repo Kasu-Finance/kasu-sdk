@@ -28,6 +28,7 @@ export type LoanTicket = {
   currentStatusDescription: string
   createdOn: EpochTimeStamp
   events: LoanTicketDto[]
+  depositRequestID: string
 }
 
 const mapPendingDecisionsToPools = (

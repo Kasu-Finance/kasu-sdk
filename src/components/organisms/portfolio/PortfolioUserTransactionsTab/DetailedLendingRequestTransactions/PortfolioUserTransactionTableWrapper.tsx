@@ -4,9 +4,9 @@ import useLoanTickets from '@/hooks/lending/useLoanTickets'
 import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
 
 import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
-import TransactionFilters from '@/components/organisms/lending/OverviewTab/UserTransactions/TransactionFilters'
-import PortfolioUserTransactionSkeleton from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedTransactions/PortfolioUserTransactionSkeleton'
-import PortfolioUserTransactionTable from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedTransactions/PortfolioUserTransactionTable'
+import TransactionFilters from '@/components/organisms/lending/OverviewTab/LendingRequestTransactions/TransactionFilters'
+import PortfolioUserTransactionSkeleton from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedLendingRequestTransactions/PortfolioUserTransactionSkeleton'
+import PortfolioUserTransactionTable from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedLendingRequestTransactions/PortfolioUserTransactionTable'
 
 import { getDetailedTransactions } from '@/utils'
 

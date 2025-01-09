@@ -24,11 +24,7 @@ const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { transaction, currentEpoch } = modal[ModalsKeys.CANCEL_WITHDRAWAL]
 
-  const transactionEvents = transaction.events
-
-  const latestEvent = transactionEvents[transactionEvents.length - 1]
-
-  const formattedTime = formatTimestamp(latestEvent.timestamp, {
+  const formattedTime = formatTimestamp(transaction.timestamp, {
     format: 'DD.MM.YYYY HH:mm:ss',
     includeUtcOffset: true,
   })
@@ -95,7 +91,7 @@ const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                 showDivider
                 metric={
                   <Typography variant='baseMdBold'>
-                    {latestEvent.trancheName}
+                    {transaction.trancheName}
                   </Typography>
                 }
               />
@@ -116,7 +112,7 @@ const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               showDivider
               metric={
                 <Typography variant='baseMdBold'>
-                  {formatAmount(latestEvent.assetAmount, { minDecimals: 2 })}
+                  {formatAmount(transaction.amount, { minDecimals: 2 })}
                 </Typography>
               }
             />

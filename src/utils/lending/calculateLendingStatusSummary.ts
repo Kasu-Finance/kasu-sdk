@@ -1,10 +1,10 @@
 import {
-  DetailedTransaction,
   DetailedTransactionReallocationRequest,
+  DetailedTransactionWrapper,
 } from '@/utils/lending/getDetailedTransactions'
-import TimeConversions from '@/utils/timeConversions'
 
 type Amounts = {
+  queued: number
   requested: number
   accepted: number
   rejected: number
@@ -13,6 +13,7 @@ type Amounts = {
 }
 
 const initialState: Amounts = {
+  queued: 0,
   accepted: 0,
   requested: 0,
   rejected: 0,
@@ -22,64 +23,80 @@ const initialState: Amounts = {
 
 const calculateLendingStatusSummary = (
   detailedTransactions: (
-    | DetailedTransaction
+    | DetailedTransactionWrapper
     | DetailedTransactionReallocationRequest
   )[],
-  nextEpochTime: number
+  currentEpoch: string
 ) => {
   const currentEpochAmounts: Amounts = { ...initialState }
   const lifetimeAmounts: Amounts = { ...initialState }
 
-  const currentEpochStartTime = nextEpochTime - TimeConversions.SECONDS_PER_WEEK
+  for (const depositGroups of detailedTransactions) {
+    if ('transactions' in depositGroups) {
+      for (const transaction of depositGroups.transactions) {
+        switch (transaction.requestStatus) {
+          case 'Cancelled':
+            if (transaction.epochId === currentEpoch) {
+              currentEpochAmounts.cancelled += parseFloat(
+                transaction.requestedAmount
+              )
+            }
 
-  for (const transaction of detailedTransactions) {
-    if (
-      transaction.requestType === 'Withdrawal' ||
-      transaction.requestType === 'Funds Returned'
-    )
-      continue
+            lifetimeAmounts.requested += parseFloat(transaction.requestedAmount)
+            lifetimeAmounts.cancelled += parseFloat(transaction.requestedAmount)
+            break
+          case 'Requested':
+            if (transaction.epochId === currentEpoch) {
+              currentEpochAmounts.queued += parseFloat(
+                transaction.requestedAmount
+              )
+              currentEpochAmounts.requested += parseFloat(
+                transaction.requestedAmount
+              )
+            }
+            break
+          case 'Processed':
+            if (
+              parseFloat(transaction.epochId) ===
+              parseFloat(currentEpoch) - 1
+            ) {
+              currentEpochAmounts.accepted += parseFloat(
+                transaction.acceptedAmount
+              )
+              currentEpochAmounts.rejected += parseFloat(
+                transaction.rejectedAmount
+              )
+              currentEpochAmounts.reallocated += parseFloat(
+                transaction.reallocatedOutAmount
+              )
+            }
 
-    const isCurrentEpoch = transaction.timestamp > currentEpochStartTime
-
-    if (transaction.requestType === 'Reallocation') {
-      lifetimeAmounts.reallocated += parseFloat(transaction.reallocatedInAmount)
-
-      if (isCurrentEpoch) {
-        currentEpochAmounts.reallocated += parseFloat(
-          transaction.reallocatedInAmount
-        )
-      }
-    } else {
-      if (transaction.latestEvent.requestType === 'Cancelled') {
-        lifetimeAmounts.cancelled += parseFloat(
-          transaction.latestEvent.assetAmount
-        )
-
-        if (transaction.latestEvent.timestamp > currentEpochStartTime) {
-          currentEpochAmounts.cancelled += parseFloat(
-            transaction.latestEvent.assetAmount
-          )
+            lifetimeAmounts.requested +=
+              parseFloat(transaction.acceptedAmount) +
+              parseFloat(transaction.rejectedAmount)
+            lifetimeAmounts.accepted += parseFloat(transaction.acceptedAmount)
+            lifetimeAmounts.rejected += parseFloat(transaction.rejectedAmount)
+            lifetimeAmounts.reallocated += parseFloat(
+              transaction.reallocatedOutAmount
+            )
+            break
         }
       }
-
-      lifetimeAmounts.accepted += parseFloat(transaction.acceptedAmount)
-      lifetimeAmounts.rejected += parseFloat(transaction.rejectedAmount)
-
-      if (isCurrentEpoch) {
-        currentEpochAmounts.accepted += parseFloat(transaction.acceptedAmount)
-        currentEpochAmounts.rejected += parseFloat(transaction.rejectedAmount)
+    } else {
+      const reallocationTx = depositGroups
+      if (parseFloat(reallocationTx.epochId) === parseFloat(currentEpoch) - 1) {
+        currentEpochAmounts.accepted += parseFloat(
+          reallocationTx.acceptedAmount
+        )
+        currentEpochAmounts.rejected += parseFloat(
+          reallocationTx.rejectedAmount
+        )
       }
+
+      lifetimeAmounts.accepted += parseFloat(reallocationTx.acceptedAmount)
+      lifetimeAmounts.rejected += parseFloat(reallocationTx.rejectedAmount)
     }
   }
-
-  currentEpochAmounts.requested =
-    currentEpochAmounts.accepted +
-    currentEpochAmounts.rejected +
-    currentEpochAmounts.reallocated
-  lifetimeAmounts.requested =
-    lifetimeAmounts.accepted +
-    lifetimeAmounts.rejected +
-    lifetimeAmounts.reallocated
 
   return { currentEpochAmounts, lifetimeAmounts }
 }
