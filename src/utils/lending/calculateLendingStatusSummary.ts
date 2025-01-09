@@ -40,6 +40,9 @@ const calculateLendingStatusSummary = (
               currentEpochAmounts.cancelled += parseFloat(
                 transaction.requestedAmount
               )
+              currentEpochAmounts.requested += parseFloat(
+                transaction.requestedAmount
+              )
             }
 
             lifetimeAmounts.requested += parseFloat(transaction.requestedAmount)
