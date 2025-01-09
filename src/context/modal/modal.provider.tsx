@@ -14,7 +14,6 @@ import {
 } from '@solidant/kasu-sdk/src/services/Portfolio/types'
 import {
   UserRequest,
-  UserRequestEvent,
   UserTrancheBalance,
 } from '@solidant/kasu-sdk/src/services/UserLending/types'
 import { ReactNode, useReducer } from 'react'
@@ -24,8 +23,8 @@ import ModalContext from '@/context/modal/modal.context'
 import { modalReducer } from '@/context/modal/modal.reducer'
 import { Modals } from '@/context/modal/modal.types'
 
-import { LoanTicket, PendingDecision } from '@/utils'
-import { DetailedTransaction } from '@/utils/lending/getDetailedTransactions'
+import { PendingDecision } from '@/utils'
+import { DetailedTransactionWrapper } from '@/utils/lending/getDetailedTransactions'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
@@ -58,19 +57,31 @@ const initialState: Modals = {
   },
   borrowerIdentifiedModal: {
     isOpen: false,
-    loanTicket: null as unknown as LoanTicket,
+    subsequentTransaction: null as unknown as {
+      amount: number
+      timestamp: EpochTimeStamp
+      endBorrowerID: string
+      poolID: string
+      trancheID: string
+    },
     poolName: '',
     callback: () => {},
   },
   optInModal: { isOpen: false },
   optOutModal: {
     isOpen: false,
-    loanTicket: null as unknown as LoanTicket,
+    subsequentTransaction: null as unknown as {
+      amount: number
+      timestamp: EpochTimeStamp
+      endBorrowerID: string
+      poolID: string
+      trancheID: string
+    },
     poolName: '',
   },
   requestDetailsModal: {
     isOpen: false,
-    detailedTransaction: null as unknown as DetailedTransaction,
+    detailedTransaction: null as unknown as DetailedTransactionWrapper,
     currentEpoch: '',
   },
   pendingDecisionsModal: {
@@ -99,9 +110,8 @@ const initialState: Modals = {
         name: string
         tranches: { orderId: string }[]
       }
-
       requestType: 'Deposit' | 'Withdrawal'
-      events: UserRequestEvent[]
+      amount: string
       nftId: string
       trancheName: string
     },
@@ -117,7 +127,7 @@ const initialState: Modals = {
         tranches: { orderId: string }[]
       }
       requestType: 'Deposit' | 'Withdrawal'
-      events: UserRequestEvent[]
+      amount: string
       nftId: string
       trancheName: string
     },

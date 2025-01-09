@@ -6,12 +6,12 @@ const DetailedTransactionRejectedTooltip = () => {
   return (
     <>
       {t(
-        'portfolio.transactions.detailedTransactions.tooltips.deposit.rejected.tooltip-1'
+        'portfolio.transactions.detailedLendingRequestTransactions.tooltips.deposit.rejected.tooltip-1'
       )}
       <br />
       <br />
       {t(
-        'portfolio.transactions.detailedTransactions.tooltips.deposit.rejected.tooltip-2'
+        'portfolio.transactions.detailedLendingRequestTransactions.tooltips.deposit.rejected.tooltip-2'
       )}
     </>
   )

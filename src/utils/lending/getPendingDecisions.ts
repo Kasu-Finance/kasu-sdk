@@ -63,6 +63,7 @@ const getPendingDecisions = (loanTicketGroups: LoanTicketDto[]) => {
         trancheID: latestTicket.trancheID,
         userID: latestTicket.userID,
         events: endBorrowerGroup,
+        depositRequestID: latestTicket.depositRequestID,
         assets,
       })
     }

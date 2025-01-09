@@ -1,9 +1,9 @@
-import PortfolioUserTransactionTableRow from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedTransactions/PortfolioUserTransactionTableRow'
+import PortfolioUserTransactionTableRow from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedLendingRequestTransactions/PortfolioUserTransactionTableRow'
 
-import { DetailedTransaction } from '@/utils/lending/getDetailedTransactions'
+import { DetailedTransactionWrapper } from '@/utils/lending/getDetailedTransactions'
 
 type PortfolioUserTransactionTableBodyProps = {
-  detailedTransactions: DetailedTransaction[]
+  detailedTransactions: DetailedTransactionWrapper[]
   currentEpoch: string
 }
 
@@ -13,7 +13,7 @@ const PortfolioUserTransactionTableBody: React.FC<
   return detailedTransactions.map((transaction, index) => (
     <PortfolioUserTransactionTableRow
       currentEpoch={currentEpoch}
-      transaction={transaction}
+      transactionWrapper={transaction}
       key={index}
     />
   ))

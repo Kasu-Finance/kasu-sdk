@@ -11,17 +11,17 @@ const DetailedTransactionQueuedTooltip = () => {
   return (
     <>
       {t(
-        'portfolio.transactions.detailedTransactions.tooltips.withdrawal.queued.tooltip-1'
+        'portfolio.transactions.detailedLendingRequestTransactions.tooltips.withdrawal.queued.tooltip-1'
       )}
       <br />
       <br />
       {t(
-        'portfolio.transactions.detailedTransactions.tooltips.withdrawal.queued.tooltip-2'
+        'portfolio.transactions.detailedLendingRequestTransactions.tooltips.withdrawal.queued.tooltip-2'
       )}
       <br />
       <br />
       {t(
-        'portfolio.transactions.detailedTransactions.tooltips.withdrawal.queued.tooltip-3'
+        'portfolio.transactions.detailedLendingRequestTransactions.tooltips.withdrawal.queued.tooltip-3'
       )}{' '}
       <Button
         variant='text'
@@ -41,7 +41,7 @@ const DetailedTransactionQueuedTooltip = () => {
         {t('modals.termsAndConditions.title')}
       </Button>{' '}
       {t(
-        'portfolio.transactions.detailedTransactions.tooltips.withdrawal.queued.tooltip-4'
+        'portfolio.transactions.detailedLendingRequestTransactions.tooltips.withdrawal.queued.tooltip-4'
       )}
     </>
   )

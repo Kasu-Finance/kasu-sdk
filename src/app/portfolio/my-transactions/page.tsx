@@ -1,7 +1,8 @@
 import { Stack } from '@mui/material'
 import { Suspense } from 'react'
 
-import DetailedTransactions from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedTransactions'
+import DetailedLendingRequestTransactions from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedLendingRequestTransactions'
+import DetailedWithdrawalRequestTransactions from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedWithdrawalRequestTransactions'
 import LendingStatusSummary from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/LendingStatusSummary'
 import NotificationBannerWrapper from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/NotificationBanner/NotificationBannerWrapper'
 import WithdrawalStatusSummary from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/WithdrawalStatusSummary'
@@ -18,7 +19,8 @@ const YourTransactions = async () => {
         <LendingStatusSummary />
         <WithdrawalStatusSummary currentEpoch={currentEpoch} />
       </Suspense>
-      <DetailedTransactions currentEpoch={currentEpoch} />
+      <DetailedLendingRequestTransactions currentEpoch={currentEpoch} />
+      <DetailedWithdrawalRequestTransactions currentEpoch={currentEpoch} />
     </Stack>
   )
 }

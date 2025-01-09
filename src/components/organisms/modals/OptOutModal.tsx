@@ -21,7 +21,7 @@ const OptOutModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { account } = useWeb3React()
 
-  const { loanTicket, poolName } = modal[ModalsKeys.OPT_OUT]
+  const { subsequentTransaction, poolName } = modal[ModalsKeys.OPT_OUT]
 
   const { nextEpochTime } = useNextEpochTime()
 
@@ -37,7 +37,8 @@ const OptOutModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         <Stack alignItems='center' spacing={3}>
           <Typography variant='baseMd'>
             <Typography variant='baseMdBold'>
-              {formatAmount(loanTicket.assets, { minDecimals: 2 })} USDC{' '}
+              {formatAmount(subsequentTransaction.amount, { minDecimals: 2 })}{' '}
+              USDC{' '}
             </Typography>
             {t('modals.optOut.description-1')} ({formattedNextEpochTime.date} •{' '}
             {formattedNextEpochTime.timestamp}{' '}
