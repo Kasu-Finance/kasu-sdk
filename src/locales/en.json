@@ -438,11 +438,11 @@
           "list": {
             "list-0": {
               "title": "Lower Yield: ",
-              "description": "Due to its highest ranking priority in repayment in the event of losses, the Senior Tranche typically offers lower interest rates compared to Mezzanine and Junior Tranches."
+              "description": "Due to its highest ranking priority in the recovery of funds in the event of losses, the Senior Tranche typically offers lower interest rates compared to Mezzanine and Junior Tranches."
             },
             "list-1": {
               "title": "Credit Risk: ",
-              "description": "In the event of any end borrower defaults, Senior Tranche Lenders are paid first from any recovered funds, but this still depends on the overall recovery rate. In the event that less than 100% is recovered, losses are proportionately applied across Lenders in the lowest ranking Tranche first (Junior Tranche), proceeding up the line through Mezzanine Tranche (if applicable) and finally to Senior Tranche. This proportionality is applied in line with the abovementioned ranking order, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to (i.e.any losses borne by the Lending Strategy are mutualised across Lenders starting from the lowest ranking Tranche).In the absence of Junior and Mezzanine Tranches, losses are proportionately applied across all Lenders in the single available Tranche."
+              "description": "In the event of any end borrower defaults that result in losses, Senior Tranche Lenders are paid first from any recovered funds, but this still depends on the overall recovery rate. In the event that less than 100% is recovered, losses are proportionately applied across Lenders in the lowest ranking Tranche first (Junior Tranche), proceeding up the line through Mezzanine Tranche (if applicable) and finally to Senior Tranche. This proportionality is applied in line with the abovementioned ranking order, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to (i.e.any losses borne by the Lending Strategy are mutualised across Lenders starting from the lowest ranking Tranche). In the absence of Junior and Mezzanine Tranches, losses are proportionately applied across all Lenders in the single available Tranche."
             }
           }
         },
@@ -452,11 +452,11 @@
           "list": {
             "list-0": {
               "title": "Subordination Risk in Event of Losses: ",
-              "description": "Mezzanine Lenders are subordinated to Senior Tranche Lenders in the event of losses. This means that in the event of losses, they are repaid only after all Senior Tranche obligations have been met."
+              "description": "Mezzanine Lenders are subordinated to Senior Tranche Lenders in the event of losses. This means that in the event of losses, they are paid from recovered funds only after all Senior Tranche obligations have been met."
             },
             "list-1": {
               "title": "Credit Risk: ",
-              "description": "There is a higher risk of non-payment (capital risk) compared to the Senior Tranche. In a default scenario, Mezzanine Lenders may experience significant delays in repayment and an increased risk of capital loss (compared to Senior Tranche Lenders). In such an event, after Senior Tranche Lenders have been repaid in full, if there is not enough recovered to pay all Mezzanine Tranche Lenders in full, losses are proportionately mutualised across all Lenders in the Mezzanine Tranche, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to. Similarly, recoveries (if any), after Senior Tranche Lenders have been repaid in full, are proportionately applied across all Lenders in the Mezzanine Tranche, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to. Only after Senior Tranche and Mezzanine Tranche Lenders have been repaid in full are any remaining recoveries allocated to the repayment of Junior Tranche Lenders (see below)."
+              "description": "There is a higher risk of non-recovery (capital risk) compared to the Senior Tranche. In a default scenario that results in losses, Mezzanine Lenders may experience significant delays in the recovery of funds and an increased risk of capital loss (compared to Senior Tranche Lenders). In such an event, after Senior Tranche Lenders have recovered their funds in full, if there is not enough recovered to pay all Mezzanine Tranche Lenders in full, losses are proportionately mutualised across all Lenders in the Mezzanine Tranche, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to. Similarly, recoveries (if any), after Senior Tranche Lenders have been repaid in full, are proportionately applied across all Lenders in the Mezzanine Tranche, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to. Only after Senior Tranche and Mezzanine Tranche Lenders’ funds have been recovered in full  are any remaining recoveries allocated to the Junior Tranche Lenders (see below)."
             }
           }
         },
@@ -466,11 +466,11 @@
           "list": {
             "list-0": {
               "title": "Subordination Risk in Event of Losses: ",
-              "description": "Junior Tranche Lenders are the last to be paid in the event of losses. They only receive repayments after all obligations to Senior and Mezzanine Lenders have been fulfilled."
+              "description": "Junior Tranche Lenders are the last to recover funds in the event of losses. They only receive recovered funds after all obligations to Senior and Mezzanine Lenders have been fulfilled."
             },
             "list-1": {
               "title": "Credit Risk: ",
-              "description": "The risk of capital loss is highest in the Junior Tranche. In a loss scenario, Junior Tranche Lenders may experience significant delays in repayment and the greatest risk of capital loss (compared to Senior Tranche and Mezzanine Tranche Lenders). In such an event, after Senior Tranche Lenders and Mezzanine Tranche Lenders have been repaid in full, if there is not enough recovered to pay all Junior Tranche Lenders in full, losses are proportionately mutualised across all Lenders in the Junior Tranche, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to. Similarly, recoveries (if any), after Senior Tranche Lenders and Mezzanine Tranche Lenders have been repaid in full, are proportionately applied across all Lenders in the Junior Tranche, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to."
+              "description": "The risk of capital loss is highest in the Junior Tranche. In a loss scenario, Junior Tranche Lenders may experience significant delays in the recovery of funds and the greatest risk of capital loss (compared to Senior Tranche and Mezzanine Tranche Lenders). In such an event, after Senior Tranche Lenders and Mezzanine Tranche Lenders have recovered funds in full, if there is not enough recovered to pay all Junior Tranche Lenders in full, losses are proportionately mutualised across all Lenders in the Junior Tranche, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to. Similarly, recoveries (if any), after Senior Tranche Lenders and Mezzanine Tranche Lenders have been repaid in full, are proportionately applied across all Lenders in the Junior Tranche, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to."
             },
             "list-3": "In the event that a Lending Strategy commences with Senior and Junior Tranches only, but a Mezzanine Tranche is subsequently added, the Junior Tranche Lenders will move from a second ranking position (second to the Senior Tranche) to a third ranking position (ranking behind both Senior and Mezzanine Tranches)."
           }
@@ -512,22 +512,22 @@
       },
       "subheader-5": {
         "title": "Pending Phase Before Interest Accrual",
-        "description": "When Lenders submit a Lending Request to Kasu, their funds enter a Pending Phase until the next Clearing Period. The Clearing Period occurs at the end of an epoch, during which Lending Requests and Loan Withdrawal Requests are processed.",
+        "description": "When Lenders submit a Lending Request to Kasu, their funds enter a Pending Phase (known as a queued Lending Request) until the next Clearing Period. The Clearing Period occurs at the end of an epoch, during which the outcome of Lending Requests and Loan Withdrawal Requests is determined.",
         "subtitle": "Acknowledgment of Pending Phase and Clearing Period Process",
-        "subtitle-description": "By lending through Kasu, Lenders acknowledge and accept the Pending Phase and Clearing Period process. It is crucial for Lenders to understand that their funds will only start accruing interest once their Lending Request is accepted at the end of the Clearing Period. Lenders also acknowledge that in rare circumstances, a Clearing Period could be missed, resulting in their Lending Request being processed in a future epoch.",
+        "subtitle-description": "By lending through Kasu, Lenders acknowledge and accept the Pending Phase and Clearing Period process. It is crucial for Lenders to understand that their funds will only start accruing interest once their Lending Request is accepted at the end of the Clearing Period (which occurs at the end of each 7-day epoch). Lenders also acknowledge that in rare circumstances, a Clearing Period could be missed, resulting in their Lending Request being processed in a future epoch.",
         "list": {
           "title": "Key Points:",
           "list-0": {
-            "title": "Pending Phase: ",
-            "description": "Funds do not start accruing interest immediately upon the submission of a Lending Request. They remain in a Pending Phase until the next Clearing Period, which occurs at the end of each epoch."
+            "title": "Pending Phase (queued Lending Requests): ",
+            "description": "Funds do not start accruing interest immediately upon the submission of a Lending Request. They remain in a Pending Phase until the next Clearing Period, which occurs at the end of each 7-day epoch."
           },
           "list-1": {
             "title": "Clearing Period: ",
-            "description": "At the end of each epoch, during the Clearing Period, Lending Requests and Loan Withdrawal Requests are processed. Based on factors such as each Lender's Loyalty Level and the liquidity needs of each Lending Strategy, funds are either accepted or rejected."
+            "description": "At the end of each 7-day epoch, during the Clearing Period, the outcome of Lending Requests and Loan Withdrawal Requests is determined. Based on factors such as each Lender's Loyalty Level and the liquidity needs of each Lending Strategy, Lending Request may be accepted, rejected or reallocated to the next available Tranche. Withdrawal Requests may be partially or fully accepted, or the entire Withdrawal Request may remain queued until the next epoch based on available liquidity."
           },
           "list-2": {
             "title": "Start of Interest Accrual: ",
-            "description": "If funds from a Lending Request are accepted during a Clearing Period (end of an epoch), the Lender will then start accruing interest from the beginning of the next epoch."
+            "description": "If funds from a Lending Request are accepted during a Clearing Period (end of a 7-day epoch), the Lender will then start accruing interest from the beginning of the next epoch."
           },
           "list-3": {
             "title": "Clearing Period Delays: ",
@@ -537,18 +537,18 @@
       },
       "subheader-6": {
         "title": "Loan Withdrawal Requests",
-        "description": "When Lenders submit a Loan Withdrawal Request to Kasu, their request enters a Pending Phase (queued). Acceptance of these Loan Withdrawal Requests is evaluated during each Clearing Period (end of each epoch) and is contingent upon the excess liquidity within the specific Lending Strategy, and may therefore remain outstanding (or partially outstanding) for one or more epochs. Excess liquidity is based on various factors outside of Kasu and Delegates’ control, such as (but not limited to) demand for Lending Strategies and End Borrowers meeting repayment requirements.",
+        "description": "When Lenders submit a Loan Withdrawal Request to Kasu, their request enters a Pending Phase (queued). Acceptance of these Loan Withdrawal Requests is determined during each Clearing Period (end of each 7-day epoch) and is contingent upon the excess liquidity within the specific Lending Strategy, and may therefore remain outstanding (or partially outstanding) for one or more epochs. Excess liquidity is based on various factors outside of Kasu and Delegates’ control, such as (but not limited to) demand for Lending Strategies and End Borrowers meeting repayment requirements.",
         "subtitle": "Acknowledgment of Loan Withdrawal Request Process",
         "subtitle-description": "By submitting a Loan Withdrawal Request through Kasu, Lenders acknowledge and accept the Pending Phase and the process based on excess liquidity. Lenders understand that:",
         "list-0": {
           "title": "Key Points:",
           "list-0": {
             "title": "Pending Phase and Excess Liquidity: ",
-            "description": "Loan Withdrawal Requests remain in Pending Phase (queued) until they are accepted as part of each Clearing Period (end of each epoch), which is dependent on the excess funds available within the given Lending Strategy. This means that Lenders may only withdraw funds up to the excess liquidity available, potentially resulting in partially fulfilled (or even unfulfilled) Withdrawal Requests until the next Clearing Period."
+            "description": "Loan Withdrawal Requests remain in Pending Phase (queued) until they are accepted as part of each Clearing Period (end of each 7-day epoch), which is dependent on the excess funds available within the given Lending Strategy. This means that Lenders may only withdraw funds up to the excess liquidity available, potentially resulting in partially fulfilled (or even unfulfilled) Withdrawal Requests until the next Clearing Period."
           },
           "list-1": {
             "title": "Multiple Epochs: ",
-            "description": "Withdrawal Requests may therefore remain outstanding/queued (or partially outstanding/queued) for more than one epoch until sufficient liquidity is available, which will be determined during each Clearing Period (end of each epoch)."
+            "description": "WWithdrawal Requests may therefore remain outstanding/queued (or partially outstanding/queued) for more than one epoch until sufficient liquidity is available, which will be determined during each Clearing Period (end of each 7-day epoch)."
           },
           "list-2": {
             "title": "Priority Based on Loyalty Level: ",
@@ -556,11 +556,11 @@
           },
           "list-3": {
             "title": "Automatic Loyalty Level Increase: ",
-            "description": "Any Withdrawal Request left outstanding for more than five epochs will automatically be prioritised above all Loyalty Levels until the withdrawal is accepted."
+            "description": "Any Withdrawal Request left outstanding for more than five epochs will automatically be prioritised above all Loyalty Levels until the Withdrawal Request is accepted."
           },
           "list-4": {
             "title": "Interest Accrual: ",
-            "description": "Interest continues to accrue during the Pending Phase until the Withdrawal Request is accepted. Upon the successful processing of a Withdrawal Request, the withdrawing Lender's lending position stops accruing interest."
+            "description": "Interest continues to accrue during the Pending Phase until the Withdrawal Request is accepted. Upon the successful acceptance of a Withdrawal Request, the withdrawing Lender's lending position stops accruing interest."
           },
           "list-5": {
             "title": "Losses: ",
@@ -568,12 +568,12 @@
           }
         },
         "list-1": {
-          "list-0": "Access to their funds is contingent upon the availability of excess liquidity within the Lending Strategy, which is determined during each Clearing Period (end of each epoch). Excess liquidity is based on various factors outside of Kasu and Delegates’ control, such as (but not limited to) demand for Lending Strategies and End Borrowers meeting repayment requirements.",
+          "list-0": "Access to their funds is contingent upon the availability of excess liquidity within the Lending Strategy, which is determined during each Clearing Period (end of each 7-day epoch). Excess liquidity is based on various factors outside of Kasu and Delegates’ control, such as (but not limited to) demand for Lending Strategies and End Borrowers meeting repayment requirements.",
           "list-1": "Withdrawal Requests are prioritised based on Loyalty Level, potentially resulting in longer waiting times for lower or no Loyalty Level Lenders.",
           "list-2": "Withdrawal Requests may therefore remain outstanding (or partially outstanding) for more than one epoch until sufficient liquidity is available.",
           "list-3": "Any Withdrawal Request that has been outstanding for more than five epochs will automatically receive the highest Loyalty Level until the withdrawal is processed.",
-          "list-4": "Interest continues to accrue during the Pending Phase and stops only upon the successful acceptance of a Withdrawal Request.",
-          "list-5": "Funds that remain in Pending Phase (queued) will still be affected by losses within Lending Strategies, given that the WIthdrawal Request is yet to be accepted."
+          "list-4": "Interest continues to accrue during the Pending Phase (queued Withdrawal Request) and stops only upon the successful acceptance of a Withdrawal Request.",
+          "list-5": "Funds that remain in Pending Phase (queued) will still be affected by losses within Lending Strategies, given that the Withdrawal Request is yet to be accepted."
         }
       },
       "subheader-7": {
@@ -597,11 +597,11 @@
           },
           "list-2": {
             "title": "APY Impact: ",
-            "description": "Next available Tranches will have a lower APY (interest return), but will be higher ranking in terms of repayment priority in the event of losses (see ‘Risk Disclosure: Senior, Mezzanine and Junior Tranches’ Section)."
+            "description": "Next available Tranches will have a lower APY (interest return), but will be higher ranking in terms recovery of funds in the event of losses (see ‘Risk Disclosure: Senior, Mezzanine and Junior Tranches’ Section)."
           },
           "list-3": {
             "title": "No Opt-Out: ",
-            "description": "Lenders cannot opt-out of this reallocation process once their Lending Request is submitted. If they are not satisfied with their participation in a lower-yielding Tranche, they may either ‘opt-out’ within 48 hours of being informed by Kasu of the end borrower(s) to which their funds will be loaned, or they must submit a Loan Withdrawal Request as outlined earlier."
+            "description": "Lenders cannot opt-out of this reallocation process once the outcome of their Lending Request is accepted. If they are not satisfied with their participation in a lower-yielding Tranche, they may either ‘opt-out’ within 48 hours of being informed by Kasu of the end borrower(s) to which their funds will be loaned, or they must submit a Loan Withdrawal Request as outlined earlier. The opt-out mechanism is only available for Lenders with less than a combined value of 350,000 USDC of existing lending and outstanding Lending Requests."
           },
           "list-4": {
             "title": "Potential Return of Funds: ",
@@ -616,9 +616,9 @@
         },
         "list-3": {
           "list-0": "Their Lending Requests may be reallocated to higher-ranking/lower-yielding Tranches if the requested Tranche is oversubscribed.",
-          "list-1": "The lower-yielding Tranche will have higher ranking in terms of repayment priority in the event of losses (see ‘Risk Disclosure: Senior, Mezzanine and Junior Tranches’ Section).",
-          "list-2": "Higher Loyalty Levels increase but do not guarantee priority allocation to the desired Tranche.",
-          "list-3": "Reallocation is automated. If Lenders are not satisfied with their participation in a lower-yielding Tranche, they may either ‘opt-out’ within 48 hours of being informed by Kasu of the end borrower(s) to which their funds will be loaned, or they must submit a Loan Withdrawal Request as outlined earlier.",
+          "list-1": "The lower-yielding Tranche will have higher priority ranking in terms of recovery of funds in the event of losses (see ‘Risk Disclosure: Senior, Mezzanine and Junior Tranches’ Section above).",
+          "list-2": "Higher Loyalty Levels increase priority allocation to a desired Tranche, but do not guarantee it.",
+          "list-3": "Reallocation is automated. If Lenders are not satisfied with their participation in a lower-yielding Tranche, they may either ‘opt-out’ within 48 hours of being informed by Kasu of the end borrower(s) to which their funds will be loaned, or they must submit a Loan Withdrawal Request as outlined earlier. Note that the opt-out mechanism is only available for Lenders with less than a combined value of 350,000 USDC of existing lending and outstanding Lending Requests.",
           "list-4": "Any unallocated funds at the end of the reallocation process will be returned to the Lenders that have been rejected if the Senior Tranche is still oversubscribed."
         },
         "capacity": "Capacity",
@@ -634,11 +634,13 @@
         "title": "Automated Opt-In",
         "subtitle": "Acknowledgment of Automated Opt-In",
         "subtitle-description": "By lending through Kasu, Lenders acknowledge and accept that if they do not select Opt-out within the 48 hour timeframe of being informed of the identity of the end borrower(s) to which their funds will be loaned, their funds will be automatically deployed. At that point, funds can only be returned via the normal Withdrawal Request process.",
+        "description-8": "The following applies to Lenders with aggregate value of existing loans and queued Lending Requests equal to or greater than 350,000 USDC.",
         "description-1": "Once a Lending Request is accepted, the Delegate has 30 days to identify an end borrower to which a Lender’s funds will be deployed. Once the Delegate identifies a suitable end borrower(s), the Lender is informed via email of the identity of the end borrower(s) to which their funds will be loaned.",
         "description-2": "The Lender is offered the following choices:",
         "description-3": "Lenders are able to select Opt-in or Opt-out requests via the",
-        "description-4": "in the Kasu dApp once their wallet is connected.",
+        "description-4": ", after connecting their Web3 wallet to the Kasu platform.",
         "description-5": "The above process repeats each time a Lender’s funds are deployed to another end borrower(s).",
+        "description-9": "It is noted that should an end borrower not be identified within 30 days, the Delegate will return the funds to the Lender (subject to available liquidity).",
         "description-6": "It is each Lender's responsibility to ensure their email spam filters are adjusted to accept emails from the address:",
         "description-7": "Kasu accepts no responsibility for any emails that have been missed.",
         "list-1": {
@@ -672,12 +674,21 @@
           },
           "list-2": {
             "title": "Notice Period for Return of Funds: ",
-            "description": "Lenders can request their funds be fully returned upon the expiry of the fixed term period, without having to undergo the normal Withdrawal Request process and the associated queueing system; however Lenders must notify Kasu prior to the four epochs leading up to the fixed term expiry date by following the notification process outlined on the Kasu platform (see ‘My Portfolio’ by the ‘My Lending Portfolio’ section on the Kasu platform)."
+            "description": " Lenders can request their funds be fully returned upon the expiry of the fixed term period, without having to undergo the normal Withdrawal Request process and the associated queueing system; however Lenders must notify Kasu prior to the four epochs leading up to the fixed term expiry date by following the notification process outlined on the Kasu platform (see My Portfolio > Lending Portfolio tab on the Kasu platform after connecting a Web3 wallet)."
           },
           "list-3": {
             "title": "No Notice Provided for Return of Funds: ",
             "description": "should a Lender not provide notice as required, their loan will automatically convert to the prevailing variable APY, and which will be subjected to the normal Withdrawal Request process."
           }
+        }
+      },
+      "subheader-10": {
+        "title": "Exemption from End Borrower Disclosure and Opt-In Mechanism",
+        "description": "Once the aggregate value of a Lender’s existing Loans and queued Lending Requests reaches a total equal to or greater than 350,000 USDC, all lending provided by a Lender will be subject to a contract designed for larger lenders. As such, amongst other things, Kasu will no longer undertake the following:",
+        "list-1": {
+          "list-0": "Return funds to the Lender if an end borrower is not identified within 30 days of the Lending Request being accepted.",
+          "list-1": "Inform the Lender of the identity of any end borrower(s) to which their funds will be loaned.",
+          "list-2": "Offer the Lender the opportunity Opt-in or Opt-out of their funds being deployed to any end borrower(s)."
         }
       }
     },
