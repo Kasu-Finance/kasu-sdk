@@ -62,7 +62,7 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
         <InfoRow
           title={t('home.card.loanTranches')}
           titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
-          toolTipInfo={t('lending.poolOverview.detailCard.tvl.tooltip')}
+          toolTipInfo={t('home.card.loanTranches-tooltip')}
           showDivider
           metric={
             <Typography variant='baseMdBold'>

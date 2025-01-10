@@ -15,9 +15,6 @@ const WeightedAverageApyTooltip = () => {
         <br />
         <br />
         {t('weightedAverageApy.tooltip-3')}
-        <br />
-        <br />
-        {t('weightedAverageApy.tooltip-4')}
       </Typography>
     </Stack>
   )

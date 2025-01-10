@@ -35,12 +35,16 @@ const LoanOverview: React.FC<LoanOverviewProps> = ({ pool }) => {
           display='flex'
           flexDirection='column'
         >
-          <Typography variant='h5'>
-            {isMultiTranche
-              ? `${tranche.name} ${t('general.tranche')}`
-              : t('lending.poolOverview.subtitle')}
-          </Typography>
-          <Divider sx={{ mt: 1.5 }} />
+          <InfoRow
+            title={
+              isMultiTranche
+                ? `${tranche.name} ${t('general.tranche')}`
+                : t('lending.poolOverview.subtitle')
+            }
+            titleStyle={{ variant: 'h5' }}
+            toolTipInfo={t('home.card.loanTranches-tooltip')}
+          />
+          <Divider />
           <InfoRow
             title={t('general.variableApy')}
             titleStyle={{

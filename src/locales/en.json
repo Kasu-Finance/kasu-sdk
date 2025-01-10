@@ -103,24 +103,21 @@
     "seconds": "seconds"
   },
   "grossApy": {
-    "tooltip-1": "The expected interest earned by Lenders on an annualised basis, prior to Kasu protocol fees being deducted, assuming all repayments will be made as expected. This does not account for the additional APY earned from compound interest, which accrues every Epoch (every seven days).",
-    "tooltip-2": "Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 13.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).​",
-    "tooltip-3": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations.",
-    "tooltip-4": "In the event of losses, Senior Tranche Lenders have the first claim on any recovered funds, followed by Mezzanine (if applicable) and Junior Tranche Lenders."
+    "tooltip-1": "Gross Annual Percentage Yield (APY) reflects the expected interest rate earned by Lenders on an annualised basis, prior to Kasu protocol fees being deducted, assuming all repayments will be made as expected. This does not account for the additional amount earned from compound interest, which accrues every Epoch (every seven days).",
+    "tooltip-2": "An APY range reflects the range of offers across Loan Tranches and Fixed and Variable loans (if applicable) within this Lending Strategy.​",
+    "tooltip-3": "Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 13.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).",
+    "tooltip-4": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations."
   },
   "variableAndFixedApy": {
-    "tooltip-1": "The expected interest earned by Lenders on an annualised basis, prior to Kasu protocol fees being deducted, assuming all repayments will be made as expected. This does not account for the additional APY earned from compound interest, which accrues every Epoch (every seven days).",
-    "tooltip-2": "A variable APY will be subject to change every {{ epoch }} epochs.",
-    "tooltip-3": "​A fixed APY will be locked for the specified period of time. ​During a fixed APY period, no Withdrawal Requests can be submitted.",
-    "tooltip-4": "Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 13.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).​",
-    "tooltip-5": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations.​",
-    "tooltip-6": "In the event of losses, Senior Tranche Lenders have the first claim on any recovered funds, followed by Mezzanine (if applicable) and Junior Tranche Lenders​"
+    "tooltip-1": "Gross Annual Percentage Yield (APY) reflects the expected interest rate earned by Lenders on an annualised basis in the particular Loan Tranche displayed, prior to Kasu protocol fees being deducted, assuming all repayments will be made as expected. This does not account for the additional amount earned from compound interest, which accrues every Epoch (every seven days).​",
+    "tooltip-2": "A Variable APY is subject to change depending on interest rate market fluctuations (increases/decrease). A Fixed APY will be locked for the specified period of time. During a fixed APY period, now Withdrawal Request can be submitted.",
+    "tooltip-3": "​Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 13.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).",
+    "tooltip-4": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations."
   },
   "weightedAverageApy": {
     "tooltip-1": "The average gross APY (prior to Kasu protocol fees being deducted) you are currently earning within this Lending Strategy that has been adjusted to reflect your weighted contribution to each Tranche relative to your total contribution across all Tranches (assuming all repayment will be made as expected). In the absence of multiple Tranches, this simply reflects the gross APY for the Single Loan Offer within this Lending Strategy",
-    "tooltip-2": "This does not account for the additional APY earned from compound interest, which accrues every Epoch (every seven days).",
-    "tooltip-3": "Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 13.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).​",
-    "tooltip-4": "​Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations.​"
+    "tooltip-2": "Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 13.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).",
+    "tooltip-3": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations.​"
   },
   "lifetimeInterestEarned": {
     "tooltip-1": "The total combined amount of interest you have earned (after fees) from all tranches within this Lending Strategy (or Single Loan Offer in the absence of multiple Tranches) since you first started lending to this Lending Strategy. To view a breakdown of your total historical interest earned across all Lending Strategies, please visit the 'My Portfolio' tab.​",
@@ -128,9 +125,8 @@
     "tooltip-3": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations.​"
   },
   "apyStructure": {
-    "tooltip-1": "Indicates whether the APY(s) offered by the Delegate to Lenders is fixed for a specified period of time, or variable, or a mixture of both.",
-    "tooltip-2": "A variable APY will be subject to change every 4 epochs.",
-    "tooltip-3": "A fixed APY will be locked for the specified period of time. During a fixed APY period, no Withdrawal Requests can be submitted."
+    "tooltip-1": "Indicates whether the Delegate is offering Fixed and/or Variable APY loans for this Lending Strategy.",
+    "tooltip-2": "A Variable APY is subject to change depending on interest rate market fluctuations (increases/decrease). A Fixed APY will be locked for the specified period of time. During a fixed APY period, now Withdrawal Request can be submitted."
   },
   "locking": {
     "widgets": {
@@ -1336,7 +1332,8 @@
       "detailCard": {
         "apyStructure": {
           "label": "APY Structure",
-          "tooltip": "Indicates whether the APY offered by the Delegate to Lenders is fixed for a specified period of time, or variable.​ A variable APY will be subject to change every 4 epochs."
+          "tooltip-1": "Indicates whether the Delegate is offering Fixed and/or Variable APY loans for this Lending Strategy.",
+          "tooltip-2": "A Variable APY is subject to change depending on interest rate market fluctuations (increases/decrease). A Fixed APY will be locked for the specified period of time. During a fixed APY period, now Withdrawal Request can be submitted."
         },
         "fixedApyExpiry": {
           "label": "Fixed APY Expiry Date",
@@ -1571,11 +1568,11 @@
       },
       "totalFunds": {
         "label": "Loan Origination Volume",
-        "tooltip": "Cumulative total USDC equivalent face value of all current and historical loans originated by the Delegate to end borrowers across all lending asset class, regardless of whether the loans have been made available on Kasu or not.​​​"
+        "tooltip": "Cumulative total USDC equivalent face value of all current and historical loans originated by the Delegate to End Borrowers across all Lending Asset Classes, regardless of whether the loans have been made available to Lenders on Kasu or not.​​​"
       },
       "totalLoans": {
         "label": "Total Loans Originated",
-        "tooltip": "Cumulative total number of all current and historical loans originated by the Delegate to end borrowers across all lending asset classes, regardless of whether the loans were made available on Kasu or not.​"
+        "tooltip": "Cumulative total number of all current and historical individual loans originated by the Delegate to end borrowers across all Lending Asset Classes, regardless of whether the loans have been made available to Lenders on Kasu or not.​"
       },
       "assetClass": {
         "label": "Asset Class(es)",
@@ -1587,7 +1584,7 @@
       },
       "loans": {
         "label": "Total Active Lending",
-        "tooltip": "Total USDC equivalent face value of all outstanding loans that the Delegate currently has deployed to end borrowers across all lending asset classes, regardless of whether the loans have been made available on Kasu or not.​"
+        "tooltip": "Cumulative total USDC equivalent face value of all outstanding loans that the Delegate currently has deployed to end borrowers across all Lending Asset Classes, regardless of whether the loans have been made available to Lenders on Kasu or not.​"
       },
       "loss": {
         "label": "Historical Loss Rate",
@@ -1871,6 +1868,7 @@
     },
     "card": {
       "loanTranches": "Loan Tranches",
+      "loanTranches-tooltip": "In the event of losses, Senior Tranche Lenders have the first claim on any recovered funds, followed by Mezzanine (if applicable), followed by Junior Tranche Lenders.​",
       "lendingAssetClass": "Lending Asset Class",
       "singleLoanOffer": "Single Loan Offer"
     },

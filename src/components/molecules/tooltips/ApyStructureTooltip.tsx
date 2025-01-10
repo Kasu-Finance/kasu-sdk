@@ -12,9 +12,6 @@ const ApyStructureTooltip = () => {
         <br />
         <br />
         {t('apyStructure.tooltip-2')}
-        <br />
-        <br />
-        {t('apyStructure.tooltip-3')}
       </Typography>
     </Stack>
   )
