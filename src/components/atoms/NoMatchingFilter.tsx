@@ -13,7 +13,12 @@ const NoMatchingFilter: React.FC<NoMatchingFilterProps> = ({
   text,
 }) => (
   <Stack alignItems='center'>
-    <Image src={CatWithFunnel} alt='Cat holding a golden funnel' />
+    <Image
+      width={342}
+      height={277}
+      src={CatWithFunnel}
+      alt='Cat holding a golden funnel'
+    />
     <Typography variant='h4' component='p' {...typographyProps}>
       {text ?? 'No data matching the filters'}
     </Typography>
