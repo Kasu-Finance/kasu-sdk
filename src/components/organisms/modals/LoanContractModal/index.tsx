@@ -127,6 +127,7 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         }}
         innerBoxProps={{
           ref: containerRef,
+          pb: 3,
           sx: {
             minHeight: '300px',
             maxHeight: isFullscreen
