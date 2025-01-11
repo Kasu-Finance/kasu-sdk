@@ -1329,6 +1329,7 @@
       "title": "Lending Strategy Overview",
       "subtitle": "Loan Overview",
       "subtitle-2": "Delegate & Lending Strategy Overview",
+      "strategyDeck": "Strategy Deck",
       "detailCard": {
         "apyStructure": {
           "label": "APY Structure",
