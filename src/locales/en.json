@@ -117,7 +117,7 @@
   "weightedAverageApy": {
     "tooltip-1": "The average gross APY (prior to Kasu protocol fees being deducted) you are currently earning within this Lending Strategy that has been adjusted to reflect your weighted contribution to each Tranche relative to your total contribution across all Tranches (assuming all repayment will be made as expected). In the absence of multiple Tranches, this simply reflects the gross APY for the Single Loan Offer within this Lending Strategy",
     "tooltip-2": "Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 13.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).",
-    "tooltip-3": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations.​"
+    "tooltip-3": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations."
   },
   "lifetimeInterestEarned": {
     "tooltip-1": "The total combined amount of interest you have earned (after fees) from all tranches within this Lending Strategy (or Single Loan Offer in the absence of multiple Tranches) since you first started lending to this Lending Strategy. To view a breakdown of your total historical interest earned across all Lending Strategies, please visit the 'My Portfolio' tab.​",
@@ -544,7 +544,7 @@
           },
           "list-1": {
             "title": "Multiple Epochs: ",
-            "description": "WWithdrawal Requests may therefore remain outstanding/queued (or partially outstanding/queued) for more than one epoch until sufficient liquidity is available, which will be determined during each Clearing Period (end of each 7-day epoch)."
+            "description": "Withdrawal Requests may therefore remain outstanding/queued (or partially outstanding/queued) for more than one epoch until sufficient liquidity is available, which will be determined during each Clearing Period (end of each 7-day epoch)."
           },
           "list-2": {
             "title": "Priority Based on Loyalty Level: ",
