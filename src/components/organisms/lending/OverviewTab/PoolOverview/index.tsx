@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from '@mui/material'
+import { Box, Button, Grid, Typography } from '@mui/material'
 import React from 'react'
 
 import getTranslation from '@/hooks/useTranslation'
@@ -11,6 +11,8 @@ import WaveBox from '@/components/atoms/WaveBox'
 import DelegateOverview from '@/components/organisms/lending/OverviewTab/PoolOverview/DelegateOverview'
 import LoanOverview from '@/components/organisms/lending/OverviewTab/PoolOverview/LoanOverview'
 import Summary from '@/components/organisms/lending/OverviewTab/PoolOverview/Summary'
+
+import { StrategyDeckIcon } from '@/assets/icons'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
@@ -26,7 +28,20 @@ const PoolOverview: React.FC<PoolOverviewProps> = ({ pool, currentEpoch }) => {
 
   return (
     <CustomCard>
-      <CustomCardHeader title={t('lending.poolOverview.title')} />
+      <CustomCardHeader
+        title={t('lending.poolOverview.title')}
+        justifyContent='space-between'
+      >
+        <Button
+          variant='text'
+          sx={{ textTransform: 'capitalize' }}
+          endIcon={<StrategyDeckIcon />}
+          href={pool.strategyDeckUrl}
+          target='_blank'
+        >
+          {t('lending.poolOverview.strategyDeck')}
+        </Button>
+      </CustomCardHeader>
       <WaveBox borderRadius={2}>
         <Box px={2} py={4}>
           <Typography variant='baseMd' whiteSpace='pre-wrap'>

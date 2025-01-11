@@ -8,6 +8,7 @@ import getTranslation from '@/hooks/useTranslation'
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
 import GrossApyTooltip from '@/components/molecules/tooltips/GrossApyTooltip'
+import TrancheGrossApyTooltip from '@/components/molecules/tooltips/TrancheGrossApyTooltip'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
@@ -117,7 +118,7 @@ const LendingModalReviewOverview = () => {
         title={`${pool.tranches.length > 1 ? t('general.tranche') : ''} ${t('general.grossApy')}`}
         toolTipInfo={
           <ToolTip
-            title='info'
+            title={<TrancheGrossApyTooltip />}
             iconSx={{
               color: 'gold.extraDark',
               '&:hover': {
