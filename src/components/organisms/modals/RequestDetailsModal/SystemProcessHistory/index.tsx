@@ -42,14 +42,11 @@ const getReallocatedOutTrancheName = (trancheName: string) => {
 const getDescription = (
   event:
     | DetailedTransactionWrapper['events'][number]
-    | WithdrawalTransactionWrapper['events'][number],
-  isLast: boolean
+    | WithdrawalTransactionWrapper['events'][number]
 ) => {
   if ('remainingQueuedAmount' in event) {
     if (event.status === 'Requested') {
-      return isLast
-        ? 'Initial WIthdrawal Request'
-        : 'Increased Withdrawal Request'
+      return 'New Withdrawal Request'
     } else {
       return parseFloat(event.remainingQueuedAmount) <= 0
         ? 'Full Withdrawal Accepted'
@@ -59,7 +56,7 @@ const getDescription = (
 
   switch (event.type) {
     case 'Request':
-      return isLast ? 'Initial Lending Request' : 'Increased Lending Request'
+      return 'New Lending Request'
     case 'Accepted':
     case 'Rejected':
       return event.type
@@ -112,24 +109,7 @@ const SystemProcessHistory: React.FC<SystemProcessHistoryProps> = ({
           }
           isWithdrawal={!isReallocation && transaction.type === 'Withdrawal'}
         />
-        <TableBody
-          sx={{
-            '.MuiTableRow-root:last-child .MuiTableCell-root': {
-              background: 'url("/images/wave-dark-gold.png") repeat',
-
-              '&:first-child': {
-                borderTopLeftRadius: 4,
-                borderBottomLeftRadius: 4,
-                pl: 0.5,
-              },
-              '&:last-child': {
-                borderTopRightRadius: 4,
-                borderBottomRightRadius: 4,
-                pr: 0.5,
-              },
-            },
-          }}
-        >
+        <TableBody>
           {isReallocation ? (
             <>
               {parseFloat(transaction.reallocatedOutAmount) > 0 && (
@@ -169,37 +149,37 @@ const SystemProcessHistory: React.FC<SystemProcessHistoryProps> = ({
                 tranasctionHash={transaction.transactionHash}
                 description={`Reallocated In from ${getReallocateFromTranscheName(transaction.trancheName)} Tranche`}
                 status={`${getReallocateFromTranscheName(transaction.trancheName)} Tranche Full/Overflow`}
+                highlight
               />
             </>
           ) : (
-            [...transaction.events]
-              .reverse()
-              .map((event, index, originalArray) => {
-                return (
-                  <Fragment key={index}>
-                    <TransactionHistoryRow
-                      epochId={event.epochId}
-                      amount={event.amount}
-                      date={event.timestamp}
-                      tranasctionHash={event.transactionHash}
-                      description={getDescription(
-                        event,
-                        index === originalArray.length - 1
-                      )}
-                      remainingAmount={
-                        'remainingQueuedAmount' in event
-                          ? event.remainingQueuedAmount
-                          : undefined
-                      }
-                      status={
-                        'type' in event
-                          ? getStatus(event, event.trancheName)
-                          : undefined
-                      }
-                    />
-                  </Fragment>
-                )
-              })
+            [...transaction.events].reverse().map((event, index) => {
+              return (
+                <Fragment key={index}>
+                  <TransactionHistoryRow
+                    epochId={event.epochId}
+                    amount={event.amount}
+                    date={event.timestamp}
+                    tranasctionHash={event.transactionHash}
+                    description={getDescription(event)}
+                    remainingAmount={
+                      'remainingQueuedAmount' in event
+                        ? event.remainingQueuedAmount
+                        : undefined
+                    }
+                    status={
+                      'type' in event
+                        ? getStatus(event, event.trancheName)
+                        : undefined
+                    }
+                    highlight={
+                      'remainingQueuedAmount' in event ||
+                      event.type === 'Request'
+                    }
+                  />
+                </Fragment>
+              )
+            })
           )}
         </TableBody>
       </Table>
