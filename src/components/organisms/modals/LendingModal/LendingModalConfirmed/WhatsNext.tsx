@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import Link from 'next/link'
 
 import useModalState from '@/hooks/context/useModalState'
@@ -14,12 +14,9 @@ import { customTypography } from '@/themes/typography'
 const WhatsNext = () => {
   const { t } = getTranslation()
 
-  const { openModal, closeModal } = useModalState()
+  const { closeModal } = useModalState()
 
   const handleClose = () => closeModal(ModalsKeys.LEND)
-
-  const handleOpen = () =>
-    openModal({ name: ModalsKeys.LOAN_CONTRACT, canAccept: false })
 
   return (
     <>
@@ -86,24 +83,8 @@ const WhatsNext = () => {
             {t('modals.lending.completed.list.list-3.description')}
           </li>
         </OrderedList>
-        <Typography variant='baseMd' component='p' mt={2}>
-          {t('modals.lending.completed.description-6')}{' '}
-          <Button
-            variant='text'
-            sx={{
-              p: 0,
-              height: 'auto',
-              textTransform: 'unset',
-              font: 'inherit',
-              verticalAlign: 'inherit',
-              display: 'inline',
-              color: 'white',
-            }}
-            onClick={handleOpen}
-          >
-            {t('modals.loanContract.title')}
-          </Button>{' '}
-          {t('modals.lending.completed.description-7')}
+        <Typography variant='baseMdBold' component='p' mt={2}>
+          {t('modals.lending.completed.description-6')}
         </Typography>
       </Box>
     </>

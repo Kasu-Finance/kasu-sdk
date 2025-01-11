@@ -15,6 +15,7 @@ type TransactionHistoryRowProps = {
   remainingAmount?: string
   status?: string
   tranasctionHash: string
+  highlight?: boolean
 }
 
 const TransactionHistoryRow: React.FC<TransactionHistoryRowProps> = ({
@@ -25,6 +26,7 @@ const TransactionHistoryRow: React.FC<TransactionHistoryRowProps> = ({
   status,
   remainingAmount,
   tranasctionHash,
+  highlight = false,
 }) => {
   const { chainId } = useWeb3React()
 
@@ -45,6 +47,23 @@ const TransactionHistoryRow: React.FC<TransactionHistoryRowProps> = ({
           '&:last-child': {
             pr: 0.5,
           },
+
+          ...(highlight
+            ? {
+                background: 'url("/images/wave-dark-gold.png") repeat',
+
+                '&:first-child': {
+                  borderTopLeftRadius: 4,
+                  borderBottomLeftRadius: 4,
+                  pl: 0.5,
+                },
+                '&:last-child': {
+                  borderTopRightRadius: 4,
+                  borderBottomRightRadius: 4,
+                  pr: 0.5,
+                },
+              }
+            : undefined),
         },
       }}
     >

@@ -781,13 +781,12 @@
         "nextClearingText": "The outcome of your Lending Request will be determined at the end of the epoch clearing period."
       },
       "completed": {
-        "description-1": "You have successfully queued:",
+        "description-1": "Your Lending Request has been successfully queued​",
         "description-2": "Lending Request submitted for the next Epoch",
         "description-3": "What happens next?​",
-        "description-4": "Because Kasu is all about transparency and choice....​",
+        "description-4": "Kasu is all about choice, transparency and control to Lenders, which is demonstrated by the following:",
         "description-5": "​Once your lending request is processed:",
-        "description-6": "The above is fully detailed in the",
-        "description-7": "you accepted.",
+        "description-6": "*Only applies to Lenders with less than 350,000 USDC total lending (including queued Lending Requests).",
         "list": {
           "list-0": {
             "title": "Tracking",
@@ -797,15 +796,15 @@
           "list-1": {
             "title": "Transparency",
             "description-1": "look out for an email from",
-            "description-2": "informing you exactly which end borrower(s) your funds will be loaned to. Be sure to adjust your spam filter to accept emails from this address.​"
+            "description-2": "informing you exactly which end borrower(s) your funds will be loaned to. Be sure to adjust your spam filter to accept emails from this address.​*"
           },
           "list-2": {
-            "title": "Choice",
-            "description": "if you decide you don’t want your funds being loaned to the particular end borrower, you may opt out within 48 hours​."
+            "title": "Choice & Control",
+            "description": "if you decide you don’t want your funds being loaned to the particular end borrower, you may opt out within 48 hours​.*"
           },
           "list-3": {
             "title": "Informed",
-            "description": "the above process will repeat every time your funds are reallocated to another end borrower, keeping you fully informed across all your lending on Kasu."
+            "description": "the above process will repeat every time your funds are reallocated to another end borrower, keeping you fully informed across all your lending on Kasu.*"
           }
         },
         "viewTx": "View Transaction (TX)"
