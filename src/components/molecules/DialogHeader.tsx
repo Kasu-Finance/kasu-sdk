@@ -40,7 +40,13 @@ const DialogHeader: React.FC<DialogHeaderProps> = ({
         display='flex'
         justifyContent='center'
       >
-        <Box component={Image} src={PeepingCat} alt='peeping cat' />
+        <Box
+          component={Image}
+          src={PeepingCat}
+          alt='peeping cat'
+          width={267}
+          height={123}
+        />
         {showClose && (
           <IconButton
             onClick={onClose}

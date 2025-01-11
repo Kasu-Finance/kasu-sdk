@@ -29,8 +29,9 @@ const PoolCard: React.FC<PoolCardProps> = ({ pool, currentEpoch }) => {
       <Image
         src={pool.thumbnailImageUrl}
         alt={pool.poolName}
-        width={240}
-        height={240}
+        width={584}
+        height={584}
+        style={{ height: 240, width: 240 }}
       />
       <Box
         height={72}

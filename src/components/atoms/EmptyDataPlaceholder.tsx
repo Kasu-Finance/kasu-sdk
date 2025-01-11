@@ -14,7 +14,7 @@ const EmptyDataPlaceholder: React.FC<EmptyDataPlaceholderProps> = ({
 }) => {
   return (
     <Stack alignItems='center' {...rest}>
-      <Image src={Cat} alt='Cat' />
+      <Image src={Cat} alt='Cat' style={{ width: 348, height: 'auto' }} />
       <Typography variant='h4'>{text ?? 'No data...'}</Typography>
       {children}
     </Stack>
