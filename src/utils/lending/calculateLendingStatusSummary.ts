@@ -57,6 +57,8 @@ const calculateLendingStatusSummary = (
                 transaction.requestedAmount
               )
             }
+
+            lifetimeAmounts.requested += parseFloat(transaction.requestedAmount)
             break
           case 'Processed':
             if (

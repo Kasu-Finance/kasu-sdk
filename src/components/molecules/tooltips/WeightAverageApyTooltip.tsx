@@ -11,7 +11,7 @@ const WeightedAverageApyTooltip = () => {
         {t('weightedAverageApy.tooltip-1')}
         <br />
         <br />
-        {t('variableAndFixedApy.tooltip-2')}
+        {t('weightedAverageApy.tooltip-2')}
         <br />
         <br />
         {t('weightedAverageApy.tooltip-3')}
