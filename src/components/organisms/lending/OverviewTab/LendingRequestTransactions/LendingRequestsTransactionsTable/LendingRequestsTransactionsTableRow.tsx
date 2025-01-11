@@ -573,25 +573,55 @@ const LendingRequestsTransactionsTableRow: React.FC<
                     {reallocatedTransaction.currentDecisionStatus?.status ===
                       LoanTicketStatus.emailSent &&
                     reallocatedTransaction.pendingDecisions.length ? (
-                      <Button
-                        variant='text'
-                        sx={{
-                          ...customTypography.baseSm,
-                          color: 'gold.dark',
-                          textTransform: 'capitalize',
-                          height: 21,
-                          position: 'relative',
-                          '.MuiButton-startIcon path': {
-                            fill: customPalette.gold.dark,
-                          },
-                        }}
-                        startIcon={<OptInOutIcon />}
-                        onClick={() =>
-                          handlePendingDecisionClick(reallocatedTransaction)
-                        }
+                      <Box
+                        display='flex'
+                        flexDirection='column'
+                        alignItems='start'
                       >
-                        {t('general.optInOut')}
-                      </Button>
+                        <Button
+                          variant='text'
+                          sx={{
+                            ...customTypography.baseSm,
+                            color: 'gold.dark',
+                            textTransform: 'capitalize',
+                            height: 21,
+                            position: 'relative',
+                            '.MuiButton-startIcon path': {
+                              fill: customPalette.gold.dark,
+                            },
+                          }}
+                          startIcon={<OptInOutIcon />}
+                          onClick={() =>
+                            handlePendingDecisionClick(reallocatedTransaction)
+                          }
+                        >
+                          {t('general.optInOut')}
+                        </Button>{' '}
+                        <Typography
+                          variant='baseSm'
+                          color='gray.middle'
+                          position='relative'
+                        >
+                          <Typography variant='inherit' display='block'>
+                            {t('general.timeLeft')}:
+                          </Typography>
+                          <Countdown
+                            endTime={dayjs(
+                              reallocatedTransaction.currentDecisionStatus
+                                .createdOn
+                            )
+                              .add(2, 'days')
+                              .unix()}
+                            format='HH:mm:ss'
+                            render={(countDown) => {
+                              const [hours, minutes, seconds] =
+                                countDown.split(':')
+
+                              return `${hours} hrs, ${minutes} mins, ${seconds} secs.`
+                            }}
+                          />
+                        </Typography>
+                      </Box>
                     ) : (
                       <Typography variant='inherit' position='relative'>
                         N/A
