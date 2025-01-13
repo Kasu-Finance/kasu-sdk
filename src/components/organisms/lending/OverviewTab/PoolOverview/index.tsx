@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Typography } from '@mui/material'
+import { Box, Button, Grid, Stack, Typography } from '@mui/material'
 import React from 'react'
 
 import getTranslation from '@/hooks/useTranslation'
@@ -43,11 +43,16 @@ const PoolOverview: React.FC<PoolOverviewProps> = ({ pool, currentEpoch }) => {
         </Button>
       </CustomCardHeader>
       <WaveBox borderRadius={2}>
-        <Box px={2} py={4}>
+        <Stack px={2} py={4} spacing={2}>
+          {pool.isOversubscribed && (
+            <Typography variant='baseMdBold'>
+              THIS LENDING STRATEGY IS FULL/OVERSUBSCRIBED
+            </Typography>
+          )}
           <Typography variant='baseMd' whiteSpace='pre-wrap'>
             {pool.description}
           </Typography>
-        </Box>
+        </Stack>
         <CustomInnerCardContent sx={{ paddingY: 3 }}>
           <Grid container spacing={4} columns={isMultiTranche ? 6 : 12}>
             <Grid item sm={6}>
