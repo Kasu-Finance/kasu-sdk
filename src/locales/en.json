@@ -1848,7 +1848,8 @@
   "home": {
     "tabs": {
       "activePools": "Active Lending Strategies",
-      "closedPools": "Closed Lending Strategies"
+      "closedPools": "Closed Lending Strategies",
+      "oversubscribedPools": "Oversubscribed Lending Strategies"
     },
     "summary": {
       "metric-1": "Total Value Locked (TVL)",
@@ -1864,7 +1865,8 @@
     },
     "no-data": {
       "activePools": "No Active Lending Strategies",
-      "closedPools": "No Closed Lending Strategies."
+      "closedPools": "No Closed Lending Strategies.",
+      "oversubscribedPools": "No Oversubscribed Lending Strategies."
     },
     "card": {
       "loanTranches": "Loan Tranches",

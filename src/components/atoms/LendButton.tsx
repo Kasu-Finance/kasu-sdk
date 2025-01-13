@@ -33,6 +33,7 @@ const LendButton: React.FC<LendButtonProps> = ({ pool, currentEpoch }) => {
       variant='contained'
       sx={{ pl: 2.25, pr: 2.25, flex: 1, textTransform: 'capitalize' }}
       onClick={handleOpen}
+      disabled={pool.isOversubscribed || !pool.enabled}
     >
       {t('general.lend')}
     </KycButton>

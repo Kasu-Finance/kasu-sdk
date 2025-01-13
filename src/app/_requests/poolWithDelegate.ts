@@ -8,7 +8,11 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 const CACHE_TTL = 60 * 60 // 1 hour
 
 export const getPoolWithDelegate = unstable_cache(
-  async (poolId?: string, activePools: boolean = true) => {
+  async (
+    poolId?: string,
+    activePools: boolean = true,
+    oversubscribed = false
+  ) => {
     const [pools, poolDelegates] = await Promise.all([
       getPoolOverview(),
       getPoolDelegate(),
@@ -20,7 +24,13 @@ export const getPoolWithDelegate = unstable_cache(
           return pool.id === poolId
         }
 
-        return activePools ? pool.isActive : !pool.isActive
+        const showActivePools = activePools ? pool.isActive : !pool.isActive
+
+        const showOversubscribedPools = oversubscribed
+          ? pool.isOversubscribed
+          : !pool.isOversubscribed
+
+        return showActivePools && showOversubscribedPools
       })
       .reduce((acc, cur) => {
         const delegate = poolDelegates.find((delegate) =>

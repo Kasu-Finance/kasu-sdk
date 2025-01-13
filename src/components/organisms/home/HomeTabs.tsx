@@ -58,6 +58,10 @@ const HomeTabs = () => {
               value={Routes.lending.root.url}
             />
             <CustomTab
+              label={t('home.tabs.oversubscribedPools')}
+              value={Routes.lending.oversubscribedLendingStrategies.url}
+            />
+            <CustomTab
               label={t('home.tabs.closedPools')}
               value={Routes.lending.closedLendingStrategies.url}
             />

@@ -85,7 +85,11 @@ const KycButton: React.FC<ButtonProps> = ({ children, ...rest }) => {
   }
 
   return (
-    <Button {...rest} onClick={handleKyc} disabled={isVerifying}>
+    <Button
+      {...rest}
+      onClick={handleKyc}
+      disabled={isVerifying || rest.disabled}
+    >
       {children}
     </Button>
   )
