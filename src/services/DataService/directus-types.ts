@@ -19,6 +19,7 @@ export interface PoolOverviewDirectus {
     poolName?: string;
     subheading?: string;
     enabled: boolean;
+    oversubscribed: boolean;
     security: string[];
     apy: number;
     description: string;

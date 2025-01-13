@@ -315,6 +315,7 @@ export class DataService {
                 id: lendingPoolSubgraph.id,
                 security: lendingPoolDirectus.security,
                 enabled: lendingPoolDirectus.enabled,
+                isOversubscribed: lendingPoolDirectus.oversubscribed,
                 apy: averageApy,
                 description: lendingPoolDirectus.description,
                 thumbnailImageUrl: this.getUrlFromFile(

@@ -8,6 +8,7 @@ export interface PoolOverview {
     subheading?: string;
     id: string;
     enabled: boolean;
+    isOversubscribed: boolean;
     apy: number;
     description: string;
     thumbnailImageUrl: string;
