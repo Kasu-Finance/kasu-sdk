@@ -129,7 +129,9 @@ const LendingModalReviewActions = () => {
       fixedTermConfigId,
       currentEpochDepositedAmount,
       contractAcceptedSignature,
-      generatedContract.createdAt
+      generatedContract.createdAt,
+      generatedContract.contractVersion,
+      generatedContract.contractType
     )
   }
 
@@ -168,7 +170,11 @@ const LendingModalReviewActions = () => {
           color='secondary'
           fullWidth
           sx={{ textTransform: 'capitalize' }}
-          onClick={generatedContract.status ? handleOpen : generateContract}
+          onClick={
+            generatedContract.status
+              ? handleOpen
+              : () => generateContract(amount)
+          }
         >
           {generatedContract.status
             ? t('modals.loanContract.actions.view')

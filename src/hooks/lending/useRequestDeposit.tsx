@@ -44,7 +44,9 @@ const useRequestDeposit = () => {
     fixedTermConfigId: string,
     currentEpochDepositedAmount: string,
     contractAcceptedSignature: string,
-    contractAcceptedTimstamp: EpochTimeStamp
+    contractAcceptedTimstamp: EpochTimeStamp,
+    contractVersion: number,
+    contractType: 'retail' | 'exempt'
   ) => {
     if (!account) {
       return console.error('RequestDeposit:: Account is undefined')
@@ -111,9 +113,13 @@ const useRequestDeposit = () => {
         swapData = data.swapData
       }
 
+      const versionType =
+        (contractVersion << 8) + (contractType === 'retail' ? 0 : 1)
+
       const depositData = buildDepositData(
         contractAcceptedSignature,
-        contractAcceptedTimstamp
+        contractAcceptedTimstamp,
+        versionType
       )
 
       const deposit = await sdk.UserLending.requestDepositWithKyc(

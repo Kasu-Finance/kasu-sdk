@@ -30,7 +30,7 @@ type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17
   
   returns "a" | "b" | "c.nested" | "d.nested.deepNested"
   */
-export type Leaves<T, D extends number = 10> = [D] extends [never]
+export type Leaves<T, D extends number = 12> = [D] extends [never]
   ? never
   : T extends object
     ? {

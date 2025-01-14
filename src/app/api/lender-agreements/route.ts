@@ -15,6 +15,10 @@ export type FundingConsentGenerateContractPayoad = {
 export type FundingConsentGenerateContractRes = {
   fullName: string
   contractMessage: string
+  formattedMessage: string
+  contractType: 'retail' | 'exempt'
+  contractVersion: number
+  timestamp: EpochTimeStamp
 }
 
 export async function POST(req: NextRequest) {
