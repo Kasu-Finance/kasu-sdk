@@ -884,7 +884,7 @@
             "label": "(Lender)."
           },
           "list-1": {
-            "description": "Kasu, Reg No#: 402812, WB Corporate Services (Cayman) Ltd., PO Box 2775, 71 Fort Street, 3rd Floor, Grand Cayman, KY1-1111, Cayman Islands,",
+            "description": "Kasu, Reg No#: 402812, WB Corporate Services (Cayman) Ltd., PO Box 2775, 71 Fort Street, 3rd Floor, Grand Cayman, KY1-1111, Cayman Islands",
             "label": "(Borrower)."
           }
         }
@@ -892,7 +892,7 @@
       "subheader-2": {
         "title": "Background:",
         "list": {
-          "list-0": "Definitions and Interpretation",
+          "list-0": "The Lender has agreed to provide a business loan to the Borrower, for on-lending.",
           "list-1": "The Lender and Borrower have agreed to enter this loan transaction on the basis of the terms and conditions set out in this Agreement."
         }
       },
@@ -914,15 +914,24 @@
                 },
                 "list-2": {
                   "label": "Apxium",
-                  "description": "means Onebox Professional Pty Limited ABN 52 613 105 561 or OneBox Services Pty Ltd ABN 88 613 105 776, both trading as Apxium and/or nominee."
+                  "description": {
+                    "retail": "means Onebox Finance US LLC EIN 37 215 7564 and/or nominee.",
+                    "exempt": "means Onebox Professional Pty Limited ABN 52 613 105 561 or OneBox Services Pty Ltd ABN 88 613 105 776, both trading as Apxium and/or nominee."
+                  }
                 },
                 "list-3": {
                   "label": "Business Lending Opportunity",
-                  "description": "means a unique Business Lending Opportunity displayed on the Kasu Platform offered by the Borrower, including the Loan Amount, Value Type, specified End Borrower, and Charges"
+                  "description": {
+                    "retail": "means a unique Business Lending Opportunity displayed on the Kasu Platform offered by the Borrower, including the Loan Amount, Value Type, specified End Borrower, and Charges",
+                    "exempt": "means a unique Business Lending Opportunity displayed on the Kasu Platform offered by the Borrower, including the Loan Amount, Value Type, and Charges"
+                  }
                 },
                 "list-4": {
-                  "label": "Charges means",
-                  "description": "the fees, charges and costs displayed on the Kasu Platform that the Borrower levies on the Loan, from the Lender, in exchange for making the Loan Amount available to the End Borrower through the Business Lending Opportunity."
+                  "label": "Charges",
+                  "description": {
+                    "retail": "means the fees, charges and costs displayed on the Kasu Platform that the Borrower levies on the Loan, from the Lender, in exchange for making the Loan Amount available to the End Borrower through the Business Lending Opportunity.",
+                    "exempt": "means the fees, charges and costs displayed on the Kasu Platform that the Borrower levies on the Loan, from the Lender, in exchange for making the Loan Amount available to an End Borrower through the Business Lending Opportunity."
+                  }
                 },
                 "list-5": {
                   "label": "Deployment Date",
@@ -930,7 +939,7 @@
                 },
                 "list-6": {
                   "label": "End Borrower",
-                  "description": "means that the non-individual business who the Borrower, though Apxium as intermediary, is the recipient of the Loan Amount less the Charges."
+                  "description": "means the non-individual business who the Borrower, though Apxium as intermediary, is the recipient of the Loan Amount less the Charges."
                 },
                 "list-7": {
                   "label": "Interest",
@@ -938,15 +947,15 @@
                 },
                 "list-8": {
                   "label": "Interest Rate",
-                  "description": "means the fixed or variable Interest Rate specified in the particular Business Lending Opportunity, and is not contingent on other factors."
+                  "description": "means the fixed or variable interest rate specified in the particular Business Lending Opportunity, and is not contingent on other factors."
                 },
                 "list-9": {
                   "label": "Kasu",
-                  "description": "means Kasu, Reg No#: 402812, WB Corporate Services (Cayman) Ltd., PO Box 2775, 71 Fort Street, 3rd Floor, Grand Cayman, KY1-1111, Cayman Islands,]. Kasu does not hold an Australian Credit licence, or Australian Financial Services licence."
+                  "description": "means Kasu, Reg No#: 402812, WB Corporate Services (Cayman) Ltd., PO Box 2775, 71 Fort Street, 3rd Floor, Grand Cayman, KY1-1111, Cayman Islands. Kasu does not hold an Australian Credit licence, or Australian Financial Services licence."
                 },
                 "list-10": {
                   "label": "Kasu Platform",
-                  "description": "means the digital platform upon which Kasu makes available one or more      Business Lending Opportunities, and this Agreement."
+                  "description": "means the digital platform upon which Kasu makes available one or more Business Lending Opportunities, and this Agreement."
                 },
                 "list-11": {
                   "label": "Loan",
@@ -966,7 +975,7 @@
                 },
                 "list-15": {
                   "label": "Term",
-                  "description": "means the term duration between the Deployment Date and receipt of a valid Withdrawal Notice by the Borrower."
+                  "description": "means the term duration between the Deployment Date and, for a variable Loan the receipt of a valid Withdrawal Notice by the Borrower, or for a fixed loan the end of the fixed rate period."
                 },
                 "list-16": {
                   "label": "Tranche",
@@ -982,7 +991,7 @@
                 },
                 "list-19": {
                   "label": "Withdrawal Notice",
-                  "description": "means a written request to withdraw the Loan Amount, and capitalised Interest, less the Charges from Kasu in a form specified on Kasu’s platform."
+                  "description": "means a written request to withdraw all or part of a variable Loan Amount and capitalised Interest less the Charges from Kasu in a form specified on the Kasu platform."
                 }
               }
             }
@@ -993,7 +1002,10 @@
               "title": "The Lender has requested the Borrower to pay the Loan Amount in connection with a specific Business Lending Opportunity (Request) by publishing the Business Lending Opportunity."
             },
             "list-1-2-list": {
-              "title": "The Borrower has provisionally accepted the Request, subject to a reasonable period (Provisional Period), during which Kasu will:",
+              "title": {
+                "retail": "The Borrower has provisionally accepted the Request, subject to a reasonable period (Provisional Period), during which Kasu will:",
+                "exempt": "The Borrower has provisionally accepted the Request, subject to a reasonable period (Provisional Period), during which Kasu will assess the provision of information required to satisfy Kasu’s AML / CTF requirements and sanctions obligations."
+              },
               "list-1-2-list-0": {
                 "list-0": "assess the provision of information required to satisfy Kasu’s AML / CTF requirements) and sanctions obligations;",
                 "list-1": "ascertain the requirement of debt for the Business Lending Opportunity nominated by the Lender at the time of the Request; and",
@@ -1015,10 +1027,13 @@
               "list-2-1-list-0": {
                 "list-0": "accepted the Request by clicking on the designated areas of the Business Lending Opportunity; and",
                 "list-1": {
-                  "title": "agreed to pay Loan Amount to the Borrower immediately for the period of the:",
+                  "title": "agreed to pay the Loan Amount to the Borrower immediately for the period of the:",
                   "list-2-1-list-0-list-1-list": {
                     "list-0": "Provisional Period; and",
-                    "list-1": "subject to acceptance of the Final Request, the Term."
+                    "list-1": {
+                      "retail": "subject to acceptance of the Final Request, the Term.",
+                      "exempt": "the Term."
+                    }
                   }
                 }
               }
@@ -1028,15 +1043,24 @@
             },
             "list-2-3-list": {
               "title": "In recognition of the Loan Amount, the Borrower will provide the Lender with one or more Tokens which record their interests under this agreement."
+            },
+            "list-2-4-list": {
+              "title": "The Lender agrees that where the aggregate value of all Loans and queued loan requests they provide via the Kasu Platform becomes equal to or greater than 350,000 USDC, the terms of this Agreement will apply to all lending provided by the Lender and supersede any and all terms applying to any and all previous Loan(s) provided by the Lender via the Kasu Platform. The terms of this Agreement will continue to apply in the event that a Lender’s aggregate lending is reduced to value below 350,000 USDC but above 0 USDC."
             }
           },
           "list-3": {
             "title": "Interest",
             "list-3-1-list": {
-              "title": "Interest in respect of the Loan is calculated daily, and accrues every 7 days or at such other intervals as specified by the Borrower, from the date of receipt of the Loan Amount (less Charges) to the End Borrower."
+              "title": {
+                "retail": "Interest in respect of the Loan is calculated and accrued every 7 days or at such other intervals as specified by the Borrower, from the date of receipt of the Loan Amount (less Charges) to the End Borrower.",
+                "exempt": "Interest in respect of the Loan is calculated and accrued every 7 days or at such other intervals as specified by the Borrower, from the Deployment Date."
+              }
             },
             "list-3-2-list": {
-              "title": "Between the time of the Loan Amount being provided to the Borrower, and receipt of the Loan Amount (less Charges), by the End Borrower, the interest rate will:",
+              "title": {
+                "retail": "Between the time of the Loan Amount being provided to the Borrower, and receipt of the Loan Amount (less Charges), by the End Borrower, the interest rate will:",
+                "exempt": "The interest rate payable will be at the rate specified in the Business Lending Opportunity."
+              },
               "list-3-2-list-0": {
                 "list-0": "not apply for a period of between 1 and 7 days, whilst the Borrower is accruing / transferring funds for Apxium; and",
                 "list-1": "be, after this time period, for a period of up to 30 days, at a rate specified in the Business Lending Opportunity."
@@ -1048,59 +1072,76 @@
           },
           "list-4": {
             "title": "Application of Loan Amount",
-            "description": "Kasu will transfer the Loan Amount, less Charges, to Apxium to make available to the End Borrower. The Lender’s rights are limited to Kasu under this Loan Agreement, and contingent on:",
+            "description": {
+              "retail": "Kasu will transfer the Loan Amount, less Charges, to Apxium to make available to the End Borrower. The Lender’s rights are limited to Kasu under this Loan Agreement, and contingent on:",
+              "exempt": "Kasu will transfer the Loan Amount, less Charges, to Apxium to make available to End Borrowers. The Lender’s rights are limited to Kasu under this Loan Agreement, and contingent on:"
+            },
             "list-4-1-list": {
               "title": "Apxium’s and the End Borrower’s actions as set out in clause 6.2; and"
             },
             "list-4-2-list": {
-              "title": "the priority and tranche specified in the Business Lending Opportunity."
+              "title": "the priority and Tranche specified in the Business Lending Opportunity."
             }
           },
           "list-5": {
             "title": "Withdrawal Rights and Repayment Priority",
             "list-5-1-list": {
               "title": "Withdrawal Notice",
-              "description": "If the Lender wishes withdraw from this Agreement, or withdraw a part of its Loan Amount, it must submit a withdrawal notice to the Borrower (Withdrawal Notice). The Withdrawal Notice must specify the amount to be withdrawn and comply with any other requirements outlined by the Borrower in the Business Lending Opportunity on the Kasu Platform."
+              "list-5-1-list-0": {
+                "list-0": "If the Lender wishes to withdraw all or a part of its Loan Amount, it must submit a Withdrawal Notice to the BorrowerThe Withdrawal Notice must specify the amount to be withdrawn and comply with any other requirements outlined by the Borrower in the Business Lending Opportunity on the Kasu Platform.",
+                "list-1": "If the Lender has entered into a fixed Loan, they are unable to submit a Withdrawal Notice or make a withdrawal, in whole or in part, during the fixed period. Lenders that wish to be repaid at the expiry of the fixed rate period must notify the Borrower via the Kasu Platform at least 28 days prior to expiry of the fixed rate period. In that event, repayment by the Borrower will be subject to clauses 6.2(b)(i) and 6.2(c) and the Borrower shall repay the loan no later than seven days after expiry of the fixed rate period. In the event that the Lender does not make such a notification, on expiry of the fixed rate period, the Lender’s fixed Loan automatically converts to the prevailing variable interest rate, at which time the Lender will be subject to the normal Withdrawal Notice process as set out in this clause 6."
+              }
             },
             "list-5-2-list": {
               "title": "Contingent Repayment of Withdrawn Amounts",
-              "description": "Upon receipt of a valid Withdrawal Notice, the Borrower:",
+              "description": {
+                "retail": "Upon receipt of a valid Withdrawal Notice for a variable loan, the Borrower:",
+                "exempt": "Upon receipt of a valid Withdrawal Notice - which applies only to variable Loans - the Borrower:"
+              },
               "list-5-2-list-0": {
                 "list-0": "shall repay the Loan, or any lesser amount specified in the Withdrawal Notice, to the Lender within 90 calendar days;",
                 "list-1": {
-                  "title": "the Borrower’s obligations under 6.2.1 are contingent upon:",
+                  "title": "the Borrower’s obligations under 6.2(a) are contingent on:",
                   "list-5-2-list-0-list-1-list": {
                     "list-0": "the End Borrower repaying the sum of the Loan to Apxium, and Apxium repaying that amount to Kasu within that time period; and",
-                    "list-1": "in the priority of their Loyalty Status set out in clause 6.3 below."
+                    "list-1": "the priority of the Lender’s Loyalty Status set out in clause 6.3 below."
                   }
                 },
                 "list-2": {
                   "title": "If a lesser amount than the full Loan is repaid to Kasu, then Kasu will:",
                   "list-5-2-list-0-list-2-list": {
-                    "list-0": "repay this sum to the Borrower in partial satisfaction of the Loan, subject to the priority set out in clause 6.3 below; and",
-                    "list-1": "Kasu, acting reasonably, will provide the Borrower with an Amendment Notice."
+                    "list-0": "repay this sum to the Lender, which for variable loans is also subject to the priority set out in clause 6.3 below; and",
+                    "list-1": "Kasu, acting reasonably, will provide the Lender with an Amendment Notice."
                   }
                 }
               }
             },
             "list-5-3-list": {
-              "title": "Priority based on Loyalty Status",
+              "title": "Withdrawal priority based on Loyalty Status",
               "list-5-3-list-0": {
                 "title": "The Loyalty Status of a Lender is determined by the criteria set forth in Schedule 1 of this Agreement."
               },
               "list-5-3-list-1": {
-                "title": "Where multiple Lenders lend to a Business Lending Opportunity, Lenders with higher Loyalty Status shall receive priority in the repayment of their withdrawn amounts over Lenders with lower Loyalty Status."
+                "title": "Where multiple Lenders lend to a Business Lending Opportunity that is a variable loan, Lenders with higher Loyalty Status shall receive priority in the repayment of their withdrawn amounts over Lenders with lower Loyalty Status."
               },
               "list-5-3-list-2": {
-                "title": "If multiple Lenders within the same Loyalty Status submit Withdrawal Notices, repayment amounts, if less than the total Loan, will be distributed pro-rata as between them and together with an Amendment Notice."
+                "title": "If multiple Lenders within the same Loyalty Status submit Withdrawal Notices for a Business Lending Opportunity that is a variable loan, the repayment amount, if less than the total Loan, will be distributed pro-rata as between them and together with an Amendment Notice."
               }
             }
           },
           "list-6": {
+            "title": "Forced withdrawal",
+            "description": "Kasu reserves the right to terminate a Lender’s variable or fixed Loan at any time and without notice. In the event that Kasu terminates a Lender’s Loan in such circumstances, the Lender will receive interest at the rate specified in the Business Lending Opportunity up to and including the date of termination. The Lender agrees that payment of interest by Kasu up to and including the date of termination is in full satisfaction of their rights under this Agreement and applicable law and holds Kasu harmless in such circumstances."
+          },
+          "list-7": {
+            "title": "Immediate withdrawal",
+            "description": "Based on a Lender’s activity on the platform or due to the application of applicable laws including but not limited to laws restricting money laundering and terrorism financing, Kasu reserves the right in its absolute discretion to immediately and without notice suspend a Lender’s access to their funds and/or to effect an immediate withdrawal of their Loan. In the event of an immediate withdrawal, Kasu will pay and the Lender agrees to receive interest only up to the end of the immediately prior seven day interest interval."
+          },
+          "list-8": {
             "title": "Representations and warranties",
-            "list-6-1-list": {
+            "list-8-1-list": {
               "title": "Each party represents and warrants to the other that:",
-              "list-6-1-list-0": {
+              "list-8-1-list-0": {
                 "list-0": {
                   "title": "it has full power and authority to enter into and do all things under this Agreement;"
                 },
@@ -1109,36 +1150,42 @@
                 },
                 "list-2": {
                   "title": "for the Lender, that:",
-                  "list-6-1-list-0-list-2-list": {
+                  "list-8-1-list-0-list-2-list": {
                     "list-0": "they are not in the business of providing credit as defined by the NCCP;",
-                    "list-1": "the economic value of the Loan Amount is set at the date of the Deployment Date at the prevailing conversion rate to AUD;",
+                    "list-1": "the economic value of the Loan Amount is set at the date of the Deployment Date at the prevailing conversion rate to United States dollars;",
                     "list-2": "that they are wholly responsible for the safeguarding of tokens provided to them in connection with this Agreement; and",
-                    "list-3": "that their assignment of the token, and entry into this Agreement, is legally permitted in their jurisdiction."
+                    "list-3": "that their assignment of the Token, and entry into this Agreement, is legally permitted in their jurisdiction."
                   }
                 }
               }
             }
           },
-          "list-7": {
+          "list-9": {
             "title": "General",
-            "list-7-1-list": {
+            "list-9-1-list": {
               "title": "Confidentiality",
               "description": "The Lender must:",
-              "list-7-1-list-0": {
-                "list-0": "keep the terms of this Agreement confidential, and must not disclose the details of it;",
-                "list-1": "not disclose any information that identifies an End Borrower, as obtained in connection with this Loan Agreement;",
+              "list-9-1-list-0": {
+                "list-0": {
+                  "retail": "keep the terms of this Agreement confidential, and must not disclose the details of it;",
+                  "exempt": "keep the terms of this Agreement confidential, and must not disclose the details of it; and"
+                },
+                "list-1": {
+                  "retail": "not disclose any information that identifies an End Borrower, as obtained in connection with this Loan Agreement;",
+                  "exempt": "not disclose any information that identifies an End Borrower, if or as obtained in connection with this Loan Agreement."
+                },
                 "list-2": "take all steps reasonably necessary to maintain the confidentiality of any information that identifies an End Borrower, including to secure such information against theft, loss or unauthorised disclosure."
               }
             },
-            "list-7-2-list": {
+            "list-9-2-list": {
               "title": "Acceptance",
-              "description": "The acceptance of the Borrower’s request, and entry into this Contingent Loan Agreement, will be taken to have occurred when the Lender purchases a Token."
+              "description": "The acceptance of the Borrower’s request, and entry into this Contingent Loan Agreement, will be taken to have occurred when the Lender receives a Token."
             },
-            "list-7-3-list": {
+            "list-9-3-list": {
               "title": "Assignment",
-              "description": "This Agreement is binding on the parties and neither party must assign this Agreement or any of its rights or obligations under this Agreement."
+              "description": "This Agreement is binding on the parties and neither party may assign this Agreement or any of its rights or obligations under this Agreement."
             },
-            "list-7-4-list": {
+            "list-9-4-list": {
               "title": "Governing law and jurisdiction",
               "description": "This agreement takes effect, is governed by, and will be construed in accordance with the laws from time to time in force in the State of South Australia, Australia. The parties submit to the non-exclusive jurisdiction of the courts of the State of South Australia, Australia."
             }
@@ -1146,36 +1193,63 @@
         }
       },
       "subheader-4": {
-        "title": "Loyalty Status Criteria:",
+        "title": "Schedule 1. Loyalty Status Criteria",
         "subheader-4-1": {
-          "title": "Loyalty Level 1",
-          "description": "If the value of a Lender’s rKSU balance, relative to their total current and pending USDC lending (including USDC lending requests that are yet to be cleared) across all Business Lending Opportunities is 1% or greater, but less than 5%, then the Lender will achieve Loyalty Level 1. This entitles the Lender to the following utility and benefits:",
-          "list": {
-            "list-0": "Second order priority access to Business Lending Opportunities available on Kasu (including loan Tranches within each Business Lending Opportunity) in the case that they are oversubscribed (behind Loyalty Level 2).",
-            "list-1": "Second order priority for capital withdrawals (i.e. when a withdrawal request is made) from existing Lending (behind Loyalty Level 2).",
-            "list-2": "Additional interest earnings (bonus interest) awarding the Lender with bonus interest earnings on all their lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements)."
+          "title": "Obtain rKSU to Achieve a Loyalty Level",
+          "description-1": "Lenders must lock KSU to obtain the required levels of rKSU relative to their lending (outlined in the Loyalty Level 1 and Loyalty Level 2 explanations below) to achieve a Loyalty Level in order to activate the following utility/benefits:",
+          "description-2": "Each KSU locking period detailed below will entitle a Lender to a multiplier on the specific amount of temporary, non-redeemable and non-transferrable, rKSU that will accumulate, so long as KSU remains locked. A synthetic value is applied to rKSU, which is pegged to the KSU price (i.e. if the price of KSU rises, so will the synthetic value of rKSU; and if the price of KSU falls, so will the synthetic value of rKSU).",
+          "description-3": "The amount of rKSU obtained is based on a multiplier applied to the amount of locked KSU:",
+          "description-4": "For example, a Lender that locks 100 KSU for 30 days will receive 5 rKSU. Similarly, a Lender that locks 100 KSU for 360 days will receive 50 rKSU. The manner in which a Lender’s rKSU is used to determine their Loyalty Level (and associated utility/benefits) is described below.",
+          "list-0": {
+            "list-1": "Priority access to Business Lending Opportunities available on Kasu including loan Tranches in the case that they are oversubscribed.",
+            "list-2": "Priority for Withdrawal Requests from existing Lending.",
+            "list-3": "Additional interest (bonus interest) on all lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements)."
+          },
+          "list-1": {
+            "list-1": "This multiplier varies according to a Lender’s locking period, per the below table.",
+            "list-2": "The synthetic value of a Lender’s rKSU balance, relative to the total combined value of a Lender’s current USDC lending (inclusive of queued USDC Lending Requests that have yet to be cleared) across all Business Lending Opportunities determines a Lender’s Loyalty Level (outlined in the Loyalty Level 1 and Loyalty Level 2 explanations below))."
           }
         },
         "subheader-4-2": {
-          "title": "Loyalty Level 2",
-          "description": "If the value of a Lender’s rKSU balance, relative to their total current USDC lending (including USDC lending requests that are yet to be cleared) across all Business Lending Opportunities is 5% or greater, then the Lender will achieve Loyalty Level 2. This entitles the lender to the following utility and benefits:",
+          "title": "No Loyalty Level",
+          "description-1": "If the synthetic value of a Lender’s rKSU balance, relative to their total combined value of current USDC lending (inclusive of queued USDC Lending Requests that are yet to be cleared) across all Business Lending Opportunities is less than 1%, then the Lender will not achieve a Loyalty Level. The Lender therefore will not be entitled to the following utility/benefits:",
+          "description-2": "For example, a Lender has 1,500 USDC in existing lending, and a further 100 USDC queued Lending Requests (that have yet to be accepted). The Lender has also purchased and locked 200 KSU for 30 days. The 0.05x rKSU multiplier (per the above table) provides the Lender with 10 rKSU. For the purposes of this calculation, it is assumed that the current price of KSU is 1 USDC. Therefore, the synthetic value of the Lender’s 10 rKSU is 10 USDC.",
+          "description-3": "Based on the formula outlined above, this ratio of the Lender’s rKSU to current USDC lending (inclusive of queued Lending Requests that have yet to be accepted) is as follows:",
+          "description-4": "The resultant output demonstrates that it is less than 1%. Therefore, the Lender has not achieved a Loyalty Level:",
+          "example-1": "rKSU synthetic value / (Current Lending + Queued Lending Requests)",
+          "example-2": "10USDC / (1,500USDC + 100 USDC) = 0.63%",
           "list": {
-            "list-0": "First order priority access to Business Lending Opportunities available on Kasu (including loan Tranches within each Business Lending Opportunity) in the case that they are oversubscribed.",
-            "list-1": "First order priority for capital withdrawals (i.e. when a withdrawal request is made) from existing lending.",
-            "list-2": "Additional interest earnings (bonus interest) awarding the Lender with higher bonus interest earnings than Loyalty Level 1 on all their lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements)."
+            "list-0": "Priority access to Business Lending Opportunities available on Kasu including loan Tranches in the case that they are oversubscribed.",
+            "list-1": "Priority for Withdrawal Requests from existing Lending.",
+            "list-2": "Additional interest (bonus interest) on all lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements)."
           }
         },
         "subheader-4-3": {
-          "title": "No Loyalty Level",
-          "description": "Lenders who do not also purchase the KSU token and lock it for a minimum period (outlined below) to derive rKSU and achieve a Loyalty Level, do not achieve the above utility/benefits."
+          "title": "Loyalty Level 1",
+          "description-1": "If the value of a Lender’s rKSU balance, relative to their total combined value of current USDC lending (inclusive of queued USDC Lending Requests that are yet to be cleared) across all Business Lending Opportunities equals 1% but less than 5%, then the Lender will achieve Loyalty Level 1. This entitles the Lender to the following utility and benefits:",
+          "description-2": "For example, a Lender has 400 USDC in existing lending, and a further 100 USDC queued Lending Requests (that have yet to be accepted). The Lender has also purchased and locked 200 KSU for 30 days. The 0.05x rKSU multiplier (per the above table) provides the Lender with 10 rKSU. For the purposes of this calculation, it is assumed that the current price of KSU is 1 USDC. Therefore, the synthetic value of the Lender’s 10 rKSU is 10 USDC.",
+          "description-3": "Based on the formula outlined above, this ratio of the Lender’s rKSU to current USDC lending (inclusive of queued Lending Requests that have yet to be accepted) is as follows:",
+          "description-4": "The resultant output demonstrates that it exceeds 1%, but is less than 5%, providing the Lender with Loyalty Level 1:",
+          "example-1": "rKSU synthetic value / (Current Lending + Queued Lending Requests)",
+          "example-2": "10USDC / (400USDC + 100 USDC) = 2.00%",
+          "list": {
+            "list-0": "Second order priority access to Business Lending Opportunities available on Kasu including loan Tranches in the case that they are oversubscribed (behind Loyalty Level 2)",
+            "list-1": "Second order priority for Withdrawal Requests from existing Lending (behind Loyalty Level 2) but only for variable interest rate loans (not fixed interest rate loans).",
+            "list-2": "Additional interest (Loyalty Level 1 bonus interest) on all lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements)."
+          }
         },
         "subheader-4-4": {
-          "title": "Derive rKSU to Achieve a Loyalty Level",
-          "description": "Lenders must lock KSU to derive rKSU. The amount of rKSU a Lender can derive is based on a multiplier applied to the amount of locked KSU.",
+          "title": "Loyalty Level 2",
+          "description-1": "If the synthetic value of a Lender’s rKSU balance, relative to their total combined value of current USDC lending (inclusive of queued USDC Lending Requests that are yet to be cleared) across all Business Lending Opportunities equals 5% or greater, then the Lender will achieve Loyalty Level 2. This entitles the lender to the following utility and benefits:",
+          "description-2": "For example, a Lender has 100 USDC in existing lending, and a further 30 USDC queued Lending Requests (that have yet to be accepted). The Lender has also purchased and locked 200 KSU for 30 days. The 0.05x rKSU multiplier (per the above table) provides the Lender with 10 rKSU. For the purposes of this calculation, it is assumed that the current price of KSU is 1 USDC. Therefore, the synthetic value of the Lender’s 10 rKSU is 10 USDC.",
+          "description-3": "Based on the formula outlined above, this ratio of the Lender’s rKSU to current USDC lending (inclusive of queued Lending Requests that have yet to be accepted) is as follows:",
+          "description-4": "The resultant output demonstrates that it exceeds 5%, providing the Lender with Loyalty Level 2:",
+          "example-1": "rKSU synthetic value / (Current Lending + Queued Lending Requests)",
+          "example-2": "10USDC / (100USDC + 30 USDC) = 7.69%",
           "list": {
-            "list-0": "This multiplier varies according to the locking period, per the below table.",
-            "list-1": "The value of a Lender’s rKSU balance relative to their total current and pending USDC lending across all Business Lending Opportunities determines the Loyalty Level (outlined above).",
-            "list-2": "Your Loyalty Level determines the extent of a Lender’s token utility/benefits (outlined above)."
+            "list-0": "First order priority access to Business Lending Opportunities available on Kasu (including loan Tranches in the case that they are oversubscribed.",
+            "list-1": "First order priority for Withdrawal Requests  from existing lending but only for variable interest rate loans (not fixed interest rate loans).",
+            "list-2": "Additional interest (Loyalty Level 2 bonus interest) on all lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements)."
           }
         }
       }

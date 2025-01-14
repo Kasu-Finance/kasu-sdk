@@ -73,11 +73,15 @@ const PoolTraction: React.FC<PoolTractionProps> = ({ pool }) => {
                   <Box display='flex' alignItems='end'>
                     <TokenAmount
                       mt={0.5}
-                      amount={formatAmount(pool.poolCapacityPercentage)}
+                      amount={formatPercentage(
+                        pool.poolCapacityPercentage
+                      ).replaceAll(' %', '')}
                       symbol='%'
                     />
                     <Typography variant='baseMd' color='gray.middle' ml='1ch'>
-                      ({formatAmount(pool.poolCapacity)} USDC)
+                      (
+                      {formatAmount(pool.poolCapacity, { minValue: 1_000_000 })}{' '}
+                      USDC)
                     </Typography>
                   </Box>
                 }

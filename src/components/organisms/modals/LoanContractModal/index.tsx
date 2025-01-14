@@ -14,7 +14,6 @@ import DialogContent from '@/components/molecules/DialogContent'
 import DialogHeader from '@/components/molecules/DialogHeader'
 import Background from '@/components/organisms/modals/LoanContractModal/Background'
 import LoyaltyStatusCriteria from '@/components/organisms/modals/LoanContractModal/LoyaltyStatusCriteria'
-import MultiplierTable from '@/components/organisms/modals/LoanContractModal/MultiplierTable'
 import Parties from '@/components/organisms/modals/LoanContractModal/Parties'
 import Witnesses from '@/components/organisms/modals/LoanContractModal/Witnesses'
 
@@ -114,6 +113,8 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
     })
   }
 
+  const formattedText = generatedContract?.formattedMessage
+
   return (
     <CustomCard>
       <DialogHeader
@@ -181,11 +182,16 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               </Typography>
             </Stack>
           </Box>
-          <Parties fullName={generatedContract?.fullName} />
-          <Background />
-          <Witnesses />
-          <LoyaltyStatusCriteria />
-          <MultiplierTable />
+          <Parties
+            formattedText={formattedText}
+            fullName={generatedContract?.fullName}
+          />
+          <Background formattedText={formattedText} />
+          <Witnesses
+            isExempt={generatedContract?.contractType === 'exempt'}
+            formattedText={formattedText}
+          />
+          <LoyaltyStatusCriteria formattedText={formattedText} />
         </Stack>
         {canAccept && (
           <Box

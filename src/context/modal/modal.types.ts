@@ -15,6 +15,11 @@ import {
   UserTrancheBalance,
 } from '@solidant/kasu-sdk/src/services/UserLending/types'
 
+import {
+  ExemptLoanContract,
+  RetailLoanContract,
+} from '@/components/organisms/modals/LoanContractModal/contract.type'
+
 import { LoanTicketDto } from '@/config/api.lendersAgreement'
 import { PendingDecision, PendingDecisionPool } from '@/utils'
 import {
@@ -132,7 +137,10 @@ export type Modals = {
     acceptLoanContract?: (contractSignature: string) => void
     generatedContract?: {
       contractMessage: string
+      formattedMessage: RetailLoanContract | ExemptLoanContract
       fullName: string
+      contractType: 'retail' | 'exempt'
+      contractVersion: number
       createdAt: EpochTimeStamp
     }
     canAccept: boolean
