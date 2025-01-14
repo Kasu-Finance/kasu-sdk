@@ -7,13 +7,16 @@ const WithdrawFundsAtExpiryTableHeader = () => {
 
   return (
     <TableRow>
-      <TableCell width='25%'>
+      <TableCell width='17%'>
+        {t('modals.withdrawFundsAtExpiry.selectFunds')}
+      </TableCell>
+      <TableCell width='18%'>
         {t('modals.fixedLoan.tableHeader.cell-1')}
       </TableCell>
-      <TableCell width='40%'>
+      <TableCell width='25%'>
         {t('modals.fixedLoan.tableHeader.cell-2')}
       </TableCell>
-      <TableCell width='45%'>
+      <TableCell width='40%'>
         {t('modals.fixedLoan.tableHeader.cell-3')}
       </TableCell>
     </TableRow>

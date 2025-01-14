@@ -6,35 +6,51 @@ import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
 import VariableAndFixedApyTooltip from '@/components/molecules/tooltips/VariableAndFixedApyTooltip'
 
-import { formatAmount, formatPercentage, formatTimestamp } from '@/utils'
+import { formatPercentage, formatTimestamp, TimeConversions } from '@/utils'
 import {
-  DetailedTransaction,
   DetailedTransactionReallocationRequest,
+  DetailedTransactionWrapper,
 } from '@/utils/lending/getDetailedTransactions'
+import { WithdrawalTransactionWrapper } from '@/utils/lending/getWithdrawalTransactions'
 
 type RequestOverviewProps = {
-  transaction: DetailedTransaction | DetailedTransactionReallocationRequest
-  isCancellable: boolean
+  transaction:
+    | WithdrawalTransactionWrapper
+    | DetailedTransactionWrapper
+    | DetailedTransactionReallocationRequest
 }
 
-const RequestOverview: React.FC<RequestOverviewProps> = ({
-  transaction,
-  isCancellable,
-}) => {
+const RequestOverview: React.FC<RequestOverviewProps> = ({ transaction }) => {
   const { t } = getTranslation()
 
-  const formattedTime = formatTimestamp(transaction.timestamp, {
-    format: 'DD.MM.YYYY HH:mm:ss',
-    includeUtcOffset: true,
-  })
+  const isReallocation = 'id' in transaction
+
+  const isFixedTermDeposit = Boolean(transaction.fixedTermConfig)
+
+  const initialDeposit = !isReallocation
+    ? transaction.transactions[0]
+    : undefined
+
+  const formattedTime =
+    isFixedTermDeposit && initialDeposit
+      ? formatTimestamp(
+          initialDeposit.requestTimestamp +
+            parseFloat(
+              initialDeposit.fixedTermConfig?.epochLockDuration ?? '0'
+            ) *
+              TimeConversions.SECONDS_PER_WEEK,
+          {
+            format: 'DD.MM.YYYY HH:mm:ss',
+            includeUtcOffset: true,
+          }
+        )
+      : undefined
 
   return (
     <Box>
       <InfoRow
         title={t(
-          transaction.fixedTermConfig
-            ? 'general.fixedApy'
-            : 'general.variableApy'
+          isFixedTermDeposit ? 'general.fixedApy' : 'general.variableApy'
         )}
         showDivider
         dividerProps={{ color: 'white' }}
@@ -55,20 +71,22 @@ const RequestOverview: React.FC<RequestOverviewProps> = ({
         metric={
           <Typography variant='h4'>
             {formatPercentage(
-              transaction.fixedTermConfig
-                ? transaction.fixedTermConfig.apy
-                : transaction.apy
+              isFixedTermDeposit
+                ? transaction.fixedTermConfig!.apy
+                : isReallocation
+                  ? transaction.apy
+                  : initialDeposit?.apy ?? 0
             )}
           </Typography>
         }
       />
       <InfoRow
-        title={t('modals.requestDetails.metric-1')}
+        title={t('general.tranche')}
         showDivider
         dividerProps={{ color: 'white' }}
         toolTipInfo={
           <ToolTip
-            title={t('modals.requestDetails.metric-1-tooltip')}
+            title='info'
             iconSx={{
               color: 'gold.extraDark',
               '&:hover': {
@@ -78,78 +96,17 @@ const RequestOverview: React.FC<RequestOverviewProps> = ({
           />
         }
         metric={
-          <Typography variant='baseMdBold'>
-            {formattedTime.date}{' '}
-            <Typography
-              variant='inherit'
-              color='gold.extraDark'
-              display='inline'
-            >
-              {formattedTime.timestamp} {formattedTime.utcOffset}
-            </Typography>
-          </Typography>
+          <Typography variant='baseMd'>{transaction.trancheName}</Typography>
         }
       />
-
-      {(transaction.requestType === 'Deposit' ||
-        transaction.requestType === 'Withdrawal') && (
-        <>
-          <InfoRow
-            title={t('modals.requestDetails.metric-2')}
-            showDivider
-            dividerProps={{ color: 'white' }}
-            toolTipInfo={
-              <ToolTip
-                title={t('modals.requestDetails.metric-2-tooltip')}
-                iconSx={{
-                  color: 'gold.extraDark',
-                  '&:hover': {
-                    color: 'rgba(133, 87, 38, 1)',
-                  },
-                }}
-              />
-            }
-            metric={
-              <Typography variant='baseMdBold'>
-                {formatAmount(transaction.requestedAmount, { minDecimals: 2 })}{' '}
-                USDC
-              </Typography>
-            }
-          />
-          {!isCancellable && (
-            <InfoRow
-              title={t('modals.requestDetails.metric-6')}
-              showDivider
-              dividerProps={{ color: 'white' }}
-              toolTipInfo={
-                <ToolTip
-                  title={t('modals.requestDetails.metric-6-tooltip')}
-                  iconSx={{
-                    color: 'gold.extraDark',
-                    '&:hover': {
-                      color: 'rgba(133, 87, 38, 1)',
-                    },
-                  }}
-                />
-              }
-              metric={
-                <Typography variant='baseMdBold'>
-                  {formatAmount(transaction.acceptedAmount, { minDecimals: 2 })}{' '}
-                  USDC
-                </Typography>
-              }
-            />
-          )}
-        </>
-      )}
-      {transaction.requestType === 'Reallocation' && (
+      {formattedTime && (
         <InfoRow
-          title={t('modals.requestDetails.metric-7')}
+          title='Fixed Loan Term Expiry'
           showDivider
           dividerProps={{ color: 'white' }}
           toolTipInfo={
             <ToolTip
-              title={t('modals.requestDetails.metric-7-tooltip')}
+              title='info'
               iconSx={{
                 color: 'gold.extraDark',
                 '&:hover': {
@@ -159,94 +116,9 @@ const RequestOverview: React.FC<RequestOverviewProps> = ({
             />
           }
           metric={
-            <Typography variant='baseMdBold'>
-              {formatAmount(transaction.reallocatedInAmount, {
-                minDecimals: 2,
-              })}{' '}
-              USDC
-            </Typography>
+            <Typography variant='baseMd'>{formattedTime.date}</Typography>
           }
         />
-      )}
-      {!isCancellable && (
-        <>
-          {transaction.requestType === 'Deposit' && (
-            <>
-              <InfoRow
-                title={t('modals.requestDetails.metric-4')}
-                showDivider
-                dividerProps={{ color: 'white' }}
-                toolTipInfo={
-                  <ToolTip
-                    title={t('modals.requestDetails.metric-4-tooltip')}
-                    iconSx={{
-                      color: 'gold.extraDark',
-                      '&:hover': {
-                        color: 'rgba(133, 87, 38, 1)',
-                      },
-                    }}
-                  />
-                }
-                metric={
-                  <Typography variant='baseMdBold'>
-                    {formatAmount(transaction.rejectedAmount, {
-                      minDecimals: 2,
-                    })}{' '}
-                    USDC
-                  </Typography>
-                }
-              />
-              <InfoRow
-                title={t('modals.requestDetails.metric-5')}
-                showDivider
-                dividerProps={{ color: 'white' }}
-                toolTipInfo={
-                  <ToolTip
-                    title={t('modals.requestDetails.metric-5-tooltip')}
-                    iconSx={{
-                      color: 'gold.extraDark',
-                      '&:hover': {
-                        color: 'rgba(133, 87, 38, 1)',
-                      },
-                    }}
-                  />
-                }
-                metric={
-                  <Typography variant='baseMdBold'>
-                    {formatAmount(transaction.reallocatedOutAmount, {
-                      minDecimals: 2,
-                    })}{' '}
-                    USDC
-                  </Typography>
-                }
-              />
-            </>
-          )}
-          {transaction.requestType === 'Withdrawal' && (
-            <InfoRow
-              title={t('modals.requestDetails.metric-3')}
-              showDivider
-              dividerProps={{ color: 'white' }}
-              toolTipInfo={
-                <ToolTip
-                  title={t('modals.requestDetails.metric-3-tooltip')}
-                  iconSx={{
-                    color: 'gold.extraDark',
-                    '&:hover': {
-                      color: 'rgba(133, 87, 38, 1)',
-                    },
-                  }}
-                />
-              }
-              metric={
-                <Typography variant='baseMdBold'>
-                  {formatAmount(transaction.queuedAmount, { minDecimals: 2 })}{' '}
-                  USDC
-                </Typography>
-              }
-            />
-          )}
-        </>
       )}
     </Box>
   )

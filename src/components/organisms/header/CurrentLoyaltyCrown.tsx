@@ -37,6 +37,8 @@ const CurrentLoyaltyCrown = () => {
       component={Image}
       src={getCrown(currentLevel)}
       alt={`crown-level_${currentLevel}`}
+      width={81}
+      height={48}
     />
   )
 }

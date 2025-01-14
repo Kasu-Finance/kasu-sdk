@@ -42,6 +42,8 @@ const LoyaltyLevelInfo: React.FC<LoyaltyLevelInfoProps> = ({
         <Image
           src={getCrown(loyaltyLevel)}
           alt={`crown-level_${loyaltyLevel}`}
+          width={81}
+          height={48}
         />
         <Typography variant='h4' {...titleProps}>
           {title}

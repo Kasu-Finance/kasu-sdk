@@ -26,6 +26,9 @@ export const Routes = {
     closedLendingStrategies: {
       url: `${BaseRoutesPaths.LENDING}/closedLendingStrategies`,
     },
+    oversubscribedLendingStrategies: {
+      url: `${BaseRoutesPaths.LENDING}/oversubscribedLendingStrategies`,
+    },
     termsAndConditions: {
       url: `${BaseRoutesPaths.LENDING}/important-information-document`,
     },

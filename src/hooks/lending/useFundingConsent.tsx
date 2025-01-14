@@ -11,7 +11,7 @@ import { FundingConsentReturn } from '@/app/api/loan-tickets/route'
 import { LoanTicketDto, LoanTicketStatus } from '@/config/api.lendersAgreement'
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import dayjs from '@/dayjs'
-import { capitalize, LoanTicket } from '@/utils'
+import { capitalize } from '@/utils'
 
 const useFundingConsent = () => {
   const { account, chainId, provider } = useWeb3React()
@@ -26,7 +26,13 @@ const useFundingConsent = () => {
 
   return async (
     poolName: string,
-    loanTicket: LoanTicket,
+    subsequentTransaction: {
+      amount: number
+      timestamp: EpochTimeStamp
+      endBorrowerID: string
+      poolID: string
+      trancheID: string
+    },
     decision: LoanTicketStatus,
     callback: (newLoanTickets: LoanTicketDto[]) => void
   ) => {
@@ -52,9 +58,9 @@ const useFundingConsent = () => {
       })
 
       const payload = {
-        endBorrowerID: loanTicket.endBorrowerID,
-        poolID: loanTicket.poolID,
-        trancheID: loanTicket.trancheID,
+        endBorrowerID: subsequentTransaction.endBorrowerID,
+        poolID: subsequentTransaction.poolID,
+        trancheID: subsequentTransaction.trancheID,
         status: decision,
       }
 
@@ -126,7 +132,7 @@ const useFundingConsent = () => {
       } else {
         openModal({
           name: ModalsKeys.OPT_OUT,
-          loanTicket,
+          subsequentTransaction,
           poolName,
         })
       }

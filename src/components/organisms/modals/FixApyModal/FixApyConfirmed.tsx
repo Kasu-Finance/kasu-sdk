@@ -11,7 +11,12 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 import { Routes } from '@/config/routes'
 import { SupportedChainIds } from '@/connection/chains'
 import { networks } from '@/connection/networks'
-import { capitalize, formatAmount, formatTimestamp } from '@/utils'
+import {
+  capitalize,
+  formatAmount,
+  formatTimestamp,
+  mergeSubheading,
+} from '@/utils'
 
 const FixApyConfirmed = () => {
   const { t } = getTranslation()
@@ -44,7 +49,9 @@ const FixApyConfirmed = () => {
           '{{ time }}',
           `${formattedTime.date} • ${formattedTime.timestamp} ${formattedTime.utcOffset}`
         )}{' '}
-        <Typography variant='baseMdBold'>{pool.poolName}</Typography>{' '}
+        <Typography variant='baseMdBold'>
+          {mergeSubheading(pool.poolName, pool.subheading)}
+        </Typography>{' '}
         {capitalize(t('general.lendingStrategy'))}
       </Typography>
       <Typography variant='baseSm'>

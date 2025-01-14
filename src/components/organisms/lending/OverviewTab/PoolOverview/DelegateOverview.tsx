@@ -80,9 +80,22 @@ const DelegateOverview: React.FC<DelegateOverviewProps> = ({ pool }) => {
           <InfoRow
             title={t('lending.poolOverview.detailCard.apyStructure.label')}
             titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
-            toolTipInfo={t(
-              'lending.poolOverview.detailCard.apyStructure.tooltip'
-            )}
+            toolTipInfo={
+              <ToolTip
+                title={
+                  <Typography variant='inherit'>
+                    {t(
+                      'lending.poolOverview.detailCard.apyStructure.tooltip-1'
+                    )}
+                    <br />
+                    <br />
+                    {t(
+                      'lending.poolOverview.detailCard.apyStructure.tooltip-2'
+                    )}
+                  </Typography>
+                }
+              />
+            }
             showDivider
             metric={
               <Typography variant='baseMdBold'>

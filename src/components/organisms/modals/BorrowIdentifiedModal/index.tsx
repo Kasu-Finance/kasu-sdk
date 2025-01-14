@@ -26,16 +26,21 @@ const BorrowerIdentifiedModal: React.FC<DialogChildProps> = ({
 
   const fundingConsent = useFundingConsent()
 
-  const { loanTicket, poolName, callback } =
+  const { subsequentTransaction, poolName, callback } =
     modal[ModalsKeys.BORROWER_IDENTIFIED]
 
   const handleConsent = async (
     decision: LoanTicketStatus.optedIn | LoanTicketStatus.optedOut
   ) => {
-    await fundingConsent(poolName, loanTicket, decision, (newLoanTickets) => {
-      callback(newLoanTickets)
-      handleClose()
-    })
+    await fundingConsent(
+      poolName,
+      subsequentTransaction,
+      decision,
+      (newLoanTickets) => {
+        callback(newLoanTickets)
+        handleClose()
+      }
+    )
   }
 
   return (
@@ -66,7 +71,7 @@ const BorrowerIdentifiedModal: React.FC<DialogChildProps> = ({
               >
                 <Countdown
                   endTime={dayjs
-                    .unix(loanTicket.createdOn)
+                    .unix(subsequentTransaction.timestamp)
                     .add(2, 'days')
                     .unix()}
                   format='HH:mm:ss'
@@ -125,12 +130,14 @@ const BorrowerIdentifiedModal: React.FC<DialogChildProps> = ({
                 {t('modals.borrowerIdentified.description-3')}
               </Typography>
             </Box>
-            <Typography variant='baseMd'>
-              {t('modals.borrowerIdentified.description-4')}
-            </Typography>
-            <Typography variant='baseMd' color='white'>
-              no-reply@kasu.finance
-            </Typography>
+            <Stack spacing={1}>
+              <Typography variant='baseMd'>
+                {t('modals.borrowerIdentified.description-4')}
+              </Typography>
+              <Typography variant='baseMd' color='white'>
+                no-reply@lenders.kasu.finance
+              </Typography>
+            </Stack>
           </Stack>
           <Box display='flex' gap={4} width='100%'>
             <Button

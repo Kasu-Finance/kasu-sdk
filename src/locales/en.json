@@ -103,24 +103,21 @@
     "seconds": "seconds"
   },
   "grossApy": {
-    "tooltip-1": "The expected interest earned by Lenders on an annualised basis, prior to Kasu protocol fees being deducted, assuming all repayments will be made as expected. This does not account for the additional APY earned from compound interest, which accrues every Epoch (every seven days).",
-    "tooltip-2": "Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 13.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).​",
-    "tooltip-3": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations.",
-    "tooltip-4": "In the event of losses, Senior Tranche Lenders have the first claim on any recovered funds, followed by Mezzanine (if applicable) and Junior Tranche Lenders."
+    "tooltip-1": "Gross Annual Percentage Yield (APY) reflects the expected interest rate earned by Lenders on an annualised basis, prior to Kasu protocol fees being deducted, assuming all repayments will be made as expected. This does not account for the additional amount earned from compound interest, which accrues every Epoch (every seven days).",
+    "tooltip-2": "An APY range reflects the range of offers across Loan Tranches and Fixed and Variable loans (if applicable) within this Lending Strategy.​",
+    "tooltip-3": "Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 13.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).",
+    "tooltip-4": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations."
   },
   "variableAndFixedApy": {
-    "tooltip-1": "The expected interest earned by Lenders on an annualised basis, prior to Kasu protocol fees being deducted, assuming all repayments will be made as expected. This does not account for the additional APY earned from compound interest, which accrues every Epoch (every seven days).",
-    "tooltip-2": "A variable APY will be subject to change every {{ epoch }} epochs.",
-    "tooltip-3": "​A fixed APY will be locked for the specified period of time. ​During a fixed APY period, no Withdrawal Requests can be submitted.",
-    "tooltip-4": "Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 13.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).​",
-    "tooltip-5": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations.​",
-    "tooltip-6": "In the event of losses, Senior Tranche Lenders have the first claim on any recovered funds, followed by Mezzanine (if applicable) and Junior Tranche Lenders​"
+    "tooltip-1": "Gross Annual Percentage Yield (APY) reflects the expected interest rate earned by Lenders on an annualised basis in the particular Loan Tranche displayed, prior to Kasu protocol fees being deducted, assuming all repayments will be made as expected. This does not account for the additional amount earned from compound interest, which accrues every Epoch (every seven days).​",
+    "tooltip-2": "A Variable APY is subject to change depending on interest rate market fluctuations (increases/decrease). A Fixed APY will be locked for the specified period of time. During a fixed APY period, now Withdrawal Request can be submitted.",
+    "tooltip-3": "​Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 13.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).",
+    "tooltip-4": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations."
   },
   "weightedAverageApy": {
     "tooltip-1": "The average gross APY (prior to Kasu protocol fees being deducted) you are currently earning within this Lending Strategy that has been adjusted to reflect your weighted contribution to each Tranche relative to your total contribution across all Tranches (assuming all repayment will be made as expected). In the absence of multiple Tranches, this simply reflects the gross APY for the Single Loan Offer within this Lending Strategy",
-    "tooltip-2": "This does not account for the additional APY earned from compound interest, which accrues every Epoch (every seven days).",
-    "tooltip-3": "Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 13.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).​",
-    "tooltip-4": "​Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations.​"
+    "tooltip-2": "Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 13.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).",
+    "tooltip-3": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations."
   },
   "lifetimeInterestEarned": {
     "tooltip-1": "The total combined amount of interest you have earned (after fees) from all tranches within this Lending Strategy (or Single Loan Offer in the absence of multiple Tranches) since you first started lending to this Lending Strategy. To view a breakdown of your total historical interest earned across all Lending Strategies, please visit the 'My Portfolio' tab.​",
@@ -128,9 +125,8 @@
     "tooltip-3": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations.​"
   },
   "apyStructure": {
-    "tooltip-1": "Indicates whether the APY(s) offered by the Delegate to Lenders is fixed for a specified period of time, or variable, or a mixture of both.",
-    "tooltip-2": "A variable APY will be subject to change every 4 epochs.",
-    "tooltip-3": "A fixed APY will be locked for the specified period of time. During a fixed APY period, no Withdrawal Requests can be submitted."
+    "tooltip-1": "Indicates whether the Delegate is offering Fixed and/or Variable APY loans for this Lending Strategy.",
+    "tooltip-2": "A Variable APY is subject to change depending on interest rate market fluctuations (increases/decrease). A Fixed APY will be locked for the specified period of time. During a fixed APY period, now Withdrawal Request can be submitted."
   },
   "locking": {
     "widgets": {
@@ -285,16 +281,18 @@
       "fixedUntil": "Fixed until"
     },
     "withdrawFundsAtExpiry": {
-      "title": "Withdraw Funds at Expiry",
-      "description-1": "You can request Withdrawal Funds",
-      "description-2": "no later than {{ epoch }} epochs",
-      "description-3": "before the end of the loan term. Otherwise, your fixed loan will be converted to a regular floating loan, where you will have to submit a withdrawal request and join the queue like everyone else.",
-      "description-4": "Withdrawal request successfully submitted. Your funds will be returned immediately after the expiration date.",
-      "action": "Withdraw Selected Funds at Expiry"
+      "title": "Repay My Funds at Fixed Loan Expiry",
+      "confirmedTitle": "Loan Repayment Request Submitted",
+      "description-1": "You can request full repayment of your loan funds if you provide",
+      "description-2": "at least {{ epoch }} epochs",
+      "description-3": "notice leading up to the expiry date of your fixed term loan. Otherwise, your fixed loan will automatically convert to the prevailing variable APY, where you will be subject to the normal queuing system.",
+      "description-4": "Your loan repayment request has been successfully submitted for the return of your funds at the end of the epoch following the expiry of your fixed term loan",
+      "action": "Repay Selected Funds at Fixed Loan Expiry",
+      "selectFunds": "Select Funds"
     },
     "autoConversionToVariable": {
       "title": "Auto Conversion to Variable​",
-      "description": "You did not request full repayment of your loan funds within the required notice period of at least 4 epochs  leading up to the expiry date of your fixed term loan. Your fixed loan will therefore automatically convert to the prevailing variable APY, where you will be subject to the normal queuing system."
+      "description": "You did not request full repayment of your loan funds within the required notice period of at least {{ epoch }} epochs leading up to the expiry date of your fixed term loan. Your fixed loan will therefore automatically convert to the prevailing variable APY, where you will be subject to the normal queuing system."
     },
     "fixApy": {
       "title": "Fixed Loan & APY Conversion​",
@@ -436,11 +434,11 @@
           "list": {
             "list-0": {
               "title": "Lower Yield: ",
-              "description": "Due to its highest ranking priority in repayment in the event of losses, the Senior Tranche typically offers lower interest rates compared to Mezzanine and Junior Tranches."
+              "description": "Due to its highest ranking priority in the recovery of funds in the event of losses, the Senior Tranche typically offers lower interest rates compared to Mezzanine and Junior Tranches."
             },
             "list-1": {
               "title": "Credit Risk: ",
-              "description": "In the event of any end borrower defaults, Senior Tranche Lenders are paid first from any recovered funds, but this still depends on the overall recovery rate. In the event that less than 100% is recovered, losses are proportionately applied across Lenders in the lowest ranking Tranche first (Junior Tranche), proceeding up the line through Mezzanine Tranche (if applicable) and finally to Senior Tranche. This proportionality is applied in line with the abovementioned ranking order, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to (i.e.any losses borne by the Lending Strategy are mutualised across Lenders starting from the lowest ranking Tranche).In the absence of Junior and Mezzanine Tranches, losses are proportionately applied across all Lenders in the single available Tranche."
+              "description": "In the event of any end borrower defaults that result in losses, Senior Tranche Lenders are paid first from any recovered funds, but this still depends on the overall recovery rate. In the event that less than 100% is recovered, losses are proportionately applied across Lenders in the lowest ranking Tranche first (Junior Tranche), proceeding up the line through Mezzanine Tranche (if applicable) and finally to Senior Tranche. This proportionality is applied in line with the abovementioned ranking order, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to (i.e.any losses borne by the Lending Strategy are mutualised across Lenders starting from the lowest ranking Tranche). In the absence of Junior and Mezzanine Tranches, losses are proportionately applied across all Lenders in the single available Tranche."
             }
           }
         },
@@ -450,11 +448,11 @@
           "list": {
             "list-0": {
               "title": "Subordination Risk in Event of Losses: ",
-              "description": "Mezzanine Lenders are subordinated to Senior Tranche Lenders in the event of losses. This means that in the event of losses, they are repaid only after all Senior Tranche obligations have been met."
+              "description": "Mezzanine Lenders are subordinated to Senior Tranche Lenders in the event of losses. This means that in the event of losses, they are paid from recovered funds only after all Senior Tranche obligations have been met."
             },
             "list-1": {
               "title": "Credit Risk: ",
-              "description": "There is a higher risk of non-payment (capital risk) compared to the Senior Tranche. In a default scenario, Mezzanine Lenders may experience significant delays in repayment and an increased risk of capital loss (compared to Senior Tranche Lenders). In such an event, after Senior Tranche Lenders have been repaid in full, if there is not enough recovered to pay all Mezzanine Tranche Lenders in full, losses are proportionately mutualised across all Lenders in the Mezzanine Tranche, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to. Similarly, recoveries (if any), after Senior Tranche Lenders have been repaid in full, are proportionately applied across all Lenders in the Mezzanine Tranche, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to. Only after Senior Tranche and Mezzanine Tranche Lenders have been repaid in full are any remaining recoveries allocated to the repayment of Junior Tranche Lenders (see below)."
+              "description": "There is a higher risk of non-recovery (capital risk) compared to the Senior Tranche. In a default scenario that results in losses, Mezzanine Lenders may experience significant delays in the recovery of funds and an increased risk of capital loss (compared to Senior Tranche Lenders). In such an event, after Senior Tranche Lenders have recovered their funds in full, if there is not enough recovered to pay all Mezzanine Tranche Lenders in full, losses are proportionately mutualised across all Lenders in the Mezzanine Tranche, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to. Similarly, recoveries (if any), after Senior Tranche Lenders have been repaid in full, are proportionately applied across all Lenders in the Mezzanine Tranche, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to. Only after Senior Tranche and Mezzanine Tranche Lenders’ funds have been recovered in full  are any remaining recoveries allocated to the Junior Tranche Lenders (see below)."
             }
           }
         },
@@ -464,11 +462,11 @@
           "list": {
             "list-0": {
               "title": "Subordination Risk in Event of Losses: ",
-              "description": "Junior Tranche Lenders are the last to be paid in the event of losses. They only receive repayments after all obligations to Senior and Mezzanine Lenders have been fulfilled."
+              "description": "Junior Tranche Lenders are the last to recover funds in the event of losses. They only receive recovered funds after all obligations to Senior and Mezzanine Lenders have been fulfilled."
             },
             "list-1": {
               "title": "Credit Risk: ",
-              "description": "The risk of capital loss is highest in the Junior Tranche. In a loss scenario, Junior Tranche Lenders may experience significant delays in repayment and the greatest risk of capital loss (compared to Senior Tranche and Mezzanine Tranche Lenders). In such an event, after Senior Tranche Lenders and Mezzanine Tranche Lenders have been repaid in full, if there is not enough recovered to pay all Junior Tranche Lenders in full, losses are proportionately mutualised across all Lenders in the Junior Tranche, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to. Similarly, recoveries (if any), after Senior Tranche Lenders and Mezzanine Tranche Lenders have been repaid in full, are proportionately applied across all Lenders in the Junior Tranche, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to."
+              "description": "The risk of capital loss is highest in the Junior Tranche. In a loss scenario, Junior Tranche Lenders may experience significant delays in the recovery of funds and the greatest risk of capital loss (compared to Senior Tranche and Mezzanine Tranche Lenders). In such an event, after Senior Tranche Lenders and Mezzanine Tranche Lenders have recovered funds in full, if there is not enough recovered to pay all Junior Tranche Lenders in full, losses are proportionately mutualised across all Lenders in the Junior Tranche, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to. Similarly, recoveries (if any), after Senior Tranche Lenders and Mezzanine Tranche Lenders have been repaid in full, are proportionately applied across all Lenders in the Junior Tranche, regardless of which individual end borrower(s) a particular Lender’s funds are loaned to."
             },
             "list-3": "In the event that a Lending Strategy commences with Senior and Junior Tranches only, but a Mezzanine Tranche is subsequently added, the Junior Tranche Lenders will move from a second ranking position (second to the Senior Tranche) to a third ranking position (ranking behind both Senior and Mezzanine Tranches)."
           }
@@ -510,22 +508,22 @@
       },
       "subheader-5": {
         "title": "Pending Phase Before Interest Accrual",
-        "description": "When Lenders submit a Lending Request to Kasu, their funds enter a Pending Phase until the next Clearing Period. The Clearing Period occurs at the end of an epoch, during which Lending Requests and Loan Withdrawal Requests are processed.",
+        "description": "When Lenders submit a Lending Request to Kasu, their funds enter a Pending Phase (known as a queued Lending Request) until the next Clearing Period. The Clearing Period occurs at the end of an epoch, during which the outcome of Lending Requests and Loan Withdrawal Requests is determined.",
         "subtitle": "Acknowledgment of Pending Phase and Clearing Period Process",
-        "subtitle-description": "By lending through Kasu, Lenders acknowledge and accept the Pending Phase and Clearing Period process. It is crucial for Lenders to understand that their funds will only start accruing interest once their Lending Request is accepted at the end of the Clearing Period. Lenders also acknowledge that in rare circumstances, a Clearing Period could be missed, resulting in their Lending Request being processed in a future epoch.",
+        "subtitle-description": "By lending through Kasu, Lenders acknowledge and accept the Pending Phase and Clearing Period process. It is crucial for Lenders to understand that their funds will only start accruing interest once their Lending Request is accepted at the end of the Clearing Period (which occurs at the end of each 7-day epoch). Lenders also acknowledge that in rare circumstances, a Clearing Period could be missed, resulting in their Lending Request being processed in a future epoch.",
         "list": {
           "title": "Key Points:",
           "list-0": {
-            "title": "Pending Phase: ",
-            "description": "Funds do not start accruing interest immediately upon the submission of a Lending Request. They remain in a Pending Phase until the next Clearing Period, which occurs at the end of each epoch."
+            "title": "Pending Phase (queued Lending Requests): ",
+            "description": "Funds do not start accruing interest immediately upon the submission of a Lending Request. They remain in a Pending Phase until the next Clearing Period, which occurs at the end of each 7-day epoch."
           },
           "list-1": {
             "title": "Clearing Period: ",
-            "description": "At the end of each epoch, during the Clearing Period, Lending Requests and Loan Withdrawal Requests are processed. Based on factors such as each Lender's Loyalty Level and the liquidity needs of each Lending Strategy, funds are either accepted or rejected."
+            "description": "At the end of each 7-day epoch, during the Clearing Period, the outcome of Lending Requests and Loan Withdrawal Requests is determined. Based on factors such as each Lender's Loyalty Level and the liquidity needs of each Lending Strategy, Lending Request may be accepted, rejected or reallocated to the next available Tranche. Withdrawal Requests may be partially or fully accepted, or the entire Withdrawal Request may remain queued until the next epoch based on available liquidity."
           },
           "list-2": {
             "title": "Start of Interest Accrual: ",
-            "description": "If funds from a Lending Request are accepted during a Clearing Period (end of an epoch), the Lender will then start accruing interest from the beginning of the next epoch."
+            "description": "If funds from a Lending Request are accepted during a Clearing Period (end of a 7-day epoch), the Lender will then start accruing interest from the beginning of the next epoch."
           },
           "list-3": {
             "title": "Clearing Period Delays: ",
@@ -535,18 +533,18 @@
       },
       "subheader-6": {
         "title": "Loan Withdrawal Requests",
-        "description": "When Lenders submit a Loan Withdrawal Request to Kasu, their request enters a Pending Phase (queued). Acceptance of these Loan Withdrawal Requests is evaluated during each Clearing Period (end of each epoch) and is contingent upon the excess liquidity within the specific Lending Strategy, and may therefore remain outstanding (or partially outstanding) for one or more epochs. Excess liquidity is based on various factors outside of Kasu and Delegates’ control, such as (but not limited to) demand for Lending Strategies and End Borrowers meeting repayment requirements.",
+        "description": "When Lenders submit a Loan Withdrawal Request to Kasu, their request enters a Pending Phase (queued). Acceptance of these Loan Withdrawal Requests is determined during each Clearing Period (end of each 7-day epoch) and is contingent upon the excess liquidity within the specific Lending Strategy, and may therefore remain outstanding (or partially outstanding) for one or more epochs. Excess liquidity is based on various factors outside of Kasu and Delegates’ control, such as (but not limited to) demand for Lending Strategies and End Borrowers meeting repayment requirements.",
         "subtitle": "Acknowledgment of Loan Withdrawal Request Process",
         "subtitle-description": "By submitting a Loan Withdrawal Request through Kasu, Lenders acknowledge and accept the Pending Phase and the process based on excess liquidity. Lenders understand that:",
         "list-0": {
           "title": "Key Points:",
           "list-0": {
             "title": "Pending Phase and Excess Liquidity: ",
-            "description": "Loan Withdrawal Requests remain in Pending Phase (queued) until they are accepted as part of each Clearing Period (end of each epoch), which is dependent on the excess funds available within the given Lending Strategy. This means that Lenders may only withdraw funds up to the excess liquidity available, potentially resulting in partially fulfilled (or even unfulfilled) Withdrawal Requests until the next Clearing Period."
+            "description": "Loan Withdrawal Requests remain in Pending Phase (queued) until they are accepted as part of each Clearing Period (end of each 7-day epoch), which is dependent on the excess funds available within the given Lending Strategy. This means that Lenders may only withdraw funds up to the excess liquidity available, potentially resulting in partially fulfilled (or even unfulfilled) Withdrawal Requests until the next Clearing Period."
           },
           "list-1": {
             "title": "Multiple Epochs: ",
-            "description": "Withdrawal Requests may therefore remain outstanding/queued (or partially outstanding/queued) for more than one epoch until sufficient liquidity is available, which will be determined during each Clearing Period (end of each epoch)."
+            "description": "Withdrawal Requests may therefore remain outstanding/queued (or partially outstanding/queued) for more than one epoch until sufficient liquidity is available, which will be determined during each Clearing Period (end of each 7-day epoch)."
           },
           "list-2": {
             "title": "Priority Based on Loyalty Level: ",
@@ -554,11 +552,11 @@
           },
           "list-3": {
             "title": "Automatic Loyalty Level Increase: ",
-            "description": "Any Withdrawal Request left outstanding for more than five epochs will automatically be prioritised above all Loyalty Levels until the withdrawal is accepted."
+            "description": "Any Withdrawal Request left outstanding for more than five epochs will automatically be prioritised above all Loyalty Levels until the Withdrawal Request is accepted."
           },
           "list-4": {
             "title": "Interest Accrual: ",
-            "description": "Interest continues to accrue during the Pending Phase until the Withdrawal Request is accepted. Upon the successful processing of a Withdrawal Request, the withdrawing Lender's lending position stops accruing interest."
+            "description": "Interest continues to accrue during the Pending Phase until the Withdrawal Request is accepted. Upon the successful acceptance of a Withdrawal Request, the withdrawing Lender's lending position stops accruing interest."
           },
           "list-5": {
             "title": "Losses: ",
@@ -566,12 +564,12 @@
           }
         },
         "list-1": {
-          "list-0": "Access to their funds is contingent upon the availability of excess liquidity within the Lending Strategy, which is determined during each Clearing Period (end of each epoch). Excess liquidity is based on various factors outside of Kasu and Delegates’ control, such as (but not limited to) demand for Lending Strategies and End Borrowers meeting repayment requirements.",
+          "list-0": "Access to their funds is contingent upon the availability of excess liquidity within the Lending Strategy, which is determined during each Clearing Period (end of each 7-day epoch). Excess liquidity is based on various factors outside of Kasu and Delegates’ control, such as (but not limited to) demand for Lending Strategies and End Borrowers meeting repayment requirements.",
           "list-1": "Withdrawal Requests are prioritised based on Loyalty Level, potentially resulting in longer waiting times for lower or no Loyalty Level Lenders.",
           "list-2": "Withdrawal Requests may therefore remain outstanding (or partially outstanding) for more than one epoch until sufficient liquidity is available.",
           "list-3": "Any Withdrawal Request that has been outstanding for more than five epochs will automatically receive the highest Loyalty Level until the withdrawal is processed.",
-          "list-4": "Interest continues to accrue during the Pending Phase and stops only upon the successful acceptance of a Withdrawal Request.",
-          "list-5": "Funds that remain in Pending Phase (queued) will still be affected by losses within Lending Strategies, given that the WIthdrawal Request is yet to be accepted."
+          "list-4": "Interest continues to accrue during the Pending Phase (queued Withdrawal Request) and stops only upon the successful acceptance of a Withdrawal Request.",
+          "list-5": "Funds that remain in Pending Phase (queued) will still be affected by losses within Lending Strategies, given that the Withdrawal Request is yet to be accepted."
         }
       },
       "subheader-7": {
@@ -595,11 +593,11 @@
           },
           "list-2": {
             "title": "APY Impact: ",
-            "description": "Next available Tranches will have a lower APY (interest return), but will be higher ranking in terms of repayment priority in the event of losses (see ‘Risk Disclosure: Senior, Mezzanine and Junior Tranches’ Section)."
+            "description": "Next available Tranches will have a lower APY (interest return), but will be higher ranking in terms recovery of funds in the event of losses (see ‘Risk Disclosure: Senior, Mezzanine and Junior Tranches’ Section)."
           },
           "list-3": {
             "title": "No Opt-Out: ",
-            "description": "Lenders cannot opt-out of this reallocation process once their Lending Request is submitted. If they are not satisfied with their participation in a lower-yielding Tranche, they may either ‘opt-out’ within 48 hours of being informed by Kasu of the end borrower(s) to which their funds will be loaned, or they must submit a Loan Withdrawal Request as outlined earlier."
+            "description": "Lenders cannot opt-out of this reallocation process once the outcome of their Lending Request is accepted. If they are not satisfied with their participation in a lower-yielding Tranche, they may either ‘opt-out’ within 48 hours of being informed by Kasu of the end borrower(s) to which their funds will be loaned, or they must submit a Loan Withdrawal Request as outlined earlier. The opt-out mechanism is only available for Lenders with less than a combined value of 350,000 USDC of existing lending and outstanding Lending Requests."
           },
           "list-4": {
             "title": "Potential Return of Funds: ",
@@ -614,9 +612,9 @@
         },
         "list-3": {
           "list-0": "Their Lending Requests may be reallocated to higher-ranking/lower-yielding Tranches if the requested Tranche is oversubscribed.",
-          "list-1": "The lower-yielding Tranche will have higher ranking in terms of repayment priority in the event of losses (see ‘Risk Disclosure: Senior, Mezzanine and Junior Tranches’ Section).",
-          "list-2": "Higher Loyalty Levels increase but do not guarantee priority allocation to the desired Tranche.",
-          "list-3": "Reallocation is automated. If Lenders are not satisfied with their participation in a lower-yielding Tranche, they may either ‘opt-out’ within 48 hours of being informed by Kasu of the end borrower(s) to which their funds will be loaned, or they must submit a Loan Withdrawal Request as outlined earlier.",
+          "list-1": "The lower-yielding Tranche will have higher priority ranking in terms of recovery of funds in the event of losses (see ‘Risk Disclosure: Senior, Mezzanine and Junior Tranches’ Section above).",
+          "list-2": "Higher Loyalty Levels increase priority allocation to a desired Tranche, but do not guarantee it.",
+          "list-3": "Reallocation is automated. If Lenders are not satisfied with their participation in a lower-yielding Tranche, they may either ‘opt-out’ within 48 hours of being informed by Kasu of the end borrower(s) to which their funds will be loaned, or they must submit a Loan Withdrawal Request as outlined earlier. Note that the opt-out mechanism is only available for Lenders with less than a combined value of 350,000 USDC of existing lending and outstanding Lending Requests.",
           "list-4": "Any unallocated funds at the end of the reallocation process will be returned to the Lenders that have been rejected if the Senior Tranche is still oversubscribed."
         },
         "capacity": "Capacity",
@@ -632,11 +630,13 @@
         "title": "Automated Opt-In",
         "subtitle": "Acknowledgment of Automated Opt-In",
         "subtitle-description": "By lending through Kasu, Lenders acknowledge and accept that if they do not select Opt-out within the 48 hour timeframe of being informed of the identity of the end borrower(s) to which their funds will be loaned, their funds will be automatically deployed. At that point, funds can only be returned via the normal Withdrawal Request process.",
+        "description-8": "The following applies to Lenders with aggregate value of existing loans and queued Lending Requests equal to or greater than 350,000 USDC.",
         "description-1": "Once a Lending Request is accepted, the Delegate has 30 days to identify an end borrower to which a Lender’s funds will be deployed. Once the Delegate identifies a suitable end borrower(s), the Lender is informed via email of the identity of the end borrower(s) to which their funds will be loaned.",
         "description-2": "The Lender is offered the following choices:",
         "description-3": "Lenders are able to select Opt-in or Opt-out requests via the",
-        "description-4": "in the Kasu dApp once their wallet is connected.",
+        "description-4": ", after connecting their Web3 wallet to the Kasu platform.",
         "description-5": "The above process repeats each time a Lender’s funds are deployed to another end borrower(s).",
+        "description-9": "It is noted that should an end borrower not be identified within 30 days, the Delegate will return the funds to the Lender (subject to available liquidity).",
         "description-6": "It is each Lender's responsibility to ensure their email spam filters are adjusted to accept emails from the address:",
         "description-7": "Kasu accepts no responsibility for any emails that have been missed.",
         "list-1": {
@@ -670,12 +670,21 @@
           },
           "list-2": {
             "title": "Notice Period for Return of Funds: ",
-            "description": "Lenders can request their funds be fully returned upon the expiry of the fixed term period, without having to undergo the normal Withdrawal Request process and the associated queueing system; however Lenders must notify Kasu prior to the four epochs leading up to the fixed term expiry date by following the notification process outlined on the Kasu platform (see ‘My Portfolio’ by the ‘My Lending Portfolio’ section on the Kasu platform)."
+            "description": " Lenders can request their funds be fully returned upon the expiry of the fixed term period, without having to undergo the normal Withdrawal Request process and the associated queueing system; however Lenders must notify Kasu prior to the four epochs leading up to the fixed term expiry date by following the notification process outlined on the Kasu platform (see My Portfolio > Lending Portfolio tab on the Kasu platform after connecting a Web3 wallet)."
           },
           "list-3": {
             "title": "No Notice Provided for Return of Funds: ",
             "description": "should a Lender not provide notice as required, their loan will automatically convert to the prevailing variable APY, and which will be subjected to the normal Withdrawal Request process."
           }
+        }
+      },
+      "subheader-10": {
+        "title": "Exemption from End Borrower Disclosure and Opt-In Mechanism",
+        "description": "Once the aggregate value of a Lender’s existing Loans and queued Lending Requests reaches a total equal to or greater than 350,000 USDC, all lending provided by a Lender will be subject to a contract designed for larger lenders. As such, amongst other things, Kasu will no longer undertake the following:",
+        "list-1": {
+          "list-0": "Return funds to the Lender if an end borrower is not identified within 30 days of the Lending Request being accepted.",
+          "list-1": "Inform the Lender of the identity of any end borrower(s) to which their funds will be loaned.",
+          "list-2": "Offer the Lender the opportunity Opt-in or Opt-out of their funds being deployed to any end borrower(s)."
         }
       }
     },
@@ -766,17 +775,18 @@
         "metric-3": "Lending Amount",
         "metric-3-tooltip": "The USDC amount you have requested for lending to this Lending Strategy.",
         "metric-4": "Total Existing Lending",
-        "metric-4-tooltip": "Your current USDC lending balance in this Lending Strategy",
-        "metric-5-tooltip": "The loan Tranche that you have made a lending request for."
+        "metric-4-tooltip": "The loan Tranche that you have made a lending request for.",
+        "metric-5": "Fixed Loan Term Expiry Date",
+        "metric-5-tooltip": "A Fixed APY Term Loan will be fixed (locked) for the specified period of time. The fixed term start date will be on the first day of the next epoch after the Lending Request is accepted. During a Fixed APY Term, no Withdrawal Request can be submitted.",
+        "nextClearingText": "The outcome of your Lending Request will be determined at the end of the epoch clearing period."
       },
       "completed": {
-        "description-1": "You have successfully queued:",
+        "description-1": "Your Lending Request has been successfully queued​",
         "description-2": "Lending Request submitted for the next Epoch",
         "description-3": "What happens next?​",
-        "description-4": "Because Kasu is all about transparency and choice....​",
+        "description-4": "Kasu is all about choice, transparency and control to Lenders, which is demonstrated by the following:",
         "description-5": "​Once your lending request is processed:",
-        "description-6": "The above is fully detailed in the",
-        "description-7": "you accepted.",
+        "description-6": "*Only applies to Lenders with less than 350,000 USDC total lending (including queued Lending Requests).",
         "list": {
           "list-0": {
             "title": "Tracking",
@@ -786,15 +796,15 @@
           "list-1": {
             "title": "Transparency",
             "description-1": "look out for an email from",
-            "description-2": "informing you exactly which end borrower(s) your funds will be loaned to. Be sure to adjust your spam filter to accept emails from this address.​"
+            "description-2": "informing you exactly which end borrower(s) your funds will be loaned to. Be sure to adjust your spam filter to accept emails from this address.​*"
           },
           "list-2": {
-            "title": "Choice",
-            "description": "if you decide you don’t want your funds being loaned to the particular end borrower, you may opt out within 48 hours​."
+            "title": "Choice & Control",
+            "description": "if you decide you don’t want your funds being loaned to the particular end borrower, you may opt out within 48 hours​.*"
           },
           "list-3": {
             "title": "Informed",
-            "description": "the above process will repeat every time your funds are reallocated to another end borrower, keeping you fully informed across all your lending on Kasu."
+            "description": "the above process will repeat every time your funds are reallocated to another end borrower, keeping you fully informed across all your lending on Kasu.*"
           }
         },
         "viewTx": "View Transaction (TX)"
@@ -812,7 +822,7 @@
       "nextEpoch": "Your funds will be returned to you at the start of the next Epoch.​"
     },
     "requestDetails": {
-      "title": "Request Details",
+      "title": "Lending Request & RWA Loan Deployment Transaction History",
       "metric-1": "Lending Request Date",
       "metric-1-tooltip": "info",
       "metric-2": "Total Requested",
@@ -827,7 +837,7 @@
       "metric-6-tooltip": "info",
       "metric-7": "Total Reallocated In",
       "metric-7-tooltip": "info",
-      "subtitle": "Subsequent Transactions (Post Acceptance)",
+      "subtitle": "RWA Loan Deployment Status (Post Acceptance)",
       "notAcceptedMessage": {
         "lending": "The outcome of your Lending Request will be determined at the end of the epoch clearing period.​",
         "withdrawal": "The outcome of your Withdrawal Request will be determined at the end of the epoch clearing period.​"
@@ -874,7 +884,7 @@
             "label": "(Lender)."
           },
           "list-1": {
-            "description": "Kasu, Reg No#: 402812, WB Corporate Services (Cayman) Ltd., PO Box 2775, 71 Fort Street, 3rd Floor, Grand Cayman, KY1-1111, Cayman Islands,",
+            "description": "Kasu, Reg No#: 402812, WB Corporate Services (Cayman) Ltd., PO Box 2775, 71 Fort Street, 3rd Floor, Grand Cayman, KY1-1111, Cayman Islands",
             "label": "(Borrower)."
           }
         }
@@ -882,7 +892,7 @@
       "subheader-2": {
         "title": "Background:",
         "list": {
-          "list-0": "Definitions and Interpretation",
+          "list-0": "The Lender has agreed to provide a business loan to the Borrower, for on-lending.",
           "list-1": "The Lender and Borrower have agreed to enter this loan transaction on the basis of the terms and conditions set out in this Agreement."
         }
       },
@@ -904,15 +914,24 @@
                 },
                 "list-2": {
                   "label": "Apxium",
-                  "description": "means Onebox Professional Pty Limited ABN 52 613 105 561 or OneBox Services Pty Ltd ABN 88 613 105 776, both trading as Apxium and/or nominee."
+                  "description": {
+                    "retail": "means Onebox Finance US LLC EIN 37 215 7564 and/or nominee.",
+                    "exempt": "means Onebox Professional Pty Limited ABN 52 613 105 561 or OneBox Services Pty Ltd ABN 88 613 105 776, both trading as Apxium and/or nominee."
+                  }
                 },
                 "list-3": {
                   "label": "Business Lending Opportunity",
-                  "description": "means a unique Business Lending Opportunity displayed on the Kasu Platform offered by the Borrower, including the Loan Amount, Value Type, specified End Borrower, and Charges"
+                  "description": {
+                    "retail": "means a unique Business Lending Opportunity displayed on the Kasu Platform offered by the Borrower, including the Loan Amount, Value Type, specified End Borrower, and Charges",
+                    "exempt": "means a unique Business Lending Opportunity displayed on the Kasu Platform offered by the Borrower, including the Loan Amount, Value Type, and Charges"
+                  }
                 },
                 "list-4": {
-                  "label": "Charges means",
-                  "description": "the fees, charges and costs displayed on the Kasu Platform that the Borrower levies on the Loan, from the Lender, in exchange for making the Loan Amount available to the End Borrower through the Business Lending Opportunity."
+                  "label": "Charges",
+                  "description": {
+                    "retail": "means the fees, charges and costs displayed on the Kasu Platform that the Borrower levies on the Loan, from the Lender, in exchange for making the Loan Amount available to the End Borrower through the Business Lending Opportunity.",
+                    "exempt": "means the fees, charges and costs displayed on the Kasu Platform that the Borrower levies on the Loan, from the Lender, in exchange for making the Loan Amount available to an End Borrower through the Business Lending Opportunity."
+                  }
                 },
                 "list-5": {
                   "label": "Deployment Date",
@@ -920,7 +939,7 @@
                 },
                 "list-6": {
                   "label": "End Borrower",
-                  "description": "means that the non-individual business who the Borrower, though Apxium as intermediary, is the recipient of the Loan Amount less the Charges."
+                  "description": "means the non-individual business who the Borrower, though Apxium as intermediary, is the recipient of the Loan Amount less the Charges."
                 },
                 "list-7": {
                   "label": "Interest",
@@ -928,15 +947,15 @@
                 },
                 "list-8": {
                   "label": "Interest Rate",
-                  "description": "means the fixed or variable Interest Rate specified in the particular Business Lending Opportunity, and is not contingent on other factors."
+                  "description": "means the fixed or variable interest rate specified in the particular Business Lending Opportunity, and is not contingent on other factors."
                 },
                 "list-9": {
                   "label": "Kasu",
-                  "description": "means Kasu, Reg No#: 402812, WB Corporate Services (Cayman) Ltd., PO Box 2775, 71 Fort Street, 3rd Floor, Grand Cayman, KY1-1111, Cayman Islands,]. Kasu does not hold an Australian Credit licence, or Australian Financial Services licence."
+                  "description": "means Kasu, Reg No#: 402812, WB Corporate Services (Cayman) Ltd., PO Box 2775, 71 Fort Street, 3rd Floor, Grand Cayman, KY1-1111, Cayman Islands. Kasu does not hold an Australian Credit licence, or Australian Financial Services licence."
                 },
                 "list-10": {
                   "label": "Kasu Platform",
-                  "description": "means the digital platform upon which Kasu makes available one or more      Business Lending Opportunities, and this Agreement."
+                  "description": "means the digital platform upon which Kasu makes available one or more Business Lending Opportunities, and this Agreement."
                 },
                 "list-11": {
                   "label": "Loan",
@@ -956,7 +975,7 @@
                 },
                 "list-15": {
                   "label": "Term",
-                  "description": "means the term duration between the Deployment Date and receipt of a valid Withdrawal Notice by the Borrower."
+                  "description": "means the term duration between the Deployment Date and, for a variable Loan the receipt of a valid Withdrawal Notice by the Borrower, or for a fixed loan the end of the fixed rate period."
                 },
                 "list-16": {
                   "label": "Tranche",
@@ -972,7 +991,7 @@
                 },
                 "list-19": {
                   "label": "Withdrawal Notice",
-                  "description": "means a written request to withdraw the Loan Amount, and capitalised Interest, less the Charges from Kasu in a form specified on Kasu’s platform."
+                  "description": "means a written request to withdraw all or part of a variable Loan Amount and capitalised Interest less the Charges from Kasu in a form specified on the Kasu platform."
                 }
               }
             }
@@ -983,7 +1002,10 @@
               "title": "The Lender has requested the Borrower to pay the Loan Amount in connection with a specific Business Lending Opportunity (Request) by publishing the Business Lending Opportunity."
             },
             "list-1-2-list": {
-              "title": "The Borrower has provisionally accepted the Request, subject to a reasonable period (Provisional Period), during which Kasu will:",
+              "title": {
+                "retail": "The Borrower has provisionally accepted the Request, subject to a reasonable period (Provisional Period), during which Kasu will:",
+                "exempt": "The Borrower has provisionally accepted the Request, subject to a reasonable period (Provisional Period), during which Kasu will assess the provision of information required to satisfy Kasu’s AML / CTF requirements and sanctions obligations."
+              },
               "list-1-2-list-0": {
                 "list-0": "assess the provision of information required to satisfy Kasu’s AML / CTF requirements) and sanctions obligations;",
                 "list-1": "ascertain the requirement of debt for the Business Lending Opportunity nominated by the Lender at the time of the Request; and",
@@ -1005,10 +1027,13 @@
               "list-2-1-list-0": {
                 "list-0": "accepted the Request by clicking on the designated areas of the Business Lending Opportunity; and",
                 "list-1": {
-                  "title": "agreed to pay Loan Amount to the Borrower immediately for the period of the:",
+                  "title": "agreed to pay the Loan Amount to the Borrower immediately for the period of the:",
                   "list-2-1-list-0-list-1-list": {
                     "list-0": "Provisional Period; and",
-                    "list-1": "subject to acceptance of the Final Request, the Term."
+                    "list-1": {
+                      "retail": "subject to acceptance of the Final Request, the Term.",
+                      "exempt": "the Term."
+                    }
                   }
                 }
               }
@@ -1018,15 +1043,24 @@
             },
             "list-2-3-list": {
               "title": "In recognition of the Loan Amount, the Borrower will provide the Lender with one or more Tokens which record their interests under this agreement."
+            },
+            "list-2-4-list": {
+              "title": "The Lender agrees that where the aggregate value of all Loans and queued loan requests they provide via the Kasu Platform becomes equal to or greater than 350,000 USDC, the terms of this Agreement will apply to all lending provided by the Lender and supersede any and all terms applying to any and all previous Loan(s) provided by the Lender via the Kasu Platform. The terms of this Agreement will continue to apply in the event that a Lender’s aggregate lending is reduced to value below 350,000 USDC but above 0 USDC."
             }
           },
           "list-3": {
             "title": "Interest",
             "list-3-1-list": {
-              "title": "Interest in respect of the Loan is calculated daily, and accrues every 7 days or at such other intervals as specified by the Borrower, from the date of receipt of the Loan Amount (less Charges) to the End Borrower."
+              "title": {
+                "retail": "Interest in respect of the Loan is calculated and accrued every 7 days or at such other intervals as specified by the Borrower, from the date of receipt of the Loan Amount (less Charges) to the End Borrower.",
+                "exempt": "Interest in respect of the Loan is calculated and accrued every 7 days or at such other intervals as specified by the Borrower, from the Deployment Date."
+              }
             },
             "list-3-2-list": {
-              "title": "Between the time of the Loan Amount being provided to the Borrower, and receipt of the Loan Amount (less Charges), by the End Borrower, the interest rate will:",
+              "title": {
+                "retail": "Between the time of the Loan Amount being provided to the Borrower, and receipt of the Loan Amount (less Charges), by the End Borrower, the interest rate will:",
+                "exempt": "The interest rate payable will be at the rate specified in the Business Lending Opportunity."
+              },
               "list-3-2-list-0": {
                 "list-0": "not apply for a period of between 1 and 7 days, whilst the Borrower is accruing / transferring funds for Apxium; and",
                 "list-1": "be, after this time period, for a period of up to 30 days, at a rate specified in the Business Lending Opportunity."
@@ -1038,59 +1072,76 @@
           },
           "list-4": {
             "title": "Application of Loan Amount",
-            "description": "Kasu will transfer the Loan Amount, less Charges, to Apxium to make available to the End Borrower. The Lender’s rights are limited to Kasu under this Loan Agreement, and contingent on:",
+            "description": {
+              "retail": "Kasu will transfer the Loan Amount, less Charges, to Apxium to make available to the End Borrower. The Lender’s rights are limited to Kasu under this Loan Agreement, and contingent on:",
+              "exempt": "Kasu will transfer the Loan Amount, less Charges, to Apxium to make available to End Borrowers. The Lender’s rights are limited to Kasu under this Loan Agreement, and contingent on:"
+            },
             "list-4-1-list": {
               "title": "Apxium’s and the End Borrower’s actions as set out in clause 6.2; and"
             },
             "list-4-2-list": {
-              "title": "the priority and tranche specified in the Business Lending Opportunity."
+              "title": "the priority and Tranche specified in the Business Lending Opportunity."
             }
           },
           "list-5": {
             "title": "Withdrawal Rights and Repayment Priority",
             "list-5-1-list": {
               "title": "Withdrawal Notice",
-              "description": "If the Lender wishes withdraw from this Agreement, or withdraw a part of its Loan Amount, it must submit a withdrawal notice to the Borrower (Withdrawal Notice). The Withdrawal Notice must specify the amount to be withdrawn and comply with any other requirements outlined by the Borrower in the Business Lending Opportunity on the Kasu Platform."
+              "list-5-1-list-0": {
+                "list-0": "If the Lender wishes to withdraw all or a part of its Loan Amount, it must submit a Withdrawal Notice to the BorrowerThe Withdrawal Notice must specify the amount to be withdrawn and comply with any other requirements outlined by the Borrower in the Business Lending Opportunity on the Kasu Platform.",
+                "list-1": "If the Lender has entered into a fixed Loan, they are unable to submit a Withdrawal Notice or make a withdrawal, in whole or in part, during the fixed period. Lenders that wish to be repaid at the expiry of the fixed rate period must notify the Borrower via the Kasu Platform at least 28 days prior to expiry of the fixed rate period. In that event, repayment by the Borrower will be subject to clauses 6.2(b)(i) and 6.2(c) and the Borrower shall repay the loan no later than seven days after expiry of the fixed rate period. In the event that the Lender does not make such a notification, on expiry of the fixed rate period, the Lender’s fixed Loan automatically converts to the prevailing variable interest rate, at which time the Lender will be subject to the normal Withdrawal Notice process as set out in this clause 6."
+              }
             },
             "list-5-2-list": {
               "title": "Contingent Repayment of Withdrawn Amounts",
-              "description": "Upon receipt of a valid Withdrawal Notice, the Borrower:",
+              "description": {
+                "retail": "Upon receipt of a valid Withdrawal Notice for a variable loan, the Borrower:",
+                "exempt": "Upon receipt of a valid Withdrawal Notice - which applies only to variable Loans - the Borrower:"
+              },
               "list-5-2-list-0": {
                 "list-0": "shall repay the Loan, or any lesser amount specified in the Withdrawal Notice, to the Lender within 90 calendar days;",
                 "list-1": {
-                  "title": "the Borrower’s obligations under 6.2.1 are contingent upon:",
+                  "title": "the Borrower’s obligations under 6.2(a) are contingent on:",
                   "list-5-2-list-0-list-1-list": {
                     "list-0": "the End Borrower repaying the sum of the Loan to Apxium, and Apxium repaying that amount to Kasu within that time period; and",
-                    "list-1": "in the priority of their Loyalty Status set out in clause 6.3 below."
+                    "list-1": "the priority of the Lender’s Loyalty Status set out in clause 6.3 below."
                   }
                 },
                 "list-2": {
                   "title": "If a lesser amount than the full Loan is repaid to Kasu, then Kasu will:",
                   "list-5-2-list-0-list-2-list": {
-                    "list-0": "repay this sum to the Borrower in partial satisfaction of the Loan, subject to the priority set out in clause 6.3 below; and",
-                    "list-1": "Kasu, acting reasonably, will provide the Borrower with an Amendment Notice."
+                    "list-0": "repay this sum to the Lender, which for variable loans is also subject to the priority set out in clause 6.3 below; and",
+                    "list-1": "Kasu, acting reasonably, will provide the Lender with an Amendment Notice."
                   }
                 }
               }
             },
             "list-5-3-list": {
-              "title": "Priority based on Loyalty Status",
+              "title": "Withdrawal priority based on Loyalty Status",
               "list-5-3-list-0": {
                 "title": "The Loyalty Status of a Lender is determined by the criteria set forth in Schedule 1 of this Agreement."
               },
               "list-5-3-list-1": {
-                "title": "Where multiple Lenders lend to a Business Lending Opportunity, Lenders with higher Loyalty Status shall receive priority in the repayment of their withdrawn amounts over Lenders with lower Loyalty Status."
+                "title": "Where multiple Lenders lend to a Business Lending Opportunity that is a variable loan, Lenders with higher Loyalty Status shall receive priority in the repayment of their withdrawn amounts over Lenders with lower Loyalty Status."
               },
               "list-5-3-list-2": {
-                "title": "If multiple Lenders within the same Loyalty Status submit Withdrawal Notices, repayment amounts, if less than the total Loan, will be distributed pro-rata as between them and together with an Amendment Notice."
+                "title": "If multiple Lenders within the same Loyalty Status submit Withdrawal Notices for a Business Lending Opportunity that is a variable loan, the repayment amount, if less than the total Loan, will be distributed pro-rata as between them and together with an Amendment Notice."
               }
             }
           },
           "list-6": {
+            "title": "Forced withdrawal",
+            "description": "Kasu reserves the right to terminate a Lender’s variable or fixed Loan at any time and without notice. In the event that Kasu terminates a Lender’s Loan in such circumstances, the Lender will receive interest at the rate specified in the Business Lending Opportunity up to and including the date of termination. The Lender agrees that payment of interest by Kasu up to and including the date of termination is in full satisfaction of their rights under this Agreement and applicable law and holds Kasu harmless in such circumstances."
+          },
+          "list-7": {
+            "title": "Immediate withdrawal",
+            "description": "Based on a Lender’s activity on the platform or due to the application of applicable laws including but not limited to laws restricting money laundering and terrorism financing, Kasu reserves the right in its absolute discretion to immediately and without notice suspend a Lender’s access to their funds and/or to effect an immediate withdrawal of their Loan. In the event of an immediate withdrawal, Kasu will pay and the Lender agrees to receive interest only up to the end of the immediately prior seven day interest interval."
+          },
+          "list-8": {
             "title": "Representations and warranties",
-            "list-6-1-list": {
+            "list-8-1-list": {
               "title": "Each party represents and warrants to the other that:",
-              "list-6-1-list-0": {
+              "list-8-1-list-0": {
                 "list-0": {
                   "title": "it has full power and authority to enter into and do all things under this Agreement;"
                 },
@@ -1099,36 +1150,42 @@
                 },
                 "list-2": {
                   "title": "for the Lender, that:",
-                  "list-6-1-list-0-list-2-list": {
+                  "list-8-1-list-0-list-2-list": {
                     "list-0": "they are not in the business of providing credit as defined by the NCCP;",
-                    "list-1": "the economic value of the Loan Amount is set at the date of the Deployment Date at the prevailing conversion rate to AUD;",
+                    "list-1": "the economic value of the Loan Amount is set at the date of the Deployment Date at the prevailing conversion rate to United States dollars;",
                     "list-2": "that they are wholly responsible for the safeguarding of tokens provided to them in connection with this Agreement; and",
-                    "list-3": "that their assignment of the token, and entry into this Agreement, is legally permitted in their jurisdiction."
+                    "list-3": "that their assignment of the Token, and entry into this Agreement, is legally permitted in their jurisdiction."
                   }
                 }
               }
             }
           },
-          "list-7": {
+          "list-9": {
             "title": "General",
-            "list-7-1-list": {
+            "list-9-1-list": {
               "title": "Confidentiality",
               "description": "The Lender must:",
-              "list-7-1-list-0": {
-                "list-0": "keep the terms of this Agreement confidential, and must not disclose the details of it;",
-                "list-1": "not disclose any information that identifies an End Borrower, as obtained in connection with this Loan Agreement;",
+              "list-9-1-list-0": {
+                "list-0": {
+                  "retail": "keep the terms of this Agreement confidential, and must not disclose the details of it;",
+                  "exempt": "keep the terms of this Agreement confidential, and must not disclose the details of it; and"
+                },
+                "list-1": {
+                  "retail": "not disclose any information that identifies an End Borrower, as obtained in connection with this Loan Agreement;",
+                  "exempt": "not disclose any information that identifies an End Borrower, if or as obtained in connection with this Loan Agreement."
+                },
                 "list-2": "take all steps reasonably necessary to maintain the confidentiality of any information that identifies an End Borrower, including to secure such information against theft, loss or unauthorised disclosure."
               }
             },
-            "list-7-2-list": {
+            "list-9-2-list": {
               "title": "Acceptance",
-              "description": "The acceptance of the Borrower’s request, and entry into this Contingent Loan Agreement, will be taken to have occurred when the Lender purchases a Token."
+              "description": "The acceptance of the Borrower’s request, and entry into this Contingent Loan Agreement, will be taken to have occurred when the Lender receives a Token."
             },
-            "list-7-3-list": {
+            "list-9-3-list": {
               "title": "Assignment",
-              "description": "This Agreement is binding on the parties and neither party must assign this Agreement or any of its rights or obligations under this Agreement."
+              "description": "This Agreement is binding on the parties and neither party may assign this Agreement or any of its rights or obligations under this Agreement."
             },
-            "list-7-4-list": {
+            "list-9-4-list": {
               "title": "Governing law and jurisdiction",
               "description": "This agreement takes effect, is governed by, and will be construed in accordance with the laws from time to time in force in the State of South Australia, Australia. The parties submit to the non-exclusive jurisdiction of the courts of the State of South Australia, Australia."
             }
@@ -1136,36 +1193,63 @@
         }
       },
       "subheader-4": {
-        "title": "Loyalty Status Criteria:",
+        "title": "Schedule 1. Loyalty Status Criteria",
         "subheader-4-1": {
-          "title": "Loyalty Level 1",
-          "description": "If the value of a Lender’s rKSU balance, relative to their total current and pending USDC lending (including USDC lending requests that are yet to be cleared) across all Business Lending Opportunities is 1% or greater, but less than 5%, then the Lender will achieve Loyalty Level 1. This entitles the Lender to the following utility and benefits:",
-          "list": {
-            "list-0": "Second order priority access to Business Lending Opportunities available on Kasu (including loan Tranches within each Business Lending Opportunity) in the case that they are oversubscribed (behind Loyalty Level 2).",
-            "list-1": "Second order priority for capital withdrawals (i.e. when a withdrawal request is made) from existing Lending (behind Loyalty Level 2).",
-            "list-2": "Additional interest earnings (bonus interest) awarding the Lender with bonus interest earnings on all their lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements)."
+          "title": "Obtain rKSU to Achieve a Loyalty Level",
+          "description-1": "Lenders must lock KSU to obtain the required levels of rKSU relative to their lending (outlined in the Loyalty Level 1 and Loyalty Level 2 explanations below) to achieve a Loyalty Level in order to activate the following utility/benefits:",
+          "description-2": "Each KSU locking period detailed below will entitle a Lender to a multiplier on the specific amount of temporary, non-redeemable and non-transferrable, rKSU that will accumulate, so long as KSU remains locked. A synthetic value is applied to rKSU, which is pegged to the KSU price (i.e. if the price of KSU rises, so will the synthetic value of rKSU; and if the price of KSU falls, so will the synthetic value of rKSU).",
+          "description-3": "The amount of rKSU obtained is based on a multiplier applied to the amount of locked KSU:",
+          "description-4": "For example, a Lender that locks 100 KSU for 30 days will receive 5 rKSU. Similarly, a Lender that locks 100 KSU for 360 days will receive 50 rKSU. The manner in which a Lender’s rKSU is used to determine their Loyalty Level (and associated utility/benefits) is described below.",
+          "list-0": {
+            "list-1": "Priority access to Business Lending Opportunities available on Kasu including loan Tranches in the case that they are oversubscribed.",
+            "list-2": "Priority for Withdrawal Requests from existing Lending.",
+            "list-3": "Additional interest (bonus interest) on all lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements)."
+          },
+          "list-1": {
+            "list-1": "This multiplier varies according to a Lender’s locking period, per the below table.",
+            "list-2": "The synthetic value of a Lender’s rKSU balance, relative to the total combined value of a Lender’s current USDC lending (inclusive of queued USDC Lending Requests that have yet to be cleared) across all Business Lending Opportunities determines a Lender’s Loyalty Level (outlined in the Loyalty Level 1 and Loyalty Level 2 explanations below))."
           }
         },
         "subheader-4-2": {
-          "title": "Loyalty Level 2",
-          "description": "If the value of a Lender’s rKSU balance, relative to their total current USDC lending (including USDC lending requests that are yet to be cleared) across all Business Lending Opportunities is 5% or greater, then the Lender will achieve Loyalty Level 2. This entitles the lender to the following utility and benefits:",
+          "title": "No Loyalty Level",
+          "description-1": "If the synthetic value of a Lender’s rKSU balance, relative to their total combined value of current USDC lending (inclusive of queued USDC Lending Requests that are yet to be cleared) across all Business Lending Opportunities is less than 1%, then the Lender will not achieve a Loyalty Level. The Lender therefore will not be entitled to the following utility/benefits:",
+          "description-2": "For example, a Lender has 1,500 USDC in existing lending, and a further 100 USDC queued Lending Requests (that have yet to be accepted). The Lender has also purchased and locked 200 KSU for 30 days. The 0.05x rKSU multiplier (per the above table) provides the Lender with 10 rKSU. For the purposes of this calculation, it is assumed that the current price of KSU is 1 USDC. Therefore, the synthetic value of the Lender’s 10 rKSU is 10 USDC.",
+          "description-3": "Based on the formula outlined above, this ratio of the Lender’s rKSU to current USDC lending (inclusive of queued Lending Requests that have yet to be accepted) is as follows:",
+          "description-4": "The resultant output demonstrates that it is less than 1%. Therefore, the Lender has not achieved a Loyalty Level:",
+          "example-1": "rKSU synthetic value / (Current Lending + Queued Lending Requests)",
+          "example-2": "10USDC / (1,500USDC + 100 USDC) = 0.63%",
           "list": {
-            "list-0": "First order priority access to Business Lending Opportunities available on Kasu (including loan Tranches within each Business Lending Opportunity) in the case that they are oversubscribed.",
-            "list-1": "First order priority for capital withdrawals (i.e. when a withdrawal request is made) from existing lending.",
-            "list-2": "Additional interest earnings (bonus interest) awarding the Lender with higher bonus interest earnings than Loyalty Level 1 on all their lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements)."
+            "list-0": "Priority access to Business Lending Opportunities available on Kasu including loan Tranches in the case that they are oversubscribed.",
+            "list-1": "Priority for Withdrawal Requests from existing Lending.",
+            "list-2": "Additional interest (bonus interest) on all lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements)."
           }
         },
         "subheader-4-3": {
-          "title": "No Loyalty Level",
-          "description": "Lenders who do not also purchase the KSU token and lock it for a minimum period (outlined below) to derive rKSU and achieve a Loyalty Level, do not achieve the above utility/benefits."
+          "title": "Loyalty Level 1",
+          "description-1": "If the value of a Lender’s rKSU balance, relative to their total combined value of current USDC lending (inclusive of queued USDC Lending Requests that are yet to be cleared) across all Business Lending Opportunities equals 1% but less than 5%, then the Lender will achieve Loyalty Level 1. This entitles the Lender to the following utility and benefits:",
+          "description-2": "For example, a Lender has 400 USDC in existing lending, and a further 100 USDC queued Lending Requests (that have yet to be accepted). The Lender has also purchased and locked 200 KSU for 30 days. The 0.05x rKSU multiplier (per the above table) provides the Lender with 10 rKSU. For the purposes of this calculation, it is assumed that the current price of KSU is 1 USDC. Therefore, the synthetic value of the Lender’s 10 rKSU is 10 USDC.",
+          "description-3": "Based on the formula outlined above, this ratio of the Lender’s rKSU to current USDC lending (inclusive of queued Lending Requests that have yet to be accepted) is as follows:",
+          "description-4": "The resultant output demonstrates that it exceeds 1%, but is less than 5%, providing the Lender with Loyalty Level 1:",
+          "example-1": "rKSU synthetic value / (Current Lending + Queued Lending Requests)",
+          "example-2": "10USDC / (400USDC + 100 USDC) = 2.00%",
+          "list": {
+            "list-0": "Second order priority access to Business Lending Opportunities available on Kasu including loan Tranches in the case that they are oversubscribed (behind Loyalty Level 2)",
+            "list-1": "Second order priority for Withdrawal Requests from existing Lending (behind Loyalty Level 2) but only for variable interest rate loans (not fixed interest rate loans).",
+            "list-2": "Additional interest (Loyalty Level 1 bonus interest) on all lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements)."
+          }
         },
         "subheader-4-4": {
-          "title": "Derive rKSU to Achieve a Loyalty Level",
-          "description": "Lenders must lock KSU to derive rKSU. The amount of rKSU a Lender can derive is based on a multiplier applied to the amount of locked KSU.",
+          "title": "Loyalty Level 2",
+          "description-1": "If the synthetic value of a Lender’s rKSU balance, relative to their total combined value of current USDC lending (inclusive of queued USDC Lending Requests that are yet to be cleared) across all Business Lending Opportunities equals 5% or greater, then the Lender will achieve Loyalty Level 2. This entitles the lender to the following utility and benefits:",
+          "description-2": "For example, a Lender has 100 USDC in existing lending, and a further 30 USDC queued Lending Requests (that have yet to be accepted). The Lender has also purchased and locked 200 KSU for 30 days. The 0.05x rKSU multiplier (per the above table) provides the Lender with 10 rKSU. For the purposes of this calculation, it is assumed that the current price of KSU is 1 USDC. Therefore, the synthetic value of the Lender’s 10 rKSU is 10 USDC.",
+          "description-3": "Based on the formula outlined above, this ratio of the Lender’s rKSU to current USDC lending (inclusive of queued Lending Requests that have yet to be accepted) is as follows:",
+          "description-4": "The resultant output demonstrates that it exceeds 5%, providing the Lender with Loyalty Level 2:",
+          "example-1": "rKSU synthetic value / (Current Lending + Queued Lending Requests)",
+          "example-2": "10USDC / (100USDC + 30 USDC) = 7.69%",
           "list": {
-            "list-0": "This multiplier varies according to the locking period, per the below table.",
-            "list-1": "The value of a Lender’s rKSU balance relative to their total current and pending USDC lending across all Business Lending Opportunities determines the Loyalty Level (outlined above).",
-            "list-2": "Your Loyalty Level determines the extent of a Lender’s token utility/benefits (outlined above)."
+            "list-0": "First order priority access to Business Lending Opportunities available on Kasu (including loan Tranches in the case that they are oversubscribed.",
+            "list-1": "First order priority for Withdrawal Requests  from existing lending but only for variable interest rate loans (not fixed interest rate loans).",
+            "list-2": "Additional interest (Loyalty Level 2 bonus interest) on all lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements)."
           }
         }
       }
@@ -1289,6 +1373,28 @@
       "metric-4-tooltip": "The date of your original lending request.",
       "nextClearingText": "This Lending Request will be either Accepted or Rejected at the end of the epoch clearing period.",
       "cancel-button": "Cancel Lending Request"
+    },
+    "withdrawal": {
+      "title": "Withdrawal Request",
+      "reviewTitle": "Confirm Withdrawal Request",
+      "confirmedTitle": "Withdrawal Request Confirmed",
+      "metric-1": "Withdraw from",
+      "metric-1-tooltip": "The Lending Strategy that you are requesting a withdrawal from",
+      "metric-2": "Total Loan Balance",
+      "metric-2-tooltip": "Your current USDC lending balance across all Tranches in this lending strategy",
+      "metric-3": "Tranche Loan Balance",
+      "metric-3-tooltip": "Your current USDC lending balance in the Tranche selected below",
+      "metric-4": "Available to Withdraw",
+      "metric-4-tooltip": "The USDC amount available for withdrawal from the Tranche selected below, after accounting for existing Withdrawal Requests that are currently queued and fixed APY loans (if applicable). i.e. Fixed APY loans can only be withdrawn uppon the fixed term expiry.",
+      "metric-5": "Withdrawal Request Amount",
+      "metric-5-tooltip": "The USDC amount you are requesting to withdraw",
+      "selectTranche": "Select Tranche",
+      "schedule": {
+        "description-1": "The fulfilment of Withdrawal Requests is contingent upon excess liquidity within a Lending Strategy, and may therefore remain outstanding (or partially outstanding) for more than one epoch. Any Withdrawal Request left outstanding for more than five epochs will be prioritised above all Loyalty Levels until it is fulfilled. Refer to the",
+        "description-2": "for more details.",
+        "description-3": "The outcome of Withdrawal Requests is determined during the clearing period of each 7-day epoch.​"
+      },
+      "action": "Review Withdrawl Request"
     }
   },
   "lending": {
@@ -1296,10 +1402,12 @@
       "title": "Lending Strategy Overview",
       "subtitle": "Loan Overview",
       "subtitle-2": "Delegate & Lending Strategy Overview",
+      "strategyDeck": "Strategy Deck",
       "detailCard": {
         "apyStructure": {
           "label": "APY Structure",
-          "tooltip": "Indicates whether the APY offered by the Delegate to Lenders is fixed for a specified period of time, or variable.​ A variable APY will be subject to change every 4 epochs."
+          "tooltip-1": "Indicates whether the Delegate is offering Fixed and/or Variable APY loans for this Lending Strategy.",
+          "tooltip-2": "A Variable APY is subject to change depending on interest rate market fluctuations (increases/decrease). A Fixed APY will be locked for the specified period of time. During a fixed APY period, now Withdrawal Request can be submitted."
         },
         "fixedApyExpiry": {
           "label": "Fixed APY Expiry Date",
@@ -1414,6 +1522,8 @@
       },
       "transactionsHistory": {
         "title": "Your Transactions",
+        "depositTitle": "Your Lending Request Transactions",
+        "withdrawTitle": "Your Withdrawal Request Transactions",
         "tooltip": "The status of your lending requests and lending withdrawal requests to and from this Lending Strategy.",
         "reallocated": {
           "label": "Reallocated",
@@ -1489,9 +1599,10 @@
       },
       "confirmStep": {
         "withdrawInfo": "Your Withdrawal Request​ has been successfully queued:​",
-        "amountLabel": "to be withdrawn in the next Epoch",
-        "subjectLiquidity": "(subject to available liquidity)",
-        "depositedLabel": "to be deposited to the wallet address"
+        "description-1": "Withdrawal Request from",
+        "description-2": "submitted. The withdrawal amount fulfilled is subject to availably liquidity and will be determined during the",
+        "description-3": "clearing period of each 7-day epoch.",
+        "description-4": "Subject to available liquidity, Funds will be deposited to the wallet address"
       },
       "errors": {
         "invalidCriteria": "The value entered does not meet the criteria required for this field.",
@@ -1531,11 +1642,11 @@
       },
       "totalFunds": {
         "label": "Loan Origination Volume",
-        "tooltip": "Cumulative total USDC equivalent face value of all current and historical loans originated by the Delegate to end borrowers across all lending asset class, regardless of whether the loans have been made available on Kasu or not.​​​"
+        "tooltip": "Cumulative total USDC equivalent face value of all current and historical loans originated by the Delegate to End Borrowers across all Lending Asset Classes, regardless of whether the loans have been made available to Lenders on Kasu or not.​​​"
       },
       "totalLoans": {
         "label": "Total Loans Originated",
-        "tooltip": "Cumulative total number of all current and historical loans originated by the Delegate to end borrowers across all lending asset classes, regardless of whether the loans were made available on Kasu or not.​"
+        "tooltip": "Cumulative total number of all current and historical individual loans originated by the Delegate to end borrowers across all Lending Asset Classes, regardless of whether the loans have been made available to Lenders on Kasu or not.​"
       },
       "assetClass": {
         "label": "Asset Class(es)",
@@ -1547,7 +1658,7 @@
       },
       "loans": {
         "label": "Total Active Lending",
-        "tooltip": "Total USDC equivalent face value of all outstanding loans that the Delegate currently has deployed to end borrowers across all lending asset classes, regardless of whether the loans have been made available on Kasu or not.​"
+        "tooltip": "Cumulative total USDC equivalent face value of all outstanding loans that the Delegate currently has deployed to end borrowers across all Lending Asset Classes, regardless of whether the loans have been made available to Lenders on Kasu or not.​"
       },
       "loss": {
         "label": "Historical Loss Rate",
@@ -1811,7 +1922,8 @@
   "home": {
     "tabs": {
       "activePools": "Active Lending Strategies",
-      "closedPools": "Closed Lending Strategies"
+      "closedPools": "Closed Lending Strategies",
+      "oversubscribedPools": "Oversubscribed Lending Strategies"
     },
     "summary": {
       "metric-1": "Total Value Locked (TVL)",
@@ -1827,10 +1939,12 @@
     },
     "no-data": {
       "activePools": "No Active Lending Strategies",
-      "closedPools": "No Closed Lending Strategies."
+      "closedPools": "No Closed Lending Strategies.",
+      "oversubscribedPools": "No Oversubscribed Lending Strategies."
     },
     "card": {
       "loanTranches": "Loan Tranches",
+      "loanTranches-tooltip": "In the event of losses, Senior Tranche Lenders have the first claim on any recovered funds, followed by Mezzanine (if applicable), followed by Junior Tranche Lenders.​",
       "lendingAssetClass": "Lending Asset Class",
       "singleLoanOffer": "Single Loan Offer"
     },
@@ -1902,7 +2016,7 @@
       },
       "actions": {
         "action-1": "Repay my funds upon expiry",
-        "action-2": "Increase Lend",
+        "action-2": "Increase Loan",
         "action-3": "Fix My APY",
         "action-4": "View Fixed Loan​",
         "action-5": "Auto Conversion to Variable​"
@@ -1932,7 +2046,8 @@
           "metric-4-tooltip-3": " you acknowledged during the Loan Contract Acceptance process for more details.​",
           "metric-5": "Cancelled",
           "metric-5-tooltip-1": "The total USDC amount of Lending Requests that you have cancelled across all Lending Strategies.",
-          "metric-5-tooltip-2": "Lending Request Cancellations can only be submitted prior to the closure of the clearing period of the current epoch."
+          "metric-5-tooltip-2": "Lending Request Cancellations can only be submitted prior to the closure of the clearing period of the current epoch.",
+          "metric-6": "Queued"
         },
         "subsequentTransactions": {
           "title": "Subsequent Transactions",
@@ -1974,15 +2089,14 @@
           "metric-4-tooltip-2": "Withdrawal Request Cancellations can only be submitted prior to the closure of the clearing period of the current epoch."
         }
       },
-      "detailedTransactions": {
-        "title": "Detailed Transactions",
+      "detailedLendingRequestTransactions": {
+        "title": "Detailed Lending Request Transactions",
         "tableHeader": {
-          "cell-1": "Loan Tranche/ Single Loan",
-          "cell-2": "Transaction",
-          "cell-3": "Transaction Date",
-          "cell-4": "Status and/or Amount",
-          "cell-5": "Lender Decision Pending",
-          "cell-6": "Loan Deployment/ Withdrawal Status"
+          "cell-1": "Last Transaction Date",
+          "cell-2": "Loan Tranche",
+          "cell-3": "Lending Request Status",
+          "cell-4": "Opt In/Out Decision Pending",
+          "cell-5": "Transaction Details"
         },
         "lendingRequest": "Lending Request",
         "withdrawalRequest": "Withdrawal Request",
@@ -2041,7 +2155,16 @@
           }
         },
         "actions": {
-          "seeDetails": "View Transactions"
+          "seeDetails": "View Details"
+        }
+      },
+      "detailedWithdrawalRequestTransaction": {
+        "title": "Detailed Withdrawal Request Transactions",
+        "tableHeader": {
+          "cell-1": "Last Transaction Date",
+          "cell-2": "Loan Tranche",
+          "cell-3": "Withdrawal Request Status",
+          "cell-4": "Transaction Details"
         }
       }
     },

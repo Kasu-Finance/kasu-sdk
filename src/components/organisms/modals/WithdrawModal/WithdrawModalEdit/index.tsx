@@ -20,12 +20,12 @@ const WithdrawModalEdit = () => {
   return (
     <Stack spacing={3} mt={3}>
       <WithdrawFromInfo />
-      <WithdrawAmountInput />
       <TrancheDropdown
         tranches={pool.tranches}
         selectedTranche={trancheId}
         setSelectedTranche={setSelectedTranche}
       />
+      <WithdrawAmountInput />
       <WithdrawModalEditActions />
     </Stack>
   )

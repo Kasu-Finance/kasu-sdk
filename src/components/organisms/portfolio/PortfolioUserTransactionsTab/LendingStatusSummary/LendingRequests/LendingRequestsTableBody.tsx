@@ -1,7 +1,6 @@
 'use client'
 
 import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
-import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
 import getTranslation from '@/hooks/useTranslation'
 
 import LendingStatusSummaryAcceptedTooltip from '@/components/molecules/tooltips/LendingStatusSummary/LendingStatusSummaryAcceptedTooltip'
@@ -33,10 +32,8 @@ const LendingRequestsTableBody: React.FC<LendingRequestsTableBodyProps> = ({
     []
   )
 
-  const { nextEpochTime } = useNextEpochTime()
-
   const { currentEpochAmounts, lifetimeAmounts } =
-    calculateLendingSattusSummary(detailedTransactions, nextEpochTime)
+    calculateLendingSattusSummary(detailedTransactions, currentEpoch)
 
   return (
     <>
@@ -48,6 +45,14 @@ const LendingRequestsTableBody: React.FC<LendingRequestsTableBodyProps> = ({
         currentEpochValue={`${formatAmount(currentEpochAmounts.requested, { minDecimals: 2 })} USDC`}
         totalLifetimeValue={`${formatAmount(lifetimeAmounts.requested, { minDecimals: 2 })} USDC`}
         variant='secondary'
+      />
+      <LendingRequestsTableRow
+        title={t(
+          'portfolio.transactions.lendingStatusSummary.lendingRequests.metric-6'
+        )}
+        tooltipInfo={<LendingStatusSummaryAcceptedTooltip />}
+        currentEpochValue={`${formatAmount(currentEpochAmounts.queued, { minDecimals: 2 })} USDC`}
+        totalLifetimeValue='N/A'
       />
       <LendingRequestsTableRow
         title={t(

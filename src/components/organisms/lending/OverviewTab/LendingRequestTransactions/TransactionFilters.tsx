@@ -48,32 +48,23 @@ type TransactionFiltersProps = {
   withReallocation?: boolean
 }
 
-const TransactionFilters: React.FC<TransactionFiltersProps> = ({
-  pools,
-  withReallocation,
-}) => {
+const TransactionFilters: React.FC<TransactionFiltersProps> = ({ pools }) => {
   const { t } = getTranslation()
 
   const {
     poolId,
-    status,
+    // status,
     trancheType,
-    transactionType,
     pendingDecision,
     setPoolId,
-    setStatus,
+    // setStatus,
     setTrancheType,
-    setTransactionType,
     setTransactionDecisons,
   } = useTransactionHistoryState()
 
-  const handleStatusChange = (e: SelectChangeEvent) => {
-    setStatus(e.target.value as ValueOf<typeof TransactionStatus>)
-  }
-
-  const handleTypeChange = (e: SelectChangeEvent) => {
-    setTransactionType(e.target.value as ValueOf<typeof TransactionType>)
-  }
+  // const handleStatusChange = (e: SelectChangeEvent) => {
+  //   setStatus(e.target.value as ValueOf<typeof TransactionStatus>)
+  // }
 
   const handleTrancheChange = (e: SelectChangeEvent) => {
     setTrancheType(e.target.value as ValueOf<typeof TransactionTranches>)
@@ -99,13 +90,13 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
               value={poolId}
               onChange={handlePoolChange}
               options={[{ id: 'All', name: 'All' }, ...pools]}
-              maxWidth={256}
+              maxWidth={544}
               labelKey='name'
               valueKey='id'
             />
           </Grid>
         )}
-        {!pendingDecision && (
+        {/* {!pendingDecision && (
           <Grid item flex={1}>
             <CustomSelect
               label='Status'
@@ -119,24 +110,7 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
               valueKey='id'
             />
           </Grid>
-        )}
-        <Grid item flex={1}>
-          <CustomSelect
-            label='Type'
-            value={transactionType}
-            onChange={handleTypeChange}
-            options={Object.values(TransactionType)
-              .filter((value) =>
-                withReallocation ? value : value !== 'Reallocation'
-              )
-              .map((val) => ({
-                name: val,
-                id: val,
-              }))}
-            labelKey='name'
-            valueKey='id'
-          />
-        </Grid>
+        )} */}
         <Grid item flex={1}>
           <CustomSelect
             label='Tranche'

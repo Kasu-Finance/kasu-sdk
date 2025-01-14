@@ -1,7 +1,7 @@
 'use client'
 
 import useStepperState from '@/hooks/context/useStepperState'
-import getTranslation from '@/hooks/useTranslation'
+import getTranslation, { TranslationKeys } from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomStepper from '@/components/atoms/CustomStepper'
@@ -28,6 +28,17 @@ const getActiveComponent = (activeStep: number) => {
   }
 }
 
+const getActiveTitle = (activeStep: number): TranslationKeys => {
+  switch (activeStep) {
+    case 3:
+      return 'modals.withdrawal.confirmedTitle'
+    case 2:
+      return 'modals.withdrawal.reviewTitle'
+    default:
+      return 'modals.withdrawal.title'
+  }
+}
+
 const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
   const { t } = getTranslation()
 
@@ -35,7 +46,10 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ handleClose }) => {
 
   return (
     <CustomCard>
-      <DialogHeader title={t('lending.withdraw.title')} onClose={handleClose} />
+      <DialogHeader
+        title={t(getActiveTitle(activeStep))}
+        onClose={handleClose}
+      />
       <DialogContent>
         <CustomStepper />
         {getActiveComponent(activeStep)}

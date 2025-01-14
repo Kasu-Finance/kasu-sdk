@@ -43,7 +43,9 @@ const PoolCardActions: React.FC<PoolCardActionsProps> = ({
       >
         {t('general.overview')}
       </Button>
-      {pool.isActive && <LendButton pool={pool} currentEpoch={currentEpoch} />}
+      {pool.isActive && !pool.isOversubscribed && (
+        <LendButton pool={pool} currentEpoch={currentEpoch} />
+      )}
     </CardActions>
   )
 }

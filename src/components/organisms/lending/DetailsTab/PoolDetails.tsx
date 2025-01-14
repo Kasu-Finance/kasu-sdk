@@ -30,12 +30,16 @@ const PoolDetails: React.FC<PoolDetailsProps> = ({ pool }) => {
         <Grid container columnSpacing={4}>
           {pool.tranches.toReversed().map((tranche) => (
             <Grid item flex={1} key={tranche.name}>
-              <Typography variant='h5' textTransform='capitalize'>
-                {isMultiTranche
-                  ? `${tranche.name} ${t('general.tranche')}`
-                  : t('general.lendingStrategy')}
-              </Typography>
-              <Divider sx={{ mt: 1.5 }} />
+              <InfoRow
+                title={
+                  isMultiTranche
+                    ? `${tranche.name} ${t('general.tranche')}`
+                    : t('general.lendingStrategy')
+                }
+                titleStyle={{ variant: 'h5' }}
+                toolTipInfo={t('home.card.loanTranches-tooltip')}
+              />
+              <Divider />
               <InfoRow
                 title={t('general.variableApy')}
                 titleStyle={{

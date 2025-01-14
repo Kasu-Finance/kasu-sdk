@@ -7,6 +7,7 @@ import { ChevronLeftRoundedIcon } from '@/assets/icons'
 
 import { getPoolOverview } from '@/app/_requests/pools'
 import { Routes } from '@/config/routes'
+import { mergeSubheading } from '@/utils'
 
 type PageHeaderProps = {
   poolId: string
@@ -35,7 +36,9 @@ const PageHeader: React.FC<PageHeaderProps> = async ({ poolId }) => {
           alt={pool.poolName}
           sx={{ width: 64, height: 64, bgcolor: 'gray.extraDark' }}
         />
-        <Typography variant='h2'>{pool.poolName}</Typography>
+        <Typography variant='h2'>
+          {mergeSubheading(pool.poolName, pool.subheading)}
+        </Typography>
       </Box>
       <Button
         LinkComponent={Link}

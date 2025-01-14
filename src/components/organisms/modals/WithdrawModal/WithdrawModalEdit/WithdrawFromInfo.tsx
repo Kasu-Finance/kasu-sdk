@@ -12,7 +12,7 @@ import ToolTip from '@/components/atoms/ToolTip'
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { SupportedTokens } from '@/constants/tokens'
-import { formatAmount } from '@/utils'
+import { formatAmount, mergeSubheading } from '@/utils'
 import { calculateWithdrawSummary } from '@/utils/lending/calculateUserBalances'
 
 const WithdrawFromInfo = () => {
@@ -26,9 +26,7 @@ const WithdrawFromInfo = () => {
 
   const supportedToken = useSupportedTokenInfo()
 
-  const { totalInvested, totalAvailableToWithdraw } = calculateWithdrawSummary(
-    trancheBalance ?? []
-  )
+  const { totalInvested } = calculateWithdrawSummary(trancheBalance ?? [])
 
   const usdcDecimals = supportedToken?.[SupportedTokens.USDC].decimals
 
@@ -39,10 +37,10 @@ const WithdrawFromInfo = () => {
   return (
     <Box>
       <InfoRow
-        title={t('lending.withdraw.fromPool')}
+        title={t('modals.withdrawal.metric-1')}
         toolTipInfo={
           <ToolTip
-            title='info'
+            title={t('modals.withdrawal.metric-1-tooltip')}
             iconSx={{
               color: 'gold.extraDark',
               '&:hover': {
@@ -55,13 +53,17 @@ const WithdrawFromInfo = () => {
         dividerProps={{
           color: 'white',
         }}
-        metric={<Typography variant='baseMdBold'>{pool.poolName}</Typography>}
+        metric={
+          <Typography variant='baseMdBold'>
+            {mergeSubheading(pool.poolName, pool.subheading)}
+          </Typography>
+        }
       />
       <InfoRow
-        title={t('lending.withdraw.metrics.totalInvestment.label')}
+        title={t('modals.withdrawal.metric-2')}
         toolTipInfo={
           <ToolTip
-            title={t('lending.withdraw.metrics.totalInvestment.tooltip')}
+            title={t('modals.withdrawal.metric-2-tooltip')}
             iconSx={{
               color: 'gold.extraDark',
               '&:hover': {
@@ -84,38 +86,10 @@ const WithdrawFromInfo = () => {
         }
       />
       <InfoRow
-        title={
-          t('lending.withdraw.metrics.totalInvestment.label') + ' Remaining'
-        }
+        title={t('modals.withdrawal.metric-3')}
         toolTipInfo={
           <ToolTip
-            title={t('lending.withdraw.metrics.totalInvestment.tooltip')}
-            iconSx={{
-              color: 'gold.extraDark',
-              '&:hover': {
-                color: 'rgba(133, 87, 38, 1)',
-              },
-            }}
-          />
-        }
-        showDivider
-        dividerProps={{
-          color: 'white',
-        }}
-        metric={
-          <Typography variant='baseMdBold'>
-            {formatAmount(formatUnits(totalAvailableToWithdraw, usdcDecimals), {
-              minDecimals: 2,
-            })}{' '}
-            USDC
-          </Typography>
-        }
-      />
-      <InfoRow
-        title={t('lending.withdraw.metrics.trancheInvestment.label')}
-        toolTipInfo={
-          <ToolTip
-            title={t('lending.withdraw.metrics.trancheInvestment.tooltip')}
+            title={t('modals.withdrawal.metric-3-tooltip')}
             iconSx={{
               color: 'gold.extraDark',
               '&:hover': {
@@ -138,12 +112,10 @@ const WithdrawFromInfo = () => {
         }
       />
       <InfoRow
-        title={
-          t('lending.withdraw.metrics.trancheInvestment.label') + ' Remaining'
-        }
+        title={t('modals.withdrawal.metric-4')}
         toolTipInfo={
           <ToolTip
-            title={t('lending.withdraw.metrics.trancheInvestment.tooltip')}
+            title={t('modals.withdrawal.metric-4-tooltip')}
             iconSx={{
               color: 'gold.extraDark',
               '&:hover': {

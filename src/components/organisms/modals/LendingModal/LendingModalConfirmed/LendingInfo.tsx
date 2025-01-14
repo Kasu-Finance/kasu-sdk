@@ -7,7 +7,7 @@ import getTranslation from '@/hooks/useTranslation'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import { formatAmount, formatTimestamp } from '@/utils'
+import { formatAmount, formatTimestamp, mergeSubheading } from '@/utils'
 
 const LendingInfo = () => {
   const { t } = getTranslation()
@@ -41,7 +41,7 @@ const LendingInfo = () => {
         {t('modals.lending.completed.description-2')} ({formattedTime.date} •{' '}
         {formattedTime.timestamp} {formattedTime.utcOffset}) {t('general.to')}{' '}
         <Typography variant='baseMdBold'>
-          {pool.poolName}
+          {mergeSubheading(pool.poolName, pool.subheading)}
           {pool.tranches.length > 1
             ? `, ${selectedTranche?.name} ${t('general.tranche')}`
             : null}

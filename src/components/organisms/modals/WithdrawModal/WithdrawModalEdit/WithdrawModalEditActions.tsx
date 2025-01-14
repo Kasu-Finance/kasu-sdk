@@ -26,7 +26,7 @@ const WithdrawModalEditActions = () => {
       )}
       sx={{ textTransform: 'capitalize' }}
     >
-      {t('lending.withdraw.button.review')}
+      {t('modals.withdrawal.action')}
     </Button>
   )
 }

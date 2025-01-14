@@ -3,24 +3,26 @@ import getTranslation from '@/hooks/useTranslation'
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
-import CsvDownloadButton from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedTransactions/CsvDownloadButton'
-import PortfolioUserTransactionTableWrapper from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedTransactions/PortfolioUserTransactionTableWrapper'
+import CsvDownloadButton from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedLendingRequestTransactions/CsvDownloadButton'
+import PortfolioUserTransactionTableWrapper from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedLendingRequestTransactions/PortfolioUserTransactionTableWrapper'
 
 import TransactionHistoryState from '@/context/transactionHistory/transactionHistory.provider'
 
-type DetailedTransactionProps = {
+type DetailedLendingRequestTransactionProps = {
   currentEpoch: string
 }
 
-const DetailedTransactions: React.FC<DetailedTransactionProps> = ({
-  currentEpoch,
-}) => {
+const DetailedLendingRequestTransactions: React.FC<
+  DetailedLendingRequestTransactionProps
+> = ({ currentEpoch }) => {
   const { t } = getTranslation()
 
   return (
     <CustomCard>
       <CustomCardHeader
-        title={t('portfolio.transactions.detailedTransactions.title')}
+        title={t(
+          'portfolio.transactions.detailedLendingRequestTransactions.title'
+        )}
       >
         <CsvDownloadButton currentEpoch={currentEpoch} />
       </CustomCardHeader>
@@ -33,4 +35,4 @@ const DetailedTransactions: React.FC<DetailedTransactionProps> = ({
   )
 }
 
-export default DetailedTransactions
+export default DetailedLendingRequestTransactions

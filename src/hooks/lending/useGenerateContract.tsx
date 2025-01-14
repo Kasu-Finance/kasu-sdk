@@ -4,6 +4,11 @@ import { useState } from 'react'
 import useToastState from '@/hooks/context/useToastState'
 import useHandleError from '@/hooks/web3/useHandleError'
 
+import {
+  ExemptLoanContract,
+  RetailLoanContract,
+} from '@/components/organisms/modals/LoanContractModal/contract.type'
+
 import { FundingConsentGenerateContractRes } from '@/app/api/lender-agreements/route'
 import dayjs from '@/dayjs'
 import { userRejectedTransaction } from '@/utils'
@@ -11,6 +16,9 @@ import { userRejectedTransaction } from '@/utils'
 const initialGeneratedContractState = {
   status: false,
   contractMessage: '',
+  formattedMessage: {} as ExemptLoanContract | RetailLoanContract,
+  contractVersion: 0,
+  contractType: '' as 'retail' | 'exempt',
   createdAt: 0,
   fullName: '',
 }
@@ -30,7 +38,7 @@ const useGenerateContract = () => {
     generatedContract,
     resetGeneratedContract: () =>
       setGeneratedContract(initialGeneratedContractState),
-    generateContract: async () => {
+    generateContract: async (amount: string) => {
       if (!account) {
         return console.error('Generate contract:: Account is undefiend')
       }
@@ -72,6 +80,7 @@ const useGenerateContract = () => {
               address: account.toLowerCase(),
               signature,
               timestamp: now,
+              depositAmount: parseFloat(amount),
             }),
           }
         )
@@ -85,8 +94,13 @@ const useGenerateContract = () => {
         setGeneratedContract({
           createdAt: now,
           status: true,
-          contractMessage: data.contractMessage,
+          contractMessage: data.contractMessage
+            .replaceAll('\\n', '\n')
+            .replaceAll('\\t', '\t'),
           fullName: data.fullName,
+          contractType: data.contractType,
+          contractVersion: data.contractVersion,
+          formattedMessage: JSON.parse(data.formattedMessage),
         })
 
         removeToast()

@@ -11,12 +11,12 @@ const DetailedTransactionReallocationOutTooltip = () => {
   return (
     <>
       {t(
-        'portfolio.transactions.detailedTransactions.tooltips.reallocatedOut.tooltip-1'
+        'portfolio.transactions.detailedLendingRequestTransactions.tooltips.reallocatedOut.tooltip-1'
       )}
       <br />
       <br />
       {t(
-        'portfolio.transactions.detailedTransactions.tooltips.reallocatedOut.tooltip-2'
+        'portfolio.transactions.detailedLendingRequestTransactions.tooltips.reallocatedOut.tooltip-2'
       )}{' '}
       <Button
         variant='text'
@@ -36,7 +36,7 @@ const DetailedTransactionReallocationOutTooltip = () => {
         {t('modals.termsAndConditions.title')}
       </Button>{' '}
       {t(
-        'portfolio.transactions.detailedTransactions.tooltips.reallocatedOut.tooltip-3'
+        'portfolio.transactions.detailedLendingRequestTransactions.tooltips.reallocatedOut.tooltip-3'
       )}
     </>
   )

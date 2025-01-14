@@ -53,6 +53,8 @@ const WithdrawFundsAtExpiryTableRow: React.FC<
               <Box width={24} height={24} borderRadius='50%' bgcolor='white' />
             }
           />
+        </TableCell>
+        <TableCell>
           {dayjs.unix(fixedLoan.startTime).format('DD.MM.YYYY')}
         </TableCell>
         <TableCell>
@@ -64,7 +66,7 @@ const WithdrawFundsAtExpiryTableRow: React.FC<
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell colSpan={3} sx={{ pt: 0 }}>
+        <TableCell colSpan={4} sx={{ pt: 0 }}>
           <DottedDivider color='white' />
         </TableCell>
       </TableRow>

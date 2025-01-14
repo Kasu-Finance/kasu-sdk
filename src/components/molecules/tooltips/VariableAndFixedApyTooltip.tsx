@@ -11,19 +11,13 @@ const VariableAndFixedApyTooltip = () => {
         {t('variableAndFixedApy.tooltip-1')}
         <br />
         <br />
-        {t('variableAndFixedApy.tooltip-2').replace('{{ epoch }}', '4')}
+        {t('variableAndFixedApy.tooltip-2')}
         <br />
         <br />
         {t('variableAndFixedApy.tooltip-3')}
         <br />
         <br />
         {t('variableAndFixedApy.tooltip-4')}
-        <br />
-        <br />
-        {t('variableAndFixedApy.tooltip-5')}
-        <br />
-        <br />
-        {t('variableAndFixedApy.tooltip-6')}
       </Typography>
     </Stack>
   )
