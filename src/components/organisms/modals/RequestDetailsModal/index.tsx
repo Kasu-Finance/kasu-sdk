@@ -29,7 +29,7 @@ const RequestDetailsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
     !isReallocation &&
       detailedTransaction.transactions.find(
         (transaction) => transaction.requestStatus === 'Requested'
-      )
+      )?.canCancel
   )
 
   return (
