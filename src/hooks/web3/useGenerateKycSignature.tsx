@@ -20,7 +20,7 @@ const useGenerateKycSignature = () => {
 
   useEffect(() => {
     const fetchKycSignature = async () => {
-      if (!account || !chainId) {
+      if (!account || !chainId || !sdk) {
         return
       }
 

@@ -7,11 +7,13 @@ const useSimulateBonusYieldEarnings = () => {
 
   return useCallback(
     (earnedAmounts: number[], amount: number, bonusEpochInterest: number) =>
-      sdk.DataService.calculateBonusInterestEarnings(
-        earnedAmounts,
-        amount,
-        bonusEpochInterest
-      ),
+      sdk
+        ? sdk.DataService.calculateBonusInterestEarnings(
+            earnedAmounts,
+            amount,
+            bonusEpochInterest
+          )
+        : [0],
     [sdk]
   )
 }

@@ -6,8 +6,9 @@ import useKasuSDK from '@/hooks/useKasuSDK'
 const useKsuPrice = () => {
   const sdk = useKasuSDK()
 
-  const { data, error, isLoading } = useSWR('ksuPrice', async () =>
-    sdk.Locking.getKasuTokenPrice()
+  const { data, error, isLoading } = useSWR(
+    sdk ? ['ksuPrice', sdk] : null,
+    async ([_, sdk]) => sdk.Locking.getKasuTokenPrice()
   )
 
   return {

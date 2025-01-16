@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers'
 
 import useGenerateSwapData from '@/hooks/lending/useGenerateSwapData'
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useKasuSDK, { KasuSdkNotReadyError } from '@/hooks/useKasuSDK'
 
 import { ONE_INCH_SLIPPAGE } from '@/config/api.oneInch'
 import { SupportedChainIds } from '@/connection/chains'
@@ -36,6 +36,10 @@ const useBuildSwapData = () => {
     minimumDeposit,
     isETH,
   }: BuildSwapDataParams) => {
+    if (!sdk) {
+      throw new KasuSdkNotReadyError()
+    }
+
     const toToken = supportedTokens[SupportedTokens.USDC].address
 
     const res = await generateSwapData(

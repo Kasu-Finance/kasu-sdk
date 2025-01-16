@@ -9,8 +9,9 @@ const useEarnedBonusLockingAmount = () => {
   const sdk = useKasuSDK()
 
   const { data, error, isLoading, mutate } = useSWR(
-    account ? ['earnedBonusLockingAmount', account] : null,
-    async ([_, userAddress]) => sdk.Locking.getUserTotalBonusAmount(userAddress)
+    account && sdk ? ['earnedBonusLockingAmount', account, sdk] : null,
+    async ([_, userAddress, sdk]) =>
+      sdk.Locking.getUserTotalBonusAmount(userAddress)
   )
   return {
     totalLaunchBonus: data,

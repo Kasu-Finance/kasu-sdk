@@ -9,8 +9,8 @@ const useStakedKSU = () => {
   const sdk = useKasuSDK()
 
   const { data, error, isLoading } = useSWR(
-    account ? ['stakedKasu', account] : null,
-    async ([_, userAddress]) => sdk.Locking.getUserStakedKsu(userAddress)
+    account && sdk ? ['stakedKasu', account, sdk] : null,
+    async ([_, userAddress, sdk]) => sdk.Locking.getUserStakedKsu(userAddress)
   )
 
   return {

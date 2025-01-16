@@ -1,13 +1,10 @@
-import { JsonRpcProvider } from '@ethersproject/providers'
 import { KasuSdk } from '@solidant/kasu-sdk'
 import { PoolOverviewDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import { useWeb3React } from '@web3-react/core'
 import useSWR, { preload } from 'swr'
 import useSWRImmutable from 'swr/immutable'
 
-import sdkConfig, { NETWORK } from '@/config/sdk'
-import { SupportedChainIds } from '@/connection/chains'
-import { RPC_URLS } from '@/connection/rpc'
+import sdkConfig from '@/config/sdk'
 
 const unusedPoolsFetcher = async () => {
   const res = await fetch(
@@ -28,6 +25,13 @@ const unusedPoolsFetcher = async () => {
 
 preload('unusedPools', unusedPoolsFetcher)
 
+export class KasuSdkNotReadyError extends Error {
+  constructor() {
+    super('KasuSDK is not ready')
+    this.name = 'SDK Error'
+  }
+}
+
 const useKasuSDK = () => {
   const { provider, account } = useWeb3React()
 
@@ -46,24 +50,6 @@ const useKasuSDK = () => {
         },
         provider.getSigner()
       )
-    },
-    {
-      fallbackData: (() => {
-        const chain =
-          NETWORK === 'BASE'
-            ? SupportedChainIds.BASE
-            : SupportedChainIds.BASE_SEPOLIA
-
-        const fallbackProvider = new JsonRpcProvider(RPC_URLS[chain][0])
-
-        return new KasuSdk(
-          {
-            ...sdkConfig,
-            UNUSED_LENDING_POOL_IDS: unusedPools?.length ? unusedPools : [''],
-          },
-          fallbackProvider
-        )
-      })(),
     }
   )
 
@@ -71,7 +57,7 @@ const useKasuSDK = () => {
     console.error(error)
   }
 
-  return data!
+  return data
 }
 
 export default useKasuSDK

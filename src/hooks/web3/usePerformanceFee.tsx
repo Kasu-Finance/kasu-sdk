@@ -6,8 +6,8 @@ const usePerformanceFee = () => {
   const sdk = useKasuSDK()
 
   const { data, error } = useSWRImmutable(
-    'performanceFee',
-    async () => await sdk.DataService.getPerformanceFee()
+    sdk ? ['performanceFee', sdk] : null,
+    async ([_, sdk]) => await sdk.DataService.getPerformanceFee()
   )
 
   return {

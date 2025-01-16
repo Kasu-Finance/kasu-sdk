@@ -6,8 +6,8 @@ const useNextEpochTime = () => {
   const sdk = useKasuSDK()
 
   const { data, isLoading, error } = useSWRImmutable(
-    'nextEpochTime',
-    async () => await sdk.Locking.getNextEpochDate()
+    sdk ? ['nextEpochTime', sdk] : null,
+    async ([_, sdk]) => await sdk.Locking.getNextEpochDate()
   )
 
   return {

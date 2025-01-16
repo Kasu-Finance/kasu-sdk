@@ -6,8 +6,8 @@ const useNextClearingPeriod = () => {
   const sdk = useKasuSDK()
 
   const { data, error } = useSWRImmutable(
-    'nextClearingPeriod',
-    async () => await sdk.Locking.getNextClearingPeriodDate()
+    sdk ? ['nextClearingPeriod', sdk] : null,
+    async ([_, sdk]) => await sdk.Locking.getNextClearingPeriodDate()
   )
 
   return {
