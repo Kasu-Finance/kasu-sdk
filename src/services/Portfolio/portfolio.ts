@@ -16,7 +16,6 @@ import { UserLending } from '../UserLending/user-lending';
 
 import { lendingPortfolioQuery } from './queries';
 import {
-    LastEpochQueryResult,
     LendingPortfolioQueryResult,
     PortfolioLendingPool,
     PortfolioRewards,
@@ -80,101 +79,55 @@ export class Portfolio {
 
     async getPortfolioSummary(
         userAddress: string,
-        poolOverviews: PoolOverview[],
+        portfolioLendingPools: PortfolioLendingPool[],
     ): Promise<PortfolioSummary> {
         const userLockingData =
             await this._lockingService.getUserBonusData(userAddress);
-        let totalInvestments = BigNumber.from(0);
-        let totalYieldEarnedLastEpoch = 0;
-        // const portfolioLendingPools: PortfolioLendingPool[] = [];
-        // const usePoolBalancePromises: Promise<UserPoolBalance>[] = [];
-        const currentEpoch =
-            await this._systemVariablesAbi.currentEpochNumber();
-        const latestEpoch = currentEpoch.sub(BigNumber.from(1));
-        const lastEpochData: LastEpochQueryResult = await this._graph.request(
-            lendingPortfolioQuery,
-            {
-                userAddress: userAddress,
-                epochId: latestEpoch.toString(),
-                unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
-            },
-        );
+        let totalInvestments = 0;
 
+        let weightedApy = 0;
         let totalYieldEarned = 0;
 
-        const userPoolBalancePromises: Promise<UserPoolBalance>[] = [];
-        for (const poolOverview of poolOverviews) {
-            userPoolBalancePromises.push(
-                this._userLendingService.getUserPoolBalance(
-                    userAddress,
-                    poolOverview.id,
-                ),
-            );
-        }
+        for (const pool of portfolioLendingPools) {
+            for (const tranche of pool.tranches) {
+                const investedAmount = parseFloat(tranche.investedAmount);
 
-        const userPoolBalances = await Promise.all(userPoolBalancePromises);
+                totalInvestments += investedAmount;
+                totalYieldEarned += parseFloat(tranche.yieldEarnings.lifetime);
 
-        userPoolBalances.forEach((userPoolBalance) => {
-            totalInvestments = totalInvestments.add(userPoolBalance.balance);
-            totalYieldEarned += userPoolBalance.yieldEarned;
-        });
+                weightedApy += parseFloat(tranche.apy) * investedAmount;
 
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        if (lastEpochData.user) {
-            for (const lastEpochDatapoint of lastEpochData.user
-                .lendingPoolUserDetails) {
-                if (
-                    lastEpochDatapoint.lendingPoolTrancheUserDetails.length == 0
-                )
-                    continue;
-                const prevTrancheYield =
-                    lastEpochDatapoint.lendingPoolTrancheUserDetails[0].tranche
-                        .lendingPoolTrancheEpochInterest.length > 0
-                        ? parseFloat(
-                              lastEpochDatapoint
-                                  .lendingPoolTrancheUserDetails[0].tranche
-                                  .lendingPoolTrancheEpochInterest[0]
-                                  .epochInterestAmount,
-                          )
-                        : 0;
-                const prevUserShares =
-                    lastEpochDatapoint.lendingPoolTrancheUserDetails[0]
-                        .lendingPoolTrancheUserEpochSharesUpdates.length > 0
-                        ? parseFloat(
-                              lastEpochDatapoint
-                                  .lendingPoolTrancheUserDetails[0]
-                                  .lendingPoolTrancheUserEpochSharesUpdates[0]
-                                  .shares,
-                          )
-                        : 0;
-                const prevTrancheShares =
-                    lastEpochDatapoint.lendingPoolTrancheUserDetails[0].tranche
-                        .lendingPoolTrancheShareUpdates.length > 0
-                        ? parseFloat(
-                              lastEpochDatapoint
-                                  .lendingPoolTrancheUserDetails[0].tranche
-                                  .lendingPoolTrancheShareUpdates[0].shares,
-                          )
-                        : 0;
-                totalYieldEarnedLastEpoch +=
-                    prevTrancheShares != 0
-                        ? (prevUserShares * prevTrancheYield) /
-                          prevTrancheShares
-                        : 0;
+                for (const fixedDeposits of tranche.fixedLoans) {
+                    const ftdConfig = tranche.fixedTermConfig.find(
+                        (ftd) => ftd.configId === fixedDeposits.configId,
+                    );
+
+                    if (!ftdConfig) continue;
+
+                    const ftdInvestedAmount = parseFloat(fixedDeposits.amount);
+
+                    totalInvestments += ftdInvestedAmount;
+                    totalYieldEarned += parseFloat(
+                        fixedDeposits.yieldEarnings.lifetime,
+                    );
+
+                    weightedApy +=
+                        parseFloat(ftdConfig.apy) * ftdInvestedAmount;
+                }
             }
         }
+
         return {
             current: {
                 totalKsuLocked: userLockingData.totalLockedAmount,
                 totalLendingPoolInvestments: totalInvestments.toString(),
-                weightedAverageApy: '0',
+                weightedAverageApy: (weightedApy / totalInvestments).toString(),
             },
             lifetime: {
                 yieldEarnings: totalYieldEarned.toString(),
                 ksuBonusRewards: userLockingData.ksuBonusAndRewards,
                 protocolFeesEarned: userLockingData.protocolFeesEarned,
             },
-            lastEpoch: { yieldEarnings: totalYieldEarnedLastEpoch.toString() },
         };
     }
 
@@ -196,7 +149,7 @@ export class Portfolio {
                 }>;
             })[];
         })[] = [];
-        const usePoolBalancePromises: Promise<UserPoolBalance>[] = [];
+        const userPoolBalancePromises: Promise<UserPoolBalance>[] = [];
         const previousEpoch = BigNumber.from(currentEpoch).sub(
             BigNumber.from(1),
         );
@@ -212,7 +165,7 @@ export class Portfolio {
         if (!lastEpochData.user) return [];
 
         for (const poolOverview of poolOverviews) {
-            usePoolBalancePromises.push(
+            userPoolBalancePromises.push(
                 this._userLendingService.getUserPoolBalance(
                     userAddress,
                     poolOverview.id,
@@ -220,7 +173,7 @@ export class Portfolio {
             );
         }
 
-        const userPoolBalances = await Promise.all(usePoolBalancePromises);
+        const userPoolBalances = await Promise.all(userPoolBalancePromises);
 
         let totalInvestments = BigNumber.from(0);
         let totalYieldEarnedLastEpoch = 0;
@@ -285,7 +238,7 @@ export class Portfolio {
 
                 const lastEpochTotalShares = parseFloat(
                     lastEpochUserTrancheDetails.tranche
-                        .lendingPoolTrancheShareUpdates?.[0].shares ?? '0',
+                        .lendingPoolTrancheShareUpdates?.[0]?.shares ?? '0',
                 );
 
                 const currentTotalAmount = parseFloat(

@@ -85,6 +85,7 @@ export interface UserTrancheBalance {
     yieldEarned: number;
     balance: string;
     availableToWithdraw: BigNumber;
+    trancheId: string;
 }
 
 export interface UserPoolBalance {

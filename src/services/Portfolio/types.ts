@@ -35,9 +35,6 @@ export interface PortfolioSummary {
         ksuBonusRewards: string;
         protocolFeesEarned: string;
     };
-    lastEpoch: {
-        yieldEarnings: string;
-    };
 }
 
 export interface PortfolioTranche extends TrancheData {

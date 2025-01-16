@@ -516,11 +516,13 @@ export class UserLending {
                         : 'Withdrawal',
                 trancheName: trancheName,
                 trancheId: userRequest.tranche.id,
-                requestedAmount: this.convertSharesToAssets(
-                    userRequest.amountRequested,
-                    userRequest.tranche.balance,
-                    userRequest.tranche.shares,
-                ).toString(),
+                requestedAmount: parseUnits(userRequest.tranche.shares).isZero()
+                    ? userRequest.amountRequested
+                    : this.convertSharesToAssets(
+                          userRequest.amountRequested,
+                          userRequest.tranche.balance,
+                          userRequest.tranche.shares,
+                      ).toString(),
                 acceptedAmount: userRequest.amountAccepted,
                 rejectedAmount: userRequest.amountRejected,
                 status: userRequest.status,
@@ -758,7 +760,13 @@ export class UserLending {
 
         let userBalance = '0';
 
-        if (userDetailsSubgraph.lendingPoolTrancheUserDetails) {
+        if (
+            userDetailsSubgraph.lendingPoolTrancheUserDetails &&
+            !parseUnits(
+                userDetailsSubgraph.lendingPoolTrancheUserDetails.tranche
+                    .shares,
+            ).isZero()
+        ) {
             userBalance = this.convertSharesToAssets(
                 userDetailsSubgraph.lendingPoolTrancheUserDetails.shares,
                 userDetailsSubgraph.lendingPoolTrancheUserDetails.tranche
@@ -789,6 +797,7 @@ export class UserLending {
             yieldEarned,
             balance: userBalance,
             availableToWithdraw,
+            trancheId,
         };
     }
 
