@@ -1,6 +1,7 @@
 'use client'
 
 import { Skeleton } from '@mui/material'
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import usePortfolioSummary from '@/hooks/portfolio/usePortfolioSummary'
 
@@ -8,8 +9,19 @@ import TokenAmount from '@/components/atoms/TokenAmount'
 
 import { formatAmount } from '@/utils'
 
-const WeightedAverageApy = () => {
-  const { portfolioSummary, isLoading } = usePortfolioSummary()
+type WeightedAverageApyProps = {
+  currentEpoch: string
+  poolOverviews: PoolOverview[]
+}
+
+const WeightedAverageApy: React.FC<WeightedAverageApyProps> = ({
+  currentEpoch,
+  poolOverviews,
+}) => {
+  const { portfolioSummary, isLoading } = usePortfolioSummary(
+    currentEpoch,
+    poolOverviews
+  )
 
   if (isLoading) {
     return <Skeleton variant='rounded' width={60} height={24} />

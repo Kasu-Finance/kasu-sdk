@@ -1653,7 +1653,7 @@
         "tooltip": "All lending specialisations, types or categories in which the Delegate has a track record of expertise, regardless of the Lending Strategies the Delegate has made available on Kasu."
       },
       "otherPools": {
-        "label": "Other KASU Lending Strategies",
+        "label": "Other Kasu Lending Strategies",
         "tooltip": "​Other Lending Strategies that the Delegate has made available on Kasu.​"
       },
       "loans": {
@@ -1748,7 +1748,7 @@
           "tooltip": "tooltip content missing"
         },
         "kasuRating": {
-          "label": "KASU Community Rating",
+          "label": "Kasu Community Rating",
           "tooltip": "tooltip content missing."
         }
       },

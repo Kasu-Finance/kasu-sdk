@@ -1,34 +1,47 @@
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useWeb3React } from '@web3-react/core'
 import useSWR from 'swr'
 
-import usePoolOverview from '@/hooks/lending/usePoolOverview'
+import useLendingPortfolioData from '@/hooks/portfolio/useLendingPortfolioData'
 import useKasuSDK from '@/hooks/useKasuSDK'
 
 import { FIVE_MINUTES } from '@/constants/general'
 
-const usePortfolioSummary = () => {
+const usePortfolioSummary = (
+  currentEpoch: string,
+  poolOverviews: PoolOverview[]
+) => {
   const sdk = useKasuSDK()
 
   const { account } = useWeb3React()
 
-  const { data: poolOverviews } = usePoolOverview()
+  const {
+    portfolioLendingPools,
+    isLoading,
+    error: portfolioLendingPoolError,
+  } = useLendingPortfolioData(poolOverviews, currentEpoch)
 
-  const { data, error, mutate } = useSWR(
-    account && poolOverviews
-      ? ['portfolioSummary', account, poolOverviews]
+  const {
+    data,
+    isLoading: summaryLoading,
+    error,
+    mutate,
+  } = useSWR(
+    account && portfolioLendingPools
+      ? ['portfolioSummary', account, portfolioLendingPools]
       : null,
-    async ([_, userAddress, poolOverviews]) =>
+    async ([_, userAddress, portfolioLendingPools]) =>
       sdk.Portfolio.getPortfolioSummary(
         userAddress.toLowerCase(),
-        poolOverviews
+        portfolioLendingPools
       ),
     { dedupingInterval: FIVE_MINUTES }
   )
 
   return {
     portfolioSummary: data,
-    error,
-    isLoading: !data && !error,
+    error: portfolioLendingPoolError || error,
+    isLoading: isLoading || summaryLoading,
     updatePortfolioSummary: mutate,
   }
 }
