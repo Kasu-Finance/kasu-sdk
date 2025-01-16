@@ -11,7 +11,7 @@ import WaveBox from '@/components/atoms/WaveBox'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import { mapPendingDecisionsToPools } from '@/utils'
+import { mapPendingDecisionsToPools, mergeSubheading } from '@/utils'
 
 type NotificationBannerProps = {
   pools: PoolOverview[]
@@ -28,7 +28,10 @@ const NotificationBanner: React.FC<NotificationBannerProps> = ({ pools }) => {
 
   const { count, pendingDecisions } = mapPendingDecisionsToPools(
     loanTickets,
-    pools
+    pools.map((pool) => ({
+      ...pool,
+      poolName: mergeSubheading(pool.poolName, pool.subheading),
+    }))
   )
 
   if (!count) return

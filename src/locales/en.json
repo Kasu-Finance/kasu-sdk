@@ -848,8 +848,9 @@
       "tableHeader": {
         "cell-1": "Date",
         "cell-2": "Lending Amount",
-        "cell-3": "Time Remaining",
-        "cell-4": "Decision Pending"
+        "cell-3": "End Borrower",
+        "cell-4": "Lender Decision Time Remaining",
+        "cell-5": "Decision Pending"
       },
       "emptyDataMessage": "You have no more pending decisions"
     },

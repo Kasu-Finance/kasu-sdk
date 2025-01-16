@@ -29,6 +29,17 @@ export type FundingConsentReturn =
     }
   | LoanTicketDto[]
 
+export type EndBorrowerInfoRes =
+  | {
+      name: string
+      endBorrowerID: string
+      poolID: string
+    }[]
+  | {
+      statusCode: number
+      message: string
+    }
+
 export async function POST(req: NextRequest) {
   try {
     const queryParams = req.nextUrl.searchParams
@@ -111,27 +122,54 @@ export async function GET(req: NextRequest) {
     )
   }
 
-  const res = await fetch(
-    `${LENDERS_AGREEMENT_API}/allocations/loan-tickets?` +
-      new URLSearchParams({
-        userID: userAddress,
-        offset: '0',
-        limit: '10000',
-      }),
-    {
-      headers: {
-        'x-api-key': process.env.LENDERS_AGREEMENT_API_KEY || '',
-        'x-chain-id': LENDERS_AGREEMENT_CHAIN_ID_MAP[chain] || '',
-        'Content-Type': 'application/json',
-      },
-    }
-  )
-
-  const data: LoanTicketRes = await res.json()
-
-  if ('statusCode' in data) {
-    return Response.json(data.message)
+  const headers = {
+    'x-api-key': process.env.LENDERS_AGREEMENT_API_KEY || '',
+    'x-chain-id': LENDERS_AGREEMENT_CHAIN_ID_MAP[chain] || '',
+    'Content-Type': 'application/json',
   }
 
-  return Response.json(data.items)
+  const [loanTicketRes, endBorrowerInfoRes] = await Promise.all([
+    fetch(
+      `${LENDERS_AGREEMENT_API}/allocations/loan-tickets?` +
+        new URLSearchParams({
+          userID: userAddress,
+          offset: '0',
+          limit: '10000',
+        }),
+      {
+        headers,
+      }
+    ),
+    fetch(`${LENDERS_AGREEMENT_API}/allocations/end-borrower-names`, {
+      headers,
+    }),
+  ])
+
+  const endBorrowerInfo: EndBorrowerInfoRes = await endBorrowerInfoRes.json()
+
+  if ('statusCode' in endBorrowerInfo) {
+    return Response.json(endBorrowerInfo.message)
+  }
+
+  const loanTicket: LoanTicketRes = await loanTicketRes.json()
+
+  if ('statusCode' in loanTicket) {
+    return Response.json(loanTicket.message)
+  }
+
+  const loanTickets = loanTicket.items.map((item) => {
+    const endBorrower = endBorrowerInfo.find(
+      (eb) =>
+        eb.endBorrowerID === item.endBorrowerID && eb.poolID === item.poolID
+    )
+
+    return {
+      ...item,
+      endBorrowerName: (endBorrower?.name ?? item.endBorrowerID)
+        .replace(/\([^()]*\)/g, '') // removes bracket and content of it
+        .trim(),
+    }
+  })
+
+  return Response.json(loanTickets)
 }

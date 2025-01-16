@@ -18,6 +18,7 @@ export type Paginated<T> = {
 export type LoanTicketDtoRaw = {
   id: string
   endBorrowerID: string
+  endBorrowerName: string
   poolID: `0x${string}`
   trancheID: `0x${string}`
   userID: `0x${string}`

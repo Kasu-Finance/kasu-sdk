@@ -20,6 +20,7 @@ export type PendingDecision = Omit<PendingDecisionPool, 'tranches'> & {
 export type LoanTicket = {
   id: string
   endBorrowerID: string
+  endBorrowerName: string
   poolID: `0x${string}`
   trancheID: `0x${string}`
   userID: `0x${string}`
