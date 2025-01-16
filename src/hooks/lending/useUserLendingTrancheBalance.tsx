@@ -16,8 +16,10 @@ const useUserLendingTrancheBalance = <T extends { id: string }>(
   const sdk = useKasuSDK()
 
   const { data, error, isLoading } = useSWR(
-    account ? ['userLendingTrancheBalance', account, tranches] : null,
-    async ([_, userId]) =>
+    account && sdk
+      ? ['userLendingTrancheBalance', account, tranches, sdk]
+      : null,
+    async ([_, userId, tranches, sdk]) =>
       Promise.all(
         tranches.map(async (tranche) => ({
           ...tranche,

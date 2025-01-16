@@ -12,12 +12,14 @@ const useSimulateYieldEarnings = () => {
       daysInvested: number,
       interestFee: number
     ) =>
-      sdk.DataService.calculateCompounding(
-        amount,
-        interestRate,
-        daysInvested,
-        interestFee
-      ),
+      sdk
+        ? sdk.DataService.calculateCompounding(
+            amount,
+            interestRate,
+            daysInvested,
+            interestFee
+          )
+        : [],
     [sdk]
   )
 }

@@ -9,8 +9,8 @@ const useTransactionHistory = (epochId: string) => {
   const { account } = useWeb3React()
 
   const { data, error, isLoading, mutate } = useSWR(
-    account ? ['transactionHistory', account] : null,
-    async ([_, userAdress]) => {
+    account && sdk ? ['transactionHistory', account, sdk] : null,
+    async ([_, userAdress, sdk]) => {
       const userRequests = await sdk.UserLending.getUserRequests(
         userAdress as `0x${string}`,
         epochId

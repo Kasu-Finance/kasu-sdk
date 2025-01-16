@@ -1,3 +1,4 @@
+import { KasuSdk } from '@solidant/kasu-sdk'
 import { useWeb3React } from '@web3-react/core'
 import { formatUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
@@ -14,24 +15,11 @@ const useTotalLendingPoolDeposits = () => {
 
   const supportedToken = useSupportedTokenInfo()
 
-  const fetchTotalPoolDeposits = async () => {
-    if (!account) {
-      throw new Error('Account not connected')
-    }
-
-    const result =
-      await sdk.UserLending.getUserTotalPendingAndActiveDepositedAmount(account)
-
-    if (!result) {
-      throw new Error('useTotalLendingPoolDeposits No data available.')
-    }
-
-    return result
-  }
-
   const { data, error, isLoading, mutate } = useSWR(
-    account ? ['totalPoolDeposits', account] : null,
-    fetchTotalPoolDeposits,
+    account && sdk ? ['totalPoolDeposits', account, sdk] : null,
+    async (account: string, sdk: KasuSdk) =>
+      sdk.UserLending.getUserTotalPendingAndActiveDepositedAmount(account),
+
     {
       shouldRetryOnError: false,
       revalidateOnFocus: true,

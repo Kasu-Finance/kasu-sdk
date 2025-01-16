@@ -5,8 +5,9 @@ import useKasuSDK from '@/hooks/useKasuSDK'
 const useAvailableKsuBonus = () => {
   const sdk = useKasuSDK()
 
-  const { data, error } = useSWR('availableKsuBonus', async () =>
-    sdk.Locking.getAvailableKsuBonus()
+  const { data, error } = useSWR(
+    sdk ? ['availableKsuBonus', sdk] : null,
+    async ([_, sdk]) => sdk.Locking.getAvailableKsuBonus()
   )
 
   return {

@@ -13,8 +13,10 @@ const useLendingPortfolioData = (
   const { account } = useWeb3React()
 
   const { data, error, isLoading, mutate } = useSWR(
-    account ? ['lendingPortfolioData', account, poolOverviews] : null,
-    async ([_, userAddress, poolOverviews]) =>
+    account && sdk
+      ? ['lendingPortfolioData', account, poolOverviews, sdk]
+      : null,
+    async ([_, userAddress, poolOverviews, sdk]) =>
       await sdk.Portfolio.getPortfolioLendingData(
         userAddress.toLowerCase(),
         poolOverviews,

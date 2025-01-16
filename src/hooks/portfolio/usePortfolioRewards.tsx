@@ -55,8 +55,8 @@ const usePortfolioRewards = () => {
   )
 
   const { data, error, isLoading, mutate } = useSWR(
-    account ? ['portfolioRewards', account] : null,
-    async ([_, userAddress]): Promise<PortfolioRewardsType> => {
+    account && sdk ? ['portfolioRewards', account, sdk] : null,
+    async ([_, userAddress, sdk]): Promise<PortfolioRewardsType> => {
       const rewards = await sdk.Portfolio.getPortfolioRewards(
         userAddress.toLowerCase()
       )

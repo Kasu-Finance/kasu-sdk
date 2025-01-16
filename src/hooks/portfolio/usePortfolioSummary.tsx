@@ -27,10 +27,10 @@ const usePortfolioSummary = (
     error,
     mutate,
   } = useSWR(
-    account && portfolioLendingPools
-      ? ['portfolioSummary', account, portfolioLendingPools]
+    account && portfolioLendingPools && sdk
+      ? ['portfolioSummary', account, portfolioLendingPools, sdk]
       : null,
-    async ([_, userAddress, portfolioLendingPools]) =>
+    async ([_, userAddress, portfolioLendingPools, sdk]) =>
       sdk.Portfolio.getPortfolioSummary(
         userAddress.toLowerCase(),
         portfolioLendingPools

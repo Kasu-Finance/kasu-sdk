@@ -13,10 +13,10 @@ const useCurrentEpochFtdAmount = (
   const { account } = useWeb3React()
 
   const { data, error, isLoading, mutate } = useSWRImmutable(
-    account
-      ? [`currentEpochFtdAmount/${lendingPoolId}/${currentEpoch}`, account]
+    account && sdk
+      ? [`currentEpochFtdAmount/${lendingPoolId}/${currentEpoch}`, account, sdk]
       : null,
-    async ([_, userAddress]) => {
+    async ([_, userAddress, sdk]) => {
       const ftdAmountMap = await sdk.UserLending.getCurrentEpochFtdAmount(
         lendingPoolId,
         userAddress.toLowerCase(),
