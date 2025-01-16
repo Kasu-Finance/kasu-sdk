@@ -1,6 +1,7 @@
 'use client'
 
 import { Box, Skeleton, Typography } from '@mui/material'
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 
 import usePortfolioSummary from '@/hooks/portfolio/usePortfolioSummary'
@@ -10,8 +11,19 @@ import TokenAmount from '@/components/atoms/TokenAmount'
 
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
-const TotalKsuLocked = () => {
-  const { portfolioSummary, isLoading } = usePortfolioSummary()
+type TotalKsuLockedProps = {
+  currentEpoch: string
+  poolOverviews: PoolOverview[]
+}
+
+const TotalKsuLocked: React.FC<TotalKsuLockedProps> = ({
+  currentEpoch,
+  poolOverviews,
+}) => {
+  const { portfolioSummary, isLoading } = usePortfolioSummary(
+    currentEpoch,
+    poolOverviews
+  )
 
   const { ksuPrice, isLoading: ksuPriceLoading } = useKsuPrice()
 
