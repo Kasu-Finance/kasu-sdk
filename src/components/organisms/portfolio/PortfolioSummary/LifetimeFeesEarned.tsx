@@ -1,6 +1,7 @@
 'use client'
 
 import { Skeleton } from '@mui/material'
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import usePortfolioSummary from '@/hooks/portfolio/usePortfolioSummary'
 
@@ -8,8 +9,19 @@ import TokenAmount from '@/components/atoms/TokenAmount'
 
 import { formatAmount } from '@/utils'
 
-const LifetimeFeesEarned = () => {
-  const { portfolioSummary, isLoading } = usePortfolioSummary()
+type LifetimeFeesEarnedProps = {
+  currentEpoch: string
+  poolOverviews: PoolOverview[]
+}
+
+const LifetimeFeesEarned: React.FC<LifetimeFeesEarnedProps> = ({
+  currentEpoch,
+  poolOverviews,
+}) => {
+  const { portfolioSummary, isLoading } = usePortfolioSummary(
+    currentEpoch,
+    poolOverviews
+  )
 
   if (isLoading) {
     return <Skeleton variant='rounded' width={90} height={24} />

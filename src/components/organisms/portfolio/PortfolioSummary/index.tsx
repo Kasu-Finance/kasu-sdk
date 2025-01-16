@@ -11,7 +11,15 @@ import TotalKsuLocked from '@/components/organisms/portfolio/PortfolioSummary/To
 import TotalLendingBalance from '@/components/organisms/portfolio/PortfolioSummary/TotalLendingBalance'
 import WeightedAverageApy from '@/components/organisms/portfolio/PortfolioSummary/WeightedAverageApy'
 
-const PortfolioSummary = () => {
+import { getCurrentEpoch } from '@/app/_requests/currentEpoch'
+import { getPoolOverview } from '@/app/_requests/pools'
+
+const PortfolioSummary = async () => {
+  const [currentEpoch, poolOverviews] = await Promise.all([
+    getCurrentEpoch(),
+    getPoolOverview(),
+  ])
+
   const { t } = getTranslation()
 
   return (
@@ -21,7 +29,12 @@ const PortfolioSummary = () => {
           <InfoColumn
             title={t('portfolio.summary.totalKsuLocked.title')}
             toolTipInfo={t('portfolio.summary.totalKsuLocked.tooltip')}
-            metric={<TotalKsuLocked />}
+            metric={
+              <TotalKsuLocked
+                currentEpoch={currentEpoch}
+                poolOverviews={poolOverviews}
+              />
+            }
           />
         </WaveBox>
       </Grid>
@@ -30,7 +43,12 @@ const PortfolioSummary = () => {
           <InfoColumn
             title={t('portfolio.summary.lendingPoolInvestment.title')}
             toolTipInfo={t('portfolio.summary.lendingPoolInvestment.tooltip')}
-            metric={<TotalLendingBalance />}
+            metric={
+              <TotalLendingBalance
+                currentEpoch={currentEpoch}
+                poolOverviews={poolOverviews}
+              />
+            }
           />
         </WaveBox>
       </Grid>
@@ -39,7 +57,12 @@ const PortfolioSummary = () => {
           <InfoColumn
             title={t('portfolio.summary.weightedApy.title')}
             toolTipInfo={t('portfolio.summary.weightedApy.tooltip')}
-            metric={<WeightedAverageApy />}
+            metric={
+              <WeightedAverageApy
+                currentEpoch={currentEpoch}
+                poolOverviews={poolOverviews}
+              />
+            }
           />
         </WaveBox>
       </Grid>
@@ -48,7 +71,12 @@ const PortfolioSummary = () => {
           <InfoColumn
             title={t('portfolio.summary.yieldEarnings.title')}
             toolTipInfo={t('portfolio.summary.yieldEarnings.tooltip')}
-            metric={<LifetimeInterestEarnings />}
+            metric={
+              <LifetimeInterestEarnings
+                currentEpoch={currentEpoch}
+                poolOverviews={poolOverviews}
+              />
+            }
           />
         </WaveBox>
       </Grid>
@@ -57,7 +85,12 @@ const PortfolioSummary = () => {
           <InfoColumn
             title={t('portfolio.summary.ksuBonusRewards.title')}
             toolTipInfo={t('portfolio.summary.ksuBonusRewards.tooltip')}
-            metric={<LifetimeKsuBonusRewards />}
+            metric={
+              <LifetimeKsuBonusRewards
+                currentEpoch={currentEpoch}
+                poolOverviews={poolOverviews}
+              />
+            }
           />
         </WaveBox>
       </Grid>
@@ -66,7 +99,12 @@ const PortfolioSummary = () => {
           <InfoColumn
             title={t('portfolio.summary.protocolFeesEarned.title')}
             toolTipInfo={t('portfolio.summary.protocolFeesEarned.tooltip')}
-            metric={<LifetimeFeesEarned />}
+            metric={
+              <LifetimeFeesEarned
+                currentEpoch={currentEpoch}
+                poolOverviews={poolOverviews}
+              />
+            }
           />
         </WaveBox>
       </Grid>
