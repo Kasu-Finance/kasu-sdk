@@ -117,6 +117,10 @@ export const getModal = (
     case ModalsKeys.PENDING_DECISIONS:
       return {
         component: <PendingDecisionModal handleClose={handleClose} />,
+        sx: {
+          maxWidth: 900,
+          width: '100%',
+        },
       }
     case ModalsKeys.FIXED_LOAN:
       return {

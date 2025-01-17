@@ -1,6 +1,6 @@
 import useStepperState from '@/hooks/context/useStepperState'
 import useToastState from '@/hooks/context/useToastState'
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useKasuSDK, { KasuSdkNotReadyError } from '@/hooks/useKasuSDK'
 import useHandleError from '@/hooks/web3/useHandleError'
 
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
@@ -17,6 +17,10 @@ const useWithdrawFundsAtExpiry = () => {
 
   return async (lendingPool: string, lockId: string) => {
     try {
+      if (!sdk) {
+        throw new KasuSdkNotReadyError()
+      }
+
       setToast({
         type: 'info',
         title: capitalize(ActionStatus.PROCESSING),

@@ -220,7 +220,7 @@
           "title": "APY Bonus",
           "subtitle": "(Bonus Interest Paid in KSU)",
           "metric-1": "APY Bonus Based on Loyalty Level",
-          "metric-1-tooltip": "Your APY bonus (paid in KSU) in addition to the APY associated with your current USDC lending balances, which is only applicable to Loyalty Level 1 and 2 KSU Token Lockers. Loyalty Level 2 Token Lockers receive a higher APY bonus than Loyalty Level 1. The APY bonus is variable and will change from time to time to meet liquidity demand and supply requirements.​ There are no fees deducted from your APY bonus.​ There are no fees deducted from your APY bonus.",
+          "metric-1-tooltip": "Your APY bonus (paid in KSU) in addition to the APY associated with your current USDC lending balances, which is only applicable to Loyalty Level 1 and 2 KSU Token Lockers. Loyalty Level 2 Token Lockers receive a higher APY bonus than Loyalty Level 1. The APY bonus is variable and will change from time to time to meet liquidity demand and supply requirements.​ There are no fees deducted from your APY bonus.",
           "metric-2-tooltip": "The balance of your APY bonus interest earnings that is available to claim.",
           "metric-3-tooltip": "The total amount of APY bonus interest your have received since the very first time you achieved (and maintained) Loyalty Level 1 or 2."
         },
@@ -848,8 +848,9 @@
       "tableHeader": {
         "cell-1": "Date",
         "cell-2": "Lending Amount",
-        "cell-3": "Time Remaining",
-        "cell-4": "Decision Pending"
+        "cell-3": "End Borrower",
+        "cell-4": "Lender Decision Time Remaining",
+        "cell-5": "Decision Pending"
       },
       "emptyDataMessage": "You have no more pending decisions"
     },
@@ -1505,7 +1506,7 @@
         },
         "apyBonus": {
           "label": "APY Bonus",
-          "tooltip": "Your APY bonus (paid in KSU) in addition to the APY associated with your current USDC lending balances, which is only applicable to Loyalty Level 1 and 2 KSU Token Lockers. Loyalty Level 2 Token Lockers receive a higher APY bonus than Loyalty Level 1. The APY bonus is variable and will change from time to time to meet liquidity demand and supply requirements.​ There are no fees deducted from your APY bonus.​ There are no fees deducted from your APY bonus."
+          "tooltip": "Your APY bonus (paid in KSU) in addition to the APY associated with your current USDC lending balances, which is only applicable to Loyalty Level 1 and 2 KSU Token Lockers. Loyalty Level 2 Token Lockers receive a higher APY bonus than Loyalty Level 1. The APY bonus is variable and will change from time to time to meet liquidity demand and supply requirements.​ There are no fees deducted from your APY bonus."
         },
         "totalBonusYield": {
           "label": "Total Bonus Interest Earnings",

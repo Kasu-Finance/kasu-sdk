@@ -8,8 +8,9 @@ const useUserApyBonus = () => {
   const { account } = useWeb3React()
 
   const { data, error, isLoading, mutate } = useSWR(
-    account ? ['userApyBonus', account] : null,
-    async ([_, userAddress]) => sdk.UserLending.getUserApyBonus(userAddress)
+    account && sdk ? ['userApyBonus', account, sdk] : null,
+    async ([_, userAddress, sdk]) =>
+      sdk.UserLending.getUserApyBonus(userAddress)
   )
 
   return {

@@ -59,7 +59,7 @@ const PendingDecisionsTableRow: React.FC<PendingDecisionsTableRowProps> = ({
   return (
     <>
       <TableRow>
-        <TableCell colSpan={4} sx={{ ...customTypography.h4, pt: 3 }}>
+        <TableCell colSpan={5} sx={{ ...customTypography.h4, pt: 3 }}>
           {pendingDecision.poolName}
         </TableCell>
       </TableRow>
@@ -67,7 +67,7 @@ const PendingDecisionsTableRow: React.FC<PendingDecisionsTableRowProps> = ({
         <Fragment key={tranche.id}>
           <TableRow>
             <TableCell
-              colSpan={4}
+              colSpan={5}
               sx={{ ...customTypography.baseMdBold, pb: 1 }}
             >
               {tranche.name} {t('general.tranche')}
@@ -93,6 +93,7 @@ const PendingDecisionsTableRow: React.FC<PendingDecisionsTableRowProps> = ({
                 <TableCell>
                   {formatAmount(ticket.assets, { minDecimals: 2 })} USDC
                 </TableCell>
+                <TableCell>{ticket.endBorrowerName}</TableCell>
                 <TableCell>
                   <Countdown
                     endTime={dayjs.unix(ticket.createdOn).add(2, 'days').unix()}
@@ -121,7 +122,7 @@ const PendingDecisionsTableRow: React.FC<PendingDecisionsTableRowProps> = ({
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell colSpan={4} sx={{ pt: 0 }}>
+                <TableCell colSpan={5} sx={{ pt: 0 }}>
                   <DottedDivider color='white' />
                 </TableCell>
               </TableRow>

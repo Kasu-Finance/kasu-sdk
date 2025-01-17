@@ -152,7 +152,7 @@ const WithdrawalTransactionsTableRow: React.FC<
                           ? `${formatAmount(transaction.lastAcceptedAmount, {
                               minDecimals: 2,
                             })} USDC`
-                          : '-'}
+                          : 'N/A'}
                       </Typography>
                     </Box>
                   )}

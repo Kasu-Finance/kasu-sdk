@@ -4,7 +4,7 @@ import useLockModalState from '@/hooks/context/useLockModalState'
 import useStepperState from '@/hooks/context/useStepperState'
 import useToastState from '@/hooks/context/useToastState'
 import useUserLocks from '@/hooks/locking/useUserLocks'
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useKasuSDK, { KasuSdkNotReadyError } from '@/hooks/useKasuSDK'
 import useEarnedRKsu from '@/hooks/web3/useEarnedRKsu'
 import useHandleError from '@/hooks/web3/useHandleError'
 
@@ -28,6 +28,10 @@ const useUnlockKSU = () => {
 
   return async (unlockAmount: BigNumber, userLockId: BigNumber) => {
     try {
+      if (!sdk) {
+        throw new KasuSdkNotReadyError()
+      }
+
       setToast({
         type: 'info',
         title: ActionStatus.PROCESSING,

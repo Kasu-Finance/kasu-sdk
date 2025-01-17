@@ -3,7 +3,7 @@ import { parseUnits } from 'ethers/lib/utils'
 import useFixApyState from '@/hooks/context/useFixApyState'
 import useStepperState from '@/hooks/context/useStepperState'
 import useToastState from '@/hooks/context/useToastState'
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useKasuSDK, { KasuSdkNotReadyError } from '@/hooks/useKasuSDK'
 import useHandleError from '@/hooks/web3/useHandleError'
 
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
@@ -27,6 +27,10 @@ const useFixApy = () => {
     fixedTermConfigId: string
   ) => {
     try {
+      if (!sdk) {
+        throw new KasuSdkNotReadyError()
+      }
+
       setToast({
         type: 'info',
         title: capitalize(ActionStatus.PROCESSING),

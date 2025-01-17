@@ -7,7 +7,7 @@ import useStepperState from '@/hooks/context/useStepperState'
 import useToastState from '@/hooks/context/useToastState'
 import useBuildDepositData from '@/hooks/lending/useBuildDepositData'
 import useBuildSwapData from '@/hooks/lending/useBuildSwapData'
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useKasuSDK, { KasuSdkNotReadyError } from '@/hooks/useKasuSDK'
 import useHandleError from '@/hooks/web3/useHandleError'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
@@ -61,6 +61,10 @@ const useRequestDeposit = () => {
     }
 
     try {
+      if (!sdk) {
+        throw new KasuSdkNotReadyError()
+      }
+
       setToast({
         type: 'info',
         title: capitalize(ActionStatus.PROCESSING),

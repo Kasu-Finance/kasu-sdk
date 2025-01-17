@@ -1,6 +1,7 @@
 import { Logger } from 'ethers/lib/utils'
 
 import useToastState from '@/hooks/context/useToastState'
+import { KasuSdkNotReadyError } from '@/hooks/useKasuSDK'
 
 import {
   ACTION_MESSAGES,
@@ -24,6 +25,11 @@ const useHandleError = () => {
     const error = _error as Error
 
     let txHash: string | undefined = undefined
+
+    if (error instanceof KasuSdkNotReadyError) {
+      console.error(error.message)
+      return
+    }
 
     if (error instanceof TransactionError) {
       txHash = error.transaction.hash

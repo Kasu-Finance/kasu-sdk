@@ -9,8 +9,8 @@ const useCurrentFtdBalance = (poolId: string) => {
   const { account } = useWeb3React()
 
   const { data, error, isLoading, mutate } = useSWR(
-    account ? ['currentFtdBalance', account, poolId] : null,
-    async ([_, userAddress, poolId]) =>
+    account && sdk ? ['currentFtdBalance', account, poolId, sdk] : null,
+    async ([_, userAddress, poolId, sdk]) =>
       await sdk.UserLending.getCurrentFtdBalance(poolId, userAddress),
     { fallbackData: new Map() }
   )

@@ -56,6 +56,7 @@ const getPendingDecisions = (loanTicketGroups: LoanTicketDto[]) => {
       loanTickets.push({
         id: endBorrowerGroup[0].id,
         endBorrowerID: endBorrowerGroup[0].endBorrowerID,
+        endBorrowerName: endBorrowerGroup[0].endBorrowerName,
         createdOn: dayjs(latestTicket.createdOn).unix(),
         currentStatus: latestTicket.status,
         currentStatusDescription: latestTicket.statusDescription,

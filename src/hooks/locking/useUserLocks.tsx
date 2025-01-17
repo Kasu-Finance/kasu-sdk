@@ -8,8 +8,8 @@ const useUserLocks = () => {
   const { account } = useWeb3React()
 
   const { data, error, isLoading, mutate } = useSWR(
-    account ? ['userLocks', account] : null,
-    async ([_, userAddress]) => sdk.Locking.getUserLocks(userAddress)
+    account && sdk ? ['userLocks', account, sdk] : null,
+    async ([_, userAddress, sdk]) => sdk.Locking.getUserLocks(userAddress)
   )
 
   return {

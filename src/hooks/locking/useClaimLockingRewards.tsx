@@ -1,6 +1,6 @@
 import useToastState from '@/hooks/context/useToastState'
 import useLockingRewards from '@/hooks/locking/useLockingRewards'
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useKasuSDK, { KasuSdkNotReadyError } from '@/hooks/useKasuSDK'
 import useHandleError from '@/hooks/web3/useHandleError'
 
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
@@ -17,6 +17,10 @@ const useClaimLockingRewards = () => {
 
   return async () => {
     try {
+      if (!sdk) {
+        throw new KasuSdkNotReadyError()
+      }
+
       setToast({
         type: 'info',
         title: ActionStatus.PROCESSING,
