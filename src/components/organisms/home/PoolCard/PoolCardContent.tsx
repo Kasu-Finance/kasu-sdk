@@ -25,8 +25,6 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
 
   const isMultiTranche = pool.tranches.length > 1
 
-  const isActivePool = pool.isActive
-
   const { minApy, maxApy } = pool.tranches.reduce(
     (total, cur) => {
       total.minApy =
@@ -94,40 +92,6 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
             alignItems: 'start',
           }}
         />
-        {!isActivePool && (
-          <InfoRow
-            title={t('general.tvl')}
-            titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
-            toolTipInfo={t('lending.poolOverview.detailCard.tvl.tooltip')}
-            showDivider
-            metric={
-              <Typography variant='baseMdBold'>
-                {formatAmount(pool.totalValueLocked || '0', {
-                  minValue: 1_000_000,
-                })}{' '}
-                USDC
-              </Typography>
-            }
-          />
-        )}
-        {!isActivePool && (
-          <InfoRow
-            title={t('lending.poolOverview.detailCard.loansUnder.label')}
-            titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
-            toolTipInfo={t(
-              'lending.poolOverview.detailCard.loansUnder.tooltip'
-            )}
-            showDivider
-            metric={
-              <Typography variant='baseMdBold'>
-                {formatAmount(pool.loansUnderManagement || '0', {
-                  minValue: 1_000_000,
-                })}{' '}
-                USDC
-              </Typography>
-            }
-          />
-        )}
         <InfoRow
           title={t('details.poolDelegate.totalFunds.label')}
           titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
@@ -153,65 +117,61 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
             </Typography>
           }
         />
-        {isActivePool && (
-          <InfoRow
-            title={t('details.poolDelegate.history.label')}
-            titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
-            toolTipInfo={t('details.poolDelegate.history.tooltip')}
-            showDivider
-            metric={
-              <Typography variant='baseMdBold'>
-                {formatDuration(pool.delegate.delegateLendingHistory, {
-                  years: true,
-                  months: true,
-                })}
-              </Typography>
-            }
-          />
-        )}
-        {isActivePool && (
-          <InfoRow
-            title={t('lending.poolOverview.detailCard.security.label')}
-            titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
-            toolTipInfo={t('lending.poolOverview.detailCard.security.tooltip')}
-            dividerProps={{
-              style: {
-                marginTop: 'auto',
-              },
-            }}
-            showDivider
-            metric={
-              <UnorderedList
-                sx={{
-                  ...customTypography.baseMdBold,
-                  pl: 2,
-                  textAlign: 'right',
-                  listStyleType: 'none',
-                }}
-              >
-                {pool.security.length > 3 ? (
-                  <>
-                    <li key={0}>{pool.security[0]}</li>
-                    <li key={1}>{pool.security[1]}</li>
-                    <li key={2}>
-                      <Typography variant='inherit' color='gray.middle'>
-                        Other
-                      </Typography>
-                    </li>
-                  </>
-                ) : (
-                  pool.security.map((security, index) => (
-                    <li key={index}>{security}</li>
-                  ))
-                )}
-              </UnorderedList>
-            }
-            sx={{
-              height: '100%',
-              alignItems: 'start',
-            }}
-          />
-        )}
+        <InfoRow
+          title={t('details.poolDelegate.history.label')}
+          titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
+          toolTipInfo={t('details.poolDelegate.history.tooltip')}
+          showDivider
+          metric={
+            <Typography variant='baseMdBold'>
+              {formatDuration(pool.delegate.delegateLendingHistory, {
+                years: true,
+                months: true,
+              })}
+            </Typography>
+          }
+        />
+        <InfoRow
+          title={t('lending.poolOverview.detailCard.security.label')}
+          titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
+          toolTipInfo={t('lending.poolOverview.detailCard.security.tooltip')}
+          dividerProps={{
+            style: {
+              marginTop: 'auto',
+            },
+          }}
+          showDivider
+          metric={
+            <UnorderedList
+              sx={{
+                ...customTypography.baseMdBold,
+                pl: 2,
+                textAlign: 'right',
+                listStyleType: 'none',
+              }}
+            >
+              {pool.security.length > 3 ? (
+                <>
+                  <li key={0}>{pool.security[0]}</li>
+                  <li key={1}>{pool.security[1]}</li>
+                  <li key={2}>
+                    <Typography variant='inherit' color='gray.middle'>
+                      Other
+                    </Typography>
+                  </li>
+                </>
+              ) : (
+                pool.security.map((security, index) => (
+                  <li key={index}>{security}</li>
+                ))
+              )}
+            </UnorderedList>
+          }
+          sx={{
+            height: '100%',
+            alignItems: 'start',
+          }}
+        />
       </CustomCardContentInner>
     </WaveBox>
   )
