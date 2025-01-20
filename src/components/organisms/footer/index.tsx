@@ -59,7 +59,7 @@ const Footer: React.FC = () => {
         justifyContent='center'
       >
         <Button
-          href='https://discord.gg/jm2V7vUg99'
+          href='https://discord.gg/kasu'
           target='_blank'
           rel='noopener noreferrer'
           sx={{ width: 'max-content', height: 'max-content', p: 0 }}
