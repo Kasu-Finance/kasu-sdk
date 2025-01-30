@@ -99,7 +99,7 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
           showDivider
           metric={
             <Typography variant='baseMdBold'>
-              {formatAmount(pool.delegate.totalLoanFundsOriginated || '0', {
+              {formatAmount(pool.loanFundsOriginated || '0', {
                 minValue: 1_000_000,
               })}{' '}
               USDC
