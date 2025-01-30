@@ -4,6 +4,7 @@ import {
     createDirectus,
     DirectusClient,
     readItems,
+    readSingleton,
     rest,
     RestClient,
 } from '@directus/sdk';
@@ -19,6 +20,7 @@ import {
     DirectusSchema,
     FinancialReportingDocumentsItemsDirectus,
     KeyCreditMetricsDirectus,
+    PlatformOverviewDirectus,
     PoolDelegateProfileAndHistoryDirectus,
     PoolOverviewDirectus,
     PoolRepaymentItemsDirectus,
@@ -132,6 +134,10 @@ export class DataService {
     calculateApyForTranche(interestRate: string): number {
         const EPOCHS_IN_YEAR = 52.17857;
         return (1 + parseFloat(interestRate)) ** EPOCHS_IN_YEAR - 1;
+    }
+
+    async getPlatformOverview(): Promise<PlatformOverviewDirectus> {
+        return await this._directus.request(readSingleton('PlatformOverview'));
     }
 
     async getPoolOverview(

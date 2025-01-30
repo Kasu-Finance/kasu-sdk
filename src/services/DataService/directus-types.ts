@@ -12,6 +12,12 @@ export interface DirectusSchema {
     PoolRepaymentItems: PoolRepaymentItemsDirectus[];
     KeyCreditMetrics: KeyCreditMetricsDirectus[];
     BadAndDoubtfulDebtsItems: BadAndDoubtfulDebtsItems[];
+    PlatformOverview: PlatformOverviewDirectus;
+}
+
+export interface PlatformOverviewDirectus {
+    id: string;
+    loanOriginationVolume: number;
 }
 
 export interface PoolOverviewDirectus {
