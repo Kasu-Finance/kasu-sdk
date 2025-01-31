@@ -63,6 +63,14 @@ const LoyaltyStatusCriteria: React.FC<LoyaltyStatusCriteriaProps> = ({
                   'modals.loanContract.subheader-4.subheader-4-1.list-0.list-3'
                 )}
             </li>
+            <li>
+              {formattedText?.['subheader-4']['subheader-4-1']['list-0'][
+                'list-4'
+              ] ??
+                t(
+                  'modals.loanContract.subheader-4.subheader-4-1.list-0.list-4'
+                )}
+            </li>
           </UnorderedList>
           <Typography variant='baseSm'>
             {formattedText?.['subheader-4']['subheader-4-1']['description-2'] ??
@@ -107,29 +115,61 @@ const LoyaltyStatusCriteria: React.FC<LoyaltyStatusCriteriaProps> = ({
             {formattedText?.['subheader-4']['subheader-4-2']['description-1'] ??
               t('modals.loanContract.subheader-4.subheader-4-2.description-1')}
           </Typography>
-          <UnorderedList
-            sx={{ ...customTypography.baseSm, pl: 2, 'li + li': { mt: 0.5 } }}
-          >
-            <li>
-              {formattedText?.['subheader-4']['subheader-4-2'].list['list-0'] ??
-                t('modals.loanContract.subheader-4.subheader-4-2.list.list-0')}
-            </li>
-            <li>
-              {formattedText?.['subheader-4']['subheader-4-2'].list['list-1'] ??
-                t('modals.loanContract.subheader-4.subheader-4-2.list.list-1')}
-            </li>
-            <li>
-              {formattedText?.['subheader-4']['subheader-4-2'].list['list-2'] ??
-                t('modals.loanContract.subheader-4.subheader-4-2.list.list-2')}
-            </li>
-          </UnorderedList>
           <Typography variant='baseSm'>
             {formattedText?.['subheader-4']['subheader-4-2']['description-2'] ??
               t('modals.loanContract.subheader-4.subheader-4-2.description-2')}
           </Typography>
+          <UnorderedList
+            sx={{ ...customTypography.baseSm, pl: 2, 'li + li': { mt: 0.5 } }}
+          >
+            <li>
+              {formattedText?.['subheader-4']['subheader-4-2']['list-0'][
+                'list-0-1'
+              ] ??
+                t(
+                  'modals.loanContract.subheader-4.subheader-4-2.list-0.list-0-1'
+                )}
+            </li>
+          </UnorderedList>
           <Typography variant='baseSm'>
             {formattedText?.['subheader-4']['subheader-4-2']['description-3'] ??
               t('modals.loanContract.subheader-4.subheader-4-2.description-3')}
+          </Typography>
+          <UnorderedList
+            sx={{ ...customTypography.baseSm, pl: 2, 'li + li': { mt: 0.5 } }}
+          >
+            <li>
+              {formattedText?.['subheader-4']['subheader-4-2']['list-1'][
+                'list-1-0'
+              ] ??
+                t(
+                  'modals.loanContract.subheader-4.subheader-4-2.list-1.list-1-0'
+                )}
+            </li>
+            <li>
+              {formattedText?.['subheader-4']['subheader-4-2']['list-1'][
+                'list-1-1'
+              ] ??
+                t(
+                  'modals.loanContract.subheader-4.subheader-4-2.list-1.list-1-1'
+                )}
+            </li>
+            <li>
+              {formattedText?.['subheader-4']['subheader-4-2']['list-1'][
+                'list-1-2'
+              ] ??
+                t(
+                  'modals.loanContract.subheader-4.subheader-4-2.list-1.list-1-2'
+                )}
+            </li>
+          </UnorderedList>
+          <Typography variant='baseSm'>
+            {formattedText?.['subheader-4']['subheader-4-2']['description-4'] ??
+              t('modals.loanContract.subheader-4.subheader-4-2.description-4')}
+          </Typography>
+          <Typography variant='baseSm'>
+            {formattedText?.['subheader-4']['subheader-4-2']['description-5'] ??
+              t('modals.loanContract.subheader-4.subheader-4-2.description-5')}
           </Typography>
           <Box bgcolor='gold.dark' borderRadius={2} p={2} textAlign='center'>
             <Typography variant='baseMdBold'>
@@ -138,8 +178,8 @@ const LoyaltyStatusCriteria: React.FC<LoyaltyStatusCriteriaProps> = ({
             </Typography>
           </Box>
           <Typography variant='baseSm'>
-            {formattedText?.['subheader-4']['subheader-4-2']['description-4'] ??
-              t('modals.loanContract.subheader-4.subheader-4-2.description-4')}
+            {formattedText?.['subheader-4']['subheader-4-2']['description-6'] ??
+              t('modals.loanContract.subheader-4.subheader-4-2.description-6')}
           </Typography>
           <Box bgcolor='gold.dark' borderRadius={2} p={2} textAlign='center'>
             <Typography variant='baseMdBold'>
@@ -172,6 +212,10 @@ const LoyaltyStatusCriteria: React.FC<LoyaltyStatusCriteriaProps> = ({
             <li>
               {formattedText?.['subheader-4']['subheader-4-3'].list['list-2'] ??
                 t('modals.loanContract.subheader-4.subheader-4-3.list.list-2')}
+            </li>
+            <li>
+              {formattedText?.['subheader-4']['subheader-4-3'].list['list-3'] ??
+                t('modals.loanContract.subheader-4.subheader-4-3.list.list-3')}
             </li>
           </UnorderedList>
           <Typography variant='baseSm'>
@@ -222,6 +266,10 @@ const LoyaltyStatusCriteria: React.FC<LoyaltyStatusCriteriaProps> = ({
             <li>
               {formattedText?.['subheader-4']['subheader-4-4'].list['list-2'] ??
                 t('modals.loanContract.subheader-4.subheader-4-4.list.list-2')}
+            </li>
+            <li>
+              {formattedText?.['subheader-4']['subheader-4-4'].list['list-3'] ??
+                t('modals.loanContract.subheader-4.subheader-4-4.list.list-3')}
             </li>
           </UnorderedList>
           <Typography variant='baseSm'>
