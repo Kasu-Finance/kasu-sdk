@@ -1197,60 +1197,68 @@
         "title": "Schedule 1. Loyalty Status Criteria",
         "subheader-4-1": {
           "title": "Obtain rKSU to Achieve a Loyalty Level",
-          "description-1": "Lenders must lock KSU to obtain the required levels of rKSU relative to their lending (outlined in the Loyalty Level 1 and Loyalty Level 2 explanations below) to achieve a Loyalty Level in order to activate the following utility/benefits:",
+          "description-1": "Lenders must lock KSU to obtain the required levels of rKSU relative to their lending (outlined in the Loyalty Level 1, Loyalty Level 2 and Loyalty Level 3 explanations below) to achieve a Loyalty Level in order to activate the following utility and rewards:",
           "description-2": "Each KSU locking period detailed below will entitle a Lender to a multiplier on the specific amount of temporary, non-redeemable and non-transferrable, rKSU that will accumulate, so long as KSU remains locked. A synthetic value is applied to rKSU, which is pegged to the KSU price (i.e. if the price of KSU rises, so will the synthetic value of rKSU; and if the price of KSU falls, so will the synthetic value of rKSU).",
           "description-3": "The amount of rKSU obtained is based on a multiplier applied to the amount of locked KSU:",
-          "description-4": "For example, a Lender that locks 100 KSU for 30 days will receive 5 rKSU. Similarly, a Lender that locks 100 KSU for 360 days will receive 50 rKSU. The manner in which a Lender’s rKSU is used to determine their Loyalty Level (and associated utility/benefits) is described below.",
+          "description-4": "For example, a Lender that locks 100 KSU for 30 days will receive 5 rKSU. Similarly, a Lender that locks 100 KSU for 360 days will receive 50 rKSU. The manner in which a Lender’s rKSU is used to determine their Loyalty Level (and associated utility and rewards) is described below.",
           "list-0": {
             "list-1": "Priority access to Business Lending Opportunities available on Kasu including loan Tranches in the case that they are oversubscribed.",
             "list-2": "Priority for Withdrawal Requests from existing Lending.",
-            "list-3": "Additional interest (bonus interest) on all lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements)."
+            "list-3": "Additional interest (bonus interest) on all lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements).",
+            "list-4": "Protocol Fee Sharing, paid in USDC."
           },
           "list-1": {
             "list-1": "This multiplier varies according to a Lender’s locking period, per the below table.",
-            "list-2": "The synthetic value of a Lender’s rKSU balance, relative to the total combined value of a Lender’s current USDC lending (inclusive of queued USDC Lending Requests that have yet to be cleared) across all Business Lending Opportunities determines a Lender’s Loyalty Level (outlined in the Loyalty Level 1 and Loyalty Level 2 explanations below))."
+            "list-2": "The synthetic value of a Lender’s rKSU balance, relative to the total combined value of a Lender’s current USDC lending (inclusive of queued USDC Lending Requests that have yet to be cleared) across all Business Lending Opportunities determines a Lender’s Loyalty Level (outlined in the Loyalty Level 1, Loyalty Level 2 and Loyalty Level 3 explanations below)."
           }
         },
         "subheader-4-2": {
-          "title": "No Loyalty Level",
-          "description-1": "If the synthetic value of a Lender’s rKSU balance, relative to their total combined value of current USDC lending (inclusive of queued USDC Lending Requests that are yet to be cleared) across all Business Lending Opportunities is less than 1%, then the Lender will not achieve a Loyalty Level. The Lender therefore will not be entitled to the following utility/benefits:",
-          "description-2": "For example, a Lender has 1,500 USDC in existing lending, and a further 100 USDC queued Lending Requests (that have yet to be accepted). The Lender has also purchased and locked 200 KSU for 30 days. The 0.05x rKSU multiplier (per the above table) provides the Lender with 10 rKSU. For the purposes of this calculation, it is assumed that the current price of KSU is 1 USDC. Therefore, the synthetic value of the Lender’s 10 rKSU is 10 USDC.",
-          "description-3": "Based on the formula outlined above, this ratio of the Lender’s rKSU to current USDC lending (inclusive of queued Lending Requests that have yet to be accepted) is as follows:",
-          "description-4": "The resultant output demonstrates that it is less than 1%. Therefore, the Lender has not achieved a Loyalty Level:",
+          "title": "Loyalty Level 1",
+          "description-1": "If the synthetic value of a Lender’s rKSU balance, relative to their total combined value of current USDC lending (inclusive of queued USDC Lending Requests that are yet to be cleared) across all Business Lending Opportunities exceeds 0% but is less than 1%, then the Lender will achieve Loyalty Level 1.",
+          "description-2": "This entitles the Lender to the following utility and reward:",
+          "description-3": "The Lender will not be entitled to the following utility and rewards:",
+          "description-4": "For example, a Lender has 1,500 USDC in existing lending, and a further 100 USDC queued Lending Requests (that have yet to be accepted). The Lender has also purchased and locked 200 KSU for 30 days. The 0.05x rKSU multiplier (per the above table) provides the Lender with 10 rKSU. For the purposes of this calculation, it is assumed that the current price of KSU is 1 USDC. Therefore, the synthetic value of the Lender’s 10 rKSU is 10 USDC.",
+          "description-5": "Based on the formula outlined above, this ratio of the Lender’s rKSU to current USDC lending (inclusive of queued Lending Requests that have yet to be accepted) is as follows:",
+          "description-6": "The resultant output demonstrates that it is greater than 0% but is less than 1%, providing the Lender with Loyalty Level 1:",
           "example-1": "rKSU synthetic value / (Current Lending + Queued Lending Requests)",
-          "example-2": "10USDC / (1,500USDC + 100 USDC) = 0.63%",
-          "list": {
-            "list-0": "Priority access to Business Lending Opportunities available on Kasu including loan Tranches in the case that they are oversubscribed.",
-            "list-1": "Priority for Withdrawal Requests from existing Lending.",
-            "list-2": "Additional interest (bonus interest) on all lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements)."
+          "example-2": "10 USDC / (1,500USDC + 100 USDC) = 0.63%",
+          "list-0": {
+            "list-0-1": "Share of Kasu Protocol Fees, determined by the Lender’s rKSU relative to all Lenders’ rKSU."
+          },
+          "list-1": {
+            "list-1-0": "Priority access to Business Lending Opportunities available on Kasu including loan Tranches in the case that they are oversubscribed.",
+            "list-1-1": "Priority for Withdrawal Requests from existing Lending.",
+            "list-1-2": "Additional interest (bonus interest) on all lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements)."
           }
         },
         "subheader-4-3": {
-          "title": "Loyalty Level 1",
-          "description-1": "If the value of a Lender’s rKSU balance, relative to their total combined value of current USDC lending (inclusive of queued USDC Lending Requests that are yet to be cleared) across all Business Lending Opportunities equals 1% but less than 5%, then the Lender will achieve Loyalty Level 1. This entitles the Lender to the following utility and benefits:",
+          "title": "Loyalty Level 2",
+          "description-1": "If the synthetic value of a Lender’s rKSU balance, relative to their total combined value of current USDC lending (inclusive of queued USDC Lending Requests that are yet to be cleared) across all Business Lending Opportunities equals 1% but less than 5%, then the Lender will achieve Loyalty Level 2. This entitles the Lender to the following utility and rewards:",
           "description-2": "For example, a Lender has 400 USDC in existing lending, and a further 100 USDC queued Lending Requests (that have yet to be accepted). The Lender has also purchased and locked 200 KSU for 30 days. The 0.05x rKSU multiplier (per the above table) provides the Lender with 10 rKSU. For the purposes of this calculation, it is assumed that the current price of KSU is 1 USDC. Therefore, the synthetic value of the Lender’s 10 rKSU is 10 USDC.",
           "description-3": "Based on the formula outlined above, this ratio of the Lender’s rKSU to current USDC lending (inclusive of queued Lending Requests that have yet to be accepted) is as follows:",
-          "description-4": "The resultant output demonstrates that it exceeds 1%, but is less than 5%, providing the Lender with Loyalty Level 1:",
+          "description-4": "The resultant output demonstrates that it exceeds 1%, but is less than 5%, providing the Lender with Loyalty Level 2:",
           "example-1": "rKSU synthetic value / (Current Lending + Queued Lending Requests)",
           "example-2": "10USDC / (400USDC + 100 USDC) = 2.00%",
           "list": {
-            "list-0": "Second order priority access to Business Lending Opportunities available on Kasu including loan Tranches in the case that they are oversubscribed (behind Loyalty Level 2)",
-            "list-1": "Second order priority for Withdrawal Requests from existing Lending (behind Loyalty Level 2) but only for variable interest rate loans (not fixed interest rate loans).",
-            "list-2": "Additional interest (Loyalty Level 1 bonus interest) on all lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements)."
+            "list-0": "Second order priority access to Business Lending Opportunities available on Kasu including loan Tranches in the case that they are oversubscribed (behind Loyalty Level 3)",
+            "list-1": "Second order priority for Withdrawal Requests from existing Lending (behind Loyalty Level 3) but only for variable interest rate loans (not fixed interest rate loans).",
+            "list-2": "Additional interest (Loyalty Level 2 bonus interest) on all lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements).",
+            "list-3": "Protocol Fee Sharing based on the Lender’s rKSU relative to all Lenders’ rKSU, paid in USDC."
           }
         },
         "subheader-4-4": {
-          "title": "Loyalty Level 2",
-          "description-1": "If the synthetic value of a Lender’s rKSU balance, relative to their total combined value of current USDC lending (inclusive of queued USDC Lending Requests that are yet to be cleared) across all Business Lending Opportunities equals 5% or greater, then the Lender will achieve Loyalty Level 2. This entitles the lender to the following utility and benefits:",
+          "title": "Loyalty Level 3",
+          "description-1": "If the synthetic value of a Lender’s rKSU balance, relative to their total combined value of current USDC lending (inclusive of queued USDC Lending Requests that are yet to be cleared) across all Business Lending Opportunities equals 5% or greater, then the Lender will achieve Loyalty Level 3. This entitles the lender to the following utility and rewards:",
           "description-2": "For example, a Lender has 100 USDC in existing lending, and a further 30 USDC queued Lending Requests (that have yet to be accepted). The Lender has also purchased and locked 200 KSU for 30 days. The 0.05x rKSU multiplier (per the above table) provides the Lender with 10 rKSU. For the purposes of this calculation, it is assumed that the current price of KSU is 1 USDC. Therefore, the synthetic value of the Lender’s 10 rKSU is 10 USDC.",
           "description-3": "Based on the formula outlined above, this ratio of the Lender’s rKSU to current USDC lending (inclusive of queued Lending Requests that have yet to be accepted) is as follows:",
-          "description-4": "The resultant output demonstrates that it exceeds 5%, providing the Lender with Loyalty Level 2:",
+          "description-4": "The resultant output demonstrates that it exceeds 5%, providing the Lender with Loyalty Level 3:",
           "example-1": "rKSU synthetic value / (Current Lending + Queued Lending Requests)",
           "example-2": "10USDC / (100USDC + 30 USDC) = 7.69%",
           "list": {
             "list-0": "First order priority access to Business Lending Opportunities available on Kasu (including loan Tranches in the case that they are oversubscribed.",
-            "list-1": "First order priority for Withdrawal Requests  from existing lending but only for variable interest rate loans (not fixed interest rate loans).",
-            "list-2": "Additional interest (Loyalty Level 2 bonus interest) on all lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements)."
+            "list-1": "First order priority for Withdrawal Requests from existing lending but only for variable interest rate loans (not fixed interest rate loans).",
+            "list-2": "Additional interest (Loyalty Level 3 bonus interest) on all lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements).",
+            "list-3": "Protocol Fee Sharing based on the Lender’s rKSU relative to all Lenders’ rKSU, paid in USDC."
           }
         }
       }
