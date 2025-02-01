@@ -1,4 +1,5 @@
 import { Box } from '@mui/material'
+import { PlatformOverviewDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import { LendingTotals } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import getTranslation from '@/hooks/useTranslation'
@@ -9,7 +10,8 @@ import { formatAmount } from '@/utils'
 
 const HomeOverview: React.FC<{
   lendingTotals: LendingTotals
-}> = async ({ lendingTotals }) => {
+  platformOverview: PlatformOverviewDirectus
+}> = async ({ lendingTotals, platformOverview }) => {
   const { t } = getTranslation()
 
   const metrics = [
@@ -32,7 +34,7 @@ const HomeOverview: React.FC<{
     {
       title: t('home.summary.metric-3'),
       toolTipInfo: t('home.summary.metric-3-tooltip'),
-      content: `${formatAmount(lendingTotals?.totalLoanFundsOriginated || '0', {
+      content: `${formatAmount(platformOverview?.loanOriginationVolume || '0', {
         minValue: 1_000_000,
       })}`,
       unit: 'USDC',

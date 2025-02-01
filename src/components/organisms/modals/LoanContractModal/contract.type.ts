@@ -294,6 +294,7 @@ export interface RetailLoanContract {
         'list-1': string
         'list-2': string
         'list-3': string
+        'list-4': string
       }
       'list-1': {
         'list-1': string
@@ -306,12 +307,17 @@ export interface RetailLoanContract {
       'description-2': string
       'description-3': string
       'description-4': string
+      'description-5': string
+      'description-6': string
       'example-1': string
       'example-2': string
-      list: {
-        'list-0': string
-        'list-1': string
-        'list-2': string
+      'list-0': {
+        'list-0-1': string
+      }
+      'list-1': {
+        'list-1-0': string
+        'list-1-1': string
+        'list-1-2': string
       }
     }
     'subheader-4-3': {
@@ -326,6 +332,7 @@ export interface RetailLoanContract {
         'list-0': string
         'list-1': string
         'list-2': string
+        'list-3': string
       }
     }
     'subheader-4-4': {
@@ -340,6 +347,7 @@ export interface RetailLoanContract {
         'list-0': string
         'list-1': string
         'list-2': string
+        'list-3': string
       }
     }
   }
@@ -627,6 +635,7 @@ export interface ExemptLoanContract {
         'list-1': string
         'list-2': string
         'list-3': string
+        'list-4': string
       }
       'list-1': {
         'list-1': string
@@ -639,12 +648,17 @@ export interface ExemptLoanContract {
       'description-2': string
       'description-3': string
       'description-4': string
+      'description-5': string
+      'description-6': string
       'example-1': string
       'example-2': string
-      list: {
-        'list-0': string
-        'list-1': string
-        'list-2': string
+      'list-0': {
+        'list-0-1': string
+      }
+      'list-1': {
+        'list-1-0': string
+        'list-1-1': string
+        'list-1-2': string
       }
     }
     'subheader-4-3': {
@@ -659,6 +673,7 @@ export interface ExemptLoanContract {
         'list-0': string
         'list-1': string
         'list-2': string
+        'list-3': string
       }
     }
     'subheader-4-4': {
@@ -673,6 +688,7 @@ export interface ExemptLoanContract {
         'list-0': string
         'list-1': string
         'list-2': string
+        'list-3': string
       }
     }
   }
