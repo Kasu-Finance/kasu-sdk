@@ -2013,7 +2013,7 @@
     "lendingPortfolio": {
       "title": "My Lending Portfolio",
       "lendingBalance": "Lending Balance",
-      "dataUpdateTime": "Your Lending Portfolio data is updated at the end of each epoch clearing period when the outcome of all Lending & Withdrawal Requests is determined. ",
+      "dataUpdateTime": "Your Lending Portfolio data is updated at the end of each 7-day Epoch, during the 48-hour Clearing Period.",
       "interestEarningsClaimable": "Interest Earnings​ Claimable Balance",
       "interestEarningsLifetime": "Interest Earnings​ Lifetime",
       "tableHeader": {
