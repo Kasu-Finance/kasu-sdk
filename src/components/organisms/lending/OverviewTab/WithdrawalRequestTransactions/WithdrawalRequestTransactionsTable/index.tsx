@@ -51,7 +51,7 @@ const WithdrawalRequestTransactionsTable: React.FC<
               {withdrawalTransactions.length ? (
                 <NoMatchingFilter />
               ) : (
-                <EmptyDataPlaceholder text='You have not withdrawn from any lending strategies...' />
+                <EmptyDataPlaceholder text='You have not yet made any Withdrawal Requests...' />
               )}
             </TableCell>
           </TableRow>

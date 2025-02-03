@@ -62,6 +62,9 @@ const DelegateOverview: React.FC<DelegateOverviewProps> = ({ pool }) => {
             metric={
               <Typography variant='baseMdBold'>{pool.assetClass}</Typography>
             }
+            sx={{
+              flexDirection: 'column',
+            }}
           />
         </Grid>
         <Grid item sm={6}>
@@ -109,10 +112,13 @@ const DelegateOverview: React.FC<DelegateOverviewProps> = ({ pool }) => {
             toolTipInfo={t('lending.poolOverview.detailCard.industry.tooltip')}
             showDivider
             metric={
-              <Typography variant='baseMdBold' maxWidth={350} textAlign='right'>
+              <Typography variant='baseMdBold' maxWidth={350}>
                 {pool.industryExposure}
               </Typography>
             }
+            sx={{
+              flexDirection: 'column',
+            }}
           />
         </Grid>
       </Grid>

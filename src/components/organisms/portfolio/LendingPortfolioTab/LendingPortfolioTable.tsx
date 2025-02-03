@@ -57,7 +57,7 @@ const LendingPortfolioTable: React.FC<LendingPortfolioTableProps> = ({
               {portfolioPools.length && 1 > 2 ? (
                 <NoMatchingFilter />
               ) : (
-                <EmptyDataPlaceholder text='You have not deposited into any lending strategies...'>
+                <EmptyDataPlaceholder text='You have not yet made any Lending Requests...'>
                   <NextClearingPeriodInfo
                     beforeText={t('portfolio.lendingPortfolio.dataUpdateTime')}
                     sx={{

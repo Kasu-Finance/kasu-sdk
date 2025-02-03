@@ -765,7 +765,7 @@
       "terms-and-conditions-2": "Important Information.",
       "secure-spot": {
         "title": "How do I secure my spot in this tranche?",
-        "description": "Depending on demand, access to certain loan tranches may be based on Loyalty Levels, which increase the likelihood of securing a spot in your desired tranche, but do not guarantee it."
+        "description": "Depending on demand, access to certain Loan Tranches may be based on Loyalty Levels. This increases the likelihood of securing a spot in your desired Tranche but does not guarantee it."
       },
       "review": {
         "metric-1": "Lend To",
@@ -1410,7 +1410,7 @@
     "poolOverview": {
       "title": "Lending Strategy Overview",
       "subtitle": "Loan Overview",
-      "subtitle-2": "Delegate & Lending Strategy Overview",
+      "subtitle-2": "Delegate Background & Lending Structure Overview",
       "strategyDeck": "Strategy Deck",
       "detailCard": {
         "apyStructure": {
@@ -1791,12 +1791,12 @@
   },
   "repayments": {
     "title": "Repayments and Funds Flow",
-    "loanModelDescription": "The Delegate's lending model is to facilitate Fiat currency loans to real world businesses off-chain. The Asset Class and Loan Structure outlined in the 'Lending Strategy Details' screen indicates that these loans are 'Revolving/Evergreen' Loan Facilities, with fluctuating loan balances, being a function of ongoing and simultaneous loan repayments and loan redraws in Fiat currency off-chain. Accordingly, these Fiat currency transactions can only be viewed via CSV download at this current point in time.",
+    "loanModelDescription": "The Delegate's lending model is to facilitate Fiat currency loans to real world businesses off-chain. The Asset Class and Loan Structure outlined in the 'Details' screen of the Lending Strategy indicates that these loans are 'Revolving/Evergreen' Loan Facilities, with fluctuating loan balances, being a function of ongoing and simultaneous loan repayments and loan redraws in Fiat currency off-chain. Accordingly, these Fiat currency transactions can only be viewed via CSV download at this current point in time. These transactions will be available to view on-chain shortly.",
     "borrowerFundsCSV": "Download CSV to view fiat currency funds flow on a per borrower basis:",
     "sections": {
       "aggregated": {
         "title": "Aggregated Funds Flow",
-        "description": "An aggregated view of this funds flow for all end borrowers, along with other/related loan funds flow is as follows. Note, this is update upon the commencement of every Epoch (clearing period).",
+        "description": "An aggregated view of this funds flow for all End Borrowers, along with other/related loan funds flow is as follows. Note, these transactions are updated the end of each 7-day Epoch, during the 48-hour Clearing Period.",
         "metrics": {
           "totalBorrowers": {
             "label": "Total End Borrowers (Current)",
@@ -2013,7 +2013,7 @@
     "lendingPortfolio": {
       "title": "My Lending Portfolio",
       "lendingBalance": "Lending Balance",
-      "dataUpdateTime": "Your Lending Portfolio data is updated at the end of each epoch clearing period when the outcome of all Lending & Withdrawal Requests is determined. ",
+      "dataUpdateTime": "Your Lending Portfolio data is updated at the end of each 7-day Epoch, during the 48-hour Clearing Period.",
       "interestEarningsClaimable": "Interest Earnings​ Claimable Balance",
       "interestEarningsLifetime": "Interest Earnings​ Lifetime",
       "tableHeader": {
@@ -2032,6 +2032,7 @@
       }
     },
     "transactions": {
+      "dataUpdateTime": "All transactions are completed at the end of each 7-day Epoch, during the 48-hour Clearing Period.",
       "notification": {
         "title": "You have {count} 'Opt In/Out' decisions pending",
         "action": "View All"
