@@ -1,4 +1,4 @@
-import { Box, Button, Link, Stack, Typography } from '@mui/material'
+import { Box, Button, Container, Stack, Typography } from '@mui/material'
 import Image from 'next/image'
 import React from 'react'
 
@@ -17,10 +17,9 @@ const Footer: React.FC = () => {
         width='100%'
         position='relative'
         display='flex'
-        flexDirection='column'
-        justifyContent='end'
-        alignItems='center'
-        height={250}
+        alignItems='end'
+        height={350}
+        pb={6}
       >
         <Image
           src={FooterBg}
@@ -32,65 +31,193 @@ const Footer: React.FC = () => {
             right: 0,
             width: '100vw',
             height: 'auto',
-            maxHeight: 300,
+            maxHeight: 343,
           }}
           priority
         />
-        <KasuFooterLogo />
-        <Typography variant='body1' mt={2}>
-          <Link
-            sx={{
-              color: 'primary',
-              textShadow: '0px 0px 8px rgba(0, 0, 0, 0.8)',
-            }}
-            href='mailto:hello@kasu.finance'
+        <Container
+          maxWidth='lg'
+          sx={{ display: 'flex', justifyContent: 'space-between' }}
+        >
+          <Box display='flex' gap={8}>
+            <Stack spacing={3.5}>
+              <KasuFooterLogo />
+              <Box display='flex' gap={2}>
+                <Button
+                  href='https://discord.gg/kasu'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  sx={{ width: 'max-content', height: 'max-content', p: 0 }}
+                >
+                  <DiscordIcon />
+                </Button>
+                <Button
+                  href='https://t.me/KASU_Fi'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  sx={{ width: 'max-content', height: 'max-content', p: 0 }}
+                >
+                  <TelegramIcon />
+                </Button>
+                <Button
+                  href='https://medium.com/@KasuFinance'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  sx={{ width: 'max-content', height: 'max-content', p: 0 }}
+                >
+                  <MediumIcon />
+                </Button>
+                <Button
+                  href='https://twitter.com/KasuFinance'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  sx={{ width: 'max-content', height: 'max-content', p: 0 }}
+                >
+                  <TwitterIcon />
+                </Button>
+              </Box>
+            </Stack>
+            <Box display='grid' gridTemplateColumns='repeat(auto-fill, 160px)'>
+              <Button
+                href='#'
+                target='_blank'
+                rel='noopener noreferrer'
+                sx={{
+                  width: 'max-content',
+                  height: 'max-content',
+                  p: 0,
+                  gridColumn: '1/3',
+                  textTransform: 'capitalize',
+                }}
+              >
+                About
+              </Button>
+              <Button
+                href='https://docs.kasu.finance/'
+                target='_blank'
+                rel='noopener noreferrer'
+                sx={{
+                  width: 'max-content',
+                  height: 'max-content',
+                  p: 0,
+                  textTransform: 'capitalize',
+                }}
+              >
+                User Docs
+              </Button>
+              <Button
+                href='https://docs.kasu.finance/important-information-when-lending/frequently-asked-questions'
+                target='_blank'
+                rel='noopener noreferrer'
+                sx={{
+                  width: 'max-content',
+                  height: 'max-content',
+                  p: 0,
+                  textTransform: 'capitalize',
+                }}
+              >
+                FAQs
+              </Button>
+              <Button
+                href='#'
+                target='_blank'
+                rel='noopener noreferrer'
+                sx={{
+                  width: 'max-content',
+                  height: 'max-content',
+                  p: 0,
+                  textTransform: 'capitalize',
+                }}
+              >
+                Website
+              </Button>
+              <Button
+                href='mailto:hello@kasu.finance'
+                rel='noopener noreferrer'
+                sx={{
+                  width: 'max-content',
+                  height: 'max-content',
+                  p: 0,
+                  textTransform: 'capitalize',
+                }}
+              >
+                Contact Us
+              </Button>
+            </Box>
+          </Box>
+
+          <Box
+            display='grid'
+            gridTemplateColumns='repeat(auto-fill, 160px)'
+            rowGap={1}
+            width={320}
           >
-            hello@kasu.finance
-          </Link>
-        </Typography>
+            <Stack spacing={1}>
+              <Typography variant='baseMdBold' color='white'>
+                Legal Notices:
+              </Typography>
+
+              <Button
+                href='https://docs.kasu.finance/legal-notices/privacy-policy'
+                target='_blank'
+                rel='noopener noreferrer'
+                sx={{
+                  width: 'max-content',
+                  height: 'max-content',
+                  p: 0,
+                  textTransform: 'capitalize',
+                }}
+              >
+                Privacy Policy
+              </Button>
+              <Button
+                href='https://docs.kasu.finance/legal-notices/platform-access-and-use-terms-of-use'
+                target='_blank'
+                rel='noopener noreferrer'
+                sx={{
+                  width: 'max-content',
+                  height: 'max-content',
+                  p: 0,
+                  textTransform: 'capitalize',
+                }}
+              >
+                Terms of Use
+              </Button>
+            </Stack>
+            <Stack spacing={1}>
+              <Typography variant='baseMdBold' color='white'>
+                Platform Disclosures:
+              </Typography>
+              <Button
+                href='https://docs.kasu.finance/important-information-when-lending/important-information'
+                target='_blank'
+                rel='noopener noreferrer'
+                sx={{
+                  width: 'max-content',
+                  height: 'max-content',
+                  p: 0,
+                  textTransform: 'capitalize',
+                }}
+              >
+                Important Information
+              </Button>
+              <Button
+                href='https://docs.kasu.finance/risk-warnings/risk-warnings'
+                target='_blank'
+                rel='noopener noreferrer'
+                sx={{
+                  width: 'max-content',
+                  height: 'max-content',
+                  p: 0,
+                  textTransform: 'capitalize',
+                }}
+              >
+                Risk Warning
+              </Button>
+            </Stack>
+          </Box>
+        </Container>
       </Box>
-      <Stack
-        direction='row'
-        spacing={2}
-        pt={2}
-        height={78}
-        bgcolor='primary.contrastText'
-        width='100%'
-        justifyContent='center'
-      >
-        <Button
-          href='https://discord.gg/kasu'
-          target='_blank'
-          rel='noopener noreferrer'
-          sx={{ width: 'max-content', height: 'max-content', p: 0 }}
-        >
-          <DiscordIcon />
-        </Button>
-        <Button
-          href='https://t.me/KASU_Fi'
-          target='_blank'
-          rel='noopener noreferrer'
-          sx={{ width: 'max-content', height: 'max-content', p: 0 }}
-        >
-          <TelegramIcon />
-        </Button>
-        <Button
-          href='https://medium.com/@KasuFinance'
-          target='_blank'
-          rel='noopener noreferrer'
-          sx={{ width: 'max-content', height: 'max-content', p: 0 }}
-        >
-          <MediumIcon />
-        </Button>
-        <Button
-          href='https://twitter.com/KasuFinance'
-          target='_blank'
-          rel='noopener noreferrer'
-          sx={{ width: 'max-content', height: 'max-content', p: 0 }}
-        >
-          <TwitterIcon />
-        </Button>
-      </Stack>
     </Box>
   )
 }
