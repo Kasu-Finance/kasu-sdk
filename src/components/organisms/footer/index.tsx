@@ -40,9 +40,9 @@ const Footer: React.FC = () => {
           sx={{ display: 'flex', justifyContent: 'space-between' }}
         >
           <Box display='flex' gap={8}>
-            <Stack spacing={3.5}>
+            <Stack>
               <KasuFooterLogo />
-              <Box display='flex' gap={2}>
+              <Box display='flex' gap={2} mt='auto'>
                 <Button
                   href='https://discord.gg/kasu'
                   target='_blank'
@@ -77,21 +77,13 @@ const Footer: React.FC = () => {
                 </Button>
               </Box>
             </Stack>
-            <Box display='grid' gridTemplateColumns='repeat(auto-fill, 160px)'>
-              <Button
-                href='#'
-                target='_blank'
-                rel='noopener noreferrer'
-                sx={{
-                  width: 'max-content',
-                  height: 'max-content',
-                  p: 0,
-                  gridColumn: '1/3',
-                  textTransform: 'capitalize',
-                }}
-              >
-                About
-              </Button>
+            <Box
+              display='grid'
+              gridTemplateColumns='repeat(2, 160px)'
+              gridTemplateRows='max-content'
+              rowGap={1}
+              mt='auto'
+            >
               <Button
                 href='https://docs.kasu.finance/'
                 target='_blank'
@@ -119,7 +111,7 @@ const Footer: React.FC = () => {
                 FAQs
               </Button>
               <Button
-                href='#'
+                href='https://kasu.finance/'
                 target='_blank'
                 rel='noopener noreferrer'
                 sx={{
