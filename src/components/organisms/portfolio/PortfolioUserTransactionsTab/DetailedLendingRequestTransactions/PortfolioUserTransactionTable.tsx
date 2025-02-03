@@ -56,7 +56,7 @@ const PortfolioUserTransactionTable: React.FC<
               {detailedTransactions.length ? (
                 <NoMatchingFilter />
               ) : (
-                <EmptyDataPlaceholder text='You have not deposited into any lending strategies...' />
+                <EmptyDataPlaceholder text='You have not yet made any Lending Requests...' />
               )}
             </TableCell>
           </TableRow>
