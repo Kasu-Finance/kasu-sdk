@@ -41,7 +41,7 @@ const NotificationBanner: React.FC<NotificationBannerProps> = ({ pools }) => {
 
   return (
     <WaveBox
-      variant='gold'
+      variant='gray'
       display='flex'
       alignItems='center'
       justifyContent='space-between'
@@ -57,8 +57,7 @@ const NotificationBanner: React.FC<NotificationBannerProps> = ({ pools }) => {
       </Typography>
       <Button
         variant='outlined'
-        color='secondary'
-        sx={{ height: 32, width: 101, textTransform: 'capitalize' }}
+        sx={{ height: 32, width: 175, textTransform: 'capitalize' }}
         onClick={handleOpen}
       >
         {t('portfolio.transactions.notification.action')}

@@ -41,7 +41,7 @@ const PortfolioUserTransactionTableWrapper: React.FC<
     return (
       <EmptyDataPlaceholder
         pb={3}
-        text='You have not deposited into any lending strategies...'
+        text='You have not yet made any Lending Requests...'
       />
     )
 
