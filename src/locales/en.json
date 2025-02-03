@@ -2032,6 +2032,7 @@
       }
     },
     "transactions": {
+      "dataUpdateTime": "All transactions are completed at the end of each 7-day Epoch, during the 48-hour Clearing Period.",
       "notification": {
         "title": "You have {count} 'Opt In/Out' decisions pending",
         "action": "View All"
