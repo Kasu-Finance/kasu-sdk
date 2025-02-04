@@ -858,7 +858,7 @@
       "title": "Borrower Identified",
       "description-1": "Kasu is all about transparency, so we sent you an email stating which end borrower(s) your funds will be loaned to.​",
       "description-2": "We’re also about providing you with choice, which is why you can Opt In or Out.​",
-      "description-3": "We can’t keep end borrowers waiting too long, so we can only keep the opt-out window open for 48 hours. If you don’t opt out within this time, you agree to an automatic opt-in",
+      "description-3": "We can’t keep End Borrowers waiting too long, so we can only keep the opt-out window open for 48 hours. If you don’t opt out within this time, you agree to an automatic opt-in",
       "description-4": "Don’t forget to adjust your email spam filter to accept emails from"
     },
     "loanContract": {
@@ -1429,11 +1429,11 @@
         },
         "industry": {
           "label": "Industry Exposure",
-          "tooltip": "Industry and/or business category in which the Delegate's customers (end borrowers) operate."
+          "tooltip": "Industry and/or business category in which the Delegate's customers (End Borrowers) operate."
         },
         "security": {
           "label": "Security",
-          "tooltip": "The form of collateral or commitment provided by the Delegate's customers (end borrowers) to secure their loans, so that in the event of default, the Delegate has recourse to recover the debt."
+          "tooltip": "The form of collateral or commitment provided by the Delegate's customers (End Borrowers) to secure their loans, so that in the event of default, the Delegate has recourse to recover the debt."
         },
         "lendingHistory": {
           "label": "Lending History",
@@ -1441,7 +1441,7 @@
         },
         "loansUnder": {
           "label": "Total Active Lending",
-          "tooltip": "Total USDC equivalent face value of all outstanding loans that the Delegate currently has deployed to end borrowers from this Lending Strategy.​"
+          "tooltip": "Total USDC equivalent face value of all outstanding loans that the Delegate currently has deployed to End Borrowers from this Lending Strategy.​"
         },
         "tvl": {
           "label": "Total Value Locked (TVL)",
@@ -1449,7 +1449,7 @@
         },
         "terms": {
           "label": "Term & Structure",
-          "tooltip": "​The term and structure offered to Lenders, which typically matches the requirements of this Lending Strategy to suit the lending asset class and loan structure provided to end borrowers. Open Ended means that the Lending Strategy is ongoing with no defined end date upon which Lenders will be repaid. This is because the Lending Strategy facilitates Revolving Loans to end borrowers, which also have no defined end date. Such loans are typically utilised to fund ongoing operations (akin to a Line of Credit, Working Capital Loan or Evergreen Facility). Lenders must therefore submit withdrawal requests to access any capital return. Term Loan means that there is a defined end date upon which Lenders will be fully repaid. This may, or may not, also include scheduled principal repayments throughout the term of the loan. Whilst repayment(s) occur without the need to submit withdrawal requests, the repayment profile is pre-defined, with little to no flexibility to submit ad-hoc withdrawal requests. This is because Term Loans are typically used to fund longer duration assets, such as  capital expenditure or long term projects (such as property)."
+          "tooltip": "​The term and structure offered to Lenders, which typically matches the requirements of this Lending Strategy to suit the lending asset class and loan structure provided to End Borrowers. Open Ended means that the Lending Strategy is ongoing with no defined end date upon which Lenders will be repaid. This is because the Lending Strategy facilitates Revolving Loans to End Borrowers, which also have no defined end date. Such loans are typically utilised to fund ongoing operations (akin to a Line of Credit, Working Capital Loan or Evergreen Facility). Lenders must therefore submit withdrawal requests to access any capital return. Term Loan means that there is a defined end date upon which Lenders will be fully repaid. This may, or may not, also include scheduled principal repayments throughout the term of the loan. Whilst repayment(s) occur without the need to submit withdrawal requests, the repayment profile is pre-defined, with little to no flexibility to submit ad-hoc withdrawal requests. This is because Term Loans are typically used to fund longer duration assets, such as  capital expenditure or long term projects (such as property)."
         },
         "totalPoolYieldEarnings": {
           "label": "Total Interest Earned",
@@ -1464,9 +1464,9 @@
       },
       "trancheCard": {
         "minDeposit": "Minimum Lending Amount",
-        "minDeposit-tooltip": "The minimum Lending Request amount the Delegate will accept from a single Lender​",
+        "minDeposit-tooltip": "The minimum Lending Request amount the Delegate will accept from a single Lender​.",
         "maxDeposit": "Maximum Lending Amount",
-        "maxDeposit-tooltip": "The maximum Lending Request amount the Delegate will accept from a single Lender​",
+        "maxDeposit-tooltip": "The maximum Lending Request amount the Delegate will accept from a single Lender​.",
         "remainingCapacity": {
           "label": "Remaining Capacity",
           "tooltip": "Amount of additional USDC funds the Delegate can accept within this Lending Strategy, also represented as a percentage of the maximum Lending Strategy target amount.​"
@@ -1656,7 +1656,7 @@
       },
       "totalLoans": {
         "label": "Total Loans Originated",
-        "tooltip": "Cumulative total number of all current and historical individual loans originated by the Delegate to end borrowers across all Lending Asset Classes, regardless of whether the loans have been made available to Lenders on Kasu or not.​"
+        "tooltip": "Cumulative total number of all current and historical individual loans originated by the Delegate to End Borrowers across all Lending Asset Classes, regardless of whether the loans have been made available to Lenders on Kasu or not.​"
       },
       "assetClass": {
         "label": "Asset Class(es)",
@@ -1668,7 +1668,7 @@
       },
       "loans": {
         "label": "Total Active Lending",
-        "tooltip": "Cumulative total USDC equivalent face value of all outstanding loans that the Delegate currently has deployed to end borrowers across all Lending Asset Classes, regardless of whether the loans have been made available to Lenders on Kasu or not.​"
+        "tooltip": "Cumulative total USDC equivalent face value of all outstanding loans that the Delegate currently has deployed to End Borrowers across all Lending Asset Classes, regardless of whether the loans have been made available to Lenders on Kasu or not.​"
       },
       "loss": {
         "label": "Historical Loss Rate",
@@ -1698,7 +1698,7 @@
       },
       "exposureIndustry": {
         "label": "Industry Exposure",
-        "tooltip": "​Industry and/or business category in which the Delegate's customers (end borrowers) operate.​"
+        "tooltip": "​Industry and/or business category in which the Delegate's customers (End Borrowers) operate.​"
       },
       "structureApy": {
         "label": "Lending Strategy APY Structure",
@@ -1710,7 +1710,7 @@
       },
       "loan": {
         "label": "Loan Structure (End Borrowers)",
-        "tooltip-1": "The structure of each loan provided by the Delegate to its customers (end borrowers) with regard to maturity date and repayment profile to suit the lending asset class related to this Lending Strategy.",
+        "tooltip-1": "The structure of each loan provided by the Delegate to its customers (End Borrowers) with regard to maturity date and repayment profile to suit the lending asset class related to this Lending Strategy.",
         "list": {
           "list-0": "A Revolving Loan refers to a loan structure that has no defined end date as it is typically utilised to fund ongoing operations (akin to a Line of Credit, Working Capital Loan or Evergreen Facility).",
           "list-1": "An Amortising Term Loan refers to a loan structure that has defined Principal and Interest repayment periods until it is fully repaid upon a specific end/maturity date, as it is typically utilised to fund core debt, capital expenditure and long term projects.",
@@ -1726,7 +1726,7 @@
       },
       "management": {
         "label": "Total Active Lending",
-        "tooltip": "Total USDC equivalent face value of all outstanding loans that the Delegate currently has deployed to end borrowers from this Lending Strategy.​"
+        "tooltip": "Total USDC equivalent face value of all outstanding loans that the Delegate currently has deployed to End Borrowers from this Lending Strategy.​"
       },
       "yield": {
         "label": "Total Interest Earned",
@@ -1734,7 +1734,7 @@
       },
       "activeLoans": {
         "label": "Active Loans",
-        "tooltip": "Total number of all current outstanding loans that the Delegate currently has deployed to end borrowers from this Lending Strategy."
+        "tooltip": "Total number of all current outstanding loans that the Delegate currently has deployed to End Borrowers from this Lending Strategy."
       },
       "capacity": {
         "label": "Remaining Capacity",
@@ -1774,14 +1774,14 @@
         },
         "bankControl": {
           "label": "Control over Bank Accounts",
-          "tooltip": "Whether the Delegate has control over any of its customers' (end borrowers) bank accounts which derive cash revenues, providing the immediate right to these cash revenues to repay loans prior to the customer (end borrower) having access to these funds. "
+          "tooltip": "Whether the Delegate has control over any of its customers' (End Borrowers) bank accounts which derive cash revenues, providing the immediate right to these cash revenues to repay loans prior to the customer (end borrower) having access to these funds. "
         }
       },
       "criteria": {
         "title": "Minimum Criteria for End Borrowers",
         "yearsBusiness": {
           "label": "Minimum 3 years in Business",
-          "tooltip": "A condition which requires a Delegate's customers (end borrowers) to prove that it has been operating for at least 3 years with adequate financial reporting history."
+          "tooltip": "A condition which requires a Delegate's customers (End Borrowers) to prove that it has been operating for at least 3 years with adequate financial reporting history."
         },
         "propertyOwners": {
           "label": "Director(s)/Beneficial Owner(s) must be property owners",
@@ -1854,9 +1854,9 @@
       "metric-1": "Total Value Locked (TVL)",
       "metric-1-tooltip": "Total Combined USDC funds deployed by Lenders across all Lending Strategies, plus the current value of all KSU locked in the Kasu protocol.",
       "metric-2": "Total Active Lending",
-      "metric-2-tooltip": "Combined USDC equivalent face value of all loans across all Lending Strategies on Kasu that Delegates currently have deployed to end borrowers.",
+      "metric-2-tooltip": "Combined USDC equivalent face value of all loans across all Lending Strategies on Kasu that Delegates currently have deployed to End Borrowers.",
       "metric-3": "Loan Origination Volume",
-      "metric-3-tooltip": "Cumulative total USDC equivalent face value of all current and historical loans originated by Delegates to end borrowers from all Lending Strategies on the Kasu protocol.",
+      "metric-3-tooltip": "Cumulative total USDC equivalent face value of all current and historical loans originated by Delegates to End Borrowers from all Lending Strategies on the Kasu protocol.",
       "metric-4": "Total Interest Earned​",
       "metric-4-tooltip": "Cumulative total gross interest earned by Lenders from all loans since the inception of the Kasu protocol.",
       "metric-5": "Total Loss Rate",
@@ -1979,17 +1979,17 @@
           "title": "Subsequent Transactions",
           "subtitle": "(Post Acceptance)",
           "metric-1": "Funds Returned",
-          "metric-1-tooltip": "The total USDC amount returned to you by the Delegate(s), due to lack of demand for funding from end borrowers.",
+          "metric-1-tooltip": "The total USDC amount returned to you by the Delegate(s), due to lack of demand for funding from End Borrowers.",
           "metric-2": "Current Opt In/Out Pending",
-          "metric-2-tooltip-1": "The total USDC amount currently awaiting your instructions for the Delegate to either deploy to end borrowers, or return your funds to you instead.",
+          "metric-2-tooltip-1": "The total USDC amount currently awaiting your instructions for the Delegate to either deploy to End Borrowers, or return your funds to you instead.",
           "metric-2-tooltip-2": "As per your acknowledgement in the",
           "metric-2-tooltip-3": "if you do not provide any ‘Opt In/Out’ instructions within 48 hours of receiving an email requesting your decision, then you will be deemed to have automatically opted in (otherwise known as ‘negative consent’).",
           "metric-3": "Opted In",
-          "metric-3-tooltip-1": "The total USDC amount that you have ‘Opted In’ for the Delegate to deploy to end borrowers.",
+          "metric-3-tooltip-1": "The total USDC amount that you have ‘Opted In’ for the Delegate to deploy to End Borrowers.",
           "metric-3-tooltip-2": "As per your acknowledgement in the",
           "metric-3-tooltip-3": "if you did not provide any ‘Opt In/Out’ instructions within 48 hours of receiving an email requesting your decision, then you are deemed to have automatically opted in (otherwise known as ‘negative consent’).",
           "metric-4": "Opted Out",
-          "metric-4-tooltip-1": "The total USDC amount that you have ‘Opted Out’ from the Delegate deploying to end borrowers, where funds will be returned to you instead.",
+          "metric-4-tooltip-1": "The total USDC amount that you have ‘Opted Out’ from the Delegate deploying to End Borrowers, where funds will be returned to you instead.",
           "metric-4-tooltip-2": "Refer to the",
           "metric-4-tooltip-3": "for further details as to how the ‘Opt In/Out’ process works."
         }
@@ -2003,13 +2003,13 @@
           "metric-1-tooltip-2": "As per your acknowledgement in the",
           "metric-1-tooltip-3": "the processing of your Withdrawal Requests is contingent upon the excess liquidity within each specific Lending Strategy, and may therefore remain outstanding (or partially outstanding) for one or more epochs.",
           "metric-2": "Queued",
-          "metric-2-tooltip-1": "The current USDC amount of Withdrawal Requests you have submitted across all Lending Strategies that remains queued (where a Delegate will accept nil, part, of all of the Request). The Delegate will continually accept nil, part, or all of the Withdrawal Requests at the end of each epoch, until the funds are fully returned to the Lender (assuming no losses or defaults by end borrowers).",
+          "metric-2-tooltip-1": "The current USDC amount of Withdrawal Requests you have submitted across all Lending Strategies that remains queued (where a Delegate will accept nil, part, of all of the Request). The Delegate will continually accept nil, part, or all of the Withdrawal Requests at the end of each epoch, until the funds are fully returned to the Lender (assuming no losses or defaults by End Borrowers).",
           "metric-2-tooltip-2": "Should any amount(s) of your Withdrawal Request(s)  remain queued for more than five epochs, they will automatically be prioritised above all Loyalty Levels.​",
           "metric-2-tooltip-3": "As per your acknowledgement in the",
           "metric-2-tooltip-4": "the acceptance of Withdrawal Requests is contingent upon the excess liquidity within each specific Lending Strategy, and may therefore remain outstanding (or partially outstanding) for one or more epochs.",
           "metric-3": "Accepted",
           "metric-3-tooltip-1": "The total USDC amount of Withdrawal Requests that has been accepted (in part or full) by the Delegate(s) across all Lending Strategies.​",
-          "metric-3-tooltip-2": "The Delegate will continually accept nil, part, or all of the Withdrawal Requests at the end of each epoch until funds are fully returned to the Lender (assuming no losses or defaults by end borrowers).",
+          "metric-3-tooltip-2": "The Delegate will continually accept nil, part, or all of the Withdrawal Requests at the end of each epoch until funds are fully returned to the Lender (assuming no losses or defaults by End Borrowers).",
           "metric-4": "Cancelled",
           "metric-4-tooltip-1": "The total USDC amount of Withdrawal Requests that you have cancelled across all Lending Strategies.",
           "metric-4-tooltip-2": "Withdrawal Request Cancellations can only be submitted prior to the closure of the clearing period of the current epoch."
@@ -2044,8 +2044,8 @@
             "tooltip-3": "you acknowledged during the Loan Contract Acceptance process for more details."
           },
           "fundsReturned": {
-            "tooltip-1": "Funds will be returned to you by the Delegate due to lack of demand for funding from end borrowers, or the Delegate’s being unable to identify a suitable end borrower.",
-            "tooltip-2": "The USDC amount of a single Lending Request that was previously accepted, but will now be returned to you by the Delegate due to lack of demand for funding from end borrowers, or the Delegate being unable to identify a suitable end borrower."
+            "tooltip-1": "Funds will be returned to you by the Delegate due to lack of demand for funding from End Borrowers, or the Delegate’s being unable to identify a suitable end borrower.",
+            "tooltip-2": "The USDC amount of a single Lending Request that was previously accepted, but will now be returned to you by the Delegate due to lack of demand for funding from End Borrowers, or the Delegate being unable to identify a suitable end borrower."
           },
           "deposit": {
             "requested": {
@@ -2073,7 +2073,7 @@
               "tooltip-2": "If a Lending Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Delegate will accept/reject the Lending Requests in full by the end of this epoch. Otherwise, a Lending Request will remain queued (‘Requested’ status) until the next clearing period (to be Accepted/Rejected at the end of the next epoch). Similarly, if a Lending Request is submitted during the clearing period of the current epoch, it will also remain queued until the next epoch."
             },
             "queued": {
-              "tooltip-1": "The portion of the single Withdrawal Requests that remains queued (where a Delegate will accept nil, part, of all of the Request). The Delegate will continually accept nil, part, or all of the Withdrawal Requests at the end of each epoch, until the funds are fully returned to the Lender (assuming no losses or defaults by end borrowers).",
+              "tooltip-1": "The portion of the single Withdrawal Requests that remains queued (where a Delegate will accept nil, part, of all of the Request). The Delegate will continually accept nil, part, or all of the Withdrawal Requests at the end of each epoch, until the funds are fully returned to the Lender (assuming no losses or defaults by End Borrowers).",
               "tooltip-2": "Should any amount(s) of your Withdrawal Request(s) remain queued for more than five epochs, they will automatically be prioritised above all Loyalty Levels.",
               "tooltip-3": "As per your acknowledgement in the",
               "tooltip-4": "the acceptance of Withdrawal Requests is contingent upon the excess liquidity within each specific Lending Strategy, and may therefore remain outstanding (or partially outstanding) for one or more epochs."
