@@ -11,6 +11,7 @@ import CancelDepositModal from '@/components/organisms/modals/CancelDepositModal
 import CancelWithdrawalModal from '@/components/organisms/modals/CancelWithdrawalModal'
 import FixApyModalWrapper from '@/components/organisms/modals/FixApyModal/FixApyModalWrapper'
 import FixedLoanModal from '@/components/organisms/modals/FixedLoanModal'
+import HistoricalRepaymentsModal from '@/components/organisms/modals/HistoricalRepaymentsModal'
 import LendingModalWrapper from '@/components/organisms/modals/LendingModal/LendingModalWrapper'
 import LoanContractModal from '@/components/organisms/modals/LoanContractModal'
 import LockModalWrapper from '@/components/organisms/modals/LockModal/LockModalWrapper'
@@ -143,6 +144,10 @@ export const getModal = (
     case ModalsKeys.UNRELEASED_FEATURE:
       return {
         component: <UnreleasedFeatureModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.HISTORICAL_REPAYMENTS:
+      return {
+        component: <HistoricalRepaymentsModal handleClose={handleClose} />,
       }
   }
 }
