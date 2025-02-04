@@ -868,7 +868,8 @@
         "view": "View & Accept Loan Contract",
         "accept": "Accept Loan Contract",
         "generate": "Generate Loan Contract",
-        "expand": "Expand"
+        "expand": "Expand",
+        "minimize": "Minimise"
       },
       "importantNote": {
         "title": "Important note:",
