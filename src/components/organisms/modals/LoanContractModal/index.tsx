@@ -109,7 +109,7 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
       acceptLoanContract,
       canAccept,
       generatedContract,
-      isFullscreen: true,
+      isFullscreen: isFullscreen ? false : true,
     })
   }
 
@@ -156,21 +156,25 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         >
           <ScrollDownIcon />
         </IconButton>
-        {!isFullscreen && (
-          <IconButton
-            sx={{
-              zIndex: 2,
-              position: 'absolute',
-              height: 42,
-              bottom: 0,
-              right: 89,
-              p: 0,
-            }}
-            onClick={handleFullscreen}
-          >
-            <ExpandIcon text={t('modals.loanContract.actions.expand')} />
-          </IconButton>
-        )}
+        <IconButton
+          sx={{
+            zIndex: 2,
+            position: 'absolute',
+            height: 42,
+            bottom: 0,
+            right: 89,
+            p: 0,
+          }}
+          onClick={handleFullscreen}
+        >
+          <ExpandIcon
+            text={t(
+              isFullscreen
+                ? 'modals.loanContract.actions.minimize'
+                : 'modals.loanContract.actions.expand'
+            )}
+          />
+        </IconButton>
         <Stack spacing={2}>
           <Box borderRadius={2} bgcolor='gold.dark' p={2}>
             <Stack spacing={2}>
