@@ -18,6 +18,8 @@ import {
 } from '@solidant/kasu-sdk/src/services/UserLending/types'
 import { ReactNode, useReducer } from 'react'
 
+import { LoanStatus } from '@/components/organisms/lending/RepaymentsTab/LoanStatus/LoanStatusTableBody'
+
 import useModalActions from '@/context/modal/modal.actions'
 import ModalContext from '@/context/modal/modal.context'
 import { modalReducer } from '@/context/modal/modal.reducer'
@@ -32,6 +34,10 @@ const initialState: Modals = {
   connectWalletModal: { isOpen: false },
   loyaltyLevelsModal: { isOpen: false },
   missingEmailModal: { isOpen: false, callback: () => {} },
+  historicalRepaymentsModal: {
+    isOpen: false,
+    historicalRepayments: null as unknown as LoanStatus['historicalRepayments'],
+  },
   fixedLoanModal: {
     isOpen: false,
     fixedLoans: null as unknown as PortfolioTranche['fixedLoans'],

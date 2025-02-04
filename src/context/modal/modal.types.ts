@@ -15,6 +15,7 @@ import {
   UserTrancheBalance,
 } from '@solidant/kasu-sdk/src/services/UserLending/types'
 
+import { LoanStatus } from '@/components/organisms/lending/RepaymentsTab/LoanStatus/LoanStatusTableBody'
 import {
   ExemptLoanContract,
   RetailLoanContract,
@@ -62,6 +63,7 @@ export enum ModalsKeys {
   FIX_APY = 'fixApyModal',
   MISSING_EMAIL = 'missingEmailModal',
   UNRELEASED_FEATURE = 'unreleasedFeatureModal',
+  HISTORICAL_REPAYMENTS = 'historicalRepaymentsModal',
 }
 
 export type ModalAction =
@@ -191,6 +193,9 @@ export type Modals = {
   [ModalsKeys.LEND]: ModalData<{
     pool: PoolOverview
     currentEpoch: string
+  }>
+  [ModalsKeys.HISTORICAL_REPAYMENTS]: ModalData<{
+    historicalRepayments: LoanStatus['historicalRepayments']
   }>
 }
 
