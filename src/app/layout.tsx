@@ -6,6 +6,7 @@ import { ReactNode } from 'react'
 
 import '@/styles/fonts.module.css'
 
+import Chatbot from '@/components/atoms/Chatbot'
 import Tracking from '@/components/atoms/Tracking'
 import Footer from '@/components/organisms/footer'
 import Header from '@/components/organisms/header'
@@ -75,6 +76,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         href='/favicons/android-chrome-512x512.png'
       />
       <Tracking />
+      <Chatbot />
       <body>
         <ThemeRegistry>
           <SwrProvider unusedPools={filteredPools}>
