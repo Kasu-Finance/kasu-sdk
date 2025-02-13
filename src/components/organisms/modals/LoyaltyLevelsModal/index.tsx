@@ -64,98 +64,100 @@ const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               {t('modals.loyaltyLevels.subtitle')}
             </Typography>
           </Stack>
-          <Grid2 container rowGap={1}>
-            <Grid2 size={6} gap={1} display='flex' alignItems='center'>
-              <VerifiedIcon />
-              <Typography variant='baseSmBold'>
-                {t('modals.loyaltyLevels.benefits.list-0')}
-              </Typography>
+          <Stack spacing={4}>
+            <Grid2 container rowGap={1}>
+              <Grid2 size={6} gap={1} display='flex' alignItems='center'>
+                <VerifiedIcon />
+                <Typography variant='baseSmBold'>
+                  {t('modals.loyaltyLevels.benefits.list-0')}
+                </Typography>
+              </Grid2>
+              <Grid2 size={6} gap={1} display='flex' alignItems='center'>
+                <VerifiedIcon />
+                <Typography variant='baseSmBold'>
+                  {t('modals.loyaltyLevels.benefits.list-1')}
+                </Typography>
+              </Grid2>
+              <Grid2 size={6} gap={1} display='flex' alignItems='center'>
+                <VerifiedIcon />
+                <Typography variant='baseSmBold'>
+                  {t('modals.loyaltyLevels.benefits.list-2')}
+                </Typography>
+              </Grid2>
+              <Grid2 size={6} gap={1} display='flex' alignItems='center'>
+                <VerifiedIcon />
+                <Typography variant='baseSmBold'>
+                  {t('modals.loyaltyLevels.benefits.list-3')}
+                </Typography>
+              </Grid2>
             </Grid2>
-            <Grid2 size={6} gap={1} display='flex' alignItems='center'>
-              <VerifiedIcon />
-              <Typography variant='baseSmBold'>
-                {t('modals.loyaltyLevels.benefits.list-1')}
-              </Typography>
-            </Grid2>
-            <Grid2 size={6} gap={1} display='flex' alignItems='center'>
-              <VerifiedIcon />
-              <Typography variant='baseSmBold'>
-                {t('modals.loyaltyLevels.benefits.list-2')}
-              </Typography>
-            </Grid2>
-            <Grid2 size={6} gap={1} display='flex' alignItems='center'>
-              <VerifiedIcon />
-              <Typography variant='baseSmBold'>
-                {t('modals.loyaltyLevels.benefits.list-3')}
-              </Typography>
-            </Grid2>
-          </Grid2>
 
-          <Stack spacing={3}>
-            <Typography variant='h4'>
-              {t('modals.loyaltyLevels.subtitle-2')}
-            </Typography>
-            <Table>
-              <TableHead>
-                <TableRow
+            <Stack spacing={1}>
+              <Typography variant='h4'>
+                {t('modals.loyaltyLevels.subtitle-2')}
+              </Typography>
+              <Table>
+                <TableHead>
+                  <TableRow
+                    sx={{
+                      '.MuiTableCell-root': { borderColor: 'gray.extraDark' },
+                    }}
+                  >
+                    <TableCell sx={{ px: 0 }}>
+                      {t('modals.loyaltyLevels.tableHeader.cell-1')}
+                    </TableCell>
+                    <TableCell>
+                      {t('modals.loyaltyLevels.tableHeader.cell-2')}
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody
                   sx={{
-                    '.MuiTableCell-root': { borderColor: 'gray.extraDark' },
+                    '.MuiTableCell-root': {
+                      border: 'none',
+                      '&:first-child': { px: 0 },
+                    },
                   }}
                 >
-                  <TableCell sx={{ px: 0 }}>
-                    {t('modals.loyaltyLevels.tableHeader.cell-1')}
-                  </TableCell>
-                  <TableCell>
-                    {t('modals.loyaltyLevels.tableHeader.cell-2')}
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody
-                sx={{
-                  '.MuiTableCell-root': {
-                    border: 'none',
-                    '&:first-child': { px: 0 },
-                  },
-                }}
-              >
-                <TableRow>
-                  <TableCell>30 {t('time.days')}</TableCell>
-                  <TableCell>0.05× {t('general.multiplier')}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell padding='none' colSpan={2}>
-                    <DottedDivider />
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>180 {t('time.days')}</TableCell>
-                  <TableCell>0.25× {t('general.multiplier')}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell padding='none' colSpan={2}>
-                    <DottedDivider />
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>360 {t('time.days')}</TableCell>
-                  <TableCell>0.50× {t('general.multiplier')}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell padding='none' colSpan={2}>
-                    <DottedDivider />
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>720 {t('time.days')}</TableCell>
-                  <TableCell>1.00× {t('general.multiplier')}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell padding='none' colSpan={2}>
-                    <DottedDivider />
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
+                  <TableRow>
+                    <TableCell>30 {t('time.days')}</TableCell>
+                    <TableCell>0.05× {t('general.multiplier')}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell padding='none' colSpan={2}>
+                      <DottedDivider />
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>180 {t('time.days')}</TableCell>
+                    <TableCell>0.25× {t('general.multiplier')}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell padding='none' colSpan={2}>
+                      <DottedDivider />
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>360 {t('time.days')}</TableCell>
+                    <TableCell>0.50× {t('general.multiplier')}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell padding='none' colSpan={2}>
+                      <DottedDivider />
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>720 {t('time.days')}</TableCell>
+                    <TableCell>1.00× {t('general.multiplier')}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell padding='none' colSpan={2}>
+                      <DottedDivider />
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </Stack>
           </Stack>
           <Typography variant='baseSm' color='#855726'>
             {t('modals.loyaltyLevels.description-1')}
