@@ -19,6 +19,7 @@ import getTranslation from '@/hooks/useTranslation'
 import ColoredBox from '@/components/atoms/ColoredBox'
 import CustomCard from '@/components/atoms/CustomCard'
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
+import DottedDivider from '@/components/atoms/DottedDivider'
 import DialogContent from '@/components/molecules/DialogContent'
 import DialogHeader from '@/components/molecules/DialogHeader'
 import LoyaltyLevelInfo from '@/components/organisms/modals/LoyaltyLevelsModal/LoyaltyLevelInfo'
@@ -26,7 +27,7 @@ import LoyaltyLevelInfo from '@/components/organisms/modals/LoyaltyLevelsModal/L
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { VerifiedIcon } from '@/assets/icons'
-import DottedDivider from '@/components/atoms/DottedDivider'
+
 import { Routes } from '@/config/routes'
 
 const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
