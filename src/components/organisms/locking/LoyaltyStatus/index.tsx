@@ -1,4 +1,4 @@
-import { Grid } from '@mui/material'
+import { Grid2 } from '@mui/material'
 
 import getTranslation from '@/hooks/useTranslation'
 
@@ -16,13 +16,12 @@ const LoyaltyStatus = () => {
     <CustomCard>
       <CustomCardHeader title={t('locking.widgets.loyalty.title')} />
       <CustomInnerCardContent sx={{ py: 3 }}>
-        <Grid container spacing={4}>
-          <Grid item xs={4}>
+        <Grid2 container spacing={4}>
+          <Grid2 size={4}>
             <CurrentLoyaltyDescription />
-          </Grid>
-          <Grid
-            item
-            xs={4}
+          </Grid2>
+          <Grid2
+            size={4}
             display='flex'
             sx={{
               img: {
@@ -31,11 +30,11 @@ const LoyaltyStatus = () => {
             }}
           >
             <CurrentLoyaltyMascot />
-          </Grid>
-          <Grid item xs={4} display='flex'>
+          </Grid2>
+          <Grid2 size={4} display='flex'>
             <CurrentLoyaltyProgressDetails />
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
       </CustomInnerCardContent>
     </CustomCard>
   )

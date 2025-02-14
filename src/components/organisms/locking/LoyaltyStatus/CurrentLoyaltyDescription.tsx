@@ -1,12 +1,15 @@
 'use client'
 
-import { Box, Skeleton, Typography } from '@mui/material'
+import { Box, Skeleton, Stack, Typography } from '@mui/material'
 
+import { getCrown } from '@/components/organisms/header/CurrentLoyaltyCrown'
 import useLoyaltyLevel, {
   LoyalLoyaltyLevels,
 } from '@/hooks/locking/useLoyaltyLevel'
 import getTranslation from '@/hooks/useTranslation'
 import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
+import Image from 'next/image'
+import { useMemo } from 'react'
 
 const CurrentLoyaltyDescription = () => {
   const { t } = getTranslation()
@@ -14,6 +17,8 @@ const CurrentLoyaltyDescription = () => {
   const { stakedPercentage, isLoading } = useLockingPercentage()
 
   const { currentLevel, isLoyal } = useLoyaltyLevel(stakedPercentage)
+
+  const benefits = useMemo(() => ({}), [currentLevel, t])
 
   if (isLoading) {
     return (
@@ -29,47 +34,20 @@ const CurrentLoyaltyDescription = () => {
 
   return (
     <Box>
-      <Typography variant='h4' mb={4.25}>
-        {t(
-          `locking.widgets.loyalty.level.level-${isLoyal ? (currentLevel as LoyalLoyaltyLevels) : 0}.title`
-        )}
-      </Typography>
-      <Typography variant='baseSm' component='p' mb={2}>
-        {t(
-          `locking.widgets.loyalty.level.level-${isLoyal ? (currentLevel as LoyalLoyaltyLevels) : 0}.description-1`
-        )}
-      </Typography>
-      {/* {isLoyal && (
-        <UnorderedList
-          sx={{
-            ...customTypography.baseSm,
-            pl: 2,
-            mb: 2,
-            'li + li': {
-              mt: 1,
-            },
-          }}
-        >
-          <li>
-            {t(
-              `locking.widgets.loyalty.level.level-${currentLevel as LoyalLoyaltyLevels}.list.list-0`
-            )}
-          </li>
-          <li>
-            {t(
-              `locking.widgets.loyalty.level.level-${currentLevel as LoyalLoyaltyLevels}.list.list-1`
-            )}
-          </li>
-          <li>
-            {t(
-              `locking.widgets.loyalty.level.level-${currentLevel as LoyalLoyaltyLevels}.list.list-2`
-            )}
-          </li>
-        </UnorderedList>
-      )} */}
-      <Typography variant='baseSm' component='p'>
-        {t('locking.widgets.loyalty.description')}
-      </Typography>
+      <Box display='flex' alignItems='center' mb={1}>
+        <Image
+          src={getCrown(currentLevel)}
+          alt={`crown-level_${currentLevel}`}
+          width={81}
+          height={48}
+        />
+        <Typography variant='h4'>
+          {t(
+            `locking.widgets.loyalty.level.level-${isLoyal ? (currentLevel as LoyalLoyaltyLevels) : 0}.title`
+          )}
+        </Typography>
+      </Box>
+      <Stack spacing={2}></Stack>
     </Box>
   )
 }
