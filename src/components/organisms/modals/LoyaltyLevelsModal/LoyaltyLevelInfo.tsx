@@ -1,26 +1,37 @@
-import { Box, SxProps, Theme, Typography, TypographyProps } from '@mui/material'
+import {
+  Box,
+  Stack,
+  SxProps,
+  Theme,
+  Typography,
+  TypographyProps,
+} from '@mui/material'
 import Image from 'next/image'
 import React, { ReactNode } from 'react'
 
 import { LoyaltyLevel } from '@/hooks/locking/useLoyaltyLevel'
 
-import UnorderedList from '@/components/atoms/UnorderedList'
 import { getCrown } from '@/components/organisms/header/CurrentLoyaltyCrown'
 
-import { customTypography } from '@/themes/typography'
+import { PartialVerifiedIcon, VerifiedIcon } from '@/assets/icons'
 
 type LoyaltyLevelInfoProps = {
   loyaltyLevel: LoyaltyLevel
   title: ReactNode
   subtitle: ReactNode
   description?: ReactNode
-  list?: ReactNode[]
+  benefits?: {
+    title: string
+    isPartial?: boolean
+    description: {
+      title: string
+      value: string
+    }
+  }[]
   rootStyles?: SxProps<Theme>
   titleProps?: TypographyProps
   subtitleProps?: TypographyProps
   descriptionProps?: TypographyProps
-  listProps?: SxProps<Theme>
-  listLabelProps?: TypographyProps
 }
 
 const LoyaltyLevelInfo: React.FC<LoyaltyLevelInfoProps> = ({
@@ -28,13 +39,11 @@ const LoyaltyLevelInfo: React.FC<LoyaltyLevelInfoProps> = ({
   title,
   subtitle,
   description,
-  list,
+  benefits,
   rootStyles,
   titleProps,
   subtitleProps,
   descriptionProps,
-  listProps,
-  listLabelProps,
 }) => {
   return (
     <Box bgcolor='gold.dark' borderRadius={2} p={2} sx={rootStyles}>
@@ -55,34 +64,26 @@ const LoyaltyLevelInfo: React.FC<LoyaltyLevelInfoProps> = ({
         component='span'
         {...subtitleProps}
       >
+        <Typography variant='baseSmBold'>HOW? </Typography>
         {subtitle}
       </Typography>
-      {list && (
-        <UnorderedList
-          sx={[
-            {
-              mt: 1,
-              pl: 2,
-              li: {
-                ...customTypography.baseSm,
-              },
-            },
-            ...(Array.isArray(listProps) ? listProps : [listProps]),
-          ]}
-        >
-          {list.map((label, index) => (
-            <li key={index}>
-              <Typography
-                variant='body2'
-                component='p'
-                fontSize={{ xs: 10, sm: 12 }}
-                {...listLabelProps}
-              >
-                {label}
+      {benefits && (
+        <Stack spacing={2} mt={2}>
+          {benefits.map((benefit, index) => (
+            <Stack spacing={1} key={index}>
+              <Box display='flex' alignItems='center' gap={1}>
+                {benefit.isPartial ? <PartialVerifiedIcon /> : <VerifiedIcon />}
+                <Typography variant='baseSmBold'>{benefit.title}</Typography>
+              </Box>
+              <Typography variant='baseSm'>
+                <Typography variant='baseSmBold'>
+                  {benefit.description.title}:{' '}
+                </Typography>
+                {benefit.description.value}
               </Typography>
-            </li>
+            </Stack>
           ))}
-        </UnorderedList>
+        </Stack>
       )}
       {description && (
         <Typography

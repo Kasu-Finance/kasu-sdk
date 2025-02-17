@@ -8,10 +8,6 @@ import useLoyaltyLevel, {
 import getTranslation from '@/hooks/useTranslation'
 import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
 
-import UnorderedList from '@/components/atoms/UnorderedList'
-
-import { customTypography } from '@/themes/typography'
-
 const CurrentLoyaltyDescription = () => {
   const { t } = getTranslation()
 
@@ -43,7 +39,7 @@ const CurrentLoyaltyDescription = () => {
           `locking.widgets.loyalty.level.level-${isLoyal ? (currentLevel as LoyalLoyaltyLevels) : 0}.description-1`
         )}
       </Typography>
-      {isLoyal && (
+      {/* {isLoyal && (
         <UnorderedList
           sx={{
             ...customTypography.baseSm,
@@ -70,7 +66,7 @@ const CurrentLoyaltyDescription = () => {
             )}
           </li>
         </UnorderedList>
-      )}
+      )} */}
       <Typography variant='baseSm' component='p'>
         {t('locking.widgets.loyalty.description')}
       </Typography>
