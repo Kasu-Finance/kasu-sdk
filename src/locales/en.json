@@ -1791,9 +1791,9 @@
     }
   },
   "repayments": {
-    "title": "Repayments and Funds Flow",
+    "title": "Repayments",
     "loanModelDescription": "The Delegate's lending model is to facilitate Fiat currency loans to real world businesses off-chain. The Asset Class and Loan Structure outlined in the 'Details' screen of the Lending Strategy indicates that these loans are 'Revolving/Evergreen' Loan Facilities, with fluctuating loan balances, being a function of ongoing and simultaneous loan repayments and loan redraws in Fiat currency off-chain. Accordingly, these Fiat currency transactions can only be viewed via CSV download at this current point in time. These transactions will be available to view on-chain shortly.",
-    "borrowerFundsCSV": "Download CSV to view fiat currency funds flow on a per borrower basis:",
+    "borrowerFundsCSV": "Download CSV to view fiat currency Loan Tape on a per borrower basis:",
     "summaryStatistics": {
       "title": "Summary Statistics"
     },

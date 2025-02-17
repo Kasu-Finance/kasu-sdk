@@ -5,6 +5,7 @@ import getTranslation from '@/hooks/useTranslation'
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
+import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
 import WaveBox from '@/components/atoms/WaveBox'
 import AggregatedFundsFlow from '@/components/organisms/lending/RepaymentsTab/AggregatedFundsFlow'
 import CsvDownloadButton from '@/components/organisms/lending/RepaymentsTab/CsvDownloadButton'
@@ -57,15 +58,18 @@ const RepaymentsTab: React.FC<PoolDetailsProps> = async ({ poolId }) => {
                   data={repayment.cumulativeLendingFundsFlow}
                   unit='USD'
                 />
-                <RepaymentSection
+                {/* <RepaymentSection
                   title={t('repayments.sections.upcomingFunds.title')}
                   subtitle={t('repayments.sections.upcomingFunds.titleSuffix')}
                   data={repayment.upcomingLendingFundsFlow}
                   unit='USD'
                   mt={6}
-                />
+                /> */}
               </Grid>
-              <Grid item xs={6} display='flex' flexDirection='column'>
+              <Grid item xs={6}>
+                <EmptyDataPlaceholder text='On-chain loans repayment coming soon' />
+              </Grid>
+              {/* <Grid item xs={6} display='flex' flexDirection='column'>
                 <RepaymentSection
                   title={t('repayments.sections.transactions.title')}
                   subtitle={t('repayments.sections.transactions.titleSuffix')}
@@ -79,7 +83,7 @@ const RepaymentsTab: React.FC<PoolDetailsProps> = async ({ poolId }) => {
                   unit='USDC'
                   mt='auto'
                 />
-              </Grid>
+              </Grid> */}
             </Grid>
           )}
         </CustomInnerCardContent>

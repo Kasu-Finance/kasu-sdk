@@ -4,16 +4,13 @@ import React from 'react'
 
 import getTranslation from '@/hooks/useTranslation'
 
-import WaveCard from '@/components/molecules/WaveCard'
 import NextClearingPeriodCard from '@/components/organisms/lending/RepaymentsTab/AggregatedFundsFlow/NextClearingPeriodCard'
 
 type AggregatedFundsFlowProps = {
   repayment: PoolRepayment | undefined
 }
 
-const AggregatedFundsFlow: React.FC<AggregatedFundsFlowProps> = ({
-  repayment,
-}) => {
+const AggregatedFundsFlow: React.FC<AggregatedFundsFlowProps> = () => {
   const { t } = getTranslation()
 
   return (
@@ -26,7 +23,7 @@ const AggregatedFundsFlow: React.FC<AggregatedFundsFlowProps> = ({
         {t('repayments.sections.aggregated.description')}
       </Typography>
       <Grid container columnSpacing={4} mt={4}>
-        <Grid item xs={6}>
+        {/* <Grid item xs={6}>
           <WaveCard
             height={116}
             title={t(
@@ -40,7 +37,7 @@ const AggregatedFundsFlow: React.FC<AggregatedFundsFlowProps> = ({
             }
             unit=''
           />
-        </Grid>
+        </Grid> */}
         <Grid item xs={6}>
           <NextClearingPeriodCard />
         </Grid>

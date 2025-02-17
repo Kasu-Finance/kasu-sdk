@@ -82,10 +82,12 @@ const DelegateProfile: React.FC<DelegateProfileProps> = ({ pool }) => {
                     {pool.delegate.otherKASUPools
                       .filter(
                         (otherPool) =>
-                          otherPool.id !== pool.id && otherPool.isActive
+                          otherPool.id !== pool.id &&
+                          otherPool.isActive &&
+                          !otherPool.isOversubscribed
                       )
                       .map((otherPool) => (
-                        <li key={otherPool.name}>
+                        <li key={otherPool.id}>
                           <NextLink
                             href={`${Routes.lending.root.url}/${otherPool.id}`}
                             display='block'
