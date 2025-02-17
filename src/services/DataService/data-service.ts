@@ -466,7 +466,7 @@ export class DataService {
             }),
             this._directus.request(
                 readItems('PoolOverview', {
-                    fields: ['id', 'poolName', 'subheading'],
+                    fields: ['id', 'poolName', 'subheading', 'oversubscribed'],
                 }),
             ),
         ]);
@@ -495,6 +495,7 @@ export class DataService {
                         ? `${poolName} - ${directusName.subheading}`
                         : poolName,
                     isActive: !found.isStopped,
+                    isOversubscribed: Boolean(directusName?.oversubscribed),
                 });
             }
 
@@ -688,7 +689,15 @@ export class DataService {
     async getRepayments(id_in?: string[]): Promise<PoolRepayment[]> {
         const [poolRepaymentDirectus, poolRepaymentItemsDirectus] =
             await Promise.all([
-                this._directus.request(readItems('PoolRepayments')),
+                this._directus.request(
+                    readItems('PoolRepayments', {
+                        filter: {
+                            poolIdFK: {
+                                _nin: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
+                            },
+                        },
+                    }),
+                ),
                 this._directus.request(readItems('PoolRepaymentItems')),
             ]);
 
@@ -712,10 +721,6 @@ export class DataService {
                 );
 
             if (lendingPoolSubgraph === undefined) {
-                console.error(
-                    "Couldn't find lending pool for id: ",
-                    data.poolIdFK,
-                );
                 continue;
             }
 

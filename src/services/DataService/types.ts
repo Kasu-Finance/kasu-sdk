@@ -41,6 +41,7 @@ export interface PoolDelegateProfileAndHistory {
         id: string;
         name: string;
         isActive: boolean;
+        isOversubscribed: boolean;
     }[];
     totalLoanFundsOriginated: number;
     totalLoansOriginated: number;
