@@ -67,7 +67,7 @@ const RepaymentsTab: React.FC<PoolDetailsProps> = async ({ poolId }) => {
                 /> */}
               </Grid>
               <Grid item xs={6}>
-                <EmptyDataPlaceholder text='On-chain loans repayment coming soon' />
+                <EmptyDataPlaceholder text='On-chain loan repayments coming soon' />
               </Grid>
               {/* <Grid item xs={6} display='flex' flexDirection='column'>
                 <RepaymentSection
