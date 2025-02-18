@@ -43,7 +43,7 @@ const HomeOverview: React.FC<{
       title: t('home.summary.metric-4'),
       toolTipInfo: t('home.summary.metric-4-tooltip'),
       content: `${formatAmount(lendingTotals?.totalYieldEarned || '0', {
-        maxDecimals: 4,
+        maxDecimals: 2,
       })}`,
       unit: 'USDC',
     },
