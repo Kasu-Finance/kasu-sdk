@@ -32,15 +32,17 @@ const PoolOverview: React.FC<PoolOverviewProps> = ({ pool, currentEpoch }) => {
         title={t('lending.poolOverview.title')}
         justifyContent='space-between'
       >
-        <Button
-          variant='text'
-          sx={{ textTransform: 'capitalize' }}
-          endIcon={<StrategyDeckIcon />}
-          href={pool.strategyDeckUrl}
-          target='_blank'
-        >
-          {t('lending.poolOverview.strategyDeck')}
-        </Button>
+        {!pool.strategyDeckUrl.includes('null') && (
+          <Button
+            variant='text'
+            sx={{ textTransform: 'capitalize' }}
+            endIcon={<StrategyDeckIcon />}
+            href={pool.strategyDeckUrl}
+            target='_blank'
+          >
+            {t('lending.poolOverview.strategyDeck')}
+          </Button>
+        )}
       </CustomCardHeader>
       <WaveBox borderRadius={2}>
         <Stack px={2} py={4} spacing={2}>
