@@ -1710,7 +1710,7 @@
         "tooltip": "​The total length of time the Delegate has been operating as a lending business.​"
       },
       "totalFunds": {
-        "label": "Loan Origination Volume",
+        "label": "Historical Origination Volume",
         "tooltip": "Cumulative total USDC equivalent face value of all current and historical loans originated by the Delegate to End Borrowers across all Lending Asset Classes, regardless of whether the loans have been made available to Lenders on Kasu or not.​​​"
       },
       "totalLoans": {
