@@ -22,7 +22,7 @@ const UsdcBalance = () => {
 
   return (
     <Typography variant='baseMdBold'>
-      {formatAmount(formatUnits(balance, decimals))} USDC
+      {formatAmount(formatUnits(balance, decimals), { minDecimals: 2 })} USDC
     </Typography>
   )
 }

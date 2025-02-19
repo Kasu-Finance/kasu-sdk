@@ -31,7 +31,7 @@ const TotalKsuLocked = () => {
         KSU
       </Typography>
       <Typography variant='baseMd' color='gray.middle'>
-        {formatAmount(formatEther(ksuInUSD))} USDC
+        {formatAmount(formatEther(ksuInUSD), { minDecimals: 2 })} USDC
       </Typography>
     </Box>
   )

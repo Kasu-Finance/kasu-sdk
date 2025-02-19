@@ -1,6 +1,6 @@
 'use client'
 
-import { Grid } from '@mui/material'
+import { Grid2 } from '@mui/material'
 import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
 
 import useModalState from '@/hooks/context/useModalState'
@@ -23,31 +23,28 @@ const UserFundsActions: React.FC<UserFundsActionsProps> = ({ lockPeriods }) => {
   const handleBuyKSU = () => openModal({ name: ModalsKeys.UNRELEASED_FEATURE })
 
   return (
-    <Grid
-      item
-      xs={6}
-      display='grid'
-      gridTemplateColumns='25fr 75fr'
-      gap={2}
-      alignItems='end'
-    >
-      <AuthenticateButton
-        variant='outlined'
-        fullWidth
-        sx={{ maxWidth: 368, textTransform: 'capitalize' }}
-        onClick={handleBuyKSU}
-      >
-        {t('general.buyKSU')}
-      </AuthenticateButton>
-      <AuthenticateButton
-        variant='contained'
-        fullWidth
-        sx={{ textTransform: 'capitalize' }}
-        onClick={handleLockKSU}
-      >
-        {t('general.lockKSU')}
-      </AuthenticateButton>
-    </Grid>
+    <Grid2 size={6} container spacing={2} alignItems='end'>
+      <Grid2 size={6}>
+        <AuthenticateButton
+          variant='outlined'
+          fullWidth
+          sx={{ maxWidth: 368, textTransform: 'capitalize' }}
+          onClick={handleBuyKSU}
+        >
+          {t('general.buyKSU')}
+        </AuthenticateButton>
+      </Grid2>
+      <Grid2 size={6}>
+        <AuthenticateButton
+          variant='contained'
+          fullWidth
+          sx={{ textTransform: 'capitalize' }}
+          onClick={handleLockKSU}
+        >
+          {t('general.lockKSU')}
+        </AuthenticateButton>
+      </Grid2>
+    </Grid2>
   )
 }
 

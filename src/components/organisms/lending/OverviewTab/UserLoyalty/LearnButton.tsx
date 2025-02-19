@@ -1,12 +1,13 @@
 'use client'
 
-import { Button } from '@mui/material'
+import { Button, ButtonProps } from '@mui/material'
+import React from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-const LearnButton = () => {
+const LearnButton: React.FC<ButtonProps> = (props) => {
   const { openModal } = useModalState()
 
   const handleOpen = () => openModal({ name: ModalsKeys.LOYALTY_LEVELS })
@@ -21,6 +22,7 @@ const LearnButton = () => {
         alignSelf: 'flex-end',
       }}
       onClick={handleOpen}
+      {...props}
     >
       Learn About KSU Loyalty
     </Button>
