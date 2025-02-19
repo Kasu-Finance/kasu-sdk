@@ -3,9 +3,9 @@ import { Box, Divider, Typography } from '@mui/material'
 import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
-import ApyBonus from '@/components/organisms/locking/BonusRewardSummary/ApyBonusBreakdown/ApyBonus'
-import CurrentInterestBalance from '@/components/organisms/locking/BonusRewardSummary/ApyBonusBreakdown/CurrentInterestBalance'
-import LifetimeInterestBalance from '@/components/organisms/locking/BonusRewardSummary/ApyBonusBreakdown/LifetimeInterestBalance'
+import ApyBonus from '@/components/organisms/locking/LoyaltyStatus/ApyBonusBreakdown/ApyBonus'
+import CurrentInterestBalance from '@/components/organisms/locking/LoyaltyStatus/ApyBonusBreakdown/CurrentInterestBalance'
+import LifetimeInterestBalance from '@/components/organisms/locking/LoyaltyStatus/ApyBonusBreakdown/LifetimeInterestBalance'
 
 const ApyBonusBreakdown = () => {
   const { t } = getTranslation()
@@ -13,8 +13,7 @@ const ApyBonusBreakdown = () => {
   return (
     <Box>
       <Typography variant='h5'>
-        {t('locking.widgets.rewardsBreakdown.rewards-1.title')}{' '}
-        {t('locking.widgets.rewardsBreakdown.rewards-1.subtitle')}
+        {t('locking.widgets.rewardsBreakdown.rewards-1.title')}
       </Typography>
       <Divider sx={{ mt: 1.5 }} />
       <InfoRow

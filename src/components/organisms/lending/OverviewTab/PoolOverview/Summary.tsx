@@ -21,7 +21,9 @@ const Summary: React.FC<SummaryProps> = ({ pool }) => {
         <WaveCard
           title={t('lending.poolOverview.detailCard.tvl.label')}
           toolTipInfo={t('lending.poolOverview.detailCard.tvl.tooltip')}
-          content={formatAmount(pool.totalValueLocked || '0')}
+          content={formatAmount(pool.totalValueLocked || '0', {
+            minDecimals: 2,
+          })}
           unit='USDC'
           height={126}
           minWidth={200}
@@ -31,7 +33,9 @@ const Summary: React.FC<SummaryProps> = ({ pool }) => {
         <WaveCard
           title={t('lending.poolOverview.detailCard.loansUnder.label')}
           toolTipInfo={t('lending.poolOverview.detailCard.loansUnder.tooltip')}
-          content={formatAmount(pool.loansUnderManagement || '0')}
+          content={formatAmount(pool.loansUnderManagement || '0', {
+            minDecimals: 2,
+          })}
           unit='USDC'
           height={126}
           minWidth={200}
@@ -45,7 +49,7 @@ const Summary: React.FC<SummaryProps> = ({ pool }) => {
           toolTipInfo={t(
             'lending.poolOverview.detailCard.totalPoolYieldEarnings.tooltip'
           )}
-          content={formatAmount(pool.yieldEarned || '0')}
+          content={formatAmount(pool.yieldEarned || '0', { minDecimals: 2 })}
           unit='USDC'
           height={126}
           minWidth={200}
@@ -57,7 +61,9 @@ const Summary: React.FC<SummaryProps> = ({ pool }) => {
           toolTipInfo={t(
             'lending.poolOverview.detailCard.totalLossRate.tooltip'
           )}
-          content={formatAmount(pool.delegate.historicLossRate || '0')}
+          content={formatAmount(pool.delegate.historicLossRate || '0', {
+            minDecimals: 2,
+          })}
           unit='%'
           height={126}
           minWidth={200}
