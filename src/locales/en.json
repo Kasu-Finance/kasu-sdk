@@ -447,7 +447,8 @@
       },
       "subheader-12": {
         "title": "Currency Exchange Risk",
-        "description": "Cryptocurrency-Fiat Exchange Rate Risk: Lenders deploy USDC (or a cryptocurrency that is swapped to USDC via 1inch), which Delegates convert to fiat currency to originate business loans to End Borrowers. Given that not all fiat loans will be denominated in US Dollars (e.g.. AUD, GBP and CAD), currency exchange rate risk may be evident. Similarly, Delegates convert fiat currency to USDC to meet Withdrawal Requests from Lenders, which similarly carries currency risk. Where deemed appropriate, Delegates may use currency hedging instruments to mitigate such risks."
+        "description-1": "Cryptocurrency-Fiat Exchange Rate Risk: Lenders deploy USDC (or a cryptocurrency that is swapped to USDC via 1inch), which Delegates convert to fiat currency to originate business loans to End Borrowers. Delegates also convert fiat currency to USDC to meet Withdrawal Requests from Lenders and other forms of repayments. These transactions carry currency exchange risk. Given that not all fiat loans will be denominated in US Dollars (e.g. loan will also be originated in AUD, GBP and CAD), currency exchange rate risk is highly evident. This risk is exacerbated by the varying durations of Lenders' loan timeframes (given by the volume and unpredictability of how often Withdrawal Requests are submitted), versus the duration of each loan to End Borrowers, for which there will inevitably be mismatched durations.",
+        "description-2": "Where deemed appropriate, Delegates may use currency hedging instruments to mitigate such risks. However, this does not fully mitigate potential losses associated with exchange rate risk. Consequently, in the event that such exchange rate risk cannot be mitigated, Lenders may suffer losses."
       },
       "subheader-13": {
         "title": "Political, Legal and Regulatory Risks",
