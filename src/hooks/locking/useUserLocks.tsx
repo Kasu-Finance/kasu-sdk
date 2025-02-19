@@ -9,7 +9,10 @@ const useUserLocks = () => {
 
   const { data, error, isLoading, mutate } = useSWR(
     account && sdk ? ['userLocks', account, sdk] : null,
-    async ([_, userAddress, sdk]) => sdk.Locking.getUserLocks(userAddress)
+    async ([_, userAddress, sdk]) => sdk.Locking.getUserLocks(userAddress),
+    {
+      keepPreviousData: true,
+    }
   )
 
   return {

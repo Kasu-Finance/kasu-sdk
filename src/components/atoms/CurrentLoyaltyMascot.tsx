@@ -8,6 +8,7 @@ import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
 import Cat_0 from '@/images/crowned-cat-0.png'
 import Cat_1 from '@/images/crowned-cat-1.png'
 import Cat_2 from '@/images/crowned-cat-2.png'
+import Cat from '@/images/crownless-cat.png'
 
 const getMascot = (currentLevel: LoyaltyLevel) => {
   switch (currentLevel) {
@@ -15,8 +16,10 @@ const getMascot = (currentLevel: LoyaltyLevel) => {
       return Cat_2
     case 1:
       return Cat_1
-    default:
+    case 0:
       return Cat_0
+    default:
+      return Cat
   }
 }
 

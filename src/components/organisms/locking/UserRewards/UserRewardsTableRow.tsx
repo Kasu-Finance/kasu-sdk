@@ -1,13 +1,22 @@
-import { Box, Button, TableCell, TableRow, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Stack,
+  TableCell,
+  TableRow,
+  Typography,
+} from '@mui/material'
 import {
   LockPeriod,
   UserLock,
 } from '@solidant/kasu-sdk/src/services/Locking/types'
+import { formatEther } from 'ethers/lib/utils'
 import React from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useCountdown from '@/hooks/useCountdown'
 import getTranslation from '@/hooks/useTranslation'
+import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
 
@@ -17,7 +26,12 @@ import { UnlockIcon } from '@/assets/icons'
 
 import { DATE_FORMAT } from '@/constants'
 import dayjs from '@/dayjs'
-import { formatAmount, formatTimestamp } from '@/utils'
+import {
+  convertToUSD,
+  formatAmount,
+  formatTimestamp,
+  toBigNumber,
+} from '@/utils'
 
 type UserRewardsTableRowProps = {
   userLock: UserLock
@@ -36,6 +50,8 @@ const UserRewardsTableRow: React.FC<UserRewardsTableRowProps> = ({
     toNearestUnit: true,
   }).split(' ')
 
+  const { ksuPrice } = useKsuPrice()
+
   const handleOpen = () => {
     openModal({ name: ModalsKeys.UNLOCK, userLock, lockPeriods })
   }
@@ -51,10 +67,26 @@ const UserRewardsTableRow: React.FC<UserRewardsTableRowProps> = ({
     <>
       <TableRow key={userLock.id.toString()}>
         <TableCell>
-          <Box display='flex' alignItems='center'>
-            <Typography variant='baseMdBold' mr='1ch'>
+          <Stack>
+            <Typography variant='baseMdBold'>
               {formatAmount(userLock.lockedAmount, { minDecimals: 2 })} KSU
             </Typography>
+            <Typography variant='baseMd' color='gray.middle'>
+              {formatAmount(
+                formatEther(
+                  convertToUSD(
+                    toBigNumber(userLock.lockedAmount),
+                    toBigNumber(ksuPrice || '0')
+                  )
+                ),
+                { minDecimals: 2 }
+              )}{' '}
+              USDC
+            </Typography>
+          </Stack>
+        </TableCell>
+        <TableCell>
+          <Box display='flex' alignItems='center'>
             <Typography variant='baseMd' color='gray.middle' mr={4}>
               {formattedTime.date} • {formattedTime.timestamp}{' '}
               {formattedTime.utcOffset}
@@ -86,12 +118,28 @@ const UserRewardsTableRow: React.FC<UserRewardsTableRowProps> = ({
           {formatAmount(userLock.lockPeriod.rKSUMultiplier, { minDecimals: 2 })}
           ✕
         </TableCell>
-        <TableCell>
-          {formatAmount(userLock.rKSUAmount, { minDecimals: 2 })} rKSU
+        <TableCell align='right'>
+          <Stack>
+            <Typography variant='baseMd'>
+              {formatAmount(userLock.rKSUAmount, { minDecimals: 2 })} rKSU
+            </Typography>
+            <Typography variant='baseMd' color='gray.middle'>
+              {formatAmount(
+                formatEther(
+                  convertToUSD(
+                    toBigNumber(userLock.rKSUAmount),
+                    toBigNumber(ksuPrice || '0')
+                  )
+                ),
+                { minDecimals: 2 }
+              )}{' '}
+              USDC
+            </Typography>
+          </Stack>
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell colSpan={5} sx={{ py: 0 }}>
+        <TableCell colSpan={6} sx={{ py: 0 }}>
           <DottedDivider />
         </TableCell>
       </TableRow>

@@ -5,7 +5,7 @@ import getTranslation from '@/hooks/useTranslation'
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
 import KsuLaunchBonus from '@/components/molecules/tooltips/KsuLaunchBonus'
-import TotalLaunchBonus from '@/components/organisms/locking/BonusRewardSummary/LaunchBonusBreakdown/TotalLaunchBonus'
+import TotalLaunchBonus from '@/components/organisms/locking/LoyaltyStatus/LaunchBonusBreakdown/TotalLaunchBonus'
 
 const LaunchBonusBreakdown = () => {
   const { t } = getTranslation()

@@ -4,9 +4,9 @@ import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
-import ClaimableFeesBalance from '@/components/organisms/locking/BonusRewardSummary/FeesEarnedBreakdown/ClaimableFeesBalance'
-import ClaimFeesButton from '@/components/organisms/locking/BonusRewardSummary/FeesEarnedBreakdown/ClaimFeesButton'
-import LifetimeFeesEarned from '@/components/organisms/locking/BonusRewardSummary/FeesEarnedBreakdown/LifetimeFeesEarned'
+import ClaimableFeesBalance from '@/components/organisms/locking/LoyaltyStatus/FeesEarnedBreakdown/ClaimableFeesBalance'
+import ClaimFeesButton from '@/components/organisms/locking/LoyaltyStatus/FeesEarnedBreakdown/ClaimFeesButton'
+import LifetimeFeesEarned from '@/components/organisms/locking/LoyaltyStatus/FeesEarnedBreakdown/LifetimeFeesEarned'
 
 const FeesEarnedBreakdown = () => {
   const { t } = getTranslation()
