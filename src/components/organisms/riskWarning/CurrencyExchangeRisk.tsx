@@ -12,7 +12,10 @@ const CurrencyExchangeRisk = () => {
       <Subheading title={t('modals.riskWarning.subheader-12.title')} />
       <Stack spacing={1}>
         <Typography variant='baseMd'>
-          {t('modals.riskWarning.subheader-12.description')}
+          {t('modals.riskWarning.subheader-12.description-1')}
+        </Typography>
+        <Typography variant='baseMd'>
+          {t('modals.riskWarning.subheader-12.description-2')}
         </Typography>
       </Stack>
     </Stack>
