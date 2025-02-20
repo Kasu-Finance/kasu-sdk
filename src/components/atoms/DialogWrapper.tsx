@@ -25,6 +25,7 @@ const DialogWrapper: React.FC<{
   if (!modalDetails || !modal[modalName].isOpen) return
 
   const sx = modalDetails.sx
+  const backdropSx = modalDetails.backdropSx
 
   return (
     <Dialog
@@ -50,15 +51,18 @@ const DialogWrapper: React.FC<{
           ...(Array.isArray(sx) ? sx : [sx]),
         ],
       }}
-      onClose={handleClose}
+      onClose={modalDetails.disableBackdropClose ? undefined : handleClose}
       disableEnforceFocus
       aria-labelledby={modalDetails.ariaLabel}
       aria-describedby={modalDetails.ariaDescription}
       slotProps={{
         backdrop: {
-          sx: {
-            background: 'rgba(0, 0, 0, 0.8)',
-          },
+          sx: [
+            {
+              background: 'rgba(0, 0, 0, 0.8)',
+            },
+            ...(Array.isArray(backdropSx) ? backdropSx : [backdropSx]),
+          ],
         },
       }}
     >
