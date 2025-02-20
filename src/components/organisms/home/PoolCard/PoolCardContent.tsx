@@ -101,7 +101,7 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
             <Typography variant='baseMdBold'>
               {formatAmount(pool.loanFundsOriginated || '0', {
                 minValue: 1_000_000,
-                maxDecimals: 1,
+                maxDecimals: 2,
               })}{' '}
               USDC
             </Typography>
