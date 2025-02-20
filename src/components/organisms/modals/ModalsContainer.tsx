@@ -23,6 +23,7 @@ import PendingDecisionModal from '@/components/organisms/modals/PendingDecisions
 import RequestDetailsModal from '@/components/organisms/modals/RequestDetailsModal'
 import UnlockModalWrapper from '@/components/organisms/modals/UnlockModal/UnlockModalWrapper'
 import UnreleasedFeatureModal from '@/components/organisms/modals/UnreleasedFeatureModal'
+import WipRedirectModal from '@/components/organisms/modals/WipRedirectModal'
 import WIthdrawFundsAtExpiryModalWrapper from '@/components/organisms/modals/WithdrawFundsAtExpiryModal/WithdrawFundsAtExpiryModalWrapper'
 import WithdrawModalWrapper from '@/components/organisms/modals/WithdrawModal/WithdrawModalWrapper'
 
@@ -37,6 +38,8 @@ type ModalDetails = {
   ariaDescription?: string
   fullscreen?: boolean
   sx?: SxProps<Theme>
+  backdropSx?: SxProps<Theme>
+  disableBackdropClose?: boolean
 }
 
 export const getModal = (
@@ -148,6 +151,15 @@ export const getModal = (
     case ModalsKeys.HISTORICAL_REPAYMENTS:
       return {
         component: <HistoricalRepaymentsModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.WIP_REDIRECT:
+      return {
+        component: <WipRedirectModal handleClose={handleClose} />,
+        backdropSx: {
+          backdropFilter: 'blur(20px)',
+          bgcolor: 'rgba(31, 31, 34, 0.9)',
+        },
+        disableBackdropClose: true,
       }
   }
 }

@@ -64,6 +64,7 @@ export enum ModalsKeys {
   MISSING_EMAIL = 'missingEmailModal',
   UNRELEASED_FEATURE = 'unreleasedFeatureModal',
   HISTORICAL_REPAYMENTS = 'historicalRepaymentsModal',
+  WIP_REDIRECT = 'wipRedirectModal',
 }
 
 export type ModalAction =
@@ -79,6 +80,7 @@ export type ModalData<T = void> = T extends void ? ModalBase : T & ModalBase
 
 export type Modals = {
   [ModalsKeys.UNRELEASED_FEATURE]: ModalData
+  [ModalsKeys.WIP_REDIRECT]: ModalData
   [ModalsKeys.LOYALTY_LEVELS]: ModalData<{
     callback?: () => void
   }>
