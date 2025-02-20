@@ -33,6 +33,7 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 const initialState: Modals = {
   connectWalletModal: { isOpen: false },
   loyaltyLevelsModal: { isOpen: false },
+  wipRedirectModal: { isOpen: false },
   missingEmailModal: { isOpen: false, callback: () => {} },
   historicalRepaymentsModal: {
     isOpen: false,

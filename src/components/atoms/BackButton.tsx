@@ -10,8 +10,9 @@ const BackButton: React.FC<ButtonProps> = ({ startIcon, ...props }) => {
   const router = useRouter()
   const { t } = getTranslation()
 
-  const handleBack = () => {
+  const handleBack = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     router.back()
+    props.onClick?.(e)
   }
 
   return (

@@ -70,15 +70,17 @@ const PoolTraction: React.FC<PoolTractionProps> = ({ pool }) => {
                 title={t('details.poolTraction.capacity.label')}
                 toolTipInfo={t('details.poolTraction.capacity.tooltip')}
                 metric={
-                  <Box display='flex' alignItems='end'>
+                  <Box display='flex' alignItems='end' flexWrap='wrap'>
                     <TokenAmount
                       mt={0.5}
                       amount={formatPercentage(
                         pool.poolCapacityPercentage
                       ).replaceAll(' %', '')}
                       symbol='%'
+                      whiteSpace='nowrap'
+                      mr='1ch'
                     />
-                    <Typography variant='baseMd' color='gray.middle' ml='1ch'>
+                    <Typography variant='baseMd' color='gray.middle'>
                       (
                       {formatAmount(pool.poolCapacity, { minValue: 1_000_000 })}{' '}
                       USDC)

@@ -1,4 +1,4 @@
-import { Grid } from '@mui/material'
+import { Grid2 } from '@mui/material'
 
 import getTranslation from '@/hooks/useTranslation'
 
@@ -22,25 +22,25 @@ const UserFunds = async () => {
     <CustomCard>
       <CustomCardHeader title={t('locking.widgets.overview.title')} />
       <CustomInnerCardContent sx={{ py: 3 }}>
-        <Grid container columnSpacing={4}>
-          <Grid item xs={6}>
+        <Grid2 container columnSpacing={4}>
+          <Grid2 size={6}>
             <InfoRow
-              title={`${t('general.wallet')}  ${t('general.balance')}`}
+              title={`KSU ${t('general.balance')}`}
               toolTipInfo={t('locking.widgets.overview.metric-1-tooltip')}
               titleStyle={{ textTransform: 'capitalize' }}
               metric={<KsuBalance />}
               showDivider
             />
-          </Grid>
-          <Grid item xs={6}>
+          </Grid2>
+          <Grid2 size={6}>
             <InfoRow
               title={t('general.totalKsuLocked')}
               toolTipInfo={t('locking.widgets.overview.metric-3-tooltip')}
               titleStyle={{ textTransform: 'capitalize' }}
               metric={<TotalKsuLocked />}
             />
-          </Grid>
-          <Grid item xs={6}>
+          </Grid2>
+          <Grid2 size={6}>
             <InfoRow
               title={t('general.availableFunds')}
               toolTipInfo={t('locking.widgets.overview.metric-2-tooltip')}
@@ -48,9 +48,9 @@ const UserFunds = async () => {
               metric={<UsdcBalance />}
               showDivider
             />
-          </Grid>
+          </Grid2>
           <UserFundsActions lockPeriods={lockPeriods} />
-        </Grid>
+        </Grid2>
       </CustomInnerCardContent>
     </CustomCard>
   )

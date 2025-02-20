@@ -1,4 +1,4 @@
-import { Box, Stack } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 
 import getTranslation from '@/hooks/useTranslation'
 
@@ -6,7 +6,6 @@ import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
 import RksuBalance from '@/components/molecules/tooltips/RksuBalance'
 import RksuTooltip from '@/components/molecules/tooltips/RksuTooltip'
-import LearnButton from '@/components/organisms/lending/OverviewTab/UserLoyalty/LearnButton'
 import LoyaltyProgress from '@/components/organisms/lending/OverviewTab/UserLoyalty/LoyaltyProgress'
 import ActiveDepositAmount from '@/components/organisms/locking/LoyaltyStatus/ActiveDepositAmount'
 import LendingRatio from '@/components/organisms/locking/LoyaltyStatus/LendingRatio'
@@ -18,7 +17,7 @@ const CurrentLoyaltyProgressDetails = () => {
   const { t } = getTranslation()
 
   return (
-    <Stack spacing={2} mt='auto' width='100%'>
+    <Stack spacing={2} mt='auto' width='100%' pt={2}>
       <LoyaltyProgress />
       <Box>
         <InfoRow
@@ -41,7 +40,10 @@ const CurrentLoyaltyProgressDetails = () => {
           metric={<LendingRatio />}
         />
       </Box>
-      <LearnButton />
+      <Typography variant='baseSm' color='gray.middle'>
+        *rKSU carries a synthetic value pegged to the KSU price for the purposes
+        of calculating the rSKU-to-Lending ratio and Loyalty Levels only
+      </Typography>
     </Stack>
   )
 }
