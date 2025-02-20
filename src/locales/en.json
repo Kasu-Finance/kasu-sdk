@@ -154,7 +154,7 @@
         "title": " Loyalty Status - KSU Token Utility & Rewards",
         "description": "Regardless of your Loyalty Level, you are entitled to Protocol Fee Sharing based on the balance of your rKSU relative to all rKSU in the Kasu ecosystem.",
         "metric-1-tooltip": "The value of your current rKSU balance, which is derived by a multiplier applied to your amount of locked KSU. This multiplier varies according to your locking period, per the below table. The value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Strategies determines your Loyalty Level. Your Loyalty Level determines the extent of your token utility (lending strategy deposit priority and withdrawal priority) and associated rewards (APY bonus). Regardless of your Loyalty Level, your rKSU balance relative to the total rKSU in the Kasu ecosystem, also determines your share of Protocol Fees.",
-        "metric-2": "Total Lending (Existing + Pending)",
+        "metric-2": "Total Lending (Existing + Requested)",
         "metric-2-toolip": "For the purposes of calculating your Loyalty Level, your total lending includes your existing lending plus your pending lending.",
         "metric-3": "rKSU-to-Lending Ratio​",
         "metric-3-toolip": {
