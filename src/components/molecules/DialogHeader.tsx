@@ -1,4 +1,4 @@
-import { Box, IconButton, SxProps, Theme } from '@mui/material'
+import { Box, IconButton, SxProps, Theme, TypographyProps } from '@mui/material'
 import Image from 'next/image'
 import { ReactNode } from 'react'
 
@@ -9,7 +9,8 @@ import { CloseRoundedIcon } from '@/assets/icons'
 import PeepingCat from '@/images/peeping-cat.png'
 
 type DialogHeaderProps = {
-  title: string
+  title: ReactNode
+  titleProps?: TypographyProps
   children?: ReactNode
   showClose?: boolean
   isFullscreen?: boolean
@@ -19,6 +20,7 @@ type DialogHeaderProps = {
 
 const DialogHeader: React.FC<DialogHeaderProps> = ({
   title,
+  titleProps,
   isFullscreen,
   showClose = true,
   onClose,
@@ -26,9 +28,7 @@ const DialogHeader: React.FC<DialogHeaderProps> = ({
   return (
     <CustomCardHeader
       title={title}
-      titleProps={{
-        variant: 'h4',
-      }}
+      titleProps={{ variant: 'h4', ...titleProps }}
       minHeight={72}
       display='flex'
       justifyContent='center'
