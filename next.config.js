@@ -48,10 +48,6 @@ const nextConfig = {
         outputFileTracingRoot: path.join(__dirname, '../../'),
       }
     : {}),
-  i18n: {
-    locales: ['en'],
-    defaultLocale: 'en',
-  },
   compiler: {
     styledComponents: true,
   },
