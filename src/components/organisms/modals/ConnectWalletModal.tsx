@@ -6,10 +6,21 @@ import DialogContent from '@/components/molecules/DialogContent'
 import DialogHeader from '@/components/molecules/DialogHeader'
 import WalletList from '@/components/molecules/WalletList'
 
+import BaseLogo from '@/assets/logo/BaseLogo'
+
 const ConnectWalletModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   return (
     <CustomCard>
-      <DialogHeader title='Connect your wallet' onClose={handleClose} />
+      <DialogHeader
+        title={
+          <>
+            Connect Your Wallet
+            <BaseLogo />
+          </>
+        }
+        titleProps={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}
+        onClose={handleClose}
+      />
       <DialogContent>
         <WalletList />
       </DialogContent>

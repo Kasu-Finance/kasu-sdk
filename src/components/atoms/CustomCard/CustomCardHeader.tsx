@@ -1,8 +1,8 @@
 import { Box, BoxProps, Typography, TypographyProps } from '@mui/material'
 import React, { ReactNode } from 'react'
 
-type CustomCardHeaderProps = BoxProps & {
-  title: string
+type CustomCardHeaderProps = Omit<BoxProps, 'title'> & {
+  title: ReactNode
   titleProps?: TypographyProps
   children?: ReactNode
 }
