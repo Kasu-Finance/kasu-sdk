@@ -457,6 +457,10 @@ const PortfolioUserTransactionTableRow: React.FC<
                       position: 'relative',
                       zIndex: 1,
 
+                      '&:last-child': {
+                        px: 2,
+                      },
+
                       '&:first-of-type': {
                         pl: 2.5,
 
