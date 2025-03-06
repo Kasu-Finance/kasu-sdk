@@ -69,7 +69,7 @@ const UserRewardsTableRow: React.FC<UserRewardsTableRowProps> = ({
         <TableCell>
           <Stack>
             <Typography variant='baseMdBold'>
-              {formatAmount(userLock.lockedAmount, { minDecimals: 2 })} KSU
+              {formatAmount(userLock.lockedAmount, { minDecimals: 2 })} KASU
             </Typography>
             <Typography variant='baseMd' color='gray.middle'>
               {formatAmount(
@@ -121,7 +121,7 @@ const UserRewardsTableRow: React.FC<UserRewardsTableRowProps> = ({
         <TableCell align='right'>
           <Stack>
             <Typography variant='baseMd'>
-              {formatAmount(userLock.rKSUAmount, { minDecimals: 2 })} rKSU
+              {formatAmount(userLock.rKSUAmount, { minDecimals: 2 })} rKASU
             </Typography>
             <Typography variant='baseMd' color='gray.middle'>
               {formatAmount(

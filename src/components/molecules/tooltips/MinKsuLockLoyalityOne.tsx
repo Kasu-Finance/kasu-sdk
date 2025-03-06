@@ -4,10 +4,10 @@ const MinKsuLockLoyalityOne = () => {
   return (
     <>
       <Typography variant='inherit'>
-        The minimum amount and duration of KSU you must lock to ensure you
-        accumulate enough rKSU (per the below slider) relative to your total
+        The minimum amount and duration of KASU you must lock to ensure you
+        accumulate enough rKASU (per the below slider) relative to your total
         USDC lending (including pending lending) across all Lending Strategies
-        to achieve Loyalty Level 1. For example, if the value of your rKSU
+        to achieve Loyalty Level 1. For example, if the value of your rKASU
         balance relative to your total current and pending USDC lending across
         all Lending Strategies is 1% or greater, but less than 5%, you will
         achieve Loyalty Level 1, entitling you to the following token utility
@@ -24,7 +24,7 @@ const MinKsuLockLoyalityOne = () => {
         </li>
         <li>
           Additional APY (APY Bonus), awarding you with bonus interest earnings
-          on all your lending, awarded in KSU (subject to change according to
+          on all your lending, awarded in KASU (subject to change according to
           liquidity demand and supply requirements).
         </li>
       </ul>

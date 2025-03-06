@@ -28,8 +28,8 @@ const WipRedirectModal: React.FC<DialogChildProps> = ({ handleClose }) => {
       <WaveBox variant='gold' px={2} py={3} borderRadius={2}>
         <Stack alignItems='center' spacing={3}>
           <Typography variant='baseMd' textAlign='center' px={3}>
-            We’re working hard on the launch of the $KSU token. In the meantime,
-            start lending so you’re the first to benefit once $KSU launches.
+            We’re working hard on the launch of the KASU token. In the meantime,
+            start lending so you’re the first to benefit once KASU launches.
           </Typography>
           <Button
             variant='contained'

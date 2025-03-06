@@ -52,7 +52,7 @@ const BuyKsuOverview = () => {
                 {formatAmount(formatUnits(ksuBalance, ksuDecimals), {
                   minDecimals: 2,
                 })}{' '}
-                KSU
+                KASU
               </Typography>
               <Typography variant='baseMd' color='gray.middle'>
                 {formatAmount(formatEther(ksuInUSD), {

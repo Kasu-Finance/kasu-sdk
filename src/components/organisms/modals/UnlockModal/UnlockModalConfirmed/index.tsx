@@ -32,7 +32,7 @@ const UnlockModalConfirmed = () => {
       ) : (
         <Typography variant='baseMd'>
           <Typography variant='baseMdBold'>
-            {formatAmount(amount, { minDecimals: 2 })} KSU{' '}
+            {formatAmount(amount, { minDecimals: 2 })} KASU{' '}
           </Typography>
           {t('modals.unlock.completed.description-2')}
         </Typography>
