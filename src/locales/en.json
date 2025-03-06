@@ -13,7 +13,7 @@
     "fixedApy": "Fixed Gross APY",
     "basic": "basic",
     "lending": "lending",
-    "buyKSU": "buy KSU",
+    "buyKSU": "buy KASU",
     "claim": "claim",
     "deposit": "deposit",
     "lend": "lend",
@@ -36,7 +36,7 @@
     "fixed": "fixed",
     "lock": "lock",
     "unlock": "unlock",
-    "lockKSU": "lock KSU",
+    "lockKSU": "lock KASU",
     "loyalty": "loyalty",
     "loyaltyLevel": "loyalty level",
     "max": "max",
@@ -62,11 +62,11 @@
     "tranche": "Tranche",
     "perTranche": "per tranche",
     "perPool": "per lending strategy",
-    "convertToKSU": "Convert to KSU",
+    "convertToKSU": "Convert to KASU",
     "locking": "Locking",
     "availableFunds": "available funds",
     "availableAssets": "available tokens",
-    "totalKsuLocked": "total KSU locked",
+    "totalKsuLocked": "total KASU locked",
     "rowsPerPage": "Rows per page:",
     "notAvailable": "not available",
     "multiplier": "multiplier",
@@ -106,23 +106,23 @@
     "tooltip-1": "Gross Annual Percentage Yield (APY) reflects the expected interest rate earned by Lenders on an annualised basis, prior to Kasu protocol fees being deducted, assuming all repayments will be made as expected. This does not account for the additional amount earned from compound interest, which accrues every Epoch (every seven days).",
     "tooltip-2": "An APY range reflects the range of offers across Loan Tranches and Fixed and Variable loans (if applicable) within this Lending Strategy.​",
     "tooltip-3": "Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 13.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).",
-    "tooltip-4": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations."
+    "tooltip-4": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KASU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations."
   },
   "variableAndFixedApy": {
     "tooltip-1": "Gross Annual Percentage Yield (APY) reflects the expected interest rate earned by Lenders on an annualised basis in the particular Loan Tranche displayed, prior to Kasu protocol fees being deducted, assuming all repayments will be made as expected. This does not account for the additional amount earned from compound interest, which accrues every Epoch (every seven days).​",
     "tooltip-2": "A Variable APY is subject to change depending on interest rate market fluctuations (increases/decrease). A Fixed APY will be locked for the specified period of time. During a fixed APY period, now Withdrawal Request can be submitted.",
     "tooltip-3": "​Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 13.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).",
-    "tooltip-4": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations."
+    "tooltip-4": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KASU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations."
   },
   "weightedAverageApy": {
     "tooltip-1": "The average gross APY (prior to Kasu protocol fees being deducted) you are currently earning within this Lending Strategy that has been adjusted to reflect your weighted contribution to each Tranche relative to your total contribution across all Tranches (assuming all repayment will be made as expected). In the absence of multiple Tranches, this simply reflects the gross APY for the Single Loan Offer within this Lending Strategy",
     "tooltip-2": "Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 13.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).",
-    "tooltip-3": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations."
+    "tooltip-3": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KASU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations."
   },
   "lifetimeInterestEarned": {
     "tooltip-1": "The total combined amount of interest you have earned (after fees) from all tranches within this Lending Strategy (or Single Loan Offer in the absence of multiple Tranches) since you first started lending to this Lending Strategy. To view a breakdown of your total historical interest earned across all Lending Strategies, please visit the 'My Portfolio' tab.​",
     "tooltip-2": "Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 13.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).​",
-    "tooltip-3": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KSU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations.​"
+    "tooltip-3": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KASU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations.​"
   },
   "apyStructure": {
     "tooltip-1": "Indicates whether the Delegate is offering Fixed and/or Variable APY loans for this Lending Strategy.",
@@ -132,47 +132,47 @@
     "widgets": {
       "rKsuMultiplier": {
         "tableHeaders": {
-          "cell-1": "KSU locking duration",
-          "cell-2": "rKSU Multiplier based on locked KSU"
+          "cell-1": "KASU locking duration",
+          "cell-2": "rKASU Multiplier based on locked KASU"
         }
       },
       "overview": {
-        "title": "Buy & Lock KSU",
-        "metric-1-tooltip": "KSU balance currently held in your Web3 wallet, including the current estimated USDC equivalent.",
-        "metric-2-tooltip": "Total USDC equivalent value of all tokens in your Web3 wallet that can be used to purchase KSU tokens.",
-        "metric-3-tooltip": "Your balance of KSU currently locked."
+        "title": "Buy & Lock KASU",
+        "metric-1-tooltip": "KASU balance currently held in your Web3 wallet, including the current estimated USDC equivalent.",
+        "metric-2-tooltip": "Total USDC equivalent value of all tokens in your Web3 wallet that can be used to purchase KASU tokens.",
+        "metric-3-tooltip": "Your balance of KASU currently locked."
       },
       "ksuStatus": {
         "rksuBalance": {
-          "tooltip": "The value of your current rKSU balance, which is derived by a multiplier applied to your amount of locked KSU. This multiplier varies according to your locking period, per the below table. The value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Strategies determines your Loyalty Level. Your Loyalty Level determines the extent of your token utility (lending strategy deposit priority and withdrawal priority) and associated rewards (APY bonus). Regardless of your Loyalty Level, your rKSU balance relative to the total rKSU in the Kasu ecosystem, also determines your share of Protocol Fees."
+          "tooltip": "The value of your current rKASU balance, which is derived by a multiplier applied to your amount of locked KASU. This multiplier varies according to your locking period, per the below table. The value of your rKASU balance relative to your total current and pending USDC deposits across all Lending Strategies determines your Loyalty Level. Your Loyalty Level determines the extent of your token utility (lending strategy deposit priority and withdrawal priority) and associated rewards (APY bonus). Regardless of your Loyalty Level, your rKASU balance relative to the total rKASU in the Kasu ecosystem, also determines your share of Protocol Fees."
         },
         "loyaltyLevel": {
           "tooltip": "info"
         }
       },
       "loyalty": {
-        "title": " Loyalty Status - KSU Token Utility & Rewards",
-        "description": "Regardless of your Loyalty Level, you are entitled to Protocol Fee Sharing based on the balance of your rKSU relative to all rKSU in the Kasu ecosystem.",
-        "metric-1-tooltip": "The value of your current rKSU balance, which is derived by a multiplier applied to your amount of locked KSU. This multiplier varies according to your locking period, per the below table. The value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Strategies determines your Loyalty Level. Your Loyalty Level determines the extent of your token utility (lending strategy deposit priority and withdrawal priority) and associated rewards (APY bonus). Regardless of your Loyalty Level, your rKSU balance relative to the total rKSU in the Kasu ecosystem, also determines your share of Protocol Fees.",
+        "title": " Loyalty Status - KASU Token Utility & Rewards",
+        "description": "Regardless of your Loyalty Level, you are entitled to Protocol Fee Sharing based on the balance of your rKASU relative to all rKASU in the Kasu ecosystem.",
+        "metric-1-tooltip": "The value of your current rKASU balance, which is derived by a multiplier applied to your amount of locked KASU. This multiplier varies according to your locking period, per the below table. The value of your rKASU balance relative to your total current and pending USDC deposits across all Lending Strategies determines your Loyalty Level. Your Loyalty Level determines the extent of your token utility (lending strategy deposit priority and withdrawal priority) and associated rewards (APY bonus). Regardless of your Loyalty Level, your rKASU balance relative to the total rKASU in the Kasu ecosystem, also determines your share of Protocol Fees.",
         "metric-2": "Total Lending (Existing + Requested)",
         "metric-2-toolip": "For the purposes of calculating your Loyalty Level, your total lending includes your existing lending plus your pending lending.",
-        "metric-3": "rKSU-to-Lending Ratio​",
+        "metric-3": "rKASU-to-Lending Ratio​",
         "metric-3-toolip": {
-          "description": "The value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Strategies. This ratio determines your Loyalty Level. Your Loyalty Level determines the extent of your token utility (lending strategy deposit priority access and withdrawal priority) and associated rewards (APY bonus) as follows:",
+          "description": "The value of your rKASU balance relative to your total current and pending USDC deposits across all Lending Strategies. This ratio determines your Loyalty Level. Your Loyalty Level determines the extent of your token utility (lending strategy deposit priority access and withdrawal priority) and associated rewards (APY bonus) as follows:",
           "subtitle-1": "No Loyalty Status",
-          "subtitle-1-description": "If the value of your rKSU balance relative to your current and pending USDC deposits is less than 1%, then:",
+          "subtitle-1-description": "If the value of your rKASU balance relative to your current and pending USDC deposits is less than 1%, then:",
           "subtitle-1-list-0": "No withdrawal or deposit priority benefits apply.",
           "subtitle-1-list-1": "Deposit/withdrawal requests are processed after Loyalty level 1 and 2 Token Lockers.",
           "subtitle-2": "Loyalty Level 1",
-          "subtitle-2-description": "If the value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Strategies is 1% or greater, but less than 5%, you will achieve Loyalty Level 1, entitling you to the following privileges:",
+          "subtitle-2-description": "If the value of your rKASU balance relative to your total current and pending USDC deposits across all Lending Strategies is 1% or greater, but less than 5%, you will achieve Loyalty Level 1, entitling you to the following privileges:",
           "subtitle-2-list-0": "Second order priority access to lending strategies (behind Loyalty Level 2).",
           "subtitle-2-list-1": "Second order priority for capital withdrawals from lending strategies (behind Loyalty Level 2).",
-          "subtitle-2-list-2": "Additional APY (APY Bonus) from your deposits in all lending strategies, awarded in KSU (subject to change according to liquidity demand and supply requirements).",
+          "subtitle-2-list-2": "Additional APY (APY Bonus) from your deposits in all lending strategies, awarded in KASU (subject to change according to liquidity demand and supply requirements).",
           "subtitle-3": "Loyalty Level 2",
-          "subtitle-3-description": "If the value of your rKSU balance relative to your total current and pending USDC deposits across all Lending Strategies is 5% or greater, you will achieve Loyalty Level 2, entitling you to the following privileges:",
+          "subtitle-3-description": "If the value of your rKASU balance relative to your total current and pending USDC deposits across all Lending Strategies is 5% or greater, you will achieve Loyalty Level 2, entitling you to the following privileges:",
           "subtitle-3-list-0": "First order priority access to lending strategies.",
           "subtitle-3-list-1": "Firstly order priority for capital withdrawals from lending strategies.",
-          "subtitle-3-list-2": "Additional APY (more APY Bonus than Loyalty Level 1 Token Lockers) from your deposits in all lending strategies, awarded in KSU (subject to change according to liquidity demand and supply requirements)."
+          "subtitle-3-list-2": "Additional APY (more APY Bonus than Loyalty Level 1 Token Lockers) from your deposits in all lending strategies, awarded in KASU (subject to change according to liquidity demand and supply requirements)."
         },
         "button": "HOW TO/WHY INCREASE LOYALTY LEVEL?",
         "level": {
@@ -183,28 +183,28 @@
                 "title": "Protocol Fee Sharing",
                 "description": {
                   "title": "Paid in USDC",
-                  "value": "The proportion of your rKSU balance, relative to all Lenders’ rKSU, determines your share of Protocol Fees."
+                  "value": "The proportion of your rKASU balance, relative to all Lenders’ rKASU, determines your share of Protocol Fees."
                 }
               }
             },
-            "description-1": "rKSU-to-Lending Ratio (inclusive of Lending Requests) exceeds 0%, but it less than 1%."
+            "description-1": "rKASU-to-Lending Ratio (inclusive of Lending Requests) exceeds 0%, but it less than 1%."
           },
           "level-1": {
             "level": "Level 2",
             "title": "Loyalty Level 2",
-            "description-1": "rKSU-to-Lending Ratio (inclusive of Lending Requests) equals 1%, but is less​ than 5%.",
+            "description-1": "rKASU-to-Lending Ratio (inclusive of Lending Requests) equals 1%, but is less​ than 5%.",
             "benefits": {
               "benefits-0": {
                 "title": "Protocol Fee Sharing",
                 "description": {
                   "title": "Paid in USDC",
-                  "value": "See above. The more rKSU you accumulate, the more share of Protocol Fees you earn."
+                  "value": "See above. The more rKASU you accumulate, the more share of Protocol Fees you earn."
                 }
               },
               "benefits-1": {
                 "title": "Bonus APY",
                 "description": {
-                  "title": "Paid in KSU Tokens",
+                  "title": "Paid in KASU Tokens",
                   "value": "Less than Loyalty Level 3."
                 }
               },
@@ -227,19 +227,19 @@
           "level-2": {
             "level": "Level 3",
             "title": "Loyalty Level 3",
-            "description-1": " rKSU-to-Lending Ratio (inclusive of Lending Requests) equals 5% or greater.​",
+            "description-1": " rKASU-to-Lending Ratio (inclusive of Lending Requests) equals 5% or greater.​",
             "benefits": {
               "benefits-0": {
                 "title": "Protocol Fee Sharing",
                 "description": {
                   "title": "Paid in USDC",
-                  "value": "See above. You may increase your rKSU-to-Lending Ratio beyond 5% to earn more share of Protocol Fees."
+                  "value": "See above. You may increase your rKASU-to-Lending Ratio beyond 5% to earn more share of Protocol Fees."
                 }
               },
               "benefits-1": {
                 "title": "Bonus APY",
                 "description": {
-                  "title": "Paid in KSU Tokens",
+                  "title": "Paid in KASU Tokens",
                   "value": "More than all other Loyalty Levels."
                 }
               },
@@ -262,54 +262,54 @@
         }
       },
       "rewardsSummary": {
-        "title": "KSU Bonuses & Rewards",
+        "title": "KASU Bonuses & Rewards",
         "metric-1": "Protocol Fee Sharing Balance",
-        "metric-1-tooltip": "Your share of USDC Protocol Fees earned that is available to claim. A Token Locker must also participate in USDC lending and generate rKSU to be eligible for Protocol Fee Sharing. Token Lockers, who are also Lenders generating rKSU, are entitled to a share of 5% of the total gross interest earnings generated by lending activities on Kasu. Your proportionate share of this amount is determined by your rKSU balance relative to the total combined rKSU balances generated by all Lenders in the Kasu ecosystem. For example, in a scenario where a total of 1,000 rKSU from Lenders exists in the entire Kasu ecosystem, a Lender with a current balance of 150 rKSU (which is 15%) would be entitled to 15% of all Protocol Fees. This proportionality is augmented as more Lenders lock (or unlock) KSU to generate more rKSU (or burn more rKSU when unlocking), entitling them to a proportionate share of Protocol Fees.",
-        "metric-2": "KSU Bonus/Rewards Balance",
-        "metric-2-toolip-1": "The value of your KSU balance (and estimated USDC equivalent value) associated with the following bonuses/rewards (per Rewards 1 and 2 below):",
-        "metric-2-toolip-2": "1) APY Bonus (only applicable to Loyalty Level 1 and 2 KSU Token Lockers); and,",
-        "metric-2-toolip-3": "2) KSU Launch Bonus (only applicable for early Token Lockers until the KSU bonus pool (5% of total supply) is fully consumed, which is based on the amount and duration of KSU locked and the associated multiplier)."
+        "metric-1-tooltip": "Your share of USDC Protocol Fees earned that is available to claim. A Token Locker must also participate in USDC lending and generate rKASU to be eligible for Protocol Fee Sharing. Token Lockers, who are also Lenders generating rKASU, are entitled to a share of 5% of the total gross interest earnings generated by lending activities on Kasu. Your proportionate share of this amount is determined by your rKASU balance relative to the total combined rKASU balances generated by all Lenders in the Kasu ecosystem. For example, in a scenario where a total of 1,000 rKASU from Lenders exists in the entire Kasu ecosystem, a Lender with a current balance of 150 rKASU (which is 15%) would be entitled to 15% of all Protocol Fees. This proportionality is augmented as more Lenders lock (or unlock) KASU to generate more rKASU (or burn more rKASU when unlocking), entitling them to a proportionate share of Protocol Fees.",
+        "metric-2": "KASU Bonus/Rewards Balance",
+        "metric-2-toolip-1": "The value of your KASU balance (and estimated USDC equivalent value) associated with the following bonuses/rewards (per Rewards 1 and 2 below):",
+        "metric-2-toolip-2": "1) APY Bonus (only applicable to Loyalty Level 1 and 2 KASU Token Lockers); and,",
+        "metric-2-toolip-3": "2) KASU Launch Bonus (only applicable for early Token Lockers until the KASU bonus pool (5% of total supply) is fully consumed, which is based on the amount and duration of KASU locked and the associated multiplier)."
       },
       "rewardsBreakdown": {
         "title": "Bonuses & Rewards Breakdown",
         "rewards-1": {
           "title": "APY Bonus",
-          "subtitle": "(Bonus Interest Paid in KSU)",
+          "subtitle": "(Bonus Interest Paid in KASU)",
           "metric-1": "APY Bonus Based on Loyalty Level",
-          "metric-1-tooltip": "Your APY bonus (paid in KSU) in addition to the APY associated with your current USDC lending balances, which is only applicable to Loyalty Level 1 and 2 KSU Token Lockers. Loyalty Level 2 Token Lockers receive a higher APY bonus than Loyalty Level 1. The APY bonus is variable and will change from time to time to meet liquidity demand and supply requirements.​ There are no fees deducted from your APY bonus.",
+          "metric-1-tooltip": "Your APY bonus (paid in KASU) in addition to the APY associated with your current USDC lending balances, which is only applicable to Loyalty Level 1 and 2 KASU Token Lockers. Loyalty Level 2 Token Lockers receive a higher APY bonus than Loyalty Level 1. The APY bonus is variable and will change from time to time to meet liquidity demand and supply requirements.​ There are no fees deducted from your APY bonus.",
           "metric-2-tooltip": "The balance of your APY bonus interest earnings that is available to claim.",
           "metric-3-tooltip": "The total amount of APY bonus interest your have received since the very first time you achieved (and maintained) Loyalty Level 1 or 2."
         },
         "rewards-2": {
           "title": "Launch Bonus",
           "metric": "Your Total Launch Bonus",
-          "metric-tooltip": "Your total KSU Launch Bonus received for being an early Token Locker, based on the amount and duration of KSU locked and the associated multiplier as follows:"
+          "metric-tooltip": "Your total KASU Launch Bonus received for being an early Token Locker, based on the amount and duration of KASU locked and the associated multiplier as follows:"
         },
         "rewards-3": {
           "title": "Protocol Fee Sharing",
           "metric-1": "Balance",
           "metric-1-tooltip-1": "Your current balance of USDC Protocol Fees earned that is available to claim.",
-          "metric-1-tooltip-2": "A Token Locker must also participate in USDC lending and generate rKSU to be eligible for Protocol Fee Sharing. Token Lockers, who are also Lenders generating rKSU, are entitled to a share of 5% of the total gross interest earnings generated by lending activities on Kasu. Your proportionate share of this amount is determined by your rKSU balance relative to the total combined rKSU balance of all Lenders in the Kasu ecosystem. For example, in a scenario where a total of 1,000 rKSU from Lenders exists in the entire Kasu ecosystem, a Lender with a current balance of 150 rKSU (which is 15%) would be entitled to 15% of all Protocol Fees. This proportionality is augmented as more Lenders lock (or unlock) KSU to generate more rKSU (or burn more rKSU when unlocking), entitling them to a proportionate share of Protocol Fees.",
+          "metric-1-tooltip-2": "A Token Locker must also participate in USDC lending and generate rKASU to be eligible for Protocol Fee Sharing. Token Lockers, who are also Lenders generating rKASU, are entitled to a share of 5% of the total gross interest earnings generated by lending activities on Kasu. Your proportionate share of this amount is determined by your rKASU balance relative to the total combined rKASU balance of all Lenders in the Kasu ecosystem. For example, in a scenario where a total of 1,000 rKASU from Lenders exists in the entire Kasu ecosystem, a Lender with a current balance of 150 rKASU (which is 15%) would be entitled to 15% of all Protocol Fees. This proportionality is augmented as more Lenders lock (or unlock) KASU to generate more rKASU (or burn more rKASU when unlocking), entitling them to a proportionate share of Protocol Fees.",
           "metric-2": "Lifetime Protocol Fees Earned",
-          "metric-2-tooltip-1": "Your share of USDC Protocol Fees earned (claimed and unclaimed) since you very first started generating rKSU as a Lender and Token Locker.",
-          "metric-2-tooltip-2": "A Token Locker must also participate in USDC lending and generate rKSU to be eligible for Protocol Fee Sharing. Token Lockers, who are also Lenders generating rKSU, are entitled to a share of 5% of the total gross interest earnings generated by lending activities on Kasu. Your proportionate share of this amount is determined by your rKSU balance relative to the total combined rKSU balance of all Lenders in the Kasu ecosystem. For example, in a scenario where a total of 1,000 rKSU from Lenders exists in the entire Kasu ecosystem, a Lender with a current balance of 150 rKSU (which is 15%) would be entitled to 15% of all Protocol Fees. This proportionality is augmented as more Lenders lock (or unlock) KSU to generate more rKSU (or burn more rKSU when unlocking), entitling them to a proportionate share of Protocol Fees."
+          "metric-2-tooltip-1": "Your share of USDC Protocol Fees earned (claimed and unclaimed) since you very first started generating rKASU as a Lender and Token Locker.",
+          "metric-2-tooltip-2": "A Token Locker must also participate in USDC lending and generate rKASU to be eligible for Protocol Fee Sharing. Token Lockers, who are also Lenders generating rKASU, are entitled to a share of 5% of the total gross interest earnings generated by lending activities on Kasu. Your proportionate share of this amount is determined by your rKASU balance relative to the total combined rKASU balance of all Lenders in the Kasu ecosystem. For example, in a scenario where a total of 1,000 rKASU from Lenders exists in the entire Kasu ecosystem, a Lender with a current balance of 150 rKASU (which is 15%) would be entitled to 15% of all Protocol Fees. This proportionality is augmented as more Lenders lock (or unlock) KASU to generate more rKASU (or burn more rKASU when unlocking), entitling them to a proportionate share of Protocol Fees."
         }
       },
       "unlock": {
-        "title": "KSU Locking Status",
+        "title": "KASU Locking Status",
         "table": {
           "headers": {
-            "amountLocked": "KSU Locked",
+            "amountLocked": "KASU Locked",
             "dateLocked": "Date Locked",
             "unlockDate": "Unlock Date",
             "remainingDuration": "Remaining Lock Period",
-            "multiplier": "rKSU Multiplier",
-            "balance": "rKSU Balance & Synthetic Value"
+            "multiplier": "rKASU Multiplier",
+            "balance": "rKASU Balance & Synthetic Value"
           }
         }
       },
       "loyaltyProgress": {
-        "rKsuRatio": "rKSU:Lending Ratio"
+        "rKsuRatio": "rKASU:Lending Ratio"
       }
     }
   },
@@ -367,15 +367,15 @@
       "viewTx": "View Transaction (TX)"
     },
     "loyaltyLevels": {
-      "title": "KSU Loyalty Program​",
-      "subtitle": "KSU Token Utility and Rewards​",
-      "subtitle-2": "Lock KSU to accumulate rKSU",
+      "title": "KASU Loyalty Program​",
+      "subtitle": "KASU Token Utility and Rewards​",
+      "subtitle-2": "Lock KASU to accumulate rKASU",
       "tableHeader": {
-        "cell-1": "KSU Locking Period",
-        "cell-2": "rKSU Multiplier Based On Locked KSU"
+        "cell-1": "KASU Locking Period",
+        "cell-2": "rKASU Multiplier Based On Locked KASU"
       },
-      "description-1": "rKSU is a synthetic, non-redeemable, no-transferrable rewards token. It carries a synthetic value that is pegged to the price of KSU, simply for the calculations associated with Loyalty Levels. Utility and rewards are therefore subject to KSU price volatility.",
-      "description-3": "Should you unlock any amount of KSU, your rKSU will be burned in relative proportion. This may adversely affect your Loyalty Level, and associated utility and rewards.",
+      "description-1": "rKASU is a synthetic, non-redeemable, no-transferrable rewards token. It carries a synthetic value that is pegged to the price of KASU, simply for the calculations associated with Loyalty Levels. Utility and rewards are therefore subject to KASU price volatility.",
+      "description-3": "Should you unlock any amount of KASU, your rKASU will be burned in relative proportion. This may adversely affect your Loyalty Level, and associated utility and rewards.",
       "benefits": {
         "list-0": "Priority Access to Lending Strategies",
         "list-1": "Protocol Fee Sharing",
@@ -465,12 +465,12 @@
         "description": "None of Kasu and its related entities, officers or personnel, or Delegates on Kasu, guarantee the performance of your loans, or the repayment of any loan amount, or the interest returns. Lending on Kasu is entirely at the risk of Lenders. No one and no entity makes any representation as to the success or otherwise of your lending on Kasu."
       },
       "subheader-17": {
-        "title": "KSU Token Price Risk",
-        "description": "The KSU token is subject to price volatility. If you lock KSU to avail of the token’s utility and benefits, negative price fluctuations in the token may negate some, or all, of these benefits and may even fluctuate to the point where you may be in a less favourable overall position than if you didn’t purchase and lock KSU to achieve utility and benefits."
+        "title": "KASU Token Price Risk",
+        "description": "The KASU token is subject to price volatility. If you lock KASU to avail of the token’s utility and benefits, negative price fluctuations in the token may negate some, or all, of these benefits and may even fluctuate to the point where you may be in a less favourable overall position than if you didn’t purchase and lock KASU to achieve utility and benefits."
       },
       "subheader-18": {
-        "title": "Delegate Concentration and KSU Token Price Risk",
-        "description": "At the current point in time, Apxium is the only Delegate Kasu has partnered with. This not only presents concentration risk in the event that the Delegate and/or its End Borrower clients fail, but also presents risk to KSU token holders. For example, if Apxium ceased participating as a Delegate on Kasu, then the KSU token may no longer have utility, which in turn, may affect the KSU token price significantly."
+        "title": "Delegate Concentration and KASU Token Price Risk",
+        "description": "At the current point in time, Apxium is the only Delegate Kasu has partnered with. This not only presents concentration risk in the event that the Delegate and/or its End Borrower clients fail, but also presents risk to KASU token holders. For example, if Apxium ceased participating as a Delegate on Kasu, then the KASU token may no longer have utility, which in turn, may affect the KASU token price significantly."
       }
     },
     "termsAndConditions": {
@@ -747,45 +747,45 @@
       }
     },
     "unlock": {
-      "title": "Unlock KSU",
-      "reviewTitle": "Confirm KSU Unlock Request",
-      "confirmedTitle": "KSU Unlock Request Confirmed",
+      "title": "Unlock KASU",
+      "reviewTitle": "Confirm KASU Unlock Request",
+      "confirmedTitle": "KASU Unlock Request Confirmed",
       "buttons": {
-        "reviewUnlock": "Review KSU Unlock Request",
+        "reviewUnlock": "Review KASU Unlock Request",
         "viewTx": "View Transaction (TX)"
       },
       "editLock": {
-        "totalKsuLocked-tooltip": "Your balance of KSU currently locked.",
+        "totalKsuLocked-tooltip": "Your balance of KASU currently locked.",
         "availableToUnlock": {
-          "title": "Available KSU to Unlock",
-          "tooltip": "The amount of KSU you are able to unlock."
+          "title": "Available KASU to Unlock",
+          "tooltip": "The amount of KASU you are able to unlock."
         }
       },
       "reviewLock": {
-        "unlockingSchedule": "Your KSU unlock request is scheduled for the end of the current Epoch.",
-        "metric-2-tooltip": "The amount of KSU you request to unlock at the end of the current locking period.",
+        "unlockingSchedule": "Your KASU unlock request is scheduled for the end of the current Epoch.",
+        "metric-2-tooltip": "The amount of KASU you request to unlock at the end of the current locking period.",
         "epochEnds": "Epoch Ends in"
       },
       "overview": {
         "lockedDate": "Locked Date",
-        "metric-1-tooltip": "Amount of KSU you are requesting to unlock.",
-        "metric-2-tooltip": "The amount of rKSU derived from the multiplier applied to your amount of locked KSU, which varies according to your locking period. rKSU will be burned in relative proportion to the amount of KSU you have requested to unlock. If you are also a Lender, this may adversely affect your Loyalty Level, which in turn, adversely affects your access and withdrawal priority to and from loans, along with your APY bonus. It will also reduce your share of Protocol Fees, regardless of Loyalty Level. The value of your rKSU balance relative to your total current and pending USDC lending across all Lending Strategies determines your Loyalty Level. Your Loyalty Level determines the extent of your token utility (lending access priority and lending withdrawal priority to and from Lending Strategies) and associated rewards (APY bonus). Regardless of your Loyalty Level, your rKSU balance, relative to the total combined rKSU balance of all Lenders in the Kasu ecosystem, also determines your share of Protocol Fees.",
-        "metric-3-tooltip": "The start date you locked this particular amount of KSU."
+        "metric-1-tooltip": "Amount of KASU you are requesting to unlock.",
+        "metric-2-tooltip": "The amount of rKASU derived from the multiplier applied to your amount of locked KASU, which varies according to your locking period. rKASU will be burned in relative proportion to the amount of KASU you have requested to unlock. If you are also a Lender, this may adversely affect your Loyalty Level, which in turn, adversely affects your access and withdrawal priority to and from loans, along with your APY bonus. It will also reduce your share of Protocol Fees, regardless of Loyalty Level. The value of your rKASU balance relative to your total current and pending USDC lending across all Lending Strategies determines your Loyalty Level. Your Loyalty Level determines the extent of your token utility (lending access priority and lending withdrawal priority to and from Lending Strategies) and associated rewards (APY bonus). Regardless of your Loyalty Level, your rKASU balance, relative to the total combined rKASU balance of all Lenders in the Kasu ecosystem, also determines your share of Protocol Fees.",
+        "metric-3-tooltip": "The start date you locked this particular amount of KASU."
       },
       "withdraw": {
-        "withdraw-title": "KSU Unlock Request",
-        "withdraw-description": "Should you unlock any amount of KSU, your rKSU will be burned in relative proportion. This may adversely affect your Loyalty Level, which in turn, adversely affects your access to Lending Strategies and loan Tranches, along with your position in the queue for withdrawals from your exiting lending. It may also affect your APY bonus. It will also reduce your share of Protocol Fees, regardless of Loyalty Level.",
-        "viewLoyaltylevels-button": "View KSU Loyalty Levels",
-        "withdraw-metric-1": "KSU Remaining",
-        "withdraw-metric-1-tooltip": "The amount of KSU you will have have left after processing your KSU unlock request.",
-        "withdraw-metric-2": "rKSU Remaining",
-        "withdraw-metric-2-tooltip": "The amount of rKSU you will have have left after processing your KSU unlock request. rKSU will be burned in relative proportion to the amount of KSU that will be unlocked, which may adversely affect your Loyalty Level and associated token utility and benefits.",
-        "withdraw-metric-3": "KSU Unlock Request Amount",
-        "withdraw-metric-3-tooltip": "The amount of KSU you request to unlock at the end of the current locking period.",
+        "withdraw-title": "KASU Unlock Request",
+        "withdraw-description": "Should you unlock any amount of KASU, your rKASU will be burned in relative proportion. This may adversely affect your Loyalty Level, which in turn, adversely affects your access to Lending Strategies and loan Tranches, along with your position in the queue for withdrawals from your exiting lending. It may also affect your APY bonus. It will also reduce your share of Protocol Fees, regardless of Loyalty Level.",
+        "viewLoyaltylevels-button": "View KASU Loyalty Levels",
+        "withdraw-metric-1": "KASU Remaining",
+        "withdraw-metric-1-tooltip": "The amount of KASU you will have have left after processing your KASU unlock request.",
+        "withdraw-metric-2": "rKASU Remaining",
+        "withdraw-metric-2-tooltip": "The amount of rKASU you will have have left after processing your KASU unlock request. rKASU will be burned in relative proportion to the amount of KASU that will be unlocked, which may adversely affect your Loyalty Level and associated token utility and benefits.",
+        "withdraw-metric-3": "KASU Unlock Request Amount",
+        "withdraw-metric-3-tooltip": "The amount of KASU you request to unlock at the end of the current locking period.",
         "input-label": "Unlock Request Amount"
       },
       "completed": {
-        "description-1": "Your KSU Unlock Request is confirmed:​",
+        "description-1": "Your KASU Unlock Request is confirmed:​",
         "description-2": "to be unlocked in the next Epoch.",
         "description-3": "to remain locked,",
         "description-4": "to be burned and",
@@ -1255,80 +1255,80 @@
       "subheader-4": {
         "title": "Schedule 1. Loyalty Status Criteria",
         "subheader-4-1": {
-          "title": "Obtain rKSU to Achieve a Loyalty Level",
-          "description-1": "Lenders must lock KSU to obtain the required levels of rKSU relative to their lending (outlined in the Loyalty Level 1, Loyalty Level 2 and Loyalty Level 3 explanations below) to achieve a Loyalty Level in order to activate the following utility and rewards:",
-          "description-2": "Each KSU locking period detailed below will entitle a Lender to a multiplier on the specific amount of temporary, non-redeemable and non-transferrable, rKSU that will accumulate, so long as KSU remains locked. A synthetic value is applied to rKSU, which is pegged to the KSU price (i.e. if the price of KSU rises, so will the synthetic value of rKSU; and if the price of KSU falls, so will the synthetic value of rKSU).",
-          "description-3": "The amount of rKSU obtained is based on a multiplier applied to the amount of locked KSU:",
-          "description-4": "For example, a Lender that locks 100 KSU for 30 days will receive 5 rKSU. Similarly, a Lender that locks 100 KSU for 360 days will receive 50 rKSU. The manner in which a Lender’s rKSU is used to determine their Loyalty Level (and associated utility and rewards) is described below.",
+          "title": "Obtain rKASU to Achieve a Loyalty Level",
+          "description-1": "Lenders must lock KASU to obtain the required levels of rKASU relative to their lending (outlined in the Loyalty Level 1, Loyalty Level 2 and Loyalty Level 3 explanations below) to achieve a Loyalty Level in order to activate the following utility and rewards:",
+          "description-2": "Each KASU locking period detailed below will entitle a Lender to a multiplier on the specific amount of temporary, non-redeemable and non-transferrable, rKASU that will accumulate, so long as KASU remains locked. A synthetic value is applied to rKASU, which is pegged to the KASU price (i.e. if the price of KASU rises, so will the synthetic value of rKASU; and if the price of KASU falls, so will the synthetic value of rKASU).",
+          "description-3": "The amount of rKASU obtained is based on a multiplier applied to the amount of locked KASU:",
+          "description-4": "For example, a Lender that locks 100 KASU for 30 days will receive 5 rKASU. Similarly, a Lender that locks 100 KASU for 360 days will receive 50 rKASU. The manner in which a Lender’s rKASU is used to determine their Loyalty Level (and associated utility and rewards) is described below.",
           "list-0": {
             "list-1": "Priority access to Business Lending Opportunities available on Kasu including loan Tranches in the case that they are oversubscribed.",
             "list-2": "Priority for Withdrawal Requests from existing Lending.",
-            "list-3": "Additional interest (bonus interest) on all lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements).",
+            "list-3": "Additional interest (bonus interest) on all lending on Kasu, awarded in KASU tokens (subject to change according to liquidity demand and supply requirements).",
             "list-4": "Protocol Fee Sharing, paid in USDC."
           },
           "list-1": {
             "list-1": "This multiplier varies according to a Lender’s locking period, per the below table.",
-            "list-2": "The synthetic value of a Lender’s rKSU balance, relative to the total combined value of a Lender’s current USDC lending (inclusive of queued USDC Lending Requests that have yet to be cleared) across all Business Lending Opportunities determines a Lender’s Loyalty Level (outlined in the Loyalty Level 1, Loyalty Level 2 and Loyalty Level 3 explanations below)."
+            "list-2": "The synthetic value of a Lender’s rKASU balance, relative to the total combined value of a Lender’s current USDC lending (inclusive of queued USDC Lending Requests that have yet to be cleared) across all Business Lending Opportunities determines a Lender’s Loyalty Level (outlined in the Loyalty Level 1, Loyalty Level 2 and Loyalty Level 3 explanations below)."
           }
         },
         "subheader-4-2": {
           "title": "Loyalty Level 1",
-          "description-1": "If the synthetic value of a Lender’s rKSU balance, relative to their total combined value of current USDC lending (inclusive of queued USDC Lending Requests that are yet to be cleared) across all Business Lending Opportunities exceeds 0% but is less than 1%, then the Lender will achieve Loyalty Level 1.",
+          "description-1": "If the synthetic value of a Lender’s rKASU balance, relative to their total combined value of current USDC lending (inclusive of queued USDC Lending Requests that are yet to be cleared) across all Business Lending Opportunities exceeds 0% but is less than 1%, then the Lender will achieve Loyalty Level 1.",
           "description-2": "This entitles the Lender to the following utility and reward:",
           "description-3": "The Lender will not be entitled to the following utility and rewards:",
-          "description-4": "For example, a Lender has 1,500 USDC in existing lending, and a further 100 USDC queued Lending Requests (that have yet to be accepted). The Lender has also purchased and locked 200 KSU for 30 days. The 0.05x rKSU multiplier (per the above table) provides the Lender with 10 rKSU. For the purposes of this calculation, it is assumed that the current price of KSU is 1 USDC. Therefore, the synthetic value of the Lender’s 10 rKSU is 10 USDC.",
-          "description-5": "Based on the formula outlined above, this ratio of the Lender’s rKSU to current USDC lending (inclusive of queued Lending Requests that have yet to be accepted) is as follows:",
+          "description-4": "For example, a Lender has 1,500 USDC in existing lending, and a further 100 USDC queued Lending Requests (that have yet to be accepted). The Lender has also purchased and locked 200 KASU for 30 days. The 0.05x rKASU multiplier (per the above table) provides the Lender with 10 rKASU. For the purposes of this calculation, it is assumed that the current price of KASU is 1 USDC. Therefore, the synthetic value of the Lender’s 10 rKASU is 10 USDC.",
+          "description-5": "Based on the formula outlined above, this ratio of the Lender’s rKASU to current USDC lending (inclusive of queued Lending Requests that have yet to be accepted) is as follows:",
           "description-6": "The resultant output demonstrates that it is greater than 0% but is less than 1%, providing the Lender with Loyalty Level 1:",
-          "example-1": "rKSU synthetic value / (Current Lending + Queued Lending Requests)",
+          "example-1": "rKASU synthetic value / (Current Lending + Queued Lending Requests)",
           "example-2": "10 USDC / (1,500USDC + 100 USDC) = 0.63%",
           "list-0": {
-            "list-0-1": "Share of Kasu Protocol Fees, determined by the Lender’s rKSU relative to all Lenders’ rKSU."
+            "list-0-1": "Share of Kasu Protocol Fees, determined by the Lender’s rKASU relative to all Lenders’ rKASU."
           },
           "list-1": {
             "list-1-0": "Priority access to Business Lending Opportunities available on Kasu including loan Tranches in the case that they are oversubscribed.",
             "list-1-1": "Priority for Withdrawal Requests from existing Lending.",
-            "list-1-2": "Additional interest (bonus interest) on all lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements)."
+            "list-1-2": "Additional interest (bonus interest) on all lending on Kasu, awarded in KASU tokens (subject to change according to liquidity demand and supply requirements)."
           }
         },
         "subheader-4-3": {
           "title": "Loyalty Level 2",
-          "description-1": "If the synthetic value of a Lender’s rKSU balance, relative to their total combined value of current USDC lending (inclusive of queued USDC Lending Requests that are yet to be cleared) across all Business Lending Opportunities equals 1% but less than 5%, then the Lender will achieve Loyalty Level 2. This entitles the Lender to the following utility and rewards:",
-          "description-2": "For example, a Lender has 400 USDC in existing lending, and a further 100 USDC queued Lending Requests (that have yet to be accepted). The Lender has also purchased and locked 200 KSU for 30 days. The 0.05x rKSU multiplier (per the above table) provides the Lender with 10 rKSU. For the purposes of this calculation, it is assumed that the current price of KSU is 1 USDC. Therefore, the synthetic value of the Lender’s 10 rKSU is 10 USDC.",
-          "description-3": "Based on the formula outlined above, this ratio of the Lender’s rKSU to current USDC lending (inclusive of queued Lending Requests that have yet to be accepted) is as follows:",
+          "description-1": "If the synthetic value of a Lender’s rKASU balance, relative to their total combined value of current USDC lending (inclusive of queued USDC Lending Requests that are yet to be cleared) across all Business Lending Opportunities equals 1% but less than 5%, then the Lender will achieve Loyalty Level 2. This entitles the Lender to the following utility and rewards:",
+          "description-2": "For example, a Lender has 400 USDC in existing lending, and a further 100 USDC queued Lending Requests (that have yet to be accepted). The Lender has also purchased and locked 200 KASU for 30 days. The 0.05x rKASU multiplier (per the above table) provides the Lender with 10 rKASU. For the purposes of this calculation, it is assumed that the current price of KASU is 1 USDC. Therefore, the synthetic value of the Lender’s 10 rKASU is 10 USDC.",
+          "description-3": "Based on the formula outlined above, this ratio of the Lender’s rKASU to current USDC lending (inclusive of queued Lending Requests that have yet to be accepted) is as follows:",
           "description-4": "The resultant output demonstrates that it exceeds 1%, but is less than 5%, providing the Lender with Loyalty Level 2:",
-          "example-1": "rKSU synthetic value / (Current Lending + Queued Lending Requests)",
+          "example-1": "rKASU synthetic value / (Current Lending + Queued Lending Requests)",
           "example-2": "10USDC / (400USDC + 100 USDC) = 2.00%",
           "list": {
             "list-0": "Second order priority access to Business Lending Opportunities available on Kasu including loan Tranches in the case that they are oversubscribed (behind Loyalty Level 3)",
             "list-1": "Second order priority for Withdrawal Requests from existing Lending (behind Loyalty Level 3) but only for variable interest rate loans (not fixed interest rate loans).",
-            "list-2": "Additional interest (Loyalty Level 2 bonus interest) on all lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements).",
-            "list-3": "Protocol Fee Sharing based on the Lender’s rKSU relative to all Lenders’ rKSU, paid in USDC."
+            "list-2": "Additional interest (Loyalty Level 2 bonus interest) on all lending on Kasu, awarded in KASU tokens (subject to change according to liquidity demand and supply requirements).",
+            "list-3": "Protocol Fee Sharing based on the Lender’s rKASU relative to all Lenders’ rKASU, paid in USDC."
           }
         },
         "subheader-4-4": {
           "title": "Loyalty Level 3",
-          "description-1": "If the synthetic value of a Lender’s rKSU balance, relative to their total combined value of current USDC lending (inclusive of queued USDC Lending Requests that are yet to be cleared) across all Business Lending Opportunities equals 5% or greater, then the Lender will achieve Loyalty Level 3. This entitles the lender to the following utility and rewards:",
-          "description-2": "For example, a Lender has 100 USDC in existing lending, and a further 30 USDC queued Lending Requests (that have yet to be accepted). The Lender has also purchased and locked 200 KSU for 30 days. The 0.05x rKSU multiplier (per the above table) provides the Lender with 10 rKSU. For the purposes of this calculation, it is assumed that the current price of KSU is 1 USDC. Therefore, the synthetic value of the Lender’s 10 rKSU is 10 USDC.",
-          "description-3": "Based on the formula outlined above, this ratio of the Lender’s rKSU to current USDC lending (inclusive of queued Lending Requests that have yet to be accepted) is as follows:",
+          "description-1": "If the synthetic value of a Lender’s rKASU balance, relative to their total combined value of current USDC lending (inclusive of queued USDC Lending Requests that are yet to be cleared) across all Business Lending Opportunities equals 5% or greater, then the Lender will achieve Loyalty Level 3. This entitles the lender to the following utility and rewards:",
+          "description-2": "For example, a Lender has 100 USDC in existing lending, and a further 30 USDC queued Lending Requests (that have yet to be accepted). The Lender has also purchased and locked 200 KASU for 30 days. The 0.05x rKASU multiplier (per the above table) provides the Lender with 10 rKASU. For the purposes of this calculation, it is assumed that the current price of KASU is 1 USDC. Therefore, the synthetic value of the Lender’s 10 rKASU is 10 USDC.",
+          "description-3": "Based on the formula outlined above, this ratio of the Lender’s rKASU to current USDC lending (inclusive of queued Lending Requests that have yet to be accepted) is as follows:",
           "description-4": "The resultant output demonstrates that it exceeds 5%, providing the Lender with Loyalty Level 3:",
-          "example-1": "rKSU synthetic value / (Current Lending + Queued Lending Requests)",
+          "example-1": "rKASU synthetic value / (Current Lending + Queued Lending Requests)",
           "example-2": "10USDC / (100USDC + 30 USDC) = 7.69%",
           "list": {
             "list-0": "First order priority access to Business Lending Opportunities available on Kasu (including loan Tranches in the case that they are oversubscribed.",
             "list-1": "First order priority for Withdrawal Requests from existing lending but only for variable interest rate loans (not fixed interest rate loans).",
-            "list-2": "Additional interest (Loyalty Level 3 bonus interest) on all lending on Kasu, awarded in KSU tokens (subject to change according to liquidity demand and supply requirements).",
-            "list-3": "Protocol Fee Sharing based on the Lender’s rKSU relative to all Lenders’ rKSU, paid in USDC."
+            "list-2": "Additional interest (Loyalty Level 3 bonus interest) on all lending on Kasu, awarded in KASU tokens (subject to change according to liquidity demand and supply requirements).",
+            "list-3": "Protocol Fee Sharing based on the Lender’s rKASU relative to all Lenders’ rKASU, paid in USDC."
           }
         }
       }
     },
 
     "lock": {
-      "title": "Lock KSU",
-      "reviewTitle": "Confirm KSU Lock Request",
-      "confirmedTitle": "KSU Lock Request Confirmed",
+      "title": "Lock KASU",
+      "reviewTitle": "Confirm KASU Lock Request",
+      "confirmedTitle": "KASU Lock Request Confirmed",
       "buttons": {
-        "reviewLock": "Review KSU Lock Request"
+        "reviewLock": "Review KASU Lock Request"
       },
       "swapAndDeposit": {
         "title": "Lend with any token.",
@@ -1339,12 +1339,12 @@
       },
       "deposit": {
         "input-label": "Lock Amount",
-        "amount-title": "KSU Locking",
-        "amount-metric-1": "Minimum KSU Lock amount to achieve Loyalty Level 1",
+        "amount-title": "KASU Locking",
+        "amount-metric-1": "Minimum KASU Lock amount to achieve Loyalty Level 1",
         "amount-metric-1-tooltip": "DEPRECATED",
-        "amount-metric-2": "Minimum KSU Lock amount to achieve Loyalty Level 2",
+        "amount-metric-2": "Minimum KASU Lock amount to achieve Loyalty Level 2",
         "amount-metric-2-tooltip": "DEPRECATED",
-        "amount-metric-3": "Lock KSU to derive rKSU and achieve a Loyalty Level",
+        "amount-metric-3": "Lock KASU to derive rKASU and achieve a Loyalty Level",
         "amount-metric-4": "for token utility, rewards and benefits.",
         "metric": "Locking Amount at Current Exchange Rate",
         "description": {
@@ -1352,7 +1352,7 @@
           "metric-2": "Important Information.",
           "metric-3": "NOTE: YOU ACCEPT THAT:",
           "metric-4": "IF THIS TRANCHE IS OVERSUBSCRIBED, YOU WILL BE AUTOMATICALLY REALLOCATED TO THE NEXT AVAILABLE TRANCHE WITH A LOWER APY WITHOUT THE OPPORTUNITY TO OPT OUT. YOU WILL THEN BE SUBJECT TO QUEUING SYSTEM SHOULD YOU WISH TO WITHDRAW YOUR FUNDS.",
-          "metric-5": "YOU WILL BE SUBJECT TO A QUEUING SYSTEM SHOULD YOU WISH TO WITHDRAW YOUR FUNDS FROM ANY TRANCHE. YOU CAN ACHIEVE WITHDRAWAL PRIORITY IN THE QUEUE BY LOCKING KSU TO ESTABLISH /INCREASE YOUR LOYALTY LEVEL​.",
+          "metric-5": "YOU WILL BE SUBJECT TO A QUEUING SYSTEM SHOULD YOU WISH TO WITHDRAW YOUR FUNDS FROM ANY TRANCHE. YOU CAN ACHIEVE WITHDRAWAL PRIORITY IN THE QUEUE BY LOCKING KASU TO ESTABLISH /INCREASE YOUR LOYALTY LEVEL​.",
           "metric-6": "How do I secure my spot in this tranche?",
           "metric-7": "Access to higher APY tranches is based on Loyalty Level. In the event of oversubscription, applicants will be automatically reassigned to the next available tranche. This process repeats for each tranche. Higher Loyalty Levels increase the likelihood of allocation to the desired tranche, but do not guarantee it."
         }
@@ -1361,31 +1361,31 @@
         "title": "Locking Duration",
         "duration": "Duration in Days",
         "unlocking": "Unlocking Date",
-        "unlocking-date": "The date that your locked KSU will become unlocked, based on the locking duration simulation your have chosen via the above slider."
+        "unlocking-date": "The date that your locked KASU will become unlocked, based on the locking duration simulation your have chosen via the above slider."
       },
       "estimates": {
         "title": "Estimated Bonuses & Rewards",
         "est-1": "Protocol Fee Sharing",
-        "tooltip-1-1": "Your projected USDC Protocol Fees. This is based on your simulated KSU locking amount and duration, and the project amount of rKSU this is expected to be generated per the rKSU multiplier displayed in the above slider.",
-        "tooltip-1-2": "A Token Locker must also participate in USDC lending and generate rKSU to be eligible for Protocol Fee Sharing. Token Lockers, who are also Lenders generating rKSU, are entitled to a share of 5% of the total gross interest earnings generated by lending activities on Kasu. Your proportionate share of this amount is determined by your rKSU balance relative to the total combined rKSU balance of all Lenders in the Kasu ecosystem. For example, in a scenario where a total of 1,000 rKSU from Lenders exists in the entire Kasu ecosystem, a Lender with a current balance of 150 rKSU (which is 15%) would be entitled to 15% of all Protocol Fees. This proportionality is augmented as more Lenders lock (or unlock) KSU to generate more rKSU (or burn more rKSU when unlocking), entitling them to a proportionate share of Protocol Fees.",
-        "est-2": "Bonus Interest (Paid in KSU)",
-        "tooltip-2": "Your projected APY bonus interest (paid in KSU) in addition to the APY associated with your lending balances, which is only applicable to Loyalty Level 1 and 2 KSU Token Lockers. Loyalty Level 2 Token Lockers receive a higher APY bonus than Loyalty Level 1. The APY bonus is variable and will change from time to meet liquidity demand and supply requirements.",
-        "est-3": "KSU Launch Bonus",
-        "tooltip-3": "Your projected KSU Launch Bonus for being an early Token Locker, based on the amount and duration of KSU locked and the associated multiplier as follows:"
+        "tooltip-1-1": "Your projected USDC Protocol Fees. This is based on your simulated KASU locking amount and duration, and the project amount of rKASU this is expected to be generated per the rKASU multiplier displayed in the above slider.",
+        "tooltip-1-2": "A Token Locker must also participate in USDC lending and generate rKASU to be eligible for Protocol Fee Sharing. Token Lockers, who are also Lenders generating rKASU, are entitled to a share of 5% of the total gross interest earnings generated by lending activities on Kasu. Your proportionate share of this amount is determined by your rKASU balance relative to the total combined rKASU balance of all Lenders in the Kasu ecosystem. For example, in a scenario where a total of 1,000 rKASU from Lenders exists in the entire Kasu ecosystem, a Lender with a current balance of 150 rKASU (which is 15%) would be entitled to 15% of all Protocol Fees. This proportionality is augmented as more Lenders lock (or unlock) KASU to generate more rKASU (or burn more rKASU when unlocking), entitling them to a proportionate share of Protocol Fees.",
+        "est-2": "Bonus Interest (Paid in KASU)",
+        "tooltip-2": "Your projected APY bonus interest (paid in KASU) in addition to the APY associated with your lending balances, which is only applicable to Loyalty Level 1 and 2 KASU Token Lockers. Loyalty Level 2 Token Lockers receive a higher APY bonus than Loyalty Level 1. The APY bonus is variable and will change from time to meet liquidity demand and supply requirements.",
+        "est-3": "KASU Launch Bonus",
+        "tooltip-3": "Your projected KASU Launch Bonus for being an early Token Locker, based on the amount and duration of KASU locked and the associated multiplier as follows:"
       },
       "reviewLock": {
-        "lockAmount": "KSU Lock Request Amount",
-        "lockAmount-tooltip": "The amount of KSU you are requesting to lock.",
+        "lockAmount": "KASU Lock Request Amount",
+        "lockAmount-tooltip": "The amount of KASU you are requesting to lock.",
         "lockingDuration": "Locking Duration",
-        "lockingDuration-tooltip": "The number of days you are requesting your KSU to be locked for.",
+        "lockingDuration-tooltip": "The number of days you are requesting your KASU to be locked for.",
         "epochEnds": "Epoch ends in",
-        "depositSchedule": "Your KSU Lock Request will be schedule for the end of the current Epoch.",
+        "depositSchedule": "Your KASU Lock Request will be schedule for the end of the current Epoch.",
         "nextClearing": "Next clearing day commences in"
       },
       "completed": {
-        "description-1": "Your KSU Lock Request has been successfully queued:",
+        "description-1": "Your KASU Lock Request has been successfully queued:",
         "description-2": "to be locked in the next Epoch.",
-        "lockingOverview": "KSU Locking Overview"
+        "lockingOverview": "KASU Locking Overview"
       },
       "actions": {
         "action-1": "Establish/Increase Loyalty Level ",
@@ -1412,7 +1412,7 @@
         "metric-2-title": "Simulated Interest Earnings",
         "metric-2-tooltip": "Forecast USDC interest earnings (after fees) associated with the lending amount entered and duration selected for this Lending Strategy at the given APY, assuming all repayments will be made as expected.",
         "metric-3-title": "APY Bonus",
-        "metric-3-tooltip": "The APY bonus (paid in KSU) that will be applied to determine your bonus interest earnings simulation, which is only applicable to Loyalty Level 1 and 2 KSU Token Lockers. Loyalty Level 2 Token Lockers receive a higher APY bonus than Loyalty Level 1. The APY bonus is variable and will change from time to meet liquidity demand and supply requirements.",
+        "metric-3-tooltip": "The APY bonus (paid in KASU) that will be applied to determine your bonus interest earnings simulation, which is only applicable to Loyalty Level 1 and 2 KASU Token Lockers. Loyalty Level 2 Token Lockers receive a higher APY bonus than Loyalty Level 1. The APY bonus is variable and will change from time to meet liquidity demand and supply requirements.",
         "metric-4-title": "Simulated Bonus Interest Earnings",
         "metric-4-tooltip": "Forecast bonus interest earnings based on the APY bonus (for the given Loyalty Level), applied to the lending amount entered and duration selected for this Lending Strategy."
       },
@@ -1560,31 +1560,31 @@
         }
       },
       "lockingStatus": {
-        "title": "Your KSU Status",
-        "subtitle": "KSU Loyalty Status",
+        "title": "Your KASU Status",
+        "subtitle": "KASU Loyalty Status",
         "subtitle-2": "Bonuses & Rewards – Related to this Lending Strategy Only​",
         "lendingAndBonus": {
           "label": "Lending Bonuses & Rewards",
           "caption": "Related to This Lending Strategy Only"
         },
         "lockedInfo": {
-          "label": "Total KSU Locked",
-          "tooltip": "Your amount of KSU currently locked."
+          "label": "Total KASU Locked",
+          "tooltip": "Your amount of KASU currently locked."
         },
         "apyBonus": {
           "label": "APY Bonus",
-          "tooltip": "Your APY bonus (paid in KSU) in addition to the APY associated with your current USDC lending balances, which is only applicable to Loyalty Level 1 and 2 KSU Token Lockers. Loyalty Level 2 Token Lockers receive a higher APY bonus than Loyalty Level 1. The APY bonus is variable and will change from time to time to meet liquidity demand and supply requirements.​ There are no fees deducted from your APY bonus."
+          "tooltip": "Your APY bonus (paid in KASU) in addition to the APY associated with your current USDC lending balances, which is only applicable to Loyalty Level 1 and 2 KASU Token Lockers. Loyalty Level 2 Token Lockers receive a higher APY bonus than Loyalty Level 1. The APY bonus is variable and will change from time to time to meet liquidity demand and supply requirements.​ There are no fees deducted from your APY bonus."
         },
         "totalBonusYield": {
           "label": "Total Bonus Interest Earnings",
-          "tooltip": "Your current bonus interest earnings balance (paid in KSU) in addition to the interest earnings associated with your USDC lending in this Lending Strategy, whilst you have an active balance in this Lending Strategy. For example, if you withdraw your total lending from this Lending Strategy (and are therefore no longer active in this Lending Strategy), then your total bonus interest earnings will be reset to zero. To view a breakdown of your total historical bonus interest earnings across all Lending Strategies, please visit on the 'My Portfolio' tab."
+          "tooltip": "Your current bonus interest earnings balance (paid in KASU) in addition to the interest earnings associated with your USDC lending in this Lending Strategy, whilst you have an active balance in this Lending Strategy. For example, if you withdraw your total lending from this Lending Strategy (and are therefore no longer active in this Lending Strategy), then your total bonus interest earnings will be reset to zero. To view a breakdown of your total historical bonus interest earnings across all Lending Strategies, please visit on the 'My Portfolio' tab."
         },
         "lifeTimeBonus": {
           "label": "Lifetime Bonus Interest Earnings",
           "tooltip": "The total amount of bonus interest earnings you have accumulated from this Lending Strategy since the very first time you achieved (and maintained) Loyalty Level 1 or 2."
         },
         "allOtherRewards": {
-          "label": "Visit KSU Locking to view all your Bonuses & Rewards related to all other Lending Strategies​",
+          "label": "Visit KASU Locking to view all your Bonuses & Rewards related to all other Lending Strategies​",
           "tooltip": ""
         }
       },
@@ -1595,7 +1595,7 @@
         "tooltip": "The status of your lending requests and lending withdrawal requests to and from this Lending Strategy.",
         "reallocated": {
           "label": "Reallocated",
-          "tooltip": "Reallocated to the next available Tranche due to oversubscription of lending requests to the Tranche you originally requested. You can achieve priority access to loans by locking KSU to achieve/increase your Loyalty Level."
+          "tooltip": "Reallocated to the next available Tranche due to oversubscription of lending requests to the Tranche you originally requested. You can achieve priority access to loans by locking KASU to achieve/increase your Loyalty Level."
         },
         "tableHeader": {
           "requested": "Requested",
@@ -1606,7 +1606,7 @@
         },
         "viewTx": "View Transaction (TX)"
       },
-      "rksuBalanceToolTip": "The value of your current rKSU balance, which is derived by a multiplier applied to your amount of locked KSU. This multiplier varies according to your locking period, per the below table. The value of your rKSU balance relative to your total current and pending USDC lending across all Lending Strategies determines your Loyalty Level. Your Loyalty Level determines the extent of your token utility (lending access priority and lending withdrawal priority to and from Lending Strategies) and associated rewards (APY bonus). Regardless of your Loyalty Level, your rKSU balance relative to the total rKSU in the Kasu ecosystem, also determines your share of Protocol Fees (noting you must participate in USDC lending to be eligible for Protocol Fee sharing).",
+      "rksuBalanceToolTip": "The value of your current rKASU balance, which is derived by a multiplier applied to your amount of locked KASU. This multiplier varies according to your locking period, per the below table. The value of your rKASU balance relative to your total current and pending USDC lending across all Lending Strategies determines your Loyalty Level. Your Loyalty Level determines the extent of your token utility (lending access priority and lending withdrawal priority to and from Lending Strategies) and associated rewards (APY bonus). Regardless of your Loyalty Level, your rKASU balance relative to the total rKASU in the Kasu ecosystem, also determines your share of Protocol Fees (noting you must participate in USDC lending to be eligible for Protocol Fee sharing).",
       "rksuTotalUSDCTooltip": "Strategy deck"
     },
     "strategyDeck": "Strategy deck",
@@ -1910,7 +1910,7 @@
     },
     "summary": {
       "metric-1": "Total Value Locked (TVL)",
-      "metric-1-tooltip": "Total Combined USDC funds deployed by Lenders across all Lending Strategies, plus the current value of all KSU locked in the Kasu protocol.",
+      "metric-1-tooltip": "Total Combined USDC funds deployed by Lenders across all Lending Strategies, plus the current value of all KASU locked in the Kasu protocol.",
       "metric-2": "Total Active Lending",
       "metric-2-tooltip": "Combined USDC equivalent face value of all loans across all Lending Strategies on Kasu that Delegates currently have deployed to End Borrowers.",
       "metric-3": "Loan Origination Volume",
@@ -1955,8 +1955,8 @@
   "portfolio": {
     "summary": {
       "totalKsuLocked": {
-        "title": "Total KSU Locked",
-        "tooltip": "Your balance of KSU currently locked."
+        "title": "Total KASU Locked",
+        "tooltip": "Your balance of KASU currently locked."
       },
       "lendingPoolInvestment": {
         "title": "Total Lending Balance",
@@ -1971,12 +1971,12 @@
         "tooltip": "The total amount of interest you have earned since the beginning of your lending activities on Kasu."
       },
       "ksuBonusRewards": {
-        "title": "Lifetime KSU Bonuses & Rewards",
-        "tooltip": "The total amount of KSU earned (and estimated USDC equivalent value) since you very first locked KSU associated with: 1) APY Bonus (only applicable to Loyalty Level 1 and 2 KSU Token Lockers); and, 2) KSU Launch Bonus (only applicable for early Token Lockers until the KSU bonus pool (5% of total supply) is fully consumed, which is based on the amount and duration of KSU locked and the associated multiplier)."
+        "title": "Lifetime KASU Bonuses & Rewards",
+        "tooltip": "The total amount of KASU earned (and estimated USDC equivalent value) since you very first locked KASU associated with: 1) APY Bonus (only applicable to Loyalty Level 1 and 2 KASU Token Lockers); and, 2) KASU Launch Bonus (only applicable for early Token Lockers until the KASU bonus pool (5% of total supply) is fully consumed, which is based on the amount and duration of KASU locked and the associated multiplier)."
       },
       "protocolFeesEarned": {
         "title": "Lifetime Protocol Fees Earned",
-        "tooltip": "Your share of USDC Protocol Fees earned (claimed and unclaimed) since you very first locked KSU and participated in USDC lending on Kasu. A Token Locker must also participate in USDC lending and generate rKSU to be eligible for Protocol Fee Sharing. Token Lockers, who are also Lenders generating rKSU, are entitled to a share of 5% of the total gross interest earnings generated by lending activities on Kasu. Your proportionate share of this amount is determined by your rKSU balance relative to the total combined rKSU balance of all Lenders in the Kasu ecosystem. For example, in a scenario where a total of 1,000 rKSU from Lenders exists in the entire Kasu ecosystem, a Lender with a current balance of 150 rKSU (which is 15%) would be entitled to 15% of all Protocol Fees. This proportionality is augmented as more Lenders lock (or unlock) KSU to generate more rKSU (or burn more rKSU when unlocking), entitling them to a proportionate share of Protocol Fees."
+        "tooltip": "Your share of USDC Protocol Fees earned (claimed and unclaimed) since you very first locked KASU and participated in USDC lending on Kasu. A Token Locker must also participate in USDC lending and generate rKASU to be eligible for Protocol Fee Sharing. Token Lockers, who are also Lenders generating rKASU, are entitled to a share of 5% of the total gross interest earnings generated by lending activities on Kasu. Your proportionate share of this amount is determined by your rKASU balance relative to the total combined rKASU balance of all Lenders in the Kasu ecosystem. For example, in a scenario where a total of 1,000 rKASU from Lenders exists in the entire Kasu ecosystem, a Lender with a current balance of 150 rKASU (which is 15%) would be entitled to 15% of all Protocol Fees. This proportionality is augmented as more Lenders lock (or unlock) KASU to generate more rKASU (or burn more rKASU when unlocking), entitling them to a proportionate share of Protocol Fees."
       }
     },
     "tabs": {
@@ -2157,20 +2157,20 @@
       "title-2": "My Bonuses & Rewards Portfolio",
       "bonusesAndRewards": "Bonuses and Rewards",
       "bonusYieldEarnings": "Bonus Interest Earnings",
-      "ksuLaunchBonus": "KSU Launch Bonus",
+      "ksuLaunchBonus": "KASU Launch Bonus",
       "protocolFees": "Protocol Fees",
       "totalUsdcBonus": "Total USDC Bonus/Rewards (Protocol Fees)",
-      "totalKsuBonus": "Total KSU Bonus/Rewards",
+      "totalKsuBonus": "Total KASU Bonus/Rewards",
       "claimableBalance": "Claimable Balance",
       "lifetimeRewards": "Lifetime Bonuses & Rewards​"
     },
     "wallet": {
       "title": "My Wallet",
       "connectedWallet": "Connected Wallet Balance",
-      "metric-1-tooltip": "The individual balances of all your cryptocurrencies in your connected Web3 wallet that can be instantly converted to KSU.",
-      "metric-2": "Total KSU Balance",
-      "metric-2-tooltip": "Your current KSU balance (and estimated USDC equivalent value) held in your Web3 wallet.",
-      "metric-3-toolip": "Total USDC equivalent value of all tokens in your Web3 wallet that can be used to purchase KSU tokens."
+      "metric-1-tooltip": "The individual balances of all your cryptocurrencies in your connected Web3 wallet that can be instantly converted to KASU.",
+      "metric-2": "Total KASU Balance",
+      "metric-2-tooltip": "Your current KASU balance (and estimated USDC equivalent value) held in your Web3 wallet.",
+      "metric-3-toolip": "Total USDC equivalent value of all tokens in your Web3 wallet that can be used to purchase KASU tokens."
     }
   }
 }

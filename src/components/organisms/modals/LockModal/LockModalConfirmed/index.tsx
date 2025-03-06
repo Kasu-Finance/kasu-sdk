@@ -19,7 +19,7 @@ const LockModalConfirmed = () => {
       </Typography>
       <Typography variant='baseMd'>
         <Typography variant='baseMdBold'>
-          {formatAmount(amount)} KSU{' '}
+          {formatAmount(amount)} KASU{' '}
         </Typography>
         {t('modals.lock.completed.description-2')}
       </Typography>

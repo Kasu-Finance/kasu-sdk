@@ -92,7 +92,7 @@ const SimulatedBonusEarnings: React.FC<SimulatedBonusEarningsProps> = ({
               {formatAmount(formatEther(bonusEarningsInKSU), {
                 minDecimals: 2,
               })}{' '}
-              KSU
+              KASU
             </Typography>
             <Typography variant='baseMd' color='rgba(133, 87, 38, 1)'>
               {formatAmount(bonusYieldEarnings[simulatedDuration] || 0, {

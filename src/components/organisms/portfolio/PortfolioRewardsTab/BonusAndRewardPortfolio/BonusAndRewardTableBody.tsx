@@ -44,7 +44,7 @@ const BonusAndRewardTableBody: React.FC<BonusAndRewardTableBodyProps> = ({
                 minDecimals: 2,
               }
             )}{' '}
-            KSU
+            KASU
           </Typography>
           <Typography variant='baseMd' color='gray.middle'>
             {formatAmount(formatEther(claimableYieldEarningsBalanceUSD), {
@@ -60,7 +60,7 @@ const BonusAndRewardTableBody: React.FC<BonusAndRewardTableBodyProps> = ({
               minValue: 1_000_000,
               minDecimals: 2,
             })}{' '}
-            KSU
+            KASU
           </Typography>
           <Typography variant='baseMd' color='gray.middle'>
             {formatAmount(formatEther(lifetimeYieldEarningsBalanceUSD), {
@@ -107,7 +107,7 @@ const BonusAndRewardTableBody: React.FC<BonusAndRewardTableBodyProps> = ({
               minValue: 1_000_000,
               minDecimals: 2,
             })}{' '}
-            KSU
+            KASU
           </Typography>
           <Typography variant='baseMd' color='gray.middle'>
             {formatAmount(formatEther(lifetimeLaunchBonusUSD), {

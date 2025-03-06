@@ -89,7 +89,7 @@ const EstimatedBonusRewards = () => {
               {formatAmount('0', {
                 minValue: 100_000_000_000,
               })}{' '}
-              KSU
+              KASU
             </Typography>
           }
         />
@@ -115,7 +115,7 @@ const EstimatedBonusRewards = () => {
               {formatAmount(disabled ? '0' : estimatedLaunchBonus, {
                 minValue: 100_000_000_000,
               })}{' '}
-              KSU
+              KASU
             </Typography>
           }
         />

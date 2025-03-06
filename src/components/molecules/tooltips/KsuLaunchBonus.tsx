@@ -11,8 +11,8 @@ const KsuLaunchBonus = () => {
   return (
     <>
       <Typography variant='inherit'>
-        Your total KSU Launch Bonus received for being an early Token Locker,
-        based on the amount and duration of KSU locked and the associated
+        Your total KASU Launch Bonus received for being an early Token Locker,
+        based on the amount and duration of KASU locked and the associated
         multiplier as follows:
       </Typography>
 
@@ -23,7 +23,7 @@ const KsuLaunchBonus = () => {
               <b>Locking duration</b>
             </TableCell>
             <TableCell>
-              <b>KSU Multiplier</b>
+              <b>KASU Multiplier</b>
             </TableCell>
           </TableRow>
         </TableHead>

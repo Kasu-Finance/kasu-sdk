@@ -21,7 +21,7 @@ const CurrentLoyaltyProgressDetails = () => {
       <LoyaltyProgress />
       <Box>
         <InfoRow
-          title={`rKSU ${capitalize(t('general.balance'))}`}
+          title={`rKASU ${capitalize(t('general.balance'))}`}
           toolTipInfo={<ToolTip title={<RksuBalance />} />}
           showDivider
           metric={<RKsuAmount />}
@@ -41,8 +41,9 @@ const CurrentLoyaltyProgressDetails = () => {
         />
       </Box>
       <Typography variant='baseSm' color='gray.middle'>
-        *rKSU carries a synthetic value pegged to the KSU price for the purposes
-        of calculating the rSKU-to-Lending ratio and Loyalty Levels only
+        *rKASU carries a synthetic value pegged to the KASU price for the
+        purposes of calculating the rSKU-to-Lending ratio and Loyalty Levels
+        only
       </Typography>
     </Stack>
   )

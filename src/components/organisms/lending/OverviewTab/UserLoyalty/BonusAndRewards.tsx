@@ -86,7 +86,7 @@ const BonusAndRewards: React.FC<BonusAndRewardsProps> = ({
             ) : (
               <Box>
                 <Typography variant='baseMdBold'>
-                  {formatAmount(lifetimeBonusYieldEarnings)} KSU{' '}
+                  {formatAmount(lifetimeBonusYieldEarnings)} KASU{' '}
                 </Typography>
                 <Typography variant='baseMd' color='gray.middle'>
                   ({formatAmount(formatEther(lifetimeYieldEarnedInUSD))}

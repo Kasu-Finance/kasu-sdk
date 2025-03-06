@@ -25,7 +25,7 @@ const RKsuAmount = () => {
   return (
     <Box>
       <Typography variant='baseMdBold'>
-        {formatAmount(rKsuAmount || '0', { minDecimals: 2 })} rKSU{' '}
+        {formatAmount(rKsuAmount || '0', { minDecimals: 2 })} rKASU{' '}
       </Typography>
       <Typography variant='baseMd' color='gray.middle'>
         {formatAmount(formatEther(ksuInUSD), { minDecimals: 2 })} USDC*

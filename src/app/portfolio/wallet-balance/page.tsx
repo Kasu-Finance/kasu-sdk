@@ -22,7 +22,7 @@ const WalletBalance = () => {
         <Grid container columnSpacing={4} mt={6}>
           <Grid item xs={6}>
             <Typography variant='h5' textTransform='capitalize'>
-              KSU {t('general.balance')}
+              KASU {t('general.balance')}
             </Typography>
           </Grid>
           <Grid item xs={6}>

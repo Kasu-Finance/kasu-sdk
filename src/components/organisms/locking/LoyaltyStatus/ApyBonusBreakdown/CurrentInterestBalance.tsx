@@ -16,7 +16,7 @@ const CurrentInterestBalance = () => {
   return (
     <Typography variant='baseMdBold'>
       {formatAmount(apyBonus?.balance.toString() || '0', { minDecimals: 2 })}{' '}
-      KSU
+      KASU
     </Typography>
   )
 }

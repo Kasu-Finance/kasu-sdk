@@ -15,7 +15,7 @@ const LifetimeInterestBalance = () => {
 
   return (
     <Typography variant='baseMdBold'>
-      {formatAmount(apyBonus?.lifetime || '0', { minDecimals: 2 })} KSU
+      {formatAmount(apyBonus?.lifetime || '0', { minDecimals: 2 })} KASU
     </Typography>
   )
 }

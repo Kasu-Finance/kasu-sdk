@@ -66,7 +66,7 @@ const UnlockRemainingInfo = () => {
               {isValidAmount
                 ? formatAmount(ksuRemaining || '0')
                 : formatAmount(userLock.lockedAmount || '0')}{' '}
-              KSU
+              KASU
               <Typography
                 variant='baseMd'
                 color='rgba(133, 87, 38, 1)'
@@ -98,7 +98,7 @@ const UnlockRemainingInfo = () => {
               {isValidAmount
                 ? formatAmount(rKsuRemaining || '0')
                 : formatAmount(userLock.rKSUAmount || '0')}{' '}
-              rKSU
+              rKASU
               <Typography
                 variant='baseMd'
                 color='rgba(133, 87, 38, 1)'
@@ -132,7 +132,7 @@ const UnlockRemainingInfo = () => {
             {formatAmount(userLock.lockedAmount || 0, {
               minDecimals: 2,
             })}{' '}
-            KSU
+            KASU
           </Typography>
         }
       />
