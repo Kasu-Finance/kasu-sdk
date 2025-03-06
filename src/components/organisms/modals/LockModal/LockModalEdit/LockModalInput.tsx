@@ -158,7 +158,7 @@ const LockModalInput = () => {
         }}
         metric={
           <Typography variant='baseMdBold'>
-            {formatAmount(500, { minDecimals: 2 })} KSU
+            {formatAmount(500, { minDecimals: 2 })} KASU
           </Typography>
         }
       />
@@ -181,7 +181,7 @@ const LockModalInput = () => {
         }}
         metric={
           <Typography variant='baseMdBold'>
-            {formatAmount(1000, { minDecimals: 2 })} KSU
+            {formatAmount(1000, { minDecimals: 2 })} KASU
           </Typography>
         }
       />

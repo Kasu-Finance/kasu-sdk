@@ -43,7 +43,7 @@ const LockModalReview = () => {
               {formatAmount(amount || 0, {
                 minDecimals: 2,
               })}{' '}
-              KSU
+              KASU
             </Typography>
           }
           showDivider

@@ -55,7 +55,7 @@ const LockModalBalanceOverview = () => {
               {formatAmount(formatUnits(ksuBalance, ksuDecimals), {
                 minDecimals: 2,
               })}{' '}
-              KSU{' '}
+              KASU{' '}
             </Typography>
             <Typography variant='baseMd' color='rgba(133, 87, 38, 1)'>
               {formatAmount(formatEther(ksuInUSD), {

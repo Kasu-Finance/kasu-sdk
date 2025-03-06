@@ -29,7 +29,7 @@ const LaunchBonusBreakdown = () => {
         sx={{ maxWidth: 368, textTransform: 'capitalize', mt: 'auto' }}
         disabled
       >
-        {t('general.claim')} KSU
+        {t('general.claim')} KASU
       </Button>
     </Box>
   )

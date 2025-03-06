@@ -31,7 +31,7 @@ const useWalletBalances = (options?: WalletBalanceParam) => {
   } = useUserBalance(supportedToken?.[SupportedTokens.USDC].address)
 
   const walletBalances = {
-    ksu: formatUnits(ksuBalance, ksuDecimals),
+    KASU: formatUnits(ksuBalance, ksuDecimals),
     usdc: formatUnits(usdcBalance, usdcDecimals),
   } as const
 

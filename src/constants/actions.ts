@@ -49,11 +49,11 @@ export const ACTION_MESSAGES = {
   [ActionType.LOCK]: {
     [ActionStatus.SUCCESS]: 'Lock request has been successfull.',
     [ActionStatus.ERROR]:
-      'An error has occurred during the KSU Lock Request. Please review log for more details.',
+      'An error has occurred during the KASU Lock Request. Please review log for more details.',
   },
   [ActionType.UNLOCK]: {
     [ActionStatus.ERROR]:
-      'An error has occurred during the KSU Unlock Request. Please review log for more details.',
+      'An error has occurred during the KASU Unlock Request. Please review log for more details.',
   },
   [ActionType.CLAIM_REWARDS]: {
     [ActionStatus.SUCCESS]: 'Claim Request has been successfull.',

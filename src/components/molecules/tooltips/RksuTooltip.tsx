@@ -4,7 +4,7 @@ const RksuTooltip = () => {
   return (
     <>
       <Typography variant='inherit'>
-        The value of your rKSU balance relative to your total current and
+        The value of your rKASU balance relative to your total current and
         pending USDC lending across all Lending Strategies. This ratio
         determines your Loyalty Level. Your Loyalty Level determines the extent
         of your token utility (lending access priority and lending withdrawal
@@ -15,7 +15,7 @@ const RksuTooltip = () => {
       <Typography variant='inherit'>
         <b>No Loyalty Status</b>
         <br />
-        If the value of your rKSU balance relative to your current and pending
+        If the value of your rKASU balance relative to your current and pending
         USDC lending is less than 1%:
       </Typography>
       <ul>
@@ -38,7 +38,7 @@ const RksuTooltip = () => {
       <Typography variant='inherit'>
         <b>Loyalty Level 1</b>
         <br />
-        If the value of your rKSU balance relative to your total current and
+        If the value of your rKASU balance relative to your total current and
         pending USDC lending across all Lending Strategies is 1% or greater, but
         less than 5%, you will achieve Loyalty Level 1, entitling you to the
         following token utility and benefits:
@@ -54,7 +54,7 @@ const RksuTooltip = () => {
         </li>
         <li>
           Additional APY (APY Bonus) awarding you with bonus interest earnings
-          on all your lending, awarded in KSU (subject to change according to
+          on all your lending, awarded in KASU (subject to change according to
           liquidity demand and supply requirements).
         </li>
       </ul>
@@ -62,7 +62,7 @@ const RksuTooltip = () => {
       <Typography variant='inherit'>
         <b>Loyalty Level 2</b>
         <br />
-        If the value of your rKSU balance relative to your total current and
+        If the value of your rKASU balance relative to your total current and
         pending USDC lending across all Lending Strategies is 5% or greater, you
         will achieve Loyalty Level 2, entitling you to the following token
         utility and benefits:
@@ -78,13 +78,13 @@ const RksuTooltip = () => {
         <li>
           Additional APY (more APY Bonus than Loyalty Level 1 Token Lockers)
           awarding you with bonus interest earnings on all your lending, awarded
-          in KSU (subject to change according to liquidity demand and supply
+          in KASU (subject to change according to liquidity demand and supply
           requirements).
         </li>
       </ul>
       <Typography variant='inherit'>
-        Regardless of your Loyalty Level, your rKSU balance, relative to the
-        total combined rKSU balance of all Lenders in the Kasu ecosystem, also
+        Regardless of your Loyalty Level, your rKASU balance, relative to the
+        total combined rKASU balance of all Lenders in the Kasu ecosystem, also
         determines your share of Protocol Fees.
       </Typography>
     </>

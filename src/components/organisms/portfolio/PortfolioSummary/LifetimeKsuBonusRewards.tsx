@@ -45,7 +45,7 @@ const LifetimeKsuBonusRewards: React.FC<LifetimeKsuBonusRewardsProps> = ({
             minDecimals: 2,
           }
         )}
-        symbol='KSU'
+        symbol='KASU'
       />
       <Typography variant='baseMd' color='gray.middle' ml='1ch'>
         ({formatAmount(formatEther(ksuInUSD))} USDC)

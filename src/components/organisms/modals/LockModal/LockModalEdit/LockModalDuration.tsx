@@ -137,7 +137,7 @@ const LockModalDuration = () => {
               ✕
               <Typography variant='baseSm' whiteSpace='nowrap'>
                 <br />
-                rKSU {t('general.multiplier')}
+                rKASU {t('general.multiplier')}
               </Typography>
             </Typography>
           </Box>

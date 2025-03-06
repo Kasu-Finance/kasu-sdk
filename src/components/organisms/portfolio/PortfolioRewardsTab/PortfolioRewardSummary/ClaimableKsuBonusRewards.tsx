@@ -35,7 +35,7 @@ const ClaimableKsuBonusRewards = () => {
             minDecimals: 2,
           }
         )}{' '}
-        KSU
+        KASU
       </Typography>
       <Typography variant='baseMd' color='gray.middle'>
         {formatAmount(formatEther(ksuInUSD) || '0')} USDC

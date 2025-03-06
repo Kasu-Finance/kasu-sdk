@@ -15,7 +15,7 @@ const TotalLaunchBonus = () => {
 
   return (
     <Typography variant='baseMdBold'>
-      {formatAmount(totalLaunchBonus || '0', { minDecimals: 2 })} KSU
+      {formatAmount(totalLaunchBonus || '0', { minDecimals: 2 })} KASU
     </Typography>
   )
 }

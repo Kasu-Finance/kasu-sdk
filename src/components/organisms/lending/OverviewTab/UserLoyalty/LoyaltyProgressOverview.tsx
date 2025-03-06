@@ -36,12 +36,12 @@ const LoyaltyProgressOverview = () => {
       <Stack height='100%'>
         <LoyaltyProgress />
         <InfoRow
-          title={`rKSU ${capitalize(t('general.balance'))}`}
+          title={`rKASU ${capitalize(t('general.balance'))}`}
           toolTipInfo={<ToolTip title={<RksuBalance />} />}
           showDivider
           metric={
             <Typography variant='baseMdBold'>
-              {formatAmount(rKsuAmount || '0', { minDecimals: 2 })} rKSU
+              {formatAmount(rKsuAmount || '0', { minDecimals: 2 })} rKASU
             </Typography>
           }
           sx={{ mt: 'auto' }}
@@ -67,7 +67,7 @@ const LoyaltyProgressOverview = () => {
           showDivider
           metric={
             <Typography variant='baseMdBold'>
-              {formatAmount(stakedKSU || '0')} KSU
+              {formatAmount(stakedKSU || '0')} KASU
             </Typography>
           }
         />
@@ -82,7 +82,7 @@ const LoyaltyProgressOverview = () => {
         }}
         onClick={handleOpen}
       >
-        Learn About KSU Loyalty
+        Learn About KASU Loyalty
       </Button>
     </Stack>
   )
