@@ -23,6 +23,7 @@ import {
   FixRateIcon,
   PaperIcon,
   UploadMoneyIcon,
+  ViewContractIcon,
   WithdrawMoneyIcon,
 } from '@/assets/icons'
 
@@ -251,6 +252,12 @@ const LendingPortfolioTableActionColumn: React.FC<
               ) : null}
             </>
           ) : null}
+          <MenuItem
+            onClick={() => openModal({ name: ModalsKeys.VIEW_LOAN_CONTRACTS })}
+          >
+            <ViewContractIcon />
+            View Loan Contract(s)
+          </MenuItem>
         </Menu>
       </Box>
     </TableCell>

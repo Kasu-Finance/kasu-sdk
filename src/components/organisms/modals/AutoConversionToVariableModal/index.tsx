@@ -44,14 +44,6 @@ const AutoConversionToVariableModal: React.FC<DialogChildProps> = ({
             '& .MuiTableRow-root:first-child .MuiTableCell-root': {
               pb: 2,
             },
-            'tr:nth-child(2)': {
-              'td:first-child': {
-                borderTopLeftRadius: 8,
-              },
-              'td:last-child': {
-                borderTopRightRadius: 8,
-              },
-            },
           }}
           tableHeader={<AutoConversionTableHeader />}
           tableBody={fixedLoans.map((fixedLoan, index) => (
