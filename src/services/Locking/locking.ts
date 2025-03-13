@@ -334,7 +334,7 @@ export class KSULocking {
         rKSUAmount: string,
         userAddress: string,
     ): Promise<number> {
-        const usdcAmount: [BigNumber, BigNumber] =
+        const [depositedAmount, pendingAmount]: [BigNumber, BigNumber] =
             await this._userManagerAbi.userTotalPendingAndActiveDepositedAmountForCurrentEpoch(
                 userAddress,
             );
@@ -344,11 +344,16 @@ export class KSULocking {
             rKSUAmount,
             18,
         );
+
+        const totalUserUsdcAmount =
+            depositedAmount.toNumber() + pendingAmount.toNumber();
+
         const rKSUInUSDC = rKSUAmountBignumber
             .mul(ksuPrice)
             .div(ethers.utils.parseUnits('1', 18))
             .div(ethers.utils.parseUnits('1', 12));
-        return rKSUInUSDC.toNumber() / usdcAmount[0].toNumber();
+
+        return rKSUInUSDC.toNumber() / totalUserUsdcAmount;
     }
 
     async getClaimableRewards(userAddress: string): Promise<BigNumber> {
