@@ -167,7 +167,7 @@ export class Portfolio {
 
         const userRequestsMap = new Map<
             string,
-            Record<string, PortfolioTrancheDepositDetails[]>
+            Record<string, PortfolioTrancheDepositDetails[] | undefined>
         >();
 
         for (const userRequest of lastEpochData.userRequests) {
