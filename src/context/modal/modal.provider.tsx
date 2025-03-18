@@ -37,6 +37,7 @@ const initialState: Modals = {
   missingEmailModal: { isOpen: false, callback: () => {} },
   viewLoanContractsModal: {
     isOpen: false,
+    depositDetails: [],
   },
   historicalRepaymentsModal: {
     isOpen: false,

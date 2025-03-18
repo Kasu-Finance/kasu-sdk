@@ -9,6 +9,7 @@ import {
 import {
   PortfolioLendingPool,
   PortfolioTranche,
+  PortfolioTrancheDepositDetails,
 } from '@solidant/kasu-sdk/src/services/Portfolio/types'
 import {
   UserRequest,
@@ -82,7 +83,9 @@ export type ModalData<T = void> = T extends void ? ModalBase : T & ModalBase
 export type Modals = {
   [ModalsKeys.UNRELEASED_FEATURE]: ModalData
   [ModalsKeys.WIP_REDIRECT]: ModalData
-  [ModalsKeys.VIEW_LOAN_CONTRACTS]: ModalData
+  [ModalsKeys.VIEW_LOAN_CONTRACTS]: ModalData<{
+    depositDetails: PortfolioTrancheDepositDetails[]
+  }>
   [ModalsKeys.LOYALTY_LEVELS]: ModalData<{
     callback?: () => void
   }>

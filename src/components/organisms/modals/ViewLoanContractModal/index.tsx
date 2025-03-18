@@ -1,5 +1,15 @@
-import { Box, Button, IconButton, TableCell, TableRow } from '@mui/material'
+import {
+  Box,
+  Button,
+  IconButton,
+  TableCell,
+  TableRow,
+  Typography,
+} from '@mui/material'
+import { Fragment } from 'react'
 
+import useModalState from '@/hooks/context/useModalState'
+import useViewLoanContract from '@/hooks/lending/useViewLoanContract'
 import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
@@ -9,12 +19,21 @@ import CustomTable from '@/components/molecules/CustomTable'
 import DialogContent from '@/components/molecules/DialogContent'
 import DialogHeader from '@/components/molecules/DialogHeader'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
 import { DownloadIcon } from '@/assets/icons'
 
-import { formatAmount } from '@/utils'
+import { formatAmount, formatTimestamp } from '@/utils'
 
 const ViewLoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { t } = getTranslation()
+
+  const { modal } = useModalState()
+
+  const { depositDetails } = modal[ModalsKeys.VIEW_LOAN_CONTRACTS]
+
+  const viewLoanContract = useViewLoanContract()
+
   return (
     <CustomCard>
       <DialogHeader title='Loan Contract(s)' onClose={handleClose} />
@@ -36,46 +55,67 @@ const ViewLoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           }}
           tableHeader={
             <TableRow>
-              <TableCell width='35%'>Contract Signing Date</TableCell>
+              <TableCell width='30%'>Contract Signing Date</TableCell>
               <TableCell width='25%'>Loan Amount</TableCell>
               <TableCell width='25%'>Accepted</TableCell>
-              <TableCell width='15%'>Download</TableCell>
+              <TableCell width='20%'>Download</TableCell>
             </TableRow>
           }
           tableBody={
-            <>
-              <TableRow
-                sx={{
-                  '.MuiTableCell-root': {
-                    pt: 0,
-                  },
-                }}
-              >
-                <TableCell>12.12.2024</TableCell>
-                <TableCell>
-                  {formatAmount(10_000, { minDecimals: 2 })}USDC
-                </TableCell>
-                <TableCell>
-                  {formatAmount(10_000, { minDecimals: 2 })} USDC
-                </TableCell>
-                <TableCell>
-                  <IconButton
+            depositDetails.length ? (
+              depositDetails.map((deposit) => (
+                <Fragment key={deposit.depositAmount}>
+                  <TableRow
                     sx={{
-                      'svg path': {
-                        fill: 'white',
+                      '.MuiTableCell-root': {
+                        pt: 0,
                       },
                     }}
                   >
-                    <DownloadIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
+                    <TableCell>
+                      {
+                        formatTimestamp(deposit.timestamp, {
+                          format: 'DD.MM.YYYY',
+                        }).date
+                      }
+                    </TableCell>
+                    <TableCell>
+                      {formatAmount(deposit.depositAmount, { minDecimals: 2 })}
+                      USDC
+                    </TableCell>
+                    <TableCell>
+                      {formatAmount(deposit.acceptedAmount, { minDecimals: 2 })}{' '}
+                      USDC
+                    </TableCell>
+                    <TableCell>
+                      <IconButton
+                        sx={{
+                          'svg path': {
+                            fill: 'white',
+                          },
+                        }}
+                        onClick={() => viewLoanContract(deposit.id)}
+                      >
+                        <DownloadIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell colSpan={4} sx={{ pt: 0 }}>
+                      <DottedDivider color='white' />
+                    </TableCell>
+                  </TableRow>
+                </Fragment>
+              ))
+            ) : (
               <TableRow>
-                <TableCell colSpan={4} sx={{ pt: 0 }}>
-                  <DottedDivider color='white' />
+                <TableCell colSpan={4} align='center'>
+                  <Typography variant='baseMdBold'>
+                    You don't have any signed Loan Contracts yet
+                  </Typography>
                 </TableCell>
               </TableRow>
-            </>
+            )
           }
         />
         <Box p={2} mb={1}>
