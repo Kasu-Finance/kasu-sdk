@@ -1,5 +1,6 @@
 'use server'
 
+import { executablePath } from 'puppeteer'
 import { launch } from 'puppeteer-core'
 
 const downloadLoanContract = async (contract: string) => {
@@ -11,7 +12,7 @@ const downloadLoanContract = async (contract: string) => {
       `--disable-gpu`,
       `--disable-dev-shm-usage`,
     ],
-    channel: 'chrome',
+    executablePath: executablePath(),
   })
 
   const page = await browser.newPage()
