@@ -37,12 +37,19 @@ export interface PortfolioSummary {
     };
 }
 
+export interface PortfolioTrancheDepositDetails {
+    timestamp: EpochTimeStamp;
+    id: string;
+    depositAmount: string;
+    acceptedAmount: string;
+}
 export interface PortfolioTranche extends TrancheData {
     investedAmount: string;
     yieldEarnings: {
         lastEpoch: string;
         lifetime: string;
     };
+    depositDetails: PortfolioTrancheDepositDetails[];
     fixedLoans: {
         isLocked: boolean;
         lockId: string;
@@ -58,6 +65,7 @@ export interface PortfolioTranche extends TrancheData {
             lastEpoch: string;
             lifetime: string;
         };
+        depositDetails: PortfolioTrancheDepositDetails[];
     }[];
 }
 export interface PortfolioLendingPool extends Omit<PoolOverview, 'tranches'> {
@@ -187,4 +195,16 @@ export interface LendingPortfolioQueryResult {
             }[];
         }[];
     } | null;
+    userRequests: {
+        createdOn: string;
+        amountAccepted: string;
+        tranche: {
+            id: string;
+        };
+        fixedTermConfigId: string;
+        userRequestEvents: {
+            id: string;
+            assetAmount: string;
+        }[];
+    }[];
 }

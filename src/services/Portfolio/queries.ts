@@ -139,5 +139,27 @@ export const lendingPortfolioQuery = gql`
                 }
             }
         }
+        userRequests(
+            where: {
+                user: $userAddress
+                userRequestEvents_: {
+                    type_in: [DepositInitiated, DepositIncreased]
+                    additionalData_not: null
+                }
+            }
+        ) {
+            createdOn
+            amountAccepted
+            tranche {
+                id
+            }
+            fixedTermConfigId
+            userRequestEvents(
+                where: { type_in: [DepositInitiated, DepositIncreased] }
+            ) {
+                id
+                assetAmount
+            }
+        }
     }
 `;

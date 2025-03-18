@@ -21,6 +21,7 @@ import {
     PortfolioRewards,
     PortfolioSummary,
     PortfolioTranche,
+    PortfolioTrancheDepositDetails,
     UserLendingPoolTrancheFixedTermDepositLock,
 } from './types';
 
@@ -164,6 +165,56 @@ export class Portfolio {
 
         if (!lastEpochData.user) return [];
 
+        const userRequestsMap = new Map<
+            string,
+            Record<string, PortfolioTrancheDepositDetails[]>
+        >();
+
+        for (const userRequest of lastEpochData.userRequests) {
+            const trancheId = userRequest.tranche.id;
+
+            const ftdId = userRequest.fixedTermConfigId;
+
+            let remainingAcceptedAmount = parseFloat(
+                userRequest.amountAccepted,
+            );
+
+            for (const userRequestEvent of userRequest.userRequestEvents) {
+                const mappedUserRequest = userRequestsMap.get(trancheId);
+
+                const assetAmount = parseFloat(userRequestEvent.assetAmount);
+
+                const acceptedAmount =
+                    remainingAcceptedAmount > assetAmount
+                        ? assetAmount
+                        : remainingAcceptedAmount;
+
+                remainingAcceptedAmount -= acceptedAmount;
+
+                const userRequestFtdItem: PortfolioTrancheDepositDetails = {
+                    id: userRequestEvent.id,
+                    depositAmount: userRequestEvent.assetAmount,
+                    acceptedAmount: acceptedAmount.toString(),
+                    timestamp: parseInt(userRequest.createdOn),
+                };
+
+                if (!mappedUserRequest) {
+                    userRequestsMap.set(trancheId, {
+                        [ftdId]: [userRequestFtdItem],
+                    });
+                    continue;
+                }
+
+                userRequestsMap.set(trancheId, {
+                    ...mappedUserRequest,
+                    [ftdId]: [
+                        ...(mappedUserRequest[ftdId] ?? []),
+                        userRequestFtdItem,
+                    ],
+                });
+            }
+        }
+
         for (const poolOverview of poolOverviews) {
             userPoolBalancePromises.push(
                 this._userLendingService.getUserPoolBalance(
@@ -209,6 +260,10 @@ export class Portfolio {
                         (lendingPool) => lendingPool.tranche.id === tranche.id,
                     );
 
+                const userRequest = userRequestsMap.get(tranche.id);
+
+                const depositDetails = userRequest?.['0'] ?? [];
+
                 if (!lastEpochUserTrancheDetails) {
                     tranches.push({
                         ...tranche,
@@ -220,6 +275,7 @@ export class Portfolio {
                             lastEpoch: '0',
                             lifetime: '0',
                         },
+                        depositDetails,
                         fixedLoans: [],
                     });
                     continue;
@@ -263,9 +319,16 @@ export class Portfolio {
 
                 let lastEpochVariableBaseYield = lastEpochTotalBaseYield;
 
-                const fixedLoans =
+                const fixedLoans: PortfolioTranche['fixedLoans'] =
                     lastEpochUserTrancheDetails.userLendingPoolTrancheFixedTermDepositLocks.map(
                         (fixedTermDeposit) => {
+                            const fixedLoanDepositDetails =
+                                userRequest?.[
+                                    fixedTermDeposit
+                                        .lendingPoolTrancheFixedTermConfig
+                                        .configId
+                                ] ?? [];
+
                             let lastEpochYieldEarned = 0;
                             let lifetimeYieldEarned = 0;
 
@@ -361,6 +424,7 @@ export class Portfolio {
                                             lifetimeYieldEarned,
                                         ),
                                 },
+                                depositDetails: fixedLoanDepositDetails,
                             };
                         },
                     );
@@ -375,6 +439,7 @@ export class Portfolio {
                         lifetime: this.precisionToString(totalLifetimeFtdYield), // passing in total FTD yield to be subtracted by total trache lifetime later down
                     },
                     fixedLoans,
+                    depositDetails,
                 });
             }
 
