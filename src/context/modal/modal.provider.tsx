@@ -35,6 +35,10 @@ const initialState: Modals = {
   loyaltyLevelsModal: { isOpen: false },
   wipRedirectModal: { isOpen: false },
   missingEmailModal: { isOpen: false, callback: () => {} },
+  viewLoanContractsModal: {
+    isOpen: false,
+    depositDetails: [],
+  },
   historicalRepaymentsModal: {
     isOpen: false,
     historicalRepayments: null as unknown as LoanStatus['historicalRepayments'],
