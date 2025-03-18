@@ -23,6 +23,7 @@ import PendingDecisionModal from '@/components/organisms/modals/PendingDecisions
 import RequestDetailsModal from '@/components/organisms/modals/RequestDetailsModal'
 import UnlockModalWrapper from '@/components/organisms/modals/UnlockModal/UnlockModalWrapper'
 import UnreleasedFeatureModal from '@/components/organisms/modals/UnreleasedFeatureModal'
+import ViewLoanContractModal from '@/components/organisms/modals/ViewLoanContractModal'
 import WipRedirectModal from '@/components/organisms/modals/WipRedirectModal'
 import WIthdrawFundsAtExpiryModalWrapper from '@/components/organisms/modals/WithdrawFundsAtExpiryModal/WithdrawFundsAtExpiryModalWrapper'
 import WithdrawModalWrapper from '@/components/organisms/modals/WithdrawModal/WithdrawModalWrapper'
@@ -151,6 +152,10 @@ export const getModal = (
     case ModalsKeys.HISTORICAL_REPAYMENTS:
       return {
         component: <HistoricalRepaymentsModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.VIEW_LOAN_CONTRACTS:
+      return {
+        component: <ViewLoanContractModal handleClose={handleClose} />,
       }
     case ModalsKeys.WIP_REDIRECT:
       return {

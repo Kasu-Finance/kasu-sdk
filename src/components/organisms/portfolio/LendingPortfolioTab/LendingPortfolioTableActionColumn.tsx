@@ -23,6 +23,7 @@ import {
   FixRateIcon,
   PaperIcon,
   UploadMoneyIcon,
+  ViewContractIcon,
   WithdrawMoneyIcon,
 } from '@/assets/icons'
 
@@ -31,8 +32,9 @@ import { customTypography } from '@/themes/typography'
 const LendingPortfolioTableActionColumn: React.FC<
   LendingPortfolioTableTrancheRowProps & {
     isVariable?: boolean
+    ftdId?: string
   }
-> = ({ tranche, currentEpoch, pool, isVariable = false }) => {
+> = ({ tranche, currentEpoch, pool, isVariable = false, ftdId }) => {
   const { t } = getTranslation()
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -72,6 +74,10 @@ const LendingPortfolioTableActionColumn: React.FC<
   )
 
   const isOpen = Boolean(anchorEl)
+
+  const ftdDepositDetails =
+    tranche.fixedLoans.find((loan) => loan.configId === ftdId)
+      ?.depositDetails ?? []
 
   return (
     <TableCell
@@ -251,6 +257,19 @@ const LendingPortfolioTableActionColumn: React.FC<
               ) : null}
             </>
           ) : null}
+          <MenuItem
+            onClick={() =>
+              openModal({
+                name: ModalsKeys.VIEW_LOAN_CONTRACTS,
+                depositDetails: isVariable
+                  ? tranche.depositDetails
+                  : ftdDepositDetails,
+              })
+            }
+          >
+            <ViewContractIcon />
+            View Loan Contract(s)
+          </MenuItem>
         </Menu>
       </Box>
     </TableCell>
