@@ -40,6 +40,13 @@ const generateKycSignature = async (
     process.env.NEXERA_API_URL ||
     `${NEXERA_API_BASE_URL}/customer-tx-auth-signature`
 
+  if (process.env.NODE_ENV === 'production') {
+    console.log(NEXERA_API_URL, {
+      ...params,
+      workflowId: isIndividual ? KYC_WORKFLOW : KYB_WORKFLOW,
+    })
+  }
+
   const response = await fetch(NEXERA_API_URL, {
     body: JSON.stringify({
       ...params,
@@ -53,7 +60,15 @@ const generateKycSignature = async (
     method: 'POST',
   })
 
+  if (process.env.NODE_ENV === 'production') {
+    console.log('response ', response)
+  }
+
   const data: ApiRes = await response.json()
+
+  if (process.env.NODE_ENV === 'production') {
+    console.log('data ', data)
+  }
 
   if ('payload' in data) {
     return {
