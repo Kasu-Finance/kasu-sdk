@@ -18,6 +18,8 @@ export async function POST(req: NextRequest) {
       console.log('workflowId: ', isIndividual ? KYC_WORKFLOW : KYB_WORKFLOW)
       console.log({ KYC_WORKFLOW })
       console.log({ KYB_WORKFLOW })
+      console.log(process.env.ONEINCH_API_KEY)
+      console.log(process.env)
     }
 
     const sessionRes = await apiClient.createWeb3Challenge({
