@@ -14,6 +14,11 @@ export async function POST(req: NextRequest) {
 
     const { isIndividual, ...args } = body
 
+    if (process.env.NODE_ENV === 'development') {
+      console.log(isIndividual ? KYC_WORKFLOW : KYB_WORKFLOW)
+      console.log(args)
+    }
+
     const sessionRes = await apiClient.createWeb3Challenge({
       workflowId: isIndividual ? KYC_WORKFLOW : KYB_WORKFLOW,
       ...args,
