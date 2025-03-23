@@ -43,7 +43,7 @@ const PortfolioWalletTab = () => {
   const ksuInUSD = convertToUSD(ksuBalance, parseEther(ksuPrice || '0'))
 
   const walletBalances = {
-    ksu: formatUnits(ksuBalance, ksuDecimals),
+    KASU: formatUnits(ksuBalance, ksuDecimals),
     usdc: formatUnits(usdcBalance, usdcDecimals),
   } as const
 
@@ -179,7 +179,7 @@ const PortfolioWalletTab = () => {
                         amount={formatAmount(
                           formatUnits(ksuBalance || '0', ksuDecimals)
                         )}
-                        symbol='KSU'
+                        symbol='KASU'
                         usdValue={formatAmount(formatEther(ksuInUSD) || '0')}
                         pt='6px'
                         pl={{ xs: 0, sm: 2 }}

@@ -24,7 +24,7 @@ const LearnButton: React.FC<ButtonProps> = (props) => {
       onClick={handleOpen}
       {...props}
     >
-      Learn About KSU Loyalty
+      Learn About KASU Loyalty
     </Button>
   )
 }

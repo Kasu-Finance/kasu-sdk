@@ -33,7 +33,7 @@ const PartialUnlockMessage = () => {
           ),
           { minDecimals: 2 }
         )}{' '}
-        KSU{' '}
+        KASU{' '}
       </Typography>
       {t('modals.unlock.completed.description-3')},{' '}
       <Typography variant='baseMdBold'>
@@ -43,11 +43,11 @@ const PartialUnlockMessage = () => {
           ),
           { minDecimals: 2 }
         )}{' '}
-        rKSU{' '}
+        rKASU{' '}
       </Typography>
       {t('modals.unlock.completed.description-4')}{' '}
       <Typography variant='baseMdBold'>
-        {formatAmount(amount, { minDecimals: 2 })} KSU{' '}
+        {formatAmount(amount, { minDecimals: 2 })} KASU{' '}
       </Typography>
       {t('modals.unlock.completed.description-5')}{' '}
       <Typography variant='baseMdBold'>{formatAccount(account)} </Typography>

@@ -28,7 +28,7 @@ const TotalKsuBalance = () => {
         {formatAmount(formatUnits(balance, decimals), {
           minDecimals: 2,
         })}{' '}
-        KSU
+        KASU
       </Typography>
       <Typography variant='baseMd' color='gray.middle'>
         {formatAmount(formatEther(ksuInUSD), {

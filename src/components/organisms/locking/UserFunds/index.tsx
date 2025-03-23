@@ -25,7 +25,7 @@ const UserFunds = async () => {
         <Grid2 container columnSpacing={4}>
           <Grid2 size={6}>
             <InfoRow
-              title={`KSU ${t('general.balance')}`}
+              title={`KASU ${t('general.balance')}`}
               toolTipInfo={t('locking.widgets.overview.metric-1-tooltip')}
               titleStyle={{ textTransform: 'capitalize' }}
               metric={<KsuBalance />}

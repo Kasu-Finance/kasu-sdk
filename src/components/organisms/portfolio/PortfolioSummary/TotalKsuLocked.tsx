@@ -42,7 +42,7 @@ const TotalKsuLocked: React.FC<TotalKsuLockedProps> = ({
         amount={formatAmount(portfolioSummary?.current.totalKsuLocked || '0', {
           minDecimals: 2,
         })}
-        symbol='KSU'
+        symbol='KASU'
       />
       <Typography variant='baseMd' color='gray.middle' ml='1ch'>
         ({formatAmount(formatEther(ksuInUSD))} USDC)

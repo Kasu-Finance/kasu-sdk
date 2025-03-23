@@ -11,8 +11,8 @@ const ModalLaunchBonus = () => {
   return (
     <>
       <Typography variant='inherit'>
-        Your projected KSU Launch Bonus for being an early Token Locker, based
-        on the amount and duration of KSU locked and the associated multiplier
+        Your projected KASU Launch Bonus for being an early Token Locker, based
+        on the amount and duration of KASU locked and the associated multiplier
         as follows:
       </Typography>
 
@@ -23,7 +23,7 @@ const ModalLaunchBonus = () => {
               <b>Locking duration</b>
             </TableCell>
             <TableCell>
-              <b>KSU Multiplier</b>
+              <b>KASU Multiplier</b>
             </TableCell>
           </TableRow>
         </TableHead>

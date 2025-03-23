@@ -47,7 +47,7 @@ const UnlockModalOverview = () => {
             {formatAmount(stakedKSU || 0, {
               minDecimals: 2,
             })}{' '}
-            KSU
+            KASU
           </Typography>
         }
         showDivider
@@ -83,7 +83,7 @@ const UnlockModalOverview = () => {
         }}
       />
       <InfoRow
-        title={`rKSU ${capitalize(t('general.balance'))}`}
+        title={`rKASU ${capitalize(t('general.balance'))}`}
         toolTipInfo={
           <ToolTip
             title={t('modals.unlock.overview.metric-2-tooltip')}
@@ -97,7 +97,7 @@ const UnlockModalOverview = () => {
         }
         metric={
           <Typography variant='baseMdBold'>
-            {formatAmount(userLock.rKSUAmount, { minDecimals: 2 })} KSU
+            {formatAmount(userLock.rKSUAmount, { minDecimals: 2 })} KASU
           </Typography>
         }
         showDivider
