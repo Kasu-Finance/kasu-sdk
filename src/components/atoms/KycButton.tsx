@@ -15,13 +15,13 @@ import { capitalize } from '@/utils'
 const KycButton: React.FC<ButtonProps> = ({ children, ...rest }) => {
   const { account } = useWeb3React()
   const { openModal } = useModalState()
-  const { isVerifying, status, lastVerifiedAccount, kycCompleted } =
+  const { isVerifying, kycInfo, lastVerifiedAccount, kycCompleted } =
     useKycState()
   const { setToast } = useToastState()
 
   const handleKyc = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     // force toast and prevent further action
-    if (status === 'To be reviewed') {
+    if (kycInfo?.status === 'To be reviewed') {
       setToast({
         type: 'warning',
         title: capitalize(ActionStatus.PROCESSING),
@@ -33,9 +33,9 @@ const KycButton: React.FC<ButtonProps> = ({ children, ...rest }) => {
     }
     // force toast and prevent further action
     if (
-      status === 'Rejected' ||
-      status === 'Failed' ||
-      status === 'Terminated'
+      kycInfo?.status === 'Rejected' ||
+      kycInfo?.status === 'Failed' ||
+      kycInfo?.status === 'Terminated'
     ) {
       setToast({
         type: 'error',
@@ -48,7 +48,7 @@ const KycButton: React.FC<ButtonProps> = ({ children, ...rest }) => {
     }
 
     if (kycCompleted) {
-      if (status === 'No Email') {
+      if (kycInfo?.status === 'No Email') {
         openModal({
           name: ModalsKeys.MISSING_EMAIL,
           callback: () => rest.onClick?.(e),
