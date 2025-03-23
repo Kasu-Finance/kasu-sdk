@@ -42,7 +42,9 @@ type KycRes =
 
 const checkUserKycState = async (
   userAddress: string
-): Promise<CustomerStatus | undefined> => {
+): Promise<
+  { type: 'Company' | 'Individual'; status: CustomerStatus } | undefined
+> => {
   const projectId = process.env.NEXERA_PROJECT_ID || NEXERA_PROJECT_ID
 
   try {
@@ -58,7 +60,7 @@ const checkUserKycState = async (
     const data: KybRes = await kybRes.json()
 
     if ('status' in data) {
-      return data.status
+      return { type: 'Company', status: data.status }
     }
 
     try {
@@ -82,10 +84,10 @@ const checkUserKycState = async (
       }
 
       if (data.status === 'Active' && !data.customerEmails[0]?.email) {
-        return 'No Email'
+        return { type: 'Individual', status: 'No Email' }
       }
 
-      return data.status
+      return { type: 'Individual', status: data.status }
     } catch (error) {
       console.error(error)
     }
