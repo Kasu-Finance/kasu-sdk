@@ -132,8 +132,10 @@ const useKycActions = (dispatch: Dispatch<KycActions>): KycFunctions => {
           type: 'SET_LAST_VERIFIED_ACCOUNT',
           payload: account,
         }),
-      setCustomerStatus: (customerStatus: CustomerStatus) =>
-        dispatch({ type: 'SET_CUSTOMER_STATUS', payload: customerStatus }),
+      setCustomerKycInfo: (customerStatus: {
+        type: 'Company' | 'Individual'
+        status: CustomerStatus
+      }) => dispatch({ type: 'SET_CUSTOMER_STATUS', payload: customerStatus }),
       setIsVerifying: (isVerifying: boolean) =>
         dispatch({ type: 'SET_IS_VERIFYING', payload: isVerifying }),
       setKycCompleted: (kycCompleted: boolean) =>

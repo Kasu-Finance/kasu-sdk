@@ -21,7 +21,7 @@ type KycStateProps = {
 const initialState: KycStateType = {
   isVerifying: false,
   lastVerifiedAccount: undefined,
-  status: null,
+  kycInfo: undefined,
   kycCompleted: false,
 }
 
@@ -36,7 +36,7 @@ const KycState: React.FC<KycStateProps> = ({ children }) => {
 
   const {
     setLastVerifiedAccount,
-    setCustomerStatus,
+    setCustomerKycInfo,
     setIsVerifying,
     setKycCompleted,
   } = kycActions
@@ -65,14 +65,14 @@ const KycState: React.FC<KycStateProps> = ({ children }) => {
 
           setLastVerifiedAccount(account)
 
-          const status = await checkUserKycState(account)
+          const kyc = await checkUserKycState(account)
 
-          if (!status) return
+          if (!kyc) return
 
-          setCustomerStatus(status)
+          setCustomerKycInfo(kyc)
 
           // no email status means kyc completed but email is not present ( edge case for users that setup KYC before email was setup )
-          if (status === 'Active' || status === 'No Email') {
+          if (kyc.status === 'Active' || kyc.status === 'No Email') {
             setKycCompleted(true)
           } else {
             setKycCompleted(false)
@@ -87,7 +87,7 @@ const KycState: React.FC<KycStateProps> = ({ children }) => {
     }
   }, [
     account,
-    setCustomerStatus,
+    setCustomerKycInfo,
     setLastVerifiedAccount,
     setIsVerifying,
     setKycCompleted,

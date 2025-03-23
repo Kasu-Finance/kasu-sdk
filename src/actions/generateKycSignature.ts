@@ -2,6 +2,7 @@
 
 import { IKasuAllowListAbi__factory } from '@solidant/kasu-sdk/src/contracts'
 
+import { KYB_WORKFLOW, KYC_WORKFLOW } from '@/app/api/kyc-challenge/route'
 import NEXERA_API_BASE_URL from '@/config/nexera/api.nexera'
 
 type ApiRes =
@@ -22,20 +23,26 @@ type ApiRes =
       ]
     }
 
-const generateKycSignature = async (params: {
-  contractAbi: IKasuAllowListAbi__factory
-  contractAddress: `${string}`
-  functionName: string
-  args: unknown[]
-  userAddress: `${string}`
-  chainId: string
-}) => {
+const generateKycSignature = async (
+  params: {
+    contractAbi: IKasuAllowListAbi__factory
+    contractAddress: `${string}`
+    functionName: string
+    args: unknown[]
+    userAddress: `${string}`
+    chainId: string
+  },
+  isIndividual: boolean
+) => {
   const NEXERA_API_URL =
     process.env.NEXERA_API_URL ||
     `${NEXERA_API_BASE_URL}/customer-tx-auth-signature`
 
   const response = await fetch(NEXERA_API_URL, {
-    body: JSON.stringify(params),
+    body: JSON.stringify({
+      ...params,
+      workflowId: isIndividual ? KYC_WORKFLOW : KYB_WORKFLOW,
+    }),
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',

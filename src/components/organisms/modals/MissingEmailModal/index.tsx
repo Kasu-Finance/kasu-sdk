@@ -37,7 +37,7 @@ const MissingEmailModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { isPending, openWidget, error } = useOpenWidget()
 
-  const { setCustomerStatus } = useKycState()
+  const { setCustomerKycInfo } = useKycState()
 
   const { setToast, removeToast } = useToastState()
 
@@ -72,14 +72,14 @@ const MissingEmailModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
           const address = account[0].address
 
-          const status = await checkUserKycState(address)
+          const kyc = await checkUserKycState(address)
 
           handleClose()
           removeToast()
 
-          if (!status) return
+          if (!kyc) return
 
-          if (status === 'No Email') {
+          if (kyc.status === 'No Email') {
             setToast({
               type: 'error',
               title: 'Email update error',
@@ -89,7 +89,7 @@ const MissingEmailModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           }
 
           callback()
-          setCustomerStatus(status)
+          setCustomerKycInfo(kyc)
         }
       },
     })

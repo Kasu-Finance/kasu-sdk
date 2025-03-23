@@ -15,7 +15,8 @@
     "format": "prettier -w .",
     "format:check": "prettier -c . '!build/**/*'",
     "generate-types": "typechain --target=ethers-v5 --always-generate-overloads --out-dir=src/contracts/output src/contracts/abis/*.json",
-    "types": "tsc -p tsconfig.json --noEmit"
+    "types": "tsc -p tsconfig.json --noEmit",
+    "postinstall": "npx puppeteer browsers install"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
