@@ -4,9 +4,6 @@ import { IKasuAllowListAbi__factory } from '@solidant/kasu-sdk/src/contracts'
 
 import NEXERA_API_BASE_URL from '@/config/nexera/api.nexera'
 
-const KYC_WORKFLOW = process.env.KYC_WORKFLOW || ''
-const KYB_WORKFLOW = process.env.KYB_WORKFLOW || ''
-
 type ApiRes =
   | {
       signatureData: string
@@ -36,6 +33,9 @@ const generateKycSignature = async (
   },
   isIndividual: boolean
 ) => {
+  const KYC_WORKFLOW = process.env.KYC_WORKFLOW || ''
+  const KYB_WORKFLOW = process.env.KYB_WORKFLOW || ''
+
   const NEXERA_API_URL =
     process.env.NEXERA_API_URL ||
     `${NEXERA_API_BASE_URL}/customer-tx-auth-signature`
