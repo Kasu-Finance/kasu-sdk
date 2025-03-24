@@ -59,7 +59,7 @@ const checkUserKycState = async (
 
     const data: KybRes = await kybRes.json()
 
-    if ('status' in data) {
+    if ('status' in data && Boolean(data.status)) {
       return { type: 'Company', status: data.status }
     }
 
