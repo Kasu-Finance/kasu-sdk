@@ -1,19 +1,24 @@
 'use server'
 
-import { executablePath } from 'puppeteer'
-import { launch } from 'puppeteer-core'
+import chromium from '@sparticuz/chromium-min'
+import { Browser, launch } from 'puppeteer'
+import { Browser as CoreBrowser, launch as coreLaunch } from 'puppeteer-core'
 
 const downloadLoanContract = async (contract: string) => {
-  const browser = await launch({
-    headless: true,
-    args: [
-      `--no-sandbox`,
-      `--headless`,
-      `--disable-gpu`,
-      `--disable-dev-shm-usage`,
-    ],
-    executablePath: executablePath(),
-  })
+  let browser: Browser | CoreBrowser
+
+  if (process.env.NODE_ENV === 'production') {
+    browser = await coreLaunch({
+      headless: chromium.headless,
+      args: chromium.args,
+      executablePath: await chromium.executablePath(
+        'https://github.com/Sparticuz/chromium/releases/download/v133.0.0/chromium-v133.0.0-pack.tar'
+      ),
+      defaultViewport: chromium.defaultViewport,
+    })
+  } else {
+    browser = await launch()
+  }
 
   const page = await browser.newPage()
 
