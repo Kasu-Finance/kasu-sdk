@@ -3,7 +3,6 @@ import { BigNumber, BytesLike } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
-import useKycState from '@/hooks/context/useKycState'
 import useStepperState from '@/hooks/context/useStepperState'
 import useToastState from '@/hooks/context/useToastState'
 import useBuildDepositData from '@/hooks/lending/useBuildDepositData'
@@ -28,8 +27,6 @@ const useRequestDeposit = () => {
   const handleError = useHandleError()
 
   const { setTxHash, trancheId, amount, selectedToken } = useDepositModalState()
-
-  const { kycInfo } = useKycState()
 
   const supportedTokens = useSupportedTokenInfo()
 
@@ -63,9 +60,6 @@ const useRequestDeposit = () => {
       return console.error('RequestDeposit:: SupportedTokens is undefined')
     }
 
-    if (!kycInfo) {
-      return console.error('RequestDeposit:: KycInfo is undefined')
-    }
     try {
       if (!sdk) {
         throw new KasuSdkNotReadyError()
@@ -83,10 +77,7 @@ const useRequestDeposit = () => {
         chainId.toString()
       )
 
-      const kycData = await generateKycSignature(
-        kycSignatureParams,
-        kycInfo.type === 'Individual'
-      )
+      const kycData = await generateKycSignature(kycSignatureParams)
 
       if (!kycData) {
         throw new Error('RequestDeposit:: Error generating signature')
