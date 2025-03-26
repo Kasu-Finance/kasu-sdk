@@ -9,6 +9,7 @@ import {
 import {
   PortfolioLendingPool,
   PortfolioTranche,
+  PortfolioTrancheDepositDetails,
 } from '@solidant/kasu-sdk/src/services/Portfolio/types'
 import {
   UserRequest,
@@ -65,6 +66,7 @@ export enum ModalsKeys {
   UNRELEASED_FEATURE = 'unreleasedFeatureModal',
   HISTORICAL_REPAYMENTS = 'historicalRepaymentsModal',
   WIP_REDIRECT = 'wipRedirectModal',
+  VIEW_LOAN_CONTRACTS = 'viewLoanContractsModal',
 }
 
 export type ModalAction =
@@ -81,6 +83,9 @@ export type ModalData<T = void> = T extends void ? ModalBase : T & ModalBase
 export type Modals = {
   [ModalsKeys.UNRELEASED_FEATURE]: ModalData
   [ModalsKeys.WIP_REDIRECT]: ModalData
+  [ModalsKeys.VIEW_LOAN_CONTRACTS]: ModalData<{
+    depositDetails: PortfolioTrancheDepositDetails[]
+  }>
   [ModalsKeys.LOYALTY_LEVELS]: ModalData<{
     callback?: () => void
   }>

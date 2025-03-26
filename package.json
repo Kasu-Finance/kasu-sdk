@@ -15,7 +15,8 @@
     "format": "prettier -w .",
     "format:check": "prettier -c . '!build/**/*'",
     "generate-types": "typechain --target=ethers-v5 --always-generate-overloads --out-dir=src/contracts/output src/contracts/abis/*.json",
-    "types": "tsc -p tsconfig.json --noEmit"
+    "types": "tsc -p tsconfig.json --noEmit",
+    "postinstall": "npx puppeteer browsers install"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
@@ -43,7 +44,8 @@
     "@nivo/pie": "^0.87.0",
     "@nivo/tooltip": "^0.87.0",
     "@nivo/voronoi": "^0.87.0",
-    "@solidant/kasu-sdk": "^0.0.127",
+    "@solidant/kasu-sdk": "^0.0.128",
+    "@sparticuz/chromium-min": "^133.0.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@web3-react/coinbase-wallet": "^8.2.3",
@@ -62,6 +64,7 @@
     "next": "^15.2.0",
     "pino-pretty": "^11.0.0",
     "pluno-web-chatbot": "^1.0.8",
+    "puppeteer": "^24.4.0",
     "sass": "^1.69.5",
     "sharp": "^0.33.5",
     "styled-components": "^6.1.2",

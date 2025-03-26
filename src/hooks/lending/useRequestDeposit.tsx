@@ -83,10 +83,7 @@ const useRequestDeposit = () => {
         chainId.toString()
       )
 
-      const kycData = await generateKycSignature(
-        kycSignatureParams,
-        kycInfo.type === 'Individual'
-      )
+      const kycData = await generateKycSignature(kycSignatureParams)
 
       if (!kycData) {
         throw new Error('RequestDeposit:: Error generating signature')
