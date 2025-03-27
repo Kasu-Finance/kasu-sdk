@@ -23,7 +23,7 @@ const PortfolioSummary = async () => {
   const { t } = getTranslation()
 
   return (
-    <Grid2 container spacing={4} mb={1}>
+    <Grid2 container spacing={4} mb={5}>
       <Grid2 size={4}>
         <WaveBox borderRadius={2} py={4} px={2} height={116}>
           <InfoColumn
