@@ -4,6 +4,7 @@ import { ReactNode, Suspense } from 'react'
 import Home from '@/components/molecules/home'
 import HomeOverviewSkeleton from '@/components/molecules/loaders/home/HomeOverviewSkeleton'
 import HomeTabs from '@/components/organisms/home/HomeTabs'
+import PromoBanner from '@/components/organisms/lending/PromoBanner'
 
 import HomeState from '@/context/home/home.provider'
 
@@ -18,6 +19,7 @@ export default async function LendingLayout({ children }: LendingLayoutProps) {
         <Suspense fallback={<HomeOverviewSkeleton />}>
           <Home />
         </Suspense>
+        <PromoBanner />
         <HomeTabs />
         {children}
       </Container>
