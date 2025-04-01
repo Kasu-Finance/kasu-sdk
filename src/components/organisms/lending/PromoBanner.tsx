@@ -39,8 +39,8 @@ const PromoBanner = () => {
           </Typography>
         </Typography>
         <Typography variant='baseMd' color='gray.middle'>
-          KASU tokens will be airdropped to your wallet upon launch and can't be
-          sold within the first 90 days
+          Loans must held for at least 90 days. KASU tokens will be airdropped
+          to your wallet 90 days post launch.
         </Typography>
       </Stack>
     </WaveBox>
