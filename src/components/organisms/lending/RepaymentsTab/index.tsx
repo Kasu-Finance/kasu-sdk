@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 
 import getTranslation from '@/hooks/useTranslation'
 
@@ -7,9 +7,7 @@ import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
 import WaveBox from '@/components/atoms/WaveBox'
-import AggregatedFundsFlow from '@/components/organisms/lending/RepaymentsTab/AggregatedFundsFlow'
 import CsvDownloadButton from '@/components/organisms/lending/RepaymentsTab/CsvDownloadButton'
-import RepaymentSection from '@/components/organisms/lending/RepaymentsTab/RepaymentSection'
 
 import { getRepayments } from '@/app/_requests/repayments'
 
@@ -46,8 +44,9 @@ const RepaymentsTab: React.FC<PoolDetailsProps> = async ({ poolId }) => {
           )}
         </Box>
         <CustomInnerCardContent sx={{ py: 3 }}>
-          <AggregatedFundsFlow repayment={repayment} />
-          {repayment && (
+          {/* <AggregatedFundsFlow repayment={repayment} /> */}
+          <EmptyDataPlaceholder text='Onchain loan repayments coming soon' />
+          {/* {repayment && (
             <Grid container columnSpacing={4} mt={6}>
               <Grid item xs={6}>
                 <RepaymentSection
@@ -58,18 +57,18 @@ const RepaymentsTab: React.FC<PoolDetailsProps> = async ({ poolId }) => {
                   data={repayment.cumulativeLendingFundsFlow}
                   unit='USD'
                 />
-                {/* <RepaymentSection
+                <RepaymentSection
                   title={t('repayments.sections.upcomingFunds.title')}
                   subtitle={t('repayments.sections.upcomingFunds.titleSuffix')}
                   data={repayment.upcomingLendingFundsFlow}
                   unit='USD'
                   mt={6}
-                /> */}
+                />
               </Grid>
               <Grid item xs={6}>
                 <EmptyDataPlaceholder text='On-chain loan repayments coming soon' />
               </Grid>
-              {/* <Grid item xs={6} display='flex' flexDirection='column'>
+              <Grid item xs={6} display='flex' flexDirection='column'>
                 <RepaymentSection
                   title={t('repayments.sections.transactions.title')}
                   subtitle={t('repayments.sections.transactions.titleSuffix')}
@@ -83,9 +82,9 @@ const RepaymentsTab: React.FC<PoolDetailsProps> = async ({ poolId }) => {
                   unit='USDC'
                   mt='auto'
                 />
-              </Grid> */}
+              </Grid>
             </Grid>
-          )}
+          )} */}
         </CustomInnerCardContent>
       </WaveBox>
     </CustomCard>
