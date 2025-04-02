@@ -1906,7 +1906,7 @@
     "tabs": {
       "activePools": "Active Lending Strategies",
       "closedPools": "Closed Lending Strategies",
-      "oversubscribedPools": "Oversubscribed Lending Strategies"
+      "oversubscribedPools": "Fully Subscribed Lending Strategies"
     },
     "summary": {
       "metric-1": "Total Value Locked (TVL)",
