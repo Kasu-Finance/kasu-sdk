@@ -1,7 +1,8 @@
 import { unstable_cache } from 'next/cache'
 
+import { getKasuSDK } from '@/actions/getKasuSDK'
+import { getCurrentEpoch } from '@/app/_requests/currentEpoch'
 import { getPoolDelegate } from '@/app/_requests/poolDelegate'
-import { getPoolOverview } from '@/app/_requests/pools'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
@@ -13,8 +14,11 @@ export const getPoolWithDelegate = unstable_cache(
     activePools: boolean = true,
     oversubscribed = false
   ) => {
+    const sdk = await getKasuSDK()
+    const currentEpoch = await getCurrentEpoch()
+
     const [pools, poolDelegates] = await Promise.all([
-      getPoolOverview(),
+      sdk.DataService.getPoolOverview(currentEpoch),
       getPoolDelegate(),
     ])
 

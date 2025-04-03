@@ -7,7 +7,6 @@ import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import DottedDivider from '@/components/atoms/DottedDivider'
 import InfoColumn from '@/components/atoms/InfoColumn'
-import InfoRow from '@/components/atoms/InfoRow'
 import NextLink from '@/components/atoms/NextLink'
 import UnorderedList from '@/components/atoms/UnorderedList'
 import WaveCard from '@/components/molecules/WaveCard'
@@ -25,12 +24,16 @@ type DelegateProfileProps = {
 const DelegateProfile: React.FC<DelegateProfileProps> = ({ pool }) => {
   const { t } = getTranslation()
 
+  const filteredPools = pool.delegate.otherKASUPools.filter(
+    (otherPool) => otherPool.id !== pool.id && otherPool.isActive
+  )
+
   return (
     <CustomCard>
       <CustomCardHeader title={t('details.poolDelegate.title')} />
       <CustomInnerCardContent sx={{ py: 3 }}>
         <Grid container spacing={4}>
-          <Grid item xs={4}>
+          <Grid item xs={3}>
             <WaveCard
               title={t('details.poolDelegate.history.label')}
               toolTipInfo={t('details.poolDelegate.history.tooltip')}
@@ -42,7 +45,7 @@ const DelegateProfile: React.FC<DelegateProfileProps> = ({ pool }) => {
               unit=''
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={3}>
             <WaveCard
               title={t('details.poolDelegate.totalFunds.label')}
               toolTipInfo={t('details.poolDelegate.totalFunds.tooltip')}
@@ -50,12 +53,22 @@ const DelegateProfile: React.FC<DelegateProfileProps> = ({ pool }) => {
               unit='USDC'
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={3}>
             <WaveCard
               title={t('details.poolDelegate.loans.label')}
               toolTipInfo={t('details.poolDelegate.loans.tooltip')}
               content={formatAmount(pool.delegate.loansUnderManagement)}
               unit='USDC'
+            />
+          </Grid>
+          <Grid item xs={3}>
+            <WaveCard
+              title={t('details.poolDelegate.loss.label')}
+              toolTipInfo={t('details.poolDelegate.loss.tooltip')}
+              content={formatPercentage(
+                pool.delegate.historicLossRate
+              ).replaceAll(' %', '')}
+              unit='%'
             />
           </Grid>
         </Grid>
@@ -69,7 +82,7 @@ const DelegateProfile: React.FC<DelegateProfileProps> = ({ pool }) => {
                   {pool.delegate.assetClasses}
                 </Typography>
               }
-              containerSx={{ mb: 2.5 }}
+              containerSx={{ mb: 1.5 }}
             />
           </Grid>
           <Grid item xs={6}>
@@ -77,32 +90,24 @@ const DelegateProfile: React.FC<DelegateProfileProps> = ({ pool }) => {
               title={t('details.poolDelegate.otherPools.label')}
               toolTipInfo={t('details.poolDelegate.otherPools.tooltip')}
               metric={
-                pool.delegate.otherKASUPools.length ? (
+                filteredPools.length ? (
                   <UnorderedList sx={{ fontSize: 12, pl: 2 }}>
-                    {pool.delegate.otherKASUPools
-                      .filter(
-                        (otherPool) =>
-                          otherPool.id !== pool.id &&
-                          otherPool.isActive &&
-                          !otherPool.isOversubscribed
-                      )
-                      .map((otherPool) => (
-                        <li key={otherPool.id}>
-                          <NextLink
-                            href={`${Routes.lending.root.url}/${otherPool.id}`}
-                            display='block'
-                            fontWeight={600}
-                          >
-                            {otherPool.name}
-                          </NextLink>
-                        </li>
-                      ))}
+                    {filteredPools.map((otherPool) => (
+                      <li key={otherPool.name}>
+                        <NextLink
+                          href={`${Routes.lending.root.url}/${otherPool.id}`}
+                          display='block'
+                          fontWeight={600}
+                        >
+                          {otherPool.name}
+                        </NextLink>
+                      </li>
+                    ))}
                   </UnorderedList>
                 ) : (
                   <Typography variant='baseMdBold'>N/A</Typography>
                 )
               }
-              containerSx={{ mb: 2.5 }}
             />
           </Grid>
           <Grid item xs={6}>
@@ -111,7 +116,7 @@ const DelegateProfile: React.FC<DelegateProfileProps> = ({ pool }) => {
           <Grid item xs={6}>
             <DottedDivider />
           </Grid>
-          <Grid item xs={6}>
+          {/* <Grid item xs={6}>
             <InfoRow
               title={t('details.poolDelegate.totalLoans.label')}
               toolTipInfo={t('details.poolDelegate.totalLoans.tooltip')}
@@ -122,8 +127,8 @@ const DelegateProfile: React.FC<DelegateProfileProps> = ({ pool }) => {
               }
               showDivider
             />
-          </Grid>
-          <Grid item xs={6}>
+          </Grid> */}
+          {/* <Grid item xs={6}>
             <InfoRow
               title={t('details.poolDelegate.loss.label')}
               toolTipInfo={t('details.poolDelegate.loss.tooltip')}
@@ -134,7 +139,7 @@ const DelegateProfile: React.FC<DelegateProfileProps> = ({ pool }) => {
               }
               showDivider
             />
-          </Grid>
+          </Grid> */}
         </Grid>
       </CustomInnerCardContent>
     </CustomCard>

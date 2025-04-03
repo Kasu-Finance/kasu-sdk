@@ -24,10 +24,10 @@ export const Routes = {
   lending: {
     root: { url: BaseRoutesPaths.LENDING },
     closedLendingStrategies: {
-      url: `${BaseRoutesPaths.LENDING}/closedLendingStrategies`,
+      url: `${BaseRoutesPaths.LENDING}/closed-lending-strategies`,
     },
-    oversubscribedLendingStrategies: {
-      url: `${BaseRoutesPaths.LENDING}/oversubscribedLendingStrategies`,
+    fullySubscribedLendingStrategies: {
+      url: `${BaseRoutesPaths.LENDING}/fully-subscribed-lending-strategies`,
     },
     termsAndConditions: {
       url: `${BaseRoutesPaths.LENDING}/important-information-document`,
