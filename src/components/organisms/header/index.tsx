@@ -3,7 +3,6 @@ import Link from 'next/link'
 
 import ConnectWalletButton from '@/components/atoms/ConnectWalletButton'
 import Navigation from '@/components/molecules/header/Navigation'
-import CurrentLoyaltyCrown from '@/components/organisms/header/CurrentLoyaltyCrown'
 import HeaderBar from '@/components/organisms/header/HeaderBar'
 import Toolbar from '@/components/organisms/header/Toolbar'
 
@@ -22,7 +21,7 @@ const Header = () => {
           <Navigation />
           <Box display='flex' alignItems='center' ml='auto'>
             <ConnectWalletButton />
-            <CurrentLoyaltyCrown />
+            {/* <CurrentLoyaltyCrown /> */}
           </Box>
         </Toolbar>
       </Container>
