@@ -1,4 +1,4 @@
-import { Button, Typography } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 
 import getTranslation from '@/hooks/useTranslation'
 
@@ -6,8 +6,8 @@ import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import BonusAndRewardTable from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/BonusAndRewardTable'
-
-import { DownloadRoundedIcon } from '@/assets/icons'
+import CsvDownloadButton from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/CsvDownloadButton'
+import ReferralBonus from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/ReferralBonus'
 
 const BonusAndRewardPortfolio = () => {
   const { t } = getTranslation()
@@ -18,22 +18,38 @@ const BonusAndRewardPortfolio = () => {
         title={t('portfolio.rewards.title-2')}
         justifyContent='space-between'
       >
-        <Button
-          variant='text'
-          endIcon={<DownloadRoundedIcon />}
-          sx={{ textTransform: 'unset' }}
-        >
-          <Typography
-            variant='inherit'
-            sx={{ '&::first-letter': { textTransform: 'capitalize' } }}
-            display='block'
-          >
-            {t('general.csvDownload')}
-          </Typography>
-        </Button>
+        <CsvDownloadButton />
       </CustomCardHeader>
-      <CustomInnerCardContent sx={{ p: 0 }}>
-        <BonusAndRewardTable />
+      <CustomInnerCardContent
+        sx={{
+          p: 0,
+          background: `#F4F4F4 url("/images/wave-middle-gray.png") repeat`,
+        }}
+      >
+        <Stack>
+          <Box>
+            <Typography
+              variant='h4'
+              color='rgba(205, 163, 112, 1)'
+              px={2}
+              py={2.3}
+            >
+              {t('portfolio.rewards.subheader-1.title')}
+            </Typography>
+            <BonusAndRewardTable />
+          </Box>
+          <Box>
+            <Typography
+              variant='h4'
+              color='rgba(205, 163, 112, 1)'
+              px={2}
+              py={2.3}
+            >
+              {t('portfolio.rewards.subheader-3.title')}
+            </Typography>
+            <ReferralBonus />
+          </Box>
+        </Stack>
       </CustomInnerCardContent>
     </CustomCard>
   )

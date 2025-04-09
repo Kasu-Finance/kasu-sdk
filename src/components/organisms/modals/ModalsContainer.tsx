@@ -20,6 +20,7 @@ import MissingEmailModalWrapper from '@/components/organisms/modals/MissingEmail
 import OptInModal from '@/components/organisms/modals/OptInModal'
 import OptOutModal from '@/components/organisms/modals/OptOutModal'
 import PendingDecisionModal from '@/components/organisms/modals/PendingDecisionsModal'
+import ReferralModal from '@/components/organisms/modals/ReferralModal'
 import RequestDetailsModal from '@/components/organisms/modals/RequestDetailsModal'
 import UnlockModalWrapper from '@/components/organisms/modals/UnlockModal/UnlockModalWrapper'
 import UnreleasedFeatureModal from '@/components/organisms/modals/UnreleasedFeatureModal'
@@ -165,6 +166,10 @@ export const getModal = (
           bgcolor: 'rgba(31, 31, 34, 0.9)',
         },
         disableBackdropClose: true,
+      }
+    case ModalsKeys.REFERRAL:
+      return {
+        component: <ReferralModal handleClose={handleClose} />,
       }
   }
 }
