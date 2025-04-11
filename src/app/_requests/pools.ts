@@ -1,5 +1,3 @@
-'use server'
-
 import { getKasuSDK } from '@/actions/getKasuSDK'
 import { getCurrentEpoch } from '@/app/_requests/currentEpoch'
 
