@@ -1499,7 +1499,7 @@
         },
         "loansUnder": {
           "label": "Total Active Lending",
-          "tooltip": "Total USDC equivalent face value of all outstanding loans that the Delegate currently has deployed to End Borrowers from this Lending Strategy.​"
+          "tooltip": "Total USDC equivalent of all approved loan limits that the Delegate currently have in place to End Borrower for this Lending Strategy."
         },
         "tvl": {
           "label": "Total Value Locked (TVL)",
@@ -2013,7 +2013,7 @@
       "metric-1": "Total Value Locked (TVL)",
       "metric-1-tooltip": "Total Combined USDC funds deployed by Lenders across all Lending Strategies, plus the current value of all KASU locked in the Kasu protocol.",
       "metric-2": "Total Active Lending",
-      "metric-2-tooltip": "Combined USDC equivalent face value of all loans across all Lending Strategies on Kasu that Delegates currently have deployed to End Borrowers.",
+      "metric-2-tooltip": "Combined USDC equivalent amount of all approved loan limits that Delegates currently have in place to End Borrower",
       "metric-3": "Loan Origination Volume",
       "metric-3-tooltip": "Cumulative total USDC equivalent face value of all current and historical loans originated by Delegates to End Borrowers from all Lending Strategies on the Kasu protocol.",
       "metric-4": "Total Interest Earned​",
