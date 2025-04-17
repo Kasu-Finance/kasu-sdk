@@ -7,6 +7,7 @@ import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import BonusAndRewardTable from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/BonusAndRewardTable'
 import CsvDownloadButton from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/CsvDownloadButton'
+import NftPortfolio from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/NftPortfolio'
 import ReferralBonus from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/ReferralBonus'
 
 const BonusAndRewardPortfolio = () => {
@@ -37,6 +38,17 @@ const BonusAndRewardPortfolio = () => {
               {t('portfolio.rewards.subheader-1.title')}
             </Typography>
             <BonusAndRewardTable />
+          </Box>
+          <Box>
+            <Typography
+              variant='h4'
+              color='rgba(205, 163, 112, 1)'
+              px={2}
+              py={2.3}
+            >
+              {t('portfolio.rewards.subheader-2.title')}
+            </Typography>
+            <NftPortfolio />
           </Box>
           <Box>
             <Typography

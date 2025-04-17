@@ -164,6 +164,9 @@ const initialState: Modals = {
     canAccept: false,
     acceptLoanContract: () => {},
   },
+  nftDetectedModal: {
+    isOpen: false,
+  },
 }
 
 const ModalState: React.FC<{ children: ReactNode }> = ({ children }) => {
