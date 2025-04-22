@@ -1,3 +1,5 @@
+'use client'
+
 import { Box, Stack, Typography } from '@mui/material'
 import Image from 'next/image'
 
@@ -32,15 +34,27 @@ const PromoBanner = () => {
       </Box>
       <Stack>
         <Typography variant='h5' color='gold.dark'>
-          KASU TOKEN AIRDROP AT LAUNCH PRICE!{' '}
+          WIN UP TO $10,000 WORTH OF KASU TOKENS AT LAUNCH PRICE!*{' '}
           <Typography variant='inherit' color='white' display='inline'>
-            Receive 50 USDC worth of free KASU tokens for every 5,000 USDC of
-            lending
+            Every entry gets you $50 worth of free KASU tokens*
           </Typography>
         </Typography>
-        <Typography variant='baseMd' color='gray.middle'>
-          Loans must held for at least 90 days. KASU tokens will be airdropped
-          to your wallet 90 days post launch.
+        <Typography variant='baseXs' color='gray.middle'>
+          Entry is based on every 5,000 USDC of lending within a single epoch.
+          Loans must be held for at least 90 days. See *
+          <Typography
+            variant='baseXs'
+            color='gold.dark'
+            sx={{ cursor: 'pointer' }}
+            onClick={() => {
+              window.open(
+                'https://docs.kasu.finance/usdkasu-kingship-token-airdrop-promotion-terms-and-conditions',
+                '_blank'
+              )
+            }}
+          >
+            Terms & Conditions.
+          </Typography>
         </Typography>
       </Stack>
     </WaveBox>
