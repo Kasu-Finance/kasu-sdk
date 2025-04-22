@@ -43,8 +43,8 @@ const KasuFooterLogo = () => (
         y2='33.2721'
         gradientUnits='userSpaceOnUse'
       >
-        <stop stop-color='#B18C5C' />
-        <stop offset='1' stop-color='#C1A076' />
+        <stop stopColor='#B18C5C' />
+        <stop offset='1' stopColor='#C1A076' />
       </linearGradient>
       <linearGradient
         id='paint1_linear_4499_56164'
@@ -54,8 +54,8 @@ const KasuFooterLogo = () => (
         y2='21.9836'
         gradientUnits='userSpaceOnUse'
       >
-        <stop stop-color='#F6DFC3' />
-        <stop offset='1' stop-color='#ECC9A0' />
+        <stop stopColor='#F6DFC3' />
+        <stop offset='1' stopColor='#ECC9A0' />
       </linearGradient>
     </defs>
   </svg>

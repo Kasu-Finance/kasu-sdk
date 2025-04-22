@@ -19,6 +19,7 @@ import { customPalette } from '@/themes/palette'
 import { customTypography } from '@/themes/typography'
 import { formatAmount } from '@/utils'
 
+//TODO-HENG: Implement logic to table row
 const NftPortfolio = () => {
   const isHighestNFTTier = false
 
