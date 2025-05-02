@@ -1,18 +1,20 @@
-import { useWeb3React } from '@web3-react/core'
 import useSWR from 'swr'
+import { useAccount } from 'wagmi'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
 const useTransactionHistory = (epochId: string) => {
   const sdk = useKasuSDK()
 
-  const { account } = useWeb3React()
+  const account = useAccount()
 
   const { data, error, isLoading, mutate } = useSWR(
-    account && sdk ? ['transactionHistory', account, sdk] : null,
+    account.address && sdk
+      ? ['transactionHistory', account.address, sdk]
+      : null,
     async ([_, userAdress, sdk]) => {
       const userRequests = await sdk.UserLending.getUserRequests(
-        userAdress as `0x${string}`,
+        userAdress,
         epochId
       )
 

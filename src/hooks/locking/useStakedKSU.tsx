@@ -1,15 +1,15 @@
-import { useWeb3React } from '@web3-react/core'
 import useSWR from 'swr'
+import { useAccount } from 'wagmi'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
 const useStakedKSU = () => {
-  const { account } = useWeb3React()
+  const account = useAccount()
 
   const sdk = useKasuSDK()
 
   const { data, error, isLoading } = useSWR(
-    account && sdk ? ['stakedKasu', account, sdk] : null,
+    account.address && sdk ? ['stakedKasu', account.address, sdk] : null,
     async ([_, userAddress, sdk]) => sdk.Locking.getUserStakedKsu(userAddress)
   )
 

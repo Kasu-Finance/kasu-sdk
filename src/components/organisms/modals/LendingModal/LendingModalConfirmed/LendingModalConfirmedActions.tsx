@@ -1,5 +1,5 @@
 import { Box, Button } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
+import { useChainId } from 'wagmi'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
@@ -13,7 +13,7 @@ import { networks } from '@/connection/networks'
 const LendingModalConfirmedActions = () => {
   const { t } = getTranslation()
 
-  const { chainId } = useWeb3React()
+  const chainId = useChainId()
 
   const { txHash } = useDepositModalState()
 

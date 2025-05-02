@@ -1,8 +1,8 @@
 'use client'
 
 // @ts-ignore export error
-import { useWeb3React } from '@web3-react/core'
 import { ReactNode, useEffect, useReducer } from 'react'
+import { useAccount } from 'wagmi'
 
 import useToastState from '@/hooks/context/useToastState'
 
@@ -26,7 +26,7 @@ const initialState: KycStateType = {
 }
 
 const KycState: React.FC<KycStateProps> = ({ children }) => {
-  const { account } = useWeb3React()
+  const account = useAccount()
 
   const [state, dispatch] = useReducer(kycReducer, initialState)
 
@@ -43,9 +43,9 @@ const KycState: React.FC<KycStateProps> = ({ children }) => {
 
   useEffect(() => {
     if (
-      account &&
+      account.address &&
       state.lastVerifiedAccount &&
-      account.toLowerCase() !== state.lastVerifiedAccount.toLowerCase()
+      account.address.toLowerCase() !== state.lastVerifiedAccount.toLowerCase()
     ) {
       setToast({
         type: 'info',
@@ -57,34 +57,34 @@ const KycState: React.FC<KycStateProps> = ({ children }) => {
   }, [account, state.lastVerifiedAccount, setToast])
 
   useEffect(() => {
-    if (account) {
-      ;(async () => {
-        try {
-          setIsVerifying(true)
+    ;(async () => {
+      try {
+        if (!account.address) return
+
+        setIsVerifying(true)
+        setKycCompleted(false)
+
+        setLastVerifiedAccount(account.address)
+
+        const kyc = await checkUserKycState(account.address)
+
+        if (!kyc) return
+
+        setCustomerKycInfo(kyc)
+
+        // no email status means kyc completed but email is not present ( edge case for users that setup KYC before email was setup )
+        if (kyc.status === 'Active' || kyc.status === 'No Email') {
+          setKycCompleted(true)
+        } else {
           setKycCompleted(false)
-
-          setLastVerifiedAccount(account)
-
-          const kyc = await checkUserKycState(account)
-
-          if (!kyc) return
-
-          setCustomerKycInfo(kyc)
-
-          // no email status means kyc completed but email is not present ( edge case for users that setup KYC before email was setup )
-          if (kyc.status === 'Active' || kyc.status === 'No Email') {
-            setKycCompleted(true)
-          } else {
-            setKycCompleted(false)
-          }
-        } catch (error) {
-          console.error(error)
-        } finally {
-          setIsVerifying(false)
-          removeToast()
         }
-      })()
-    }
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setIsVerifying(false)
+        removeToast()
+      }
+    })()
   }, [
     account,
     setCustomerKycInfo,

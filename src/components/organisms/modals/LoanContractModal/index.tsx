@@ -1,5 +1,5 @@
 import { Box, Button, IconButton, Stack, Typography } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
+import { useSignMessage, useWallets } from '@privy-io/react-auth'
 import { useRef, useState } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
@@ -29,7 +29,9 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { modal, openModal } = useModalState()
 
-  const { provider } = useWeb3React()
+  const { wallets } = useWallets()
+
+  const { signMessage } = useSignMessage()
 
   const { setToast, removeToast } = useToastState()
 
@@ -64,9 +66,11 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   )
 
   const handleClick = async () => {
-    if (!provider) {
-      return console.error('Accept Contract:: Provider is undefined')
-    }
+    // const provider = await wallet.getEthereumProvider()
+
+    // if (!provider) {
+    //   return console.error('Accept Contract:: Provider is undefined')
+    // }
 
     if (!generatedContract) {
       return console.error('Accept Contract:: generatedContract is undefined')
@@ -81,9 +85,13 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         isClosable: false,
       })
 
-      const signature = await provider
-        .getSigner()
-        .signMessage(generatedContract.contractMessage)
+      const { signature } = await signMessage({
+        message: generatedContract.contractMessage,
+      })
+
+      // const signature = await provider
+      //   .getSigner()
+      //   .signMessage(generatedContract.contractMessage)
 
       acceptLoanContract && acceptLoanContract(signature)
 

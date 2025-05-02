@@ -1,5 +1,6 @@
-import { useWeb3React } from '@web3-react/core'
+import { useSignMessage } from '@privy-io/react-auth'
 import { useState } from 'react'
+import { useAccount, useChainId } from 'wagmi'
 
 import useToastState from '@/hooks/context/useToastState'
 import useHandleError from '@/hooks/web3/useHandleError'
@@ -24,7 +25,11 @@ const initialGeneratedContractState = {
 }
 
 const useGenerateContract = () => {
-  const { account, chainId, provider } = useWeb3React()
+  const account = useAccount()
+
+  const chainId = useChainId()
+
+  const { signMessage } = useSignMessage()
 
   const { setToast, removeToast } = useToastState()
 
@@ -39,14 +44,11 @@ const useGenerateContract = () => {
     resetGeneratedContract: () =>
       setGeneratedContract(initialGeneratedContractState),
     generateContract: async (amount: string) => {
-      if (!account) {
+      if (!account.address) {
         return console.error('Generate contract:: Account is undefiend')
       }
       if (!chainId) {
         return console.error('Generate contract:: ChainID is undefiend')
-      }
-      if (!provider) {
-        return console.error('Generate contract:: Provider is undefiend')
       }
 
       const now = dayjs().unix() * 1000
@@ -60,11 +62,9 @@ const useGenerateContract = () => {
           isClosable: false,
         })
 
-        const signature = await provider
-          .getSigner()
-          .signMessage(
-            `I request contract content for ${account.toLowerCase()} at ${now}.`
-          )
+        const { signature } = await signMessage({
+          message: `I request contract content for ${account.address.toLowerCase()} at ${now}.`,
+        })
 
         const res = await fetch(
           '/api/lender-agreements?' +
@@ -77,7 +77,7 @@ const useGenerateContract = () => {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              address: account.toLowerCase(),
+              address: account.address.toLowerCase(),
               signature,
               timestamp: now,
               depositAmount: parseFloat(amount),

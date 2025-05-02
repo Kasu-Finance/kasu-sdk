@@ -1,10 +1,10 @@
-import { useWeb3React } from '@web3-react/core'
+import { useChainId } from 'wagmi'
 
 import { TOKENS } from '@/constants/tokens'
 import { isSupportedChain } from '@/utils'
 
 const useSupportedTokenInfo = () => {
-  const { chainId } = useWeb3React()
+  const chainId = useChainId()
 
   if (!chainId || !isSupportedChain(chainId)) return undefined
 

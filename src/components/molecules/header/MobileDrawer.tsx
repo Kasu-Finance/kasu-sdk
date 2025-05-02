@@ -6,8 +6,8 @@ import {
   ListItemText,
   Typography,
 } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
 import Link from 'next/link'
+import { useAccount } from 'wagmi'
 
 import getTranslation from '@/hooks/useTranslation'
 
@@ -28,7 +28,7 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
 }) => {
   const { t } = getTranslation()
 
-  const { account } = useWeb3React()
+  const account = useAccount()
 
   return (
     <Box
@@ -42,7 +42,7 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
       <DrawerHeader onClose={handleDrawerToggle} />
       <List>
         {NAV_ITEMS.map((link) =>
-          link.accountRequired && !account ? null : (
+          link.accountRequired && !account.address ? null : (
             <ListItem
               key={link.label}
               disablePadding

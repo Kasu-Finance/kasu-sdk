@@ -1,4 +1,4 @@
-import { useWeb3React } from '@web3-react/core'
+import { useWallets } from '@privy-io/react-auth'
 import { ProviderRpcError } from '@web3-react/types'
 import { useCallback } from 'react'
 
@@ -6,21 +6,21 @@ import useToastState from '@/hooks/context/useToastState'
 import useHandleError from '@/hooks/web3/useHandleError'
 
 import { SupportedChainIds } from '@/connection/chains'
-import { getConnection } from '@/connection/connectors'
 import { networks } from '@/connection/networks'
 import { ErrorCode } from '@/constants'
-import { userRejectedConnection } from '@/utils'
 
 const useSwitchChain = () => {
-  const { connector } = useWeb3React()
-
   const handleError = useHandleError()
 
   const { setToast } = useToastState()
 
+  const { wallets } = useWallets()
+
+  const wallet = wallets[0]
+
   return useCallback(
     async (chainId: SupportedChainIds) => {
-      if (!connector) return
+      // if (!connector) return
 
       try {
         setToast({
@@ -30,7 +30,9 @@ const useSwitchChain = () => {
           isClosable: false,
         })
 
-        await connector.activate(chainId)
+        // await connector.activate(chainId)
+
+        await wallet.switchChain(chainId)
 
         return true
       } catch (error) {
@@ -42,22 +44,22 @@ const useSwitchChain = () => {
           // label cannot be present ( look at AddEthereumChainParameter type )
           delete networks[chainId].label
 
-          await connector.activate(networks[chainId])
+          // await connector.activate(networks[chainId])
 
           return true
-        } else if (userRejectedConnection(getConnection(connector), error)) {
-          handleError(
-            error,
-            'Connection Error',
-            'Chain switching request denied.',
-            true
-          )
+          // } else if (userRejectedConnection(getConnection(connector), error)) {
+          //   handleError(
+          //     error,
+          //     'Connection Error',
+          //     'Chain switching request denied.',
+          //     true
+          //   )
         } else {
           handleError(error)
         }
       }
     },
-    [connector, handleError, setToast]
+    [handleError, setToast]
   )
 }
 

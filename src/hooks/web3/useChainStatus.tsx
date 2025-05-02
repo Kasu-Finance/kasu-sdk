@@ -1,16 +1,17 @@
-import { useWeb3React } from '@web3-react/core'
 import { useCallback, useEffect } from 'react'
+import { useAccount, useChainId } from 'wagmi'
 
 import useToastState from '@/hooks/context/useToastState'
 import useSwitchChain from '@/hooks/web3/useSwitchChain'
 
 import { NETWORK } from '@/config/sdk'
 import { SupportedChainIds } from '@/connection/chains'
-import { networkConnection } from '@/connection/connectors/networkConnector'
 import { isSupportedChain } from '@/utils'
 
 const useChainStatus = () => {
-  const { account, connector, chainId } = useWeb3React()
+  const account = useAccount()
+
+  const chainId = useChainId()
 
   const { toast, setToast, removeToast } = useToastState()
 
@@ -31,20 +32,20 @@ const useChainStatus = () => {
   }, [switchChain, removeToast])
 
   // auto activate back to networkConnector
-  useEffect(() => {
-    if (
-      chainId &&
-      isSupportedChain(chainId) &&
-      connector !== networkConnection.connector
-    ) {
-      networkConnection.connector.activate(chainId)
-    }
-  }, [connector, chainId])
+  // useEffect(() => {
+  //   if (
+  //     chainId &&
+  //     isSupportedChain(chainId) &&
+  //     connector !== networkConnection.connector
+  //   ) {
+  //     networkConnection.connector.activate(chainId)
+  //   }
+  // }, [connector, chainId])
 
   // wrong chain listener
   useEffect(() => {
     if (
-      account &&
+      account.address &&
       invalidChain &&
       toast?.title !== 'Wrong Chain' &&
       toast?.title !== 'Connecting Wallet' &&
@@ -62,9 +63,9 @@ const useChainStatus = () => {
         isClosable: false,
       })
     }
-  }, [toast, account, invalidChain, setToast, handleSwitchChain])
+  }, [toast, account.address, invalidChain, setToast, handleSwitchChain])
 
-  return { connected: account, isValidChain: !invalidChain }
+  return { connected: account.address, isValidChain: !invalidChain }
 }
 
 export default useChainStatus

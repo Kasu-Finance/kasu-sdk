@@ -1,14 +1,14 @@
-import { useWeb3React } from '@web3-react/core'
 import useSWR from 'swr'
+import { useAccount } from 'wagmi'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
 const useUserApyBonus = () => {
   const sdk = useKasuSDK()
-  const { account } = useWeb3React()
+  const account = useAccount()
 
   const { data, error, isLoading, mutate } = useSWR(
-    account && sdk ? ['userApyBonus', account, sdk] : null,
+    account.address && sdk ? ['userApyBonus', account.address, sdk] : null,
     async ([_, userAddress, sdk]) =>
       sdk.UserLending.getUserApyBonus(userAddress)
   )

@@ -1,20 +1,20 @@
 import { Button, ButtonProps } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
 import React from 'react'
+import { useAccount } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 const AuthenticateButton: React.FC<ButtonProps> = (props) => {
-  const { account } = useWeb3React()
+  const account = useAccount()
 
   const { openModal } = useModalState()
 
   const handleOpen = (e: any) => {
     const action = () => props.onClick?.(e)
 
-    if (!account) {
+    if (!account.address) {
       openModal({ name: ModalsKeys.CONNECT_WALLET, callback: action })
       return
     }

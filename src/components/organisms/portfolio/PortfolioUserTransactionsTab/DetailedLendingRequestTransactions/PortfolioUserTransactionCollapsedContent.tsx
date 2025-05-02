@@ -7,8 +7,8 @@ import {
   Typography,
 } from '@mui/material'
 import { UserRequestEvent } from '@solidant/kasu-sdk/src/services/UserLending/types'
-import { useWeb3React } from '@web3-react/core'
 import React from 'react'
+import { useChainId } from 'wagmi'
 
 import getTranslation from '@/hooks/useTranslation'
 
@@ -32,7 +32,7 @@ const PortfolioUserTransactionCollapsedContent: React.FC<
 > = ({ actionHistory, requestTrancheName }) => {
   const { t } = getTranslation()
 
-  const { chainId } = useWeb3React()
+  const chainId = useChainId()
 
   const eventTrancheName = actionHistory?.trancheName
 

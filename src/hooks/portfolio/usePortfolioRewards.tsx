@@ -1,8 +1,8 @@
 import { PortfolioRewards } from '@solidant/kasu-sdk/src/services/Portfolio/types'
-import { useWeb3React } from '@web3-react/core'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import useSWR from 'swr'
+import { useAccount } from 'wagmi'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 import getTranslation from '@/hooks/useTranslation'
@@ -40,7 +40,7 @@ export type PortfolioRewardsType = {
 const usePortfolioRewards = () => {
   const sdk = useKasuSDK()
 
-  const { account } = useWeb3React()
+  const account = useAccount()
 
   const { t } = getTranslation()
 
@@ -55,7 +55,7 @@ const usePortfolioRewards = () => {
   )
 
   const { data, error, isLoading, mutate } = useSWR(
-    account && sdk ? ['portfolioRewards', account, sdk] : null,
+    account.address && sdk ? ['portfolioRewards', account.address, sdk] : null,
     async ([_, userAddress, sdk]): Promise<PortfolioRewardsType> => {
       const rewards = await sdk.Portfolio.getPortfolioRewards(
         userAddress.toLowerCase()

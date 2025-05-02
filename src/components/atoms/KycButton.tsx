@@ -1,5 +1,5 @@
 import { Button, ButtonProps } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
+import { useAccount } from 'wagmi'
 
 import useKycState from '@/hooks/context/useKycState'
 import useModalState from '@/hooks/context/useModalState'
@@ -13,7 +13,7 @@ import { ActionStatus } from '@/constants'
 import { capitalize } from '@/utils'
 
 const KycButton: React.FC<ButtonProps> = ({ children, ...rest }) => {
-  const { account } = useWeb3React()
+  const account = useAccount()
   const { openModal } = useModalState()
   const { isVerifying, kycInfo, lastVerifiedAccount, kycCompleted } =
     useKycState()
@@ -76,7 +76,7 @@ const KycButton: React.FC<ButtonProps> = ({ children, ...rest }) => {
   }
 
   // prompt connect wallet first
-  if (!account) {
+  if (!account.address) {
     return (
       <AuthenticateButton {...rest} onClick={handleKyc}>
         {children}

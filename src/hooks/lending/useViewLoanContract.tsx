@@ -1,4 +1,5 @@
-import { useWeb3React } from '@web3-react/core'
+import { useSignMessage } from '@privy-io/react-auth'
+import { useAccount, useChainId } from 'wagmi'
 
 import useToastState from '@/hooks/context/useToastState'
 import useHandleError from '@/hooks/web3/useHandleError'
@@ -9,21 +10,22 @@ import dayjs from '@/dayjs'
 import { userRejectedTransaction } from '@/utils'
 
 const useViewLoanContract = () => {
-  const { account, chainId, provider } = useWeb3React()
+  const account = useAccount()
+
+  const chainId = useChainId()
+
+  const { signMessage } = useSignMessage()
 
   const handleError = useHandleError()
 
   const { setToast, removeToast } = useToastState()
 
   return async (id: string) => {
-    if (!account) {
+    if (!account.address) {
       return console.error('View Loan Contract:: Account is undefiend')
     }
     if (!chainId) {
       return console.error('View Loan Contract:: ChainID is undefiend')
-    }
-    if (!provider) {
-      return console.error('View Loan Contract:: Provider is undefiend')
     }
 
     const now = dayjs().unix() * 1000
@@ -37,11 +39,9 @@ const useViewLoanContract = () => {
         isClosable: false,
       })
 
-      const signature = await provider
-        .getSigner()
-        .signMessage(
-          `Requesting contract content for ${account.toLowerCase()}/${id} at ${now}.`
-        )
+      const { signature } = await signMessage({
+        message: `Requesting contract content for ${account.address.toLowerCase()}/${id} at ${now}.`,
+      })
 
       setToast({
         type: 'info',
@@ -52,7 +52,7 @@ const useViewLoanContract = () => {
 
       const data = await getLoanContracts(
         {
-          address: account.toLowerCase(),
+          address: account.address.toLowerCase(),
           signature,
           timestamp: now,
           id,

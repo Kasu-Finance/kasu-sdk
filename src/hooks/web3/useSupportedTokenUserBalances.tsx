@@ -1,6 +1,7 @@
-import { useWeb3React } from '@web3-react/core'
-import { BigNumber } from 'ethers'
+import { useWallets } from '@privy-io/react-auth'
+import { BigNumber, ethers } from 'ethers'
 import useSWR from 'swr'
+import { useAccount } from 'wagmi'
 
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 import useUserBalance from '@/hooks/web3/useUserBalance'
@@ -20,7 +21,11 @@ export type SupportedTokenUserBalances = SupportedTokenInfo & {
 }
 
 const useSupportedTokenUserBalances = () => {
-  const { account, provider } = useWeb3React()
+  const account = useAccount()
+
+  const { wallets } = useWallets()
+
+  const wallet = wallets[0]
 
   const supportedTokens = useSupportedTokenInfo()
 
@@ -31,16 +36,20 @@ const useSupportedTokenUserBalances = () => {
   const { data, error } = useSWR(
     // add isUserBalanceLoading here to prevent rerenders because
     // useUserBalance returns a fallback data when balance is not loaded
-    provider && account && supportedTokens && balance && !isUserBalanceLoading
+    wallet &&
+      account.address &&
+      supportedTokens &&
+      balance &&
+      !isUserBalanceLoading
       ? [
           'userbalance-supported-tokens',
-          provider,
-          account,
+          wallet,
+          account.address,
           supportedTokens,
           balance,
         ]
       : null,
-    async ([_, library, userAddress, tokens, usdcBalance]) => {
+    async ([_, wallet, userAddress, tokens, usdcBalance]) => {
       const USDC = tokens[SupportedTokens.USDC]
 
       const filteredTokens = Object.keys(tokens).filter(
@@ -68,9 +77,12 @@ const useSupportedTokenUserBalances = () => {
           if (token.symbol === USDC.symbol) {
             return { ...token, balance: usdcBalance, balanceInUSD: usdcBalance }
           }
+          const privyProvider = await wallet.getEthereumProvider()
+
+          const provider = new ethers.providers.Web3Provider(privyProvider)
 
           if (token.symbol === SupportedTokens.ETH) {
-            const ethBalance = await library.getBalance(userAddress)
+            const ethBalance = await provider.getBalance(userAddress)
 
             const balanceInUSD = convertToUSD(
               ethBalance,
@@ -80,7 +92,7 @@ const useSupportedTokenUserBalances = () => {
             return { ...token, balance: ethBalance, balanceInUSD }
           }
 
-          const erc20 = IERC20__factory.connect(token.address, library)
+          const erc20 = IERC20__factory.connect(token.address, provider)
           const balance = await erc20.balanceOf(userAddress)
 
           const balanceInUSD = convertToUSD(

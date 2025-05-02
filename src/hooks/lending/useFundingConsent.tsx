@@ -1,4 +1,5 @@
-import { useWeb3React } from '@web3-react/core'
+import { useSignMessage, useWallets } from '@privy-io/react-auth'
+import { useAccount, useChainId } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
 import useToastState from '@/hooks/context/useToastState'
@@ -14,7 +15,13 @@ import dayjs from '@/dayjs'
 import { capitalize } from '@/utils'
 
 const useFundingConsent = () => {
-  const { account, chainId, provider } = useWeb3React()
+  const account = useAccount()
+
+  const chainId = useChainId()
+
+  const wallet = useWallets()
+
+  const { signMessage } = useSignMessage()
 
   const handleError = useHandleError()
 
@@ -36,16 +43,12 @@ const useFundingConsent = () => {
     decision: LoanTicketStatus,
     callback: (newLoanTickets: LoanTicketDto[]) => void
   ) => {
-    if (!account) {
+    if (!account.address) {
       return console.error('FundingConsent:: Account is undefined')
     }
 
     if (!chainId) {
       return console.error('FundingConsent:: ChainId is undefined')
-    }
-
-    if (!provider) {
-      return console.error('FundingConsent:: Provider is undefined')
     }
 
     try {
@@ -69,11 +72,11 @@ const useFundingConsent = () => {
       const signatureTimestamp = dayjs().unix() * 1000
 
       try {
-        signature = await provider
-          .getSigner()
-          .signMessage(
-            `I would like to record the following opt-in/out requests: ${JSON.stringify([payload])}, ${signatureTimestamp}`
-          )
+        const message = await signMessage({
+          message: `I would like to record the following opt-in/out requests: ${JSON.stringify([payload])}, ${signatureTimestamp}`,
+        })
+
+        signature = message.signature
       } catch (error) {
         handleError(
           error,
@@ -103,7 +106,7 @@ const useFundingConsent = () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            userID: account.toLowerCase(),
+            userID: account.address.toLowerCase(),
             payload,
             signature,
             signatureTimestamp,

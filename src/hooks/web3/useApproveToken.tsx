@@ -1,8 +1,9 @@
-import { useWeb3React } from '@web3-react/core'
+import { useWallets } from '@privy-io/react-auth'
 import { ethers } from 'ethers'
 import { parseEther, parseUnits } from 'ethers/lib/utils'
 import { useEffect, useState } from 'react'
 import useSWR from 'swr'
+import { useAccount } from 'wagmi'
 
 import useToastState from '@/hooks/context/useToastState'
 import useTokenDetails from '@/hooks/web3/useTokenDetails'
@@ -16,7 +17,11 @@ const useApproveToken = (
   spender: string | undefined,
   amount: string
 ) => {
-  const { provider, account } = useWeb3React()
+  const account = useAccount()
+
+  const { wallets } = useWallets()
+
+  const wallet = wallets[0]
 
   const { decimals } = useTokenDetails(tokenAddress)
 
@@ -25,17 +30,21 @@ const useApproveToken = (
   const { setToast, removeToast } = useToastState()
 
   const { data: allowance, mutate } = useSWR(
-    provider && account && tokenAddress && spender
+    wallet && account.address && tokenAddress && spender
       ? [
-          `allowance-${tokenAddress}-${spender}-${account}`,
+          `allowance-${tokenAddress}-${spender}-${account.address}`,
           tokenAddress,
-          account,
+          account.address,
           spender,
-          provider,
+          wallet,
         ]
       : null,
-    async ([_, token, userAddress, spender, library]) => {
-      const erc20 = IERC20__factory.connect(token, library)
+    async ([_, token, userAddress, spender, wallet]) => {
+      const privyProvider = await wallet.getEthereumProvider()
+
+      const provider = new ethers.providers.Web3Provider(privyProvider)
+
+      const erc20 = IERC20__factory.connect(token, provider)
 
       const allowance = await erc20.allowance(userAddress, spender)
 
@@ -65,7 +74,11 @@ const useApproveToken = (
       if (!tokenAddress)
         throw new Error('useApproveToken: tokenAddress not specified')
       if (!spender) throw new Error('useApproveToken: spender not specified')
-      if (!provider) throw new Error('userApproveToken: provider is undefined')
+      if (!wallet) throw new Error('userApproveToken: wallet is undefined')
+
+      const privyProvider = await wallet.getEthereumProvider()
+
+      const provider = new ethers.providers.Web3Provider(privyProvider)
 
       setToast({
         type: 'info',

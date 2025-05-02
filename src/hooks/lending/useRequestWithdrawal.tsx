@@ -1,5 +1,5 @@
-import { useWeb3React } from '@web3-react/core'
 import { ContractTransaction } from 'ethers'
+import { useAccount } from 'wagmi'
 
 import useStepperState from '@/hooks/context/useStepperState'
 import useToastState from '@/hooks/context/useToastState'
@@ -13,7 +13,7 @@ import { capitalize, waitForReceipt } from '@/utils'
 const useRequestWithdrawal = () => {
   const sdk = useKasuSDK()
 
-  const { account } = useWeb3React()
+  const account = useAccount()
 
   const handleError = useHandleError()
 
@@ -29,7 +29,7 @@ const useRequestWithdrawal = () => {
     amount: string,
     isWithdrawMax: boolean
   ) => {
-    if (!account) {
+    if (!account.address) {
       return console.error('RequestWithdraw:: Account is undefined')
     }
 
@@ -51,7 +51,7 @@ const useRequestWithdrawal = () => {
         txResponse = await sdk.UserLending.requestWithdrawalMax(
           lendingPool,
           trancheId,
-          account
+          account.address
         )
       } else {
         txResponse = await sdk.UserLending.requestWithdrawalInUSDC(

@@ -1,6 +1,7 @@
+import { useWallets } from '@privy-io/react-auth'
 import { KasuSdk } from '@solidant/kasu-sdk'
 import { PoolOverviewDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
-import { useWeb3React } from '@web3-react/core'
+import { ethers } from 'ethers'
 import useSWR, { preload } from 'swr'
 import useSWRImmutable from 'swr/immutable'
 
@@ -33,7 +34,9 @@ export class KasuSdkNotReadyError extends Error {
 }
 
 const useKasuSDK = () => {
-  const { provider, account } = useWeb3React()
+  const { wallets } = useWallets()
+
+  const wallet = wallets[0]
 
   const { data: unusedPools } = useSWRImmutable<string[]>(
     'unusedPools',
@@ -41,8 +44,13 @@ const useKasuSDK = () => {
   )
 
   const { data, error } = useSWR(
-    provider && account ? ['kasuSDK', provider, account] : null,
-    async ([_, provider]) => {
+    wallet ? ['kasuSDK', wallet] : null,
+
+    async ([_, wallet]) => {
+      const privyProvider = await wallet.getEthereumProvider()
+
+      const provider = new ethers.providers.Web3Provider(privyProvider)
+
       return new KasuSdk(
         {
           ...sdkConfig,

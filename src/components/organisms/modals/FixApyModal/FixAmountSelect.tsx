@@ -1,7 +1,7 @@
 import { Box, SelectChangeEvent, Typography } from '@mui/material'
 import { TrancheData } from '@solidant/kasu-sdk/src/services/DataService/types'
-import { useWeb3React } from '@web3-react/core'
 import React, { useMemo } from 'react'
+import { useAccount } from 'wagmi'
 
 import useFixApyState from '@/hooks/context/useFixApyState'
 import getTranslation from '@/hooks/useTranslation'
@@ -21,7 +21,7 @@ const FixAmountSelect: React.FC<FixAmountSelectProps> = ({
 
   const { fixedTermConfigId, setFixedTermConfigId } = useFixApyState()
 
-  const { account } = useWeb3React()
+  const account = useAccount()
 
   const apyOptions = useMemo(
     () =>
@@ -31,7 +31,8 @@ const FixAmountSelect: React.FC<FixAmountSelectProps> = ({
             fixedTermConfig.fixedTermDepositStatus === 'Everyone' ||
             fixedTermConfig.fixedTermDepositAllowlist.find(
               (allowList) =>
-                allowList.userId.toLowerCase() === account?.toLowerCase()
+                allowList.userId.toLowerCase() ===
+                account.address?.toLowerCase()
             )
         )
         .map((fixedTermConfig) => {

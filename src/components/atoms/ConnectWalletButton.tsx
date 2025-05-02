@@ -9,37 +9,51 @@ import {
   IconButton,
   Typography,
 } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
-import { forwardRef } from 'react'
+import { useLogin, useLogout, usePrivy, useWallets } from '@privy-io/react-auth'
+import { forwardRef, useEffect } from 'react'
+import { useAccount } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
 import getTranslation from '@/hooks/useTranslation'
 import useChainStatus from '@/hooks/web3/useChainStatus'
 import useWalletActivation from '@/hooks/web3/useWalletActivation'
 
-import { ModalsKeys } from '@/context/modal/modal.types'
-
 import { ConnectWalletIcon } from '@/assets/icons'
 
 import { customPalette } from '@/themes/palette'
 import { customTypography } from '@/themes/typography'
-import formatAccount from '@/utils/formats/formatAccount'
+import { formatAccount } from '@/utils'
 
 const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
     const { t } = getTranslation()
 
-    const { account } = useWeb3React()
+    const account = useAccount()
 
     const { openModal } = useModalState()
 
     const { disconnect } = useWalletActivation()
 
-    const handleOpen = () => openModal({ name: ModalsKeys.CONNECT_WALLET })
+    const { login } = useLogin({})
+
+    useEffect(() => {}, [])
+
+    const handleOpen = () => login()
 
     const { connected, isValidChain } = useChainStatus()
 
-    if (!connected) {
+    const { wallets } = useWallets()
+
+    const { ready, authenticated } = usePrivy()
+    const { logout } = useLogout()
+
+    console.log(account.connector)
+
+    if (ready && authenticated) {
+      return <Button onClick={logout}>logout</Button>
+    }
+
+    if (!connected || !authenticated) {
       return (
         <Button
           ref={ref}
@@ -53,7 +67,9 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
           onClick={handleOpen}
           {...props}
         >
-          {t('general.connectWallet')}
+          {wallets.length
+            ? formatAccount(wallets[0].address)
+            : t('general.connectWallet')}
         </Button>
       )
     }
@@ -78,9 +94,9 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
       >
         <ConnectWalletIcon key='connected' />
         <Typography variant='baseSm' color='gold.dark' mx={1.5} mt={0.5}>
-          {formatAccount(account)}
+          {formatAccount(account.address)}
         </Typography>
-        <IconButton sx={{ p: 0 }} onClick={disconnect}>
+        <IconButton sx={{ p: 0 }} onClick={logout}>
           <CloseIcon sx={{ width: 16, height: 16 }} />
         </IconButton>
         <Chip
