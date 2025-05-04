@@ -788,7 +788,7 @@ export class UserLending {
             yieldEarned =
                 parseFloat(userBalance) -
                 totalAcceptedDeposits -
-                totalAcceptedWithdrawals;
+                -totalAcceptedWithdrawals;
         }
 
         return {
