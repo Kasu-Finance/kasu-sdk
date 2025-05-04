@@ -1,17 +1,13 @@
-import { Box, Grid2, Typography } from '@mui/material'
+import { Stack } from '@mui/material'
 import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
 
 import getTranslation from '@/hooks/useTranslation'
 
-import CurrentLoyaltyMascot from '@/components/atoms/CurrentLoyaltyMascot'
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
-import WaveBox from '@/components/atoms/WaveBox'
-import BonusAndRewards from '@/components/organisms/lending/OverviewTab/UserLoyalty/BonusAndRewards'
-import LoyaltyProgressOverview from '@/components/organisms/lending/OverviewTab/UserLoyalty/LoyaltyProgressOverview'
-import UserLoyaltyActions from '@/components/organisms/lending/OverviewTab/UserLoyalty/UserLoyaltyActions'
-import UserLoyaltyLevel from '@/components/organisms/lending/OverviewTab/UserLoyalty/UserLoyaltyLevel'
+import EmptyCardState from '@/components/atoms/EmptyCardState'
+import LearnButton from '@/components/organisms/lending/OverviewTab/UserLoyalty/LearnButton'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
@@ -22,18 +18,29 @@ type UserLoyaltyProps = {
   lockPeriods: LockPeriod[]
 }
 
-const UserLoyalty: React.FC<UserLoyaltyProps> = async ({
-  pools,
-  poolId,
-  currentEpoch,
-  lockPeriods,
-}) => {
+const UserLoyalty: React.FC<UserLoyaltyProps> = async () => {
   const { t } = getTranslation()
 
   return (
     <CustomCard>
       <CustomCardHeader title={t('lending.poolOverview.lockingStatus.title')} />
-      <WaveBox borderRadius={2}>
+      <CustomInnerCardContent sx={{ py: 6 }}>
+        <Stack alignItems='center'>
+          <EmptyCardState
+            color='gray.extraDark'
+            variant='h5'
+            message='We’re working hard on the launch of the $KSU token. In the meantime, start lending so you’re the first to benefit once $KSU launches.'
+          />
+          <LearnButton
+            sx={{
+              alignSelf: 'center',
+              maxWidth: 307,
+              textTransform: 'capitalize',
+            }}
+          />
+        </Stack>
+      </CustomInnerCardContent>
+      {/* <WaveBox borderRadius={2}>
         <CustomInnerCardContent sx={{ py: 3, px: 0 }}>
           <Grid2 container spacing={4} mb={7} px={2} alignItems='end'>
             <Grid2 px={1}>
@@ -60,7 +67,7 @@ const UserLoyalty: React.FC<UserLoyaltyProps> = async ({
             </CustomInnerCardContent>
           </WaveBox>
         </CustomInnerCardContent>
-      </WaveBox>
+      </WaveBox> */}
     </CustomCard>
   )
 }
