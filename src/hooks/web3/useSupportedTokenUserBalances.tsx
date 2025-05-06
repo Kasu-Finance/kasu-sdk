@@ -1,10 +1,12 @@
-import { useWallets } from '@privy-io/react-auth'
-import { BigNumber, ethers } from 'ethers'
+import { BigNumber } from 'ethers'
 import useSWR from 'swr'
 import { useAccount } from 'wagmi'
+import { getBalance, readContract } from 'wagmi/actions'
 
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 import useUserBalance from '@/hooks/web3/useUserBalance'
+
+import { wagmiConfig } from '@/context/privy.provider'
 
 import { SupportedTokenInfo, SupportedTokens } from '@/constants/tokens'
 import { IERC20__factory } from '@/contracts/output'
@@ -21,11 +23,7 @@ export type SupportedTokenUserBalances = SupportedTokenInfo & {
 }
 
 const useSupportedTokenUserBalances = () => {
-  const account = useAccount()
-
-  const { wallets } = useWallets()
-
-  const wallet = wallets[0]
+  const { address } = useAccount()
 
   const supportedTokens = useSupportedTokenInfo()
 
@@ -36,20 +34,10 @@ const useSupportedTokenUserBalances = () => {
   const { data, error } = useSWR(
     // add isUserBalanceLoading here to prevent rerenders because
     // useUserBalance returns a fallback data when balance is not loaded
-    wallet &&
-      account.address &&
-      supportedTokens &&
-      balance &&
-      !isUserBalanceLoading
-      ? [
-          'userbalance-supported-tokens',
-          wallet,
-          account.address,
-          supportedTokens,
-          balance,
-        ]
+    address && supportedTokens && balance && !isUserBalanceLoading
+      ? ['userbalance-supported-tokens', address, supportedTokens, balance]
       : null,
-    async ([_, wallet, userAddress, tokens, usdcBalance]) => {
+    async ([_, userAddress, tokens, usdcBalance]) => {
       const USDC = tokens[SupportedTokens.USDC]
 
       const filteredTokens = Object.keys(tokens).filter(
@@ -77,12 +65,15 @@ const useSupportedTokenUserBalances = () => {
           if (token.symbol === USDC.symbol) {
             return { ...token, balance: usdcBalance, balanceInUSD: usdcBalance }
           }
-          const privyProvider = await wallet.getEthereumProvider()
-
-          const provider = new ethers.providers.Web3Provider(privyProvider)
 
           if (token.symbol === SupportedTokens.ETH) {
-            const ethBalance = await provider.getBalance(userAddress)
+            const nativeTokenBalance = await getBalance(wagmiConfig, {
+              address: userAddress,
+            })
+
+            const ethBalance = BigNumber.from(
+              BigInt(nativeTokenBalance.value).toString()
+            )
 
             const balanceInUSD = convertToUSD(
               ethBalance,
@@ -92,11 +83,15 @@ const useSupportedTokenUserBalances = () => {
             return { ...token, balance: ethBalance, balanceInUSD }
           }
 
-          const erc20 = IERC20__factory.connect(token.address, provider)
-          const balance = await erc20.balanceOf(userAddress)
+          const balance = await readContract(wagmiConfig, {
+            abi: IERC20__factory.abi,
+            functionName: 'balanceOf',
+            args: [userAddress],
+            address: token.address,
+          })
 
           const balanceInUSD = convertToUSD(
-            balance,
+            BigNumber.from(balance),
             toBigNumber(tokenPrices[token.symbol], token.decimals)
           )
           return { ...token, balance, balanceInUSD }

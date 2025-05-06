@@ -1,5 +1,4 @@
-import { Button, ButtonProps } from '@mui/material'
-import { useAccount } from 'wagmi'
+import { ButtonProps } from '@mui/material'
 
 import useKycState from '@/hooks/context/useKycState'
 import useModalState from '@/hooks/context/useModalState'
@@ -12,14 +11,20 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 import { ActionStatus } from '@/constants'
 import { capitalize } from '@/utils'
 
-const KycButton: React.FC<ButtonProps> = ({ children, ...rest }) => {
-  const account = useAccount()
+type KycButtonProps = ButtonProps & {
+  onKycCompleted: () => void
+}
+
+const KycButton: React.FC<KycButtonProps> = ({
+  children,
+  onKycCompleted,
+  ...rest
+}) => {
   const { openModal } = useModalState()
-  const { isVerifying, kycInfo, lastVerifiedAccount, kycCompleted } =
-    useKycState()
+  const { isVerifying, kycInfo, kycCompleted } = useKycState()
   const { setToast } = useToastState()
 
-  const handleKyc = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleKyc = () => {
     // force toast and prevent further action
     if (kycInfo?.status === 'To be reviewed') {
       setToast({
@@ -51,47 +56,29 @@ const KycButton: React.FC<ButtonProps> = ({ children, ...rest }) => {
       if (kycInfo?.status === 'No Email') {
         openModal({
           name: ModalsKeys.MISSING_EMAIL,
-          callback: () => rest.onClick?.(e),
+          callback: onKycCompleted,
         })
 
         return
       }
 
-      return rest.onClick?.(e)
-    }
-
-    if (!lastVerifiedAccount) {
-      setToast({
-        type: 'info',
-        title: 'Account connected',
-        message: 'Verifying status of account...',
-        isClosable: false,
-      })
+      return onKycCompleted()
     }
 
     openModal({
       name: ModalsKeys.KYC,
-      callback: () => rest.onClick?.(e),
+      callback: onKycCompleted,
     })
   }
 
-  // prompt connect wallet first
-  if (!account.address) {
-    return (
-      <AuthenticateButton {...rest} onClick={handleKyc}>
-        {children}
-      </AuthenticateButton>
-    )
-  }
-
   return (
-    <Button
+    <AuthenticateButton
       {...rest}
-      onClick={handleKyc}
+      onAuthenticated={handleKyc}
       disabled={isVerifying || rest.disabled}
     >
       {children}
-    </Button>
+    </AuthenticateButton>
   )
 }
 

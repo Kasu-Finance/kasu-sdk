@@ -29,7 +29,7 @@ const UserFundsActions: React.FC<UserFundsActionsProps> = ({ lockPeriods }) => {
           variant='outlined'
           fullWidth
           sx={{ maxWidth: 368, textTransform: 'capitalize' }}
-          onClick={handleBuyKSU}
+          onAuthenticated={handleBuyKSU}
         >
           {t('general.buyKSU')}
         </AuthenticateButton>
@@ -39,7 +39,7 @@ const UserFundsActions: React.FC<UserFundsActionsProps> = ({ lockPeriods }) => {
           variant='contained'
           fullWidth
           sx={{ textTransform: 'capitalize' }}
-          onClick={handleLockKSU}
+          onAuthenticated={handleLockKSU}
         >
           {t('general.lockKSU')}
         </AuthenticateButton>

@@ -7,7 +7,7 @@ import { useAccount } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
 import getTranslation from '@/hooks/useTranslation'
-import useChainStatus from '@/hooks/web3/useChainStatus'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
@@ -27,13 +27,13 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const handleOpen = () => openModal({ name: ModalsKeys.LINK_WALLETS })
 
-    const { login } = useLogin({})
+    const { login } = useLogin()
 
-    const { isValidChain } = useChainStatus()
+    const { ready } = usePrivy()
 
-    const { ready, authenticated } = usePrivy()
+    const { isAuthenticated } = usePrivyAuthenticated()
 
-    if (!ready || (ready && !authenticated) || !account.address) {
+    if (!isAuthenticated) {
       return (
         <Button
           ref={ref}
@@ -87,7 +87,7 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
               fontSize={10}
               color='white'
             >
-              {isValidChain ? 'Connected' : 'Wrong Chain'}
+              Connected
             </Typography>
           }
           variant='filled'
@@ -108,7 +108,7 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
             },
           }}
           size='small'
-          color={isValidChain ? 'success' : 'warning'}
+          color='success'
         />
       </Box>
     )

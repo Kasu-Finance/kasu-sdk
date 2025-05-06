@@ -1,28 +1,55 @@
 import { Button, ButtonProps } from '@mui/material'
+import { useLogin } from '@privy-io/react-auth'
 import React from 'react'
-import { useAccount } from 'wagmi'
 
-import useModalState from '@/hooks/context/useModalState'
+import useKycState from '@/hooks/context/useKycState'
+import useToastState from '@/hooks/context/useToastState'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
-import { ModalsKeys } from '@/context/modal/modal.types'
+type AuthenticateButtonProps = ButtonProps & {
+  onAuthenticated: () => void
+}
 
-const AuthenticateButton: React.FC<ButtonProps> = (props) => {
-  const account = useAccount()
+const AuthenticateButton: React.FC<AuthenticateButtonProps> = ({
+  onAuthenticated,
+  ...rest
+}) => {
+  const { isAuthenticated } = usePrivyAuthenticated()
 
-  const { openModal } = useModalState()
+  const { checkUserKyc } = useKycState()
+
+  const { setToast } = useToastState()
+
+  const { login } = useLogin({
+    onComplete: async ({ wasAlreadyAuthenticated, user }) => {
+      setToast({
+        type: 'info',
+        title: 'Account connected',
+        message: 'Verifying status of account...',
+        isClosable: false,
+      })
+
+      if (user.wallet?.address) {
+        await checkUserKyc(user.wallet.address)
+      }
+      if (!wasAlreadyAuthenticated) {
+        onAuthenticated()
+      }
+    },
+  })
 
   const handleOpen = (e: any) => {
-    const action = () => props.onClick?.(e)
-
-    if (!account.address) {
-      openModal({ name: ModalsKeys.CONNECT_WALLET, callback: action })
+    if (!isAuthenticated) {
+      login()
       return
     }
 
-    action()
+    onAuthenticated?.()
+
+    rest.onClick?.(e)
   }
 
-  return <Button {...props} onClick={handleOpen} />
+  return <Button {...rest} onClick={handleOpen} />
 }
 
 export default AuthenticateButton

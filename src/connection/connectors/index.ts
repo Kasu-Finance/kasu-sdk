@@ -1,7 +1,3 @@
-import { Connector } from '@web3-react/types'
-
-import { ConnectionType } from '@/types/connectors'
-
 export const connections = [
   // gnosisSafeConnection,
   // deprecatedInjectedConnection,
@@ -11,7 +7,7 @@ export const connections = [
   // networkConnection,
 ]
 
-export function getConnection(connector: Connector | ConnectionType) {
+export function getConnection() {
   // if (connector instanceof Connector) {
   //   const connection = connections.find(
   //     (connection) => connection.connector === connector

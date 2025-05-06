@@ -4,17 +4,20 @@ import { parseEther, parseUnits } from 'ethers/lib/utils'
 import { useEffect, useState } from 'react'
 import useSWR from 'swr'
 import { useAccount } from 'wagmi'
+import { writeContract } from 'wagmi/actions'
 
 import useToastState from '@/hooks/context/useToastState'
 import useTokenDetails from '@/hooks/web3/useTokenDetails'
+
+import { wagmiConfig } from '@/context/privy.provider'
 
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { IERC20__factory } from '@/contracts/output'
 import { calculateMargin, capitalize, userRejectedTransaction } from '@/utils'
 
 const useApproveToken = (
-  tokenAddress: string | undefined,
-  spender: string | undefined,
+  tokenAddress: `0x${string}` | undefined,
+  spender: `0x${string}` | undefined,
   amount: string
 ) => {
   const account = useAccount()
@@ -87,12 +90,21 @@ const useApproveToken = (
         isClosable: false,
       })
 
+      writeContract(wagmiConfig, {
+        abi: IERC20__factory.abi,
+        address: tokenAddress,
+        functionName: 'approve',
+        args: [spender, parseUnits(approveAmount, decimals).toBigInt()],
+      })
+
       const erc20contract = IERC20__factory.connect(
         tokenAddress,
         provider.getSigner()
       )
 
       let useExact = false
+
+      // https://www.reddit.com/r/ethdev/comments/1fkqbhs/estimate_gas_using_wagmi/
 
       const estimatedGas = await erc20contract.estimateGas
         .approve(spender, ethers.constants.MaxUint256)

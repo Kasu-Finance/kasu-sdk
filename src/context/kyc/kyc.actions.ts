@@ -32,7 +32,6 @@ const useKycActions = (dispatch: Dispatch<KycActions>): KycFunctions => {
           message: 'Waiting for message signature to be signed...',
           isClosable: false,
         })
-
         watchIsAuthenticated(compilotConfig, {
           onIsAuthenticatedChange: (isAuthenticated) => {
             if (isAuthenticated) {
@@ -45,7 +44,6 @@ const useKycActions = (dispatch: Dispatch<KycActions>): KycFunctions => {
             }
           },
         })
-
         watchWidgetVisibleState(compilotConfig, {
           onChange: async (isVisible) => {
             // widget close

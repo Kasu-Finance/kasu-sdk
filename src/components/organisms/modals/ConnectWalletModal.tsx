@@ -7,7 +7,6 @@ import CustomCard from '@/components/atoms/CustomCard'
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
 import DialogContent from '@/components/molecules/DialogContent'
 import DialogHeader from '@/components/molecules/DialogHeader'
-import WalletList from '@/components/molecules/WalletList'
 
 import BaseLogo from '@/assets/logo/BaseLogo'
 
@@ -33,7 +32,7 @@ const ConnectWalletModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         onClose={handleClose}
       />
       <DialogContent>
-        <WalletList />
+        {/* <WalletList /> */}
 
         {ready && (
           <button onClick={() => sendCode({ email: 'tomi@solidant.io' })}>

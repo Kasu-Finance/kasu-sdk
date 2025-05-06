@@ -1,10 +1,11 @@
 'use client'
 
 // @ts-ignore export error
-import { ReactNode, useEffect, useReducer } from 'react'
+import { ReactNode, useCallback, useEffect, useReducer } from 'react'
 import { useAccount } from 'wagmi'
 
 import useToastState from '@/hooks/context/useToastState'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import KycContext from '@/context/kyc/kyc.context'
 import kycReducer from '@/context/kyc/kyc.reducer'
@@ -26,15 +27,15 @@ const initialState: KycStateType = {
 }
 
 const KycState: React.FC<KycStateProps> = ({ children }) => {
-  const account = useAccount()
-
-  console.log(account)
+  const { address } = useAccount()
 
   const [state, dispatch] = useReducer(kycReducer, initialState)
 
   const { setToast, removeToast } = useToastState()
 
   const kycActions = useKycActions(dispatch)
+
+  const { isAuthenticated } = usePrivyAuthenticated()
 
   const {
     setLastVerifiedAccount,
@@ -43,32 +44,17 @@ const KycState: React.FC<KycStateProps> = ({ children }) => {
     setKycCompleted,
   } = kycActions
 
-  useEffect(() => {
-    if (
-      account.address &&
-      state.lastVerifiedAccount &&
-      account.address.toLowerCase() !== state.lastVerifiedAccount.toLowerCase()
-    ) {
-      setToast({
-        type: 'info',
-        title: 'Account change detected',
-        message: 'Verifying status of new account...',
-        isClosable: false,
-      })
-    }
-  }, [account, state.lastVerifiedAccount, setToast])
-
-  useEffect(() => {
-    ;(async () => {
+  const checkUserKyc = useCallback(
+    async (account: string) => {
       try {
-        if (!account.address) return
+        if (!account) return
 
         setIsVerifying(true)
         setKycCompleted(false)
 
-        setLastVerifiedAccount(account.address)
+        setLastVerifiedAccount(account)
 
-        const kyc = await checkUserKycState(account.address)
+        const kyc = await checkUserKycState(account)
 
         if (!kyc) return
 
@@ -86,18 +72,41 @@ const KycState: React.FC<KycStateProps> = ({ children }) => {
         setIsVerifying(false)
         removeToast()
       }
-    })()
+    },
+    [
+      setIsVerifying,
+      setKycCompleted,
+      setLastVerifiedAccount,
+      setCustomerKycInfo,
+      removeToast,
+    ]
+  )
+
+  useEffect(() => {
+    if (
+      isAuthenticated &&
+      address &&
+      state.lastVerifiedAccount &&
+      address.toLowerCase() !== state.lastVerifiedAccount.toLowerCase()
+    ) {
+      setToast({
+        type: 'info',
+        title: 'Account change detected',
+        message: 'Verifying status of new account...',
+        isClosable: false,
+      })
+      checkUserKyc(address)
+    }
   }, [
-    account,
-    setCustomerKycInfo,
-    setLastVerifiedAccount,
-    setIsVerifying,
-    setKycCompleted,
-    removeToast,
+    isAuthenticated,
+    address,
+    state.lastVerifiedAccount,
+    setToast,
+    checkUserKyc,
   ])
 
   return (
-    <KycContext.Provider value={{ ...state, ...kycActions }}>
+    <KycContext.Provider value={{ ...state, ...kycActions, checkUserKyc }}>
       {children}
     </KycContext.Provider>
   )
