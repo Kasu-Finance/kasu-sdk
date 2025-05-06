@@ -1,5 +1,4 @@
-import { useSignMessage } from '@privy-io/react-auth'
-import { useAccount, useChainId } from 'wagmi'
+import { useAccount, useChainId, useSignMessage } from 'wagmi'
 
 import useToastState from '@/hooks/context/useToastState'
 import useHandleError from '@/hooks/web3/useHandleError'
@@ -39,9 +38,22 @@ const useViewLoanContract = () => {
         isClosable: false,
       })
 
-      const { signature } = await signMessage({
-        message: `Requesting contract content for ${account.address.toLowerCase()}/${id} at ${now}.`,
-      })
+      let signature: string | undefined
+
+      await signMessage(
+        {
+          message: `Requesting contract content for ${account.address.toLowerCase()}/${id} at ${now}.`,
+        },
+        {
+          onSuccess: (data) => {
+            signature = data
+          },
+        }
+      )
+
+      if (!signature) {
+        throw new Error('ViewLoanContract:: Failed to get signature')
+      }
 
       setToast({
         type: 'info',
@@ -59,6 +71,10 @@ const useViewLoanContract = () => {
         },
         chainId
       )
+
+      if ('error' in data) {
+        throw new Error(data.message)
+      }
 
       const pdfBlob = await downloadLoanContract(
         data.contractMessage

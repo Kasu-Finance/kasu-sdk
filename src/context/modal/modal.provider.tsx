@@ -34,6 +34,7 @@ const initialState: Modals = {
   connectWalletModal: { isOpen: false },
   loyaltyLevelsModal: { isOpen: false },
   wipRedirectModal: { isOpen: false },
+  linkWalletsModal: { isOpen: false },
   missingEmailModal: { isOpen: false, callback: () => {} },
   viewLoanContractsModal: {
     isOpen: false,

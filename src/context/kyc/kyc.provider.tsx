@@ -28,6 +28,8 @@ const initialState: KycStateType = {
 const KycState: React.FC<KycStateProps> = ({ children }) => {
   const account = useAccount()
 
+  console.log(account)
+
   const [state, dispatch] = useReducer(kycReducer, initialState)
 
   const { setToast, removeToast } = useToastState()

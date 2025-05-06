@@ -1,22 +1,15 @@
 'use client'
 
-import CloseIcon from '@mui/icons-material/Close'
-import {
-  Box,
-  Button,
-  ButtonProps,
-  Chip,
-  IconButton,
-  Typography,
-} from '@mui/material'
-import { useLogin, useLogout, usePrivy, useWallets } from '@privy-io/react-auth'
-import { forwardRef, useEffect } from 'react'
+import { Box, Button, ButtonProps, Chip, Typography } from '@mui/material'
+import { useLogin, usePrivy } from '@privy-io/react-auth'
+import { forwardRef } from 'react'
 import { useAccount } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
 import getTranslation from '@/hooks/useTranslation'
 import useChainStatus from '@/hooks/web3/useChainStatus'
-import useWalletActivation from '@/hooks/web3/useWalletActivation'
+
+import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { ConnectWalletIcon } from '@/assets/icons'
 
@@ -32,28 +25,15 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const { openModal } = useModalState()
 
-    const { disconnect } = useWalletActivation()
+    const handleOpen = () => openModal({ name: ModalsKeys.LINK_WALLETS })
 
     const { login } = useLogin({})
 
-    useEffect(() => {}, [])
-
-    const handleOpen = () => login()
-
-    const { connected, isValidChain } = useChainStatus()
-
-    const { wallets } = useWallets()
+    const { isValidChain } = useChainStatus()
 
     const { ready, authenticated } = usePrivy()
-    const { logout } = useLogout()
 
-    console.log(account.connector)
-
-    if (ready && authenticated) {
-      return <Button onClick={logout}>logout</Button>
-    }
-
-    if (!connected || !authenticated) {
+    if (!ready || (ready && !authenticated) || !account.address) {
       return (
         <Button
           ref={ref}
@@ -64,12 +44,11 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
             ...customTypography.baseMd,
           }}
           startIcon={<ConnectWalletIcon key='disconnected' />}
-          onClick={handleOpen}
+          onClick={login}
+          disabled={!ready}
           {...props}
         >
-          {wallets.length
-            ? formatAccount(wallets[0].address)
-            : t('general.connectWallet')}
+          {t('general.connectWallet')}
         </Button>
       )
     }
@@ -88,17 +67,17 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
           'svg path': {
             fill: customPalette.gold.dark,
           },
+          cursor: 'pointer',
         }}
         bgcolor='gray.extraLight'
         position='relative'
+        onClick={handleOpen}
       >
         <ConnectWalletIcon key='connected' />
         <Typography variant='baseSm' color='gold.dark' mx={1.5} mt={0.5}>
           {formatAccount(account.address)}
         </Typography>
-        <IconButton sx={{ p: 0 }} onClick={logout}>
-          <CloseIcon sx={{ width: 16, height: 16 }} />
-        </IconButton>
+
         <Chip
           label={
             <Typography

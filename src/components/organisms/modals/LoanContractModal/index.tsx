@@ -1,6 +1,6 @@
 import { Box, Button, IconButton, Stack, Typography } from '@mui/material'
-import { useSignMessage, useWallets } from '@privy-io/react-auth'
 import { useRef, useState } from 'react'
+import { useSignMessage } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
 import useToastState from '@/hooks/context/useToastState'
@@ -28,8 +28,6 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { t } = getTranslation()
 
   const { modal, openModal } = useModalState()
-
-  const { wallets } = useWallets()
 
   const { signMessage } = useSignMessage()
 
@@ -66,12 +64,6 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   )
 
   const handleClick = async () => {
-    // const provider = await wallet.getEthereumProvider()
-
-    // if (!provider) {
-    //   return console.error('Accept Contract:: Provider is undefined')
-    // }
-
     if (!generatedContract) {
       return console.error('Accept Contract:: generatedContract is undefined')
     }
@@ -85,18 +77,19 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         isClosable: false,
       })
 
-      const { signature } = await signMessage({
-        message: generatedContract.contractMessage,
-      })
+      await signMessage(
+        {
+          message: generatedContract.contractMessage,
+        },
+        {
+          onSuccess: (signature) => {
+            acceptLoanContract && acceptLoanContract(signature)
 
-      // const signature = await provider
-      //   .getSigner()
-      //   .signMessage(generatedContract.contractMessage)
-
-      acceptLoanContract && acceptLoanContract(signature)
-
-      removeToast()
-      handleClose()
+            removeToast()
+            handleClose()
+          },
+        }
+      )
     } catch (error) {
       if (userRejectedTransaction(error)) {
         handleError(

@@ -1,5 +1,4 @@
-import { useSignMessage, useWallets } from '@privy-io/react-auth'
-import { useAccount, useChainId } from 'wagmi'
+import { useAccount, useChainId, useSignMessage } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
 import useToastState from '@/hooks/context/useToastState'
@@ -18,8 +17,6 @@ const useFundingConsent = () => {
   const account = useAccount()
 
   const chainId = useChainId()
-
-  const wallet = useWallets()
 
   const { signMessage } = useSignMessage()
 
@@ -67,16 +64,21 @@ const useFundingConsent = () => {
         status: decision,
       }
 
-      let signature: string
+      let signature: string | undefined
 
       const signatureTimestamp = dayjs().unix() * 1000
 
       try {
-        const message = await signMessage({
-          message: `I would like to record the following opt-in/out requests: ${JSON.stringify([payload])}, ${signatureTimestamp}`,
-        })
-
-        signature = message.signature
+        await signMessage(
+          {
+            message: `I would like to record the following opt-in/out requests: ${JSON.stringify([payload])}, ${signatureTimestamp}`,
+          },
+          {
+            onSuccess: (data) => {
+              signature = data
+            },
+          }
+        )
       } catch (error) {
         handleError(
           error,
@@ -85,6 +87,10 @@ const useFundingConsent = () => {
           true
         )
         return
+      }
+
+      if (!signature) {
+        throw new Error('FundingConsent:: Failed to get signature')
       }
 
       setToast({

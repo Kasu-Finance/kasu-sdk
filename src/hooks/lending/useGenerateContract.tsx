@@ -1,6 +1,5 @@
-import { useSignMessage } from '@privy-io/react-auth'
 import { useState } from 'react'
-import { useAccount, useChainId } from 'wagmi'
+import { useAccount, useChainId, useSignMessage } from 'wagmi'
 
 import useToastState from '@/hooks/context/useToastState'
 import useHandleError from '@/hooks/web3/useHandleError'
@@ -47,6 +46,7 @@ const useGenerateContract = () => {
       if (!account.address) {
         return console.error('Generate contract:: Account is undefiend')
       }
+
       if (!chainId) {
         return console.error('Generate contract:: ChainID is undefiend')
       }
@@ -62,48 +62,61 @@ const useGenerateContract = () => {
           isClosable: false,
         })
 
-        const { signature } = await signMessage({
-          message: `I request contract content for ${account.address.toLowerCase()} at ${now}.`,
-        })
-
-        const res = await fetch(
-          '/api/lender-agreements?' +
-            new URLSearchParams({
-              chainId: chainId.toString(),
-            }),
+        await signMessage(
           {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
+            message: `I request contract content for ${account.address.toLowerCase()} at ${now}.`,
+          },
+          {
+            onSuccess: async (signature) => {
+              if (!account.address) {
+                return console.error('Generate contract:: Account is undefiend')
+              }
+
+              const res = await fetch(
+                '/api/lender-agreements?' +
+                  new URLSearchParams({
+                    chainId: chainId.toString(),
+                  }),
+                {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    address: account.address.toLowerCase(),
+                    signature,
+                    timestamp: now,
+                    depositAmount: parseFloat(amount),
+                  }),
+                }
+              )
+
+              if (res.status !== 200) {
+                throw new Error('Failed to retrieve fullname')
+              }
+
+              const data: FundingConsentGenerateContractRes = await res.json()
+
+              if ('error' in data) {
+                throw new Error(data.message)
+              }
+
+              setGeneratedContract({
+                createdAt: now,
+                status: true,
+                contractMessage: data.contractMessage
+                  .replaceAll('\\n', '\n')
+                  .replaceAll('\\t', '\t'),
+                fullName: data.fullName,
+                contractType: data.contractType,
+                contractVersion: data.contractVersion,
+                formattedMessage: JSON.parse(data.formattedMessage),
+              })
+
+              removeToast()
             },
-            body: JSON.stringify({
-              address: account.address.toLowerCase(),
-              signature,
-              timestamp: now,
-              depositAmount: parseFloat(amount),
-            }),
           }
         )
-
-        if (res.status !== 200) {
-          throw new Error('Failed to retrieve fullname')
-        }
-
-        const data: FundingConsentGenerateContractRes = await res.json()
-
-        setGeneratedContract({
-          createdAt: now,
-          status: true,
-          contractMessage: data.contractMessage
-            .replaceAll('\\n', '\n')
-            .replaceAll('\\t', '\t'),
-          fullName: data.fullName,
-          contractType: data.contractType,
-          contractVersion: data.contractVersion,
-          formattedMessage: JSON.parse(data.formattedMessage),
-        })
-
-        removeToast()
       } catch (error) {
         if (userRejectedTransaction(error)) {
           handleError(

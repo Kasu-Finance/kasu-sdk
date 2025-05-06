@@ -67,6 +67,7 @@ export enum ModalsKeys {
   HISTORICAL_REPAYMENTS = 'historicalRepaymentsModal',
   WIP_REDIRECT = 'wipRedirectModal',
   VIEW_LOAN_CONTRACTS = 'viewLoanContractsModal',
+  LINK_WALLETS = 'linkWalletsModal',
 }
 
 export type ModalAction =
@@ -83,6 +84,7 @@ export type ModalData<T = void> = T extends void ? ModalBase : T & ModalBase
 export type Modals = {
   [ModalsKeys.UNRELEASED_FEATURE]: ModalData
   [ModalsKeys.WIP_REDIRECT]: ModalData
+  [ModalsKeys.LINK_WALLETS]: ModalData
   [ModalsKeys.VIEW_LOAN_CONTRACTS]: ModalData<{
     depositDetails: PortfolioTrancheDepositDetails[]
   }>

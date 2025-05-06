@@ -13,6 +13,7 @@ import FixApyModalWrapper from '@/components/organisms/modals/FixApyModal/FixApy
 import FixedLoanModal from '@/components/organisms/modals/FixedLoanModal'
 import HistoricalRepaymentsModal from '@/components/organisms/modals/HistoricalRepaymentsModal'
 import LendingModalWrapper from '@/components/organisms/modals/LendingModal/LendingModalWrapper'
+import LinkWalletsModal from '@/components/organisms/modals/LinkWalletsModal'
 import LoanContractModal from '@/components/organisms/modals/LoanContractModal'
 import LockModalWrapper from '@/components/organisms/modals/LockModal/LockModalWrapper'
 import LoyaltyLevelsModal from '@/components/organisms/modals/LoyaltyLevelsModal'
@@ -53,6 +54,10 @@ export const getModal = (
         component: <ConnectWalletModal handleClose={handleClose} />,
         ariaLabel: 'Connect Wallet Modal',
         ariaDescription: 'List of available web3 wallet connections',
+      }
+    case ModalsKeys.LINK_WALLETS:
+      return {
+        component: <LinkWalletsModal handleClose={handleClose} />,
       }
     case ModalsKeys.LOYALTY_LEVELS:
       return {
