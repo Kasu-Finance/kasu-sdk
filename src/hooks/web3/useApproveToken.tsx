@@ -1,10 +1,15 @@
-import { useWallets } from '@privy-io/react-auth'
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import { parseEther, parseUnits } from 'ethers/lib/utils'
 import { useEffect, useState } from 'react'
 import useSWR from 'swr'
+import { encodeFunctionData } from 'viem'
 import { useAccount } from 'wagmi'
-import { writeContract } from 'wagmi/actions'
+import {
+  estimateGas,
+  readContract,
+  waitForTransactionReceipt,
+  writeContract,
+} from 'wagmi/actions'
 
 import useToastState from '@/hooks/context/useToastState'
 import useTokenDetails from '@/hooks/web3/useTokenDetails'
@@ -13,7 +18,7 @@ import { wagmiConfig } from '@/context/privy.provider'
 
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { IERC20__factory } from '@/contracts/output'
-import { calculateMargin, capitalize, userRejectedTransaction } from '@/utils'
+import { capitalize, userRejectedTransaction } from '@/utils'
 
 const useApproveToken = (
   tokenAddress: `0x${string}` | undefined,
@@ -22,10 +27,6 @@ const useApproveToken = (
 ) => {
   const account = useAccount()
 
-  const { wallets } = useWallets()
-
-  const wallet = wallets[0]
-
   const { decimals } = useTokenDetails(tokenAddress)
 
   const [isApproved, setIsApproved] = useState(false)
@@ -33,25 +34,23 @@ const useApproveToken = (
   const { setToast, removeToast } = useToastState()
 
   const { data: allowance, mutate } = useSWR(
-    wallet && account.address && tokenAddress && spender
+    account.address && tokenAddress && spender
       ? [
           `allowance-${tokenAddress}-${spender}-${account.address}`,
           tokenAddress,
           account.address,
           spender,
-          wallet,
         ]
       : null,
-    async ([_, token, userAddress, spender, wallet]) => {
-      const privyProvider = await wallet.getEthereumProvider()
+    async ([_, token, userAddress, spender]) => {
+      const allowance = await readContract(wagmiConfig, {
+        address: token,
+        abi: IERC20__factory.abi,
+        functionName: 'allowance',
+        args: [userAddress, spender],
+      })
 
-      const provider = new ethers.providers.Web3Provider(privyProvider)
-
-      const erc20 = IERC20__factory.connect(token, provider)
-
-      const allowance = await erc20.allowance(userAddress, spender)
-
-      return allowance
+      return BigNumber.from(allowance)
     },
     {
       fallbackData: parseEther('0'),
@@ -77,11 +76,6 @@ const useApproveToken = (
       if (!tokenAddress)
         throw new Error('useApproveToken: tokenAddress not specified')
       if (!spender) throw new Error('useApproveToken: spender not specified')
-      if (!wallet) throw new Error('userApproveToken: wallet is undefined')
-
-      const privyProvider = await wallet.getEthereumProvider()
-
-      const provider = new ethers.providers.Web3Provider(privyProvider)
 
       setToast({
         type: 'info',
@@ -90,45 +84,46 @@ const useApproveToken = (
         isClosable: false,
       })
 
-      writeContract(wagmiConfig, {
+      let useExact = false
+
+      let estimatedGasTest: bigint
+
+      try {
+        estimatedGasTest = await estimateGas(wagmiConfig, {
+          to: tokenAddress,
+          data: encodeFunctionData({
+            abi: IERC20__factory.abi,
+            functionName: 'approve',
+            args: [spender, ethers.constants.MaxUint256.toBigInt()],
+          }),
+        })
+      } catch (error) {
+        useExact = true
+
+        estimatedGasTest = await estimateGas(wagmiConfig, {
+          to: tokenAddress,
+          data: encodeFunctionData({
+            abi: IERC20__factory.abi,
+            functionName: 'approve',
+            args: [spender, parseUnits(approveAmount, decimals).toBigInt()],
+          }),
+        })
+      }
+
+      const hash = await writeContract(wagmiConfig, {
         abi: IERC20__factory.abi,
         address: tokenAddress,
         functionName: 'approve',
-        args: [spender, parseUnits(approveAmount, decimals).toBigInt()],
+        args: [
+          spender,
+          useExact
+            ? parseUnits(approveAmount, decimals).toBigInt()
+            : ethers.constants.MaxUint256.toBigInt(),
+        ],
+        gas: estimatedGasTest,
       })
 
-      const erc20contract = IERC20__factory.connect(
-        tokenAddress,
-        provider.getSigner()
-      )
-
-      let useExact = false
-
-      // https://www.reddit.com/r/ethdev/comments/1fkqbhs/estimate_gas_using_wagmi/
-
-      const estimatedGas = await erc20contract.estimateGas
-        .approve(spender, ethers.constants.MaxUint256)
-        .catch(() => {
-          // general fallback for tokens who restrict approval amounts
-          useExact = true
-
-          return erc20contract.estimateGas.approve(
-            spender,
-            parseUnits(approveAmount, decimals)
-          )
-        })
-
-      const approve = await erc20contract.approve(
-        spender,
-        useExact
-          ? parseUnits(approveAmount, decimals)
-          : ethers.constants.MaxUint256,
-        {
-          gasLimit: calculateMargin(estimatedGas),
-        }
-      )
-
-      await approve.wait()
+      await waitForTransactionReceipt(wagmiConfig, { hash })
 
       await mutate()
 

@@ -17,7 +17,9 @@ const useUserBalance = (tokenAddress: string | undefined) => {
 
   const [hasLoaded, setHasLoaded] = useState(false)
 
-  const { decimals, symbol, error } = useTokenDetails(tokenAddress)
+  const { decimals, symbol, error } = useTokenDetails(
+    tokenAddress as `0x${string}`
+  )
 
   const {
     data: balance,
@@ -52,3 +54,44 @@ const useUserBalance = (tokenAddress: string | undefined) => {
 }
 
 export default useUserBalance
+
+// import { IERC20__factory } from '@/contracts/output'
+// import { BigNumber } from 'ethers'
+// import { zeroAddress } from 'viem'
+// import { useAccount, useReadContracts } from 'wagmi'
+
+// const useUserBalance = (tokenAddress: `0x${string}` | undefined) => {
+//   const { address } = useAccount()
+
+//   const { data, isLoading, error } = useReadContracts({
+//     allowFailure: false,
+//     contracts: [
+//       {
+//         address: tokenAddress,
+//         abi: IERC20__factory.abi,
+//         functionName: 'balanceOf',
+//         args: [address ?? zeroAddress],
+//       },
+//       {
+//         address: tokenAddress,
+//         abi: IERC20__factory.abi,
+//         functionName: 'decimals',
+//       },
+//       {
+//         address: tokenAddress,
+//         abi: IERC20__factory.abi,
+//         functionName: 'symbol',
+//       },
+//     ],
+//   })
+
+//   return {
+//     balance: BigNumber.from(data?.[0] ?? 0),
+//     decimals: data?.[1],
+//     symbol: data?.[2],
+//     error,
+//     isUserBalanceLoading: isLoading,
+//   }
+// }
+
+// export default useUserBalance

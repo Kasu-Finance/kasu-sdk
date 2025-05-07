@@ -23,7 +23,9 @@ const LockModalReviewActions = () => {
     amount
   )
 
-  const { decimals } = useTokenDetails(sdkConfig.contracts.KSUToken)
+  const { decimals } = useTokenDetails(
+    sdkConfig.contracts.KSUToken as `0x${string}`
+  )
 
   const lockKSU = useLockKSU()
 
