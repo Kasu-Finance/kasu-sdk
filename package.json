@@ -74,6 +74,7 @@
     "styled-components": "^6.1.2",
     "swr": "^2.2.5",
     "typescript": "^5.6.3",
+    "viem": "^2.29.0",
     "wagmi": "^2.15.1",
     "xhr2": "^0.2.1"
   },
