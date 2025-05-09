@@ -85,6 +85,29 @@ export const lendingPoolUserDetailsQuery = gql`
     }
 `;
 
+export const portfolioUserTrancheDetailsQuery = gql`
+    query TrancheUserDetailsQuery($userAddress: String!) {
+        user(id: $userAddress) {
+            lendingPoolUserDetails {
+                lendingPool {
+                    id
+                }
+                lendingPoolTrancheUserDetails {
+                    id
+                    totalAcceptedDeposits
+                    totalAcceptedWithdrawnAmount
+                    shares
+                    tranche {
+                        id
+                        shares
+                        balance
+                    }
+                }
+            }
+        }
+    }
+`;
+
 export const trancheUserDetailsQuery = gql`
     query TrancheUserDetailsQuery($userAddress: String!) {
         lendingPoolTrancheUserDetails(id: $userAddress) {

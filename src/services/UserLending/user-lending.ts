@@ -51,6 +51,7 @@ import {
     currentEpochFtdAmountQuery,
     currentFtdBalanceQuery,
     lendingPoolUserDetailsQuery,
+    portfolioUserTrancheDetailsQuery,
     totalUserLoyaltyRewardsQuery,
     trancheUserDetailsQuery,
     userRequestsQuery,
@@ -60,6 +61,7 @@ import {
     CurrentEpochFtdAmountSubgraph,
     CurrentFtdBalanceSubgraph,
     LendingPoolUserDetailsSubgraph,
+    PortfolioTrancheUserDetailsSubgraph,
     TotalUserLoyaltyRewardsSubgraph,
     TrancheUserDetailsSubgraph,
     UserRequestsSubgraph,
@@ -716,6 +718,7 @@ export class UserLending {
             await this._graph.request(lendingPoolUserDetailsQuery, {
                 userAddress: `${poolId}-${user}`,
             });
+
         const balance = await lendingPool.userBalance(user);
         const balanceNumber = parseFloat(ethers.utils.formatUnits(balance, 6));
         return {
@@ -735,6 +738,63 @@ export class UserLending {
                     : 0,
             balance: balance,
         };
+    }
+
+    async getPortfolioUserTrancheBalance(user: string) {
+        const userDetails: PortfolioTrancheUserDetailsSubgraph =
+            await this._graph.request(portfolioUserTrancheDetailsQuery, {
+                userAddress: user.toLowerCase(),
+            });
+
+        const mapper = new Map();
+
+        for (const lendingPoolUserDetail of userDetails.user
+            .lendingPoolUserDetails) {
+            const tranches: {
+                trancheId: string;
+                yieldEarned: number;
+                userBalance: string;
+            }[] = [];
+
+            for (const trancheDetail of lendingPoolUserDetail.lendingPoolTrancheUserDetails) {
+                let yieldEarned = 0;
+
+                let userBalance = '0';
+
+                if (
+                    trancheDetail &&
+                    !parseUnits(trancheDetail.shares).isZero()
+                ) {
+                    userBalance = this.convertSharesToAssets(
+                        trancheDetail.shares,
+                        trancheDetail.tranche.balance,
+                        trancheDetail.tranche.shares,
+                    );
+
+                    const totalAcceptedDeposits = parseFloat(
+                        trancheDetail.totalAcceptedDeposits,
+                    );
+
+                    const totalAcceptedWithdrawals = parseFloat(
+                        trancheDetail.totalAcceptedWithdrawnAmount,
+                    );
+
+                    yieldEarned =
+                        parseFloat(userBalance) -
+                        totalAcceptedDeposits -
+                        -totalAcceptedWithdrawals;
+
+                    tranches.push({
+                        trancheId: trancheDetail.tranche.id,
+                        yieldEarned,
+                        userBalance,
+                    });
+                }
+            }
+            mapper.set(lendingPoolUserDetail.lendingPool.id, tranches);
+        }
+
+        return mapper;
     }
 
     async getUserTrancheBalance(
