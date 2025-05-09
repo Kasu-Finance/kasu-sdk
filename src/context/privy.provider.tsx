@@ -24,13 +24,13 @@ export const wagmiConfig = createConfig({
 const PrivyProvider: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <PrivyRootProvider
-      appId='cm9b83y3g01xuk00nikfufifi'
+      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''}
       config={{
         // Customize Privy's appearance in your app
         appearance: {
           theme: 'light',
           accentColor: '#c4996c',
-          logo: 'https://your-logo-url',
+          logo: 'https://kasu-finance.directus.app/assets/3113809a-887f-4b8a-b5f9-ef9d1d1abd74.png',
         },
         // Create embedded wallets for users who don't have a wallet
         embeddedWallets: {
