@@ -4,6 +4,8 @@ import { formatEther, parseEther } from 'ethers/lib/utils';
 import { GraphQLClient } from 'graphql-request';
 
 import {
+    IKasuNFTsAbi,
+    IKasuNFTsAbi__factory,
     ISystemVariablesAbi,
     ISystemVariablesAbi__factory,
 } from '../../contracts';
@@ -32,6 +34,7 @@ export class Portfolio {
     private readonly _graph: GraphQLClient;
 
     private _systemVariablesAbi: ISystemVariablesAbi;
+    private _kasuNftContract: IKasuNFTsAbi;
     readonly _signerOrProvider: Signer | Provider;
 
     constructor(
@@ -47,6 +50,10 @@ export class Portfolio {
         );
         this._userLendingService = new UserLending(
             _kasuConfig,
+            signerOrProvider,
+        );
+        this._kasuNftContract = IKasuNFTsAbi__factory.connect(
+            _kasuConfig.contracts.KasuNFTs,
             signerOrProvider,
         );
         this._graph = new GraphQLClient(_kasuConfig.subgraphUrl);
@@ -76,6 +83,12 @@ export class Portfolio {
             },
             ksuLaunchBonus: { lifeTime: { ksuAmount: ksuLaunchBonus } },
         };
+    }
+
+    async getUserNfts(userAddress: string): Promise<number[]> {
+        const usernfts = await this._kasuNftContract.tokensOfOwner(userAddress);
+
+        return usernfts.map((nft) => nft.toNumber());
     }
 
     async getPortfolioSummary(
