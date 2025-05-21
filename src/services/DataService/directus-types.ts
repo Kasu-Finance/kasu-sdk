@@ -13,11 +13,21 @@ export interface DirectusSchema {
     KeyCreditMetrics: KeyCreditMetricsDirectus[];
     BadAndDoubtfulDebtsItems: BadAndDoubtfulDebtsItems[];
     PlatformOverview: PlatformOverviewDirectus;
+    NftBoost: NftBoostDirectus;
 }
 
 export interface PlatformOverviewDirectus {
     id: string;
     loanOriginationVolume: number;
+}
+
+export interface NftBoostDirectus {
+    id: string;
+    kappa: number;
+    kitsune: number;
+    tengu: number;
+    ryujin: number;
+    yurei: number;
 }
 
 export interface PoolOverviewDirectus {

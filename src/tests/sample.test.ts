@@ -25,6 +25,7 @@ test('subgraphCall', async () => {
             UserLoyaltyRewards: '0x259631CE76FD9F65296549Cd81232aa59D53Dd0c',
             KsuPrice: '0x2027192aCFB4810Ad734A212F19d7030F698aCE3',
             ClearingCoordinator: '0x2027192aCFB4810Ad734A212F19d7030F698aCE3',
+            KasuNFTs: '0x0000000000000000000000000000000000000000',
         },
 
         'https://kasu-finance.directus.app',

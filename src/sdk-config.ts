@@ -9,6 +9,7 @@ export interface ContractAddresses {
     UserLoyaltyRewards: string;
     KsuPrice: string;
     ClearingCoordinator: string;
+    KasuNFTs: string;
 }
 export class SdkConfig {
     subgraphUrl: string;

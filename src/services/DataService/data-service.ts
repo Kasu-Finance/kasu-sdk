@@ -20,6 +20,7 @@ import {
     DirectusSchema,
     FinancialReportingDocumentsItemsDirectus,
     KeyCreditMetricsDirectus,
+    NftBoostDirectus,
     PlatformOverviewDirectus,
     PoolDelegateProfileAndHistoryDirectus,
     PoolOverviewDirectus,
@@ -138,6 +139,10 @@ export class DataService {
 
     async getPlatformOverview(): Promise<PlatformOverviewDirectus> {
         return await this._directus.request(readSingleton('PlatformOverview'));
+    }
+
+    async getNftBoost(): Promise<Omit<NftBoostDirectus, 'id'>> {
+        return await this._directus.request(readSingleton('NftBoost'));
     }
 
     async getPoolOverview(
