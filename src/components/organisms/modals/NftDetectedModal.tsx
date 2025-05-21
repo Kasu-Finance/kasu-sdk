@@ -2,22 +2,15 @@
 
 import { Box, Button, IconButton, Stack, Typography } from '@mui/material'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
 
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
+import NextLink from '@/components/atoms/NextLink'
 
 import { CloseRoundedIcon } from '@/assets/icons'
 
 import { Routes } from '@/config/routes'
 
 const NftDetectedModal: React.FC<DialogChildProps> = ({ handleClose }) => {
-  const router = useRouter()
-
-  const handleButtonClick = () => {
-    handleClose()
-    router.push(Routes.portfolio.rewards.url)
-  }
-
   return (
     <Box
       display='flex'
@@ -51,9 +44,11 @@ const NftDetectedModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         <Button
           variant='contained'
           color='primary'
+          LinkComponent={NextLink}
+          href={Routes.portfolio.rewards.url}
           sx={{ maxWidth: 180, textTransform: 'capitalize' }}
           fullWidth
-          onClick={handleButtonClick}
+          onClick={handleClose}
         >
           Go to Portfolio
         </Button>

@@ -3,213 +3,118 @@
 import {
   Box,
   Button,
+  Skeleton,
   Stack,
   TableCell,
   TableRow,
   Typography,
 } from '@mui/material'
-import { formatEther, parseEther } from 'ethers/lib/utils'
+import Image from 'next/image'
+import { Fragment } from 'react'
+
+import useUserNfts from '@/hooks/portfolio/useUserNfts'
+import useUserNftYields from '@/hooks/portfolio/useUserNftYields'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
 import CustomTable from '@/components/molecules/CustomTable'
+import NftPortfolioTableRow from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/NftPortfolio/NftPortfolioTableRow'
 
-import { CopyIcon, WithdrawMoneyIcon } from '@/assets/icons'
+import NoNftsPlaceholder from '@/images/no_nft_placeholder.png'
 
-import { customPalette } from '@/themes/palette'
-import { customTypography } from '@/themes/typography'
-import { formatAmount } from '@/utils'
-
-//TODO-HENG: Implement logic to table row
 const NftPortfolio = () => {
-  const isHighestNFTTier = false
+  const { userNfts, isLoading } = useUserNfts()
+
+  const { userNftYields, isLoading: yieldsLoading } = useUserNftYields()
 
   return (
     <Stack>
       <CustomTable
         tableHeader={
           <TableRow>
-            <TableCell width='25%'>NFT</TableCell>
-            <TableCell width='15%' align='right'>
+            <TableCell width='38%'>NFT</TableCell>
+            <TableCell width='18%' align='right'>
               Yield Boost
             </TableCell>
-            <TableCell width='19%' align='right'>
+            <TableCell width='22%' align='right'>
               Yield Boost - Last Epoch
             </TableCell>
-            <TableCell width='19%' align='right'>
+            <TableCell width='22%' align='right'>
               Yield Boost - Lifetime
-            </TableCell>
-            <TableCell width='14%' align='right'>
-              Claimable Balance
-            </TableCell>
-            <TableCell width='8%' align='right'>
-              Action
             </TableCell>
           </TableRow>
         }
         tableBody={
-          <>
-            <TableRow>
-              <TableCell>
-                <Box display='flex' alignItems='center' gap={1}>
-                  <Box
-                    component='img'
-                    src='https://fastly.picsum.photos/id/288/200/300.jpg?hmac=45WLionXnoogi0-njKuSNnVY5hnswMhf-CrxwzKTcrc'
-                    alt='NFT'
-                    sx={{
-                      width: 72,
-                      height: 72,
-                      borderRadius: '50%',
-                      border: `0.5rem solid ${customPalette.gold.dark}`,
-                    }}
+          userNfts?.length ? (
+            userNfts
+              .sort((a, b) => b.boostAmount - a.boostAmount)
+              .map((nft, index) => (
+                <Fragment key={index}>
+                  <NftPortfolioTableRow
+                    nft={nft}
+                    nftYields={userNftYields}
+                    isActive={index === 0}
                   />
-                  Name of the NFT
-                </Box>
-              </TableCell>
-              <TableCell align='right'>
-                <Box display='flex' justifyContent='flex-end'>
-                  <Typography variant='baseSm'>
-                    10.00% APY
-                    <br />
-                    <Typography variant='inherit' color='gray.middle'>
-                      Boost applied to interest earnings
-                    </Typography>
-                  </Typography>
-                </Box>
-              </TableCell>
-              <TableCell align='right'>
-                <Typography variant='baseSm'>
-                  {formatAmount(160, { minDecimals: 2 })} KASU
-                  <br />
-                  <Typography variant='inherit' color='gray.middle'>
-                    {formatAmount(formatEther(parseEther('160')), {
-                      minDecimals: 2,
-                    })}{' '}
-                    USDC
-                  </Typography>
-                </Typography>
-              </TableCell>
-              <TableCell align='right'>
-                {formatAmount(160, { minDecimals: 2 })} KASU
-              </TableCell>
-              <TableCell align='right'>
-                <Typography variant='baseSm'>
-                  {formatAmount(160, { minDecimals: 2 })} KASU
-                  <br />
-                  <Typography variant='inherit' color='gray.middle'>
-                    {formatAmount(formatEther(parseEther('160')), {
-                      minDecimals: 2,
-                    })}{' '}
-                    USDC
-                  </Typography>
-                </Typography>
-              </TableCell>
-              <TableCell align='right'>
-                <Box
-                  display='flex'
-                  alignItems='center'
-                  gap={1}
-                  justifyContent='flex-end'
-                >
-                  <WithdrawMoneyIcon />
-                  <Typography variant='baseSm' color='primary.main'>
-                    Claim
-                  </Typography>
-                </Box>
-              </TableCell>
-            </TableRow>
+                  {index !== userNfts.length - 1 && (
+                    <TableRow>
+                      <TableCell colSpan={4} sx={{ py: 0 }}>
+                        <DottedDivider />
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </Fragment>
+              ))
+          ) : isLoading || yieldsLoading ? (
             <TableRow
               sx={{
-                opacity: !isHighestNFTTier ? 0.5 : 1,
-                pointerEvents: !isHighestNFTTier ? 'none' : 'auto',
-                backgroundColor: !isHighestNFTTier
-                  ? 'rgba(0, 0, 0, 0.04)'
-                  : 'inherit',
-                '& td': {
-                  color: !isHighestNFTTier ? 'text.disabled' : 'inherit',
+                '.MuiSkeleton-root': {
+                  height: 48,
                 },
               }}
             >
               <TableCell>
                 <Box display='flex' alignItems='center' gap={1}>
-                  <Box
-                    component='img'
-                    src='https://fastly.picsum.photos/id/288/200/300.jpg?hmac=45WLionXnoogi0-njKuSNnVY5hnswMhf-CrxwzKTcrc'
-                    alt='NFT'
-                    sx={{
-                      width: 72,
-                      height: 72,
-                      borderRadius: '50%',
-                      border: `0.5rem solid ${isHighestNFTTier ? customPalette.gold.dark : customPalette.gold.light}`,
-                      opacity: !isHighestNFTTier ? 0.5 : 1,
-                    }}
-                  />
-                  Name of the NFT
+                  <Skeleton variant='circular' width={72} height={72} />
+                  <Skeleton width='50%' />
                 </Box>
               </TableCell>
-              <TableCell align='right'>
-                <Box display='flex' justifyContent='flex-end'>
-                  <Typography variant='baseSm'>
-                    10.00% APY
-                    <br />
-                    <Typography variant='inherit' color='gray.middle'>
-                      Boost applied to interest earnings
-                    </Typography>
-                  </Typography>
-                </Box>
+              <TableCell>
+                <Skeleton />
               </TableCell>
-              {!isHighestNFTTier ? (
-                <TableCell colSpan={4}>
-                  <Box display='flex' justifyContent='center'>
-                    Inactive - only the highest APY Boost NFT applies to all
-                    your lending
-                  </Box>
-                </TableCell>
-              ) : (
-                <>
-                  <TableCell align='right'>
-                    <Typography variant='baseSm'>
-                      {formatAmount(160, { minDecimals: 2 })} KASU
-                      <br />
-                      <Typography variant='inherit' color='gray.middle'>
-                        {formatAmount(formatEther(parseEther('160')), {
-                          minDecimals: 2,
-                        })}{' '}
-                        USDC
-                      </Typography>
-                    </Typography>
-                  </TableCell>
-                  <TableCell align='right'>
-                    {formatAmount(160, { minDecimals: 2 })} KASU
-                  </TableCell>
-                  <TableCell align='right'>
-                    <Typography variant='baseSm'>
-                      {formatAmount(160, { minDecimals: 2 })} KASU
-                      <br />
-                      <Typography variant='inherit' color='gray.middle'>
-                        {formatAmount(formatEther(parseEther('160')), {
-                          minDecimals: 2,
-                        })}{' '}
-                        USDC
-                      </Typography>
-                    </Typography>
-                  </TableCell>
-                  <TableCell align='right'>
-                    <Box
-                      display='flex'
-                      alignItems='center'
-                      gap={1}
-                      justifyContent='flex-end'
-                    >
-                      <WithdrawMoneyIcon />
-                      <Typography variant='baseSm' color='primary.main'>
-                        Claim
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                </>
-              )}
+              <TableCell>
+                <Skeleton />
+              </TableCell>
+              <TableCell>
+                <Skeleton />
+              </TableCell>
             </TableRow>
-          </>
+          ) : (
+            <TableRow>
+              <TableCell colSpan={4}>
+                <Stack spacing={2} alignItems='center'>
+                  <Image
+                    src={NoNftsPlaceholder}
+                    alt='No Nft placeholder'
+                    width={340}
+                    height={177}
+                  />
+                  <Typography variant='h3' color='gold.dark'>
+                    You don’t have Kasu NFTs in your wallet
+                  </Typography>
+                  <Typography variant='baseMd' color='gray.extraDark'>
+                    Buy one to boost your yield!
+                  </Typography>
+                  <Button
+                    variant='contained'
+                    href='https://opensea.io/collection/kasu-kings'
+                    target='_blank'
+                    sx={{ textTransform: 'capitalize', width: 144, height: 48 }}
+                  >
+                    Go to OpenSea
+                  </Button>
+                </Stack>
+              </TableCell>
+            </TableRow>
+          )
         }
         sx={{
           bgcolor: 'white',
@@ -226,41 +131,6 @@ const NftPortfolio = () => {
           boxShadow: 'none',
         }}
       />
-      <Stack
-        px={2}
-        bgcolor='white'
-        sx={{
-          borderBottomLeftRadius: 8,
-          borderBottomRightRadius: 8,
-        }}
-      >
-        <DottedDivider />
-        <Typography variant='baseSm' my={3}>
-          Use your referral link to invite friends and get a reward.{' '}
-          <Button
-            variant='text'
-            sx={{
-              textTransform: 'unset',
-              display: 'inline-flex',
-              alignItems: 'center',
-              p: 0,
-              height: 15,
-              mt: -0.2,
-              ...customTypography.baseSm,
-              '.MuiButton-endIcon svg': {
-                width: 13,
-                height: 'auto',
-                path: {
-                  fill: customPalette.gold.dark,
-                },
-              },
-            }}
-            endIcon={<CopyIcon />}
-          >
-            <Typography variant='inherit'>Copy your link</Typography>
-          </Button>
-        </Typography>
-      </Stack>
     </Stack>
   )
 }

@@ -169,8 +169,6 @@ export const getModal = (
         },
         disableBackdropClose: true,
       }
-
-    // TODO-HENG: Implement logic to show this
     case ModalsKeys.NFT_DETECTED:
       return {
         component: <NftDetectedModal handleClose={handleClose} />,
