@@ -1,6 +1,6 @@
 import { Button, ButtonProps } from '@mui/material'
 import { useLogin } from '@privy-io/react-auth'
-import React from 'react'
+import React, { useState } from 'react'
 
 import useKycState from '@/hooks/context/useKycState'
 import useToastState from '@/hooks/context/useToastState'
@@ -16,12 +16,14 @@ const AuthenticateButton: React.FC<AuthenticateButtonProps> = ({
 }) => {
   const { isAuthenticated } = usePrivyAuthenticated()
 
+  const [loginClicked, setLoginClicked] = useState(false)
+
   const { checkUserKyc } = useKycState()
 
   const { setToast } = useToastState()
 
   const { login } = useLogin({
-    onComplete: async ({ wasAlreadyAuthenticated, user }) => {
+    onComplete: async ({ user }) => {
       setToast({
         type: 'info',
         title: 'Account connected',
@@ -32,14 +34,16 @@ const AuthenticateButton: React.FC<AuthenticateButtonProps> = ({
       if (user.wallet?.address) {
         await checkUserKyc(user.wallet.address)
       }
-      if (!wasAlreadyAuthenticated) {
+      if (loginClicked) {
         onAuthenticated()
+        setLoginClicked(false)
       }
     },
   })
 
   const handleOpen = (e: any) => {
     if (!isAuthenticated) {
+      setLoginClicked(true)
       login()
       return
     }
