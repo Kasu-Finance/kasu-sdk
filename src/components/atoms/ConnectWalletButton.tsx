@@ -5,7 +5,9 @@ import { useLogin, usePrivy } from '@privy-io/react-auth'
 import { forwardRef } from 'react'
 import { useAccount } from 'wagmi'
 
+import useKycState from '@/hooks/context/useKycState'
 import useModalState from '@/hooks/context/useModalState'
+import useToastState from '@/hooks/context/useToastState'
 import getTranslation from '@/hooks/useTranslation'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
@@ -25,9 +27,26 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const { openModal } = useModalState()
 
+    const { checkUserKyc } = useKycState()
+
+    const { setToast } = useToastState()
+
     const handleOpen = () => openModal({ name: ModalsKeys.LINK_WALLETS })
 
-    const { login } = useLogin()
+    const { login } = useLogin({
+      onComplete: async ({ user }) => {
+        setToast({
+          type: 'info',
+          title: 'Account connected',
+          message: 'Verifying status of account...',
+          isClosable: false,
+        })
+
+        if (user.wallet?.address) {
+          await checkUserKyc(user.wallet.address)
+        }
+      },
+    })
 
     const { ready } = usePrivy()
 

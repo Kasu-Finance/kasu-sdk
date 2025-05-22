@@ -16,7 +16,8 @@ const AuthenticateButton: React.FC<AuthenticateButtonProps> = ({
 }) => {
   const { isAuthenticated } = usePrivyAuthenticated()
 
-  const [loginClicked, setLoginClicked] = useState(false)
+  // adding this because useLogin `onComplete` callback is global and will be triggered when ConnetWalletButton is pressed
+  const [buttonClicked, setButtonClicked] = useState(false)
 
   const { checkUserKyc } = useKycState()
 
@@ -34,16 +35,17 @@ const AuthenticateButton: React.FC<AuthenticateButtonProps> = ({
       if (user.wallet?.address) {
         await checkUserKyc(user.wallet.address)
       }
-      if (loginClicked) {
+
+      if (buttonClicked) {
         onAuthenticated()
-        setLoginClicked(false)
+        setButtonClicked(false)
       }
     },
   })
 
   const handleOpen = (e: any) => {
     if (!isAuthenticated) {
-      setLoginClicked(true)
+      setButtonClicked(true)
       login()
       return
     }
