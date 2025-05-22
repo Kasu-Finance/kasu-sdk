@@ -7,6 +7,7 @@ import { ReactNode } from 'react'
 import '@/styles/fonts.module.css'
 
 import Chatbot from '@/components/atoms/Chatbot'
+import NftTracker from '@/components/atoms/NftTracker'
 import Footer from '@/components/organisms/footer'
 import Header from '@/components/organisms/header'
 import ModalsContainer from '@/components/organisms/modals/ModalsContainer'
@@ -82,6 +83,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
               <ToastState>
                 <KycState>
                   <ModalState>
+                    <NftTracker />
                     <Header />
                     <Box component='main'>{children}</Box>
                     <Footer />
