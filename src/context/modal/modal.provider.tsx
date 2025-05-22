@@ -33,6 +33,7 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 const initialState: Modals = {
   connectWalletModal: { isOpen: false },
   loyaltyLevelsModal: { isOpen: false },
+  referralModal: { isOpen: false },
   wipRedirectModal: { isOpen: false },
   missingEmailModal: { isOpen: false, callback: () => {} },
   viewLoanContractsModal: {
@@ -162,6 +163,9 @@ const initialState: Modals = {
     isFullscreen: false,
     canAccept: false,
     acceptLoanContract: () => {},
+  },
+  nftDetectedModal: {
+    isOpen: false,
   },
 }
 
