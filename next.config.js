@@ -53,6 +53,29 @@ const nextConfig = {
   },
   reactStrictMode: true,
   async headers() {
+    const trustedDomains = [
+      'https://challenges.cloudflare.com',
+      'https://app.pluno.ai',
+      'https://fonts.googleapis.com',
+      'https://fonts.gstatic.com',
+      'https://auth.privy.io',
+      'https://verify.walletconnect.com',
+      'https://verify.walletconnect.org',
+      'https://pulse.walletconnect.org',
+      'https://api.web3modal.org',
+      'https://auth.privy.io',
+      'https://kasu-dev.directus.app',
+      'https://kasu-finance.directus.app',
+      'wss://relay.walletconnect.com',
+      'wss://relay.walletconnect.org',
+      'wss://www.walletlink.org',
+      'https://*.rpc.privy.systems',
+      'https://explorer-api.walletconnect.com',
+      'https://*.base.org',
+      'https://subgraph.satsuma-prod.com/3ed46ea711d3/kasu-finance--314476/kasu-sepolia/api',
+      'https://subgraph.satsuma-prod.com/3ed46ea711d3/kasu-finance--314476/kasu-base/api',
+    ].filter(Boolean)
+
     return [
       {
         source: '/manifest.json',
@@ -78,17 +101,17 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: `
               default-src 'self';
-              script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com;
-              style-src 'self' 'unsafe-inline';
-              img-src 'self' data: blob:;
-              font-src 'self';
+              script-src 'self' 'unsafe-inline' ${trustedDomains.join(' ')};
+              style-src 'self' 'unsafe-inline' ${trustedDomains.join(' ')};
+              img-src 'self' data: blob: https: ${trustedDomains.join(' ')};
+              font-src 'self' ${trustedDomains.join(' ')};
               object-src 'none';
               base-uri 'self';
               form-action 'self';
               frame-ancestors 'none';
-              child-src 'self' https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org;
-              frame-src 'self' https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org https://challenges.cloudflare.com;
-              connect-src 'self' https://auth.privy.io https://kasu-dev.directus.app https://kasu-finance.directus.app wss://relay.walletconnect.com wss://relay.walletconnect.org wss://www.walletlink.org https://*.rpc.privy.systems https://explorer-api.walletconnect.com;
+              child-src 'self' ${trustedDomains.join(' ')};
+              frame-src 'self' ${trustedDomains.join(' ')};
+              connect-src 'self' ${trustedDomains.join(' ')};
               worker-src 'self';
               manifest-src 'self';
             `
