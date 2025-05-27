@@ -71,6 +71,50 @@ const nextConfig = {
           },
         ],
       },
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: `
+              default-src 'self';
+              script-src 'self' https://feat-privy-integration.d3s1ghysg3hed3.amplifyapp.com https://challenges.cloudflare.com;
+              style-src 'self' 'unsafe-inline';
+              img-src 'self' data: blob:;
+              font-src 'self';
+              object-src 'none';
+              base-uri 'self';
+              form-action 'self';
+              frame-ancestors 'none';
+              child-src https://feat-privy-integration.d3s1ghysg3hed3.amplifyapp.com https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org;
+              frame-src https://feat-privy-integration.d3s1ghysg3hed3.amplifyapp.com https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org https://challenges.cloudflare.com;
+              connect-src 'self' https://feat-privy-integration.d3s1ghysg3hed3.amplifyapp.com https://auth.privy.io wss://relay.walletconnect.com wss://relay.walletconnect.org wss://www.walletlink.org https://*.rpc.privy.systems https://explorer-api.walletconnect.com;
+              worker-src 'self';
+              manifest-src 'self'
+            `,
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+        ],
+      },
     ]
   },
 }
