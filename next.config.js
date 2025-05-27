@@ -78,7 +78,7 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: `
               default-src 'self';
-              script-src 'self' https://feat-privy-integration.d3s1ghysg3hed3.amplifyapp.com https://challenges.cloudflare.com;
+              script-src 'self' https://challenges.cloudflare.com;
               style-src 'self' 'unsafe-inline';
               img-src 'self' data: blob:;
               font-src 'self';
@@ -86,11 +86,11 @@ const nextConfig = {
               base-uri 'self';
               form-action 'self';
               frame-ancestors 'none';
-              child-src https://feat-privy-integration.d3s1ghysg3hed3.amplifyapp.com https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org;
-              frame-src https://feat-privy-integration.d3s1ghysg3hed3.amplifyapp.com https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org https://challenges.cloudflare.com;
-              connect-src 'self' https://feat-privy-integration.d3s1ghysg3hed3.amplifyapp.com https://auth.privy.io wss://relay.walletconnect.com wss://relay.walletconnect.org wss://www.walletlink.org https://*.rpc.privy.systems https://explorer-api.walletconnect.com;
+              child-src 'self' https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org;
+              frame-src 'self' https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org https://challenges.cloudflare.com;
+              connect-src 'self' https://auth.privy.io wss://relay.walletconnect.com wss://relay.walletconnect.org wss://www.walletlink.org https://*.rpc.privy.systems https://explorer-api.walletconnect.com;
               worker-src 'self';
-              manifest-src 'self'
+              manifest-src 'self';
             `,
           },
           {
