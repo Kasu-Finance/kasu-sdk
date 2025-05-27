@@ -91,7 +91,9 @@ const nextConfig = {
               connect-src 'self' https://auth.privy.io wss://relay.walletconnect.com wss://relay.walletconnect.org wss://www.walletlink.org https://*.rpc.privy.systems https://explorer-api.walletconnect.com;
               worker-src 'self';
               manifest-src 'self';
-            `,
+            `
+              .replace(/\s{2,}/g, ' ')
+              .trim(),
           },
           {
             key: 'Strict-Transport-Security',
