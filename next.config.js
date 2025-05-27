@@ -78,7 +78,7 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: `
               default-src 'self';
-              script-src 'self' https://challenges.cloudflare.com;
+              script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com;
               style-src 'self' 'unsafe-inline';
               img-src 'self' data: blob:;
               font-src 'self';
@@ -88,7 +88,7 @@ const nextConfig = {
               frame-ancestors 'none';
               child-src 'self' https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org;
               frame-src 'self' https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org https://challenges.cloudflare.com;
-              connect-src 'self' https://auth.privy.io wss://relay.walletconnect.com wss://relay.walletconnect.org wss://www.walletlink.org https://*.rpc.privy.systems https://explorer-api.walletconnect.com;
+              connect-src 'self' https://auth.privy.io https://kasu-dev.directus.app https://kasu-finance.directus.app wss://relay.walletconnect.com wss://relay.walletconnect.org wss://www.walletlink.org https://*.rpc.privy.systems https://explorer-api.walletconnect.com;
               worker-src 'self';
               manifest-src 'self';
             `
