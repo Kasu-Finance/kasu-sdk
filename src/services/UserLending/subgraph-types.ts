@@ -114,9 +114,21 @@ export interface TrancheUserDetailsSubgraph {
         totalAcceptedWithdrawnAmount: string;
         shares: string;
         tranche: {
+            id: string;
             shares: string;
             balance: string;
         };
+    };
+}
+
+export interface PortfolioTrancheUserDetailsSubgraph {
+    user: {
+        lendingPoolUserDetails: {
+            lendingPool: {
+                id: string;
+            };
+            lendingPoolTrancheUserDetails: TrancheUserDetailsSubgraph['lendingPoolTrancheUserDetails'][];
+        }[];
     };
 }
 
