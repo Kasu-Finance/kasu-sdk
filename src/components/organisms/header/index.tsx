@@ -4,7 +4,6 @@ import Link from 'next/link'
 import ConnectWalletButton from '@/components/atoms/ConnectWalletButton'
 import Navigation from '@/components/molecules/header/Navigation'
 import HeaderBar from '@/components/organisms/header/HeaderBar'
-import ReferButton from '@/components/organisms/header/ReferButton'
 import Toolbar from '@/components/organisms/header/Toolbar'
 
 import KasuLogo from '@/assets/logo/Kasu'
@@ -21,7 +20,7 @@ const Header = () => {
           </Link>
           <Navigation />
           <Box display='flex' alignItems='center' ml='auto'>
-            <ReferButton />
+            {/* <ReferButton /> */}
             <ConnectWalletButton />
             {/* <CurrentLoyaltyCrown /> */}
           </Box>
