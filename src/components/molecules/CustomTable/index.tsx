@@ -76,6 +76,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
                 height: 69,
                 '& .MuiTableCell-root': {
                   border: 'none',
+                  fontWeight: 600,
                 },
               },
               ...(Array.isArray(tableHeaderSx)
