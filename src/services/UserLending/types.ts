@@ -88,6 +88,15 @@ export interface UserTrancheBalance {
     trancheId: string;
 }
 
+export type PortfolioUserTrancheBalance = Map<
+    string,
+    {
+        trancheId: string;
+        yieldEarned: number;
+        userBalance: string;
+    }[]
+>;
+
 export interface UserPoolBalance {
     userId: string;
     address: string;

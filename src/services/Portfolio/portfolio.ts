@@ -157,10 +157,10 @@ export class Portfolio {
             'tranches'
         > & {
             tranches: (Omit<PortfolioTranche, 'investedAmount'> & {
-                investedAmount: Promise<{
+                investedAmount: {
                     balance: string;
                     yieldEarned: number;
-                }>;
+                };
             })[];
         })[] = [];
         const userPoolBalancePromises: Promise<UserPoolBalance>[] = [];
@@ -168,13 +168,22 @@ export class Portfolio {
             BigNumber.from(1),
         );
 
-        const lastEpochData: LendingPortfolioQueryResult =
-            await this._graph.request(lendingPortfolioQuery, {
-                userAddress: userAddress.toLowerCase(),
-                epochId: parseFloat(currentEpoch),
-                lastEpochId: previousEpoch.toNumber(),
-                unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
-            });
+        const [lastEpochData, portfolioUserTrancheBalances] = await Promise.all(
+            [
+                this._graph.request<LendingPortfolioQueryResult>(
+                    lendingPortfolioQuery,
+                    {
+                        userAddress: userAddress.toLowerCase(),
+                        epochId: parseFloat(currentEpoch),
+                        lastEpochId: previousEpoch.toNumber(),
+                        unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
+                    },
+                ),
+                this._userLendingService.getPortfolioUserTrancheBalances(
+                    userAddress,
+                ),
+            ],
+        );
 
         if (!lastEpochData.user) return [];
 
@@ -254,10 +263,10 @@ export class Portfolio {
             }
             totalInvestments = userPoolBalance.balance.add(totalInvestments);
             const tranches: (Omit<PortfolioTranche, 'investedAmount'> & {
-                investedAmount: Promise<{
+                investedAmount: {
                     balance: string;
                     yieldEarned: number;
-                }>;
+                };
             })[] = [];
 
             const lendingPoolUserDetails =
@@ -266,6 +275,9 @@ export class Portfolio {
                 );
 
             if (!lendingPoolUserDetails) continue;
+
+            const portfolioUserTrancheBalance =
+                portfolioUserTrancheBalances.get(poolOverview.id);
 
             for (const tranche of poolOverview.tranches) {
                 const lastEpochUserTrancheDetails =
@@ -280,10 +292,10 @@ export class Portfolio {
                 if (!lastEpochUserTrancheDetails) {
                     tranches.push({
                         ...tranche,
-                        investedAmount: Promise.resolve({
+                        investedAmount: {
                             balance: '0',
                             yieldEarned: 0,
-                        }),
+                        },
                         yieldEarnings: {
                             lastEpoch: '0',
                             lifetime: '0',
@@ -318,15 +330,29 @@ export class Portfolio {
                 );
 
                 const lastEpochTotalBaseYield =
-                    (lastEpochTotalYield * lastEpochUserShares) /
-                    lastEpochTotalShares;
+                    lastEpochTotalShares === 0
+                        ? 0
+                        : (lastEpochTotalYield * lastEpochUserShares) /
+                          lastEpochTotalShares;
 
-                const userTrancheBalance =
-                    this._userLendingService.getUserTrancheBalance(
-                        userAddress,
-                        poolOverview.id,
-                        tranche.id,
-                    );
+                const userTrancheBalance = {
+                    balance: '0',
+                    yieldEarned: 0,
+                };
+
+                if (portfolioUserTrancheBalance) {
+                    const portfolioUserTranche =
+                        portfolioUserTrancheBalance.find(
+                            ({ trancheId }) => trancheId === tranche.id,
+                        );
+
+                    if (portfolioUserTranche) {
+                        userTrancheBalance.balance =
+                            portfolioUserTranche.userBalance;
+                        userTrancheBalance.yieldEarned =
+                            portfolioUserTranche.yieldEarned;
+                    }
+                }
 
                 let totalLifetimeFtdYield = 0;
 
@@ -471,8 +497,8 @@ export class Portfolio {
             portfolioLendingPoolsPromise.map(async (pool) => ({
                 ...pool,
                 tranches: await Promise.all(
-                    pool.tranches.map(async (tranche) => {
-                        const trancheBalance = await tranche.investedAmount;
+                    pool.tranches.map((tranche) => {
+                        const trancheBalance = tranche.investedAmount;
 
                         const lockedAmount = tranche.fixedLoans.reduce(
                             (total, cur) => {
