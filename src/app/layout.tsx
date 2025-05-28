@@ -82,6 +82,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
               <ToastState>
                 <KycState>
                   <ModalState>
+                    {/* <NftTracker /> */}
                     <Header />
                     <Box component='main'>{children}</Box>
                     <Footer />

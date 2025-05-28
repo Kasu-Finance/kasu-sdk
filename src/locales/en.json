@@ -323,6 +323,12 @@
       "description-1": "Kasu is all about transparency and choice.​",
       "description-2": "Please contact us via the feedback link to provide your email. We require this so that we can keep you fully informed of which end borrower(s) your funds are being loaned to."
     },
+    "referral": {
+      "title": "Refer new Users to earn",
+      "description": "Invite new users and earn % of generated yield for each! Your referral link:",
+      "subtitle": "Your referred users stats:",
+      "sub-description": "Your referred users"
+    },
     "fixedLoan": {
       "title": "Fixed Loan & APY​",
       "tableHeader": {
@@ -2255,7 +2261,16 @@
     },
     "rewards": {
       "title-1": "My Bonuses & Rewards Summary",
-      "title-2": "My Bonuses & Rewards Portfolio",
+      "title-2": "Bonuses & Rewards Portfolio",
+      "subheader-1": {
+        "title": "KASU Locking & Loyalty Rewards"
+      },
+      "subheader-2": {
+        "title": "NFT Portfolio"
+      },
+      "subheader-3": {
+        "title": "KASU Referral Bonus"
+      },
       "bonusesAndRewards": "Bonuses and Rewards",
       "bonusYieldEarnings": "Bonus Interest Earnings",
       "ksuLaunchBonus": "KASU Launch Bonus",
