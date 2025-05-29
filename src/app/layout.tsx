@@ -1,6 +1,7 @@
 import { Box } from '@mui/material'
 import { PoolOverviewDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import type { Metadata } from 'next'
+import Script from 'next/script'
 import { ReactNode } from 'react'
 
 import '@/styles/fonts.module.css'
@@ -82,6 +83,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
               <ToastState>
                 <KycState>
                   <ModalState>
+                    {/* <NftTracker /> */}
                     <Header />
                     <Box component='main'>{children}</Box>
                     <Footer />
@@ -94,6 +96,11 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           </PrivyProvider>
         </ThemeRegistry>
       </body>
+      <Script
+        src='https://cdn.cookie3.co/scripts/analytics/0.11.4/cookie3.analytics.min.js'
+        defer
+        data-site-id='1441'
+      />
     </html>
   )
 }

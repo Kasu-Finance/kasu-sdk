@@ -21,7 +21,10 @@ const useLendingPortfolioData = (
         userAddress.toLowerCase(),
         poolOverviews,
         currentEpoch
-      )
+      ),
+    {
+      keepPreviousData: true,
+    }
   )
 
   return {

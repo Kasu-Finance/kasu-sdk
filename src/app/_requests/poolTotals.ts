@@ -1,13 +1,14 @@
-import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
-
 import { getKasuSDK } from '@/actions/getKasuSDK'
+import { getPoolOverview } from '@/app/_requests/pools'
 
 // const CACHE_TTL = 1
 
-export const getPoolsTotals = async (poolOverviews: PoolOverview[]) => {
+export const getPoolsTotals = async () => {
   const sdk = await getKasuSDK()
 
-  return await sdk.DataService.getLendingTotals(poolOverviews)
+  const pools = await getPoolOverview()
+
+  return await sdk.DataService.getLendingTotals(pools)
 }
 // ['totals'],
 // {

@@ -68,6 +68,8 @@ export enum ModalsKeys {
   WIP_REDIRECT = 'wipRedirectModal',
   VIEW_LOAN_CONTRACTS = 'viewLoanContractsModal',
   LINK_WALLETS = 'linkWalletsModal',
+  REFERRAL = 'referralModal',
+  NFT_DETECTED = 'nftDetectedModal',
 }
 
 export type ModalAction =
@@ -85,6 +87,8 @@ export type Modals = {
   [ModalsKeys.UNRELEASED_FEATURE]: ModalData
   [ModalsKeys.WIP_REDIRECT]: ModalData
   [ModalsKeys.LINK_WALLETS]: ModalData
+  [ModalsKeys.NFT_DETECTED]: ModalData
+  [ModalsKeys.REFERRAL]: ModalData
   [ModalsKeys.VIEW_LOAN_CONTRACTS]: ModalData<{
     depositDetails: PortfolioTrancheDepositDetails[]
   }>

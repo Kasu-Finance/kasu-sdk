@@ -52,7 +52,7 @@ export const calculateUserLendingSummary = (
 ) => {
   const result = trancheBalances.reduce(
     (acc, cur) => {
-      acc.totalYieldEarned += acc.totalYieldEarned + cur.balanceData.yieldEarned
+      acc.totalYieldEarned += cur.balanceData.yieldEarned
 
       acc.totalInvested = acc.totalInvested.add(
         toBigNumber(cur.balanceData.balance)

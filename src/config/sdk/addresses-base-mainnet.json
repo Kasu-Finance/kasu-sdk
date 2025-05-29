@@ -108,5 +108,11 @@
     "implementation": "0x39a4E4dF478a792afAa9FF56cA7cD5327a89e41A",
     "startBlock": 15486216,
     "proxyType": "TransparentProxy"
+  },
+  "KasuNFTs": {
+    "address": "0x4946fF5f1a6550524C425479022D50446AA2968E",
+    "implementation": "0x39a4E4dF478a792afAa9FF56cA7cD5327a89e41A",
+    "startBlock": 15486216,
+    "proxyType": "TransparentProxy"
   }
 }

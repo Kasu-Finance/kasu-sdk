@@ -20,6 +20,7 @@ const Header = () => {
           </Link>
           <Navigation />
           <Box display='flex' alignItems='center' ml='auto'>
+            {/* <ReferButton /> */}
             <ConnectWalletButton />
             {/* <CurrentLoyaltyCrown /> */}
           </Box>

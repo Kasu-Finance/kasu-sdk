@@ -30,7 +30,7 @@ const useUserLendingTrancheBalance = <T extends { id: string }>(
           ),
         }))
       ),
-    { dedupingInterval: FIVE_MINUTES }
+    { dedupingInterval: FIVE_MINUTES, keepPreviousData: true }
   )
 
   return {

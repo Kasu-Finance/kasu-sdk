@@ -26,6 +26,11 @@ const nextConfig = {
         hostname: 'kasu-dev.directus.app',
         pathname: '**',
       },
+      {
+        protocol: 'https',
+        hostname: 'bafybei*.ipfs.w3s.link',
+        pathname: '**',
+      },
     ],
   },
   async redirects() {

@@ -1,46 +1,41 @@
 import { Stack } from '@mui/material'
 
+import CustomCard from '@/components/atoms/CustomCard'
+import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
+import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
 import BadAndDoubtfulDebts from '@/components/organisms/lending/RiskReportingTab/BadAndDoubtfulDebts'
-import FinancialReportingDocuments from '@/components/organisms/lending/RiskReportingTab/FinancialReportingDocuments'
-import PoolCreditMetrics from '@/components/organisms/lending/RiskReportingTab/PoolCreditMetrics'
 import RiskReportingTabSkeleton from '@/components/organisms/lending/RiskReportingTab/RiskReportingTabSkeleton'
 
 import { getBadAndDoubtfulDebts } from '@/app/_requests/badAndDoubltDebts'
-import { getFinancialReportingDocuments } from '@/app/_requests/financialReportingDocuments'
-import { getPoolCreditMetrics } from '@/app/_requests/poolCreditMetrics'
-import { isFulfilledPromise } from '@/utils'
 
 type RiskReportingProps = {
   poolId: string
 }
 
 const RiskReportingTab: React.FC<RiskReportingProps> = async ({ poolId }) => {
-  const [poolCreditMetrics, debts, financialReportingDocuments] =
-    await Promise.allSettled([
-      getPoolCreditMetrics(poolId),
-      getBadAndDoubtfulDebts(poolId),
-      getFinancialReportingDocuments(poolId),
-    ])
+  const debts = await getBadAndDoubtfulDebts(poolId)
 
-  if (!poolCreditMetrics && !debts && !financialReportingDocuments)
-    return <RiskReportingTabSkeleton />
+  if (!debts) return <RiskReportingTabSkeleton />
 
   return (
     <Stack spacing={3} mt={3}>
       {/* <PoolData /> */}
       {/* <PortfolioLeadingIndicators /> */}
-      {isFulfilledPromise(poolCreditMetrics) && poolCreditMetrics.value && (
+      {/* {isFulfilledPromise(poolCreditMetrics) && poolCreditMetrics.value && (
         <PoolCreditMetrics poolCreditMetrics={poolCreditMetrics.value} />
-      )}
-      {isFulfilledPromise(debts) && debts.value && (
-        <BadAndDoubtfulDebts badAndDoubltfulDebts={debts.value} />
-      )}
-      {isFulfilledPromise(financialReportingDocuments) &&
+      )} */}
+      <BadAndDoubtfulDebts badAndDoubltfulDebts={debts} />
+      <CustomCard sx={{ bgcolor: 'white' }}>
+        <CustomInnerCardContent sx={{ py: 6 }}>
+          <EmptyDataPlaceholder text='Comprehensive on-chain risk reporting dashboards coming soon' />
+        </CustomInnerCardContent>
+      </CustomCard>
+      {/* {isFulfilledPromise(financialReportingDocuments) &&
         financialReportingDocuments.value && (
           <FinancialReportingDocuments
             documents={financialReportingDocuments.value}
           />
-        )}
+        )} */}
     </Stack>
   )
 }

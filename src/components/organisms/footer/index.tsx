@@ -6,6 +6,7 @@ import DiscordIcon from '@/assets/icons/general/DiscordIcon'
 import MediumIcon from '@/assets/icons/general/MediumIcon'
 import TelegramIcon from '@/assets/icons/general/TelegramIcon'
 import TwitterIcon from '@/assets/icons/general/TwitterIcon'
+import BuiltOnBase from '@/assets/logo/BuildOnBaseLogo'
 import KasuFooterLogo from '@/assets/logo/KasuFooterLogo'
 
 import FooterBg from '@/images/footer-background.png'
@@ -41,8 +42,11 @@ const Footer: React.FC = () => {
         >
           <Box display='flex' gap={8}>
             <Stack>
-              <KasuFooterLogo />
-              <Box display='flex' gap={2} mt='auto'>
+              <Box display='flex' gap={2} alignItems='center'>
+                <KasuFooterLogo />
+                <BuiltOnBase />
+              </Box>
+              <Box display='flex' gap={4} mt='auto'>
                 <Button
                   href='https://discord.gg/kasu'
                   target='_blank'

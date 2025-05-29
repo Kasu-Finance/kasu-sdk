@@ -16,8 +16,6 @@ const BonusAndRewardTable = () => {
     return <BonusAndRewardSkeleton />
   }
 
-  if (!portfolioRewards) return null
-
   return (
     <CustomTable
       tableHeader={<BonusAndRewardTableHeader />}
@@ -27,6 +25,10 @@ const BonusAndRewardTable = () => {
           ksuPrice={ksuPrice || '0'}
         />
       }
+      sx={{
+        bgcolor: 'white',
+        borderRadius: 2,
+      }}
     />
   )
 }

@@ -31,6 +31,7 @@ const DialogWrapper: React.FC<{
     <Dialog
       open={modal[modalName].isOpen}
       PaperProps={{
+        elevation: modalDetails.disableElevation ? 0 : 24,
         sx: [
           {
             background: 'transparent',
