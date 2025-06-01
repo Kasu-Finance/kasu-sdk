@@ -1,23 +1,33 @@
-import { useWeb3React } from '@web3-react/core'
 import useSWR from 'swr'
+import { readContracts } from 'wagmi/actions'
+
+import { wagmiConfig } from '@/context/privy.provider'
 
 import { IERC20__factory } from '@/contracts/output'
 
-const useTokenDetails = (tokenAddress: string | undefined) => {
-  const { provider } = useWeb3React()
-
+const useTokenDetails = (tokenAddress: `0x${string}` | undefined) => {
   const error = !tokenAddress
     ? new Error('useTokenDetails: tokenAddress is not defined')
     : undefined
 
   const { data, error: rpcError } = useSWR(
-    provider && tokenAddress ? ['symbol', tokenAddress, provider] : null,
-    async ([_, tokenAddress, provider]) => {
-      const erc20 = IERC20__factory.connect(tokenAddress, provider)
-
-      const symbol = await erc20.symbol()
-      const decimals = await erc20.decimals()
-
+    tokenAddress ? ['symbol', tokenAddress] : null,
+    async ([_, tokenAddress]) => {
+      const [symbol, decimals] = await readContracts(wagmiConfig, {
+        allowFailure: false,
+        contracts: [
+          {
+            abi: IERC20__factory.abi,
+            address: tokenAddress,
+            functionName: 'symbol',
+          },
+          {
+            abi: IERC20__factory.abi,
+            address: tokenAddress,
+            functionName: 'decimals',
+          },
+        ],
+      })
       return { symbol, decimals }
     }
   )

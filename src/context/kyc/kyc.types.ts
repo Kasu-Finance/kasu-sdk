@@ -51,4 +51,7 @@ export type KycFunctions = {
   setLastVerifiedAccount: (account: string) => void
 }
 
-export type KycTypes = KycStateType & KycFunctions
+export type KycTypes = KycStateType &
+  KycFunctions & {
+    checkUserKyc: (account: string) => Promise<void>
+  }

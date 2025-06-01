@@ -1,5 +1,5 @@
 import { Box, Button, Stack, Typography } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
+import { useChainId } from 'wagmi'
 
 import useFixApyState from '@/hooks/context/useFixApyState'
 import useModalState from '@/hooks/context/useModalState'
@@ -21,7 +21,7 @@ import {
 const FixApyConfirmed = () => {
   const { t } = getTranslation()
 
-  const { chainId } = useWeb3React()
+  const chainId = useChainId()
 
   const { amount, txHash } = useFixApyState()
 

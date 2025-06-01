@@ -1,6 +1,6 @@
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
-import { useWeb3React } from '@web3-react/core'
 import useSWR from 'swr'
+import { useAccount } from 'wagmi'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
@@ -10,11 +10,11 @@ const useLendingPortfolioData = (
 ) => {
   const sdk = useKasuSDK()
 
-  const { account } = useWeb3React()
+  const account = useAccount()
 
   const { data, error, isLoading, mutate } = useSWR(
-    account && sdk
-      ? ['lendingPortfolioData', account, poolOverviews, sdk]
+    account.address && sdk
+      ? ['lendingPortfolioData', account.address, poolOverviews, sdk]
       : null,
     async ([_, userAddress, poolOverviews, sdk]) =>
       await sdk.Portfolio.getPortfolioLendingData(

@@ -1,6 +1,6 @@
 import { Box, SelectChangeEvent, Typography } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
 import { useMemo } from 'react'
+import { useAccount } from 'wagmi'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
@@ -14,9 +14,7 @@ import { formatPercentage, formatToNearestTime, TimeConversions } from '@/utils'
 
 const ApyDropdown = () => {
   const { t } = getTranslation()
-
-  const { account } = useWeb3React()
-
+  const account = useAccount()
   const { modal } = useModalState()
 
   const { trancheId, fixedTermConfigId, setFixedTermConfigId } =
@@ -43,7 +41,8 @@ const ApyDropdown = () => {
                   fixedTermConfig.fixedTermDepositStatus === 'Everyone' ||
                   fixedTermConfig.fixedTermDepositAllowlist.find(
                     (allowList) =>
-                      allowList.userId.toLowerCase() === account?.toLowerCase()
+                      allowList.userId.toLowerCase() ===
+                      account.address?.toLowerCase()
                   )
               )
               .map((fixedTermConfig) => {

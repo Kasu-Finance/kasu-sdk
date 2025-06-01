@@ -19,15 +19,13 @@ const useWalletBalances = (options?: WalletBalanceParam) => {
     decimals: ksuDecimals,
     isUserBalanceLoading: ksuLoading,
     error: ksuError,
-    hasLoaded: ksuLoaded,
-  } = useUserBalance(sdkConfig.contracts.KSUToken)
+  } = useUserBalance(sdkConfig.contracts.KSUToken as `0x${string}`)
 
   const {
     balance: usdcBalance,
     decimals: usdcDecimals,
     isUserBalanceLoading: usdcLoading,
     error: usdcError,
-    hasLoaded: usdcLoaded,
   } = useUserBalance(supportedToken?.[SupportedTokens.USDC].address)
 
   const walletBalances = {
@@ -44,7 +42,7 @@ const useWalletBalances = (options?: WalletBalanceParam) => {
 
   return {
     walletWithBalance,
-    isLoading: !ksuLoaded || !usdcLoaded || ksuLoading || usdcLoading,
+    isLoading: ksuLoading || usdcLoading,
     error: ksuError || usdcError,
   }
 }

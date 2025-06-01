@@ -6,14 +6,13 @@ import {
   ListItemText,
   Typography,
 } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
 import Link from 'next/link'
+import { useAccount } from 'wagmi'
 
 import getTranslation from '@/hooks/useTranslation'
 
 import ConnectWalletButton from '@/components/atoms/ConnectWalletButton'
 import DrawerHeader from '@/components/molecules/header/DrawerHeader'
-import WalletList from '@/components/molecules/WalletList'
 
 import { NAV_ITEMS } from '@/config/navigation'
 
@@ -28,7 +27,7 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
 }) => {
   const { t } = getTranslation()
 
-  const { account } = useWeb3React()
+  const account = useAccount()
 
   return (
     <Box
@@ -42,7 +41,7 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
       <DrawerHeader onClose={handleDrawerToggle} />
       <List>
         {NAV_ITEMS.map((link) =>
-          link.accountRequired && !account ? null : (
+          link.accountRequired && !account.address ? null : (
             <ListItem
               key={link.label}
               disablePadding
@@ -87,13 +86,13 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
         <Typography variant='h6' color='primary.main' px={3}>
           {t('general.connectWallet')}
         </Typography>
-        <WalletList
+        {/* <WalletList
           sx={{
             maxHeight: 280,
             overflow: 'auto',
             px: 3,
           }}
-        />
+        /> */}
       </Box>
       {account && (
         <ConnectWalletButton

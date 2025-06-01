@@ -8,8 +8,8 @@ import {
   Grid,
   Typography,
 } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
 import { formatEther, formatUnits, parseEther } from 'ethers/lib/utils'
+import { useAccount } from 'wagmi'
 
 import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import getTranslation from '@/hooks/useTranslation'
@@ -30,7 +30,7 @@ const PortfolioWalletTab = () => {
 
   const { t } = getTranslation()
 
-  const { account } = useWeb3React()
+  const account = useAccount()
 
   const { balance: ksuBalance, decimals: ksuDecimals } = useUserBalance(
     sdkConfig.contracts.KSUToken
@@ -89,10 +89,10 @@ const PortfolioWalletTab = () => {
               pt='6px'
               pl={{ xs: 0, sm: 2 }}
             >
-              {account
+              {account.address
                 ? isMobile
-                  ? formatAccount(account)
-                  : `0x ${account.substring(2).match(/.{4}/g)?.join(' ')}`
+                  ? formatAccount(account.address)
+                  : `0x ${account.address.substring(2).match(/.{4}/g)?.join(' ')}`
                 : '-'}{' '}
             </Typography>
           }
