@@ -1,15 +1,17 @@
-import { useWeb3React } from '@web3-react/core'
 import useSWR from 'swr'
+import { useAccount } from 'wagmi'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
 const useCurrentFtdBalance = (poolId: string) => {
   const sdk = useKasuSDK()
 
-  const { account } = useWeb3React()
+  const account = useAccount()
 
   const { data, error, isLoading, mutate } = useSWR(
-    account && sdk ? ['currentFtdBalance', account, poolId, sdk] : null,
+    account.address && sdk
+      ? ['currentFtdBalance', account.address, poolId, sdk]
+      : null,
     async ([_, userAddress, poolId, sdk]) =>
       await sdk.UserLending.getCurrentFtdBalance(poolId, userAddress),
     { fallbackData: new Map() }

@@ -1,5 +1,5 @@
 import { Stack, Typography } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
+import { useAccount } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
@@ -15,7 +15,7 @@ import { formatAccount, formatAmount, mergeSubheading } from '@/utils'
 const WithdrawalModalConfirmed = () => {
   const { t } = getTranslation()
 
-  const { account } = useWeb3React()
+  const account = useAccount()
 
   const { modal } = useModalState()
 
@@ -52,7 +52,9 @@ const WithdrawalModalConfirmed = () => {
         </Typography>
         <Typography variant='baseMd'>
           {t('lending.withdraw.confirmStep.description-4')}{' '}
-          <Typography variant='baseMdBold'>{formatAccount(account)}</Typography>
+          <Typography variant='baseMdBold'>
+            {formatAccount(account.address)}
+          </Typography>
         </Typography>
       </Stack>
       <WithdrawalModalConfirmedActions />

@@ -1,14 +1,18 @@
-import { useWeb3React } from '@web3-react/core'
 import useSWR from 'swr'
+import { useAccount, useChainId } from 'wagmi'
 
 import { LoanTicketDto, LoanTicketDtoRaw } from '@/config/api.lendersAgreement'
 import dayjs from '@/dayjs'
 
 const useLoanTickets = () => {
-  const { account, chainId } = useWeb3React()
+  const account = useAccount()
+
+  const chainId = useChainId()
 
   const { data, error, isLoading, mutate } = useSWR(
-    account && chainId ? ['loanTickets', account, chainId] : null,
+    account.address && chainId
+      ? ['loanTickets', account.address, chainId]
+      : null,
     async ([_, userAddress, chainId]): Promise<LoanTicketDto[]> => {
       const res = await fetch(
         '/api/loan-tickets?' +

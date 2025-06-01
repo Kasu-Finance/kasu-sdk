@@ -1,13 +1,15 @@
-import { useWeb3React } from '@web3-react/core'
 import useSWR from 'swr'
+import { useAccount, useChainId } from 'wagmi'
 
 import { NftRes } from '@/app/api/nft/route'
 
 const useUserNftYields = () => {
-  const { account, chainId } = useWeb3React()
+  const { address } = useAccount()
+
+  const chainId = useChainId()
 
   const { data, error, isLoading } = useSWR(
-    account && chainId ? ['userNftYields', account, chainId] : null,
+    address && chainId ? ['userNftYields', address, chainId] : null,
     async ([_, userAddress, chainId]) => {
       const res = await fetch(
         '/api/nft?' +

@@ -13,9 +13,9 @@ import ModalsContainer from '@/components/organisms/modals/ModalsContainer'
 
 import KycState from '@/context/kyc/kyc.provider'
 import ModalState from '@/context/modal/modal.provider'
+import PrivyProvider from '@/context/privy.provider'
 import SwrProvider from '@/context/swr.provider'
 import ToastState from '@/context/toast/toast.provider'
-import Web3Provider from '@/context/web3provider/web3.provider'
 
 import sdkConfig from '@/config/sdk'
 import ThemeRegistry from '@/themes/ThemeRegistry'
@@ -77,8 +77,9 @@ export default async function RootLayout({ children }: RootLayoutProps) {
       <Chatbot />
       <body>
         <ThemeRegistry>
-          <SwrProvider unusedPools={filteredPools}>
-            <Web3Provider>
+          <PrivyProvider>
+            <SwrProvider unusedPools={filteredPools}>
+              {/* <Web3Provider> */}
               <ToastState>
                 <KycState>
                   <ModalState>
@@ -90,8 +91,9 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                   </ModalState>
                 </KycState>
               </ToastState>
-            </Web3Provider>
-          </SwrProvider>
+              {/* </Web3Provider> */}
+            </SwrProvider>
+          </PrivyProvider>
         </ThemeRegistry>
       </body>
       <Script
