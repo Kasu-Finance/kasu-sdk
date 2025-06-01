@@ -84,6 +84,9 @@ const nextConfig = {
       'https://*.base.org',
       'https://subgraph.satsuma-prod.com/3ed46ea711d3/kasu-finance--314476/kasu-sepolia/api',
       'https://subgraph.satsuma-prod.com/3ed46ea711d3/kasu-finance--314476/kasu-base/api',
+      'https://infragrid.v.network/wallet/getnodeinfo',
+      'https://webanalytics.cookie3.co',
+      '',
     ].filter(Boolean)
 
     return [
@@ -111,7 +114,7 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: `
               default-src 'self';
-              script-src 'self' 'unsafe-inline' ${trustedDomains.join(' ')};
+              script-src 'self' 'unsafe-inline' 'unsafe-eval' ${trustedDomains.join(' ')};
               style-src 'self' 'unsafe-inline' ${trustedDomains.join(' ')};
               img-src 'self' data: blob: https: ${trustedDomains.join(' ')};
               font-src 'self' ${trustedDomains.join(' ')};
@@ -124,6 +127,7 @@ const nextConfig = {
               connect-src 'self' ${trustedDomains.join(' ')};
               worker-src 'self';
               manifest-src 'self';
+              script-src-elem 'self' 'unsafe-inline' https://cdn.cookie3.co/scripts/analytics/0.11.4/cookie3.analytics.min.js;
             `
               .replace(/\s{2,}/g, ' ')
               .trim(),
