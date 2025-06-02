@@ -82,11 +82,10 @@ const nextConfig = {
       'https://*.rpc.privy.systems',
       'https://explorer-api.walletconnect.com',
       'https://*.base.org',
+      'https://base-rpc.publicnode.com',
       'https://subgraph.satsuma-prod.com/3ed46ea711d3/kasu-finance--314476/kasu-sepolia/api',
       'https://subgraph.satsuma-prod.com/3ed46ea711d3/kasu-finance--314476/kasu-base/api',
       'https://infragrid.v.network/wallet/getnodeinfo',
-      'https://webanalytics.cookie3.co',
-      '',
     ].filter(Boolean)
 
     return [
@@ -127,7 +126,7 @@ const nextConfig = {
               connect-src 'self' ${trustedDomains.join(' ')};
               worker-src 'self';
               manifest-src 'self';
-              script-src-elem 'self' 'unsafe-inline' https://cdn.cookie3.co/scripts/analytics/0.11.4/cookie3.analytics.min.js;
+              script-src-elem 'self' 'unsafe-inline' https://app.pluno.ai/web-support/chat-widget.js;
             `
               .replace(/\s{2,}/g, ' ')
               .trim(),

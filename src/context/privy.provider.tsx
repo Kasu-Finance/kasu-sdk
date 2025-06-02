@@ -8,14 +8,16 @@ import { base, baseSepolia } from 'viem/chains'
 import { http } from 'wagmi'
 
 import { NETWORK } from '@/config/sdk'
+import { SupportedChainIds } from '@/connection/chains'
+import { RPC_URLS } from '@/connection/rpc'
 
 const queryClient = new QueryClient()
 
 export const wagmiConfig = createConfig({
   chains: [base, baseSepolia],
   transports: {
-    [base.id]: http(),
-    [baseSepolia.id]: http(),
+    [base.id]: http(RPC_URLS[SupportedChainIds.BASE][0]),
+    [baseSepolia.id]: http(RPC_URLS[SupportedChainIds.BASE_SEPOLIA][0]),
   },
 })
 

@@ -20,7 +20,6 @@ const DesktopNavigation = () => {
             key={link.label}
             isActive={pathName === link.to || pathName.includes(link.to)}
             href={link.to}
-            prefetch
           >
             {link.label}
           </NavItem>

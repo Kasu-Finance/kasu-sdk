@@ -1,5 +1,6 @@
 'use client'
 
+import { usePrivy } from '@privy-io/react-auth'
 import { redirect } from 'next/navigation'
 import React, { useEffect } from 'react'
 import { useAccount } from 'wagmi'
@@ -10,14 +11,15 @@ const RedirectHandler: React.FC<{ delay: number; url: string }> = ({
   delay,
   url,
 }) => {
+  const { ready } = usePrivy()
   const account = useAccount()
-  const delayed = useDelayedExecution(delay)
+  const delayed = useDelayedExecution(ready ? delay : 0)
 
   useEffect(() => {
-    if (!account.address && delayed) {
+    if (ready && !account.address && delayed) {
       redirect(url)
     }
-  }, [account, delayed, url])
+  }, [account, ready, delayed, url])
 
   return null
 }
