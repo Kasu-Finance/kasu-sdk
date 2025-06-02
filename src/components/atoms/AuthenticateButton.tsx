@@ -21,7 +21,7 @@ const AuthenticateButton: React.FC<AuthenticateButtonProps> = ({
 
   const { checkUserKyc } = useKycState()
 
-  const { setToast } = useToastState()
+  const { setToast, removeToast } = useToastState()
 
   const { login } = useLogin({
     onComplete: async ({ user }) => {
@@ -40,6 +40,10 @@ const AuthenticateButton: React.FC<AuthenticateButtonProps> = ({
         onAuthenticated()
         setButtonClicked(false)
       }
+    },
+    onError: (error) => {
+      removeToast()
+      console.error(error)
     },
   })
 
