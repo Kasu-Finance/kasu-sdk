@@ -98,8 +98,7 @@ export type PortfolioUserTrancheBalance = Map<
 >;
 
 export interface UserPoolBalance {
-    userId: string;
-    address: string;
+    poolId: string;
     yieldEarned: number;
     balance: BigNumber;
 }

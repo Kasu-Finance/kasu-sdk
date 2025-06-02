@@ -13,7 +13,6 @@ import { SdkConfig } from '../../sdk-config';
 import { DataService } from '../DataService/data-service';
 import { PoolOverview } from '../DataService/types';
 import { KSULocking } from '../Locking/locking';
-import { UserPoolBalance } from '../UserLending/types';
 import { UserLending } from '../UserLending/user-lending';
 
 import { lendingPortfolioQuery } from './queries';
@@ -135,7 +134,10 @@ export class Portfolio {
             current: {
                 totalKsuLocked: userLockingData.totalLockedAmount,
                 totalLendingPoolInvestments: totalInvestments.toString(),
-                weightedAverageApy: (weightedApy / totalInvestments).toString(),
+                weightedAverageApy:
+                    totalInvestments === 0
+                        ? '0'
+                        : (weightedApy / totalInvestments).toString(),
             },
             lifetime: {
                 yieldEarnings: totalYieldEarned.toString(),
@@ -163,13 +165,13 @@ export class Portfolio {
                 };
             })[];
         })[] = [];
-        const userPoolBalancePromises: Promise<UserPoolBalance>[] = [];
+
         const previousEpoch = BigNumber.from(currentEpoch).sub(
             BigNumber.from(1),
         );
 
-        const [lastEpochData, portfolioUserTrancheBalances] = await Promise.all(
-            [
+        const [lastEpochData, portfolioUserTrancheBalances, userPoolBalances] =
+            await Promise.all([
                 this._graph.request<LendingPortfolioQueryResult>(
                     lendingPortfolioQuery,
                     {
@@ -182,8 +184,11 @@ export class Portfolio {
                 this._userLendingService.getPortfolioUserTrancheBalances(
                     userAddress,
                 ),
-            ],
-        );
+                this._userLendingService.getUserPoolBalance(
+                    userAddress,
+                    poolOverviews.map(({ id }) => id),
+                ),
+            ]);
 
         if (!lastEpochData.user) return [];
 
@@ -237,23 +242,12 @@ export class Portfolio {
             }
         }
 
-        for (const poolOverview of poolOverviews) {
-            userPoolBalancePromises.push(
-                this._userLendingService.getUserPoolBalance(
-                    userAddress,
-                    poolOverview.id,
-                ),
-            );
-        }
-
-        const userPoolBalances = await Promise.all(userPoolBalancePromises);
-
         let totalInvestments = BigNumber.from(0);
         let totalYieldEarnedLastEpoch = 0;
 
         for (const poolOverview of poolOverviews) {
             const userPoolBalance = userPoolBalances.find(
-                (u) => u.address === poolOverview.id,
+                ({ poolId }) => poolId === poolOverview.id,
             );
             if (!userPoolBalance) {
                 console.warn(
@@ -493,47 +487,44 @@ export class Portfolio {
             });
         }
 
-        const portfolioLendingPools: PortfolioLendingPool[] = await Promise.all(
-            portfolioLendingPoolsPromise.map(async (pool) => ({
+        const portfolioLendingPools: PortfolioLendingPool[] =
+            portfolioLendingPoolsPromise.map((pool) => ({
                 ...pool,
-                tranches: await Promise.all(
-                    pool.tranches.map((tranche) => {
-                        const trancheBalance = tranche.investedAmount;
+                tranches: pool.tranches.map((tranche) => {
+                    const trancheBalance = tranche.investedAmount;
 
-                        const lockedAmount = tranche.fixedLoans.reduce(
-                            (total, cur) => {
-                                if (!cur.isLocked) return total;
+                    const lockedAmount = tranche.fixedLoans.reduce(
+                        (total, cur) => {
+                            if (!cur.isLocked) return total;
 
-                                return total.add(parseEther(cur.amount));
-                            },
-                            BigNumber.from(0),
-                        );
+                            return total.add(parseEther(cur.amount));
+                        },
+                        BigNumber.from(0),
+                    );
 
-                        const totalTrancheYieldEarned =
-                            trancheBalance.yieldEarned.toFixed(6);
-                        const totalTrancheFtdYieldEarned = parseFloat(
-                            tranche.yieldEarnings.lifetime,
-                        ).toFixed(6);
+                    const totalTrancheYieldEarned =
+                        trancheBalance.yieldEarned.toFixed(6);
+                    const totalTrancheFtdYieldEarned = parseFloat(
+                        tranche.yieldEarnings.lifetime,
+                    ).toFixed(6);
 
-                        return {
-                            ...tranche,
-                            investedAmount: formatEther(
-                                parseEther(trancheBalance.balance).sub(
-                                    lockedAmount,
-                                ),
+                    return {
+                        ...tranche,
+                        investedAmount: formatEther(
+                            parseEther(trancheBalance.balance).sub(
+                                lockedAmount,
                             ),
-                            yieldEarnings: {
-                                ...tranche.yieldEarnings,
-                                lifetime: this.precisionToString(
-                                    parseFloat(totalTrancheYieldEarned) -
-                                        parseFloat(totalTrancheFtdYieldEarned),
-                                ),
-                            },
-                        };
-                    }),
-                ),
-            })),
-        );
+                        ),
+                        yieldEarnings: {
+                            ...tranche.yieldEarnings,
+                            lifetime: this.precisionToString(
+                                parseFloat(totalTrancheYieldEarned) -
+                                    parseFloat(totalTrancheFtdYieldEarned),
+                            ),
+                        },
+                    };
+                }),
+            }));
 
         return portfolioLendingPools.filter(
             (pool) =>

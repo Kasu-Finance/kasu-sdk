@@ -77,10 +77,15 @@ export const userRequestsQuery = gql`
 
 export const lendingPoolUserDetailsQuery = gql`
     query LendingPoolUserDetailsQuery($userAddress: String!) {
-        lendingPoolUserDetails(id: $userAddress) {
-            id
-            totalAcceptedDeposits
-            totalAcceptedWithdrawnAmount
+        user(id: $userAddress) {
+            lendingPoolUserDetails {
+                id
+                lendingPool {
+                    id
+                }
+                totalAcceptedDeposits
+                totalAcceptedWithdrawnAmount
+            }
         }
     }
 `;

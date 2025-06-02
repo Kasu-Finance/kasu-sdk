@@ -100,11 +100,15 @@ export type UserRequestEventType =
     | 'DepositRejected';
 
 export interface LendingPoolUserDetailsSubgraph {
-    lendingPoolUserDetails?: {
-        id: string;
-        totalAcceptedDeposits: string;
-        totalAcceptedWithdrawnAmount: string;
-    };
+    user: {
+        lendingPoolUserDetails: {
+            lendingPool: {
+                id: string;
+            };
+            totalAcceptedDeposits: string;
+            totalAcceptedWithdrawnAmount: string;
+        }[];
+    } | null;
 }
 
 export interface TrancheUserDetailsSubgraph {
@@ -129,7 +133,7 @@ export interface PortfolioTrancheUserDetailsSubgraph {
             };
             lendingPoolTrancheUserDetails: TrancheUserDetailsSubgraph['lendingPoolTrancheUserDetails'][];
         }[];
-    };
+    } | null;
 }
 
 export interface TotalUserLoyaltyRewardsSubgraph {

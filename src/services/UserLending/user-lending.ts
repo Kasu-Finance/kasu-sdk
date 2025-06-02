@@ -700,46 +700,79 @@ export class UserLending {
 
     async getUserPoolBalance(
         user: string,
-        poolId: string,
-    ): Promise<UserPoolBalance> {
-        const lendingPool = ILendingPoolAbi__factory.connect(
-            poolId,
-            this._signerOrProvider,
-        );
+        poolIds: string[],
+    ): Promise<UserPoolBalance[]> {
+        const poolBalances: {
+            poolId: string;
+            balance: Promise<BigNumber>;
+        }[] = [];
 
-        if (
-            this._kasuConfig.UNUSED_LENDING_POOL_IDS.includes(
-                poolId.toLowerCase(),
-            )
-        ) {
-            throw new Error('This pool is no longer in used');
+        for (const poolId of poolIds) {
+            const lendingPool = ILendingPoolAbi__factory.connect(
+                poolId,
+                this._signerOrProvider,
+            );
+            if (
+                this._kasuConfig.UNUSED_LENDING_POOL_IDS.includes(
+                    poolId.toLowerCase(),
+                )
+            ) {
+                console.error('This pool is no longer in used');
+                continue;
+            }
+
+            poolBalances.push({
+                poolId,
+                balance: lendingPool.userBalance(user),
+            });
         }
 
-        const userDetailsSubgraph: LendingPoolUserDetailsSubgraph =
-            await this._graph.request(lendingPoolUserDetailsQuery, {
-                userAddress: `${poolId}-${user}`,
-            });
+        const [userDetailsSubgraph, balances] = await Promise.all([
+            this._graph.request<LendingPoolUserDetailsSubgraph>(
+                lendingPoolUserDetailsQuery,
+                {
+                    userAddress: user.toLowerCase(),
+                },
+            ),
+            Promise.all(
+                poolBalances.map(async ({ balance, poolId }) => ({
+                    poolId,
+                    balance: await balance,
+                })),
+            ),
+        ]);
 
-        const balance = await lendingPool.userBalance(user);
+        if (!userDetailsSubgraph.user?.lendingPoolUserDetails) {
+            return poolIds.map((poolId) => ({
+                poolId,
+                yieldEarned: 0,
+                balance: BigNumber.from(0),
+            }));
+        }
 
-        const balanceNumber = parseFloat(ethers.utils.formatUnits(balance, 6));
+        return userDetailsSubgraph.user.lendingPoolUserDetails.map(
+            ({
+                lendingPool,
+                totalAcceptedDeposits,
+                totalAcceptedWithdrawnAmount,
+            }) => {
+                const balance =
+                    balances.find(
+                        ({ poolId }) =>
+                            poolId.toLowerCase() ===
+                            lendingPool.id.toLowerCase(),
+                    )?.balance ?? BigNumber.from(0);
 
-        return {
-            userId: user,
-            address: poolId,
-            yieldEarned: userDetailsSubgraph.lendingPoolUserDetails
-                ? balanceNumber -
-                  parseFloat(
-                      userDetailsSubgraph.lendingPoolUserDetails
-                          .totalAcceptedDeposits,
-                  ) -
-                  -parseFloat(
-                      userDetailsSubgraph.lendingPoolUserDetails
-                          .totalAcceptedWithdrawnAmount,
-                  )
-                : 0,
-            balance: balance,
-        };
+                return {
+                    poolId: lendingPool.id,
+                    yieldEarned:
+                        parseFloat(ethers.utils.formatUnits(balance, 6)) -
+                        parseFloat(totalAcceptedDeposits) -
+                        -parseFloat(totalAcceptedWithdrawnAmount),
+                    balance,
+                };
+            },
+        );
     }
 
     async getPortfolioUserTrancheBalances(
@@ -759,6 +792,8 @@ export class UserLending {
             }[]
         >();
 
+        if (!userDetails.user) return mapper;
+
         for (const lendingPoolUserDetail of userDetails.user
             .lendingPoolUserDetails) {
             const tranches: {
@@ -772,10 +807,7 @@ export class UserLending {
 
                 let userBalance = '0';
 
-                if (
-                    trancheDetail &&
-                    !parseUnits(trancheDetail.shares).isZero()
-                ) {
+                if (trancheDetail) {
                     userBalance = this.convertSharesToAssets(
                         trancheDetail.shares,
                         trancheDetail.tranche.balance,
