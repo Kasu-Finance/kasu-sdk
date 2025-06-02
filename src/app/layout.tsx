@@ -1,10 +1,7 @@
 import { Box } from '@mui/material'
 import { PoolOverviewDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import type { Metadata } from 'next'
-import Script from 'next/script'
 import { ReactNode } from 'react'
-
-import '@/styles/fonts.module.css'
 
 import Chatbot from '@/components/atoms/Chatbot'
 import Footer from '@/components/organisms/footer'
@@ -96,11 +93,6 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           </PrivyProvider>
         </ThemeRegistry>
       </body>
-      <Script
-        src='https://cdn.cookie3.co/scripts/analytics/0.11.4/cookie3.analytics.min.js'
-        defer
-        data-site-id='1441'
-      />
     </html>
   )
 }
