@@ -29,7 +29,7 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const { checkUserKyc } = useKycState()
 
-    const { setToast } = useToastState()
+    const { setToast, removeToast } = useToastState()
 
     const handleOpen = () => openModal({ name: ModalsKeys.LINK_WALLETS })
 
@@ -45,6 +45,10 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
         if (user.wallet?.address) {
           await checkUserKyc(user.wallet.address)
         }
+      },
+      onError: (error) => {
+        removeToast()
+        console.error(error)
       },
     })
 
