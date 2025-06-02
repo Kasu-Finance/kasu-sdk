@@ -39,7 +39,6 @@
     "axios": "^1.7.0",
     "eslint": "^8.56.0",
     "ethers": "^5.7.2",
-    "ethers-multicall-provider": "^3.1.2",
     "graphql-request": "^6.1.0",
     "jest": "^29.7.0",
     "ts-node": "^10.9.2",

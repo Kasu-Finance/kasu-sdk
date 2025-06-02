@@ -701,6 +701,7 @@ export class UserLending {
     async getUserPoolBalance(
         user: string,
         poolIds: string[],
+        provider?: Provider,
     ): Promise<UserPoolBalance[]> {
         const poolBalances: {
             poolId: string;
@@ -710,7 +711,7 @@ export class UserLending {
         for (const poolId of poolIds) {
             const lendingPool = ILendingPoolAbi__factory.connect(
                 poolId,
-                this._signerOrProvider,
+                provider ?? this._signerOrProvider,
             );
             if (
                 this._kasuConfig.UNUSED_LENDING_POOL_IDS.includes(

@@ -151,6 +151,7 @@ export class Portfolio {
         userAddress: string,
         poolOverviews: PoolOverview[],
         currentEpoch: string,
+        provider?: Provider,
     ): Promise<PortfolioLendingPool[]> {
         const SECONDS_PER_EPOCH = 604_800; // seconds in a week
 
@@ -187,6 +188,7 @@ export class Portfolio {
                 this._userLendingService.getUserPoolBalance(
                     userAddress,
                     poolOverviews.map(({ id }) => id),
+                    provider,
                 ),
             ]);
 
