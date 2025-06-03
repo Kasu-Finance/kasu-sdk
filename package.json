@@ -45,7 +45,6 @@
     "@nivo/pie": "^0.87.0",
     "@nivo/tooltip": "^0.87.0",
     "@nivo/voronoi": "^0.87.0",
-    "@privy-io/react-auth": "^2.13.0",
     "@privy-io/wagmi": "^1.0.3",
     "@solidant/kasu-sdk": "^0.0.136",
     "@sparticuz/chromium-min": "^133.0.0",
