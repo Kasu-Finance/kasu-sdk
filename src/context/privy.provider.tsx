@@ -33,13 +33,10 @@ const PrivyProvider: React.FC<PropsWithChildren> = ({ children }) => {
           theme: 'light',
           accentColor: '#c4996c',
           logo: 'https://kasu-finance.directus.app/assets/3113809a-887f-4b8a-b5f9-ef9d1d1abd74.png',
-          showWalletLoginFirst: true,
-          walletList: [
-            'metamask',
-            'coinbase_wallet',
-            'wallet_connect',
-            'detected_ethereum_wallets',
-          ],
+        },
+        loginMethodsAndOrder: {
+          primary: ['metamask', 'wallet_connect', 'google', 'email'],
+          overflow: ['coinbase_wallet', 'detected_wallets'],
         },
         // Create embedded wallets for users who don't have a wallet
         embeddedWallets: {
