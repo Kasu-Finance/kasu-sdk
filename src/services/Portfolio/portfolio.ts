@@ -1,6 +1,6 @@
 import { Provider } from '@ethersproject/providers';
 import { BigNumber, Signer } from 'ethers';
-import { formatEther, parseEther } from 'ethers/lib/utils';
+import { formatEther, parseEther, parseUnits } from 'ethers/lib/utils';
 import { GraphQLClient } from 'graphql-request';
 
 import {
@@ -530,8 +530,8 @@ export class Portfolio {
 
         return portfolioLendingPools.filter(
             (pool) =>
-                !BigNumber.from(pool.totalInvestedAmount).isZero() ||
-                !BigNumber.from(pool.totalYieldEarningsLifetime).isZero(),
+                !parseUnits(pool.totalInvestedAmount).isZero() ||
+                !parseUnits(pool.totalYieldEarningsLifetime).isZero(),
         );
     }
 

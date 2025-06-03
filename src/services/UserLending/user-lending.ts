@@ -674,6 +674,8 @@ export class UserLending {
         totalAssets: string,
         totalSupply: string,
     ): string {
+        if (parseUnits(totalSupply).isZero()) return '0';
+
         return formatUnits(
             parseUnits(sharesAmount)
                 .mul(parseUnits(totalAssets.toString()))
