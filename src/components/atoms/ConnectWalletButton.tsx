@@ -1,21 +1,15 @@
 'use client'
 
-import CloseIcon from '@mui/icons-material/Close'
-import {
-  Box,
-  Button,
-  ButtonProps,
-  Chip,
-  IconButton,
-  Typography,
-} from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
+import { Box, Button, ButtonProps, Chip, Typography } from '@mui/material'
+import { useLogin, usePrivy } from '@privy-io/react-auth'
 import { forwardRef } from 'react'
+import { useAccount } from 'wagmi'
 
+import useKycState from '@/hooks/context/useKycState'
 import useModalState from '@/hooks/context/useModalState'
+import useToastState from '@/hooks/context/useToastState'
 import getTranslation from '@/hooks/useTranslation'
-import useChainStatus from '@/hooks/web3/useChainStatus'
-import useWalletActivation from '@/hooks/web3/useWalletActivation'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
@@ -23,23 +17,46 @@ import { ConnectWalletIcon } from '@/assets/icons'
 
 import { customPalette } from '@/themes/palette'
 import { customTypography } from '@/themes/typography'
-import formatAccount from '@/utils/formats/formatAccount'
+import { formatAccount } from '@/utils'
 
 const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
     const { t } = getTranslation()
 
-    const { account } = useWeb3React()
+    const account = useAccount()
 
     const { openModal } = useModalState()
 
-    const { disconnect } = useWalletActivation()
+    const { checkUserKyc } = useKycState()
 
-    const handleOpen = () => openModal({ name: ModalsKeys.CONNECT_WALLET })
+    const { setToast, removeToast } = useToastState()
 
-    const { connected, isValidChain } = useChainStatus()
+    const handleOpen = () => openModal({ name: ModalsKeys.LINK_WALLETS })
 
-    if (!connected) {
+    const { login } = useLogin({
+      onComplete: async ({ user }) => {
+        setToast({
+          type: 'info',
+          title: 'Account connected',
+          message: 'Verifying status of account...',
+          isClosable: false,
+        })
+
+        if (user.wallet?.address) {
+          await checkUserKyc(user.wallet.address)
+        }
+      },
+      onError: (error) => {
+        removeToast()
+        console.error(error)
+      },
+    })
+
+    const { ready } = usePrivy()
+
+    const { isAuthenticated } = usePrivyAuthenticated()
+
+    if (!isAuthenticated) {
       return (
         <Button
           ref={ref}
@@ -50,7 +67,8 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
             ...customTypography.baseMd,
           }}
           startIcon={<ConnectWalletIcon key='disconnected' />}
-          onClick={handleOpen}
+          onClick={login}
+          disabled={!ready}
           {...props}
         >
           {t('general.connectWallet')}
@@ -72,17 +90,17 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
           'svg path': {
             fill: customPalette.gold.dark,
           },
+          cursor: 'pointer',
         }}
         bgcolor='gray.extraLight'
         position='relative'
+        onClick={handleOpen}
       >
         <ConnectWalletIcon key='connected' />
         <Typography variant='baseSm' color='gold.dark' mx={1.5} mt={0.5}>
-          {formatAccount(account)}
+          {formatAccount(account.address)}
         </Typography>
-        <IconButton sx={{ p: 0 }} onClick={disconnect}>
-          <CloseIcon sx={{ width: 16, height: 16 }} />
-        </IconButton>
+
         <Chip
           label={
             <Typography
@@ -92,7 +110,7 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
               fontSize={10}
               color='white'
             >
-              {isValidChain ? 'Connected' : 'Wrong Chain'}
+              Connected
             </Typography>
           }
           variant='filled'
@@ -113,7 +131,7 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
             },
           }}
           size='small'
-          color={isValidChain ? 'success' : 'warning'}
+          color='success'
         />
       </Box>
     )

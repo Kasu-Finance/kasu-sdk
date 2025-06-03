@@ -56,7 +56,7 @@ const LendingModalReviewActions = () => {
 
   const { isApproved, approve } = useApproveToken(
     supportedToken?.[selectedToken].address,
-    sdkConfig.contracts.LendingPoolManager,
+    sdkConfig.contracts.LendingPoolManager as `0x${string}`,
     amount
   )
 

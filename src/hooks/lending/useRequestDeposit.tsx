@@ -1,6 +1,6 @@
-import { useWeb3React } from '@web3-react/core'
 import { BigNumber, BytesLike } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
+import { useAccount, useChainId } from 'wagmi'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useKycState from '@/hooks/context/useKycState'
@@ -17,13 +17,13 @@ import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { SupportedTokens } from '@/constants/tokens'
 import { capitalize, toBigNumber, waitForReceipt } from '@/utils'
 
-import { HexString } from '@/types/lending'
 import { PoolOverviewWithDelegate } from '@/types/page'
 
 const useRequestDeposit = () => {
   const sdk = useKasuSDK()
+  const account = useAccount()
 
-  const { account, chainId } = useWeb3React()
+  const chainId = useChainId()
 
   const handleError = useHandleError()
 
@@ -51,7 +51,7 @@ const useRequestDeposit = () => {
     contractVersion: number,
     contractType: 'retail' | 'exempt'
   ) => {
-    if (!account) {
+    if (!account.address) {
       return console.error('RequestDeposit:: Account is undefined')
     }
 
@@ -79,7 +79,7 @@ const useRequestDeposit = () => {
       })
 
       const kycSignatureParams = await sdk.UserLending.buildKycSignatureParams(
-        account as HexString,
+        account.address,
         chainId.toString()
       )
 
@@ -108,7 +108,7 @@ const useRequestDeposit = () => {
 
       if (selectedToken !== SupportedTokens.USDC) {
         const data = await buildSwapData({
-          account,
+          account: account.address,
           chainId,
           currentDepositedAmount,
           fromAmount,

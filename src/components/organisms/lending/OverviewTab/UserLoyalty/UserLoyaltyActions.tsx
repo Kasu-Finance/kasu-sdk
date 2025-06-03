@@ -28,7 +28,7 @@ const UserLoyaltyActions: React.FC<UserLoyaltyActionsProps> = ({
     <Grid container columnSpacing={4} justifyContent='center' mt={4}>
       <Grid item>
         <AuthenticateButton
-          onClick={handleLockKSU}
+          onAuthenticated={handleLockKSU}
           variant='outlined'
           sx={{ width: 368 }}
         >
@@ -37,7 +37,7 @@ const UserLoyaltyActions: React.FC<UserLoyaltyActionsProps> = ({
       </Grid>
       <Grid item>
         <AuthenticateButton
-          onClick={handleBuyKSU}
+          onAuthenticated={handleBuyKSU}
           variant='outlined'
           sx={{ width: 368 }}
         >

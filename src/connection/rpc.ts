@@ -7,6 +7,7 @@ export const FALLBACK_URLS: Record<SupportedChainIds, string[]> = {
 
 export const RPC_URLS: Record<SupportedChainIds, string[]> = {
   [SupportedChainIds.BASE]: [
+    'https://base-rpc.publicnode.com',
     'https://mainnet.base.org',
     ...FALLBACK_URLS[SupportedChainIds.BASE],
   ],

@@ -1,28 +1,65 @@
 import { Button, ButtonProps } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
-import React from 'react'
+import { useLogin } from '@privy-io/react-auth'
+import React, { useState } from 'react'
 
-import useModalState from '@/hooks/context/useModalState'
+import useKycState from '@/hooks/context/useKycState'
+import useToastState from '@/hooks/context/useToastState'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
-import { ModalsKeys } from '@/context/modal/modal.types'
+type AuthenticateButtonProps = ButtonProps & {
+  onAuthenticated: () => void
+}
 
-const AuthenticateButton: React.FC<ButtonProps> = (props) => {
-  const { account } = useWeb3React()
+const AuthenticateButton: React.FC<AuthenticateButtonProps> = ({
+  onAuthenticated,
+  ...rest
+}) => {
+  const { isAuthenticated } = usePrivyAuthenticated()
 
-  const { openModal } = useModalState()
+  // adding this because useLogin `onComplete` callback is global and will be triggered when ConnetWalletButton is pressed
+  const [buttonClicked, setButtonClicked] = useState(false)
+
+  const { checkUserKyc } = useKycState()
+
+  const { setToast, removeToast } = useToastState()
+
+  const { login } = useLogin({
+    onComplete: async ({ user }) => {
+      setToast({
+        type: 'info',
+        title: 'Account connected',
+        message: 'Verifying status of account...',
+        isClosable: false,
+      })
+
+      if (user.wallet?.address) {
+        await checkUserKyc(user.wallet.address)
+      }
+
+      if (buttonClicked) {
+        onAuthenticated()
+        setButtonClicked(false)
+      }
+    },
+    onError: (error) => {
+      removeToast()
+      console.error(error)
+    },
+  })
 
   const handleOpen = (e: any) => {
-    const action = () => props.onClick?.(e)
-
-    if (!account) {
-      openModal({ name: ModalsKeys.CONNECT_WALLET, callback: action })
+    if (!isAuthenticated) {
+      setButtonClicked(true)
+      login()
       return
     }
 
-    action()
+    onAuthenticated?.()
+
+    rest.onClick?.(e)
   }
 
-  return <Button {...props} onClick={handleOpen} />
+  return <Button {...rest} onClick={handleOpen} />
 }
 
 export default AuthenticateButton

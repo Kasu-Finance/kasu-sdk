@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
+import { useAccount } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
 
@@ -10,11 +10,11 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 import { ReferralIcon } from '@/assets/icons'
 
 const ReferButton = () => {
-  const { account } = useWeb3React()
+  const { address } = useAccount()
 
   const { openModal } = useModalState()
 
-  if (!account) return null
+  if (!address) return null
 
   const handleOpen = () => openModal({ name: ModalsKeys.REFERRAL })
 

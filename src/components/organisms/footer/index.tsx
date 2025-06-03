@@ -1,5 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
 import { Box, Button, Container, Stack, Typography } from '@mui/material'
-import Image from 'next/image'
 import React from 'react'
 
 import DiscordIcon from '@/assets/icons/general/DiscordIcon'
@@ -22,8 +22,8 @@ const Footer: React.FC = () => {
         height={350}
         pb={6}
       >
-        <Image
-          src={FooterBg}
+        <img
+          src={FooterBg.src}
           alt='footer background'
           style={{
             position: 'absolute',
@@ -31,10 +31,9 @@ const Footer: React.FC = () => {
             bottom: 0,
             right: 0,
             width: '100vw',
-            height: 'auto',
+            height: '100%',
             maxHeight: 343,
           }}
-          priority
         />
         <Container
           maxWidth='lg'

@@ -12,14 +12,20 @@ export type FundingConsentGenerateContractPayoad = {
   timestamp: EpochTimeStamp
 }
 
-export type FundingConsentGenerateContractRes = {
-  fullName: string
-  contractMessage: string
-  formattedMessage: string
-  contractType: 'retail' | 'exempt'
-  contractVersion: number
-  timestamp: EpochTimeStamp
-}
+export type FundingConsentGenerateContractRes =
+  | {
+      fullName: string
+      contractMessage: string
+      formattedMessage: string
+      contractType: 'retail' | 'exempt'
+      contractVersion: number
+      timestamp: EpochTimeStamp
+    }
+  | {
+      error: string
+      message: string
+      statusCode: number
+    }
 
 export async function POST(req: NextRequest) {
   const queryParams = req.nextUrl.searchParams

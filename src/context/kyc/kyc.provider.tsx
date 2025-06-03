@@ -1,10 +1,11 @@
 'use client'
 
 // @ts-ignore export error
-import { useWeb3React } from '@web3-react/core'
-import { ReactNode, useEffect, useReducer } from 'react'
+import { ReactNode, useCallback, useEffect, useReducer } from 'react'
+import { useAccount } from 'wagmi'
 
 import useToastState from '@/hooks/context/useToastState'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import KycContext from '@/context/kyc/kyc.context'
 import kycReducer from '@/context/kyc/kyc.reducer'
@@ -26,13 +27,15 @@ const initialState: KycStateType = {
 }
 
 const KycState: React.FC<KycStateProps> = ({ children }) => {
-  const { account } = useWeb3React()
+  const { address } = useAccount()
 
   const [state, dispatch] = useReducer(kycReducer, initialState)
 
   const { setToast, removeToast } = useToastState()
 
   const kycActions = useKycActions(dispatch)
+
+  const { isAuthenticated } = usePrivyAuthenticated()
 
   const {
     setLastVerifiedAccount,
@@ -41,11 +44,50 @@ const KycState: React.FC<KycStateProps> = ({ children }) => {
     setKycCompleted,
   } = kycActions
 
+  const checkUserKyc = useCallback(
+    async (account: string) => {
+      try {
+        if (!account) return
+
+        setIsVerifying(true)
+        setKycCompleted(false)
+
+        setLastVerifiedAccount(account)
+
+        const kyc = await checkUserKycState(account)
+
+        if (!kyc) return
+
+        setCustomerKycInfo(kyc)
+
+        // no email status means kyc completed but email is not present ( edge case for users that setup KYC before email was setup )
+        if (kyc.status === 'Active' || kyc.status === 'No Email') {
+          setKycCompleted(true)
+        } else {
+          setKycCompleted(false)
+        }
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setIsVerifying(false)
+        removeToast()
+      }
+    },
+    [
+      setIsVerifying,
+      setKycCompleted,
+      setLastVerifiedAccount,
+      setCustomerKycInfo,
+      removeToast,
+    ]
+  )
+
   useEffect(() => {
     if (
-      account &&
+      isAuthenticated &&
+      address &&
       state.lastVerifiedAccount &&
-      account.toLowerCase() !== state.lastVerifiedAccount.toLowerCase()
+      address.toLowerCase() !== state.lastVerifiedAccount.toLowerCase()
     ) {
       setToast({
         type: 'info',
@@ -53,49 +95,18 @@ const KycState: React.FC<KycStateProps> = ({ children }) => {
         message: 'Verifying status of new account...',
         isClosable: false,
       })
-    }
-  }, [account, state.lastVerifiedAccount, setToast])
-
-  useEffect(() => {
-    if (account) {
-      ;(async () => {
-        try {
-          setIsVerifying(true)
-          setKycCompleted(false)
-
-          setLastVerifiedAccount(account)
-
-          const kyc = await checkUserKycState(account)
-
-          if (!kyc) return
-
-          setCustomerKycInfo(kyc)
-
-          // no email status means kyc completed but email is not present ( edge case for users that setup KYC before email was setup )
-          if (kyc.status === 'Active' || kyc.status === 'No Email') {
-            setKycCompleted(true)
-          } else {
-            setKycCompleted(false)
-          }
-        } catch (error) {
-          console.error(error)
-        } finally {
-          setIsVerifying(false)
-          removeToast()
-        }
-      })()
+      checkUserKyc(address)
     }
   }, [
-    account,
-    setCustomerKycInfo,
-    setLastVerifiedAccount,
-    setIsVerifying,
-    setKycCompleted,
-    removeToast,
+    isAuthenticated,
+    address,
+    state.lastVerifiedAccount,
+    setToast,
+    checkUserKyc,
   ])
 
   return (
-    <KycContext.Provider value={{ ...state, ...kycActions }}>
+    <KycContext.Provider value={{ ...state, ...kycActions, checkUserKyc }}>
       {children}
     </KycContext.Provider>
   )

@@ -1,5 +1,5 @@
 import { Box, Button, Stack, Typography } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
+import { useAccount } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
@@ -19,7 +19,7 @@ const OptOutModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { modal } = useModalState()
 
-  const { account } = useWeb3React()
+  const account = useAccount()
 
   const { subsequentTransaction, poolName } = modal[ModalsKeys.OPT_OUT]
 
@@ -47,7 +47,7 @@ const OptOutModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             <Typography variant='baseMdBold'>{poolName}</Typography>
             {t('modals.optOut.description-3')}{' '}
             <Typography variant='baseMdBold'>
-              {formatAccount(account)}
+              {formatAccount(account.address)}
             </Typography>
           </Typography>
           <Box bgcolor='gold.dark' p={2} borderRadius={2} width='100%'>

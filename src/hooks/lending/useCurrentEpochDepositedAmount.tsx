@@ -1,5 +1,5 @@
-import { useWeb3React } from '@web3-react/core'
 import useSWRImmutable from 'swr/immutable'
+import { useAccount } from 'wagmi'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
@@ -9,11 +9,11 @@ const useCurrentEpochDepositedAmount = (
 ) => {
   const sdk = useKasuSDK()
 
-  const { account } = useWeb3React()
+  const account = useAccount()
 
   const { data, error, isLoading, mutate } = useSWRImmutable(
-    account && sdk
-      ? [`currentEpochDepositedAmount/${lendingPoolId}`, account, sdk]
+    account.address && sdk
+      ? [`currentEpochDepositedAmount/${lendingPoolId}`, account.address, sdk]
       : null,
     async ([_, userAddress, sdk]) => {
       const amountMap = await sdk.UserLending.getCurrentEpochDepositedAmount(

@@ -1,8 +1,12 @@
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
-import { useWeb3React } from '@web3-react/core'
+import { ethers } from 'ethers'
 import useSWR from 'swr'
+import { useAccount, useChainId } from 'wagmi'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
+
+import { SupportedChainIds } from '@/connection/chains'
+import { RPC_URLS } from '@/connection/rpc'
 
 const useLendingPortfolioData = (
   poolOverviews: PoolOverview[],
@@ -10,17 +14,22 @@ const useLendingPortfolioData = (
 ) => {
   const sdk = useKasuSDK()
 
-  const { account } = useWeb3React()
+  const chainId = useChainId()
 
-  const { data, error, isLoading, mutate } = useSWR(
-    account && sdk
-      ? ['lendingPortfolioData', account, poolOverviews, sdk]
+  const account = useAccount()
+
+  const { data, error, mutate } = useSWR(
+    account.address && sdk && chainId
+      ? ['lendingPortfolioData', account.address, poolOverviews, sdk, chainId]
       : null,
     async ([_, userAddress, poolOverviews, sdk]) =>
       await sdk.Portfolio.getPortfolioLendingData(
         userAddress.toLowerCase(),
         poolOverviews,
-        currentEpoch
+        currentEpoch,
+        new ethers.providers.JsonRpcProvider(
+          RPC_URLS[chainId as SupportedChainIds][0]
+        )
       ),
     {
       keepPreviousData: true,
@@ -30,7 +39,7 @@ const useLendingPortfolioData = (
   return {
     portfolioLendingPools: data,
     error,
-    isLoading,
+    isLoading: !data && !error,
     updateLendingPortfolioData: mutate,
   }
 }

@@ -1,7 +1,7 @@
 import { Box, Skeleton, Typography } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { useCallback } from 'react'
+import { useChainId } from 'wagmi'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
@@ -22,7 +22,7 @@ import { SupportedTokenInfo, SupportedTokens } from '@/constants/tokens'
 import { formatAmount } from '@/utils'
 
 const SelectedAssetInput = () => {
-  const { chainId } = useWeb3React()
+  const chainId = useChainId()
 
   const { modal } = useModalState()
 

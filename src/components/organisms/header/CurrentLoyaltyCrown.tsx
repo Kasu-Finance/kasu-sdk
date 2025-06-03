@@ -1,8 +1,8 @@
 'use client'
 
 import { Box } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
 import Image from 'next/image'
+import { useAccount } from 'wagmi'
 
 import useLoyaltyLevel, { LoyaltyLevel } from '@/hooks/locking/useLoyaltyLevel'
 import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
@@ -23,13 +23,13 @@ export const getCrown = (currentLevel: LoyaltyLevel) => {
 }
 
 const CurrentLoyaltyCrown = () => {
-  const { account } = useWeb3React()
+  const account = useAccount()
 
   const { stakedPercentage } = useLockingPercentage()
 
   const { currentLevel } = useLoyaltyLevel(stakedPercentage)
 
-  if (!account) return null
+  if (!account.address) return null
 
   return (
     <Box

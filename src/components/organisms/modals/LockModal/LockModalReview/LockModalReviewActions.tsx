@@ -18,12 +18,14 @@ const LockModalReviewActions = () => {
   const { amount, selectedLockPeriod } = useLockModalState()
 
   const { isApproved, approve } = useApproveToken(
-    sdkConfig.contracts.KSUToken,
-    sdkConfig.contracts.IKSULocking,
+    sdkConfig.contracts.KSUToken as `0x${string}`,
+    sdkConfig.contracts.IKSULocking as `0x${string}`,
     amount
   )
 
-  const { decimals } = useTokenDetails(sdkConfig.contracts.KSUToken)
+  const { decimals } = useTokenDetails(
+    sdkConfig.contracts.KSUToken as `0x${string}`
+  )
 
   const lockKSU = useLockKSU()
 

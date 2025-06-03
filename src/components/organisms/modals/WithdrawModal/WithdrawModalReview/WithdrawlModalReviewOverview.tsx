@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
+import { useAccount } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
@@ -15,7 +15,7 @@ import { formatAmount, mergeSubheading } from '@/utils'
 const WithdrawModalReviewOverview = () => {
   const { t } = getTranslation()
 
-  const { account } = useWeb3React()
+  const account = useAccount()
 
   const { modal } = useModalState()
 
@@ -120,7 +120,7 @@ const WithdrawModalReviewOverview = () => {
         dividerProps={{
           color: 'white',
         }}
-        metric={<Typography variant='baseMdBold'>{account}</Typography>}
+        metric={<Typography variant='baseMdBold'>{account.address}</Typography>}
       />
     </Box>
   )
