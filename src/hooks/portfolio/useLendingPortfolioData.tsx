@@ -18,7 +18,7 @@ const useLendingPortfolioData = (
 
   const account = useAccount()
 
-  const { data, error, isLoading, mutate } = useSWR(
+  const { data, error, mutate } = useSWR(
     account.address && sdk && chainId
       ? ['lendingPortfolioData', account.address, poolOverviews, sdk, chainId]
       : null,
@@ -39,7 +39,7 @@ const useLendingPortfolioData = (
   return {
     portfolioLendingPools: data,
     error,
-    isLoading,
+    isLoading: !data && !error,
     updateLendingPortfolioData: mutate,
   }
 }
