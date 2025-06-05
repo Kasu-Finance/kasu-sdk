@@ -47,9 +47,9 @@ const NftPortfolio = () => {
                   textAlign='center'
                   whiteSpace='normal'
                 >
-                  We're working hard on the launch of NFT boosts. In the
-                  meantime, start lending so you're the first to benefit once
-                  NFT launches.
+                  Yields boosts for NFT holders will start accruing once the
+                  KASU token goes live. Start building your lending portfolio
+                  now to maximise your yield boost once the KASU token launches.
                 </Typography>
               </Stack>
             </TableCell>
