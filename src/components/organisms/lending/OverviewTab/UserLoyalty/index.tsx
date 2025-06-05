@@ -29,7 +29,7 @@ const UserLoyalty: React.FC<UserLoyaltyProps> = async () => {
           <EmptyCardState
             color='gray.extraDark'
             variant='h5'
-            message='We’re working hard on the launch of the $KSU token. In the meantime, start lending so you’re the first to benefit once $KSU launches.'
+            message='We’re working hard on the launch of the $KASU token. In the meantime, start lending so you’re the first to benefit once $KASU launches.'
           />
           <LearnButton
             sx={{
