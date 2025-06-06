@@ -86,6 +86,10 @@ const nextConfig = {
       'https://subgraph.satsuma-prod.com/3ed46ea711d3/kasu-finance--314476/kasu-sepolia/api',
       'https://subgraph.satsuma-prod.com/3ed46ea711d3/kasu-finance--314476/kasu-base/api',
       'https://infragrid.v.network/wallet/getnodeinfo',
+      'https://identity-v2.compilot.ai/',
+      'https://auth.privy.io/api/v1/analytics_events',
+      'https://identity-api.compilot.ai/public/auth-session/wallet/challenge/verify',
+      'https://identity-api.compilot.ai/identity/wallets',
     ].filter(Boolean)
 
     return [
