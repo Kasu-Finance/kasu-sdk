@@ -33,7 +33,6 @@ import WithdrawModalWrapper from '@/components/organisms/modals/WithdrawModal/Wi
 
 import { Modals, ModalsKeys } from '@/context/modal/modal.types'
 
-import ConnectWalletModal from './ConnectWalletModal'
 import KycModalWrapper from './KycModal/KycModalWrapper'
 
 type ModalDetails = {
@@ -52,12 +51,6 @@ export const getModal = (
   handleClose: () => void
 ): ModalDetails => {
   switch (modalName) {
-    case ModalsKeys.CONNECT_WALLET:
-      return {
-        component: <ConnectWalletModal handleClose={handleClose} />,
-        ariaLabel: 'Connect Wallet Modal',
-        ariaDescription: 'List of available web3 wallet connections',
-      }
     case ModalsKeys.LINK_WALLETS:
       return {
         component: <LinkWalletsModal handleClose={handleClose} />,

@@ -9,7 +9,7 @@ import useTokenDetails from '@/hooks/web3/useTokenDetails'
 import { IERC20__factory } from '@/contracts/output'
 
 const useUserBalance = (tokenAddress: string | undefined) => {
-  const account = useAccount()
+  const { address } = useAccount()
 
   const { wallets } = useWallets()
 
@@ -26,8 +26,8 @@ const useUserBalance = (tokenAddress: string | undefined) => {
     error: balanceError,
     isLoading,
   } = useSWR(
-    wallet && account.address && tokenAddress
-      ? [`userBalance-${tokenAddress}`, wallet, account.address, tokenAddress]
+    wallet && address && tokenAddress
+      ? [`userBalance-${tokenAddress}`, wallet, address, tokenAddress]
       : null,
     async ([_, wallet, userAddress, token]) => {
       const privyProvider = await wallet.getEthereumProvider()
@@ -54,44 +54,3 @@ const useUserBalance = (tokenAddress: string | undefined) => {
 }
 
 export default useUserBalance
-
-// import { IERC20__factory } from '@/contracts/output'
-// import { BigNumber } from 'ethers'
-// import { zeroAddress } from 'viem'
-// import { useAccount, useReadContracts } from 'wagmi'
-
-// const useUserBalance = (tokenAddress: `0x${string}` | undefined) => {
-//   const { address } = useAccount()
-
-//   const { data, isLoading, error } = useReadContracts({
-//     allowFailure: false,
-//     contracts: [
-//       {
-//         address: tokenAddress,
-//         abi: IERC20__factory.abi,
-//         functionName: 'balanceOf',
-//         args: [address ?? zeroAddress],
-//       },
-//       {
-//         address: tokenAddress,
-//         abi: IERC20__factory.abi,
-//         functionName: 'decimals',
-//       },
-//       {
-//         address: tokenAddress,
-//         abi: IERC20__factory.abi,
-//         functionName: 'symbol',
-//       },
-//     ],
-//   })
-
-//   return {
-//     balance: BigNumber.from(data?.[0] ?? 0),
-//     decimals: data?.[1],
-//     symbol: data?.[2],
-//     error,
-//     isUserBalanceLoading: isLoading,
-//   }
-// }
-
-// export default useUserBalance
