@@ -4,6 +4,7 @@ import { PoolOverviewDirectus } from '@solidant/kasu-sdk/src/services/DataServic
 import { ethers } from 'ethers'
 import useSWR, { preload } from 'swr'
 import useSWRImmutable from 'swr/immutable'
+import { useAccount } from 'wagmi'
 
 import sdkConfig from '@/config/sdk'
 
@@ -36,7 +37,9 @@ export class KasuSdkNotReadyError extends Error {
 const useKasuSDK = () => {
   const { wallets } = useWallets()
 
-  const wallet = wallets[0]
+  const { address } = useAccount()
+
+  const wallet = wallets.find((wallet) => wallet.address === address)
 
   const { data: unusedPools } = useSWRImmutable<string[]>(
     'unusedPools',
