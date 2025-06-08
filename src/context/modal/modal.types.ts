@@ -43,7 +43,6 @@ export enum ModalsActionTypes {
 }
 
 export enum ModalsKeys {
-  CONNECT_WALLET = 'connectWalletModal',
   LOYALTY_LEVELS = 'loyaltyLevelsModal',
   LOCK = 'lockModal',
   UNLOCK = 'unlockModal',
@@ -160,7 +159,6 @@ export type Modals = {
     }
     canAccept: boolean
   }>
-  [ModalsKeys.CONNECT_WALLET]: ModalData<{ callback?: () => void }>
   [ModalsKeys.LOCK]: ModalData<{ lockPeriods: LockPeriod[] }>
   [ModalsKeys.UNLOCK]: ModalData<{
     userLock: UserLock
