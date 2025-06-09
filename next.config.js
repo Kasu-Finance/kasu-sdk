@@ -72,6 +72,8 @@ const nextConfig = {
       'https://kasu-dev.directus.app',
       'https://kasu-finance.directus.app',
       'https://*.coinbase.com',
+      'https://google.com',
+      'https://apple.com',
       'ipfs.io',
       'gateway.ipfs.io',
       '*.googletagmanager.com',

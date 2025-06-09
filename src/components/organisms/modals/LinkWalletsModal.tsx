@@ -9,10 +9,14 @@ import { useSetActiveWallet } from '@privy-io/wagmi'
 import React from 'react'
 import { useAccount } from 'wagmi'
 
+import useModalState from '@/hooks/context/useModalState'
+
 import CustomCard from '@/components/atoms/CustomCard'
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
 import DialogContent from '@/components/molecules/DialogContent'
 import DialogHeader from '@/components/molecules/DialogHeader'
+
+import { ModalsKeys } from '@/context/modal/modal.types'
 
 import BaseLogo from '@/assets/logo/BaseLogo'
 
@@ -29,7 +33,14 @@ const LinkWalletsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { setActiveWallet } = useSetActiveWallet()
 
+  const { openModal } = useModalState()
+
   const { logout } = useLogout()
+
+  const viewWallet = () => {
+    handleClose()
+    openModal({ name: ModalsKeys.VIEW_WALLET })
+  }
 
   const disconnect = async () => {
     await logout()
@@ -69,18 +80,20 @@ const LinkWalletsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                   wallet.address.toLowerCase() ===
                   account.address?.toLowerCase()
 
+                const isPrivy = wallet.walletClientType === 'privy'
+
                 return (
                   <ListItem
                     key={index}
                     sx={{
                       border: `1px solid ${customPalette.gold.extraDark}`,
                       borderRadius: 30,
+                      py: 0.5,
+                      height: isPrivy ? 'auto' : 48,
+                      overflow: 'hidden',
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'center',
-                      py: 0.5,
-                      height: 48,
-                      overflow: 'hidden',
                       '&:hover .set-active-button': {
                         opacity: 1,
                         transform: 'translateX(0)',
@@ -96,20 +109,38 @@ const LinkWalletsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                       </Typography>
                     </Stack>
                     {isActiveWallet ? (
-                      <Typography
-                        variant='baseSm'
-                        color={customPalette.gold.dark}
-                        px={2}
-                        py={0.5}
-                        bgcolor={customPalette.gray.extraDark}
-                        borderRadius={30}
-                        height={26}
-                      >
-                        Active
-                      </Typography>
+                      <Box>
+                        {isPrivy && (
+                          <Button
+                            variant='contained'
+                            color='secondary'
+                            sx={{
+                              ...customTypography.baseSm,
+                              textTransform: 'capitalize',
+                              mr: 1,
+                              height: 26,
+                            }}
+                            onClick={viewWallet}
+                          >
+                            View Wallet
+                          </Button>
+                        )}
+                        <Typography
+                          variant='baseSm'
+                          color='white'
+                          px={2}
+                          py={0.5}
+                          bgcolor={customPalette.gold.dark}
+                          borderRadius={30}
+                          height={26}
+                        >
+                          Active
+                        </Typography>
+                      </Box>
                     ) : (
                       <Button
                         variant='contained'
+                        color='secondary'
                         className='set-active-button'
                         sx={{
                           textTransform: 'capitalize',
@@ -131,6 +162,13 @@ const LinkWalletsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                 )
               })}
             </List>
+          </Box>
+          <Box
+            display='grid'
+            gridTemplateColumns='minmax(0,1fr) max-content minmax(0,1fr)'
+            alignItems='center'
+            gap={1.5}
+          >
             <Button
               variant='contained'
               color='secondary'
@@ -140,32 +178,17 @@ const LinkWalletsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             >
               Link another wallet
             </Button>
+            <Typography>or</Typography>
+            <Button
+              variant='outlined'
+              color='secondary'
+              fullWidth
+              onClick={disconnect}
+              sx={{ textTransform: 'capitalize' }}
+            >
+              Disconnect
+            </Button>
           </Box>
-          <Typography
-            sx={{
-              display: 'grid',
-              textAlign: 'center',
-              alignItems: 'center',
-              width: '100%',
-              gridTemplateColumns: 'minmax(20px, 1fr) auto minmax(20px,  1fr)',
-              gap: 2,
-              '&::before, &::after': {
-                content: '""',
-                borderTop: `1px solid ${customPalette.gold.extraDark}`,
-              },
-            }}
-          >
-            or
-          </Typography>
-          <Button
-            variant='outlined'
-            color='secondary'
-            fullWidth
-            onClick={disconnect}
-            sx={{ textTransform: 'capitalize' }}
-          >
-            Disconnect
-          </Button>
         </Stack>
       </DialogContent>
     </CustomCard>
