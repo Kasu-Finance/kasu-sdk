@@ -27,6 +27,7 @@ import RequestDetailsModal from '@/components/organisms/modals/RequestDetailsMod
 import UnlockModalWrapper from '@/components/organisms/modals/UnlockModal/UnlockModalWrapper'
 import UnreleasedFeatureModal from '@/components/organisms/modals/UnreleasedFeatureModal'
 import ViewLoanContractModal from '@/components/organisms/modals/ViewLoanContractModal'
+import ViewWalletModal from '@/components/organisms/modals/ViewWalletModal'
 import WipRedirectModal from '@/components/organisms/modals/WipRedirectModal'
 import WIthdrawFundsAtExpiryModalWrapper from '@/components/organisms/modals/WithdrawFundsAtExpiryModal/WithdrawFundsAtExpiryModalWrapper'
 import WithdrawModalWrapper from '@/components/organisms/modals/WithdrawModal/WithdrawModalWrapper'
@@ -54,6 +55,10 @@ export const getModal = (
     case ModalsKeys.LINK_WALLETS:
       return {
         component: <LinkWalletsModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.VIEW_WALLET:
+      return {
+        component: <ViewWalletModal handleClose={handleClose} />,
       }
     case ModalsKeys.LOYALTY_LEVELS:
       return {
