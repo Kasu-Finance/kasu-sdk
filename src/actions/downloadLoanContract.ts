@@ -26,7 +26,7 @@ const downloadLoanContract = async (contract: string) => {
 
   const pdfBlob = await page.pdf()
 
-  return pdfBlob
+  return new Uint8Array(pdfBlob).buffer
 }
 
 export default downloadLoanContract

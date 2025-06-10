@@ -38,65 +38,65 @@ const useViewLoanContract = () => {
         isClosable: false,
       })
 
-      let signature: string | undefined
-
-      await signMessage(
+      signMessage(
         {
           message: `Requesting contract content for ${account.address.toLowerCase()}/${id} at ${now}.`,
         },
+
         {
-          onSuccess: (data) => {
-            signature = data
+          onError: (error) => {
+            throw new Error(error.message)
+          },
+          onSuccess: async (signature) => {
+            if (!account.address) {
+              return console.error('View Loan contract:: Account is undefiend')
+            }
+
+            setToast({
+              type: 'info',
+              title: 'Downloading Loan Contract...',
+              message: 'Your Loan Contract is being downloaded.',
+              isClosable: false,
+            })
+
+            const data = await getLoanContracts(
+              {
+                address: account.address.toLowerCase(),
+                signature,
+                timestamp: now,
+                id,
+              },
+              chainId
+            )
+
+            if ('error' in data) {
+              throw new Error(data.message)
+            }
+
+            const pdfBlob = await downloadLoanContract(
+              data.contractMessage
+                .replaceAll('\\n', '<br/>')
+                .replaceAll('\\t', '&emsp;')
+            )
+
+            const blob = new Blob([pdfBlob], {
+              type: 'application/octet-stream',
+            })
+
+            const fileURL = URL.createObjectURL(blob)
+
+            const downloadLink = document.createElement('a')
+            downloadLink.href = fileURL
+            downloadLink.download = `loan-contract-${data.timestamp}.pdf`
+            document.body.appendChild(downloadLink)
+            downloadLink.click()
+
+            URL.revokeObjectURL(fileURL)
+
+            removeToast()
           },
         }
       )
-
-      if (!signature) {
-        throw new Error('ViewLoanContract:: Failed to get signature')
-      }
-
-      setToast({
-        type: 'info',
-        title: 'Downloading Loan Contract...',
-        message: 'Your Loan Contract is being downloaded.',
-        isClosable: false,
-      })
-
-      const data = await getLoanContracts(
-        {
-          address: account.address.toLowerCase(),
-          signature,
-          timestamp: now,
-          id,
-        },
-        chainId
-      )
-
-      if ('error' in data) {
-        throw new Error(data.message)
-      }
-
-      const pdfBlob = await downloadLoanContract(
-        data.contractMessage
-          .replaceAll('\\n', '<br/>')
-          .replaceAll('\\t', '&emsp;')
-      )
-
-      const blob = new Blob([pdfBlob], {
-        type: 'application/octet-stream',
-      })
-
-      const fileURL = URL.createObjectURL(blob)
-
-      const downloadLink = document.createElement('a')
-      downloadLink.href = fileURL
-      downloadLink.download = `loan-contract-${data.timestamp}.pdf`
-      document.body.appendChild(downloadLink)
-      downloadLink.click()
-
-      URL.revokeObjectURL(fileURL)
-
-      removeToast()
     } catch (error) {
       if (userRejectedTransaction(error)) {
         handleError(

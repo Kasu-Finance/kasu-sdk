@@ -76,7 +76,6 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <ThemeRegistry>
           <PrivyProvider>
             <SwrProvider unusedPools={filteredPools}>
-              {/* <Web3Provider> */}
               <ToastState>
                 <KycState>
                   <ModalState>
@@ -88,7 +87,6 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                   </ModalState>
                 </KycState>
               </ToastState>
-              {/* </Web3Provider> */}
             </SwrProvider>
           </PrivyProvider>
         </ThemeRegistry>
