@@ -90,6 +90,7 @@ const nextConfig = {
       'https://auth.privy.io/api/',
       'https://identity-api.compilot.ai/',
       'https://api.compilot.ai/identity/',
+      'https://a.markfi.xyz/',
     ].filter(Boolean)
 
     return [
@@ -130,7 +131,7 @@ const nextConfig = {
               connect-src 'self' ${trustedDomains.join(' ')};
               worker-src 'self';
               manifest-src 'self';
-              script-src-elem 'self' 'unsafe-inline' https://app.pluno.ai/;
+              script-src-elem 'self' 'unsafe-inline' https://app.pluno.ai/ https://cdn.markfi.xyz/;
             `
               .replace(/\s{2,}/g, ' ')
               .trim(),
