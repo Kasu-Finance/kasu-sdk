@@ -22,7 +22,6 @@ import DialogHeader from '@/components/molecules/DialogHeader'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import checkUserKycState from '@/actions/checkUserKycState'
 import { ActionStatus } from '@/constants'
 import { capitalize } from '@/utils'
 
@@ -72,7 +71,15 @@ const MissingEmailModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
           const address = account[0].address
 
-          const kyc = await checkUserKycState(address)
+          const kycRes = await fetch(
+            `/api/kyc?${new URLSearchParams({
+              userAddress: address.toLowerCase(),
+            })}`
+          )
+
+          if (kycRes.status !== 200) return
+
+          const kyc = await kycRes.json()
 
           handleClose()
           removeToast()

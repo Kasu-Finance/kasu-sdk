@@ -1,6 +1,6 @@
 import { Config } from '@compilot/react-sdk'
 
-import { CustomerStatus } from '@/actions/checkUserKycState'
+import { CustomerStatus } from '@/app/api/kyc/route'
 
 export type IdentityClientData = {
   accessToken: string
@@ -53,5 +53,5 @@ export type KycFunctions = {
 
 export type KycTypes = KycStateType &
   KycFunctions & {
-    checkUserKyc: (account: string) => Promise<void>
+    checkUserKyc: (account: string, signal?: AbortSignal) => Promise<void>
   }

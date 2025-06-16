@@ -1,6 +1,5 @@
-'use server'
-
 import { getCustomerStatus } from '@compilot/react-sdk'
+import { NextRequest } from 'next/server'
 
 import NEXERA_API_BASE_URL, {
   NEXERA_PROJECT_ID,
@@ -40,11 +39,20 @@ type KycRes =
       ]
     }
 
-const checkUserKycState = async (
-  userAddress: string
-): Promise<
-  { type: 'Company' | 'Individual'; status: CustomerStatus } | undefined
-> => {
+export type CheckKycRes = {
+  type: 'Company' | 'Individual'
+  status: CustomerStatus
+}
+
+export async function GET(req: NextRequest) {
+  const queryParams = req.nextUrl.searchParams
+
+  const userAddress = queryParams.get('userAddress')
+
+  if (!userAddress) {
+    return Response.json({ message: 'Missing Parameters' }, { status: 400 })
+  }
+
   const projectId = process.env.NEXERA_PROJECT_ID || NEXERA_PROJECT_ID
 
   try {
@@ -60,7 +68,7 @@ const checkUserKycState = async (
     const data: KybRes = await kybRes.json()
 
     if ('status' in data && Boolean(data.status)) {
-      return { type: 'Company', status: data.status }
+      return Response.json({ type: 'Company', status: data.status })
     }
 
     try {
@@ -77,23 +85,21 @@ const checkUserKycState = async (
 
       if (!('status' in data)) {
         if (data.message !== 'Customer not found.') {
-          throw new Error(data.message, { cause: data })
+          return Response.json(data.message, { status: 404 })
         }
 
-        return undefined
+        return Response.json(data.message, { status: 400 })
       }
 
       if (data.status === 'Active' && !data.customerEmails[0]?.email) {
-        return { type: 'Individual', status: 'No Email' }
+        return Response.json({ type: 'Individual', status: 'No Email' })
       }
 
-      return { type: 'Individual', status: data.status }
+      return Response.json({ type: 'Individual', status: data.status })
     } catch (error) {
-      console.error(error)
+      return Response.json({ error }, { status: 500 })
     }
   } catch (error) {
-    console.error(error)
+    return Response.json({ error }, { status: 500 })
   }
 }
-
-export default checkUserKycState

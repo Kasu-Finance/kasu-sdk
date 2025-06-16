@@ -1,14 +1,16 @@
 'use client'
 
 import { Box, Button, ButtonProps, Chip, Typography } from '@mui/material'
-import { useLogin, usePrivy } from '@privy-io/react-auth'
-import { forwardRef } from 'react'
+import { useLogin, usePrivy, useWallets } from '@privy-io/react-auth'
+import { useSetActiveWallet } from '@privy-io/wagmi'
+import { forwardRef, useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import useKycState from '@/hooks/context/useKycState'
 import useModalState from '@/hooks/context/useModalState'
 import useToastState from '@/hooks/context/useToastState'
 import getTranslation from '@/hooks/useTranslation'
+import useLastActiveWallet from '@/hooks/web3/useLastActiveWallet'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
@@ -23,7 +25,9 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
     const { t } = getTranslation()
 
-    const account = useAccount()
+    const { address } = useAccount()
+
+    const { wallets, ready: walletsReady } = useWallets()
 
     const { openModal } = useModalState()
 
@@ -31,10 +35,20 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const { setToast, removeToast } = useToastState()
 
+    const [connected, setConnected] = useState(false)
+
     const handleOpen = () => openModal({ name: ModalsKeys.LINK_WALLETS })
 
+    const { ready } = usePrivy()
+
+    const { isAuthenticated } = usePrivyAuthenticated()
+
+    const { getLastActiveWallet, setLastActiveWallet } = useLastActiveWallet()
+
+    const { setActiveWallet } = useSetActiveWallet()
+
     const { login } = useLogin({
-      onComplete: async ({ user }) => {
+      onComplete: async () => {
         setToast({
           type: 'info',
           title: 'Account connected',
@@ -42,9 +56,7 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
           isClosable: false,
         })
 
-        if (user.wallet?.address) {
-          await checkUserKyc(user.wallet.address)
-        }
+        setConnected(true)
       },
       onError: (error) => {
         removeToast()
@@ -52,9 +64,43 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
       },
     })
 
-    const { ready } = usePrivy()
+    useEffect(() => {
+      if (!connected || !wallets.length || !address || getLastActiveWallet())
+        return
 
-    const { isAuthenticated } = usePrivyAuthenticated()
+      const wallet = wallets.find(
+        (wallet) => wallet.address.toLowerCase() === address?.toLowerCase()
+      )
+
+      if (wallet) {
+        setLastActiveWallet(wallet)
+      }
+    }, [wallets, address, connected, getLastActiveWallet, setLastActiveWallet])
+
+    useEffect(() => {
+      const lastActiveWallet = getLastActiveWallet()
+
+      if (!connected || !wallets.length || !address || !lastActiveWallet) return
+
+      const abortController = new AbortController()
+
+      setActiveWallet(lastActiveWallet)
+
+      checkUserKyc(lastActiveWallet.address, abortController.signal)
+
+      return () => {
+        abortController.abort('new wallets detected')
+      }
+    }, [
+      connected,
+      wallets,
+      walletsReady,
+      address,
+      getLastActiveWallet,
+      checkUserKyc,
+      setActiveWallet,
+      setLastActiveWallet,
+    ])
 
     if (!isAuthenticated) {
       return (
@@ -98,7 +144,7 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
       >
         <ConnectWalletIcon key='connected' />
         <Typography variant='baseSm' color='gold.dark' mx={1.5} mt={0.5}>
-          {formatAccount(account.address)}
+          {formatAccount(address)}
         </Typography>
 
         <Chip

@@ -10,6 +10,7 @@ import React from 'react'
 import { useAccount } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
+import useLastActiveWallet from '@/hooks/web3/useLastActiveWallet'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
@@ -33,6 +34,8 @@ const LinkWalletsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { setActiveWallet } = useSetActiveWallet()
 
+  const { setLastActiveWallet } = useLastActiveWallet()
+
   const { openModal } = useModalState()
 
   const { logout } = useLogout()
@@ -49,6 +52,7 @@ const LinkWalletsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   }
 
   const changeActiveWallet = async (wallet: ConnectedWallet) => {
+    setLastActiveWallet(wallet)
     await setActiveWallet(wallet)
   }
 
