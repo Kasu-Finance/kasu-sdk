@@ -30,10 +30,10 @@ const ReferralDetectedModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { login } = useLogin()
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     if (!address) return
 
-    verifyReferral(address, referralCode)
+    await verifyReferral(address, referralCode, handleClose)
   }
 
   return (

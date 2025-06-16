@@ -15,7 +15,8 @@ export type UserReferralYieldRes =
         epochId: string
         refferralYield: string
       }[]
-      totalUserReferralsCount: number
+      totalUserRefferalsCount: number
+      totalUsersWithDeposits: number
     }
   | {
       error: string

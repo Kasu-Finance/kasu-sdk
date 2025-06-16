@@ -29,7 +29,7 @@ const useUserReferrals = () => {
         .reverse()
 
       return {
-        referredUsers: data.totalUserReferralsCount,
+        referredUsers: data.totalUserRefferalsCount,
         referralYields: latestItem.length ? latestItem[0].refferralYield : '0',
       }
     }

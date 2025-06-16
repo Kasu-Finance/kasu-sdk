@@ -14,8 +14,19 @@ const useVerifyReferral = () => {
 
   const { setToast, removeToast } = useToastState()
 
-  return async (userAddress: string, referralCode: string) => {
+  return async (
+    userAddress: string,
+    referralCode: string,
+    callback: () => void
+  ) => {
     try {
+      setToast({
+        type: 'info',
+        title: 'Verifying Referral...',
+        message: 'Retrieving referral code information. Please wait.',
+        isClosable: false,
+      })
+
       const res = await fetch(
         `/api/referral?${new URLSearchParams({
           chainId: chainId.toString(),
@@ -27,6 +38,25 @@ const useVerifyReferral = () => {
       const data = await res.json()
 
       if ('error' in data) {
+        if (data.error === 'Reference already exists') {
+          setToast({
+            type: 'error',
+            title: 'Unable to use referral code',
+            message: 'You already have a referral code linked to your account.',
+          })
+          callback()
+          return
+        }
+
+        if (data.error === 'You cannot refer yourself') {
+          setToast({
+            type: 'error',
+            title: 'Unable to use referral code',
+            message: 'You cannot refer yourself.',
+          })
+          callback()
+          return
+        }
         throw new Error(data.message)
       }
 
@@ -52,9 +82,7 @@ const useVerifyReferral = () => {
               })}`,
               {
                 method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                   owner: referralCode.toLowerCase(),
                   signature,
@@ -73,6 +101,7 @@ const useVerifyReferral = () => {
                   message:
                     'Only new users who have not deposited are eligible for the referral program.',
                 })
+                callback()
                 return
               }
 
@@ -85,6 +114,7 @@ const useVerifyReferral = () => {
                 title: 'Referral Code Applied',
                 message: `Your referral code from ${referralCode.toLowerCase()} has been applied succesfully.`,
               })
+              callback()
               return
             }
 
