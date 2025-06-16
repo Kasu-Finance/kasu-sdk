@@ -69,6 +69,7 @@ export enum ModalsKeys {
   LINK_WALLETS = 'linkWalletsModal',
   REFERRAL = 'referralModal',
   NFT_DETECTED = 'nftDetectedModal',
+  REFERRAL_DETECTED = 'referralDetectedModal',
   VIEW_WALLET = 'viewWalletModal',
 }
 
@@ -90,6 +91,7 @@ export type Modals = {
   [ModalsKeys.VIEW_WALLET]: ModalData
   [ModalsKeys.NFT_DETECTED]: ModalData
   [ModalsKeys.REFERRAL]: ModalData
+  [ModalsKeys.REFERRAL_DETECTED]: ModalData<{ referralCode: `0x${string}` }>
   [ModalsKeys.VIEW_LOAN_CONTRACTS]: ModalData<{
     depositDetails: PortfolioTrancheDepositDetails[]
   }>

@@ -11,8 +11,6 @@ import KycContext from '@/context/kyc/kyc.context'
 import kycReducer from '@/context/kyc/kyc.reducer'
 import { KycStateType } from '@/context/kyc/kyc.types'
 
-import checkUserKycState from '@/actions/checkUserKycState'
-
 import useKycActions from './kyc.actions'
 
 type KycStateProps = {
@@ -45,7 +43,7 @@ const KycState: React.FC<KycStateProps> = ({ children }) => {
   } = kycActions
 
   const checkUserKyc = useCallback(
-    async (account: string) => {
+    async (account: string, signal?: AbortSignal) => {
       try {
         if (!account) return
 
@@ -54,7 +52,16 @@ const KycState: React.FC<KycStateProps> = ({ children }) => {
 
         setLastVerifiedAccount(account)
 
-        const kyc = await checkUserKycState(account)
+        const kycRes = await fetch(
+          `/api/kyc?${new URLSearchParams({
+            userAddress: account.toLowerCase(),
+          })}`,
+          { signal }
+        )
+
+        if (kycRes.status !== 200) return
+
+        const kyc = await kycRes.json()
 
         if (!kyc) return
 
@@ -67,7 +74,9 @@ const KycState: React.FC<KycStateProps> = ({ children }) => {
           setKycCompleted(false)
         }
       } catch (error) {
-        console.error(error)
+        if (error !== 'new wallets detected') {
+          console.error(error)
+        }
       } finally {
         setIsVerifying(false)
         removeToast()

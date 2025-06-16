@@ -62,7 +62,7 @@ const useGenerateContract = () => {
           isClosable: false,
         })
 
-        await signMessage(
+        signMessage(
           {
             message: `I request contract content for ${account.address.toLowerCase()} at ${now}.`,
           },

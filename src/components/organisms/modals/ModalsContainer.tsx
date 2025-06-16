@@ -22,6 +22,7 @@ import NftDetectedModal from '@/components/organisms/modals/NftDetectedModal'
 import OptInModal from '@/components/organisms/modals/OptInModal'
 import OptOutModal from '@/components/organisms/modals/OptOutModal'
 import PendingDecisionModal from '@/components/organisms/modals/PendingDecisionsModal'
+import ReferralDetectedModal from '@/components/organisms/modals/ReferralDetectedModal'
 import ReferralModal from '@/components/organisms/modals/ReferralModal'
 import RequestDetailsModal from '@/components/organisms/modals/RequestDetailsModal'
 import UnlockModalWrapper from '@/components/organisms/modals/UnlockModal/UnlockModalWrapper'
@@ -185,6 +186,10 @@ export const getModal = (
     case ModalsKeys.REFERRAL:
       return {
         component: <ReferralModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.REFERRAL_DETECTED:
+      return {
+        component: <ReferralDetectedModal handleClose={handleClose} />,
       }
   }
 }

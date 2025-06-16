@@ -64,18 +64,78 @@ const useFundingConsent = () => {
         status: decision,
       }
 
-      let signature: string | undefined
-
       const signatureTimestamp = dayjs().unix() * 1000
 
       try {
-        await signMessage(
+        signMessage(
           {
             message: `I would like to record the following opt-in/out requests: ${JSON.stringify([payload])}, ${signatureTimestamp}`,
           },
           {
-            onSuccess: (data) => {
-              signature = data
+            onError: (error) => {
+              throw new Error(error.message)
+            },
+            onSuccess: async (signature) => {
+              if (!account.address) {
+                return console.error('Funding Consent:: Account is undefiend')
+              }
+
+              setToast({
+                type: 'info',
+                title: capitalize(ActionStatus.PROCESSING),
+                message:
+                  ACTION_MESSAGES[ActionType.FUNDING_CONSENT][
+                    ActionStatus.PROCESSING
+                  ],
+                isClosable: false,
+              })
+
+              const res = await fetch(
+                '/api/loan-tickets?' +
+                  new URLSearchParams({
+                    chainId: chainId.toString(),
+                  }),
+                {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    userID: account.address.toLowerCase(),
+                    payload,
+                    signature,
+                    signatureTimestamp,
+                  }),
+                }
+              )
+
+              const data: FundingConsentReturn = await res.json()
+
+              if ('statusCode' in data) {
+                throw new Error(data.message)
+              }
+              const loanTickets = await updateLoanTickets(
+                (prevData) => [...(prevData || []), ...data],
+                {
+                  revalidate: false,
+                }
+              )
+
+              if (loanTickets) {
+                callback(loanTickets)
+              }
+
+              if (decision === LoanTicketStatus.optedIn) {
+                openModal({ name: ModalsKeys.OPT_IN })
+              } else {
+                openModal({
+                  name: ModalsKeys.OPT_OUT,
+                  subsequentTransaction,
+                  poolName,
+                })
+              }
+
+              removeToast()
             },
           }
         )
@@ -88,65 +148,6 @@ const useFundingConsent = () => {
         )
         return
       }
-
-      if (!signature) {
-        throw new Error('FundingConsent:: Failed to get signature')
-      }
-
-      setToast({
-        type: 'info',
-        title: capitalize(ActionStatus.PROCESSING),
-        message:
-          ACTION_MESSAGES[ActionType.FUNDING_CONSENT][ActionStatus.PROCESSING],
-        isClosable: false,
-      })
-
-      const res = await fetch(
-        '/api/loan-tickets?' +
-          new URLSearchParams({
-            chainId: chainId.toString(),
-          }),
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            userID: account.address.toLowerCase(),
-            payload,
-            signature,
-            signatureTimestamp,
-          }),
-        }
-      )
-
-      const data: FundingConsentReturn = await res.json()
-
-      if ('statusCode' in data) {
-        throw new Error(data.message)
-      }
-      const loanTickets = await updateLoanTickets(
-        (prevData) => [...(prevData || []), ...data],
-        {
-          revalidate: false,
-        }
-      )
-
-      if (loanTickets) {
-        callback(loanTickets)
-      }
-
-      if (decision === LoanTicketStatus.optedIn) {
-        openModal({ name: ModalsKeys.OPT_IN })
-      } else {
-        openModal({
-          name: ModalsKeys.OPT_OUT,
-          subsequentTransaction,
-          poolName,
-        })
-      }
-
-      removeToast()
     } catch (error) {
       handleError(error)
     }
