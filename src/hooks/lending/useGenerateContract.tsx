@@ -97,6 +97,8 @@ const useGenerateContract = () => {
 
               const data: FundingConsentGenerateContractRes = await res.json()
 
+              console.log('Data from request contract content... : ', { data })
+
               if ('error' in data) {
                 throw new Error(data.message)
               }

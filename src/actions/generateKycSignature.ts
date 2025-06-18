@@ -51,6 +51,8 @@ const generateKycSignature = async (params: {
 
   const data: ApiRes = await response.json()
 
+  console.log('generateKycSignature ', data)
+
   if ('payload' in data) {
     return {
       blockExpiration: data.blockExpiration,
