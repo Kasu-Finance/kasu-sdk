@@ -114,9 +114,12 @@ const ReferralModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                     />
                   ) : (
                     <Typography variant='baseMdBold' color='gray.extraDark'>
-                      {formatAmount(userReferrals?.referralYields || '0', {
-                        minDecimals: 2,
-                      })}{' '}
+                      {formatAmount(
+                        userReferrals?.referralYieldLifetime || '0',
+                        {
+                          minDecimals: 2,
+                        }
+                      )}{' '}
                       USD
                     </Typography>
                   )
