@@ -13,8 +13,10 @@ export type UserReferralYieldRes =
         refferantAddress: string
         reffereeAddress: string
         epochId: string
-        refferralYield: string
+        refferalYield: string
       }[]
+      latestEpochReferralYield: string
+      lifetimeRefferalYield: string
       totalUserRefferalsCount: number
       totalUsersWithDeposits: number
     }

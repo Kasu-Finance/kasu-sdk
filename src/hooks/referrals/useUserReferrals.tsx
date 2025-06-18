@@ -1,3 +1,4 @@
+import { formatUnits } from 'ethers/lib/utils'
 import useSWR from 'swr'
 import { useAccount, useChainId } from 'wagmi'
 
@@ -24,13 +25,10 @@ const useUserReferrals = () => {
         throw new Error(data.message)
       }
 
-      const latestItem = data.items
-        .sort((a, b) => parseFloat(b.epochId) - parseFloat(a.epochId))
-        .reverse()
-
       return {
         referredUsers: data.totalUserRefferalsCount,
-        referralYields: latestItem.length ? latestItem[0].refferralYield : '0',
+        referralYieldLastEpoch: formatUnits(data.latestEpochReferralYield, 6),
+        referralYieldLifetime: formatUnits(data.lifetimeRefferalYield, 6),
       }
     }
   )

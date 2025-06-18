@@ -8,6 +8,7 @@ import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCar
 import BonusAndRewardTable from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/BonusAndRewardTable'
 import CsvDownloadButton from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/CsvDownloadButton'
 import NftPortfolio from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/NftPortfolio'
+import ReferralBonus from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/ReferralBonus'
 
 const BonusAndRewardPortfolio = () => {
   const { t } = getTranslation()
@@ -49,7 +50,7 @@ const BonusAndRewardPortfolio = () => {
             </Typography>
             <NftPortfolio />
           </Box>
-          {/* <Box>
+          <Box>
             <Typography
               variant='h4'
               color='rgba(205, 163, 112, 1)'
@@ -59,7 +60,7 @@ const BonusAndRewardPortfolio = () => {
               {t('portfolio.rewards.subheader-3.title')}
             </Typography>
             <ReferralBonus />
-          </Box> */}
+          </Box>
         </Stack>
       </CustomInnerCardContent>
     </CustomCard>
