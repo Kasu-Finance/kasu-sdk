@@ -71,8 +71,8 @@ const nextConfig = {
       'https://kasu-dev.directus.app/',
       'https://kasu-finance.directus.app/',
       'https://*.coinbase.com/',
-      'https://google.com/',
-      'https://apple.com/',
+      'https://*.google.com/',
+      'https://*.apple.com/',
       'https://*.ipfs.io/',
       '*.googletagmanager.com/',
       '*.google-analytics.com/',
@@ -91,6 +91,8 @@ const nextConfig = {
       'https://identity-api.compilot.ai/',
       'https://api.compilot.ai/identity/',
       'https://a.markfi.xyz/',
+      'https://api.relay.link/',
+      'https://api.testnets.relay.link/',
     ].filter(Boolean)
 
     return [

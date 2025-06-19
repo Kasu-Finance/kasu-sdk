@@ -1,4 +1,12 @@
-import { Box, Button, List, ListItem, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  List,
+  ListItem,
+  Stack,
+  Tooltip,
+  Typography,
+} from '@mui/material'
 import {
   ConnectedWallet,
   useLogout,
@@ -6,7 +14,7 @@ import {
   useWallets,
 } from '@privy-io/react-auth'
 import { useSetActiveWallet } from '@privy-io/wagmi'
-import React from 'react'
+import React, { useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
@@ -29,6 +37,8 @@ const LinkWalletsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { wallets } = useWallets()
 
   const account = useAccount()
+
+  const [open, setOpen] = useState('')
 
   const { linkWallet } = usePrivy()
 
@@ -54,6 +64,15 @@ const LinkWalletsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const changeActiveWallet = async (wallet: ConnectedWallet) => {
     setLastActiveWallet(wallet)
     await setActiveWallet(wallet)
+  }
+
+  const handleCopy = (address: string) => {
+    navigator.clipboard.writeText(address)
+    setOpen(address)
+
+    setTimeout(() => {
+      setOpen('')
+    }, 500)
   }
 
   return (
@@ -108,9 +127,31 @@ const LinkWalletsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                       <Typography variant='baseXs' color='rgba(133, 87, 38, 1)'>
                         {wallet.meta.name}
                       </Typography>
-                      <Typography variant='baseMd'>
-                        {formatAccount(wallet.address)}
-                      </Typography>
+                      <Tooltip
+                        title='Copied'
+                        arrow
+                        open={open === wallet.address}
+                        slotProps={{
+                          tooltip: {
+                            sx: {
+                              overflow: 'visible',
+                            },
+                          },
+                          arrow: {
+                            sx: {
+                              color: 'rgba(40, 40, 42, 0.9)',
+                            },
+                          },
+                        }}
+                      >
+                        <Typography
+                          variant='baseMd'
+                          onClick={() => handleCopy(wallet.address)}
+                          sx={{ cursor: 'pointer' }}
+                        >
+                          {formatAccount(wallet.address)}
+                        </Typography>
+                      </Tooltip>
                     </Stack>
                     {isActiveWallet ? (
                       <Box>
