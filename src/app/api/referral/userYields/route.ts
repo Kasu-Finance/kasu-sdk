@@ -9,11 +9,9 @@ import { isSupportedChain } from '@/utils'
 export type UserReferralYieldRes =
   | {
       items: {
-        poolAddress: string
-        refferantAddress: string
-        reffereeAddress: string
-        epochId: string
-        refferalYield: string
+        user: string
+        firstDeposit: string
+        yield: string
       }[]
       latestEpochReferralYield: string
       lifetimeRefferalYield: string

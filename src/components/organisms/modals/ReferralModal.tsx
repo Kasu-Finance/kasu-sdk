@@ -1,7 +1,10 @@
 import { Box, Button, Skeleton, Stack, Typography } from '@mui/material'
 import { useAccount } from 'wagmi'
 
-import useUserReferrals from '@/hooks/referrals/useUserReferrals'
+import useModalState from '@/hooks/context/useModalState'
+import useUserReferrals, {
+  ReferredUserDetails,
+} from '@/hooks/referrals/useUserReferrals'
 import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
@@ -9,6 +12,8 @@ import { DialogChildProps } from '@/components/atoms/DialogWrapper'
 import InfoRow from '@/components/atoms/InfoRow'
 import WaveBox from '@/components/atoms/WaveBox'
 import DialogHeader from '@/components/molecules/DialogHeader'
+
+import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { CopyIcon } from '@/assets/icons'
 
@@ -21,13 +26,19 @@ const ReferralModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { address } = useAccount()
 
-  const handleClick = (text: string) => {
+  const { openModal } = useModalState()
+
+  const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text)
   }
 
   const referralCode = address || ''
 
   const { userReferrals, isLoading } = useUserReferrals()
+
+  const handleClick = (referredUsers: ReferredUserDetails[]) => {
+    openModal({ name: ModalsKeys.REFERRED_USERS, referredUsers })
+  }
 
   return (
     <CustomCard>
@@ -61,7 +72,7 @@ const ReferralModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                 }}
                 endIcon={<CopyIcon />}
                 onClick={() =>
-                  handleClick(
+                  handleCopy(
                     `${window.location.origin}/referrals/${referralCode}`
                   )
                 }
@@ -94,7 +105,14 @@ const ReferralModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                       sx={{ bgcolor: customPalette.gold.extraDark }}
                     />
                   ) : (
-                    <Typography variant='baseMdBold' color='gray.extraDark'>
+                    <Typography
+                      variant='baseMdBold'
+                      color='gray.extraDark'
+                      sx={{ cursor: 'pointer' }}
+                      onClick={() =>
+                        handleClick(userReferrals?.referredUsersDetails ?? [])
+                      }
+                    >
                       {userReferrals?.referredUsers || '0'}
                     </Typography>
                   )

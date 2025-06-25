@@ -24,6 +24,7 @@ import OptOutModal from '@/components/organisms/modals/OptOutModal'
 import PendingDecisionModal from '@/components/organisms/modals/PendingDecisionsModal'
 import ReferralDetectedModal from '@/components/organisms/modals/ReferralDetectedModal'
 import ReferralModal from '@/components/organisms/modals/ReferralModal'
+import ReferredUsersModal from '@/components/organisms/modals/ReferredUsersModal'
 import RequestDetailsModal from '@/components/organisms/modals/RequestDetailsModal'
 import UnlockModalWrapper from '@/components/organisms/modals/UnlockModal/UnlockModalWrapper'
 import UnreleasedFeatureModal from '@/components/organisms/modals/UnreleasedFeatureModal'
@@ -186,6 +187,10 @@ export const getModal = (
     case ModalsKeys.REFERRAL:
       return {
         component: <ReferralModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.REFERRED_USERS:
+      return {
+        component: <ReferredUsersModal handleClose={handleClose} />,
       }
     case ModalsKeys.REFERRAL_DETECTED:
       return {

@@ -11,11 +11,16 @@ import {
 import { formatEther, parseEther } from 'ethers/lib/utils'
 import { useAccount } from 'wagmi'
 
-import useUserReferrals from '@/hooks/referrals/useUserReferrals'
+import useModalState from '@/hooks/context/useModalState'
+import useUserReferrals, {
+  ReferredUserDetails,
+} from '@/hooks/referrals/useUserReferrals'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
 import CustomTable from '@/components/molecules/CustomTable'
+
+import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { CopyIcon } from '@/assets/icons'
 
@@ -28,8 +33,14 @@ const ReferralBonus = () => {
 
   const { address } = useAccount()
 
+  const { openModal } = useModalState()
+
   const { userReferrals, isLoading } = useUserReferrals()
   const referralCode = address || ''
+
+  const handleClick = (referredUsers: ReferredUserDetails[]) => {
+    openModal({ name: ModalsKeys.REFERRED_USERS, referredUsers })
+  }
 
   const handleCopy = () =>
     navigator.clipboard.writeText(
@@ -57,7 +68,17 @@ const ReferralBonus = () => {
           !isLoading && userReferrals ? (
             <TableRow>
               <TableCell>Referral Bonus</TableCell>
-              <TableCell align='right'>{userReferrals.referredUsers}</TableCell>
+              <TableCell align='right'>
+                <Typography
+                  variant='inherit'
+                  onClick={() =>
+                    handleClick(userReferrals.referredUsersDetails ?? [])
+                  }
+                  sx={{ cursor: 'pointer' }}
+                >
+                  {userReferrals.referredUsers}
+                </Typography>
+              </TableCell>
               <TableCell align='right'>
                 <Typography variant='baseSm'>
                   {formatAmount(userReferrals.referralYieldLastEpoch || '0', {
