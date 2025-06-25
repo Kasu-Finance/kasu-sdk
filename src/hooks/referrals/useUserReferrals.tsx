@@ -35,8 +35,8 @@ const useUserReferrals = () => {
         referredUsers: data.totalUserRefferalsCount,
         referredUsersDetails: data.items.map((item) => ({
           user: item.user,
-          depositAmount: formatUnits(item.deposit, 6),
-          referralReward: formatUnits(item.deposit, 6),
+          depositAmount: formatUnits(item.firstDeposit, 6),
+          referralReward: formatUnits(item.yield, 6),
         })),
         referralYieldLastEpoch: formatUnits(data.latestEpochReferralYield, 6),
         referralYieldLifetime: formatUnits(data.lifetimeRefferalYield, 6),

@@ -10,7 +10,8 @@ export type UserReferralYieldRes =
   | {
       items: {
         user: string
-        deposit: string
+        firstDeposit: string
+        yield: string
       }[]
       latestEpochReferralYield: string
       lifetimeRefferalYield: string
