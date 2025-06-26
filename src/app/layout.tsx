@@ -16,16 +16,30 @@ import SwrProvider from '@/context/swr.provider'
 import ToastState from '@/context/toast/toast.provider'
 
 import sdkConfig from '@/config/sdk'
+import BannerImage from '@/images/banner.png'
 import ThemeRegistry from '@/themes/ThemeRegistry'
 
 type RootLayoutProps = {
   children: ReactNode
 }
 
+const metaImage = {
+  url: BannerImage.src,
+  width: BannerImage.width,
+  height: BannerImage.height,
+}
+
 export const metadata: Metadata = {
   title: 'Kasu',
-  description: 'Kasu',
+  description:
+    'Kasu. Redefining Real-World Yield. Earn the highest quality yields in RWA Private Credit.',
   manifest: '/manifest.json',
+  openGraph: {
+    images: metaImage,
+  },
+  twitter: {
+    images: metaImage,
+  },
 }
 
 // Since this is the root layout, all fetch requests in the app
