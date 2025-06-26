@@ -27,6 +27,7 @@ import DialogHeader from '@/components/molecules/DialogHeader'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
+import { CopyIcon } from '@/assets/icons'
 import BaseLogo from '@/assets/logo/BaseLogo'
 
 import { customPalette } from '@/themes/palette'
@@ -144,13 +145,23 @@ const LinkWalletsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                           },
                         }}
                       >
-                        <Typography
-                          variant='baseMd'
+                        <Box
+                          display='flex'
+                          alignItems='center'
+                          gap={0.5}
                           onClick={() => handleCopy(wallet.address)}
-                          sx={{ cursor: 'pointer' }}
+                          sx={{
+                            cursor: 'pointer',
+                            'svg path': {
+                              fill: customPalette.gold.extraDark,
+                            },
+                          }}
                         >
-                          {formatAccount(wallet.address)}
-                        </Typography>
+                          <Typography variant='baseMd'>
+                            {formatAccount(wallet.address)}
+                          </Typography>
+                          <CopyIcon />
+                        </Box>
                       </Tooltip>
                     </Stack>
                     {isActiveWallet ? (
