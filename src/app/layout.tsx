@@ -1,6 +1,7 @@
 import { Box } from '@mui/material'
 import { PoolOverviewDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import type { Metadata } from 'next'
+import Script from 'next/script'
 import { ReactNode } from 'react'
 
 import Chatbot from '@/components/atoms/Chatbot'
@@ -72,11 +73,11 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         href='/favicons/android-chrome-512x512.png'
       />
       <Chatbot />
+
       <body>
         <ThemeRegistry>
           <PrivyProvider>
             <SwrProvider unusedPools={filteredPools}>
-              {/* <Web3Provider> */}
               <ToastState>
                 <KycState>
                   <ModalState>
@@ -88,11 +89,18 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                   </ModalState>
                 </KycState>
               </ToastState>
-              {/* </Web3Provider> */}
             </SwrProvider>
           </PrivyProvider>
         </ThemeRegistry>
       </body>
+      <Script
+        src='https://cdn.markfi.xyz/scripts/analytics/0.11.24/cookie3.analytics.min.js'
+        integrity='sha384-ihnQ09PGDbDPthGB3QoQ2Heg2RwQIDyWkHkqxMzq91RPeP8OmydAZbQLgAakAOfI'
+        crossOrigin='anonymous'
+        async
+        strategy='lazyOnload'
+        site-id='9d57619d-d1f7-404f-9e5b-6ab88f39d5a0'
+      />
     </html>
   )
 }

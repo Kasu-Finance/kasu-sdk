@@ -1,5 +1,10 @@
-import { Box, Button, Stack, Typography } from '@mui/material'
+import { Box, Button, Skeleton, Stack, Typography } from '@mui/material'
+import { useAccount } from 'wagmi'
 
+import useModalState from '@/hooks/context/useModalState'
+import useUserReferrals, {
+  ReferredUserDetails,
+} from '@/hooks/referrals/useUserReferrals'
 import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
@@ -8,19 +13,32 @@ import InfoRow from '@/components/atoms/InfoRow'
 import WaveBox from '@/components/atoms/WaveBox'
 import DialogHeader from '@/components/molecules/DialogHeader'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
 import { CopyIcon } from '@/assets/icons'
 
+import { customPalette } from '@/themes/palette'
 import { customTypography } from '@/themes/typography'
 import { formatAmount } from '@/utils'
 
 const ReferralModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { t } = getTranslation()
 
-  const handleClick = (text: string) => {
+  const { address } = useAccount()
+
+  const { openModal } = useModalState()
+
+  const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text)
   }
 
-  const referralCode = 'abc123'
+  const referralCode = address || ''
+
+  const { userReferrals, isLoading } = useUserReferrals()
+
+  const handleClick = (referredUsers: ReferredUserDetails[]) => {
+    openModal({ name: ModalsKeys.REFERRED_USERS, referredUsers })
+  }
 
   return (
     <CustomCard>
@@ -42,6 +60,7 @@ const ReferralModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               display='flex'
               alignItems='center'
               justifyContent='center'
+              px={2}
             >
               <Button
                 variant='text'
@@ -49,13 +68,25 @@ const ReferralModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                   ...customTypography.baseLgBold,
                   color: 'white',
                   textTransform: 'unset',
+                  px: 2,
                 }}
                 endIcon={<CopyIcon />}
                 onClick={() =>
-                  handleClick(`${window.location.origin}/${referralCode}`)
+                  handleCopy(
+                    `${window.location.origin}/referrals/${referralCode}`
+                  )
                 }
               >
-                {window.location.host}/{referralCode}
+                <Typography
+                  variant='inherit'
+                  sx={{
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                  }}
+                >
+                  {window.location.host}/referrals/{referralCode}
+                </Typography>
               </Button>
             </Box>
           </Stack>
@@ -67,9 +98,17 @@ const ReferralModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               <InfoRow
                 title={t('modals.referral.sub-description')}
                 metric={
-                  <Typography variant='baseMdBold' color='gray.extraDark'>
-                    25
-                  </Typography>
+                  isLoading ? (
+                    <Skeleton
+                      width={100}
+                      height={30}
+                      sx={{ bgcolor: customPalette.gold.extraDark }}
+                    />
+                  ) : (
+                    <Typography variant='baseMdBold' color='gray.extraDark'>
+                      {userReferrals?.referredUsers || '0'}
+                    </Typography>
+                  )
                 }
                 dividerProps={{ color: 'white' }}
                 showDivider
@@ -78,12 +117,37 @@ const ReferralModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                 title={t('general.rewards')}
                 titleStyle={{ textTransform: 'capitalize' }}
                 metric={
-                  <Typography variant='baseMdBold' color='gray.extraDark'>
-                    {formatAmount(69.42, { minDecimals: 2 })} USD
-                  </Typography>
+                  isLoading ? (
+                    <Skeleton
+                      width={100}
+                      height={30}
+                      sx={{ bgcolor: customPalette.gold.extraDark }}
+                    />
+                  ) : (
+                    <Typography variant='baseMdBold' color='gray.extraDark'>
+                      {formatAmount(
+                        userReferrals?.referralYieldLifetime || '0',
+                        {
+                          minDecimals: 2,
+                        }
+                      )}{' '}
+                      USD
+                    </Typography>
+                  )
                 }
               />
             </Stack>
+            <Button
+              variant='contained'
+              color='secondary'
+              fullWidth
+              onClick={() =>
+                handleClick(userReferrals?.referredUsersDetails ?? [])
+              }
+              sx={{ textTransform: 'capitalize' }}
+            >
+              View Referrals
+            </Button>
           </Stack>
         </Stack>
       </WaveBox>

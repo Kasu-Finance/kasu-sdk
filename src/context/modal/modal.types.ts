@@ -16,6 +16,8 @@ import {
   UserTrancheBalance,
 } from '@solidant/kasu-sdk/src/services/UserLending/types'
 
+import { ReferredUserDetails } from '@/hooks/referrals/useUserReferrals'
+
 import { LoanStatus } from '@/components/organisms/lending/RepaymentsTab/LoanStatus/LoanStatusTableBody'
 import {
   ExemptLoanContract,
@@ -69,6 +71,9 @@ export enum ModalsKeys {
   LINK_WALLETS = 'linkWalletsModal',
   REFERRAL = 'referralModal',
   NFT_DETECTED = 'nftDetectedModal',
+  REFERRAL_DETECTED = 'referralDetectedModal',
+  REFERRED_USERS = 'referredUsersModal',
+  VIEW_WALLET = 'viewWalletModal',
 }
 
 export type ModalAction =
@@ -86,8 +91,13 @@ export type Modals = {
   [ModalsKeys.UNRELEASED_FEATURE]: ModalData
   [ModalsKeys.WIP_REDIRECT]: ModalData
   [ModalsKeys.LINK_WALLETS]: ModalData
+  [ModalsKeys.VIEW_WALLET]: ModalData
   [ModalsKeys.NFT_DETECTED]: ModalData
   [ModalsKeys.REFERRAL]: ModalData
+  [ModalsKeys.REFERRED_USERS]: ModalData<{
+    referredUsers: ReferredUserDetails[]
+  }>
+  [ModalsKeys.REFERRAL_DETECTED]: ModalData<{ referralCode: `0x${string}` }>
   [ModalsKeys.VIEW_LOAN_CONTRACTS]: ModalData<{
     depositDetails: PortfolioTrancheDepositDetails[]
   }>

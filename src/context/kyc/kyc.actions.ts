@@ -12,7 +12,7 @@ import useToastState from '@/hooks/context/useToastState'
 
 import { KycActions, KycFunctions } from '@/context/kyc/kyc.types'
 
-import { CustomerStatus } from '@/actions/checkUserKycState'
+import { CustomerStatus } from '@/app/api/kyc/route'
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { capitalize } from '@/utils'
 

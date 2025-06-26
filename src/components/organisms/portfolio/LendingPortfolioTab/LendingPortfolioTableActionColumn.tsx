@@ -226,36 +226,32 @@ const LendingPortfolioTableActionColumn: React.FC<
               {t('portfolio.lendingPortfolio.actions.action-3')}
             </MenuItem>
           ) : null}
-          {!isVariable ? (
-            <>
-              {tranche.fixedLoans.length ? (
-                <MenuItem
-                  onClick={() =>
-                    handleMenuItemClick({
-                      name: ModalsKeys.FIXED_LOAN,
-                      fixedLoans: tranche.fixedLoans,
-                    })
-                  }
-                >
-                  <PaperIcon />
-                  {t('portfolio.lendingPortfolio.actions.action-4')}
-                </MenuItem>
-              ) : null}
-              {autoConvertedLoans.length ? (
-                <MenuItem
-                  onClick={() =>
-                    handleMenuItemClick({
-                      name: ModalsKeys.AUTO_CONVERSION_TO_VARIABLE,
-                      epochNumber: pool.requestEpochsInAdvance,
-                      fixedLoans: autoConvertedLoans,
-                    })
-                  }
-                >
-                  <FixRateIcon />
-                  {t('portfolio.lendingPortfolio.actions.action-5')}
-                </MenuItem>
-              ) : null}
-            </>
+          {!isVariable && tranche.fixedLoans.length ? (
+            <MenuItem
+              onClick={() =>
+                handleMenuItemClick({
+                  name: ModalsKeys.FIXED_LOAN,
+                  fixedLoans: tranche.fixedLoans,
+                })
+              }
+            >
+              <PaperIcon />
+              {t('portfolio.lendingPortfolio.actions.action-4')}
+            </MenuItem>
+          ) : null}
+          {!isVariable && autoConvertedLoans.length ? (
+            <MenuItem
+              onClick={() =>
+                handleMenuItemClick({
+                  name: ModalsKeys.AUTO_CONVERSION_TO_VARIABLE,
+                  epochNumber: pool.requestEpochsInAdvance,
+                  fixedLoans: autoConvertedLoans,
+                })
+              }
+            >
+              <FixRateIcon />
+              {t('portfolio.lendingPortfolio.actions.action-5')}
+            </MenuItem>
           ) : null}
           <MenuItem
             onClick={() =>

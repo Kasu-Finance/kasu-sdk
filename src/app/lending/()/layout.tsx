@@ -1,6 +1,7 @@
 import { Container } from '@mui/material'
 import { ReactNode, Suspense } from 'react'
 
+import ReferralDetector from '@/components/atoms/ReferralDetector'
 import Home from '@/components/molecules/home'
 import HomeOverviewSkeleton from '@/components/molecules/loaders/home/HomeOverviewSkeleton'
 import HomeTabs from '@/components/organisms/home/HomeTabs'
@@ -22,6 +23,7 @@ export default async function LendingLayout({ children }: LendingLayoutProps) {
           <Home />
         </Suspense>
         <PromoBanner />
+        <ReferralDetector />
         <HomeTabs />
         {children}
       </Container>

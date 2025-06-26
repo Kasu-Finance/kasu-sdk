@@ -22,11 +22,14 @@ import NftDetectedModal from '@/components/organisms/modals/NftDetectedModal'
 import OptInModal from '@/components/organisms/modals/OptInModal'
 import OptOutModal from '@/components/organisms/modals/OptOutModal'
 import PendingDecisionModal from '@/components/organisms/modals/PendingDecisionsModal'
+import ReferralDetectedModal from '@/components/organisms/modals/ReferralDetectedModal'
 import ReferralModal from '@/components/organisms/modals/ReferralModal'
+import ReferredUsersModal from '@/components/organisms/modals/ReferredUsersModal'
 import RequestDetailsModal from '@/components/organisms/modals/RequestDetailsModal'
 import UnlockModalWrapper from '@/components/organisms/modals/UnlockModal/UnlockModalWrapper'
 import UnreleasedFeatureModal from '@/components/organisms/modals/UnreleasedFeatureModal'
 import ViewLoanContractModal from '@/components/organisms/modals/ViewLoanContractModal'
+import ViewWalletModal from '@/components/organisms/modals/ViewWalletModal'
 import WipRedirectModal from '@/components/organisms/modals/WipRedirectModal'
 import WIthdrawFundsAtExpiryModalWrapper from '@/components/organisms/modals/WithdrawFundsAtExpiryModal/WithdrawFundsAtExpiryModalWrapper'
 import WithdrawModalWrapper from '@/components/organisms/modals/WithdrawModal/WithdrawModalWrapper'
@@ -54,6 +57,10 @@ export const getModal = (
     case ModalsKeys.LINK_WALLETS:
       return {
         component: <LinkWalletsModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.VIEW_WALLET:
+      return {
+        component: <ViewWalletModal handleClose={handleClose} />,
       }
     case ModalsKeys.LOYALTY_LEVELS:
       return {
@@ -180,6 +187,14 @@ export const getModal = (
     case ModalsKeys.REFERRAL:
       return {
         component: <ReferralModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.REFERRED_USERS:
+      return {
+        component: <ReferredUsersModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.REFERRAL_DETECTED:
+      return {
+        component: <ReferralDetectedModal handleClose={handleClose} />,
       }
   }
 }

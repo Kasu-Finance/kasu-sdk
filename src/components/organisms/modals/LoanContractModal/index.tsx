@@ -77,7 +77,7 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         isClosable: false,
       })
 
-      await signMessage(
+      signMessage(
         {
           message: generatedContract.contractMessage,
         },
