@@ -27,6 +27,7 @@ export const metadata: Metadata = {
   description:
     'Kasu. Redefining Real-World Yield. Earn the highest quality yields in RWA Private Credit.',
   manifest: '/manifest.json',
+  metadataBase: new URL('https://app.kasu.finance'),
 }
 
 // Since this is the root layout, all fetch requests in the app
