@@ -22,7 +22,7 @@ import CustomTable from '@/components/molecules/CustomTable'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import { CopyIcon } from '@/assets/icons'
+import { CopyIcon, PaperIcon } from '@/assets/icons'
 
 import { customPalette } from '@/themes/palette'
 import { customTypography } from '@/themes/typography'
@@ -53,14 +53,17 @@ const ReferralBonus = () => {
         tableHeader={
           <TableRow>
             <TableCell width='25%'>Bonus</TableCell>
-            <TableCell width='25%' align='right'>
+            <TableCell width='20%' align='right'>
               Successful Referrals
             </TableCell>
-            <TableCell width='25%' align='right'>
+            <TableCell width='20%' align='right'>
               Referral Bonus - Last Epoch
             </TableCell>
-            <TableCell width='25%' align='right'>
+            <TableCell width='20%' align='right'>
               Referral Bonus - Lifetime
+            </TableCell>
+            <TableCell width='15%' align='right'>
+              Action
             </TableCell>
           </TableRow>
         }
@@ -69,13 +72,7 @@ const ReferralBonus = () => {
             <TableRow>
               <TableCell>Referral Bonus</TableCell>
               <TableCell align='right'>
-                <Typography
-                  variant='inherit'
-                  onClick={() =>
-                    handleClick(userReferrals.referredUsersDetails ?? [])
-                  }
-                  sx={{ cursor: 'pointer' }}
-                >
+                <Typography variant='inherit'>
                   {userReferrals.referredUsers}
                 </Typography>
               </TableCell>
@@ -129,11 +126,39 @@ const ReferralBonus = () => {
                   </Typography>
                 </Typography>
               </TableCell>
+              <TableCell align='right'>
+                <Button
+                  variant='text'
+                  sx={{
+                    ...customTypography.baseSm,
+                    color: 'gold.dark',
+                    textTransform: 'capitalize',
+                    height: 21,
+                    '.MuiButton-startIcon path': {
+                      fill: customPalette.gold.dark,
+                    },
+                  }}
+                  startIcon={<PaperIcon />}
+                  onClick={() =>
+                    handleClick(userReferrals.referredUsersDetails ?? [])
+                  }
+                >
+                  View Details
+                </Button>
+              </TableCell>
             </TableRow>
           ) : (
             <TableRow>
               <TableCell>
                 <Skeleton variant='rounded' height={20} width={150} />
+              </TableCell>
+              <TableCell align='right'>
+                <Skeleton
+                  variant='rounded'
+                  height={20}
+                  width={150}
+                  sx={{ ml: 'auto' }}
+                />
               </TableCell>
               <TableCell align='right'>
                 <Skeleton

@@ -105,14 +105,7 @@ const ReferralModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                       sx={{ bgcolor: customPalette.gold.extraDark }}
                     />
                   ) : (
-                    <Typography
-                      variant='baseMdBold'
-                      color='gray.extraDark'
-                      sx={{ cursor: 'pointer' }}
-                      onClick={() =>
-                        handleClick(userReferrals?.referredUsersDetails ?? [])
-                      }
-                    >
+                    <Typography variant='baseMdBold' color='gray.extraDark'>
                       {userReferrals?.referredUsers || '0'}
                     </Typography>
                   )
@@ -144,6 +137,17 @@ const ReferralModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                 }
               />
             </Stack>
+            <Button
+              variant='contained'
+              color='secondary'
+              fullWidth
+              onClick={() =>
+                handleClick(userReferrals?.referredUsersDetails ?? [])
+              }
+              sx={{ textTransform: 'capitalize' }}
+            >
+              View Referrals
+            </Button>
           </Stack>
         </Stack>
       </WaveBox>
