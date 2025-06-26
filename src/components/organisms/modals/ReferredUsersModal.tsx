@@ -67,12 +67,12 @@ const ReferredUsersModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                       <TableCell align='right'>
                         {hasDeposited
                           ? `${formatAmount(depositAmount, { minDecimals: 2 })} USDC`
-                          : 'N/A'}
+                          : '-'}
                       </TableCell>
                       <TableCell align='right'>
                         {hasDeposited
                           ? `${formatAmount(referralReward, { minDecimals: 2 })} USDC`
-                          : 'N/A'}
+                          : '-'}
                       </TableCell>
                     </TableRow>
                   </Fragment>
