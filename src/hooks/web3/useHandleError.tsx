@@ -41,18 +41,27 @@ const useHandleError = () => {
     }
 
     switch (true) {
-      case overrideDefault:
-        setToast({
-          type: 'error',
-          title: capitalize(title ?? ErrorTypes.UNEXPECTED_ERROR),
-          message: message ?? ERROR_MESSAGES[ErrorTypes.UNEXPECTED_ERROR],
-        })
-        return
+      // early return statements
       case userRejectedTransaction(error):
         setToast({
           type: 'error',
           title: capitalize(ActionStatus.REJECTED),
           message: ACTION_MESSAGES[ActionStatus.REJECTED],
+        })
+        return
+      case error.name === Logger.errors.INSUFFICIENT_FUNDS:
+        setToast({
+          type: 'error',
+          title: capitalize(ErrorTypes.INSUFFICIENT_BALANCE),
+          message: ERROR_MESSAGES[ErrorTypes.INSUFFICIENT_BALANCE],
+        })
+        return
+      // break to enable logging
+      case overrideDefault:
+        setToast({
+          type: 'error',
+          title: capitalize(title ?? ErrorTypes.UNEXPECTED_ERROR),
+          message: message ?? ERROR_MESSAGES[ErrorTypes.UNEXPECTED_ERROR],
         })
         break
       case error.name === Logger.errors.CALL_EXCEPTION:
@@ -63,42 +72,35 @@ const useHandleError = () => {
           txHash,
         })
         break
-      case error.name === Logger.errors.INSUFFICIENT_FUNDS:
-        setToast({
-          type: 'error',
-          title: capitalize(ErrorTypes.INSUFFICIENT_BALANCE),
-          message: ERROR_MESSAGES[ErrorTypes.INSUFFICIENT_BALANCE],
-        })
-        break
       default:
         setToast({
           type: 'error',
           title: capitalize(title ?? ErrorTypes.UNEXPECTED_ERROR),
           message: message ?? ERROR_MESSAGES[ErrorTypes.UNEXPECTED_ERROR],
         })
-
-        fetch('/api/logging', {
-          body: JSON.stringify({
-            error: {
-              message: error.message,
-              cause: error.cause,
-              name: error.name,
-              stack: error.stack,
-            },
-            chainId,
-            address,
-            title,
-            message,
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-          method: 'POST',
-        })
         console.error(error)
         break
     }
+
+    fetch('/api/logging', {
+      body: JSON.stringify({
+        error: {
+          message: error.message,
+          cause: error.cause,
+          name: error.name,
+          stack: error.stack,
+        },
+        chainId,
+        address,
+        title,
+        message,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      method: 'POST',
+    })
   }
 }
 
