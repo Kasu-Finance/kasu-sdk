@@ -51,6 +51,8 @@ const generateKycSignature = async (params: {
 
   const data: ApiRes = await response.json()
 
+  console.error(data)
+
   if ('message' in data) {
     console.error('GenerateKycSignature:: ', data.message)
     console.error(params)
