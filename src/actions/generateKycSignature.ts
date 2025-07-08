@@ -49,6 +49,10 @@ const generateKycSignature = async (params: {
     method: 'POST',
   })
 
+  if (!response.ok) {
+    console.error(response)
+  }
+
   const data: ApiRes = await response.json()
 
   console.error(data)
