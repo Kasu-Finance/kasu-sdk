@@ -1,4 +1,4 @@
-name: Push to external repo
+name: Push to external repo test
 on:
   push:
     branches:
