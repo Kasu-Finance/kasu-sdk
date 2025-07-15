@@ -31,6 +31,7 @@ const LendingModalEdit = () => {
         tranches={pool.tranches}
         selectedTranche={trancheId}
         setSelectedTranche={setSelectedTranche}
+        disableOversubscribed
       />
       <ApyDropdown />
       <EarningsSimulator />
