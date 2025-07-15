@@ -13,7 +13,7 @@ const LendingRequestsTransactionsTableHeader = () => {
         '.MuiTableCell-root': {
           textTransform: 'capitalize',
           whiteSpace: 'normal',
-          ...customTypography.baseSm,
+          ...customTypography.baseSmBold,
           lineHeight: '18px',
           verticalAlign: 'bottom',
 
