@@ -53,11 +53,9 @@ const useSupportedTokenUserBalances = () => {
           })}`
         )
 
-        const data = (await response.json()) as {
-          prices: Record<SupportedTokens, string>
-        }
+        const data = (await response.json()) as Record<SupportedTokens, string>
 
-        tokenPrices = data.prices
+        tokenPrices = data
       }
 
       const tokenWithBalances = await Promise.allSettled(
@@ -71,9 +69,7 @@ const useSupportedTokenUserBalances = () => {
               address: userAddress,
             })
 
-            const ethBalance = BigNumber.from(
-              BigInt(nativeTokenBalance.value).toString()
-            )
+            const ethBalance = BigNumber.from(nativeTokenBalance.value)
 
             const balanceInUSD = convertToUSD(
               ethBalance,
