@@ -12,6 +12,8 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 import ModalStatusState from '@/context/modalStatus/modalStatus.provider'
 import StepperState from '@/context/stepper/stepper.provider'
 
+import { toBigNumber } from '@/utils'
+
 const LendingModalWrapper: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { modal, openModal } = useModalState()
 
@@ -41,15 +43,16 @@ const LendingModalWrapper: React.FC<DialogChildProps> = ({ handleClose }) => {
     removeToast,
   ])
 
+  const defaultTranche =
+    modal[ModalsKeys.LEND].pool.tranches.find(
+      (tranche) => !toBigNumber(tranche.maximumDeposit).isZero()
+    ) ?? modal[ModalsKeys.LEND].pool.tranches[0]
+
   return (
     <DepositModalState
-      defaultTrancheId={
-        modal[ModalsKeys.LEND].pool.tranches[0].id as `0x${string}`
-      }
+      defaultTrancheId={defaultTranche.id as `0x${string}`}
       initialFixedTermConfigId={
-        modal[ModalsKeys.LEND].pool.tranches[0].fixedTermConfig.length
-          ? undefined
-          : '0'
+        defaultTranche.fixedTermConfig.length ? undefined : '0'
       }
     >
       <ModalStatusState>
