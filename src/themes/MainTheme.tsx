@@ -132,8 +132,9 @@ export const theme = createTheme({
           height: calc(100% + 2px);
           border: 2px dotted ${customPalette.primary.main};
           border-radius: 4px;
-          top: 0;
-          left: -2px;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
         }
       }
 

@@ -1,5 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
-import { Box, Button, Container, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Container,
+  IconButton,
+  Stack,
+  Typography,
+} from '@mui/material'
 import React from 'react'
 
 import DiscordIcon from '@/assets/icons/general/DiscordIcon'
@@ -10,6 +17,7 @@ import BuiltOnBase from '@/assets/logo/BuildOnBaseLogo'
 import KasuFooterLogo from '@/assets/logo/KasuFooterLogo'
 
 import FooterBg from '@/images/footer-background.png'
+import { customPalette } from '@/themes/palette'
 
 const Footer: React.FC = () => {
   return (
@@ -45,39 +53,57 @@ const Footer: React.FC = () => {
                 <KasuFooterLogo />
                 <BuiltOnBase />
               </Box>
-              <Box display='flex' gap={4} mt='auto'>
-                <Button
+              <Box
+                display='flex'
+                gap={4}
+                mt='auto'
+                sx={{
+                  '.MuiIconButton-root': {
+                    p: 0,
+
+                    '&::before': {
+                      borderRadius: '50%',
+                      height: 'calc(100% + 4px)',
+                    },
+
+                    'svg path': {
+                      transition: 'fill 0.3s ease',
+                    },
+
+                    '&:hover svg path': {
+                      fill: customPalette.gold.extraDark,
+                    },
+                  },
+                }}
+              >
+                <IconButton
                   href='https://discord.gg/kasu'
                   target='_blank'
                   rel='noopener noreferrer'
-                  sx={{ width: 'max-content', height: 'max-content', p: 0 }}
                 >
                   <DiscordIcon />
-                </Button>
-                <Button
+                </IconButton>
+                <IconButton
                   href='https://t.me/KASU_Fi'
                   target='_blank'
                   rel='noopener noreferrer'
-                  sx={{ width: 'max-content', height: 'max-content', p: 0 }}
                 >
                   <TelegramIcon />
-                </Button>
-                <Button
+                </IconButton>
+                <IconButton
                   href='https://medium.com/@KasuFinance'
                   target='_blank'
                   rel='noopener noreferrer'
-                  sx={{ width: 'max-content', height: 'max-content', p: 0 }}
                 >
                   <MediumIcon />
-                </Button>
-                <Button
+                </IconButton>
+                <IconButton
                   href='https://twitter.com/KasuFinance'
                   target='_blank'
                   rel='noopener noreferrer'
-                  sx={{ width: 'max-content', height: 'max-content', p: 0 }}
                 >
                   <TwitterIcon />
-                </Button>
+                </IconButton>
               </Box>
             </Stack>
             <Box

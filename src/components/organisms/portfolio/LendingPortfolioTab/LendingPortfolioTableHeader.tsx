@@ -11,7 +11,7 @@ const LendingPortfolioTableHeader = () => {
     <TableRow
       sx={{
         '.MuiTableCell-root': {
-          ...customTypography.baseSm,
+          ...customTypography.baseSmBold,
           '&:not(:first-child):not(:last-child)': {
             px: 1,
           },
@@ -36,7 +36,7 @@ const LendingPortfolioTableHeader = () => {
       <TableCell width='14%' align='right'>
         {t('portfolio.lendingPortfolio.tableHeader.cell-4')}
       </TableCell>
-      <TableCell width='22%'>
+      <TableCell width='22%' align='right'>
         {t('portfolio.lendingPortfolio.tableHeader.cell-5')}
       </TableCell>
     </TableRow>
