@@ -62,7 +62,10 @@ const RequestDetailsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               </Typography>
             </Box>
           )}
-          <SystemProcessHistory transaction={detailedTransaction} />
+          <SystemProcessHistory
+            transaction={detailedTransaction}
+            currentEpoch={currentEpoch}
+          />
           {(isReallocation || detailedTransaction.type === 'Deposit') && (
             <SubsequentTransactionsHistory
               poolName={
