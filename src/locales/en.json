@@ -103,7 +103,7 @@
     "seconds": "seconds"
   },
   "grossApy": {
-    "tooltip-1": "Gross Annual Percentage Yield (APY) reflects the expected interest rate earned by Lenders on an annualised basis, prior to Kasu protocol fees being deducted, assuming all repayments will be made as expected. This does not account for the additional amount earned from compound interest, which accrues every Epoch (every seven days).",
+    "tooltip-1": "Gross Annual Percentage Yield (APY) reflects the expected interest rate earned by Lenders on an annualised basis, prior to Kasu protocol fees being deducted, assuming all repayments will be made as expected. Given that interest earnings accrue to a Lender’s balance every Epoch (every seven days), APY therefore assumes interest is auto-compounded, and left in the protocol across epochs for a full year.",
     "tooltip-2": "An APY range reflects the range of offers across Loan Tranches and Fixed and Variable loans (if applicable) within this Lending Strategy.​",
     "tooltip-3": "Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 13.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).",
     "tooltip-4": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KASU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations."
@@ -321,7 +321,13 @@
     "missingEmail": {
       "title": "Email Address",
       "description-1": "Kasu is all about transparency and choice.​",
-      "description-2": "Please contact us via the feedback link to provide your email. We require this so that we can keep you fully informed of which end borrower(s) your funds are being loaned to."
+      "description-2": "Please contact us via the feedback link to provide your email. We require this so that we can keep you fully informed of which end borrower(s) your funds are being loaned to subject to total, combined lending amount."
+    },
+    "referral": {
+      "title": "Refer new Users to earn",
+      "description": "Invite new users and earn % of generated yield for each! Your referral link:",
+      "subtitle": "Your referred users stats:",
+      "sub-description": "Your referred users"
     },
     "fixedLoan": {
       "title": "Fixed Loan & APY​",
@@ -1498,8 +1504,8 @@
           "tooltip": "Total length of time the Delegate has been operating as a lending business."
         },
         "loansUnder": {
-          "label": "Total Active Lending",
-          "tooltip": "Total USDC equivalent face value of all outstanding loans that the Delegate currently has deployed to End Borrowers from this Lending Strategy.​"
+          "label": "Total Lending",
+          "tooltip": "Total USDC equivalent of all approved loan limits that the Delegate currently have in place to End Borrowers for this Lending Strategy."
         },
         "tvl": {
           "label": "Total Value Locked (TVL)",
@@ -1725,7 +1731,7 @@
         "tooltip": "​Other Lending Strategies that the Delegate has made available on Kasu.​"
       },
       "loans": {
-        "label": "Total Active Lending",
+        "label": "Total Lending",
         "tooltip": "Cumulative total USDC equivalent face value of all outstanding loans that the Delegate currently has deployed to End Borrowers across all Lending Asset Classes, regardless of whether the loans have been made available to Lenders on Kasu or not.​"
       },
       "loss": {
@@ -1783,7 +1789,7 @@
         "tooltip": "Total USDC funds deployed by Lenders to this Lending Strategy, plus first loss capital (if contributed by the Delegate)."
       },
       "management": {
-        "label": "Total Active Lending",
+        "label": "Total Lending",
         "tooltip": "Total USDC equivalent face value of all outstanding loans that the Delegate currently has deployed to End Borrowers from this Lending Strategy.​"
       },
       "yield": {
@@ -1849,6 +1855,9 @@
     }
   },
   "repayments": {
+    "title": "Repayments",
+    "loanModelDescription": "The Delegate's lending model is to facilitate Fiat currency loans to real world businesses off-chain. The Asset Class and Loan Structure outlined in the 'Details' screen of the Lending Strategy indicates that these loans are 'Revolving/Evergreen' Loan Facilities, with fluctuating loan balances, being a function of ongoing and simultaneous loan repayments and loan redraws in Fiat currency off-chain. Accordingly, these Fiat currency transactions can only be viewed via CSV download at this current point in time. These transactions will be available to view on-chain shortly.",
+    "borrowerFundsCSV": "Download to view fiat currency Loan Tape on a per borrower basis:",
     "summaryStatistics": {
       "title": "Summary Statistics"
     },
@@ -1864,6 +1873,104 @@
         "cell-7": "Historial Repayments ($)"
       },
       "viewDetails": "View Details"
+    },
+    "sections": {
+      "aggregated": {
+        "title": "Aggregated Funds Flow",
+        "description": "An aggregated view of this funds flow for all End Borrowers, along with other/related loan funds flow is as follows. Note, these transactions are updated the end of each 7-day Epoch, during the 48-hour Clearing Period.",
+        "metrics": {
+          "totalBorrowers": {
+            "label": "Total End Borrowers (Current)",
+            "tooltip": "The number of individual businesses that the Delegate is currently lending to."
+          }
+        }
+      },
+      "map": {
+        "Closing Loans Balance": {
+          "label": "Closing Loans Balance",
+          "tooltip": "Total combined USD equivalent loan balance of all loan Tranches within this Lending Strategy, representing funds deployed into loans to end borrowers (outstanding loans) upon the closure of the most recent epoch. The closing loans balance is the net effect of the below funds flows and related transactions and will be updated every epoch."
+        },
+        "Opening Loans Balance": {
+          "label": "Opening Loans Balance",
+          "tooltip": "Total USD equivalent loan balance of all loan Tranches within this Lending Strategy, representing funds deployed into loans to end borrowers (outstanding loans) upon the closure of the prior epoch, being the same as the start of the current epoch."
+        },
+        "Loans Drawn": {
+          "label": "Loans Drawn",
+          "tooltip": "The USD equivalent amount within this Lending Strategy of all additional loans drawn (deployed) to end borrowers during the most recent epoch (upon closure of the most recent epoch)."
+        },
+        "Interest Accrued": {
+          "label": "Interest Accrued",
+          "tooltip": "The USD equivalent amount within this Lending Strategy of total interest accrued by end borrowers during the most recent epoch (upon closure of the most recent epoch)."
+        },
+        "Interest Payments": {
+          "label": "Interest Payments",
+          "tooltip": "The USD equivalent amount within this Lending Strategy of total actual interest paid by end borrowers during the most recent epoch (upon closure of the most recent epoch)."
+        },
+        "Principal Repayments": {
+          "label": "Principal Repayments",
+          "tooltip": "The USD equivalent amount within this Lending Strategy of total loan principal repayments made by end borrowers during the most recent epoch (upon closure of the most recent epoch)."
+        },
+        "Unrealised Losses": {
+          "label": "Unrealised Losses",
+          "tooltip": "The USD equivalent amount of loans within this Lending Strategy that became subject to formal recovery or legal action during the most recent epoch (upon closure of the most recent epoch)."
+        },
+        "Net Inflows/(Outflows)": {
+          "label": "Net Inflows/(Outflows)",
+          "tooltip": "The upcoming/expected USD equivalent net effect of the below funds flows for the current epoch (expected upon closure of the current epoch)."
+        },
+        "Upcoming Net Loan Drawdowns/(Repayments)": {
+          "label": "Upcoming Net Loan Drawdowns/(Repayments)",
+          "tooltip": ""
+        },
+        "upcomingInterest": {
+          "label": "Upcoming Interest Payments",
+          "tooltip": ""
+        },
+        "upcomingPrincipal": {
+          "label": "Upcoming Principal Repayments",
+          "tooltip": ""
+        },
+        "Net Lending/(Lending Withdrawals)": {
+          "label": "Net Lending/(Lending Withdrawals)",
+          "tooltip": "The total, cumulative net effect of USDC lending settled and lending withdrawals settled to and from this Lending Strategy since its inception, upon the closure of the most recent epoch."
+        },
+        "Cumulative Lending": {
+          "label": "Cumulative Lending",
+          "tooltip": "Total, cumulative USDC lending settled to this Lending Strategy since its inception, upon the closure of the most recent epoch."
+        },
+        "Cumulative Lending Withdrawals": {
+          "label": "Cumulative Lending Withdrawals",
+          "tooltip": "Total, cumulative USDC lending withdrawals settled from this Lending Strategy since its inception, upon the closure of the most recent epoch."
+        },
+        "Net Lending/(Withdrawal Requests)": {
+          "label": "Net Lending/(Withdrawal Requests)",
+          "tooltip": "The net effect of all current USDC lending requests and lending withdrawal requests that remain queued for this Lending Strategy for the current epoch."
+        },
+        "Current Lending Requests": {
+          "label": "Current Lending Requests",
+          "tooltip": "Total of all current USDC lending requests that remain queued for this Lending Strategy for the current epoch."
+        },
+        "Current Lending Withdrawal Requests": {
+          "label": "Current Lending Withdrawal Requests",
+          "tooltip": "Total of all current USDC lending withdrawal requests that remain queued for this Lending Strategy for the current epoch."
+        }
+      },
+      "cumulativeFunds": {
+        "title": "Cumulative Lending Funds Flow - End Borrowers",
+        "titleSuffix": "Actual"
+      },
+      "upcomingFunds": {
+        "title": "Upcoming Lending Funds Flow - End Borrowers​",
+        "titleSuffix": "Current Epoch"
+      },
+      "transactions": {
+        "title": "Cumulative Lending & ​Withdrawals",
+        "titleSuffix": "Actual"
+      },
+      "fundsRequest": {
+        "title": "Lending Request & Lending Withdrawal Request",
+        "titleSuffix": "Current Epoch"
+      }
     }
   },
   "risk": {
@@ -1906,13 +2013,13 @@
     "tabs": {
       "activePools": "Active Lending Strategies",
       "closedPools": "Closed Lending Strategies",
-      "oversubscribedPools": "Oversubscribed Lending Strategies"
+      "oversubscribedPools": "Fully Subscribed Lending Strategies"
     },
     "summary": {
       "metric-1": "Total Value Locked (TVL)",
       "metric-1-tooltip": "Total Combined USDC funds deployed by Lenders across all Lending Strategies, plus the current value of all KASU locked in the Kasu protocol.",
-      "metric-2": "Total Active Lending",
-      "metric-2-tooltip": "Combined USDC equivalent face value of all loans across all Lending Strategies on Kasu that Delegates currently have deployed to End Borrowers.",
+      "metric-2": "Total Lending",
+      "metric-2-tooltip": "Combined USDC equivalent amount of all approved loan limits that Delegates currently have in place to End Borrowers",
       "metric-3": "Loan Origination Volume",
       "metric-3-tooltip": "Cumulative total USDC equivalent face value of all current and historical loans originated by Delegates to End Borrowers from all Lending Strategies on the Kasu protocol.",
       "metric-4": "Total Interest Earned​",
@@ -2154,7 +2261,16 @@
     },
     "rewards": {
       "title-1": "My Bonuses & Rewards Summary",
-      "title-2": "My Bonuses & Rewards Portfolio",
+      "title-2": "Bonuses & Rewards Portfolio",
+      "subheader-1": {
+        "title": "KASU Locking & Loyalty Rewards"
+      },
+      "subheader-2": {
+        "title": "NFT Portfolio"
+      },
+      "subheader-3": {
+        "title": "KASU Referral Bonus"
+      },
       "bonusesAndRewards": "Bonuses and Rewards",
       "bonusYieldEarnings": "Bonus Interest Earnings",
       "ksuLaunchBonus": "KASU Launch Bonus",

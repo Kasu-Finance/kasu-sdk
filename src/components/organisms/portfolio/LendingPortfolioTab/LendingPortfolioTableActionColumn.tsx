@@ -23,6 +23,7 @@ import {
   FixRateIcon,
   PaperIcon,
   UploadMoneyIcon,
+  ViewContractIcon,
   WithdrawMoneyIcon,
 } from '@/assets/icons'
 
@@ -31,8 +32,9 @@ import { customTypography } from '@/themes/typography'
 const LendingPortfolioTableActionColumn: React.FC<
   LendingPortfolioTableTrancheRowProps & {
     isVariable?: boolean
+    ftdId?: string
   }
-> = ({ tranche, currentEpoch, pool, isVariable = false }) => {
+> = ({ tranche, currentEpoch, pool, isVariable = false, ftdId }) => {
   const { t } = getTranslation()
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -72,6 +74,10 @@ const LendingPortfolioTableActionColumn: React.FC<
   )
 
   const isOpen = Boolean(anchorEl)
+
+  const ftdDepositDetails =
+    tranche.fixedLoans.find((loan) => loan.configId === ftdId)
+      ?.depositDetails ?? []
 
   return (
     <TableCell
@@ -220,37 +226,46 @@ const LendingPortfolioTableActionColumn: React.FC<
               {t('portfolio.lendingPortfolio.actions.action-3')}
             </MenuItem>
           ) : null}
-          {!isVariable ? (
-            <>
-              {tranche.fixedLoans.length ? (
-                <MenuItem
-                  onClick={() =>
-                    handleMenuItemClick({
-                      name: ModalsKeys.FIXED_LOAN,
-                      fixedLoans: tranche.fixedLoans,
-                    })
-                  }
-                >
-                  <PaperIcon />
-                  {t('portfolio.lendingPortfolio.actions.action-4')}
-                </MenuItem>
-              ) : null}
-              {autoConvertedLoans.length ? (
-                <MenuItem
-                  onClick={() =>
-                    handleMenuItemClick({
-                      name: ModalsKeys.AUTO_CONVERSION_TO_VARIABLE,
-                      epochNumber: pool.requestEpochsInAdvance,
-                      fixedLoans: autoConvertedLoans,
-                    })
-                  }
-                >
-                  <FixRateIcon />
-                  {t('portfolio.lendingPortfolio.actions.action-5')}
-                </MenuItem>
-              ) : null}
-            </>
+          {!isVariable && tranche.fixedLoans.length ? (
+            <MenuItem
+              onClick={() =>
+                handleMenuItemClick({
+                  name: ModalsKeys.FIXED_LOAN,
+                  fixedLoans: tranche.fixedLoans,
+                })
+              }
+            >
+              <PaperIcon />
+              {t('portfolio.lendingPortfolio.actions.action-4')}
+            </MenuItem>
           ) : null}
+          {!isVariable && autoConvertedLoans.length ? (
+            <MenuItem
+              onClick={() =>
+                handleMenuItemClick({
+                  name: ModalsKeys.AUTO_CONVERSION_TO_VARIABLE,
+                  epochNumber: pool.requestEpochsInAdvance,
+                  fixedLoans: autoConvertedLoans,
+                })
+              }
+            >
+              <FixRateIcon />
+              {t('portfolio.lendingPortfolio.actions.action-5')}
+            </MenuItem>
+          ) : null}
+          <MenuItem
+            onClick={() =>
+              openModal({
+                name: ModalsKeys.VIEW_LOAN_CONTRACTS,
+                depositDetails: isVariable
+                  ? tranche.depositDetails
+                  : ftdDepositDetails,
+              })
+            }
+          >
+            <ViewContractIcon />
+            View Loan Contract(s)
+          </MenuItem>
         </Menu>
       </Box>
     </TableCell>

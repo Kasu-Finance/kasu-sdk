@@ -22,7 +22,6 @@ import DialogHeader from '@/components/molecules/DialogHeader'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import checkUserKycState from '@/actions/checkUserKycState'
 import { ActionStatus } from '@/constants'
 import { capitalize } from '@/utils'
 
@@ -37,7 +36,7 @@ const MissingEmailModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { isPending, openWidget, error } = useOpenWidget()
 
-  const { setCustomerStatus } = useKycState()
+  const { setCustomerKycInfo } = useKycState()
 
   const { setToast, removeToast } = useToastState()
 
@@ -72,14 +71,22 @@ const MissingEmailModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
           const address = account[0].address
 
-          const status = await checkUserKycState(address)
+          const kycRes = await fetch(
+            `/api/kyc?${new URLSearchParams({
+              userAddress: address.toLowerCase(),
+            })}`
+          )
+
+          if (kycRes.status !== 200) return
+
+          const kyc = await kycRes.json()
 
           handleClose()
           removeToast()
 
-          if (!status) return
+          if (!kyc) return
 
-          if (status === 'No Email') {
+          if (kyc.status === 'No Email') {
             setToast({
               type: 'error',
               title: 'Email update error',
@@ -89,7 +96,7 @@ const MissingEmailModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           }
 
           callback()
-          setCustomerStatus(status)
+          setCustomerKycInfo(kyc)
         }
       },
     })

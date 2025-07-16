@@ -1,14 +1,23 @@
-import { Box, Button, Container, Stack, Typography } from '@mui/material'
-import Image from 'next/image'
+/* eslint-disable @next/next/no-img-element */
+import {
+  Box,
+  Button,
+  Container,
+  IconButton,
+  Stack,
+  Typography,
+} from '@mui/material'
 import React from 'react'
 
 import DiscordIcon from '@/assets/icons/general/DiscordIcon'
 import MediumIcon from '@/assets/icons/general/MediumIcon'
 import TelegramIcon from '@/assets/icons/general/TelegramIcon'
 import TwitterIcon from '@/assets/icons/general/TwitterIcon'
+import BuiltOnBase from '@/assets/logo/BuildOnBaseLogo'
 import KasuFooterLogo from '@/assets/logo/KasuFooterLogo'
 
 import FooterBg from '@/images/footer-background.png'
+import { customPalette } from '@/themes/palette'
 
 const Footer: React.FC = () => {
   return (
@@ -21,8 +30,8 @@ const Footer: React.FC = () => {
         height={350}
         pb={6}
       >
-        <Image
-          src={FooterBg}
+        <img
+          src={FooterBg.src}
           alt='footer background'
           style={{
             position: 'absolute',
@@ -30,10 +39,9 @@ const Footer: React.FC = () => {
             bottom: 0,
             right: 0,
             width: '100vw',
-            height: 'auto',
+            height: '100%',
             maxHeight: 343,
           }}
-          priority
         />
         <Container
           maxWidth='lg'
@@ -41,40 +49,61 @@ const Footer: React.FC = () => {
         >
           <Box display='flex' gap={8}>
             <Stack>
-              <KasuFooterLogo />
-              <Box display='flex' gap={2} mt='auto'>
-                <Button
+              <Box display='flex' gap={2} alignItems='center'>
+                <KasuFooterLogo />
+                <BuiltOnBase />
+              </Box>
+              <Box
+                display='flex'
+                gap={4}
+                mt='auto'
+                sx={{
+                  '.MuiIconButton-root': {
+                    p: 0,
+
+                    '&::before': {
+                      borderRadius: '50%',
+                      height: 'calc(100% + 4px)',
+                    },
+
+                    'svg path': {
+                      transition: 'fill 0.3s ease',
+                    },
+
+                    '&:hover svg path': {
+                      fill: customPalette.gold.extraDark,
+                    },
+                  },
+                }}
+              >
+                <IconButton
                   href='https://discord.gg/kasu'
                   target='_blank'
                   rel='noopener noreferrer'
-                  sx={{ width: 'max-content', height: 'max-content', p: 0 }}
                 >
                   <DiscordIcon />
-                </Button>
-                <Button
+                </IconButton>
+                <IconButton
                   href='https://t.me/KASU_Fi'
                   target='_blank'
                   rel='noopener noreferrer'
-                  sx={{ width: 'max-content', height: 'max-content', p: 0 }}
                 >
                   <TelegramIcon />
-                </Button>
-                <Button
+                </IconButton>
+                <IconButton
                   href='https://medium.com/@KasuFinance'
                   target='_blank'
                   rel='noopener noreferrer'
-                  sx={{ width: 'max-content', height: 'max-content', p: 0 }}
                 >
                   <MediumIcon />
-                </Button>
-                <Button
+                </IconButton>
+                <IconButton
                   href='https://twitter.com/KasuFinance'
                   target='_blank'
                   rel='noopener noreferrer'
-                  sx={{ width: 'max-content', height: 'max-content', p: 0 }}
                 >
                   <TwitterIcon />
-                </Button>
+                </IconButton>
               </Box>
             </Stack>
             <Box

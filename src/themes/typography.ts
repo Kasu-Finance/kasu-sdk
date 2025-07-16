@@ -1,5 +1,5 @@
 import { TypographyVariantsOptions } from '@mui/material'
-import { Open_Sans } from 'next/font/google'
+import { Barlow_Condensed, Open_Sans } from 'next/font/google'
 
 declare module '@mui/material/Typography' {
   interface TypographyPropsVariantOverrides {
@@ -38,9 +38,13 @@ declare module '@mui/material/styles/createTypography' {
 }
 
 const openSans = Open_Sans({ preload: false })
+const barlowCondensed = Barlow_Condensed({
+  preload: false,
+  weight: ['400', '500', '600'],
+})
 
 export const primaryFontFamily = openSans.style.fontFamily
-export const headingFontFamily = 'Barlow Condensed'
+export const headingFontFamily = barlowCondensed.style.fontFamily
 
 export const customTypography: TypographyVariantsOptions = {
   baseLg: {

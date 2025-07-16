@@ -10,7 +10,7 @@ const kycReducer = (state: KycStateType, action: KycActions): KycStateType => {
     case 'SET_CUSTOMER_STATUS':
       return {
         ...state,
-        status: action.payload,
+        kycInfo: action.payload,
       }
     case 'SET_LAST_VERIFIED_ACCOUNT':
       return {

@@ -11,8 +11,7 @@ import WaveBox from '@/components/atoms/WaveBox'
 import GrossApyTooltip from '@/components/molecules/tooltips/GrossApyTooltip'
 
 import { customTypography } from '@/themes/typography'
-import { formatAmount, formatPercentage } from '@/utils'
-import formatDuration from '@/utils/formats/formatDuration'
+import { formatPercentage } from '@/utils'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
@@ -92,7 +91,7 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
             alignItems: 'start',
           }}
         />
-        <InfoRow
+        {/* <InfoRow
           title={t('details.poolDelegate.totalFunds.label')}
           titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
           toolTipInfo={t('details.poolDelegate.totalFunds.tooltip')}
@@ -106,7 +105,7 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
               USDC
             </Typography>
           }
-        />
+        /> */}
         <InfoRow
           title={t('details.poolDelegate.totalLossRate.label')}
           titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
@@ -118,7 +117,7 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
             </Typography>
           }
         />
-        <InfoRow
+        {/* <InfoRow
           title={t('details.poolDelegate.history.label')}
           titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}
           toolTipInfo={t('details.poolDelegate.history.tooltip')}
@@ -131,7 +130,7 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
               })}
             </Typography>
           }
-        />
+        /> */}
         <InfoRow
           title={t('lending.poolOverview.detailCard.security.label')}
           titleStyle={{ variant: 'baseMd', color: 'gray.extraDark' }}

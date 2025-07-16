@@ -1,21 +1,17 @@
 'use client'
 
-import CloseIcon from '@mui/icons-material/Close'
-import {
-  Box,
-  Button,
-  ButtonProps,
-  Chip,
-  IconButton,
-  Typography,
-} from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
-import { forwardRef } from 'react'
+import { Box, Button, ButtonProps, Chip, Typography } from '@mui/material'
+import { useLogin, usePrivy, useWallets } from '@privy-io/react-auth'
+import { useSetActiveWallet } from '@privy-io/wagmi'
+import { forwardRef, useEffect, useState } from 'react'
+import { useAccount } from 'wagmi'
 
+import useKycState from '@/hooks/context/useKycState'
 import useModalState from '@/hooks/context/useModalState'
+import useToastState from '@/hooks/context/useToastState'
 import getTranslation from '@/hooks/useTranslation'
-import useChainStatus from '@/hooks/web3/useChainStatus'
-import useWalletActivation from '@/hooks/web3/useWalletActivation'
+import useLastActiveWallet from '@/hooks/web3/useLastActiveWallet'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
@@ -23,23 +19,90 @@ import { ConnectWalletIcon } from '@/assets/icons'
 
 import { customPalette } from '@/themes/palette'
 import { customTypography } from '@/themes/typography'
-import formatAccount from '@/utils/formats/formatAccount'
+import { formatAccount } from '@/utils'
 
 const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
     const { t } = getTranslation()
 
-    const { account } = useWeb3React()
+    const { address } = useAccount()
+
+    const { wallets, ready: walletsReady } = useWallets()
 
     const { openModal } = useModalState()
 
-    const { disconnect } = useWalletActivation()
+    const { checkUserKyc } = useKycState()
 
-    const handleOpen = () => openModal({ name: ModalsKeys.CONNECT_WALLET })
+    const { setToast, removeToast } = useToastState()
 
-    const { connected, isValidChain } = useChainStatus()
+    const [connected, setConnected] = useState(false)
 
-    if (!connected) {
+    const handleOpen = () => openModal({ name: ModalsKeys.LINK_WALLETS })
+
+    const { ready } = usePrivy()
+
+    const { isAuthenticated } = usePrivyAuthenticated()
+
+    const { getLastActiveWallet, setLastActiveWallet } = useLastActiveWallet()
+
+    const { setActiveWallet } = useSetActiveWallet()
+
+    const { login } = useLogin({
+      onComplete: async () => {
+        setToast({
+          type: 'info',
+          title: 'Account connected',
+          message: 'Verifying status of account...',
+          isClosable: false,
+        })
+
+        setConnected(true)
+      },
+      onError: (error) => {
+        removeToast()
+        console.error(error)
+      },
+    })
+
+    useEffect(() => {
+      if (!connected || !wallets.length || !address || getLastActiveWallet())
+        return
+
+      const wallet = wallets.find(
+        (wallet) => wallet.address.toLowerCase() === address?.toLowerCase()
+      )
+
+      if (wallet) {
+        setLastActiveWallet(wallet)
+      }
+    }, [wallets, address, connected, getLastActiveWallet, setLastActiveWallet])
+
+    useEffect(() => {
+      const lastActiveWallet = getLastActiveWallet()
+
+      if (!connected || !wallets.length || !address || !lastActiveWallet) return
+
+      const abortController = new AbortController()
+
+      setActiveWallet(lastActiveWallet)
+
+      checkUserKyc(lastActiveWallet.address, abortController.signal)
+
+      return () => {
+        abortController.abort('new wallets detected')
+      }
+    }, [
+      connected,
+      wallets,
+      walletsReady,
+      address,
+      getLastActiveWallet,
+      checkUserKyc,
+      setActiveWallet,
+      setLastActiveWallet,
+    ])
+
+    if (!isAuthenticated) {
       return (
         <Button
           ref={ref}
@@ -50,7 +113,8 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
             ...customTypography.baseMd,
           }}
           startIcon={<ConnectWalletIcon key='disconnected' />}
-          onClick={handleOpen}
+          onClick={login}
+          disabled={!ready}
           {...props}
         >
           {t('general.connectWallet')}
@@ -72,17 +136,17 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
           'svg path': {
             fill: customPalette.gold.dark,
           },
+          cursor: 'pointer',
         }}
         bgcolor='gray.extraLight'
         position='relative'
+        onClick={handleOpen}
       >
         <ConnectWalletIcon key='connected' />
         <Typography variant='baseSm' color='gold.dark' mx={1.5} mt={0.5}>
-          {formatAccount(account)}
+          {formatAccount(address)}
         </Typography>
-        <IconButton sx={{ p: 0 }} onClick={disconnect}>
-          <CloseIcon sx={{ width: 16, height: 16 }} />
-        </IconButton>
+
         <Chip
           label={
             <Typography
@@ -92,7 +156,7 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
               fontSize={10}
               color='white'
             >
-              {isValidChain ? 'Connected' : 'Wrong Chain'}
+              Connected
             </Typography>
           }
           variant='filled'
@@ -113,7 +177,7 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
             },
           }}
           size='small'
-          color={isValidChain ? 'success' : 'warning'}
+          color='success'
         />
       </Box>
     )

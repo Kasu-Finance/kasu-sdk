@@ -1,6 +1,6 @@
 import { Box, Button } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
 import Link from 'next/link'
+import { useChainId } from 'wagmi'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalState from '@/hooks/context/useModalState'
@@ -15,7 +15,7 @@ import { networks } from '@/connection/networks'
 const LockModalConfirmedActions = () => {
   const { t } = getTranslation()
 
-  const { chainId } = useWeb3React()
+  const chainId = useChainId()
 
   const { txHash } = useLockModalState()
 

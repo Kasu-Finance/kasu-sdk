@@ -18,6 +18,7 @@ const flushTags = (cachedTags: string[]): Promise<void> => {
 export async function GET(_req: Request): Promise<Response> {
   const cachedTags: string[] = [
     'pools',
+    'poolsWithDelegate',
     'platformOverview',
     'totals',
     'poolDelegate',

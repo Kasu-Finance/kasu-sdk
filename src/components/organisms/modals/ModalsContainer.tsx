@@ -13,23 +13,29 @@ import FixApyModalWrapper from '@/components/organisms/modals/FixApyModal/FixApy
 import FixedLoanModal from '@/components/organisms/modals/FixedLoanModal'
 import HistoricalRepaymentsModal from '@/components/organisms/modals/HistoricalRepaymentsModal'
 import LendingModalWrapper from '@/components/organisms/modals/LendingModal/LendingModalWrapper'
+import LinkWalletsModal from '@/components/organisms/modals/LinkWalletsModal'
 import LoanContractModal from '@/components/organisms/modals/LoanContractModal'
 import LockModalWrapper from '@/components/organisms/modals/LockModal/LockModalWrapper'
 import LoyaltyLevelsModal from '@/components/organisms/modals/LoyaltyLevelsModal'
 import MissingEmailModalWrapper from '@/components/organisms/modals/MissingEmailModal/MissingEmailModalWrapper'
+import NftDetectedModal from '@/components/organisms/modals/NftDetectedModal'
 import OptInModal from '@/components/organisms/modals/OptInModal'
 import OptOutModal from '@/components/organisms/modals/OptOutModal'
 import PendingDecisionModal from '@/components/organisms/modals/PendingDecisionsModal'
+import ReferralDetectedModal from '@/components/organisms/modals/ReferralDetectedModal'
+import ReferralModal from '@/components/organisms/modals/ReferralModal'
+import ReferredUsersModal from '@/components/organisms/modals/ReferredUsersModal'
 import RequestDetailsModal from '@/components/organisms/modals/RequestDetailsModal'
 import UnlockModalWrapper from '@/components/organisms/modals/UnlockModal/UnlockModalWrapper'
 import UnreleasedFeatureModal from '@/components/organisms/modals/UnreleasedFeatureModal'
+import ViewLoanContractModal from '@/components/organisms/modals/ViewLoanContractModal'
+import ViewWalletModal from '@/components/organisms/modals/ViewWalletModal'
 import WipRedirectModal from '@/components/organisms/modals/WipRedirectModal'
 import WIthdrawFundsAtExpiryModalWrapper from '@/components/organisms/modals/WithdrawFundsAtExpiryModal/WithdrawFundsAtExpiryModalWrapper'
 import WithdrawModalWrapper from '@/components/organisms/modals/WithdrawModal/WithdrawModalWrapper'
 
 import { Modals, ModalsKeys } from '@/context/modal/modal.types'
 
-import ConnectWalletModal from './ConnectWalletModal'
 import KycModalWrapper from './KycModal/KycModalWrapper'
 
 type ModalDetails = {
@@ -40,6 +46,7 @@ type ModalDetails = {
   sx?: SxProps<Theme>
   backdropSx?: SxProps<Theme>
   disableBackdropClose?: boolean
+  disableElevation?: boolean
 }
 
 export const getModal = (
@@ -47,11 +54,13 @@ export const getModal = (
   handleClose: () => void
 ): ModalDetails => {
   switch (modalName) {
-    case ModalsKeys.CONNECT_WALLET:
+    case ModalsKeys.LINK_WALLETS:
       return {
-        component: <ConnectWalletModal handleClose={handleClose} />,
-        ariaLabel: 'Connect Wallet Modal',
-        ariaDescription: 'List of available web3 wallet connections',
+        component: <LinkWalletsModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.VIEW_WALLET:
+      return {
+        component: <ViewWalletModal handleClose={handleClose} />,
       }
     case ModalsKeys.LOYALTY_LEVELS:
       return {
@@ -152,6 +161,10 @@ export const getModal = (
       return {
         component: <HistoricalRepaymentsModal handleClose={handleClose} />,
       }
+    case ModalsKeys.VIEW_LOAN_CONTRACTS:
+      return {
+        component: <ViewLoanContractModal handleClose={handleClose} />,
+      }
     case ModalsKeys.WIP_REDIRECT:
       return {
         component: <WipRedirectModal handleClose={handleClose} />,
@@ -160,6 +173,28 @@ export const getModal = (
           bgcolor: 'rgba(31, 31, 34, 0.9)',
         },
         disableBackdropClose: true,
+      }
+    case ModalsKeys.NFT_DETECTED:
+      return {
+        component: <NftDetectedModal handleClose={handleClose} />,
+        backdropSx: {
+          backdropFilter: 'blur(20px)',
+          bgcolor: 'rgba(31, 31, 34, 0.9)',
+        },
+        disableBackdropClose: true,
+        disableElevation: true,
+      }
+    case ModalsKeys.REFERRAL:
+      return {
+        component: <ReferralModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.REFERRED_USERS:
+      return {
+        component: <ReferredUsersModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.REFERRAL_DETECTED:
+      return {
+        component: <ReferralDetectedModal handleClose={handleClose} />,
       }
   }
 }

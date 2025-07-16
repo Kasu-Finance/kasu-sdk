@@ -1,6 +1,6 @@
 import { Box, Button, IconButton, Stack, Typography } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
 import { useRef, useState } from 'react'
+import { useSignMessage } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
 import useToastState from '@/hooks/context/useToastState'
@@ -29,7 +29,7 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { modal, openModal } = useModalState()
 
-  const { provider } = useWeb3React()
+  const { signMessage } = useSignMessage()
 
   const { setToast, removeToast } = useToastState()
 
@@ -64,10 +64,6 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   )
 
   const handleClick = async () => {
-    if (!provider) {
-      return console.error('Accept Contract:: Provider is undefined')
-    }
-
     if (!generatedContract) {
       return console.error('Accept Contract:: generatedContract is undefined')
     }
@@ -81,14 +77,19 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         isClosable: false,
       })
 
-      const signature = await provider
-        .getSigner()
-        .signMessage(generatedContract.contractMessage)
+      signMessage(
+        {
+          message: generatedContract.contractMessage,
+        },
+        {
+          onSuccess: (signature) => {
+            acceptLoanContract && acceptLoanContract(signature)
 
-      acceptLoanContract && acceptLoanContract(signature)
-
-      removeToast()
-      handleClose()
+            removeToast()
+            handleClose()
+          },
+        }
+      )
     } catch (error) {
       if (userRejectedTransaction(error)) {
         handleError(

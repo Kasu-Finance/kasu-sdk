@@ -18,6 +18,7 @@ export const sdkConfig: SdkConfig = {
     KsuPrice: base.KsuPrice.address,
     UserLoyaltyRewards: base.UserLoyaltyRewards.address,
     ClearingCoordinator: base.ClearingCoordinator.address,
+    KasuNFTs: base.KasuNFTs.address,
   },
   UNUSED_LENDING_POOL_IDS: [''], // will be initialized later
   directusUrl: 'https://kasu-finance.directus.app/',

@@ -1,20 +1,19 @@
-import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
-import { unstable_cache } from 'next/cache'
-
 import { getKasuSDK } from '@/actions/getKasuSDK'
+import { getPoolOverview } from '@/app/_requests/pools'
 
-const CACHE_TTL = 60 * 60 // 1 hour
+// const CACHE_TTL = 1
 
-export const getPoolsTotals = unstable_cache(
-  async (poolOverviews: PoolOverview[]) => {
-    const sdk = await getKasuSDK()
+export const getPoolsTotals = async () => {
+  const sdk = await getKasuSDK()
 
-    return await sdk.DataService.getLendingTotals(poolOverviews)
-  },
-  ['totals'],
-  {
-    // use it to revalidate/flush cache with revalidateTag()
-    tags: ['totals'],
-    revalidate: CACHE_TTL,
-  }
-)
+  const pools = await getPoolOverview()
+
+  return await sdk.DataService.getLendingTotals(pools)
+}
+// ['totals'],
+// {
+//   // use it to revalidate/flush cache with revalidateTag()
+//   tags: ['totals'],
+//   revalidate: CACHE_TTL,
+// }
+// )

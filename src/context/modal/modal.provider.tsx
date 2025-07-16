@@ -31,10 +31,18 @@ import { DetailedTransactionWrapper } from '@/utils/lending/getDetailedTransacti
 import { PoolOverviewWithDelegate } from '@/types/page'
 
 const initialState: Modals = {
-  connectWalletModal: { isOpen: false },
   loyaltyLevelsModal: { isOpen: false },
+  referralModal: { isOpen: false },
   wipRedirectModal: { isOpen: false },
+  linkWalletsModal: { isOpen: false },
+  referredUsersModal: { isOpen: false, referredUsers: [] },
+  referralDetectedModal: { isOpen: false, referralCode: '' as `0x${string}` },
+  viewWalletModal: { isOpen: false },
   missingEmailModal: { isOpen: false, callback: () => {} },
+  viewLoanContractsModal: {
+    isOpen: false,
+    depositDetails: [],
+  },
   historicalRepaymentsModal: {
     isOpen: false,
     historicalRepayments: null as unknown as LoanStatus['historicalRepayments'],
@@ -158,6 +166,9 @@ const initialState: Modals = {
     isFullscreen: false,
     canAccept: false,
     acceptLoanContract: () => {},
+  },
+  nftDetectedModal: {
+    isOpen: false,
   },
 }
 

@@ -1,5 +1,5 @@
 import { IconButton, TableCell, TableRow, Typography } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
+import { useChainId } from 'wagmi'
 
 import { PaperIcon } from '@/assets/icons'
 
@@ -28,7 +28,7 @@ const TransactionHistoryRow: React.FC<TransactionHistoryRowProps> = ({
   tranasctionHash,
   highlight = false,
 }) => {
-  const { chainId } = useWeb3React()
+  const chainId = useChainId()
 
   const formattedTime = formatTimestamp(date, {
     format: 'DD.MM.YYYY HH:mm:ss',

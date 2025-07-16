@@ -15,7 +15,8 @@
     "format": "prettier -w .",
     "format:check": "prettier -c . '!build/**/*'",
     "generate-types": "typechain --target=ethers-v5 --always-generate-overloads --out-dir=src/contracts/output src/contracts/abis/*.json",
-    "types": "tsc -p tsconfig.json --noEmit"
+    "types": "tsc -p tsconfig.json --noEmit",
+    "postinstall": "npx puppeteer browsers install"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
@@ -28,8 +29,9 @@
   },
   "dependencies": {
     "@coinbase/wallet-sdk": "^3.7.2",
-    "@compilot/js-sdk": "^2.35.3",
-    "@compilot/react-sdk": "^2.35.3",
+    "@compilot/js-sdk": "^2.111.0",
+    "@compilot/react-sdk": "^2.114.0",
+    "@compilot/web-sdk-wallet-wagmi": "^2.49.0",
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.4",
     "@emotion/server": "^11.11.0",
@@ -43,7 +45,11 @@
     "@nivo/pie": "^0.87.0",
     "@nivo/tooltip": "^0.87.0",
     "@nivo/voronoi": "^0.87.0",
-    "@solidant/kasu-sdk": "^0.0.126",
+    "@privy-io/react-auth": "^2.13.8",
+    "@privy-io/wagmi": "^1.0.3",
+    "@solidant/kasu-sdk": "^0.0.137",
+    "@sparticuz/chromium-min": "^133.0.0",
+    "@tanstack/react-query": "^5.74.11",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@web3-react/coinbase-wallet": "^8.2.3",
@@ -62,11 +68,14 @@
     "next": "^15.2.0",
     "pino-pretty": "^11.0.0",
     "pluno-web-chatbot": "^1.0.8",
+    "puppeteer": "^24.4.0",
     "sass": "^1.69.5",
     "sharp": "^0.33.5",
     "styled-components": "^6.1.2",
     "swr": "^2.2.5",
     "typescript": "^5.6.3",
+    "viem": "^2.29.0",
+    "wagmi": "^2.15.1",
     "xhr2": "^0.2.1"
   },
   "devDependencies": {

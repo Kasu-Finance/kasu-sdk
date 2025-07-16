@@ -150,6 +150,7 @@ const LendingPortfolioTableTrancheRow: React.FC<
                 currentEpoch={currentEpoch}
                 pool={pool}
                 tranche={tranche}
+                ftdId={fixedTermConfig.configId}
               />
             </TableRow>
           ))

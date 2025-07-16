@@ -55,9 +55,9 @@ const LoyaltyLevelsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               sx={{ bgcolor: 'gold.dark', textAlign: 'center', py: 1.5 }}
             >
               <Typography variant='h5' px={5}>
-                We’re working hard on the launch of the $KASU token. In the
-                meantime, start lending so you’re the first to benefit once
-                $KASU launches, which you can learn more about below
+                We’re working hard on the launch of the KASU token. In the
+                meantime, start lending so you’re the first to benefit once KASU
+                launches, which you can learn more about below
               </Typography>
             </ColoredBox>
             <Typography variant='h4'>

@@ -1,7 +1,7 @@
 'use client'
 
-import { useWeb3React } from '@web3-react/core'
 import useSWR from 'swr'
+import { useAccount } from 'wagmi'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
@@ -11,13 +11,13 @@ const useUserLendingTrancheBalance = <T extends { id: string }>(
   poolId: string,
   tranches: T[]
 ) => {
-  const { account } = useWeb3React()
+  const account = useAccount()
 
   const sdk = useKasuSDK()
 
   const { data, error, isLoading } = useSWR(
-    account && sdk
-      ? ['userLendingTrancheBalance', account, tranches, sdk]
+    account.address && sdk
+      ? ['userLendingTrancheBalance', account.address, tranches, sdk]
       : null,
     async ([_, userId, tranches, sdk]) =>
       Promise.all(
@@ -30,7 +30,7 @@ const useUserLendingTrancheBalance = <T extends { id: string }>(
           ),
         }))
       ),
-    { dedupingInterval: FIVE_MINUTES }
+    { dedupingInterval: FIVE_MINUTES, keepPreviousData: true }
   )
 
   return {

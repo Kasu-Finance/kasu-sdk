@@ -30,8 +30,8 @@ const LockingNotification = () => {
         <InfoIcon />
       </Icon>
       <Typography variant='h5'>
-        We’re working hard on the launch of the $KASU token. In the meantime,
-        start lending so you’re the first to benefit once $KASU launches.
+        We’re working hard on the launch of the KASU token. In the meantime,
+        start lending so you’re the first to benefit once KASU launches.
       </Typography>
       <LearnButton sx={{ maxWidth: 307, textTransform: 'capitalize' }} />
     </WaveBox>

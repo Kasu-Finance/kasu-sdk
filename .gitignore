@@ -20,3 +20,4 @@ dist/
 
 .yalc
 yalc.lock
+.cache

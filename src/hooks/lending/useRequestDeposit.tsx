@@ -1,8 +1,9 @@
-import { useWeb3React } from '@web3-react/core'
 import { BigNumber, BytesLike } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
+import { useAccount, useChainId } from 'wagmi'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
+import useKycState from '@/hooks/context/useKycState'
 import useStepperState from '@/hooks/context/useStepperState'
 import useToastState from '@/hooks/context/useToastState'
 import useBuildDepositData from '@/hooks/lending/useBuildDepositData'
@@ -16,17 +17,19 @@ import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { SupportedTokens } from '@/constants/tokens'
 import { capitalize, toBigNumber, waitForReceipt } from '@/utils'
 
-import { HexString } from '@/types/lending'
 import { PoolOverviewWithDelegate } from '@/types/page'
 
 const useRequestDeposit = () => {
   const sdk = useKasuSDK()
+  const account = useAccount()
 
-  const { account, chainId } = useWeb3React()
+  const chainId = useChainId()
 
   const handleError = useHandleError()
 
   const { setTxHash, trancheId, amount, selectedToken } = useDepositModalState()
+
+  const { kycInfo } = useKycState()
 
   const supportedTokens = useSupportedTokenInfo()
 
@@ -48,7 +51,7 @@ const useRequestDeposit = () => {
     contractVersion: number,
     contractType: 'retail' | 'exempt'
   ) => {
-    if (!account) {
+    if (!account.address) {
       return console.error('RequestDeposit:: Account is undefined')
     }
 
@@ -60,6 +63,9 @@ const useRequestDeposit = () => {
       return console.error('RequestDeposit:: SupportedTokens is undefined')
     }
 
+    if (!kycInfo) {
+      return console.error('RequestDeposit:: KycInfo is undefined')
+    }
     try {
       if (!sdk) {
         throw new KasuSdkNotReadyError()
@@ -73,7 +79,7 @@ const useRequestDeposit = () => {
       })
 
       const kycSignatureParams = await sdk.UserLending.buildKycSignatureParams(
-        account as HexString,
+        account.address,
         chainId.toString()
       )
 
@@ -102,7 +108,7 @@ const useRequestDeposit = () => {
 
       if (selectedToken !== SupportedTokens.USDC) {
         const data = await buildSwapData({
-          account,
+          account: account.address,
           chainId,
           currentDepositedAmount,
           fromAmount,

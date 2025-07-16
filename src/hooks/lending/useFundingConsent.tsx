@@ -1,4 +1,4 @@
-import { useWeb3React } from '@web3-react/core'
+import { useAccount, useChainId, useSignMessage } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
 import useToastState from '@/hooks/context/useToastState'
@@ -14,7 +14,11 @@ import dayjs from '@/dayjs'
 import { capitalize } from '@/utils'
 
 const useFundingConsent = () => {
-  const { account, chainId, provider } = useWeb3React()
+  const account = useAccount()
+
+  const chainId = useChainId()
+
+  const { signMessage } = useSignMessage()
 
   const handleError = useHandleError()
 
@@ -36,16 +40,12 @@ const useFundingConsent = () => {
     decision: LoanTicketStatus,
     callback: (newLoanTickets: LoanTicketDto[]) => void
   ) => {
-    if (!account) {
+    if (!account.address) {
       return console.error('FundingConsent:: Account is undefined')
     }
 
     if (!chainId) {
       return console.error('FundingConsent:: ChainId is undefined')
-    }
-
-    if (!provider) {
-      return console.error('FundingConsent:: Provider is undefined')
     }
 
     try {
@@ -64,16 +64,81 @@ const useFundingConsent = () => {
         status: decision,
       }
 
-      let signature: string
-
       const signatureTimestamp = dayjs().unix() * 1000
 
       try {
-        signature = await provider
-          .getSigner()
-          .signMessage(
-            `I would like to record the following opt-in/out requests: ${JSON.stringify([payload])}, ${signatureTimestamp}`
-          )
+        signMessage(
+          {
+            message: `I would like to record the following opt-in/out requests: ${JSON.stringify([payload])}, ${signatureTimestamp}`,
+          },
+          {
+            onError: (error) => {
+              throw new Error(error.message)
+            },
+            onSuccess: async (signature) => {
+              if (!account.address) {
+                return console.error('Funding Consent:: Account is undefiend')
+              }
+
+              setToast({
+                type: 'info',
+                title: capitalize(ActionStatus.PROCESSING),
+                message:
+                  ACTION_MESSAGES[ActionType.FUNDING_CONSENT][
+                    ActionStatus.PROCESSING
+                  ],
+                isClosable: false,
+              })
+
+              const res = await fetch(
+                '/api/loan-tickets?' +
+                  new URLSearchParams({
+                    chainId: chainId.toString(),
+                  }),
+                {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    userID: account.address.toLowerCase(),
+                    payload,
+                    signature,
+                    signatureTimestamp,
+                  }),
+                }
+              )
+
+              const data: FundingConsentReturn = await res.json()
+
+              if ('statusCode' in data) {
+                throw new Error(data.message)
+              }
+              const loanTickets = await updateLoanTickets(
+                (prevData) => [...(prevData || []), ...data],
+                {
+                  revalidate: false,
+                }
+              )
+
+              if (loanTickets) {
+                callback(loanTickets)
+              }
+
+              if (decision === LoanTicketStatus.optedIn) {
+                openModal({ name: ModalsKeys.OPT_IN })
+              } else {
+                openModal({
+                  name: ModalsKeys.OPT_OUT,
+                  subsequentTransaction,
+                  poolName,
+                })
+              }
+
+              removeToast()
+            },
+          }
+        )
       } catch (error) {
         handleError(
           error,
@@ -83,61 +148,6 @@ const useFundingConsent = () => {
         )
         return
       }
-
-      setToast({
-        type: 'info',
-        title: capitalize(ActionStatus.PROCESSING),
-        message:
-          ACTION_MESSAGES[ActionType.FUNDING_CONSENT][ActionStatus.PROCESSING],
-        isClosable: false,
-      })
-
-      const res = await fetch(
-        '/api/loan-tickets?' +
-          new URLSearchParams({
-            chainId: chainId.toString(),
-          }),
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            userID: account.toLowerCase(),
-            payload,
-            signature,
-            signatureTimestamp,
-          }),
-        }
-      )
-
-      const data: FundingConsentReturn = await res.json()
-
-      if ('statusCode' in data) {
-        throw new Error(data.message)
-      }
-      const loanTickets = await updateLoanTickets(
-        (prevData) => [...(prevData || []), ...data],
-        {
-          revalidate: false,
-        }
-      )
-
-      if (loanTickets) {
-        callback(loanTickets)
-      }
-
-      if (decision === LoanTicketStatus.optedIn) {
-        openModal({ name: ModalsKeys.OPT_IN })
-      } else {
-        openModal({
-          name: ModalsKeys.OPT_OUT,
-          subsequentTransaction,
-          poolName,
-        })
-      }
-
-      removeToast()
     } catch (error) {
       handleError(error)
     }

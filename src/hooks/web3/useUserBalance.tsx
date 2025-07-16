@@ -1,29 +1,40 @@
-import { useWeb3React } from '@web3-react/core'
+import { useWallets } from '@privy-io/react-auth'
 import { ethers } from 'ethers'
 import { useState } from 'react'
 import useSWR from 'swr'
+import { useAccount } from 'wagmi'
 
 import useTokenDetails from '@/hooks/web3/useTokenDetails'
 
 import { IERC20__factory } from '@/contracts/output'
 
 const useUserBalance = (tokenAddress: string | undefined) => {
-  const { account, provider } = useWeb3React()
+  const { address } = useAccount()
+
+  const { wallets } = useWallets()
+
+  const wallet = wallets[0]
 
   const [hasLoaded, setHasLoaded] = useState(false)
 
-  const { decimals, symbol, error } = useTokenDetails(tokenAddress)
+  const { decimals, symbol, error } = useTokenDetails(
+    tokenAddress as `0x${string}`
+  )
 
   const {
     data: balance,
     error: balanceError,
     isLoading,
   } = useSWR(
-    provider && account && tokenAddress
-      ? [`userBalance-${tokenAddress}`, provider, account, tokenAddress]
+    wallet && address && tokenAddress
+      ? [`userBalance-${tokenAddress}`, wallet, address, tokenAddress]
       : null,
-    async ([_, library, userAddress, token]) => {
-      const erc20 = IERC20__factory.connect(token, library)
+    async ([_, wallet, userAddress, token]) => {
+      const privyProvider = await wallet.getEthereumProvider()
+
+      const provider = new ethers.providers.Web3Provider(privyProvider)
+
+      const erc20 = IERC20__factory.connect(token, provider)
 
       const balance = await erc20.balanceOf(userAddress)
 

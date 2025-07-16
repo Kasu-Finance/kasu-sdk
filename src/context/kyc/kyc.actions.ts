@@ -12,7 +12,7 @@ import useToastState from '@/hooks/context/useToastState'
 
 import { KycActions, KycFunctions } from '@/context/kyc/kyc.types'
 
-import { CustomerStatus } from '@/actions/checkUserKycState'
+import { CustomerStatus } from '@/app/api/kyc/route'
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { capitalize } from '@/utils'
 
@@ -32,7 +32,6 @@ const useKycActions = (dispatch: Dispatch<KycActions>): KycFunctions => {
           message: 'Waiting for message signature to be signed...',
           isClosable: false,
         })
-
         watchIsAuthenticated(compilotConfig, {
           onIsAuthenticatedChange: (isAuthenticated) => {
             if (isAuthenticated) {
@@ -45,7 +44,6 @@ const useKycActions = (dispatch: Dispatch<KycActions>): KycFunctions => {
             }
           },
         })
-
         watchWidgetVisibleState(compilotConfig, {
           onChange: async (isVisible) => {
             // widget close
@@ -132,8 +130,10 @@ const useKycActions = (dispatch: Dispatch<KycActions>): KycFunctions => {
           type: 'SET_LAST_VERIFIED_ACCOUNT',
           payload: account,
         }),
-      setCustomerStatus: (customerStatus: CustomerStatus) =>
-        dispatch({ type: 'SET_CUSTOMER_STATUS', payload: customerStatus }),
+      setCustomerKycInfo: (customerStatus: {
+        type: 'Company' | 'Individual'
+        status: CustomerStatus
+      }) => dispatch({ type: 'SET_CUSTOMER_STATUS', payload: customerStatus }),
       setIsVerifying: (isVerifying: boolean) =>
         dispatch({ type: 'SET_IS_VERIFYING', payload: isVerifying }),
       setKycCompleted: (kycCompleted: boolean) =>

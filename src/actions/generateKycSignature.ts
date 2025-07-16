@@ -4,6 +4,8 @@ import { IKasuAllowListAbi__factory } from '@solidant/kasu-sdk/src/contracts'
 
 import NEXERA_API_BASE_URL from '@/config/nexera/api.nexera'
 
+const SIGNATURE_WORKFLOW = process.env.SIGNATURE_WORKFLOW || ''
+
 type ApiRes =
   | {
       signatureData: string
@@ -35,7 +37,10 @@ const generateKycSignature = async (params: {
     `${NEXERA_API_BASE_URL}/customer-tx-auth-signature`
 
   const response = await fetch(NEXERA_API_URL, {
-    body: JSON.stringify(params),
+    body: JSON.stringify({
+      ...params,
+      workflowId: SIGNATURE_WORKFLOW,
+    }),
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -44,7 +49,19 @@ const generateKycSignature = async (params: {
     method: 'POST',
   })
 
+  if (!response.ok) {
+    console.error(response)
+  }
+
   const data: ApiRes = await response.json()
+
+  console.error(data)
+
+  if ('message' in data) {
+    console.error('GenerateKycSignature:: ', data.message)
+    console.error(params)
+    console.error(data)
+  }
 
   if ('payload' in data) {
     return {

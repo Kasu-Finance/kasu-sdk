@@ -9,11 +9,14 @@ import {
 import {
   PortfolioLendingPool,
   PortfolioTranche,
+  PortfolioTrancheDepositDetails,
 } from '@solidant/kasu-sdk/src/services/Portfolio/types'
 import {
   UserRequest,
   UserTrancheBalance,
 } from '@solidant/kasu-sdk/src/services/UserLending/types'
+
+import { ReferredUserDetails } from '@/hooks/referrals/useUserReferrals'
 
 import { LoanStatus } from '@/components/organisms/lending/RepaymentsTab/LoanStatus/LoanStatusTableBody'
 import {
@@ -42,7 +45,6 @@ export enum ModalsActionTypes {
 }
 
 export enum ModalsKeys {
-  CONNECT_WALLET = 'connectWalletModal',
   LOYALTY_LEVELS = 'loyaltyLevelsModal',
   LOCK = 'lockModal',
   UNLOCK = 'unlockModal',
@@ -65,6 +67,13 @@ export enum ModalsKeys {
   UNRELEASED_FEATURE = 'unreleasedFeatureModal',
   HISTORICAL_REPAYMENTS = 'historicalRepaymentsModal',
   WIP_REDIRECT = 'wipRedirectModal',
+  VIEW_LOAN_CONTRACTS = 'viewLoanContractsModal',
+  LINK_WALLETS = 'linkWalletsModal',
+  REFERRAL = 'referralModal',
+  NFT_DETECTED = 'nftDetectedModal',
+  REFERRAL_DETECTED = 'referralDetectedModal',
+  REFERRED_USERS = 'referredUsersModal',
+  VIEW_WALLET = 'viewWalletModal',
 }
 
 export type ModalAction =
@@ -81,6 +90,17 @@ export type ModalData<T = void> = T extends void ? ModalBase : T & ModalBase
 export type Modals = {
   [ModalsKeys.UNRELEASED_FEATURE]: ModalData
   [ModalsKeys.WIP_REDIRECT]: ModalData
+  [ModalsKeys.LINK_WALLETS]: ModalData
+  [ModalsKeys.VIEW_WALLET]: ModalData
+  [ModalsKeys.NFT_DETECTED]: ModalData
+  [ModalsKeys.REFERRAL]: ModalData
+  [ModalsKeys.REFERRED_USERS]: ModalData<{
+    referredUsers: ReferredUserDetails[]
+  }>
+  [ModalsKeys.REFERRAL_DETECTED]: ModalData<{ referralCode: `0x${string}` }>
+  [ModalsKeys.VIEW_LOAN_CONTRACTS]: ModalData<{
+    depositDetails: PortfolioTrancheDepositDetails[]
+  }>
   [ModalsKeys.LOYALTY_LEVELS]: ModalData<{
     callback?: () => void
   }>
@@ -149,7 +169,6 @@ export type Modals = {
     }
     canAccept: boolean
   }>
-  [ModalsKeys.CONNECT_WALLET]: ModalData<{ callback?: () => void }>
   [ModalsKeys.LOCK]: ModalData<{ lockPeriods: LockPeriod[] }>
   [ModalsKeys.UNLOCK]: ModalData<{
     userLock: UserLock

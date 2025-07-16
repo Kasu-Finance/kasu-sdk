@@ -1,9 +1,8 @@
 import { Box } from '@mui/material'
 import { PoolOverviewDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import type { Metadata } from 'next'
+import Script from 'next/script'
 import { ReactNode } from 'react'
-
-import '@/styles/fonts.module.css'
 
 import Chatbot from '@/components/atoms/Chatbot'
 import Footer from '@/components/organisms/footer'
@@ -12,9 +11,9 @@ import ModalsContainer from '@/components/organisms/modals/ModalsContainer'
 
 import KycState from '@/context/kyc/kyc.provider'
 import ModalState from '@/context/modal/modal.provider'
+import PrivyProvider from '@/context/privy.provider'
 import SwrProvider from '@/context/swr.provider'
 import ToastState from '@/context/toast/toast.provider'
-import Web3Provider from '@/context/web3provider/web3.provider'
 
 import sdkConfig from '@/config/sdk'
 import ThemeRegistry from '@/themes/ThemeRegistry'
@@ -25,8 +24,10 @@ type RootLayoutProps = {
 
 export const metadata: Metadata = {
   title: 'Kasu',
-  description: 'Kasu',
+  description:
+    'Kasu. Redefining Real-World Yield. Earn the highest quality yields in RWA Private Credit.',
   manifest: '/manifest.json',
+  metadataBase: new URL('https://app.kasu.finance'),
 }
 
 // Since this is the root layout, all fetch requests in the app
@@ -74,13 +75,15 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         href='/favicons/android-chrome-512x512.png'
       />
       <Chatbot />
+
       <body>
         <ThemeRegistry>
-          <SwrProvider unusedPools={filteredPools}>
-            <Web3Provider>
+          <PrivyProvider>
+            <SwrProvider unusedPools={filteredPools}>
               <ToastState>
                 <KycState>
                   <ModalState>
+                    {/* <NftTracker /> */}
                     <Header />
                     <Box component='main'>{children}</Box>
                     <Footer />
@@ -88,10 +91,18 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                   </ModalState>
                 </KycState>
               </ToastState>
-            </Web3Provider>
-          </SwrProvider>
+            </SwrProvider>
+          </PrivyProvider>
         </ThemeRegistry>
       </body>
+      <Script
+        src='https://cdn.markfi.xyz/scripts/analytics/0.11.24/cookie3.analytics.min.js'
+        integrity='sha384-ihnQ09PGDbDPthGB3QoQ2Heg2RwQIDyWkHkqxMzq91RPeP8OmydAZbQLgAakAOfI'
+        crossOrigin='anonymous'
+        async
+        strategy='lazyOnload'
+        site-id='9d57619d-d1f7-404f-9e5b-6ab88f39d5a0'
+      />
     </html>
   )
 }

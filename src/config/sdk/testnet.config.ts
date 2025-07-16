@@ -18,6 +18,7 @@ export const sdkConfig: SdkConfig = {
     KsuPrice: sepolia.KsuPrice.address,
     UserLoyaltyRewards: sepolia.UserLoyaltyRewards.address,
     ClearingCoordinator: sepolia.ClearingCoordinator.address,
+    KasuNFTs: sepolia.KasuNFTs.address,
   },
   directusUrl: 'https://kasu-dev.directus.app/',
   UNUSED_LENDING_POOL_IDS: [''], // will be initialized later

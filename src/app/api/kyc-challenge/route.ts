@@ -5,11 +5,11 @@ const apiClient = createSdk({
   apiKey: process.env.NEXERA_API_KEY || '',
 })
 
-const KYC_WORKFLOW = 'c8493d6c-48e5-4884-b87e-c3eaf371d314'
-const KYB_WORKFLOW = 'e73e3fc4-1396-4267-87e9-6f828f87c2aa'
-
 export async function POST(req: NextRequest) {
   try {
+    const KYC_WORKFLOW = process.env.KYC_WORKFLOW || ''
+    const KYB_WORKFLOW = process.env.KYB_WORKFLOW || ''
+
     const body = await req.json()
 
     const { isIndividual, ...args } = body
