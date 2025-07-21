@@ -1,4 +1,5 @@
 import { Button, Stack } from '@mui/material'
+import { memo } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
@@ -56,4 +57,4 @@ const LendingModalEditActions = () => {
   )
 }
 
-export default LendingModalEditActions
+export default memo(LendingModalEditActions)

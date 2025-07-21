@@ -4,6 +4,8 @@ import {
   DepositModalStateType,
 } from '@/context/depositModal/depositModal.types'
 
+import calculateDepositMinMax from '@/utils/lending/calculateDepositMinMax'
+
 const depositModalReducer = (
   state: DepositModalStateType,
   action: DepositModalActions
@@ -20,17 +22,39 @@ const depositModalReducer = (
         ...state,
         amountInUSD: action.payload,
       }
-    case DepositModalActionType.SET_FIXED_TERM_CONFIG_ID:
+    case DepositModalActionType.SET_FIXED_TERM_CONFIG_ID: {
+      const { minDeposit, maxDeposit } = calculateDepositMinMax(
+        state.pool.tranches,
+        state.trancheId,
+        state.currentEpochDepositedAmountMap,
+        state.currentEpochFtdAmountMap,
+        action.payload
+      )
+
       return {
         ...state,
         fixedTermConfigId: action.payload,
+        minDeposit,
+        maxDeposit,
       }
-    case DepositModalActionType.SET_SELECTED_TRANCHE:
+    }
+    case DepositModalActionType.SET_SELECTED_TRANCHE: {
+      const { minDeposit, maxDeposit } = calculateDepositMinMax(
+        state.pool.tranches,
+        action.payload.trancheId,
+        state.currentEpochDepositedAmountMap,
+        state.currentEpochFtdAmountMap,
+        action.payload.defaultFixedTermConfigId
+      )
+
       return {
         ...state,
         trancheId: action.payload.trancheId,
         fixedTermConfigId: action.payload.defaultFixedTermConfigId,
+        minDeposit,
+        maxDeposit,
       }
+    }
     case DepositModalActionType.SET_TX_HASH:
       return {
         ...state,

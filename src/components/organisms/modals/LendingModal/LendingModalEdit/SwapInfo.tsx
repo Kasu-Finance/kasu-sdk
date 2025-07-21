@@ -1,7 +1,7 @@
 import { Skeleton, Typography } from '@mui/material'
 import { Box } from '@mui/system'
+import React, { memo } from 'react'
 
-import useDepositModalState from '@/hooks/context/useDepositModalState'
 import getTranslation from '@/hooks/useTranslation'
 import useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
 
@@ -13,11 +13,23 @@ import { ONE_INCH_SLIPPAGE } from '@/config/api.oneInch'
 import { SupportedTokens } from '@/constants/tokens'
 import { formatAmount, formatPercentage } from '@/utils'
 
-const SwapInfo = () => {
+type SwapInfoProps = {
+  selectedToken: SupportedTokens
+  amount: string
+  amountInUSD: string | undefined
+  isValidating: boolean
+}
+
+const SwapInfo: React.FC<SwapInfoProps> = ({
+  amount,
+  amountInUSD,
+  selectedToken,
+  isValidating,
+}) => {
   const { t } = getTranslation()
 
-  const { amount, amountInUSD, isValidating, selectedToken } =
-    useDepositModalState()
+  // const { amount, amountInUSD, isValidating, selectedToken } =
+  //   useDepositModalState()
 
   const { supportedTokenUserBalances } = useSupportedTokenUserBalances()
 
@@ -84,4 +96,4 @@ const SwapInfo = () => {
   )
 }
 
-export default SwapInfo
+export default memo(SwapInfo)

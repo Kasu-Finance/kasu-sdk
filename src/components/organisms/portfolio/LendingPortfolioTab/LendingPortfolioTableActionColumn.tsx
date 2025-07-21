@@ -11,6 +11,8 @@ import {
 import React, { useState } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
+import useCurrentEpochDepositedAmount from '@/hooks/lending/useCurrentEpochDepositedAmount'
+import useCurrentEpochFtdAmount from '@/hooks/lending/useCurrentEpochFtdAmount'
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
 import getTranslation from '@/hooks/useTranslation'
 
@@ -42,6 +44,14 @@ const LendingPortfolioTableActionColumn: React.FC<
   const { openModal } = useModalState()
 
   const { isLoading, nextEpochTime } = useNextEpochTime()
+
+  const {
+    currentEpochDepositedAmount,
+    isLoading: currentEpochDepositedAmountLoading,
+  } = useCurrentEpochDepositedAmount(pool.id)
+
+  const { currentEpochFtdAmount, isLoading: currentEpochFtdAmountLoading } =
+    useCurrentEpochFtdAmount(pool.id, currentEpoch)
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
@@ -195,12 +205,22 @@ const LendingPortfolioTableActionColumn: React.FC<
           TransitionComponent={Fade}
         >
           <MenuItem
-            onClick={() =>
+            onClick={() => {
+              if (!currentEpochDepositedAmount || !currentEpochFtdAmount) {
+                console.error('CurrentEpochAmount is undefined')
+                return
+              }
+
               handleMenuItemClick({
                 name: ModalsKeys.LEND,
                 pool,
                 currentEpoch,
+                currentEpochDepositedAmount,
+                currentEpochFtdAmount,
               })
+            }}
+            disabled={
+              currentEpochDepositedAmountLoading || currentEpochFtdAmountLoading
             }
           >
             <UploadMoneyIcon />

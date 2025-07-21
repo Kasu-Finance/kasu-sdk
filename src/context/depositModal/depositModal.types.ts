@@ -1,3 +1,5 @@
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
+
 import { SupportedTokens } from '@/constants/tokens'
 
 export enum DepositModalActionType {
@@ -64,6 +66,7 @@ export type DepositModalActions =
     }
 
 export type DepositModalStateType = {
+  pool: PoolOverview
   amount: string
   simulatedDuration: number
   trancheId: `0x${string}`
@@ -75,6 +78,10 @@ export type DepositModalStateType = {
   loanContractAccepted: boolean
   isValidating: boolean
   isDebouncing: boolean
+  minDeposit: string
+  maxDeposit: string
+  currentEpochDepositedAmountMap: Map<string, string>
+  currentEpochFtdAmountMap: Map<string, string[]>
 }
 
 export type DepositModalFunctions = {

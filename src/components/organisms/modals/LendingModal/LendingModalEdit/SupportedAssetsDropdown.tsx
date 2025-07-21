@@ -6,9 +6,8 @@ import {
   Typography,
 } from '@mui/material'
 import { formatUnits } from 'ethers/lib/utils'
-import { useMemo } from 'react'
+import React, { memo, useMemo } from 'react'
 
-import useDepositModalState from '@/hooks/context/useDepositModalState'
 import getTranslation from '@/hooks/useTranslation'
 import useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
 
@@ -19,12 +18,18 @@ import OneInchLogo from '@/assets/logo/OneInchLogo'
 import { SupportedTokens } from '@/constants/tokens'
 import { capitalize, formatAmount } from '@/utils'
 
-const SupportedAssetsDropdown = () => {
+type SupportedAssetsDropdownProps = {
+  selectedToken: SupportedTokens
+  setSelectedToken: (token: SupportedTokens) => void
+}
+
+const SupportedAssetsDropdown: React.FC<SupportedAssetsDropdownProps> = ({
+  selectedToken,
+  setSelectedToken,
+}) => {
   const { t } = getTranslation()
 
   const { supportedTokenUserBalances } = useSupportedTokenUserBalances()
-
-  const { selectedToken, setSelectedToken } = useDepositModalState()
 
   const showOneInch = useMemo(
     () => selectedToken !== SupportedTokens.USDC,
@@ -133,4 +138,4 @@ const SupportedAssetsDropdown = () => {
   )
 }
 
-export default SupportedAssetsDropdown
+export default memo(SupportedAssetsDropdown)
