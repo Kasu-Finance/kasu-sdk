@@ -1,10 +1,9 @@
 import { Box, Skeleton, Typography } from '@mui/material'
 import { formatUnits } from 'ethers/lib/utils'
 import { Dispatch, SetStateAction } from 'react'
-import { useChainId } from 'wagmi'
 
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
-import useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
+import { SupportedTokenUserBalances } from '@/hooks/web3/useSupportedTokenUserBalances'
 
 import DepositAmountInput from '@/components/molecules/lending/lendingModal/DepositAmountInput'
 
@@ -19,6 +18,13 @@ type SelectedAssetInputProps = {
   setAmountInUSD: Dispatch<SetStateAction<string | undefined>>
   isValidating: boolean
   setIsValidating: Dispatch<SetStateAction<boolean>>
+  validate: (amount: string, amountInUSD?: string) => void
+  supportedTokenUserBalances: Record<
+    SupportedTokens,
+    SupportedTokenUserBalances
+  >
+  supportedTokens: NonNullable<ReturnType<typeof useSupportedTokenInfo>>
+  applyConversion: (fromAmount: string, token: SupportedTokens) => void
 }
 
 const SelectedAssetInput: React.FC<SelectedAssetInputProps> = ({
@@ -29,46 +35,34 @@ const SelectedAssetInput: React.FC<SelectedAssetInputProps> = ({
   setAmountInUSD,
   isValidating,
   setIsValidating,
+  validate,
+  supportedTokenUserBalances,
+  supportedTokens,
+  applyConversion,
 }) => {
-  const chainId = useChainId()
-
-  // const {
-  //   // amountInUSD,
-
-  //   isValidating,
-  //   // setAmountInUSD,
-  // } = useDepositModalState()
-
-  const { supportedTokenUserBalances } = useSupportedTokenUserBalances()
-
-  const supportedTokens = useSupportedTokenInfo()
-
-  if (!supportedTokenUserBalances || !supportedTokens) {
-    return (
-      <Skeleton
-        variant='rounded'
-        sx={{ bgcolor: 'gold.extraDark' }}
-        height={60}
-      />
-    )
-  }
-
   const usdcInfo = supportedTokens[SupportedTokens.USDC]
 
-  const token = supportedTokens[selectedToken]
+  const targetToken = supportedTokens[selectedToken]
 
-  const tokenBalance = supportedTokenUserBalances[selectedToken]
+  const targetTokenBalance = supportedTokenUserBalances[selectedToken]
 
   return (
     <DepositAmountInput
+      selectedToken={selectedToken}
       amount={amount}
+      amountInUSD={amountInUSD}
+      validate={validate}
       setAmount={setAmount}
       setAmountInUSD={setAmountInUSD}
       setIsValidating={setIsValidating}
-      decimals={tokenBalance.decimals}
-      balance={formatUnits(tokenBalance.balance, tokenBalance.decimals)}
+      decimals={targetTokenBalance.decimals}
+      balance={formatUnits(
+        targetTokenBalance.balance,
+        targetTokenBalance.decimals
+      )}
       endAdornment={
-        tokenBalance.symbol === SupportedTokens.USDC ? null : isValidating ? (
+        targetTokenBalance.symbol ===
+        SupportedTokens.USDC ? null : isValidating ? (
           <Skeleton
             variant='rounded'
             sx={{ bgcolor: 'gold.extraDark' }}
@@ -89,32 +83,18 @@ const SelectedAssetInput: React.FC<SelectedAssetInputProps> = ({
       }
       startAdornment={
         <Box display='flex' alignItems='center'>
-          {token.icon.dark}
+          {targetToken.icon.dark}
           <Typography
             variant='inherit'
             component='span'
             color='gold.extraDark'
             ml={1}
           >
-            {tokenBalance.symbol}
+            {targetTokenBalance.symbol}
           </Typography>
         </Box>
       }
-      applyConversion={
-        selectedToken === SupportedTokens.USDC
-          ? undefined
-          : {
-              chainId,
-              fromToken: {
-                address: tokenBalance.address,
-                decimals: tokenBalance.decimals,
-              },
-              toToken: {
-                address: usdcInfo.address,
-                decimals: usdcInfo.decimals,
-              },
-            }
-      }
+      applyConversion={applyConversion}
       debounceTime={500}
     />
   )

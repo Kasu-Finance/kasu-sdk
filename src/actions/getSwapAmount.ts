@@ -39,7 +39,7 @@ const getSwapAmount = async (
     return data.dstAmount
   } catch (error) {
     console.error(error)
-    return '3456000000'
+    return '0'
   }
 }
 

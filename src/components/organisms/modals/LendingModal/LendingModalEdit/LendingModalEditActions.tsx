@@ -1,5 +1,5 @@
 import { Button, Stack } from '@mui/material'
-import { memo } from 'react'
+import React, { memo } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
@@ -9,15 +9,32 @@ import getTranslation from '@/hooks/useTranslation'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-const LendingModalEditActions = () => {
+type LendingModalEditActionsProps = {
+  amount: string
+  amountInUSD: string | undefined
+  fixedTermConfigId: string | undefined
+  trancheId: `0x${string}`
+}
+
+const LendingModalEditActions: React.FC<LendingModalEditActionsProps> = ({
+  amount,
+  amountInUSD,
+  fixedTermConfigId,
+  // trancheId,
+}) => {
   const { t } = getTranslation()
 
   const { openModal, closeModal } = useModalState()
 
   const { nextStep } = useStepperState()
 
-  const { amount, amountInUSD, termsAccepted, fixedTermConfigId } =
-    useDepositModalState()
+  const {
+    termsAccepted,
+    setAmount,
+    setAmountInUSD,
+    // setFixedTermConfigId,
+    // setSelectedTranche,
+  } = useDepositModalState()
 
   const { modalStatus } = useModalStatusState()
 
@@ -26,6 +43,15 @@ const LendingModalEditActions = () => {
       name: ModalsKeys.LOYALTY_LEVELS,
       callback: () => closeModal(ModalsKeys.LEND),
     })
+
+  const handleNextStep = () => {
+    setAmount(amount)
+    setAmountInUSD(amountInUSD)
+    // setFixedTermConfigId(fixedTermConfigId)
+    // setSelectedTranche(trancheId)
+
+    nextStep()
+  }
 
   return (
     <Stack spacing={2}>
@@ -40,7 +66,7 @@ const LendingModalEditActions = () => {
       <Button
         variant='contained'
         color='secondary'
-        onClick={nextStep}
+        onClick={handleNextStep}
         sx={{ textTransform: 'capitalize' }}
         disabled={Boolean(
           !amount ||

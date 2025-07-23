@@ -2,7 +2,6 @@
 
 import LoginIcon from '@mui/icons-material/Login'
 import { Box, Typography } from '@mui/material'
-import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { Dispatch, ReactNode, SetStateAction, useCallback } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
@@ -13,12 +12,14 @@ import getTranslation from '@/hooks/useTranslation'
 import NumericalInput from '@/components/molecules/NumericalInput'
 
 // import useLendingModalState from '@/store/lendingModal'
-import getSwapAmount from '@/actions/getSwapAmount'
+import { SupportedTokens } from '@/constants/tokens'
 import { customTypography } from '@/themes/typography'
-import { formatAmount, toBigNumber } from '@/utils'
+import { toBigNumber } from '@/utils'
 
 type DepositAmountInputProps = {
+  selectedToken: SupportedTokens
   amount: string
+  amountInUSD: string | undefined
   setAmount: Dispatch<SetStateAction<string>>
   setAmountInUSD: Dispatch<SetStateAction<string | undefined>>
   balance: string
@@ -26,140 +27,34 @@ type DepositAmountInputProps = {
   disabled?: boolean
   startAdornment?: ReactNode
   endAdornment?: ReactNode
-  applyConversion?: {
-    fromToken: {
-      address: `0x${string}`
-      decimals: number
-    }
-    toToken: {
-      address: `0x${string}`
-      decimals: number
-    }
-    chainId: number
-  }
+  applyConversion: (fromAmount: string, token: SupportedTokens) => void
   debounceTime?: number
   setIsValidating: Dispatch<SetStateAction<boolean>>
+  validate: (amount: string, amountInUSD?: string) => void
   // currentEpochDepositedAmount: string
   // currentEpochFtdAmount: string[]
 }
 
 const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
+  selectedToken,
   amount,
+  amountInUSD,
   setAmount,
   setAmountInUSD,
   balance,
   decimals = 18,
-
+  validate,
   disabled,
   startAdornment = <LoginIcon />,
   endAdornment = 'USDC',
   debounceTime = 1000,
   applyConversion,
-  setIsValidating,
 }) => {
   const { t } = getTranslation()
 
-  const { minDeposit, maxDeposit } = useDepositModalState()
-
-  // const amount = useLendingModalState((state) => state.amount)
-  // const setAmount = useLendingModalState((state) => state.setAmount)
+  const { maxDeposit } = useDepositModalState()
 
   const { modalStatus, setModalStatus } = useModalStatusState()
-
-  const handleAmountChange = async (value: string) => {
-    setAmount(value)
-
-    if (!applyConversion) {
-      setAmountInUSD(value)
-      debouncedValidate(value)
-      return
-    }
-
-    handleApplyConversion(value, applyConversion)
-  }
-
-  const validate = useCallback(
-    async (amount: string, amountInUSD?: string) => {
-      try {
-        if (!amount) return
-
-        const inputBN = toBigNumber(amount)
-        const inputUsdBN = toBigNumber(amountInUSD ?? amount)
-        const minDepositBN = toBigNumber(minDeposit)
-        const maxDepositBN = toBigNumber(maxDeposit)
-        const balanceBN = toBigNumber(balance)
-
-        if (inputBN.isZero()) {
-          setModalStatus({ type: 'error', errorMessage: 'Amount is required' })
-          return
-        }
-
-        if (inputUsdBN.lt(minDepositBN)) {
-          setModalStatus({
-            type: 'error',
-            errorMessage: `The value entered is below the minimum of ${formatAmount(minDeposit)} USDC`,
-          })
-          return
-        }
-
-        if (inputUsdBN.gt(maxDepositBN)) {
-          setModalStatus({
-            type: 'error',
-            errorMessage: `The value entered is above the maximum of ${formatAmount(maxDeposit)} USDC`,
-          })
-          return
-        }
-
-        if (inputBN.gt(balanceBN)) {
-          setModalStatus({
-            type: 'error',
-            errorMessage: 'Insufficient balance',
-          })
-
-          return
-        }
-
-        setModalStatus({ type: amount ? 'success' : 'default' })
-      } catch (error) {
-        console.error(error)
-      }
-    },
-    [setModalStatus, minDeposit, maxDeposit, balance]
-  )
-
-  const handleApplyConversion = useCallback(
-    async (
-      value: string,
-      applyConversion: NonNullable<DepositAmountInputProps['applyConversion']>
-    ) => {
-      try {
-        setIsValidating(true)
-
-        const usdAmount = await getSwapAmount({
-          chainId: applyConversion.chainId,
-          fromToken: applyConversion.fromToken.address,
-          toToken: applyConversion.toToken.address,
-          fromAmount: parseUnits(
-            value,
-            applyConversion.fromToken.decimals
-          ).toString(),
-        })
-
-        const formattedAmount = formatUnits(
-          usdAmount || '0',
-          applyConversion.toToken.decimals
-        )
-
-        setAmountInUSD(formattedAmount)
-        validate(value, formattedAmount)
-      } catch (error) {
-        console.error(error)
-      } finally {
-        setIsValidating(false)
-      }
-    },
-    [validate, setAmountInUSD, setIsValidating]
-  )
 
   const { debouncedFunction: debouncedValidate } = useDebounce(
     validate,
@@ -167,19 +62,39 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
     true
   )
 
-  // const handleAmountChange = useCallback(
-  //   async (value: string) => {
-  //     setAmount(value)
+  const { debouncedFunction: debouncedApplyConversion } = useDebounce(
+    applyConversion,
+    debounceTime,
+    true
+  )
 
-  //     // if (selectedToken === SupportedTokens.USDC) {
-  //     //   setAmountInUSD(value)
-  //     //   return
-  //     // }
+  const handleAmountChange = useCallback(
+    (value: string) => {
+      // reset modal state when amount changes
+      if (modalStatus.type === 'error') {
+        setModalStatus({ type: 'default' })
+      }
 
-  //
-  //   },
-  //   [setAmount, setAmountInUSD, selectedToken, setIsValidating, applyConversion]
-  // )
+      setAmount(value)
+
+      if (selectedToken === SupportedTokens.USDC) {
+        setAmountInUSD(value)
+        debouncedValidate(value)
+        return
+      }
+
+      debouncedApplyConversion(value, selectedToken)
+    },
+    [
+      setAmountInUSD,
+      selectedToken,
+      modalStatus,
+      debouncedApplyConversion,
+      setAmount,
+      setModalStatus,
+      debouncedValidate,
+    ]
+  )
 
   const handleMax = useCallback(() => {
     if (toBigNumber(balance).isZero()) {
@@ -194,75 +109,23 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
 
     setAmount(maxPossible)
 
-    if (!applyConversion) {
+    if (selectedToken === SupportedTokens.USDC) {
       setAmountInUSD(maxPossible)
       debouncedValidate(maxPossible)
 
       return
     }
 
-    handleApplyConversion(maxPossible, applyConversion)
-
-    // if (applyConversion) {
-    //   debouncedValidate(maxPossible)
-    // } else {
-    //   validate(maxPossible)
-    // }
+    applyConversion(maxPossible, selectedToken)
   }, [
     balance,
+    selectedToken,
     maxDeposit,
     setAmount,
     setAmountInUSD,
     applyConversion,
-    handleApplyConversion,
     debouncedValidate,
   ])
-
-  // const handleAmountChange = useCallback(
-  //   (value: string) => {
-  //     setIsValidating(true)
-  //     setAmount(value)
-
-  //     if (applyConversion) {
-  //       debouncedValidate(value)
-  //     } else {
-  //       validate(value)
-  //       setAmountInUSD(value)
-  //     }
-  //   },
-  //   [
-  //     setAmount,
-  //     setAmountInUSD,
-  //     validate,
-  //     applyConversion,
-  //     debouncedValidate,
-  //     setIsValidating,
-  //   ]
-  // )
-
-  // const handleFocusState = useCallback(
-  //   (state: boolean) => {
-  //     if (state) {
-  //       setModalStatus({ type: 'focused' })
-  //     } else {
-  //       applyConversion ? debouncedValidate(amount) : validate(amount)
-  //     }
-  //   },
-  //   [amount, setModalStatus, validate, applyConversion, debouncedValidate]
-  // )
-
-  // useEffect(() => {
-  //   if (!fixedTermConfigId) return
-
-  //   applyConversion ? debouncedValidate(amount) : validate(amount)
-  //   // eslint-disable-next-line
-  // }, [
-  //   trancheId,
-  //   fixedTermConfigId,
-  //   applyConversion,
-  //   validate,
-  //   debouncedValidate,
-  // ])
 
   return (
     <Box>
@@ -283,8 +146,10 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
               bgcolor: 'inherit',
             },
           },
-          // onFocus: () => handleFocusState(true),
-          // onBlur: () => handleFocusState(false),
+          onFocus: () => setModalStatus({ type: 'focused' }),
+          onBlur: () => {
+            validate(amount, amountInUSD)
+          },
           error: modalStatus.type === 'error',
           InputLabelProps: {
             shrink: true,

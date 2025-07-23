@@ -1,8 +1,13 @@
-import { Stack } from '@mui/material'
+import { Skeleton, Stack } from '@mui/material'
+import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { useCallback, useMemo, useState } from 'react'
+import { useChainId } from 'wagmi'
 
+import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
+import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
+import useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
 
 import Acknowledgement from '@/components/organisms/modals/LendingModal/LendingModalEdit/Acknowledgement'
 import ApyDropdown from '@/components/organisms/modals/LendingModal/LendingModalEdit/ApyDropdown'
@@ -16,15 +21,24 @@ import SwapInfo from '@/components/organisms/modals/LendingModal/LendingModalEdi
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
+import getSwapAmount from '@/actions/getSwapAmount'
 import { SupportedTokens } from '@/constants/tokens'
-import { toBigNumber } from '@/utils'
+import { formatAmount, toBigNumber } from '@/utils'
 
 const LendingModalEdit = () => {
+  const chainId = useChainId()
+
   const { modal } = useModalState()
 
   const { pool } = modal[ModalsKeys.LEND]
 
   const { setModalStatus } = useModalStatusState()
+
+  const { supportedTokenUserBalances } = useSupportedTokenUserBalances()
+
+  const supportedTokens = useSupportedTokenInfo()
+
+  const { minDeposit, maxDeposit } = useDepositModalState()
 
   const defaultTranche = useMemo(
     () =>
@@ -44,13 +58,109 @@ const LendingModalEdit = () => {
   const [fixedTermConfigId, setFixedTermConfigId] = useState(
     defaultTranche.fixedTermConfig.length ? undefined : '0'
   )
+  const validate = useCallback(
+    (amount: string, amountInUSD?: string) => {
+      try {
+        if (!amount || !supportedTokenUserBalances) return
+
+        const tokenBalance = supportedTokenUserBalances[selectedToken]
+
+        const balance = formatUnits(tokenBalance.balance, tokenBalance.decimals)
+
+        const inputBN = toBigNumber(amount)
+        const inputUsdBN = toBigNumber(amountInUSD ?? amount)
+        const minDepositBN = toBigNumber(minDeposit)
+        const maxDepositBN = toBigNumber(maxDeposit)
+        const balanceBN = toBigNumber(balance)
+
+        if (inputBN.isZero()) {
+          setModalStatus({ type: 'error', errorMessage: 'Amount is required' })
+          return
+        }
+
+        if (inputUsdBN.lt(minDepositBN)) {
+          setModalStatus({
+            type: 'error',
+            errorMessage: `The value entered is below the minimum of ${formatAmount(minDeposit)} USDC`,
+          })
+          return
+        }
+
+        if (inputUsdBN.gt(maxDepositBN)) {
+          setModalStatus({
+            type: 'error',
+            errorMessage: `The value entered is above the maximum of ${formatAmount(maxDeposit)} USDC`,
+          })
+          return
+        }
+
+        if (inputBN.gt(balanceBN)) {
+          setModalStatus({
+            type: 'error',
+            errorMessage: 'Insufficient balance',
+          })
+          return
+        }
+
+        setModalStatus({ type: amount ? 'success' : 'default' })
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    [
+      setModalStatus,
+      minDeposit,
+      maxDeposit,
+      selectedToken,
+      supportedTokenUserBalances,
+    ]
+  )
+
+  const handleApplyConversion = useCallback(
+    async (fromAmount: string, token: SupportedTokens) => {
+      if (!supportedTokens || token === SupportedTokens.USDC) return
+
+      const toToken = supportedTokens[SupportedTokens.USDC]
+
+      const fromToken = supportedTokens[token]
+
+      try {
+        setIsValidating(true)
+
+        const usdAmount = await getSwapAmount({
+          chainId,
+          fromToken: fromToken.address,
+          toToken: toToken.address,
+          fromAmount: parseUnits(fromAmount, fromToken.decimals).toString(),
+        })
+
+        const formattedAmount = formatUnits(usdAmount || '0', toToken.decimals)
+
+        setAmountInUSD(formattedAmount)
+        validate(fromAmount, formattedAmount)
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setIsValidating(false)
+      }
+    },
+    [chainId, supportedTokens, validate, setAmountInUSD, setIsValidating]
+  )
 
   const handleTokenChange = useCallback(
     (token: SupportedTokens) => {
       setModalStatus({ type: 'default' })
       setSelectedToken(token)
+      setAmountInUSD(undefined)
+
+      if (token === SupportedTokens.USDC) {
+        validate(amount)
+        return
+      }
+
+      handleApplyConversion(amount, token)
     },
-    [setModalStatus]
+    [amount, setModalStatus, handleApplyConversion, validate]
   )
 
   const handleTrancheChange = useCallback(
@@ -58,8 +168,15 @@ const LendingModalEdit = () => {
       setModalStatus({ type: 'default' })
       setSelectedTranche(tranche)
       setFixedTermConfigId(defaultFixedTermConfigId)
+
+      if (selectedToken === SupportedTokens.USDC) {
+        validate(amount)
+        return
+      }
+
+      handleApplyConversion(amount, selectedToken)
     },
-    [setModalStatus]
+    [setModalStatus, validate, amount, selectedToken, handleApplyConversion]
   )
 
   return (
@@ -68,15 +185,27 @@ const LendingModalEdit = () => {
         selectedToken={selectedToken}
         setSelectedToken={handleTokenChange}
       />
-      <SelectedAssetInput
-        selectedToken={selectedToken}
-        amount={amount}
-        setAmount={setAmount}
-        amountInUSD={amountInUSD}
-        setAmountInUSD={setAmountInUSD}
-        isValidating={isValidating}
-        setIsValidating={setIsValidating}
-      />
+      {!supportedTokenUserBalances || !supportedTokens ? (
+        <Skeleton
+          variant='rounded'
+          sx={{ bgcolor: 'gold.extraDark' }}
+          height={60}
+        />
+      ) : (
+        <SelectedAssetInput
+          validate={validate}
+          selectedToken={selectedToken}
+          amount={amount}
+          setAmount={setAmount}
+          amountInUSD={amountInUSD}
+          setAmountInUSD={setAmountInUSD}
+          isValidating={isValidating}
+          setIsValidating={setIsValidating}
+          supportedTokenUserBalances={supportedTokenUserBalances}
+          supportedTokens={supportedTokens}
+          applyConversion={handleApplyConversion}
+        />
+      )}
       <SwapInfo
         amount={amount}
         amountInUSD={amountInUSD}
@@ -95,7 +224,12 @@ const LendingModalEdit = () => {
       <EarningsSimulator />
       <Acknowledgement />
       <SecureSpotInfo />
-      <LendingModalEditActions />
+      <LendingModalEditActions
+        amount={amount}
+        amountInUSD={amountInUSD}
+        fixedTermConfigId={fixedTermConfigId}
+        trancheId={selectedTranche}
+      />
     </Stack>
   )
 }
