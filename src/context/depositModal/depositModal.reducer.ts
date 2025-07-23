@@ -4,8 +4,6 @@ import {
   DepositModalStateType,
 } from '@/context/depositModal/depositModal.types'
 
-import calculateDepositMinMax from '@/utils/lending/calculateDepositMinMax'
-
 const depositModalReducer = (
   state: DepositModalStateType,
   action: DepositModalActions
@@ -22,39 +20,17 @@ const depositModalReducer = (
         ...state,
         amountInUSD: action.payload,
       }
-    case DepositModalActionType.SET_FIXED_TERM_CONFIG_ID: {
-      const { minDeposit, maxDeposit } = calculateDepositMinMax(
-        state.pool.tranches,
-        state.trancheId,
-        state.currentEpochDepositedAmountMap,
-        state.currentEpochFtdAmountMap,
-        action.payload
-      )
-
+    case DepositModalActionType.SET_FIXED_TERM_CONFIG_ID:
       return {
         ...state,
         fixedTermConfigId: action.payload,
-        minDeposit,
-        maxDeposit,
       }
-    }
-    case DepositModalActionType.SET_SELECTED_TRANCHE: {
-      const { minDeposit, maxDeposit } = calculateDepositMinMax(
-        state.pool.tranches,
-        action.payload.trancheId,
-        state.currentEpochDepositedAmountMap,
-        state.currentEpochFtdAmountMap,
-        action.payload.defaultFixedTermConfigId
-      )
 
+    case DepositModalActionType.SET_SELECTED_TRANCHE:
       return {
         ...state,
-        trancheId: action.payload.trancheId,
-        fixedTermConfigId: action.payload.defaultFixedTermConfigId,
-        minDeposit,
-        maxDeposit,
+        trancheId: action.payload,
       }
-    }
     case DepositModalActionType.SET_TX_HASH:
       return {
         ...state,
@@ -69,8 +45,6 @@ const depositModalReducer = (
       return {
         ...state,
         selectedToken: action.payload,
-        amount: '',
-        amountInUSD: undefined,
       }
     case DepositModalActionType.SET_IS_VALIDATING:
       return {
@@ -81,6 +55,12 @@ const depositModalReducer = (
       return {
         ...state,
         isDebouncing: action.payload,
+      }
+    case DepositModalActionType.SET_DEPOSIT_MIN_MAX:
+      return {
+        ...state,
+        minDeposit: action.payload.minDeposit,
+        maxDeposit: action.payload.maxDeposit,
       }
     case DepositModalActionType.SET_TERMS_ACCEPTED:
       return { ...state, termsAccepted: action.payload }

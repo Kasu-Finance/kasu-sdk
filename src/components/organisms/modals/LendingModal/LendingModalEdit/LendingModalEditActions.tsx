@@ -9,18 +9,22 @@ import getTranslation from '@/hooks/useTranslation'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
+import { SupportedTokens } from '@/constants/tokens'
+
 type LendingModalEditActionsProps = {
   amount: string
   amountInUSD: string | undefined
   fixedTermConfigId: string | undefined
   trancheId: `0x${string}`
+  selectedToken: SupportedTokens
 }
 
 const LendingModalEditActions: React.FC<LendingModalEditActionsProps> = ({
+  selectedToken,
   amount,
   amountInUSD,
   fixedTermConfigId,
-  // trancheId,
+  trancheId,
 }) => {
   const { t } = getTranslation()
 
@@ -30,10 +34,11 @@ const LendingModalEditActions: React.FC<LendingModalEditActionsProps> = ({
 
   const {
     termsAccepted,
+    setSelectedToken,
     setAmount,
     setAmountInUSD,
-    // setFixedTermConfigId,
-    // setSelectedTranche,
+    setFixedTermConfigId,
+    setSelectedTranche,
   } = useDepositModalState()
 
   const { modalStatus } = useModalStatusState()
@@ -45,10 +50,15 @@ const LendingModalEditActions: React.FC<LendingModalEditActionsProps> = ({
     })
 
   const handleNextStep = () => {
+    setSelectedToken(selectedToken)
+    setSelectedTranche(trancheId)
     setAmount(amount)
     setAmountInUSD(amountInUSD)
-    // setFixedTermConfigId(fixedTermConfigId)
-    // setSelectedTranche(trancheId)
+
+    // default is set to 0 if defaultTranche.fixedTermConfig.length <=0
+    if (fixedTermConfigId) {
+      setFixedTermConfigId(fixedTermConfigId)
+    }
 
     nextStep()
   }

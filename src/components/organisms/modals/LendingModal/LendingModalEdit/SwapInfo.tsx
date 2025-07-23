@@ -28,9 +28,6 @@ const SwapInfo: React.FC<SwapInfoProps> = ({
 }) => {
   const { t } = getTranslation()
 
-  // const { amount, amountInUSD, isValidating, selectedToken } =
-  //   useDepositModalState()
-
   const { supportedTokenUserBalances } = useSupportedTokenUserBalances()
 
   if (!supportedTokenUserBalances || selectedToken === SupportedTokens.USDC)

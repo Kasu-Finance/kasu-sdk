@@ -24,6 +24,7 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 import getSwapAmount from '@/actions/getSwapAmount'
 import { SupportedTokens } from '@/constants/tokens'
 import { formatAmount, toBigNumber } from '@/utils'
+import calculateDepositMinMax from '@/utils/lending/calculateDepositMinMax'
 
 const LendingModalEdit = () => {
   const chainId = useChainId()
@@ -38,7 +39,18 @@ const LendingModalEdit = () => {
 
   const supportedTokens = useSupportedTokenInfo()
 
-  const { minDeposit, maxDeposit } = useDepositModalState()
+  const {
+    selectedToken: prevSelectedToken,
+    amount: prevAmount,
+    amountInUSD: prevAmountInUSD,
+    trancheId: prevTrancheId,
+    fixedTermConfigId: prevFixedTermConfigId,
+    minDeposit,
+    maxDeposit,
+    currentEpochDepositedAmountMap,
+    currentEpochFtdAmountMap,
+    setDepositMinMax,
+  } = useDepositModalState()
 
   const defaultTranche = useMemo(
     () =>
@@ -49,28 +61,42 @@ const LendingModalEdit = () => {
   )
 
   const [isValidating, setIsValidating] = useState(false)
-  const [selectedToken, setSelectedToken] = useState(SupportedTokens.USDC)
-  const [amount, setAmount] = useState('')
-  const [amountInUSD, setAmountInUSD] = useState<string | undefined>(undefined)
+  const [selectedToken, setSelectedToken] = useState(
+    prevSelectedToken ?? SupportedTokens.USDC
+  )
+  const [amount, setAmount] = useState(prevAmount ?? '')
+  const [amountInUSD, setAmountInUSD] = useState<string | undefined>(
+    prevAmountInUSD ?? undefined
+  )
   const [selectedTranche, setSelectedTranche] = useState(
-    defaultTranche.id as `0x${string}`
+    prevTrancheId ?? (defaultTranche.id as `0x${string}`)
   )
   const [fixedTermConfigId, setFixedTermConfigId] = useState(
-    defaultTranche.fixedTermConfig.length ? undefined : '0'
+    prevFixedTermConfigId ??
+      (defaultTranche.fixedTermConfig.length ? undefined : '0')
   )
   const validate = useCallback(
-    (amount: string, amountInUSD?: string) => {
+    (
+      amount: string,
+      amountInUSD?: string,
+      depositMinMax?: { minDeposit: string; maxDeposit: string },
+      token?: SupportedTokens
+    ) => {
       try {
         if (!amount || !supportedTokenUserBalances) return
 
-        const tokenBalance = supportedTokenUserBalances[selectedToken]
+        const tokenBalance = supportedTokenUserBalances[token ?? selectedToken]
 
         const balance = formatUnits(tokenBalance.balance, tokenBalance.decimals)
 
         const inputBN = toBigNumber(amount)
         const inputUsdBN = toBigNumber(amountInUSD ?? amount)
-        const minDepositBN = toBigNumber(minDeposit)
-        const maxDepositBN = toBigNumber(maxDeposit)
+
+        const min = depositMinMax?.minDeposit ?? minDeposit
+        const max = depositMinMax?.maxDeposit ?? maxDeposit
+
+        const minDepositBN = toBigNumber(min)
+        const maxDepositBN = toBigNumber(max)
         const balanceBN = toBigNumber(balance)
 
         if (inputBN.isZero()) {
@@ -81,7 +107,7 @@ const LendingModalEdit = () => {
         if (inputUsdBN.lt(minDepositBN)) {
           setModalStatus({
             type: 'error',
-            errorMessage: `The value entered is below the minimum of ${formatAmount(minDeposit)} USDC`,
+            errorMessage: `The value entered is below the minimum of ${formatAmount(min)} USDC`,
           })
           return
         }
@@ -89,7 +115,7 @@ const LendingModalEdit = () => {
         if (inputUsdBN.gt(maxDepositBN)) {
           setModalStatus({
             type: 'error',
-            errorMessage: `The value entered is above the maximum of ${formatAmount(maxDeposit)} USDC`,
+            errorMessage: `The value entered is above the maximum of ${formatAmount(max)} USDC`,
           })
           return
         }
@@ -137,7 +163,7 @@ const LendingModalEdit = () => {
         const formattedAmount = formatUnits(usdAmount || '0', toToken.decimals)
 
         setAmountInUSD(formattedAmount)
-        validate(fromAmount, formattedAmount)
+        validate(fromAmount, formattedAmount, undefined, token)
       } catch (error) {
         console.error(error)
       } finally {
@@ -153,8 +179,11 @@ const LendingModalEdit = () => {
       setSelectedToken(token)
       setAmountInUSD(undefined)
 
+      // skip validation and conversion if amount is not set
+      if (!amount) return
+
       if (token === SupportedTokens.USDC) {
-        validate(amount)
+        validate(amount, undefined, undefined, token)
         return
       }
 
@@ -169,14 +198,60 @@ const LendingModalEdit = () => {
       setSelectedTranche(tranche)
       setFixedTermConfigId(defaultFixedTermConfigId)
 
-      if (selectedToken === SupportedTokens.USDC) {
-        validate(amount)
-        return
-      }
+      const depositMinMax = calculateDepositMinMax(
+        pool.tranches,
+        tranche,
+        currentEpochDepositedAmountMap,
+        currentEpochFtdAmountMap,
+        defaultFixedTermConfigId
+      )
 
-      handleApplyConversion(amount, selectedToken)
+      setDepositMinMax(depositMinMax)
+
+      // skip validation and conversion when new tranche has fixed term options
+      // since it will be validated when user selects a fixed term option which is required
+      if (!defaultFixedTermConfigId) return
+
+      validate(amount, amountInUSD, depositMinMax)
     },
-    [setModalStatus, validate, amount, selectedToken, handleApplyConversion]
+    [
+      setModalStatus,
+      validate,
+      amount,
+      amountInUSD,
+      pool.tranches,
+      currentEpochDepositedAmountMap,
+      currentEpochFtdAmountMap,
+      setDepositMinMax,
+    ]
+  )
+
+  const handleFixedTermConfigChange = useCallback(
+    (fixedTermConfigId: string | undefined) => {
+      setFixedTermConfigId(fixedTermConfigId)
+
+      const depositMinMax = calculateDepositMinMax(
+        pool.tranches,
+        selectedTranche,
+        currentEpochDepositedAmountMap,
+        currentEpochFtdAmountMap,
+        fixedTermConfigId
+      )
+
+      setDepositMinMax(depositMinMax)
+
+      validate(amount, amountInUSD, depositMinMax)
+    },
+    [
+      selectedTranche,
+      amount,
+      amountInUSD,
+      pool.tranches,
+      currentEpochDepositedAmountMap,
+      currentEpochFtdAmountMap,
+      setDepositMinMax,
+      validate,
+    ]
   )
 
   return (
@@ -219,7 +294,7 @@ const LendingModalEdit = () => {
       <ApyDropdown
         fixedTermConfigId={fixedTermConfigId}
         selectedTrancheId={selectedTranche}
-        setFixedTermConfigId={setFixedTermConfigId}
+        setFixedTermConfigId={handleFixedTermConfigChange}
       />
       <EarningsSimulator />
       <Acknowledgement />
@@ -229,6 +304,7 @@ const LendingModalEdit = () => {
         amountInUSD={amountInUSD}
         fixedTermConfigId={fixedTermConfigId}
         trancheId={selectedTranche}
+        selectedToken={selectedToken}
       />
     </Stack>
   )

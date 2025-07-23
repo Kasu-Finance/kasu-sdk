@@ -77,6 +77,12 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
 
       setAmount(value)
 
+      // if value is empty skip validation and conversions and reset converted amount
+      if (!value) {
+        setAmountInUSD(undefined)
+        return
+      }
+
       if (selectedToken === SupportedTokens.USDC) {
         setAmountInUSD(value)
         debouncedValidate(value)
