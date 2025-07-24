@@ -1,24 +1,23 @@
 import {
   Button,
   FormControl,
-  FormControlLabel,
   FormGroup,
   FormHelperText,
   Typography,
 } from '@mui/material'
-import { useEffect, useReducer } from 'react'
+import { memo, useEffect, useReducer } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import getTranslation from '@/hooks/useTranslation'
 
-import CustomCheckbox from '@/components/atoms/CustomCheckbox'
+import AcknowledgementContent from '@/components/organisms/modals/LendingModal/LendingModalEdit/Acknowledgement/AcknowledgementContent'
 
 import { Routes } from '@/config/routes'
 import { customTypography } from '@/themes/typography'
 
-type AcknowledgementTypes = 'riskWarning' | 'termsAndConditions'
+export type AcknowledgementTypes = 'riskWarning' | 'termsAndConditions'
 
-type AcknowledgementStateType = Record<AcknowledgementTypes, boolean>
+export type AcknowledgementStateType = Record<AcknowledgementTypes, boolean>
 
 const Acknowledgement = () => {
   const { t } = getTranslation()
@@ -66,65 +65,9 @@ const Acknowledgement = () => {
           },
         }}
       >
-        <FormControlLabel
-          control={
-            <CustomCheckbox
-              checked={checked.riskWarning}
-              onChange={() => toggleChecked('riskWarning')}
-              name='risk warning acknowledgement'
-            />
-          }
-          label={
-            <Typography variant='baseMd' component='p'>
-              {t('modals.lending.acknowledgement.base')}{' '}
-              <Button
-                variant='text'
-                sx={{
-                  p: 0,
-                  height: 'auto',
-                  textTransform: 'unset',
-                  font: 'inherit',
-                  verticalAlign: 'inherit',
-                  display: 'inline',
-                  color: 'white',
-                }}
-                href={Routes.lending.riskWarning.url}
-                target='_blank'
-              >
-                {t('modals.lending.acknowledgement.riskWarning')}
-              </Button>
-            </Typography>
-          }
-        />
-        <FormControlLabel
-          control={
-            <CustomCheckbox
-              checked={checked.termsAndConditions}
-              onChange={() => toggleChecked('termsAndConditions')}
-              name='Important Information Document acknowledgement'
-            />
-          }
-          label={
-            <Typography variant='baseMd' component='p'>
-              {t('modals.lending.acknowledgement.base')}{' '}
-              <Button
-                variant='text'
-                sx={{
-                  p: 0,
-                  height: 'auto',
-                  textTransform: 'unset',
-                  font: 'inherit',
-                  verticalAlign: 'inherit',
-                  display: 'inline',
-                  color: 'white',
-                }}
-                href={Routes.lending.termsAndConditions.url}
-                target='_blank'
-              >
-                {t('modals.lending.acknowledgement.termsAndConditions')}
-              </Button>
-            </Typography>
-          }
+        <AcknowledgementContent
+          checked={checked}
+          toggleChecked={toggleChecked}
         />
       </FormGroup>
       <FormHelperText
@@ -160,4 +103,4 @@ const Acknowledgement = () => {
   )
 }
 
-export default Acknowledgement
+export default memo(Acknowledgement)

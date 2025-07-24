@@ -1,3 +1,5 @@
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
+
 import { SupportedTokens } from '@/constants/tokens'
 
 export enum DepositModalActionType {
@@ -12,6 +14,7 @@ export enum DepositModalActionType {
   SET_IS_DEBOUNCING = 'SET_IS_DEBOUNCING',
   SET_FIXED_TERM_CONFIG_ID = 'SET_FIXED_TERM_CONFIG_ID',
   SET_LOAN_CONTRACT_ACCEPTED = 'SET_LOAN_CONTRACT_ACCEPTED',
+  SET_DEPOSIT_MIN_MAX = 'SET_DEPOSIT_MIN_MAX',
 }
 
 export type DepositModalActions =
@@ -25,10 +28,7 @@ export type DepositModalActions =
     }
   | {
       type: DepositModalActionType.SET_SELECTED_TRANCHE
-      payload: {
-        trancheId: `0x${string}`
-        defaultFixedTermConfigId: string | undefined
-      }
+      payload: `0x${string}`
     }
   | {
       type: DepositModalActionType.SET_TX_HASH
@@ -62,8 +62,16 @@ export type DepositModalActions =
       type: DepositModalActionType.SET_LOAN_CONTRACT_ACCEPTED
       payload: boolean
     }
+  | {
+      type: DepositModalActionType.SET_DEPOSIT_MIN_MAX
+      payload: {
+        minDeposit: string
+        maxDeposit: string
+      }
+    }
 
 export type DepositModalStateType = {
+  pool: PoolOverview
   amount: string
   simulatedDuration: number
   trancheId: `0x${string}`
@@ -75,15 +83,16 @@ export type DepositModalStateType = {
   loanContractAccepted: boolean
   isValidating: boolean
   isDebouncing: boolean
+  minDeposit: string
+  maxDeposit: string
+  currentEpochDepositedAmountMap: Map<string, string>
+  currentEpochFtdAmountMap: Map<string, string[]>
 }
 
 export type DepositModalFunctions = {
   setAmount: (amount: string) => void
   setAmountInUSD: (amountInUSD: string | undefined) => void
-  setSelectedTranche: (
-    selectedTranche: `0x${string}`,
-    defaultFixedTermConfigId: string | undefined
-  ) => void
+  setSelectedTranche: (selectedTranche: `0x${string}`) => void
   setFixedTermConfigId: (fixedTermConfigId: string) => void
   setTxHash: (txHash: string) => void
   setSimulatedDuration: (simulatedDuration: number) => void
@@ -92,6 +101,10 @@ export type DepositModalFunctions = {
   setIsValidating: (isValidating: boolean) => void
   setIsDebouncing: (isDebouncing: boolean) => void
   setLoanContractAcccepted: (loanContractAccepted: boolean) => void
+  setDepositMinMax: (payload: {
+    minDeposit: string
+    maxDeposit: string
+  }) => void
 }
 
 export type DepositModalTypes = DepositModalStateType & DepositModalFunctions

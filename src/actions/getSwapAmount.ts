@@ -1,6 +1,6 @@
 'use server'
 
-import { BigNumberish, ethers } from 'ethers'
+import { BigNumberish } from 'ethers'
 
 import { ONE_INCH_API } from '@/config/api.oneInch'
 
@@ -18,7 +18,7 @@ const getSwapAmount = async (
     const { chainId, fromToken, fromAmount, toToken } = params
 
     const res = await fetch(
-      `${ONE_INCH_API}/swap/v6.0/${chainId}/quote?${new URLSearchParams({
+      `${ONE_INCH_API}/swap/v6.1/${chainId}/quote?${new URLSearchParams({
         src: fromToken,
         amount: fromAmount,
         dst: toToken,
@@ -30,11 +30,16 @@ const getSwapAmount = async (
       }
     )
 
+    if (!res.ok) {
+      throw new Error(res.statusText)
+    }
+
     const data: { dstAmount: string } = await res.json()
 
     return data.dstAmount
   } catch (error) {
-    return ethers.constants.Zero
+    console.error(error)
+    return '0'
   }
 }
 

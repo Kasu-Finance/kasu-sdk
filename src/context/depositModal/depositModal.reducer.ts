@@ -25,11 +25,11 @@ const depositModalReducer = (
         ...state,
         fixedTermConfigId: action.payload,
       }
+
     case DepositModalActionType.SET_SELECTED_TRANCHE:
       return {
         ...state,
-        trancheId: action.payload.trancheId,
-        fixedTermConfigId: action.payload.defaultFixedTermConfigId,
+        trancheId: action.payload,
       }
     case DepositModalActionType.SET_TX_HASH:
       return {
@@ -45,8 +45,6 @@ const depositModalReducer = (
       return {
         ...state,
         selectedToken: action.payload,
-        amount: '',
-        amountInUSD: undefined,
       }
     case DepositModalActionType.SET_IS_VALIDATING:
       return {
@@ -57,6 +55,12 @@ const depositModalReducer = (
       return {
         ...state,
         isDebouncing: action.payload,
+      }
+    case DepositModalActionType.SET_DEPOSIT_MIN_MAX:
+      return {
+        ...state,
+        minDeposit: action.payload.minDeposit,
+        maxDeposit: action.payload.maxDeposit,
       }
     case DepositModalActionType.SET_TERMS_ACCEPTED:
       return { ...state, termsAccepted: action.payload }
