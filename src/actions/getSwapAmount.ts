@@ -1,7 +1,6 @@
 'use server'
 
-import { BigNumber, BigNumberish } from 'ethers'
-import { parseUnits } from 'ethers/lib/utils'
+import { BigNumberish } from 'ethers'
 
 import { ONE_INCH_API } from '@/config/api.oneInch'
 
@@ -40,11 +39,7 @@ const getSwapAmount = async (
     return data.dstAmount
   } catch (error) {
     console.error(error)
-    return BigNumber.from(params.fromAmount)
-      .mul('3645')
-      .div(parseUnits('1', 12))
-      .toString()
-    // return '0'
+    return '0'
   }
 }
 
