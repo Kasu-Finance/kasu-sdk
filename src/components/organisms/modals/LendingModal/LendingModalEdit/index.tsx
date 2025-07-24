@@ -296,7 +296,12 @@ const LendingModalEdit = () => {
         selectedTrancheId={selectedTranche}
         setFixedTermConfigId={handleFixedTermConfigChange}
       />
-      <EarningsSimulator />
+      <EarningsSimulator
+        amount={amount}
+        amountInUSD={amountInUSD}
+        trancheId={selectedTranche}
+        fixedTermConfigId={fixedTermConfigId}
+      />
       <Acknowledgement />
       <SecureSpotInfo />
       <LendingModalEditActions

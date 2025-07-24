@@ -1,7 +1,6 @@
 import { Skeleton, Typography } from '@mui/material'
-import { Dispatch, SetStateAction, useEffect, useMemo } from 'react'
+import { Dispatch, memo, SetStateAction, useEffect, useMemo } from 'react'
 
-import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
 import useSimulateYieldEarnings from '@/hooks/lending/useSimulateYieldEarnings'
 import getTranslation from '@/hooks/useTranslation'
@@ -17,10 +16,22 @@ import { formatAmount } from '@/utils'
 type SimulatedDefaultEarningsProps = {
   yieldEarnings: number[]
   setYieldEarnings: Dispatch<SetStateAction<number[]>>
+  amount: string
+  amountInUSD?: string
+  trancheId: `0x${string}`
+  fixedTermConfigId?: string
+  simulatedDuration: number
+  isDebouncing: boolean
 }
 
 const SimulatedDefaultEarnings: React.FC<SimulatedDefaultEarningsProps> = ({
+  amount,
+  simulatedDuration,
+  trancheId,
+  amountInUSD,
+  fixedTermConfigId,
   yieldEarnings,
+  isDebouncing,
   setYieldEarnings,
 }) => {
   const { t } = getTranslation()
@@ -28,15 +39,6 @@ const SimulatedDefaultEarnings: React.FC<SimulatedDefaultEarningsProps> = ({
   const { modal } = useModalState()
 
   const pool = modal[ModalsKeys.LEND].pool
-
-  const {
-    amount,
-    amountInUSD,
-    trancheId,
-    fixedTermConfigId,
-    simulatedDuration,
-    isDebouncing,
-  } = useDepositModalState()
 
   const { performanceFee } = usePerformanceFee()
 
@@ -123,4 +125,4 @@ const SimulatedDefaultEarnings: React.FC<SimulatedDefaultEarningsProps> = ({
   )
 }
 
-export default SimulatedDefaultEarnings
+export default memo(SimulatedDefaultEarnings)

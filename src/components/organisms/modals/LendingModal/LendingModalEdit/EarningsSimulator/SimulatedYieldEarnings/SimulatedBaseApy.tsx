@@ -1,7 +1,6 @@
 import { Typography } from '@mui/material'
-import { useMemo } from 'react'
+import React, { memo, useMemo } from 'react'
 
-import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
 import getTranslation from '@/hooks/useTranslation'
 
@@ -12,14 +11,20 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { capitalize, formatPercentage } from '@/utils'
 
-const SimulatedBaseApy = () => {
+type SimulatedBaseApyProps = {
+  trancheId: `0x${string}`
+  fixedTermConfigId?: string
+}
+
+const SimulatedBaseApy: React.FC<SimulatedBaseApyProps> = ({
+  trancheId,
+  fixedTermConfigId,
+}) => {
   const { t } = getTranslation()
 
   const { modal } = useModalState()
 
   const pool = modal[ModalsKeys.LEND].pool
-
-  const { trancheId, fixedTermConfigId } = useDepositModalState()
 
   const selectedApy = useMemo(() => {
     const selectedTranche = pool.tranches.find(
@@ -64,4 +69,4 @@ const SimulatedBaseApy = () => {
   )
 }
 
-export default SimulatedBaseApy
+export default memo(SimulatedBaseApy)
