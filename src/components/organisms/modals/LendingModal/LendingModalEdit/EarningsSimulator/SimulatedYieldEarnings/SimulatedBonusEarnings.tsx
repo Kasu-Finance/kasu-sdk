@@ -1,8 +1,7 @@
 import { Box, Skeleton, Typography } from '@mui/material'
 import { formatEther } from 'ethers/lib/utils'
-import { useEffect, useMemo, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 
-import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useSimulateBonusYieldEarnings from '@/hooks/lending/useSimulateBonusYieldEarnings'
 import getTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
@@ -15,18 +14,23 @@ import { convertFromUSD, formatAmount, toBigNumber } from '@/utils'
 type SimulatedBonusEarningsProps = {
   yieldEarnings: number[]
   bonusEpochInterest: number
+  amount: string
+  amountInUSD?: string
+  simulatedDuration: number
+  isDebouncing: boolean
 }
 
 const SimulatedBonusEarnings: React.FC<SimulatedBonusEarningsProps> = ({
   yieldEarnings,
   bonusEpochInterest,
+  amount,
+  amountInUSD,
+  simulatedDuration,
+  isDebouncing,
 }) => {
   const { t } = getTranslation()
 
   const [bonusYieldEarnings, setBonusYieldEarnings] = useState([0])
-
-  const { amount, amountInUSD, simulatedDuration, isDebouncing } =
-    useDepositModalState()
 
   const { ksuPrice } = useKsuPrice()
 
@@ -107,4 +111,4 @@ const SimulatedBonusEarnings: React.FC<SimulatedBonusEarningsProps> = ({
   )
 }
 
-export default SimulatedBonusEarnings
+export default memo(SimulatedBonusEarnings)

@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material'
-import { useMemo } from 'react'
+import { memo, useMemo } from 'react'
 
 import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
 import getTranslation from '@/hooks/useTranslation'
@@ -60,4 +60,4 @@ const SimulatedBonusApy = () => {
   )
 }
 
-export default SimulatedBonusApy
+export default memo(SimulatedBonusApy)

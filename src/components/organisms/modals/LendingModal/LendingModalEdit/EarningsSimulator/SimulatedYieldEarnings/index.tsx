@@ -1,13 +1,22 @@
 import { Box } from '@mui/material'
-import { useState } from 'react'
+import React, { memo, useState } from 'react'
 
-import useLoyaltyLevel, { LoyaltyLevel } from '@/hooks/locking/useLoyaltyLevel'
-import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
+import { LoyaltyLevel } from '@/hooks/locking/useLoyaltyLevel'
 
 import SimulatedBaseApy from '@/components/organisms/modals/LendingModal/LendingModalEdit/EarningsSimulator/SimulatedYieldEarnings/SimulatedBaseApy'
 import SimulatedBonusApy from '@/components/organisms/modals/LendingModal/LendingModalEdit/EarningsSimulator/SimulatedYieldEarnings/SimulatedBonusApy'
 import SimulatedBonusEarnings from '@/components/organisms/modals/LendingModal/LendingModalEdit/EarningsSimulator/SimulatedYieldEarnings/SimulatedBonusEarnings'
 import SimulatedDefaultEarnings from '@/components/organisms/modals/LendingModal/LendingModalEdit/EarningsSimulator/SimulatedYieldEarnings/SimulatedDefaultEarnings'
+
+type SimulatedYieldEarningsProps = {
+  fixedTermConfigId?: string
+  trancheId: `0x${string}`
+  simulatedDuration: number
+  isDebouncing: boolean
+  amount: string
+  amountInUSD?: string
+  currentLevel: LoyaltyLevel
+}
 
 const getBonusEpochInterest = (loyaltyLevel: LoyaltyLevel) => {
   switch (loyaltyLevel) {
@@ -20,28 +29,46 @@ const getBonusEpochInterest = (loyaltyLevel: LoyaltyLevel) => {
   }
 }
 
-const SimulatedYieldEarnings = () => {
+const SimulatedYieldEarnings: React.FC<SimulatedYieldEarningsProps> = ({
+  currentLevel,
+  amount,
+  amountInUSD,
+  trancheId,
+  fixedTermConfigId,
+  isDebouncing,
+  simulatedDuration,
+}) => {
   const [yieldEarnings, setYieldEarnings] = useState([0])
-
-  const { stakedPercentage } = useLockingPercentage()
-  const { currentLevel } = useLoyaltyLevel(stakedPercentage)
 
   const bonusEpochInterest = getBonusEpochInterest(currentLevel)
 
   return (
     <Box>
-      <SimulatedBaseApy />
+      <SimulatedBaseApy
+        trancheId={trancheId}
+        fixedTermConfigId={fixedTermConfigId}
+      />
       <SimulatedBonusApy />
       <SimulatedDefaultEarnings
         yieldEarnings={yieldEarnings}
         setYieldEarnings={setYieldEarnings}
+        trancheId={trancheId}
+        fixedTermConfigId={fixedTermConfigId}
+        simulatedDuration={simulatedDuration}
+        isDebouncing={isDebouncing}
+        amount={amount}
+        amountInUSD={amountInUSD}
       />
       <SimulatedBonusEarnings
         yieldEarnings={yieldEarnings}
         bonusEpochInterest={bonusEpochInterest}
+        amount={amount}
+        amountInUSD={amountInUSD}
+        isDebouncing={isDebouncing}
+        simulatedDuration={simulatedDuration}
       />
     </Box>
   )
 }
 
-export default SimulatedYieldEarnings
+export default memo(SimulatedYieldEarnings)
