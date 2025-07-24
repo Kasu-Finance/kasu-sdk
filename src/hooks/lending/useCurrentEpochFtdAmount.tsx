@@ -5,8 +5,7 @@ import useKasuSDK from '@/hooks/useKasuSDK'
 
 const useCurrentEpochFtdAmount = (
   lendingPoolId: string,
-  currentEpoch: string,
-  trancheId: string
+  currentEpoch: string
 ) => {
   const sdk = useKasuSDK()
 
@@ -32,7 +31,7 @@ const useCurrentEpochFtdAmount = (
   )
 
   return {
-    currentEpochFtdAmount: data?.get(trancheId),
+    currentEpochFtdAmount: data,
     error,
     isLoading,
     updateCurrentEpochFtdAmount: mutate,

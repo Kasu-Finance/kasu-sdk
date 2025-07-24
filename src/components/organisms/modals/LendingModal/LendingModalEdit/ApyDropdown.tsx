@@ -1,8 +1,7 @@
 import { Box, SelectChangeEvent, Typography } from '@mui/material'
-import { useMemo } from 'react'
+import { memo, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
-import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
 import getTranslation from '@/hooks/useTranslation'
 
@@ -12,18 +11,25 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { formatPercentage, formatToNearestTime, TimeConversions } from '@/utils'
 
-const ApyDropdown = () => {
+type ApyDropdownProps = {
+  selectedTrancheId: `0x${string}`
+  fixedTermConfigId: string | undefined
+  setFixedTermConfigId: (fixedTermConfigId: string | undefined) => void
+}
+
+const ApyDropdown: React.FC<ApyDropdownProps> = ({
+  fixedTermConfigId,
+  selectedTrancheId,
+  setFixedTermConfigId,
+}) => {
   const { t } = getTranslation()
   const account = useAccount()
   const { modal } = useModalState()
 
-  const { trancheId, fixedTermConfigId, setFixedTermConfigId } =
-    useDepositModalState()
-
   const pool = modal[ModalsKeys.LEND].pool
 
   const selectedTranche = pool.tranches.find(
-    (tranche) => tranche.id === trancheId
+    (tranche) => tranche.id === selectedTrancheId
   )
 
   const apyOptions = useMemo(
@@ -110,4 +116,4 @@ const ApyDropdown = () => {
   )
 }
 
-export default ApyDropdown
+export default memo(ApyDropdown)

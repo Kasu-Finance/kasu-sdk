@@ -160,6 +160,8 @@ const initialState: Modals = {
     isOpen: false,
     pool: null as unknown as PoolOverviewWithDelegate,
     currentEpoch: '',
+    currentEpochDepositedAmount: new Map(),
+    currentEpochFtdAmount: new Map(),
   },
   loanContractModal: {
     isOpen: false,

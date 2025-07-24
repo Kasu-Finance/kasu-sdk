@@ -9,7 +9,6 @@ import {
   Typography,
 } from '@mui/material'
 import { formatEther, parseEther } from 'ethers/lib/utils'
-import { useAccount } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
 import useUserReferrals, {
@@ -17,12 +16,11 @@ import useUserReferrals, {
 } from '@/hooks/referrals/useUserReferrals'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
-import DottedDivider from '@/components/atoms/DottedDivider'
 import CustomTable from '@/components/molecules/CustomTable'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import { CopyIcon, PaperIcon } from '@/assets/icons'
+import { PaperIcon } from '@/assets/icons'
 
 import { customPalette } from '@/themes/palette'
 import { customTypography } from '@/themes/typography'
@@ -31,21 +29,22 @@ import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 const ReferralBonus = () => {
   const { ksuPrice } = useKsuPrice()
 
-  const { address } = useAccount()
+  // const { address } = useAccount()
 
   const { openModal } = useModalState()
 
   const { userReferrals, isLoading } = useUserReferrals()
-  const referralCode = address || ''
+
+  // const referralCode = address || ''
 
   const handleClick = (referredUsers: ReferredUserDetails[]) => {
     openModal({ name: ModalsKeys.REFERRED_USERS, referredUsers })
   }
 
-  const handleCopy = () =>
-    navigator.clipboard.writeText(
-      `${window.location.origin}/referrals/${referralCode}`
-    )
+  // const handleCopy = () =>
+  //   navigator.clipboard.writeText(
+  //     `${window.location.origin}/referrals/${referralCode}`
+  //   )
 
   return (
     <Stack>
@@ -205,8 +204,8 @@ const ReferralBonus = () => {
           borderBottomRightRadius: 8,
         }}
       >
-        <DottedDivider />
-        <Typography variant='baseSm' my={3}>
+        {/* <DottedDivider /> */}
+        {/* <Typography variant='baseSm' my={3}>
           Use your referral link to invite friends and get a reward.{' '}
           <Button
             variant='text'
@@ -231,7 +230,7 @@ const ReferralBonus = () => {
           >
             <Typography variant='inherit'>Copy your link</Typography>
           </Button>
-        </Typography>
+        </Typography> */}
       </Stack>
     </Stack>
   )

@@ -3,6 +3,8 @@
 import React from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
+import useCurrentEpochDepositedAmount from '@/hooks/lending/useCurrentEpochDepositedAmount'
+import useCurrentEpochFtdAmount from '@/hooks/lending/useCurrentEpochFtdAmount'
 import getTranslation from '@/hooks/useTranslation'
 
 import KycButton from '@/components/atoms/KycButton'
@@ -21,19 +23,40 @@ const LendButton: React.FC<LendButtonProps> = ({ pool, currentEpoch }) => {
 
   const { openModal } = useModalState()
 
-  const handleOpen = () =>
+  const {
+    currentEpochDepositedAmount,
+    isLoading: currentEpochDepositedAmountLoading,
+  } = useCurrentEpochDepositedAmount(pool.id)
+
+  const { currentEpochFtdAmount, isLoading: currentEpochFtdAmountLoading } =
+    useCurrentEpochFtdAmount(pool.id, currentEpoch)
+
+  const handleOpen = () => {
+    if (!currentEpochDepositedAmount || !currentEpochFtdAmount) {
+      console.error('CurrentEpochAmount is undefined')
+      return
+    }
+
     openModal({
       name: ModalsKeys.LEND,
       pool,
       currentEpoch,
+      currentEpochDepositedAmount,
+      currentEpochFtdAmount,
     })
+  }
 
   return (
     <KycButton
       variant='contained'
       sx={{ pl: 2.25, pr: 2.25, flex: 1, textTransform: 'capitalize' }}
       onKycCompleted={handleOpen}
-      disabled={pool.isOversubscribed || !pool.enabled}
+      disabled={
+        pool.isOversubscribed ||
+        !pool.enabled ||
+        currentEpochDepositedAmountLoading ||
+        currentEpochFtdAmountLoading
+      }
     >
       {t('general.lend')}
     </KycButton>

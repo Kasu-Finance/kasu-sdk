@@ -3,10 +3,7 @@ import { useAccount } from 'wagmi'
 
 import useKasuSDK from '@/hooks/useKasuSDK'
 
-const useCurrentEpochDepositedAmount = (
-  lendingPoolId: string,
-  trancheId: string
-) => {
+const useCurrentEpochDepositedAmount = (lendingPoolId: string) => {
   const sdk = useKasuSDK()
 
   const account = useAccount()
@@ -26,9 +23,7 @@ const useCurrentEpochDepositedAmount = (
   )
 
   return {
-    currentEpochDepositedAmount: data
-      ? data.get(trancheId.toLowerCase()) ?? '0'
-      : undefined,
+    currentEpochDepositedAmount: data,
     error,
     isLoading,
     updateCurrentEpochDepositedAmount: mutate,

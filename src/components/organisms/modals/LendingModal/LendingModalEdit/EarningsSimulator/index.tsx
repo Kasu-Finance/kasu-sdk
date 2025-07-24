@@ -1,5 +1,5 @@
 import { Box, Button, Collapse, Stack, Typography } from '@mui/material'
-import { useReducer } from 'react'
+import { memo, useReducer } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import getTranslation from '@/hooks/useTranslation'
@@ -65,4 +65,4 @@ const EarningsSimulator = () => {
   )
 }
 
-export default EarningsSimulator
+export default memo(EarningsSimulator)

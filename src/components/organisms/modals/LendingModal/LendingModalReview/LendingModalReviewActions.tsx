@@ -50,8 +50,7 @@ const LendingModalReviewActions = () => {
   } = useDepositModalState()
 
   const { currentEpochDepositedAmount } = useCurrentEpochDepositedAmount(
-    pool.id,
-    trancheId
+    pool.id
   )
 
   const { isApproved, approve } = useApproveToken(
@@ -90,7 +89,9 @@ const LendingModalReviewActions = () => {
       )
     }
 
-    if (!currentEpochDepositedAmount) {
+    const amount = currentEpochDepositedAmount?.get(trancheId.toLowerCase())
+
+    if (!amount) {
       return console.error(
         'RequestDeposit:: currentEpochDepositedAmount is undefined'
       )
@@ -127,7 +128,7 @@ const LendingModalReviewActions = () => {
       pool.id as `0x${string}`,
       selectedTranche,
       fixedTermConfigId,
-      currentEpochDepositedAmount,
+      amount,
       contractAcceptedSignature,
       generatedContract.createdAt,
       generatedContract.contractVersion,

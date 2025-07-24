@@ -214,6 +214,8 @@ export type Modals = {
   [ModalsKeys.LEND]: ModalData<{
     pool: PoolOverview
     currentEpoch: string
+    currentEpochDepositedAmount: Map<string, string>
+    currentEpochFtdAmount: Map<string, string[]>
   }>
   [ModalsKeys.HISTORICAL_REPAYMENTS]: ModalData<{
     historicalRepayments: LoanStatus['historicalRepayments']
