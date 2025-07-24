@@ -55,6 +55,7 @@ export const theme = createTheme({
         font-family: ${primaryFontFamily};
         display:grid;
         grid-template-rows: max-content minmax(max-content, 1fr) max-content;
+        overflow-x: hidden;
       }
 
       main {
