@@ -10,11 +10,15 @@ import {
 } from '@mui/material'
 import { MouseEvent, useRef, useState } from 'react'
 
+import useLiteModeState from '@/hooks/context/useLiteModeState'
+
 import { customTypography } from '@/themes/typography'
 
 const ModeToggleButton = () => {
   const [open, setOpen] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
+
+  const { isLiteMode, toggleLiteMode } = useLiteModeState()
 
   const ref = useRef<HTMLDivElement>(null)
 
@@ -32,6 +36,10 @@ const ModeToggleButton = () => {
     setTimeout(() => {
       setOpen(true)
     }, 50)
+
+    setTimeout(() => {
+      toggleLiteMode()
+    }, 600)
 
     setTimeout(() => {
       setOpen(false)
@@ -59,38 +67,49 @@ const ModeToggleButton = () => {
         }}
         onClick={toggle}
       >
-        Switch to Kasu Lite
+        Switch to Kasu {isLiteMode ? 'PRO' : 'Lite'}
       </Button>
       <Portal>
         <Box
           ref={ref}
+          className={open ? 'expanded' : ''}
           position='relative'
           zIndex={99999999999}
-          bgcolor={open ? 'gray.extraDark' : 'gray.extraLight'}
-          width={open ? '100vw' : '0vw'}
-          height={open ? '100vh' : '0vh'}
+          bgcolor={isLiteMode ? 'gray.extraDark' : 'gray.extraLight'}
           display='flex'
           alignItems='center'
           justifyContent='center'
           sx={{
-            borderRadius: open ? '0' : '120px',
+            width: '0vw',
+            height: '0vh',
+            borderRadius: '120px',
             pointerEvents: 'none',
-            opacity: open ? 100 : 0,
+            opacity: 0,
             left: open ? `0 !important` : undefined,
             top: open ? `0 !important` : undefined,
-            transition: `width 0.5s ease-in, 
-                         left 0.5s ease-in, 
-                         top 0.5s ease-in, 
-                         height 0.5s ease-in, 
-                         ${
-                           open
-                             ? `background-color 0.3s linear 1s, 
-                            opacity 0.1s linear, 
-                            border-radius 0.5s ease-in`
-                             : `background-color 0s linear 0.5s, 
-                            opacity 0.1s linear 1s, 
-                            border-radius 0.5s ease-out`
-                         }`,
+            transition: `width 0.3s ease-in, 
+                         left 0.3s ease-in, 
+                         top 0.3s ease-in, 
+                         height 0.3s ease-in, 
+                         background-color 0s linear 0.5s, 
+                         opacity 0.1s linear 1s, 
+                         border-radius 0.5s ease-out`,
+            '&.expanded': {
+              width: '100vw',
+              height: '100vh',
+              borderRadius: 0,
+              opacity: 100,
+              backgroundColor: isLiteMode
+                ? 'gray.extraDark'
+                : 'gray.extraLight',
+              transition: `width 0.4s ease-in, 
+                           left 0.4s ease-in, 
+                           top 0.4s ease-in, 
+                           height 0.4s ease-in, 
+                           background-color 0.3s linear 0.5s, 
+                           opacity 0.1s linear, 
+                           border-radius 0.5s ease-in`,
+            },
           }}
         >
           {isMounted && (
@@ -104,12 +123,16 @@ const ModeToggleButton = () => {
             >
               <Typography
                 variant='h2'
-                color={open ? 'gold.dark' : undefined}
+                className={open ? 'expanded' : ''}
+                color={isLiteMode ? 'gold.dark' : 'gray.extraDark'}
                 sx={{
-                  transition: 'color 0.3s ease 1s',
+                  transition: 'color 0.3s ease 0.5s',
+                  '&.expanded': {
+                    color: isLiteMode ? 'gold.dark' : 'gray.extraDark',
+                  },
                 }}
               >
-                Entering Kasu Lite
+                Entering Kasu {isLiteMode ? 'Lite' : 'PRO'}
               </Typography>
               <LinearProgress />
             </Stack>

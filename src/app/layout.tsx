@@ -10,6 +10,7 @@ import Header from '@/components/organisms/header'
 import ModalsContainer from '@/components/organisms/modals/ModalsContainer'
 
 import KycState from '@/context/kyc/kyc.provider'
+import LiteModeState from '@/context/liteMode/liteMode.provider'
 import ModalState from '@/context/modal/modal.provider'
 import PrivyProvider from '@/context/privy.provider'
 import SwrProvider from '@/context/swr.provider'
@@ -81,15 +82,17 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           <PrivyProvider>
             <SwrProvider unusedPools={filteredPools}>
               <ToastState>
-                <KycState>
-                  <ModalState>
-                    {/* <NftTracker /> */}
-                    <Header />
-                    <Box component='main'>{children}</Box>
-                    <Footer />
-                    <ModalsContainer />
-                  </ModalState>
-                </KycState>
+                <LiteModeState>
+                  <KycState>
+                    <ModalState>
+                      {/* <NftTracker /> */}
+                      <Header />
+                      <Box component='main'>{children}</Box>
+                      <Footer />
+                      <ModalsContainer />
+                    </ModalState>
+                  </KycState>
+                </LiteModeState>
               </ToastState>
             </SwrProvider>
           </PrivyProvider>

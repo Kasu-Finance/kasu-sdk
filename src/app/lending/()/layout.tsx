@@ -1,6 +1,7 @@
 import { Container } from '@mui/material'
 import { ReactNode, Suspense } from 'react'
 
+import LiteModeRenderer from '@/components/atoms/LiteModeRenderer'
 import ReferralDetector from '@/components/atoms/ReferralDetector'
 import Home from '@/components/molecules/home'
 import HomeOverviewSkeleton from '@/components/molecules/loaders/home/HomeOverviewSkeleton'
@@ -17,16 +18,21 @@ export const dynamic = 'force-dynamic'
 
 export default async function LendingLayout({ children }: LendingLayoutProps) {
   return (
-    <HomeState>
-      <Container maxWidth='lg'>
-        <Suspense fallback={<HomeOverviewSkeleton />}>
-          <Home />
-        </Suspense>
-        <PromoBanner />
-        <ReferralDetector />
-        <HomeTabs />
-        {children}
-      </Container>
-    </HomeState>
+    <LiteModeRenderer
+      renderOnLiteMode='hello world'
+      otherwise={
+        <HomeState>
+          <Container maxWidth='lg'>
+            <Suspense fallback={<HomeOverviewSkeleton />}>
+              <Home />
+            </Suspense>
+            <PromoBanner />
+            <ReferralDetector />
+            <HomeTabs />
+            {children}
+          </Container>
+        </HomeState>
+      }
+    />
   )
 }
