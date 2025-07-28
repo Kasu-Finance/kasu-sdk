@@ -56,6 +56,13 @@ export const theme = createTheme({
         display:grid;
         grid-template-rows: max-content minmax(max-content, 1fr) max-content;
         overflow-x: hidden;
+
+        &.lite-mode {
+          background-image: url('/images/lite-mode-background.png');
+          background-size: 100% 817px;
+          background-repeat: no-repeat;
+          background-color: #0C0C0E;
+        }
       }
 
       main {
