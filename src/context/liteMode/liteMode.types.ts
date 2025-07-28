@@ -13,7 +13,7 @@ export type LiteModeActions =
     }
 
 export type LiteModeStateType = {
-  isLiteMode: boolean
+  isLiteMode: boolean | undefined
 }
 
 export type LiteModeFunctions = {
