@@ -12,6 +12,7 @@ const DesktopNavigation = () => {
   const pathName = usePathname()
 
   const account = useAccount()
+
   return (
     <Box>
       {NAV_ITEMS.map((link) =>

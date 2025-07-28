@@ -7,6 +7,7 @@ import { forwardRef, useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import useKycState from '@/hooks/context/useKycState'
+import useLiteModeState from '@/hooks/context/useLiteModeState'
 import useModalState from '@/hooks/context/useModalState'
 import useToastState from '@/hooks/context/useToastState'
 import getTranslation from '@/hooks/useTranslation'
@@ -24,6 +25,8 @@ import { formatAccount } from '@/utils'
 const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
     const { t } = getTranslation()
+
+    const { isLiteMode } = useLiteModeState()
 
     const { address } = useAccount()
 
@@ -138,7 +141,7 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
           },
           cursor: 'pointer',
         }}
-        bgcolor='gray.extraLight'
+        bgcolor={isLiteMode ? 'rgba(0,0,0,0.4)' : 'gray.extraLight'}
         position='relative'
         onClick={handleOpen}
       >
