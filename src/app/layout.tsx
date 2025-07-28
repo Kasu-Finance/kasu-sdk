@@ -5,6 +5,7 @@ import Script from 'next/script'
 import { ReactNode } from 'react'
 
 import Chatbot from '@/components/atoms/Chatbot'
+import LiteModeReady from '@/components/atoms/LiteModeReady'
 import Footer from '@/components/organisms/footer'
 import Header from '@/components/organisms/header'
 import ModalsContainer from '@/components/organisms/modals/ModalsContainer'
@@ -85,10 +86,12 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                 <LiteModeState>
                   <KycState>
                     <ModalState>
-                      {/* <NftTracker /> */}
-                      <Header />
-                      <Box component='main'>{children}</Box>
-                      <Footer />
+                      <LiteModeReady>
+                        {/* <NftTracker /> */}
+                        <Header />
+                        <Box component='main'>{children}</Box>
+                        <Footer />
+                      </LiteModeReady>
                       <ModalsContainer />
                     </ModalState>
                   </KycState>
