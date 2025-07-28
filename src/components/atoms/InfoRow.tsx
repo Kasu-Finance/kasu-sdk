@@ -6,12 +6,13 @@ import { isValidElement, ReactNode } from 'react'
 import DottedDivider, {
   DottedDividerProps,
 } from '@/components/atoms/DottedDivider'
-import ToolTip from '@/components/atoms/ToolTip'
+import ToolTip, { ToolTipProps } from '@/components/atoms/ToolTip'
 
 type InfoRowProps = {
   title: string
   subtitle?: string
   toolTipInfo?: ReactNode | string
+  toolTipProps?: Omit<ToolTipProps, 'title'>
   showDivider?: boolean
   metric?: ReactNode | number | string
   titleStyle?: TypographyProps
@@ -25,6 +26,7 @@ const InfoRow: React.FC<InfoRowProps> = ({
   subtitle,
   toolTipInfo,
   showDivider = false,
+  toolTipProps,
   metric,
   titleStyle,
   subtitleStyle,
@@ -40,7 +42,7 @@ const InfoRow: React.FC<InfoRowProps> = ({
 
   const renderToolTip = (info: ReactNode | string) => {
     if (typeof info === 'string') {
-      return <ToolTip title={info} />
+      return <ToolTip title={info} {...toolTipProps} />
     }
     if (isValidElement(info)) {
       return info
