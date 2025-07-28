@@ -20,10 +20,14 @@ const ModeToggleButton = () => {
 
   const { isLiteMode, toggleLiteMode } = useLiteModeState()
 
+  const [text, setText] = useState<'Lite' | 'PRO'>(isLiteMode ? 'Lite' : 'PRO')
+
   const ref = useRef<HTMLDivElement>(null)
 
   const toggle = (e: MouseEvent<HTMLButtonElement>) => {
     if (!ref.current || open || isMounted) return
+
+    setText((prev) => (prev === 'Lite' ? 'PRO' : 'Lite'))
 
     setIsMounted(true)
 
@@ -58,12 +62,15 @@ const ModeToggleButton = () => {
     >
       <Button
         variant='contained'
+        color='primary'
         sx={{
           width: 160,
           textTransform: 'unset',
-          color: 'gold.dark',
-          bgcolor: 'gray.extraLight',
           ...customTypography.baseSm,
+          ...(!isLiteMode && {
+            color: 'gold.dark',
+            bgcolor: 'gray.extraLight',
+          }),
         }}
         onClick={toggle}
       >
@@ -132,7 +139,7 @@ const ModeToggleButton = () => {
                   },
                 }}
               >
-                Entering Kasu {isLiteMode ? 'Lite' : 'PRO'}
+                Entering Kasu {text}
               </Typography>
               <LinearProgress />
             </Stack>
