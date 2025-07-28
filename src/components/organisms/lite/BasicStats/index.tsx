@@ -12,7 +12,7 @@ const BasicStats = () => {
     <>
       <Grid2 container spacing={3}>
         <Grid2 size={6}>
-          <WaveBox borderRadius={4} p={2} variant='dark-gold'>
+          <WaveBox borderRadius={4} p={2} variant='dark-middle'>
             <Typography variant='baseMd' color='white'>
               Total Lending Balance
             </Typography>
@@ -31,7 +31,7 @@ const BasicStats = () => {
           </WaveBox>
         </Grid2>
         <Grid2 size={6}>
-          <WaveBox borderRadius={4} p={2} variant='dark-gold'>
+          <WaveBox borderRadius={4} p={2} variant='dark-middle'>
             <Typography variant='baseMd' color='white'>
               Lifetime Interest Earnings
             </Typography>

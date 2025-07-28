@@ -3,7 +3,13 @@
 import { Box, styled } from '@mui/material'
 
 type WaveBoxProps = {
-  variant?: 'gold' | 'white' | 'gray' | 'dark-gray' | 'dark-gold'
+  variant?:
+    | 'gold'
+    | 'white'
+    | 'gray'
+    | 'dark-gray'
+    | 'dark-gold'
+    | 'dark-middle'
   backgroundColor?: string
 }
 
