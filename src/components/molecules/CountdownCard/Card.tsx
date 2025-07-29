@@ -1,10 +1,10 @@
-import { Box, Typography } from '@mui/material'
+import { Box, BoxProps, Typography } from '@mui/material'
 
-type CountdownCardProps = {
+type CardProps = BoxProps & {
   value: string
 }
 
-const CountdownCard: React.FC<CountdownCardProps> = ({ value }) => (
+const Card: React.FC<CardProps> = ({ value, ...rest }) => (
   <Box
     bgcolor='gray.extraDark'
     height={96}
@@ -13,6 +13,7 @@ const CountdownCard: React.FC<CountdownCardProps> = ({ value }) => (
     alignItems='center'
     justifyContent='center'
     borderRadius={2}
+    {...rest}
   >
     <Typography variant='h3' color='gold.middle'>
       {value}
@@ -20,4 +21,4 @@ const CountdownCard: React.FC<CountdownCardProps> = ({ value }) => (
   </Box>
 )
 
-export default CountdownCard
+export default Card
