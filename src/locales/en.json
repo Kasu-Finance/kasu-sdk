@@ -133,6 +133,10 @@
     "lendingPortfolio": {
       "title": "Lending Portfolio"
     },
+    "pendingTransactionRequests": {
+      "title": "Pending Transaction Requests",
+      "requestType": "Request Type"
+    },
     "lendingDecisionsPending": {
       "title": "Lending Decisions Pending",
       "decisionPending": "Decision Pending"

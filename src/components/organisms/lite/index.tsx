@@ -12,9 +12,10 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 
 type LiteModeAppProps = {
   pools: PoolOverviewWithDelegate[]
+  currentEpoch: string
 }
 
-const LiteModeApp: React.FC<LiteModeAppProps> = ({ pools }) => {
+const LiteModeApp: React.FC<LiteModeAppProps> = ({ pools, currentEpoch }) => {
   const { t } = getTranslation()
 
   return (
@@ -27,7 +28,7 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({ pools }) => {
             </Typography>
             <Stack spacing={3}>
               <BasicStats />
-              <PendingTransactionRequests />
+              <PendingTransactionRequests currentEpoch={currentEpoch} />
               <LendingDecisionsPending pools={pools} />
             </Stack>
           </Stack>

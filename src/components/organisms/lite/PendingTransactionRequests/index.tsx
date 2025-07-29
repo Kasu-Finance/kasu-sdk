@@ -1,27 +1,40 @@
 'use client'
 
-import {
-  Box,
-  Grid2,
-  Stack,
-  TableCell,
-  TableRow,
-  Typography,
-} from '@mui/material'
+import { Box, Grid2, Stack, Typography } from '@mui/material'
+import React from 'react'
 
+import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
-import DottedDivider from '@/components/atoms/DottedDivider'
 import ToolTip from '@/components/atoms/ToolTip'
 import WaveBox from '@/components/atoms/WaveBox'
 import CountdownCard from '@/components/molecules/CountdownCard'
 import LiteModeTable from '@/components/molecules/CustomTable/LiteModeTable'
+import PendingTransactionRequestsTableBody from '@/components/organisms/lite/PendingTransactionRequests/PendingTransactionRequestsTableBody'
+import PendingTransactionRequestsTableHeader from '@/components/organisms/lite/PendingTransactionRequests/PendingTransactionRequestsTableHeader'
 
 import { customTypography } from '@/themes/typography'
-import { formatAmount } from '@/utils'
+import { getPendingTransactionRequests } from '@/utils'
 
-const PendingTransactionRequests = () => {
+type PendingTransactionRequestsProps = {
+  currentEpoch: string
+}
+
+const PendingTransactionRequests: React.FC<PendingTransactionRequestsProps> = ({
+  currentEpoch,
+}) => {
   const { nextEpochTime } = useNextEpochTime()
+
+  const { isAuthenticated } = usePrivyAuthenticated()
+
+  const { transactionHistory } = useTransactionHistory(currentEpoch)
+
+  if (!transactionHistory || !isAuthenticated) return null
+
+  const pendingTransactions = getPendingTransactionRequests(transactionHistory)
+
+  if (!pendingTransactions.length) return null
 
   return (
     <WaveBox variant='dark-middle' borderRadius={4} p={2}>
@@ -84,56 +97,11 @@ const PendingTransactionRequests = () => {
           </Grid2>
         </Grid2>
         <LiteModeTable
-          tableHeader={
-            <>
-              <TableRow
-                sx={{
-                  '.MuiTableCell-root': {
-                    py: 1,
-                  },
-                }}
-              >
-                <TableCell>Lending Strategy</TableCell>
-                <TableCell align='right'>Tranche</TableCell>
-                <TableCell align='right'>Request Type</TableCell>
-                <TableCell align='right'>Requested</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell colSpan={4} padding='none'>
-                  <DottedDivider />
-                </TableCell>
-              </TableRow>
-            </>
-          }
+          tableHeader={<PendingTransactionRequestsTableHeader />}
           tableBody={
-            <>
-              <TableRow sx={{ '.MuiTableCell-root': { py: 1 } }}>
-                <TableCell>Whole Ledger Funding</TableCell>
-                <TableCell align='right'>Junior</TableCell>
-                <TableCell align='right'>Withdrawal</TableCell>
-                <TableCell align='right'>
-                  {formatAmount(100, { minDecimals: 2 })} USDC
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell colSpan={4} padding='none'>
-                  <DottedDivider />
-                </TableCell>
-              </TableRow>
-              <TableRow sx={{ '.MuiTableCell-root': { py: 1 } }}>
-                <TableCell>Whole Ledger Funding</TableCell>
-                <TableCell align='right'>Junior</TableCell>
-                <TableCell align='right'>Withdrawal</TableCell>
-                <TableCell align='right'>
-                  {formatAmount(100, { minDecimals: 2 })} USDC
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell colSpan={4} padding='none'>
-                  <DottedDivider />
-                </TableCell>
-              </TableRow>
-            </>
+            <PendingTransactionRequestsTableBody
+              pendingTransactions={pendingTransactions}
+            />
           }
         />
       </Stack>

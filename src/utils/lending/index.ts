@@ -10,6 +10,7 @@ export {
 export { default as calculateWithdrawalStatusSummary } from '@/utils/lending/calculateWithdrawalStatusSummary'
 export { default as getAverageApyAndTotal } from '@/utils/lending/getAverageApyAndTotal'
 export { default as getDetailedTransactions } from '@/utils/lending/getDetailedTransactions'
+export { default as getPendingTransactionRequests } from '@/utils/lending/getPendingTransactionRequests'
 export { default as getWithdrawalTransactions } from '@/utils/lending/getWithdrawalTransactions'
 export { default as mapFixedLoanToConfig } from '@/utils/lending/mapFixedLoanToConfig'
 export { default as mapLoanTicketsTranche } from '@/utils/lending/mapLoanTicketsTranche'
