@@ -141,7 +141,7 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
           },
           cursor: 'pointer',
         }}
-        bgcolor={isLiteMode ? 'rgba(0,0,0,0.4)' : 'gray.extraLight'}
+        bgcolor={isLiteMode ? 'rgba(0,0,0,0.7)' : 'gray.extraLight'}
         position='relative'
         onClick={handleOpen}
       >
@@ -171,10 +171,7 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
             position: 'absolute',
             bottom: 0,
             transform: 'translateY(50%)',
-            backgroundImage: 'url("/images/seamless-noise-20.png")',
-            backgroundRepeat: 'repeat',
-            backgroundPosition: '0 0',
-            backgroundSize: '120px 86px',
+            ...(isLiteMode && { bgcolor: 'rgb(102 148 67)' }),
             '& .MuiChip-label': {
               padding: 0,
             },
