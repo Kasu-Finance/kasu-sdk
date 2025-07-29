@@ -90,7 +90,6 @@ const ModeToggleButton = () => {
             width: '0vw',
             height: '0vh',
             borderRadius: '120px',
-            pointerEvents: 'none',
             opacity: 0,
             left: open ? `0 !important` : undefined,
             top: open ? `0 !important` : undefined,
