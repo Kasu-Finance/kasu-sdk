@@ -144,7 +144,7 @@ export type Modals = {
       poolID: string
       trancheID: string
     }
-    callback: (newLoanTickets: LoanTicketDto[]) => void
+    callback?: (newLoanTickets: LoanTicketDto[]) => void
   }>
   [ModalsKeys.PENDING_DECISIONS]: ModalData<{
     pendingDecisions: PendingDecision[]

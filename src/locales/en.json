@@ -92,7 +92,8 @@
     "myPortfolio": "My Portfolio",
     "epoch": "Epochs",
     "userDocs": "User Docs",
-    "and": "and"
+    "and": "and",
+    "timeRemainig": "Time Remaining"
   },
   "time": {
     "years": "years",
@@ -127,6 +128,15 @@
   "apyStructure": {
     "tooltip-1": "Indicates whether the Delegate is offering Fixed and/or Variable APY loans for this Lending Strategy.",
     "tooltip-2": "A Variable APY is subject to change depending on interest rate market fluctuations (increases/decrease). A Fixed APY will be locked for the specified period of time. During a fixed APY period, now Withdrawal Request can be submitted."
+  },
+  "lite": {
+    "lendingPortfolio": {
+      "title": "Lending Portfolio"
+    },
+    "lendingDecisionsPending": {
+      "title": "Lending Decisions Pending",
+      "decisionPending": "Decision Pending"
+    }
   },
   "locking": {
     "widgets": {

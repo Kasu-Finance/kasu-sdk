@@ -24,7 +24,7 @@ const LendingPage = async () => {
 
   return (
     <LiteModeRenderer
-      renderOnLiteMode={<LiteModeApp />}
+      renderOnLiteMode={<LiteModeApp pools={poolsWithDelegate} />}
       otherwise={
         <Box mt={3}>
           <Suspense fallback={<PoolLayoutWrapperSkeleton />}>

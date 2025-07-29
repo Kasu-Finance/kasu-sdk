@@ -35,7 +35,7 @@ const BorrowerIdentifiedModal: React.FC<DialogChildProps> = ({
       subsequentTransaction,
       decision,
       (newLoanTickets) => {
-        callback(newLoanTickets)
+        callback?.(newLoanTickets)
         handleClose()
       }
     )
