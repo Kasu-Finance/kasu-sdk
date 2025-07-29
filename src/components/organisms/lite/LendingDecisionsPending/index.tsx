@@ -1,10 +1,10 @@
 'use client'
 
 import { Stack, Typography } from '@mui/material'
-import { useAccount } from 'wagmi'
 
 import useLoanTickets from '@/hooks/lending/useLoanTickets'
 import getTranslation from '@/hooks/useTranslation'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import WaveBox from '@/components/atoms/WaveBox'
 import LiteModeTable from '@/components/molecules/CustomTable/LiteModeTable'
@@ -24,11 +24,11 @@ const LendingDecisionsPending: React.FC<LendingDecisionsPendingProps> = ({
 }) => {
   const { t } = getTranslation()
 
-  const { address } = useAccount()
+  const { isAuthenticated } = usePrivyAuthenticated()
 
   const { loanTickets } = useLoanTickets()
 
-  if (!address || !loanTickets) return null
+  if (!isAuthenticated || !loanTickets) return null
 
   const { count, pendingDecisions } = mapPendingDecisionsToPools(
     loanTickets,
