@@ -6,6 +6,7 @@ import getTranslation from '@/hooks/useTranslation'
 
 import WaveBox from '@/components/atoms/WaveBox'
 import BasicStats from '@/components/organisms/lite/BasicStats'
+import LendingActions from '@/components/organisms/lite/LendingActions'
 import LendingDecisionsPending from '@/components/organisms/lite/LendingDecisionsPending'
 import LiteLendingPortfolio from '@/components/organisms/lite/LiteLendingPortfolio'
 import PendingTransactionRequests from '@/components/organisms/lite/PendingTransactionRequests'
@@ -31,6 +32,7 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({ pools, currentEpoch }) => {
               <PendingTransactionRequests currentEpoch={currentEpoch} />
               <LendingDecisionsPending pools={pools} />
               <LiteLendingPortfolio pools={pools} currentEpoch={currentEpoch} />
+              <LendingActions />
             </Stack>
           </Stack>
         </WaveBox>
