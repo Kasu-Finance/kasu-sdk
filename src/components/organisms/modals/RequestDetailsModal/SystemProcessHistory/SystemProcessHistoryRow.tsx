@@ -61,6 +61,7 @@ const SystemProcessHistoryRow: React.FC<SystemProcessHistoryRowProps> = ({
           ...(highlight
             ? {
                 background: 'url("/images/wave-dark-gold.png") repeat',
+                backgroundSize: '17px 16px',
 
                 '&:first-child': {
                   borderTopLeftRadius: 4,

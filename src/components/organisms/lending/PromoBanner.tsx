@@ -18,6 +18,7 @@ const PromoBanner = () => {
       borderRadius={2}
       sx={{
         background: `url("/images/wave-dark-gray.png") repeat, #28282A`,
+        backgroundSize: '17px 16px',
       }}
       height={64}
       gap={2}

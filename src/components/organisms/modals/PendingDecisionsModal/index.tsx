@@ -31,9 +31,11 @@ const PendingDecisionModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         }}
         tableSx={{
           background: 'url("/images/wave-dark-gold.png") repeat',
+          backgroundSize: '17px 16px',
         }}
         tableBodySx={{
           background: 'url("/images/wave-gold.png") repeat',
+          backgroundSize: '17px 16px',
           '& .MuiTableRow-root:first-child': {
             display: 'none',
           },

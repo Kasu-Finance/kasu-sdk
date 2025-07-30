@@ -2,7 +2,7 @@
 
 import { Box, styled } from '@mui/material'
 
-type WaveBoxProps = {
+export type WaveBoxProps = {
   variant?:
     | 'gold'
     | 'white'
@@ -15,6 +15,7 @@ type WaveBoxProps = {
 
 const WaveBox = styled(Box)<WaveBoxProps>((props) => ({
   background: `url("/images/wave-${props.variant ?? 'white'}.png") repeat, ${props.backgroundColor ?? 'white'}`,
+  backgroundSize: '17px 16px',
 }))
 
 export default WaveBox
