@@ -10,6 +10,8 @@ import LendingBasicStats from '@/components/organisms/lite/LendingBasicStats'
 import LendingDecisionsPending from '@/components/organisms/lite/LendingDecisionsPending'
 import LiteLendingPortfolio from '@/components/organisms/lite/LiteLendingPortfolio'
 import LiteReferralBonus from '@/components/organisms/lite/LiteReferralBonus'
+import LockActions from '@/components/organisms/lite/LockActions'
+import LockBasicStats from '@/components/organisms/lite/LockBasicStats'
 import LockingRewards from '@/components/organisms/lite/LockingRewards'
 import NftRewards from '@/components/organisms/lite/NftRewards'
 import PendingTransactionRequests from '@/components/organisms/lite/PendingTransactionRequests'
@@ -24,7 +26,7 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({ pools, currentEpoch }) => {
   const { t } = getTranslation()
 
   return (
-    <Grid2 container spacing={3}>
+    <Grid2 container spacing={3} alignItems='stretch'>
       <Grid2 size={8}>
         <WaveBox variant='dark-gray' borderRadius={6} p={2}>
           <Stack spacing={6.5}>
@@ -58,8 +60,22 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({ pools, currentEpoch }) => {
         </WaveBox>
       </Grid2>
       <Grid2 size={4}>
-        <WaveBox variant='dark-gray' borderRadius={6} p={2}>
-          <Typography color='white'>world</Typography>
+        <WaveBox variant='dark-gray' borderRadius={6} p={2} height='100%'>
+          <Stack spacing={4}>
+            <Typography
+              textAlign='center'
+              maxWidth={330}
+              variant='h3'
+              color='gold.dark'
+              mt={0.5}
+            >
+              {t('lite.buyAndLock.title')}
+            </Typography>
+            <Stack>
+              <LockBasicStats />
+              <LockActions />
+            </Stack>
+          </Stack>
         </WaveBox>
       </Grid2>
     </Grid2>

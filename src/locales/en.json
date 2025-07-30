@@ -164,6 +164,14 @@
         "cell-3": "Lifetime Referral Bonus",
         "cell-4": "Action"
       }
+    },
+    "buyAndLock": {
+      "title": "Buy and lock KASU to achieve/increase token utility and rewards",
+      "actions": {
+        "unlock": "Unlock KASU",
+        "buy": "Buy KASU",
+        "lock": "Lock KASU"
+      }
     }
   },
   "locking": {
