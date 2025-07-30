@@ -94,7 +94,9 @@
     "userDocs": "User Docs",
     "and": "and",
     "timeRemainig": "Time Remaining",
-    "lifetimeInterest": "Lifetime Interest"
+    "lifetimeInterest": "Lifetime Interest",
+    "lifetimeRewards": "Lifetime Rewards",
+    "claimableRewards": "Claimable Rewards"
   },
   "time": {
     "years": "years",
