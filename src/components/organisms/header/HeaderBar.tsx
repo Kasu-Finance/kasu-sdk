@@ -25,7 +25,7 @@ const HeaderBar: React.FC<HeaderBarProps> = ({ children }) => {
       sx={
         isLiteMode
           ? {
-              bgcolor: 'transparent',
+              bgcolor: trigger ? 'gray.extraDark' : 'transparent',
             }
           : undefined
       }
