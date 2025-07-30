@@ -41,6 +41,7 @@ const LiteModeTable: React.FC<LiteModeTableProps> = ({
         sx={[
           {
             tableLayout: 'fixed',
+            overflow: 'hidden',
             '.MuiTableCell-root': {
               color: 'white',
             },

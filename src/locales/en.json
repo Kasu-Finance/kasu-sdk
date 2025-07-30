@@ -155,6 +155,15 @@
         "cell-3": "Last Epoch Yield Boost",
         "cell-4": "Lifetime Yield Boost"
       }
+    },
+    "referralBonus": {
+      "title": "Referral Bonus",
+      "table": {
+        "cell-1": "Successful Referrals",
+        "cell-2": "Last Epoch Referral Bonus",
+        "cell-3": "Lifetime Referral Bonus",
+        "cell-4": "Action"
+      }
     }
   },
   "locking": {
