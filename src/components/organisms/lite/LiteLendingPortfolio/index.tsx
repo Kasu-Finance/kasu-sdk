@@ -29,7 +29,7 @@ const LiteLendingPortfolio: React.FC<LiteLendingPortfolioProps> = ({
 
   const { portfolioLendingPools } = useLendingPortfolioData(pools, currentEpoch)
 
-  if (!isAuthenticated || !portfolioLendingPools) return null
+  if (!isAuthenticated || !portfolioLendingPools?.length) return null
 
   return (
     <WaveBox variant='dark-middle' borderRadius={4} p={2}>
