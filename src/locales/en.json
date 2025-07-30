@@ -141,6 +141,9 @@
     "lendingDecisionsPending": {
       "title": "Lending Decisions Pending",
       "decisionPending": "Decision Pending"
+    },
+    "rewardsPortfolio": {
+      "title": "Rewards Portfolio"
     }
   },
   "locking": {

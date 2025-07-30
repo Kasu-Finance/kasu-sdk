@@ -7,7 +7,7 @@ import WaveBox from '@/components/atoms/WaveBox'
 
 import { formatAmount } from '@/utils'
 
-const BasicStats = () => {
+const LendingBasicStats = () => {
   return (
     <>
       <Grid2 container spacing={3}>
@@ -104,4 +104,4 @@ const BasicStats = () => {
   )
 }
 
-export default BasicStats
+export default LendingBasicStats
