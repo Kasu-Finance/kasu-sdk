@@ -29,13 +29,11 @@ import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 const ReferralBonus = () => {
   const { ksuPrice } = useKsuPrice()
 
-  // const { address } = useAccount()
-
   const { openModal } = useModalState()
 
   const { userReferrals, isLoading } = useUserReferrals()
 
-  // const referralCode = address || ''
+  // const referralLink = useReferralLink()
 
   const handleClick = (referredUsers: ReferredUserDetails[]) => {
     openModal({ name: ModalsKeys.REFERRED_USERS, referredUsers })
@@ -43,7 +41,7 @@ const ReferralBonus = () => {
 
   // const handleCopy = () =>
   //   navigator.clipboard.writeText(
-  //     `${window.location.origin}/referrals/${referralCode}`
+  //     referralLink.fullUrl
   //   )
 
   return (
@@ -206,7 +204,7 @@ const ReferralBonus = () => {
       >
         {/* <DottedDivider /> */}
         {/* <Typography variant='baseSm' my={3}>
-          Use your referral link to invite friends and get a reward.{' '}
+          Use your referral link to invite friends and earn KASU tokens:{' '}
           <Button
             variant='text'
             sx={{
