@@ -1,6 +1,7 @@
 'use client'
 
 import { Stack, Typography } from '@mui/material'
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import useLoanTickets from '@/hooks/lending/useLoanTickets'
 import getTranslation from '@/hooks/useTranslation'
@@ -11,12 +12,10 @@ import LiteModeTable from '@/components/molecules/CustomTable/LiteModeTable'
 import LendingDecisionsPendingTableHeader from '@/components/organisms/lite/LendingDecisionsPending/LendingDecisionsPendingTableHeader'
 import LendingDecisionsPendingTableBody from '@/components/organisms/lite/LendingDecisionsPending/LendingDecisionsTableBody'
 
-import { mapPendingDecisionsToPools, mergeSubheading } from '@/utils'
-
-import { PoolOverviewWithDelegate } from '@/types/page'
+import { mapPendingDecisionsToPools } from '@/utils'
 
 type LendingDecisionsPendingProps = {
-  pools: PoolOverviewWithDelegate[]
+  pools: PoolOverview[]
 }
 
 const LendingDecisionsPending: React.FC<LendingDecisionsPendingProps> = ({
@@ -34,7 +33,7 @@ const LendingDecisionsPending: React.FC<LendingDecisionsPendingProps> = ({
     loanTickets,
     pools.map((pool) => ({
       ...pool,
-      poolName: mergeSubheading(pool.poolName, pool.subheading),
+      poolName: pool.poolName,
     }))
   )
 

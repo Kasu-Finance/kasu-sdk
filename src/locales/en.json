@@ -93,7 +93,8 @@
     "epoch": "Epochs",
     "userDocs": "User Docs",
     "and": "and",
-    "timeRemainig": "Time Remaining"
+    "timeRemainig": "Time Remaining",
+    "lifetimeInterest": "Lifetime Interest"
   },
   "time": {
     "years": "years",

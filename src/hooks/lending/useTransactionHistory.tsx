@@ -19,6 +19,9 @@ const useTransactionHistory = (epochId: string) => {
       )
 
       return userRequests.sort((a, b) => b.timestamp - a.timestamp)
+    },
+    {
+      keepPreviousData: true,
     }
   )
 

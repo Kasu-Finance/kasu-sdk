@@ -1,4 +1,5 @@
 import { Grid2, Stack, Typography } from '@mui/material'
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
 import getTranslation from '@/hooks/useTranslation'
@@ -6,12 +7,11 @@ import getTranslation from '@/hooks/useTranslation'
 import WaveBox from '@/components/atoms/WaveBox'
 import BasicStats from '@/components/organisms/lite/BasicStats'
 import LendingDecisionsPending from '@/components/organisms/lite/LendingDecisionsPending'
+import LiteLendingPortfolio from '@/components/organisms/lite/LiteLendingPortfolio'
 import PendingTransactionRequests from '@/components/organisms/lite/PendingTransactionRequests'
 
-import { PoolOverviewWithDelegate } from '@/types/page'
-
 type LiteModeAppProps = {
-  pools: PoolOverviewWithDelegate[]
+  pools: PoolOverview[]
   currentEpoch: string
 }
 
@@ -30,6 +30,7 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({ pools, currentEpoch }) => {
               <BasicStats />
               <PendingTransactionRequests currentEpoch={currentEpoch} />
               <LendingDecisionsPending pools={pools} />
+              <LiteLendingPortfolio pools={pools} currentEpoch={currentEpoch} />
             </Stack>
           </Stack>
         </WaveBox>
