@@ -3,6 +3,16 @@ import { useAccount, useChainId } from 'wagmi'
 
 import { NftRes } from '@/app/api/nft/route'
 
+export type UserNftYield = {
+  poolAddress: string
+  epochIds: string[]
+  baseYield: string
+  boostPct: string
+  boostedYield: string
+  epochBoost: string
+  totalBoost: string
+}
+
 const useUserNftYields = () => {
   const { address } = useAccount()
 
@@ -10,7 +20,7 @@ const useUserNftYields = () => {
 
   const { data, error, isLoading } = useSWR(
     address && chainId ? ['userNftYields', address, chainId] : null,
-    async ([_, userAddress, chainId]) => {
+    async ([_, userAddress, chainId]): Promise<UserNftYield> => {
       const res = await fetch(
         '/api/nft?' +
           new URLSearchParams({
@@ -42,7 +52,7 @@ const useUserNftYields = () => {
   return {
     userNftYields: data,
     error,
-    isLoading,
+    isLoading: isLoading || (!data && !error),
   }
 }
 

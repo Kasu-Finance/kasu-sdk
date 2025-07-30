@@ -1,6 +1,7 @@
 import { Box, TableCell, TableRow, Typography } from '@mui/material'
 import { formatEther, formatUnits, parseEther } from 'ethers/lib/utils'
 import Image from 'next/image'
+import React from 'react'
 
 import { NftDetail } from '@/hooks/portfolio/useUserNfts'
 import { UserNftYield } from '@/hooks/portfolio/useUserNftYields'
@@ -9,16 +10,16 @@ import useKsuPrice from '@/hooks/web3/useKsuPrice'
 import { customPalette } from '@/themes/palette'
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
-type NftPortfolioTableRowProps = {
+type NftRewardsTableRowProps = {
   nft: NftDetail
   nftYields?: UserNftYield
   isActive: boolean
 }
 
-const NftPortfolioTableRow: React.FC<NftPortfolioTableRowProps> = ({
+const NftRewardsTableRow: React.FC<NftRewardsTableRowProps> = ({
+  isActive,
   nft,
   nftYields,
-  isActive,
 }) => {
   const { ksuPrice } = useKsuPrice()
 
@@ -31,7 +32,8 @@ const NftPortfolioTableRow: React.FC<NftPortfolioTableRowProps> = ({
     <TableRow
       sx={{
         '.MuiTableCell-root': {
-          color: !isActive ? 'gray.light' : 'inherit',
+          color: !isActive ? 'rgb(102 102 102)' : 'white',
+          py: 1,
         },
       }}
     >
@@ -49,8 +51,8 @@ const NftPortfolioTableRow: React.FC<NftPortfolioTableRowProps> = ({
             alt={nft.name}
           />
           <Typography
-            variant='baseMd'
-            color={isActive ? 'gray.extraDark' : 'gray.light'}
+            variant='baseSm'
+            color={isActive ? 'white' : 'rgb(102 102 102)'}
           >
             {nft.name ?? 'NFT'}
           </Typography>
@@ -62,8 +64,8 @@ const NftPortfolioTableRow: React.FC<NftPortfolioTableRowProps> = ({
             {formatAmount(nft.boostAmount, { minDecimals: 2 })}% APY
             <br />
             <Typography
-              variant='inherit'
-              color={isActive ? 'gray.middle' : 'gray.light'}
+              variant='baseXs'
+              color={isActive ? 'gray.middle' : 'rgb(102 102 102)'}
             >
               Boost applied to interest earnings
             </Typography>
@@ -97,8 +99,10 @@ const NftPortfolioTableRow: React.FC<NftPortfolioTableRowProps> = ({
       ) : (
         <TableCell colSpan={3}>
           <Box display='flex' justifyContent='center'>
-            Inactive - only the highest APY Boost NFT applies to all your
-            lending
+            <Typography variant='baseXs'>
+              Inactive - only the highest APY Boost NFT applies to all your
+              lending
+            </Typography>
           </Box>
         </TableCell>
       )}
@@ -106,4 +110,4 @@ const NftPortfolioTableRow: React.FC<NftPortfolioTableRowProps> = ({
   )
 }
 
-export default NftPortfolioTableRow
+export default NftRewardsTableRow

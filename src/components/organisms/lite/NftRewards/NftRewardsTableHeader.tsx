@@ -4,7 +4,7 @@ import getTranslation from '@/hooks/useTranslation'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
 
-const LockingRewardsTableHeader = () => {
+const NftRewardsTableHeader = () => {
   const { t } = getTranslation()
 
   return (
@@ -16,18 +16,19 @@ const LockingRewardsTableHeader = () => {
           },
         }}
       >
-        <TableCell width='40%'>
-          {t('portfolio.rewards.bonusesAndRewards')}
+        <TableCell width='30%'>{t('lite.nftRewards.table.cell-1')}</TableCell>
+        <TableCell width='20%' align='right'>
+          {t('lite.nftRewards.table.cell-2')}
         </TableCell>
-        <TableCell width='30%' align='right'>
-          {t('general.lifetimeRewards')}
+        <TableCell width='25%' align='right'>
+          {t('lite.nftRewards.table.cell-3')}
         </TableCell>
-        <TableCell width='30%' align='right'>
-          {t('general.claimableRewards')}
+        <TableCell width='25%' align='right'>
+          {t('lite.nftRewards.table.cell-4')}
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell colSpan={3} padding='none'>
+        <TableCell colSpan={4} padding='none'>
           <DottedDivider />
         </TableCell>
       </TableRow>
@@ -35,4 +36,4 @@ const LockingRewardsTableHeader = () => {
   )
 }
 
-export default LockingRewardsTableHeader
+export default NftRewardsTableHeader

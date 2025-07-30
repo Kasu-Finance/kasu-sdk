@@ -146,6 +146,15 @@
     },
     "rewardsPortfolio": {
       "title": "Rewards Portfolio"
+    },
+    "nftRewards": {
+      "title": "Your NFT",
+      "table": {
+        "cell-1": "Bonuses and Rewards",
+        "cell-2": "Yield Boost %",
+        "cell-3": "Last Epoch Yield Boost",
+        "cell-4": "Lifetime Yield Boost"
+      }
     }
   },
   "locking": {

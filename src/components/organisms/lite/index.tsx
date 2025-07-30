@@ -10,6 +10,7 @@ import LendingBasicStats from '@/components/organisms/lite/LendingBasicStats'
 import LendingDecisionsPending from '@/components/organisms/lite/LendingDecisionsPending'
 import LiteLendingPortfolio from '@/components/organisms/lite/LiteLendingPortfolio'
 import LockingRewards from '@/components/organisms/lite/LockingRewards'
+import NftRewards from '@/components/organisms/lite/NftRewards'
 import PendingTransactionRequests from '@/components/organisms/lite/PendingTransactionRequests'
 import RewardsBasicStats from '@/components/organisms/lite/RewardsBasicStats'
 
@@ -45,8 +46,11 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({ pools, currentEpoch }) => {
               <Typography variant='h2' color='gold.dark'>
                 {t('lite.rewardsPortfolio.title')}
               </Typography>
-              <RewardsBasicStats />
-              <LockingRewards />
+              <Stack spacing={5}>
+                <RewardsBasicStats />
+                <LockingRewards />
+                <NftRewards />
+              </Stack>
             </Stack>
           </Stack>
         </WaveBox>

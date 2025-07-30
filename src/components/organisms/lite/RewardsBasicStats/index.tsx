@@ -1,4 +1,4 @@
-import { Grid2, Typography } from '@mui/material'
+import { Grid2, Stack, Typography } from '@mui/material'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
 import InfoRow from '@/components/atoms/InfoRow'
@@ -9,7 +9,7 @@ import { formatAmount } from '@/utils'
 
 const RewardsBasicStats = () => {
   return (
-    <>
+    <Stack spacing={3}>
       <Grid2 container spacing={3}>
         <Grid2 size={6}>
           <WaveBox borderRadius={4} p={2} variant='dark-middle'>
@@ -96,7 +96,7 @@ const RewardsBasicStats = () => {
           />
         </Grid2>
       </Grid2>
-    </>
+    </Stack>
   )
 }
 
