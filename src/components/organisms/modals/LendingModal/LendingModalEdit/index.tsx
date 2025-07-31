@@ -1,6 +1,6 @@
 import { Skeleton, Stack } from '@mui/material'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useDeferredValue, useMemo, useState } from 'react'
 import { useChainId } from 'wagmi'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
@@ -65,9 +65,11 @@ const LendingModalEdit = () => {
     prevSelectedToken ?? SupportedTokens.USDC
   )
   const [amount, setAmount] = useState(prevAmount ?? '')
+
   const [amountInUSD, setAmountInUSD] = useState<string | undefined>(
     prevAmountInUSD ?? undefined
   )
+
   const [selectedTranche, setSelectedTranche] = useState(
     prevTrancheId ?? (defaultTranche.id as `0x${string}`)
   )
@@ -75,6 +77,10 @@ const LendingModalEdit = () => {
     prevFixedTermConfigId ??
       (defaultTranche.fixedTermConfig.length ? undefined : '0')
   )
+
+  const deferredAmountInUSD = useDeferredValue(amountInUSD)
+  const deferredAmount = useDeferredValue(amount)
+
   const validate = useCallback(
     (
       amount: string,
@@ -180,16 +186,16 @@ const LendingModalEdit = () => {
       setAmountInUSD(undefined)
 
       // skip validation and conversion if amount is not set
-      if (!amount) return
+      if (!deferredAmount) return
 
       if (token === SupportedTokens.USDC) {
-        validate(amount, undefined, undefined, token)
+        validate(deferredAmount, undefined, undefined, token)
         return
       }
 
-      handleApplyConversion(amount, token)
+      handleApplyConversion(deferredAmount, token)
     },
-    [amount, setModalStatus, handleApplyConversion, validate]
+    [deferredAmount, setModalStatus, handleApplyConversion, validate]
   )
 
   const handleTrancheChange = useCallback(
@@ -212,13 +218,13 @@ const LendingModalEdit = () => {
       // since it will be validated when user selects a fixed term option which is required
       if (!defaultFixedTermConfigId) return
 
-      validate(amount, amountInUSD, depositMinMax)
+      validate(deferredAmount, deferredAmountInUSD, depositMinMax)
     },
     [
       setModalStatus,
       validate,
-      amount,
-      amountInUSD,
+      deferredAmount,
+      deferredAmountInUSD,
       pool.tranches,
       currentEpochDepositedAmountMap,
       currentEpochFtdAmountMap,
@@ -240,12 +246,12 @@ const LendingModalEdit = () => {
 
       setDepositMinMax(depositMinMax)
 
-      validate(amount, amountInUSD, depositMinMax)
+      validate(deferredAmount, deferredAmountInUSD, depositMinMax)
     },
     [
       selectedTranche,
-      amount,
-      amountInUSD,
+      deferredAmount,
+      deferredAmountInUSD,
       pool.tranches,
       currentEpochDepositedAmountMap,
       currentEpochFtdAmountMap,
@@ -282,8 +288,8 @@ const LendingModalEdit = () => {
         />
       )}
       <SwapInfo
-        amount={amount}
-        amountInUSD={amountInUSD}
+        amount={deferredAmount}
+        amountInUSD={deferredAmountInUSD}
         selectedToken={selectedToken}
         isValidating={isValidating}
       />
@@ -297,16 +303,16 @@ const LendingModalEdit = () => {
         setFixedTermConfigId={handleFixedTermConfigChange}
       />
       <EarningsSimulator
-        amount={amount}
-        amountInUSD={amountInUSD}
+        amount={deferredAmount}
+        amountInUSD={deferredAmountInUSD}
         trancheId={selectedTranche}
         fixedTermConfigId={fixedTermConfigId}
       />
       <Acknowledgement />
       <SecureSpotInfo />
       <LendingModalEditActions
-        amount={amount}
-        amountInUSD={amountInUSD}
+        amount={deferredAmount}
+        amountInUSD={deferredAmountInUSD}
         fixedTermConfigId={fixedTermConfigId}
         trancheId={selectedTranche}
         selectedToken={selectedToken}
