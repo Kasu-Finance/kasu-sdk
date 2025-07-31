@@ -172,6 +172,9 @@
         "buy": "Buy KASU",
         "lock": "Lock KASU"
       }
+    },
+    "loyaltyInfo": {
+      "title": "Kasu Loyalty - KASU Token Utility & Rewards"
     }
   },
   "locking": {

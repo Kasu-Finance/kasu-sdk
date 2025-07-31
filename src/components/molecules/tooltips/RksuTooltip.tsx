@@ -13,7 +13,7 @@ const RksuTooltip = () => {
       </Typography>
       <br />
       <Typography variant='inherit'>
-        <b>No Loyalty Status</b>
+        <b>No Loyalty Level</b>
         <br />
         If the value of your rKASU balance relative to your current and pending
         USDC lending is less than 1%:

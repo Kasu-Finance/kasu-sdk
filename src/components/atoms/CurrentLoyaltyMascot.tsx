@@ -1,6 +1,7 @@
 'use client'
 
-import Image from 'next/image'
+import Image, { ImageProps } from 'next/image'
+import React from 'react'
 
 import useLoyaltyLevel, { LoyaltyLevel } from '@/hooks/locking/useLoyaltyLevel'
 import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
@@ -23,7 +24,9 @@ const getMascot = (currentLevel: LoyaltyLevel) => {
   }
 }
 
-const CurrentLoyaltyMascot = () => {
+const CurrentLoyaltyMascot: React.FC<Omit<ImageProps, 'src' | 'alt'>> = (
+  props
+) => {
   const { stakedPercentage } = useLockingPercentage()
 
   const { currentLevel } = useLoyaltyLevel(stakedPercentage)
@@ -34,6 +37,7 @@ const CurrentLoyaltyMascot = () => {
       alt={`cat-level_${currentLevel}`}
       width={367}
       height={315}
+      {...props}
     />
   )
 }

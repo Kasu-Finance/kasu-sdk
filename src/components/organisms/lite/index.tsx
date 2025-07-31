@@ -9,6 +9,7 @@ import LendingActions from '@/components/organisms/lite/LendingActions'
 import LendingBasicStats from '@/components/organisms/lite/LendingBasicStats'
 import LendingDecisionsPending from '@/components/organisms/lite/LendingDecisionsPending'
 import LiteLendingPortfolio from '@/components/organisms/lite/LiteLendingPortfolio'
+import LiteLoyaltyInfo from '@/components/organisms/lite/LiteLoyaltyInfo'
 import LiteReferralBonus from '@/components/organisms/lite/LiteReferralBonus'
 import LockActions from '@/components/organisms/lite/LockActions'
 import LockBasicStats from '@/components/organisms/lite/LockBasicStats'
@@ -75,6 +76,7 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({ pools, currentEpoch }) => {
               <LockBasicStats />
               <LockActions />
             </Stack>
+            <LiteLoyaltyInfo />
           </Stack>
         </WaveBox>
       </Grid2>
