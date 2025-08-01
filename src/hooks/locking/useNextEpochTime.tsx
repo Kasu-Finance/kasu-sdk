@@ -1,11 +1,11 @@
-import useSWRImmutable from 'swr/immutable'
+import useSWR from 'swr'
 
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useSdk from '@/hooks/context/useSdk'
 
 const useNextEpochTime = () => {
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
 
-  const { data, isLoading, error } = useSWRImmutable(
+  const { data, isLoading, error } = useSWR(
     sdk ? ['nextEpochTime', sdk] : null,
     async ([_, sdk]) => await sdk.Locking.getNextEpochDate()
   )

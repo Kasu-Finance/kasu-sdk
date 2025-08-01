@@ -1,13 +1,15 @@
+import useSdk from '@/hooks/context/useSdk'
 import useToastState from '@/hooks/context/useToastState'
 import useLockingRewards from '@/hooks/locking/useLockingRewards'
-import useKasuSDK, { KasuSdkNotReadyError } from '@/hooks/useKasuSDK'
 import useHandleError from '@/hooks/web3/useHandleError'
+
+import { KasuSdkNotReadyError } from '@/context/sdk/sdk.types'
 
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { waitForReceipt } from '@/utils'
 
 const useClaimLockingRewards = () => {
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
 
   const handleError = useHandleError()
 

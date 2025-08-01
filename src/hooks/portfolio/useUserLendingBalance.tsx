@@ -4,14 +4,14 @@ import { PortfolioLendingPool } from '@solidant/kasu-sdk/src/services/Portfolio/
 import useSWR from 'swr'
 import { useAccount } from 'wagmi'
 
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useSdk from '@/hooks/context/useSdk'
 
 import { FIVE_MINUTES } from '@/constants/general'
 
 const useUserLendingBalance = (pools: PortfolioLendingPool[]) => {
   const account = useAccount()
 
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
 
   const { data, error, isLoading } = useSWR(
     account.address && sdk

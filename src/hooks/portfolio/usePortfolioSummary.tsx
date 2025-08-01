@@ -2,8 +2,8 @@ import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import useSWR from 'swr'
 import { useAccount } from 'wagmi'
 
+import useSdk from '@/hooks/context/useSdk'
 import useLendingPortfolioData from '@/hooks/portfolio/useLendingPortfolioData'
-import useKasuSDK from '@/hooks/useKasuSDK'
 
 import { FIVE_MINUTES } from '@/constants/general'
 
@@ -11,7 +11,7 @@ const usePortfolioSummary = (
   currentEpoch: string,
   poolOverviews: PoolOverview[]
 ) => {
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
 
   const account = useAccount()
 

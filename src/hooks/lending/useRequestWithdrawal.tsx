@@ -1,17 +1,19 @@
 import { ContractTransaction } from 'ethers'
 import { useAccount } from 'wagmi'
 
+import useSdk from '@/hooks/context/useSdk'
 import useStepperState from '@/hooks/context/useStepperState'
 import useToastState from '@/hooks/context/useToastState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
-import useKasuSDK, { KasuSdkNotReadyError } from '@/hooks/useKasuSDK'
 import useHandleError from '@/hooks/web3/useHandleError'
+
+import { KasuSdkNotReadyError } from '@/context/sdk/sdk.types'
 
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { capitalize, waitForReceipt } from '@/utils'
 
 const useRequestWithdrawal = () => {
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
 
   const account = useAccount()
 

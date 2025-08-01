@@ -1,7 +1,7 @@
 'use client'
 
 import { Box, Grid2, Stack, Typography } from '@mui/material'
-import React from 'react'
+import React, { useMemo } from 'react'
 
 import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
@@ -30,9 +30,15 @@ const PendingTransactionRequests: React.FC<PendingTransactionRequestsProps> = ({
 
   const { transactionHistory } = useTransactionHistory(currentEpoch)
 
-  if (!transactionHistory || !isAuthenticated) return null
+  const pendingTransactions = useMemo(
+    () =>
+      transactionHistory
+        ? getPendingTransactionRequests(transactionHistory)
+        : [],
+    [transactionHistory]
+  )
 
-  const pendingTransactions = getPendingTransactionRequests(transactionHistory)
+  if (!isAuthenticated) return null
 
   if (!pendingTransactions.length) return null
 

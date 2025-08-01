@@ -1,10 +1,15 @@
+'use client'
+
 import { useWallets } from '@privy-io/react-auth'
 import { KasuSdk } from '@solidant/kasu-sdk'
 import { PoolOverviewDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import { ethers } from 'ethers'
-import useSWR, { preload } from 'swr'
+import React, { PropsWithChildren, useEffect, useState } from 'react'
+import { preload } from 'swr'
 import useSWRImmutable from 'swr/immutable'
 import { useAccount } from 'wagmi'
+
+import SdkContext from '@/context/sdk/sdk.context'
 
 import sdkConfig from '@/config/sdk'
 
@@ -27,14 +32,9 @@ const unusedPoolsFetcher = async () => {
 
 preload('unusedPools', unusedPoolsFetcher)
 
-export class KasuSdkNotReadyError extends Error {
-  constructor() {
-    super('KasuSDK is not ready')
-    this.name = 'SDK Error'
-  }
-}
+const SdkState: React.FC<PropsWithChildren> = ({ children }) => {
+  const [kasuSdk, setKasuSdk] = useState<KasuSdk | undefined>(undefined)
 
-const useKasuSDK = () => {
   const { wallets } = useWallets()
 
   const { address } = useAccount()
@@ -46,29 +46,34 @@ const useKasuSDK = () => {
     unusedPoolsFetcher
   )
 
-  const { data, error } = useSWR(
-    wallet ? ['kasuSDK', wallet] : null,
+  useEffect(() => {
+    if (!wallet || !unusedPools) return
+    ;(async () => {
+      try {
+        const privyProvider = await wallet.getEthereumProvider()
 
-    async ([_, wallet]) => {
-      const privyProvider = await wallet.getEthereumProvider()
+        const provider = new ethers.providers.Web3Provider(privyProvider)
 
-      const provider = new ethers.providers.Web3Provider(privyProvider)
+        const sdk = new KasuSdk(
+          {
+            ...sdkConfig,
+            UNUSED_LENDING_POOL_IDS: unusedPools?.length ? unusedPools : [''],
+          },
+          provider.getSigner()
+        )
 
-      return new KasuSdk(
-        {
-          ...sdkConfig,
-          UNUSED_LENDING_POOL_IDS: unusedPools?.length ? unusedPools : [''],
-        },
-        provider.getSigner()
-      )
-    }
+        setKasuSdk(sdk)
+      } catch (error) {
+        console.error(error)
+      }
+    })()
+  }, [wallet, unusedPools])
+
+  return (
+    <SdkContext.Provider value={{ sdk: kasuSdk }}>
+      {children}
+    </SdkContext.Provider>
   )
-
-  if (error) {
-    console.error(error)
-  }
-
-  return data
 }
 
-export default useKasuSDK
+export default SdkState

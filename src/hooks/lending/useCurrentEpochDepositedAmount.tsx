@@ -1,10 +1,10 @@
 import useSWRImmutable from 'swr/immutable'
 import { useAccount } from 'wagmi'
 
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useSdk from '@/hooks/context/useSdk'
 
 const useCurrentEpochDepositedAmount = (lendingPoolId: string) => {
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
 
   const account = useAccount()
 

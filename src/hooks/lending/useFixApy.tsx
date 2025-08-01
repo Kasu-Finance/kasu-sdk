@@ -1,16 +1,18 @@
 import { parseUnits } from 'ethers/lib/utils'
 
 import useFixApyState from '@/hooks/context/useFixApyState'
+import useSdk from '@/hooks/context/useSdk'
 import useStepperState from '@/hooks/context/useStepperState'
 import useToastState from '@/hooks/context/useToastState'
-import useKasuSDK, { KasuSdkNotReadyError } from '@/hooks/useKasuSDK'
 import useHandleError from '@/hooks/web3/useHandleError'
+
+import { KasuSdkNotReadyError } from '@/context/sdk/sdk.types'
 
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { capitalize, waitForReceipt } from '@/utils'
 
 const useFixApy = () => {
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
 
   const { setToast, removeToast } = useToastState()
 

@@ -4,14 +4,14 @@ import { useMemo } from 'react'
 import useSWR from 'swr'
 import { useAccount } from 'wagmi'
 
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useSdk from '@/hooks/context/useSdk'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
 import { SupportedTokens } from '@/constants/tokens'
 
 const useTotalLendingPoolDeposits = () => {
   const account = useAccount()
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
 
   const supportedToken = useSupportedTokenInfo()
 

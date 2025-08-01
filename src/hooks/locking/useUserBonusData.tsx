@@ -1,10 +1,10 @@
 import useSWR from 'swr'
 import { useAccount } from 'wagmi'
 
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useSdk from '@/hooks/context/useSdk'
 
 const useUserBonusData = () => {
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
   const account = useAccount()
 
   const { data, error, isLoading, mutate } = useSWR(

@@ -1,9 +1,9 @@
 import useSWRImmutable from 'swr/immutable'
 
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useSdk from '@/hooks/context/useSdk'
 
 const useNextClearingPeriod = () => {
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
 
   const { data, error } = useSWRImmutable(
     sdk ? ['nextClearingPeriod', sdk] : null,

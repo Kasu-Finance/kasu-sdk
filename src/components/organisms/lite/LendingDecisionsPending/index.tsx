@@ -2,6 +2,7 @@
 
 import { Stack, Typography } from '@mui/material'
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
+import { useMemo } from 'react'
 
 import useLoanTickets from '@/hooks/lending/useLoanTickets'
 import getTranslation from '@/hooks/useTranslation'
@@ -27,17 +28,21 @@ const LendingDecisionsPending: React.FC<LendingDecisionsPendingProps> = ({
 
   const { loanTickets } = useLoanTickets()
 
-  if (!isAuthenticated || !loanTickets) return null
-
-  const { count, pendingDecisions } = mapPendingDecisionsToPools(
-    loanTickets,
-    pools.map((pool) => ({
-      ...pool,
-      poolName: pool.poolName,
-    }))
+  const { count, pendingDecisions } = useMemo(
+    () =>
+      loanTickets?.length
+        ? mapPendingDecisionsToPools(
+            loanTickets,
+            pools.map((pool) => ({
+              ...pool,
+              poolName: pool.poolName,
+            }))
+          )
+        : { count: undefined, pendingDecisions: undefined },
+    [loanTickets, pools]
   )
 
-  if (!count) return null
+  if (!isAuthenticated || !loanTickets || !count) return null
 
   return (
     <WaveBox variant='dark-middle' borderRadius={4} p={2}>

@@ -2,7 +2,8 @@ import { Logger } from 'ethers/lib/utils'
 import { useAccount, useChainId } from 'wagmi'
 
 import useToastState from '@/hooks/context/useToastState'
-import { KasuSdkNotReadyError } from '@/hooks/useKasuSDK'
+
+import { KasuSdkNotReadyError } from '@/context/sdk/sdk.types'
 
 import {
   ACTION_MESSAGES,

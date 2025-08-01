@@ -14,6 +14,7 @@ import KycState from '@/context/kyc/kyc.provider'
 import LiteModeState from '@/context/liteMode/liteMode.provider'
 import ModalState from '@/context/modal/modal.provider'
 import PrivyProvider from '@/context/privy.provider'
+import SdkState from '@/context/sdk/sdk.provider'
 import SwrProvider from '@/context/swr.provider'
 import ToastState from '@/context/toast/toast.provider'
 
@@ -82,21 +83,23 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <ThemeRegistry>
           <PrivyProvider>
             <SwrProvider unusedPools={filteredPools}>
-              <ToastState>
-                <LiteModeState>
-                  <KycState>
-                    <ModalState>
-                      <LiteModeReady>
-                        {/* <NftTracker /> */}
-                        <Header />
-                        <Box component='main'>{children}</Box>
-                        <Footer />
-                      </LiteModeReady>
-                      <ModalsContainer />
-                    </ModalState>
-                  </KycState>
-                </LiteModeState>
-              </ToastState>
+              <SdkState>
+                <ToastState>
+                  <LiteModeState>
+                    <KycState>
+                      <ModalState>
+                        <LiteModeReady>
+                          {/* <NftTracker /> */}
+                          <Header />
+                          <Box component='main'>{children}</Box>
+                          <Footer />
+                        </LiteModeReady>
+                        <ModalsContainer />
+                      </ModalState>
+                    </KycState>
+                  </LiteModeState>
+                </ToastState>
+              </SdkState>
             </SwrProvider>
           </PrivyProvider>
         </ThemeRegistry>

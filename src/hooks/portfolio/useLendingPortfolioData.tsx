@@ -3,7 +3,7 @@ import { ethers } from 'ethers'
 import useSWR from 'swr'
 import { useAccount, useChainId } from 'wagmi'
 
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useSdk from '@/hooks/context/useSdk'
 
 import { SupportedChainIds } from '@/connection/chains'
 import { RPC_URLS } from '@/connection/rpc'
@@ -12,7 +12,7 @@ const useLendingPortfolioData = (
   poolOverviews: PoolOverview[],
   currentEpoch: string
 ) => {
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
 
   const chainId = useChainId()
 

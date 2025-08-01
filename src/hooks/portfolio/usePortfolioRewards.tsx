@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import useSWR from 'swr'
 import { useAccount } from 'wagmi'
 
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useSdk from '@/hooks/context/useSdk'
 import getTranslation from '@/hooks/useTranslation'
 
 import { toBigNumber } from '@/utils'
@@ -38,7 +38,7 @@ export type PortfolioRewardsType = {
 }
 
 const usePortfolioRewards = () => {
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
 
   const account = useAccount()
 

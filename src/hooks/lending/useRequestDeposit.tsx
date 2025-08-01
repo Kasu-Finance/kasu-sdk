@@ -4,13 +4,15 @@ import { useAccount, useChainId } from 'wagmi'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useKycState from '@/hooks/context/useKycState'
+import useSdk from '@/hooks/context/useSdk'
 import useStepperState from '@/hooks/context/useStepperState'
 import useToastState from '@/hooks/context/useToastState'
 import useBuildDepositData from '@/hooks/lending/useBuildDepositData'
 import useBuildSwapData from '@/hooks/lending/useBuildSwapData'
-import useKasuSDK, { KasuSdkNotReadyError } from '@/hooks/useKasuSDK'
 import useHandleError from '@/hooks/web3/useHandleError'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
+
+import { KasuSdkNotReadyError } from '@/context/sdk/sdk.types'
 
 import generateKycSignature from '@/actions/generateKycSignature'
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
@@ -20,7 +22,7 @@ import { capitalize, toBigNumber, waitForReceipt } from '@/utils'
 import { PoolOverviewWithDelegate } from '@/types/page'
 
 const useRequestDeposit = () => {
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
   const account = useAccount()
 
   const chainId = useChainId()

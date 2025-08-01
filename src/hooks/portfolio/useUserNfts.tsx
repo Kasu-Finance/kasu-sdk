@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 import { useAccount } from 'wagmi'
 
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useSdk from '@/hooks/context/useSdk'
 
 import NftMetadata from '@/config/nfts.json'
 
@@ -23,7 +23,7 @@ export type NftDetail = {
 }
 
 const useUserNfts = () => {
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
 
   const { address } = useAccount()
 
@@ -90,6 +90,9 @@ const useUserNfts = () => {
           }
         })
         .filter((nft) => nft !== null)
+    },
+    {
+      errorRetryCount: 5,
     }
   )
 
