@@ -340,7 +340,8 @@ export class DataService {
             const plumeTvl =
                 lendingPoolDirectus.plumeStrategy &&
                 this._plumeTvl.has(lendingPoolDirectus.plumeStrategy)
-                    ? this._plumeTvl.get(lendingPoolDirectus.plumeStrategy)!
+                    ? (this._plumeTvl.get(lendingPoolDirectus.plumeStrategy) ??
+                      '0')
                     : '0';
 
             const offChainTvl = lendingPoolDirectus.offchainTVL ?? '0';
