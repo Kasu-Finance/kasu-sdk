@@ -24,4 +24,6 @@ export const sdkConfig: SdkConfig = {
   directusUrl: 'https://kasu-finance.directus.app/',
   subgraphUrl:
     'https://subgraph.satsuma-prod.com/3ed46ea711d3/kasu-finance--314476/kasu-base/api',
+  plumeSubgraphUrl:
+    'https://api.goldsky.com/api/public/project_cm9t3064xeuyn01tgctdo3c17/subgraphs/kasu-plume/prod/gn',
 }
