@@ -14,6 +14,7 @@ test('subgraphCall', async () => {
     );
     const config = new SdkConfig(
         'https://api.studio.thegraph.com/query/63245/kasu-wip-sepolia/version/latest',
+        'https://api.goldsky.com/api/public/project_cm9t3064xeuyn01tgctdo3c17/subgraphs/kasu-plume/prod/gn',
         {
             IKSULocking: '0x529A81c11ab6176c5E88670d293BB771800066a2',
             IKSULockBonus: '0xBBfFd5F744156FFc526df12F5e09dC7b208Be740',
@@ -29,6 +30,7 @@ test('subgraphCall', async () => {
         },
 
         'https://kasu-finance.directus.app',
+
         [''],
     );
     const sdk = new KasuSdk(config, wallet);
