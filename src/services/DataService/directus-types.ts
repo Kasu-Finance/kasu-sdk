@@ -51,6 +51,8 @@ export interface PoolOverviewDirectus {
     loansUnderManagement: string;
     activeLoans: string;
     loanFundsOriginated: string;
+    plumeStrategy: string | null;
+    offchainTVL: string | null;
 }
 
 export interface PoolDelegateProfileAndHistoryDirectus {

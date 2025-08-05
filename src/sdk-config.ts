@@ -13,17 +13,20 @@ export interface ContractAddresses {
 }
 export class SdkConfig {
     subgraphUrl: string;
+    plumeSubgraphUrl: string;
     contracts: ContractAddresses;
     directusUrl: string;
     UNUSED_LENDING_POOL_IDS: string[];
 
     constructor(
         subgraphUrl: string,
+        plumeSubgraphUrl: string,
         contracts: ContractAddresses,
         directusUrl: string,
         UNUSED_LENDING_POOL_IDS: string[],
     ) {
         this.subgraphUrl = subgraphUrl;
+        this.plumeSubgraphUrl = plumeSubgraphUrl;
         this.contracts = contracts;
         this.directusUrl = directusUrl;
         this.UNUSED_LENDING_POOL_IDS = UNUSED_LENDING_POOL_IDS;

@@ -31,6 +31,7 @@ import {
     getAllTrancheConfigurationsQuery,
     getAllTranchesQuery,
     getLendingPoolWithdrawalAndDepositsQuery,
+    getPlumeTvl,
     getPoolNameQuery,
     getPoolOverviewQuery,
 } from './queries';
@@ -39,6 +40,7 @@ import {
     LendingPoolSubgraph,
     LendingPoolSubgraphReturn,
     LendingPoolWithdrawalAndDepositSubgraph,
+    PlumeSubgraphReturn,
     TrancheConfigurationSubgraphResult,
     TrancheSubgraphResult,
 } from './subgraph-types';
@@ -58,13 +60,17 @@ import {
 
 export class DataService {
     private readonly _graph: GraphQLClient;
+    private readonly _plumeGraph: GraphQLClient;
     private readonly _directus: DirectusClient<DirectusSchema> &
         AuthenticationClient<DirectusSchema> &
         RestClient<DirectusSchema>;
     private _directusPoolOverview: PoolOverviewDirectus[] | undefined;
+    private _plumeTvl = new Map<string, string>();
 
     constructor(private _kasuConfig: SdkConfig) {
         this._graph = new GraphQLClient(_kasuConfig.subgraphUrl);
+        this._plumeGraph = new GraphQLClient(_kasuConfig.plumeSubgraphUrl);
+
         this._directus = createDirectus<DirectusSchema>(_kasuConfig.directusUrl)
             .with(authentication())
             .with(rest());
@@ -160,6 +166,15 @@ export class DataService {
                 unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
                 epochId,
             });
+
+        if (!this._plumeTvl.size) {
+            const plumeResults: PlumeSubgraphReturn =
+                await this._plumeGraph.request(getPlumeTvl);
+
+            for (const pool of plumeResults.lendingPools) {
+                this._plumeTvl.set(pool.id, pool.balance);
+            }
+        }
 
         if (!this._directusPoolOverview) {
             this._directusPoolOverview = await this._directus.request(
@@ -322,6 +337,14 @@ export class DataService {
                 averageApy += parseFloat(trancheData.averageApy) * weight;
             }
 
+            const plumeTvl =
+                lendingPoolDirectus.plumeStrategy &&
+                this._plumeTvl.has(lendingPoolDirectus.plumeStrategy)
+                    ? this._plumeTvl.get(lendingPoolDirectus.plumeStrategy)!
+                    : '0';
+
+            const offChainTvl = lendingPoolDirectus.offchainTVL ?? '0';
+
             const poolOverview: PoolOverview = {
                 id: lendingPoolSubgraph.id,
                 security: lendingPoolDirectus.security,
@@ -347,7 +370,11 @@ export class DataService {
                 poolName:
                     lendingPoolDirectus.poolName ?? lendingPoolSubgraph.name,
                 subheading: lendingPoolDirectus.subheading,
-                totalValueLocked: lendingPoolSubgraph.balance,
+                totalValueLocked: (
+                    parseFloat(lendingPoolSubgraph.balance) +
+                    parseFloat(plumeTvl) +
+                    parseFloat(offChainTvl)
+                ).toString(),
                 loansUnderManagement: lendingPoolDirectus.loansUnderManagement,
                 yieldEarned: lendingPoolSubgraph.totalUserInterestAmount,
                 poolCapacity: poolCapacitySum.toString(),

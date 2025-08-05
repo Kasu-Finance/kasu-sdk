@@ -1,5 +1,14 @@
 import { gql } from 'graphql-request';
 
+export const getPlumeTvl = gql`
+    {
+        lendingPools {
+            id
+            balance
+        }
+    }
+`;
+
 export const getPoolOverviewQuery = (ids?: string[]): string => gql`
     query getAllPoolOverview($epochId: String!, $unusedPools: [String]!) {
         lendingPools(
