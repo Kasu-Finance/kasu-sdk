@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { PropsWithChildren } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useCurrentEpochDepositedAmount from '@/hooks/lending/useCurrentEpochDepositedAmount'
@@ -13,12 +13,16 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
-type LendButtonProps = {
+type LendButtonProps = PropsWithChildren<{
   pool: PoolOverviewWithDelegate
   currentEpoch: string
-}
+}>
 
-const LendButton: React.FC<LendButtonProps> = ({ pool, currentEpoch }) => {
+const LendButton: React.FC<LendButtonProps> = ({
+  pool,
+  currentEpoch,
+  children,
+}) => {
   const { t } = getTranslation()
 
   const { openModal } = useModalState()
@@ -58,7 +62,7 @@ const LendButton: React.FC<LendButtonProps> = ({ pool, currentEpoch }) => {
         currentEpochFtdAmountLoading
       }
     >
-      {t('general.lend')}
+      {children ?? t('general.lend')}
     </KycButton>
   )
 }

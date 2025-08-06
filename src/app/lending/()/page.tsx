@@ -27,7 +27,11 @@ const LendingPage = async () => {
   return (
     <LiteModeRenderer
       renderOnLiteMode={
-        <LiteModeApp pools={pools} currentEpoch={currentEpoch} />
+        <LiteModeApp
+          activePools={poolsWithDelegate}
+          pools={pools}
+          currentEpoch={currentEpoch}
+        />
       }
       otherwise={
         <Box mt={3}>

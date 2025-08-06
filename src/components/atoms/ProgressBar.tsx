@@ -1,4 +1,4 @@
-import { Box, lighten, styled } from '@mui/material'
+import { Box, lighten, styled, SxProps, Theme } from '@mui/material'
 import { ReactNode } from 'react'
 
 const ProgressBarRoot = styled(Box)({
@@ -8,9 +8,7 @@ const ProgressBarRoot = styled(Box)({
   overflow: 'hidden',
 })
 
-const ProgressBarBackground = styled(Box, {
-  shouldForwardProp: (prop) => prop !== 'value',
-})<ProgressBarBackgroundProp>(({ theme, value }) => ({
+const ProgressBarBackground = styled(Box)(({ theme }) => ({
   position: 'absolute',
   display: 'flex',
   justifyContent: 'center',
@@ -21,18 +19,24 @@ const ProgressBarBackground = styled(Box, {
   bottom: 0,
   backgroundColor: lighten(theme.palette.primary.main, 0.62),
   color: theme.palette.text.disabled,
-  clipPath: `inset(0 -1px -1px ${value}%)`,
   transition: 'clip-path 1s linear',
+  zIndex: 1,
 }))
 
-const ProgressBarForeground = styled(Box)(({ theme }) => ({
+const ProgressBarForeground = styled(Box, {
+  shouldForwardProp: (prop) => prop !== 'value',
+})<ProgressBarBackgroundProp>(({ theme, value }) => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  width: '100%',
   height: '100%',
   backgroundColor: theme.palette.primary.main,
   color: 'white',
+  zIndex: 2,
+  position: 'relative',
+  width: `${value}%`,
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
 }))
 
 type ProgressBarBackgroundProp = {
@@ -42,8 +46,8 @@ type ProgressBarBackgroundProp = {
 type ProgressBarProps = {
   value: number
   children?: ReactNode
-  rootStyles?: React.CSSProperties
-  barStyles?: React.CSSProperties
+  rootStyles?: SxProps<Theme>
+  barStyles?: SxProps<Theme>
 }
 
 const ProgressBar: React.FC<ProgressBarProps> = ({
@@ -54,8 +58,14 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
 }) => {
   return (
     <ProgressBarRoot sx={rootStyles}>
-      <ProgressBarForeground sx={barStyles}>{children}</ProgressBarForeground>
-      <ProgressBarBackground value={value} sx={barStyles}>
+      <ProgressBarForeground
+        value={value}
+        className='progress-foreground'
+        sx={barStyles}
+      >
+        {children}
+      </ProgressBarForeground>
+      <ProgressBarBackground className='progress-background' sx={barStyles}>
         {children}
       </ProgressBarBackground>
     </ProgressBarRoot>

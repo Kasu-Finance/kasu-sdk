@@ -18,12 +18,21 @@ import NftRewards from '@/components/organisms/lite/NftRewards'
 import PendingTransactionRequests from '@/components/organisms/lite/PendingTransactionRequests'
 import RewardsBasicStats from '@/components/organisms/lite/RewardsBasicStats'
 
+import PoolAccordion from './PoolAccordion'
+
+import { PoolOverviewWithDelegate } from '@/types/page'
+
 type LiteModeAppProps = {
   pools: PoolOverview[]
+  activePools: PoolOverviewWithDelegate[]
   currentEpoch: string
 }
 
-const LiteModeApp: React.FC<LiteModeAppProps> = ({ pools, currentEpoch }) => {
+const LiteModeApp: React.FC<LiteModeAppProps> = ({
+  pools,
+  currentEpoch,
+  activePools,
+}) => {
   const { t } = getTranslation()
 
   return (
@@ -77,6 +86,7 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({ pools, currentEpoch }) => {
               <LockActions />
             </Stack>
             <LiteLoyaltyInfo />
+            <PoolAccordion pools={activePools} currentEpoch={currentEpoch} />
           </Stack>
         </WaveBox>
       </Grid2>
