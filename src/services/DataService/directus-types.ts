@@ -39,6 +39,7 @@ export interface PoolOverviewDirectus {
     security: string[];
     apy: number;
     description: string;
+    liteDescription: string;
     thumbnailImage: string;
     bannerImage: string;
     strategyDeck: string;

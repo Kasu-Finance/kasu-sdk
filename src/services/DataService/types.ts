@@ -11,6 +11,7 @@ export interface PoolOverview {
     isOversubscribed: boolean;
     apy: number;
     description: string;
+    liteDescription: string;
     thumbnailImageUrl: string;
     bannerImageUrl: string;
     strategyDeckUrl: string;

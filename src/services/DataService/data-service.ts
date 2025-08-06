@@ -340,8 +340,8 @@ export class DataService {
             const plumeTvl =
                 lendingPoolDirectus.plumeStrategy &&
                 this._plumeTvl.has(lendingPoolDirectus.plumeStrategy)
-                    ? (this._plumeTvl.get(lendingPoolDirectus.plumeStrategy) ??
-                      '0')
+                    ? this._plumeTvl.get(lendingPoolDirectus.plumeStrategy) ??
+                      '0'
                     : '0';
 
             const offChainTvl = lendingPoolDirectus.offchainTVL ?? '0';
@@ -353,6 +353,7 @@ export class DataService {
                 isOversubscribed: lendingPoolDirectus.oversubscribed,
                 apy: averageApy,
                 description: lendingPoolDirectus.description,
+                liteDescription: lendingPoolDirectus.liteDescription,
                 thumbnailImageUrl: this.getUrlFromFile(
                     lendingPoolDirectus.thumbnailImage,
                 ),
