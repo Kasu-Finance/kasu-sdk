@@ -16,7 +16,11 @@ export interface PoolOverview {
     bannerImageUrl: string;
     strategyDeckUrl: string;
     tranches: TrancheData[];
-    totalValueLocked: string;
+    totalValueLocked: {
+        total: string;
+        offchain: string;
+        plume: string;
+    };
     loansUnderManagement: string;
     yieldEarned: string;
     poolCapacity: string;

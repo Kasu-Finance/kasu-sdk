@@ -372,11 +372,15 @@ export class DataService {
                 poolName:
                     lendingPoolDirectus.poolName ?? lendingPoolSubgraph.name,
                 subheading: lendingPoolDirectus.subheading,
-                totalValueLocked: (
-                    parseFloat(lendingPoolSubgraph.balance) +
-                    parseFloat(plumeTvl) +
-                    parseFloat(offChainTvl)
-                ).toString(),
+                totalValueLocked: {
+                    total: (
+                        parseFloat(lendingPoolSubgraph.balance) +
+                        parseFloat(plumeTvl) +
+                        parseFloat(offChainTvl)
+                    ).toString(),
+                    offchain: offChainTvl,
+                    plume: plumeTvl,
+                },
                 loansUnderManagement: lendingPoolDirectus.loansUnderManagement,
                 yieldEarned: lendingPoolSubgraph.totalUserInterestAmount,
                 poolCapacity: poolCapacitySum.toString(),
@@ -889,7 +893,9 @@ export class DataService {
             totalYieldEarned: 0,
         };
         for (const poolOverview of poolOverviews) {
-            retn.totalValueLocked += parseFloat(poolOverview.totalValueLocked);
+            retn.totalValueLocked += parseFloat(
+                poolOverview.totalValueLocked.total,
+            );
             retn.loansUnderManagement += parseFloat(
                 poolOverview.loansUnderManagement,
             );
