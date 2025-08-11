@@ -1,5 +1,6 @@
 'use client'
 
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React, { PropsWithChildren } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
@@ -14,11 +15,13 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 import { PoolOverviewWithDelegate } from '@/types/page'
 
 type LendButtonProps = PropsWithChildren<{
+  pools?: PoolOverview[]
   pool: PoolOverviewWithDelegate
   currentEpoch: string
 }>
 
 const LendButton: React.FC<LendButtonProps> = ({
+  pools,
   pool,
   currentEpoch,
   children,
@@ -44,6 +47,7 @@ const LendButton: React.FC<LendButtonProps> = ({
     openModal({
       name: ModalsKeys.LEND,
       pool,
+      pools,
       currentEpoch,
       currentEpochDepositedAmount,
       currentEpochFtdAmount,

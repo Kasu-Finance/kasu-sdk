@@ -4,11 +4,26 @@ import {
   DepositModalStateType,
 } from '@/context/depositModal/depositModal.types'
 
+import { toBigNumber } from '@/utils'
+
 const depositModalReducer = (
   state: DepositModalStateType,
   action: DepositModalActions
 ): DepositModalStateType => {
   switch (action.type) {
+    case DepositModalActionType.SET_SELECTED_POOL: {
+      const defaultTranche =
+        action.payload.tranches.find(
+          (tranche) => !toBigNumber(tranche.maximumDeposit).isZero()
+        ) ?? action.payload.tranches[0]
+
+      return {
+        ...state,
+        pool: action.payload,
+        trancheId: defaultTranche.id as `0x${string}`,
+        fixedTermConfigId: '0',
+      }
+    }
     case DepositModalActionType.SET_AMOUNT:
       return {
         ...state,
@@ -25,7 +40,6 @@ const depositModalReducer = (
         ...state,
         fixedTermConfigId: action.payload,
       }
-
     case DepositModalActionType.SET_SELECTED_TRANCHE:
       return {
         ...state,

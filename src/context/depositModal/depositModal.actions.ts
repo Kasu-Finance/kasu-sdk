@@ -1,3 +1,4 @@
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { Dispatch, useMemo } from 'react'
 
 import {
@@ -13,6 +14,11 @@ const useDepositModalActions = (
 ): DepositModalFunctions =>
   useMemo(
     () => ({
+      setSelectedPool: (pool: PoolOverview) =>
+        dispatch({
+          type: DepositModalActionType.SET_SELECTED_POOL,
+          payload: pool,
+        }),
       setAmount: (amount: string) =>
         dispatch({
           type: DepositModalActionType.SET_AMOUNT,

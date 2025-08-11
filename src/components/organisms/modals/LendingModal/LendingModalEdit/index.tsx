@@ -1,23 +1,16 @@
-import { Skeleton, Stack } from '@mui/material'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { useCallback, useDeferredValue, useMemo, useState } from 'react'
 import { useChainId } from 'wagmi'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
+import useLiteModeState from '@/hooks/context/useLiteModeState'
 import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 import useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
 
-import Acknowledgement from '@/components/organisms/modals/LendingModal/LendingModalEdit/Acknowledgement'
-import ApyDropdown from '@/components/organisms/modals/LendingModal/LendingModalEdit/ApyDropdown'
-import EarningsSimulator from '@/components/organisms/modals/LendingModal/LendingModalEdit/EarningsSimulator'
-import LendingModalEditActions from '@/components/organisms/modals/LendingModal/LendingModalEdit/LendingModalEditActions'
-import LendingTrancheDropdown from '@/components/organisms/modals/LendingModal/LendingModalEdit/LendingTrancheDropdown'
-import SecureSpotInfo from '@/components/organisms/modals/LendingModal/LendingModalEdit/SecureSpotInfo'
-import SelectedAssetInput from '@/components/organisms/modals/LendingModal/LendingModalEdit/SelectedAssetInput'
-import SupportedAssetsDropdown from '@/components/organisms/modals/LendingModal/LendingModalEdit/SupportedAssetsDropdown'
-import SwapInfo from '@/components/organisms/modals/LendingModal/LendingModalEdit/SwapInfo'
+import LiteLayout from '@/components/organisms/modals/LendingModal/LendingModalEdit/LiteLayout'
+import ProLayout from '@/components/organisms/modals/LendingModal/LendingModalEdit/ProLayout'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
@@ -34,6 +27,8 @@ const LendingModalEdit = () => {
   const { pool } = modal[ModalsKeys.LEND]
 
   const { setModalStatus } = useModalStatusState()
+
+  const { isLiteMode } = useLiteModeState()
 
   const { supportedTokenUserBalances } = useSupportedTokenUserBalances()
 
@@ -60,6 +55,7 @@ const LendingModalEdit = () => {
     [pool]
   )
 
+  const [selectedPool, setSelectedPool] = useState(pool.id)
   const [isValidating, setIsValidating] = useState(false)
   const [selectedToken, setSelectedToken] = useState(
     prevSelectedToken ?? SupportedTokens.USDC
@@ -260,65 +256,30 @@ const LendingModalEdit = () => {
     ]
   )
 
-  return (
-    <Stack spacing={3} mt={3}>
-      <SupportedAssetsDropdown
-        selectedToken={selectedToken}
-        setSelectedToken={handleTokenChange}
-      />
-      {!supportedTokenUserBalances || !supportedTokens ? (
-        <Skeleton
-          variant='rounded'
-          sx={{ bgcolor: 'gold.extraDark' }}
-          height={60}
-        />
-      ) : (
-        <SelectedAssetInput
-          validate={validate}
-          selectedToken={selectedToken}
-          amount={amount}
-          setAmount={setAmount}
-          amountInUSD={amountInUSD}
-          setAmountInUSD={setAmountInUSD}
-          isValidating={isValidating}
-          setIsValidating={setIsValidating}
-          supportedTokenUserBalances={supportedTokenUserBalances}
-          supportedTokens={supportedTokens}
-          applyConversion={handleApplyConversion}
-        />
-      )}
-      <SwapInfo
-        amount={deferredAmount}
-        amountInUSD={deferredAmountInUSD}
-        selectedToken={selectedToken}
-        isValidating={isValidating}
-      />
-      <LendingTrancheDropdown
-        selectedTranche={selectedTranche}
-        setSelectedTranche={handleTrancheChange}
-      />
-      <ApyDropdown
-        fixedTermConfigId={fixedTermConfigId}
-        selectedTrancheId={selectedTranche}
-        setFixedTermConfigId={handleFixedTermConfigChange}
-      />
-      <EarningsSimulator
-        amount={deferredAmount}
-        amountInUSD={deferredAmountInUSD}
-        trancheId={selectedTranche}
-        fixedTermConfigId={fixedTermConfigId}
-      />
-      <Acknowledgement />
-      <SecureSpotInfo />
-      <LendingModalEditActions
-        amount={deferredAmount}
-        amountInUSD={deferredAmountInUSD}
-        fixedTermConfigId={fixedTermConfigId}
-        trancheId={selectedTranche}
-        selectedToken={selectedToken}
-      />
-    </Stack>
-  )
+  const props = {
+    selectedPool,
+    selectedToken,
+    supportedTokenUserBalances,
+    supportedTokens,
+    amount,
+    deferredAmount,
+    amountInUSD,
+    deferredAmountInUSD,
+    isValidating,
+    fixedTermConfigId,
+    selectedTranche,
+    setSelectedPool,
+    setAmount,
+    setAmountInUSD,
+    validate,
+    setIsValidating,
+    handleApplyConversion,
+    handleFixedTermConfigChange,
+    handleTrancheChange,
+    handleTokenChange,
+  }
+
+  return isLiteMode ? <LiteLayout {...props} /> : <ProLayout {...props} />
 }
 
 export default LendingModalEdit

@@ -21,7 +21,7 @@ const Summary: React.FC<SummaryProps> = ({ pool }) => {
         <WaveCard
           title={t('lending.poolOverview.detailCard.tvl.label')}
           toolTipInfo={t('lending.poolOverview.detailCard.tvl.tooltip')}
-          content={formatAmount(pool.totalValueLocked || '0', {
+          content={formatAmount(pool.totalValueLocked.total || '0', {
             minDecimals: 2,
           })}
           unit='USDC'

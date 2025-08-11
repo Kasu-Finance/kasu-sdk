@@ -140,8 +140,11 @@ const PoolAccordion: React.FC<PoolAccordionProps> = ({
                     </Stack>
                   ))}
                 </Stack>
-
-                <LendButton pool={pool} currentEpoch={currentEpoch}>
+                <LendButton
+                  pools={pools}
+                  pool={pool}
+                  currentEpoch={currentEpoch}
+                >
                   Lend Now
                 </LendButton>
               </Stack>

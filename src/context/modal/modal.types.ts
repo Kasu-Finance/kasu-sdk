@@ -212,6 +212,7 @@ export type Modals = {
     }
   }>
   [ModalsKeys.LEND]: ModalData<{
+    pools?: PoolOverview[]
     pool: PoolOverview
     currentEpoch: string
     currentEpochDepositedAmount: Map<string, string>

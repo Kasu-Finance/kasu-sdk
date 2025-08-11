@@ -34,13 +34,15 @@ const useSupportedTokenUserBalances = () => {
   const { data, error } = useSWR(
     // add isUserBalanceLoading here to prevent rerenders because
     // useUserBalance returns a fallback data when balance is not loaded
-    address && supportedTokens && balance && !isUserBalanceLoading
-      ? ['userbalance-supported-tokens', address, supportedTokens, balance]
+    address && balance && !isUserBalanceLoading
+      ? ['userbalance-supported-tokens', address, balance]
       : null,
-    async ([_, userAddress, tokens, usdcBalance]) => {
-      const USDC = tokens[SupportedTokens.USDC]
+    async ([_, userAddress, usdcBalance]) => {
+      if (!supportedTokens) return
 
-      const filteredTokens = Object.keys(tokens).filter(
+      const USDC = supportedTokens[SupportedTokens.USDC]
+
+      const filteredTokens = Object.keys(supportedTokens).filter(
         (key) => key !== SupportedTokens.USDC
       ) as SupportedTokens[]
 
@@ -59,39 +61,45 @@ const useSupportedTokenUserBalances = () => {
       }
 
       const tokenWithBalances = await Promise.allSettled(
-        (Object.values(tokens) as SupportedTokenInfo[]).map(async (token) => {
-          if (token.symbol === USDC.symbol) {
-            return { ...token, balance: usdcBalance, balanceInUSD: usdcBalance }
-          }
+        (Object.values(supportedTokens) as SupportedTokenInfo[]).map(
+          async (token) => {
+            if (token.symbol === USDC.symbol) {
+              return {
+                ...token,
+                balance: usdcBalance,
+                balanceInUSD: usdcBalance,
+              }
+            }
 
-          if (token.symbol === SupportedTokens.ETH) {
-            const nativeTokenBalance = await getBalance(wagmiConfig, {
-              address: userAddress,
+            if (token.symbol === SupportedTokens.ETH) {
+              const nativeTokenBalance = await getBalance(wagmiConfig, {
+                address: userAddress,
+              })
+
+              const ethBalance = BigNumber.from(nativeTokenBalance.value)
+
+              const balanceInUSD = convertToUSD(
+                ethBalance,
+                toBigNumber(tokenPrices[token.symbol])
+              )
+
+              return { ...token, balance: ethBalance, balanceInUSD }
+            }
+
+            const balance = await readContract(wagmiConfig, {
+              abi: IERC20__factory.abi,
+              functionName: 'balanceOf',
+              args: [userAddress],
+              address: token.address,
             })
 
-            const ethBalance = BigNumber.from(nativeTokenBalance.value)
-
             const balanceInUSD = convertToUSD(
-              ethBalance,
-              toBigNumber(tokenPrices[token.symbol])
+              BigNumber.from(balance),
+              toBigNumber(tokenPrices[token.symbol], token.decimals)
             )
-
-            return { ...token, balance: ethBalance, balanceInUSD }
+            return { ...token, balance, balanceInUSD }
           }
-
-          const balance = await readContract(wagmiConfig, {
-            abi: IERC20__factory.abi,
-            functionName: 'balanceOf',
-            args: [userAddress],
-            address: token.address,
-          })
-
-          const balanceInUSD = convertToUSD(
-            BigNumber.from(balance),
-            toBigNumber(tokenPrices[token.symbol], token.decimals)
-          )
-          return { ...token, balance, balanceInUSD }
-        })
+        )
       )
 
       return tokenWithBalances.filter(isFulfilledPromise).reduce(
@@ -102,14 +110,6 @@ const useSupportedTokenUserBalances = () => {
       )
     },
     {
-      onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
-        const RETRY_TIMES = 5
-        const RETRY_INTERVAL = 2000
-
-        if (retryCount >= RETRY_TIMES) return
-
-        setTimeout(() => revalidate({ retryCount }), RETRY_INTERVAL)
-      },
       dedupingInterval: TimeConversions.SECONDS_PER_MINUTE * 1000,
       refreshInterval: TimeConversions.SECONDS_PER_MINUTE * 1000,
       keepPreviousData: true,

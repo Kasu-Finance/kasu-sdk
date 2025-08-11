@@ -4,6 +4,7 @@ import { SupportedTokens } from '@/constants/tokens'
 
 export enum DepositModalActionType {
   SET_AMOUNT = 'SET_AMOUNT',
+  SET_SELECTED_POOL = 'SET_SELECTED_POOL',
   SET_SELECTED_TRANCHE = 'SET_SELECTED_TRANCHE',
   SET_TX_HASH = 'SET_TX_HASH',
   SET_TERMS_ACCEPTED = 'SET_TERMS_ACCEPTED',
@@ -18,6 +19,10 @@ export enum DepositModalActionType {
 }
 
 export type DepositModalActions =
+  | {
+      type: DepositModalActionType.SET_SELECTED_POOL
+      payload: PoolOverview
+    }
   | {
       type: DepositModalActionType.SET_AMOUNT
       payload: string
@@ -90,6 +95,7 @@ export type DepositModalStateType = {
 }
 
 export type DepositModalFunctions = {
+  setSelectedPool(pool: PoolOverview): void
   setAmount: (amount: string) => void
   setAmountInUSD: (amountInUSD: string | undefined) => void
   setSelectedTranche: (selectedTranche: `0x${string}`) => void
