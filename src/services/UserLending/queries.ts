@@ -137,8 +137,8 @@ export const totalUserLoyaltyRewardsQuery = gql`
 `;
 
 export const currentEpochDepositedAmountQuery = gql`
-    query CurrentEpochDepositedAmountQuery($id: String) {
-        lendingPoolUserDetails(id: $id) {
+    query CurrentEpochDepositedAmountQuery($ids: [ID!]) {
+        lendingPoolUserDetails_collection(where: { id_in: $ids }) {
             lendingPoolTrancheUserDetails {
                 tranche {
                     id
@@ -152,13 +152,13 @@ export const currentEpochDepositedAmountQuery = gql`
 export const currentEpochFtdAmountQuery = gql`
     query CurrentEpochFtdAmountQuery(
         $userId: String
-        $poolId: String
+        $poolIds: [String!]
         $currentEpoch: BigInt
     ) {
         userRequests(
             where: {
                 user: $userId
-                lendingPool: $poolId
+                lendingPool_in: $poolIds
                 epochId: $currentEpoch
             }
         ) {

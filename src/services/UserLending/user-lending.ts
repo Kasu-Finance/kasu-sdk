@@ -599,14 +599,14 @@ export class UserLending {
     }
 
     async getCurrentEpochFtdAmount(
-        poolId: string,
+        poolIds: string[],
         userId: string,
         currentEpoch: string,
     ): Promise<Map<string, string[]>> {
         const currentEpochFtdAmountRes: CurrentEpochFtdAmountSubgraph =
             await this._graph.request(currentEpochFtdAmountQuery, {
                 userId: userId.toLowerCase(),
-                poolId: poolId.toLowerCase(),
+                poolIds: poolIds.map((id) => id.toLowerCase()),
                 currentEpoch: parseFloat(currentEpoch),
             });
 
@@ -643,21 +643,27 @@ export class UserLending {
     }
 
     async getCurrentEpochDepositedAmount(
-        lendingPoolId: string,
+        lendingPoolIds: string[],
         userId: string,
     ): Promise<Map<string, string>> {
         const currentEpochDepositedAmountRes: CurrentEpochDepositedAmountSubgraph =
             await this._graph.request(currentEpochDepositedAmountQuery, {
-                id: `${lendingPoolId}-${userId}`,
+                ids: lendingPoolIds.map((poolId) => `${poolId}-${userId}`),
             });
 
         const amountMap = new Map<string, string>();
 
-        if (!currentEpochDepositedAmountRes.lendingPoolUserDetails)
+        if (
+            !currentEpochDepositedAmountRes.lendingPoolUserDetails_collection
+                ?.length
+        )
             return amountMap;
 
-        const { lendingPoolTrancheUserDetails } =
-            currentEpochDepositedAmountRes.lendingPoolUserDetails;
+        const lendingPoolTrancheUserDetails =
+            currentEpochDepositedAmountRes.lendingPoolUserDetails_collection.flatMap(
+                ({ lendingPoolTrancheUserDetails }) =>
+                    lendingPoolTrancheUserDetails,
+            );
 
         for (const {
             tranche,

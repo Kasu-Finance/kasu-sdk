@@ -59,14 +59,16 @@ export interface UserRequestsSubgraph {
 }
 
 export interface CurrentEpochDepositedAmountSubgraph {
-    lendingPoolUserDetails: {
-        lendingPoolTrancheUserDetails: {
-            tranche: {
-                id: string;
-            };
-            totalPendingDepositAmount: string;
-        }[];
-    } | null;
+    lendingPoolUserDetails_collection:
+        | {
+              lendingPoolTrancheUserDetails: {
+                  tranche: {
+                      id: string;
+                  };
+                  totalPendingDepositAmount: string;
+              }[];
+          }[]
+        | null;
 }
 
 export interface CurrentEpochFtdAmountSubgraph {
