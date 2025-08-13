@@ -31,8 +31,6 @@ type DepositAmountInputProps = {
   debounceTime?: number
   setIsValidating: Dispatch<SetStateAction<boolean>>
   validate: (amount: string, amountInUSD?: string) => void
-  // currentEpochDepositedAmount: string
-  // currentEpochFtdAmount: string[]
 }
 
 const DepositAmountInput: React.FC<DepositAmountInputProps> = ({

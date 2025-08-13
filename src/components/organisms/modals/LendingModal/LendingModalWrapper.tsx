@@ -22,6 +22,7 @@ const LendingModalWrapper: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { isVerifying, kycCompleted } = useKycState()
 
   const {
+    pools,
     pool,
     currentEpoch,
     currentEpochDepositedAmount,
@@ -38,6 +39,7 @@ const LendingModalWrapper: React.FC<DialogChildProps> = ({ handleClose }) => {
           openModal({
             name: ModalsKeys.LEND,
             pool,
+            pools,
             currentEpoch,
             currentEpochDepositedAmount,
             currentEpochFtdAmount,
@@ -51,15 +53,16 @@ const LendingModalWrapper: React.FC<DialogChildProps> = ({ handleClose }) => {
     currentEpochDepositedAmount,
     currentEpochFtdAmount,
     pool,
+    pools,
     openModal,
     handleClose,
     removeToast,
   ])
 
   const defaultTranche =
-    modal[ModalsKeys.LEND].pool.tranches.find(
+    pool.tranches.find(
       (tranche) => !toBigNumber(tranche.maximumDeposit).isZero()
-    ) ?? modal[ModalsKeys.LEND].pool.tranches[0]
+    ) ?? pool.tranches[0]
 
   return (
     <DepositModalState

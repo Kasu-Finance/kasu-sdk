@@ -52,7 +52,10 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({
                   pools={pools}
                   currentEpoch={currentEpoch}
                 />
-                <LendingActions />
+                <LendingActions
+                  pools={activePools}
+                  currentEpoch={currentEpoch}
+                />
               </Stack>
             </Stack>
             <Stack spacing={3}>

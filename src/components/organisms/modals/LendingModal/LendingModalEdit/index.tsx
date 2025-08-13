@@ -1,18 +1,16 @@
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { useCallback, useDeferredValue, useMemo, useState } from 'react'
 import { useChainId } from 'wagmi'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useLiteModeState from '@/hooks/context/useLiteModeState'
-import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 import useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
 
 import LiteLayout from '@/components/organisms/modals/LendingModal/LendingModalEdit/LiteLayout'
 import ProLayout from '@/components/organisms/modals/LendingModal/LendingModalEdit/ProLayout'
-
-import { ModalsKeys } from '@/context/modal/modal.types'
 
 import getSwapAmount from '@/actions/getSwapAmount'
 import { SupportedTokens } from '@/constants/tokens'
@@ -21,10 +19,6 @@ import calculateDepositMinMax from '@/utils/lending/calculateDepositMinMax'
 
 const LendingModalEdit = () => {
   const chainId = useChainId()
-
-  const { modal } = useModalState()
-
-  const { pool } = modal[ModalsKeys.LEND]
 
   const { setModalStatus } = useModalStatusState()
 
@@ -35,6 +29,7 @@ const LendingModalEdit = () => {
   const supportedTokens = useSupportedTokenInfo()
 
   const {
+    pool,
     selectedToken: prevSelectedToken,
     amount: prevAmount,
     amountInUSD: prevAmountInUSD,
@@ -175,6 +170,11 @@ const LendingModalEdit = () => {
     [chainId, supportedTokens, validate, setAmountInUSD, setIsValidating]
   )
 
+  const handlePoolChange = useCallback((pool: PoolOverview) => {
+    setSelectedPool(pool.id)
+    setSelectedTranche(pool.tranches[0].id as `0x${string}`)
+  }, [])
+
   const handleTokenChange = useCallback(
     (token: SupportedTokens) => {
       setModalStatus({ type: 'default' })
@@ -274,6 +274,7 @@ const LendingModalEdit = () => {
     validate,
     setIsValidating,
     handleApplyConversion,
+    handlePoolChange,
     handleFixedTermConfigChange,
     handleTrancheChange,
     handleTokenChange,

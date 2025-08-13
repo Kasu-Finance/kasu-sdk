@@ -45,18 +45,12 @@ type ProLayoutProps = {
   validate: (
     amount: string,
     amountInUSD?: string | undefined,
-    depositMinMax?:
-      | {
-          minDeposit: string
-          maxDeposit: string
-        }
-      | undefined,
+    depositMinMax?: { minDeposit: string; maxDeposit: string } | undefined,
     token?: SupportedTokens | undefined
   ) => void
 }
 
 const ProLayout: React.FC<ProLayoutProps> = ({
-  handleTokenChange,
   selectedToken,
   supportedTokenUserBalances,
   supportedTokens,
@@ -74,6 +68,7 @@ const ProLayout: React.FC<ProLayoutProps> = ({
   handleApplyConversion,
   handleFixedTermConfigChange,
   handleTrancheChange,
+  handleTokenChange,
 }) => (
   <Stack spacing={3} mt={3}>
     <SupportedAssetsDropdown

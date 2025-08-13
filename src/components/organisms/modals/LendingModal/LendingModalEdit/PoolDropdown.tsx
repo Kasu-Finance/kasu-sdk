@@ -1,4 +1,5 @@
 import { SelectChangeEvent, Typography } from '@mui/material'
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
@@ -12,12 +13,12 @@ import { capitalize, mergeSubheading } from '@/utils'
 
 type PoolDropdownProps = {
   selectedPool: string
-  setSelectedPool: (pool: string) => void
+  handlePoolChange: (pool: PoolOverview) => void
 }
 
 const PoolDropdown: React.FC<PoolDropdownProps> = ({
   selectedPool,
-  setSelectedPool,
+  handlePoolChange,
 }) => {
   const { t } = getTranslation()
 
@@ -30,7 +31,11 @@ const PoolDropdown: React.FC<PoolDropdownProps> = ({
   const handleChange = (e: SelectChangeEvent) => {
     const poolId = e.target.value
 
-    setSelectedPool(poolId)
+    const pool = pools.find((pool) => pool.id === poolId)
+
+    if (!pool) return
+
+    handlePoolChange(pool)
   }
 
   return (
@@ -50,6 +55,7 @@ const PoolDropdown: React.FC<PoolDropdownProps> = ({
           {val ? val.label : 'Select Lending Strategy'}
         </Typography>
       )}
+      selectSx={{ '.MuiOutlinedInput-input': { pl: 3 } }}
     />
   )
 }

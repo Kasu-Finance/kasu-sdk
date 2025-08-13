@@ -1,12 +1,25 @@
 'use client'
 
 import { Button, Grid2 } from '@mui/material'
+import React from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 
+import LendButton from '@/components/atoms/LendButton'
+
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-const LendingActions = () => {
+import { PoolOverviewWithDelegate } from '@/types/page'
+
+type LendingActionsProps = {
+  pools: PoolOverviewWithDelegate[]
+  currentEpoch: string
+}
+
+const LendingActions: React.FC<LendingActionsProps> = ({
+  currentEpoch,
+  pools,
+}) => {
   const { openModal } = useModalState()
 
   const handleOpen = () => openModal({ name: ModalsKeys.UNRELEASED_FEATURE })
@@ -24,14 +37,12 @@ const LendingActions = () => {
         </Button>
       </Grid2>
       <Grid2 size={6}>
-        <Button
-          variant='contained'
+        <LendButton
+          currentEpoch={currentEpoch}
+          pool={pools[0]}
+          pools={pools}
           fullWidth
-          sx={{ textTransform: 'capitalize' }}
-          onClick={handleOpen}
-        >
-          Lend
-        </Button>
+        />
       </Grid2>
     </Grid2>
   )

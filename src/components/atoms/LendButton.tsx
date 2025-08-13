@@ -1,5 +1,6 @@
 'use client'
 
+import { ButtonProps } from '@mui/material'
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React, { PropsWithChildren } from 'react'
 
@@ -14,17 +15,19 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
-type LendButtonProps = PropsWithChildren<{
-  pools?: PoolOverview[]
-  pool: PoolOverviewWithDelegate
-  currentEpoch: string
-}>
+type LendButtonProps = ButtonProps &
+  PropsWithChildren<{
+    pools?: PoolOverview[]
+    pool: PoolOverviewWithDelegate
+    currentEpoch: string
+  }>
 
 const LendButton: React.FC<LendButtonProps> = ({
   pools,
   pool,
   currentEpoch,
   children,
+  ...rest
 }) => {
   const { t } = getTranslation()
 
@@ -33,10 +36,15 @@ const LendButton: React.FC<LendButtonProps> = ({
   const {
     currentEpochDepositedAmount,
     isLoading: currentEpochDepositedAmountLoading,
-  } = useCurrentEpochDepositedAmount(pool.id)
+  } = useCurrentEpochDepositedAmount(
+    pools ? pools.map((pool) => pool.id) : pool.id
+  )
 
   const { currentEpochFtdAmount, isLoading: currentEpochFtdAmountLoading } =
-    useCurrentEpochFtdAmount(pool.id, currentEpoch)
+    useCurrentEpochFtdAmount(
+      pools ? pools.map((pool) => pool.id) : pool.id,
+      currentEpoch
+    )
 
   const handleOpen = () => {
     if (!currentEpochDepositedAmount || !currentEpochFtdAmount) {
@@ -65,6 +73,7 @@ const LendButton: React.FC<LendButtonProps> = ({
         currentEpochDepositedAmountLoading ||
         currentEpochFtdAmountLoading
       }
+      {...rest}
     >
       {children ?? t('general.lend')}
     </KycButton>

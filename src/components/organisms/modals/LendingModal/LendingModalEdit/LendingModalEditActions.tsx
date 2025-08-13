@@ -2,6 +2,7 @@ import { Button, Stack } from '@mui/material'
 import React, { memo } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
+import useLiteModeState from '@/hooks/context/useLiteModeState'
 import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useStepperState from '@/hooks/context/useStepperState'
@@ -12,6 +13,7 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 import { SupportedTokens } from '@/constants/tokens'
 
 type LendingModalEditActionsProps = {
+  selectedPool?: string
   amount: string
   amountInUSD: string | undefined
   fixedTermConfigId: string | undefined
@@ -20,6 +22,7 @@ type LendingModalEditActionsProps = {
 }
 
 const LendingModalEditActions: React.FC<LendingModalEditActionsProps> = ({
+  selectedPool,
   selectedToken,
   amount,
   amountInUSD,
@@ -28,7 +31,11 @@ const LendingModalEditActions: React.FC<LendingModalEditActionsProps> = ({
 }) => {
   const { t } = getTranslation()
 
-  const { openModal, closeModal } = useModalState()
+  const { isLiteMode } = useLiteModeState()
+
+  const { modal, openModal, closeModal } = useModalState()
+
+  const { pools } = modal[ModalsKeys.LEND]
 
   const { nextStep } = useStepperState()
 
@@ -39,6 +46,7 @@ const LendingModalEditActions: React.FC<LendingModalEditActionsProps> = ({
     setAmountInUSD,
     setFixedTermConfigId,
     setSelectedTranche,
+    setSelectedPool,
   } = useDepositModalState()
 
   const { modalStatus } = useModalStatusState()
@@ -50,6 +58,14 @@ const LendingModalEditActions: React.FC<LendingModalEditActionsProps> = ({
     })
 
   const handleNextStep = () => {
+    if (pools?.length) {
+      const pool = pools.find((pool) => pool.id === selectedPool)
+
+      if (pool) {
+        setSelectedPool(pool)
+      }
+    }
+
     setSelectedToken(selectedToken)
     setSelectedTranche(trancheId)
     setAmount(amount)
@@ -57,7 +73,8 @@ const LendingModalEditActions: React.FC<LendingModalEditActionsProps> = ({
 
     // default is set to 0 if defaultTranche.fixedTermConfig.length <=0
     if (fixedTermConfigId) {
-      setFixedTermConfigId(fixedTermConfigId)
+      // set to zero if pools exist ( in lite mode )
+      setFixedTermConfigId(pools?.length ? '0' : fixedTermConfigId)
     }
 
     nextStep()
@@ -65,14 +82,16 @@ const LendingModalEditActions: React.FC<LendingModalEditActionsProps> = ({
 
   return (
     <Stack spacing={2}>
-      <Button
-        variant='outlined'
-        color='secondary'
-        onClick={handleOpen}
-        sx={{ textTransform: 'capitalize' }}
-      >
-        {t('modals.lending.buttons.increaseLoyaltyLevel')}
-      </Button>
+      {!isLiteMode && (
+        <Button
+          variant='outlined'
+          color='secondary'
+          onClick={handleOpen}
+          sx={{ textTransform: 'capitalize' }}
+        >
+          {t('modals.lending.buttons.increaseLoyaltyLevel')}
+        </Button>
+      )}
       <Button
         variant='contained'
         color='secondary'

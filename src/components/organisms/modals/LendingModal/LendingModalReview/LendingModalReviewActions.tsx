@@ -5,7 +5,6 @@ import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
 import useStepperState from '@/hooks/context/useStepperState'
 import useToastState from '@/hooks/context/useToastState'
-import useCurrentEpochDepositedAmount from '@/hooks/lending/useCurrentEpochDepositedAmount'
 import useGenerateContract from '@/hooks/lending/useGenerateContract'
 import useRequestDeposit from '@/hooks/lending/useRequestDeposit'
 import getTranslation from '@/hooks/useTranslation'
@@ -36,9 +35,7 @@ const LendingModalReviewActions = () => {
 
   const supportedToken = useSupportedTokenInfo()
 
-  const { modal, openModal } = useModalState()
-
-  const { pool } = modal[ModalsKeys.LEND]
+  const { openModal } = useModalState()
 
   const {
     amount,
@@ -46,12 +43,10 @@ const LendingModalReviewActions = () => {
     trancheId,
     loanContractAccepted,
     fixedTermConfigId,
+    pool,
+    currentEpochDepositedAmountMap,
     setLoanContractAcccepted,
   } = useDepositModalState()
-
-  const { currentEpochDepositedAmount } = useCurrentEpochDepositedAmount(
-    pool.id
-  )
 
   const { isApproved, approve } = useApproveToken(
     supportedToken?.[selectedToken].address,
@@ -89,13 +84,8 @@ const LendingModalReviewActions = () => {
       )
     }
 
-    const amount = currentEpochDepositedAmount?.get(trancheId.toLowerCase())
-
-    if (!amount) {
-      return console.error(
-        'RequestDeposit:: currentEpochDepositedAmount is undefined'
-      )
-    }
+    const amount =
+      currentEpochDepositedAmountMap?.get(trancheId.toLowerCase()) ?? '0'
 
     if (
       dayjs

@@ -115,19 +115,22 @@ const useGenerateContract = () => {
 
               removeToast()
             },
+            onError: (error) => {
+              if (userRejectedTransaction(error)) {
+                handleError(
+                  error,
+                  'Generate Loan Contract Error',
+                  'Message signature request declined. Unable to generate Loan Contract.',
+                  true
+                )
+              } else {
+                handleError(error)
+              }
+            },
           }
         )
       } catch (error) {
-        if (userRejectedTransaction(error)) {
-          handleError(
-            error,
-            'Generate Loan Contract Error',
-            'Message signature request declined. Unable to generate Loan Contract.',
-            true
-          )
-        } else {
-          handleError(error)
-        }
+        handleError(error)
       }
     },
   }
