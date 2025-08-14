@@ -176,6 +176,7 @@ export type Modals = {
   }>
   [ModalsKeys.WITHDRAW]: ModalData<{
     pool: PoolOverviewWithDelegate
+    pools?: PoolOverview[]
     trancheBalance: (TrancheData & { balanceData: UserTrancheBalance })[]
   }>
   [ModalsKeys.KYC]: ModalData<{ callback: () => void }>

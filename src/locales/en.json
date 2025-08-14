@@ -1501,6 +1501,7 @@
       "title": "Withdrawal Request",
       "reviewTitle": "Confirm Withdrawal Request",
       "confirmedTitle": "Withdrawal Request Confirmed",
+      "totalBalance": "Total Balance",
       "metric-1": "Withdraw from",
       "metric-1-tooltip": "The Lending Strategy that you are requesting a withdrawal from",
       "metric-2": "Total Loan Balance",

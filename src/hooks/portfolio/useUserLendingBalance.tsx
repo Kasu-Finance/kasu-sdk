@@ -1,5 +1,6 @@
 'use client'
 
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { PortfolioLendingPool } from '@solidant/kasu-sdk/src/services/Portfolio/types'
 import useSWR from 'swr'
 import { useAccount } from 'wagmi'
@@ -8,7 +9,9 @@ import useSdk from '@/hooks/context/useSdk'
 
 import { FIVE_MINUTES } from '@/constants/general'
 
-const useUserLendingBalance = (pools: PortfolioLendingPool[]) => {
+const useUserLendingBalance = <T extends PortfolioLendingPool | PoolOverview>(
+  pools: T[]
+) => {
   const account = useAccount()
 
   const sdk = useSdk()

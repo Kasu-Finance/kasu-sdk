@@ -50,7 +50,7 @@ type ProLayoutProps = {
   ) => void
 }
 
-const ProLayout: React.FC<ProLayoutProps> = ({
+const LendingProLayout: React.FC<ProLayoutProps> = ({
   selectedToken,
   supportedTokenUserBalances,
   supportedTokens,
@@ -129,4 +129,4 @@ const ProLayout: React.FC<ProLayoutProps> = ({
   </Stack>
 )
 
-export default memo(ProLayout)
+export default memo(LendingProLayout)

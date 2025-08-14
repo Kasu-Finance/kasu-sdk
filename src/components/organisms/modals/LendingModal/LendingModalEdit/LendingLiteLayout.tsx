@@ -2,17 +2,20 @@ import { Skeleton, Stack } from '@mui/material'
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { Dispatch, memo, SetStateAction } from 'react'
 
+import useModalState from '@/hooks/context/useModalState'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 import useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
 
+import PoolDropdown from '@/components/molecules/lending/PoolDropdown'
 import Acknowledgement from '@/components/organisms/modals/LendingModal/LendingModalEdit/Acknowledgement'
 import ForecastedEarnings from '@/components/organisms/modals/LendingModal/LendingModalEdit/ForecastedEarnings'
 import LendingModalEditActions from '@/components/organisms/modals/LendingModal/LendingModalEdit/LendingModalEditActions'
 import LendingTrancheDropdown from '@/components/organisms/modals/LendingModal/LendingModalEdit/LendingTrancheDropdown'
-import PoolDropdown from '@/components/organisms/modals/LendingModal/LendingModalEdit/PoolDropdown'
 import SelectedAssetInput from '@/components/organisms/modals/LendingModal/LendingModalEdit/SelectedAssetInput'
 import SupportedAssetsDropdown from '@/components/organisms/modals/LendingModal/LendingModalEdit/SupportedAssetsDropdown'
 import TrancheInfo from '@/components/organisms/modals/LendingModal/LendingModalEdit/TrancheInfo'
+
+import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { SupportedTokens } from '@/constants/tokens'
 
@@ -53,7 +56,7 @@ type LiteLayoutProps = {
   ) => void
 }
 
-const LiteLayout: React.FC<LiteLayoutProps> = ({
+const LendingLiteLayout: React.FC<LiteLayoutProps> = ({
   selectedPool,
   selectedToken,
   supportedTokenUserBalances,
@@ -73,12 +76,19 @@ const LiteLayout: React.FC<LiteLayoutProps> = ({
   handleTrancheChange,
   handleTokenChange,
 }) => {
+  const { modal } = useModalState()
+
+  const { pools } = modal[ModalsKeys.LEND]
+
   return (
     <Stack spacing={3} mt={3}>
-      <PoolDropdown
-        selectedPool={selectedPool}
-        handlePoolChange={handlePoolChange}
-      />
+      {pools && (
+        <PoolDropdown
+          selectedPool={selectedPool}
+          handlePoolChange={handlePoolChange}
+          pools={pools}
+        />
+      )}
       <LendingTrancheDropdown
         selectedPool={selectedPool}
         selectedTranche={selectedTranche}
@@ -131,4 +141,4 @@ const LiteLayout: React.FC<LiteLayoutProps> = ({
   )
 }
 
-export default memo(LiteLayout)
+export default memo(LendingLiteLayout)

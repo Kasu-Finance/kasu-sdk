@@ -1,6 +1,7 @@
 import { Box, Typography } from '@mui/material'
 import { formatUnits } from 'ethers/lib/utils'
 
+import useLiteModeState from '@/hooks/context/useLiteModeState'
 import useModalState from '@/hooks/context/useModalState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import getTranslation from '@/hooks/useTranslation'
@@ -17,6 +18,8 @@ import { calculateWithdrawSummary } from '@/utils/lending/calculateUserBalances'
 
 const WithdrawFromInfo = () => {
   const { t } = getTranslation()
+
+  const { isLiteMode } = useLiteModeState()
 
   const { modal } = useModalState()
 
@@ -36,57 +39,65 @@ const WithdrawFromInfo = () => {
 
   return (
     <Box>
-      <InfoRow
-        title={t('modals.withdrawal.metric-1')}
-        toolTipInfo={
-          <ToolTip
-            title={t('modals.withdrawal.metric-1-tooltip')}
-            iconSx={{
-              color: 'gold.extraDark',
-              '&:hover': {
-                color: 'rgba(133, 87, 38, 1)',
-              },
+      {!isLiteMode && (
+        <>
+          <InfoRow
+            title={t('modals.withdrawal.metric-1')}
+            toolTipInfo={
+              <ToolTip
+                title={t('modals.withdrawal.metric-1-tooltip')}
+                iconSx={{
+                  color: 'gold.extraDark',
+                  '&:hover': {
+                    color: 'rgba(133, 87, 38, 1)',
+                  },
+                }}
+              />
+            }
+            showDivider
+            dividerProps={{
+              color: 'white',
             }}
+            metric={
+              <Typography variant='baseMdBold'>
+                {mergeSubheading(pool.poolName, pool.subheading)}
+              </Typography>
+            }
           />
-        }
-        showDivider
-        dividerProps={{
-          color: 'white',
-        }}
-        metric={
-          <Typography variant='baseMdBold'>
-            {mergeSubheading(pool.poolName, pool.subheading)}
-          </Typography>
-        }
-      />
-      <InfoRow
-        title={t('modals.withdrawal.metric-2')}
-        toolTipInfo={
-          <ToolTip
-            title={t('modals.withdrawal.metric-2-tooltip')}
-            iconSx={{
-              color: 'gold.extraDark',
-              '&:hover': {
-                color: 'rgba(133, 87, 38, 1)',
-              },
+          <InfoRow
+            title={t('modals.withdrawal.metric-2')}
+            toolTipInfo={
+              <ToolTip
+                title={t('modals.withdrawal.metric-2-tooltip')}
+                iconSx={{
+                  color: 'gold.extraDark',
+                  '&:hover': {
+                    color: 'rgba(133, 87, 38, 1)',
+                  },
+                }}
+              />
+            }
+            showDivider
+            dividerProps={{
+              color: 'white',
             }}
+            metric={
+              <Typography variant='baseMdBold'>
+                {formatAmount(formatUnits(totalInvested), {
+                  minDecimals: 2,
+                })}{' '}
+                USDC
+              </Typography>
+            }
           />
-        }
-        showDivider
-        dividerProps={{
-          color: 'white',
-        }}
-        metric={
-          <Typography variant='baseMdBold'>
-            {formatAmount(formatUnits(totalInvested), {
-              minDecimals: 2,
-            })}{' '}
-            USDC
-          </Typography>
-        }
-      />
+        </>
+      )}
       <InfoRow
-        title={t('modals.withdrawal.metric-3')}
+        title={
+          isLiteMode
+            ? t('modals.withdrawal.totalBalance')
+            : t('modals.withdrawal.metric-3')
+        }
         toolTipInfo={
           <ToolTip
             title={t('modals.withdrawal.metric-3-tooltip')}

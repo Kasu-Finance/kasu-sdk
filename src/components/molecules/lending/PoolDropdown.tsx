@@ -2,31 +2,24 @@ import { SelectChangeEvent, Typography } from '@mui/material'
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
-import useModalState from '@/hooks/context/useModalState'
 import getTranslation from '@/hooks/useTranslation'
 
 import CustomSelect from '@/components/atoms/CustomSelect'
 
-import { ModalsKeys } from '@/context/modal/modal.types'
-
 import { capitalize, mergeSubheading } from '@/utils'
 
 type PoolDropdownProps = {
+  pools: PoolOverview[]
   selectedPool: string
   handlePoolChange: (pool: PoolOverview) => void
 }
 
 const PoolDropdown: React.FC<PoolDropdownProps> = ({
+  pools,
   selectedPool,
   handlePoolChange,
 }) => {
   const { t } = getTranslation()
-
-  const { modal } = useModalState()
-
-  const { pools } = modal[ModalsKeys.LEND]
-
-  if (!pools) return null
 
   const handleChange = (e: SelectChangeEvent) => {
     const poolId = e.target.value

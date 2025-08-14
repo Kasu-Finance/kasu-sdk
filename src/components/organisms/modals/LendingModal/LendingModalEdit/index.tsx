@@ -9,8 +9,8 @@ import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 import useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
 
-import LiteLayout from '@/components/organisms/modals/LendingModal/LendingModalEdit/LiteLayout'
-import ProLayout from '@/components/organisms/modals/LendingModal/LendingModalEdit/ProLayout'
+import LendingLiteLayout from '@/components/organisms/modals/LendingModal/LendingModalEdit/LendingLiteLayout'
+import LendingProLayout from '@/components/organisms/modals/LendingModal/LendingModalEdit/LendingProLayout'
 
 import getSwapAmount from '@/actions/getSwapAmount'
 import { SupportedTokens } from '@/constants/tokens'
@@ -280,7 +280,11 @@ const LendingModalEdit = () => {
     handleTokenChange,
   }
 
-  return isLiteMode ? <LiteLayout {...props} /> : <ProLayout {...props} />
+  return isLiteMode ? (
+    <LendingLiteLayout {...props} />
+  ) : (
+    <LendingProLayout {...props} />
+  )
 }
 
 export default LendingModalEdit
