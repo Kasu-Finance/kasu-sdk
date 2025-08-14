@@ -47,7 +47,7 @@
     "@nivo/voronoi": "^0.87.0",
     "@privy-io/react-auth": "^2.13.8",
     "@privy-io/wagmi": "^1.0.3",
-    "@solidant/kasu-sdk": "^0.0.140",
+    "@solidant/kasu-sdk": "^0.0.142",
     "@sparticuz/chromium-min": "^133.0.0",
     "@tanstack/react-query": "^5.74.11",
     "@types/react": "^18.3.12",

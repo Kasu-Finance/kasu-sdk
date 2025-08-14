@@ -30,13 +30,13 @@ const PoolTraction: React.FC<PoolTractionProps> = ({ pool }) => {
             <WaveCard
               title={t('details.poolTraction.valueLocked.label')}
               toolTipInfo={t('details.poolTraction.valueLocked.tooltip')}
-              content={formatAmount(pool.totalValueLocked, {
+              content={formatAmount(pool.totalValueLocked.total, {
                 minValue: 1_000_000,
               })}
               unit='USDC'
             />
           </Grid>
-          <Grid item flex={1}>
+          {/* <Grid item flex={1}>
             <WaveCard
               title={t('details.poolTraction.management.label')}
               toolTipInfo={t('details.poolTraction.management.tooltip')}
@@ -45,7 +45,7 @@ const PoolTraction: React.FC<PoolTractionProps> = ({ pool }) => {
               })}
               unit='USDC'
             />
-          </Grid>
+          </Grid> */}
           <Grid item flex={1}>
             <WaveCard
               title={t('details.poolTraction.yield.label')}
