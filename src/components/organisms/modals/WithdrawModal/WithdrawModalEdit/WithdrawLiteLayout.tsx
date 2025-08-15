@@ -1,6 +1,6 @@
 import { Stack } from '@mui/material'
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 
@@ -13,46 +13,43 @@ import WithdrawModalEditActions from '@/components/organisms/modals/WithdrawModa
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { HexString } from '@/types/lending'
-import { PoolOverviewWithDelegate } from '@/types/page'
 
 type WithdrawLiteLayoutProps = {
-  pool: PoolOverviewWithDelegate
+  pool: PoolOverview
   trancheId: `0x${string}` | undefined
   setSelectedTranche: (trancheId: HexString) => void
+  setSelectedPool: (pool: PoolOverview) => void
 }
 
 const WithdrawLiteLayout: React.FC<WithdrawLiteLayoutProps> = ({
   pool,
   setSelectedTranche,
+  setSelectedPool,
   trancheId,
 }) => {
   const { modal } = useModalState()
 
   const { pools } = modal[ModalsKeys.WITHDRAW]
 
-  const [selectedPool, setSelectedPool] = useState(pool.id)
-
   const handlePoolChange = useCallback(
     (pool: PoolOverview) => {
-      setSelectedPool(pool.id)
+      setSelectedPool(pool)
       setSelectedTranche(pool.tranches[0].id as `0x${string}`)
     },
-    [setSelectedTranche]
+    [setSelectedTranche, setSelectedPool]
   )
-
-  const selected = pools?.find((pool) => pool.id === selectedPool)
 
   return (
     <Stack spacing={3} mt={3}>
       {pools && (
         <PoolDropdown
           pools={pools}
-          selectedPool={selectedPool}
+          selectedPool={pool.id}
           handlePoolChange={handlePoolChange}
         />
       )}
       <TrancheDropdown
-        tranches={selected?.tranches ?? pool.tranches}
+        tranches={pool?.tranches ?? pool.tranches}
         selectedTranche={trancheId}
         setSelectedTranche={setSelectedTranche}
       />

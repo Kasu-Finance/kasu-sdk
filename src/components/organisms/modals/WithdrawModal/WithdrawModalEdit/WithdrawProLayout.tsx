@@ -1,4 +1,5 @@
 import { Stack } from '@mui/material'
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
 import TrancheDropdown from '@/components/molecules/lending/TrancheDropdown'
@@ -7,10 +8,9 @@ import WithdrawFromInfo from '@/components/organisms/modals/WithdrawModal/Withdr
 import WithdrawModalEditActions from '@/components/organisms/modals/WithdrawModal/WithdrawModalEdit/WithdrawModalEditActions'
 
 import { HexString } from '@/types/lending'
-import { PoolOverviewWithDelegate } from '@/types/page'
 
 type WithdrawProLayoutProps = {
-  pool: PoolOverviewWithDelegate
+  pool: PoolOverview
   trancheId: `0x${string}` | undefined
   setSelectedTranche: (trancheId: HexString) => void
 }
