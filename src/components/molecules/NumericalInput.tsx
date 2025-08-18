@@ -1,5 +1,5 @@
 import { Box, Button, TextField, TextFieldProps } from '@mui/material'
-import { useId } from 'react'
+import { memo, useId } from 'react'
 
 import getTranslation from '@/hooks/useTranslation'
 
@@ -92,4 +92,4 @@ const NumericalInput: React.FC<NumericalInputProps> = ({
   )
 }
 
-export default NumericalInput
+export default memo(NumericalInput)

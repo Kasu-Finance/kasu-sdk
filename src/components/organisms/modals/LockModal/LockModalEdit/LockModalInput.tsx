@@ -1,57 +1,34 @@
 import { Typography } from '@mui/material'
-import { formatEther, formatUnits } from 'ethers/lib/utils'
-import React, {
-  Dispatch,
-  memo,
-  SetStateAction,
-  useCallback,
-  useMemo,
-} from 'react'
+import React, { Dispatch, memo, SetStateAction, useCallback } from 'react'
 
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import getTranslation from '@/hooks/useTranslation'
-import useKsuPrice from '@/hooks/web3/useKsuPrice'
-import useUserBalance from '@/hooks/web3/useUserBalance'
 
 import NumericalInput from '@/components/molecules/NumericalInput'
 
 import { KsuIcon } from '@/assets/icons'
 
-import sdkConfig from '@/config/sdk'
 import { customTypography } from '@/themes/typography'
-import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
+import { toBigNumber } from '@/utils'
 
 type LockModalInputProps = {
   amount: string
-  deferredAmount: string
+  decimals?: number
+  balance: string
+  ksuInUSD: string
   setAmount: Dispatch<SetStateAction<string>>
 }
 
 const LockModalInput: React.FC<LockModalInputProps> = ({
   amount,
-  deferredAmount,
+  decimals,
+  balance,
+  ksuInUSD,
   setAmount,
 }) => {
   const { t } = getTranslation()
 
   const { modalStatus, setModalStatus } = useModalStatusState()
-
-  const { balance: ksuBalance, decimals } = useUserBalance(
-    sdkConfig.contracts.KSUToken
-  )
-
-  const { ksuPrice } = useKsuPrice()
-
-  const balance = useMemo(
-    () => formatUnits(ksuBalance, decimals),
-    [ksuBalance, decimals]
-  )
-
-  const ksuInUSD = useMemo(
-    () =>
-      convertToUSD(toBigNumber(deferredAmount), toBigNumber(ksuPrice || '0')),
-    [deferredAmount, ksuPrice]
-  )
 
   const validate = useCallback(
     (amount: string) => {
@@ -115,7 +92,7 @@ const LockModalInput: React.FC<LockModalInputProps> = ({
                 component='span'
                 color='gold.extraDark'
               >
-                ~ {formatAmount(formatEther(ksuInUSD), { minDecimals: 2 })} USDC
+                ~ {ksuInUSD} USDC
               </Typography>
             ),
             sx: {
@@ -133,6 +110,10 @@ const LockModalInput: React.FC<LockModalInputProps> = ({
               },
               '& .MuiInputBase-input': {
                 px: 1,
+              },
+
+              svg: {
+                minWidth: 24,
               },
             },
           },

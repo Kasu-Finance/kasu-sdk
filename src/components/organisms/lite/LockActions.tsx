@@ -5,6 +5,7 @@ import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
 import React from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
+import useUserLocks from '@/hooks/locking/useUserLocks'
 import getTranslation from '@/hooks/useTranslation'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
@@ -18,7 +19,18 @@ const LockActions: React.FC<LockActionsProps> = ({ lockPeriods }) => {
 
   const { openModal } = useModalState()
 
-  const handleOpen = () => openModal({ name: ModalsKeys.UNRELEASED_FEATURE })
+  const { userLocks, isLoading } = useUserLocks()
+
+  const handleUnlockClick = () => {
+    if (!userLocks) return
+
+    openModal({
+      name: ModalsKeys.UNLOCK,
+      userLocks,
+      userLock: userLocks[0],
+      lockPeriods,
+    })
+  }
 
   const handleLockClick = () =>
     openModal({ name: ModalsKeys.LOCK, lockPeriods })
@@ -34,8 +46,13 @@ const LockActions: React.FC<LockActionsProps> = ({ lockPeriods }) => {
     >
       <Button
         variant='text'
-        onClick={handleOpen}
-        sx={{ width: 'max-content', textTransform: 'capitalize' }}
+        onClick={handleUnlockClick}
+        sx={{
+          width: 'max-content',
+          textTransform: 'capitalize',
+          visibility: userLocks?.length ? 'visible' : 'hidden',
+        }}
+        disabled={isLoading || !userLocks}
       >
         {t('lite.buyAndLock.actions.unlock')}
       </Button>
@@ -43,7 +60,7 @@ const LockActions: React.FC<LockActionsProps> = ({ lockPeriods }) => {
         <Grid2 size={6}>
           <Button
             variant='outlined'
-            onClick={handleOpen}
+            onClick={handleUnlockClick}
             sx={{ textTransform: 'capitalize' }}
             fullWidth
           >

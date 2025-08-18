@@ -172,6 +172,7 @@ export type Modals = {
   [ModalsKeys.LOCK]: ModalData<{ lockPeriods: LockPeriod[] }>
   [ModalsKeys.UNLOCK]: ModalData<{
     userLock: UserLock
+    userLocks?: UserLock[]
     lockPeriods: LockPeriod[]
   }>
   [ModalsKeys.WITHDRAW]: ModalData<{
