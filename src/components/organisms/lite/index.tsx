@@ -1,5 +1,6 @@
 import { Grid2, Stack, Typography } from '@mui/material'
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
+import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
 import React from 'react'
 
 import getTranslation from '@/hooks/useTranslation'
@@ -24,6 +25,7 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 
 type LiteModeAppProps = {
   pools: PoolOverview[]
+  lockPeriods: LockPeriod[]
   activePools: PoolOverviewWithDelegate[]
   currentEpoch: string
 }
@@ -31,6 +33,7 @@ type LiteModeAppProps = {
 const LiteModeApp: React.FC<LiteModeAppProps> = ({
   pools,
   currentEpoch,
+  lockPeriods,
   activePools,
 }) => {
   const { t } = getTranslation()
@@ -86,7 +89,7 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({
             </Typography>
             <Stack>
               <LockBasicStats />
-              <LockActions />
+              <LockActions lockPeriods={lockPeriods} />
             </Stack>
             <LiteLoyaltyInfo />
             <PoolAccordion pools={activePools} currentEpoch={currentEpoch} />

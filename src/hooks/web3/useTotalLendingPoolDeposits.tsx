@@ -1,4 +1,3 @@
-import { KasuSdk } from '@solidant/kasu-sdk'
 import { formatUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import useSWR from 'swr'
@@ -17,7 +16,7 @@ const useTotalLendingPoolDeposits = () => {
 
   const { data, error, isLoading, mutate } = useSWR(
     account.address && sdk ? ['totalPoolDeposits', account.address, sdk] : null,
-    async (account: string, sdk: KasuSdk) =>
+    async ([_, account, sdk]) =>
       sdk.UserLending.getUserTotalPendingAndActiveDepositedAmount(account),
 
     {

@@ -1,18 +1,19 @@
-import { Box, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
 import { formatEther, formatUnits } from 'ethers/lib/utils'
+import React, {
+  Dispatch,
+  memo,
+  SetStateAction,
+  useCallback,
+  useMemo,
+} from 'react'
 
-import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import getTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 import useUserBalance from '@/hooks/web3/useUserBalance'
 
-import InfoRow from '@/components/atoms/InfoRow'
-import ToolTip from '@/components/atoms/ToolTip'
 import NumericalInput from '@/components/molecules/NumericalInput'
-import LendingLoyalityLevelsTooltip from '@/components/molecules/tooltips/LendingLoyalityLevelsTooltip'
-import MinKsuLockLoyalityOne from '@/components/molecules/tooltips/MinKsuLockLoyalityOne'
-import MinKsuLockLoyalityTwo from '@/components/molecules/tooltips/MinKsuLockLoyalityTwo'
 
 import { KsuIcon } from '@/assets/icons'
 
@@ -20,10 +21,18 @@ import sdkConfig from '@/config/sdk'
 import { customTypography } from '@/themes/typography'
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
-const LockModalInput = () => {
-  const { t } = getTranslation()
+type LockModalInputProps = {
+  amount: string
+  deferredAmount: string
+  setAmount: Dispatch<SetStateAction<string>>
+}
 
-  const { amount, setAmount } = useLockModalState()
+const LockModalInput: React.FC<LockModalInputProps> = ({
+  amount,
+  deferredAmount,
+  setAmount,
+}) => {
+  const { t } = getTranslation()
 
   const { modalStatus, setModalStatus } = useModalStatusState()
 
@@ -33,45 +42,44 @@ const LockModalInput = () => {
 
   const { ksuPrice } = useKsuPrice()
 
-  const balance = formatUnits(ksuBalance, decimals)
-
-  const ksuInUSD = convertToUSD(
-    toBigNumber(amount),
-    toBigNumber(ksuPrice || '0')
+  const balance = useMemo(
+    () => formatUnits(ksuBalance, decimals),
+    [ksuBalance, decimals]
   )
 
-  const handleMax = () => {
+  const ksuInUSD = useMemo(
+    () =>
+      convertToUSD(toBigNumber(deferredAmount), toBigNumber(ksuPrice || '0')),
+    [deferredAmount, ksuPrice]
+  )
+
+  const validate = useCallback(
+    (amount: string) => {
+      if (amount && toBigNumber(amount).gt(toBigNumber(balance))) {
+        setModalStatus({
+          type: 'error',
+          errorMessage: 'Insufficient balance',
+        })
+        return
+      }
+
+      if (toBigNumber(amount).isZero()) {
+        setModalStatus({ type: 'error', errorMessage: 'Amount is required' })
+        return
+      }
+
+      setModalStatus({ type: amount ? 'success' : 'default' })
+    },
+    [balance, setModalStatus]
+  )
+
+  const handleMax = useCallback(() => {
     setAmount(balance)
     validate(balance)
-  }
-
-  const validate = (amount: string) => {
-    if (amount && toBigNumber(amount).gt(toBigNumber(balance))) {
-      setModalStatus({
-        type: 'error',
-        errorMessage: 'Insufficient balance',
-      })
-      return
-    }
-
-    if (toBigNumber(amount).isZero()) {
-      setModalStatus({ type: 'error', errorMessage: 'Amount is required' })
-      return
-    }
-
-    setModalStatus({ type: amount ? 'success' : 'default' })
-  }
-
-  const handleFocusState = (state: boolean) => {
-    if (state) {
-      setModalStatus({ type: 'focused' })
-    } else {
-      validate(amount)
-    }
-  }
+  }, [validate, balance, setAmount])
 
   return (
-    <Box>
+    <>
       <NumericalInput
         amount={amount}
         label={t('modals.lock.deposit.input-label')}
@@ -87,8 +95,8 @@ const LockModalInput = () => {
               bgcolor: 'inherit',
             },
           },
-          onFocus: () => handleFocusState(true),
-          onBlur: () => handleFocusState(false),
+          onFocus: () => setModalStatus({ type: 'focused' }),
+          onBlur: () => validate(amount),
           error: modalStatus.type === 'error',
           InputLabelProps: {
             shrink: true,
@@ -139,68 +147,8 @@ const LockModalInput = () => {
       >
         {modalStatus.type === 'error' ? modalStatus.errorMessage : 'message'}
       </Typography>
-      <InfoRow
-        title={t('modals.lock.deposit.amount-metric-1')}
-        toolTipInfo={
-          <ToolTip
-            title={<MinKsuLockLoyalityOne />}
-            iconSx={{
-              color: 'gold.extraDark',
-              '&:hover': {
-                color: 'rgba(133, 87, 38, 1)',
-              },
-            }}
-          />
-        }
-        showDivider
-        dividerProps={{
-          color: 'white',
-        }}
-        metric={
-          <Typography variant='baseMdBold'>
-            {formatAmount(500, { minDecimals: 2 })} KASU
-          </Typography>
-        }
-      />
-      <InfoRow
-        title={t('modals.lock.deposit.amount-metric-2')}
-        toolTipInfo={
-          <ToolTip
-            title={<MinKsuLockLoyalityTwo />}
-            iconSx={{
-              color: 'gold.extraDark',
-              '&:hover': {
-                color: 'rgba(133, 87, 38, 1)',
-              },
-            }}
-          />
-        }
-        showDivider
-        dividerProps={{
-          color: 'white',
-        }}
-        metric={
-          <Typography variant='baseMdBold'>
-            {formatAmount(1000, { minDecimals: 2 })} KASU
-          </Typography>
-        }
-      />
-      <Typography variant='baseMd' mt={3} display='block'>
-        {t('modals.lock.deposit.amount-metric-3')}{' '}
-        <ToolTip
-          title={<LendingLoyalityLevelsTooltip />}
-          iconSx={{
-            verticalAlign: 'sub',
-            color: 'gold.extraDark',
-            '&:hover': {
-              color: 'rgba(133, 87, 38, 1)',
-            },
-          }}
-        />{' '}
-        {t('modals.lock.deposit.amount-metric-4')}
-      </Typography>
-    </Box>
+    </>
   )
 }
 
-export default LockModalInput
+export default memo(LockModalInput)

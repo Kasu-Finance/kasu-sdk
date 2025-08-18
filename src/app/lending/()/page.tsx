@@ -11,6 +11,7 @@ import PoolLayoutWrapper from '@/components/organisms/home/PoolLayoutWrapper'
 import PoolLayoutWrapperSkeleton from '@/components/organisms/home/PoolLayoutWrapperSkeleton'
 import LiteModeApp from '@/components/organisms/lite'
 
+import getLockPeriods from '@/actions/getLockPeriods'
 import { getCurrentEpoch } from '@/app/_requests/currentEpoch'
 import { getPoolOverview } from '@/app/_requests/pools'
 import { getPoolWithDelegate } from '@/app/_requests/poolWithDelegate'
@@ -18,11 +19,13 @@ import { getPoolWithDelegate } from '@/app/_requests/poolWithDelegate'
 const LendingPage = async () => {
   const { t } = getTranslation()
 
-  const [poolsWithDelegate, pools, currentEpoch] = await Promise.all([
-    getPoolWithDelegate(),
-    getPoolOverview(),
-    getCurrentEpoch(),
-  ])
+  const [poolsWithDelegate, pools, currentEpoch, lockPeriods] =
+    await Promise.all([
+      getPoolWithDelegate(),
+      getPoolOverview(),
+      getCurrentEpoch(),
+      getLockPeriods(),
+    ])
 
   return (
     <LiteModeRenderer
@@ -31,6 +34,7 @@ const LendingPage = async () => {
           activePools={poolsWithDelegate}
           pools={pools}
           currentEpoch={currentEpoch}
+          lockPeriods={lockPeriods}
         />
       }
       otherwise={

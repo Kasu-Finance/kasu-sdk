@@ -1,18 +1,27 @@
 'use client'
 
 import { Button, Grid2, Stack } from '@mui/material'
+import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
+import React from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import getTranslation from '@/hooks/useTranslation'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-const LockActions = () => {
+type LockActionsProps = {
+  lockPeriods: LockPeriod[]
+}
+
+const LockActions: React.FC<LockActionsProps> = ({ lockPeriods }) => {
   const { t } = getTranslation()
 
   const { openModal } = useModalState()
 
   const handleOpen = () => openModal({ name: ModalsKeys.UNRELEASED_FEATURE })
+
+  const handleLockClick = () =>
+    openModal({ name: ModalsKeys.LOCK, lockPeriods })
 
   return (
     <Stack
@@ -44,7 +53,7 @@ const LockActions = () => {
         <Grid2 size={6}>
           <Button
             variant='contained'
-            onClick={handleOpen}
+            onClick={handleLockClick}
             sx={{ textTransform: 'capitalize' }}
             fullWidth
           >
