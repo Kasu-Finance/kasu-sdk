@@ -2,12 +2,9 @@ import { Typography } from '@mui/material'
 import { formatEther } from 'ethers/lib/utils'
 import { useAccount } from 'wagmi'
 
-import useLockModalState from '@/hooks/context/useLockModalState'
-import useModalState from '@/hooks/context/useModalState'
+import useUnlockModalState from '@/hooks/context/useUnlockModalState'
 import useRatio from '@/hooks/useRatio'
 import getTranslation from '@/hooks/useTranslation'
-
-import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { formatAccount, formatAmount, toBigNumber } from '@/utils'
 
@@ -16,11 +13,7 @@ const PartialUnlockMessage = () => {
 
   const account = useAccount()
 
-  const { amount } = useLockModalState()
-
-  const { modal } = useModalState()
-
-  const { userLock } = modal[ModalsKeys.UNLOCK]
+  const { amount, userLock } = useUnlockModalState()
 
   const ratio = useRatio(amount, userLock.lockedAmount)
 

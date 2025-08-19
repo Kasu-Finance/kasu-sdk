@@ -3,7 +3,7 @@ import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
 import { formatEther } from 'ethers/lib/utils'
 import React from 'react'
 
-import useLockModalState from '@/hooks/context/useLockModalState'
+import useUnlockModalState from '@/hooks/context/useUnlockModalState'
 import useRatio from '@/hooks/useRatio'
 import getTranslation from '@/hooks/useTranslation'
 
@@ -21,7 +21,7 @@ const UnlockRemainingInfo: React.FC<UnlockRemainingInfoProps> = ({
 }) => {
   const { t } = getTranslation()
 
-  const { amount } = useLockModalState()
+  const { amount } = useUnlockModalState()
 
   const ratio = useRatio(amount, userLock.lockedAmount)
 

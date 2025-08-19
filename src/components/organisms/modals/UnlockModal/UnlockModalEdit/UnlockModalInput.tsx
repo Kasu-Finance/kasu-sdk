@@ -3,8 +3,8 @@ import { Box } from '@mui/system'
 import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
 import { formatEther } from 'ethers/lib/utils'
 
-import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
+import useUnlockModalState from '@/hooks/context/useUnlockModalState'
 import getTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
@@ -22,7 +22,7 @@ type UnlockModalInputProps = {
 const UnlockModalInput: React.FC<UnlockModalInputProps> = ({ userLock }) => {
   const { t } = getTranslation()
 
-  const { amount, setAmount } = useLockModalState()
+  const { amount, setAmount } = useUnlockModalState()
 
   const { modalStatus, setModalStatus } = useModalStatusState()
 

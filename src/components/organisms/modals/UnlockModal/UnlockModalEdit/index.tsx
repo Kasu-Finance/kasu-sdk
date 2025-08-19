@@ -1,8 +1,10 @@
 import { Stack } from '@mui/material'
+import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
 import { useState } from 'react'
 
 import useLiteModeState from '@/hooks/context/useLiteModeState'
 import useModalState from '@/hooks/context/useModalState'
+import useUnlockModalState from '@/hooks/context/useUnlockModalState'
 
 import AvailableLocksDropdown from '@/components/organisms/modals/UnlockModal/UnlockModalEdit/AvailableLocksDropdown'
 import UnlockModalEditActions from '@/components/organisms/modals/UnlockModal/UnlockModalEdit/UnlockModalEditActions'
@@ -18,9 +20,16 @@ const UnlockModalEdit = () => {
 
   const { modal } = useModalState()
 
+  const { setUserLock } = useUnlockModalState()
+
   const { userLocks, userLock } = modal[ModalsKeys.UNLOCK]
 
   const [selectedLock, setSelectedLock] = useState(userLock)
+
+  const handleSelectedLockChange = (lock: UserLock) => {
+    setUserLock(lock)
+    setSelectedLock(lock)
+  }
 
   return (
     <Stack spacing={3} mt={3}>
@@ -31,7 +40,7 @@ const UnlockModalEdit = () => {
         <AvailableLocksDropdown
           selectedLock={selectedLock}
           userLocks={userLocks}
-          handleSelectedLockChange={setSelectedLock}
+          handleSelectedLockChange={handleSelectedLockChange}
         />
       )}
       <UnlockModalInput userLock={selectedLock} />

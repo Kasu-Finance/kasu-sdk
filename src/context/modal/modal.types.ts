@@ -173,7 +173,6 @@ export type Modals = {
   [ModalsKeys.UNLOCK]: ModalData<{
     userLock: UserLock
     userLocks?: UserLock[]
-    lockPeriods: LockPeriod[]
   }>
   [ModalsKeys.WITHDRAW]: ModalData<{
     pool: PoolOverviewWithDelegate

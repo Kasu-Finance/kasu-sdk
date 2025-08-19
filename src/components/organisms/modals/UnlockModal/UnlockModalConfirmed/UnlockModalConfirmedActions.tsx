@@ -3,8 +3,8 @@ import Link from 'next/link'
 import { useChainId } from 'wagmi'
 
 import useLiteModeState from '@/hooks/context/useLiteModeState'
-import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalState from '@/hooks/context/useModalState'
+import useUnlockModalState from '@/hooks/context/useUnlockModalState'
 import getTranslation from '@/hooks/useTranslation'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
@@ -20,7 +20,7 @@ const UnlockModalConfirmedActions = () => {
 
   const chainId = useChainId()
 
-  const { txHash } = useLockModalState()
+  const { txHash } = useUnlockModalState()
 
   const { closeModal } = useModalState()
 
