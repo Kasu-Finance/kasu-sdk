@@ -21,6 +21,10 @@ const LockActions: React.FC<LockActionsProps> = ({ lockPeriods }) => {
 
   const { userLocks, isLoading } = useUserLocks()
 
+  const handleBuyClick = () => {
+    openModal({ name: ModalsKeys.BUY_KASU, lockPeriods })
+  }
+
   const handleUnlockClick = () => {
     if (!userLocks) return
 
@@ -59,7 +63,7 @@ const LockActions: React.FC<LockActionsProps> = ({ lockPeriods }) => {
         <Grid2 size={6}>
           <Button
             variant='outlined'
-            onClick={handleUnlockClick}
+            onClick={handleBuyClick}
             sx={{ textTransform: 'capitalize' }}
             fullWidth
           >

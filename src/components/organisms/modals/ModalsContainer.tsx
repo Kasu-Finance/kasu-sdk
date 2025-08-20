@@ -7,6 +7,7 @@ import useModalState from '@/hooks/context/useModalState'
 import DialogWrapper from '@/components/atoms/DialogWrapper'
 import AutoConversionToVariableModal from '@/components/organisms/modals/AutoConversionToVariableModal'
 import BorrowerIdentifiedModal from '@/components/organisms/modals/BorrowIdentifiedModal'
+import BuyKasuModalWrapper from '@/components/organisms/modals/BuyKasuModal/BuyKasuModalWrapper'
 import CancelDepositModal from '@/components/organisms/modals/CancelDepositModal'
 import CancelWithdrawalModal from '@/components/organisms/modals/CancelWithdrawalModal'
 import FixApyModalWrapper from '@/components/organisms/modals/FixApyModal/FixApyModalWrapper'
@@ -36,7 +37,6 @@ import WithdrawModalWrapper from '@/components/organisms/modals/WithdrawModal/Wi
 
 import { Modals, ModalsKeys } from '@/context/modal/modal.types'
 
-import BuyKasuModal from '@/components/organisms/modals/BuyKasuModal'
 import KycModalWrapper from './KycModal/KycModalWrapper'
 
 type ModalDetails = {
@@ -199,7 +199,7 @@ export const getModal = (
       }
     case ModalsKeys.BUY_KASU:
       return {
-        component: <BuyKasuModal handleClose={handleClose} />,
+        component: <BuyKasuModalWrapper handleClose={handleClose} />,
       }
   }
 }

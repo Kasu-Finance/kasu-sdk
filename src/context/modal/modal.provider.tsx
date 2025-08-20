@@ -28,7 +28,6 @@ import { Modals } from '@/context/modal/modal.types'
 import { PendingDecision } from '@/utils'
 import { DetailedTransactionWrapper } from '@/utils/lending/getDetailedTransactions'
 
-import FALLBACK_LOCK_PERIODS from '@/config/lockPeriod'
 import { PoolOverviewWithDelegate } from '@/types/page'
 
 const initialState: Modals = {
@@ -170,9 +169,8 @@ const initialState: Modals = {
     acceptLoanContract: () => {},
   },
   buyKasuModal: {
-    isOpen: true,
-    // lockPeriods: null as unknown as LockPeriod[],
-    lockPeriods: FALLBACK_LOCK_PERIODS,
+    isOpen: false,
+    lockPeriods: null as unknown as LockPeriod[],
   },
   nftDetectedModal: {
     isOpen: false,

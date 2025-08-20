@@ -4,6 +4,7 @@ import { useWeb3React } from '@web3-react/core'
 import getTranslation from '@/hooks/useTranslation'
 
 import BuyKasuConfirmationAction from '@/components/organisms/modals/BuyKasuModal/BuyKasuConfirmation/BuyKasuConfirmationAction'
+
 import { formatAccount, formatAmount } from '@/utils'
 
 const BuyKasuModalConfirmation = () => {

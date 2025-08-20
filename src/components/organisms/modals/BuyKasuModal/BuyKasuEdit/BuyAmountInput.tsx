@@ -2,7 +2,7 @@
 
 import LoginIcon from '@mui/icons-material/Login'
 import { Box, Typography } from '@mui/material'
-import { ReactNode, useCallback } from 'react'
+import { Dispatch, ReactNode, SetStateAction, useCallback } from 'react'
 
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useDebounce from '@/hooks/useDebounce'
@@ -10,23 +10,36 @@ import getTranslation from '@/hooks/useTranslation'
 
 import NumericalInput from '@/components/molecules/NumericalInput'
 
-import useBuyKasuModalState from '@/hooks/context/useBuyKasuModalState'
+import { SupportedTokens } from '@/constants/tokens'
 import { customTypography } from '@/themes/typography'
 import { toBigNumber } from '@/utils'
 
 type BuyAmountInputProps = {
+  selectedToken: SupportedTokens
+  amount: string
+  amountInUSD: string | undefined
+  setAmount: Dispatch<SetStateAction<string>>
+  setAmountInUSD: Dispatch<SetStateAction<string | undefined>>
   balance: string
   decimals?: number
   disabled?: boolean
   startAdornment?: ReactNode
   endAdornment?: ReactNode
-  applyConversion?: (newAmount: string) => Promise<string>
+  applyConversion: (fromAmount: string, token: SupportedTokens) => void
   debounceTime?: number
+  setIsValidating: Dispatch<SetStateAction<boolean>>
+  validate: (amount: string, amountInUSD?: string) => void
 }
 
 const BuyAmountInput: React.FC<BuyAmountInputProps> = ({
+  selectedToken,
+  amount,
+  amountInUSD,
+  setAmount,
+  setAmountInUSD,
   balance,
   decimals = 18,
+  validate,
   disabled,
   startAdornment = <LoginIcon />,
   endAdornment = 'USDC',
@@ -37,115 +50,77 @@ const BuyAmountInput: React.FC<BuyAmountInputProps> = ({
 
   const { modalStatus, setModalStatus } = useModalStatusState()
 
-  const { amount, setAmount, setAmountInUSD, setIsValidating } =
-    useBuyKasuModalState()
-
-  const validate = useCallback(
-    async (inputAmount: string) => {
-      try {
-        // let convertedAmount: string = '0'
-
-        const inputBN = toBigNumber(inputAmount)
-        const balanceBN = toBigNumber(balance)
-
-        if (inputBN.isZero()) {
-          setModalStatus({ type: 'error', errorMessage: 'Amount is required' })
-
-          return
-        }
-
-        // if (applyConversion) {
-        //   convertedAmount = await applyConversion(inputAmount)
-        // }
-
-        // const inputUsdBN = applyConversion
-        //   ? toBigNumber(convertedAmount)
-        //   : inputBN
-
-        if (inputBN.gt(balanceBN)) {
-          setModalStatus({
-            type: 'error',
-            errorMessage: 'Insufficient balance',
-          })
-
-          return
-        }
-
-        setModalStatus({ type: inputAmount ? 'success' : 'default' })
-      } catch (error) {
-        console.error(error)
-      } finally {
-        setIsValidating(false)
-      }
-    },
-    [setModalStatus, balance, setIsValidating]
-  )
-
   const { debouncedFunction: debouncedValidate } = useDebounce(
     validate,
     debounceTime,
     true
   )
 
-  const handleMax = useCallback(() => {
-    const maxPossible = balance
-
-    setAmount(maxPossible)
-
-    if (toBigNumber(balance).isZero()) {
-      return
-    }
-
-    setIsValidating(true)
-
-    if (applyConversion) {
-      debouncedValidate(maxPossible)
-    } else {
-      validate(maxPossible)
-      setAmountInUSD(maxPossible)
-    }
-  }, [
-    balance,
-    setAmount,
-    setAmountInUSD,
-    validate,
+  const { debouncedFunction: debouncedApplyConversion } = useDebounce(
     applyConversion,
-    debouncedValidate,
-    setIsValidating,
-  ])
+    debounceTime,
+    true
+  )
 
   const handleAmountChange = useCallback(
     (value: string) => {
-      setIsValidating(true)
+      // reset modal state when amount changes
+      if (modalStatus.type === 'error') {
+        setModalStatus({ type: 'default' })
+      }
+
       setAmount(value)
 
-      if (applyConversion) {
-        debouncedValidate(value)
-      } else {
-        validate(value)
-        setAmountInUSD(value)
+      // if value is empty skip validation and conversions and reset converted amount
+      if (!value) {
+        setAmountInUSD(undefined)
+        return
       }
+
+      if (selectedToken === SupportedTokens.USDC) {
+        setAmountInUSD(value)
+        debouncedValidate(value)
+        return
+      }
+
+      debouncedApplyConversion(value, selectedToken)
     },
     [
-      setAmount,
       setAmountInUSD,
-      validate,
-      applyConversion,
+      selectedToken,
+      modalStatus,
+      debouncedApplyConversion,
+      setAmount,
+      setModalStatus,
       debouncedValidate,
-      setIsValidating,
     ]
   )
 
-  const handleFocusState = useCallback(
-    (state: boolean) => {
-      if (state) {
-        setModalStatus({ type: 'focused' })
-      } else {
-        applyConversion ? debouncedValidate(amount) : validate(amount)
-      }
-    },
-    [amount, setModalStatus, validate, applyConversion, debouncedValidate]
-  )
+  const handleMax = useCallback(() => {
+    if (toBigNumber(balance).isZero()) {
+      setAmount('0')
+      setAmountInUSD('0')
+      return
+    }
+
+    setAmount(balance)
+
+    if (selectedToken === SupportedTokens.USDC) {
+      setAmountInUSD(balance)
+      debouncedValidate(balance)
+
+      return
+    }
+
+    applyConversion(balance, selectedToken)
+  }, [
+    balance,
+    selectedToken,
+    setAmount,
+    setAmountInUSD,
+    applyConversion,
+    debouncedValidate,
+  ])
 
   return (
     <Box>
@@ -166,8 +141,10 @@ const BuyAmountInput: React.FC<BuyAmountInputProps> = ({
               bgcolor: 'inherit',
             },
           },
-          onFocus: () => handleFocusState(true),
-          onBlur: () => handleFocusState(false),
+          onFocus: () => setModalStatus({ type: 'focused' }),
+          onBlur: () => {
+            validate(amount, amountInUSD)
+          },
           error: modalStatus.type === 'error',
           InputLabelProps: {
             shrink: true,

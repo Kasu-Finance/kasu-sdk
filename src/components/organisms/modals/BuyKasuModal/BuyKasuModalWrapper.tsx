@@ -8,17 +8,13 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 import ModalStatusState from '@/context/modalStatus/modalStatus.provider'
 import StepperState from '@/context/stepper/stepper.provider'
 
-import FALLBACK_LOCK_PERIODS from '@/config/lockPeriod'
-
 const BuyKasuModalWrapper: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { modal } = useModalState()
 
-  const { lockPeriods = FALLBACK_LOCK_PERIODS } =
-    modal[ModalsKeys.BUY_KASU] || {}
-  const defaultLockPeriod = lockPeriods?.[0] || FALLBACK_LOCK_PERIODS[0]
+  const { lockPeriods } = modal[ModalsKeys.BUY_KASU]
 
   return (
-    <BuyKasuModalState defaultLockPeriod={defaultLockPeriod}>
+    <BuyKasuModalState defaultLockPeriod={lockPeriods[0]}>
       <ModalStatusState>
         <StepperState steps={3}>
           <BuyKasuModal handleClose={handleClose} />

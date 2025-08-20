@@ -1,14 +1,28 @@
 import { Box, Typography } from '@mui/material'
+import { formatEther, parseEther } from 'ethers/lib/utils'
+import { memo } from 'react'
 
 import getTranslation from '@/hooks/useTranslation'
+import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
 
-import { formatAmount } from '@/utils'
+import { formatAmount, toBigNumber } from '@/utils'
 
-const ExchangeRate = () => {
+type ExchangeRateProps = {
+  amountInUSD: string
+}
+
+const ExchangeRate: React.FC<ExchangeRateProps> = ({ amountInUSD }) => {
   const { t } = getTranslation()
+
+  const { ksuPrice } = useKsuPrice()
+
+  const purchaseAmount =
+    ksuPrice && !toBigNumber(ksuPrice).isZero()
+      ? toBigNumber(amountInUSD).mul(toBigNumber('1')).div(parseEther(ksuPrice))
+      : '0'
 
   return (
     <Box>
@@ -20,9 +34,9 @@ const ExchangeRate = () => {
           <ToolTip
             title={t('locking.widgets.overview.metric-1-tooltip')}
             iconSx={{
-              color: 'gold.extraDark',
+              color: 'gold.dark',
               '&:hover': {
-                color: 'rgba(133, 87, 38, 1)',
+                color: 'gold.extraDark',
               },
             }}
           />
@@ -30,7 +44,7 @@ const ExchangeRate = () => {
         metric={
           <Box>
             <Typography variant='baseMdBold'>
-              {formatAmount('0.00', {
+              {formatAmount(1, {
                 minDecimals: 2,
               })}{' '}
               KASU{' '}
@@ -38,10 +52,10 @@ const ExchangeRate = () => {
             =
             <Typography variant='baseMdBold'>
               {' '}
-              {formatAmount('0.00', {
+              {formatAmount(ksuPrice || '0', {
                 minDecimals: 2,
               })}{' '}
-              KASU{' '}
+              USDC{' '}
             </Typography>
           </Box>
         }
@@ -57,9 +71,9 @@ const ExchangeRate = () => {
           <ToolTip
             title={t('locking.widgets.overview.metric-1-tooltip')}
             iconSx={{
-              color: 'gold.extraDark',
+              color: 'gold.dark',
               '&:hover': {
-                color: 'rgba(133, 87, 38, 1)',
+                color: 'gold.extraDark',
               },
             }}
           />
@@ -67,13 +81,13 @@ const ExchangeRate = () => {
         metric={
           <Box>
             <Typography variant='baseMdBold'>
-              {formatAmount('0.00', {
+              {formatAmount(formatEther(purchaseAmount), {
                 minDecimals: 2,
               })}{' '}
               KASU{' '}
             </Typography>
             <Typography variant='baseMd' color='rgba(133, 87, 38, 1)'>
-              {formatAmount('0.00', {
+              {formatAmount(amountInUSD, {
                 minDecimals: 2,
               })}{' '}
               USDC
@@ -89,4 +103,4 @@ const ExchangeRate = () => {
   )
 }
 
-export default ExchangeRate
+export default memo(ExchangeRate)

@@ -4,8 +4,8 @@ import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
-
 import BuyKasuReviewActions from '@/components/organisms/modals/BuyKasuModal/BuyKasuReview/BuyKasuReviewActions'
+
 import { formatAmount } from '@/utils'
 
 const BuyKasuModalReview = () => {

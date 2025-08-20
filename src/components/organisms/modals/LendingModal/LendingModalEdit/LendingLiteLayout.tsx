@@ -1,21 +1,24 @@
-import { Skeleton, Stack } from '@mui/material'
+import { Skeleton, Stack, Typography } from '@mui/material'
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { Dispatch, memo, SetStateAction } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
+import getTranslation from '@/hooks/useTranslation'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 import useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
 
 import PoolDropdown from '@/components/molecules/lending/PoolDropdown'
+import SupportedAssetsDropdown from '@/components/organisms/lending/SupportedAssetsDropdown'
 import Acknowledgement from '@/components/organisms/modals/LendingModal/LendingModalEdit/Acknowledgement'
 import ForecastedEarnings from '@/components/organisms/modals/LendingModal/LendingModalEdit/ForecastedEarnings'
 import LendingModalEditActions from '@/components/organisms/modals/LendingModal/LendingModalEdit/LendingModalEditActions'
 import LendingTrancheDropdown from '@/components/organisms/modals/LendingModal/LendingModalEdit/LendingTrancheDropdown'
 import SelectedAssetInput from '@/components/organisms/modals/LendingModal/LendingModalEdit/SelectedAssetInput'
-import SupportedAssetsDropdown from '@/components/organisms/modals/LendingModal/LendingModalEdit/SupportedAssetsDropdown'
 import TrancheInfo from '@/components/organisms/modals/LendingModal/LendingModalEdit/TrancheInfo'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
+
+import OneInchLogo from '@/assets/logo/OneInchLogo'
 
 import { SupportedTokens } from '@/constants/tokens'
 
@@ -76,6 +79,8 @@ const LendingLiteLayout: React.FC<LiteLayoutProps> = ({
   handleTrancheChange,
   handleTokenChange,
 }) => {
+  const { t } = getTranslation()
+
   const { modal } = useModalState()
 
   const { pools } = modal[ModalsKeys.LEND]
@@ -98,10 +103,26 @@ const LendingLiteLayout: React.FC<LiteLayoutProps> = ({
         selectedPool={selectedPool}
         selectedTranche={selectedTranche}
       />
-      <SupportedAssetsDropdown
-        selectedToken={selectedToken}
-        setSelectedToken={handleTokenChange}
-      />
+      <Stack spacing={2}>
+        <Typography
+          variant='baseMd'
+          display='inline-flex'
+          alignItems='center'
+          gap={1}
+        >
+          {t('modals.earningsCalculator.simulatedAmount.metric-1')}{' '}
+          {selectedToken !== SupportedTokens.USDC && (
+            <>
+              {t('modals.earningsCalculator.simulatedAmount.metric-2')}
+              <OneInchLogo />
+            </>
+          )}
+        </Typography>
+        <SupportedAssetsDropdown
+          selectedToken={selectedToken}
+          setSelectedToken={handleTokenChange}
+        />
+      </Stack>
       {!supportedTokenUserBalances || !supportedTokens ? (
         <Skeleton
           variant='rounded'
