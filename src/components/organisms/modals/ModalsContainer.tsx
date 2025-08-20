@@ -36,6 +36,7 @@ import WithdrawModalWrapper from '@/components/organisms/modals/WithdrawModal/Wi
 
 import { Modals, ModalsKeys } from '@/context/modal/modal.types'
 
+import BuyKasuModal from '@/components/organisms/modals/BuyKasuModal'
 import KycModalWrapper from './KycModal/KycModalWrapper'
 
 type ModalDetails = {
@@ -195,6 +196,10 @@ export const getModal = (
     case ModalsKeys.REFERRAL_DETECTED:
       return {
         component: <ReferralDetectedModal handleClose={handleClose} />,
+      }
+    case ModalsKeys.BUY_KASU:
+      return {
+        component: <BuyKasuModal handleClose={handleClose} />,
       }
   }
 }

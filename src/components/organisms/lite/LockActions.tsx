@@ -28,7 +28,6 @@ const LockActions: React.FC<LockActionsProps> = ({ lockPeriods }) => {
       name: ModalsKeys.UNLOCK,
       userLocks,
       userLock: userLocks[0],
-      lockPeriods,
     })
   }
 

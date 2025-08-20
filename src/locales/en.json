@@ -1454,7 +1454,8 @@
       "simulatedAmount": {
         "title": " Lending Scenario",
         "metric-1": "Swap any token to USDC to start lending.",
-        "metric-2": "Powered by 1inch"
+        "metric-2": "Powered by 1inch",
+        "metric-3": "Any tokens swapped to USDC via 1inch will incur 1.00% Slippage"
       },
       "simulatedDuration": {
         "title": "Simulated Lending Duration",
@@ -1519,6 +1520,37 @@
         "description-3": "The outcome of Withdrawal Requests is determined during the clearing period of each 7-day epoch.​"
       },
       "action": "Review Withdrawl Request"
+    },
+    "buyKasu": {
+      "title": {
+        "edit": "Buy Kasu",
+        "review": "Confirm KASU Purchase",
+        "confirmation": "KASU Purchase Submitted"
+      },
+      "metric-1": "Current Exchange Rate",
+      "metric-2": "Purchase Amount at Current Exchange Rate",
+      "automaticallyLock": "Automatically lock the entire amount of my upcoming KASU purchase and derive rKASU to achieve a Loyalty Level      for token utility, rewards and benefits. ​",
+      "lock": {
+        "metric-1": "Minimum KASU Lock amount to achieve Loyalty Level 1",
+        "metric-2": "Minimum KASU Lock amount to achieve Loyalty Level 2",
+        "metric-3": "Unlocking Date"
+      },
+      "completed": {
+        "action": "Review KASU Purchase",
+        "disclaimer": "Fees apply: 0.01% transaction value"
+      },
+      "review": {
+        "metric-1": "USDC Amount",
+        "metric-2": "Current Exchange Rate",
+        "metric-3": "KASU Purchase Amount at Current Exchange Rate",
+        "disclaimer": "Your KASU purchase​ will be processed shorty. KASU will be transferred to your wallet.​"
+      },
+      "confirmation": {
+        "title": "Your KASU Purchase Request has been successfully submitted:​",
+        "description-1": "to be purchased at the current exchange rate",
+        "description-2": "to be deposited to the wallet",
+        "description-3": "address"
+      }
     }
   },
   "lending": {
