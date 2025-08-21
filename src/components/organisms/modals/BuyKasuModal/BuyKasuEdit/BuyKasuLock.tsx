@@ -7,7 +7,13 @@ import {
   Typography,
 } from '@mui/material'
 import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
-import { Dispatch, memo, SetStateAction } from 'react'
+import {
+  Dispatch,
+  memo,
+  SetStateAction,
+  useDeferredValue,
+  useMemo,
+} from 'react'
 
 import useBuyKasuModalState from '@/hooks/context/useBuyKasuModalState'
 import useModalState from '@/hooks/context/useModalState'
@@ -17,9 +23,12 @@ import getTranslation from '@/hooks/useTranslation'
 import CustomCheckbox from '@/components/atoms/CustomCheckbox'
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
+import MinRequiredLockAmount from '@/components/molecules/locking/MinRequiredLockAmount'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
+import { DATE_FORMAT } from '@/constants'
+import dayjs from '@/dayjs'
 import { customTypography } from '@/themes/typography'
 import { formatAmount, formatToNearestTime, TimeConversions } from '@/utils'
 
@@ -50,6 +59,8 @@ const BuyKasuLock: React.FC<BuyKasuLockProps> = ({
 
   const { modalStatus, setModalStatus } = useModalStatusState()
 
+  const deferredLockPeriod = useDeferredValue(selectedLockPeriod)
+
   const { lockPeriods } = modal[ModalsKeys.BUY_KASU]
 
   const handleChange = (_: Event, value: number | number[]) => {
@@ -59,6 +70,18 @@ const BuyKasuLock: React.FC<BuyKasuLockProps> = ({
   const disabled = modalStatus.type === 'error'
 
   const gridTemplateColumns = `minmax(0, 0.5fr) ${[...new Array(lockPeriods.length - 2)].map(() => 'minmax(0,1fr)').join(' ')} minmax(0, 0.5fr)`
+
+  const unlockTime = useMemo(
+    () =>
+      dayjs().add(
+        Number(
+          parseFloat(deferredLockPeriod.lockPeriod) /
+            TimeConversions.SECONDS_PER_DAY
+        ),
+        'days'
+      ),
+    [deferredLockPeriod]
+  )
 
   return (
     <>
@@ -186,44 +209,7 @@ const BuyKasuLock: React.FC<BuyKasuLockProps> = ({
             ))}
           </Box>
           <Box mt={4}>
-            <InfoRow
-              sx={{ pt: 0 }}
-              title={`${t('modals.buyKasu.lock.metric-1')}`}
-              titleStyle={{ textTransform: 'capitalize' }}
-              metric={
-                <Box>
-                  <Typography variant='baseMdBold'>
-                    {formatAmount('0.00', {
-                      minDecimals: 2,
-                    })}{' '}
-                    KASU{' '}
-                  </Typography>
-                </Box>
-              }
-              showDivider
-              dividerProps={{
-                color: 'white',
-              }}
-            />
-            <InfoRow
-              sx={{ pt: 2 }}
-              title={`${t('modals.buyKasu.lock.metric-2')}`}
-              titleStyle={{ textTransform: 'capitalize' }}
-              metric={
-                <Box>
-                  <Typography variant='baseMdBold'>
-                    {formatAmount('0.00', {
-                      minDecimals: 2,
-                    })}{' '}
-                    KASU{' '}
-                  </Typography>
-                </Box>
-              }
-              showDivider
-              dividerProps={{
-                color: 'white',
-              }}
-            />
+            <MinRequiredLockAmount selectedLockPeriod={deferredLockPeriod} />
             <InfoRow
               sx={{ pt: 4, pb: 0 }}
               title={`${t('modals.buyKasu.lock.metric-3')}`}
@@ -240,14 +226,11 @@ const BuyKasuLock: React.FC<BuyKasuLockProps> = ({
                 />
               }
               metric={
-                <Box>
-                  <Typography variant='baseMdBold'>
-                    {formatAmount('0.00', {
-                      minDecimals: 2,
-                    })}{' '}
-                    KASU{' '}
-                  </Typography>
-                </Box>
+                <Typography variant='baseMdBold'>
+                  {disabled
+                    ? t('general.notAvailable')
+                    : unlockTime.format(DATE_FORMAT)}
+                </Typography>
               }
             />
           </Box>

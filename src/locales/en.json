@@ -1395,10 +1395,8 @@
       "deposit": {
         "input-label": "Lock Amount",
         "amount-title": "KASU Locking",
-        "amount-metric-1": "Minimum KASU Lock amount to achieve Loyalty Level 1",
-        "amount-metric-1-tooltip": "DEPRECATED",
-        "amount-metric-2": "Minimum KASU Lock amount to achieve Loyalty Level 2",
-        "amount-metric-2-tooltip": "DEPRECATED",
+        "amount-metric-1": "Minimum KASU Lock amount to achieve Loyalty Level 2",
+        "amount-metric-2": "Minimum KASU Lock amount to achieve Loyalty Level 3",
         "amount-metric-3": "Lock KASU to derive rKASU and achieve a Loyalty Level",
         "amount-metric-4": "for token utility, rewards and benefits.",
         "metric": "Locking Amount at Current Exchange Rate",

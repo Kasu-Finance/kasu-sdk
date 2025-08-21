@@ -6,6 +6,7 @@ import getTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
 import InfoRow from '@/components/atoms/InfoRow'
+import LiteModeSkeleton from '@/components/atoms/LiteModeSkeleton'
 import ToolTip from '@/components/atoms/ToolTip'
 
 import { formatAmount, toBigNumber } from '@/utils'
@@ -17,7 +18,7 @@ type ExchangeRateProps = {
 const ExchangeRate: React.FC<ExchangeRateProps> = ({ amountInUSD }) => {
   const { t } = getTranslation()
 
-  const { ksuPrice } = useKsuPrice()
+  const { ksuPrice, isLoading } = useKsuPrice()
 
   const purchaseAmount =
     ksuPrice && !toBigNumber(ksuPrice).isZero()
@@ -50,13 +51,23 @@ const ExchangeRate: React.FC<ExchangeRateProps> = ({ amountInUSD }) => {
               KASU{' '}
             </Typography>
             =
-            <Typography variant='baseMdBold'>
-              {' '}
-              {formatAmount(ksuPrice || '0', {
-                minDecimals: 2,
-              })}{' '}
-              USDC{' '}
-            </Typography>
+            {isLoading ? (
+              <>
+                <LiteModeSkeleton
+                  width={40}
+                  sx={{ display: 'inline-block', ml: '1ch' }}
+                />
+                <Typography variant='baseMdBold'> USDC</Typography>
+              </>
+            ) : (
+              <Typography variant='baseMdBold'>
+                {' '}
+                {formatAmount(ksuPrice || '0', {
+                  minDecimals: 2,
+                })}{' '}
+                USDC{' '}
+              </Typography>
+            )}
           </Box>
         }
         showDivider
@@ -79,20 +90,26 @@ const ExchangeRate: React.FC<ExchangeRateProps> = ({ amountInUSD }) => {
           />
         }
         metric={
-          <Box>
-            <Typography variant='baseMdBold'>
-              {formatAmount(formatEther(purchaseAmount), {
-                minDecimals: 2,
-              })}{' '}
-              KASU{' '}
-            </Typography>
-            <Typography variant='baseMd' color='rgba(133, 87, 38, 1)'>
-              {formatAmount(amountInUSD, {
-                minDecimals: 2,
-              })}{' '}
-              USDC
-            </Typography>
-          </Box>
+          isLoading ? (
+            <LiteModeSkeleton width={120} />
+          ) : (
+            <Box>
+              <Typography variant='baseMdBold'>
+                {formatAmount(formatEther(purchaseAmount), {
+                  minDecimals: 2,
+                  minValue: 1_000_000,
+                })}{' '}
+                KASU{' '}
+              </Typography>
+              <Typography variant='baseMd' color='rgba(133, 87, 38, 1)'>
+                {formatAmount(amountInUSD, {
+                  minDecimals: 2,
+                  minValue: 1_000_000,
+                })}{' '}
+                USDC
+              </Typography>
+            </Box>
+          )
         }
         showDivider
         dividerProps={{

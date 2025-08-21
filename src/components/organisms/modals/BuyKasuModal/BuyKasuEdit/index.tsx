@@ -64,7 +64,9 @@ const BuyKasuModalEdit = () => {
 
         const tokenBalance = supportedTokenUserBalances[token ?? selectedToken]
 
-        const balance = tokenBalance.balance
+        const balance = formatUnits(tokenBalance.balance, tokenBalance.decimals)
+
+        const balanceBN = toBigNumber(balance)
 
         const inputBN = toBigNumber(amount)
 
@@ -73,7 +75,7 @@ const BuyKasuModalEdit = () => {
           return
         }
 
-        if (inputBN.gt(balance)) {
+        if (inputBN.gt(balanceBN)) {
           setModalStatus({
             type: 'error',
             errorMessage: 'Insufficient balance',
@@ -211,7 +213,12 @@ const BuyKasuModalEdit = () => {
         selectedLockPeriod={selectedLockPeriod}
         setSelectedLockPeriod={setSelectedLockPeriod}
       />
-      <BuyKasuEditAction />
+      <BuyKasuEditAction
+        amount={deferredAmount}
+        amountInUSD={deferredAmountInUSD}
+        selectedLockPeriod={selectedLockPeriod}
+        selectedToken={selectedToken}
+      />
       <Typography
         variant='baseMd'
         display='inline-flex'

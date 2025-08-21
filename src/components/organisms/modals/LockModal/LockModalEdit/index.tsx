@@ -1,22 +1,27 @@
-import { Box, Stack } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 import { formatEther, formatUnits } from 'ethers/lib/utils'
 import { memo, useDeferredValue, useMemo, useState } from 'react'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
+import getTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 import useUserBalance from '@/hooks/web3/useUserBalance'
 
+import ToolTip from '@/components/atoms/ToolTip'
+import MinRequiredLockAmount from '@/components/molecules/locking/MinRequiredLockAmount'
+import LendingLoyalityLevelsTooltip from '@/components/molecules/tooltips/LendingLoyalityLevelsTooltip'
 import EstimatedBonusRewards from '@/components/organisms/modals/LockModal/LockModalEdit/EstimatedBonusRewards'
 import LockModalBalanceOverview from '@/components/organisms/modals/LockModal/LockModalEdit/LockModalBalanceOverview'
 import LockModalDuration from '@/components/organisms/modals/LockModal/LockModalEdit/LockModalDuration'
 import LockModalEditActions from '@/components/organisms/modals/LockModal/LockModalEdit/LockModalEditActions'
 import LockModalInput from '@/components/organisms/modals/LockModal/LockModalEdit/LockModalInput'
-import MinRequiredLockAmount from '@/components/organisms/modals/LockModal/LockModalEdit/MinRequiredLockAmount'
 
 import sdkConfig from '@/config/sdk'
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
 const LockModalEdit = () => {
+  const { t } = getTranslation()
+
   const { amount: prevAmount, selectedLockPeriod: prevSelectedLockPeriod } =
     useLockModalState()
 
@@ -60,6 +65,20 @@ const LockModalEdit = () => {
           setAmount={setAmount}
         />
         <MinRequiredLockAmount selectedLockPeriod={selectedLockPeriod} />
+        <Typography variant='baseMd' mt={3} display='block'>
+          {t('modals.lock.deposit.amount-metric-3')}{' '}
+          <ToolTip
+            title={<LendingLoyalityLevelsTooltip />}
+            iconSx={{
+              verticalAlign: 'sub',
+              color: 'gold.extraDark',
+              '&:hover': {
+                color: 'rgba(133, 87, 38, 1)',
+              },
+            }}
+          />{' '}
+          {t('modals.lock.deposit.amount-metric-4')}
+        </Typography>
       </Box>
       <LockModalDuration
         selectedLockPeriod={selectedLockPeriod}

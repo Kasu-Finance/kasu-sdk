@@ -1,15 +1,29 @@
 import { Box, Stack, Typography } from '@mui/material'
+import { formatEther, parseEther } from 'ethers/lib/utils'
 
+import useBuyKasuModalState from '@/hooks/context/useBuyKasuModalState'
 import getTranslation from '@/hooks/useTranslation'
+import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
 import BuyKasuReviewActions from '@/components/organisms/modals/BuyKasuModal/BuyKasuReview/BuyKasuReviewActions'
 
-import { formatAmount } from '@/utils'
+import { formatAmount, toBigNumber } from '@/utils'
 
 const BuyKasuModalReview = () => {
   const { t } = getTranslation()
+
+  const { amountInUSD, amount } = useBuyKasuModalState()
+
+  const { ksuPrice } = useKsuPrice()
+
+  const purchaseAmount =
+    ksuPrice && !toBigNumber(ksuPrice).isZero()
+      ? toBigNumber(amountInUSD ?? amount ?? '0')
+          .mul(toBigNumber('1'))
+          .div(parseEther(ksuPrice))
+      : '0'
 
   return (
     <Stack spacing={3}>
@@ -29,7 +43,7 @@ const BuyKasuModalReview = () => {
           }
           metric={
             <Typography variant='baseMdBold'>
-              {formatAmount(0, {
+              {formatAmount(amountInUSD ?? amount ?? 0, {
                 minDecimals: 2,
               })}{' '}
               USDC
@@ -56,7 +70,7 @@ const BuyKasuModalReview = () => {
           metric={
             <Box>
               <Typography variant='baseMdBold'>
-                {formatAmount('0.00', {
+                {formatAmount(1, {
                   minDecimals: 2,
                 })}{' '}
                 KASU{' '}
@@ -64,10 +78,10 @@ const BuyKasuModalReview = () => {
               =
               <Typography variant='baseMdBold'>
                 {' '}
-                {formatAmount('0.00', {
+                {formatAmount(ksuPrice || '0', {
                   minDecimals: 2,
                 })}{' '}
-                KASU{' '}
+                KASU
               </Typography>
             </Box>
           }
@@ -92,11 +106,10 @@ const BuyKasuModalReview = () => {
           metric={
             <Box>
               <Typography variant='baseMdBold'>
-                {' '}
-                {formatAmount('0.00', {
+                {formatAmount(formatEther(purchaseAmount), {
                   minDecimals: 2,
                 })}{' '}
-                KASU{' '}
+                KASU
               </Typography>
             </Box>
           }
