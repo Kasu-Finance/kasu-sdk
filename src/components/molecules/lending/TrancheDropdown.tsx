@@ -17,6 +17,7 @@ type TrancheDropdownProps = {
     defaultFixedTermConfigId: string | undefined
   ) => void
   disableOversubscribed?: boolean
+  isWithdrawal?: boolean
 }
 
 const TrancheDropdown: React.FC<TrancheDropdownProps> = ({
@@ -24,6 +25,7 @@ const TrancheDropdown: React.FC<TrancheDropdownProps> = ({
   setSelectedTranche,
   tranches,
   disableOversubscribed,
+  isWithdrawal,
 }) => {
   const { t } = getTranslation()
 
@@ -36,7 +38,11 @@ const TrancheDropdown: React.FC<TrancheDropdownProps> = ({
 
     const tranche = tranches.find((tranche) => tranche.id === trancheValue)
 
-    if (!tranche || toBigNumber(tranche.maximumDeposit).isZero()) return
+    if (
+      !tranche ||
+      (!isWithdrawal && toBigNumber(tranche.maximumDeposit).isZero())
+    )
+      return
 
     setSelectedTranche(
       trancheValue as `0x${string}`,

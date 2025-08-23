@@ -24,6 +24,7 @@ const WithdrawModalEdit = () => {
         tranches={pool.tranches}
         selectedTranche={trancheId}
         setSelectedTranche={setSelectedTranche}
+        isWithdrawal
       />
       <WithdrawAmountInput />
       <WithdrawModalEditActions />
