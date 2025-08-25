@@ -1754,7 +1754,7 @@
       "confirmStep": {
         "withdrawInfo": "Your Withdrawal Request​ has been successfully queued:​",
         "description-1": "Withdrawal Request from",
-        "description-2": "submitted. The withdrawal amount fulfilled is subject to availably liquidity and will be determined during the",
+        "description-2": "submitted. The withdrawal amount fulfilled is subject to available liquidity and will be determined during the",
         "description-3": "clearing period of each 7-day epoch.",
         "description-4": "Subject to available liquidity, Funds will be deposited to the wallet address"
       },
