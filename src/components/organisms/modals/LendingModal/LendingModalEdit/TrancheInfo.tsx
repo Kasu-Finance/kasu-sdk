@@ -2,13 +2,12 @@ import { Box, Stack, Typography } from '@mui/material'
 import React from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
-import getTranslation from '@/hooks/useTranslation'
 
 import ProgressBar from '@/components/atoms/ProgressBar'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import { formatPercentage, mergeSubheading } from '@/utils'
+import { formatPercentage } from '@/utils'
 
 type TrancheInfoProps = { selectedPool: string; selectedTranche: `0x${string}` }
 
@@ -16,8 +15,6 @@ const TrancheInfo: React.FC<TrancheInfoProps> = ({
   selectedPool,
   selectedTranche,
 }) => {
-  const { t } = getTranslation()
-
   const { modal } = useModalState()
 
   const { pools } = modal[ModalsKeys.LEND]
@@ -48,14 +45,15 @@ const TrancheInfo: React.FC<TrancheInfoProps> = ({
           rootStyles={{ height: 16, borderRadius: 30 }}
         >
           <Typography variant='baseXs' width='100%' px={1}>
-            {formatPercentage(percentage, 0).replaceAll(' %', '%')}{' '}
+            {formatPercentage(percentage, 0).replaceAll(' %', '%')} FULL
           </Typography>
         </ProgressBar>
-        <Typography variant='baseSm' textAlign='center'>
-          {mergeSubheading(pool.poolName, pool.subheading)}, {tranche.name}{' '}
-          {t('general.tranche')} is{' '}
-          {formatPercentage(percentage, 0).replaceAll(' %', '%')} full.
-        </Typography>
+        {percentage === 1 && (
+          <Typography variant='baseSm' textAlign='center'>
+            Temporarily full. Please select another tranche and/or Lending
+            Strategy.
+          </Typography>
+        )}
       </Stack>
     </Box>
   )

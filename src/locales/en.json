@@ -894,7 +894,7 @@
         "nextClearingText": "The outcome of your Lending Request will be determined at the end of the epoch clearing period."
       },
       "completed": {
-        "description-1": "Your Lending Request has been successfully queued​",
+        "description-1": "Your Lending Request has been successfully queued​:",
         "description-2": "Lending Request submitted for the next Epoch",
         "description-3": "What happens next?​",
         "description-4": "Kasu is all about choice, transparency and control to Lenders, which is demonstrated by the following:",

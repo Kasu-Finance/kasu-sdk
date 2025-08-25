@@ -2,13 +2,13 @@ import { Box, Typography } from '@mui/material'
 import React from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
-import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
+import ToolTip from '@/components/atoms/ToolTip'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import { formatAmount, formatPercentage, TimeConversions } from '@/utils'
+import { formatAmount, TimeConversions } from '@/utils'
 
 type ForecastedEarningsProps = {
   amountInUSD: string
@@ -21,8 +21,6 @@ const ForecastedEarnings: React.FC<ForecastedEarningsProps> = ({
   selectedPool,
   selectedTranche,
 }) => {
-  const { t } = getTranslation()
-
   const { modal } = useModalState()
 
   const { pools } = modal[ModalsKeys.LEND]
@@ -42,13 +40,20 @@ const ForecastedEarnings: React.FC<ForecastedEarningsProps> = ({
   return (
     <Box>
       <InfoRow
-        title='Forecasted Earnings'
+        title='Forecast Monthly Earnings'
         showDivider
         dividerProps={{ color: 'white' }}
+        toolTipInfo={
+          <ToolTip
+            title='Assumes interest / yield is autocompounded every week based on the current APY stated. Forecast interest earnings and approximates only and are subject to changes in APY.'
+            iconSx={{
+              color: 'gold.extraDark',
+              '&:hover': { color: 'rgba(133, 87, 38, 1)' },
+            }}
+          />
+        }
         metric={
           <Typography variant='baseMdBold'>
-            At {formatPercentage(tranche.apy, 2).replaceAll(' %', '%')}{' '}
-            {t('general.apy')}, you can earn ~
             {formatAmount(forecastedEarnings, { currency: 'USD' }).trimEnd()}
             /month
           </Typography>

@@ -92,7 +92,16 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({
               <LockActions lockPeriods={lockPeriods} />
             </Stack>
             <LiteLoyaltyInfo />
-            <PoolAccordion pools={activePools} currentEpoch={currentEpoch} />
+            <Stack spacing={2}>
+              <Typography
+                variant='h2'
+                color='gold.dark'
+                textTransform='capitalize'
+              >
+                {t('general.lendingStrategy')}
+              </Typography>
+              <PoolAccordion pools={activePools} currentEpoch={currentEpoch} />
+            </Stack>
           </Stack>
         </WaveBox>
       </Grid2>
