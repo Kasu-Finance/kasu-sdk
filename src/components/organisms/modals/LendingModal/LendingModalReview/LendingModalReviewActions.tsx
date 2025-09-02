@@ -89,13 +89,8 @@ const LendingModalReviewActions = () => {
       )
     }
 
-    const amount = currentEpochDepositedAmount?.get(trancheId.toLowerCase())
-
-    if (!amount) {
-      return console.error(
-        'RequestDeposit:: currentEpochDepositedAmount is undefined'
-      )
-    }
+    const amount =
+      currentEpochDepositedAmount?.get(trancheId.toLowerCase()) ?? '0'
 
     if (
       dayjs
