@@ -19,7 +19,7 @@ const Header = () => {
             <HeaderLogo />
           </Link>
           <Navigation />
-          <Box display='flex' alignItems='center' ml='auto'>
+          <Box display='flex' alignItems='center'>
             {/* <ReferButton /> */}
             <ModeToggleButton />
             <ConnectWalletButton />

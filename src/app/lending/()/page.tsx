@@ -9,33 +9,23 @@ import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
 import LiteModeRenderer from '@/components/atoms/LiteModeRenderer'
 import PoolLayoutWrapper from '@/components/organisms/home/PoolLayoutWrapper'
 import PoolLayoutWrapperSkeleton from '@/components/organisms/home/PoolLayoutWrapperSkeleton'
-import LiteModeApp from '@/components/organisms/lite'
+import LiteHome from '@/components/organisms/lite/LiteHome'
 
-import getLockPeriods from '@/actions/getLockPeriods'
 import { getCurrentEpoch } from '@/app/_requests/currentEpoch'
-import { getPoolOverview } from '@/app/_requests/pools'
 import { getPoolWithDelegate } from '@/app/_requests/poolWithDelegate'
 
 const LendingPage = async () => {
   const { t } = getTranslation()
 
-  const [poolsWithDelegate, pools, currentEpoch, lockPeriods] =
-    await Promise.all([
-      getPoolWithDelegate(),
-      getPoolOverview(),
-      getCurrentEpoch(),
-      getLockPeriods(),
-    ])
+  const [poolsWithDelegate, currentEpoch] = await Promise.all([
+    getPoolWithDelegate(),
+    getCurrentEpoch(),
+  ])
 
   return (
     <LiteModeRenderer
       renderOnLiteMode={
-        <LiteModeApp
-          activePools={poolsWithDelegate}
-          pools={pools}
-          currentEpoch={currentEpoch}
-          lockPeriods={lockPeriods}
-        />
+        <LiteHome pools={poolsWithDelegate} currentEpoch={currentEpoch} />
       }
       otherwise={
         <Box mt={3}>

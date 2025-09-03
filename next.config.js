@@ -42,7 +42,6 @@ const nextConfig = {
       },
     ]
   },
-
   experimental: {
     serverComponentsHmrCache: false,
     optimizePackageImports: ['dayjs', 'ethers'],

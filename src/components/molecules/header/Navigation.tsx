@@ -12,7 +12,7 @@ const Navigation = () => {
   if (isLiteMode) return null
 
   return (
-    <Box sx={{ display: 'flex', ml: 3 }}>
+    <Box sx={{ display: 'flex', flex: 1, ml: 3 }}>
       <DesktopNavigation />
     </Box>
   )

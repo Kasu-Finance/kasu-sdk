@@ -37,6 +37,7 @@ const ProgressBarForeground = styled(Box, {
   width: `${value}%`,
   whiteSpace: 'nowrap',
   overflow: 'hidden',
+  transition: 'width 0.3s ease',
 }))
 
 type ProgressBarBackgroundProp = {
