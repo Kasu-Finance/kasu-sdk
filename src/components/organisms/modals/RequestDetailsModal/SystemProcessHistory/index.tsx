@@ -46,7 +46,9 @@ const getDescription = (
     | WithdrawalTransactionWrapper['events'][number]
 ) => {
   if ('remainingQueuedAmount' in event) {
-    if (event.status === 'Requested') {
+    if (event.status === 'Forced') {
+      return 'Forced Withdrawal'
+    } else if (event.status === 'Requested') {
       return 'New Withdrawal Request'
     } else {
       return parseFloat(event.remainingQueuedAmount) <= 0

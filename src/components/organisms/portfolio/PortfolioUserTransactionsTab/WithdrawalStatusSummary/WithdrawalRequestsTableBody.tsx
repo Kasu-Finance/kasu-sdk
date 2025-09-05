@@ -68,6 +68,17 @@ const WithdrawalRequestsTableBody: React.FC<
         currentEpochValue={`${formatAmount(currentEpochAmounts.cancelled, { minDecimals: 2 })} USDC`}
         totalLifetimeValue={`${formatAmount(lifetimeAmounts.cancelled, { minDecimals: 2 })} USDC`}
       />
+      <WithdrawalRequestsTableRow
+        title={t(
+          'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-5'
+        )}
+        tooltipInfo={t(
+          'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-5-tooltip-1'
+        )}
+        currentEpochValue='N/A'
+        totalLifetimeValue={`${formatAmount(lifetimeAmounts.forced, { minDecimals: 2 })} USDC`}
+        variant='secondary'
+      />
     </>
   )
 }

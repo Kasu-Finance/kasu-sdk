@@ -12,6 +12,7 @@ import useModalState from '@/hooks/context/useModalState'
 import getTranslation from '@/hooks/useTranslation'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
+import ToolTip from '@/components/atoms/ToolTip'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
@@ -138,82 +139,108 @@ const WithdrawalTransactionsTableRow: React.FC<
               <TableCell>{transaction.trancheName}</TableCell>
               <TableCell>
                 <Stack spacing={3}>
-                  {transaction.requestStatus !== 'Cancelled' && (
+                  {transaction.requestStatus !== 'Cancelled' &&
+                    transaction.requestStatus !== 'Forced' && (
+                      <Box
+                        display='flex'
+                        justifyContent='space-between'
+                        alignItems='end'
+                      >
+                        <Typography variant='baseSmBold'>
+                          Most Recent Withdrawal Accepted
+                        </Typography>
+                        <Typography variant='baseSmBold'>
+                          {transaction.requestStatus === 'Processed'
+                            ? `${formatAmount(transaction.lastAcceptedAmount, {
+                                minDecimals: 2,
+                              })} USDC`
+                            : 'N/A'}
+                        </Typography>
+                      </Box>
+                    )}
+                  {transaction.requestStatus === 'Forced' ? (
                     <Box
                       display='flex'
                       justifyContent='space-between'
                       alignItems='end'
                     >
+                      <Box display='flex' alignItems='center'>
+                        <Typography variant='baseSmBold'>
+                          Forced Withdrawal
+                        </Typography>
+                        <ToolTip
+                          title={t(
+                            'portfolio.transactions.withdrawalStatusSummary.withdrawalRequests.metric-5-tooltip-1'
+                          )}
+                        />
+                      </Box>
                       <Typography variant='baseSmBold'>
-                        Most Recent Withdrawal Accepted
-                      </Typography>
-                      <Typography variant='baseSmBold'>
-                        {transaction.requestStatus === 'Processed'
-                          ? `${formatAmount(transaction.lastAcceptedAmount, {
-                              minDecimals: 2,
-                            })} USDC`
-                          : 'N/A'}
-                      </Typography>
-                    </Box>
-                  )}
-                  <Stack>
-                    <Box
-                      display='flex'
-                      justifyContent='space-between'
-                      alignItems='end'
-                    >
-                      <Typography variant='baseSmBold'>
-                        Original Withdrawal Request
-                      </Typography>
-                      <Typography variant='baseSmBold'>
-                        {formatAmount(transaction.requestedAmount, {
+                        {formatAmount(transaction.acceptedAmount, {
                           minDecimals: 2,
                         })}{' '}
                         USDC
                       </Typography>
                     </Box>
-                    <Box
-                      display='flex'
-                      justifyContent='space-between'
-                      alignItems='end'
-                    >
-                      <Typography variant='baseSm' color='gray.middle'>
-                        {transaction.requestStatus === 'Cancelled'
-                          ? 'Cancelled'
-                          : 'Queued'}
-                      </Typography>
-                      <Typography variant='baseSm' color='gray.middle'>
-                        {formatAmount(
-                          transaction.requestStatus === 'Cancelled'
-                            ? transaction.requestedAmount
-                            : transaction.requestStatus === 'Processed'
-                              ? transaction.queuedAmount
-                              : transaction.requestedAmount,
-                          {
+                  ) : (
+                    <Stack>
+                      <Box
+                        display='flex'
+                        justifyContent='space-between'
+                        alignItems='end'
+                      >
+                        <Typography variant='baseSmBold'>
+                          Original Withdrawal Request
+                        </Typography>
+                        <Typography variant='baseSmBold'>
+                          {formatAmount(transaction.requestedAmount, {
                             minDecimals: 2,
-                          }
-                        )}{' '}
-                        USDC
-                      </Typography>
-                    </Box>
-                    {transaction.requestStatus === 'Processed' && (
+                          })}{' '}
+                          USDC
+                        </Typography>
+                      </Box>
                       <Box
                         display='flex'
                         justifyContent='space-between'
                         alignItems='end'
                       >
                         <Typography variant='baseSm' color='gray.middle'>
-                          Accepted
+                          {transaction.requestStatus === 'Cancelled'
+                            ? 'Cancelled'
+                            : 'Queued'}
                         </Typography>
                         <Typography variant='baseSm' color='gray.middle'>
-                          {formatAmount(transaction.acceptedAmount, {
-                            minDecimals: 2,
-                          })}{' '}
+                          {formatAmount(
+                            transaction.requestStatus === 'Cancelled'
+                              ? transaction.requestedAmount
+                              : transaction.requestStatus === 'Processed'
+                                ? transaction.queuedAmount
+                                : transaction.requestedAmount,
+                            {
+                              minDecimals: 2,
+                            }
+                          )}{' '}
                           USDC
                         </Typography>
                       </Box>
-                    )}
-                  </Stack>
+                      {transaction.requestStatus === 'Processed' && (
+                        <Box
+                          display='flex'
+                          justifyContent='space-between'
+                          alignItems='end'
+                        >
+                          <Typography variant='baseSm' color='gray.middle'>
+                            Accepted
+                          </Typography>
+                          <Typography variant='baseSm' color='gray.middle'>
+                            {formatAmount(transaction.acceptedAmount, {
+                              minDecimals: 2,
+                            })}{' '}
+                            USDC
+                          </Typography>
+                        </Box>
+                      )}
+                    </Stack>
+                  )}
                 </Stack>
               </TableCell>
 

@@ -37,10 +37,16 @@ type ProcessedWithdrawalTransaction<T> = T & {
   lastAcceptedAmount: string
 }
 
+type ForcedWithdrawalTransaction<T> = T & {
+  requestStatus: 'Forced'
+  acceptedAmount: string
+}
+
 export type WithdrawalTransaction =
   | ProcessedWithdrawalTransaction<WithdrawalTransactionBase>
   | CancelledWithdrawalTransaction<WithdrawalTransactionBase>
   | UnprocessedTransaction<WithdrawalTransactionBase>
+  | ForcedWithdrawalTransaction<WithdrawalTransactionBase>
 
 export type WithdrawalTransactionWrapper = {
   type: 'Withdrawal'
@@ -70,12 +76,35 @@ const getWithdrawalTransactions = (transactionHistory: UserRequest[]) => {
 
     const withdrawalGroup: WithdrawalTransaction[] = []
 
+    const isForced = transaction.events.find(
+      (event) => event.requestType === 'Forced'
+    )
+
     const isProcessed = transaction.events.find(
       (event) =>
         event.requestType !== 'Initiated' && event.requestType !== 'Increased'
     )
 
-    if (!isProcessed) {
+    if (isForced) {
+      for (const forcedEvent of transaction.events) {
+        withdrawalGroup.push({
+          id: forcedEvent.id,
+          lendingPool: transaction.lendingPool,
+          requestTimestamp: forcedEvent.timestamp,
+          trancheName: forcedEvent.trancheName,
+          trancheId: forcedEvent.trancheId,
+          userId: transaction.userId,
+          nftId: transaction.nftId,
+          apy: forcedEvent.apy,
+          fixedTermConfig: transaction.fixedTermConfig,
+          requestedAmount: forcedEvent.assetAmount,
+          requestStatus: 'Forced',
+          acceptedAmount: forcedEvent.assetAmount,
+          epochId: forcedEvent.epochId,
+          transactionHash: forcedEvent.transactionHash,
+        })
+      }
+    } else if (!isProcessed) {
       for (const unProcessedEvent of transaction.events) {
         withdrawalGroup.push({
           id: unProcessedEvent.id,
@@ -239,7 +268,9 @@ const getWithdrawalTransactions = (transactionHistory: UserRequest[]) => {
         remainingQueuedAmount,
         status: ['Initiated', 'Increased'].includes(event.requestType)
           ? 'Requested'
-          : 'Processed',
+          : event.requestType === 'Forced'
+            ? 'Forced'
+            : 'Processed',
         timestamp: event.timestamp,
         trancheName: event.trancheName,
         transactionHash: event.transactionHash,
