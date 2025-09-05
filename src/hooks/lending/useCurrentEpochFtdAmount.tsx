@@ -4,7 +4,7 @@ import { useAccount } from 'wagmi'
 import useKasuSDK from '@/hooks/useKasuSDK'
 
 const useCurrentEpochFtdAmount = (
-  lendingPoolId: string,
+  lendingPoolIds: string | string[],
   currentEpoch: string
 ) => {
   const sdk = useKasuSDK()
@@ -14,14 +14,14 @@ const useCurrentEpochFtdAmount = (
   const { data, error, isLoading, mutate } = useSWRImmutable(
     account.address && sdk
       ? [
-          `currentEpochFtdAmount/${lendingPoolId}/${currentEpoch}`,
+          `currentEpochFtdAmount/${Array.isArray(lendingPoolIds) ? lendingPoolIds.join(',') : lendingPoolIds}/${currentEpoch}`,
           account.address,
           sdk,
         ]
       : null,
     async ([_, userAddress, sdk]) => {
       const ftdAmountMap = await sdk.UserLending.getCurrentEpochFtdAmount(
-        lendingPoolId,
+        Array.isArray(lendingPoolIds) ? lendingPoolIds : [lendingPoolIds],
         userAddress.toLowerCase(),
         currentEpoch
       )

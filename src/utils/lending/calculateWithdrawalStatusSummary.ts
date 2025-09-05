@@ -5,6 +5,7 @@ type Amounts = {
   accepted: number
   queued: number
   cancelled: number
+  forced: number
 }
 
 const initialState: Amounts = {
@@ -12,6 +13,7 @@ const initialState: Amounts = {
   requested: 0,
   queued: 0,
   cancelled: 0,
+  forced: 0,
 }
 
 const calculateWithdrawalStatusSummary = (
@@ -40,6 +42,8 @@ const calculateWithdrawalStatusSummary = (
           )
         }
       }
+
+      // for amounts that were processed "last week"
       if (parseFloat(withdrawalTx.epochId) === parseFloat(currentEpoch) - 1) {
         if (withdrawalTx.requestStatus === 'Processed') {
           currentEpochAmounts.requested += parseFloat(
@@ -49,6 +53,10 @@ const calculateWithdrawalStatusSummary = (
             withdrawalTx.acceptedAmount
           )
         }
+      }
+
+      if (withdrawalTx.requestStatus === 'Forced') {
+        lifetimeAmounts.forced += parseFloat(withdrawalTx.acceptedAmount)
       }
 
       if (withdrawalTx.requestStatus === 'Processed') {
