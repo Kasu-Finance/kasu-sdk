@@ -411,6 +411,7 @@ export class UserLending {
                     case 'DepositAccepted':
                     case 'WithdrawalAccepted':
                     case 'DepositReallocated':
+                    case 'ImmediateWithdrawalExecuted':
                         totalAccepted = assetAmount;
                         break;
                     case 'DepositCancelled':
@@ -424,7 +425,6 @@ export class UserLending {
                     case 'DepositIncreased':
                     case 'WithdrawalIncreased':
                         totalRequested = assetAmount;
-
                         break;
                 }
 

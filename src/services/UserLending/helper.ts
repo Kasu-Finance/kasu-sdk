@@ -11,8 +11,18 @@ const USER_REQUEST_EVENT_MAP = {
     WithdrawalCancelled: 'Cancelled',
     WithdrawalIncreased: 'Increased',
     WithdrawalInitiated: 'Initiated',
+    ImmediateWithdrawalExecuted: 'Forced',
 } as const;
 
-export const mapUserRequestEventType = (requestType: UserRequestEventType): "Initiated" | "Increased" | "Cancelled" | "Accepted" | "Rejected" | "Reallocated" => {
+export const mapUserRequestEventType = (
+    requestType: UserRequestEventType,
+):
+    | 'Initiated'
+    | 'Increased'
+    | 'Cancelled'
+    | 'Accepted'
+    | 'Rejected'
+    | 'Reallocated'
+    | 'Forced' => {
     return USER_REQUEST_EVENT_MAP[requestType];
 };

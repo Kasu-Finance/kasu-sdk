@@ -90,6 +90,7 @@ export enum UserRequestStatus {
 }
 
 export type UserRequestEventType =
+    | 'ImmediateWithdrawalExecuted'
     | 'WithdrawalInitiated'
     | 'WithdrawalIncreased'
     | 'WithdrawalCancelled'
