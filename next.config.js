@@ -132,7 +132,8 @@ const nextConfig = {
               connect-src 'self' ${trustedDomains.join(' ')};
               worker-src 'self';
               manifest-src 'self';
-              script-src-elem 'self' 'unsafe-inline' https://app.pluno.ai/ https://cdn.markfi.xyz/;
+              script-src-elem 'self' 'unsafe-inline' https://auth.privy.io/ https://app.pluno.ai/ https://cdn.markfi.xyz/;
+              media-src https://kasu-dev.directus.app/ https://kasu-finance.directus.app/;
             `
               .replace(/\s{2,}/g, ' ')
               .trim(),

@@ -4,6 +4,7 @@ import { Grid2, Stack, Typography } from '@mui/material'
 import { redirect } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
+import KasuIntroVideo from '@/components/organisms/lite/LiteHome/KasuIntroVideo'
 import LiteHomePool from '@/components/organisms/lite/LiteHome/LiteHomePool'
 
 import { Routes } from '@/config/routes'
@@ -72,6 +73,7 @@ const LiteHome: React.FC<LiteHomeProps> = ({ pools, currentEpoch }) => {
           <LiteHomePool key={pool.id} pool={pool} currentEpoch={currentEpoch} />
         ))}
       </Grid2>
+      <KasuIntroVideo />
     </Stack>
   )
 }
