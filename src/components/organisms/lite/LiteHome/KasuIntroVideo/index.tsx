@@ -1,150 +1,31 @@
+import ReplayIcon from '@mui/icons-material/Replay'
 import { Box, Grid2, IconButton, Stack, Typography } from '@mui/material'
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
+
+import useVideoControls from '@/hooks/useVideoControls'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
 import ControlBar from '@/components/organisms/lite/LiteHome/KasuIntroVideo/ControlBar'
 
 import { PlayIcon } from '@/assets/icons'
 
-export type VideoControls = {
-  play: boolean
-  fullscreen: boolean
-  volume: number
-  time: number
-  muted: boolean
-  currentTime: number
-  duration: number
-}
-
 const KasuIntroVideo = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
 
-  const [controls, setControls] = useState<VideoControls>({
-    play: false,
-    fullscreen: false,
-    volume: 0.5,
-    muted: false,
-    time: 0,
-    currentTime: 0,
-    duration: 0,
-  })
-
-  useEffect(() => {
-    const video = videoRef.current
-    const videoContainer = videoContainerRef.current
-
-    if (!video || !videoContainer) return
-
-    videoContainer.addEventListener('fullscreenchange', () => {
-      setControls((prev) => ({
-        ...prev,
-        fullscreen: Boolean(document.fullscreenElement),
-      }))
-    })
-
-    video.addEventListener('durationchange', () => {
-      setControls((prev) => ({
-        ...prev,
-        duration: video.duration,
-      }))
-    })
-
-    video.addEventListener('timeupdate', () => {
-      setControls((prev) => ({
-        ...prev,
-        currentTime: video.currentTime,
-      }))
-
-      if (video.currentTime === video.duration) {
-        setControls((prev) => ({ ...prev, play: false }))
-      }
-    })
-  }, [])
-
-  const handleVolumeChange = (e: Event, value: number | number[]) => {
-    if (!videoRef.current) return
-
-    const volume = Array.isArray(value) ? value[0] : value
-
-    videoRef.current.volume = volume
-
-    setControls((prev) => ({
-      ...prev,
-      volume,
-      muted: volume === 0 ? true : false,
-    }))
-  }
-
-  const toggleMute = () => {
-    if (!videoRef.current) return
-
-    videoRef.current.muted = !videoRef.current.muted
-
-    setControls((prev) => ({ ...prev, muted: !prev.muted }))
-  }
-
-  const handlePlay = () => {
-    if (!videoRef.current) return
-
-    setControls((prev) => ({ ...prev, play: true }))
-
-    videoRef.current.play()
-  }
-
-  const handlePause = () => {
-    if (!videoRef.current) return
-
-    setControls((prev) => ({ ...prev, play: false }))
-
-    videoRef.current.pause()
-  }
-
-  const focusEventListener = (event: KeyboardEvent) => {
-    if (!videoContainerRef.current) return
-
-    // Note that "F" is case-sensitive (uppercase):
-    if (event.key === 'F') {
-      // Check if we're in fullscreen mode
-      if (document.fullscreenElement) {
-        document.exitFullscreen()
-        return
-      }
-      // Otherwise enter fullscreen mode
-      videoContainerRef.current
-        .requestFullscreen({ navigationUI: 'hide' })
-        .catch((err) => {
-          console.error(`Error enabling fullscreen: ${err.message}`)
-        })
-    }
-
-    if (event.key === 'Esc') {
-      if (document.fullscreenElement) {
-        document.exitFullscreen()
-        return
-      }
-    }
-  }
-
-  const handleFocus = () => {
-    document.addEventListener('keydown', focusEventListener)
-  }
-
-  const handleBlur = () => {
-    document.removeEventListener('keydown', focusEventListener)
-  }
-
-  const toggleFullscreen = () => {
-    if (!videoContainerRef.current) return
-
-    if (controls.fullscreen) {
-      if (document.fullscreenElement) {
-        document.exitFullscreen()
-      }
-    } else {
-      videoContainerRef.current.requestFullscreen({ navigationUI: 'hide' })
-    }
-  }
+  const {
+    controls,
+    handleBlur,
+    handleFocus,
+    handlePause,
+    handlePlay,
+    handleSeek,
+    handleMouseMove,
+    handleVolumeChange,
+    togglePlay,
+    toggleFullscreen,
+    toggleMute,
+  } = useVideoControls(videoRef, videoContainerRef)
 
   return (
     <Stack spacing={8} my={8}>
@@ -168,16 +49,21 @@ const KasuIntroVideo = () => {
         onFocus={handleFocus}
         onBlur={handleBlur}
         ref={videoContainerRef}
+        display='flex'
+        justifyContent='center'
+        onClick={togglePlay}
+        onMouseMove={handleMouseMove}
       >
-        <Box
-          position='absolute'
-          top={0}
-          left={0}
-          width='100%'
-          height='100%'
-          zIndex={1}
-        >
-          {controls.currentTime === 0 && (
+        {(controls.currentTime === 0 ||
+          controls.currentTime === controls.duration) && (
+          <Box
+            position='absolute'
+            top={0}
+            left={0}
+            width='100%'
+            height='100%'
+            zIndex={2}
+          >
             <IconButton
               sx={{
                 position: 'absolute',
@@ -186,25 +72,42 @@ const KasuIntroVideo = () => {
                 transform: 'translate(-50%, -50%)',
               }}
               onClick={handlePlay}
+              color='primary'
             >
-              <PlayIcon />
+              {controls.currentTime === 0 ? <PlayIcon /> : <ReplayIcon />}
             </IconButton>
-          )}
-          <ControlBar
-            controls={controls}
-            handlePause={handlePause}
-            handlePlay={handlePlay}
-            toggleMute={toggleMute}
-            handleVolumeChange={handleVolumeChange}
-            toggleFullscreen={toggleFullscreen}
-          />
-        </Box>
+          </Box>
+        )}
+        {(controls.visible || videoRef.current?.paused) && (
+          <Box
+            position='absolute'
+            top={0}
+            left={0}
+            width='100%'
+            height='100%'
+            zIndex={1}
+            sx={{
+              background:
+                'linear-gradient(to bottom,hsla(0, 0%, 0%, 0) 0%,hsla(0, 0%, 0%, 0.013) 8.1%,hsla(0, 0%, 0%, 0.049) 15.5%,hsla(0, 0%, 0%, 0.104) 22.5%,hsla(0, 0%, 0%, 0.175) 29%,hsla(0, 0%, 0%, 0.259) 35.3%,hsla(0, 0%, 0%, 0.352) 41.2%,hsla(0, 0%, 0%, 0.37) 47.1%,hsla(0, 0%, 0%, 0.39) 52.9%,hsla(0, 0%, 0%, 0.40) 58.8%,hsla(0, 0%, 0%, 0.45) 64.7%,hsla(0, 0%, 0%, 0.52) 71%,hsla(0, 0%, 0%, 0.58) 77.5%,hsla(0, 0%, 0%, 0.64) 84.5%,hsla(0, 0%, 0%, 0.7) 91.9%, hsla(0, 0%, 0%, 0.8) 100%) repeat-x bottom left',
+              backgroundSize: 'auto 110px',
+            }}
+          >
+            <ControlBar
+              controls={controls}
+              handlePause={handlePause}
+              handlePlay={handlePlay}
+              handleSeek={handleSeek}
+              toggleMute={toggleMute}
+              handleVolumeChange={handleVolumeChange}
+              toggleFullscreen={toggleFullscreen}
+            />
+          </Box>
+        )}
         <Box
           component='video'
-          width='100%'
+          width={controls.fullscreen ? 'auto' : '100%'}
           height={controls.fullscreen ? '100%' : 671}
           ref={videoRef}
-          borderRadius={3}
           sx={{
             objectFit: 'cover',
             '&::-webkit-media-controls': {

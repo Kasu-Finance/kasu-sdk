@@ -74,6 +74,14 @@ const LiteHome: React.FC<LiteHomeProps> = ({ pools, currentEpoch }) => {
         ))}
       </Grid2>
       <KasuIntroVideo />
+      <Typography
+        variant='h3'
+        fontWeight={400}
+        color='gold.dark'
+        textAlign='center'
+      >
+        Built on Base · KYC required
+      </Typography>
     </Stack>
   )
 }
