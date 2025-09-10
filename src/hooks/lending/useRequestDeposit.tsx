@@ -1,9 +1,11 @@
 import { BigNumber, BytesLike } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
+import { usePathname, useRouter } from 'next/navigation'
 import { useAccount, useChainId } from 'wagmi'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useKycState from '@/hooks/context/useKycState'
+import useLiteModeState from '@/hooks/context/useLiteModeState'
 import useSdk from '@/hooks/context/useSdk'
 import useStepperState from '@/hooks/context/useStepperState'
 import useToastState from '@/hooks/context/useToastState'
@@ -15,6 +17,7 @@ import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 import { KasuSdkNotReadyError } from '@/context/sdk/sdk.types'
 
 import generateKycSignature from '@/actions/generateKycSignature'
+import { Routes } from '@/config/routes'
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { SupportedTokens } from '@/constants/tokens'
 import { capitalize, toBigNumber, waitForReceipt } from '@/utils'
@@ -23,7 +26,14 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 
 const useRequestDeposit = () => {
   const sdk = useSdk()
+
   const account = useAccount()
+
+  const { isLiteMode } = useLiteModeState()
+
+  const pathname = usePathname()
+
+  const router = useRouter()
 
   const chainId = useChainId()
 
@@ -147,9 +157,15 @@ const useRequestDeposit = () => {
 
       const receipt = await waitForReceipt(deposit)
 
+      localStorage.setItem('KASU_INITIAL_DEPOSIT', 'true')
+
       setTxHash(receipt.transactionHash)
 
       removeToast()
+
+      if (isLiteMode && pathname !== Routes.portfolio.root.url) {
+        router.push(Routes.portfolio.root.url)
+      }
 
       nextStep()
     } catch (error) {
