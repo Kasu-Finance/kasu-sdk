@@ -78,7 +78,8 @@ const KasuIntroVideo = () => {
             </IconButton>
           </Box>
         )}
-        {(controls.visible || videoRef.current?.paused) && (
+        {(controls.visible ||
+          (videoRef.current?.paused && controls.currentTime !== 0)) && (
           <Box
             position='absolute'
             top={0}
