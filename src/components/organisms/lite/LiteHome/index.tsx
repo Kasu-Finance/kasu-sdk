@@ -1,13 +1,10 @@
 'use client'
 
 import { Grid2, Stack, Typography } from '@mui/material'
-import { redirect } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
 import KasuIntroVideo from '@/components/organisms/lite/LiteHome/KasuIntroVideo'
 import LiteHomePool from '@/components/organisms/lite/LiteHome/LiteHomePool'
-
-import { Routes } from '@/config/routes'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
@@ -17,32 +14,7 @@ type LiteHomeProps = {
 }
 
 const LiteHome: React.FC<LiteHomeProps> = ({ pools, currentEpoch }) => {
-  const [initialDeposit, setInitialDeposit] = useState<boolean | undefined>()
-
-  useEffect(() => {
-    if (
-      typeof localStorage !== 'undefined' &&
-      typeof initialDeposit === 'undefined'
-    ) {
-      const initialState = localStorage.getItem('KASU_INITIAL_DEPOSIT')
-
-      if (!initialState) {
-        localStorage.setItem('KASU_INITIAL_DEPOSIT', 'false')
-        setInitialDeposit(false)
-        return
-      }
-
-      setInitialDeposit(initialState === 'true')
-    }
-  }, [initialDeposit])
-
-  if (typeof initialDeposit === 'undefined') {
-    return null
-  }
-
-  return initialDeposit ? (
-    redirect(Routes.portfolio.root.url)
-  ) : (
+  return (
     <Stack>
       <Typography
         variant='h1'

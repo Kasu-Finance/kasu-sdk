@@ -9,6 +9,7 @@ import TrancheAnimator from '@/components/organisms/lite/LiteHome/TrancheAnimato
 
 import { CollapsedCloseIcon, CollapsedOpenIcon } from '@/assets/icons'
 
+import { customPalette } from '@/themes/palette'
 import { headingFontFamily } from '@/themes/typography'
 import { formatPercentage } from '@/utils'
 
@@ -97,7 +98,23 @@ const LiteHomePool: React.FC<LiteHomePoolProps> = ({ pool, currentEpoch }) => {
         {pool.poolName}
       </Typography>
       <TrancheAnimator tranches={pool.tranches} />
-      <IconButton onClick={toggleCollapsed} sx={{ mt: 2 }}>
+      <IconButton
+        onClick={toggleCollapsed}
+        sx={{
+          mt: 2,
+          '&:focus:before': {
+            position: 'absolute',
+            content: '""',
+            width: 'calc(100% + 4px)',
+            height: 'calc(100% + 2px)',
+            border: `2px dotted ${customPalette.primary.main}`,
+            borderRadius: '50%',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+          },
+        }}
+      >
         {collapsed ? <CollapsedCloseIcon /> : <CollapsedOpenIcon />}
       </IconButton>
       <Collapse in={collapsed} timeout={300}>
