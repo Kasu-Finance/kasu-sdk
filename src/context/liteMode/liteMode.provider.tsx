@@ -25,6 +25,7 @@ const LiteModeState: React.FC<PropsWithChildren> = ({ children }) => {
 
       if (!isLiteMode) {
         localStorage.setItem('KASU_IS_LITE_MODE', 'true')
+        liteModeActions.setLiteMode(true)
         return
       }
 

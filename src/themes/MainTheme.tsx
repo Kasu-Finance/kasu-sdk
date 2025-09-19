@@ -68,7 +68,6 @@ export const theme = createTheme({
       main {
         margin-top: 24px;
         padding-bottom: 16px;
-        overflow-x: hidden;
         position: relative;
         z-index: 1;
         min-height: calc(100vh - 436px); // header + footer height + main margin
@@ -145,7 +144,6 @@ export const theme = createTheme({
           transform: translate(-50%, -50%);
         }
       }
-
     `,
     },
     MuiAppBar: {

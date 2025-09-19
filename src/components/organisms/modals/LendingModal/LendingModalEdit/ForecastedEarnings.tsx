@@ -40,7 +40,7 @@ const ForecastedEarnings: React.FC<ForecastedEarningsProps> = ({
   return (
     <Box>
       <InfoRow
-        title='Forecast Monthly Earnings'
+        title='Forecast monthly earnings'
         showDivider
         dividerProps={{ color: 'white' }}
         toolTipInfo={
@@ -55,7 +55,8 @@ const ForecastedEarnings: React.FC<ForecastedEarningsProps> = ({
         metric={
           <Typography variant='baseMdBold'>
             {formatAmount(forecastedEarnings, { currency: 'USD' }).trimEnd()}
-            /month
+            {` / `}
+            month
           </Typography>
         }
         sx={{ pt: 0 }}

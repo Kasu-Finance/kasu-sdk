@@ -3,6 +3,7 @@ import React from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 
+import DottedDivider from '@/components/atoms/DottedDivider'
 import ProgressBar from '@/components/atoms/ProgressBar'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
@@ -32,27 +33,33 @@ const TrancheInfo: React.FC<TrancheInfoProps> = ({
   return (
     <Box bgcolor='gold.dark' borderRadius={2} p={2}>
       <Stack spacing={2}>
-        <ProgressBar
-          value={percentage * 100}
-          barStyles={{
-            height: 16,
-            '&.progress-background': { backgroundColor: 'gold.extraDark' },
-            '&.progress-foreground': {
-              borderRadius: 40,
-              backgroundColor: 'gray.extraDark',
-            },
-          }}
-          rootStyles={{ height: 16, borderRadius: 30 }}
-        >
-          <Typography variant='baseXs' width='100%' px={1}>
-            {formatPercentage(percentage, 0).replaceAll(' %', '%')} FULL
-          </Typography>
-        </ProgressBar>
+        <Box display='flex' alignItems='center' gap={2}>
+          <Typography variant='baseMd'>Tranche Capacity</Typography>
+          <ProgressBar
+            value={percentage * 100}
+            barStyles={{
+              height: 16,
+              '&.progress-background': { backgroundColor: 'gold.extraDark' },
+              '&.progress-foreground': {
+                borderRadius: 40,
+                backgroundColor: 'gray.extraDark',
+              },
+            }}
+            rootStyles={{ height: 16, borderRadius: 30, flex: 1 }}
+          >
+            <Typography variant='baseXs' width='100%' px={1}>
+              {formatPercentage(percentage, 0).replaceAll(' %', '%')} full
+            </Typography>
+          </ProgressBar>
+        </Box>
         {percentage === 1 && (
-          <Typography variant='baseSm' textAlign='center'>
-            Temporarily full. Please select another tranche and/or Lending
-            Strategy.
-          </Typography>
+          <>
+            <DottedDivider color='white' />
+            <Typography variant='baseMd' textAlign='center' color='white'>
+              Temporarily full. Please select another tranche and/or Lending
+              Strategy.
+            </Typography>
+          </>
         )}
       </Stack>
     </Box>

@@ -6,6 +6,7 @@ import Navigation from '@/components/molecules/header/Navigation'
 import HeaderBar from '@/components/organisms/header/HeaderBar'
 import HeaderLogo from '@/components/organisms/header/HeaderLogo'
 import ModeToggleButton from '@/components/organisms/header/ModeToggleButton'
+import PortfolioRedirect from '@/components/organisms/header/PortfolioRedirect'
 import Toolbar from '@/components/organisms/header/Toolbar'
 
 import { BaseRoutesPaths } from '@/config/routes'
@@ -19,8 +20,9 @@ const Header = () => {
             <HeaderLogo />
           </Link>
           <Navigation />
-          <Box display='flex' alignItems='center' ml='auto'>
+          <Box display='flex' alignItems='center'>
             {/* <ReferButton /> */}
+            <PortfolioRedirect />
             <ModeToggleButton />
             <ConnectWalletButton />
             {/* <CurrentLoyaltyCrown /> */}
