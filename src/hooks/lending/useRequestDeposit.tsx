@@ -157,8 +157,6 @@ const useRequestDeposit = () => {
 
       const receipt = await waitForReceipt(deposit)
 
-      localStorage.setItem('KASU_INITIAL_DEPOSIT', 'true')
-
       setTxHash(receipt.transactionHash)
 
       removeToast()
