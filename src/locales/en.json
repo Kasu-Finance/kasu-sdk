@@ -2257,7 +2257,9 @@
           "metric-3-tooltip-2": "The Delegate will continually accept nil, part, or all of the Withdrawal Requests at the end of each epoch until funds are fully returned to the Lender (assuming no losses or defaults by End Borrowers).",
           "metric-4": "Cancelled",
           "metric-4-tooltip-1": "The total USDC amount of Withdrawal Requests that you have cancelled across all Lending Strategies.",
-          "metric-4-tooltip-2": "Withdrawal Request Cancellations can only be submitted prior to the closure of the clearing period of the current epoch."
+          "metric-4-tooltip-2": "Withdrawal Request Cancellations can only be submitted prior to the closure of the clearing period of the current epoch.",
+          "metric-5": "Forced",
+          "metric-5-tooltip-1": "Adhoc withdrawal initiated by the Credit Originator for liquidity rebalancing purposes, caused by factors such as (but not limited to) excess funding."
         }
       },
       "detailedLendingRequestTransactions": {
@@ -2350,6 +2352,9 @@
       },
       "subheader-3": {
         "title": "KASU Referral Bonus"
+      },
+      "subheader-4": {
+        "title": "KASU Airdrops"
       },
       "bonusesAndRewards": "Bonuses and Rewards",
       "bonusYieldEarnings": "Bonus Interest Earnings",

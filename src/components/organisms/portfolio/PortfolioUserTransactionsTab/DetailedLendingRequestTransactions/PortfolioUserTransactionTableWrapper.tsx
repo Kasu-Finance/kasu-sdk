@@ -40,7 +40,7 @@ const PortfolioUserTransactionTableWrapper: React.FC<
   if (!pools.length)
     return (
       <EmptyDataPlaceholder
-        pb={3}
+        py={7}
         text='You have not yet made any Lending Requests...'
       />
     )

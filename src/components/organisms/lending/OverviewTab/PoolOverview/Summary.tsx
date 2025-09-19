@@ -29,7 +29,7 @@ const Summary: React.FC<SummaryProps> = ({ pool }) => {
           minWidth={200}
         />
       </Grid>
-      <Grid item flex={1}>
+      {/* <Grid item flex={1}>
         <WaveCard
           title={t('lending.poolOverview.detailCard.loansUnder.label')}
           toolTipInfo={t('lending.poolOverview.detailCard.loansUnder.tooltip')}
@@ -40,7 +40,7 @@ const Summary: React.FC<SummaryProps> = ({ pool }) => {
           height={126}
           minWidth={200}
         />
-      </Grid>
+      </Grid> */}
       <Grid item flex={1}>
         <WaveCard
           title={t(

@@ -23,14 +23,14 @@ const HomeOverview: React.FC<{
       })}`,
       unit: 'USDC',
     },
-    {
-      title: t('home.summary.metric-2'),
-      toolTipInfo: t('home.summary.metric-2-tooltip'),
-      content: `${formatAmount(lendingTotals?.loansUnderManagement || '0', {
-        minValue: 1_000_000,
-      })}`,
-      unit: 'USDC',
-    },
+    // {
+    //   title: t('home.summary.metric-2'),
+    //   toolTipInfo: t('home.summary.metric-2-tooltip'),
+    //   content: `${formatAmount(lendingTotals?.loansUnderManagement || '0', {
+    //     minValue: 1_000_000,
+    //   })}`,
+    //   unit: 'USDC',
+    // },
     {
       title: t('home.summary.metric-3'),
       toolTipInfo: t('home.summary.metric-3-tooltip'),
@@ -61,7 +61,7 @@ const HomeOverview: React.FC<{
         display={{ xs: 'grid' }}
         gridTemplateColumns={{
           xs: 'repeat(2, minmax(0, 1fr))',
-          lg: 'repeat(5, minmax(0, 1fr))',
+          lg: 'repeat(4, minmax(0, 1fr))',
         }}
         gap={{ xs: 2 }}
       >

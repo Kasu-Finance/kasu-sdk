@@ -36,7 +36,7 @@ const PoolTraction: React.FC<PoolTractionProps> = ({ pool }) => {
               unit='USDC'
             />
           </Grid>
-          <Grid item flex={1}>
+          {/* <Grid item flex={1}>
             <WaveCard
               title={t('details.poolTraction.management.label')}
               toolTipInfo={t('details.poolTraction.management.tooltip')}
@@ -45,7 +45,7 @@ const PoolTraction: React.FC<PoolTractionProps> = ({ pool }) => {
               })}
               unit='USDC'
             />
-          </Grid>
+          </Grid> */}
           <Grid item flex={1}>
             <WaveCard
               title={t('details.poolTraction.yield.label')}
