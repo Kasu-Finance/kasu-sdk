@@ -15,6 +15,7 @@ export type UserAirDropTicket = {
     epochId: number
     epochDate: EpochTimeStamp
     ticketOrder: string
+    requestId: string
   }[]
 }
 

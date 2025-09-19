@@ -14,19 +14,38 @@ const useUserAirdrops = () => {
     (
       qualifiedAirdrops: NonNullable<
         ReturnType<typeof useQualifiedAirdrops>['qualifiedAirdrops']
-      >
+      >,
+      address: string
     ) => {
       const filtered = qualifiedAirdrops.filter(
-        ({ userAddress }) =>
-          userAddress.toLowerCase() ===
-          '0x7b4a6f5fad9ab79749ec7190ec27beadd434a658'.toLowerCase()
+        ({ userAddress }) => userAddress.toLowerCase() === address.toLowerCase()
       )
 
       const grouped = groupBy(filtered, ({ epochId }) => epochId.toString())
 
+      const requestIdGroup = Object.entries(
+        groupBy(filtered, ({ requestId }) => requestId)
+      ).reduce((acc, [key, value]) => {
+        if (acc.has(key)) return acc
+
+        acc.set(key, value[0].totalAcceptedInEpoch)
+
+        return acc
+      }, new Map<string, number>())
+
       const airdrops = Object.values(grouped).map((group) => {
+        const uniqueRequestId = [
+          ...new Set(group.map(({ requestId }) => requestId)),
+        ]
+
+        const lendingAmount = uniqueRequestId.reduce((total, requestId) => {
+          const amount = requestIdGroup.get(requestId) ?? 0
+
+          return total + amount
+        }, 0)
+
         return {
-          lendingAmount: group[0].totalAcceptedInEpoch,
+          lendingAmount,
           acceptedEpoch: group[0].epochId,
           ticketsOwed: group.length,
           airDropDate: 'TGE + 90 days',
@@ -36,11 +55,14 @@ const useUserAirdrops = () => {
 
       return airdrops
     },
-    [address]
+    []
   )
 
   return {
-    userAirdrops: getUserAirdrops(qualifiedAirdrops ?? []),
+    userAirdrops:
+      address && qualifiedAirdrops
+        ? getUserAirdrops(qualifiedAirdrops, address)
+        : [],
     error,
     isLoading,
   }
