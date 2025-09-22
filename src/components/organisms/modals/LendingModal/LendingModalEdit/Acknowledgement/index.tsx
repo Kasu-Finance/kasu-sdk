@@ -8,7 +8,6 @@ import {
 import { memo, useEffect, useReducer } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
-import useLiteModeState from '@/hooks/context/useLiteModeState'
 import getTranslation from '@/hooks/useTranslation'
 
 import AcknowledgementContent from '@/components/organisms/modals/LendingModal/LendingModalEdit/Acknowledgement/AcknowledgementContent'
@@ -22,8 +21,6 @@ export type AcknowledgementStateType = Record<AcknowledgementTypes, boolean>
 
 const Acknowledgement = () => {
   const { t } = getTranslation()
-
-  const { isLiteMode } = useLiteModeState()
 
   const { termsAccepted, setTermsAccepted } = useDepositModalState()
 
@@ -63,37 +60,36 @@ const Acknowledgement = () => {
           toggleChecked={toggleChecked}
         />
       </FormGroup>
-      {!isLiteMode && (
-        <FormHelperText
+
+      <FormHelperText
+        sx={{
+          margin: '16px 0 0 0',
+          color: 'gray.extraDark',
+          ...customTypography.baseSm,
+        }}
+      >
+        <Typography variant='baseSmBold' component='span'>
+          {t('modals.lending.acknowledgement.edit.description-1')}
+        </Typography>{' '}
+        {t('modals.lending.acknowledgement.edit.description-2')}{' '}
+        <Button
+          variant='text'
           sx={{
-            margin: '16px 0 0 0',
-            color: 'gray.extraDark',
-            ...customTypography.baseSm,
+            p: 0,
+            height: 'auto',
+            textTransform: 'unset',
+            font: 'inherit',
+            verticalAlign: 'inherit',
+            display: 'inline',
+            color: 'white',
           }}
+          href={Routes.lending.termsAndConditions.url}
+          target='_blank'
         >
-          <Typography variant='baseSmBold' component='span'>
-            {t('modals.lending.acknowledgement.edit.description-1')}
-          </Typography>{' '}
-          {t('modals.lending.acknowledgement.edit.description-2')}{' '}
-          <Button
-            variant='text'
-            sx={{
-              p: 0,
-              height: 'auto',
-              textTransform: 'unset',
-              font: 'inherit',
-              verticalAlign: 'inherit',
-              display: 'inline',
-              color: 'white',
-            }}
-            href={Routes.lending.termsAndConditions.url}
-            target='_blank'
-          >
-            {t('modals.lending.acknowledgement.termsAndConditions')}
-          </Button>{' '}
-          {t('modals.lending.acknowledgement.edit.description-3')}
-        </FormHelperText>
-      )}
+          {t('modals.lending.acknowledgement.termsAndConditions')}
+        </Button>{' '}
+        {t('modals.lending.acknowledgement.edit.description-3')}
+      </FormHelperText>
     </FormControl>
   )
 }
