@@ -199,6 +199,7 @@ const Footer: React.FC = () => {
                   width: 'max-content',
                   height: 'max-content',
                   p: 0,
+                  textTransform: 'unset',
                 }}
               >
                 Terms of Use
