@@ -141,7 +141,7 @@ const LendingModalReviewActions = () => {
         fullWidth
         sx={{ textTransform: 'capitalize' }}
       >
-        {t('general.adjust')}
+        {t('general.amend')}
       </Button>
       {loanContractAccepted ? (
         <Button

@@ -46,7 +46,7 @@
     "to": "to",
     "wallet": "wallet",
     "none": "none",
-    "adjust": "adjust",
+    "amend": "amend",
     "csvDownload": "download as CSV",
     "overview": "overview",
     "poolApy": "Loan APY",
@@ -1724,7 +1724,6 @@
       },
       "button": {
         "review": "Review Withdrawal",
-        "adjust": "ADJUST",
         "confirm": "CONFIRM",
         "strategyOverview": "LENDING STRATEGY OVERVIEW",
         "viewTx": "View Transaction (TX)"

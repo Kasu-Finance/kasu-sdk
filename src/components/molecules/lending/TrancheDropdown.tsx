@@ -78,10 +78,10 @@ const TrancheDropdown: React.FC<TrancheDropdownProps> = ({
             {disableOversubscribed &&
             toBigNumber(val.maximumDeposit).isZero() ? (
               <>
-                (Oversubscribed)
+                (Full)
                 <ToolTip
                   placement='top'
-                  title='This tranche is temporarily oversubscribed. Please check again in the next epoch.'
+                  title='This Loan Tranche is temporarily full. Please check again in the next weekly epoch. Each weekly epoch ends every Tuesday at 6am UTC.'
                   iconSx={{
                     color: customPalette.gold.dark,
                     '&:hover': {

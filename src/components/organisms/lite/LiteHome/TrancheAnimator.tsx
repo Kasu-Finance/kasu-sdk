@@ -1,9 +1,10 @@
-import { Box, keyframes, Stack, Typography } from '@mui/material'
+import { Box, keyframes, Stack, StackProps, Typography } from '@mui/material'
 import { TrancheData } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { useState } from 'react'
 
 import ProgressBar from '@/components/atoms/ProgressBar'
 import ToolTip from '@/components/atoms/ToolTip'
+import LiteTrancheTooltip from '@/components/molecules/tooltips/Lite/LiteTrancheTooltip'
 
 import { formatPercentage } from '@/utils'
 
@@ -44,11 +45,14 @@ const letterSwapEffectLast = keyframes`
 // duration in seconds
 const ANIMATION_DURATION = 4
 
-type TrancheAnimatorProps = {
+type TrancheAnimatorProps = StackProps & {
   tranches: TrancheData[]
 }
 
-const TrancheAnimator: React.FC<TrancheAnimatorProps> = ({ tranches }) => {
+const TrancheAnimator: React.FC<TrancheAnimatorProps> = ({
+  tranches,
+  ...rest
+}) => {
   const [animate, setAnimate] = useState({
     active: 0,
     total: tranches.length,
@@ -79,7 +83,7 @@ const TrancheAnimator: React.FC<TrancheAnimatorProps> = ({ tranches }) => {
   }
 
   return (
-    <Stack mt={2} spacing={2}>
+    <Stack {...rest}>
       <Box
         display='flex'
         alignItems='center'
@@ -126,7 +130,7 @@ const TrancheAnimator: React.FC<TrancheAnimatorProps> = ({ tranches }) => {
                   </Typography>
                 ))}
                 <ToolTip
-                  title='info'
+                  title={<LiteTrancheTooltip />}
                   className='tranche-animation'
                   iconSx={{
                     color: 'gold.dark',

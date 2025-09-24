@@ -31,7 +31,7 @@ const UnlockModalReviewActions = () => {
         fullWidth
         sx={{ textTransform: 'capitalize' }}
       >
-        {t('general.adjust')}
+        {t('general.amend')}
       </Button>
       <Button
         variant='contained'

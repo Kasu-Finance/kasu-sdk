@@ -226,7 +226,7 @@ const ReferralBonus = () => {
             onClick={handleCopy}
             endIcon={<CopyIcon />}
           >
-            <Typography variant='inherit'>Copy your link</Typography>
+            <Typography variant='inherit'>Copy your referral link</Typography>
           </Button>
         </Typography> */}
       </Stack>
