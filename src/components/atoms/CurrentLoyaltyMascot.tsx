@@ -37,6 +37,7 @@ const CurrentLoyaltyMascot: React.FC<Omit<ImageProps, 'src' | 'alt'>> = (
       alt={`cat-level_${currentLevel}`}
       width={367}
       height={315}
+      priority
       {...props}
     />
   )
