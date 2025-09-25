@@ -8,8 +8,15 @@ import {
     rest,
     RestClient,
 } from '@directus/sdk';
+import { Provider } from '@ethersproject/abstract-provider';
+import { Signer } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils';
 import { GraphQLClient } from 'graphql-request';
 
+import {
+    KasuPoolExternalTVLAbi,
+    KasuPoolExternalTVLAbi__factory,
+} from '../../contracts';
 import { SdkConfig } from '../../sdk-config';
 import { getSystemVariablesQuery } from '../Locking/queries';
 import { SystemVariables } from '../Locking/types';
@@ -61,13 +68,21 @@ import {
 export class DataService {
     private readonly _graph: GraphQLClient;
     private readonly _plumeGraph: GraphQLClient;
+    private readonly _externalTvlAbi: KasuPoolExternalTVLAbi;
     private readonly _directus: DirectusClient<DirectusSchema> &
         AuthenticationClient<DirectusSchema> &
         RestClient<DirectusSchema>;
     private _directusPoolOverview: PoolOverviewDirectus[] | undefined;
     private _plumeTvl = new Map<string, string>();
 
-    constructor(private _kasuConfig: SdkConfig) {
+    constructor(
+        private _kasuConfig: SdkConfig,
+        signerOrProvider: Signer | Provider,
+    ) {
+        this._externalTvlAbi = KasuPoolExternalTVLAbi__factory.connect(
+            _kasuConfig.contracts.ExternalTVL,
+            signerOrProvider,
+        );
         this._graph = new GraphQLClient(_kasuConfig.subgraphUrl);
         this._plumeGraph = new GraphQLClient(_kasuConfig.plumeSubgraphUrl);
 
@@ -151,6 +166,30 @@ export class DataService {
         return await this._directus.request(readSingleton('NftBoost'));
     }
 
+    async getOffChainTvl(poolIds: string[]): Promise<Map<string, string>> {
+        const tvlMap = new Map<string, string>();
+
+        try {
+            const results = await Promise.all(
+                poolIds.map(
+                    async (id) =>
+                        [
+                            id,
+                            await this._externalTvlAbi.externalTVLOfPool(id),
+                        ] as const,
+                ),
+            );
+
+            for (const [id, tvl] of results) {
+                tvlMap.set(id, formatUnits(tvl, 6));
+            }
+        } catch (error) {
+            console.error('getOffChainTvl :', error);
+        }
+
+        return tvlMap;
+    }
+
     async getPoolOverview(
         epochId: string,
         id_in?: string[],
@@ -187,6 +226,10 @@ export class DataService {
                 }),
             );
         }
+
+        const offchainTvlMap = await this.getOffChainTvl(
+            poolOverviewResults.lendingPools.map(({ id }) => id),
+        );
 
         const retn: PoolOverview[] = [];
         for (const lendingPoolSubgraph of poolOverviewResults.lendingPools) {
@@ -344,7 +387,8 @@ export class DataService {
                       '0'
                     : '0';
 
-            const offChainTvl = lendingPoolDirectus.offchainTVL ?? '0';
+            const offChainTvl =
+                offchainTvlMap.get(lendingPoolSubgraph.id) ?? '0';
 
             const poolOverview: PoolOverview = {
                 id: lendingPoolSubgraph.id,

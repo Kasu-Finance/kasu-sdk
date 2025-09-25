@@ -42,7 +42,7 @@ export class Portfolio {
     ) {
         this._signerOrProvider = signerOrProvider;
         this._lockingService = new KSULocking(_kasuConfig, signerOrProvider);
-        this._dataService = new DataService(_kasuConfig);
+        this._dataService = new DataService(_kasuConfig, signerOrProvider);
         this._systemVariablesAbi = ISystemVariablesAbi__factory.connect(
             _kasuConfig.contracts.SystemVariables,
             signerOrProvider,

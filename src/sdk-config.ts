@@ -10,6 +10,7 @@ export interface ContractAddresses {
     KsuPrice: string;
     ClearingCoordinator: string;
     KasuNFTs: string;
+    ExternalTVL: string;
 }
 export class SdkConfig {
     subgraphUrl: string;

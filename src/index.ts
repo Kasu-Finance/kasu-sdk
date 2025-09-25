@@ -1,5 +1,5 @@
 import { Provider } from '@ethersproject/providers';
-import { Signer } from 'ethers';
+import { ethers, Signer } from 'ethers';
 import { GraphQLClient } from 'graphql-request';
 
 import { SdkConfig } from './sdk-config';
@@ -20,7 +20,7 @@ export class KasuSdk {
         this._graphClient = new GraphQLClient(config.subgraphUrl);
         this.Locking = new KSULocking(config, signerOrProvider);
         this.UserLending = new UserLending(config, signerOrProvider);
-        this.DataService = new DataService(config);
+        this.DataService = new DataService(config, signerOrProvider);
         this.Portfolio = new Portfolio(config, signerOrProvider);
         this.Swapper = new Swapper();
     }

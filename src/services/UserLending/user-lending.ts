@@ -116,7 +116,7 @@ export class UserLending {
             _kasuConfig.contracts.SystemVariables,
             signerOrProvider,
         );
-        this._dataService = new DataService(_kasuConfig);
+        this._dataService = new DataService(_kasuConfig, signerOrProvider);
         this._directus = createDirectus<DirectusSchema>(_kasuConfig.directusUrl)
             .with(authentication())
             .with(rest());

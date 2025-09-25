@@ -530,6 +530,7 @@ export class KSULocking {
             await this._graph.request(lockingPeriodsQuery);
         return data.lockPeriods;
     }
+
     getProjectedApy(): string {
         return '10.00';
     }
