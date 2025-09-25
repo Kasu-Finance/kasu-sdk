@@ -19,6 +19,7 @@ export const sdkConfig: SdkConfig = {
     UserLoyaltyRewards: sepolia.UserLoyaltyRewards.address,
     ClearingCoordinator: sepolia.ClearingCoordinator.address,
     KasuNFTs: sepolia.KasuNFTs.address,
+    ExternalTVL: sepolia.ExternalTVL.address,
   },
   directusUrl: 'https://kasu-dev.directus.app/',
   UNUSED_LENDING_POOL_IDS: [''], // will be initialized later
