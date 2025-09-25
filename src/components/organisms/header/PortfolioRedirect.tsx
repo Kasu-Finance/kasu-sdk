@@ -1,13 +1,13 @@
 'use client'
 
-import WorkIcon from '@mui/icons-material/Work'
 import { IconButton } from '@mui/material'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
 
 import useLiteModeState from '@/hooks/context/useLiteModeState'
 
 import NextLink from '@/components/atoms/NextLink'
+
+import { PortfolioIcon } from '@/assets/icons'
 
 import { Routes } from '@/config/routes'
 
@@ -16,27 +16,7 @@ const PortfolioRedirect = () => {
 
   const { isLiteMode } = useLiteModeState()
 
-  const [initialDeposit, setInitialDeposit] = useState<boolean | undefined>()
-
-  useEffect(() => {
-    if (
-      typeof localStorage !== 'undefined' &&
-      typeof initialDeposit === 'undefined'
-    ) {
-      const initialState = localStorage.getItem('KASU_INITIAL_DEPOSIT')
-
-      if (!initialState) {
-        localStorage.setItem('KASU_INITIAL_DEPOSIT', 'false')
-        setInitialDeposit(false)
-        return
-      }
-
-      setInitialDeposit(initialState === 'true')
-    }
-  }, [initialDeposit])
-
-  if (!initialDeposit || !isLiteMode || path !== Routes.lending.root.url)
-    return null
+  if (!isLiteMode || path !== Routes.lending.root.url) return null
 
   return (
     <IconButton
@@ -62,7 +42,7 @@ const PortfolioRedirect = () => {
       LinkComponent={NextLink}
       href={Routes.portfolio.root.url}
     >
-      <WorkIcon />
+      <PortfolioIcon />
     </IconButton>
   )
 }

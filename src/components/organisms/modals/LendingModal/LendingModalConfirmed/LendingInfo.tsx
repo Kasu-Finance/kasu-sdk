@@ -37,7 +37,7 @@ const LendingInfo = () => {
         <Typography variant='baseMdBold'>
           {mergeSubheading(pool.poolName, pool.subheading)}
           {pool.tranches.length > 1
-            ? `, ${selectedTranche?.name} ${t('general.tranche')}`
+            ? `- ${selectedTranche?.name} ${t('general.tranche')}`
             : null}
         </Typography>
       </Typography>

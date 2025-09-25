@@ -8,6 +8,8 @@ import getTranslation from '@/hooks/useTranslation'
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
 import GrossApyTooltip from '@/components/molecules/tooltips/GrossApyTooltip'
+import LiteTrancheGrossApyTooltip from '@/components/molecules/tooltips/Lite/LiteTrancheGrossApyTooltip'
+import LiteTrancheTooltip from '@/components/molecules/tooltips/Lite/LiteTrancheTooltip'
 import TrancheGrossApyTooltip from '@/components/molecules/tooltips/TrancheGrossApyTooltip'
 
 import dayjs from '@/dayjs'
@@ -83,15 +85,19 @@ const LendingModalReviewOverview = () => {
         <InfoRow
           title={t('general.tranche')}
           toolTipInfo={
-            !isLiteMode && (
-              <ToolTip
-                title={t('modals.lending.review.metric-4-tooltip')}
-                iconSx={{
-                  color: 'gold.extraDark',
-                  '&:hover': { color: 'rgba(133, 87, 38, 1)' },
-                }}
-              />
-            )
+            <ToolTip
+              title={
+                isLiteMode ? (
+                  <LiteTrancheTooltip />
+                ) : (
+                  t('modals.lending.review.metric-4-tooltip')
+                )
+              }
+              iconSx={{
+                color: 'gold.extraDark',
+                '&:hover': { color: 'rgba(133, 87, 38, 1)' },
+              }}
+            />
           }
           metric={
             <Typography variant='baseMdBold'>
@@ -106,15 +112,19 @@ const LendingModalReviewOverview = () => {
       <InfoRow
         title={t('general.grossApy')}
         toolTipInfo={
-          !isLiteMode && (
-            <ToolTip
-              title={<TrancheGrossApyTooltip />}
-              iconSx={{
-                color: 'gold.extraDark',
-                '&:hover': { color: 'rgba(133, 87, 38, 1)' },
-              }}
-            />
-          )
+          <ToolTip
+            title={
+              isLiteMode ? (
+                <LiteTrancheGrossApyTooltip />
+              ) : (
+                <TrancheGrossApyTooltip />
+              )
+            }
+            iconSx={{
+              color: 'gold.extraDark',
+              '&:hover': { color: 'rgba(133, 87, 38, 1)' },
+            }}
+          />
         }
         metric={
           <Typography variant='baseMdBold' display='flex' alignItems='center'>

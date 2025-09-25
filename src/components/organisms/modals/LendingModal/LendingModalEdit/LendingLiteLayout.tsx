@@ -98,6 +98,7 @@ const LendingLiteLayout: React.FC<LiteLayoutProps> = ({
         selectedPool={selectedPool}
         selectedTranche={selectedTranche}
         setSelectedTranche={handleTrancheChange}
+        showApy
       />
       <TrancheInfo
         selectedPool={selectedPool}

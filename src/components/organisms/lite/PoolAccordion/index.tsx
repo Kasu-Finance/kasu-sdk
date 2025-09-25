@@ -16,6 +16,7 @@ import DottedDivider from '@/components/atoms/DottedDivider'
 import LendButton from '@/components/atoms/LendButton'
 import ProgressBar from '@/components/atoms/ProgressBar'
 import ToolTip from '@/components/atoms/ToolTip'
+import LiteTrancheTooltip from '@/components/molecules/tooltips/Lite/LiteTrancheTooltip'
 
 import { formatPercentage } from '@/utils'
 
@@ -101,7 +102,7 @@ const PoolAccordion: React.FC<PoolAccordionProps> = ({
                             {formatPercentage(tranche.apy)} {t('general.apy')}
                           </Typography>
                           <ToolTip
-                            title='info'
+                            title={<LiteTrancheTooltip />}
                             iconSx={{
                               color: 'gold.dark',
                               '&:hover': {

@@ -13,12 +13,14 @@ type LendingTrancheDropdownProps = {
     tranche: `0x${string}`,
     defaultFixedTermConfigId: string | undefined
   ) => void
+  showApy?: boolean
 }
 
 const LendingTrancheDropdown: React.FC<LendingTrancheDropdownProps> = ({
   selectedPool,
   selectedTranche,
   setSelectedTranche,
+  showApy,
 }) => {
   const { modal } = useModalState()
 
@@ -32,6 +34,7 @@ const LendingTrancheDropdown: React.FC<LendingTrancheDropdownProps> = ({
       selectedTranche={selectedTranche}
       setSelectedTranche={setSelectedTranche}
       disableOversubscribed
+      showApy={showApy}
     />
   )
 }

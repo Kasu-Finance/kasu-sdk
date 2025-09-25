@@ -62,6 +62,19 @@ export const theme = createTheme({
           background-size: 100% 817px;
           background-repeat: no-repeat;
           background-color: #0C0C0E;
+          position: relative;
+
+          &::after {
+            position: absolute;
+            content: "";
+            top: 0;
+            left: 0;
+            height: 1251px;
+            width: 100%;
+            background: linear-gradient(180deg, rgba(25, 24, 26, 0) 0%, #0B0B0D 65%);
+            z-index: 1;
+            pointer-events: none;
+          }
         }
       }
 
@@ -69,7 +82,7 @@ export const theme = createTheme({
         margin-top: 24px;
         padding-bottom: 16px;
         position: relative;
-        z-index: 1;
+        z-index: 2;
         min-height: calc(100vh - 436px); // header + footer height + main margin
       }
 
@@ -643,6 +656,16 @@ export const theme = createTheme({
           color: '#fff',
           backgroundColor: 'rgba(212, 98, 98, 1)',
         },
+        outlined: {
+          '&.Mui-disabled': {
+            borderColor: customPalette.gray.dark,
+            color: customPalette.gray.dark,
+
+            '&:hover': {
+              backgroundColor: 'unset',
+            },
+          },
+        },
       },
     },
     MuiSelect: {
@@ -718,13 +741,12 @@ export const theme = createTheme({
           overflow: 'auto',
           lineHeight: 1.5,
           padding: '4px 8px 6px 8px',
-          backgroundColor: 'rgba(40, 40, 42, 0.9)',
+          backgroundColor: 'rgba(20, 20, 20, 0.9)',
           color: '#ffffff',
           backdropFilter: 'blur(1px)',
           borderRadius: '4px',
           boxShadow: '0px 8px 12px 0px rgba(0, 0, 0, 0.25)',
         },
-
         arrow: {
           color: 'rgba(97, 97, 97, 0.9)',
         },

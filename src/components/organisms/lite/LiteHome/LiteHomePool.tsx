@@ -5,6 +5,7 @@ import { useReducer } from 'react'
 import LendButton from '@/components/atoms/LendButton'
 import ToolTip from '@/components/atoms/ToolTip'
 import WaveBox from '@/components/atoms/WaveBox'
+import LiteApyTooltip from '@/components/molecules/tooltips/Lite/LiteApyTooltip'
 import TrancheAnimator from '@/components/organisms/lite/LiteHome/TrancheAnimator'
 
 import { CollapsedCloseIcon, CollapsedOpenIcon } from '@/assets/icons'
@@ -18,9 +19,14 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 type LiteHomePoolProps = {
   pool: PoolOverviewWithDelegate
   currentEpoch: string
+  layoutType: 1 | 2 | 3
 }
 
-const LiteHomePool: React.FC<LiteHomePoolProps> = ({ pool, currentEpoch }) => {
+const LiteHomePool: React.FC<LiteHomePoolProps> = ({
+  pool,
+  currentEpoch,
+  layoutType,
+}) => {
   const [collapsed, toggleCollapsed] = useReducer((prev) => !prev, false)
 
   const maxApy = [...pool.tranches].reduce(
@@ -41,63 +47,93 @@ const LiteHomePool: React.FC<LiteHomePoolProps> = ({ pool, currentEpoch }) => {
             animationPlayState: 'paused',
           },
         },
+        ...(layoutType === 1 && {
+          maxWidth: 652,
+        }),
       }}
+      size={12 / layoutType}
       textAlign='center'
     >
-      <Box display='flex' alignItems='center' justifyContent='center'>
-        <WaveBox
-          variant='dark-gray'
-          className='wave-box'
-          sx={{
-            borderRadius: '50%',
-            width: 276,
-            height: 276,
-            position: 'absolute',
-            zIndex: -1,
-            transition: 'width 0.3s ease, height 0.3s ease',
-          }}
-        />
-        <Image
-          src={pool.thumbnailImageUrl}
-          alt={pool.poolName}
-          width={584}
-          height={584}
-          style={{
-            width: 330,
-            height: 330,
-          }}
-        />
-      </Box>
-      <Typography fontFamily={headingFontFamily} fontSize={18} color='white'>
-        UP TO
-      </Typography>
-      <Box display='flex' alignItems='end' justifyContent='center'>
-        <Typography
-          fontFamily={headingFontFamily}
-          fontSize={64}
-          fontWeight={300}
-          color='white'
-          lineHeight='52px'
-        >
-          <Typography variant='inherit' fontWeight={700} component='span'>
-            {formatPercentage(maxApy, 0).replaceAll(' %', '%')}{' '}
+      <Box
+        sx={
+          layoutType === 1
+            ? {
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
+              }
+            : null
+        }
+      >
+        <Box display='flex' alignItems='center' justifyContent='center'>
+          <WaveBox
+            variant='dark-gray'
+            className='wave-box'
+            sx={{
+              borderRadius: '50%',
+              width: 276,
+              height: 276,
+              position: 'absolute',
+              zIndex: -1,
+              transition: 'width 0.3s ease, height 0.3s ease',
+            }}
+          />
+          <Image
+            src={pool.thumbnailImageUrl}
+            alt={pool.poolName}
+            width={584}
+            height={584}
+            style={{
+              width: 330,
+              height: 330,
+            }}
+          />
+        </Box>
+        <Box>
+          <Typography
+            fontFamily={headingFontFamily}
+            fontSize={18}
+            color='white'
+          >
+            UP TO
           </Typography>
-          APY
-        </Typography>
-        <ToolTip
-          title='info'
-          iconSx={{
-            color: 'gold.dark',
-            '&:hover': {
-              color: 'gold.extraDark',
-            },
-          }}
-        />
+          <Box display='flex' alignItems='end' justifyContent='center'>
+            <Typography
+              fontFamily={headingFontFamily}
+              fontSize={64}
+              fontWeight={300}
+              color='white'
+              lineHeight='52px'
+            >
+              <Typography variant='inherit' fontWeight={700} component='span'>
+                {formatPercentage(maxApy, 0).replaceAll(' %', '%')}{' '}
+              </Typography>
+              APY
+            </Typography>
+            <ToolTip
+              title={<LiteApyTooltip />}
+              iconSx={{
+                color: 'gold.dark',
+                '&:hover': {
+                  color: 'gold.extraDark',
+                },
+              }}
+            />
+          </Box>
+          <Typography
+            variant='h3'
+            color='gold.dark'
+            mt={layoutType === 1 ? 4 : 2}
+          >
+            {pool.poolName}
+          </Typography>
+          <TrancheAnimator
+            tranches={pool.tranches}
+            mt={layoutType === 1 ? 3 : 2}
+            spacing={layoutType === 1 ? 4 : 2}
+          />
+        </Box>
       </Box>
-      <Typography variant='h3' color='gold.dark' mt={2}>
-        {pool.poolName}
-      </Typography>
-      <TrancheAnimator tranches={pool.tranches} />
       <IconButton
         onClick={toggleCollapsed}
         sx={{

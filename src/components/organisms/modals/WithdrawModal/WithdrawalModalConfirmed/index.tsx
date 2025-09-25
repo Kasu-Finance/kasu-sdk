@@ -33,7 +33,7 @@ const WithdrawalModalConfirmed = () => {
           {t('lending.withdraw.confirmStep.description-1')}{' '}
           {mergeSubheading(selectedPool.poolName, selectedPool.subheading)}
           {selectedPool.tranches.length > 1
-            ? `, ${selectedTranche?.name} ${t('general.tranche')}`
+            ? `- ${selectedTranche?.name} ${t('general.tranche')}`
             : null}{' '}
           {t('lending.withdraw.confirmStep.description-2')}{' '}
           <Typography variant='baseMdBold'>

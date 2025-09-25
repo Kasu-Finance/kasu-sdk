@@ -57,7 +57,7 @@ const RewardsBasicStats = () => {
           <InfoRow
             title='Weekly Protocol Fees'
             titleStyle={{ color: 'white' }}
-            toolTipInfo='info'
+            toolTipInfo='The amount of Protocol Fees you are expected to earn for the current 7-day epoch, based on your Kasu Loyalty Level.'
             toolTipProps={{
               iconSx: {
                 color: 'gold.dark',
@@ -78,7 +78,7 @@ const RewardsBasicStats = () => {
           <InfoRow
             title='Weekly KASU Rewards'
             titleStyle={{ color: 'white' }}
-            toolTipInfo='info'
+            toolTipInfo='The amount of KASU Rewards you are expected to earn for the current 7-day epoch. See below Rewards Portfolio for a full breakdown.'
             toolTipProps={{
               iconSx: {
                 color: 'gold.dark',

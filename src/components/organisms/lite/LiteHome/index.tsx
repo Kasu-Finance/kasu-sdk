@@ -1,7 +1,9 @@
 'use client'
 
-import { Grid2, Stack, Typography } from '@mui/material'
+import { Grid2, Pagination, Stack, Typography } from '@mui/material'
 import React from 'react'
+
+import usePagination from '@/hooks/usePagination'
 
 import KasuIntroVideo from '@/components/organisms/lite/LiteHome/KasuIntroVideo'
 import LiteHomePool from '@/components/organisms/lite/LiteHome/LiteHomePool'
@@ -13,7 +15,14 @@ type LiteHomeProps = {
   pools: PoolOverviewWithDelegate[]
 }
 
+const CARDS_PER_PAGE = 3
+
 const LiteHome: React.FC<LiteHomeProps> = ({ pools, currentEpoch }) => {
+  const { currentPage, setPage, paginateData } = usePagination(
+    CARDS_PER_PAGE,
+    pools.length
+  )
+
   return (
     <Stack>
       <Typography
@@ -37,14 +46,46 @@ const LiteHome: React.FC<LiteHomeProps> = ({ pools, currentEpoch }) => {
         Real businesses. Trusted lending partners. Proven tack track record.
       </Typography>
       <Typography variant='baseLg' color='white' textAlign='center' mt={1}>
-        Our partner Apxium has issued over $3B in loans with no losses in 8
-        years.
+        Our partner Apxium has originated over $30M in loans with zero losses
+        across its full 8-year operating history.
       </Typography>
-      <Grid2 container spacing={8} mt={5}>
-        {pools.map((pool) => (
-          <LiteHomePool key={pool.id} pool={pool} currentEpoch={currentEpoch} />
+      <Grid2
+        container
+        spacing={pools.length === 2 ? 27 : 11}
+        mt={5}
+        justifyContent='space-evenly'
+        sx={
+          pools.length === 2
+            ? {
+                px: 18,
+              }
+            : null
+        }
+      >
+        {paginateData([...pools], true).map((pool, index, orgArr) => (
+          <LiteHomePool
+            key={index}
+            layoutType={Math.min(orgArr.length, 3) as 1 | 2 | 3}
+            pool={pool}
+            currentEpoch={currentEpoch}
+          />
         ))}
       </Grid2>
+
+      {pools.length > CARDS_PER_PAGE && (
+        <Pagination
+          color='primary'
+          boundaryCount={2}
+          siblingCount={0}
+          count={Math.ceil(pools.length / CARDS_PER_PAGE)}
+          page={currentPage}
+          onChange={(_, page) => setPage(page)}
+          sx={{
+            mt: 5,
+            mx: 'auto',
+          }}
+        />
+      )}
       <KasuIntroVideo />
       <Typography
         variant='h3'
@@ -52,7 +93,7 @@ const LiteHome: React.FC<LiteHomeProps> = ({ pools, currentEpoch }) => {
         color='gold.dark'
         textAlign='center'
       >
-        Built on Base · KYC required
+        Built on Base Â· KYC required
       </Typography>
     </Stack>
   )
