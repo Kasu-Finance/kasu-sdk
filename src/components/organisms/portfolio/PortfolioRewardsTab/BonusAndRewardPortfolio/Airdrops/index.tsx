@@ -1,24 +1,18 @@
 'use client'
 
 import { Stack, TableCell, TableRow, Typography } from '@mui/material'
-import { formatEther } from 'ethers/lib/utils'
 
 import useUserAirdrops from '@/hooks/lending/useUserAirdrops'
 import getTranslation from '@/hooks/useTranslation'
-import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
 import CustomTable from '@/components/molecules/CustomTable'
 
-import { convertFromUSD, formatAmount, toBigNumber } from '@/utils'
-
-const TICKET_USD_VALUE = 50
+import { formatAmount } from '@/utils'
 
 const Airdrops = () => {
   const { t } = getTranslation()
 
   const { userAirdrops } = useUserAirdrops()
-
-  const { ksuPrice } = useKsuPrice()
 
   if (!userAirdrops.length) return null
 
@@ -49,13 +43,6 @@ const Airdrops = () => {
           </TableRow>
         }
         tableBody={userAirdrops.map((airdrops) => {
-          const airdropsOwed = airdrops.ticketsOwed * TICKET_USD_VALUE
-
-          const airDropsOwedInKSU = convertFromUSD(
-            toBigNumber(airdropsOwed.toString()),
-            toBigNumber(ksuPrice || '0')
-          )
-
           return (
             <TableRow key={airdrops.acceptedEpoch}>
               <TableCell>
@@ -71,20 +58,9 @@ const Airdrops = () => {
               </TableCell>
               <TableCell align='right'>{airdrops.acceptedEpoch}</TableCell>
               <TableCell align='right'>
-                <Stack>
-                  <Typography variant='baseSm'>
-                    {formatAmount(formatEther(airDropsOwedInKSU), {
-                      minDecimals: 2,
-                    })}{' '}
-                    KASU
-                  </Typography>
-                  <Typography variant='baseSm' color='gray.middle'>
-                    {formatAmount(airdropsOwed, {
-                      minDecimals: 2,
-                    })}{' '}
-                    USDC
-                  </Typography>
-                </Stack>
+                <Typography variant='baseSm'>
+                  {airdrops.ticketsOwed}x
+                </Typography>
               </TableCell>
               <TableCell align='right'>
                 TGE + 90 days

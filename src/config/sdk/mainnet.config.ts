@@ -19,6 +19,7 @@ export const sdkConfig: SdkConfig = {
     UserLoyaltyRewards: base.UserLoyaltyRewards.address,
     ClearingCoordinator: base.ClearingCoordinator.address,
     KasuNFTs: base.KasuNFTs.address,
+    ExternalTVL: base.ExternalTVL.address,
   },
   UNUSED_LENDING_POOL_IDS: [''], // will be initialized later
   directusUrl: 'https://kasu-finance.directus.app/',
