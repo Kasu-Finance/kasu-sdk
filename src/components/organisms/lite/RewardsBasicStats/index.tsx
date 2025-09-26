@@ -1,13 +1,24 @@
 import { Grid2, Stack, Typography } from '@mui/material'
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
 import InfoRow from '@/components/atoms/InfoRow'
-import TokenAmount from '@/components/atoms/TokenAmount'
 import WaveBox from '@/components/atoms/WaveBox'
+import LifetimeFeesEarned from '@/components/organisms/portfolio/PortfolioSummary/LifetimeFeesEarned'
+import LifetimeKsuBonusRewards from '@/components/organisms/portfolio/PortfolioSummary/LifetimeKsuBonusRewards'
 
+import { customPalette } from '@/themes/palette'
 import { formatAmount } from '@/utils'
 
-const RewardsBasicStats = () => {
+type RewardsBasicStatsProps = {
+  pools: PoolOverview[]
+  currentEpoch: string
+}
+
+const RewardsBasicStats: React.FC<RewardsBasicStatsProps> = ({
+  currentEpoch,
+  pools,
+}) => {
   return (
     <Stack spacing={3}>
       <Grid2 container spacing={3}>
@@ -16,14 +27,22 @@ const RewardsBasicStats = () => {
             <Typography variant='baseMd' color='white'>
               Lifetime Protocol Fees
             </Typography>
-            <TokenAmount
-              amount={formatAmount(10_000, { minDecimals: 2 })}
-              symbol='USDC'
+            <LifetimeFeesEarned
+              poolOverviews={pools}
+              currentEpoch={currentEpoch}
               amountProps={{
                 variant: 'h2',
               }}
               symbolProps={{
                 color: 'white',
+              }}
+              skeletonProps={{
+                sx: {
+                  backgroundColor: customPalette.gold.dark,
+                  mt: 2,
+                },
+                height: 42,
+                width: 160,
               }}
             />
           </WaveBox>
@@ -33,15 +52,24 @@ const RewardsBasicStats = () => {
             <Typography variant='baseMd' color='white'>
               Lifetime KASU Rewards
             </Typography>
-            <TokenAmount
-              amount={formatAmount(1_000, { minDecimals: 2 })}
-              symbol='USDC'
+            <LifetimeKsuBonusRewards
+              poolOverviews={pools}
+              currentEpoch={currentEpoch}
               amountProps={{
                 variant: 'h2',
               }}
               symbolProps={{
                 color: 'white',
               }}
+              skeletonProps={{
+                sx: {
+                  backgroundColor: customPalette.gold.dark,
+                  mt: 2,
+                },
+                height: 42,
+                width: 160,
+              }}
+              showUsdAmout={false}
             />
           </WaveBox>
         </Grid2>

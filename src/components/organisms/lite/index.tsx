@@ -48,7 +48,7 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({
                 {t('lite.lendingPortfolio.title')}
               </Typography>
               <Stack spacing={3}>
-                <LendingBasicStats />
+                <LendingBasicStats pools={pools} currentEpoch={currentEpoch} />
                 <PendingTransactionRequests currentEpoch={currentEpoch} />
                 <LendingDecisionsPending pools={pools} />
                 <LiteLendingPortfolio
@@ -66,7 +66,7 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({
                 {t('lite.rewardsPortfolio.title')}
               </Typography>
               <Stack spacing={5}>
-                <RewardsBasicStats />
+                <RewardsBasicStats pools={pools} currentEpoch={currentEpoch} />
                 <LockingRewards />
                 <NftRewards />
                 <LiteReferralBonus />
