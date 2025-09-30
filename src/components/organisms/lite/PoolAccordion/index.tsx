@@ -9,6 +9,7 @@ import {
   Typography,
 } from '@mui/material'
 import React, { Fragment, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 
 import getTranslation from '@/hooks/useTranslation'
 
@@ -85,7 +86,9 @@ const PoolAccordion: React.FC<PoolAccordionProps> = ({
             </AccordionSummary>
             <AccordionDetails sx={{ color: 'white', px: 0 }}>
               <Stack spacing={3}>
-                <Typography variant='baseSm'>{pool.liteDescription}</Typography>
+                <Typography variant='baseSm'>
+                  <ReactMarkdown>{pool.liteDescription}</ReactMarkdown>
+                </Typography>
                 <Stack spacing={1.5}>
                   {pool.tranches.map((tranche) => (
                     <Stack key={tranche.id}>

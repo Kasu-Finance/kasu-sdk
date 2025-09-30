@@ -59,6 +59,7 @@
     "pino-pretty": "^11.0.0",
     "pluno-web-chatbot": "^1.0.8",
     "puppeteer": "^24.4.0",
+    "react-markdown": "^7.0.0",
     "sass": "^1.69.5",
     "sharp": "^0.33.5",
     "styled-components": "^6.1.2",

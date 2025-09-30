@@ -1,6 +1,7 @@
 import { Box, Collapse, Grid2, IconButton, Typography } from '@mui/material'
 import Image from 'next/image'
 import { useReducer } from 'react'
+import ReactMarkdown from 'react-markdown'
 
 import LendButton from '@/components/atoms/LendButton'
 import ToolTip from '@/components/atoms/ToolTip'
@@ -155,7 +156,7 @@ const LiteHomePool: React.FC<LiteHomePoolProps> = ({
       </IconButton>
       <Collapse in={collapsed} timeout={300}>
         <Typography variant='baseMd' color='white'>
-          {pool.liteDescription}
+          <ReactMarkdown skipHtml>{pool.liteDescription}</ReactMarkdown>
         </Typography>
       </Collapse>
       <LendButton
