@@ -5,6 +5,8 @@ import Image from 'next/image'
 import { useEffect } from 'react'
 import { useAccount, useChainId } from 'wagmi'
 
+import LiteModeRenderer from '@/components/atoms/LiteModeRenderer'
+
 import Cat from '@/images/cat.png'
 
 export default function Error({
@@ -41,9 +43,18 @@ export default function Error({
   return (
     <Stack mt={20} alignItems='center'>
       <Image src={Cat} alt='Cat' style={{ width: 548, height: 'auto' }} />
-      <Typography variant='h3' color='gray.extraDark'>
-        Currently under maintenance, please try again later.
-      </Typography>
+      <LiteModeRenderer
+        renderOnLiteMode={
+          <Typography variant='h3' color='white'>
+            Currently under maintenance, please try again later.
+          </Typography>
+        }
+        otherwise={
+          <Typography variant='h3' color='gray.extraDark'>
+            Currently under maintenance, please try again later.
+          </Typography>
+        }
+      />
     </Stack>
   )
 }

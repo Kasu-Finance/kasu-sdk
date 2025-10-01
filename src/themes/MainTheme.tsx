@@ -69,11 +69,12 @@ export const theme = createTheme({
             content: "";
             top: 0;
             left: 0;
-            height: 1251px;
+            max-height: 1251px;
             width: 100%;
             background: linear-gradient(180deg, rgba(25, 24, 26, 0) 0%, #0B0B0D 65%);
             z-index: 1;
             pointer-events: none;
+            height: 70vh;
           }
         }
       }
