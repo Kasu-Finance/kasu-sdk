@@ -15,9 +15,10 @@ export const getUnusedPools = unstable_cache(
     )
 
     if (!res.ok) {
-      throw new Error(
+      console.error(
         `Failed to fetch unused pools data: ${res.status} ${res.statusText}`
       )
+      return []
     }
 
     const unusedPools: { data: PoolOverviewDirectus[] } = await res.json()
