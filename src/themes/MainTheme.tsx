@@ -55,6 +55,31 @@ export const theme = createTheme({
         font-family: ${primaryFontFamily};
         display:grid;
         grid-template-rows: max-content minmax(max-content, 1fr) max-content;
+<<<<<<< Updated upstream
+=======
+        overflow-x: hidden;
+
+        &.lite-mode {
+          background-image: url('/images/lite-mode-background.png');
+          background-size: 100% 817px;
+          background-repeat: no-repeat;
+          background-color: #0C0C0E;
+          position: relative;
+
+          &::after {
+            position: absolute;
+            content: "";
+            top: 0;
+            left: 0;
+            max-height: 1251px;
+            width: 100%;
+            background: linear-gradient(180deg, rgba(25, 24, 26, 0) 0%, #0B0B0D 65%);
+            z-index: 1;
+            pointer-events: none;
+            height: 70vh;
+          }
+        }
+>>>>>>> Stashed changes
       }
 
       main {
