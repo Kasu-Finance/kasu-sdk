@@ -75,9 +75,9 @@ const NextClearingPeriodInfo: React.FC<NextClearingPeriodInfoProps> = ({
           />
         ) : (
           <Typography variant='baseMdBold' {...timeTypographyProps}>
+            {formattedNextClearingPeriod.date} at{' '}
             {formattedNextClearingPeriod.timestamp}{' '}
-            {formattedNextClearingPeriod.utcOffset} •{' '}
-            {formattedNextClearingPeriod.date}
+            {formattedNextClearingPeriod.utcOffset}
           </Typography>
         )}
       </Typography>
