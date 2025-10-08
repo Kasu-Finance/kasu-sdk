@@ -70,7 +70,7 @@ const UnlockModalReview = () => {
             />
           ) : (
             <Typography variant='baseMdBold'>
-              {formattedTime.date} • {formattedTime.timestamp}{' '}
+              {formattedTime.date} at {formattedTime.timestamp}{' '}
               {formattedTime.utcOffset}
             </Typography>
           )}
