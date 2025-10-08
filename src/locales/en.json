@@ -75,7 +75,7 @@
     "request": "Request",
     "approved": "Approved",
     "confirmed": "Confirmed",
-    "nextClearingPeriodStart": "Next Clearing Period Starts at",
+    "nextClearingPeriodStart": "Next Clearing Period Starts on",
     "slippage": "Slippage",
     "strategies": "Strategies",
     "active": "Active",
@@ -770,7 +770,7 @@
       "reviewLock": {
         "unlockingSchedule": "Your KASU unlock request is scheduled for the end of the current Epoch.",
         "metric-2-tooltip": "The amount of KASU you request to unlock at the end of the current locking period.",
-        "epochEnds": "Epoch Ends in"
+        "epochEnds": "Epoch Ends on"
       },
       "overview": {
         "lockedDate": "Locked Date",
@@ -1384,7 +1384,7 @@
         "lockAmount-tooltip": "The amount of KASU you are requesting to lock.",
         "lockingDuration": "Locking Duration",
         "lockingDuration-tooltip": "The number of days you are requesting your KASU to be locked for.",
-        "epochEnds": "Epoch ends in",
+        "epochEnds": "Epoch Ends on",
         "depositSchedule": "Your KASU Lock Request will be schedule for the end of the current Epoch.",
         "nextClearing": "Next clearing day commences in"
       },
@@ -1433,7 +1433,7 @@
       "metric-3-tooltip": "The date of your original lending withdrawal request.",
       "metric-4-tooltip": "The loan Tranche related to this Lending Strategy that you request a withdrawal cancellation from.",
       "epochEndsText": "Tho Outcome of this Withdrawal Request will be determined at the end of the epoch clearing period.",
-      "epochEnds": "Epoch Ends in",
+      "epochEnds": "Epoch Ends on",
       "cancel-button": "Cancel Withdrawal Request"
     },
     "cancelDeposit": {
@@ -1635,7 +1635,7 @@
       "subtitle": "Total Withdrawal Request Amount",
       "fromPool": "From Lending Strategy",
       "toWallet": "To Wallet",
-      "epochEnds": "Epoch ends in",
+      "epochEnds": "Epoch Ends on",
       "withdrawalSchedule-1": "Withdrawal will be scheduled for the end of the current Epoch.",
       "withdrawalSchedule-2": "The final Withdrawal Amount may vary due to Lending Strategy conditions.",
       "amountInput": {

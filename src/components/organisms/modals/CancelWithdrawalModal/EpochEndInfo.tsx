@@ -38,8 +38,8 @@ const EpochEndInfo: React.FC<EpochEndInfoProps> = ({ beforeText }) => {
         ) : (
           <Typography variant='baseMdBold' display='inline'>
             {' '}
-            {formattedNextEpochTime.timestamp}{' '}
-            {formattedNextEpochTime.utcOffset} • {formattedNextEpochTime.date}
+            {formattedNextEpochTime.date} at {formattedNextEpochTime.timestamp}{' '}
+            {formattedNextEpochTime.utcOffset}
           </Typography>
         )}
       </Typography>
