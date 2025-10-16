@@ -1,21 +1,21 @@
 import { formatUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import useSWR from 'swr'
-import { useAccount } from 'wagmi'
 
 import useSdk from '@/hooks/context/useSdk'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
 import { SupportedTokens } from '@/constants/tokens'
 
 const useTotalLendingPoolDeposits = () => {
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
   const sdk = useSdk()
 
   const supportedToken = useSupportedTokenInfo()
 
   const { data, error, isLoading, mutate } = useSWR(
-    account.address && sdk ? ['totalPoolDeposits', account.address, sdk] : null,
+    address && sdk ? ['totalPoolDeposits', address, sdk] : null,
     async ([_, account, sdk]) =>
       sdk.UserLending.getUserTotalPendingAndActiveDepositedAmount(account),
 

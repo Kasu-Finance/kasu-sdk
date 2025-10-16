@@ -1,7 +1,8 @@
-import { useAccount, useChainId, useSignMessage } from 'wagmi'
+import { useChainId, useSignMessage } from 'wagmi'
 
 import useToastState from '@/hooks/context/useToastState'
 import useHandleError from '@/hooks/web3/useHandleError'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import downloadLoanContract from '@/actions/downloadLoanContract'
 import getLoanContracts from '@/actions/viewLoanContract'
@@ -9,7 +10,7 @@ import dayjs from '@/dayjs'
 import { userRejectedTransaction } from '@/utils'
 
 const useViewLoanContract = () => {
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const chainId = useChainId()
 
@@ -20,7 +21,7 @@ const useViewLoanContract = () => {
   const { setToast, removeToast } = useToastState()
 
   return async (id: string) => {
-    if (!account.address) {
+    if (!address) {
       return console.error('View Loan Contract:: Account is undefiend')
     }
     if (!chainId) {
@@ -40,7 +41,7 @@ const useViewLoanContract = () => {
 
       signMessage(
         {
-          message: `Requesting contract content for ${account.address.toLowerCase()}/${id} at ${now}.`,
+          message: `Requesting contract content for ${address.toLowerCase()}/${id} at ${now}.`,
         },
 
         {
@@ -48,7 +49,7 @@ const useViewLoanContract = () => {
             throw new Error(error.message)
           },
           onSuccess: async (signature) => {
-            if (!account.address) {
+            if (!address) {
               return console.error('View Loan contract:: Account is undefiend')
             }
 
@@ -61,7 +62,7 @@ const useViewLoanContract = () => {
 
             const data = await getLoanContracts(
               {
-                address: account.address.toLowerCase(),
+                address: address.toLowerCase(),
                 signature,
                 timestamp: now,
                 id,

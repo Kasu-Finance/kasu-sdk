@@ -1,12 +1,12 @@
 import { useCallback } from 'react'
-import { useAccount } from 'wagmi'
 
 import useQualifiedAirdrops from '@/hooks/lending/useQualifiedAirdrops'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import { groupBy } from '@/utils'
 
 const useUserAirdrops = () => {
-  const { address } = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const { qualifiedAirdrops, isLoading, error } = useQualifiedAirdrops()
 

@@ -1,8 +1,8 @@
 import { Box, Typography } from '@mui/material'
-import { useAccount } from 'wagmi'
 
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import getTranslation from '@/hooks/useTranslation'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
@@ -12,7 +12,7 @@ import { formatAmount, mergeSubheading } from '@/utils'
 const WithdrawModalReviewOverview = () => {
   const { t } = getTranslation()
 
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const { amount, trancheId, selectedPool } = useWithdrawModalState()
 
@@ -113,7 +113,7 @@ const WithdrawModalReviewOverview = () => {
         dividerProps={{
           color: 'white',
         }}
-        metric={<Typography variant='baseMdBold'>{account.address}</Typography>}
+        metric={<Typography variant='baseMdBold'>{address}</Typography>}
       />
     </Box>
   )

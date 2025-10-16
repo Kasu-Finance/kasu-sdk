@@ -14,11 +14,12 @@ import {
   useWallets,
 } from '@privy-io/react-auth'
 import { useSetActiveWallet } from '@privy-io/wagmi'
+import { redirect, usePathname } from 'next/navigation'
 import React, { useState } from 'react'
-import { useAccount } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
 import useLastActiveWallet from '@/hooks/web3/useLastActiveWallet'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
@@ -30,6 +31,7 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 import { CopyIcon } from '@/assets/icons'
 import BaseLogo from '@/assets/logo/BaseLogo'
 
+import { Routes } from '@/config/routes'
 import { customPalette } from '@/themes/palette'
 import { customTypography } from '@/themes/typography'
 import { formatAccount } from '@/utils'
@@ -37,9 +39,11 @@ import { formatAccount } from '@/utils'
 const LinkWalletsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { wallets } = useWallets()
 
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const [open, setOpen] = useState('')
+
+  const path = usePathname()
 
   const { linkWallet } = usePrivy()
 
@@ -60,6 +64,10 @@ const LinkWalletsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
     await logout()
 
     handleClose()
+
+    if (path.includes(Routes.portfolio.root.url)) {
+      redirect(Routes.lending.root.url)
+    }
   }
 
   const changeActiveWallet = async (wallet: ConnectedWallet) => {
@@ -101,8 +109,7 @@ const LinkWalletsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             >
               {wallets.map((wallet, index) => {
                 const isActiveWallet =
-                  wallet.address.toLowerCase() ===
-                  account.address?.toLowerCase()
+                  wallet.address.toLowerCase() === address?.toLowerCase()
 
                 const isPrivy = wallet.walletClientType === 'privy'
 

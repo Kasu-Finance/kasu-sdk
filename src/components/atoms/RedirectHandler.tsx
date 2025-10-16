@@ -1,25 +1,41 @@
 'use client'
 
-import { usePrivy } from '@privy-io/react-auth'
 import { redirect } from 'next/navigation'
 import React, { useEffect } from 'react'
-import { useAccount } from 'wagmi'
 
-import useDelayedExecution from '@/hooks/useDelayedExecution'
+import useLiteModeState from '@/hooks/context/useLiteModeState'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
-const RedirectHandler: React.FC<{ delay: number; url: string }> = ({
-  delay,
-  url,
+type RedirectHandlerProps = {
+  to: string
+  whenNotConnected?: boolean
+}
+
+const RedirectHandler: React.FC<RedirectHandlerProps> = ({
+  to,
+  whenNotConnected = false,
 }) => {
-  const { ready } = usePrivy()
-  const account = useAccount()
-  const delayed = useDelayedExecution(ready ? delay : 0)
+  const { isAuthenticated } = usePrivyAuthenticated()
+
+  const { isLiteMode } = useLiteModeState()
 
   useEffect(() => {
-    if (ready && !account.address && delayed) {
-      redirect(url)
+    let timer: NodeJS.Timeout
+
+    if (whenNotConnected) {
+      if (!isAuthenticated) {
+        timer = setTimeout(() => {
+          redirect(to)
+        }, 2000)
+      }
+    } else {
+      redirect(to)
     }
-  }, [account, ready, delayed, url])
+
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [to, isLiteMode, whenNotConnected, isAuthenticated])
 
   return null
 }

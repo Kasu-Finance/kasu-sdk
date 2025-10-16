@@ -1,10 +1,10 @@
 import { Box, SelectChangeEvent, Typography } from '@mui/material'
 import { TrancheData } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React, { useMemo } from 'react'
-import { useAccount } from 'wagmi'
 
 import useFixApyState from '@/hooks/context/useFixApyState'
 import getTranslation from '@/hooks/useTranslation'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import CustomSelect from '@/components/atoms/CustomSelect'
 
@@ -21,7 +21,7 @@ const FixAmountSelect: React.FC<FixAmountSelectProps> = ({
 
   const { fixedTermConfigId, setFixedTermConfigId } = useFixApyState()
 
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const apyOptions = useMemo(
     () =>
@@ -31,8 +31,7 @@ const FixAmountSelect: React.FC<FixAmountSelectProps> = ({
             fixedTermConfig.fixedTermDepositStatus === 'Everyone' ||
             fixedTermConfig.fixedTermDepositAllowlist.find(
               (allowList) =>
-                allowList.userId.toLowerCase() ===
-                account.address?.toLowerCase()
+                allowList.userId.toLowerCase() === address?.toLowerCase()
             )
         )
         .map((fixedTermConfig) => {
@@ -49,7 +48,7 @@ const FixAmountSelect: React.FC<FixAmountSelectProps> = ({
           }
         }),
 
-    [t, account, fixedTermConfigs]
+    [t, address, fixedTermConfigs]
   )
 
   const handleChange = (e: SelectChangeEvent) => {

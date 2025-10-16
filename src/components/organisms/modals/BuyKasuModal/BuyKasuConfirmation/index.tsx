@@ -1,10 +1,10 @@
 import { Stack, Typography } from '@mui/material'
 import { formatEther, parseEther } from 'ethers/lib/utils'
-import { useAccount } from 'wagmi'
 
 import useBuyKasuModalState from '@/hooks/context/useBuyKasuModalState'
 import getTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import BuyKasuConfirmationAction from '@/components/organisms/modals/BuyKasuModal/BuyKasuConfirmation/BuyKasuConfirmationAction'
 
@@ -13,7 +13,7 @@ import { formatAccount, formatAmount, toBigNumber } from '@/utils'
 const BuyKasuModalConfirmation = () => {
   const { t } = getTranslation()
 
-  const { address } = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const { amount, amountInUSD } = useBuyKasuModalState()
 

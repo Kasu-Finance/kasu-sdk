@@ -3,7 +3,9 @@
 import { Stack, Typography } from '@mui/material'
 import Image from 'next/image'
 import { useEffect } from 'react'
-import { useAccount, useChainId } from 'wagmi'
+import { useChainId } from 'wagmi'
+
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import Cat from '@/images/cat.png'
 
@@ -15,7 +17,8 @@ export default function Error({
   // reset: () => void
 }) {
   const chainId = useChainId()
-  const { address } = useAccount()
+
+  const { address } = usePrivyAuthenticated()
 
   useEffect(() => {
     fetch('/api/logging', {

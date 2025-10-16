@@ -9,11 +9,11 @@ import {
   Typography,
 } from '@mui/material'
 import { formatEther, formatUnits, parseEther } from 'ethers/lib/utils'
-import { useAccount } from 'wagmi'
 
 import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 import getTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 import useUserBalance from '@/hooks/web3/useUserBalance'
 
 import ColoredBox from '@/components/atoms/ColoredBox'
@@ -30,7 +30,7 @@ const PortfolioWalletTab = () => {
 
   const { t } = getTranslation()
 
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const { balance: ksuBalance, decimals: ksuDecimals } = useUserBalance(
     sdkConfig.contracts.KSUToken
@@ -89,10 +89,10 @@ const PortfolioWalletTab = () => {
               pt='6px'
               pl={{ xs: 0, sm: 2 }}
             >
-              {account.address
+              {address
                 ? isMobile
-                  ? formatAccount(account.address)
-                  : `0x ${account.address.substring(2).match(/.{4}/g)?.join(' ')}`
+                  ? formatAccount(address)
+                  : `0x ${address.substring(2).match(/.{4}/g)?.join(' ')}`
                 : '-'}{' '}
             </Typography>
           }

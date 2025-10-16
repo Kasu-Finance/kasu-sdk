@@ -22,7 +22,7 @@ export default async function PortfolioLayout({
       renderOnLiteMode={<Container maxWidth='lg'>{children}</Container>}
       otherwise={
         <>
-          <RedirectHandler delay={2000} url={Routes.home.root.url} />
+          <RedirectHandler to={Routes.home.root.url} whenNotConnected />
           <Container maxWidth='lg'>
             <PortfolioSummary />
             <PortfolioTabs />

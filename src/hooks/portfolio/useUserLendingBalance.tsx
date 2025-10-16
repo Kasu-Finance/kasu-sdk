@@ -3,23 +3,21 @@
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { PortfolioLendingPool } from '@solidant/kasu-sdk/src/services/Portfolio/types'
 import useSWR from 'swr'
-import { useAccount } from 'wagmi'
 
 import useSdk from '@/hooks/context/useSdk'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import { FIVE_MINUTES } from '@/constants/general'
 
 const useUserLendingBalance = <T extends PortfolioLendingPool | PoolOverview>(
   pools: T[]
 ) => {
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const sdk = useSdk()
 
   const { data, error, isLoading } = useSWR(
-    account.address && sdk
-      ? ['userLendingTrancheBalance', account.address, pools, sdk]
-      : null,
+    address && sdk ? ['userLendingTrancheBalance', address, pools, sdk] : null,
     async ([_, userId, pools, sdk]) =>
       Promise.all(
         pools.map(async (pool) => ({

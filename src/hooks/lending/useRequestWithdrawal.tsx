@@ -1,11 +1,11 @@
 import { ContractTransaction } from 'ethers'
-import { useAccount } from 'wagmi'
 
 import useSdk from '@/hooks/context/useSdk'
 import useStepperState from '@/hooks/context/useStepperState'
 import useToastState from '@/hooks/context/useToastState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import useHandleError from '@/hooks/web3/useHandleError'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import { KasuSdkNotReadyError } from '@/context/sdk/sdk.types'
 
@@ -15,7 +15,7 @@ import { capitalize, waitForReceipt } from '@/utils'
 const useRequestWithdrawal = () => {
   const sdk = useSdk()
 
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const handleError = useHandleError()
 
@@ -31,7 +31,7 @@ const useRequestWithdrawal = () => {
     amount: string,
     isWithdrawMax: boolean
   ) => {
-    if (!account.address) {
+    if (!address) {
       return console.error('RequestWithdraw:: Account is undefined')
     }
 
@@ -53,7 +53,7 @@ const useRequestWithdrawal = () => {
         txResponse = await sdk.UserLending.requestWithdrawalMax(
           lendingPool,
           trancheId,
-          account.address
+          address
         )
       } else {
         txResponse = await sdk.UserLending.requestWithdrawalInUSDC(

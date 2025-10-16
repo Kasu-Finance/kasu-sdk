@@ -8,9 +8,10 @@ import { ethers } from 'ethers'
 import { ErrorBoundary } from 'next/dist/client/components/error-boundary'
 import React from 'react'
 import { formatUnits } from 'viem'
-import { useAccount, useBalance, useChainId } from 'wagmi'
+import { useBalance, useChainId } from 'wagmi'
 
 import useHandleError from '@/hooks/web3/useHandleError'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 import useUserBalance from '@/hooks/web3/useUserBalance'
 
@@ -27,7 +28,7 @@ import { customPalette } from '@/themes/palette'
 import { formatAccount, formatAmount } from '@/utils'
 
 const ViewWalletModal: React.FC<DialogChildProps> = ({ handleClose }) => {
-  const { address } = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const chainId = useChainId()
 

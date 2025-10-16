@@ -1,17 +1,15 @@
 import useSWR from 'swr'
-import { useAccount } from 'wagmi'
 
 import useSdk from '@/hooks/context/useSdk'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 const useTransactionHistory = (epochId: string) => {
   const sdk = useSdk()
 
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const { data, error, isLoading, mutate } = useSWR(
-    account.address && sdk
-      ? ['transactionHistory', account.address, sdk]
-      : null,
+    address && sdk ? ['transactionHistory', address, sdk] : null,
     async ([_, userAdress, sdk]) => {
       const userRequests = await sdk.UserLending.getUserRequests(
         userAdress,

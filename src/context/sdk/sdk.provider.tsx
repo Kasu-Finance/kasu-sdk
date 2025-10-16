@@ -7,7 +7,8 @@ import { ethers } from 'ethers'
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { preload } from 'swr'
 import useSWRImmutable from 'swr/immutable'
-import { useAccount } from 'wagmi'
+
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import SdkContext from '@/context/sdk/sdk.context'
 
@@ -37,7 +38,7 @@ const SdkState: React.FC<PropsWithChildren> = ({ children }) => {
 
   const { wallets } = useWallets()
 
-  const { address } = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const wallet = wallets.find((wallet) => wallet.address === address)
 

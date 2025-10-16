@@ -1,7 +1,7 @@
 import { Stack } from '@mui/material'
-import { redirect } from 'next/navigation'
 
 import LiteModeRenderer from '@/components/atoms/LiteModeRenderer'
+import RedirectHandler from '@/components/atoms/RedirectHandler'
 import BonusAndRewardPortfolio from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio'
 import PortfolioRewardSummary from '@/components/organisms/portfolio/PortfolioRewardsTab/PortfolioRewardSummary'
 
@@ -10,7 +10,9 @@ import { Routes } from '@/config/routes'
 const BonusAndRewards = () => {
   return (
     <LiteModeRenderer
-      renderOnLiteMode={redirect(Routes.portfolio.root.url)}
+      renderOnLiteMode={
+        <RedirectHandler to={Routes.portfolio.root.url} whenNotConnected />
+      }
       otherwise={
         <Stack spacing={3}>
           <PortfolioRewardSummary />

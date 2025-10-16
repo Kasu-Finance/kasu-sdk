@@ -1,7 +1,7 @@
-import { useAccount } from 'wagmi'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 const useReferralLink = () => {
-  const { address } = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const referralCode = address || ''
 

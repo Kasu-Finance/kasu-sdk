@@ -1,9 +1,10 @@
-import { useAccount, useChainId, useSignMessage } from 'wagmi'
+import { useChainId, useSignMessage } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
 import useToastState from '@/hooks/context/useToastState'
 import useLoanTickets from '@/hooks/lending/useLoanTickets'
 import useHandleError from '@/hooks/web3/useHandleError'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
@@ -14,7 +15,7 @@ import dayjs from '@/dayjs'
 import { capitalize } from '@/utils'
 
 const useFundingConsent = () => {
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const chainId = useChainId()
 
@@ -40,7 +41,7 @@ const useFundingConsent = () => {
     decision: LoanTicketStatus,
     callback: (newLoanTickets: LoanTicketDto[]) => void
   ) => {
-    if (!account.address) {
+    if (!address) {
       return console.error('FundingConsent:: Account is undefined')
     }
 
@@ -76,7 +77,7 @@ const useFundingConsent = () => {
               throw new Error(error.message)
             },
             onSuccess: async (signature) => {
-              if (!account.address) {
+              if (!address) {
                 return console.error('Funding Consent:: Account is undefiend')
               }
 
@@ -101,7 +102,7 @@ const useFundingConsent = () => {
                     'Content-Type': 'application/json',
                   },
                   body: JSON.stringify({
-                    userID: account.address.toLowerCase(),
+                    userID: address.toLowerCase(),
                     payload,
                     signature,
                     signatureTimestamp,

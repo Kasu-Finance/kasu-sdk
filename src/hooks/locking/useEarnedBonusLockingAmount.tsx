@@ -1,17 +1,15 @@
 import useSWR from 'swr'
-import { useAccount } from 'wagmi'
 
 import useSdk from '@/hooks/context/useSdk'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 const useEarnedBonusLockingAmount = () => {
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const sdk = useSdk()
 
   const { data, error, isLoading, mutate } = useSWR(
-    account.address && sdk
-      ? ['earnedBonusLockingAmount', account.address, sdk]
-      : null,
+    address && sdk ? ['earnedBonusLockingAmount', address, sdk] : null,
     async ([_, userAddress, sdk]) =>
       sdk.Locking.getUserTotalBonusAmount(userAddress)
   )
