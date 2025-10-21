@@ -5,9 +5,8 @@ import {
   FormHelperText,
   Typography,
 } from '@mui/material'
-import { memo, useEffect, useReducer } from 'react'
+import { memo } from 'react'
 
-import useDepositModalState from '@/hooks/context/useDepositModalState'
 import getTranslation from '@/hooks/useTranslation'
 
 import AcknowledgementContent from '@/components/organisms/modals/LendingModal/LendingModalEdit/Acknowledgement/AcknowledgementContent'
@@ -21,27 +20,6 @@ export type AcknowledgementStateType = Record<AcknowledgementTypes, boolean>
 
 const Acknowledgement = () => {
   const { t } = getTranslation()
-
-  const { termsAccepted, setTermsAccepted } = useDepositModalState()
-
-  const [checked, toggleChecked] = useReducer(
-    (
-      prev: AcknowledgementStateType,
-      acknowledgement: AcknowledgementTypes
-    ) => ({ ...prev, [acknowledgement]: !prev[acknowledgement] }),
-    {
-      riskWarning: termsAccepted,
-      termsAndConditions: termsAccepted,
-    }
-  )
-
-  useEffect(() => {
-    if (checked.riskWarning && checked.termsAndConditions) {
-      setTermsAccepted(true)
-    } else {
-      setTermsAccepted(false)
-    }
-  }, [checked, setTermsAccepted])
 
   return (
     <FormControl>
@@ -65,10 +43,7 @@ const Acknowledgement = () => {
           },
         }}
       >
-        <AcknowledgementContent
-          checked={checked}
-          toggleChecked={toggleChecked}
-        />
+        <AcknowledgementContent />
       </FormGroup>
       <FormHelperText
         sx={{
