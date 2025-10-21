@@ -27,9 +27,7 @@ const AcknowledgementMessage = () => {
         >
           {t('modals.lending.acknowledgement.riskWarning')}
         </Button>
-      </Typography>
-      <Typography variant='baseMd' component='p'>
-        {t('modals.lending.acknowledgement.acknowledged')}{' '}
+        ,{' '}
         <Button
           variant='text'
           sx={{
@@ -45,6 +43,23 @@ const AcknowledgementMessage = () => {
           target='_blank'
         >
           {t('modals.lending.acknowledgement.termsAndConditions')}
+        </Button>{' '}
+        and{' '}
+        <Button
+          variant='text'
+          sx={{
+            p: 0,
+            height: 'auto',
+            textTransform: 'unset',
+            font: 'inherit',
+            verticalAlign: 'inherit',
+            display: 'inline',
+            color: 'white',
+          }}
+          href='https://docs.kasu.finance/risk-warnings/subordination-of-kasu-loans-to-senior-lender'
+          target='_blank'
+        >
+          {t('modals.lending.acknowledgement.subordinationDisclosure')}
         </Button>
       </Typography>
     </Stack>

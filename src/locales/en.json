@@ -821,9 +821,10 @@
           "description-3": "for full details."
         },
         "base": "I acknowledge that I have read and understood the",
-        "acknowledged": "You have acknowledged that you have read and understood the",
+        "acknowledged": "You have acknowledged that you read and understood the",
         "riskWarning": "Risk Warning",
-        "termsAndConditions": "Important Information"
+        "termsAndConditions": "Important Information",
+        "subordinationDisclosure": "Subordination of Kasu Loans Disclosure"
       },
       "terms-and-conditions-1": "By depositing funds to this Lending Strategy, you accept the",
       "terms-and-conditions-2": "Important Information.",
