@@ -100,8 +100,7 @@ const TrancheDropdown: React.FC<TrancheDropdownProps> = ({
           </Typography>
           {showApy && (
             <Typography variant='baseMd' color='inherit'>
-              {formatPercentage(val.apy).replaceAll(' %', '%')}{' '}
-              {t('general.grossApy')}
+              {formatPercentage(val.apy)} {t('general.grossApy')}
             </Typography>
           )}
         </Box>
@@ -124,8 +123,7 @@ const TrancheDropdown: React.FC<TrancheDropdownProps> = ({
             </Typography>
             {showApy && (
               <Typography variant='baseMd' color='inherit'>
-                {formatPercentage(val.apy).replaceAll(' %', '%')}{' '}
-                {t('general.grossApy')}
+                {formatPercentage(val.apy)} {t('general.grossApy')}
               </Typography>
             )}
           </Box>

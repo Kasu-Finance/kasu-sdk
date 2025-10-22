@@ -174,7 +174,7 @@ const TrancheAnimator: React.FC<TrancheAnimatorProps> = ({
           {formatPercentage(
             1 - parseFloat(currentTranche.poolCapacityPercentage),
             0
-          ).replaceAll(' %', '%')}{' '}
+          )}{' '}
           FULL
         </Typography>
       </ProgressBar>

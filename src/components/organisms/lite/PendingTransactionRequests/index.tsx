@@ -11,6 +11,7 @@ import ToolTip from '@/components/atoms/ToolTip'
 import WaveBox from '@/components/atoms/WaveBox'
 import CountdownCard from '@/components/molecules/CountdownCard'
 import LiteModeTable from '@/components/molecules/CustomTable/LiteModeTable'
+import EpochCountdownTooltip from '@/components/molecules/tooltips/EpochCountdownTooltip'
 import PendingTransactionRequestsTableBody from '@/components/organisms/lite/PendingTransactionRequests/PendingTransactionRequestsTableBody'
 import PendingTransactionRequestsTableHeader from '@/components/organisms/lite/PendingTransactionRequests/PendingTransactionRequestsTableHeader'
 
@@ -64,7 +65,7 @@ const PendingTransactionRequests: React.FC<PendingTransactionRequestsProps> = ({
                   Epoch Countdown
                 </Typography>
                 <ToolTip
-                  title='info'
+                  title={<EpochCountdownTooltip />}
                   iconSx={{
                     color: 'gold.dark',
                     '&:hover': {

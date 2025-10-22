@@ -150,7 +150,7 @@ const PortfolioWalletTab = () => {
                 startIcon={<CachedIcon />}
                 disabled={!walletWithBalance.length}
               >
-                {t('general.convertToKSU')}
+                {t('general.buyKSU')}
               </Button>
             )}
           </Grid>

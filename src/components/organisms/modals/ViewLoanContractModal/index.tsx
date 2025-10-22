@@ -36,7 +36,13 @@ const ViewLoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   return (
     <CustomCard>
-      <DialogHeader title='Loan Contract(s)' onClose={handleClose} />
+      <DialogHeader
+        title='Loan Contract(s)'
+        onClose={handleClose}
+        titleProps={{
+          textTransform: 'unset',
+        }}
+      />
       <DialogContent p={0}>
         <CustomTable
           sx={{

@@ -75,7 +75,7 @@ const PoolTraction: React.FC<PoolTractionProps> = ({ pool }) => {
                       mt={0.5}
                       amount={formatPercentage(
                         pool.poolCapacityPercentage
-                      ).replaceAll(' %', '')}
+                      ).replaceAll('%', '')}
                       symbol='%'
                       whiteSpace='nowrap'
                       mr='1ch'

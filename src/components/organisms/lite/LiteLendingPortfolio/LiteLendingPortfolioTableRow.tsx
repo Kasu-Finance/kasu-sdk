@@ -72,9 +72,7 @@ const LiteLendingPortfolioTableRow: React.FC<
               )}{' '}
               USDC
             </TableCell>
-            <TableCell align='right'>
-              {formatPercentage(tranche.apy).replaceAll(' ', '')}
-            </TableCell>
+            <TableCell align='right'>{formatPercentage(tranche.apy)}</TableCell>
             <TableCell align='right'>
               {formatAmount(
                 parseFloat(tranche.yieldEarnings.lifetime) +

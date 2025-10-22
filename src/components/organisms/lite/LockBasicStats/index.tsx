@@ -20,7 +20,7 @@ const LockBasicStats = () => {
             textTransform: 'capitalize',
           }}
           showDivider
-          toolTipInfo='info'
+          toolTipInfo='The amount of KASU tokens held in your wallet that is currently connected to the Kasu dApp.'
           metric={
             <KsuBalance
               sx={{
@@ -38,7 +38,7 @@ const LockBasicStats = () => {
             textTransform: 'capitalize',
           }}
           showDivider
-          toolTipInfo='info'
+          toolTipInfo='The current USDC balance in your wallet currently connected to the Kasu dApp that can be used to purchase KASU tokens via the dApp.'
           metric={<UsdcBalance color='white' />}
         />
       </Stack>
@@ -48,7 +48,7 @@ const LockBasicStats = () => {
           color: 'white',
           textTransform: 'capitalize',
         }}
-        toolTipInfo={t('locking.widgets.overview.metric-3-tooltip')}
+        toolTipInfo='The amount of KASU tokens locked held in your wallet that is currently connected to the Kasu dApp.'
         metric={
           <TotalKsuLocked
             sx={{

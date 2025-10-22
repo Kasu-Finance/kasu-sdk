@@ -151,7 +151,7 @@ const LendingModalReviewOverview = () => {
               fixedTermApy && !isLiteMode
                 ? fixedTermApy.apy
                 : selectedTranche?.apy || '0'
-            ).replaceAll(' %', '%')}
+            )}
           </Typography>
         }
         showDivider

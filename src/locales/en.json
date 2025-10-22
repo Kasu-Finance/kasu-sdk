@@ -96,7 +96,8 @@
     "timeRemainig": "Time Remaining",
     "lifetimeInterest": "Lifetime Interest",
     "lifetimeRewards": "Lifetime Rewards",
-    "claimableRewards": "Claimable Rewards"
+    "claimableRewards": "Claimable Rewards",
+    "addFunds": "Add Funds"
   },
   "time": {
     "years": "years",
@@ -1638,7 +1639,7 @@
           "tooltip": "Your current USDC lending balance in this Tranche."
         },
         "trancheApy": {
-          "label": "Tranche Gross APY",
+          "label": "Gross APY",
           "tooltip": "The Annual Percentage Yield currently offered by the Delegate for this Tranche of this Lending Strategy, assuming all repayments will be made as expected."
         },
         "yieldEarned": {

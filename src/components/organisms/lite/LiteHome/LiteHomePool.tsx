@@ -107,7 +107,7 @@ const LiteHomePool: React.FC<LiteHomePoolProps> = ({
               lineHeight='52px'
             >
               <Typography variant='inherit' fontWeight={700} component='span'>
-                {formatPercentage(maxApy, 0).replaceAll(' %', '%')}{' '}
+                {formatPercentage(maxApy, 0)}{' '}
               </Typography>
               APY
             </Typography>

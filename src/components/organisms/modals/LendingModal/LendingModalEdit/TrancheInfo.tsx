@@ -48,7 +48,7 @@ const TrancheInfo: React.FC<TrancheInfoProps> = ({
             rootStyles={{ height: 16, borderRadius: 30, flex: 1 }}
           >
             <Typography variant='baseXs' width='100%' px={1}>
-              {formatPercentage(percentage, 0).replaceAll(' %', '%')} full
+              {formatPercentage(percentage, 0)} full
             </Typography>
           </ProgressBar>
         </Box>

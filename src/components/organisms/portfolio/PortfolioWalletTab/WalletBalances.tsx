@@ -1,19 +1,31 @@
 'use client'
 
 import { Button, Divider, Grid, Typography } from '@mui/material'
+import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
 
+import useModalState from '@/hooks/context/useModalState'
 import getTranslation from '@/hooks/useTranslation'
 import useWalletBalances from '@/hooks/web3/useWalletBalances'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import WalletBalancesSkeleton from '@/components/organisms/portfolio/PortfolioWalletTab/WalletBalancesSkeleton'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
 import { formatAmount } from '@/utils'
 
-const WalletBalances = () => {
+type WalletBalancesProps = {
+  lockPeriods: LockPeriod[]
+}
+
+const WalletBalances: React.FC<WalletBalancesProps> = ({ lockPeriods }) => {
   const { t } = getTranslation()
 
   const { walletWithBalance, isLoading } = useWalletBalances()
+
+  const { openModal } = useModalState()
+
+  const handleOpen = () => openModal({ name: ModalsKeys.BUY_KASU, lockPeriods })
 
   if (isLoading) {
     return <WalletBalancesSkeleton />
@@ -46,8 +58,9 @@ const WalletBalances = () => {
             variant='contained'
             fullWidth
             sx={{ maxWidth: 368, textTransform: 'capitalize' }}
+            onClick={handleOpen}
           >
-            {t('general.convertToKSU')}
+            {t('general.buyKSU')}
           </Button>
         </Grid>
       </Grid>

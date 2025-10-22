@@ -75,7 +75,7 @@ const RequestOverview: React.FC<RequestOverviewProps> = ({ transaction }) => {
                 ? transaction.fixedTermConfig!.apy
                 : isReallocation
                   ? transaction.apy
-                  : initialDeposit?.apy ?? 0
+                  : (initialDeposit?.apy ?? 0)
             )}
           </Typography>
         }
@@ -86,7 +86,7 @@ const RequestOverview: React.FC<RequestOverviewProps> = ({ transaction }) => {
         dividerProps={{ color: 'white' }}
         toolTipInfo={
           <ToolTip
-            title='info'
+            title='The loan Tranche that the below Transaction History relates to.'
             iconSx={{
               color: 'gold.extraDark',
               '&:hover': {
@@ -106,7 +106,7 @@ const RequestOverview: React.FC<RequestOverviewProps> = ({ transaction }) => {
           dividerProps={{ color: 'white' }}
           toolTipInfo={
             <ToolTip
-              title='info'
+              title='A Fixed APY will be locked for the specified period of time offered, until the expiry date. During a fixed APY period, no Withdrawal Request can be submitted.'
               iconSx={{
                 color: 'gold.extraDark',
                 '&:hover': {
