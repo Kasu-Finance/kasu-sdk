@@ -64,9 +64,7 @@ const LendingPortfolioTableTrancheRow: React.FC<
               {tranche.name} {t('general.tranche')}
             </Box>
           </TableCell>
-          <TableCell align='right'>
-            {formatPercentage(tranche.apy).replaceAll(' ', '')}
-          </TableCell>
+          <TableCell align='right'>{formatPercentage(tranche.apy)}</TableCell>
           <TableCell>Variable</TableCell>
           <TableCell align='right'>
             {formatAmount(tranche.investedAmount || '0', {
@@ -122,7 +120,7 @@ const LendingPortfolioTableTrancheRow: React.FC<
                 </Box>
               </TableCell>
               <TableCell align='right'>
-                {formatPercentage(fixedTermConfig.apy).replaceAll(' ', '')}
+                {formatPercentage(fixedTermConfig.apy)}
               </TableCell>
               <TableCell>Fixed</TableCell>
               <TableCell align='right'>

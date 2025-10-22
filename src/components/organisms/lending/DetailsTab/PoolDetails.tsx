@@ -48,7 +48,7 @@ const PoolDetails: React.FC<PoolDetailsProps> = ({ pool }) => {
                 toolTipInfo={<ToolTip title={<GrossApyTooltip />} />}
                 metric={
                   <Typography variant='h5' color='gold.dark'>
-                    {formatPercentage(tranche.apy).replaceAll(' ', '')}
+                    {formatPercentage(tranche.apy)}
                   </Typography>
                 }
                 showDivider
@@ -73,7 +73,7 @@ const PoolDetails: React.FC<PoolDetailsProps> = ({ pool }) => {
                       toolTipInfo={<ToolTip title={<GrossApyTooltip />} />}
                       metric={
                         <Typography variant='h5' color='gold.dark'>
-                          {formatPercentage(apy).replaceAll(' ', '')}
+                          {formatPercentage(apy)}
                         </Typography>
                       }
                       showDivider

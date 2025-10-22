@@ -107,7 +107,7 @@ const WithdrawModalReviewOverview = () => {
         title={t('lending.withdraw.toWallet')}
         toolTipInfo={
           <ToolTip
-            title='info'
+            title='The wallet address to receive funds.'
             iconSx={{
               color: 'gold.extraDark',
               '&:hover': {
