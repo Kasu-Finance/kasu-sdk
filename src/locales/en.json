@@ -1340,7 +1340,7 @@
       "swapAndDeposit": {
         "title": "Lend with any token.",
         "input-label": "Lending Amount",
-        "swap-via": "Swapped via 1inch",
+        "swap-via": "Swap via 1inch",
         "swap": "Swap",
         "for": "for"
       },

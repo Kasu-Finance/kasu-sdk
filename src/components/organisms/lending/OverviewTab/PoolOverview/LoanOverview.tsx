@@ -53,7 +53,7 @@ const LoanOverview: React.FC<LoanOverviewProps> = ({ pool }) => {
             toolTipInfo={<ToolTip title={<VariableAndFixedApyTooltip />} />}
             metric={
               <Typography variant='h5' color='gold.dark'>
-                {formatPercentage(tranche.apy).replaceAll(' ', '')}
+                {formatPercentage(tranche.apy)}
               </Typography>
             }
             showDivider
@@ -82,7 +82,7 @@ const LoanOverview: React.FC<LoanOverviewProps> = ({ pool }) => {
                   }}
                   metric={
                     <Typography variant='h5' color='gold.dark'>
-                      {formatPercentage(apy).replaceAll(' ', '')}
+                      {formatPercentage(apy)}
                     </Typography>
                   }
                   showDivider

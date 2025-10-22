@@ -20,8 +20,8 @@ const PoolTableRowApy: React.FC<PoolTableRowApyProps> = ({
     {icon}
     <Typography variant='baseSm'>
       {minApy === maxApy
-        ? formatPercentage(minApy).replaceAll(' ', '')
-        : `${formatPercentage(minApy).replaceAll(' %', '')} - ${formatPercentage(maxApy).replaceAll(' ', '')}
+        ? formatPercentage(minApy)
+        : `${formatPercentage(minApy).replaceAll('%', '')} - ${formatPercentage(maxApy)}
       `}
     </Typography>
   </Box>
