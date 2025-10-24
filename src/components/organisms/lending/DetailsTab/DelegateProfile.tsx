@@ -65,7 +65,9 @@ const DelegateProfile: React.FC<DelegateProfileProps> = ({ pool }) => {
             <WaveCard
               title={t('details.poolDelegate.loss.label')}
               toolTipInfo={t('details.poolDelegate.loss.tooltip')}
-              content={formatPercentage(pool.delegate.historicLossRate)}
+              content={formatPercentage(
+                pool.delegate.historicLossRate
+              ).replaceAll('%', '')}
               unit='%'
             />
           </Grid>
