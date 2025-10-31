@@ -105,6 +105,7 @@ export const lendingPortfolioQuery = gql`
                         lendingPoolTrancheFixedTermConfig {
                             epochLockDuration
                             configId
+                            epochInterestRate
                         }
                         userLendingPoolTrancheFixedTermDepositLockShareUpdate(
                             orderBy: shareUpdatesIndex

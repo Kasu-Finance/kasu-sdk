@@ -101,6 +101,8 @@ export class Portfolio {
         let weightedApy = 0;
         let totalYieldEarned = 0;
 
+        let weeklyYieldEarnings = 0;
+
         for (const pool of portfolioLendingPools) {
             for (const tranche of pool.tranches) {
                 const investedAmount = parseFloat(tranche.investedAmount);
@@ -109,6 +111,9 @@ export class Portfolio {
                 totalYieldEarned += parseFloat(tranche.yieldEarnings.lifetime);
 
                 weightedApy += parseFloat(tranche.apy) * investedAmount;
+
+                weeklyYieldEarnings +=
+                    investedAmount * parseFloat(tranche.interestRate);
 
                 for (const fixedDeposits of tranche.fixedLoans) {
                     const ftdConfig = tranche.fixedTermConfig.find(
@@ -124,6 +129,10 @@ export class Portfolio {
                         fixedDeposits.yieldEarnings.lifetime,
                     );
 
+                    weeklyYieldEarnings +=
+                        ftdInvestedAmount *
+                        parseFloat(ftdConfig.epochInterestRate);
+
                     weightedApy +=
                         parseFloat(ftdConfig.apy) * ftdInvestedAmount;
                 }
@@ -138,6 +147,14 @@ export class Portfolio {
                     totalInvestments === 0
                         ? '0'
                         : (weightedApy / totalInvestments).toString(),
+            },
+            daily: {
+                yieldEarnings: (weeklyYieldEarnings / 7).toString(),
+            },
+            weekly: {
+                yieldEarnings: weeklyYieldEarnings.toString(),
+                protocolFeesEarned: '0',
+                ksuBonusRewards: '0',
             },
             lifetime: {
                 yieldEarnings: totalYieldEarned.toString(),
@@ -435,6 +452,10 @@ export class Portfolio {
                                         .lendingPoolTrancheFixedTermConfig
                                         .epochLockDuration,
                                 epochLockEnd: fixedTermDeposit.epochLockEnd,
+                                epochInterestRate:
+                                    fixedTermDeposit
+                                        .lendingPoolTrancheFixedTermConfig
+                                        .epochInterestRate,
                                 epochLockStart: fixedTermDeposit.epochLockStart,
                                 amount: this._userLendingService
                                     .convertSharesToAssets(

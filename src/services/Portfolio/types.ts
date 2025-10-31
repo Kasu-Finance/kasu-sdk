@@ -30,6 +30,14 @@ export interface PortfolioSummary {
         totalLendingPoolInvestments: string;
         weightedAverageApy: string;
     };
+    daily: {
+        yieldEarnings: string;
+    };
+    weekly: {
+        yieldEarnings: string;
+        protocolFeesEarned: string;
+        ksuBonusRewards: string;
+    };
     lifetime: {
         yieldEarnings: string;
         ksuBonusRewards: string;
@@ -54,6 +62,7 @@ export interface PortfolioTranche extends TrancheData {
         isLocked: boolean;
         lockId: string;
         configId: string;
+        epochInterestRate: string;
         epochLockStart: string;
         epochLockEnd: string;
         epochLockDuration: string;
@@ -91,6 +100,7 @@ export interface UserLendingPoolTrancheFixedTermDepositLock {
     lendingPoolTrancheFixedTermConfig: {
         epochLockDuration: string;
         configId: string;
+        epochInterestRate: string;
     };
     unlockAmount: string | null;
     initialAmount: string;
