@@ -51,8 +51,8 @@ const PoolCardContent: React.FC<PoolCardContentProps> = ({ pool }) => {
         </Typography>
         <Typography variant='h2' color='gold.dark'>
           {minApy === maxApy
-            ? formatPercentage(maxApy, 0).replaceAll(' %', '%')
-            : `${formatPercentage(minApy, 0).replaceAll(' %', '')}-${formatPercentage(maxApy, 0).replaceAll(' %', '%')}`}
+            ? formatPercentage(maxApy, 0)
+            : `${formatPercentage(minApy, 0).replaceAll('%', '')}-${formatPercentage(maxApy, 0)}`}
         </Typography>
       </Box>
       <CustomCardContentInner display='flex' flexDirection='column' flex={1}>

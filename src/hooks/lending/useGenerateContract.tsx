@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { useAccount, useChainId, useSignMessage } from 'wagmi'
+import { useChainId, useSignMessage } from 'wagmi'
 
 import useToastState from '@/hooks/context/useToastState'
 import useHandleError from '@/hooks/web3/useHandleError'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import {
   ExemptLoanContract,
@@ -24,7 +25,7 @@ const initialGeneratedContractState = {
 }
 
 const useGenerateContract = () => {
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const chainId = useChainId()
 
@@ -43,7 +44,7 @@ const useGenerateContract = () => {
     resetGeneratedContract: () =>
       setGeneratedContract(initialGeneratedContractState),
     generateContract: async (amount: string) => {
-      if (!account.address) {
+      if (!address) {
         return console.error('Generate contract:: Account is undefiend')
       }
 
@@ -64,11 +65,11 @@ const useGenerateContract = () => {
 
         signMessage(
           {
-            message: `I request contract content for ${account.address.toLowerCase()} at ${now}.`,
+            message: `I request contract content for ${address.toLowerCase()} at ${now}.`,
           },
           {
             onSuccess: async (signature) => {
-              if (!account.address) {
+              if (!address) {
                 return console.error('Generate contract:: Account is undefiend')
               }
 
@@ -83,7 +84,7 @@ const useGenerateContract = () => {
                     'Content-Type': 'application/json',
                   },
                   body: JSON.stringify({
-                    address: account.address.toLowerCase(),
+                    address: address.toLowerCase(),
                     signature,
                     timestamp: now,
                     depositAmount: parseFloat(amount),

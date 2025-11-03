@@ -1,8 +1,8 @@
 import { Container } from '@mui/material'
-import { redirect } from 'next/navigation'
 import { ReactNode } from 'react'
 
 import LiteModeRenderer from '@/components/atoms/LiteModeRenderer'
+import RedirectHandler from '@/components/atoms/RedirectHandler'
 import PageHeader from '@/components/organisms/lending/PageHeader'
 import PoolTabs from '@/components/organisms/lending/PoolTabs'
 
@@ -21,7 +21,7 @@ export default async function LendingSlugLayout({
 
   return (
     <LiteModeRenderer
-      renderOnLiteMode={redirect(Routes.lending.root.url)}
+      renderOnLiteMode={<RedirectHandler to={Routes.lending.root.url} />}
       otherwise={
         <Container maxWidth='lg'>
           <PageHeader poolId={poolId} />

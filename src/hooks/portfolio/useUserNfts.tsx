@@ -1,7 +1,7 @@
 import useSWR from 'swr'
-import { useAccount } from 'wagmi'
 
 import useSdk from '@/hooks/context/useSdk'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import NftMetadata from '@/config/nfts.json'
 
@@ -25,7 +25,7 @@ export type NftDetail = {
 const useUserNfts = () => {
   const sdk = useSdk()
 
-  const { address } = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const { data, error, isLoading, mutate } = useSWR(
     address && sdk ? ['userNfts', address, sdk] : null,

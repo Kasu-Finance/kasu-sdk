@@ -137,7 +137,7 @@ const PoolAccordion: React.FC<PoolAccordionProps> = ({
                           {formatPercentage(
                             1 - parseFloat(tranche.poolCapacityPercentage),
                             0
-                          ).replaceAll(' %', '%')}{' '}
+                          )}{' '}
                           FULL
                         </Typography>
                       </ProgressBar>

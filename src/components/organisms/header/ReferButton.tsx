@@ -1,17 +1,17 @@
 'use client'
 
 import { Button } from '@mui/material'
-import { useAccount } from 'wagmi'
 
 import useLiteModeState from '@/hooks/context/useLiteModeState'
 import useModalState from '@/hooks/context/useModalState'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { ReferralIcon } from '@/assets/icons'
 
 const ReferButton = () => {
-  const { address } = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const { openModal } = useModalState()
 

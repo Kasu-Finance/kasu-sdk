@@ -75,7 +75,7 @@
     "request": "Request",
     "approved": "Approved",
     "confirmed": "Confirmed",
-    "nextClearingPeriodStart": "Next Clearing Period Starts at",
+    "nextClearingPeriodStart": "Next Clearing Period Starts on",
     "slippage": "Slippage",
     "strategies": "Strategies",
     "active": "Active",
@@ -96,7 +96,8 @@
     "timeRemainig": "Time Remaining",
     "lifetimeInterest": "Lifetime Interest",
     "lifetimeRewards": "Lifetime Rewards",
-    "claimableRewards": "Claimable Rewards"
+    "claimableRewards": "Claimable Rewards",
+    "addFunds": "Add Funds"
   },
   "time": {
     "years": "years",
@@ -819,7 +820,7 @@
       "reviewLock": {
         "unlockingSchedule": "Your KASU unlock request is scheduled for the end of the current Epoch.",
         "metric-2-tooltip": "The amount of KASU you request to unlock at the end of the current locking period.",
-        "epochEnds": "Epoch Ends in"
+        "epochEnds": "Epoch Ends on"
       },
       "overview": {
         "lockedDate": "Locked Date",
@@ -870,9 +871,10 @@
           "description-3": "for full details."
         },
         "base": "I acknowledge that I have read and understood the",
-        "acknowledged": "You have acknowledged that you have read and understood the",
+        "acknowledged": "You acknowledge that you have read and understood the",
         "riskWarning": "Risk Warning",
-        "termsAndConditions": "Important Information"
+        "termsAndConditions": "Important Information",
+        "subordinationDisclosure": "Subordination of Kasu Loans Disclosure"
       },
       "terms-and-conditions-1": "By depositing funds to this Lending Strategy, you accept the",
       "terms-and-conditions-2": "Important Information.",
@@ -1388,7 +1390,7 @@
       "swapAndDeposit": {
         "title": "Lend with any token.",
         "input-label": "Lending Amount",
-        "swap-via": "Swapped via 1inch",
+        "swap-via": "Swap via 1inch",
         "swap": "Swap",
         "for": "for"
       },
@@ -1431,7 +1433,7 @@
         "lockAmount-tooltip": "The amount of KASU you are requesting to lock.",
         "lockingDuration": "Locking Duration",
         "lockingDuration-tooltip": "The number of days you are requesting your KASU to be locked for.",
-        "epochEnds": "Epoch ends in",
+        "epochEnds": "Epoch Ends on",
         "depositSchedule": "Your KASU Lock Request will be schedule for the end of the current Epoch.",
         "nextClearing": "Next clearing day commences in"
       },
@@ -1481,7 +1483,7 @@
       "metric-3-tooltip": "The date of your original lending withdrawal request.",
       "metric-4-tooltip": "The loan Tranche related to this Lending Strategy that you request a withdrawal cancellation from.",
       "epochEndsText": "Tho Outcome of this Withdrawal Request will be determined at the end of the epoch clearing period.",
-      "epochEnds": "Epoch Ends in",
+      "epochEnds": "Epoch Ends on",
       "cancel-button": "Cancel Withdrawal Request"
     },
     "cancelDeposit": {
@@ -1637,7 +1639,7 @@
           "tooltip": "Your current USDC lending balance in this Tranche."
         },
         "trancheApy": {
-          "label": "Tranche Gross APY",
+          "label": "Gross APY",
           "tooltip": "The Annual Percentage Yield currently offered by the Delegate for this Tranche of this Lending Strategy, assuming all repayments will be made as expected."
         },
         "yieldEarned": {
@@ -1715,7 +1717,7 @@
       "subtitle": "Total Withdrawal Request Amount",
       "fromPool": "From Lending Strategy",
       "toWallet": "To Wallet",
-      "epochEnds": "Epoch ends in",
+      "epochEnds": "Epoch Ends on",
       "withdrawalSchedule-1": "Withdrawal will be scheduled for the end of the current Epoch.",
       "withdrawalSchedule-2": "The final Withdrawal Amount may vary due to Lending Strategy conditions.",
       "amountInput": {

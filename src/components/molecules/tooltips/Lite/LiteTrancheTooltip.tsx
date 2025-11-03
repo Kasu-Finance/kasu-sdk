@@ -16,7 +16,8 @@ const LiteTrancheTooltip = () => {
       </Typography>
       <Typography variant='inherit'>
         This priority ranking is subject to a Subordination and Priority Deed.
-        See{' '}
+        See &apos;Subordination of Kasu Loans to Senior Lender&apos; section in
+        the{' '}
         <Button
           variant='text'
           sx={{

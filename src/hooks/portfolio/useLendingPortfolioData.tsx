@@ -1,9 +1,10 @@
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { ethers } from 'ethers'
 import useSWR from 'swr'
-import { useAccount, useChainId } from 'wagmi'
+import { useChainId } from 'wagmi'
 
 import useSdk from '@/hooks/context/useSdk'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import { SupportedChainIds } from '@/connection/chains'
 import { RPC_URLS } from '@/connection/rpc'
@@ -16,11 +17,11 @@ const useLendingPortfolioData = (
 
   const chainId = useChainId()
 
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const { data, error, mutate } = useSWR(
-    account.address && sdk && chainId
-      ? ['lendingPortfolioData', account.address, poolOverviews, sdk, chainId]
+    address && sdk && chainId
+      ? ['lendingPortfolioData', address, poolOverviews, sdk, chainId]
       : null,
     async ([_, userAddress, poolOverviews, sdk]) =>
       await sdk.Portfolio.getPortfolioLendingData(

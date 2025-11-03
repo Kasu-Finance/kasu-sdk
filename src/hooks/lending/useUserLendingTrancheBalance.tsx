@@ -1,9 +1,9 @@
 'use client'
 
 import useSWR from 'swr'
-import { useAccount } from 'wagmi'
 
 import useSdk from '@/hooks/context/useSdk'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import { FIVE_MINUTES } from '@/constants/general'
 
@@ -11,13 +11,13 @@ const useUserLendingTrancheBalance = <T extends { id: string }>(
   poolId: string,
   tranches: T[]
 ) => {
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const sdk = useSdk()
 
   const { data, error, isLoading } = useSWR(
-    account.address && sdk
-      ? ['userLendingTrancheBalance', account.address, tranches, sdk]
+    address && sdk
+      ? ['userLendingTrancheBalance', address, tranches, sdk]
       : null,
     async ([_, userId, tranches, sdk]) =>
       Promise.all(

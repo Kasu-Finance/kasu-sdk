@@ -24,14 +24,14 @@ const ModeToggleButton = () => {
 
   const { isLiteMode, toggleLiteMode } = useLiteModeState()
 
-  const [text, setText] = useState<'Lite' | 'PRO'>(isLiteMode ? 'Lite' : 'PRO')
+  const [text, setText] = useState<'Lite' | 'Pro'>(isLiteMode ? 'Lite' : 'Pro')
 
   const ref = useRef<HTMLDivElement>(null)
 
   const toggle = (e: MouseEvent<HTMLButtonElement>) => {
     if (!ref.current || open || isMounted) return
 
-    setText((prev) => (prev === 'Lite' ? 'PRO' : 'Lite'))
+    setText((prev) => (prev === 'Lite' ? 'Pro' : 'Lite'))
 
     setIsMounted(true)
 
@@ -82,7 +82,7 @@ const ModeToggleButton = () => {
         }}
         onClick={toggle}
       >
-        Switch to Kasu {isLiteMode ? 'PRO' : 'Lite'}
+        Switch to Kasu {isLiteMode ? 'Pro' : 'Lite'}
       </Button>
       <Portal>
         <Box

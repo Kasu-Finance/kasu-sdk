@@ -1,9 +1,9 @@
 import { Box, SelectChangeEvent, Typography } from '@mui/material'
 import { memo, useMemo } from 'react'
-import { useAccount } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
 import getTranslation from '@/hooks/useTranslation'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import CustomSelect from '@/components/atoms/CustomSelect'
 
@@ -23,7 +23,7 @@ const ApyDropdown: React.FC<ApyDropdownProps> = ({
   setFixedTermConfigId,
 }) => {
   const { t } = getTranslation()
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
   const { modal } = useModalState()
 
   const pool = modal[ModalsKeys.LEND].pool
@@ -47,8 +47,7 @@ const ApyDropdown: React.FC<ApyDropdownProps> = ({
                   fixedTermConfig.fixedTermDepositStatus === 'Everyone' ||
                   fixedTermConfig.fixedTermDepositAllowlist.find(
                     (allowList) =>
-                      allowList.userId.toLowerCase() ===
-                      account.address?.toLowerCase()
+                      allowList.userId.toLowerCase() === address?.toLowerCase()
                   )
               )
               .map((fixedTermConfig) => {
@@ -66,7 +65,7 @@ const ApyDropdown: React.FC<ApyDropdownProps> = ({
               }),
           ]
         : null,
-    [t, account, selectedTranche]
+    [t, address, selectedTranche]
   )
 
   if (!apyOptions) return null

@@ -1,7 +1,7 @@
 import { BigNumber, BytesLike } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
 import { usePathname, useRouter } from 'next/navigation'
-import { useAccount, useChainId } from 'wagmi'
+import { useChainId } from 'wagmi'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useKycState from '@/hooks/context/useKycState'
@@ -12,6 +12,7 @@ import useToastState from '@/hooks/context/useToastState'
 import useBuildDepositData from '@/hooks/lending/useBuildDepositData'
 import useBuildSwapData from '@/hooks/lending/useBuildSwapData'
 import useHandleError from '@/hooks/web3/useHandleError'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
 import { KasuSdkNotReadyError } from '@/context/sdk/sdk.types'
@@ -27,7 +28,7 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 const useRequestDeposit = () => {
   const sdk = useSdk()
 
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const { isLiteMode } = useLiteModeState()
 
@@ -63,7 +64,7 @@ const useRequestDeposit = () => {
     contractVersion: number,
     contractType: 'retail' | 'exempt'
   ) => {
-    if (!account.address) {
+    if (!address) {
       return console.error('RequestDeposit:: Account is undefined')
     }
 
@@ -91,7 +92,7 @@ const useRequestDeposit = () => {
       })
 
       const kycSignatureParams = await sdk.UserLending.buildKycSignatureParams(
-        account.address,
+        address,
         chainId.toString()
       )
 
@@ -120,7 +121,7 @@ const useRequestDeposit = () => {
 
       if (selectedToken !== SupportedTokens.USDC) {
         const data = await buildSwapData({
-          account: account.address,
+          account: address,
           chainId,
           currentDepositedAmount,
           fromAmount,

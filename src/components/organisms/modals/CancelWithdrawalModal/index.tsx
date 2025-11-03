@@ -58,7 +58,7 @@ const CancelWithdrawalModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               title={t('modals.cancelWithdrawal.metric-1')}
               toolTipInfo={
                 <ToolTip
-                  title='info'
+                  title='The Lending Strategy that your withdrawal request relates to.'
                   iconSx={{
                     color: 'gold.extraDark',
                     '&:hover': {

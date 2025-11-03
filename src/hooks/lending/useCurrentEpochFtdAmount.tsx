@@ -1,7 +1,7 @@
 import useSWRImmutable from 'swr/immutable'
-import { useAccount } from 'wagmi'
 
 import useSdk from '@/hooks/context/useSdk'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 const useCurrentEpochFtdAmount = (
   lendingPoolIds: string | string[],
@@ -9,13 +9,13 @@ const useCurrentEpochFtdAmount = (
 ) => {
   const sdk = useSdk()
 
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const { data, error, isLoading, mutate } = useSWRImmutable(
-    account.address && sdk
+    address && sdk
       ? [
           `currentEpochFtdAmount/${Array.isArray(lendingPoolIds) ? lendingPoolIds.join(',') : lendingPoolIds}/${currentEpoch}`,
-          account.address,
+          address,
           sdk,
         ]
       : null,

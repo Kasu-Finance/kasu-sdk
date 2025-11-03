@@ -1,9 +1,9 @@
 import { Box, Button, Stack, Typography } from '@mui/material'
-import { useAccount } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
 import getTranslation from '@/hooks/useTranslation'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
@@ -19,7 +19,7 @@ const OptOutModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { modal } = useModalState()
 
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const { subsequentTransaction, poolName } = modal[ModalsKeys.OPT_OUT]
 
@@ -47,7 +47,7 @@ const OptOutModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             <Typography variant='baseMdBold'>{poolName}</Typography>
             {t('modals.optOut.description-3')}{' '}
             <Typography variant='baseMdBold'>
-              {formatAccount(account.address)}
+              {formatAccount(address)}
             </Typography>
           </Typography>
           <Box bgcolor='gold.dark' p={2} borderRadius={2} width='100%'>

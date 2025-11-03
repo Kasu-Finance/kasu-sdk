@@ -3,7 +3,6 @@ import { parseEther, parseUnits } from 'ethers/lib/utils'
 import { useEffect, useState } from 'react'
 import useSWR from 'swr'
 import { encodeFunctionData } from 'viem'
-import { useAccount } from 'wagmi'
 import {
   estimateGas,
   readContract,
@@ -12,6 +11,7 @@ import {
 } from 'wagmi/actions'
 
 import useToastState from '@/hooks/context/useToastState'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 import useTokenDetails from '@/hooks/web3/useTokenDetails'
 
 import { wagmiConfig } from '@/context/privy.provider'
@@ -25,7 +25,7 @@ const useApproveToken = (
   spender: `0x${string}` | undefined,
   amount: string
 ) => {
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const { decimals } = useTokenDetails(tokenAddress)
 
@@ -34,11 +34,11 @@ const useApproveToken = (
   const { setToast, removeToast } = useToastState()
 
   const { data: allowance, mutate } = useSWR(
-    account.address && tokenAddress && spender
+    address && tokenAddress && spender
       ? [
-          `allowance-${tokenAddress}-${spender}-${account.address}`,
+          `allowance-${tokenAddress}-${spender}-${address}`,
           tokenAddress,
-          account.address,
+          address,
           spender,
         ]
       : null,

@@ -18,6 +18,10 @@ const TrancheGrossApyTooltip = () => {
         1.5%). Half of this fee is to fund Protocol Fee Sharing for Lenders who
         are also KASU Token Lockers. The remaining half of this fee is retained
         by the Kasu protocol to fund operations.
+        <br />
+        <br />
+        Variable APY is subject to change in line with interest rate market
+        fluctuations. Fixed APY (if offered) is fixed for the term offered.
       </Typography>
     </>
   )

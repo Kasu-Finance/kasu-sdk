@@ -1,8 +1,8 @@
 import { Stack, Typography } from '@mui/material'
-import { useAccount } from 'wagmi'
 
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import getTranslation from '@/hooks/useTranslation'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import NextClearingPeriodInfo from '@/components/molecules/NextClearingPeriodInfo'
 import WithdrawalModalConfirmedActions from '@/components/organisms/modals/WithdrawModal/WithdrawalModalConfirmed/WithdrawalModalConfirmedActions'
@@ -12,7 +12,7 @@ import { formatAccount, formatAmount, mergeSubheading } from '@/utils'
 const WithdrawalModalConfirmed = () => {
   const { t } = getTranslation()
 
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const { amount, trancheId, selectedPool } = useWithdrawModalState()
 
@@ -45,9 +45,7 @@ const WithdrawalModalConfirmed = () => {
         </Typography>
         <Typography variant='baseMd'>
           {t('lending.withdraw.confirmStep.description-4')}{' '}
-          <Typography variant='baseMdBold'>
-            {formatAccount(account.address)}
-          </Typography>
+          <Typography variant='baseMdBold'>{formatAccount(address)}</Typography>
         </Typography>
       </Stack>
       <WithdrawalModalConfirmedActions />

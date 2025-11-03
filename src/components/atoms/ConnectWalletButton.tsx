@@ -4,7 +4,6 @@ import { Box, Button, ButtonProps, Chip, Typography } from '@mui/material'
 import { useLogin, usePrivy, useWallets } from '@privy-io/react-auth'
 import { useSetActiveWallet } from '@privy-io/wagmi'
 import { forwardRef, useEffect, useState } from 'react'
-import { useAccount } from 'wagmi'
 
 import useKycState from '@/hooks/context/useKycState'
 import useLiteModeState from '@/hooks/context/useLiteModeState'
@@ -28,8 +27,6 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const { isLiteMode } = useLiteModeState()
 
-    const { address } = useAccount()
-
     const { wallets, ready: walletsReady } = useWallets()
 
     const { openModal } = useModalState()
@@ -44,7 +41,7 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const { ready } = usePrivy()
 
-    const { isAuthenticated } = usePrivyAuthenticated()
+    const { address, isAuthenticated } = usePrivyAuthenticated()
 
     const { getLastActiveWallet, setLastActiveWallet } = useLastActiveWallet()
 

@@ -1,8 +1,8 @@
 import { BigNumber } from 'ethers'
 import useSWR from 'swr'
-import { useAccount } from 'wagmi'
 import { getBalance, readContract } from 'wagmi/actions'
 
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 import useUserBalance from '@/hooks/web3/useUserBalance'
 
@@ -23,7 +23,7 @@ export type SupportedTokenUserBalances = SupportedTokenInfo & {
 }
 
 const useSupportedTokenUserBalances = () => {
-  const { address } = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const supportedTokens = useSupportedTokenInfo()
 

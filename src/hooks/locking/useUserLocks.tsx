@@ -1,14 +1,14 @@
 import useSWR from 'swr'
-import { useAccount } from 'wagmi'
 
 import useSdk from '@/hooks/context/useSdk'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 const useUserLocks = () => {
   const sdk = useSdk()
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const { data, error, isLoading, mutate } = useSWR(
-    account.address && sdk ? ['userLocks', account.address, sdk] : null,
+    address && sdk ? ['userLocks', address, sdk] : null,
     async ([_, userAddress, sdk]) => sdk.Locking.getUserLocks(userAddress),
     {
       keepPreviousData: true,

@@ -1,10 +1,10 @@
 import { Stack } from '@mui/material'
-import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
 
 import getTranslation from '@/hooks/useTranslation'
 
 import LiteModeRenderer from '@/components/atoms/LiteModeRenderer'
+import RedirectHandler from '@/components/atoms/RedirectHandler'
 import WaveBox from '@/components/atoms/WaveBox'
 import NextClearingPeriodInfo from '@/components/molecules/NextClearingPeriodInfo'
 import DetailedLendingRequestTransactions from '@/components/organisms/portfolio/PortfolioUserTransactionsTab/DetailedLendingRequestTransactions'
@@ -23,7 +23,7 @@ const YourTransactions = async () => {
 
   return (
     <LiteModeRenderer
-      renderOnLiteMode={redirect(Routes.portfolio.root.url)}
+      renderOnLiteMode={<RedirectHandler to={Routes.portfolio.root.url} />}
       otherwise={
         <Stack spacing={3}>
           <NotificationBannerWrapper />

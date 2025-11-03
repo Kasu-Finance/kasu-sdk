@@ -9,11 +9,12 @@ import WaveBox from '@/components/atoms/WaveBox'
 import LiteDailyInterestEarningsTooltip from '@/components/molecules/tooltips/Lite/LiteDailyInterestEarningsTooltip'
 import LiteLifetimeInterestEarningsTooltip from '@/components/molecules/tooltips/Lite/LiteLifetimeInterestEarningsTooltip'
 import LiteWeeklyInterestEarningsTooltip from '@/components/molecules/tooltips/Lite/LiteWeeklyInterestEarningsTooltip'
-import LifetimeInterestEarnings from '@/components/organisms/portfolio/PortfolioSummary/LifetimeInterestEarnings'
+import DailyInterestEarnings from '@/components/organisms/lite/LendingBasicStats/DailyInterestEarnings'
+import IncrementalLifetimeInterestEarnings from '@/components/organisms/lite/LendingBasicStats/IncrementalLifetimeInterestEarnings'
+import WeeklyInterestEarnings from '@/components/organisms/lite/LendingBasicStats/WeeklyInterestEarnings'
 import TotalLendingBalance from '@/components/organisms/portfolio/PortfolioSummary/TotalLendingBalance'
 
 import { customPalette } from '@/themes/palette'
-import { formatAmount } from '@/utils'
 
 type LendingBasicStatsProps = {
   currentEpoch: string
@@ -72,7 +73,7 @@ const LendingBasicStats: React.FC<LendingBasicStatsProps> = ({
             </Box>
             {/* <Box height={58} width='100%' />
             <DottedDivider color='white' /> */}
-            <LifetimeInterestEarnings
+            <IncrementalLifetimeInterestEarnings
               poolOverviews={pools}
               currentEpoch={currentEpoch}
               amountProps={{
@@ -117,9 +118,17 @@ const LendingBasicStats: React.FC<LendingBasicStatsProps> = ({
             }
             showDivider
             metric={
-              <Typography variant='h3' color='gold.dark'>
-                {formatAmount(250, { minDecimals: 2 })} USDC
-              </Typography>
+              <WeeklyInterestEarnings
+                poolOverviews={pools}
+                currentEpoch={currentEpoch}
+                skeletonProps={{
+                  sx: {
+                    backgroundColor: customPalette.gold.dark,
+                  },
+                  height: 38,
+                  width: 100,
+                }}
+              />
             }
           />
         </Grid2>
@@ -140,9 +149,17 @@ const LendingBasicStats: React.FC<LendingBasicStatsProps> = ({
             }
             showDivider
             metric={
-              <Typography variant='h3' color='gold.dark'>
-                {formatAmount(25, { minDecimals: 2 })} USDC
-              </Typography>
+              <DailyInterestEarnings
+                poolOverviews={pools}
+                currentEpoch={currentEpoch}
+                skeletonProps={{
+                  sx: {
+                    backgroundColor: customPalette.gold.dark,
+                  },
+                  height: 38,
+                  width: 100,
+                }}
+              />
             }
           />
         </Grid2>

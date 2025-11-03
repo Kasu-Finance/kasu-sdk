@@ -93,7 +93,7 @@ const LiteHome: React.FC<LiteHomeProps> = ({ pools, currentEpoch }) => {
         color='gold.dark'
         textAlign='center'
       >
-        Built on Base Â· KYC required
+        Built on Base · KYC required
       </Typography>
     </Stack>
   )
