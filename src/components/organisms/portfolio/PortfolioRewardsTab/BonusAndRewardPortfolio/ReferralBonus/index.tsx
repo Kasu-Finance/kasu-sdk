@@ -11,16 +11,18 @@ import {
 import { formatEther, parseEther } from 'ethers/lib/utils'
 
 import useModalState from '@/hooks/context/useModalState'
+import useReferralLink from '@/hooks/referrals/useReferralLink'
 import useUserReferrals, {
   ReferredUserDetails,
 } from '@/hooks/referrals/useUserReferrals'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
+import DottedDivider from '@/components/atoms/DottedDivider'
 import CustomTable from '@/components/molecules/CustomTable'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import { PaperIcon } from '@/assets/icons'
+import { CopyIcon, PaperIcon } from '@/assets/icons'
 
 import { customPalette } from '@/themes/palette'
 import { customTypography } from '@/themes/typography'
@@ -33,16 +35,13 @@ const ReferralBonus = () => {
 
   const { userReferrals, isLoading } = useUserReferrals()
 
-  // const referralLink = useReferralLink()
+  const referralLink = useReferralLink()
 
   const handleClick = (referredUsers: ReferredUserDetails[]) => {
     openModal({ name: ModalsKeys.REFERRED_USERS, referredUsers })
   }
 
-  // const handleCopy = () =>
-  //   navigator.clipboard.writeText(
-  //     referralLink.fullUrl
-  //   )
+  const handleCopy = () => navigator.clipboard.writeText(referralLink.fullUrl)
 
   return (
     <Stack>
@@ -202,8 +201,8 @@ const ReferralBonus = () => {
           borderBottomRightRadius: 8,
         }}
       >
-        {/* <DottedDivider /> */}
-        {/* <Typography variant='baseSm' my={3}>
+        <DottedDivider />
+        <Typography variant='baseSm' my={3}>
           Use your referral link to invite friends and earn KASU tokens:{' '}
           <Button
             variant='text'
@@ -228,7 +227,7 @@ const ReferralBonus = () => {
           >
             <Typography variant='inherit'>Copy your referral link</Typography>
           </Button>
-        </Typography> */}
+        </Typography>
       </Stack>
     </Stack>
   )

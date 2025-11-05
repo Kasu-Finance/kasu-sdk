@@ -7,6 +7,7 @@ import HeaderBar from '@/components/organisms/header/HeaderBar'
 import HeaderLogo from '@/components/organisms/header/HeaderLogo'
 import ModeToggleButton from '@/components/organisms/header/ModeToggleButton'
 import PortfolioRedirect from '@/components/organisms/header/PortfolioRedirect'
+import ReferButton from '@/components/organisms/header/ReferButton'
 import Toolbar from '@/components/organisms/header/Toolbar'
 
 import { BaseRoutesPaths } from '@/config/routes'
@@ -21,7 +22,7 @@ const Header = () => {
           </Link>
           <Navigation />
           <Box display='flex' alignItems='center'>
-            {/* <ReferButton /> */}
+            <ReferButton />
             <PortfolioRedirect />
             <ModeToggleButton />
             <ConnectWalletButton />

@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@mui/material'
+import { usePathname } from 'next/navigation'
 
 import useLiteModeState from '@/hooks/context/useLiteModeState'
 import useModalState from '@/hooks/context/useModalState'
@@ -10,14 +11,20 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { ReferralIcon } from '@/assets/icons'
 
+import { Routes } from '@/config/routes'
+
 const ReferButton = () => {
   const { address } = usePrivyAuthenticated()
+
+  const pathName = usePathname()
 
   const { openModal } = useModalState()
 
   const { isLiteMode } = useLiteModeState()
 
-  if (!address) return null
+  if (!address || (isLiteMode && pathName === Routes.lending.root.url)) {
+    return null
+  }
 
   const handleOpen = () => openModal({ name: ModalsKeys.REFERRAL })
 
