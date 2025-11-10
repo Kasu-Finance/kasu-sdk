@@ -40,7 +40,7 @@ jobs:
           git clone https://${{ env.ORIGINAL_ORG_NAME }}:${{ secrets.ORIGINAL_REPO_API_TOKEN }}@github.com/${{ env.ORIGINAL_ORG_NAME }}/${{ env.ORIGINAL_REPO_NAME }}.git
           cd ${{ env.ORIGINAL_REPO_NAME }}
           git checkout ${{ github.ref_name }}
-          git remote add ${{ env.OUTPUT_REPO_NAME }} https://${{ env.OUTPUT_ORG_NAME }}:${{ secrets.OUTPUT_REPO_API_TOKEN }}@github.com/${{ env.OUTPUT_ORG_NAME }}/${{ env.OUTPUT_REPO_NAME }}.git
+          git remote set-url origin https://${{ env.OUTPUT_ORG_NAME }}:${{ secrets.OUTPUT_REPO_API_TOKEN }}@github.com/${{ env.OUTPUT_ORG_NAME }}/${{ env.OUTPUT_REPO_NAME }}.git
           git push origin ${{ github.ref_name }}
         env:
           TARGET_BRANCH: ${{ github.ref_name }}
