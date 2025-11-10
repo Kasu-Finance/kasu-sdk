@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - aws-deploy
+      - develop
+      - feat/v7-ui
 
 jobs:
   sync:
@@ -13,6 +15,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Push to destination repository
+        if: github.ref_name  == 'aws-deploy'
         run: |
           git config --global user.email "159537591+KasuFinance@users.noreply.github.com"
           git config --global user.name "Kasu Admin"
@@ -24,6 +27,23 @@ jobs:
           git push origin main
         env:
           TARGET_BRANCH: aws-deploy
+          OUTPUT_REPO_NAME: kasu-fe-next
+          OUTPUT_ORG_NAME: Kasu-Finance
+          ORIGINAL_REPO_NAME: ${{ github.event.repository.name }}
+          ORIGINAL_ORG_NAME: Solidant
+
+      - name: Push to destination repository
+        if: github.ref_name  != 'aws-deploy'
+        run: |
+          git config --global user.email "159537591+KasuFinance@users.noreply.github.com"
+          git config --global user.name "Kasu Admin"
+          git clone https://${{ env.ORIGINAL_ORG_NAME }}:${{ secrets.ORIGINAL_REPO_API_TOKEN }}@github.com/${{ env.ORIGINAL_ORG_NAME }}/${{ env.ORIGINAL_REPO_NAME }}.git
+          cd ${{ env.ORIGINAL_REPO_NAME }}
+          git checkout ${{ github.ref_name }}
+          git remote set-url origin https://${{ env.OUTPUT_ORG_NAME }}:${{ secrets.OUTPUT_REPO_API_TOKEN }}@github.com/${{ env.OUTPUT_ORG_NAME }}/${{ env.OUTPUT_REPO_NAME }}.git
+          git push origin ${{ github.ref_name }}
+        env:
+          TARGET_BRANCH: ${{ github.ref_name }}
           OUTPUT_REPO_NAME: kasu-fe-next
           OUTPUT_ORG_NAME: Kasu-Finance
           ORIGINAL_REPO_NAME: ${{ github.event.repository.name }}
