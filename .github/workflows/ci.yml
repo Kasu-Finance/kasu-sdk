@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - aws-deploy
-      - kasu-lite
+      - feat/kasu-lite
 
 jobs:
   sync:
