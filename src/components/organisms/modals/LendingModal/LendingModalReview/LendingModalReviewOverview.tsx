@@ -7,7 +7,6 @@ import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
-import GrossApyTooltip from '@/components/molecules/tooltips/GrossApyTooltip'
 import TrancheGrossApyTooltip from '@/components/molecules/tooltips/TrancheGrossApyTooltip'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
@@ -17,9 +16,7 @@ import {
   formatAmount,
   formatPercentage,
   formatTimestamp,
-  formatToNearestTime,
   mergeSubheading,
-  TimeConversions,
 } from '@/utils'
 
 const LendingModalReviewOverview = () => {
@@ -115,7 +112,7 @@ const LendingModalReviewOverview = () => {
       )}
 
       <InfoRow
-        title={`${pool.tranches.length > 1 ? t('general.tranche') : ''} ${t('general.grossApy')}`}
+        title={fixedTermApy ? t('general.fixedApy') : t('general.variableApy')}
         toolTipInfo={
           <ToolTip
             title={<TrancheGrossApyTooltip />}
@@ -129,23 +126,6 @@ const LendingModalReviewOverview = () => {
         }
         metric={
           <Typography variant='baseMdBold' display='flex' alignItems='center'>
-            {fixedTermApy
-              ? `${t('general.fixedApy')}, ${fixedTermApy.epochLockDuration} ${t('general.epoch')} (~${formatToNearestTime(
-                  parseFloat(fixedTermApy.epochLockDuration) *
-                    TimeConversions.DAYS_PER_WEEK *
-                    TimeConversions.SECONDS_PER_DAY *
-                    1000
-                )})`
-              : t('general.variableApy')}
-            <ToolTip
-              title={<GrossApyTooltip />}
-              iconSx={{
-                color: 'gold.extraDark',
-                '&:hover': {
-                  color: 'rgba(133, 87, 38, 1)',
-                },
-              }}
-            />
             {formatPercentage(
               fixedTermApy ? fixedTermApy.apy : selectedTranche?.apy || '0'
             )}

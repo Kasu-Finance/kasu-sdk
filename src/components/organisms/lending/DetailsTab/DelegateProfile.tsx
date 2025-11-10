@@ -67,7 +67,7 @@ const DelegateProfile: React.FC<DelegateProfileProps> = ({ pool }) => {
               toolTipInfo={t('details.poolDelegate.loss.tooltip')}
               content={formatPercentage(
                 pool.delegate.historicLossRate
-              ).replaceAll(' %', '')}
+              ).replaceAll('%', '')}
               unit='%'
             />
           </Grid>
