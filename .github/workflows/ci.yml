@@ -4,6 +4,7 @@ on:
     branches:
       - aws-deploy
       - feat/kasu-lite
+      - feat/kasu-lite-mainnet
 
 jobs:
   sync:
