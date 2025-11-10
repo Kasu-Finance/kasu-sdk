@@ -5,6 +5,7 @@ on:
       - aws-deploy
       - develop
       - feat/kasu-lite
+      - feat/kasu-lite-mainnet
 
 jobs:
   sync:
