@@ -40,7 +40,7 @@ jobs:
           git config --global user.name "Kasu Admin"
           git clone https://${{ env.OUTPUT_ORG_NAME }}:${{ secrets.OUTPUT_REPO_API_TOKEN }}@github.com/${{ env.OUTPUT_ORG_NAME }}/${{ env.OUTPUT_REPO_NAME }}.git
           cd ${{ env.OUTPUT_REPO_NAME }}
-          git checkout $(git show-ref --verify --quiet refs/heads/${{ github.ref_name }} || echo '-b') ${{ github.ref_name }}
+          git checkout $(git show-ref --verify --quiet refs/heads/${{ github.ref_name }} || echo '--orphan') ${{ github.ref_name }}
           git remote add ${{ env.ORIGINAL_REPO_NAME }} https://${{ env.ORIGINAL_ORG_NAME }}:${{ secrets.ORIGINAL_REPO_API_TOKEN }}@github.com/${{ env.ORIGINAL_ORG_NAME }}/${{ env.ORIGINAL_REPO_NAME }}.git
           git remote update
           git merge ${{ env.ORIGINAL_REPO_NAME }}/${{ env.TARGET_BRANCH }}
