@@ -1,6 +1,6 @@
 {
-    "name": "@solidant/kasu-sdk",
-    "version": "1.0.0",
+    "name": "@kasufinance/kasu-sdk",
+    "version": "1.0.1",
     "description": "",
     "main": "dist/bundle.cjs.js",
     "module": "dist/bundle.esm.js",
@@ -13,7 +13,8 @@
         "lint": "eslint . --fix"
     },
     "publishConfig": {
-        "registry": "https://npm.pkg.github.com/@solidant"
+        "registry": "https://registry.npmjs.org/",
+        "access": "public"
     },
     "author": "",
     "license": "ISC",
