@@ -1,4 +1,4 @@
-import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
+import { LockPeriod } from '@kasufinance/kasu-sdk/src/services/Locking/types'
 import { Dispatch, useMemo } from 'react'
 
 import {

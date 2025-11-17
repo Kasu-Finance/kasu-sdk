@@ -1,5 +1,5 @@
+import { PortfolioTranche } from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
 import { TableCell, TableRow } from '@mui/material'
-import { PortfolioTranche } from '@solidant/kasu-sdk/src/services/Portfolio/types'
 
 import getTranslation from '@/hooks/useTranslation'
 

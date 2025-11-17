@@ -3,19 +3,19 @@
 import {
   PoolOverview,
   TrancheData,
-} from '@solidant/kasu-sdk/src/services/DataService/types'
+} from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import {
   LockPeriod,
   UserLock,
-} from '@solidant/kasu-sdk/src/services/Locking/types'
+} from '@kasufinance/kasu-sdk/src/services/Locking/types'
 import {
   PortfolioLendingPool,
   PortfolioTranche,
-} from '@solidant/kasu-sdk/src/services/Portfolio/types'
+} from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
 import {
   UserRequest,
   UserTrancheBalance,
-} from '@solidant/kasu-sdk/src/services/UserLending/types'
+} from '@kasufinance/kasu-sdk/src/services/UserLending/types'
 import { ReactNode, useReducer } from 'react'
 
 import { LoanStatus } from '@/components/organisms/lending/RepaymentsTab/LoanStatus/LoanStatusTableBody'

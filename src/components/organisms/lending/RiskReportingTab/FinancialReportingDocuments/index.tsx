@@ -1,7 +1,7 @@
 'use client'
 
+import { FinancialReportingDocuments as FinancialReportingDocumentsType } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { Pagination, Stack } from '@mui/material'
-import { FinancialReportingDocuments as FinancialReportingDocumentsType } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
 import usePagination from '@/hooks/usePagination'

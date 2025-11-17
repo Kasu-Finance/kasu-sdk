@@ -1,4 +1,8 @@
 import {
+  LockPeriod,
+  UserLock,
+} from '@kasufinance/kasu-sdk/src/services/Locking/types'
+import {
   Box,
   Button,
   Stack,
@@ -6,10 +10,6 @@ import {
   TableRow,
   Typography,
 } from '@mui/material'
-import {
-  LockPeriod,
-  UserLock,
-} from '@solidant/kasu-sdk/src/services/Locking/types'
 import { formatEther } from 'ethers/lib/utils'
 import React from 'react'
 

@@ -1,4 +1,4 @@
-import { BadAndDoubtfulDebts as BadAndDoubtfulDebtsType } from '@solidant/kasu-sdk/src/services/DataService/types'
+import { BadAndDoubtfulDebts as BadAndDoubtfulDebtsType } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
 import getTranslation from '@/hooks/useTranslation'

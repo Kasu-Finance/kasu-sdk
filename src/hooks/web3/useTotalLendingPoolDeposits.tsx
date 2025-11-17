@@ -1,4 +1,4 @@
-import { KasuSdk } from '@solidant/kasu-sdk'
+import { KasuSdk } from '@kasufinance/kasu-sdk'
 import { formatUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import useSWR from 'swr'

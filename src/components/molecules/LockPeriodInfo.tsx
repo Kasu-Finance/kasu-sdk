@@ -1,5 +1,5 @@
+import { LockPeriod } from '@kasufinance/kasu-sdk/src/services/Locking/types'
 import { Box, Divider, Typography } from '@mui/material'
-import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
 import React from 'react'
 
 import getTranslation from '@/hooks/useTranslation'

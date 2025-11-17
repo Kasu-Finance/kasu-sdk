@@ -1,5 +1,5 @@
+import { RiskManagement as RiskManagementType } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { Box, Divider, Stack, Typography } from '@mui/material'
-import { RiskManagement as RiskManagementType } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import getTranslation from '@/hooks/useTranslation'
 

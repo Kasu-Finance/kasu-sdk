@@ -1,4 +1,4 @@
-import { PoolCreditMetrics as PoolCreditMetricsType } from '@solidant/kasu-sdk/src/services/DataService/types'
+import { PoolCreditMetrics as PoolCreditMetricsType } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
 import getTranslation from '@/hooks/useTranslation'

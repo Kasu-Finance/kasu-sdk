@@ -1,6 +1,6 @@
+import { KasuSdk } from '@kasufinance/kasu-sdk'
+import { PoolOverviewDirectus } from '@kasufinance/kasu-sdk/src/services/DataService/directus-types'
 import { useWallets } from '@privy-io/react-auth'
-import { KasuSdk } from '@solidant/kasu-sdk'
-import { PoolOverviewDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import { ethers } from 'ethers'
 import useSWR, { preload } from 'swr'
 import useSWRImmutable from 'swr/immutable'

@@ -1,4 +1,4 @@
-import { SdkConfig } from '@solidant/kasu-sdk/src/sdk-config'
+import { SdkConfig } from '@kasufinance/kasu-sdk/src/sdk-config'
 
 import sepolia from '@/config/sdk/addresses-base-sepolia.json'
 

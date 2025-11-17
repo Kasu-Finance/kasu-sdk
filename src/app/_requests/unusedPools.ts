@@ -1,4 +1,4 @@
-import { PoolOverviewDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
+import { PoolOverviewDirectus } from '@kasufinance/kasu-sdk/src/services/DataService/directus-types'
 import { unstable_cache } from 'next/cache'
 
 import sdkConfig from '@/config/sdk'

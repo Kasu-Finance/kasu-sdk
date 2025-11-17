@@ -1,5 +1,5 @@
+import { UserRequestEvent } from '@kasufinance/kasu-sdk/src/services/UserLending/types'
 import { Box, Button, TableCell, TableRow, Typography } from '@mui/material'
-import { UserRequestEvent } from '@solidant/kasu-sdk/src/services/UserLending/types'
 import React from 'react'
 import { useChainId } from 'wagmi'
 

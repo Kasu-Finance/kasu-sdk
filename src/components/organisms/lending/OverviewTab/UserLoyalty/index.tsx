@@ -1,5 +1,5 @@
+import { LockPeriod } from '@kasufinance/kasu-sdk/src/services/Locking/types'
 import { Stack } from '@mui/material'
-import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
 
 import getTranslation from '@/hooks/useTranslation'
 

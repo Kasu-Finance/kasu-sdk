@@ -1,5 +1,5 @@
+import { PortfolioLendingPool } from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
 import { TableCell, TableRow } from '@mui/material'
-import { PortfolioLendingPool } from '@solidant/kasu-sdk/src/services/Portfolio/types'
 import React from 'react'
 
 import usePortfolioState from '@/hooks/context/usePortfolioState'

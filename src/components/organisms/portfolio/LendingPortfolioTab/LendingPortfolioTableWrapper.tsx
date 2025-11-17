@@ -1,6 +1,6 @@
 'use client'
 
-import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
+import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
 import useLendingPortfolioData from '@/hooks/portfolio/useLendingPortfolioData'

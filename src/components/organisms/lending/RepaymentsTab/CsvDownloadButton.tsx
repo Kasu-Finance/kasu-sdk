@@ -1,7 +1,7 @@
 'use client'
 
+import { PoolRepayment } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { Button } from '@mui/material'
-import { PoolRepayment } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 type CsvDownloadButtonProps = {
   repayment: PoolRepayment

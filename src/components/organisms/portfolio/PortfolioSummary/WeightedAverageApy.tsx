@@ -1,7 +1,7 @@
 'use client'
 
+import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { Skeleton } from '@mui/material'
-import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import usePortfolioSummary from '@/hooks/portfolio/usePortfolioSummary'
 

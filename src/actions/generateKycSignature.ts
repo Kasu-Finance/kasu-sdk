@@ -1,6 +1,6 @@
 'use server'
 
-import { IKasuAllowListAbi__factory } from '@solidant/kasu-sdk/src/contracts'
+import { IKasuAllowListAbi__factory } from '@kasufinance/kasu-sdk/src/contracts'
 
 import NEXERA_API_BASE_URL from '@/config/nexera/api.nexera'
 

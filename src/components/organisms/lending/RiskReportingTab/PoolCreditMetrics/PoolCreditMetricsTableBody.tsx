@@ -1,5 +1,5 @@
+import { PoolCreditMetrics } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { Box, TableCell, TableRow } from '@mui/material'
-import { PoolCreditMetrics } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
 import ToolTip from '@/components/atoms/ToolTip'

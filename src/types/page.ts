@@ -1,7 +1,7 @@
 import {
   PoolDelegateProfileAndHistory,
   PoolOverview,
-} from '@solidant/kasu-sdk/src/services/DataService/types'
+} from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { NextPage } from 'next'
 import { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'

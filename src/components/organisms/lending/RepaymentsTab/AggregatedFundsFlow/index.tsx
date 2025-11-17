@@ -1,5 +1,5 @@
+import { PoolRepayment } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { Box, Divider, Grid, Typography } from '@mui/material'
-import { PoolRepayment } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
 import getTranslation from '@/hooks/useTranslation'

@@ -1,6 +1,6 @@
 'use client'
 
-import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
+import { LockPeriod } from '@kasufinance/kasu-sdk/src/services/Locking/types'
 
 import useUserLocks from '@/hooks/locking/useUserLocks'
 import getTranslation from '@/hooks/useTranslation'

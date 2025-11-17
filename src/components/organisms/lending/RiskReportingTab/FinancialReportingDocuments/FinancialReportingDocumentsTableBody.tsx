@@ -1,3 +1,4 @@
+import { FinancialReportingDocuments } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import {
   IconButton,
   Stack,
@@ -5,7 +6,6 @@ import {
   TableRow,
   Typography,
 } from '@mui/material'
-import { FinancialReportingDocuments } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { Fragment } from 'react'
 
 import DottedDivider from '@/components/atoms/DottedDivider'

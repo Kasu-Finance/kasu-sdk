@@ -1,7 +1,7 @@
 'use client'
 
+import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { Box, Button } from '@mui/material'
-import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import usePortfolioState from '@/hooks/context/usePortfolioState'
 import useLendingPortfolioData from '@/hooks/portfolio/useLendingPortfolioData'

@@ -1,7 +1,7 @@
 import {
   LockPeriod,
   UserLock,
-} from '@solidant/kasu-sdk/src/services/Locking/types'
+} from '@kasufinance/kasu-sdk/src/services/Locking/types'
 import React from 'react'
 
 import usePagination from '@/hooks/usePagination'

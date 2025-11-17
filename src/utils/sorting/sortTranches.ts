@@ -1,4 +1,4 @@
-import { TrancheData } from '@solidant/kasu-sdk/src/services/DataService/types'
+import { TrancheData } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 
 const sortTranches = (tranches: TrancheData[]) => {
   if (!tranches || tranches.length === 0) {

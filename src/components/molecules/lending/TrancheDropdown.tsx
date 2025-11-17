@@ -1,5 +1,5 @@
+import { TrancheData } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { SelectChangeEvent, Typography } from '@mui/material'
-import { TrancheData } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import getTranslation from '@/hooks/useTranslation'
 

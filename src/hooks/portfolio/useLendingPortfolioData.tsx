@@ -1,4 +1,4 @@
-import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
+import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { ethers } from 'ethers'
 import useSWR from 'swr'
 import { useAccount, useChainId } from 'wagmi'

@@ -1,5 +1,5 @@
+import { BadAndDoubtfulDebts } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { Box, TableCell, TableRow, Typography } from '@mui/material'
-import { BadAndDoubtfulDebts } from '@solidant/kasu-sdk/src/services/DataService/types'
 import React from 'react'
 
 import ToolTip from '@/components/atoms/ToolTip'

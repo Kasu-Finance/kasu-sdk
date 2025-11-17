@@ -1,4 +1,4 @@
-import { GQLGetLockingPeriods } from '@solidant/kasu-sdk/src/services/Locking/types'
+import { GQLGetLockingPeriods } from '@kasufinance/kasu-sdk/src/services/Locking/types'
 import { unstable_cache } from 'next/cache'
 
 import sdkConfig from '@/config/sdk'

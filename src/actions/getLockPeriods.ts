@@ -3,7 +3,7 @@
 import {
   GQLGetLockingPeriods,
   LockPeriod,
-} from '@solidant/kasu-sdk/src/services/Locking/types'
+} from '@kasufinance/kasu-sdk/src/services/Locking/types'
 
 import FALLBACK_LOCK_PERIODS from '@/config/lockPeriod'
 import sdkConfig from '@/config/sdk'

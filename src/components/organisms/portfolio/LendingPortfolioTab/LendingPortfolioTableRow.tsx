@@ -1,5 +1,5 @@
+import { PortfolioLendingPool } from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
 import { TableCell, TableRow, Typography } from '@mui/material'
-import { PortfolioLendingPool } from '@solidant/kasu-sdk/src/services/Portfolio/types'
 
 import useUserLendingTrancheBalance from '@/hooks/lending/useUserLendingTrancheBalance'
 

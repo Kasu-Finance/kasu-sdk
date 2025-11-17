@@ -1,9 +1,9 @@
-import { Box, TableCell, TableRow } from '@mui/material'
 import {
   PortfolioLendingPool,
   PortfolioTranche,
-} from '@solidant/kasu-sdk/src/services/Portfolio/types'
-import { UserTrancheBalance } from '@solidant/kasu-sdk/src/services/UserLending/types'
+} from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
+import { UserTrancheBalance } from '@kasufinance/kasu-sdk/src/services/UserLending/types'
+import { Box, TableCell, TableRow } from '@mui/material'
 
 import getTranslation from '@/hooks/useTranslation'
 

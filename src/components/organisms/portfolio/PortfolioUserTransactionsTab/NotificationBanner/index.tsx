@@ -1,7 +1,7 @@
 'use client'
 
+import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { Button, Typography } from '@mui/material'
-import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 
 import useModalState from '@/hooks/context/useModalState'
 import useLoanTickets from '@/hooks/lending/useLoanTickets'

@@ -1,4 +1,4 @@
-import { UserRequest } from '@solidant/kasu-sdk/src/services/UserLending/types'
+import { UserRequest } from '@kasufinance/kasu-sdk/src/services/UserLending/types'
 
 import { LoanTicketDto } from '@/config/api.lendersAgreement'
 import getCurrentDecisionStatus from '@/utils/lending/getCurrentDecisionStatus'
@@ -440,12 +440,12 @@ const getDetailedTransactions = (
         ? getCurrentDecisionStatus(loanTickets, transactionActionId)
         : undefined,
       pendingDecisions: transactionActionId
-        ? pendingDecisionMap.get(transaction.trancheId) ?? []
+        ? (pendingDecisionMap.get(transaction.trancheId) ?? [])
         : [],
       subsequentTransactions: transactionActionId
-        ? subsequentTransactionsMap
+        ? (subsequentTransactionsMap
             .get(transactionActionId)
-            ?.sort((a, b) => b.timestamp - a.timestamp) ?? []
+            ?.sort((a, b) => b.timestamp - a.timestamp) ?? [])
         : [],
       lastTransactionDate: [...transaction.events].reverse()[0].timestamp,
       transactions: depositGroup,

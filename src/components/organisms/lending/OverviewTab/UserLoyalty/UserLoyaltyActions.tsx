@@ -1,7 +1,7 @@
 'use client'
 
+import { LockPeriod } from '@kasufinance/kasu-sdk/src/services/Locking/types'
 import { Grid } from '@mui/material'
-import { LockPeriod } from '@solidant/kasu-sdk/src/services/Locking/types'
 
 import useModalState from '@/hooks/context/useModalState'
 import getTranslation from '@/hooks/useTranslation'
