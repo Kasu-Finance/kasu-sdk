@@ -16,28 +16,32 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Get the version
-        id: get_version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
 
-      - name: Remove leading v
-        id: replaced_version
-        env:
-          IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
+      - name: Get tag version
+        id: tag_version
         run: |
-          string=$IMAGE_TAG
-          echo "VERSION=${string#v}" >> "$GITHUB_OUTPUT"
+          RAW_TAG="${GITHUB_REF#refs/tags/}"
+          echo "TAG_VERSION=${RAW_TAG#v}" >> "$GITHUB_OUTPUT"
 
-      - name: Replace version inside package.json
-        env:
-          VERSION: ${{ steps.replaced_version.outputs.VERSION }}
-        run: bash versioner.sh $VERSION
+      - name: Read package version
+        id: package_version
+        run: |
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          echo "PACKAGE_VERSION=$PKG_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Ensure tag matches package.json
+        run: |
+          if [ "${{ steps.tag_version.outputs.TAG_VERSION }}" != "${{ steps.package_version.outputs.PACKAGE_VERSION }}" ]; then
+            echo "Tag version ${{ steps.tag_version.outputs.TAG_VERSION }} does not match package.json version ${{ steps.package_version.outputs.PACKAGE_VERSION }}."
+            exit 1
+          fi
 
       - uses: actions/setup-node@v3
         with:
           node-version: 18
           registry-url: https://registry.npmjs.org/
           scope: '@kasufinance'
+
       - run: npm install && npm run build-tc && npm run build && npm run rollup-build && npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
