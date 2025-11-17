@@ -1,4 +1,4 @@
-name: Workflow-publish
+name: Publish to npm
 
 on:
   push:
@@ -18,16 +18,16 @@ jobs:
       - uses: actions/checkout@v3
       - name: Get the version
         id: get_version
-        run: echo "VERSION=$value" >> $GITHUB_OUTPUT
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
 
-      - name: Replace version string
+      - name: Remove leading v
         id: replaced_version
         env:
           IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
         run: |
           string=$IMAGE_TAG
-          replaced=${string//v/}
-          echo "VERSION=$value" >> $GITHUB_OUTPUT
+          echo "VERSION=${string#v}" >> "$GITHUB_OUTPUT"
+
       - name: Replace version inside package.json
         env:
           VERSION: ${{ steps.replaced_version.outputs.VERSION }}
