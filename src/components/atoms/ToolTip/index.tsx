@@ -9,9 +9,15 @@ import useDeviceDetection, { Device } from '@/hooks/useDeviceDetections'
 export type ToolTipProps = Omit<TooltipProps, 'children'> & {
   children?: React.ReactElement<any, any>
   iconSx?: SxProps<Theme>
+  darkDefaultIcon?: boolean
 }
 
-const ToolTip: React.FC<ToolTipProps> = ({ children, iconSx, ...rest }) => {
+const ToolTip: React.FC<ToolTipProps> = ({
+  children,
+  darkDefaultIcon,
+  iconSx,
+  ...rest
+}) => {
   const currentDevice = useDeviceDetection()
 
   const isMobile = currentDevice === Device.MOBILE
@@ -46,6 +52,12 @@ const ToolTip: React.FC<ToolTipProps> = ({ children, iconSx, ...rest }) => {
                 width: 16,
                 height: 16,
               },
+              ...(darkDefaultIcon && {
+                color: 'gold.extraDark',
+                '&:hover': {
+                  color: 'rgba(133, 87, 38, 1)',
+                },
+              }),
             }),
             ...(Array.isArray(iconSx) ? iconSx : [iconSx]),
           ]}

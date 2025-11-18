@@ -1,26 +1,27 @@
 import { Box, Typography } from '@mui/material'
+import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
 import { formatEther } from 'ethers/lib/utils'
+import React from 'react'
 
-import useLockModalState from '@/hooks/context/useLockModalState'
-import useModalState from '@/hooks/context/useModalState'
+import useUnlockModalState from '@/hooks/context/useUnlockModalState'
 import useRatio from '@/hooks/useRatio'
 import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
 
-import { ModalsKeys } from '@/context/modal/modal.types'
-
 import { formatAmount, toBigNumber } from '@/utils'
 
-const UnlockRemainingInfo = () => {
+type UnlockRemainingInfoProps = {
+  userLock: UserLock
+}
+
+const UnlockRemainingInfo: React.FC<UnlockRemainingInfoProps> = ({
+  userLock,
+}) => {
   const { t } = getTranslation()
 
-  const { modal } = useModalState()
-
-  const { userLock } = modal[ModalsKeys.UNLOCK]
-
-  const { amount } = useLockModalState()
+  const { amount } = useUnlockModalState()
 
   const ratio = useRatio(amount, userLock.lockedAmount)
 

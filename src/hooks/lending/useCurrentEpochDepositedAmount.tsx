@@ -1,23 +1,24 @@
 import useSWRImmutable from 'swr/immutable'
-import { useAccount } from 'wagmi'
 
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useSdk from '@/hooks/context/useSdk'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
-const useCurrentEpochDepositedAmount = (
-  lendingPoolId: string,
-  trancheId: string
-) => {
-  const sdk = useKasuSDK()
+const useCurrentEpochDepositedAmount = (lendingPoolIds: string | string[]) => {
+  const sdk = useSdk()
 
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const { data, error, isLoading, mutate } = useSWRImmutable(
-    account.address && sdk
-      ? [`currentEpochDepositedAmount/${lendingPoolId}`, account.address, sdk]
+    address && sdk
+      ? [
+          `currentEpochDepositedAmount/${Array.isArray(lendingPoolIds) ? lendingPoolIds.join(',') : lendingPoolIds}`,
+          address,
+          sdk,
+        ]
       : null,
     async ([_, userAddress, sdk]) => {
       const amountMap = await sdk.UserLending.getCurrentEpochDepositedAmount(
-        lendingPoolId,
+        Array.isArray(lendingPoolIds) ? lendingPoolIds : [lendingPoolIds],
         userAddress.toLowerCase()
       )
 
@@ -26,9 +27,7 @@ const useCurrentEpochDepositedAmount = (
   )
 
   return {
-    currentEpochDepositedAmount: data
-      ? data.get(trancheId.toLowerCase()) ?? '0'
-      : undefined,
+    currentEpochDepositedAmount: data,
     error,
     isLoading,
     updateCurrentEpochDepositedAmount: mutate,

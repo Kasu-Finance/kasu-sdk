@@ -1,7 +1,8 @@
 'use client'
 
-import { Skeleton, Typography } from '@mui/material'
+import { Skeleton, Typography, TypographyProps } from '@mui/material'
 import { formatUnits } from 'ethers/lib/utils'
+import React from 'react'
 
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 import useUserBalance from '@/hooks/web3/useUserBalance'
@@ -9,7 +10,7 @@ import useUserBalance from '@/hooks/web3/useUserBalance'
 import { SupportedTokens } from '@/constants/tokens'
 import { formatAmount } from '@/utils'
 
-const UsdcBalance = () => {
+const UsdcBalance: React.FC<TypographyProps> = (props) => {
   const supportedToken = useSupportedTokenInfo()
 
   const { balance, decimals, isUserBalanceLoading } = useUserBalance(
@@ -21,7 +22,7 @@ const UsdcBalance = () => {
   }
 
   return (
-    <Typography variant='baseMdBold'>
+    <Typography variant='baseMdBold' {...props}>
       {formatAmount(formatUnits(balance, decimals), { minDecimals: 2 })} USDC
     </Typography>
   )

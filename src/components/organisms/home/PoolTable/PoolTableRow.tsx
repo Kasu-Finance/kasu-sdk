@@ -162,10 +162,7 @@ const PoolTableRow: React.FC<PoolTableRowProps> = ({ pool }) => {
         )}
         <TableCell>
           <Typography variant='baseSm'>
-            {formatPercentage(pool.delegate.historicLossRate).replaceAll(
-              ' ',
-              ''
-            )}
+            {formatPercentage(pool.delegate.historicLossRate)}
           </Typography>
         </TableCell>
         {isActivePool && (

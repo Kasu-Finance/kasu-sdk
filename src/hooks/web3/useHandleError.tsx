@@ -1,8 +1,10 @@
 import { Logger } from 'ethers/lib/utils'
-import { useAccount, useChainId } from 'wagmi'
+import { useChainId } from 'wagmi'
 
 import useToastState from '@/hooks/context/useToastState'
-import { KasuSdkNotReadyError } from '@/hooks/useKasuSDK'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
+
+import { KasuSdkNotReadyError } from '@/context/sdk/sdk.types'
 
 import {
   ACTION_MESSAGES,
@@ -16,7 +18,7 @@ import { capitalize, userRejectedTransaction } from '@/utils'
 const useHandleError = () => {
   const { setToast } = useToastState()
 
-  const { address } = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const chainId = useChainId()
 

@@ -1,3 +1,4 @@
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { Dispatch, useMemo } from 'react'
 
 import {
@@ -13,6 +14,11 @@ const useDepositModalActions = (
 ): DepositModalFunctions =>
   useMemo(
     () => ({
+      setSelectedPool: (pool: PoolOverview) =>
+        dispatch({
+          type: DepositModalActionType.SET_SELECTED_POOL,
+          payload: pool,
+        }),
       setAmount: (amount: string) =>
         dispatch({
           type: DepositModalActionType.SET_AMOUNT,
@@ -33,16 +39,10 @@ const useDepositModalActions = (
           type: DepositModalActionType.SET_FIXED_TERM_CONFIG_ID,
           payload: fixedTermConfigId,
         }),
-      setSelectedTranche: (
-        selectedTranche: `0x${string}`,
-        defaultFixedTermConfigId: string | undefined
-      ) =>
+      setSelectedTranche: (selectedTranche: `0x${string}`) =>
         dispatch({
           type: DepositModalActionType.SET_SELECTED_TRANCHE,
-          payload: {
-            trancheId: selectedTranche,
-            defaultFixedTermConfigId,
-          },
+          payload: selectedTranche,
         }),
       setSimulatedDuration: (simulatedDuration: number) =>
         dispatch({
@@ -68,6 +68,11 @@ const useDepositModalActions = (
         dispatch({
           type: DepositModalActionType.SET_IS_DEBOUNCING,
           payload: isDebouncing,
+        }),
+      setDepositMinMax: (payload: { minDeposit: string; maxDeposit: string }) =>
+        dispatch({
+          type: DepositModalActionType.SET_DEPOSIT_MIN_MAX,
+          payload,
         }),
       setLoanContractAcccepted: (loanContractAccepted: boolean) =>
         dispatch({

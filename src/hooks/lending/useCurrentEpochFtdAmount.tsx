@@ -1,28 +1,27 @@
 import useSWRImmutable from 'swr/immutable'
-import { useAccount } from 'wagmi'
 
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useSdk from '@/hooks/context/useSdk'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 const useCurrentEpochFtdAmount = (
-  lendingPoolId: string,
-  currentEpoch: string,
-  trancheId: string
+  lendingPoolIds: string | string[],
+  currentEpoch: string
 ) => {
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
 
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const { data, error, isLoading, mutate } = useSWRImmutable(
-    account.address && sdk
+    address && sdk
       ? [
-          `currentEpochFtdAmount/${lendingPoolId}/${currentEpoch}`,
-          account.address,
+          `currentEpochFtdAmount/${Array.isArray(lendingPoolIds) ? lendingPoolIds.join(',') : lendingPoolIds}/${currentEpoch}`,
+          address,
           sdk,
         ]
       : null,
     async ([_, userAddress, sdk]) => {
       const ftdAmountMap = await sdk.UserLending.getCurrentEpochFtdAmount(
-        lendingPoolId,
+        Array.isArray(lendingPoolIds) ? lendingPoolIds : [lendingPoolIds],
         userAddress.toLowerCase(),
         currentEpoch
       )
@@ -32,7 +31,7 @@ const useCurrentEpochFtdAmount = (
   )
 
   return {
-    currentEpochFtdAmount: data?.get(trancheId),
+    currentEpochFtdAmount: data,
     error,
     isLoading,
     updateCurrentEpochFtdAmount: mutate,

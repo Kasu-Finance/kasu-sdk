@@ -2,10 +2,10 @@
 
 import { Box } from '@mui/material'
 import Image from 'next/image'
-import { useAccount } from 'wagmi'
 
 import useLoyaltyLevel, { LoyaltyLevel } from '@/hooks/locking/useLoyaltyLevel'
 import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import Crown_0 from '@/images/crown-0.png'
 import Crown_1 from '@/images/crown-1.png'
@@ -23,13 +23,13 @@ export const getCrown = (currentLevel: LoyaltyLevel) => {
 }
 
 const CurrentLoyaltyCrown = () => {
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const { stakedPercentage } = useLockingPercentage()
 
   const { currentLevel } = useLoyaltyLevel(stakedPercentage)
 
-  if (!account.address) return null
+  if (!address) return null
 
   return (
     <Box

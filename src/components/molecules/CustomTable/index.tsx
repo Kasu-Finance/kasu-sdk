@@ -65,6 +65,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
               borderRadius: 2,
               overflow: 'hidden',
               background: `url("/images/wave-white.png") repeat`,
+              backgroundSize: '17px 16px',
               tableLayout: 'fixed',
             },
             ...(Array.isArray(tableSx) ? tableSx : [tableSx]),

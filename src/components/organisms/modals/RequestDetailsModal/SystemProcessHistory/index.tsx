@@ -1,7 +1,7 @@
 import { Stack, Table, TableBody, Typography } from '@mui/material'
 import { Fragment } from 'react'
 
-import TransactionHistoryRow from '@/components/organisms/modals/RequestDetailsModal/SystemProcessHistory/SystemProcessHistoryRow'
+import SystemProcessHistoryRow from '@/components/organisms/modals/RequestDetailsModal/SystemProcessHistory/SystemProcessHistoryRow'
 import TraansactionHistoryTableHeader from '@/components/organisms/modals/RequestDetailsModal/SystemProcessHistory/SystemProcessHistoryTableHeader'
 
 import {
@@ -15,6 +15,7 @@ type SystemProcessHistoryProps = {
     | WithdrawalTransactionWrapper
     | DetailedTransactionWrapper
     | DetailedTransactionReallocationRequest
+  currentEpoch: string
 }
 
 const getReallocateFromTranscheName = (trancheName: string) => {
@@ -45,7 +46,9 @@ const getDescription = (
     | WithdrawalTransactionWrapper['events'][number]
 ) => {
   if ('remainingQueuedAmount' in event) {
-    if (event.status === 'Requested') {
+    if (event.status === 'Forced') {
+      return 'Forced Withdrawal'
+    } else if (event.status === 'Requested') {
       return 'New Withdrawal Request'
     } else {
       return parseFloat(event.remainingQueuedAmount) <= 0
@@ -85,6 +88,7 @@ const getStatus = (
 
 const SystemProcessHistory: React.FC<SystemProcessHistoryProps> = ({
   transaction,
+  currentEpoch,
 }) => {
   const isReallocation = 'id' in transaction
 
@@ -113,39 +117,43 @@ const SystemProcessHistory: React.FC<SystemProcessHistoryProps> = ({
           {isReallocation ? (
             <>
               {parseFloat(transaction.reallocatedOutAmount) > 0 && (
-                <TransactionHistoryRow
+                <SystemProcessHistoryRow
                   amount={transaction.reallocatedOutAmount}
                   date={transaction.requestTimestamp}
                   epochId={transaction.epochId}
+                  currentEpoch={currentEpoch}
                   tranasctionHash='hash'
                   description={`Reallocated Out to ${getReallocatedOutTrancheName(transaction.trancheName)} Tranche`}
                   status={`${transaction.trancheName} Tranche Full/Overflow`}
                 />
               )}
               {parseFloat(transaction.rejectedAmount) > 0 && (
-                <TransactionHistoryRow
+                <SystemProcessHistoryRow
                   amount={transaction.rejectedAmount}
                   date={transaction.requestTimestamp}
                   epochId={transaction.epochId}
+                  currentEpoch={currentEpoch}
                   tranasctionHash={transaction.transactionHash}
                   description='Rejected'
                   status={`Funds Returned - ${transaction.trancheName} Tranche Full/Overflow`}
                 />
               )}
               {parseFloat(transaction.acceptedAmount) > 0 && (
-                <TransactionHistoryRow
+                <SystemProcessHistoryRow
                   amount={transaction.acceptedAmount}
                   date={transaction.requestTimestamp}
                   epochId={transaction.epochId}
+                  currentEpoch={currentEpoch}
                   tranasctionHash={transaction.transactionHash}
                   description='Accepted'
                   status='Accepted by Delegate'
                 />
               )}
-              <TransactionHistoryRow
+              <SystemProcessHistoryRow
                 amount={transaction.reallocatedInAmount}
                 date={transaction.requestTimestamp}
                 epochId={transaction.epochId}
+                currentEpoch={currentEpoch}
                 tranasctionHash={transaction.transactionHash}
                 description={`Reallocated In from ${getReallocateFromTranscheName(transaction.trancheName)} Tranche`}
                 status={`${getReallocateFromTranscheName(transaction.trancheName)} Tranche Full/Overflow`}
@@ -156,8 +164,9 @@ const SystemProcessHistory: React.FC<SystemProcessHistoryProps> = ({
             [...transaction.events].reverse().map((event, index) => {
               return (
                 <Fragment key={index}>
-                  <TransactionHistoryRow
+                  <SystemProcessHistoryRow
                     epochId={event.epochId}
+                    currentEpoch={currentEpoch}
                     amount={event.amount}
                     date={event.timestamp}
                     tranasctionHash={event.transactionHash}

@@ -1,29 +1,22 @@
 import { Stack, Typography } from '@mui/material'
-import { useAccount } from 'wagmi'
 
-import useModalState from '@/hooks/context/useModalState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import getTranslation from '@/hooks/useTranslation'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import NextClearingPeriodInfo from '@/components/molecules/NextClearingPeriodInfo'
 import WithdrawalModalConfirmedActions from '@/components/organisms/modals/WithdrawModal/WithdrawalModalConfirmed/WithdrawalModalConfirmedActions'
-
-import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { formatAccount, formatAmount, mergeSubheading } from '@/utils'
 
 const WithdrawalModalConfirmed = () => {
   const { t } = getTranslation()
 
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
-  const { modal } = useModalState()
+  const { amount, trancheId, selectedPool } = useWithdrawModalState()
 
-  const { pool } = modal[ModalsKeys.WITHDRAW]
-
-  const { amount, trancheId } = useWithdrawModalState()
-
-  const selectedTranche = pool.tranches.find(
+  const selectedTranche = selectedPool.tranches.find(
     (tranche) => tranche.id === trancheId
   )
 
@@ -38,9 +31,9 @@ const WithdrawalModalConfirmed = () => {
             {formatAmount(amount, { minDecimals: 2 })} USDC{' '}
           </Typography>
           {t('lending.withdraw.confirmStep.description-1')}{' '}
-          {mergeSubheading(pool.poolName, pool.subheading)}
-          {pool.tranches.length > 1
-            ? `, ${selectedTranche?.name} ${t('general.tranche')}`
+          {mergeSubheading(selectedPool.poolName, selectedPool.subheading)}
+          {selectedPool.tranches.length > 1
+            ? `- ${selectedTranche?.name} ${t('general.tranche')}`
             : null}{' '}
           {t('lending.withdraw.confirmStep.description-2')}{' '}
           <Typography variant='baseMdBold'>
@@ -52,9 +45,7 @@ const WithdrawalModalConfirmed = () => {
         </Typography>
         <Typography variant='baseMd'>
           {t('lending.withdraw.confirmStep.description-4')}{' '}
-          <Typography variant='baseMdBold'>
-            {formatAccount(account.address)}
-          </Typography>
+          <Typography variant='baseMdBold'>{formatAccount(address)}</Typography>
         </Typography>
       </Stack>
       <WithdrawalModalConfirmedActions />

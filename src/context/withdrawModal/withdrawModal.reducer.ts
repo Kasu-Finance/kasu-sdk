@@ -9,6 +9,11 @@ const withdrawModalReducer = (
   action: WithdrawModalActions
 ): WithdrawModalStateType => {
   switch (action.type) {
+    case WithdrawModalActionTypes.SET_SELECTED_POOL:
+      return {
+        ...state,
+        selectedPool: action.payload,
+      }
     case WithdrawModalActionTypes.SET_AMOUNT:
       return {
         ...state,

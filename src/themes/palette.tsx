@@ -128,7 +128,7 @@ export const customPalette = {
     noises: 'rgba(244, 244, 244, 1)',
   },
   gold: {
-    extraLight: 'rgba(244, 244, 244, 1)',
+    extraLight: 'rgba(247, 241, 229, 1)',
     light: 'rgba(205, 206, 208, 1)',
     middle: 'rgba(232, 192, 145, 1)',
     dark: 'rgba(196, 153, 108, 1)',

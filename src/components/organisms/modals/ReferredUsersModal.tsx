@@ -30,11 +30,13 @@ const ReferredUsersModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         sx={{ pb: 0 }}
         tableSx={{
           background: 'url("/images/wave-dark-gold.png") repeat',
+          backgroundSize: '17px 16px',
           borderBottomLeftRadius: 0,
           borderBottomRightRadius: 0,
         }}
         tableBodySx={{
           background: 'url("/images/wave-gold.png") repeat',
+          backgroundSize: '17px 16px',
         }}
         tableHeader={
           <TableRow>

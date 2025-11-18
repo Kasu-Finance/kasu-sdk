@@ -5,6 +5,7 @@ import getTranslation from '@/hooks/useTranslation'
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
+import Airdrops from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/Airdrops'
 import BonusAndRewardTable from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/BonusAndRewardTable'
 import CsvDownloadButton from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/CsvDownloadButton'
 import NftPortfolio from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/NftPortfolio'
@@ -60,6 +61,9 @@ const BonusAndRewardPortfolio = () => {
               {t('portfolio.rewards.subheader-3.title')}
             </Typography>
             <ReferralBonus />
+          </Box>
+          <Box>
+            <Airdrops />
           </Box>
         </Stack>
       </CustomInnerCardContent>

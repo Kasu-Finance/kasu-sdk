@@ -1,6 +1,8 @@
 import { formatUnits } from 'ethers/lib/utils'
 import useSWR from 'swr'
-import { useAccount, useChainId } from 'wagmi'
+import { useChainId } from 'wagmi'
+
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import { UserReferralYieldRes } from '@/app/api/referral/userYields/route'
 
@@ -11,7 +13,7 @@ export type ReferredUserDetails = {
 }
 
 const useUserReferrals = () => {
-  const { address } = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const chainId = useChainId()
 

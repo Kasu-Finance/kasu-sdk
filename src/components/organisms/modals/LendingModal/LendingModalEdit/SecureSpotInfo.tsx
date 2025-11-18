@@ -1,4 +1,5 @@
 import { Box, Typography } from '@mui/material'
+import { memo } from 'react'
 
 import getTranslation from '@/hooks/useTranslation'
 
@@ -17,4 +18,4 @@ const SecureSpotInfo = () => {
   )
 }
 
-export default SecureSpotInfo
+export default memo(SecureSpotInfo)

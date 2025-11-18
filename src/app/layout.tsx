@@ -1,21 +1,23 @@
 import { Box } from '@mui/material'
-import { PoolOverviewDirectus } from '@solidant/kasu-sdk/src/services/DataService/directus-types'
 import type { Metadata } from 'next'
 import Script from 'next/script'
 import { ReactNode } from 'react'
 
 import Chatbot from '@/components/atoms/Chatbot'
+import LiteModeReady from '@/components/atoms/LiteModeReady'
 import Footer from '@/components/organisms/footer'
 import Header from '@/components/organisms/header'
 import ModalsContainer from '@/components/organisms/modals/ModalsContainer'
 
 import KycState from '@/context/kyc/kyc.provider'
+import LiteModeState from '@/context/liteMode/liteMode.provider'
 import ModalState from '@/context/modal/modal.provider'
 import PrivyProvider from '@/context/privy.provider'
+import SdkState from '@/context/sdk/sdk.provider'
 import SwrProvider from '@/context/swr.provider'
 import ToastState from '@/context/toast/toast.provider'
 
-import sdkConfig from '@/config/sdk'
+import { getUnusedPools } from '@/app/_requests/unusedPools'
 import ThemeRegistry from '@/themes/ThemeRegistry'
 
 type RootLayoutProps = {
@@ -35,12 +37,7 @@ export const metadata: Metadata = {
 export const fetchCache = 'default-cache'
 
 export default async function RootLayout({ children }: RootLayoutProps) {
-  const res = await fetch(
-    `${sdkConfig.directusUrl}items/PoolOverview?filter[enabled][_neq]=true`
-  )
-
-  const unusedPools: { data: PoolOverviewDirectus[] } = await res.json()
-  const filteredPools = unusedPools.data.map((pool) => pool.id)
+  const filteredPools = await getUnusedPools()
 
   return (
     <html lang='en'>
@@ -80,17 +77,23 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <ThemeRegistry>
           <PrivyProvider>
             <SwrProvider unusedPools={filteredPools}>
-              <ToastState>
-                <KycState>
-                  <ModalState>
-                    {/* <NftTracker /> */}
-                    <Header />
-                    <Box component='main'>{children}</Box>
-                    <Footer />
-                    <ModalsContainer />
-                  </ModalState>
-                </KycState>
-              </ToastState>
+              <SdkState>
+                <ToastState>
+                  <LiteModeState>
+                    <KycState>
+                      <ModalState>
+                        <LiteModeReady>
+                          {/* <NftTracker /> */}
+                          <Header />
+                          <Box component='main'>{children}</Box>
+                          <Footer />
+                        </LiteModeReady>
+                        <ModalsContainer />
+                      </ModalState>
+                    </KycState>
+                  </LiteModeState>
+                </ToastState>
+              </SdkState>
             </SwrProvider>
           </PrivyProvider>
         </ThemeRegistry>

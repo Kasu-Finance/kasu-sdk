@@ -1,35 +1,30 @@
 import { Box, Typography } from '@mui/material'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
-import useModalState from '@/hooks/context/useModalState'
+import useLiteModeState from '@/hooks/context/useLiteModeState'
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
 import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
-import GrossApyTooltip from '@/components/molecules/tooltips/GrossApyTooltip'
+import LiteTrancheGrossApyTooltip from '@/components/molecules/tooltips/Lite/LiteTrancheGrossApyTooltip'
+import LiteTrancheTooltip from '@/components/molecules/tooltips/Lite/LiteTrancheTooltip'
 import TrancheGrossApyTooltip from '@/components/molecules/tooltips/TrancheGrossApyTooltip'
-
-import { ModalsKeys } from '@/context/modal/modal.types'
 
 import dayjs from '@/dayjs'
 import {
   formatAmount,
   formatPercentage,
   formatTimestamp,
-  formatToNearestTime,
   mergeSubheading,
-  TimeConversions,
 } from '@/utils'
 
 const LendingModalReviewOverview = () => {
   const { t } = getTranslation()
 
-  const { modal } = useModalState()
+  const { isLiteMode } = useLiteModeState()
 
-  const pool = modal[ModalsKeys.LEND].pool
-
-  const { amount, amountInUSD, trancheId, fixedTermConfigId } =
+  const { amount, pool, amountInUSD, trancheId, fixedTermConfigId } =
     useDepositModalState()
 
   const formattedTimeNow = formatTimestamp(dayjs().unix(), {
@@ -57,10 +52,7 @@ const LendingModalReviewOverview = () => {
         'weeks'
       )
       .unix(),
-    {
-      format: 'DD.MM.YYYY HH:mm:ss',
-      includeUtcOffset: true,
-    }
+    { format: 'DD.MM.YYYY HH:mm:ss', includeUtcOffset: true }
   )
 
   return (
@@ -68,15 +60,15 @@ const LendingModalReviewOverview = () => {
       <InfoRow
         title={t('modals.lending.review.metric-1')}
         toolTipInfo={
-          <ToolTip
-            title={t('modals.lending.review.metric-1-tooltip')}
-            iconSx={{
-              color: 'gold.extraDark',
-              '&:hover': {
-                color: 'rgba(133, 87, 38, 1)',
-              },
-            }}
-          />
+          !isLiteMode && (
+            <ToolTip
+              title={t('modals.lending.review.metric-1-tooltip')}
+              iconSx={{
+                color: 'gold.extraDark',
+                '&:hover': { color: 'rgba(133, 87, 38, 1)' },
+              }}
+            />
+          )
         }
         metric={
           <Typography variant='baseMdBold'>
@@ -84,21 +76,23 @@ const LendingModalReviewOverview = () => {
           </Typography>
         }
         showDivider
-        dividerProps={{
-          color: 'white',
-        }}
+        dividerProps={{ color: 'white' }}
       />
       {pool.tranches.length > 1 && selectedTranche && (
         <InfoRow
           title={t('general.tranche')}
           toolTipInfo={
             <ToolTip
-              title={t('modals.lending.review.metric-4-tooltip')}
+              title={
+                isLiteMode ? (
+                  <LiteTrancheTooltip />
+                ) : (
+                  t('modals.lending.review.metric-4-tooltip')
+                )
+              }
               iconSx={{
                 color: 'gold.extraDark',
-                '&:hover': {
-                  color: 'rgba(133, 87, 38, 1)',
-                },
+                '&:hover': { color: 'rgba(133, 87, 38, 1)' },
               }}
             />
           }
@@ -108,67 +102,51 @@ const LendingModalReviewOverview = () => {
             </Typography>
           }
           showDivider
-          dividerProps={{
-            color: 'white',
-          }}
+          dividerProps={{ color: 'white' }}
         />
       )}
 
       <InfoRow
-        title={`${pool.tranches.length > 1 ? t('general.tranche') : ''} ${t('general.grossApy')}`}
+        title={fixedTermApy ? t('general.fixedApy') : t('general.variableApy')}
         toolTipInfo={
           <ToolTip
-            title={<TrancheGrossApyTooltip />}
+            title={
+              isLiteMode ? (
+                <LiteTrancheGrossApyTooltip />
+              ) : (
+                <TrancheGrossApyTooltip />
+              )
+            }
             iconSx={{
               color: 'gold.extraDark',
-              '&:hover': {
-                color: 'rgba(133, 87, 38, 1)',
-              },
+              '&:hover': { color: 'rgba(133, 87, 38, 1)' },
             }}
           />
         }
         metric={
           <Typography variant='baseMdBold' display='flex' alignItems='center'>
-            {fixedTermApy
-              ? `${t('general.fixedApy')}, ${fixedTermApy.epochLockDuration} ${t('general.epoch')} (~${formatToNearestTime(
-                  parseFloat(fixedTermApy.epochLockDuration) *
-                    TimeConversions.DAYS_PER_WEEK *
-                    TimeConversions.SECONDS_PER_DAY *
-                    1000
-                )})`
-              : t('general.variableApy')}
-            <ToolTip
-              title={<GrossApyTooltip />}
-              iconSx={{
-                color: 'gold.extraDark',
-                '&:hover': {
-                  color: 'rgba(133, 87, 38, 1)',
-                },
-              }}
-            />
             {formatPercentage(
-              fixedTermApy ? fixedTermApy.apy : selectedTranche?.apy || '0'
+              fixedTermApy && !isLiteMode
+                ? fixedTermApy.apy
+                : selectedTranche?.apy || '0'
             )}
           </Typography>
         }
         showDivider
-        dividerProps={{
-          color: 'white',
-        }}
+        dividerProps={{ color: 'white' }}
       />
-
       <InfoRow
         title={t('modals.lending.review.metric-3')}
         toolTipInfo={
-          <ToolTip
-            title={t('modals.lending.review.metric-3-tooltip')}
-            iconSx={{
-              color: 'gold.extraDark',
-              '&:hover': {
-                color: 'rgba(133, 87, 38, 1)',
-              },
-            }}
-          />
+          !isLiteMode && (
+            <ToolTip
+              title={t('modals.lending.review.metric-3-tooltip')}
+              iconSx={{
+                color: 'gold.extraDark',
+                '&:hover': { color: 'rgba(133, 87, 38, 1)' },
+              }}
+            />
+          )
         }
         metric={
           <Typography variant='baseMdBold'>
@@ -180,11 +158,10 @@ const LendingModalReviewOverview = () => {
           </Typography>
         }
         showDivider
-        dividerProps={{
-          color: 'white',
-        }}
+        dividerProps={{ color: 'white' }}
       />
-      {fixedTermApy && (
+
+      {fixedTermApy && !isLiteMode && (
         <InfoRow
           title={t('modals.lending.review.metric-5')}
           toolTipInfo={
@@ -192,9 +169,7 @@ const LendingModalReviewOverview = () => {
               title={t('modals.lending.review.metric-5-tooltip')}
               iconSx={{
                 color: 'gold.extraDark',
-                '&:hover': {
-                  color: 'rgba(133, 87, 38, 1)',
-                },
+                '&:hover': { color: 'rgba(133, 87, 38, 1)' },
               }}
             />
           }
@@ -209,39 +184,35 @@ const LendingModalReviewOverview = () => {
             </Box>
           }
           showDivider
-          dividerProps={{
-            color: 'white',
-          }}
+          dividerProps={{ color: 'white' }}
         />
       )}
-      <InfoRow
-        title={t('modals.lending.review.metric-2')}
-        toolTipInfo={
-          <ToolTip
-            title={t('modals.lending.review.metric-2-tooltip')}
-            iconSx={{
-              color: 'gold.extraDark',
-              '&:hover': {
-                color: 'rgba(133, 87, 38, 1)',
-              },
-            }}
-          />
-        }
-        metric={
-          <Box>
-            <Typography variant='baseMdBold'>
-              {formattedTimeNow.date}{' '}
-            </Typography>
-            <Typography variant='baseMd' color='gold.extraDark'>
-              {formattedTimeNow.timestamp} {formattedTimeNow.utcOffset}
-            </Typography>
-          </Box>
-        }
-        showDivider
-        dividerProps={{
-          color: 'white',
-        }}
-      />
+      {!isLiteMode && (
+        <InfoRow
+          title={t('modals.lending.review.metric-2')}
+          toolTipInfo={
+            <ToolTip
+              title={t('modals.lending.review.metric-2-tooltip')}
+              iconSx={{
+                color: 'gold.extraDark',
+                '&:hover': { color: 'rgba(133, 87, 38, 1)' },
+              }}
+            />
+          }
+          metric={
+            <Box>
+              <Typography variant='baseMdBold'>
+                {formattedTimeNow.date}{' '}
+              </Typography>
+              <Typography variant='baseMd' color='gold.extraDark'>
+                {formattedTimeNow.timestamp} {formattedTimeNow.utcOffset}
+              </Typography>
+            </Box>
+          }
+          showDivider
+          dividerProps={{ color: 'white' }}
+        />
+      )}
     </Box>
   )
 }

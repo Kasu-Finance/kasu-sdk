@@ -1,24 +1,17 @@
 import { Stack, Typography } from '@mui/material'
 
-import useLockModalState from '@/hooks/context/useLockModalState'
-import useModalState from '@/hooks/context/useModalState'
+import useUnlockModalState from '@/hooks/context/useUnlockModalState'
 import getTranslation from '@/hooks/useTranslation'
 
 import PartialUnlockMessage from '@/components/organisms/modals/UnlockModal/UnlockModalConfirmed/PartialUnlockMessage'
 import UnlockModalConfirmedActions from '@/components/organisms/modals/UnlockModal/UnlockModalConfirmed/UnlockModalConfirmedActions'
-
-import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { formatAmount, toBigNumber } from '@/utils'
 
 const UnlockModalConfirmed = () => {
   const { t } = getTranslation()
 
-  const { amount } = useLockModalState()
-
-  const { modal } = useModalState()
-
-  const { userLock } = modal[ModalsKeys.UNLOCK]
+  const { amount, userLock } = useUnlockModalState()
 
   const isPartial = !toBigNumber(amount).eq(toBigNumber(userLock.lockedAmount))
 

@@ -1,3 +1,5 @@
+import { Box } from '@mui/material'
+
 import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
@@ -24,7 +26,9 @@ const UserLending: React.FC<UserLendingProps> = ({ pool }) => {
       <CustomInnerCardContent>
         <UserLendingSummary pool={pool} />
         {pool.tranches.length > 1 && <UserLendingTrancheDetail pool={pool} />}
-        <WithdrawButton pool={pool} />
+        <Box width={368} mx='auto' display='flex' mt={4}>
+          <WithdrawButton pool={pool} />
+        </Box>
       </CustomInnerCardContent>
     </CustomCard>
   )

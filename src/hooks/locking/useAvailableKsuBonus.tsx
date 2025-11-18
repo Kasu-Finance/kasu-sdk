@@ -1,9 +1,9 @@
 import useSWR from 'swr'
 
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useSdk from '@/hooks/context/useSdk'
 
 const useAvailableKsuBonus = () => {
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
 
   const { data, error } = useSWR(
     sdk ? ['availableKsuBonus', sdk] : null,

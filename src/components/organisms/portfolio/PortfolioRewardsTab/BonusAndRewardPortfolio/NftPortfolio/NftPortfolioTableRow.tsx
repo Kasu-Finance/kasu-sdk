@@ -3,6 +3,7 @@ import { formatEther, formatUnits, parseEther } from 'ethers/lib/utils'
 import Image from 'next/image'
 
 import { NftDetail } from '@/hooks/portfolio/useUserNfts'
+import { UserNftYield } from '@/hooks/portfolio/useUserNftYields'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
 import { customPalette } from '@/themes/palette'
@@ -10,15 +11,7 @@ import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
 type NftPortfolioTableRowProps = {
   nft: NftDetail
-  nftYields?: {
-    poolAddress: string
-    epochIds: string[]
-    baseYield: string
-    boostPct: string
-    boostedYield: string
-    epochBoost: string
-    totalBoost: string
-  }
+  nftYields?: UserNftYield
   isActive: boolean
 }
 

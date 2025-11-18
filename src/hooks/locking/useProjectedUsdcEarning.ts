@@ -1,7 +1,7 @@
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useSdk from '@/hooks/context/useSdk'
 
 const useProjectedUsdcEarning = () => {
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
 
   return sdk ? sdk.Locking.getProjectedUSDC() : '0'
 }

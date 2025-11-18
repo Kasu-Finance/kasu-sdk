@@ -114,5 +114,8 @@
     "implementation": "0x39a4E4dF478a792afAa9FF56cA7cD5327a89e41A",
     "startBlock": 15486216,
     "proxyType": "TransparentProxy"
+  },
+  "ExternalTVL": {
+    "address": "0x662379FEBb3e4F91400B5f7d4f7F7ce4699F3c9F"
   }
 }

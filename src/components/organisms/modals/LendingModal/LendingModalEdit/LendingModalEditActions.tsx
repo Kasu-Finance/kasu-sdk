@@ -1,6 +1,8 @@
 import { Button, Stack } from '@mui/material'
+import React, { memo } from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
+import useLiteModeState from '@/hooks/context/useLiteModeState'
 import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useStepperState from '@/hooks/context/useStepperState'
@@ -8,15 +10,44 @@ import getTranslation from '@/hooks/useTranslation'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-const LendingModalEditActions = () => {
+import { SupportedTokens } from '@/constants/tokens'
+
+type LendingModalEditActionsProps = {
+  selectedPool?: string
+  amount: string
+  amountInUSD: string | undefined
+  fixedTermConfigId: string | undefined
+  trancheId: `0x${string}`
+  selectedToken: SupportedTokens
+}
+
+const LendingModalEditActions: React.FC<LendingModalEditActionsProps> = ({
+  selectedPool,
+  selectedToken,
+  amount,
+  amountInUSD,
+  fixedTermConfigId,
+  trancheId,
+}) => {
   const { t } = getTranslation()
 
-  const { openModal, closeModal } = useModalState()
+  const { isLiteMode } = useLiteModeState()
+
+  const { modal, openModal, closeModal } = useModalState()
+
+  const { pools } = modal[ModalsKeys.LEND]
 
   const { nextStep } = useStepperState()
 
-  const { amount, amountInUSD, termsAccepted, fixedTermConfigId } =
-    useDepositModalState()
+  const {
+    termsAccepted,
+    setSelectedToken,
+    setAmount,
+    setAmountInUSD,
+    setFixedTermConfigId,
+    setSelectedTranche,
+    setSelectedPool,
+  } = useDepositModalState()
 
   const { modalStatus } = useModalStatusState()
 
@@ -26,20 +57,45 @@ const LendingModalEditActions = () => {
       callback: () => closeModal(ModalsKeys.LEND),
     })
 
+  const handleNextStep = () => {
+    if (pools?.length) {
+      const pool = pools.find((pool) => pool.id === selectedPool)
+
+      if (pool) {
+        setSelectedPool(pool)
+      }
+    }
+
+    setSelectedToken(selectedToken)
+    setSelectedTranche(trancheId)
+    setAmount(amount)
+    setAmountInUSD(amountInUSD)
+
+    // default is set to 0 if defaultTranche.fixedTermConfig.length <=0
+    if (fixedTermConfigId) {
+      // set to zero if pools exist ( in lite mode )
+      setFixedTermConfigId(pools?.length ? '0' : fixedTermConfigId)
+    }
+
+    nextStep()
+  }
+
   return (
     <Stack spacing={2}>
-      <Button
-        variant='outlined'
-        color='secondary'
-        onClick={handleOpen}
-        sx={{ textTransform: 'capitalize' }}
-      >
-        {t('modals.lending.buttons.increaseLoyaltyLevel')}
-      </Button>
+      {!isLiteMode && (
+        <Button
+          variant='outlined'
+          color='secondary'
+          onClick={handleOpen}
+          sx={{ textTransform: 'capitalize' }}
+        >
+          {t('modals.lending.buttons.increaseLoyaltyLevel')}
+        </Button>
+      )}
       <Button
         variant='contained'
         color='secondary'
-        onClick={nextStep}
+        onClick={handleNextStep}
         sx={{ textTransform: 'capitalize' }}
         disabled={Boolean(
           !amount ||
@@ -56,4 +112,4 @@ const LendingModalEditActions = () => {
   )
 }
 
-export default LendingModalEditActions
+export default memo(LendingModalEditActions)

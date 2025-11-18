@@ -21,7 +21,13 @@ const LendingModalWrapper: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { isVerifying, kycCompleted } = useKycState()
 
-  const { pool, currentEpoch } = modal[ModalsKeys.LEND]
+  const {
+    pools,
+    pool,
+    currentEpoch,
+    currentEpochDepositedAmount,
+    currentEpochFtdAmount,
+  } = modal[ModalsKeys.LEND]
 
   // handle account change admist lending (new account may not be kyc-ed)
   useEffect(() => {
@@ -30,30 +36,43 @@ const LendingModalWrapper: React.FC<DialogChildProps> = ({ handleClose }) => {
       openModal({
         name: ModalsKeys.KYC,
         callback: () =>
-          openModal({ name: ModalsKeys.LEND, pool, currentEpoch }),
+          openModal({
+            name: ModalsKeys.LEND,
+            pool,
+            pools,
+            currentEpoch,
+            currentEpochDepositedAmount,
+            currentEpochFtdAmount,
+          }),
       })
     }
   }, [
     isVerifying,
     kycCompleted,
     currentEpoch,
+    currentEpochDepositedAmount,
+    currentEpochFtdAmount,
     pool,
+    pools,
     openModal,
     handleClose,
     removeToast,
   ])
 
   const defaultTranche =
-    modal[ModalsKeys.LEND].pool.tranches.find(
+    pool.tranches.find(
       (tranche) => !toBigNumber(tranche.maximumDeposit).isZero()
-    ) ?? modal[ModalsKeys.LEND].pool.tranches[0]
+    ) ?? pool.tranches[0]
 
   return (
     <DepositModalState
+      pool={pool}
       defaultTrancheId={defaultTranche.id as `0x${string}`}
       initialFixedTermConfigId={
         defaultTranche.fixedTermConfig.length ? undefined : '0'
       }
+      currentEpochDepositedAmountMap={currentEpochDepositedAmount}
+      currentEpochFtdAmountMap={currentEpochFtdAmount}
     >
       <ModalStatusState>
         <StepperState steps={3}>

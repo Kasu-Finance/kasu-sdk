@@ -7,9 +7,9 @@ import {
   Typography,
 } from '@mui/material'
 import Link from 'next/link'
-import { useAccount } from 'wagmi'
 
 import getTranslation from '@/hooks/useTranslation'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import ConnectWalletButton from '@/components/atoms/ConnectWalletButton'
 import DrawerHeader from '@/components/molecules/header/DrawerHeader'
@@ -27,7 +27,7 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
 }) => {
   const { t } = getTranslation()
 
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   return (
     <Box
@@ -41,7 +41,7 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
       <DrawerHeader onClose={handleDrawerToggle} />
       <List>
         {NAV_ITEMS.map((link) =>
-          link.accountRequired && !account.address ? null : (
+          link.accountRequired && !address ? null : (
             <ListItem
               key={link.label}
               disablePadding
@@ -94,7 +94,7 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
           }}
         /> */}
       </Box>
-      {account && (
+      {address && (
         <ConnectWalletButton
           size='large'
           sx={{

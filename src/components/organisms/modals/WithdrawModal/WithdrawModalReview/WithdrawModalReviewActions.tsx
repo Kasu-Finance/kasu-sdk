@@ -17,9 +17,9 @@ const WithdrawModalReviewActions = () => {
 
   const { modal } = useModalState()
 
-  const { pool, trancheBalance } = modal[ModalsKeys.WITHDRAW]
+  const { trancheBalance } = modal[ModalsKeys.WITHDRAW]
 
-  const { amount, trancheId } = useWithdrawModalState()
+  const { amount, trancheId, selectedPool } = useWithdrawModalState()
 
   const supportedToken = useSupportedTokenInfo()
 
@@ -46,7 +46,7 @@ const WithdrawModalReviewActions = () => {
       )
 
     await requestWithdrawal(
-      pool.id,
+      selectedPool.id,
       selectedTranche.id,
       parseUnits(amount, usdcDecimals).toString(),
       isMaxWithdrawal
@@ -62,7 +62,7 @@ const WithdrawModalReviewActions = () => {
         fullWidth
         sx={{ textTransform: 'capitalize' }}
       >
-        {t('general.adjust')}
+        {t('general.amend')}
       </Button>
       <Button
         variant='contained'

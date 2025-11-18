@@ -1,5 +1,9 @@
-import { IconButton, TableCell, TableRow, Typography } from '@mui/material'
+import { Box, IconButton, TableCell, TableRow, Typography } from '@mui/material'
 import { useChainId } from 'wagmi'
+
+import useEpochDate from '@/hooks/web3/useEpochDate'
+
+import ToolTip from '@/components/atoms/ToolTip'
 
 import { PaperIcon } from '@/assets/icons'
 
@@ -7,8 +11,9 @@ import { SupportedChainIds } from '@/connection/chains'
 import { networks } from '@/connection/networks'
 import { formatAmount, formatTimestamp } from '@/utils'
 
-type TransactionHistoryRowProps = {
+type SystemProcessHistoryRowProps = {
   epochId: string
+  currentEpoch: string
   date: EpochTimeStamp
   description: string
   amount: string
@@ -18,8 +23,9 @@ type TransactionHistoryRowProps = {
   highlight?: boolean
 }
 
-const TransactionHistoryRow: React.FC<TransactionHistoryRowProps> = ({
+const SystemProcessHistoryRow: React.FC<SystemProcessHistoryRowProps> = ({
   epochId,
+  currentEpoch,
   amount,
   date,
   description,
@@ -34,6 +40,10 @@ const TransactionHistoryRow: React.FC<TransactionHistoryRowProps> = ({
     format: 'DD.MM.YYYY HH:mm:ss',
     includeUtcOffset: true,
   })
+
+  const { getEpochDate } = useEpochDate()
+
+  const epochDate = getEpochDate(epochId, currentEpoch)
 
   return (
     <TableRow
@@ -51,6 +61,7 @@ const TransactionHistoryRow: React.FC<TransactionHistoryRowProps> = ({
           ...(highlight
             ? {
                 background: 'url("/images/wave-dark-gold.png") repeat',
+                backgroundSize: '17px 16px',
 
                 '&:first-child': {
                   borderTopLeftRadius: 4,
@@ -68,7 +79,30 @@ const TransactionHistoryRow: React.FC<TransactionHistoryRowProps> = ({
       }}
     >
       <TableCell>
-        <Typography variant='baseMdBold'>{epochId}</Typography>
+        <Box display='flex' alignItems='center'>
+          <Typography variant='baseMdBold'>{epochId}</Typography>
+          <ToolTip
+            title={
+              <Typography variant='baseMd'>
+                {
+                  formatTimestamp(epochDate.startTime, { format: 'DD.MM.YYYY' })
+                    .date
+                }
+                {` - `}
+                {
+                  formatTimestamp(epochDate.endTime, { format: 'DD.MM.YYYY' })
+                    .date
+                }
+              </Typography>
+            }
+            iconSx={{
+              color: 'gold.extraDark',
+              '&:hover': {
+                color: 'rgba(133, 87, 38, 1)',
+              },
+            }}
+          />
+        </Box>
       </TableCell>
       <TableCell>
         <Typography variant='baseMd'>
@@ -115,4 +149,4 @@ const TransactionHistoryRow: React.FC<TransactionHistoryRowProps> = ({
   )
 }
 
-export default TransactionHistoryRow
+export default SystemProcessHistoryRow

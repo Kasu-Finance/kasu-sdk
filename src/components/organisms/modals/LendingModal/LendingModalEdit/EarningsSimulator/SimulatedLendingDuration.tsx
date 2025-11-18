@@ -1,9 +1,7 @@
 import { Box, Slider, Typography } from '@mui/material'
-import { useEffect, useState } from 'react'
+import React, { Dispatch, memo, SetStateAction } from 'react'
 
-import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
-import useDebounce from '@/hooks/useDebounce'
 import getTranslation from '@/hooks/useTranslation'
 
 const MIN = 0
@@ -20,27 +18,25 @@ const marks = [
   },
 ]
 
-const SimulatedLendingDuration = () => {
+type SimulatedLendingDurationProps = {
+  amount: string
+  duration: number
+  setDuration: Dispatch<SetStateAction<number>>
+}
+
+const SimulatedLendingDuration: React.FC<SimulatedLendingDurationProps> = ({
+  amount,
+  duration,
+  setDuration,
+}) => {
   const { t } = getTranslation()
 
   const { setModalStatus } = useModalStatusState()
-
-  const { amount, setSimulatedDuration, setIsDebouncing } =
-    useDepositModalState()
-
-  const { debouncedFunction, isDebouncing } = useDebounce(
-    setSimulatedDuration,
-    500
-  )
-
-  // setting state here instead of using value from context to prevent unncesary rerenders
-  const [duration, setDuration] = useState(0)
 
   const disabled = !amount
 
   const handleChange = (_: Event, value: number | number[]) => {
     setDuration(value as number)
-    debouncedFunction(value as number)
   }
 
   const promptError = () =>
@@ -48,10 +44,6 @@ const SimulatedLendingDuration = () => {
       type: 'error',
       errorMessage: 'Amount is required',
     })
-
-  useEffect(() => {
-    setIsDebouncing(isDebouncing)
-  }, [isDebouncing, setIsDebouncing])
 
   return (
     <Box onClick={disabled ? promptError : undefined}>
@@ -89,4 +81,4 @@ const SimulatedLendingDuration = () => {
   )
 }
 
-export default SimulatedLendingDuration
+export default memo(SimulatedLendingDuration)

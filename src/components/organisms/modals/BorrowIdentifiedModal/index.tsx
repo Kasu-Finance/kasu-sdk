@@ -4,13 +4,11 @@ import useModalState from '@/hooks/context/useModalState'
 import useFundingConsent from '@/hooks/lending/useFundingConsent'
 import getTranslation from '@/hooks/useTranslation'
 
-import Countdown from '@/components/atoms/Countdown'
 import CustomCard from '@/components/atoms/CustomCard'
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
 import WaveBox from '@/components/atoms/WaveBox'
+import CountdownCard from '@/components/molecules/CountdownCard'
 import DialogHeader from '@/components/molecules/DialogHeader'
-import CountdownCard from '@/components/organisms/modals/BorrowIdentifiedModal/CountdownCard'
-import CountdownSeparator from '@/components/organisms/modals/BorrowIdentifiedModal/CountdownSeparator'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
@@ -37,7 +35,7 @@ const BorrowerIdentifiedModal: React.FC<DialogChildProps> = ({
       subsequentTransaction,
       decision,
       (newLoanTickets) => {
-        callback(newLoanTickets)
+        callback?.(newLoanTickets)
         handleClose()
       }
     )
@@ -61,71 +59,15 @@ const BorrowerIdentifiedModal: React.FC<DialogChildProps> = ({
               </Typography>
             </Stack>
             <Box px={2} py={3} borderRadius={2} bgcolor='gold.dark'>
-              <Box
+              <CountdownCard
+                time={dayjs
+                  .unix(subsequentTransaction.timestamp)
+                  .add(2, 'days')
+                  .unix()}
+                format='HH:mm:ss'
+                label={[t('time.hours'), t('time.minutes'), t('time.seconds')]}
                 pb={4}
-                display='grid'
-                gridTemplateColumns='repeat(auto-fit, minmax(0, max-content))'
-                alignItems='end'
-                gap={1}
-                justifyContent='center'
-              >
-                <Countdown
-                  endTime={dayjs
-                    .unix(subsequentTransaction.timestamp)
-                    .add(2, 'days')
-                    .unix()}
-                  format='HH:mm:ss'
-                  render={(countdown) => {
-                    const [hours, minutes, seconds] = countdown.split(':')
-
-                    return (
-                      <>
-                        <Box display='flex' gap={0.5} position='relative'>
-                          <CountdownCard value={hours[0]} />
-                          <CountdownCard value={hours[1]} />
-                          <Typography
-                            variant='baseXs'
-                            position='absolute'
-                            sx={{ transform: 'translateX(-50%)' }}
-                            left='50%'
-                            bottom='-20px'
-                          >
-                            {t('time.hours')}
-                          </Typography>
-                        </Box>
-                        <CountdownSeparator />
-                        <Box display='flex' gap={0.5} position='relative'>
-                          <CountdownCard value={minutes[0]} />
-                          <CountdownCard value={minutes[1]} />
-                          <Typography
-                            variant='baseXs'
-                            position='absolute'
-                            sx={{ transform: 'translateX(-50%)' }}
-                            left='50%'
-                            bottom='-20px'
-                          >
-                            {t('time.minutes')}
-                          </Typography>
-                        </Box>
-                        <CountdownSeparator />
-                        <Box display='flex' gap={0.5} position='relative'>
-                          <CountdownCard value={seconds[0]} />
-                          <CountdownCard value={seconds[1]} />
-                          <Typography
-                            variant='baseXs'
-                            position='absolute'
-                            sx={{ transform: 'translateX(-50%)' }}
-                            left='50%'
-                            bottom='-20px'
-                          >
-                            {t('time.seconds')}
-                          </Typography>
-                        </Box>
-                      </>
-                    )
-                  }}
-                />
-              </Box>
+              />
               <Typography variant='baseMd'>
                 {t('modals.borrowerIdentified.description-3')}
               </Typography>

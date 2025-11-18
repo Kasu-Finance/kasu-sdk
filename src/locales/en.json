@@ -46,7 +46,7 @@
     "to": "to",
     "wallet": "wallet",
     "none": "none",
-    "adjust": "adjust",
+    "amend": "amend",
     "csvDownload": "download as CSV",
     "overview": "overview",
     "poolApy": "Loan APY",
@@ -75,7 +75,7 @@
     "request": "Request",
     "approved": "Approved",
     "confirmed": "Confirmed",
-    "nextClearingPeriodStart": "Next Clearing Period Starts at",
+    "nextClearingPeriodStart": "Next Clearing Period Starts on",
     "slippage": "Slippage",
     "strategies": "Strategies",
     "active": "Active",
@@ -92,7 +92,12 @@
     "myPortfolio": "My Portfolio",
     "epoch": "Epochs",
     "userDocs": "User Docs",
-    "and": "and"
+    "and": "and",
+    "timeRemainig": "Time Remaining",
+    "lifetimeInterest": "Lifetime Interest",
+    "lifetimeRewards": "Lifetime Rewards",
+    "claimableRewards": "Claimable Rewards",
+    "addFunds": "Add Funds"
   },
   "time": {
     "years": "years",
@@ -109,7 +114,7 @@
     "tooltip-4": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KASU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations."
   },
   "variableAndFixedApy": {
-    "tooltip-1": "Gross Annual Percentage Yield (APY) reflects the expected interest rate earned by Lenders on an annualised basis in the particular Loan Tranche displayed, prior to Kasu protocol fees being deducted, assuming all repayments will be made as expected. This does not account for the additional amount earned from compound interest, which accrues every Epoch (every seven days).​",
+    "tooltip-1": "Gross Annual Percentage Yield (APY) reflects the expected interest rate earned by Lenders on an annualised basis, prior to Kasu protocol fees being deducted, assuming all repayments will be made as expected. Given that interest earnings accrue to a Lender’s balance every Epoch (every seven days), APY therefore assumes interest is auto-compounded, and left in the protocol across epochs for a full year.",
     "tooltip-2": "A Variable APY is subject to change depending on interest rate market fluctuations (increases/decrease). A Fixed APY will be locked for the specified period of time. During a fixed APY period, now Withdrawal Request can be submitted.",
     "tooltip-3": "​Kasu protocol fees comprise 10% of interest earned by Lenders. For example, if the Gross APY is stated as 15%, then the Net APY earned by Lenders is 13.50% after 1.50% is deducted for fees (i.e. 10% x 15% = 1.5%).",
     "tooltip-4": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KASU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations."
@@ -127,6 +132,51 @@
   "apyStructure": {
     "tooltip-1": "Indicates whether the Delegate is offering Fixed and/or Variable APY loans for this Lending Strategy.",
     "tooltip-2": "A Variable APY is subject to change depending on interest rate market fluctuations (increases/decrease). A Fixed APY will be locked for the specified period of time. During a fixed APY period, now Withdrawal Request can be submitted."
+  },
+  "lite": {
+    "lendingPortfolio": {
+      "title": "Lending Portfolio"
+    },
+    "pendingTransactionRequests": {
+      "title": "Pending Transaction Requests",
+      "requestType": "Request Type"
+    },
+    "lendingDecisionsPending": {
+      "title": "Lending Decisions Pending",
+      "decisionPending": "Decision Pending"
+    },
+    "rewardsPortfolio": {
+      "title": "Rewards Portfolio"
+    },
+    "nftRewards": {
+      "title": "Your NFT",
+      "table": {
+        "cell-1": "Bonuses and Rewards",
+        "cell-2": "Yield Boost %",
+        "cell-3": "Last Epoch Yield Boost",
+        "cell-4": "Lifetime Yield Boost"
+      }
+    },
+    "referralBonus": {
+      "title": "Referral Bonus",
+      "table": {
+        "cell-1": "Successful Referrals",
+        "cell-2": "Last Epoch Referral Bonus",
+        "cell-3": "Lifetime Referral Bonus",
+        "cell-4": "Action"
+      }
+    },
+    "buyAndLock": {
+      "title": "Buy and lock KASU to achieve/increase token utility and rewards",
+      "actions": {
+        "unlock": "Unlock KASU",
+        "buy": "Buy KASU",
+        "lock": "Lock KASU"
+      }
+    },
+    "loyaltyInfo": {
+      "title": "Kasu Loyalty - KASU Token Utility & Rewards"
+    }
   },
   "locking": {
     "widgets": {
@@ -770,7 +820,7 @@
       "reviewLock": {
         "unlockingSchedule": "Your KASU unlock request is scheduled for the end of the current Epoch.",
         "metric-2-tooltip": "The amount of KASU you request to unlock at the end of the current locking period.",
-        "epochEnds": "Epoch Ends in"
+        "epochEnds": "Epoch Ends on"
       },
       "overview": {
         "lockedDate": "Locked Date",
@@ -821,9 +871,10 @@
           "description-3": "for full details."
         },
         "base": "I acknowledge that I have read and understood the",
-        "acknowledged": "You have acknowledged that you have read and understood the",
+        "acknowledged": "You acknowledge that you have read and understood the",
         "riskWarning": "Risk Warning",
-        "termsAndConditions": "Important Information"
+        "termsAndConditions": "Important Information",
+        "subordinationDisclosure": "Subordination of Kasu Loans Disclosure"
       },
       "terms-and-conditions-1": "By depositing funds to this Lending Strategy, you accept the",
       "terms-and-conditions-2": "Important Information.",
@@ -845,7 +896,7 @@
         "nextClearingText": "The outcome of your Lending Request will be determined at the end of the epoch clearing period."
       },
       "completed": {
-        "description-1": "Your Lending Request has been successfully queued​",
+        "description-1": "Your Lending Request has been successfully queued​:",
         "description-2": "Lending Request submitted for the next Epoch",
         "description-3": "What happens next?​",
         "description-4": "Kasu is all about choice, transparency and control to Lenders, which is demonstrated by the following:",
@@ -1339,17 +1390,15 @@
       "swapAndDeposit": {
         "title": "Lend with any token.",
         "input-label": "Lending Amount",
-        "swap-via": "Swapped via 1inch",
+        "swap-via": "Swap via 1inch",
         "swap": "Swap",
         "for": "for"
       },
       "deposit": {
         "input-label": "Lock Amount",
         "amount-title": "KASU Locking",
-        "amount-metric-1": "Minimum KASU Lock amount to achieve Loyalty Level 1",
-        "amount-metric-1-tooltip": "DEPRECATED",
-        "amount-metric-2": "Minimum KASU Lock amount to achieve Loyalty Level 2",
-        "amount-metric-2-tooltip": "DEPRECATED",
+        "amount-metric-1": "Minimum KASU Lock amount to achieve Loyalty Level 2",
+        "amount-metric-2": "Minimum KASU Lock amount to achieve Loyalty Level 3",
         "amount-metric-3": "Lock KASU to derive rKASU and achieve a Loyalty Level",
         "amount-metric-4": "for token utility, rewards and benefits.",
         "metric": "Locking Amount at Current Exchange Rate",
@@ -1384,7 +1433,7 @@
         "lockAmount-tooltip": "The amount of KASU you are requesting to lock.",
         "lockingDuration": "Locking Duration",
         "lockingDuration-tooltip": "The number of days you are requesting your KASU to be locked for.",
-        "epochEnds": "Epoch ends in",
+        "epochEnds": "Epoch Ends on",
         "depositSchedule": "Your KASU Lock Request will be schedule for the end of the current Epoch.",
         "nextClearing": "Next clearing day commences in"
       },
@@ -1405,7 +1454,8 @@
       "simulatedAmount": {
         "title": " Lending Scenario",
         "metric-1": "Swap any token to USDC to start lending.",
-        "metric-2": "Powered by 1inch"
+        "metric-2": "Powered by 1inch",
+        "metric-3": "Any tokens swapped to USDC via 1inch will incur 1.00% Slippage"
       },
       "simulatedDuration": {
         "title": "Simulated Lending Duration",
@@ -1433,7 +1483,7 @@
       "metric-3-tooltip": "The date of your original lending withdrawal request.",
       "metric-4-tooltip": "The loan Tranche related to this Lending Strategy that you request a withdrawal cancellation from.",
       "epochEndsText": "Tho Outcome of this Withdrawal Request will be determined at the end of the epoch clearing period.",
-      "epochEnds": "Epoch Ends in",
+      "epochEnds": "Epoch Ends on",
       "cancel-button": "Cancel Withdrawal Request"
     },
     "cancelDeposit": {
@@ -1452,6 +1502,7 @@
       "title": "Withdrawal Request",
       "reviewTitle": "Confirm Withdrawal Request",
       "confirmedTitle": "Withdrawal Request Confirmed",
+      "totalBalance": "Total Balance",
       "metric-1": "Withdraw from",
       "metric-1-tooltip": "The Lending Strategy that you are requesting a withdrawal from",
       "metric-2": "Total Loan Balance",
@@ -1469,6 +1520,37 @@
         "description-3": "The outcome of Withdrawal Requests is determined during the clearing period of each 7-day epoch.​"
       },
       "action": "Review Withdrawl Request"
+    },
+    "buyKasu": {
+      "title": {
+        "edit": "Buy Kasu",
+        "review": "Confirm KASU Purchase",
+        "confirmation": "KASU Purchase Submitted"
+      },
+      "metric-1": "Current Exchange Rate",
+      "metric-2": "Purchase Amount at Current Exchange Rate",
+      "automaticallyLock": "Automatically lock the entire amount of my upcoming KASU purchase and derive rKASU to achieve a Loyalty Level      for token utility, rewards and benefits. ​",
+      "lock": {
+        "metric-1": "Minimum KASU Lock amount to achieve Loyalty Level 1",
+        "metric-2": "Minimum KASU Lock amount to achieve Loyalty Level 2",
+        "metric-3": "Unlocking Date"
+      },
+      "completed": {
+        "action": "Review KASU Purchase",
+        "disclaimer": "Fees apply: 0.01% transaction value"
+      },
+      "review": {
+        "metric-1": "USDC Amount",
+        "metric-2": "Current Exchange Rate",
+        "metric-3": "KASU Purchase Amount at Current Exchange Rate",
+        "disclaimer": "Your KASU purchase​ will be processed shorty. KASU will be transferred to your wallet.​"
+      },
+      "confirmation": {
+        "title": "Your KASU Purchase Request has been successfully submitted:​",
+        "description-1": "to be purchased at the current exchange rate",
+        "description-2": "to be deposited to the wallet",
+        "description-3": "address"
+      }
     }
   },
   "lending": {
@@ -1557,7 +1639,7 @@
           "tooltip": "Your current USDC lending balance in this Tranche."
         },
         "trancheApy": {
-          "label": "Tranche Gross APY",
+          "label": "Gross APY",
           "tooltip": "The Annual Percentage Yield currently offered by the Delegate for this Tranche of this Lending Strategy, assuming all repayments will be made as expected."
         },
         "yieldEarned": {
@@ -1635,7 +1717,7 @@
       "subtitle": "Total Withdrawal Request Amount",
       "fromPool": "From Lending Strategy",
       "toWallet": "To Wallet",
-      "epochEnds": "Epoch ends in",
+      "epochEnds": "Epoch Ends on",
       "withdrawalSchedule-1": "Withdrawal will be scheduled for the end of the current Epoch.",
       "withdrawalSchedule-2": "The final Withdrawal Amount may vary due to Lending Strategy conditions.",
       "amountInput": {
@@ -1644,7 +1726,6 @@
       },
       "button": {
         "review": "Review Withdrawal",
-        "adjust": "ADJUST",
         "confirm": "CONFIRM",
         "strategyOverview": "LENDING STRATEGY OVERVIEW",
         "viewTx": "View Transaction (TX)"
@@ -1674,7 +1755,7 @@
       "confirmStep": {
         "withdrawInfo": "Your Withdrawal Request​ has been successfully queued:​",
         "description-1": "Withdrawal Request from",
-        "description-2": "submitted. The withdrawal amount fulfilled is subject to availably liquidity and will be determined during the",
+        "description-2": "submitted. The withdrawal amount fulfilled is subject to available liquidity and will be determined during the",
         "description-3": "clearing period of each 7-day epoch.",
         "description-4": "Subject to available liquidity, Funds will be deposited to the wallet address"
       },
@@ -2177,7 +2258,9 @@
           "metric-3-tooltip-2": "The Delegate will continually accept nil, part, or all of the Withdrawal Requests at the end of each epoch until funds are fully returned to the Lender (assuming no losses or defaults by End Borrowers).",
           "metric-4": "Cancelled",
           "metric-4-tooltip-1": "The total USDC amount of Withdrawal Requests that you have cancelled across all Lending Strategies.",
-          "metric-4-tooltip-2": "Withdrawal Request Cancellations can only be submitted prior to the closure of the clearing period of the current epoch."
+          "metric-4-tooltip-2": "Withdrawal Request Cancellations can only be submitted prior to the closure of the clearing period of the current epoch.",
+          "metric-5": "Forced",
+          "metric-5-tooltip-1": "Adhoc withdrawal initiated by the Credit Originator for liquidity rebalancing purposes, caused by factors such as (but not limited to) excess funding."
         }
       },
       "detailedLendingRequestTransactions": {
@@ -2270,6 +2353,9 @@
       },
       "subheader-3": {
         "title": "KASU Referral Bonus"
+      },
+      "subheader-4": {
+        "title": "KASU Airdrops"
       },
       "bonusesAndRewards": "Bonuses and Rewards",
       "bonusYieldEarnings": "Bonus Interest Earnings",

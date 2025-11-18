@@ -1,5 +1,5 @@
-const LOYALTY_LEVEL_1_REQUIREMENT = 1
-const LOYALTY_LEVEL_2_REQUIREMENT = 5
+export const LOYALTY_LEVEL_1_REQUIREMENT = 1
+export const LOYALTY_LEVEL_2_REQUIREMENT = 5
 
 export type LoyalLoyaltyLevels = Extract<LoyaltyLevel, 1 | 2>
 

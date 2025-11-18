@@ -19,9 +19,12 @@ export const sdkConfig: SdkConfig = {
     UserLoyaltyRewards: sepolia.UserLoyaltyRewards.address,
     ClearingCoordinator: sepolia.ClearingCoordinator.address,
     KasuNFTs: sepolia.KasuNFTs.address,
+    ExternalTVL: sepolia.ExternalTVL.address,
   },
   directusUrl: 'https://kasu-dev.directus.app/',
   UNUSED_LENDING_POOL_IDS: [''], // will be initialized later
   subgraphUrl:
     'https://subgraph.satsuma-prod.com/3ed46ea711d3/kasu-finance--314476/kasu-sepolia/api',
+  plumeSubgraphUrl:
+    'https://api.goldsky.com/api/public/project_cm9t3064xeuyn01tgctdo3c17/subgraphs/kasu-plume/prod/gn',
 }

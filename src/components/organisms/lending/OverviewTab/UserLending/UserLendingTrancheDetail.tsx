@@ -7,6 +7,8 @@ import useUserLendingTrancheBalance from '@/hooks/lending/useUserLendingTrancheB
 import getTranslation from '@/hooks/useTranslation'
 
 import InfoRow from '@/components/atoms/InfoRow'
+import ToolTip from '@/components/atoms/ToolTip'
+import GrossApyTooltip from '@/components/molecules/tooltips/GrossApyTooltip'
 import UserLendingTrancheDetailSkeleton from '@/components/organisms/lending/OverviewTab/UserLending/UserLendingTrancheDetailSkeleton'
 
 import { formatAmount, formatPercentage } from '@/utils'
@@ -69,9 +71,7 @@ const UserLendingTrancheDetail: React.FC<UserLendingTrancheDetailProps> = ({
           />
           <InfoRow
             title={t('lending.poolOverview.investmentCard.trancheApy.label')}
-            toolTipInfo={t(
-              'lending.poolOverview.investmentCard.trancheApy.tooltip'
-            )}
+            toolTipInfo={<ToolTip title={<GrossApyTooltip />} />}
             titleStyle={{
               variant: 'baseMd',
             }}

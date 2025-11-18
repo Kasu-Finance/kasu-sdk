@@ -3,6 +3,8 @@
 import React, { ReactNode } from 'react'
 import { SWRConfig } from 'swr'
 
+import { TimeConversions } from '@/utils'
+
 type SwrProviderProps = {
   children: ReactNode
   unusedPools: string[]
@@ -15,6 +17,7 @@ const SwrProvider: React.FC<SwrProviderProps> = ({ children, unusedPools }) => {
         fallback: {
           unusedPools,
         },
+        dedupingInterval: TimeConversions.SECONDS_PER_MINUTE * 5,
       }}
     >
       {children}

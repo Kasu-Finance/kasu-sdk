@@ -3,6 +3,8 @@
 import { AppBar, useScrollTrigger } from '@mui/material'
 import { ReactNode } from 'react'
 
+import useLiteModeState from '@/hooks/context/useLiteModeState'
+
 type HeaderBarProps = {
   children: ReactNode
 }
@@ -14,8 +16,20 @@ const HeaderBar: React.FC<HeaderBarProps> = ({ children }) => {
     disableHysteresis: true,
   })
 
+  const { isLiteMode } = useLiteModeState()
+
   return (
-    <AppBar position='sticky' elevation={trigger ? 4 : 0}>
+    <AppBar
+      position='sticky'
+      elevation={trigger ? 4 : 0}
+      sx={
+        isLiteMode
+          ? {
+              bgcolor: trigger ? 'rgba(11, 11, 13, 0.8)' : 'transparent',
+            }
+          : undefined
+      }
+    >
       {children}
     </AppBar>
   )

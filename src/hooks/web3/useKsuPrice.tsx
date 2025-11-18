@@ -1,10 +1,10 @@
 import { formatUnits } from 'ethers/lib/utils'
 import useSWR from 'swr'
 
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useSdk from '@/hooks/context/useSdk'
 
 const useKsuPrice = () => {
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
 
   const { data, error, isLoading } = useSWR(
     sdk ? ['ksuPrice', sdk] : null,

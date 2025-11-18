@@ -45,6 +45,7 @@ const CustomStepper = () => {
             },
             '&.Mui-completed': {
               color: 'white',
+              bgcolor: 'gray.extraDark',
               '&::before': {
                 width: 'calc(100% + 1px)',
               },

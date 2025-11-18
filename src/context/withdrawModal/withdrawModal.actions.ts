@@ -1,3 +1,4 @@
+import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import { Dispatch, useMemo } from 'react'
 
 import {
@@ -28,6 +29,11 @@ const useWithdrawModalActions = (
         dispatch({
           type: WithdrawModalActionTypes.SET_SELECTED_TRANCHE,
           payload: selectedTranche,
+        }),
+      setSelectedPool: (pool: PoolOverview) =>
+        dispatch({
+          type: WithdrawModalActionTypes.SET_SELECTED_POOL,
+          payload: pool,
         }),
     }),
     [dispatch]

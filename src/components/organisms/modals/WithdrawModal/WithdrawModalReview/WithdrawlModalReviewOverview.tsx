@@ -1,29 +1,22 @@
 import { Box, Typography } from '@mui/material'
-import { useAccount } from 'wagmi'
 
-import useModalState from '@/hooks/context/useModalState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 import getTranslation from '@/hooks/useTranslation'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
-
-import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { formatAmount, mergeSubheading } from '@/utils'
 
 const WithdrawModalReviewOverview = () => {
   const { t } = getTranslation()
 
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
-  const { modal } = useModalState()
+  const { amount, trancheId, selectedPool } = useWithdrawModalState()
 
-  const { pool } = modal[ModalsKeys.WITHDRAW]
-
-  const { amount, trancheId } = useWithdrawModalState()
-
-  const selectedTranche = pool.tranches.find(
+  const selectedTranche = selectedPool.tranches.find(
     (tranche) => tranche.id === trancheId
   )
 
@@ -44,7 +37,7 @@ const WithdrawModalReviewOverview = () => {
         }
         metric={
           <Typography variant='baseMdBold'>
-            {mergeSubheading(pool.poolName, pool.subheading)}
+            {mergeSubheading(selectedPool.poolName, selectedPool.subheading)}
           </Typography>
         }
         showDivider
@@ -52,7 +45,7 @@ const WithdrawModalReviewOverview = () => {
           color: 'white',
         }}
       />
-      {pool.tranches.length > 1 && selectedTranche && (
+      {selectedPool.tranches.length > 1 && selectedTranche && (
         <InfoRow
           title={t('general.tranche')}
           toolTipInfo={
@@ -107,7 +100,7 @@ const WithdrawModalReviewOverview = () => {
         title={t('lending.withdraw.toWallet')}
         toolTipInfo={
           <ToolTip
-            title='info'
+            title='The wallet address to receive funds.'
             iconSx={{
               color: 'gold.extraDark',
               '&:hover': {
@@ -120,7 +113,7 @@ const WithdrawModalReviewOverview = () => {
         dividerProps={{
           color: 'white',
         }}
-        metric={<Typography variant='baseMdBold'>{account.address}</Typography>}
+        metric={<Typography variant='baseMdBold'>{address}</Typography>}
       />
     </Box>
   )

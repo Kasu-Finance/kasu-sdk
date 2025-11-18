@@ -9,9 +9,9 @@ import {
   Typography,
 } from '@mui/material'
 import { formatEther, parseEther } from 'ethers/lib/utils'
-import { useAccount } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
+import useReferralLink from '@/hooks/referrals/useReferralLink'
 import useUserReferrals, {
   ReferredUserDetails,
 } from '@/hooks/referrals/useUserReferrals'
@@ -31,21 +31,17 @@ import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 const ReferralBonus = () => {
   const { ksuPrice } = useKsuPrice()
 
-  const { address } = useAccount()
-
   const { openModal } = useModalState()
 
   const { userReferrals, isLoading } = useUserReferrals()
-  const referralCode = address || ''
+
+  const referralLink = useReferralLink()
 
   const handleClick = (referredUsers: ReferredUserDetails[]) => {
     openModal({ name: ModalsKeys.REFERRED_USERS, referredUsers })
   }
 
-  const handleCopy = () =>
-    navigator.clipboard.writeText(
-      `${window.location.origin}/referrals/${referralCode}`
-    )
+  const handleCopy = () => navigator.clipboard.writeText(referralLink.fullUrl)
 
   return (
     <Stack>
@@ -207,7 +203,7 @@ const ReferralBonus = () => {
       >
         <DottedDivider />
         <Typography variant='baseSm' my={3}>
-          Use your referral link to invite friends and get a reward.{' '}
+          Use your referral link to invite friends and earn KASU tokens:{' '}
           <Button
             variant='text'
             sx={{
@@ -229,7 +225,7 @@ const ReferralBonus = () => {
             onClick={handleCopy}
             endIcon={<CopyIcon />}
           >
-            <Typography variant='inherit'>Copy your link</Typography>
+            <Typography variant='inherit'>Copy your referral link</Typography>
           </Button>
         </Typography>
       </Stack>

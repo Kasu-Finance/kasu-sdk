@@ -141,7 +141,7 @@ const KycModal: React.FC<KycModalProps> = ({
                     }
                   />
                 }
-                label='I represent a Business entity'
+                label='I represent a business entity'
               />
             </RadioGroup>
             <Typography variant='baseMd' component='p'>

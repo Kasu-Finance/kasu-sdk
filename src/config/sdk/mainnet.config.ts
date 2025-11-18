@@ -19,9 +19,12 @@ export const sdkConfig: SdkConfig = {
     UserLoyaltyRewards: base.UserLoyaltyRewards.address,
     ClearingCoordinator: base.ClearingCoordinator.address,
     KasuNFTs: base.KasuNFTs.address,
+    ExternalTVL: base.ExternalTVL.address,
   },
   UNUSED_LENDING_POOL_IDS: [''], // will be initialized later
   directusUrl: 'https://kasu-finance.directus.app/',
   subgraphUrl:
     'https://subgraph.satsuma-prod.com/3ed46ea711d3/kasu-finance--314476/kasu-base/api',
+  plumeSubgraphUrl:
+    'https://api.goldsky.com/api/public/project_cm9t3064xeuyn01tgctdo3c17/subgraphs/kasu-plume/prod/gn',
 }

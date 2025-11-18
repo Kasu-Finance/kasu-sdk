@@ -16,6 +16,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ children }) => {
       disableGutters
       sx={(theme) => ({
         height: 84,
+        justifyContent: 'space-between',
         [theme.breakpoints.down('sm')]: {
           height: 74,
 

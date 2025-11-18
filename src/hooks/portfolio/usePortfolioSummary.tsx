@@ -1,9 +1,9 @@
 import { PoolOverview } from '@solidant/kasu-sdk/src/services/DataService/types'
 import useSWR from 'swr'
-import { useAccount } from 'wagmi'
 
+import useSdk from '@/hooks/context/useSdk'
 import useLendingPortfolioData from '@/hooks/portfolio/useLendingPortfolioData'
-import useKasuSDK from '@/hooks/useKasuSDK'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import { FIVE_MINUTES } from '@/constants/general'
 
@@ -11,9 +11,9 @@ const usePortfolioSummary = (
   currentEpoch: string,
   poolOverviews: PoolOverview[]
 ) => {
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
 
-  const account = useAccount()
+  const { address, isAuthenticated } = usePrivyAuthenticated()
 
   const {
     portfolioLendingPools,
@@ -27,8 +27,8 @@ const usePortfolioSummary = (
     error,
     mutate,
   } = useSWR(
-    account.address && portfolioLendingPools && sdk
-      ? ['portfolioSummary', account.address, portfolioLendingPools, sdk]
+    address && portfolioLendingPools && sdk
+      ? ['portfolioSummary', address, portfolioLendingPools, sdk]
       : null,
     async ([_, userAddress, portfolioLendingPools, sdk]) =>
       sdk.Portfolio.getPortfolioSummary(
@@ -41,7 +41,7 @@ const usePortfolioSummary = (
   return {
     portfolioSummary: data,
     error: portfolioLendingPoolError || error,
-    isLoading: isLoading || summaryLoading,
+    isLoading: isAuthenticated && (isLoading || summaryLoading),
     updatePortfolioSummary: mutate,
   }
 }

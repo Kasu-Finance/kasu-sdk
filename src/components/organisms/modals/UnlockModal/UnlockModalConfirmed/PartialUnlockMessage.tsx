@@ -1,26 +1,19 @@
 import { Typography } from '@mui/material'
 import { formatEther } from 'ethers/lib/utils'
-import { useAccount } from 'wagmi'
 
-import useLockModalState from '@/hooks/context/useLockModalState'
-import useModalState from '@/hooks/context/useModalState'
+import useUnlockModalState from '@/hooks/context/useUnlockModalState'
 import useRatio from '@/hooks/useRatio'
 import getTranslation from '@/hooks/useTranslation'
-
-import { ModalsKeys } from '@/context/modal/modal.types'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import { formatAccount, formatAmount, toBigNumber } from '@/utils'
 
 const PartialUnlockMessage = () => {
   const { t } = getTranslation()
 
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
-  const { amount } = useLockModalState()
-
-  const { modal } = useModalState()
-
-  const { userLock } = modal[ModalsKeys.UNLOCK]
+  const { amount, userLock } = useUnlockModalState()
 
   const ratio = useRatio(amount, userLock.lockedAmount)
 
@@ -50,9 +43,7 @@ const PartialUnlockMessage = () => {
         {formatAmount(amount, { minDecimals: 2 })} KASU{' '}
       </Typography>
       {t('modals.unlock.completed.description-5')}{' '}
-      <Typography variant='baseMdBold'>
-        {formatAccount(account.address)}{' '}
-      </Typography>
+      <Typography variant='baseMdBold'>{formatAccount(address)} </Typography>
       {t('modals.unlock.completed.description-6')}
     </Typography>
   )

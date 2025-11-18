@@ -6,10 +6,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material'
-import {
-  LockPeriod,
-  UserLock,
-} from '@solidant/kasu-sdk/src/services/Locking/types'
+import { UserLock } from '@solidant/kasu-sdk/src/services/Locking/types'
 import { formatEther } from 'ethers/lib/utils'
 import React from 'react'
 
@@ -35,12 +32,10 @@ import {
 
 type UserRewardsTableRowProps = {
   userLock: UserLock
-  lockPeriods: LockPeriod[]
 }
 
 const UserRewardsTableRow: React.FC<UserRewardsTableRowProps> = ({
   userLock,
-  lockPeriods,
 }) => {
   const { t } = getTranslation()
 
@@ -53,7 +48,7 @@ const UserRewardsTableRow: React.FC<UserRewardsTableRowProps> = ({
   const { ksuPrice } = useKsuPrice()
 
   const handleOpen = () => {
-    openModal({ name: ModalsKeys.UNLOCK, userLock, lockPeriods })
+    openModal({ name: ModalsKeys.UNLOCK, userLock })
   }
 
   const formattedTime = formatTimestamp(userLock.startTime, {

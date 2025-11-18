@@ -1,10 +1,9 @@
 import { Box, SelectChangeEvent, Typography } from '@mui/material'
-import { useMemo } from 'react'
-import { useAccount } from 'wagmi'
+import { memo, useMemo } from 'react'
 
-import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
 import getTranslation from '@/hooks/useTranslation'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import CustomSelect from '@/components/atoms/CustomSelect'
 
@@ -12,18 +11,25 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { formatPercentage, formatToNearestTime, TimeConversions } from '@/utils'
 
-const ApyDropdown = () => {
-  const { t } = getTranslation()
-  const account = useAccount()
-  const { modal } = useModalState()
+type ApyDropdownProps = {
+  selectedTrancheId: `0x${string}`
+  fixedTermConfigId: string | undefined
+  setFixedTermConfigId: (fixedTermConfigId: string | undefined) => void
+}
 
-  const { trancheId, fixedTermConfigId, setFixedTermConfigId } =
-    useDepositModalState()
+const ApyDropdown: React.FC<ApyDropdownProps> = ({
+  fixedTermConfigId,
+  selectedTrancheId,
+  setFixedTermConfigId,
+}) => {
+  const { t } = getTranslation()
+  const { address } = usePrivyAuthenticated()
+  const { modal } = useModalState()
 
   const pool = modal[ModalsKeys.LEND].pool
 
   const selectedTranche = pool.tranches.find(
-    (tranche) => tranche.id === trancheId
+    (tranche) => tranche.id === selectedTrancheId
   )
 
   const apyOptions = useMemo(
@@ -41,8 +47,7 @@ const ApyDropdown = () => {
                   fixedTermConfig.fixedTermDepositStatus === 'Everyone' ||
                   fixedTermConfig.fixedTermDepositAllowlist.find(
                     (allowList) =>
-                      allowList.userId.toLowerCase() ===
-                      account.address?.toLowerCase()
+                      allowList.userId.toLowerCase() === address?.toLowerCase()
                   )
               )
               .map((fixedTermConfig) => {
@@ -60,7 +65,7 @@ const ApyDropdown = () => {
               }),
           ]
         : null,
-    [t, account, selectedTranche]
+    [t, address, selectedTranche]
   )
 
   if (!apyOptions) return null
@@ -110,4 +115,4 @@ const ApyDropdown = () => {
   )
 }
 
-export default ApyDropdown
+export default memo(ApyDropdown)

@@ -1,20 +1,30 @@
 'use client'
 
 import { Button } from '@mui/material'
-import { useAccount } from 'wagmi'
+import { usePathname } from 'next/navigation'
 
+import useLiteModeState from '@/hooks/context/useLiteModeState'
 import useModalState from '@/hooks/context/useModalState'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { ReferralIcon } from '@/assets/icons'
 
+import { Routes } from '@/config/routes'
+
 const ReferButton = () => {
-  const { address } = useAccount()
+  const { address } = usePrivyAuthenticated()
+
+  const pathName = usePathname()
 
   const { openModal } = useModalState()
 
-  if (!address) return null
+  const { isLiteMode } = useLiteModeState()
+
+  if (!address || (isLiteMode && pathName === Routes.lending.root.url)) {
+    return null
+  }
 
   const handleOpen = () => openModal({ name: ModalsKeys.REFERRAL })
 
@@ -23,14 +33,14 @@ const ReferButton = () => {
       variant='text'
       sx={{
         '.MuiButton-startIcon': {
-          bgcolor: 'gray.extraLight',
+          bgcolor: isLiteMode ? 'gold.dark' : 'gray.extraLight',
           p: 2,
           borderRadius: '50%',
         },
         textTransform: 'unset',
         mr: 2,
       }}
-      startIcon={<ReferralIcon />}
+      startIcon={<ReferralIcon color={isLiteMode ? 'white' : undefined} />}
       onClick={handleOpen}
     >
       Refer to earn
