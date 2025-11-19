@@ -4,10 +4,12 @@ on:
   push:
     branches:
       - main
+      - uat
       - develop
   pull_request:
     branches:
       - main
+      - uat
       - develop
 
 permissions:
@@ -29,16 +31,8 @@ jobs:
           node-version: 20
           cache: npm
 
-      - name: Configure npm for GitHub Packages
-        if: secrets.NPM_TOKEN != ''
-        run: npm run prebuild
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
       - name: Install dependencies
         run: npm ci
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Lint
         run: npm run lint
