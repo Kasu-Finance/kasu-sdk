@@ -10,7 +10,6 @@ import { http } from 'wagmi'
 import { NETWORK } from '@/config/sdk'
 import { SupportedChainIds } from '@/connection/chains'
 import { RPC_URLS } from '@/connection/rpc'
-import { getRequiredEnv } from '@/utils/env'
 
 const queryClient = new QueryClient()
 
@@ -22,14 +21,10 @@ export const wagmiConfig = createConfig({
   },
 })
 
-// const privyConfig: PrivyClientConfig =
-
-const getPrivyAppId = () => getRequiredEnv('NEXT_PUBLIC_PRIVY_APP_ID')
-
 const PrivyProvider: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <PrivyRootProvider
-      appId={getPrivyAppId()}
+      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''}
       config={{
         // Customize Privy's appearance in your app
         appearance: {
