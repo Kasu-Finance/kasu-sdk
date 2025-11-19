@@ -42,3 +42,6 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          NEXERA_API_KEY: ${{ secrets.NEXERA_API_KEY }}
+          NEXT_PUBLIC_PRIVY_APP_ID: ${{ secrets.NEXT_PUBLIC_PRIVY_APP_ID }}
