@@ -1,9 +1,14 @@
 import { createSdk } from '@compilot/js-sdk'
 import { NextRequest, NextResponse } from 'next/server'
 
-const apiClient = createSdk({
-  apiKey: process.env.NEXERA_API_KEY || '',
-})
+const getApiClient = () => {
+  const apiKey = process.env.NEXERA_API_KEY
+  if (!apiKey) {
+    throw new Error('NEXERA_API_KEY is not configured.')
+  }
+
+  return createSdk({ apiKey })
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,7 +19,7 @@ export async function POST(req: NextRequest) {
 
     const { isIndividual, ...args } = body
 
-    const sessionRes = await apiClient.createWeb3Challenge({
+    const sessionRes = await getApiClient().createWeb3Challenge({
       workflowId: isIndividual ? KYC_WORKFLOW : KYB_WORKFLOW,
       ...args,
     })
