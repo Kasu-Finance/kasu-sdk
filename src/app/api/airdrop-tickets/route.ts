@@ -5,6 +5,7 @@ import {
   LENDERS_AGREEMENT_CHAIN_ID_MAP,
 } from '@/config/api.lendersAgreement'
 import { isSupportedChain } from '@/utils'
+import { getRequiredEnv } from '@/utils/env'
 
 export type UserAirDropTicket = {
   totalTickets: number
@@ -47,8 +48,8 @@ export async function GET(req: NextRequest) {
     const res = await fetch(`${LENDERS_AGREEMENT_API}/user-airdrop/tickets`, {
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': process.env.LENDERS_AGREEMENT_API_KEY || '',
-        'x-chain-id': LENDERS_AGREEMENT_CHAIN_ID_MAP[chain] || '',
+        'x-api-key': getRequiredEnv('LENDERS_AGREEMENT_API_KEY'),
+        'x-chain-id': LENDERS_AGREEMENT_CHAIN_ID_MAP[chain],
       },
     })
 

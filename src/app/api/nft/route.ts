@@ -5,6 +5,7 @@ import {
   LENDERS_AGREEMENT_CHAIN_ID_MAP,
 } from '@/config/api.lendersAgreement'
 import { isSupportedChain } from '@/utils'
+import { getRequiredEnv } from '@/utils/env'
 
 export type NftPayload = {
   address: string
@@ -59,8 +60,8 @@ export async function POST(req: NextRequest) {
     {
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': process.env.LENDERS_AGREEMENT_API_KEY || '',
-        'x-chain-id': LENDERS_AGREEMENT_CHAIN_ID_MAP[chain] || '',
+        'x-api-key': getRequiredEnv('LENDERS_AGREEMENT_API_KEY'),
+        'x-chain-id': LENDERS_AGREEMENT_CHAIN_ID_MAP[chain],
       },
     }
   )

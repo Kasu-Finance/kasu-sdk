@@ -1,26 +1,27 @@
 import { createSdk } from '@compilot/js-sdk'
 import { NextRequest, NextResponse } from 'next/server'
 
+import { getRequiredEnv } from '@/utils/env'
+
 const getApiClient = () => {
-  const apiKey = process.env.NEXERA_API_KEY
-  if (!apiKey) {
-    throw new Error('NEXERA_API_KEY is not configured.')
-  }
+  const apiKey = getRequiredEnv('NEXERA_API_KEY')
 
   return createSdk({ apiKey })
 }
 
+const getWorkflowId = (envKey: 'KYC_WORKFLOW' | 'KYB_WORKFLOW') =>
+  getRequiredEnv(envKey)
+
 export async function POST(req: NextRequest) {
   try {
-    const KYC_WORKFLOW = process.env.KYC_WORKFLOW || ''
-    const KYB_WORKFLOW = process.env.KYB_WORKFLOW || ''
-
     const body = await req.json()
 
     const { isIndividual, ...args } = body
 
     const sessionRes = await getApiClient().createWeb3Challenge({
-      workflowId: isIndividual ? KYC_WORKFLOW : KYB_WORKFLOW,
+      workflowId: isIndividual
+        ? getWorkflowId('KYC_WORKFLOW')
+        : getWorkflowId('KYB_WORKFLOW'),
       ...args,
     })
 

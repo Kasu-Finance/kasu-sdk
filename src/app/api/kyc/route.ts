@@ -4,6 +4,7 @@ import { NextRequest } from 'next/server'
 import NEXERA_API_BASE_URL, {
   NEXERA_PROJECT_ID,
 } from '@/config/nexera/api.nexera'
+import { getRequiredEnv } from '@/utils/env'
 
 export type CustomerStatus =
   | Awaited<ReturnType<typeof getCustomerStatus>>
@@ -56,11 +57,13 @@ export async function GET(req: NextRequest) {
   const projectId = process.env.NEXERA_PROJECT_ID || NEXERA_PROJECT_ID
 
   try {
+    const apiKey = getRequiredEnv('NEXERA_API_KEY')
+
     const kybRes = await fetch(
       `${NEXERA_API_BASE_URL}/companies/details?address=${userAddress.toLowerCase()}`,
       {
         headers: {
-          Authorization: `Bearer ${process.env.NEXERA_API_KEY}`,
+          Authorization: `Bearer ${apiKey}`,
         },
       }
     )
@@ -76,7 +79,7 @@ export async function GET(req: NextRequest) {
         `${NEXERA_API_BASE_URL}/projects/${projectId}/customer-wallets/${userAddress.toLowerCase()}/customer`,
         {
           headers: {
-            Authorization: `Bearer ${process.env.NEXERA_API_KEY}`,
+            Authorization: `Bearer ${apiKey}`,
           },
         }
       )

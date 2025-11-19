@@ -1,13 +1,12 @@
 import { createSdk } from '@compilot/js-sdk'
 import { NextRequest, NextResponse } from 'next/server'
 
+import { getRequiredEnv } from '@/utils/env'
+
 const EMAIL_WORKFLOW = 'a95f52b0-7017-4745-ab92-4106b8e89e33'
 
 const getApiClient = () => {
-  const apiKey = process.env.NEXERA_API_KEY
-  if (!apiKey) {
-    throw new Error('NEXERA_API_KEY is not configured.')
-  }
+  const apiKey = getRequiredEnv('NEXERA_API_KEY')
 
   return createSdk({ apiKey })
 }

@@ -3,8 +3,9 @@
 import { IKasuAllowListAbi__factory } from '@kasufinance/kasu-sdk/src/contracts'
 
 import NEXERA_API_BASE_URL from '@/config/nexera/api.nexera'
+import { getRequiredEnv } from '@/utils/env'
 
-const SIGNATURE_WORKFLOW = process.env.SIGNATURE_WORKFLOW || ''
+const SIGNATURE_WORKFLOW = getRequiredEnv('SIGNATURE_WORKFLOW')
 
 type ApiRes =
   | {
@@ -44,7 +45,7 @@ const generateKycSignature = async (params: {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      Authorization: `Bearer ${process.env.NEXERA_API_KEY}`,
+      Authorization: `Bearer ${getRequiredEnv('NEXERA_API_KEY')}`,
     },
     method: 'POST',
   })
