@@ -1,14 +1,14 @@
 import { ethers } from 'ethers'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useSdk from '@/hooks/context/useSdk'
 
 const useCalculateLaunchBonusAmount = (
   lockAmount: string,
   bonusMultiplier: number,
   bonusTokensLeft: string
 ) => {
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
 
   const bonusAmount = sdk
     ? sdk.Locking.getLaunchBonusAmount(

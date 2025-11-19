@@ -2,14 +2,14 @@ import { useWallets } from '@privy-io/react-auth'
 import { ethers } from 'ethers'
 import { useState } from 'react'
 import useSWR from 'swr'
-import { useAccount } from 'wagmi'
 
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 import useTokenDetails from '@/hooks/web3/useTokenDetails'
 
 import { IERC20__factory } from '@/contracts/output'
 
 const useUserBalance = (tokenAddress: string | undefined) => {
-  const { address } = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const { wallets } = useWallets()
 

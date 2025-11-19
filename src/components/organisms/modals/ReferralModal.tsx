@@ -1,7 +1,7 @@
 import { Box, Button, Skeleton, Stack, Typography } from '@mui/material'
-import { useAccount } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
+import useReferralLink from '@/hooks/referrals/useReferralLink'
 import useUserReferrals, {
   ReferredUserDetails,
 } from '@/hooks/referrals/useUserReferrals'
@@ -24,15 +24,13 @@ import { formatAmount } from '@/utils'
 const ReferralModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { t } = getTranslation()
 
-  const { address } = useAccount()
-
   const { openModal } = useModalState()
+
+  const referralLink = useReferralLink()
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text)
   }
-
-  const referralCode = address || ''
 
   const { userReferrals, isLoading } = useUserReferrals()
 
@@ -71,11 +69,7 @@ const ReferralModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                   px: 2,
                 }}
                 endIcon={<CopyIcon />}
-                onClick={() =>
-                  handleCopy(
-                    `${window.location.origin}/referrals/${referralCode}`
-                  )
-                }
+                onClick={() => handleCopy(referralLink.fullUrl)}
               >
                 <Typography
                   variant='inherit'
@@ -85,7 +79,7 @@ const ReferralModal: React.FC<DialogChildProps> = ({ handleClose }) => {
                     overflow: 'hidden',
                   }}
                 >
-                  {window.location.host}/referrals/{referralCode}
+                  {referralLink.shortenUrl}
                 </Typography>
               </Button>
             </Box>

@@ -8,7 +8,7 @@ export type PaginationType = {
   setPage: (page: number) => void
   nextPage: () => void
   prevPage: () => void
-  paginateData: <T>(data: T[]) => T[]
+  paginateData: <T>(data: T[], fillData?: boolean) => T[]
 }
 
 const usePagination = (
@@ -31,8 +31,18 @@ const usePagination = (
 
   const prevPage = () => setCurrentPage((prev) => prev - 1)
 
-  const paginateData = <T,>(data: T[]): T[] =>
-    [...data].slice((currentPage - 1) * rowPerPage, currentPage * rowPerPage)
+  const paginateData = <T,>(data: T[], fillData?: boolean): T[] => {
+    const isLastPage = currentPage === totalPages
+
+    const startIndex = (currentPage - 1) * rowPerPage
+    const endIndex = Math.min(currentPage * rowPerPage, totalCount)
+
+    const paginated = [...data].slice(startIndex, endIndex)
+
+    return fillData && isLastPage && paginated.length !== rowPerPage
+      ? [...data].slice(Math.max(0, endIndex - rowPerPage), endIndex)
+      : paginated
+  }
 
   useEffect(() => {
     if (!pages.includes(currentPage)) {

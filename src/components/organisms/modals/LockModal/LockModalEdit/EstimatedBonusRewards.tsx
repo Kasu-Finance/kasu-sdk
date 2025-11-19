@@ -1,6 +1,7 @@
+import { LockPeriod } from '@kasufinance/kasu-sdk/src/services/Locking/types'
 import { Box, Typography } from '@mui/material'
+import React, { memo } from 'react'
 
-import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useAvailableKsuBonus from '@/hooks/locking/useAvailableKsuBonus'
 import useCalculateLaunchBonusAmount from '@/hooks/locking/useCalculateLaunchBonusAmount'
@@ -13,9 +14,16 @@ import ModalLaunchBonus from '@/components/molecules/tooltips/ModalLaunchBonus'
 
 import { formatAmount } from '@/utils'
 
-const EstimatedBonusRewards = () => {
+type EstimatedBonusRewardsProps = {
+  amount: string
+  selectedLockPeriod: LockPeriod
+}
+
+const EstimatedBonusRewards: React.FC<EstimatedBonusRewardsProps> = ({
+  amount,
+  selectedLockPeriod,
+}) => {
   const { t } = getTranslation()
-  const { amount, selectedLockPeriod } = useLockModalState()
   const { modalStatus } = useModalStatusState()
   const { availableKsuBonus } = useAvailableKsuBonus()
 
@@ -124,4 +132,4 @@ const EstimatedBonusRewards = () => {
   )
 }
 
-export default EstimatedBonusRewards
+export default memo(EstimatedBonusRewards)

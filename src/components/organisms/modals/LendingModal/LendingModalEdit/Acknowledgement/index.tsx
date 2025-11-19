@@ -28,23 +28,17 @@ const Acknowledgement = () => {
           '.MuiFormControlLabel-root': {
             m: 0,
             alignItems: 'flex-start',
-            '.MuiCheckbox-root': {
-              mr: 2,
-              bgcolor: 'white',
-            },
+            '.MuiCheckbox-root': { mr: 2, bgcolor: 'white' },
 
-            '.MuiTypography-root': {
-              mt: 0.25,
-            },
+            '.MuiTypography-root': { mt: 0.25 },
 
-            '& + .MuiFormControlLabel-root': {
-              mt: 2,
-            },
+            '& + .MuiFormControlLabel-root': { mt: 2 },
           },
         }}
       >
         <AcknowledgementContent />
       </FormGroup>
+
       <FormHelperText
         sx={{
           margin: '16px 0 0 0',

@@ -1,34 +1,26 @@
-import { Stack } from '@mui/material'
-
-import useModalState from '@/hooks/context/useModalState'
+import useLiteModeState from '@/hooks/context/useLiteModeState'
 import useWithdrawModalState from '@/hooks/context/useWithdrawModalState'
 
-import TrancheDropdown from '@/components/molecules/lending/TrancheDropdown'
-import WithdrawAmountInput from '@/components/organisms/modals/WithdrawModal/WithdrawModalEdit/WithdrawAmountInput'
-import WithdrawFromInfo from '@/components/organisms/modals/WithdrawModal/WithdrawModalEdit/WithdrawFromInfo'
-import WithdrawModalEditActions from '@/components/organisms/modals/WithdrawModal/WithdrawModalEdit/WithdrawModalEditActions'
-
-import { ModalsKeys } from '@/context/modal/modal.types'
+import WithdrawLiteLayout from '@/components/organisms/modals/WithdrawModal/WithdrawModalEdit/WithdrawLiteLayout'
+import WithdrawProLayout from '@/components/organisms/modals/WithdrawModal/WithdrawModalEdit/WithdrawProLayout'
 
 const WithdrawModalEdit = () => {
-  const { modal } = useModalState()
+  const { isLiteMode } = useLiteModeState()
 
-  const { trancheId, setSelectedTranche } = useWithdrawModalState()
+  const { trancheId, setSelectedTranche, selectedPool, setSelectedPool } =
+    useWithdrawModalState()
 
-  const pool = modal[ModalsKeys.WITHDRAW].pool
+  const props = {
+    trancheId,
+    pool: selectedPool,
+    setSelectedTranche,
+    setSelectedPool,
+  }
 
-  return (
-    <Stack spacing={3} mt={3}>
-      <WithdrawFromInfo />
-      <TrancheDropdown
-        tranches={pool.tranches}
-        selectedTranche={trancheId}
-        setSelectedTranche={setSelectedTranche}
-        isWithdrawal
-      />
-      <WithdrawAmountInput />
-      <WithdrawModalEditActions />
-    </Stack>
+  return isLiteMode ? (
+    <WithdrawLiteLayout {...props} />
+  ) : (
+    <WithdrawProLayout {...props} />
   )
 }
 

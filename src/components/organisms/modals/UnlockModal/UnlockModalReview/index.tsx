@@ -1,6 +1,6 @@
 import { Box, Skeleton, Stack, Typography } from '@mui/material'
 
-import useLockModalState from '@/hooks/context/useLockModalState'
+import useUnlockModalState from '@/hooks/context/useUnlockModalState'
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
 import getTranslation from '@/hooks/useTranslation'
 
@@ -13,7 +13,7 @@ import { formatAmount, formatTimestamp } from '@/utils'
 const UnlockModalReview = () => {
   const { t } = getTranslation()
 
-  const { amount } = useLockModalState()
+  const { amount } = useUnlockModalState()
 
   const { nextEpochTime, isLoading } = useNextEpochTime()
 

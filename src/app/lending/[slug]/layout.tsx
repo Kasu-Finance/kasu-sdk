@@ -1,8 +1,12 @@
 import { Container } from '@mui/material'
 import { ReactNode } from 'react'
 
+import LiteModeRenderer from '@/components/atoms/LiteModeRenderer'
+import RedirectHandler from '@/components/atoms/RedirectHandler'
 import PageHeader from '@/components/organisms/lending/PageHeader'
 import PoolTabs from '@/components/organisms/lending/PoolTabs'
+
+import { Routes } from '@/config/routes'
 
 type LendingLayoutProps = {
   children: ReactNode
@@ -16,10 +20,15 @@ export default async function LendingSlugLayout({
   const { slug: poolId } = await params
 
   return (
-    <Container maxWidth='lg'>
-      <PageHeader poolId={poolId} />
-      <PoolTabs poolId={poolId} />
-      {children}
-    </Container>
+    <LiteModeRenderer
+      renderOnLiteMode={<RedirectHandler to={Routes.lending.root.url} />}
+      otherwise={
+        <Container maxWidth='lg'>
+          <PageHeader poolId={poolId} />
+          <PoolTabs poolId={poolId} />
+          {children}
+        </Container>
+      }
+    />
   )
 }

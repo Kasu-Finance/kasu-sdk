@@ -1,7 +1,4 @@
-import {
-  LockPeriod,
-  UserLock,
-} from '@kasufinance/kasu-sdk/src/services/Locking/types'
+import { UserLock } from '@kasufinance/kasu-sdk/src/services/Locking/types'
 import React from 'react'
 
 import usePagination from '@/hooks/usePagination'
@@ -12,15 +9,11 @@ import UserRewardsTableRow from '@/components/organisms/locking/UserRewards/User
 
 type UserRewardsTableProps = {
   userLocks: UserLock[]
-  lockPeriods: LockPeriod[]
 }
 
 const ROW_PER_PAGE = 10
 
-const UserRewardsTable: React.FC<UserRewardsTableProps> = ({
-  userLocks,
-  lockPeriods,
-}) => {
+const UserRewardsTable: React.FC<UserRewardsTableProps> = ({ userLocks }) => {
   const { currentPage, setPage, paginateData } = usePagination(
     ROW_PER_PAGE,
     userLocks.length
@@ -30,11 +23,7 @@ const UserRewardsTable: React.FC<UserRewardsTableProps> = ({
     <CustomTable
       tableHeader={<UserRewardsTableHeader />}
       tableBody={[...paginateData(userLocks)].map((userLock) => (
-        <UserRewardsTableRow
-          key={userLock.id.toString()}
-          userLock={userLock}
-          lockPeriods={lockPeriods}
-        />
+        <UserRewardsTableRow key={userLock.id.toString()} userLock={userLock} />
       ))}
       paginationProps={
         userLocks.length > ROW_PER_PAGE

@@ -1,18 +1,21 @@
 'use client'
 
 import { Box, Paper, Skeleton, Typography } from '@mui/material'
-import { DefaultRawDatum, ResponsivePie } from '@nivo/pie'
-import React, { useEffect, useState } from 'react'
+import { DefaultRawDatum, PieTooltipProps, ResponsivePie } from '@nivo/pie'
+import { useEffect, useState } from 'react'
 
-type PieChartProps = {
-  data: (DefaultRawDatum & {
-    color: string
-    label: string
-  })[]
+type DataType = DefaultRawDatum & {
+  color: string
+  label: string
 }
 
-const PieChart: React.FC<PieChartProps> = ({ data }) => {
-  const [chartData, setChartData] = useState<PieChartProps['data']>([])
+export type PieChartProps<T extends DataType> = {
+  data: T[]
+  tooltip?: React.FC<PieTooltipProps<T>>
+}
+
+const PieChart = <T extends DataType>({ data, tooltip }: PieChartProps<T>) => {
+  const [chartData, setChartData] = useState<T[]>([])
 
   // animate chart https://github.com/plouc/nivo/issues/732
   useEffect(() => {
@@ -35,19 +38,25 @@ const PieChart: React.FC<PieChartProps> = ({ data }) => {
         enableArcLinkLabels={false}
         enableArcLabels={false}
         colors={({ data }) => data.color}
-        tooltip={({ datum }) => (
-          <Paper sx={{ display: 'flex', alignItems: 'center', p: 1 }}>
-            <Box
-              boxShadow='0 0 15px 0 rgba(0,0,0, 0.5)'
-              bgcolor={datum.color}
-              width={12}
-              height={12}
-              mr={1}
-            />
-            <Typography variant='baseSm'>{datum.label} :&nbsp;</Typography>
-            <Typography variant='baseSmBold'>{datum.value}</Typography>
-          </Paper>
-        )}
+        tooltip={(data) =>
+          tooltip ? (
+            tooltip(data)
+          ) : (
+            <Paper sx={{ display: 'flex', alignItems: 'center', p: 1 }}>
+              <Box
+                boxShadow='0 0 15px 0 rgba(0,0,0, 0.5)'
+                bgcolor={data.datum.color}
+                width={12}
+                height={12}
+                mr={1}
+              />
+              <Typography variant='baseSm'>
+                {data.datum.label} :&nbsp;
+              </Typography>
+              <Typography variant='baseSmBold'>{data.datum.value}</Typography>
+            </Paper>
+          )
+        }
         transitionMode='startAngle'
       />
       {!chartData.length && data.length && (

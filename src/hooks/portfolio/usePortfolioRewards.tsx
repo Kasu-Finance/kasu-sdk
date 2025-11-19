@@ -2,10 +2,10 @@ import { PortfolioRewards } from '@kasufinance/kasu-sdk/src/services/Portfolio/t
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import useSWR from 'swr'
-import { useAccount } from 'wagmi'
 
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useSdk from '@/hooks/context/useSdk'
 import getTranslation from '@/hooks/useTranslation'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import { toBigNumber } from '@/utils'
 
@@ -38,9 +38,9 @@ export type PortfolioRewardsType = {
 }
 
 const usePortfolioRewards = () => {
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
 
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const { t } = getTranslation()
 
@@ -55,7 +55,7 @@ const usePortfolioRewards = () => {
   )
 
   const { data, error, isLoading, mutate } = useSWR(
-    account.address && sdk ? ['portfolioRewards', account.address, sdk] : null,
+    address && sdk ? ['portfolioRewards', address, sdk] : null,
     async ([_, userAddress, sdk]): Promise<PortfolioRewardsType> => {
       const rewards = await sdk.Portfolio.getPortfolioRewards(
         userAddress.toLowerCase()

@@ -2,7 +2,6 @@
 
 // @ts-ignore export error
 import { ReactNode, useCallback, useEffect, useReducer } from 'react'
-import { useAccount } from 'wagmi'
 
 import useToastState from '@/hooks/context/useToastState'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
@@ -25,15 +24,13 @@ const initialState: KycStateType = {
 }
 
 const KycState: React.FC<KycStateProps> = ({ children }) => {
-  const { address } = useAccount()
-
   const [state, dispatch] = useReducer(kycReducer, initialState)
 
   const { setToast, removeToast } = useToastState()
 
   const kycActions = useKycActions(dispatch)
 
-  const { isAuthenticated } = usePrivyAuthenticated()
+  const { address, isAuthenticated } = usePrivyAuthenticated()
 
   const {
     setLastVerifiedAccount,

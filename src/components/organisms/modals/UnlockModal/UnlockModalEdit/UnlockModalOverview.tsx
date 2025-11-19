@@ -1,6 +1,7 @@
 import { Typography } from '@mui/material'
 import { Box } from '@mui/system'
 
+import useLiteModeState from '@/hooks/context/useLiteModeState'
 import useModalState from '@/hooks/context/useModalState'
 import useStakedKSU from '@/hooks/locking/useStakedKSU'
 import getTranslation from '@/hooks/useTranslation'
@@ -15,9 +16,11 @@ import { capitalize, formatAmount, formatTimestamp } from '@/utils'
 const UnlockModalOverview = () => {
   const { t } = getTranslation()
 
+  const { isLiteMode } = useLiteModeState()
+
   const { modal } = useModalState()
 
-  const { userLock } = modal[ModalsKeys.UNLOCK]
+  const { userLock, userLocks } = modal[ModalsKeys.UNLOCK]
 
   const { stakedKSU } = useStakedKSU()
 
@@ -25,6 +28,11 @@ const UnlockModalOverview = () => {
     format: 'DD.MM.YYYY HH:mm:ss',
     includeUtcOffset: true,
   })
+
+  const totalRKsuBalance = (userLocks ?? []).reduce(
+    (acc, cur) => (acc += parseFloat(cur.rKSUAmount)),
+    0
+  )
 
   return (
     <Box>
@@ -55,33 +63,35 @@ const UnlockModalOverview = () => {
           color: 'white',
         }}
       />
-      <InfoRow
-        title={t('modals.unlock.overview.lockedDate')}
-        titleStyle={{ textTransform: 'capitalize' }}
-        toolTipInfo={
-          <ToolTip
-            title={t('modals.unlock.overview.metric-3-tooltip')}
-            iconSx={{
-              color: 'gold.extraDark',
-              '&:hover': {
-                color: 'rgba(133, 87, 38, 1)',
-              },
-            }}
-          />
-        }
-        metric={
-          <Typography variant='baseMdBold'>
-            {formattedTime.date}{' '}
-            <Typography variant='baseMd' color='rgba(133, 87, 38, 1)'>
-              {formattedTime.timestamp} {formattedTime.utcOffset}
+      {!isLiteMode && (
+        <InfoRow
+          title={t('modals.unlock.overview.lockedDate')}
+          titleStyle={{ textTransform: 'capitalize' }}
+          toolTipInfo={
+            <ToolTip
+              title={t('modals.unlock.overview.metric-3-tooltip')}
+              iconSx={{
+                color: 'gold.extraDark',
+                '&:hover': {
+                  color: 'rgba(133, 87, 38, 1)',
+                },
+              }}
+            />
+          }
+          metric={
+            <Typography variant='baseMdBold'>
+              {formattedTime.date}{' '}
+              <Typography variant='baseMd' color='rgba(133, 87, 38, 1)'>
+                {formattedTime.timestamp} {formattedTime.utcOffset}
+              </Typography>
             </Typography>
-          </Typography>
-        }
-        showDivider
-        dividerProps={{
-          color: 'white',
-        }}
-      />
+          }
+          showDivider
+          dividerProps={{
+            color: 'white',
+          }}
+        />
+      )}
       <InfoRow
         title={`rKASU ${capitalize(t('general.balance'))}`}
         toolTipInfo={
@@ -97,7 +107,10 @@ const UnlockModalOverview = () => {
         }
         metric={
           <Typography variant='baseMdBold'>
-            {formatAmount(userLock.rKSUAmount, { minDecimals: 2 })} KASU
+            {formatAmount(isLiteMode ? totalRKsuBalance : userLock.rKSUAmount, {
+              minDecimals: 2,
+            })}{' '}
+            KASU
           </Typography>
         }
         showDivider

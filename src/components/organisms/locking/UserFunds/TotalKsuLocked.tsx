@@ -1,14 +1,15 @@
 'use client'
 
-import { Box, Skeleton, Typography } from '@mui/material'
+import { Box, BoxProps, Skeleton, Typography } from '@mui/material'
 import { formatEther, parseEther } from 'ethers/lib/utils'
+import React from 'react'
 
 import useStakedKSU from '@/hooks/locking/useStakedKSU'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
-const TotalKsuLocked = () => {
+const TotalKsuLocked: React.FC<BoxProps> = (props) => {
   const { stakedKSU, isLoading } = useStakedKSU()
 
   const { ksuPrice } = useKsuPrice()
@@ -23,7 +24,7 @@ const TotalKsuLocked = () => {
   )
 
   return (
-    <Box>
+    <Box {...props}>
       <Typography variant='baseMdBold' mr='1ch'>
         {formatAmount(stakedKSU || '0', {
           minDecimals: 2,

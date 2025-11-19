@@ -1,77 +1,62 @@
-import { Box, Typography } from '@mui/material'
-import { formatEther, formatUnits } from 'ethers/lib/utils'
+import { Typography } from '@mui/material'
+import React, { Dispatch, memo, SetStateAction, useCallback } from 'react'
 
-import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import getTranslation from '@/hooks/useTranslation'
-import useKsuPrice from '@/hooks/web3/useKsuPrice'
-import useUserBalance from '@/hooks/web3/useUserBalance'
 
-import InfoRow from '@/components/atoms/InfoRow'
-import ToolTip from '@/components/atoms/ToolTip'
 import NumericalInput from '@/components/molecules/NumericalInput'
-import LendingLoyalityLevelsTooltip from '@/components/molecules/tooltips/LendingLoyalityLevelsTooltip'
-import MinKsuLockLoyalityOne from '@/components/molecules/tooltips/MinKsuLockLoyalityOne'
-import MinKsuLockLoyalityTwo from '@/components/molecules/tooltips/MinKsuLockLoyalityTwo'
 
 import { KsuIcon } from '@/assets/icons'
 
-import sdkConfig from '@/config/sdk'
 import { customTypography } from '@/themes/typography'
-import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
+import { toBigNumber } from '@/utils'
 
-const LockModalInput = () => {
+type LockModalInputProps = {
+  amount: string
+  decimals?: number
+  balance: string
+  ksuInUSD: string
+  setAmount: Dispatch<SetStateAction<string>>
+}
+
+const LockModalInput: React.FC<LockModalInputProps> = ({
+  amount,
+  decimals,
+  balance,
+  ksuInUSD,
+  setAmount,
+}) => {
   const { t } = getTranslation()
-
-  const { amount, setAmount } = useLockModalState()
 
   const { modalStatus, setModalStatus } = useModalStatusState()
 
-  const { balance: ksuBalance, decimals } = useUserBalance(
-    sdkConfig.contracts.KSUToken
+  const validate = useCallback(
+    (amount: string) => {
+      if (amount && toBigNumber(amount).gt(toBigNumber(balance))) {
+        setModalStatus({
+          type: 'error',
+          errorMessage: 'Insufficient balance',
+        })
+        return
+      }
+
+      if (toBigNumber(amount).isZero()) {
+        setModalStatus({ type: 'error', errorMessage: 'Amount is required' })
+        return
+      }
+
+      setModalStatus({ type: amount ? 'success' : 'default' })
+    },
+    [balance, setModalStatus]
   )
 
-  const { ksuPrice } = useKsuPrice()
-
-  const balance = formatUnits(ksuBalance, decimals)
-
-  const ksuInUSD = convertToUSD(
-    toBigNumber(amount),
-    toBigNumber(ksuPrice || '0')
-  )
-
-  const handleMax = () => {
+  const handleMax = useCallback(() => {
     setAmount(balance)
     validate(balance)
-  }
-
-  const validate = (amount: string) => {
-    if (amount && toBigNumber(amount).gt(toBigNumber(balance))) {
-      setModalStatus({
-        type: 'error',
-        errorMessage: 'Insufficient balance',
-      })
-      return
-    }
-
-    if (toBigNumber(amount).isZero()) {
-      setModalStatus({ type: 'error', errorMessage: 'Amount is required' })
-      return
-    }
-
-    setModalStatus({ type: amount ? 'success' : 'default' })
-  }
-
-  const handleFocusState = (state: boolean) => {
-    if (state) {
-      setModalStatus({ type: 'focused' })
-    } else {
-      validate(amount)
-    }
-  }
+  }, [validate, balance, setAmount])
 
   return (
-    <Box>
+    <>
       <NumericalInput
         amount={amount}
         label={t('modals.lock.deposit.input-label')}
@@ -87,8 +72,8 @@ const LockModalInput = () => {
               bgcolor: 'inherit',
             },
           },
-          onFocus: () => handleFocusState(true),
-          onBlur: () => handleFocusState(false),
+          onFocus: () => setModalStatus({ type: 'focused' }),
+          onBlur: () => validate(amount),
           error: modalStatus.type === 'error',
           InputLabelProps: {
             shrink: true,
@@ -107,7 +92,7 @@ const LockModalInput = () => {
                 component='span'
                 color='gold.extraDark'
               >
-                ~ {formatAmount(formatEther(ksuInUSD), { minDecimals: 2 })} USDC
+                ~ {ksuInUSD} USDC
               </Typography>
             ),
             sx: {
@@ -126,6 +111,10 @@ const LockModalInput = () => {
               '& .MuiInputBase-input': {
                 px: 1,
               },
+
+              svg: {
+                minWidth: 24,
+              },
             },
           },
         }}
@@ -139,68 +128,8 @@ const LockModalInput = () => {
       >
         {modalStatus.type === 'error' ? modalStatus.errorMessage : 'message'}
       </Typography>
-      <InfoRow
-        title={t('modals.lock.deposit.amount-metric-1')}
-        toolTipInfo={
-          <ToolTip
-            title={<MinKsuLockLoyalityOne />}
-            iconSx={{
-              color: 'gold.extraDark',
-              '&:hover': {
-                color: 'rgba(133, 87, 38, 1)',
-              },
-            }}
-          />
-        }
-        showDivider
-        dividerProps={{
-          color: 'white',
-        }}
-        metric={
-          <Typography variant='baseMdBold'>
-            {formatAmount(500, { minDecimals: 2 })} KASU
-          </Typography>
-        }
-      />
-      <InfoRow
-        title={t('modals.lock.deposit.amount-metric-2')}
-        toolTipInfo={
-          <ToolTip
-            title={<MinKsuLockLoyalityTwo />}
-            iconSx={{
-              color: 'gold.extraDark',
-              '&:hover': {
-                color: 'rgba(133, 87, 38, 1)',
-              },
-            }}
-          />
-        }
-        showDivider
-        dividerProps={{
-          color: 'white',
-        }}
-        metric={
-          <Typography variant='baseMdBold'>
-            {formatAmount(1000, { minDecimals: 2 })} KASU
-          </Typography>
-        }
-      />
-      <Typography variant='baseMd' mt={3} display='block'>
-        {t('modals.lock.deposit.amount-metric-3')}{' '}
-        <ToolTip
-          title={<LendingLoyalityLevelsTooltip />}
-          iconSx={{
-            verticalAlign: 'sub',
-            color: 'gold.extraDark',
-            '&:hover': {
-              color: 'rgba(133, 87, 38, 1)',
-            },
-          }}
-        />{' '}
-        {t('modals.lock.deposit.amount-metric-4')}
-      </Typography>
-    </Box>
+    </>
   )
 }
 
-export default LockModalInput
+export default memo(LockModalInput)

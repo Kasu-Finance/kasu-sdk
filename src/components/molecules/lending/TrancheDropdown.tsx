@@ -1,5 +1,5 @@
 import { TrancheData } from '@kasufinance/kasu-sdk/src/services/DataService/types'
-import { SelectChangeEvent, Typography } from '@mui/material'
+import { Box, SelectChangeEvent, Typography } from '@mui/material'
 
 import getTranslation from '@/hooks/useTranslation'
 
@@ -7,7 +7,7 @@ import CustomSelect from '@/components/atoms/CustomSelect'
 import ToolTip from '@/components/atoms/ToolTip'
 
 import { customPalette } from '@/themes/palette'
-import { toBigNumber } from '@/utils'
+import { formatPercentage, toBigNumber } from '@/utils'
 
 type TrancheDropdownProps = {
   tranches: TrancheData[]
@@ -18,6 +18,7 @@ type TrancheDropdownProps = {
   ) => void
   disableOversubscribed?: boolean
   isWithdrawal?: boolean
+  showApy?: boolean
 }
 
 const TrancheDropdown: React.FC<TrancheDropdownProps> = ({
@@ -26,6 +27,7 @@ const TrancheDropdown: React.FC<TrancheDropdownProps> = ({
   tranches,
   disableOversubscribed,
   isWithdrawal,
+  showApy,
 }) => {
   const { t } = getTranslation()
 
@@ -60,34 +62,48 @@ const TrancheDropdown: React.FC<TrancheDropdownProps> = ({
       value={selectedTranche ?? ''}
       variant='secondary'
       renderItem={(val) => (
-        <Typography
-          variant='baseMd'
+        <Box
           py={1}
-          display='inline-flex'
+          display='flex'
           alignItems='center'
+          justifyContent='space-between'
           color={
             disableOversubscribed && toBigNumber(val.maximumDeposit).isZero()
               ? customPalette.gray.dark
               : undefined
           }
+          width='100%'
         >
-          {val.name} {t('general.tranche')}{' '}
-          {disableOversubscribed && toBigNumber(val.maximumDeposit).isZero() ? (
-            <>
-              (Oversubscribed)
-              <ToolTip
-                placement='top'
-                title='This tranche is temporarily oversubscribed. Please check again in the next epoch.'
-                iconSx={{
-                  color: customPalette.gold.dark,
-                  '&:hover': {
-                    color: customPalette.gold.extraDark,
-                  },
-                }}
-              />
-            </>
-          ) : null}
-        </Typography>
+          <Typography
+            variant='baseMd'
+            display='inline-flex'
+            alignItems='center'
+            color='inherit'
+          >
+            {val.name} {t('general.tranche')}{' '}
+            {disableOversubscribed &&
+            toBigNumber(val.maximumDeposit).isZero() ? (
+              <>
+                (Full)
+                <ToolTip
+                  placement='top'
+                  title='This Loan Tranche is temporarily full. Please check again in the next weekly epoch. Each weekly epoch ends every Tuesday at 6am UTC.'
+                  iconSx={{
+                    color: customPalette.gold.dark,
+                    '&:hover': {
+                      color: customPalette.gold.extraDark,
+                    },
+                  }}
+                />
+              </>
+            ) : null}
+          </Typography>
+          {showApy && (
+            <Typography variant='baseMd' color='inherit'>
+              {formatPercentage(val.apy)} {t('general.grossApy')}
+            </Typography>
+          )}
+        </Box>
       )}
       selectSx={{
         '.MuiOutlinedInput-input': {
@@ -96,9 +112,21 @@ const TrancheDropdown: React.FC<TrancheDropdownProps> = ({
       }}
       renderSelected={(val) =>
         val ? (
-          <Typography variant='baseMd'>
-            {val.name} {t('general.tranche')}
-          </Typography>
+          <Box
+            display='flex'
+            alignItems='center'
+            justifyContent='space-between'
+            width='100%'
+          >
+            <Typography variant='baseMd'>
+              {val.name} {t('general.tranche')}
+            </Typography>
+            {showApy && (
+              <Typography variant='baseMd' color='inherit'>
+                {formatPercentage(val.apy)} {t('general.grossApy')}
+              </Typography>
+            )}
+          </Box>
         ) : (
           t('modals.withdrawal.selectTranche')
         )

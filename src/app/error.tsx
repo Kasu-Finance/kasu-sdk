@@ -3,7 +3,11 @@
 import { Stack, Typography } from '@mui/material'
 import Image from 'next/image'
 import { useEffect } from 'react'
-import { useAccount, useChainId } from 'wagmi'
+import { useChainId } from 'wagmi'
+
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
+
+import LiteModeRenderer from '@/components/atoms/LiteModeRenderer'
 
 import Cat from '@/images/cat.png'
 
@@ -15,7 +19,8 @@ export default function Error({
   // reset: () => void
 }) {
   const chainId = useChainId()
-  const { address } = useAccount()
+
+  const { address } = usePrivyAuthenticated()
 
   useEffect(() => {
     fetch('/api/logging', {
@@ -41,9 +46,18 @@ export default function Error({
   return (
     <Stack mt={20} alignItems='center'>
       <Image src={Cat} alt='Cat' style={{ width: 548, height: 'auto' }} />
-      <Typography variant='h3' color='gray.extraDark'>
-        Currently under maintenance, please try again later.
-      </Typography>
+      <LiteModeRenderer
+        renderOnLiteMode={
+          <Typography variant='h3' color='white'>
+            Currently under maintenance, please try again later.
+          </Typography>
+        }
+        otherwise={
+          <Typography variant='h3' color='gray.extraDark'>
+            Currently under maintenance, please try again later.
+          </Typography>
+        }
+      />
     </Stack>
   )
 }

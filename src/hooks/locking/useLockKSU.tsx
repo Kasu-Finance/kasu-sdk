@@ -1,19 +1,21 @@
 import { BigNumber } from 'ethers'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
+import useSdk from '@/hooks/context/useSdk'
 import useStepperState from '@/hooks/context/useStepperState'
 import useToastState from '@/hooks/context/useToastState'
 import useEarnedBonusLockingAmount from '@/hooks/locking/useEarnedBonusLockingAmount'
 import useUserLocks from '@/hooks/locking/useUserLocks'
-import useKasuSDK, { KasuSdkNotReadyError } from '@/hooks/useKasuSDK'
 import useEarnedRKsu from '@/hooks/web3/useEarnedRKsu'
 import useHandleError from '@/hooks/web3/useHandleError'
+
+import { KasuSdkNotReadyError } from '@/context/sdk/sdk.types'
 
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { capitalize, waitForReceipt } from '@/utils'
 
 const useLockKSU = () => {
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
   const handleError = useHandleError()
 
   const { setTxHash } = useLockModalState()

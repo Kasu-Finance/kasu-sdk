@@ -1,22 +1,39 @@
+import { LockPeriod } from '@kasufinance/kasu-sdk/src/services/Locking/types'
 import { Button } from '@mui/material'
+import React, { memo } from 'react'
 
 import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useStepperState from '@/hooks/context/useStepperState'
 import getTranslation from '@/hooks/useTranslation'
 
-const LockModalEditActions = () => {
+type LockModalEditActionsProps = {
+  amount: string
+  selectedLockPeriod: LockPeriod
+}
+
+const LockModalEditActions: React.FC<LockModalEditActionsProps> = ({
+  amount,
+  selectedLockPeriod,
+}) => {
   const { t } = getTranslation()
 
   const { nextStep } = useStepperState()
 
-  const { amount } = useLockModalState()
+  const { setAmount, setSelectedLockPeriod } = useLockModalState()
 
   const { modalStatus } = useModalStatusState()
 
+  const handleClick = () => {
+    setAmount(amount)
+    setSelectedLockPeriod(selectedLockPeriod)
+
+    nextStep()
+  }
+
   return (
     <Button
-      onClick={nextStep}
+      onClick={handleClick}
       variant='contained'
       color='secondary'
       disabled={Boolean(
@@ -31,4 +48,4 @@ const LockModalEditActions = () => {
   )
 }
 
-export default LockModalEditActions
+export default memo(LockModalEditActions)

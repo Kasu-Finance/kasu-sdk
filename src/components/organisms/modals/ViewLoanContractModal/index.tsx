@@ -39,7 +39,9 @@ const ViewLoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
       <DialogHeader
         title='Loan Contract(s)'
         onClose={handleClose}
-        titleProps={{ textTransform: 'unset' }}
+        titleProps={{
+          textTransform: 'unset',
+        }}
       />
       <DialogContent p={0}>
         <CustomTable
@@ -48,11 +50,13 @@ const ViewLoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           }}
           tableSx={{
             background: 'url("/images/wave-dark-gold.png") repeat',
+            backgroundSize: '17px 16px',
             borderBottomLeftRadius: 0,
             borderBottomRightRadius: 0,
           }}
           tableBodySx={{
             background: 'url("/images/wave-gold.png") repeat',
+            backgroundSize: '17px 16px',
             '& .MuiTableRow-root:first-child .MuiTableCell-root': {
               pb: 2,
             },

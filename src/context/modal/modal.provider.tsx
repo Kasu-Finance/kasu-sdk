@@ -150,7 +150,6 @@ const initialState: Modals = {
   unlockModal: {
     isOpen: false,
     userLock: null as unknown as UserLock,
-    lockPeriods: null as unknown as LockPeriod[],
   },
   kycModal: {
     isOpen: false,
@@ -168,6 +167,10 @@ const initialState: Modals = {
     isFullscreen: false,
     canAccept: false,
     acceptLoanContract: () => {},
+  },
+  buyKasuModal: {
+    isOpen: false,
+    lockPeriods: null as unknown as LockPeriod[],
   },
   nftDetectedModal: {
     isOpen: false,

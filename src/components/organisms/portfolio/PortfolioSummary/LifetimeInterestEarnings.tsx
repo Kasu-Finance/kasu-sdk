@@ -1,22 +1,25 @@
 'use client'
 
 import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
-import { Skeleton } from '@mui/material'
+import { Skeleton, SkeletonProps } from '@mui/material'
 
 import usePortfolioSummary from '@/hooks/portfolio/usePortfolioSummary'
 
-import TokenAmount from '@/components/atoms/TokenAmount'
+import TokenAmount, { TokenAmountProps } from '@/components/atoms/TokenAmount'
 
 import { formatAmount } from '@/utils'
 
-type LifetimeInterestEarningsProps = {
+type LifetimeInterestEarningsProps = Partial<TokenAmountProps> & {
   currentEpoch: string
   poolOverviews: PoolOverview[]
+  skeletonProps?: SkeletonProps
 }
 
 const LifetimeInterestEarnings: React.FC<LifetimeInterestEarningsProps> = ({
   currentEpoch,
   poolOverviews,
+  skeletonProps,
+  ...rest
 }) => {
   const { portfolioSummary, isLoading } = usePortfolioSummary(
     currentEpoch,
@@ -24,7 +27,9 @@ const LifetimeInterestEarnings: React.FC<LifetimeInterestEarningsProps> = ({
   )
 
   if (isLoading) {
-    return <Skeleton variant='rounded' width={90} height={24} />
+    return (
+      <Skeleton variant='rounded' width={90} height={24} {...skeletonProps} />
+    )
   }
 
   return (
@@ -33,6 +38,7 @@ const LifetimeInterestEarnings: React.FC<LifetimeInterestEarningsProps> = ({
         minDecimals: 2,
       })}
       symbol='USDC'
+      {...rest}
     />
   )
 }

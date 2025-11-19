@@ -1,7 +1,6 @@
 import { Button, Stack, Typography } from '@mui/material'
 import { useLogin } from '@privy-io/react-auth'
 import React from 'react'
-import { useAccount } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
 import useVerifyReferral from '@/hooks/referrals/useVerifyReferral'
@@ -22,9 +21,7 @@ const ReferralDetectedModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { referralCode } = modal[ModalsKeys.REFERRAL_DETECTED]
 
-  const { isAuthenticated } = usePrivyAuthenticated()
-
-  const { address } = useAccount()
+  const { isAuthenticated, address } = usePrivyAuthenticated()
 
   const verifyReferral = useVerifyReferral()
 

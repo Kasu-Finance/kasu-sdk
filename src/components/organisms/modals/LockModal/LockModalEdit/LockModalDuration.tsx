@@ -1,6 +1,7 @@
+import { LockPeriod } from '@kasufinance/kasu-sdk/src/services/Locking/types'
 import { Box, Button, Slider, Typography } from '@mui/material'
+import { Dispatch, memo, SetStateAction } from 'react'
 
-import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import getTranslation from '@/hooks/useTranslation'
@@ -26,12 +27,18 @@ const getAlignment = (index: number, arrayLength: number) => {
   }
 }
 
-const LockModalDuration = () => {
+type LockModalDurationProps = {
+  selectedLockPeriod: LockPeriod
+  setSelectedLockPeriod: Dispatch<SetStateAction<LockPeriod>>
+}
+
+const LockModalDuration: React.FC<LockModalDurationProps> = ({
+  selectedLockPeriod,
+  setSelectedLockPeriod,
+}) => {
   const { modal } = useModalState()
 
   const { lockPeriods } = modal[ModalsKeys.LOCK]
-
-  const { selectedLockPeriod, setSelectedLockPeriod } = useLockModalState()
 
   const { modalStatus, setModalStatus } = useModalStatusState()
 
@@ -55,7 +62,7 @@ const LockModalDuration = () => {
   const gridTemplateColumns = `minmax(0, 0.5fr) ${[...new Array(lockPeriods.length - 2)].map(() => 'minmax(0,1fr)').join(' ')} minmax(0, 0.5fr)`
 
   return (
-    <Box display='flex' flexDirection='column'>
+    <Box display='flex' flexDirection='column' sx={{ overflowX: 'hidden' }}>
       <Box display='grid' gridTemplateColumns={gridTemplateColumns}>
         {lockPeriods.map((period, index) => (
           <Button
@@ -70,7 +77,12 @@ const LockModalDuration = () => {
               p: 0,
               width: 'max-content',
               height: 'max-content',
+
+              '&.Mui-disabled': {
+                color: 'white',
+              },
             }}
+            disabled={disabled}
           >
             {formatToNearestTime(parseFloat(period.lockPeriod) * 1000)}
           </Button>
@@ -175,4 +187,4 @@ const LockModalDuration = () => {
   )
 }
 
-export default LockModalDuration
+export default memo(LockModalDuration)

@@ -1,27 +1,20 @@
 import { Box, Button } from '@mui/material'
 import { parseUnits } from 'ethers/lib/utils'
 
-import useLockModalState from '@/hooks/context/useLockModalState'
-import useModalState from '@/hooks/context/useModalState'
 import useStepperState from '@/hooks/context/useStepperState'
+import useUnlockModalState from '@/hooks/context/useUnlockModalState'
 import useUnlockKSU from '@/hooks/locking/useUnlockKSU'
 import getTranslation from '@/hooks/useTranslation'
 import useTokenDetails from '@/hooks/web3/useTokenDetails'
-
-import { ModalsKeys } from '@/context/modal/modal.types'
 
 import sdkConfig from '@/config/sdk'
 
 const UnlockModalReviewActions = () => {
   const { t } = getTranslation()
 
-  const { modal } = useModalState()
-
-  const { userLock } = modal[ModalsKeys.UNLOCK]
-
   const { prevStep } = useStepperState()
 
-  const { amount } = useLockModalState()
+  const { amount, userLock } = useUnlockModalState()
 
   const { decimals } = useTokenDetails(
     sdkConfig.contracts.KSUToken as `0x${string}`
@@ -38,7 +31,7 @@ const UnlockModalReviewActions = () => {
         fullWidth
         sx={{ textTransform: 'capitalize' }}
       >
-        {t('general.adjust')}
+        {t('general.amend')}
       </Button>
       <Button
         variant='contained'

@@ -1,7 +1,4 @@
-import {
-  LockPeriod,
-  UserLock,
-} from '@kasufinance/kasu-sdk/src/services/Locking/types'
+import { UserLock } from '@kasufinance/kasu-sdk/src/services/Locking/types'
 import {
   Box,
   Button,
@@ -35,12 +32,10 @@ import {
 
 type UserRewardsTableRowProps = {
   userLock: UserLock
-  lockPeriods: LockPeriod[]
 }
 
 const UserRewardsTableRow: React.FC<UserRewardsTableRowProps> = ({
   userLock,
-  lockPeriods,
 }) => {
   const { t } = getTranslation()
 
@@ -53,7 +48,7 @@ const UserRewardsTableRow: React.FC<UserRewardsTableRowProps> = ({
   const { ksuPrice } = useKsuPrice()
 
   const handleOpen = () => {
-    openModal({ name: ModalsKeys.UNLOCK, userLock, lockPeriods })
+    openModal({ name: ModalsKeys.UNLOCK, userLock })
   }
 
   const formattedTime = formatTimestamp(userLock.startTime, {

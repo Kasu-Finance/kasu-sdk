@@ -4,13 +4,16 @@ import Script from 'next/script'
 import { ReactNode } from 'react'
 
 import Chatbot from '@/components/atoms/Chatbot'
+import LiteModeReady from '@/components/atoms/LiteModeReady'
 import Footer from '@/components/organisms/footer'
 import Header from '@/components/organisms/header'
 import ModalsContainer from '@/components/organisms/modals/ModalsContainer'
 
 import KycState from '@/context/kyc/kyc.provider'
+import LiteModeState from '@/context/liteMode/liteMode.provider'
 import ModalState from '@/context/modal/modal.provider'
 import PrivyProvider from '@/context/privy.provider'
+import SdkState from '@/context/sdk/sdk.provider'
 import SwrProvider from '@/context/swr.provider'
 import ToastState from '@/context/toast/toast.provider'
 
@@ -74,17 +77,23 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <ThemeRegistry>
           <PrivyProvider>
             <SwrProvider unusedPools={filteredPools}>
-              <ToastState>
-                <KycState>
-                  <ModalState>
-                    {/* <NftTracker /> */}
-                    <Header />
-                    <Box component='main'>{children}</Box>
-                    <Footer />
-                    <ModalsContainer />
-                  </ModalState>
-                </KycState>
-              </ToastState>
+              <SdkState>
+                <ToastState>
+                  <LiteModeState>
+                    <KycState>
+                      <ModalState>
+                        <LiteModeReady>
+                          {/* <NftTracker /> */}
+                          <Header />
+                          <Box component='main'>{children}</Box>
+                          <Footer />
+                        </LiteModeReady>
+                        <ModalsContainer />
+                      </ModalState>
+                    </KycState>
+                  </LiteModeState>
+                </ToastState>
+              </SdkState>
             </SwrProvider>
           </PrivyProvider>
         </ThemeRegistry>

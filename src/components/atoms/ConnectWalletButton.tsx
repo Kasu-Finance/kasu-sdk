@@ -4,9 +4,9 @@ import { Box, Button, ButtonProps, Chip, Typography } from '@mui/material'
 import { useLogin, usePrivy, useWallets } from '@privy-io/react-auth'
 import { useSetActiveWallet } from '@privy-io/wagmi'
 import { forwardRef, useEffect, useState } from 'react'
-import { useAccount } from 'wagmi'
 
 import useKycState from '@/hooks/context/useKycState'
+import useLiteModeState from '@/hooks/context/useLiteModeState'
 import useModalState from '@/hooks/context/useModalState'
 import useToastState from '@/hooks/context/useToastState'
 import getTranslation from '@/hooks/useTranslation'
@@ -25,7 +25,7 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
     const { t } = getTranslation()
 
-    const { address } = useAccount()
+    const { isLiteMode } = useLiteModeState()
 
     const { wallets, ready: walletsReady } = useWallets()
 
@@ -41,7 +41,7 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const { ready } = usePrivy()
 
-    const { isAuthenticated } = usePrivyAuthenticated()
+    const { address, isAuthenticated } = usePrivyAuthenticated()
 
     const { getLastActiveWallet, setLastActiveWallet } = useLastActiveWallet()
 
@@ -138,7 +138,7 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
           },
           cursor: 'pointer',
         }}
-        bgcolor='gray.extraLight'
+        bgcolor={isLiteMode ? 'rgba(0,0,0,0.7)' : 'gray.extraLight'}
         position='relative'
         onClick={handleOpen}
       >
@@ -168,10 +168,7 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
             position: 'absolute',
             bottom: 0,
             transform: 'translateY(50%)',
-            backgroundImage: 'url("/images/seamless-noise-20.png")',
-            backgroundRepeat: 'repeat',
-            backgroundPosition: '0 0',
-            backgroundSize: '120px 86px',
+            ...(isLiteMode && { bgcolor: 'rgb(102 148 67)' }),
             '& .MuiChip-label': {
               padding: 0,
             },

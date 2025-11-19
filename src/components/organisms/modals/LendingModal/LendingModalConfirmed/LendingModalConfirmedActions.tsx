@@ -2,6 +2,7 @@ import { Box, Button } from '@mui/material'
 import { useChainId } from 'wagmi'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
+import useLiteModeState from '@/hooks/context/useLiteModeState'
 import useModalState from '@/hooks/context/useModalState'
 import getTranslation from '@/hooks/useTranslation'
 
@@ -13,6 +14,8 @@ import { networks } from '@/connection/networks'
 const LendingModalConfirmedActions = () => {
   const { t } = getTranslation()
 
+  const { isLiteMode } = useLiteModeState()
+
   const chainId = useChainId()
 
   const { txHash } = useDepositModalState()
@@ -23,7 +26,7 @@ const LendingModalConfirmedActions = () => {
 
   return (
     <Box display='flex' gap={4}>
-      {txHash && (
+      {!isLiteMode && txHash && (
         <Button
           variant='outlined'
           color='secondary'

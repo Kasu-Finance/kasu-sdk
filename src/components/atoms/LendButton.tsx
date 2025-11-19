@@ -1,6 +1,8 @@
 'use client'
 
-import React from 'react'
+import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
+import { ButtonProps } from '@mui/material'
+import React, { PropsWithChildren } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useCurrentEpochDepositedAmount from '@/hooks/lending/useCurrentEpochDepositedAmount'
@@ -13,12 +15,20 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
-type LendButtonProps = {
-  pool: PoolOverviewWithDelegate
-  currentEpoch: string
-}
+type LendButtonProps = ButtonProps &
+  PropsWithChildren<{
+    pools?: PoolOverview[]
+    pool: PoolOverviewWithDelegate
+    currentEpoch: string
+  }>
 
-const LendButton: React.FC<LendButtonProps> = ({ pool, currentEpoch }) => {
+const LendButton: React.FC<LendButtonProps> = ({
+  pools,
+  pool,
+  currentEpoch,
+  children,
+  ...rest
+}) => {
   const { t } = getTranslation()
 
   const { openModal } = useModalState()
@@ -26,10 +36,15 @@ const LendButton: React.FC<LendButtonProps> = ({ pool, currentEpoch }) => {
   const {
     currentEpochDepositedAmount,
     isLoading: currentEpochDepositedAmountLoading,
-  } = useCurrentEpochDepositedAmount(pool.id)
+  } = useCurrentEpochDepositedAmount(
+    pools ? pools.map((pool) => pool.id) : pool.id
+  )
 
   const { currentEpochFtdAmount, isLoading: currentEpochFtdAmountLoading } =
-    useCurrentEpochFtdAmount(pool.id, currentEpoch)
+    useCurrentEpochFtdAmount(
+      pools ? pools.map((pool) => pool.id) : pool.id,
+      currentEpoch
+    )
 
   const handleOpen = () => {
     if (!currentEpochDepositedAmount || !currentEpochFtdAmount) {
@@ -40,6 +55,7 @@ const LendButton: React.FC<LendButtonProps> = ({ pool, currentEpoch }) => {
     openModal({
       name: ModalsKeys.LEND,
       pool,
+      pools,
       currentEpoch,
       currentEpochDepositedAmount,
       currentEpochFtdAmount,
@@ -57,8 +73,9 @@ const LendButton: React.FC<LendButtonProps> = ({ pool, currentEpoch }) => {
         currentEpochDepositedAmountLoading ||
         currentEpochFtdAmountLoading
       }
+      {...rest}
     >
-      {t('general.lend')}
+      {children ?? t('general.lend')}
     </KycButton>
   )
 }

@@ -6,7 +6,9 @@ const usePrivyAuthenticated = () => {
 
   const { ready, authenticated } = usePrivy()
 
-  return { isAuthenticated: ready && authenticated && address }
+  const isAuthenticated = Boolean(ready && authenticated && address)
+
+  return { isAuthenticated, address: isAuthenticated ? address : undefined }
 }
 
 export default usePrivyAuthenticated

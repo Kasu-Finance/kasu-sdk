@@ -1,5 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import { formatEther, formatUnits } from 'ethers/lib/utils'
+import { memo } from 'react'
 
 import useStakedKSU from '@/hooks/locking/useStakedKSU'
 import getTranslation from '@/hooks/useTranslation'
@@ -126,4 +127,4 @@ const LockModalBalanceOverview = () => {
   )
 }
 
-export default LockModalBalanceOverview
+export default memo(LockModalBalanceOverview)

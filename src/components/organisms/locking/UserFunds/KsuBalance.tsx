@@ -1,7 +1,8 @@
 'use client'
 
-import { Box, Skeleton, Typography } from '@mui/material'
+import { Box, BoxProps, Skeleton, Typography } from '@mui/material'
 import { formatEther, formatUnits, parseEther } from 'ethers/lib/utils'
+import React from 'react'
 
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 import useUserBalance from '@/hooks/web3/useUserBalance'
@@ -9,7 +10,7 @@ import useUserBalance from '@/hooks/web3/useUserBalance'
 import sdkConfig from '@/config/sdk'
 import { convertToUSD, formatAmount } from '@/utils'
 
-const KsuBalance = () => {
+const KsuBalance: React.FC<BoxProps> = (props) => {
   const { balance, decimals, isUserBalanceLoading } = useUserBalance(
     sdkConfig.contracts.KSUToken
   )
@@ -23,7 +24,7 @@ const KsuBalance = () => {
   const ksuInUSD = convertToUSD(balance, parseEther(ksuPrice || '0'))
 
   return (
-    <Box>
+    <Box {...props}>
       <Typography variant='baseMdBold' mr='1ch'>
         {formatAmount(formatUnits(balance || '0', decimals), {
           minDecimals: 2,

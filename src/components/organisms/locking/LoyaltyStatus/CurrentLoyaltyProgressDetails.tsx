@@ -22,7 +22,18 @@ const CurrentLoyaltyProgressDetails = () => {
       <Box>
         <InfoRow
           title={`rKASU ${capitalize(t('general.balance'))}`}
-          toolTipInfo={<ToolTip title={<RksuBalance />} />}
+          toolTipInfo={
+            <ToolTip
+              slotProps={{
+                tooltip: {
+                  sx: {
+                    maxWidth: 400,
+                  },
+                },
+              }}
+              title={<RksuBalance />}
+            />
+          }
           showDivider
           metric={<RKsuAmount />}
           sx={{ mt: 'auto' }}

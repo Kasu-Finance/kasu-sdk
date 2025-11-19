@@ -1,7 +1,9 @@
 import { BigNumber } from 'ethers'
 
+import useSdk from '@/hooks/context/useSdk'
 import useGenerateSwapData from '@/hooks/lending/useGenerateSwapData'
-import useKasuSDK, { KasuSdkNotReadyError } from '@/hooks/useKasuSDK'
+
+import { KasuSdkNotReadyError } from '@/context/sdk/sdk.types'
 
 import { ONE_INCH_SLIPPAGE } from '@/config/api.oneInch'
 import { SupportedChainIds } from '@/connection/chains'
@@ -21,7 +23,7 @@ type BuildSwapDataParams = {
 }
 
 const useBuildSwapData = () => {
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
 
   const generateSwapData = useGenerateSwapData()
 

@@ -1,30 +1,28 @@
+import { UserLock } from '@kasufinance/kasu-sdk/src/services/Locking/types'
 import { Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import { formatEther } from 'ethers/lib/utils'
 
-import useLockModalState from '@/hooks/context/useLockModalState'
-import useModalState from '@/hooks/context/useModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
+import useUnlockModalState from '@/hooks/context/useUnlockModalState'
 import getTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
 import NumericalInput from '@/components/molecules/NumericalInput'
-
-import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { KsuIcon } from '@/assets/icons'
 
 import { customTypography } from '@/themes/typography'
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
-const UnlockModalInput = () => {
+type UnlockModalInputProps = {
+  userLock: UserLock
+}
+
+const UnlockModalInput: React.FC<UnlockModalInputProps> = ({ userLock }) => {
   const { t } = getTranslation()
 
-  const { modal } = useModalState()
-
-  const { userLock } = modal[ModalsKeys.UNLOCK]
-
-  const { amount, setAmount } = useLockModalState()
+  const { amount, setAmount } = useUnlockModalState()
 
   const { modalStatus, setModalStatus } = useModalStatusState()
 
@@ -103,7 +101,10 @@ const UnlockModalInput = () => {
                 color='gold.extraDark'
               >
                 ~{' '}
-                {formatAmount(formatEther(ksuInUSD || '0'), { minDecimals: 2 })}{' '}
+                {formatAmount(formatEther(ksuInUSD || '0'), {
+                  minDecimals: 2,
+                  minValue: 10_000,
+                })}{' '}
                 USDC
               </Typography>
             ),

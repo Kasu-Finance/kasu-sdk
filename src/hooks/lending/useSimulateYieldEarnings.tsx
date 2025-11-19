@@ -1,9 +1,9 @@
 import { useCallback } from 'react'
 
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useSdk from '@/hooks/context/useSdk'
 
 const useSimulateYieldEarnings = () => {
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
 
   return useCallback(
     (

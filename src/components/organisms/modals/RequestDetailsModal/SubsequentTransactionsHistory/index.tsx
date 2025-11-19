@@ -149,6 +149,7 @@ const SubsequentTransactionsHistory: React.FC<SubsequentTransactionsProps> = ({
                           transaction.action === LoanTicketStatus.emailSent
                             ? 'url("/images/wave-dark-gold.png") repeat'
                             : undefined,
+                        backgroundSize: '17px 16px',
                         '&:first-child': {
                           borderTopLeftRadius:
                             originalArray[index - 1]?.action !==

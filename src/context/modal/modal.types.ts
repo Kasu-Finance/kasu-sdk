@@ -74,6 +74,7 @@ export enum ModalsKeys {
   REFERRAL_DETECTED = 'referralDetectedModal',
   REFERRED_USERS = 'referredUsersModal',
   VIEW_WALLET = 'viewWalletModal',
+  BUY_KASU = 'buyKasuModal',
 }
 
 export type ModalAction =
@@ -94,6 +95,7 @@ export type Modals = {
   [ModalsKeys.VIEW_WALLET]: ModalData
   [ModalsKeys.NFT_DETECTED]: ModalData
   [ModalsKeys.REFERRAL]: ModalData
+  [ModalsKeys.BUY_KASU]: ModalData<{ lockPeriods: LockPeriod[] }>
   [ModalsKeys.REFERRED_USERS]: ModalData<{
     referredUsers: ReferredUserDetails[]
   }>
@@ -144,7 +146,7 @@ export type Modals = {
       poolID: string
       trancheID: string
     }
-    callback: (newLoanTickets: LoanTicketDto[]) => void
+    callback?: (newLoanTickets: LoanTicketDto[]) => void
   }>
   [ModalsKeys.PENDING_DECISIONS]: ModalData<{
     pendingDecisions: PendingDecision[]
@@ -172,10 +174,11 @@ export type Modals = {
   [ModalsKeys.LOCK]: ModalData<{ lockPeriods: LockPeriod[] }>
   [ModalsKeys.UNLOCK]: ModalData<{
     userLock: UserLock
-    lockPeriods: LockPeriod[]
+    userLocks?: UserLock[]
   }>
   [ModalsKeys.WITHDRAW]: ModalData<{
     pool: PoolOverviewWithDelegate
+    pools?: PoolOverview[]
     trancheBalance: (TrancheData & { balanceData: UserTrancheBalance })[]
   }>
   [ModalsKeys.KYC]: ModalData<{ callback: () => void }>
@@ -212,6 +215,7 @@ export type Modals = {
     }
   }>
   [ModalsKeys.LEND]: ModalData<{
+    pools?: PoolOverview[]
     pool: PoolOverview
     currentEpoch: string
     currentEpochDepositedAmount: Map<string, string>

@@ -1,15 +1,15 @@
 import useSWR from 'swr'
-import { useAccount } from 'wagmi'
 
-import useKasuSDK from '@/hooks/useKasuSDK'
+import useSdk from '@/hooks/context/useSdk'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 const useLockingRewards = () => {
-  const sdk = useKasuSDK()
+  const sdk = useSdk()
 
-  const account = useAccount()
+  const { address } = usePrivyAuthenticated()
 
   const { data, error, isLoading, mutate } = useSWR(
-    account.address && sdk ? ['lockingRewards', account.address, sdk] : null,
+    address && sdk ? ['lockingRewards', address, sdk] : null,
     async ([_, userAddress, sdk]) => sdk.Locking.getLockingRewards(userAddress)
   )
 

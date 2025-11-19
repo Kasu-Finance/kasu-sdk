@@ -37,7 +37,18 @@ const LoyaltyProgressOverview = () => {
         <LoyaltyProgress />
         <InfoRow
           title={`rKASU ${capitalize(t('general.balance'))}`}
-          toolTipInfo={<ToolTip title={<RksuBalance />} />}
+          toolTipInfo={
+            <ToolTip
+              slotProps={{
+                tooltip: {
+                  sx: {
+                    maxWidth: 400,
+                  },
+                },
+              }}
+              title={<RksuBalance />}
+            />
+          }
           showDivider
           metric={
             <Typography variant='baseMdBold'>

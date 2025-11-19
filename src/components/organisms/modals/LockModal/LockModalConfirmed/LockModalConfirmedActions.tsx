@@ -2,6 +2,7 @@ import { Box, Button } from '@mui/material'
 import Link from 'next/link'
 import { useChainId } from 'wagmi'
 
+import useLiteModeState from '@/hooks/context/useLiteModeState'
 import useLockModalState from '@/hooks/context/useLockModalState'
 import useModalState from '@/hooks/context/useModalState'
 import getTranslation from '@/hooks/useTranslation'
@@ -14,6 +15,8 @@ import { networks } from '@/connection/networks'
 
 const LockModalConfirmedActions = () => {
   const { t } = getTranslation()
+
+  const { isLiteMode } = useLiteModeState()
 
   const chainId = useChainId()
 
@@ -40,17 +43,29 @@ const LockModalConfirmedActions = () => {
           {t('modals.lock.actions.viewTx')}
         </Button>
       )}
-      <Button
-        onClick={handleClose}
-        variant='contained'
-        color='secondary'
-        LinkComponent={Link}
-        href={Routes.locking.root.url}
-        fullWidth
-        sx={{ textTransform: 'capitalize' }}
-      >
-        {t('modals.lock.completed.lockingOverview')}
-      </Button>
+      {isLiteMode ? (
+        <Button
+          onClick={handleClose}
+          variant='contained'
+          color='secondary'
+          fullWidth
+          sx={{ textTransform: 'capitalize' }}
+        >
+          {t('general.close')}
+        </Button>
+      ) : (
+        <Button
+          onClick={handleClose}
+          variant='contained'
+          color='secondary'
+          LinkComponent={Link}
+          href={Routes.locking.root.url}
+          fullWidth
+          sx={{ textTransform: 'capitalize' }}
+        >
+          {t('modals.lock.completed.lockingOverview')}
+        </Button>
+      )}
     </Box>
   )
 }
