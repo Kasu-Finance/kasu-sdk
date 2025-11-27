@@ -31,7 +31,11 @@ jobs:
           node-version: 20
           cache: npm
 
-      - name: Install dependencies
+      - name: Clean workspace
+        run: |
+          rm -rf node_modules .next
+
+      - name: Install dependencies (fresh)
         run: npm ci
 
       - name: Lint
