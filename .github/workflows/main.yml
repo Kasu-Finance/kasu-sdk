@@ -38,6 +38,10 @@ jobs:
       - name: Install dependencies (fresh)
         run: npm ci
 
+      - name: Rebuild sharp for Linux
+        run: |
+          npm rebuild sharp --platform=linux --arch=x64 --target=$(node -p "process.versions.node")
+
       - name: Lint
         run: npm run lint
 
