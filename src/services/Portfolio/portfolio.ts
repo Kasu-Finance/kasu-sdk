@@ -8,11 +8,28 @@ import {
     IKasuNFTsAbi__factory,
     ISystemVariablesAbi,
     ISystemVariablesAbi__factory,
+    IUserLoyaltyRewardsAbi__factory,
 } from '../../contracts';
 import { SdkConfig } from '../../sdk-config';
 import { DataService } from '../DataService/data-service';
+import {
+    getAllTrancheConfigurationsQuery,
+    getAllTranchesQuery,
+} from '../DataService/queries';
+import {
+    TrancheConfigurationSubgraphResult,
+    TrancheSubgraphResult,
+} from '../DataService/subgraph-types';
 import { PoolOverview } from '../DataService/types';
 import { KSULocking } from '../Locking/locking';
+import {
+    getSystemVariablesQuery,
+    lockingSummariesQuery,
+} from '../Locking/queries';
+import {
+    LockingSummarySubgraphResult,
+    SystemVariables,
+} from '../Locking/types';
 import { UserLending } from '../UserLending/user-lending';
 
 import { lendingPortfolioQuery } from './queries';
@@ -33,6 +50,9 @@ export class Portfolio {
     private readonly _graph: GraphQLClient;
 
     private _systemVariablesAbi: ISystemVariablesAbi;
+    private _userLoyaltyRewardsAbi: ReturnType<
+        typeof IUserLoyaltyRewardsAbi__factory.connect
+    >;
     private _kasuNftContract: IKasuNFTsAbi;
     readonly _signerOrProvider: Signer | Provider;
 
@@ -47,6 +67,10 @@ export class Portfolio {
             _kasuConfig.contracts.SystemVariables,
             signerOrProvider,
         );
+        this._userLoyaltyRewardsAbi = IUserLoyaltyRewardsAbi__factory.connect(
+            _kasuConfig.contracts.UserLoyaltyRewards,
+            signerOrProvider,
+        );
         this._userLendingService = new UserLending(
             _kasuConfig,
             signerOrProvider,
@@ -58,49 +82,17 @@ export class Portfolio {
         this._graph = new GraphQLClient(_kasuConfig.subgraphUrl);
     }
 
-    async getPortfolioRewards(userAddress: string): Promise<PortfolioRewards> {
-        const userLockingData =
-            await this._lockingService.getUserBonusData(userAddress);
-        const lockingRewards =
-            await this._lockingService.getLockingRewards(userAddress);
-        const ksuLaunchBonus =
-            await this._lockingService.getUserTotalBonusAmount(userAddress);
-        return {
-            bonusYieldEarnings: {
-                claimableBalance: {
-                    ksuAmount: userLockingData.ksuBonusAndRewards,
-                },
-                lifeTime: {
-                    ksuAmount: userLockingData.ksuBonusAndRewardsLifetime,
-                },
-            },
-            protocolFees: {
-                claimableBalance: {
-                    usdcAmount: lockingRewards.claimableRewards,
-                },
-                lifeTime: { usdcAmount: lockingRewards.lifeTimeRewards },
-            },
-            ksuLaunchBonus: { lifeTime: { ksuAmount: ksuLaunchBonus } },
-        };
-    }
-
-    async getUserNfts(userAddress: string): Promise<number[]> {
-        const usernfts = await this._kasuNftContract.tokensOfOwner(userAddress);
-
-        return usernfts.map((nft) => nft.toNumber());
-    }
-
-    async getPortfolioSummary(
-        userAddress: string,
+    private computeYieldMetrics(
         portfolioLendingPools: PortfolioLendingPool[],
-    ): Promise<PortfolioSummary> {
-        const userLockingData =
-            await this._lockingService.getUserBonusData(userAddress);
+    ): {
+        totalInvestments: number;
+        totalYieldEarned: number;
+        weightedApy: number;
+        weeklyYieldEarnings: number;
+    } {
         let totalInvestments = 0;
-
-        let weightedApy = 0;
         let totalYieldEarned = 0;
-
+        let weightedApy = 0;
         let weeklyYieldEarnings = 0;
 
         for (const pool of portfolioLendingPools) {
@@ -140,6 +132,233 @@ export class Portfolio {
         }
 
         return {
+            totalInvestments,
+            totalYieldEarned,
+            weightedApy,
+            weeklyYieldEarnings,
+        };
+    }
+
+    /**
+     * Calculate aggregate yield metrics for a set of portfolio lending pools.
+     * Accepts pre-fetched pool data and returns totals without performing any network calls.
+     */
+    public calculateYieldMetrics(
+        portfolioLendingPools: PortfolioLendingPool[],
+    ): {
+        totalInvestments: number;
+        totalYieldEarned: number;
+        weightedApy: number;
+        weeklyYieldEarnings: number;
+    } {
+        return this.computeYieldMetrics(portfolioLendingPools);
+    }
+
+    /**
+     * Calculate the user's weekly protocol fee share (USDC) given tranche balances/configs,
+     * system variables and locking summary. All inputs are expected to be pre-fetched.
+     */
+    public calculateWeeklyProtocolFees(params: {
+        trancheBalances: TrancheSubgraphResult;
+        trancheConfigurations: TrancheConfigurationSubgraphResult;
+        systemVariables: SystemVariables;
+        lockingSummary: LockingSummarySubgraphResult;
+        userRksuAmount: string;
+    }): number {
+        const {
+            trancheBalances,
+            trancheConfigurations,
+            systemVariables,
+            lockingSummary,
+            userRksuAmount,
+        } = params;
+
+        const totalRKsuAmount = parseFloat(
+            lockingSummary.lockingSummaries[0]?.totalRKsuAmount ?? '0',
+        );
+        const userRKsuAmount = parseFloat(userRksuAmount || '0');
+
+        const performanceFee =
+            parseFloat(systemVariables.systemVariables.performanceFee) / 100;
+        const ecosystemFeeRate =
+            parseFloat(systemVariables.systemVariables.ecosystemFeeRate) / 100;
+
+        if (
+            totalRKsuAmount <= 0 ||
+            userRKsuAmount <= 0 ||
+            performanceFee <= 0 ||
+            ecosystemFeeRate <= 0
+        ) {
+            return 0;
+        }
+
+        let totalWeeklyEcosystemFees = 0;
+
+        for (const tranche of trancheBalances.lendingPoolTranches) {
+            const trancheConfig =
+                trancheConfigurations.lendingPoolTrancheConfigurations.find(
+                    (config) => config.id === tranche.id,
+                );
+
+            if (!trancheConfig) continue;
+
+            const interestUpdates =
+                trancheConfig.lendingPoolTrancheInterestRateUpdates;
+
+            const interestRate = interestUpdates.length
+                ? interestUpdates[0].epochInterestRate
+                : trancheConfig.interestRate;
+
+            totalWeeklyEcosystemFees +=
+                parseFloat(tranche.balance) *
+                parseFloat(interestRate) *
+                performanceFee *
+                ecosystemFeeRate;
+        }
+
+        return (
+            (totalWeeklyEcosystemFees * userRKsuAmount) / totalRKsuAmount
+        );
+    }
+
+    /**
+     * Calculate the user's weekly KASU bonus rewards (KASU) based on current deposits,
+     * loyalty level, reward rate, and KSU epoch price. Inputs should be pre-fetched.
+     */
+    public async calculateWeeklyKsuBonusRewards(params: {
+        userAddress: string;
+        userRksuAmount: string;
+        userDepositAmounts: [BigNumber, BigNumber];
+        ksuEpochPrice: { price: BigNumber; decimals: number };
+    }): Promise<number> {
+        const { userAddress, userRksuAmount, userDepositAmounts, ksuEpochPrice } =
+            params;
+
+        const totalUserDeposits = userDepositAmounts[0].add(
+            userDepositAmounts[1],
+        );
+
+        if (totalUserDeposits.isZero()) return 0;
+
+        const rKSUtoUSDCRatio = await this._lockingService.getRKSUvsUSDCRatio(
+            userRksuAmount,
+            userAddress,
+        );
+        const { loyaltyLevel } =
+            this._lockingService.getLoyaltyLevelAndApyBonusFromRatio(
+                rKSUtoUSDCRatio,
+            );
+
+        const loyaltyRewardRate =
+            await this._userLoyaltyRewardsAbi.loyaltyEpochRewardRates(
+                loyaltyLevel,
+            );
+
+        if (loyaltyRewardRate.isZero() || ksuEpochPrice.price.isZero()) {
+            return 0;
+        }
+
+        const reward = totalUserDeposits
+            .mul(loyaltyRewardRate)
+            .mul(BigNumber.from(10).pow(12))
+            .div(ksuEpochPrice.price);
+
+        return parseFloat(formatEther(reward));
+    }
+
+    async getPortfolioRewards(userAddress: string): Promise<PortfolioRewards> {
+        const userLockingData =
+            await this._lockingService.getUserBonusData(userAddress);
+        const lockingRewards =
+            await this._lockingService.getLockingRewards(userAddress);
+        const ksuLaunchBonus =
+            await this._lockingService.getUserTotalBonusAmount(userAddress);
+        return {
+            bonusYieldEarnings: {
+                claimableBalance: {
+                    ksuAmount: userLockingData.ksuBonusAndRewards,
+                },
+                lifeTime: {
+                    ksuAmount: userLockingData.ksuBonusAndRewardsLifetime,
+                },
+            },
+            protocolFees: {
+                claimableBalance: {
+                    usdcAmount: lockingRewards.claimableRewards,
+                },
+                lifeTime: { usdcAmount: lockingRewards.lifeTimeRewards },
+            },
+            ksuLaunchBonus: { lifeTime: { ksuAmount: ksuLaunchBonus } },
+        };
+    }
+
+    async getUserNfts(userAddress: string): Promise<number[]> {
+        const usernfts = await this._kasuNftContract.tokensOfOwner(userAddress);
+
+        return usernfts.map((nft) => nft.toNumber());
+    }
+
+    async getPortfolioSummary(
+        userAddress: string,
+        portfolioLendingPools: PortfolioLendingPool[],
+        currentEpoch: string,
+    ): Promise<PortfolioSummary> {
+        const epochId = currentEpoch.toString();
+        const [
+            userLockingData,
+            userRksuAmount,
+            lockingSummary,
+            systemVariables,
+            trancheBalances,
+            trancheConfigurations,
+            userDepositAmounts,
+            ksuEpochPrice,
+        ] = await Promise.all([
+            this._lockingService.getUserBonusData(userAddress),
+            this._lockingService.getUserEarnedrKsu(userAddress),
+            this._graph.request<LockingSummarySubgraphResult>(
+                lockingSummariesQuery,
+            ),
+            this._graph.request<SystemVariables>(getSystemVariablesQuery),
+            this._graph.request<TrancheSubgraphResult>(getAllTranchesQuery, {
+                unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
+            }),
+            this._graph.request<TrancheConfigurationSubgraphResult>(
+                getAllTrancheConfigurationsQuery,
+                {
+                    unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
+                    epochId,
+                },
+            ),
+            this._userLendingService.getUserTotalPendingAndActiveDepositedAmountForCurrentEpoch(
+                userAddress,
+            ),
+            this._lockingService.getKasuEpochTokenPrice(),
+        ]);
+        const {
+            totalInvestments,
+            totalYieldEarned,
+            weightedApy,
+            weeklyYieldEarnings,
+        } = this.computeYieldMetrics(portfolioLendingPools);
+
+        const weeklyProtocolFeesEarned = this.calculateWeeklyProtocolFees({
+            trancheBalances,
+            trancheConfigurations,
+            systemVariables,
+            lockingSummary,
+            userRksuAmount,
+        });
+
+        const weeklyKsuBonusRewards =
+            await this.calculateWeeklyKsuBonusRewards({
+                userAddress,
+                userRksuAmount,
+                userDepositAmounts,
+                ksuEpochPrice,
+            });
+
+        return {
             current: {
                 totalKsuLocked: userLockingData.totalLockedAmount,
                 totalLendingPoolInvestments: totalInvestments.toString(),
@@ -153,8 +372,8 @@ export class Portfolio {
             },
             weekly: {
                 yieldEarnings: weeklyYieldEarnings.toString(),
-                protocolFeesEarned: '0',
-                ksuBonusRewards: '0',
+                protocolFeesEarned: weeklyProtocolFeesEarned.toString(),
+                ksuBonusRewards: weeklyKsuBonusRewards.toString(),
             },
             lifetime: {
                 yieldEarnings: totalYieldEarned.toString(),
@@ -269,9 +488,6 @@ export class Portfolio {
                 ({ poolId }) => poolId === poolOverview.id,
             );
             if (!userPoolBalance) {
-                console.warn(
-                    `Could not find user pool balance for ${poolOverview.id}`,
-                );
                 continue;
             }
             totalInvestments = userPoolBalance.balance.add(totalInvestments);
