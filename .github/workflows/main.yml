@@ -31,19 +31,8 @@ jobs:
           node-version: 20
           cache: npm
 
-      - name: Clean workspace
-        run: |
-          rm -rf node_modules .next package-lock.json
-
-      - name: Regenerate lockfile for Linux
-        run: npm install --package-lock-only --ignore-scripts --legacy-peer-deps
-
-      - name: Install dependencies (fresh)
-        run: npm ci --legacy-peer-deps
-
-      - name: Rebuild sharp for Linux
-        run: |
-          npm rebuild sharp --platform=linux --arch=x64 --target=$(node -p "process.versions.node")
+      - name: Install dependencies
+        run: npm ci
 
       - name: Lint
         run: npm run lint
