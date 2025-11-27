@@ -36,10 +36,10 @@ jobs:
           rm -rf node_modules .next package-lock.json
 
       - name: Regenerate lockfile for Linux
-        run: npm install --package-lock-only --ignore-scripts
+        run: npm install --package-lock-only --ignore-scripts --legacy-peer-deps
 
       - name: Install dependencies (fresh)
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Rebuild sharp for Linux
         run: |
