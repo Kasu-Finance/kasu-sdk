@@ -71,6 +71,7 @@ const IncrementalLifetimeInterestEarnings: React.FC<
     <TokenAmount
       amount={formatAmount(amount, {
         minDecimals: 4,
+        maxDecimals: 4,
       })}
       symbol='USDC'
       {...rest}
