@@ -28,12 +28,13 @@ const usePortfolioSummary = (
     mutate,
   } = useSWR(
     address && portfolioLendingPools && sdk
-      ? ['portfolioSummary', address, portfolioLendingPools, sdk]
+      ? ['portfolioSummary', address, portfolioLendingPools, currentEpoch, sdk]
       : null,
-    async ([_, userAddress, portfolioLendingPools, sdk]) =>
+    async ([_, userAddress, portfolioLendingPools, epoch, sdk]) =>
       sdk.Portfolio.getPortfolioSummary(
         userAddress.toLowerCase(),
-        portfolioLendingPools
+        portfolioLendingPools,
+        epoch
       ),
     { dedupingInterval: FIVE_MINUTES }
   )

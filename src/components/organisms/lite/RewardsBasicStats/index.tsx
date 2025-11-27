@@ -4,11 +4,12 @@ import { Grid2, Stack, Typography } from '@mui/material'
 import DottedDivider from '@/components/atoms/DottedDivider'
 import InfoRow from '@/components/atoms/InfoRow'
 import WaveBox from '@/components/atoms/WaveBox'
+import WeeklyKsuRewards from '@/components/organisms/lite/RewardsBasicStats/WeeklyKsuRewards'
+import WeeklyProtocolFees from '@/components/organisms/lite/RewardsBasicStats/WeeklyProtocolFees'
 import LifetimeFeesEarned from '@/components/organisms/portfolio/PortfolioSummary/LifetimeFeesEarned'
 import LifetimeKsuBonusRewards from '@/components/organisms/portfolio/PortfolioSummary/LifetimeKsuBonusRewards'
 
 import { customPalette } from '@/themes/palette'
-import { formatAmount } from '@/utils'
 
 type RewardsBasicStatsProps = {
   pools: PoolOverview[]
@@ -96,9 +97,17 @@ const RewardsBasicStats: React.FC<RewardsBasicStatsProps> = ({
             }}
             showDivider
             metric={
-              <Typography variant='h3' color='gold.dark'>
-                {formatAmount(250, { minDecimals: 2 })} USDC
-              </Typography>
+              <WeeklyProtocolFees
+                poolOverviews={pools}
+                currentEpoch={currentEpoch}
+                skeletonProps={{
+                  sx: {
+                    backgroundColor: customPalette.gold.dark,
+                  },
+                  height: 38,
+                  width: 100,
+                }}
+              />
             }
           />
         </Grid2>
@@ -117,9 +126,17 @@ const RewardsBasicStats: React.FC<RewardsBasicStatsProps> = ({
             }}
             showDivider
             metric={
-              <Typography variant='h3' color='gold.dark'>
-                {formatAmount(25, { minDecimals: 2 })} USDC
-              </Typography>
+              <WeeklyKsuRewards
+                poolOverviews={pools}
+                currentEpoch={currentEpoch}
+                skeletonProps={{
+                  sx: {
+                    backgroundColor: customPalette.gold.dark,
+                  },
+                  height: 38,
+                  width: 100,
+                }}
+              />
             }
           />
         </Grid2>
