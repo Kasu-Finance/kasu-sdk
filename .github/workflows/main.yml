@@ -33,7 +33,10 @@ jobs:
 
       - name: Clean workspace
         run: |
-          rm -rf node_modules .next
+          rm -rf node_modules .next package-lock.json
+
+      - name: Regenerate lockfile for Linux
+        run: npm install --package-lock-only --ignore-scripts
 
       - name: Install dependencies (fresh)
         run: npm ci
