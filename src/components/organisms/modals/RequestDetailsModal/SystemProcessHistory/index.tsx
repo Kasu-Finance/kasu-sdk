@@ -120,7 +120,7 @@ const SystemProcessHistory: React.FC<SystemProcessHistoryProps> = ({
                 <SystemProcessHistoryRow
                   amount={transaction.reallocatedOutAmount}
                   date={transaction.requestTimestamp}
-                  epochId={transaction.epochId}
+                  transactionEpoch={transaction.epochId}
                   currentEpoch={currentEpoch}
                   tranasctionHash='hash'
                   description={`Reallocated Out to ${getReallocatedOutTrancheName(transaction.trancheName)} Tranche`}
@@ -131,7 +131,7 @@ const SystemProcessHistory: React.FC<SystemProcessHistoryProps> = ({
                 <SystemProcessHistoryRow
                   amount={transaction.rejectedAmount}
                   date={transaction.requestTimestamp}
-                  epochId={transaction.epochId}
+                  transactionEpoch={transaction.epochId}
                   currentEpoch={currentEpoch}
                   tranasctionHash={transaction.transactionHash}
                   description='Rejected'
@@ -142,7 +142,7 @@ const SystemProcessHistory: React.FC<SystemProcessHistoryProps> = ({
                 <SystemProcessHistoryRow
                   amount={transaction.acceptedAmount}
                   date={transaction.requestTimestamp}
-                  epochId={transaction.epochId}
+                  transactionEpoch={transaction.epochId}
                   currentEpoch={currentEpoch}
                   tranasctionHash={transaction.transactionHash}
                   description='Accepted'
@@ -152,7 +152,7 @@ const SystemProcessHistory: React.FC<SystemProcessHistoryProps> = ({
               <SystemProcessHistoryRow
                 amount={transaction.reallocatedInAmount}
                 date={transaction.requestTimestamp}
-                epochId={transaction.epochId}
+                transactionEpoch={transaction.epochId}
                 currentEpoch={currentEpoch}
                 tranasctionHash={transaction.transactionHash}
                 description={`Reallocated In from ${getReallocateFromTranscheName(transaction.trancheName)} Tranche`}
@@ -165,7 +165,7 @@ const SystemProcessHistory: React.FC<SystemProcessHistoryProps> = ({
               return (
                 <Fragment key={index}>
                   <SystemProcessHistoryRow
-                    epochId={event.epochId}
+                    transactionEpoch={event.epochId}
                     currentEpoch={currentEpoch}
                     amount={event.amount}
                     date={event.timestamp}

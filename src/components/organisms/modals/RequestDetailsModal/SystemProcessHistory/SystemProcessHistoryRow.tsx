@@ -12,7 +12,7 @@ import { networks } from '@/connection/networks'
 import { formatAmount, formatTimestamp } from '@/utils'
 
 type SystemProcessHistoryRowProps = {
-  epochId: string
+  transactionEpoch: string
   currentEpoch: string
   date: EpochTimeStamp
   description: string
@@ -24,7 +24,7 @@ type SystemProcessHistoryRowProps = {
 }
 
 const SystemProcessHistoryRow: React.FC<SystemProcessHistoryRowProps> = ({
-  epochId,
+  transactionEpoch,
   currentEpoch,
   amount,
   date,
@@ -43,7 +43,7 @@ const SystemProcessHistoryRow: React.FC<SystemProcessHistoryRowProps> = ({
 
   const { getEpochDate } = useEpochDate()
 
-  const epochDate = getEpochDate(epochId, currentEpoch)
+  const epochDate = getEpochDate(transactionEpoch, currentEpoch)
 
   return (
     <TableRow
@@ -80,7 +80,7 @@ const SystemProcessHistoryRow: React.FC<SystemProcessHistoryRowProps> = ({
     >
       <TableCell>
         <Box display='flex' alignItems='center'>
-          <Typography variant='baseMdBold'>{epochId}</Typography>
+          <Typography variant='baseMdBold'>{transactionEpoch}</Typography>
           <ToolTip
             title={
               <Typography variant='baseMd'>
