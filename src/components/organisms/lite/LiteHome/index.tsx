@@ -32,7 +32,7 @@ const LiteHome: React.FC<LiteHomeProps> = ({ pools, currentEpoch }) => {
         letterSpacing={-1}
         color='white'
         textAlign='center'
-        mt={-11}
+        mt={-2}
       >
         REDEFINING REAL-WORLD YIELD
       </Typography>

@@ -8,17 +8,13 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import { usePathname } from 'next/navigation'
 import { MouseEvent, useRef, useState } from 'react'
 
 import useLiteModeState from '@/hooks/context/useLiteModeState'
 
-import { Routes } from '@/config/routes'
 import { customTypography } from '@/themes/typography'
 
 const ModeToggleButton = () => {
-  const path = usePathname()
-
   const [open, setOpen] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
 
@@ -58,9 +54,9 @@ const ModeToggleButton = () => {
     }, 2800)
   }
 
-  if (isLiteMode && path === Routes.lending.root.url) {
+  /*if (isLiteMode && path === Routes.lending.root.url) {
     return null
-  }
+  }*/
 
   return (
     <Box

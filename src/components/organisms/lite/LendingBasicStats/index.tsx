@@ -3,6 +3,7 @@ import { Box, Grid2, Typography } from '@mui/material'
 import React from 'react'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
+import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
 import WaveBox from '@/components/atoms/WaveBox'
@@ -19,12 +20,29 @@ import { customPalette } from '@/themes/palette'
 type LendingBasicStatsProps = {
   currentEpoch: string
   pools: PoolOverview[]
+  hasActiveDeposits?: boolean
+  isPortfolioLoading?: boolean
 }
 
 const LendingBasicStats: React.FC<LendingBasicStatsProps> = ({
   currentEpoch,
   pools,
+  hasActiveDeposits = true,
+  isPortfolioLoading,
 }) => {
+  const shouldShowEmptyState = !isPortfolioLoading && !hasActiveDeposits
+
+  if (shouldShowEmptyState) {
+    return (
+      <WaveBox borderRadius={4} p={4} variant='dark-middle'>
+        <EmptyDataPlaceholder
+          text='You have no active deposits yet.'
+          textProps={{ color: 'white' }}
+        />
+      </WaveBox>
+    )
+  }
+
   return (
     <>
       <Grid2 container spacing={3}>

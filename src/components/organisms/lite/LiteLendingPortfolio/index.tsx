@@ -1,6 +1,7 @@
 'use client'
 
 import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
+import { PortfolioLendingPool } from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
 import { Grid2, Stack, Typography } from '@mui/material'
 import React from 'react'
 
@@ -17,19 +18,34 @@ import LiteLendingPortfolioTableHeader from '@/components/organisms/lite/LiteLen
 type LiteLendingPortfolioProps = {
   pools: PoolOverview[]
   currentEpoch: string
+  portfolioLendingPools?: PortfolioLendingPool[]
+  isLoading?: boolean
+  isAuthenticated?: boolean
 }
 
 const LiteLendingPortfolio: React.FC<LiteLendingPortfolioProps> = ({
   currentEpoch,
   pools,
+  portfolioLendingPools: portfolioLendingPoolsFromProps,
+  isLoading: isLoadingFromProps,
+  isAuthenticated: isAuthenticatedFromProps,
 }) => {
   const { t } = getTranslation()
 
-  const { isAuthenticated } = usePrivyAuthenticated()
+  const { isAuthenticated: isAuthenticatedFromHook } = usePrivyAuthenticated()
 
-  const { portfolioLendingPools } = useLendingPortfolioData(pools, currentEpoch)
+  const { portfolioLendingPools, isLoading } = useLendingPortfolioData(
+    pools,
+    currentEpoch
+  )
 
-  if (!isAuthenticated || !portfolioLendingPools?.length) return null
+  const isAuthenticated = isAuthenticatedFromProps ?? isAuthenticatedFromHook
+  const isPortfolioLoading = isLoadingFromProps ?? isLoading
+  const lendingPortfolioPools =
+    portfolioLendingPoolsFromProps ?? portfolioLendingPools
+
+  if (!isAuthenticated || isPortfolioLoading || !lendingPortfolioPools?.length)
+    return null
 
   return (
     <WaveBox variant='dark-middle' borderRadius={4} p={2}>
@@ -43,14 +59,14 @@ const LiteLendingPortfolio: React.FC<LiteLendingPortfolioProps> = ({
               tableHeader={<LiteLendingPortfolioTableHeader />}
               tableBody={
                 <LiteLendingPortfolioTableBody
-                  portfolioLendingPools={portfolioLendingPools}
+                  portfolioLendingPools={lendingPortfolioPools}
                 />
               }
             />
           </Grid2>
           <Grid2 size={2.5}>
             <LiteLendingPortfolioChart
-              portfolioLendingPools={portfolioLendingPools}
+              portfolioLendingPools={lendingPortfolioPools}
             />
           </Grid2>
         </Grid2>

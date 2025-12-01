@@ -2,6 +2,7 @@ import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/typ
 import { Grid2, Stack, Typography } from '@mui/material'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
+import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
 import InfoRow from '@/components/atoms/InfoRow'
 import WaveBox from '@/components/atoms/WaveBox'
 import WeeklyKsuRewards from '@/components/organisms/lite/RewardsBasicStats/WeeklyKsuRewards'
@@ -14,12 +15,29 @@ import { customPalette } from '@/themes/palette'
 type RewardsBasicStatsProps = {
   pools: PoolOverview[]
   currentEpoch: string
+  hasActiveDeposits?: boolean
+  isPortfolioLoading?: boolean
 }
 
 const RewardsBasicStats: React.FC<RewardsBasicStatsProps> = ({
   currentEpoch,
   pools,
+  hasActiveDeposits = true,
+  isPortfolioLoading,
 }) => {
+  const shouldShowEmptyState = !isPortfolioLoading && !hasActiveDeposits
+
+  if (shouldShowEmptyState) {
+    return (
+      <WaveBox borderRadius={4} p={4} variant='dark-middle'>
+        <EmptyDataPlaceholder
+          text='You have no active deposits yet.'
+          textProps={{ color: 'white' }}
+        />
+      </WaveBox>
+    )
+  }
+
   return (
     <Stack spacing={3}>
       <Grid2 container spacing={3}>
