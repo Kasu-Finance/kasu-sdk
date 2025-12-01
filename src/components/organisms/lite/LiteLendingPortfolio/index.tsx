@@ -9,6 +9,8 @@ import useLendingPortfolioData from '@/hooks/portfolio/useLendingPortfolioData'
 import getTranslation from '@/hooks/useTranslation'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
+import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
+import LiteModeSkeleton from '@/components/atoms/LiteModeSkeleton'
 import WaveBox from '@/components/atoms/WaveBox'
 import LiteModeTable from '@/components/molecules/CustomTable/LiteModeTable'
 import LiteLendingPortfolioChart from '@/components/organisms/lite/LiteLendingPortfolio/LiteLendingPortfolioChart'
@@ -44,8 +46,10 @@ const LiteLendingPortfolio: React.FC<LiteLendingPortfolioProps> = ({
   const lendingPortfolioPools =
     portfolioLendingPoolsFromProps ?? portfolioLendingPools
 
-  if (!isAuthenticated || isPortfolioLoading || !lendingPortfolioPools?.length)
-    return null
+  if (!isAuthenticated) return null
+
+  const showSkeleton = isPortfolioLoading
+  const showEmpty = !showSkeleton && !lendingPortfolioPools?.length
 
   return (
     <WaveBox variant='dark-middle' borderRadius={4} p={2}>
@@ -53,23 +57,48 @@ const LiteLendingPortfolio: React.FC<LiteLendingPortfolioProps> = ({
         <Typography variant='h4' color='white'>
           {t('lite.lendingPortfolio.title')}
         </Typography>
-        <Grid2 container spacing={2}>
-          <Grid2 size={9.5}>
-            <LiteModeTable
-              tableHeader={<LiteLendingPortfolioTableHeader />}
-              tableBody={
-                <LiteLendingPortfolioTableBody
-                  portfolioLendingPools={lendingPortfolioPools}
-                />
-              }
-            />
-          </Grid2>
-          <Grid2 size={2.5}>
-            <LiteLendingPortfolioChart
-              portfolioLendingPools={lendingPortfolioPools}
-            />
-          </Grid2>
-        </Grid2>
+        {showSkeleton ? (
+          <Stack spacing={2}>
+            <LiteModeSkeleton height={28} width='45%' variant='rounded' />
+            {[1, 2, 3, 4].map((row) => (
+              <LiteModeSkeleton
+                key={row}
+                height={44}
+                variant='rounded'
+                width='100%'
+              />
+            ))}
+          </Stack>
+        ) : showEmpty ? (
+          <EmptyDataPlaceholder
+            text='You have no active deposits yet.'
+            textProps={{ color: 'white' }}
+          />
+        ) : (
+          (() => {
+            const poolsData = lendingPortfolioPools as PortfolioLendingPool[]
+
+            return (
+              <Grid2 container spacing={2}>
+                <Grid2 size={9.5}>
+                  <LiteModeTable
+                    tableHeader={<LiteLendingPortfolioTableHeader />}
+                    tableBody={
+                      <LiteLendingPortfolioTableBody
+                        portfolioLendingPools={poolsData}
+                      />
+                    }
+                  />
+                </Grid2>
+                <Grid2 size={2.5}>
+                  <LiteLendingPortfolioChart
+                    portfolioLendingPools={poolsData}
+                  />
+                </Grid2>
+              </Grid2>
+            )
+          })()
+        )}
       </Stack>
     </WaveBox>
   )

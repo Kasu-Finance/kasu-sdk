@@ -8,6 +8,7 @@ import useLoanTickets from '@/hooks/lending/useLoanTickets'
 import getTranslation from '@/hooks/useTranslation'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
+import LiteModeSkeleton from '@/components/atoms/LiteModeSkeleton'
 import WaveBox from '@/components/atoms/WaveBox'
 import LiteModeTable from '@/components/molecules/CustomTable/LiteModeTable'
 import LendingDecisionsPendingTableHeader from '@/components/organisms/lite/LendingDecisionsPending/LendingDecisionsPendingTableHeader'
@@ -26,7 +27,7 @@ const LendingDecisionsPending: React.FC<LendingDecisionsPendingProps> = ({
 
   const { isAuthenticated } = usePrivyAuthenticated()
 
-  const { loanTickets } = useLoanTickets()
+  const { loanTickets, isLoading } = useLoanTickets()
 
   const { count, pendingDecisions } = useMemo(
     () =>
@@ -42,7 +43,20 @@ const LendingDecisionsPending: React.FC<LendingDecisionsPendingProps> = ({
     [loanTickets, pools]
   )
 
-  if (!isAuthenticated || !loanTickets || !count) return null
+  if (!isAuthenticated) return null
+
+  if (isLoading) {
+    return (
+      <WaveBox variant='dark-middle' borderRadius={4} p={2}>
+        <Stack spacing={2.5}>
+          <LiteModeSkeleton width='35%' height={24} variant='rounded' />
+          <LiteModeSkeleton width='100%' height={160} variant='rounded' />
+        </Stack>
+      </WaveBox>
+    )
+  }
+
+  if (!loanTickets || !count) return null
 
   return (
     <WaveBox variant='dark-middle' borderRadius={4} p={2}>
