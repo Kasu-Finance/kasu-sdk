@@ -4,6 +4,7 @@ import { IconButton } from '@mui/material'
 import { usePathname } from 'next/navigation'
 
 import useLiteModeState from '@/hooks/context/useLiteModeState'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import NextLink from '@/components/atoms/NextLink'
 
@@ -13,10 +14,12 @@ import { Routes } from '@/config/routes'
 
 const PortfolioRedirect = () => {
   const path = usePathname()
+  const { isAuthenticated } = usePrivyAuthenticated()
 
   const { isLiteMode } = useLiteModeState()
 
-  if (!isLiteMode || path !== Routes.lending.root.url) return null
+  if (!isLiteMode || path !== Routes.lending.root.url || !isAuthenticated)
+    return null
 
   return (
     <IconButton

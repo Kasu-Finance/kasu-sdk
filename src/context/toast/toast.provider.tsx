@@ -8,7 +8,7 @@ import {
   Button,
   IconButton,
   LinearProgress,
-  Modal,
+  Snackbar,
 } from '@mui/material'
 import { ReactNode, useReducer } from 'react'
 
@@ -63,27 +63,19 @@ const ToastState: React.FC<ToastStateProps> = ({ children }) => {
     <ToastContext.Provider value={{ ...state, ...toastActions }}>
       {children}
       {state.toast && (
-        <Modal
-          open={true}
-          disableEnforceFocus
+        <Snackbar
+          open
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           onClose={state.toast.isClosable ? handleClose : undefined}
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            zIndex: 1301,
-          }}
-          slotProps={{
-            backdrop: {
-              sx: {
-                background: 'rgba(0, 0, 0, 0.8)',
-              },
-            },
-          }}
+          autoHideDuration={state.toast.isClosable ? 6000 : null}
+          sx={{ zIndex: 1301 }}
         >
           <Alert
             severity={state.toast.type}
             sx={{
+              minWidth: 320,
+              maxWidth: 420,
+              boxShadow: (theme) => theme.shadows[6],
               '& .MuiAlert-message': {
                 width: '100%',
               },
@@ -122,7 +114,7 @@ const ToastState: React.FC<ToastStateProps> = ({ children }) => {
             )}
             {state.toast.type === 'info' && <LinearProgress sx={{ mt: 2 }} />}
           </Alert>
-        </Modal>
+        </Snackbar>
       )}
     </ToastContext.Provider>
   )

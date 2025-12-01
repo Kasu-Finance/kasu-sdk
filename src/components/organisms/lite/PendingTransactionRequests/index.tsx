@@ -7,6 +7,7 @@ import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
+import LiteModeSkeleton from '@/components/atoms/LiteModeSkeleton'
 import ToolTip from '@/components/atoms/ToolTip'
 import WaveBox from '@/components/atoms/WaveBox'
 import CountdownCard from '@/components/molecules/CountdownCard'
@@ -29,7 +30,7 @@ const PendingTransactionRequests: React.FC<PendingTransactionRequestsProps> = ({
 
   const { isAuthenticated } = usePrivyAuthenticated()
 
-  const { transactionHistory } = useTransactionHistory(currentEpoch)
+  const { transactionHistory, isLoading } = useTransactionHistory(currentEpoch)
 
   const pendingTransactions = useMemo(
     () =>
@@ -40,6 +41,17 @@ const PendingTransactionRequests: React.FC<PendingTransactionRequestsProps> = ({
   )
 
   if (!isAuthenticated) return null
+
+  if (isLoading) {
+    return (
+      <WaveBox variant='dark-middle' borderRadius={4} p={2}>
+        <Stack spacing={2.5}>
+          <LiteModeSkeleton width='45%' height={24} variant='rounded' />
+          <LiteModeSkeleton width='100%' height={120} variant='rounded' />
+        </Stack>
+      </WaveBox>
+    )
+  }
 
   if (!pendingTransactions.length) return null
 

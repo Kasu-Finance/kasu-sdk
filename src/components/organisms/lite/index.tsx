@@ -1,9 +1,13 @@
+'use client'
+
 import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { LockPeriod } from '@kasufinance/kasu-sdk/src/services/Locking/types'
 import { Grid2, Stack, Typography } from '@mui/material'
 import React from 'react'
 
+import useLendingPortfolioData from '@/hooks/portfolio/useLendingPortfolioData'
 import getTranslation from '@/hooks/useTranslation'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import WaveBox from '@/components/atoms/WaveBox'
 import LendingActions from '@/components/organisms/lite/LendingActions'
@@ -38,6 +42,16 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({
 }) => {
   const { t } = getTranslation()
 
+  const { isAuthenticated } = usePrivyAuthenticated()
+
+  const { portfolioLendingPools, isLoading: isPortfolioLoading } =
+    useLendingPortfolioData(pools, currentEpoch)
+
+  const isPortfolioDataLoading = isPortfolioLoading && isAuthenticated
+  const hasActiveDeposits = isAuthenticated
+    ? Boolean(portfolioLendingPools?.length)
+    : true
+
   return (
     <Grid2 container spacing={3} alignItems='stretch'>
       <Grid2 size={8}>
@@ -48,12 +62,20 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({
                 {t('lite.lendingPortfolio.title')}
               </Typography>
               <Stack spacing={3}>
-                <LendingBasicStats pools={pools} currentEpoch={currentEpoch} />
+                <LendingBasicStats
+                  pools={pools}
+                  currentEpoch={currentEpoch}
+                  hasActiveDeposits={hasActiveDeposits}
+                  isPortfolioLoading={isPortfolioDataLoading}
+                />
                 <PendingTransactionRequests currentEpoch={currentEpoch} />
                 <LendingDecisionsPending pools={pools} />
                 <LiteLendingPortfolio
                   pools={pools}
                   currentEpoch={currentEpoch}
+                  portfolioLendingPools={portfolioLendingPools}
+                  isLoading={isPortfolioDataLoading}
+                  isAuthenticated={isAuthenticated}
                 />
                 <LendingActions
                   pools={activePools}
@@ -66,7 +88,12 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({
                 {t('lite.rewardsPortfolio.title')}
               </Typography>
               <Stack spacing={5}>
-                <RewardsBasicStats pools={pools} currentEpoch={currentEpoch} />
+                <RewardsBasicStats
+                  pools={pools}
+                  currentEpoch={currentEpoch}
+                  hasActiveDeposits={hasActiveDeposits}
+                  isPortfolioLoading={isPortfolioDataLoading}
+                />
                 <LockingRewards />
                 <NftRewards />
                 <LiteReferralBonus />

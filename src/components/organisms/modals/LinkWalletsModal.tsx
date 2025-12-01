@@ -60,10 +60,8 @@ const LinkWalletsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
     openModal({ name: ModalsKeys.VIEW_WALLET })
   }
 
-  const disconnect = async () => {
-    await logout()
-
-    handleClose()
+  const disconnect = () => {
+    logout().then(() => handleClose())
 
     if (path.includes(Routes.portfolio.root.url)) {
       redirect(Routes.lending.root.url)
