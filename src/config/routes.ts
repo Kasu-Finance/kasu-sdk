@@ -49,6 +49,5 @@ export const Routes = {
     root: { url: BaseRoutesPaths.PORTFOLIO },
     yourTransactions: { url: `${BaseRoutesPaths.PORTFOLIO}/my-transactions` },
     rewards: { url: `${BaseRoutesPaths.PORTFOLIO}/bonus-and-rewards` },
-    wallet: { url: `${BaseRoutesPaths.PORTFOLIO}/wallet-balance` },
   },
 } as const satisfies RouteGroup
