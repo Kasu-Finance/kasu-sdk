@@ -2365,14 +2365,6 @@
       "totalKsuBonus": "Total KASU Bonus/Rewards",
       "claimableBalance": "Claimable Balance",
       "lifetimeRewards": "Lifetime Bonuses & Rewards​"
-    },
-    "wallet": {
-      "title": "My Wallet",
-      "connectedWallet": "Connected Wallet Balance",
-      "metric-1-tooltip": "The individual balances of all your cryptocurrencies in your connected Web3 wallet that can be instantly converted to KASU.",
-      "metric-2": "Total KASU Balance",
-      "metric-2-tooltip": "Your current KASU balance (and estimated USDC equivalent value) held in your Web3 wallet.",
-      "metric-3-toolip": "Total USDC equivalent value of all tokens in your Web3 wallet that can be used to purchase KASU tokens."
     }
   }
 }
