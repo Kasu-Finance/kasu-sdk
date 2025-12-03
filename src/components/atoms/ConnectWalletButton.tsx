@@ -4,6 +4,7 @@ import { Box, Button, ButtonProps, Chip, Typography } from '@mui/material'
 import { useLogin, usePrivy, useWallets } from '@privy-io/react-auth'
 import { useSetActiveWallet } from '@privy-io/wagmi'
 import { forwardRef, useEffect, useState } from 'react'
+import { useChainId } from 'wagmi'
 
 import useKycState from '@/hooks/context/useKycState'
 import useLiteModeState from '@/hooks/context/useLiteModeState'
@@ -17,6 +18,8 @@ import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { ConnectWalletIcon } from '@/assets/icons'
 
+import { NETWORK } from '@/config/sdk'
+import { SupportedChainIds } from '@/connection/chains'
 import { customPalette } from '@/themes/palette'
 import { customTypography } from '@/themes/typography'
 import { formatAccount } from '@/utils'
@@ -29,7 +32,7 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const { wallets, ready: walletsReady } = useWallets()
 
-    const { openModal } = useModalState()
+    const { openModal, closeModal } = useModalState()
 
     const { checkUserKyc } = useKycState()
 
@@ -47,6 +50,13 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const { setActiveWallet } = useSetActiveWallet()
 
+    const chainId = useChainId()
+
+    const expectedChainId =
+      NETWORK === 'BASE'
+        ? SupportedChainIds.BASE
+        : SupportedChainIds.BASE_SEPOLIA
+
     const { login } = useLogin({
       onComplete: async () => {
         setToast({
@@ -63,6 +73,21 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
         console.error(error)
       },
     })
+
+    useEffect(() => {
+      if (!isAuthenticated) {
+        closeModal(ModalsKeys.WRONG_NETWORK)
+        return
+      }
+
+      if (!chainId) return
+
+      if (chainId !== expectedChainId) {
+        openModal({ name: ModalsKeys.WRONG_NETWORK })
+      } else {
+        closeModal(ModalsKeys.WRONG_NETWORK)
+      }
+    }, [chainId, closeModal, expectedChainId, isAuthenticated, openModal])
 
     useEffect(() => {
       if (!connected || !wallets.length || !address || getLastActiveWallet())
