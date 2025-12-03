@@ -53,6 +53,7 @@ const DialogWrapper: React.FC<{
         ],
       }}
       onClose={modalDetails.disableBackdropClose ? undefined : handleClose}
+      disableEscapeKeyDown={modalDetails.disableEscapeKeyDown}
       disableEnforceFocus
       aria-labelledby={modalDetails.ariaLabel}
       aria-describedby={modalDetails.ariaDescription}

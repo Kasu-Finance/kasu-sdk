@@ -34,6 +34,7 @@ import ViewWalletModal from '@/components/organisms/modals/ViewWalletModal'
 import WipRedirectModal from '@/components/organisms/modals/WipRedirectModal'
 import WIthdrawFundsAtExpiryModalWrapper from '@/components/organisms/modals/WithdrawFundsAtExpiryModal/WithdrawFundsAtExpiryModalWrapper'
 import WithdrawModalWrapper from '@/components/organisms/modals/WithdrawModal/WithdrawModalWrapper'
+import WrongNetworkModal from '@/components/organisms/modals/WrongNetworkModal'
 
 import { Modals, ModalsKeys } from '@/context/modal/modal.types'
 
@@ -48,6 +49,7 @@ type ModalDetails = {
   backdropSx?: SxProps<Theme>
   disableBackdropClose?: boolean
   disableElevation?: boolean
+  disableEscapeKeyDown?: boolean
 }
 
 export const getModal = (
@@ -200,6 +202,17 @@ export const getModal = (
     case ModalsKeys.BUY_KASU:
       return {
         component: <BuyKasuModalWrapper handleClose={handleClose} />,
+      }
+    case ModalsKeys.WRONG_NETWORK:
+      return {
+        component: <WrongNetworkModal handleClose={handleClose} />,
+        backdropSx: {
+          backdropFilter: 'blur(20px)',
+          bgcolor: 'rgba(31, 31, 34, 0.9)',
+        },
+        disableBackdropClose: true,
+        disableEscapeKeyDown: true,
+        disableElevation: true,
       }
   }
 }

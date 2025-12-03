@@ -37,6 +37,7 @@ const initialState: Modals = {
   linkWalletsModal: { isOpen: false },
   referredUsersModal: { isOpen: false, referredUsers: [] },
   referralDetectedModal: { isOpen: false, referralCode: '' as `0x${string}` },
+  wrongNetworkModal: { isOpen: false },
   viewWalletModal: { isOpen: false },
   missingEmailModal: { isOpen: false, callback: () => {} },
   viewLoanContractsModal: {
