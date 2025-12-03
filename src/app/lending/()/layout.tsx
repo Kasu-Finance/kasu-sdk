@@ -6,6 +6,7 @@ import ReferralDetector from '@/components/atoms/ReferralDetector'
 import Home from '@/components/molecules/home'
 import HomeOverviewSkeleton from '@/components/molecules/loaders/home/HomeOverviewSkeleton'
 import HomeTabs from '@/components/organisms/home/HomeTabs'
+import ReferralBanner from '@/components/organisms/home/ReferralBanner'
 
 import HomeState from '@/context/home/home.provider'
 
@@ -26,6 +27,7 @@ export default async function LendingLayout({ children }: LendingLayoutProps) {
               <Home />
             </Suspense>
             <ReferralDetector />
+            <ReferralBanner />
             <HomeTabs />
             {children}
           </HomeState>
