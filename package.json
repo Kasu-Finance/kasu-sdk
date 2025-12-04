@@ -33,6 +33,8 @@
     "@compilot/js-sdk": "^2.111.0",
     "@compilot/react-sdk": "^2.114.0",
     "@compilot/web-sdk-wallet-wagmi": "^2.49.0",
+    "@cowprotocol/widget-lib": "^0.20.0",
+    "@cowprotocol/widget-react": "^0.14.0",
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.4",
     "@emotion/server": "^11.11.0",

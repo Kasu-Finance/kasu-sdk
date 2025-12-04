@@ -92,6 +92,7 @@ const nextConfig = {
       'https://a.markfi.xyz/',
       'https://api.relay.link/',
       'https://api.testnets.relay.link/',
+      'https://swap.cow.fi/',
     ].filter(Boolean)
 
     return [
