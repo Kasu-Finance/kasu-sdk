@@ -4,7 +4,6 @@ import { Box, Button, ButtonProps, Chip, Typography } from '@mui/material'
 import { useLogin, usePrivy, useWallets } from '@privy-io/react-auth'
 import { useSetActiveWallet } from '@privy-io/wagmi'
 import { forwardRef, useEffect, useState } from 'react'
-import { useChainId } from 'wagmi'
 
 import useKycState from '@/hooks/context/useKycState'
 import useLiteModeState from '@/hooks/context/useLiteModeState'
@@ -49,8 +48,7 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
     const { getLastActiveWallet, setLastActiveWallet } = useLastActiveWallet()
 
     const { setActiveWallet } = useSetActiveWallet()
-
-    const chainId = useChainId()
+    const [actualChainId, setActualChainId] = useState<number>()
 
     const expectedChainId =
       NETWORK === 'BASE'
@@ -75,19 +73,81 @@ const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
     })
 
     useEffect(() => {
+      let isMounted = true
+      let cleanup: (() => void) | undefined
+
+      const updateChainId = (chain: unknown) => {
+        const numericChain =
+          typeof chain === 'string'
+            ? Number.parseInt(chain, 16)
+            : typeof chain === 'number'
+              ? chain
+              : undefined
+
+        if (Number.isFinite(numericChain) && isMounted) {
+          setActualChainId(numericChain)
+        }
+      }
+
+      const resolveChain = async () => {
+        if (!wallets.length || !address) {
+          setActualChainId(undefined)
+          return
+        }
+
+        const wallet = wallets.find(
+          (w) => w.address.toLowerCase() === address.toLowerCase()
+        )
+
+        if (!wallet) {
+          setActualChainId(undefined)
+          return
+        }
+
+        const provider: any = await wallet.getEthereumProvider()
+
+        const chain = provider?.chainId
+          ? provider.chainId
+          : await provider?.request?.({ method: 'eth_chainId' })
+
+        updateChainId(chain)
+
+        const handler = (id: unknown) => updateChainId(id)
+
+        if (provider?.on) {
+          provider.on('chainChanged', handler)
+          cleanup = () => {
+            provider.removeListener?.('chainChanged', handler) ||
+              provider.off?.('chainChanged', handler)
+          }
+        }
+      }
+
+      resolveChain()
+
+      return () => {
+        isMounted = false
+        cleanup?.()
+      }
+    }, [address, wallets])
+
+    useEffect(() => {
       if (!isAuthenticated) {
         closeModal(ModalsKeys.WRONG_NETWORK)
         return
       }
 
-      if (!chainId) return
+      if (!actualChainId) return
 
-      if (chainId !== expectedChainId) {
-        openModal({ name: ModalsKeys.WRONG_NETWORK })
+      if (actualChainId !== expectedChainId) {
+        openModal({
+          name: ModalsKeys.WRONG_NETWORK,
+          detectedChainId: actualChainId,
+        })
       } else {
         closeModal(ModalsKeys.WRONG_NETWORK)
       }
-    }, [chainId, closeModal, expectedChainId, isAuthenticated, openModal])
+    }, [actualChainId, closeModal, expectedChainId, isAuthenticated, openModal])
 
     useEffect(() => {
       if (!connected || !wallets.length || !address || getLastActiveWallet())

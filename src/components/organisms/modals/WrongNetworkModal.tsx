@@ -1,8 +1,9 @@
 'use client'
 
 import { Box, Link, Stack, Typography } from '@mui/material'
-import { useChainId, useSwitchChain } from 'wagmi'
+import { useSwitchChain } from 'wagmi'
 
+import useModalState from '@/hooks/context/useModalState'
 import useToastState from '@/hooks/context/useToastState'
 
 import CustomCard from '@/components/atoms/CustomCard'
@@ -15,7 +16,9 @@ import { networks } from '@/connection/networks'
 import { customPalette } from '@/themes/palette'
 
 const WrongNetworkModal: React.FC<DialogChildProps> = ({ handleClose }) => {
-  const chainId = useChainId()
+  const { modal } = useModalState()
+  const { wrongNetworkModal } = modal
+  const detectedChainId = wrongNetworkModal.detectedChainId
 
   const { setToast } = useToastState()
 
@@ -25,7 +28,8 @@ const WrongNetworkModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const expectedNetwork = networks[expectedChainId]
 
   const currentNetwork =
-    (chainId && networks[chainId as SupportedChainIds]) || undefined
+    (detectedChainId && networks[detectedChainId as SupportedChainIds]) ||
+    undefined
 
   const { switchChainAsync, isPending } = useSwitchChain()
 
@@ -83,9 +87,9 @@ const WrongNetworkModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           <Typography variant='baseSm' color='gray.light'>
             Detected network:{' '}
             {currentNetwork
-              ? `${currentNetwork.chainName} (chainId: ${chainId})`
-              : chainId
-                ? `Unknown (chainId: ${chainId})`
+              ? `${currentNetwork.chainName} (chainId: ${detectedChainId})`
+              : detectedChainId
+                ? `Unknown (chainId: ${detectedChainId})`
                 : 'Waiting for wallet'}
           </Typography>
         </Stack>

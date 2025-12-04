@@ -195,7 +195,6 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
       },
       buy: {
         asset: 'USDC',
-        //amount: '500',
       },
       enabledTradeTypes: ['swap'] as TradeType[],
       theme: {
@@ -210,6 +209,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
         success: '#ffffff',
         info: '#000000',
       },
+      hideNetworkSelector: true,
       standaloneMode: !widgetProvider,
       disableToastMessages: false,
       disableProgressBar: false,
@@ -217,6 +217,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
         bps: 50,
         recipient: '0x22af3D38E50ddedeb7C47f36faB321eC3Bb72A76',
       },
+      hideLogo: true,
       hideBridgeInfo: true,
       hideOrdersTable: true,
       images: {},
