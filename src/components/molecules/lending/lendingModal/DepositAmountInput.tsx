@@ -1,11 +1,13 @@
 'use client'
 
-import type { CowSwapWidgetParams, TradeType } from '@cowprotocol/widget-lib'
-import { Web3Provider } from '@ethersproject/providers'
+import type {
+  CowSwapWidgetParams,
+  EthereumProvider,
+  TradeType,
+} from '@cowprotocol/widget-lib'
 import LoginIcon from '@mui/icons-material/Login'
 import { Box, IconButton, Portal, Typography } from '@mui/material'
 import { useWallets } from '@privy-io/react-auth'
-import { ethers } from 'ethers'
 import dynamic from 'next/dynamic'
 import {
   Dispatch,
@@ -80,20 +82,61 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
   const chainId = useChainId()
   const { wallets } = useWallets()
   const [isSwapWidgetOpen, setIsSwapWidgetOpen] = useState(false)
-  const [widgetProvider, setWidgetProvider] = useState<Web3Provider>()
+  const [widgetProvider, setWidgetProvider] = useState<EthereumProvider>()
   const [widgetLoaded, setWidgetLoaded] = useState(false)
   const widgetContainerRef = useRef<HTMLDivElement>(null)
+
+  const normalizeCowProvider = useCallback(
+    (provider: any): EthereumProvider | undefined => {
+      if (!provider) return undefined
+
+      const request =
+        typeof provider.request === 'function'
+          ? provider.request.bind(provider)
+          : typeof provider.send === 'function'
+            ? ({ method, params }: { method: string; params?: unknown[] }) =>
+                provider.send(method, params)
+            : undefined
+
+      const on =
+        typeof provider.on === 'function'
+          ? provider.on.bind(provider)
+          : typeof provider.addListener === 'function'
+            ? provider.addListener.bind(provider)
+            : undefined
+
+      if (!request || !on) return undefined
+
+      const enable =
+        typeof provider.enable === 'function'
+          ? provider.enable.bind(provider)
+          : () =>
+              request({
+                method: 'eth_requestAccounts',
+                params: [],
+              } as any)
+
+      return {
+        request,
+        on,
+        enable,
+      }
+    },
+    []
+  )
 
   useEffect(() => {
     let isMounted = true
 
     const resolveProvider = async () => {
       const privyProvider = await wallets?.[0]?.getEthereumProvider?.()
-      const privyWeb3Provider = new ethers.providers.Web3Provider(privyProvider)
+      const normalizedPrivy = normalizeCowProvider(privyProvider)
+      const normalizedWindow = normalizeCowProvider(
+        typeof window !== 'undefined' ? (window as any).ethereum : undefined
+      )
 
-      if (isMounted && privyWeb3Provider) {
-        setWidgetProvider(privyWeb3Provider)
-        return
+      if (isMounted) {
+        setWidgetProvider(normalizedPrivy ?? normalizedWindow)
       }
     }
 
@@ -102,7 +145,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
     return () => {
       isMounted = false
     }
-  }, [wallets])
+  }, [wallets, normalizeCowProvider])
 
   useEffect(() => {
     if (!isSwapWidgetOpen) return
@@ -141,8 +184,6 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
   const params: CowSwapWidgetParams = useMemo(
     () => ({
       appCode: 'Kasu',
-      //width: '100%',
-      //height: '640px',
       chainId: chainId,
       tokenLists: [
         'https://raw.githubusercontent.com/cowprotocol/token-lists/main/src/public/CoinGecko.1.json',
@@ -154,7 +195,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
       },
       buy: {
         asset: 'USDC',
-        amount: '500',
+        //amount: '500',
       },
       enabledTradeTypes: ['swap'] as TradeType[],
       theme: {
@@ -169,7 +210,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
         success: '#ffffff',
         info: '#000000',
       },
-      standaloneMode: true,
+      standaloneMode: !widgetProvider,
       disableToastMessages: false,
       disableProgressBar: false,
       partnerFee: {
@@ -182,7 +223,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
       sounds: {},
       customTokens: [],
     }),
-    [chainId]
+    [chainId, widgetProvider]
   )
 
   const { debouncedFunction: debouncedValidate } = useDebounce(
@@ -378,8 +419,8 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
                 sx={{
                   width: 'fit-content',
                   maxWidth: '96vw',
-                  maxHeight: '80vh',
-                  overflow: 'hidden',
+                  maxHeight: '90vh',
+                  overflow: 'auto',
                   borderRadius: 2,
                   boxShadow: 6,
                   bgcolor: 'transparent',
@@ -418,6 +459,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
         sx={{ color: (theme) => theme.palette.error.main }}
         visibility={modalStatus.type === 'error' ? 'visible' : 'hidden'}
       >
+        <br />
         {modalStatus.type === 'error' ? modalStatus.errorMessage : 'message'}
       </Typography>
     </Box>
