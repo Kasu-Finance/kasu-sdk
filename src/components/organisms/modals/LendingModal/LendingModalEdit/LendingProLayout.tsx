@@ -3,7 +3,7 @@ import React, { Dispatch, memo, SetStateAction } from 'react'
 
 import getTranslation from '@/hooks/useTranslation'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
-import useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
+import type useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
 
 import SupportedAssetsDropdown from '@/components/organisms/lending/SupportedAssetsDropdown'
 import Acknowledgement from '@/components/organisms/modals/LendingModal/LendingModalEdit/Acknowledgement'
@@ -31,6 +31,9 @@ type ProLayoutProps = {
   supportedTokenUserBalances: ReturnType<
     typeof useSupportedTokenUserBalances
   >['supportedTokenUserBalances']
+  refetchSupportedTokenUserBalances: ReturnType<
+    typeof useSupportedTokenUserBalances
+  >['refetchSupportedTokenUserBalances']
   supportedTokens: ReturnType<typeof useSupportedTokenInfo>
   setAmount: Dispatch<SetStateAction<string>>
   setAmountInUSD: Dispatch<SetStateAction<string | undefined>>
@@ -56,6 +59,7 @@ type ProLayoutProps = {
 const LendingProLayout: React.FC<ProLayoutProps> = ({
   selectedToken,
   supportedTokenUserBalances,
+  refetchSupportedTokenUserBalances,
   supportedTokens,
   amount,
   deferredAmount,
@@ -116,6 +120,7 @@ const LendingProLayout: React.FC<ProLayoutProps> = ({
           supportedTokenUserBalances={supportedTokenUserBalances}
           supportedTokens={supportedTokens}
           applyConversion={handleApplyConversion}
+          refetchSupportedTokenUserBalances={refetchSupportedTokenUserBalances}
         />
       )}
       <SwapInfo

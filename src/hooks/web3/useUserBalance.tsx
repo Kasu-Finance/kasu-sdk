@@ -25,6 +25,7 @@ const useUserBalance = (tokenAddress: string | undefined) => {
     data: balance,
     error: balanceError,
     isLoading,
+    mutate: refetchUserBalance,
   } = useSWR(
     wallet && address && tokenAddress
       ? [`userBalance-${tokenAddress}`, wallet, address, tokenAddress]
@@ -50,6 +51,7 @@ const useUserBalance = (tokenAddress: string | undefined) => {
     error: error || balanceError,
     isUserBalanceLoading: isLoading,
     hasLoaded,
+    refetchUserBalance,
   }
 }
 

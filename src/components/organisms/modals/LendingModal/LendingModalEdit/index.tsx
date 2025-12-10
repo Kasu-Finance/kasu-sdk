@@ -24,7 +24,8 @@ const LendingModalEdit = () => {
 
   const { isLiteMode } = useLiteModeState()
 
-  const { supportedTokenUserBalances } = useSupportedTokenUserBalances()
+  const { supportedTokenUserBalances, refetchSupportedTokenUserBalances } =
+    useSupportedTokenUserBalances()
 
   const supportedTokens = useSupportedTokenInfo()
 
@@ -260,6 +261,7 @@ const LendingModalEdit = () => {
     selectedPool,
     selectedToken,
     supportedTokenUserBalances,
+    refetchSupportedTokenUserBalances,
     supportedTokens,
     amount,
     deferredAmount,

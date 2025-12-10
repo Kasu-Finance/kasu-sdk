@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers'
+import { useCallback } from 'react'
 import useSWR from 'swr'
 import { getBalance, readContract } from 'wagmi/actions'
 
@@ -27,17 +28,12 @@ const useSupportedTokenUserBalances = () => {
 
   const supportedTokens = useSupportedTokenInfo()
 
-  const { balance, isUserBalanceLoading } = useUserBalance(
+  const { balance, isUserBalanceLoading, refetchUserBalance } = useUserBalance(
     supportedTokens?.[SupportedTokens.USDC].address
   )
 
-  const { data, error } = useSWR(
-    // add isUserBalanceLoading here to prevent rerenders because
-    // useUserBalance returns a fallback data when balance is not loaded
-    address && balance && !isUserBalanceLoading
-      ? ['userbalance-supported-tokens', address, balance]
-      : null,
-    async ([_, userAddress, usdcBalance]) => {
+  const fetchSupportedBalances = useCallback(
+    async (userAddress: string, usdcBalance: BigNumber) => {
       if (!supportedTokens) return
 
       const USDC = supportedTokens[SupportedTokens.USDC]
@@ -73,7 +69,7 @@ const useSupportedTokenUserBalances = () => {
 
             if (token.symbol === SupportedTokens.ETH) {
               const nativeTokenBalance = await getBalance(wagmiConfig, {
-                address: userAddress,
+                address: userAddress as `0x${string}`,
               })
 
               const ethBalance = BigNumber.from(nativeTokenBalance.value)
@@ -89,7 +85,7 @@ const useSupportedTokenUserBalances = () => {
             const balance = await readContract(wagmiConfig, {
               abi: IERC20__factory.abi,
               functionName: 'balanceOf',
-              args: [userAddress],
+              args: [userAddress as `0x${string}`],
               address: token.address,
             })
 
@@ -109,6 +105,17 @@ const useSupportedTokenUserBalances = () => {
         {} as Record<SupportedTokens, SupportedTokenUserBalances>
       )
     },
+    [supportedTokens]
+  )
+
+  const { data, error, mutate } = useSWR(
+    // add isUserBalanceLoading here to prevent rerenders because
+    // useUserBalance returns a fallback data when balance is not loaded
+    address && balance && !isUserBalanceLoading
+      ? ['userbalance-supported-tokens', address, balance]
+      : null,
+    async ([_, userAddress, usdcBalance]) =>
+      fetchSupportedBalances(userAddress, usdcBalance),
     {
       dedupingInterval: TimeConversions.SECONDS_PER_MINUTE * 1000,
       refreshInterval: TimeConversions.SECONDS_PER_MINUTE * 1000,
@@ -116,7 +123,29 @@ const useSupportedTokenUserBalances = () => {
     }
   )
 
-  return { supportedTokenUserBalances: data, error }
+  const refetchSupportedTokenUserBalances = useCallback(async () => {
+    const updatedUsdcBalance = (await refetchUserBalance()) ?? balance
+
+    if (!address || !updatedUsdcBalance || !supportedTokens) return data
+
+    return mutate(() => fetchSupportedBalances(address, updatedUsdcBalance), {
+      revalidate: false,
+    })
+  }, [
+    address,
+    balance,
+    data,
+    fetchSupportedBalances,
+    mutate,
+    refetchUserBalance,
+    supportedTokens,
+  ])
+
+  return {
+    supportedTokenUserBalances: data,
+    refetchSupportedTokenUserBalances,
+    error,
+  }
 }
 
 export default useSupportedTokenUserBalances

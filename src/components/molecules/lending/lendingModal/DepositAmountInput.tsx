@@ -1,5 +1,9 @@
 'use client'
 
+import {
+  type CowWidgetEventListeners,
+  CowWidgetEvents,
+} from '@cowprotocol/events'
 import type {
   CowSwapWidgetParams,
   EthereumProvider,
@@ -8,6 +12,7 @@ import type {
 import LoginIcon from '@mui/icons-material/Login'
 import { Box, IconButton, Portal, Typography } from '@mui/material'
 import { useWallets } from '@privy-io/react-auth'
+import { formatUnits } from 'ethers/lib/utils'
 import dynamic from 'next/dynamic'
 import {
   Dispatch,
@@ -25,6 +30,7 @@ import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useDebounce from '@/hooks/useDebounce'
 import getTranslation from '@/hooks/useTranslation'
+import type useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
 
 import NumericalInput from '@/components/molecules/NumericalInput'
 
@@ -56,6 +62,9 @@ type DepositAmountInputProps = {
   debounceTime?: number
   setIsValidating: Dispatch<SetStateAction<boolean>>
   validate: (amount: string, amountInUSD?: string) => void
+  refetchSupportedTokenUserBalances?: ReturnType<
+    typeof useSupportedTokenUserBalances
+  >['refetchSupportedTokenUserBalances']
 }
 
 const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
@@ -72,6 +81,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
   endAdornment = 'USDC',
   debounceTime = 1000,
   applyConversion,
+  refetchSupportedTokenUserBalances,
 }) => {
   const { t } = getTranslation()
 
@@ -213,10 +223,6 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
       standaloneMode: !widgetProvider,
       disableToastMessages: false,
       disableProgressBar: false,
-      partnerFee: {
-        bps: 50,
-        recipient: '0x22af3D38E50ddedeb7C47f36faB321eC3Bb72A76',
-      },
       hideLogo: true,
       hideBridgeInfo: true,
       hideOrdersTable: true,
@@ -237,6 +243,42 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
     applyConversion,
     debounceTime,
     true
+  )
+
+  const applyMaxAmount = useCallback(
+    (currentBalance: string = balance) => {
+      if (toBigNumber(currentBalance).isZero()) {
+        setAmount('0')
+        setAmountInUSD('0')
+        return
+      }
+
+      const maxPossible = toBigNumber(maxDeposit).lt(
+        toBigNumber(currentBalance)
+      )
+        ? maxDeposit
+        : currentBalance
+
+      setAmount(maxPossible)
+
+      if (selectedToken === SupportedTokens.USDC) {
+        setAmountInUSD(maxPossible)
+        debouncedValidate(maxPossible)
+
+        return
+      }
+
+      applyConversion(maxPossible, selectedToken)
+    },
+    [
+      applyConversion,
+      balance,
+      debouncedValidate,
+      maxDeposit,
+      selectedToken,
+      setAmount,
+      setAmountInUSD,
+    ]
   )
 
   const handleAmountChange = useCallback(
@@ -274,35 +316,48 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
   )
 
   const handleMax = useCallback(() => {
-    if (toBigNumber(balance).isZero()) {
-      setAmount('0')
-      setAmountInUSD('0')
-      return
+    applyMaxAmount()
+  }, [applyMaxAmount])
+
+  const handleSwapExecuted = useCallback(async () => {
+    try {
+      if (!refetchSupportedTokenUserBalances) {
+        applyMaxAmount()
+        return
+      }
+
+      const updatedBalances = await refetchSupportedTokenUserBalances()
+
+      const updatedBalanceForToken = updatedBalances?.[selectedToken]
+
+      if (!updatedBalanceForToken) {
+        applyMaxAmount()
+        return
+      }
+
+      const formattedBalance = formatUnits(
+        updatedBalanceForToken.balance,
+        updatedBalanceForToken.decimals
+      )
+
+      applyMaxAmount(formattedBalance)
+    } catch (error) {
+      console.error(error)
+      applyMaxAmount()
     }
+  }, [applyMaxAmount, refetchSupportedTokenUserBalances, selectedToken])
 
-    const maxPossible = toBigNumber(maxDeposit).lt(toBigNumber(balance))
-      ? maxDeposit
-      : balance
-
-    setAmount(maxPossible)
-
-    if (selectedToken === SupportedTokens.USDC) {
-      setAmountInUSD(maxPossible)
-      debouncedValidate(maxPossible)
-
-      return
-    }
-
-    applyConversion(maxPossible, selectedToken)
-  }, [
-    balance,
-    selectedToken,
-    maxDeposit,
-    setAmount,
-    setAmountInUSD,
-    applyConversion,
-    debouncedValidate,
-  ])
+  const cowEventListeners = useMemo<CowWidgetEventListeners>(
+    () => [
+      {
+        event: CowWidgetEvents.ON_FULFILLED_ORDER,
+        handler: () => {
+          void handleSwapExecuted()
+        },
+      },
+    ],
+    [handleSwapExecuted]
+  )
 
   return (
     <Box>
@@ -359,26 +414,64 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
           },
         }}
       />
-      <Typography
-        variant='body2'
-        component='button'
-        type='button'
-        onClick={() => setIsSwapWidgetOpen(true)}
+      <Box
         sx={{
           mt: 1,
-          color: 'gray.extraDark',
-          textDecoration: 'underline',
-          cursor: 'pointer',
-          bgcolor: 'transparent',
-          border: 'none',
-          p: 0,
-          textAlign: 'left',
-          ...customTypography.baseMd,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          flexWrap: 'wrap',
         }}
       >
-        {t('modals.lock.swapAndDeposit.swap-cta')}
-      </Typography>
-
+        <Typography
+          variant='body2'
+          component='button'
+          type='button'
+          onClick={() => setIsSwapWidgetOpen(true)}
+          sx={{
+            color: 'gray.extraDark',
+            textDecoration: 'underline',
+            cursor: 'pointer',
+            bgcolor: 'transparent',
+            border: 'none',
+            p: 0,
+            textAlign: 'left',
+            ...customTypography.baseMd,
+          }}
+        >
+          {t('modals.lock.swapAndDeposit.swap-cta')}
+        </Typography>
+        <Typography
+          variant='body2'
+          component='span'
+          sx={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 0.5,
+            color: 'gray.extraDark',
+            ...customTypography.baseMd,
+          }}
+        >
+          or{' '}
+          <Box
+            component='a'
+            href='https://swap.cow.fi/#/1/swap/WETH/0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913?theme=dark&targetChainId=8453'
+            target='_blank'
+            rel='noopener noreferrer'
+            sx={{
+              color: 'gray.extraDark',
+              textDecoration: 'underline',
+              fontFamily: 'inherit',
+              fontSize: 'inherit',
+              fontWeight: 'inherit',
+              lineHeight: 'inherit',
+              cursor: 'pointer',
+            }}
+          >
+            bridge from another chain
+          </Box>
+        </Typography>
+      </Box>
       {isSwapWidgetOpen && (
         <Portal>
           <Box
@@ -448,7 +541,11 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
                     Loading...
                   </Box>
                 )}
-                <CowSwapWidget params={params} provider={widgetProvider} />
+                <CowSwapWidget
+                  params={params}
+                  provider={widgetProvider}
+                  listeners={cowEventListeners}
+                />
               </Box>
             </Box>
           </Box>
@@ -458,7 +555,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
         variant='caption'
         component='span'
         sx={{ color: (theme) => theme.palette.error.main }}
-        visibility={modalStatus.type === 'error' ? 'visible' : 'hidden'}
+        display={modalStatus.type === 'error' ? 'block' : 'none'}
       >
         <br />
         {modalStatus.type === 'error' ? modalStatus.errorMessage : 'message'}

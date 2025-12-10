@@ -5,7 +5,7 @@ import { Dispatch, memo, SetStateAction } from 'react'
 import useModalState from '@/hooks/context/useModalState'
 import getTranslation from '@/hooks/useTranslation'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
-import useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
+import type useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
 
 import PoolDropdown from '@/components/molecules/lending/PoolDropdown'
 import SupportedAssetsDropdown from '@/components/organisms/lending/SupportedAssetsDropdown'
@@ -35,6 +35,9 @@ type LiteLayoutProps = {
   supportedTokenUserBalances: ReturnType<
     typeof useSupportedTokenUserBalances
   >['supportedTokenUserBalances']
+  refetchSupportedTokenUserBalances: ReturnType<
+    typeof useSupportedTokenUserBalances
+  >['refetchSupportedTokenUserBalances']
   supportedTokens: ReturnType<typeof useSupportedTokenInfo>
   setSelectedPool: Dispatch<SetStateAction<string>>
   setAmount: Dispatch<SetStateAction<string>>
@@ -63,6 +66,7 @@ const LendingLiteLayout: React.FC<LiteLayoutProps> = ({
   selectedPool,
   selectedToken,
   supportedTokenUserBalances,
+  refetchSupportedTokenUserBalances,
   supportedTokens,
   amount,
   deferredAmount,
@@ -143,6 +147,7 @@ const LendingLiteLayout: React.FC<LiteLayoutProps> = ({
           supportedTokenUserBalances={supportedTokenUserBalances}
           supportedTokens={supportedTokens}
           applyConversion={handleApplyConversion}
+          refetchSupportedTokenUserBalances={refetchSupportedTokenUserBalances}
         />
       )}
       <ForecastedEarnings

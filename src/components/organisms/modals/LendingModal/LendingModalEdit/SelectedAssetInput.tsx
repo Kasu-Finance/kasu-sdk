@@ -3,7 +3,8 @@ import { formatUnits } from 'ethers/lib/utils'
 import { Dispatch, SetStateAction } from 'react'
 
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
-import { SupportedTokenUserBalances } from '@/hooks/web3/useSupportedTokenUserBalances'
+import type useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
+import type { SupportedTokenUserBalances } from '@/hooks/web3/useSupportedTokenUserBalances'
 
 import DepositAmountInput from '@/components/molecules/lending/lendingModal/DepositAmountInput'
 
@@ -25,6 +26,9 @@ type SelectedAssetInputProps = {
   >
   supportedTokens: NonNullable<ReturnType<typeof useSupportedTokenInfo>>
   applyConversion: (fromAmount: string, token: SupportedTokens) => void
+  refetchSupportedTokenUserBalances: ReturnType<
+    typeof useSupportedTokenUserBalances
+  >['refetchSupportedTokenUserBalances']
 }
 
 const SelectedAssetInput: React.FC<SelectedAssetInputProps> = ({
@@ -39,6 +43,7 @@ const SelectedAssetInput: React.FC<SelectedAssetInputProps> = ({
   supportedTokenUserBalances,
   supportedTokens,
   applyConversion,
+  refetchSupportedTokenUserBalances,
 }) => {
   const usdcInfo = supportedTokens[SupportedTokens.USDC]
 
@@ -96,6 +101,7 @@ const SelectedAssetInput: React.FC<SelectedAssetInputProps> = ({
       }
       applyConversion={applyConversion}
       debounceTime={500}
+      refetchSupportedTokenUserBalances={refetchSupportedTokenUserBalances}
     />
   )
 }
