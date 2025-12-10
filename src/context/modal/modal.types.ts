@@ -100,7 +100,7 @@ export type Modals = {
   [ModalsKeys.REFERRED_USERS]: ModalData<{
     referredUsers: ReferredUserDetails[]
   }>
-  [ModalsKeys.WRONG_NETWORK]: ModalData
+  [ModalsKeys.WRONG_NETWORK]: ModalData<{ detectedChainId?: number }>
   [ModalsKeys.REFERRAL_DETECTED]: ModalData<{ referralCode: `0x${string}` }>
   [ModalsKeys.VIEW_LOAN_CONTRACTS]: ModalData<{
     depositDetails: PortfolioTrancheDepositDetails[]

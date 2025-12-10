@@ -1390,6 +1390,7 @@
       "swapAndDeposit": {
         "title": "Lend with any token.",
         "input-label": "Lending Amount",
+        "swap-cta": "Not enough USDC? Swap assets",
         "swap-via": "Swap via 1inch",
         "swap": "Swap",
         "for": "for"
