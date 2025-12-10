@@ -24,7 +24,7 @@ export const sdkConfig: SdkConfig = {
   directusUrl: 'https://kasu-dev.directus.app/',
   UNUSED_LENDING_POOL_IDS: [''], // will be initialized later
   subgraphUrl:
-    'https://subgraph.satsuma-prod.com/3ed46ea711d3/kasu-finance--314476/kasu-sepolia/api',
+    'https://api.goldsky.com/api/public/project_cmgzlpxm300765np2a19421om/subgraphs/kasu-sepolia/v0.0.42/gn',
   plumeSubgraphUrl:
     'https://api.goldsky.com/api/public/project_cm9t3064xeuyn01tgctdo3c17/subgraphs/kasu-plume/prod/gn',
 }
