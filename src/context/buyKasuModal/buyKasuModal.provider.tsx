@@ -13,7 +13,6 @@ import { SupportedTokens } from '@/constants/tokens'
 type BuyKasuModalStateProps = {
   children: ReactNode
   defaultLockPeriod: LockPeriod
-  initialToken?: SupportedTokens
 }
 
 const initialState: Omit<
@@ -29,12 +28,11 @@ const initialState: Omit<
 
 const BuyKasuModalState: React.FC<BuyKasuModalStateProps> = ({
   children,
-  initialToken,
   defaultLockPeriod,
 }) => {
   const initialReducerState = {
     ...initialState,
-    selectedToken: initialToken ?? SupportedTokens.USDC,
+    selectedToken: SupportedTokens.USDC,
     selectedLockPeriod: defaultLockPeriod,
   }
 

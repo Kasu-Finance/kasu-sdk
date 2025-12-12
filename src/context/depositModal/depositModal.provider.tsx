@@ -19,7 +19,6 @@ type DepositModalStateProps = {
   initialAmount?: string
   initialUsdAmount?: string
   initialTranche?: `0x${string}`
-  initialToken?: SupportedTokens
   currentEpochDepositedAmountMap: Map<string, string>
   currentEpochFtdAmountMap: Map<string, string[]>
 }
@@ -52,7 +51,6 @@ const DepositModalState: React.FC<DepositModalStateProps> = ({
   initialAmount,
   initialUsdAmount,
   initialTranche,
-  initialToken,
   initialFixedTermConfigId,
   currentEpochDepositedAmountMap,
   currentEpochFtdAmountMap,
@@ -86,7 +84,7 @@ const DepositModalState: React.FC<DepositModalStateProps> = ({
     pool,
     amount: initialAmount ?? '',
     amountInUSD: initialUsdAmount ?? '',
-    selectedToken: initialToken ?? SupportedTokens.USDC,
+    selectedToken: SupportedTokens.USDC,
     fixedTermConfigId: initialFixedTermConfigId ?? undefined,
     currentEpochDepositedAmountMap,
     currentEpochFtdAmountMap,

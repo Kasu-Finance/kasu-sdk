@@ -1,37 +1,33 @@
 import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
-import { formatUnits, parseUnits } from 'ethers/lib/utils'
+import { formatUnits } from 'ethers/lib/utils'
 import { useCallback, useDeferredValue, useMemo, useState } from 'react'
-import { useChainId } from 'wagmi'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useLiteModeState from '@/hooks/context/useLiteModeState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
-import useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
+import useUserBalance from '@/hooks/web3/useUserBalance'
 
 import LendingLiteLayout from '@/components/organisms/modals/LendingModal/LendingModalEdit/LendingLiteLayout'
 import LendingProLayout from '@/components/organisms/modals/LendingModal/LendingModalEdit/LendingProLayout'
 
-import getSwapAmount from '@/actions/getSwapAmount'
 import { SupportedTokens } from '@/constants/tokens'
 import { formatAmount, toBigNumber } from '@/utils'
 import calculateDepositMinMax from '@/utils/lending/calculateDepositMinMax'
 
 const LendingModalEdit = () => {
-  const chainId = useChainId()
-
   const { setModalStatus } = useModalStatusState()
 
   const { isLiteMode } = useLiteModeState()
 
-  const { supportedTokenUserBalances, refetchSupportedTokenUserBalances } =
-    useSupportedTokenUserBalances()
-
   const supportedTokens = useSupportedTokenInfo()
+  const usdcToken = supportedTokens?.[SupportedTokens.USDC]
+  const { balance, decimals } = useUserBalance(usdcToken?.address)
+  const usdcDecimals = decimals ?? 6
+  const usdcBalance = balance ? formatUnits(balance, usdcDecimals) : '0'
 
   const {
     pool,
-    selectedToken: prevSelectedToken,
     amount: prevAmount,
     amountInUSD: prevAmountInUSD,
     trancheId: prevTrancheId,
@@ -52,10 +48,7 @@ const LendingModalEdit = () => {
   )
 
   const [selectedPool, setSelectedPool] = useState(pool.id)
-  const [isValidating, setIsValidating] = useState(false)
-  const [selectedToken, setSelectedToken] = useState(
-    prevSelectedToken ?? SupportedTokens.USDC
-  )
+  const selectedToken = SupportedTokens.USDC
   const [amount, setAmount] = useState(prevAmount ?? '')
 
   const [amountInUSD, setAmountInUSD] = useState<string | undefined>(
@@ -77,15 +70,12 @@ const LendingModalEdit = () => {
     (
       amount: string,
       amountInUSD?: string,
-      depositMinMax?: { minDeposit: string; maxDeposit: string },
-      token?: SupportedTokens
+      depositMinMax?: { minDeposit: string; maxDeposit: string }
     ) => {
       try {
-        if (!amount || !supportedTokenUserBalances) return
+        if (!amount || !balance) return
 
-        const tokenBalance = supportedTokenUserBalances[token ?? selectedToken]
-
-        const balance = formatUnits(tokenBalance.balance, tokenBalance.decimals)
+        const balanceValue = formatUnits(balance, usdcDecimals)
 
         const inputBN = toBigNumber(amount)
         const inputUsdBN = toBigNumber(amountInUSD ?? amount)
@@ -95,7 +85,7 @@ const LendingModalEdit = () => {
 
         const minDepositBN = toBigNumber(min)
         const maxDepositBN = toBigNumber(max)
-        const balanceBN = toBigNumber(balance)
+        const balanceBN = toBigNumber(balanceValue)
 
         if (inputBN.isZero()) {
           setModalStatus({ type: 'error', errorMessage: 'Amount is required' })
@@ -131,69 +121,13 @@ const LendingModalEdit = () => {
         console.error(error)
       }
     },
-    [
-      setModalStatus,
-      minDeposit,
-      maxDeposit,
-      selectedToken,
-      supportedTokenUserBalances,
-    ]
-  )
-
-  const handleApplyConversion = useCallback(
-    async (fromAmount: string, token: SupportedTokens) => {
-      if (!supportedTokens || token === SupportedTokens.USDC) return
-
-      const toToken = supportedTokens[SupportedTokens.USDC]
-
-      const fromToken = supportedTokens[token]
-
-      try {
-        setIsValidating(true)
-
-        const usdAmount = await getSwapAmount({
-          chainId,
-          fromToken: fromToken.address,
-          toToken: toToken.address,
-          fromAmount: parseUnits(fromAmount, fromToken.decimals).toString(),
-        })
-
-        const formattedAmount = formatUnits(usdAmount || '0', toToken.decimals)
-
-        setAmountInUSD(formattedAmount)
-        validate(fromAmount, formattedAmount, undefined, token)
-      } catch (error) {
-        console.error(error)
-      } finally {
-        setIsValidating(false)
-      }
-    },
-    [chainId, supportedTokens, validate, setAmountInUSD, setIsValidating]
+    [setModalStatus, minDeposit, maxDeposit, balance, usdcDecimals]
   )
 
   const handlePoolChange = useCallback((pool: PoolOverview) => {
     setSelectedPool(pool.id)
     setSelectedTranche(pool.tranches[0].id as `0x${string}`)
   }, [])
-
-  const handleTokenChange = useCallback(
-    (token: SupportedTokens) => {
-      setModalStatus({ type: 'default' })
-      setSelectedToken(token)
-      setAmountInUSD(undefined)
-
-      // skip validation and conversion if amount is not set
-      if (!deferredAmount) return
-
-      if (token === SupportedTokens.USDC) {
-        validate(deferredAmount, undefined, undefined, token)
-        return
-      }
-
-      handleApplyConversion(deferredAmount, token)
-    },
-    [deferredAmount, setModalStatus, handleApplyConversion, validate]
-  )
 
   const handleTrancheChange = useCallback(
     (tranche: `0x${string}`, defaultFixedTermConfigId: string | undefined) => {
@@ -260,26 +194,22 @@ const LendingModalEdit = () => {
   const props = {
     selectedPool,
     selectedToken,
-    supportedTokenUserBalances,
-    refetchSupportedTokenUserBalances,
     supportedTokens,
     amount,
     deferredAmount,
     amountInUSD,
     deferredAmountInUSD,
-    isValidating,
     fixedTermConfigId,
     selectedTranche,
     setSelectedPool,
     setAmount,
     setAmountInUSD,
     validate,
-    setIsValidating,
-    handleApplyConversion,
     handlePoolChange,
     handleFixedTermConfigChange,
     handleTrancheChange,
-    handleTokenChange,
+    usdcBalance,
+    usdcDecimals,
   }
 
   return isLiteMode ? (

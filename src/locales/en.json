@@ -501,7 +501,7 @@
       },
       "subheader-12": {
         "title": "Currency Exchange Risk",
-        "description-1": "Cryptocurrency-Fiat Exchange Rate Risk: Lenders deploy USDC (or a cryptocurrency that is swapped to USDC via 1inch), which Delegates convert to fiat currency to originate business loans to End Borrowers. Delegates also convert fiat currency to USDC to meet Withdrawal Requests from Lenders and other forms of repayments. These transactions carry currency exchange risk. Given that not all fiat loans will be denominated in US Dollars (e.g. loan will also be originated in AUD, GBP and CAD), currency exchange rate risk is highly evident. This risk is exacerbated by the varying durations of Lenders' loan timeframes (given by the volume and unpredictability of how often Withdrawal Requests are submitted), versus the duration of each loan to End Borrowers, for which there will inevitably be mismatched durations.",
+        "description-1": "Cryptocurrency-Fiat Exchange Rate Risk: Lenders deploy USDC, which Delegates convert to fiat currency to originate business loans to End Borrowers. Delegates also convert fiat currency to USDC to meet Withdrawal Requests from Lenders and other forms of repayments. These transactions carry currency exchange risk. Given that not all fiat loans will be denominated in US Dollars (e.g. loan will also be originated in AUD, GBP and CAD), currency exchange rate risk is highly evident. This risk is exacerbated by the varying durations of Lenders' loan timeframes (given by the volume and unpredictability of how often Withdrawal Requests are submitted), versus the duration of each loan to End Borrowers, for which there will inevitably be mismatched durations.",
         "description-2": "Where deemed appropriate, Delegates may use currency hedging instruments to mitigate such risks. However, this does not fully mitigate potential losses associated with exchange rate risk. Consequently, in the event that such exchange rate risk cannot be mitigated, Lenders may suffer losses."
       },
       "subheader-13": {
@@ -1388,12 +1388,9 @@
         "reviewLock": "Review KASU Lock Request"
       },
       "swapAndDeposit": {
-        "title": "Lend with any token.",
+        "title": "Lend with USDC.",
         "input-label": "Lending Amount",
-        "swap-cta": "Not enough USDC? Swap assets",
-        "swap-via": "Swap via 1inch",
-        "swap": "Swap",
-        "for": "for"
+        "swap-cta": "Not enough USDC? wap assets"
       },
       "deposit": {
         "input-label": "Lock Amount",
@@ -1454,9 +1451,8 @@
       "subtitle": "Simulate your potential interest earnings",
       "simulatedAmount": {
         "title": " Lending Scenario",
-        "metric-1": "Swap any token to USDC to start lending.",
-        "metric-2": "Powered by 1inch",
-        "metric-3": "Any tokens swapped to USDC via 1inch will incur 1.00% Slippage"
+        "metric-1": "Deposit USDC to start lending.",
+        "metric-3": ""
       },
       "simulatedDuration": {
         "title": "Simulated Lending Duration",
@@ -1472,8 +1468,7 @@
         "metric-3-tooltip": "The APY bonus (paid in KASU) that will be applied to determine your bonus interest earnings simulation, which is only applicable to Loyalty Level 1 and 2 KASU Token Lockers. Loyalty Level 2 Token Lockers receive a higher APY bonus than Loyalty Level 1. The APY bonus is variable and will change from time to meet liquidity demand and supply requirements.",
         "metric-4-title": "Simulated Bonus Interest Earnings",
         "metric-4-tooltip": "Forecast bonus interest earnings based on the APY bonus (for the given Loyalty Level), applied to the lending amount entered and duration selected for this Lending Strategy."
-      },
-      "slippage-tooltip": "Swapping your cryptocurrency to USDC will be executed via 1inch, which may incur slippage of up to 1%. Slippage refers to the difference between the expected price of a trade and the actual executed price of the trade. It typically occurs in markets experiencing high volatility, low liquidity and network congestion. For example, assume you wish buy 50 USDC for 400 DOGE (which is the same as 'swapping' 400 DOGE for 50 USDC). But, due to sudden market volatility, the actual executed price ends up being 404 DOGE. In this case, the slippage is 4 DOGE, or 1% of the intended trade amount. The maximum amount of slippage tolerance for this trade is set at 1%"
+      }
     },
     "cancelWithdrawal": {
       "title": "Cancel Withdrawal Request",

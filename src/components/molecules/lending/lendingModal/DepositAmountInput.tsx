@@ -12,7 +12,6 @@ import type {
 import LoginIcon from '@mui/icons-material/Login'
 import { Box, IconButton, Portal, Typography } from '@mui/material'
 import { useWallets } from '@privy-io/react-auth'
-import { formatUnits } from 'ethers/lib/utils'
 import dynamic from 'next/dynamic'
 import {
   Dispatch,
@@ -30,7 +29,6 @@ import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalStatusState from '@/hooks/context/useModalStatusState'
 import useDebounce from '@/hooks/useDebounce'
 import getTranslation from '@/hooks/useTranslation'
-import type useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
 
 import NumericalInput from '@/components/molecules/NumericalInput'
 
@@ -60,11 +58,7 @@ type DepositAmountInputProps = {
   endAdornment?: ReactNode
   applyConversion: (fromAmount: string, token: SupportedTokens) => void
   debounceTime?: number
-  setIsValidating: Dispatch<SetStateAction<boolean>>
   validate: (amount: string, amountInUSD?: string) => void
-  refetchSupportedTokenUserBalances?: ReturnType<
-    typeof useSupportedTokenUserBalances
-  >['refetchSupportedTokenUserBalances']
 }
 
 const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
@@ -81,7 +75,6 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
   endAdornment = 'USDC',
   debounceTime = 1000,
   applyConversion,
-  refetchSupportedTokenUserBalances,
 }) => {
   const { t } = getTranslation()
 
@@ -320,32 +313,8 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
   }, [applyMaxAmount])
 
   const handleSwapExecuted = useCallback(async () => {
-    try {
-      if (!refetchSupportedTokenUserBalances) {
-        applyMaxAmount()
-        return
-      }
-
-      const updatedBalances = await refetchSupportedTokenUserBalances()
-
-      const updatedBalanceForToken = updatedBalances?.[selectedToken]
-
-      if (!updatedBalanceForToken) {
-        applyMaxAmount()
-        return
-      }
-
-      const formattedBalance = formatUnits(
-        updatedBalanceForToken.balance,
-        updatedBalanceForToken.decimals
-      )
-
-      applyMaxAmount(formattedBalance)
-    } catch (error) {
-      console.error(error)
-      applyMaxAmount()
-    }
-  }, [applyMaxAmount, refetchSupportedTokenUserBalances, selectedToken])
+    applyMaxAmount()
+  }, [applyMaxAmount])
 
   const cowEventListeners = useMemo<CowWidgetEventListeners>(
     () => [

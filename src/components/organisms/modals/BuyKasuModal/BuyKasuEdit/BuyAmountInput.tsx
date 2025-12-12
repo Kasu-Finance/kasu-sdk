@@ -27,7 +27,6 @@ type BuyAmountInputProps = {
   endAdornment?: ReactNode
   applyConversion: (fromAmount: string, token: SupportedTokens) => void
   debounceTime?: number
-  setIsValidating: Dispatch<SetStateAction<boolean>>
   validate: (amount: string, amountInUSD?: string) => void
 }
 

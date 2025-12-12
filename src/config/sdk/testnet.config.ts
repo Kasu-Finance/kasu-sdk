@@ -4,8 +4,6 @@ import sepolia from '@/config/sdk/addresses-base-sepolia.json'
 
 export const USDC = sepolia.USDC.address
 
-export const swapper = sepolia.Swapper.address
-
 export const sdkConfig: SdkConfig = {
   contracts: {
     IKSULockBonus: sepolia.KSULocking.address,
