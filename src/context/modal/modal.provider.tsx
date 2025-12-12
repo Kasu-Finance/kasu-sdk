@@ -169,10 +169,6 @@ const initialState: Modals = {
     canAccept: false,
     acceptLoanContract: () => {},
   },
-  buyKasuModal: {
-    isOpen: false,
-    lockPeriods: null as unknown as LockPeriod[],
-  },
   nftDetectedModal: {
     isOpen: false,
   },

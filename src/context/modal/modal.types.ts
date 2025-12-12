@@ -74,7 +74,6 @@ export enum ModalsKeys {
   REFERRAL_DETECTED = 'referralDetectedModal',
   REFERRED_USERS = 'referredUsersModal',
   VIEW_WALLET = 'viewWalletModal',
-  BUY_KASU = 'buyKasuModal',
   WRONG_NETWORK = 'wrongNetworkModal',
 }
 
@@ -96,7 +95,6 @@ export type Modals = {
   [ModalsKeys.VIEW_WALLET]: ModalData
   [ModalsKeys.NFT_DETECTED]: ModalData
   [ModalsKeys.REFERRAL]: ModalData
-  [ModalsKeys.BUY_KASU]: ModalData<{ lockPeriods: LockPeriod[] }>
   [ModalsKeys.REFERRED_USERS]: ModalData<{
     referredUsers: ReferredUserDetails[]
   }>

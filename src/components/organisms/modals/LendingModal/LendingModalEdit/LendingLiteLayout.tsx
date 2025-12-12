@@ -1,24 +1,19 @@
 import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
-import { Skeleton, Stack, Typography } from '@mui/material'
+import { Box, Skeleton, Stack, Typography } from '@mui/material'
 import { Dispatch, memo, SetStateAction } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
-import getTranslation from '@/hooks/useTranslation'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
-import useSupportedTokenUserBalances from '@/hooks/web3/useSupportedTokenUserBalances'
 
+import DepositAmountInput from '@/components/molecules/lending/lendingModal/DepositAmountInput'
 import PoolDropdown from '@/components/molecules/lending/PoolDropdown'
-import SupportedAssetsDropdown from '@/components/organisms/lending/SupportedAssetsDropdown'
 import Acknowledgement from '@/components/organisms/modals/LendingModal/LendingModalEdit/Acknowledgement'
 import ForecastedEarnings from '@/components/organisms/modals/LendingModal/LendingModalEdit/ForecastedEarnings'
 import LendingModalEditActions from '@/components/organisms/modals/LendingModal/LendingModalEdit/LendingModalEditActions'
 import LendingTrancheDropdown from '@/components/organisms/modals/LendingModal/LendingModalEdit/LendingTrancheDropdown'
-import SelectedAssetInput from '@/components/organisms/modals/LendingModal/LendingModalEdit/SelectedAssetInput'
 import TrancheInfo from '@/components/organisms/modals/LendingModal/LendingModalEdit/TrancheInfo'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
-
-import OneInchLogo from '@/assets/logo/OneInchLogo'
 
 import { SupportedTokens } from '@/constants/tokens'
 
@@ -28,28 +23,20 @@ type LiteLayoutProps = {
   amountInUSD: string | undefined
   deferredAmount: string
   deferredAmountInUSD: string | undefined
-  isValidating: boolean
   selectedToken: SupportedTokens
   selectedTranche: `0x${string}`
   fixedTermConfigId: string | undefined
-  supportedTokenUserBalances: ReturnType<
-    typeof useSupportedTokenUserBalances
-  >['supportedTokenUserBalances']
   supportedTokens: ReturnType<typeof useSupportedTokenInfo>
+  usdcBalance: string
+  usdcDecimals?: number
   setSelectedPool: Dispatch<SetStateAction<string>>
   setAmount: Dispatch<SetStateAction<string>>
   setAmountInUSD: Dispatch<SetStateAction<string | undefined>>
-  setIsValidating: Dispatch<SetStateAction<boolean>>
-  handleApplyConversion: (
-    fromAmount: string,
-    token: SupportedTokens
-  ) => Promise<void>
   handlePoolChange: (pool: PoolOverview) => void
   handleTrancheChange: (
     tranche: `0x${string}`,
     defaultFixedTermConfigId: string | undefined
   ) => void
-  handleTokenChange: (token: SupportedTokens) => void
   handleFixedTermConfigChange: (fixedTermConfigId: string | undefined) => void
   validate: (
     amount: string,
@@ -62,25 +49,20 @@ type LiteLayoutProps = {
 const LendingLiteLayout: React.FC<LiteLayoutProps> = ({
   selectedPool,
   selectedToken,
-  supportedTokenUserBalances,
   supportedTokens,
+  usdcBalance,
+  usdcDecimals,
   amount,
   deferredAmount,
   amountInUSD,
   deferredAmountInUSD,
-  isValidating,
   selectedTranche,
   setAmount,
   setAmountInUSD,
   validate,
-  setIsValidating,
   handlePoolChange,
-  handleApplyConversion,
   handleTrancheChange,
-  handleTokenChange,
 }) => {
-  const { t } = getTranslation()
-
   const { modal } = useModalState()
 
   const { pools } = modal[ModalsKeys.LEND]
@@ -104,45 +86,38 @@ const LendingLiteLayout: React.FC<LiteLayoutProps> = ({
         selectedPool={selectedPool}
         selectedTranche={selectedTranche}
       />
-      <Stack spacing={2}>
-        <Typography
-          variant='baseMd'
-          display='inline-flex'
-          alignItems='center'
-          gap={1}
-        >
-          {t('modals.earningsCalculator.simulatedAmount.metric-1')}{' '}
-          {selectedToken !== SupportedTokens.USDC && (
-            <>
-              {t('modals.earningsCalculator.simulatedAmount.metric-2')}
-              <OneInchLogo />
-            </>
-          )}
-        </Typography>
-        <SupportedAssetsDropdown
-          selectedToken={selectedToken}
-          setSelectedToken={handleTokenChange}
-        />
-      </Stack>
-      {!supportedTokenUserBalances || !supportedTokens ? (
+      {!supportedTokens ? (
         <Skeleton
           variant='rounded'
           sx={{ bgcolor: 'gold.extraDark' }}
           height={60}
         />
       ) : (
-        <SelectedAssetInput
-          validate={validate}
+        <DepositAmountInput
           selectedToken={selectedToken}
           amount={amount}
-          setAmount={setAmount}
           amountInUSD={amountInUSD}
+          setAmount={setAmount}
           setAmountInUSD={setAmountInUSD}
-          isValidating={isValidating}
-          setIsValidating={setIsValidating}
-          supportedTokenUserBalances={supportedTokenUserBalances}
-          supportedTokens={supportedTokens}
-          applyConversion={handleApplyConversion}
+          balance={usdcBalance}
+          decimals={usdcDecimals}
+          validate={validate}
+          applyConversion={() => {}}
+          startAdornment={
+            <Box display='flex' alignItems='center'>
+              {supportedTokens[SupportedTokens.USDC].icon.dark}
+              <Typography
+                variant='inherit'
+                component='span'
+                color='gold.extraDark'
+                ml={1}
+              >
+                {SupportedTokens.USDC}
+              </Typography>
+            </Box>
+          }
+          endAdornment={null}
+          debounceTime={500}
         />
       )}
       <ForecastedEarnings

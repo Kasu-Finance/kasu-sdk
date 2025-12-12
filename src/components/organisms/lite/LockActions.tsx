@@ -8,6 +8,8 @@ import useModalState from '@/hooks/context/useModalState'
 import useUserLocks from '@/hooks/locking/useUserLocks'
 import getTranslation from '@/hooks/useTranslation'
 
+import BuyKasuCowSwap from '@/components/organisms/locking/BuyKasuCowSwap'
+
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 type LockActionsProps = {
@@ -20,10 +22,6 @@ const LockActions: React.FC<LockActionsProps> = ({ lockPeriods }) => {
   const { openModal } = useModalState()
 
   const { userLocks, isLoading } = useUserLocks()
-
-  const handleBuyClick = () => {
-    openModal({ name: ModalsKeys.BUY_KASU, lockPeriods })
-  }
 
   const handleUnlockClick = () => {
     if (!userLocks) return
@@ -61,14 +59,14 @@ const LockActions: React.FC<LockActionsProps> = ({ lockPeriods }) => {
       </Button>
       <Grid2 container spacing={2}>
         <Grid2 size={6}>
-          <Button
-            variant='outlined'
-            onClick={handleBuyClick}
-            sx={{ textTransform: 'capitalize' }}
-            fullWidth
-          >
-            {t('lite.buyAndLock.actions.buy')}
-          </Button>
+          <BuyKasuCowSwap
+            buttonProps={{
+              variant: 'outlined',
+              sx: { textTransform: 'capitalize' },
+              fullWidth: true,
+              children: t('lite.buyAndLock.actions.buy'),
+            }}
+          />
         </Grid2>
         <Grid2 size={6}>
           <Button

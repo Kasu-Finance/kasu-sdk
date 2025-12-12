@@ -4,8 +4,6 @@ import base from '@/config/sdk/addresses-base-mainnet.json'
 
 export const USDC = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'
 
-export const swapper = base.Swapper.address
-
 export const sdkConfig: SdkConfig = {
   contracts: {
     IKSULockBonus: base.KSULocking.address,

@@ -9,12 +9,10 @@ import useGenerateContract from '@/hooks/lending/useGenerateContract'
 import useRequestDeposit from '@/hooks/lending/useRequestDeposit'
 import getTranslation from '@/hooks/useTranslation'
 import useApproveToken from '@/hooks/web3/useApproveToken'
-import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import sdkConfig from '@/config/sdk'
-import { SupportedTokens } from '@/constants/tokens'
+import sdkConfig, { USDC } from '@/config/sdk'
 import dayjs from '@/dayjs'
 
 const LendingModalReviewActions = () => {
@@ -33,13 +31,10 @@ const LendingModalReviewActions = () => {
 
   const requestDeposit = useRequestDeposit()
 
-  const supportedToken = useSupportedTokenInfo()
-
   const { openModal } = useModalState()
 
   const {
     amount,
-    selectedToken,
     trancheId,
     loanContractAccepted,
     fixedTermConfigId,
@@ -49,12 +44,12 @@ const LendingModalReviewActions = () => {
   } = useDepositModalState()
 
   const { isApproved, approve } = useApproveToken(
-    supportedToken?.[selectedToken].address,
+    USDC as `0x${string}`,
     sdkConfig.contracts.LendingPoolManager as `0x${string}`,
     amount
   )
 
-  const approvalRequired = !isApproved && selectedToken !== SupportedTokens.ETH
+  const approvalRequired = !isApproved
 
   const handleOpen = () => {
     if (!generatedContract.contractMessage) {

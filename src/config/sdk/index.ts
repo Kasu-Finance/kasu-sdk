@@ -4,7 +4,6 @@ import * as mainnetConfig from './mainnet.config'
 import * as testnetConfig from './testnet.config'
 
 interface Config {
-  swapper: string
   sdkConfig: SdkConfig
   USDC: string
 }
@@ -20,8 +19,6 @@ const SDK_CONFIG: Record<typeof NETWORK, Config> = {
 const config = SDK_CONFIG[NETWORK]
 
 const sdkConfig = config.sdkConfig
-
-export const SWAPPER = config.swapper
 
 export const USDC = config.USDC
 

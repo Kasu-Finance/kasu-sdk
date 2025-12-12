@@ -10,7 +10,6 @@ import useSdk from '@/hooks/context/useSdk'
 import useStepperState from '@/hooks/context/useStepperState'
 import useToastState from '@/hooks/context/useToastState'
 import useBuildDepositData from '@/hooks/lending/useBuildDepositData'
-import useBuildSwapData from '@/hooks/lending/useBuildSwapData'
 import useHandleError from '@/hooks/web3/useHandleError'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
@@ -49,8 +48,6 @@ const useRequestDeposit = () => {
   const { nextStep } = useStepperState()
 
   const { setToast, removeToast } = useToastState()
-
-  const buildSwapData = useBuildSwapData()
 
   const buildDepositData = useBuildDepositData()
 
@@ -102,9 +99,11 @@ const useRequestDeposit = () => {
         throw new Error('RequestDeposit:: Error generating signature')
       }
 
-      const isETH = selectedToken === SupportedTokens.ETH
+      if (selectedToken !== SupportedTokens.USDC) {
+        return console.error('RequestDeposit:: Only USDC is supported')
+      }
 
-      const fromToken = supportedTokens[selectedToken]
+      const fromToken = supportedTokens[SupportedTokens.USDC]
       const fromAmount = parseUnits(amount, fromToken.decimals).toString()
 
       const currentDepositedAmount = toBigNumber(currentEpochDepositedAmount, 6)
@@ -113,28 +112,11 @@ const useRequestDeposit = () => {
         currentDepositedAmount
       )
 
-      let maxAmount = BigNumber.from(fromAmount).gt(trancheMax)
+      const maxAmount = BigNumber.from(fromAmount).gt(trancheMax)
         ? trancheMax.toString()
         : fromAmount
 
-      let swapData: BytesLike = '0x'
-
-      if (selectedToken !== SupportedTokens.USDC) {
-        const data = await buildSwapData({
-          account: address,
-          chainId,
-          currentDepositedAmount,
-          fromAmount,
-          fromToken: fromToken.address,
-          isETH,
-          minimumDeposit: selectedTranche.minimumDeposit,
-          supportedTokens,
-          trancheMax,
-        })
-
-        maxAmount = data.maxAmount
-        swapData = data.swapData
-      }
+      const swapData: BytesLike = '0x'
 
       const versionType =
         (contractVersion << 8) + (contractType === 'retail' ? 0 : 1)
@@ -153,7 +135,7 @@ const useRequestDeposit = () => {
         fixedTermConfigId,
         depositData,
         kycData,
-        isETH ? fromAmount : '0' // when using ETH, pass the value  directly here
+        '0' // when using ETH, pass the value directly here; USDC has no native value
       )
 
       const receipt = await waitForReceipt(deposit)
