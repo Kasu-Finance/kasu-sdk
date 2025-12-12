@@ -7,7 +7,6 @@ import useModalState from '@/hooks/context/useModalState'
 import DialogWrapper from '@/components/atoms/DialogWrapper'
 import AutoConversionToVariableModal from '@/components/organisms/modals/AutoConversionToVariableModal'
 import BorrowerIdentifiedModal from '@/components/organisms/modals/BorrowIdentifiedModal'
-import BuyKasuModalWrapper from '@/components/organisms/modals/BuyKasuModal/BuyKasuModalWrapper'
 import CancelDepositModal from '@/components/organisms/modals/CancelDepositModal'
 import CancelWithdrawalModal from '@/components/organisms/modals/CancelWithdrawalModal'
 import FixApyModalWrapper from '@/components/organisms/modals/FixApyModal/FixApyModalWrapper'
@@ -198,10 +197,6 @@ export const getModal = (
     case ModalsKeys.REFERRAL_DETECTED:
       return {
         component: <ReferralDetectedModal handleClose={handleClose} />,
-      }
-    case ModalsKeys.BUY_KASU:
-      return {
-        component: <BuyKasuModalWrapper handleClose={handleClose} />,
       }
     case ModalsKeys.WRONG_NETWORK:
       return {
