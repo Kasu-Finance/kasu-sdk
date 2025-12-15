@@ -1,9 +1,10 @@
 import { Box, Container } from '@mui/material'
-import { ReactNode } from 'react'
+import { ReactNode, Suspense } from 'react'
 
 import LiteModeRenderer from '@/components/atoms/LiteModeRenderer'
 import RedirectHandler from '@/components/atoms/RedirectHandler'
 import PortfolioSummary from '@/components/organisms/portfolio/PortfolioSummary'
+import PortfolioSummarySkeleton from '@/components/organisms/portfolio/PortfolioSummary/PortfolioSummarySkeleton'
 import PortfolioTabs from '@/components/organisms/portfolio/PortfolioTabs'
 
 import PortfolioState from '@/context/portfolio/portfolio.provider'
@@ -24,7 +25,9 @@ export default async function PortfolioLayout({
         <>
           <RedirectHandler to={Routes.home.root.url} whenNotConnected />
           <Container maxWidth='lg'>
-            <PortfolioSummary />
+            <Suspense fallback={<PortfolioSummarySkeleton />}>
+              <PortfolioSummary />
+            </Suspense>
             <PortfolioTabs />
             <Box pt={3}>
               <PortfolioState>{children}</PortfolioState>

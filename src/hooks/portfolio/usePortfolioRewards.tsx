@@ -2,6 +2,7 @@ import { PortfolioRewards } from '@kasufinance/kasu-sdk/src/services/Portfolio/t
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import useSWR from 'swr'
+import { useChainId } from 'wagmi'
 
 import useSdk from '@/hooks/context/useSdk'
 import getTranslation from '@/hooks/useTranslation'
@@ -40,6 +41,8 @@ export type PortfolioRewardsType = {
 const usePortfolioRewards = () => {
   const sdk = useSdk()
 
+  const chainId = useChainId()
+
   const { address } = usePrivyAuthenticated()
 
   const { t } = getTranslation()
@@ -54,37 +57,51 @@ const usePortfolioRewards = () => {
     [t]
   )
 
-  const { data, error, isLoading, mutate } = useSWR(
-    address && sdk ? ['portfolioRewards', address, sdk] : null,
-    async ([_, userAddress, sdk]): Promise<PortfolioRewardsType> => {
-      const rewards = await sdk.Portfolio.getPortfolioRewards(
-        userAddress.toLowerCase()
-      )
-
-      const totalLifetimeKsuRewards = toBigNumber(
-        rewards.bonusYieldEarnings.lifeTime.ksuAmount
-      ).add(toBigNumber(rewards.ksuLaunchBonus.lifeTime.ksuAmount))
-
-      return {
-        bonusYieldEarnings: {
-          ...rewards.bonusYieldEarnings,
-          label: mapKeyToLabel['bonusYieldEarnings'],
-        },
-        ksuLaunchBonus: {
-          ...rewards.ksuLaunchBonus,
-          label: mapKeyToLabel['ksuLaunchBonus'],
-        },
-        protocolFees: {
-          ...rewards.protocolFees,
-          label: mapKeyToLabel['protocolFees'],
-        },
-        totalLifetimeKsuRewards,
-      }
+  const {
+    data: rewards,
+    error,
+    isLoading,
+    mutate,
+  } = useSWR(
+    address && sdk && chainId
+      ? ['portfolioRewards', chainId, address.toLowerCase()]
+      : null,
+    async ([_, __chainId, userAddress]): Promise<PortfolioRewards> => {
+      if (!sdk) throw new Error('SDK not ready')
+      return await sdk.Portfolio.getPortfolioRewards(userAddress)
+    },
+    {
+      keepPreviousData: true,
+      revalidateIfStale: false,
     }
   )
 
+  const portfolioRewards = useMemo((): PortfolioRewardsType | undefined => {
+    if (!rewards) return undefined
+
+    const totalLifetimeKsuRewards = toBigNumber(
+      rewards.bonusYieldEarnings.lifeTime.ksuAmount
+    ).add(toBigNumber(rewards.ksuLaunchBonus.lifeTime.ksuAmount))
+
+    return {
+      bonusYieldEarnings: {
+        ...rewards.bonusYieldEarnings,
+        label: mapKeyToLabel['bonusYieldEarnings'],
+      },
+      ksuLaunchBonus: {
+        ...rewards.ksuLaunchBonus,
+        label: mapKeyToLabel['ksuLaunchBonus'],
+      },
+      protocolFees: {
+        ...rewards.protocolFees,
+        label: mapKeyToLabel['protocolFees'],
+      },
+      totalLifetimeKsuRewards,
+    }
+  }, [mapKeyToLabel, rewards])
+
   return {
-    portfolioRewards: data,
+    portfolioRewards,
     error,
     isLoading,
     updatePortfolioRewards: mutate,

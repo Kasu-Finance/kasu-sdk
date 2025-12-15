@@ -1,4 +1,5 @@
 import useSWR from 'swr'
+import { useChainId } from 'wagmi'
 
 import useSdk from '@/hooks/context/useSdk'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
@@ -6,13 +7,19 @@ import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 const useTransactionHistory = (epochId: string) => {
   const sdk = useSdk()
 
+  const chainId = useChainId()
+
   const { address } = usePrivyAuthenticated()
 
   const { data, error, isLoading, mutate } = useSWR(
-    address && sdk ? ['transactionHistory', address, sdk] : null,
-    async ([_, userAdress, sdk]) => {
+    address && sdk && chainId && epochId
+      ? ['transactionHistory', chainId, address.toLowerCase(), epochId]
+      : null,
+    async ([_, __chainId, userAddress, epochId]) => {
+      if (!sdk) throw new Error('SDK not ready')
+
       const userRequests = await sdk.UserLending.getUserRequests(
-        userAdress,
+        userAddress as `0x${string}`,
         epochId
       )
 
@@ -20,6 +27,7 @@ const useTransactionHistory = (epochId: string) => {
     },
     {
       keepPreviousData: true,
+      revalidateIfStale: false,
     }
   )
 
