@@ -3,7 +3,7 @@
 import { Button } from '@mui/material'
 
 import useClaimLockingRewards from '@/hooks/locking/useClaimLockingRewards'
-import useUserBonusData from '@/hooks/locking/useUserBonusData'
+import useLockingRewards from '@/hooks/locking/useLockingRewards'
 import getTranslation from '@/hooks/useTranslation'
 
 import { toBigNumber } from '@/utils'
@@ -13,10 +13,10 @@ const ClaimFeesButton = () => {
 
   const claimRewards = useClaimLockingRewards()
 
-  const { userBonus } = useUserBonusData()
+  const { lockingRewards } = useLockingRewards()
 
   const isFeesClaimable = Boolean(
-    userBonus && !toBigNumber(userBonus.protocolFeesEarned).isZero()
+    lockingRewards && !toBigNumber(lockingRewards.claimableRewards, 6).isZero()
   )
 
   return (

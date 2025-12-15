@@ -1,20 +1,13 @@
-import useSWR from 'swr'
-
-import useSdk from '@/hooks/context/useSdk'
+import useUserLockDepositsInfo from '@/hooks/locking/useUserLockDepositsInfo'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 const useStakedKSU = () => {
   const { address } = usePrivyAuthenticated()
 
-  const sdk = useSdk()
-
-  const { data, error, isLoading } = useSWR(
-    address && sdk ? ['stakedKasu', address, sdk] : null,
-    async ([_, userAddress, sdk]) => sdk.Locking.getUserStakedKsu(userAddress)
-  )
+  const { userLockDepositsInfo, error, isLoading } = useUserLockDepositsInfo()
 
   return {
-    stakedKSU: data,
+    stakedKSU: address ? userLockDepositsInfo?.ksuLockedAmount : undefined,
     error,
     isLoading,
   }

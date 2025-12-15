@@ -1,5 +1,7 @@
 import { Box, Button } from '@mui/material'
 import Link from 'next/link'
+import { useEffect, useRef } from 'react'
+import { useSWRConfig } from 'swr'
 import { useChainId } from 'wagmi'
 
 import useLiteModeState from '@/hooks/context/useLiteModeState'
@@ -22,7 +24,18 @@ const LockModalConfirmedActions = () => {
 
   const { txHash } = useLockModalState()
 
+  const { mutate } = useSWRConfig()
+  const hasRevalidatedRef = useRef(false)
+
   const { closeModal } = useModalState()
+
+  useEffect(() => {
+    if (!txHash) return
+    if (hasRevalidatedRef.current) return
+    hasRevalidatedRef.current = true
+
+    void mutate(() => true, undefined, { revalidate: true })
+  }, [mutate, txHash])
 
   const handleClose = () => closeModal(ModalsKeys.LOCK)
 

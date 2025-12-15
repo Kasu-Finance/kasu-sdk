@@ -4,7 +4,7 @@ import { Grid2 } from '@mui/material'
 import React from 'react'
 
 import LendButton from '@/components/atoms/LendButton'
-import WithdrawButton from '@/components/organisms/lending/OverviewTab/UserLending/WithdrawButton'
+import LiteWithdrawButton from '@/components/organisms/lite/LiteWithdrawButton'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
@@ -20,7 +20,7 @@ const LendingActions: React.FC<LendingActionsProps> = ({
   return (
     <Grid2 container spacing={3}>
       <Grid2 size={6}>
-        <WithdrawButton variant='outlined' pool={pools[0]} pools={pools} />
+        <LiteWithdrawButton variant='outlined' pools={pools} />
       </Grid2>
       <Grid2 size={6}>
         <LendButton

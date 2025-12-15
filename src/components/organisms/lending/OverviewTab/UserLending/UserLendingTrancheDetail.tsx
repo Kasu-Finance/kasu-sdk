@@ -26,14 +26,14 @@ const UserLendingTrancheDetail: React.FC<UserLendingTrancheDetailProps> = ({
 
   const { userLendingTrancheBalance, isLoading } = useUserLendingTrancheBalance(
     pool.id,
-    pool.tranches.toReversed()
+    pool.tranches
   )
 
   if (isLoading) {
     return <UserLendingTrancheDetailSkeleton />
   }
 
-  const dataWithFallback = pool.tranches.toReversed().map((tranche) => ({
+  const dataWithFallback = pool.tranches.map((tranche) => ({
     ...tranche,
     balanceData: {
       address: tranche.id,
@@ -46,59 +46,61 @@ const UserLendingTrancheDetail: React.FC<UserLendingTrancheDetailProps> = ({
 
   return (
     <Grid container spacing={4} mt={2}>
-      {(userLendingTrancheBalance ?? dataWithFallback).map((tranche) => (
-        <Grid item flex={1} key={tranche.id}>
-          <Typography variant='h5'>
-            {tranche.name} {t('general.tranche')}
-          </Typography>
-          <Divider sx={{ mt: 1.5 }} />
-          <InfoRow
-            title={t(
-              'lending.poolOverview.investmentCard.amountInvested.label'
-            )}
-            toolTipInfo={t(
-              'lending.poolOverview.investmentCard.amountInvested.tooltip'
-            )}
-            titleStyle={{
-              variant: 'baseMd',
-            }}
-            metric={
-              <Typography variant='baseMdBold'>
-                {formatAmount(tranche.balanceData.balance)} USDC
-              </Typography>
-            }
-            showDivider
-          />
-          <InfoRow
-            title={t('lending.poolOverview.investmentCard.trancheApy.label')}
-            toolTipInfo={<ToolTip title={<GrossApyTooltip />} />}
-            titleStyle={{
-              variant: 'baseMd',
-            }}
-            metric={
-              <Typography variant='baseMdBold'>
-                {formatPercentage(tranche.apy)}
-              </Typography>
-            }
-            showDivider
-          />
-          <InfoRow
-            title={t('lending.poolOverview.investmentCard.yieldEarned.label')}
-            toolTipInfo={t(
-              'lending.poolOverview.investmentCard.yieldEarned.tooltip'
-            )}
-            titleStyle={{
-              variant: 'baseMd',
-            }}
-            metric={
-              <Typography variant='baseMdBold'>
-                {formatAmount(tranche.balanceData.yieldEarned)} USDC
-              </Typography>
-            }
-            showDivider
-          />
-        </Grid>
-      ))}
+      {(userLendingTrancheBalance ?? dataWithFallback)
+        .toReversed()
+        .map((tranche) => (
+          <Grid item flex={1} key={tranche.id}>
+            <Typography variant='h5'>
+              {tranche.name} {t('general.tranche')}
+            </Typography>
+            <Divider sx={{ mt: 1.5 }} />
+            <InfoRow
+              title={t(
+                'lending.poolOverview.investmentCard.amountInvested.label'
+              )}
+              toolTipInfo={t(
+                'lending.poolOverview.investmentCard.amountInvested.tooltip'
+              )}
+              titleStyle={{
+                variant: 'baseMd',
+              }}
+              metric={
+                <Typography variant='baseMdBold'>
+                  {formatAmount(tranche.balanceData.balance)} USDC
+                </Typography>
+              }
+              showDivider
+            />
+            <InfoRow
+              title={t('lending.poolOverview.investmentCard.trancheApy.label')}
+              toolTipInfo={<ToolTip title={<GrossApyTooltip />} />}
+              titleStyle={{
+                variant: 'baseMd',
+              }}
+              metric={
+                <Typography variant='baseMdBold'>
+                  {formatPercentage(tranche.apy)}
+                </Typography>
+              }
+              showDivider
+            />
+            <InfoRow
+              title={t('lending.poolOverview.investmentCard.yieldEarned.label')}
+              toolTipInfo={t(
+                'lending.poolOverview.investmentCard.yieldEarned.tooltip'
+              )}
+              titleStyle={{
+                variant: 'baseMd',
+              }}
+              metric={
+                <Typography variant='baseMdBold'>
+                  {formatAmount(tranche.balanceData.yieldEarned)} USDC
+                </Typography>
+              }
+              showDivider
+            />
+          </Grid>
+        ))}
     </Grid>
   )
 }

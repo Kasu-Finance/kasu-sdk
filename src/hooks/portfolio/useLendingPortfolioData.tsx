@@ -1,5 +1,6 @@
 import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { ethers } from 'ethers'
+import { useMemo } from 'react'
 import useSWR from 'swr'
 import { useChainId } from 'wagmi'
 
@@ -19,21 +20,47 @@ const useLendingPortfolioData = (
 
   const { address } = usePrivyAuthenticated()
 
+  const poolOverviewsKey = useMemo(() => {
+    return poolOverviews
+      .map(
+        (pool) =>
+          `${pool.id.toLowerCase()}:${pool.tranches
+            .map((tranche) => tranche.id.toLowerCase())
+            .sort()
+            .join(',')}`
+      )
+      .sort()
+      .join('|')
+  }, [poolOverviews])
+
+  const rpcUrl = RPC_URLS[chainId as SupportedChainIds]?.[0]
+  const provider = useMemo(() => {
+    if (!rpcUrl) return undefined
+    return new ethers.providers.JsonRpcProvider(rpcUrl)
+  }, [rpcUrl])
+
   const { data, error, mutate } = useSWR(
     address && sdk && chainId
-      ? ['lendingPortfolioData', address, poolOverviews, sdk, chainId]
+      ? [
+          'lendingPortfolioData',
+          chainId,
+          address.toLowerCase(),
+          currentEpoch,
+          poolOverviewsKey,
+        ]
       : null,
-    async ([_, userAddress, poolOverviews, sdk]) =>
-      await sdk.Portfolio.getPortfolioLendingData(
-        userAddress.toLowerCase(),
+    async ([_, __chainId, userAddress]) => {
+      if (!sdk) throw new Error('SDK not ready')
+      return await sdk.Portfolio.getPortfolioLendingData(
+        userAddress,
         poolOverviews,
         currentEpoch,
-        new ethers.providers.JsonRpcProvider(
-          RPC_URLS[chainId as SupportedChainIds][0]
-        )
-      ),
+        provider
+      )
+    },
     {
       keepPreviousData: true,
+      revalidateIfStale: false,
     }
   )
 

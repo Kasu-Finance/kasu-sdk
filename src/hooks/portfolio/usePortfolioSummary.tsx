@@ -1,5 +1,7 @@
 import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
+import { useMemo } from 'react'
 import useSWR from 'swr'
+import { useChainId } from 'wagmi'
 
 import useSdk from '@/hooks/context/useSdk'
 import useLendingPortfolioData from '@/hooks/portfolio/useLendingPortfolioData'
@@ -13,7 +15,23 @@ const usePortfolioSummary = (
 ) => {
   const sdk = useSdk()
 
+  const chainId = useChainId()
+
   const { address, isAuthenticated } = usePrivyAuthenticated()
+  const addressLower = address?.toLowerCase()
+
+  const poolOverviewsKey = useMemo(() => {
+    return poolOverviews
+      .map(
+        (pool) =>
+          `${pool.id.toLowerCase()}:${pool.tranches
+            .map((tranche) => tranche.id.toLowerCase())
+            .sort()
+            .join(',')}`
+      )
+      .sort()
+      .join('|')
+  }, [poolOverviews])
 
   const {
     portfolioLendingPools,
@@ -27,16 +45,31 @@ const usePortfolioSummary = (
     error,
     mutate,
   } = useSWR(
-    address && portfolioLendingPools && sdk
-      ? ['portfolioSummary', address, portfolioLendingPools, currentEpoch, sdk]
+    addressLower && portfolioLendingPools && sdk && chainId
+      ? [
+          'portfolioSummary',
+          chainId,
+          addressLower,
+          currentEpoch,
+          poolOverviewsKey,
+        ]
       : null,
-    async ([_, userAddress, portfolioLendingPools, epoch, sdk]) =>
-      sdk.Portfolio.getPortfolioSummary(
-        userAddress.toLowerCase(),
+    async ([_, __chainId, userAddress, epoch]) => {
+      if (!sdk) throw new Error('SDK not ready')
+      if (!portfolioLendingPools) {
+        throw new Error('Portfolio lending pools not ready')
+      }
+      return await sdk.Portfolio.getPortfolioSummary(
+        userAddress,
         portfolioLendingPools,
         epoch
-      ),
-    { dedupingInterval: FIVE_MINUTES }
+      )
+    },
+    {
+      dedupingInterval: FIVE_MINUTES,
+      keepPreviousData: true,
+      revalidateIfStale: false,
+    }
   )
 
   return {

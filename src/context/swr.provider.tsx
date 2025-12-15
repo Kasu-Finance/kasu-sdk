@@ -18,6 +18,7 @@ const SwrProvider: React.FC<SwrProviderProps> = ({ children, unusedPools }) => {
           unusedPools,
         },
         dedupingInterval: TimeConversions.SECONDS_PER_MINUTE * 5,
+        revalidateOnFocus: false,
       }}
     >
       {children}

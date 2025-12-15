@@ -1390,7 +1390,7 @@
       "swapAndDeposit": {
         "title": "Lend with USDC.",
         "input-label": "Lending Amount",
-        "swap-cta": "Not enough USDC? wap assets"
+        "swap-cta": "Not enough USDC? swap assets"
       },
       "deposit": {
         "input-label": "Lock Amount",
@@ -1452,7 +1452,7 @@
       "simulatedAmount": {
         "title": " Lending Scenario",
         "metric-1": "Deposit USDC to start lending.",
-        "metric-3": ""
+        "metric-3": "Simulations assume deposits are made in USDC."
       },
       "simulatedDuration": {
         "title": "Simulated Lending Duration",
@@ -1516,8 +1516,7 @@
         "description-3": "The outcome of Withdrawal Requests is determined during the clearing period of each 7-day epoch.​"
       },
       "action": "Review Withdrawl Request"
-    },
-    "buyKasu": {}
+    }
   },
   "lending": {
     "poolOverview": {

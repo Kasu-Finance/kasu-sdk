@@ -1,6 +1,6 @@
 'use client'
 
-import { IconButton } from '@mui/material'
+import { Button } from '@mui/material'
 import { usePathname } from 'next/navigation'
 
 import useLiteModeState from '@/hooks/context/useLiteModeState'
@@ -22,31 +22,26 @@ const PortfolioRedirect = () => {
     return null
 
   return (
-    <IconButton
+    <Button
       sx={{
-        borderRadius: 30,
-        height: 48,
-        width: 48,
         mr: 2,
-        bgcolor: 'gold.dark',
-        transition: 'width 1s ease',
-        'svg path': {
-          color: 'white',
-        },
-        '&:hover': {
-          bgcolor: 'gold.extraDark',
-        },
-        '&:focus:before': {
+        textTransform: 'unset',
+        color: 'gold.dark',
+        '.MuiButton-startIcon': {
+          bgcolor: 'gold.dark',
+          p: 2,
           borderRadius: '50%',
-          width: 'calc(100% + 6px)',
-          height: 'calc(100% + 6px)',
+        },
+        '&:hover .MuiButton-startIcon': {
+          bgcolor: 'gold.extraDark',
         },
       }}
       LinkComponent={NextLink}
       href={Routes.portfolio.root.url}
+      startIcon={<PortfolioIcon />}
     >
-      <PortfolioIcon />
-    </IconButton>
+      My portfolio
+    </Button>
   )
 }
 

@@ -1,4 +1,6 @@
 import { Box, Button } from '@mui/material'
+import { useEffect, useRef } from 'react'
+import { useSWRConfig } from 'swr'
 import { useChainId } from 'wagmi'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
@@ -20,7 +22,18 @@ const LendingModalConfirmedActions = () => {
 
   const { txHash } = useDepositModalState()
 
+  const { mutate } = useSWRConfig()
+  const hasRevalidatedRef = useRef(false)
+
   const { closeModal } = useModalState()
+
+  useEffect(() => {
+    if (!txHash) return
+    if (hasRevalidatedRef.current) return
+    hasRevalidatedRef.current = true
+
+    void mutate(() => true, undefined, { revalidate: true })
+  }, [mutate, txHash])
 
   const handleClose = () => closeModal(ModalsKeys.LEND)
 

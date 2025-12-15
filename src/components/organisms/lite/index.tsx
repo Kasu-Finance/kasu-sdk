@@ -23,6 +23,8 @@ import NftRewards from '@/components/organisms/lite/NftRewards'
 import PendingTransactionRequests from '@/components/organisms/lite/PendingTransactionRequests'
 import RewardsBasicStats from '@/components/organisms/lite/RewardsBasicStats'
 
+import PortfolioSummaryLiteProvider from '@/context/portfolioSummaryLite/PortfolioSummaryLiteProvider'
+
 import PoolAccordion from './PoolAccordion'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
@@ -56,50 +58,52 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({
     <Grid2 container spacing={3} alignItems='stretch'>
       <Grid2 size={8}>
         <WaveBox variant='dark-gray' borderRadius={6} p={2}>
-          <Stack spacing={6.5}>
-            <Stack spacing={4.5}>
-              <Typography variant='h2' color='gold.dark'>
-                {t('lite.lendingPortfolio.title')}
-              </Typography>
+          <PortfolioSummaryLiteProvider
+            currentEpoch={currentEpoch}
+            poolOverviews={pools}
+            portfolioLendingPools={portfolioLendingPools}
+          >
+            <Stack spacing={6.5}>
+              <Stack spacing={4.5}>
+                <Typography variant='h2' color='gold.dark'>
+                  {t('lite.lendingPortfolio.title')}
+                </Typography>
+                <Stack spacing={3}>
+                  <LendingBasicStats
+                    pools={pools}
+                    currentEpoch={currentEpoch}
+                    hasActiveDeposits={hasActiveDeposits}
+                    isPortfolioLoading={isPortfolioDataLoading}
+                  />
+                  <PendingTransactionRequests currentEpoch={currentEpoch} />
+                  <LendingDecisionsPending pools={pools} />
+                  <LiteLendingPortfolio
+                    portfolioLendingPools={portfolioLendingPools}
+                    isLoading={isPortfolioDataLoading}
+                    isAuthenticated={isAuthenticated}
+                  />
+                  <LendingActions
+                    pools={activePools}
+                    currentEpoch={currentEpoch}
+                  />
+                </Stack>
+              </Stack>
               <Stack spacing={3}>
-                <LendingBasicStats
-                  pools={pools}
-                  currentEpoch={currentEpoch}
-                  hasActiveDeposits={hasActiveDeposits}
-                  isPortfolioLoading={isPortfolioDataLoading}
-                />
-                <PendingTransactionRequests currentEpoch={currentEpoch} />
-                <LendingDecisionsPending pools={pools} />
-                <LiteLendingPortfolio
-                  pools={pools}
-                  currentEpoch={currentEpoch}
-                  portfolioLendingPools={portfolioLendingPools}
-                  isLoading={isPortfolioDataLoading}
-                  isAuthenticated={isAuthenticated}
-                />
-                <LendingActions
-                  pools={activePools}
-                  currentEpoch={currentEpoch}
-                />
+                <Typography variant='h2' color='gold.dark'>
+                  {t('lite.rewardsPortfolio.title')}
+                </Typography>
+                <Stack spacing={5}>
+                  <RewardsBasicStats
+                    hasActiveDeposits={hasActiveDeposits}
+                    isPortfolioLoading={isPortfolioDataLoading}
+                  />
+                  <LockingRewards />
+                  <NftRewards />
+                  <LiteReferralBonus />
+                </Stack>
               </Stack>
             </Stack>
-            <Stack spacing={3}>
-              <Typography variant='h2' color='gold.dark'>
-                {t('lite.rewardsPortfolio.title')}
-              </Typography>
-              <Stack spacing={5}>
-                <RewardsBasicStats
-                  pools={pools}
-                  currentEpoch={currentEpoch}
-                  hasActiveDeposits={hasActiveDeposits}
-                  isPortfolioLoading={isPortfolioDataLoading}
-                />
-                <LockingRewards />
-                <NftRewards />
-                <LiteReferralBonus />
-              </Stack>
-            </Stack>
-          </Stack>
+          </PortfolioSummaryLiteProvider>
         </WaveBox>
       </Grid2>
       <Grid2 size={4}>

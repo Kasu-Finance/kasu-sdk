@@ -11,11 +11,13 @@ import { Routes } from '@/config/routes'
 import { PoolOverviewWithDelegate } from '@/types/page'
 
 type PoolCardActionsProps = {
+  pools?: PoolOverviewWithDelegate[]
   pool: PoolOverviewWithDelegate
   currentEpoch: string
 }
 
 const PoolCardActions: React.FC<PoolCardActionsProps> = ({
+  pools,
   pool,
   currentEpoch,
 }) => {
@@ -44,7 +46,7 @@ const PoolCardActions: React.FC<PoolCardActionsProps> = ({
         {t('general.overview')}
       </Button>
       {pool.isActive && !pool.isOversubscribed && (
-        <LendButton pool={pool} currentEpoch={currentEpoch} />
+        <LendButton pool={pool} pools={pools} currentEpoch={currentEpoch} />
       )}
     </CardActions>
   )

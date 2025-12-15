@@ -1,11 +1,9 @@
 'use client'
 
-import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { PortfolioLendingPool } from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
 import { Grid2, Stack, Typography } from '@mui/material'
 import React from 'react'
 
-import useLendingPortfolioData from '@/hooks/portfolio/useLendingPortfolioData'
 import getTranslation from '@/hooks/useTranslation'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
@@ -18,16 +16,12 @@ import LiteLendingPortfolioTableBody from '@/components/organisms/lite/LiteLendi
 import LiteLendingPortfolioTableHeader from '@/components/organisms/lite/LiteLendingPortfolio/LiteLendingPortfolioTableHeader'
 
 type LiteLendingPortfolioProps = {
-  pools: PoolOverview[]
-  currentEpoch: string
   portfolioLendingPools?: PortfolioLendingPool[]
   isLoading?: boolean
   isAuthenticated?: boolean
 }
 
 const LiteLendingPortfolio: React.FC<LiteLendingPortfolioProps> = ({
-  currentEpoch,
-  pools,
   portfolioLendingPools: portfolioLendingPoolsFromProps,
   isLoading: isLoadingFromProps,
   isAuthenticated: isAuthenticatedFromProps,
@@ -36,15 +30,9 @@ const LiteLendingPortfolio: React.FC<LiteLendingPortfolioProps> = ({
 
   const { isAuthenticated: isAuthenticatedFromHook } = usePrivyAuthenticated()
 
-  const { portfolioLendingPools, isLoading } = useLendingPortfolioData(
-    pools,
-    currentEpoch
-  )
-
   const isAuthenticated = isAuthenticatedFromProps ?? isAuthenticatedFromHook
-  const isPortfolioLoading = isLoadingFromProps ?? isLoading
-  const lendingPortfolioPools =
-    portfolioLendingPoolsFromProps ?? portfolioLendingPools
+  const isPortfolioLoading = isLoadingFromProps ?? false
+  const lendingPortfolioPools = portfolioLendingPoolsFromProps
 
   if (!isAuthenticated) return null
 

@@ -4,7 +4,7 @@ import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/typ
 import { Skeleton, SkeletonProps } from '@mui/material'
 import { useEffect, useState } from 'react'
 
-import usePortfolioSummary from '@/hooks/portfolio/usePortfolioSummary'
+import usePortfolioSummaryLite from '@/hooks/context/usePortfolioSummaryLite'
 
 import TokenAmount, { TokenAmountProps } from '@/components/atoms/TokenAmount'
 
@@ -20,20 +20,16 @@ type IncrementalLifetimeInterestEarningsProps = Partial<TokenAmountProps> & {
 
 const IncrementalLifetimeInterestEarnings: React.FC<
   IncrementalLifetimeInterestEarningsProps
-> = ({
-  currentEpoch,
-  poolOverviews,
-  skeletonProps,
-  incrementIntervalMs = 3000,
-  ...rest
-}) => {
-  const { portfolioSummary, isLoading } = usePortfolioSummary(
-    currentEpoch,
-    poolOverviews
-  )
+> = ({ skeletonProps, incrementIntervalMs = 3000, ...rest }) => {
+  const { portfolioSummary, isLoading } = usePortfolioSummaryLite()
   const [amount, setAmount] = useState(
     portfolioSummary?.lifetime.yieldEarnings || '0'
   )
+
+  useEffect(() => {
+    if (!portfolioSummary) return
+    setAmount(portfolioSummary.lifetime.yieldEarnings)
+  }, [portfolioSummary])
 
   useEffect(() => {
     if (!portfolioSummary) return
