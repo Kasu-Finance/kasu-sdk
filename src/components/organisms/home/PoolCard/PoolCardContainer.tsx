@@ -34,7 +34,12 @@ const PoolCardContainer: React.FC<PoolCardContainerProps> = ({
     <Stack spacing={4} alignItems='center'>
       <Box display='flex' flexWrap='wrap' gap={3} width='100%'>
         {paginateData([...pools]).map((pool) => (
-          <PoolCard pool={pool} currentEpoch={currentEpoch} key={pool.id} />
+          <PoolCard
+            pools={pools}
+            pool={pool}
+            currentEpoch={currentEpoch}
+            key={pool.id}
+          />
         ))}
       </Box>
       {pools.length > CARDS_PER_PAGE && (

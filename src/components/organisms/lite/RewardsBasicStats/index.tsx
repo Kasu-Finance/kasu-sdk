@@ -1,27 +1,22 @@
-import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { Grid2, Stack, Typography } from '@mui/material'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
 import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
 import InfoRow from '@/components/atoms/InfoRow'
 import WaveBox from '@/components/atoms/WaveBox'
+import LiteLifetimeFeesEarned from '@/components/organisms/lite/RewardsBasicStats/LiteLifetimeFeesEarned'
+import LiteLifetimeKsuBonusRewards from '@/components/organisms/lite/RewardsBasicStats/LiteLifetimeKsuBonusRewards'
 import WeeklyKsuRewards from '@/components/organisms/lite/RewardsBasicStats/WeeklyKsuRewards'
 import WeeklyProtocolFees from '@/components/organisms/lite/RewardsBasicStats/WeeklyProtocolFees'
-import LifetimeFeesEarned from '@/components/organisms/portfolio/PortfolioSummary/LifetimeFeesEarned'
-import LifetimeKsuBonusRewards from '@/components/organisms/portfolio/PortfolioSummary/LifetimeKsuBonusRewards'
 
 import { customPalette } from '@/themes/palette'
 
 type RewardsBasicStatsProps = {
-  pools: PoolOverview[]
-  currentEpoch: string
   hasActiveDeposits?: boolean
   isPortfolioLoading?: boolean
 }
 
 const RewardsBasicStats: React.FC<RewardsBasicStatsProps> = ({
-  currentEpoch,
-  pools,
   hasActiveDeposits = true,
   isPortfolioLoading,
 }) => {
@@ -46,9 +41,7 @@ const RewardsBasicStats: React.FC<RewardsBasicStatsProps> = ({
             <Typography variant='baseMd' color='white'>
               Lifetime Protocol Fees
             </Typography>
-            <LifetimeFeesEarned
-              poolOverviews={pools}
-              currentEpoch={currentEpoch}
+            <LiteLifetimeFeesEarned
               amountProps={{
                 variant: 'h2',
               }}
@@ -71,9 +64,7 @@ const RewardsBasicStats: React.FC<RewardsBasicStatsProps> = ({
             <Typography variant='baseMd' color='white'>
               Lifetime KASU Rewards
             </Typography>
-            <LifetimeKsuBonusRewards
-              poolOverviews={pools}
-              currentEpoch={currentEpoch}
+            <LiteLifetimeKsuBonusRewards
               amountProps={{
                 variant: 'h2',
               }}
@@ -88,7 +79,6 @@ const RewardsBasicStats: React.FC<RewardsBasicStatsProps> = ({
                 height: 42,
                 width: 160,
               }}
-              showUsdAmout={false}
             />
           </WaveBox>
         </Grid2>
@@ -116,8 +106,6 @@ const RewardsBasicStats: React.FC<RewardsBasicStatsProps> = ({
             showDivider
             metric={
               <WeeklyProtocolFees
-                poolOverviews={pools}
-                currentEpoch={currentEpoch}
                 skeletonProps={{
                   sx: {
                     backgroundColor: customPalette.gold.dark,
@@ -145,8 +133,6 @@ const RewardsBasicStats: React.FC<RewardsBasicStatsProps> = ({
             showDivider
             metric={
               <WeeklyKsuRewards
-                poolOverviews={pools}
-                currentEpoch={currentEpoch}
                 skeletonProps={{
                   sx: {
                     backgroundColor: customPalette.gold.dark,

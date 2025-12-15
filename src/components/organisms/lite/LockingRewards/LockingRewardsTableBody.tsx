@@ -3,7 +3,9 @@
 import { Stack, TableCell, TableRow, Typography } from '@mui/material'
 import { formatEther } from 'ethers/lib/utils'
 
-import usePortfolioRewards from '@/hooks/portfolio/usePortfolioRewards'
+import useEarnedBonusLockingAmount from '@/hooks/locking/useEarnedBonusLockingAmount'
+import useLockingRewards from '@/hooks/locking/useLockingRewards'
+import useUserBonusData from '@/hooks/locking/useUserBonusData'
 import getTranslation from '@/hooks/useTranslation'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
@@ -15,10 +17,19 @@ import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 const LockingRewardsTableBody = () => {
   const { t } = getTranslation()
 
-  const { portfolioRewards, isLoading } = usePortfolioRewards()
+  const { userBonus, isLoading: isUserBonusLoading } = useUserBonusData()
+  const { lockingRewards, isLoading: isLockingRewardsLoading } =
+    useLockingRewards()
+  const { totalLaunchBonus, isLoading: isLaunchBonusLoading } =
+    useEarnedBonusLockingAmount()
   const { ksuPrice, isLoading: isKsuPriceLoading } = useKsuPrice()
 
-  if (isLoading || isKsuPriceLoading) {
+  if (
+    isUserBonusLoading ||
+    isLockingRewardsLoading ||
+    isLaunchBonusLoading ||
+    isKsuPriceLoading
+  ) {
     return (
       <TableRow sx={{ '.MuiTableCell-root': { py: 1 } }}>
         <TableCell>
@@ -35,19 +46,17 @@ const LockingRewardsTableBody = () => {
   }
 
   const claimableYieldEarningsBalanceUSD = convertToUSD(
-    toBigNumber(
-      portfolioRewards?.bonusYieldEarnings.claimableBalance.ksuAmount || '0'
-    ),
+    toBigNumber(userBonus?.ksuBonusAndRewards || '0'),
     toBigNumber(ksuPrice || '0')
   )
 
   const lifetimeYieldEarningsBalanceUSD = convertToUSD(
-    toBigNumber(portfolioRewards?.bonusYieldEarnings.lifeTime.ksuAmount || '0'),
+    toBigNumber(userBonus?.ksuBonusAndRewardsLifetime || '0'),
     toBigNumber(ksuPrice || '0')
   )
 
   const lifetimeLaunchBonusUSD = convertToUSD(
-    toBigNumber(portfolioRewards?.ksuLaunchBonus.lifeTime.ksuAmount || '0'),
+    toBigNumber(totalLaunchBonus || '0'),
     toBigNumber(ksuPrice || '0')
   )
 
@@ -55,20 +64,14 @@ const LockingRewardsTableBody = () => {
     <>
       <LockingRewardsTableRow
         key={0}
-        label={
-          portfolioRewards?.bonusYieldEarnings.label ??
-          t('portfolio.rewards.bonusYieldEarnings')
-        }
+        label={t('portfolio.rewards.bonusYieldEarnings')}
         lifeTimeRewards={
           <Stack>
             <Typography variant='baseSmBold'>
-              {formatAmount(
-                portfolioRewards?.bonusYieldEarnings.lifeTime.ksuAmount || '0',
-                {
-                  minValue: 1_000_000,
-                  minDecimals: 2,
-                }
-              )}{' '}
+              {formatAmount(userBonus?.ksuBonusAndRewardsLifetime || '0', {
+                minValue: 1_000_000,
+                minDecimals: 2,
+              })}{' '}
               KASU
             </Typography>
             <Typography variant='baseSm' color='gray.middle'>
@@ -83,14 +86,10 @@ const LockingRewardsTableBody = () => {
         claimableRewards={
           <Stack>
             <Typography variant='baseSmBold'>
-              {formatAmount(
-                portfolioRewards?.bonusYieldEarnings.claimableBalance
-                  .ksuAmount || '0',
-                {
-                  minValue: 1_000_000,
-                  minDecimals: 2,
-                }
-              )}{' '}
+              {formatAmount(userBonus?.ksuBonusAndRewards || '0', {
+                minValue: 1_000_000,
+                minDecimals: 2,
+              })}{' '}
               KASU
             </Typography>
             <Typography variant='baseSm' color='gray.middle'>
@@ -105,19 +104,16 @@ const LockingRewardsTableBody = () => {
       />
       <LockingRewardsTableRow
         key={1}
-        label={
-          portfolioRewards?.protocolFees.label ??
-          t('portfolio.rewards.protocolFees')
-        }
+        label={t('portfolio.rewards.protocolFees')}
         lifeTimeRewards={`${formatAmount(
-          portfolioRewards?.protocolFees.lifeTime.usdcAmount || '0',
+          lockingRewards?.lifeTimeRewards || '0',
           {
             minValue: 1_000_000,
             minDecimals: 2,
           }
         )} USDC `}
         claimableRewards={`${formatAmount(
-          portfolioRewards?.protocolFees.claimableBalance.usdcAmount || '0',
+          lockingRewards?.claimableRewards || '0',
           {
             minValue: 1_000_000,
             minDecimals: 2,
@@ -126,20 +122,14 @@ const LockingRewardsTableBody = () => {
       />
       <LockingRewardsTableRow
         key={2}
-        label={
-          portfolioRewards?.ksuLaunchBonus.label ??
-          t('portfolio.rewards.ksuLaunchBonus')
-        }
+        label={t('portfolio.rewards.ksuLaunchBonus')}
         lifeTimeRewards={
           <Stack>
             <Typography variant='baseSmBold'>
-              {formatAmount(
-                portfolioRewards?.ksuLaunchBonus.lifeTime.ksuAmount || '0',
-                {
-                  minValue: 1_000_000,
-                  minDecimals: 2,
-                }
-              )}{' '}
+              {formatAmount(totalLaunchBonus || '0', {
+                minValue: 1_000_000,
+                minDecimals: 2,
+              })}{' '}
               KASU
             </Typography>
             <Typography variant='baseSm' color='gray.middle'>

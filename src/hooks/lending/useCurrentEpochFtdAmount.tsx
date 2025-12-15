@@ -1,4 +1,6 @@
-import useSWRImmutable from 'swr/immutable'
+import { useMemo } from 'react'
+import useSWR from 'swr'
+import { useChainId } from 'wagmi'
 
 import useSdk from '@/hooks/context/useSdk'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
@@ -8,25 +10,46 @@ const useCurrentEpochFtdAmount = (
   currentEpoch: string
 ) => {
   const sdk = useSdk()
+  const chainId = useChainId()
 
   const { address } = usePrivyAuthenticated()
 
-  const { data, error, isLoading, mutate } = useSWRImmutable(
-    address && sdk
+  const addressLower = address?.toLowerCase()
+
+  const normalizedPoolIds = useMemo(() => {
+    const ids = Array.isArray(lendingPoolIds)
+      ? lendingPoolIds
+      : [lendingPoolIds]
+    return ids.map((id) => id.toLowerCase()).sort()
+  }, [lendingPoolIds])
+
+  const poolIdsKey = useMemo(
+    () => normalizedPoolIds.join(','),
+    [normalizedPoolIds]
+  )
+
+  const { data, error, isLoading, mutate } = useSWR(
+    addressLower && sdk && chainId && currentEpoch
       ? [
-          `currentEpochFtdAmount/${Array.isArray(lendingPoolIds) ? lendingPoolIds.join(',') : lendingPoolIds}/${currentEpoch}`,
-          address,
-          sdk,
+          'currentEpochFtdAmount',
+          chainId,
+          addressLower,
+          currentEpoch,
+          poolIdsKey,
         ]
       : null,
-    async ([_, userAddress, sdk]) => {
-      const ftdAmountMap = await sdk.UserLending.getCurrentEpochFtdAmount(
-        Array.isArray(lendingPoolIds) ? lendingPoolIds : [lendingPoolIds],
-        userAddress.toLowerCase(),
+    async () => {
+      if (!sdk) throw new Error('SDK not ready')
+
+      return await sdk.UserLending.getCurrentEpochFtdAmount(
+        normalizedPoolIds,
+        addressLower as `0x${string}`,
         currentEpoch
       )
-
-      return ftdAmountMap
+    },
+    {
+      keepPreviousData: true,
+      revalidateIfStale: false,
     }
   )
 

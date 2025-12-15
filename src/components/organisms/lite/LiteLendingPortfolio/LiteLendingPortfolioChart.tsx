@@ -2,8 +2,6 @@ import { PortfolioLendingPool } from '@kasufinance/kasu-sdk/src/services/Portfol
 import { Box, Paper, Typography } from '@mui/material'
 import React, { useMemo } from 'react'
 
-import useUserLendingBalance from '@/hooks/portfolio/useUserLendingBalance'
-
 import PieChart from '@/components/organisms/lending/RiskReportingTab/PortfolioLeadingIndicators/PieChart'
 
 import { formatAmount, mapFixedLoanToConfig } from '@/utils'
@@ -15,35 +13,29 @@ type LiteLendingPortfolioChartProps = {
 const LiteLendingPortfolioChart: React.FC<LiteLendingPortfolioChartProps> = ({
   portfolioLendingPools,
 }) => {
-  const { userLendingBalance } = useUserLendingBalance(portfolioLendingPools)
-
   const data = useMemo(
     () =>
-      userLendingBalance
-        ? userLendingBalance.map(({ id, tranches }) => {
-            const trancheInvestedAmount = tranches.reduce((acc, cur) => {
-              const mappedFixedTermConfig = mapFixedLoanToConfig(
-                cur.fixedLoans,
-                cur.fixedTermConfig
-              )
+      portfolioLendingPools.map(({ id, tranches }) => {
+        const trancheInvestedAmount = tranches.reduce((acc, cur) => {
+          const mappedFixedTermConfig = mapFixedLoanToConfig(
+            cur.fixedLoans,
+            cur.fixedTermConfig
+          )
 
-              const ftdInvestedAmount = mappedFixedTermConfig.reduce(
-                (acc, cur) => {
-                  return acc + parseFloat(cur.investedAmount)
-                },
-                0
-              )
+          const ftdInvestedAmount = mappedFixedTermConfig.reduce(
+            (acc, cur) => acc + parseFloat(cur.investedAmount),
+            0
+          )
 
-              return acc + parseFloat(cur.investedAmount) + ftdInvestedAmount
-            }, 0)
+          return acc + parseFloat(cur.investedAmount) + ftdInvestedAmount
+        }, 0)
 
-            return {
-              id,
-              investedAmount: trancheInvestedAmount,
-            }
-          })
-        : undefined,
-    [userLendingBalance]
+        return {
+          id,
+          investedAmount: trancheInvestedAmount,
+        }
+      }),
+    [portfolioLendingPools]
   )
   if (!data) return null
 

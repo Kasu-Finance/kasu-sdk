@@ -1,6 +1,5 @@
 'use client'
 
-import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import {
   Skeleton,
   SkeletonProps,
@@ -8,26 +7,19 @@ import {
   TypographyProps,
 } from '@mui/material'
 
-import usePortfolioSummary from '@/hooks/portfolio/usePortfolioSummary'
+import usePortfolioSummaryLite from '@/hooks/context/usePortfolioSummaryLite'
 
 import { formatAmount } from '@/utils'
 
 type WeeklyKsuRewardsProps = TypographyProps & {
-  currentEpoch: string
-  poolOverviews: PoolOverview[]
   skeletonProps?: SkeletonProps
 }
 
 const WeeklyKsuRewards: React.FC<WeeklyKsuRewardsProps> = ({
-  currentEpoch,
-  poolOverviews,
   skeletonProps,
   ...rest
 }) => {
-  const { portfolioSummary, isLoading } = usePortfolioSummary(
-    currentEpoch,
-    poolOverviews
-  )
+  const { portfolioSummary, isLoading } = usePortfolioSummaryLite()
 
   if (isLoading) {
     return (

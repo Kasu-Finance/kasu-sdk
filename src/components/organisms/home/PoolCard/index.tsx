@@ -11,11 +11,12 @@ import { FireIcon, LockIcon } from '@/assets/icons'
 import { PoolOverviewWithDelegate } from '@/types/page'
 
 interface PoolCardProps {
+  pools?: PoolOverviewWithDelegate[]
   pool: PoolOverviewWithDelegate
   currentEpoch: string
 }
 
-const PoolCard: React.FC<PoolCardProps> = ({ pool, currentEpoch }) => {
+const PoolCard: React.FC<PoolCardProps> = ({ pools, pool, currentEpoch }) => {
   return (
     <CustomCard
       sx={{
@@ -51,7 +52,11 @@ const PoolCard: React.FC<PoolCardProps> = ({ pool, currentEpoch }) => {
       </Box>
       <CustomCardContent>
         <PoolCardContent pool={pool} />
-        <PoolCardActions pool={pool} currentEpoch={currentEpoch} />
+        <PoolCardActions
+          pools={pools}
+          pool={pool}
+          currentEpoch={currentEpoch}
+        />
       </CustomCardContent>
     </CustomCard>
   )

@@ -12,8 +12,8 @@ import LiteLifetimeInterestEarningsTooltip from '@/components/molecules/tooltips
 import LiteWeeklyInterestEarningsTooltip from '@/components/molecules/tooltips/Lite/LiteWeeklyInterestEarningsTooltip'
 import DailyInterestEarnings from '@/components/organisms/lite/LendingBasicStats/DailyInterestEarnings'
 import IncrementalLifetimeInterestEarnings from '@/components/organisms/lite/LendingBasicStats/IncrementalLifetimeInterestEarnings'
+import LiteTotalLendingBalance from '@/components/organisms/lite/LendingBasicStats/LiteTotalLendingBalance'
 import WeeklyInterestEarnings from '@/components/organisms/lite/LendingBasicStats/WeeklyInterestEarnings'
-import TotalLendingBalance from '@/components/organisms/portfolio/PortfolioSummary/TotalLendingBalance'
 
 import { customPalette } from '@/themes/palette'
 
@@ -53,9 +53,7 @@ const LendingBasicStats: React.FC<LendingBasicStatsProps> = ({
             </Typography>
             {/* <Box height={58} width='100%' />
             <DottedDivider color='white' /> */}
-            <TotalLendingBalance
-              currentEpoch={currentEpoch}
-              poolOverviews={pools}
+            <LiteTotalLendingBalance
               amountProps={{
                 variant: 'h2',
               }}
