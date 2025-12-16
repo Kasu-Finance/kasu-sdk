@@ -45,8 +45,8 @@ const LendingBasicStats: React.FC<LendingBasicStatsProps> = ({
 
   return (
     <>
-      <Grid2 container spacing={3}>
-        <Grid2 size={6}>
+      <Grid2 container spacing={{ xs: 2, md: 3 }}>
+        <Grid2 size={{ xs: 12, sm: 6 }}>
           <WaveBox borderRadius={4} p={2} variant='dark-middle'>
             <Typography variant='baseMd' color='white'>
               Total Lending Balance
@@ -71,7 +71,7 @@ const LendingBasicStats: React.FC<LendingBasicStatsProps> = ({
             />
           </WaveBox>
         </Grid2>
-        <Grid2 size={6}>
+        <Grid2 size={{ xs: 12, sm: 6 }}>
           <WaveBox borderRadius={4} p={2} variant='dark-middle'>
             <Box display='flex' alignItems='center'>
               <Typography variant='baseMd' color='white'>
@@ -110,14 +110,20 @@ const LendingBasicStats: React.FC<LendingBasicStatsProps> = ({
           </WaveBox>
         </Grid2>
       </Grid2>
-      <Grid2 container columnSpacing={3}>
-        <Grid2 size={6}>
+      <Grid2 container columnSpacing={{ xs: 0, md: 3 }}>
+        <Grid2
+          size={{ xs: 12, md: 6 }}
+          sx={{ display: { xs: 'none', md: 'block' } }}
+        >
           <DottedDivider />
         </Grid2>
-        <Grid2 size={6}>
+        <Grid2
+          size={{ xs: 12, md: 6 }}
+          sx={{ display: { xs: 'none', md: 'block' } }}
+        >
           <DottedDivider />
         </Grid2>
-        <Grid2 size={6}>
+        <Grid2 size={{ xs: 12, md: 6 }}>
           <InfoRow
             title='Weekly Interest Earnings'
             titleStyle={{ color: 'white' }}
@@ -148,7 +154,7 @@ const LendingBasicStats: React.FC<LendingBasicStatsProps> = ({
             }
           />
         </Grid2>
-        <Grid2 size={6}>
+        <Grid2 size={{ xs: 12, md: 6 }}>
           <InfoRow
             title='Daily Interest Earnings'
             titleStyle={{ color: 'white' }}

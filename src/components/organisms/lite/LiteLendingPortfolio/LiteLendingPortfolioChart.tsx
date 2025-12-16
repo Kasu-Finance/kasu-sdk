@@ -40,7 +40,7 @@ const LiteLendingPortfolioChart: React.FC<LiteLendingPortfolioChartProps> = ({
   if (!data) return null
 
   return (
-    <Box height={139}>
+    <Box height={{ xs: 200, md: 139 }}>
       <PieChart
         data={data.map(({ id, investedAmount }, index, og) => ({
           id,

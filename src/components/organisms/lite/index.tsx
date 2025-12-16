@@ -55,8 +55,8 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({
     : true
 
   return (
-    <Grid2 container spacing={3} alignItems='stretch'>
-      <Grid2 size={8}>
+    <Grid2 container spacing={{ xs: 2, md: 3 }} alignItems='stretch'>
+      <Grid2 size={{ xs: 12, md: 8 }} sx={{ minWidth: 0 }}>
         <WaveBox variant='dark-gray' borderRadius={6} p={2}>
           <PortfolioSummaryLiteProvider
             currentEpoch={currentEpoch}
@@ -106,9 +106,14 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({
           </PortfolioSummaryLiteProvider>
         </WaveBox>
       </Grid2>
-      <Grid2 size={4}>
-        <WaveBox variant='dark-gray' borderRadius={6} p={2} height='100%'>
-          <Stack spacing={4}>
+      <Grid2 size={{ xs: 12, md: 4 }} sx={{ minWidth: 0 }}>
+        <WaveBox
+          variant='dark-gray'
+          borderRadius={6}
+          p={2}
+          height={{ xs: 'auto', md: '100%' }}
+        >
+          <Stack spacing={{ xs: 3, md: 4 }}>
             <Typography
               textAlign='center'
               maxWidth={330}

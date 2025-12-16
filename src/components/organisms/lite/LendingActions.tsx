@@ -18,11 +18,11 @@ const LendingActions: React.FC<LendingActionsProps> = ({
   pools,
 }) => {
   return (
-    <Grid2 container spacing={3}>
-      <Grid2 size={6}>
+    <Grid2 container spacing={{ xs: 2, md: 3 }}>
+      <Grid2 size={{ xs: 12, sm: 6 }}>
         <LiteWithdrawButton variant='outlined' pools={pools} />
       </Grid2>
-      <Grid2 size={6}>
+      <Grid2 size={{ xs: 12, sm: 6 }}>
         <LendButton
           currentEpoch={currentEpoch}
           pool={pools[0]}

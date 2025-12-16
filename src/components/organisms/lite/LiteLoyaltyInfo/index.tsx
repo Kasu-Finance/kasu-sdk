@@ -20,10 +20,13 @@ const LiteLoyaltyInfo = () => {
           maxWidth={330}
           textAlign='center'
           mb={2}
+          px={{ xs: 1, md: 0 }}
         >
           {t('lite.loyaltyInfo.title')}
         </Typography>
-        <CurrentLoyaltyMascot width={320} height={295} />
+        <CurrentLoyaltyMascot
+          style={{ width: 'min(320px, 100%)', height: 'auto' }}
+        />
         <Stack spacing={3} mt={-4}>
           <CurrentLoyaltyLevel color='white' textAlign='center' />
           <CurrentLoyaltyProgressStepper />

@@ -166,7 +166,7 @@ const TrancheAnimator: React.FC<TrancheAnimatorProps> = ({
           height: 16,
           borderRadius: 30,
           textAlign: 'left',
-          width: 222,
+          width: { xs: 200, sm: 222 },
           alignSelf: 'center',
         }}
       >

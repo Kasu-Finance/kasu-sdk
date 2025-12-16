@@ -28,7 +28,7 @@ const KasuIntroVideo = () => {
   } = useVideoControls(videoRef, videoContainerRef)
 
   return (
-    <Stack spacing={8} my={8}>
+    <Stack spacing={{ xs: 4, md: 8 }} my={{ xs: 4, md: 8 }}>
       <Grid2 container spacing={4} alignItems='center'>
         <Grid2 flex={1}>
           <DottedDivider />
@@ -53,6 +53,11 @@ const KasuIntroVideo = () => {
         justifyContent='center'
         onClick={togglePlay}
         onMouseMove={handleMouseMove}
+        sx={{
+          width: '100%',
+          height: { xs: 'auto', md: 671 },
+          aspectRatio: { xs: '16 / 9', md: 'unset' },
+        }}
       >
         {(controls.currentTime === 0 ||
           controls.currentTime === controls.duration) && (
@@ -107,7 +112,7 @@ const KasuIntroVideo = () => {
         <Box
           component='video'
           width={controls.fullscreen ? 'auto' : '100%'}
-          height={controls.fullscreen ? '100%' : 671}
+          height={controls.fullscreen ? '100%' : '100%'}
           ref={videoRef}
           sx={{
             objectFit: 'cover',

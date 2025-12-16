@@ -68,7 +68,7 @@ const ModeToggleButton = () => {
         variant='contained'
         color='primary'
         sx={{
-          width: 160,
+          width: { xs: '100%', sm: 160 },
           textTransform: 'unset',
           ...customTypography.baseSm,
           ...(!isLiteMode && {

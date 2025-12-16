@@ -11,17 +11,18 @@ const FooterLiteLayout = () => (
   <>
     <Box
       display='grid'
-      gridTemplateColumns='repeat(2, 160px)'
+      gridTemplateColumns={{ xs: '1fr', sm: 'repeat(2, 160px)' }}
       gridTemplateRows='max-content'
       rowGap={1}
       mt='auto'
+      width={{ xs: '100%', md: 'auto' }}
     >
       <Typography variant='baseMdBold' gridColumn='1/3'>
         Additional Information:
       </Typography>
       <AdditionalInformation />
     </Box>
-    <Stack justifyContent='center' alignItems='center' spacing={2}>
+    <Stack justifyContent='center' alignItems='center' spacing={2} width='100%'>
       <KasuGold />
       <Button
         href='mailto:hello@kasu.finance'
@@ -40,9 +41,9 @@ const FooterLiteLayout = () => (
     </Stack>
     <Box
       display='grid'
-      gridTemplateColumns='repeat(auto-fill, 160px)'
+      gridTemplateColumns={{ xs: '1fr', sm: 'repeat(auto-fill, 160px)' }}
       rowGap={1}
-      width={320}
+      width={{ xs: '100%', md: 320 }}
     >
       <LegalNotices isLiteMode />
       <PlatformDisclosures isLiteMode />

@@ -28,11 +28,12 @@ const LiteHome: React.FC<LiteHomeProps> = ({ pools, currentEpoch }) => {
       <Typography
         variant='h1'
         fontWeight={300}
-        fontSize={58}
+        fontSize={{ xs: 34, sm: 44, md: 58 }}
         letterSpacing={-1}
         color='white'
         textAlign='center'
-        mt={-2}
+        mt={{ xs: 0, md: -2 }}
+        px={{ xs: 1, sm: 2, md: 0 }}
       >
         REDEFINING REAL-WORLD YIELD
       </Typography>
@@ -41,23 +42,30 @@ const LiteHome: React.FC<LiteHomeProps> = ({ pools, currentEpoch }) => {
         fontWeight={400}
         color='gold.dark'
         textAlign='center'
-        mt={5}
+        mt={{ xs: 3, md: 5 }}
+        px={{ xs: 1, sm: 2, md: 0 }}
       >
         Real businesses. Trusted lending partners. Proven tack track record.
       </Typography>
-      <Typography variant='baseLg' color='white' textAlign='center' mt={1}>
+      <Typography
+        variant='baseLg'
+        color='white'
+        textAlign='center'
+        mt={1}
+        px={{ xs: 1, sm: 2, md: 0 }}
+      >
         Our partner Apxium has originated over $30M in loans with zero losses
         across its full 8-year operating history.
       </Typography>
       <Grid2
         container
-        spacing={pools.length === 2 ? 27 : 11}
-        mt={5}
+        spacing={{ xs: 4, md: pools.length === 2 ? 27 : 11 }}
+        mt={{ xs: 3, md: 5 }}
         justifyContent='space-evenly'
         sx={
           pools.length === 2
             ? {
-                px: 18,
+                px: { xs: 0, md: 18 },
               }
             : null
         }
@@ -81,7 +89,7 @@ const LiteHome: React.FC<LiteHomeProps> = ({ pools, currentEpoch }) => {
           page={currentPage}
           onChange={(_, page) => setPage(page)}
           sx={{
-            mt: 5,
+            mt: { xs: 3, md: 5 },
             mx: 'auto',
           }}
         />
@@ -92,6 +100,7 @@ const LiteHome: React.FC<LiteHomeProps> = ({ pools, currentEpoch }) => {
         fontWeight={400}
         color='gold.dark'
         textAlign='center'
+        px={{ xs: 1, sm: 2, md: 0 }}
       >
         Built on Base · KYC required
       </Typography>

@@ -35,8 +35,11 @@ const InfoRow: React.FC<InfoRowProps> = ({
 }) => {
   const defaultSx = {
     display: 'flex',
+    flexDirection: { xs: 'column', sm: 'row' },
+    alignItems: { xs: 'flex-start', sm: 'center' },
     justifyContent: 'space-between',
     width: '100%',
+    gap: 1,
     py: 2,
   }
 
@@ -77,7 +80,15 @@ const InfoRow: React.FC<InfoRowProps> = ({
           </Box>
           {toolTipInfo && renderToolTip(toolTipInfo)}
         </Box>
-        {metric && metric}
+        {metric && (
+          <Box
+            width={{ xs: '100%', sm: 'auto' }}
+            display='flex'
+            justifyContent={{ xs: 'flex-start', sm: 'flex-end' }}
+          >
+            {metric}
+          </Box>
+        )}
       </Box>
       {showDivider && <DottedDivider {...dividerProps} />}
     </>

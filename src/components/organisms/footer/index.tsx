@@ -14,17 +14,21 @@ const Footer: React.FC = () => {
         width='100%'
         position='relative'
         display='flex'
-        alignItems='end'
-        height={418}
-        pb={6}
+        alignItems={{ xs: 'stretch', md: 'end' }}
+        flexDirection={{ xs: 'column', md: 'row' }}
+        minHeight={{ md: 418 }}
+        pb={{ xs: 4, md: 6 }}
+        pt={{ xs: 4, md: 0 }}
       >
         <FooterBg />
         <Container
           maxWidth='lg'
           sx={{
             display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
             justifyContent: 'space-between',
-            alignItems: 'end',
+            alignItems: { xs: 'stretch', md: 'end' },
+            gap: { xs: 4, md: 0 },
           }}
         >
           <LiteModeRenderer

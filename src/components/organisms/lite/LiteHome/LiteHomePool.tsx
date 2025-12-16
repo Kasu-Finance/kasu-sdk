@@ -38,21 +38,22 @@ const LiteHomePool: React.FC<LiteHomePoolProps> = ({
   return (
     <Grid2
       sx={{
-        '&:hover': {
-          '.wave-box': {
-            width: 330,
-            height: 330,
-          },
-
-          '.tranche-animation': {
-            animationPlayState: 'paused',
+        '@media (hover: hover) and (pointer: fine)': {
+          '&:hover': {
+            '.wave-box': {
+              width: 330,
+              height: 330,
+            },
+            '.tranche-animation': {
+              animationPlayState: 'paused',
+            },
           },
         },
         ...(layoutType === 1 && {
           maxWidth: 652,
         }),
       }}
-      size={12 / layoutType}
+      size={{ xs: 12, md: 12 / layoutType }}
       textAlign='center'
     >
       <Box
@@ -61,7 +62,8 @@ const LiteHomePool: React.FC<LiteHomePoolProps> = ({
             ? {
                 display: 'flex',
                 alignItems: 'center',
-                gap: 4,
+                gap: { xs: 2, md: 4 },
+                flexDirection: { xs: 'column', md: 'row' },
               }
             : null
         }
@@ -72,8 +74,8 @@ const LiteHomePool: React.FC<LiteHomePoolProps> = ({
             className='wave-box'
             sx={{
               borderRadius: '50%',
-              width: 276,
-              height: 276,
+              width: { xs: 220, sm: 250, md: 276 },
+              height: { xs: 220, sm: 250, md: 276 },
               position: 'absolute',
               zIndex: -1,
               transition: 'width 0.3s ease, height 0.3s ease',
@@ -85,15 +87,16 @@ const LiteHomePool: React.FC<LiteHomePoolProps> = ({
             width={584}
             height={584}
             style={{
-              width: 330,
-              height: 330,
+              width: 'min(330px, 100%)',
+              height: 'auto',
+              aspectRatio: '1 / 1',
             }}
           />
         </Box>
         <Box>
           <Typography
             fontFamily={headingFontFamily}
-            fontSize={18}
+            fontSize={{ xs: 16, md: 18 }}
             color='white'
           >
             UP TO
@@ -101,10 +104,10 @@ const LiteHomePool: React.FC<LiteHomePoolProps> = ({
           <Box display='flex' alignItems='end' justifyContent='center'>
             <Typography
               fontFamily={headingFontFamily}
-              fontSize={64}
+              fontSize={{ xs: 44, sm: 56, md: 64 }}
               fontWeight={300}
               color='white'
-              lineHeight='52px'
+              lineHeight={{ xs: '40px', sm: '48px', md: '52px' }}
             >
               <Typography variant='inherit' fontWeight={700} component='span'>
                 {formatPercentage(maxApy, 0)}{' '}

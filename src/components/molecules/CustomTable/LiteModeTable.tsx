@@ -31,6 +31,11 @@ const LiteModeTable: React.FC<LiteModeTableProps> = ({
       sx={[
         {
           border: 'none',
+          overflowX: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          width: '100%',
+          maxWidth: '100%',
+          minWidth: 0,
         },
         ...(Array.isArray(tableContainerSx)
           ? tableContainerSx
@@ -40,10 +45,16 @@ const LiteModeTable: React.FC<LiteModeTableProps> = ({
       <Table
         sx={[
           {
-            tableLayout: 'fixed',
+            tableLayout: { xs: 'auto', md: 'fixed' },
             overflow: 'hidden',
+            minWidth: 0,
+            width: '100%',
+            maxWidth: '100%',
             '.MuiTableCell-root': {
               color: 'white',
+              whiteSpace: 'normal',
+              overflowWrap: 'anywhere',
+              wordBreak: 'break-word',
             },
           },
           ...(Array.isArray(tableSx) ? tableSx : [tableSx]),

@@ -87,6 +87,24 @@ export const theme = createTheme({
         min-height: calc(100vh - 436px); // header + footer height + main margin
       }
 
+      @media (max-width: 600px) {
+        body.lite-mode {
+          background-size: cover;
+          background-position: top center;
+        }
+
+        body.lite-mode::after {
+          height: 45vh;
+        }
+
+        main {
+          margin-top: 0;
+          padding-top: 74px;
+          min-height: auto;
+          padding-bottom: 24px;
+        }
+      }
+
       ul{
         padding-left: 1.5em;
       }

@@ -58,8 +58,8 @@ const PendingTransactionRequests: React.FC<PendingTransactionRequestsProps> = ({
   return (
     <WaveBox variant='dark-middle' borderRadius={4} p={2}>
       <Stack spacing={2}>
-        <Grid2 container spacing={4} pb={2}>
-          <Grid2 size={7.5}>
+        <Grid2 container spacing={{ xs: 2, md: 4 }} pb={2}>
+          <Grid2 size={{ xs: 12, md: 7.5 }}>
             <Stack justifyContent='space-between' height='100%'>
               <Typography variant='h4' color='white'>
                 Pending Transaction Requests
@@ -70,7 +70,7 @@ const PendingTransactionRequests: React.FC<PendingTransactionRequestsProps> = ({
               </Typography>
             </Stack>
           </Grid2>
-          <Grid2 size={4.5}>
+          <Grid2 size={{ xs: 12, md: 4.5 }}>
             <Stack spacing={1.5}>
               <Box display='flex' alignItems='center'>
                 <Typography variant='h5' color='white'>
@@ -89,14 +89,14 @@ const PendingTransactionRequests: React.FC<PendingTransactionRequestsProps> = ({
               <CountdownCard
                 time={nextEpochTime}
                 gap={0.75}
-                justifyContent='space-between'
+                justifyContent={{ xs: 'flex-start', md: 'space-between' }}
                 labelProps={{
                   variant: 'baseXsBold',
                   color: 'gray.extraDark',
                 }}
                 cardProps={{
-                  width: 30,
-                  height: 57,
+                  width: { xs: 24, md: 30 },
+                  height: { xs: 48, md: 57 },
                   sx: {
                     '.MuiTypography-root': {
                       ...customTypography.h4,

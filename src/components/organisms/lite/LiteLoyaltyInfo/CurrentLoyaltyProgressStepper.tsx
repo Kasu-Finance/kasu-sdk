@@ -27,7 +27,7 @@ const CurrentLoyaltyProgressStepper = () => {
           sx={{
             zIndex: origialArray.length - index,
             flex: 1,
-            ml: index !== 0 ? -4 : 0,
+            ml: index !== 0 ? { xs: -2, md: -4 } : 0,
             height: 36,
             display: 'flex',
             gap: 0.5,

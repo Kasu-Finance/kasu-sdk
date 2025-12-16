@@ -130,7 +130,7 @@ const ControlBar: React.FC<ControlBarProps> = ({
               {controls.muted ? <VolumeOffIcon /> : <VolumeUpIcon />}
             </IconButton>
             <Box
-              width={0}
+              width={{ xs: 86, md: 0 }}
               display='flex'
               alignItems='center'
               overflow='hidden'

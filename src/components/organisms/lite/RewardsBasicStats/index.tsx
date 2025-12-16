@@ -35,8 +35,8 @@ const RewardsBasicStats: React.FC<RewardsBasicStatsProps> = ({
 
   return (
     <Stack spacing={3}>
-      <Grid2 container spacing={3}>
-        <Grid2 size={6}>
+      <Grid2 container spacing={{ xs: 2, md: 3 }}>
+        <Grid2 size={{ xs: 12, sm: 6 }}>
           <WaveBox borderRadius={4} p={2} variant='dark-middle'>
             <Typography variant='baseMd' color='white'>
               Lifetime Protocol Fees
@@ -59,7 +59,7 @@ const RewardsBasicStats: React.FC<RewardsBasicStatsProps> = ({
             />
           </WaveBox>
         </Grid2>
-        <Grid2 size={6}>
+        <Grid2 size={{ xs: 12, sm: 6 }}>
           <WaveBox borderRadius={4} p={2} variant='dark-middle'>
             <Typography variant='baseMd' color='white'>
               Lifetime KASU Rewards
@@ -83,14 +83,20 @@ const RewardsBasicStats: React.FC<RewardsBasicStatsProps> = ({
           </WaveBox>
         </Grid2>
       </Grid2>
-      <Grid2 container columnSpacing={3}>
-        <Grid2 size={6}>
+      <Grid2 container columnSpacing={{ xs: 0, md: 3 }}>
+        <Grid2
+          size={{ xs: 12, md: 6 }}
+          sx={{ display: { xs: 'none', md: 'block' } }}
+        >
           <DottedDivider />
         </Grid2>
-        <Grid2 size={6}>
+        <Grid2
+          size={{ xs: 12, md: 6 }}
+          sx={{ display: { xs: 'none', md: 'block' } }}
+        >
           <DottedDivider />
         </Grid2>
-        <Grid2 size={6}>
+        <Grid2 size={{ xs: 12, md: 6 }}>
           <InfoRow
             title='Weekly Protocol Fees'
             titleStyle={{ color: 'white' }}
@@ -117,7 +123,7 @@ const RewardsBasicStats: React.FC<RewardsBasicStatsProps> = ({
             }
           />
         </Grid2>
-        <Grid2 size={6}>
+        <Grid2 size={{ xs: 12, md: 6 }}>
           <InfoRow
             title='Weekly KASU Rewards'
             titleStyle={{ color: 'white' }}

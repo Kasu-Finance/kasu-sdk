@@ -15,13 +15,14 @@ const FooterBg = () => {
       component='img'
       src={isLiteMode ? FooterWhiteBg.src : FooterDarkBg.src}
       alt='footer background'
-      style={{
+      sx={{
         position: 'absolute',
         zIndex: -1,
         bottom: 0,
         right: 0,
         width: '100%',
-        height: 418,
+        height: '100%',
+        objectFit: 'cover',
       }}
     />
   )

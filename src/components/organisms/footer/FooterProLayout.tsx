@@ -10,7 +10,11 @@ import KasuFooterLogo from '@/assets/logo/KasuFooterLogo'
 
 const FooterProLayout = () => (
   <>
-    <Box display='flex' gap={8}>
+    <Box
+      display='flex'
+      gap={{ xs: 4, md: 8 }}
+      flexDirection={{ xs: 'column', md: 'row' }}
+    >
       <Stack spacing={2}>
         <Box display='flex' gap={2} alignItems='center'>
           <KasuFooterLogo />
@@ -20,10 +24,11 @@ const FooterProLayout = () => (
       </Stack>
       <Box
         display='grid'
-        gridTemplateColumns='repeat(2, 160px)'
+        gridTemplateColumns={{ xs: '1fr', sm: 'repeat(2, 160px)' }}
         gridTemplateRows='max-content'
         rowGap={1}
         mt='auto'
+        width={{ xs: '100%', md: 'auto' }}
       >
         <AdditionalInformation />
       </Box>
@@ -31,9 +36,9 @@ const FooterProLayout = () => (
 
     <Box
       display='grid'
-      gridTemplateColumns='repeat(auto-fill, 160px)'
+      gridTemplateColumns={{ xs: '1fr', sm: 'repeat(auto-fill, 160px)' }}
       rowGap={1}
-      width={320}
+      width={{ xs: '100%', md: 320 }}
     >
       <LegalNotices />
       <PlatformDisclosures />

@@ -41,7 +41,7 @@ const LockActions: React.FC<LockActionsProps> = ({ lockPeriods }) => {
       spacing={3}
       sx={{
         '& > .MuiButton-root': {
-          ml: -1,
+          ml: { xs: 0, md: -1 },
         },
       }}
     >
@@ -57,8 +57,8 @@ const LockActions: React.FC<LockActionsProps> = ({ lockPeriods }) => {
       >
         {t('lite.buyAndLock.actions.unlock')}
       </Button>
-      <Grid2 container spacing={2}>
-        <Grid2 size={6}>
+      <Grid2 container spacing={{ xs: 2, md: 2 }}>
+        <Grid2 size={{ xs: 12, sm: 6 }}>
           <BuyKasuCowSwap
             buttonProps={{
               variant: 'outlined',
@@ -68,7 +68,7 @@ const LockActions: React.FC<LockActionsProps> = ({ lockPeriods }) => {
             }}
           />
         </Grid2>
-        <Grid2 size={6}>
+        <Grid2 size={{ xs: 12, sm: 6 }}>
           <Button
             variant='contained'
             onClick={handleLockClick}

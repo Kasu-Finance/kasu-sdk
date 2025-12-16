@@ -1,6 +1,13 @@
 'use client'
 
-import { Box, Button, ButtonProps, Chip, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  ButtonProps,
+  Chip,
+  IconButton,
+  Typography,
+} from '@mui/material'
 import { useLogin, usePrivy, useWallets } from '@privy-io/react-auth'
 import { useSetActiveWallet } from '@privy-io/wagmi'
 import { forwardRef, useEffect, useState } from 'react'
@@ -23,247 +30,312 @@ import { customPalette } from '@/themes/palette'
 import { customTypography } from '@/themes/typography'
 import { formatAccount } from '@/utils'
 
-const ConnectWalletButton = forwardRef<HTMLButtonElement, ButtonProps>(
-  (props, ref) => {
-    const { t } = getTranslation()
+type ConnectWalletButtonProps = ButtonProps & {
+  compact?: boolean
+}
 
-    const { isLiteMode } = useLiteModeState()
+const ConnectWalletButton = forwardRef<
+  HTMLButtonElement,
+  ConnectWalletButtonProps
+>((props, ref) => {
+  const { t } = getTranslation()
 
-    const { wallets, ready: walletsReady } = useWallets()
+  const { compact, ...buttonProps } = props
 
-    const { openModal, closeModal } = useModalState()
+  const { isLiteMode } = useLiteModeState()
 
-    const { checkUserKyc } = useKycState()
+  const { wallets, ready: walletsReady } = useWallets()
 
-    const { setToast, removeToast } = useToastState()
+  const { openModal, closeModal } = useModalState()
 
-    const [connected, setConnected] = useState(false)
+  const { checkUserKyc } = useKycState()
 
-    const handleOpen = () => openModal({ name: ModalsKeys.LINK_WALLETS })
+  const { setToast, removeToast } = useToastState()
 
-    const { ready } = usePrivy()
+  const [connected, setConnected] = useState(false)
 
-    const { address, isAuthenticated } = usePrivyAuthenticated()
+  const handleOpen = () => openModal({ name: ModalsKeys.LINK_WALLETS })
 
-    const { getLastActiveWallet, setLastActiveWallet } = useLastActiveWallet()
+  const { ready } = usePrivy()
 
-    const { setActiveWallet } = useSetActiveWallet()
-    const [actualChainId, setActualChainId] = useState<number>()
+  const { address, isAuthenticated } = usePrivyAuthenticated()
 
-    const expectedChainId =
-      NETWORK === 'BASE'
-        ? SupportedChainIds.BASE
-        : SupportedChainIds.BASE_SEPOLIA
+  const { getLastActiveWallet, setLastActiveWallet } = useLastActiveWallet()
 
-    const { login } = useLogin({
-      onComplete: async () => {
-        setToast({
-          type: 'info',
-          title: 'Account connected',
-          message: 'Verifying status of account...',
-          isClosable: false,
-        })
+  const { setActiveWallet } = useSetActiveWallet()
+  const [actualChainId, setActualChainId] = useState<number>()
 
-        setConnected(true)
-      },
-      onError: (error) => {
-        removeToast()
-        console.error(error)
-      },
-    })
+  const expectedChainId =
+    NETWORK === 'BASE' ? SupportedChainIds.BASE : SupportedChainIds.BASE_SEPOLIA
 
-    useEffect(() => {
-      let isMounted = true
-      let cleanup: (() => void) | undefined
+  const { login } = useLogin({
+    onComplete: async () => {
+      setToast({
+        type: 'info',
+        title: 'Account connected',
+        message: 'Verifying status of account...',
+        isClosable: false,
+      })
 
-      const updateChainId = (chain: unknown) => {
-        const numericChain =
-          typeof chain === 'string'
-            ? Number.parseInt(chain, 16)
-            : typeof chain === 'number'
-              ? chain
-              : undefined
+      setConnected(true)
+    },
+    onError: (error) => {
+      removeToast()
+      console.error(error)
+    },
+  })
 
-        if (Number.isFinite(numericChain) && isMounted) {
-          setActualChainId(numericChain)
-        }
+  useEffect(() => {
+    let isMounted = true
+    let cleanup: (() => void) | undefined
+
+    const updateChainId = (chain: unknown) => {
+      const numericChain =
+        typeof chain === 'string'
+          ? Number.parseInt(chain, 16)
+          : typeof chain === 'number'
+            ? chain
+            : undefined
+
+      if (Number.isFinite(numericChain) && isMounted) {
+        setActualChainId(numericChain)
       }
+    }
 
-      const resolveChain = async () => {
-        if (!wallets.length || !address) {
-          setActualChainId(undefined)
-          return
-        }
-
-        const wallet = wallets.find(
-          (w) => w.address.toLowerCase() === address.toLowerCase()
-        )
-
-        if (!wallet) {
-          setActualChainId(undefined)
-          return
-        }
-
-        const provider: any = await wallet.getEthereumProvider()
-
-        const chain = provider?.chainId
-          ? provider.chainId
-          : await provider?.request?.({ method: 'eth_chainId' })
-
-        updateChainId(chain)
-
-        const handler = (id: unknown) => updateChainId(id)
-
-        if (provider?.on) {
-          provider.on('chainChanged', handler)
-          cleanup = () => {
-            provider.removeListener?.('chainChanged', handler) ||
-              provider.off?.('chainChanged', handler)
-          }
-        }
-      }
-
-      resolveChain()
-
-      return () => {
-        isMounted = false
-        cleanup?.()
-      }
-    }, [address, wallets])
-
-    useEffect(() => {
-      if (!isAuthenticated) {
-        closeModal(ModalsKeys.WRONG_NETWORK)
+    const resolveChain = async () => {
+      if (!wallets.length || !address) {
+        setActualChainId(undefined)
         return
       }
-
-      if (!actualChainId) return
-
-      if (actualChainId !== expectedChainId) {
-        openModal({
-          name: ModalsKeys.WRONG_NETWORK,
-          detectedChainId: actualChainId,
-        })
-      } else {
-        closeModal(ModalsKeys.WRONG_NETWORK)
-      }
-    }, [actualChainId, closeModal, expectedChainId, isAuthenticated, openModal])
-
-    useEffect(() => {
-      if (!connected || !wallets.length || !address || getLastActiveWallet())
-        return
 
       const wallet = wallets.find(
-        (wallet) => wallet.address.toLowerCase() === address?.toLowerCase()
+        (w) => w.address.toLowerCase() === address.toLowerCase()
       )
 
-      if (wallet) {
-        setLastActiveWallet(wallet)
+      if (!wallet) {
+        setActualChainId(undefined)
+        return
       }
-    }, [wallets, address, connected, getLastActiveWallet, setLastActiveWallet])
 
-    useEffect(() => {
-      const lastActiveWallet = getLastActiveWallet()
+      const provider: any = await wallet.getEthereumProvider()
 
-      if (!connected || !wallets.length || !address || !lastActiveWallet) return
+      const chain = provider?.chainId
+        ? provider.chainId
+        : await provider?.request?.({ method: 'eth_chainId' })
 
-      const abortController = new AbortController()
+      updateChainId(chain)
 
-      setActiveWallet(lastActiveWallet)
+      const handler = (id: unknown) => updateChainId(id)
 
-      checkUserKyc(lastActiveWallet.address, abortController.signal)
-
-      return () => {
-        abortController.abort('new wallets detected')
+      if (provider?.on) {
+        provider.on('chainChanged', handler)
+        cleanup = () => {
+          provider.removeListener?.('chainChanged', handler) ||
+            provider.off?.('chainChanged', handler)
+        }
       }
-    }, [
-      connected,
-      wallets,
-      walletsReady,
-      address,
-      getLastActiveWallet,
-      checkUserKyc,
-      setActiveWallet,
-      setLastActiveWallet,
-    ])
+    }
 
+    resolveChain()
+
+    return () => {
+      isMounted = false
+      cleanup?.()
+    }
+  }, [address, wallets])
+
+  useEffect(() => {
     if (!isAuthenticated) {
+      closeModal(ModalsKeys.WRONG_NETWORK)
+      return
+    }
+
+    if (!actualChainId) return
+
+    if (actualChainId !== expectedChainId) {
+      openModal({
+        name: ModalsKeys.WRONG_NETWORK,
+        detectedChainId: actualChainId,
+      })
+    } else {
+      closeModal(ModalsKeys.WRONG_NETWORK)
+    }
+  }, [actualChainId, closeModal, expectedChainId, isAuthenticated, openModal])
+
+  useEffect(() => {
+    if (!connected || !wallets.length || !address || getLastActiveWallet())
+      return
+
+    const wallet = wallets.find(
+      (wallet) => wallet.address.toLowerCase() === address?.toLowerCase()
+    )
+
+    if (wallet) {
+      setLastActiveWallet(wallet)
+    }
+  }, [wallets, address, connected, getLastActiveWallet, setLastActiveWallet])
+
+  useEffect(() => {
+    const lastActiveWallet = getLastActiveWallet()
+
+    if (!connected || !wallets.length || !address || !lastActiveWallet) return
+
+    const abortController = new AbortController()
+
+    setActiveWallet(lastActiveWallet)
+
+    checkUserKyc(lastActiveWallet.address, abortController.signal)
+
+    return () => {
+      abortController.abort('new wallets detected')
+    }
+  }, [
+    connected,
+    wallets,
+    walletsReady,
+    address,
+    getLastActiveWallet,
+    checkUserKyc,
+    setActiveWallet,
+    setLastActiveWallet,
+  ])
+
+  if (!isAuthenticated) {
+    if (compact) {
       return (
-        <Button
+        <IconButton
           ref={ref}
-          variant='contained'
-          sx={{
-            width: 184,
-            textTransform: 'capitalize',
-            ...customTypography.baseMd,
-          }}
-          startIcon={<ConnectWalletIcon key='disconnected' />}
+          aria-label={t('general.connectWallet')}
           onClick={login}
           disabled={!ready}
-          {...props}
+          className={buttonProps.className}
+          id={buttonProps.id}
+          title={buttonProps.title}
+          tabIndex={buttonProps.tabIndex}
+          sx={[
+            {
+              bgcolor: isLiteMode ? 'rgba(0,0,0,0.35)' : 'gray.extraLight',
+              backdropFilter: isLiteMode ? 'blur(6px)' : undefined,
+              '&:hover': {
+                bgcolor: isLiteMode ? 'rgba(0,0,0,0.5)' : 'gray.light',
+              },
+            },
+            ...(Array.isArray(buttonProps.sx)
+              ? buttonProps.sx
+              : [buttonProps.sx]),
+          ]}
         >
-          {t('general.connectWallet')}
-        </Button>
+          <ConnectWalletIcon key='disconnected' />
+        </IconButton>
       )
     }
 
     return (
-      <Box
-        width={180}
-        height={48}
-        borderRadius={30}
-        display='flex'
-        justifyContent='center'
-        alignItems='center'
-        px={3}
-        py={1}
+      <Button
+        ref={ref}
+        variant='contained'
         sx={{
-          'svg path': {
-            fill: customPalette.gold.dark,
-          },
-          cursor: 'pointer',
+          width: { xs: '100%', sm: 184 },
+          textTransform: 'capitalize',
+          ...customTypography.baseMd,
         }}
-        bgcolor={isLiteMode ? 'rgba(0,0,0,0.7)' : 'gray.extraLight'}
-        position='relative'
-        onClick={handleOpen}
+        startIcon={<ConnectWalletIcon key='disconnected' />}
+        onClick={login}
+        disabled={!ready}
+        {...buttonProps}
       >
-        <ConnectWalletIcon key='connected' />
-        <Typography variant='baseSm' color='gold.dark' mx={1.5} mt={0.5}>
-          {formatAccount(address)}
-        </Typography>
-
-        <Chip
-          label={
-            <Typography
-              textTransform='capitalize'
-              variant='subtitle2'
-              component='span'
-              fontSize={10}
-              color='white'
-            >
-              Connected
-            </Typography>
-          }
-          variant='filled'
-          sx={{
-            px: '3px',
-            pb: 0.5,
-            width: 69,
-            height: 20,
-            position: 'absolute',
-            bottom: 0,
-            transform: 'translateY(50%)',
-            ...(isLiteMode && { bgcolor: 'rgb(102 148 67)' }),
-            '& .MuiChip-label': {
-              padding: 0,
-            },
-          }}
-          size='small'
-          color='success'
-        />
-      </Box>
+        {t('general.connectWallet')}
+      </Button>
     )
   }
-)
+
+  if (compact) {
+    return (
+      <IconButton
+        ref={ref}
+        aria-label={t('general.connectWallet')}
+        onClick={handleOpen}
+        className={buttonProps.className}
+        id={buttonProps.id}
+        title={buttonProps.title}
+        tabIndex={buttonProps.tabIndex}
+        sx={[
+          {
+            bgcolor: isLiteMode ? 'rgba(0,0,0,0.35)' : 'gray.extraLight',
+            backdropFilter: isLiteMode ? 'blur(6px)' : undefined,
+            '&:hover': {
+              bgcolor: isLiteMode ? 'rgba(0,0,0,0.5)' : 'gray.light',
+            },
+            'svg path': {
+              fill: customPalette.gold.dark,
+            },
+          },
+          ...(Array.isArray(buttonProps.sx)
+            ? buttonProps.sx
+            : [buttonProps.sx]),
+        ]}
+      >
+        <ConnectWalletIcon key='connected' />
+      </IconButton>
+    )
+  }
+
+  return (
+    <Box
+      width={{ xs: '100%', sm: 180 }}
+      height={48}
+      borderRadius={30}
+      display='flex'
+      justifyContent='center'
+      alignItems='center'
+      px={3}
+      py={1}
+      sx={{
+        'svg path': {
+          fill: customPalette.gold.dark,
+        },
+        cursor: 'pointer',
+      }}
+      bgcolor={isLiteMode ? 'rgba(0,0,0,0.7)' : 'gray.extraLight'}
+      position='relative'
+      onClick={handleOpen}
+    >
+      <ConnectWalletIcon key='connected' />
+      <Typography variant='baseSm' color='gold.dark' mx={1.5} mt={0.5}>
+        {formatAccount(address)}
+      </Typography>
+
+      <Chip
+        label={
+          <Typography
+            textTransform='capitalize'
+            variant='subtitle2'
+            component='span'
+            fontSize={10}
+            color='white'
+          >
+            Connected
+          </Typography>
+        }
+        variant='filled'
+        sx={{
+          px: '3px',
+          pb: 0.5,
+          width: 69,
+          height: 20,
+          position: 'absolute',
+          bottom: 0,
+          transform: 'translateY(50%)',
+          ...(isLiteMode && { bgcolor: 'rgb(102 148 67)' }),
+          '& .MuiChip-label': {
+            padding: 0,
+          },
+        }}
+        size='small'
+        color='success'
+      />
+    </Box>
+  )
+})
 
 export default ConnectWalletButton

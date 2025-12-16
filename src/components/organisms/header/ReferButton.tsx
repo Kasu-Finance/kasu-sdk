@@ -39,6 +39,7 @@ const ReferButton = () => {
         },
         textTransform: 'unset',
         mr: 2,
+        width: { xs: '100%', sm: 'auto' },
       }}
       startIcon={<ReferralIcon color={isLiteMode ? 'white' : undefined} />}
       onClick={handleOpen}

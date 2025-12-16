@@ -67,8 +67,8 @@ const LiteLendingPortfolio: React.FC<LiteLendingPortfolioProps> = ({
             const poolsData = lendingPortfolioPools as PortfolioLendingPool[]
 
             return (
-              <Grid2 container spacing={2}>
-                <Grid2 size={9.5}>
+              <Grid2 container spacing={{ xs: 2, md: 2 }}>
+                <Grid2 size={{ xs: 12, md: 9.5 }} sx={{ minWidth: 0 }}>
                   <LiteModeTable
                     tableHeader={<LiteLendingPortfolioTableHeader />}
                     tableBody={
@@ -78,7 +78,7 @@ const LiteLendingPortfolio: React.FC<LiteLendingPortfolioProps> = ({
                     }
                   />
                 </Grid2>
-                <Grid2 size={2.5}>
+                <Grid2 size={{ xs: 12, md: 2.5 }} sx={{ minWidth: 0 }}>
                   <LiteLendingPortfolioChart
                     portfolioLendingPools={poolsData}
                   />

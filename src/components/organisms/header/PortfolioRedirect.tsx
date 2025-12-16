@@ -27,6 +27,7 @@ const PortfolioRedirect = () => {
         mr: 2,
         textTransform: 'unset',
         color: 'gold.dark',
+        width: { xs: '100%', sm: 'auto' },
         '.MuiButton-startIcon': {
           bgcolor: 'gold.dark',
           p: 2,
