@@ -12,7 +12,6 @@ import { useLogin, usePrivy, useWallets } from '@privy-io/react-auth'
 import { useSetActiveWallet } from '@privy-io/wagmi'
 import { forwardRef, useEffect, useState } from 'react'
 
-import useKycState from '@/hooks/context/useKycState'
 import useLiteModeState from '@/hooks/context/useLiteModeState'
 import useModalState from '@/hooks/context/useModalState'
 import useToastState from '@/hooks/context/useToastState'
@@ -44,11 +43,9 @@ const ConnectWalletButton = forwardRef<
 
   const { isLiteMode } = useLiteModeState()
 
-  const { wallets, ready: walletsReady } = useWallets()
+  const { wallets } = useWallets()
 
   const { openModal, closeModal } = useModalState()
-
-  const { checkUserKyc } = useKycState()
 
   const { setToast, removeToast } = useToastState()
 
@@ -60,7 +57,7 @@ const ConnectWalletButton = forwardRef<
 
   const { address, isAuthenticated } = usePrivyAuthenticated()
 
-  const { getLastActiveWallet, setLastActiveWallet } = useLastActiveWallet()
+  const { setLastActiveWallet } = useLastActiveWallet()
 
   const { setActiveWallet } = useSetActiveWallet()
   const [actualChainId, setActualChainId] = useState<number>()
@@ -84,6 +81,15 @@ const ConnectWalletButton = forwardRef<
       console.error(error)
     },
   })
+
+  useEffect(() => {
+    if (isAuthenticated && address) {
+      setConnected(true)
+      return
+    }
+
+    setConnected(false)
+  }, [address, isAuthenticated])
 
   useEffect(() => {
     let isMounted = true
@@ -163,8 +169,7 @@ const ConnectWalletButton = forwardRef<
   }, [actualChainId, closeModal, expectedChainId, isAuthenticated, openModal])
 
   useEffect(() => {
-    if (!connected || !wallets.length || !address || getLastActiveWallet())
-      return
+    if (!connected || !wallets.length || !address) return
 
     const wallet = wallets.find(
       (wallet) => wallet.address.toLowerCase() === address?.toLowerCase()
@@ -172,33 +177,9 @@ const ConnectWalletButton = forwardRef<
 
     if (wallet) {
       setLastActiveWallet(wallet)
+      setActiveWallet(wallet)
     }
-  }, [wallets, address, connected, getLastActiveWallet, setLastActiveWallet])
-
-  useEffect(() => {
-    const lastActiveWallet = getLastActiveWallet()
-
-    if (!connected || !wallets.length || !address || !lastActiveWallet) return
-
-    const abortController = new AbortController()
-
-    setActiveWallet(lastActiveWallet)
-
-    checkUserKyc(lastActiveWallet.address, abortController.signal)
-
-    return () => {
-      abortController.abort('new wallets detected')
-    }
-  }, [
-    connected,
-    wallets,
-    walletsReady,
-    address,
-    getLastActiveWallet,
-    checkUserKyc,
-    setActiveWallet,
-    setLastActiveWallet,
-  ])
+  }, [wallets, address, connected, setLastActiveWallet, setActiveWallet])
 
   if (!isAuthenticated) {
     if (compact) {

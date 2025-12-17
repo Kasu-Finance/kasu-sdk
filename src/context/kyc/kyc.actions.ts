@@ -12,9 +12,13 @@ import useToastState from '@/hooks/context/useToastState'
 
 import { KycActions, KycFunctions } from '@/context/kyc/kyc.types'
 
-import { CustomerStatus } from '@/app/api/kyc/route'
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { capitalize } from '@/utils'
+
+import type { CheckKycRes, CustomerStatus } from '@/types/kyc'
+
+const isKycCompletedStatus = (status: CustomerStatus) =>
+  status === 'Active' || status === 'No Email'
 
 const useKycActions = (dispatch: Dispatch<KycActions>): KycFunctions => {
   const { setToast, removeToast } = useToastState()
@@ -48,10 +52,71 @@ const useKycActions = (dispatch: Dispatch<KycActions>): KycFunctions => {
           onChange: async (isVisible) => {
             // widget close
             if (!isVisible) {
-              const status = await getCustomerStatus(compilotConfig)
               const account = await getIdentityWallets(compilotConfig)
+              const walletAddress = account[0]?.address
+              if (!walletAddress) {
+                setToast({
+                  type: 'error',
+                  title: capitalize(ActionStatus.ERROR),
+                  message:
+                    'Unable to read your wallet address from the verification session.',
+                })
+                return
+              }
 
-              if (status !== 'To be reviewed' && status !== 'Active') {
+              const fetchKycInfo = async () => {
+                try {
+                  const res = await fetch(
+                    `/api/kyc?${new URLSearchParams({
+                      userAddress: walletAddress.toLowerCase(),
+                    })}`
+                  )
+
+                  if (!res.ok) return null
+
+                  return (await res.json()) as CheckKycRes
+                } catch {
+                  return null
+                }
+              }
+
+              const kycInfo = await fetchKycInfo()
+              const status: CustomerStatus =
+                (kycInfo?.status as CustomerStatus) ??
+                (await getCustomerStatus(compilotConfig)) ??
+                'No status'
+
+              if (kycInfo) {
+                dispatch({
+                  type: 'SET_CUSTOMER_STATUS',
+                  payload: kycInfo,
+                })
+              }
+
+              if (
+                !isKycCompletedStatus(status) &&
+                status !== 'To be reviewed'
+              ) {
+                if (
+                  status === 'Rejected' ||
+                  status === 'Failed' ||
+                  status === 'Terminated'
+                ) {
+                  const reason =
+                    typeof kycInfo?.reason === 'string' &&
+                    kycInfo.reason.trim().length
+                      ? ` Reason: ${kycInfo.reason}`
+                      : ''
+
+                  setToast({
+                    type: 'error',
+                    title: capitalize(ActionStatus.REJECTED),
+                    message: `Your identity verification was not approved.${reason}`,
+                  })
+
+                  return
+                }
+
                 setToast({
                   type: 'warning',
                   title: capitalize(ActionStatus.PROCESSING),
@@ -76,12 +141,12 @@ const useKycActions = (dispatch: Dispatch<KycActions>): KycFunctions => {
 
                 dispatch({
                   type: 'SET_LAST_VERIFIED_ACCOUNT',
-                  payload: account[0].address,
+                  payload: walletAddress,
                 })
 
                 dispatch({
                   type: 'SET_KYC_COMPLETED',
-                  payload: true,
+                  payload: isKycCompletedStatus(status),
                 })
 
                 const handleToastClose = (clearInterval?: () => void) => {
@@ -133,6 +198,8 @@ const useKycActions = (dispatch: Dispatch<KycActions>): KycFunctions => {
       setCustomerKycInfo: (customerStatus: {
         type: 'Company' | 'Individual'
         status: CustomerStatus
+        canRetry: boolean
+        reason?: string | null
       }) => dispatch({ type: 'SET_CUSTOMER_STATUS', payload: customerStatus }),
       setIsVerifying: (isVerifying: boolean) =>
         dispatch({ type: 'SET_IS_VERIFYING', payload: isVerifying }),

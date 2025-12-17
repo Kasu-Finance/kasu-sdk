@@ -1,4 +1,3 @@
-import { getCustomerStatus } from '@compilot/react-sdk'
 import { NextRequest } from 'next/server'
 
 import NEXERA_API_BASE_URL, {
@@ -6,16 +5,26 @@ import NEXERA_API_BASE_URL, {
 } from '@/config/nexera/api.nexera'
 import { getRequiredEnv } from '@/utils/env'
 
-export type CustomerStatus =
-  | Awaited<ReturnType<typeof getCustomerStatus>>
-  | 'No Email'
+import type { CustomerStatus } from '@/types/kyc'
+
+const normalizeStatus = (
+  status: CustomerStatus | null | undefined
+): CustomerStatus => (status ?? 'No status') as CustomerStatus
+
+const canRetryStatus = (status: CustomerStatus) =>
+  status === 'Rejected' ||
+  status === 'Failed' ||
+  status === 'Terminated' ||
+  status === 'Dormant' ||
+  status === 'No status'
 
 type KybRes =
   | {
-      status: CustomerStatus
+      status: CustomerStatus | null
       companyClaims: {
         email: string
       }[]
+      reason?: string | null
     }
   | {
       message: string
@@ -25,10 +34,11 @@ type KybRes =
 
 type KycRes =
   | {
-      status: CustomerStatus
+      status: CustomerStatus | null
       customerEmails: {
         email: string
       }[]
+      reason?: string | null
     }
   | {
       message: string
@@ -39,11 +49,6 @@ type KycRes =
         },
       ]
     }
-
-export type CheckKycRes = {
-  type: 'Company' | 'Individual'
-  status: CustomerStatus
-}
 
 export async function GET(req: NextRequest) {
   const queryParams = req.nextUrl.searchParams
@@ -71,7 +76,13 @@ export async function GET(req: NextRequest) {
     const data: KybRes = await kybRes.json()
 
     if ('status' in data && Boolean(data.status)) {
-      return Response.json({ type: 'Company', status: data.status })
+      const status = normalizeStatus(data.status)
+      return Response.json({
+        type: 'Company',
+        status,
+        canRetry: canRetryStatus(status),
+        reason: 'reason' in data ? data.reason : null,
+      })
     }
 
     try {
@@ -87,18 +98,45 @@ export async function GET(req: NextRequest) {
       const data: KycRes = await kycRes.json()
 
       if (!('status' in data)) {
-        if (data.message !== 'Customer not found.') {
-          return Response.json(data.message, { status: 404 })
+        if (data.message === 'Customer not found.') {
+          const status = normalizeStatus('No status')
+          return Response.json({
+            type: 'Individual',
+            status,
+            canRetry: canRetryStatus(status),
+            reason: null,
+          })
         }
 
-        return Response.json(data.message, { status: 400 })
+        return Response.json(
+          {
+            message: data.message,
+            issues: data.issues,
+            code: data.code,
+          },
+          { status: 502 }
+        )
       }
 
-      if (data.status === 'Active' && !data.customerEmails[0]?.email) {
-        return Response.json({ type: 'Individual', status: 'No Email' })
+      if (
+        normalizeStatus(data.status) === 'Active' &&
+        !data.customerEmails[0]?.email
+      ) {
+        return Response.json({
+          type: 'Individual',
+          status: 'No Email',
+          canRetry: false,
+          reason: data.reason ?? null,
+        })
       }
 
-      return Response.json({ type: 'Individual', status: data.status })
+      const status = normalizeStatus(data.status)
+      return Response.json({
+        type: 'Individual',
+        status,
+        canRetry: canRetryStatus(status),
+        reason: data.reason ?? null,
+      })
     } catch (error) {
       return Response.json({ error }, { status: 500 })
     }

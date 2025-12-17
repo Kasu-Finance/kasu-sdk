@@ -3,6 +3,7 @@ import { ButtonProps } from '@mui/material'
 import useKycState from '@/hooks/context/useKycState'
 import useModalState from '@/hooks/context/useModalState'
 import useToastState from '@/hooks/context/useToastState'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import AuthenticateButton from '@/components/atoms/AuthenticateButton'
 
@@ -21,32 +22,56 @@ const KycButton: React.FC<KycButtonProps> = ({
   ...rest
 }) => {
   const { openModal } = useModalState()
-  const { isVerifying, kycInfo, kycCompleted } = useKycState()
+  const { isVerifying, kycInfo, kycCompleted, checkUserKyc } = useKycState()
   const { setToast } = useToastState()
+  const { address } = usePrivyAuthenticated()
 
   const handleKyc = () => {
     // force toast and prevent further action
-    if (kycInfo?.status === 'To be reviewed') {
+    if (
+      kycInfo?.status === 'To be reviewed' ||
+      kycInfo?.status === 'Escalated'
+    ) {
       setToast({
         type: 'warning',
         title: capitalize(ActionStatus.PROCESSING),
         message:
           'Your identity is being reviewed by our team. Please return to this page later.',
+        action: address
+          ? {
+              label: 'Refresh status',
+              onClick: () => checkUserKyc(address),
+            }
+          : undefined,
       })
 
       return
     }
-    // force toast and prevent further action
+
     if (
       kycInfo?.status === 'Rejected' ||
       kycInfo?.status === 'Failed' ||
       kycInfo?.status === 'Terminated'
     ) {
+      const reason =
+        typeof kycInfo.reason === 'string' && kycInfo.reason.trim().length
+          ? ` Reason: ${kycInfo.reason}`
+          : ''
+
       setToast({
         type: 'error',
         title: capitalize(ActionStatus.REJECTED),
-        message:
-          'Your identity was rejected. Please contact our team for more information.',
+        message: `Your identity verification was not approved.${reason}`,
+        action: kycInfo.canRetry
+          ? {
+              label: 'Retry verification',
+              onClick: () =>
+                openModal({
+                  name: ModalsKeys.KYC,
+                  callback: onKycCompleted,
+                }),
+            }
+          : undefined,
       })
 
       return

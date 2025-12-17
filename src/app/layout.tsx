@@ -80,8 +80,8 @@ export default async function RootLayout({ children }: RootLayoutProps) {
               <SdkState>
                 <ToastState>
                   <LiteModeState>
-                    <KycState>
-                      <ModalState>
+                    <ModalState>
+                      <KycState>
                         <LiteModeReady>
                           {/* <NftTracker /> */}
                           <Header />
@@ -89,8 +89,8 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                           <Footer />
                         </LiteModeReady>
                         <ModalsContainer />
-                      </ModalState>
-                    </KycState>
+                      </KycState>
+                    </ModalState>
                   </LiteModeState>
                 </ToastState>
               </SdkState>
