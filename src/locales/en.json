@@ -902,6 +902,11 @@
         "description-4": "Kasu is all about choice, transparency and control to Lenders, which is demonstrated by the following:",
         "description-5": "​Once your lending request is processed:",
         "description-6": "*Only applies to Lenders with less than 350,000 USDC total lending (including queued Lending Requests).",
+        "referralCta": {
+          "title": "Earn more by referring users",
+          "description": "Share your referral link and earn a % of generated yield for each new user you invite.",
+          "action": "Share referral link"
+        },
         "list": {
           "list-0": {
             "title": "Tracking",
