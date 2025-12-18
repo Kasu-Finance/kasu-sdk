@@ -10,17 +10,38 @@ import WaveBox from '@/components/atoms/WaveBox'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
+import { formatPercentage } from '@/utils'
+
 const ShareReferralCta = () => {
   const { t } = getTranslation()
 
-  const { txHash } = useDepositModalState()
+  const { txHash, pool, trancheId, fixedTermConfigId } = useDepositModalState()
 
   const { openModal, closeModal } = useModalState()
 
   if (!txHash) return null
 
   const handleOpenReferral = () => {
-    openModal({ name: ModalsKeys.REFERRAL })
+    const selectedTranche = pool.tranches.find(
+      (tranche) => tranche.id === trancheId
+    )
+
+    const selectedFixedTerm = selectedTranche?.fixedTermConfig?.find(
+      (cfg) => cfg.configId === fixedTermConfigId
+    )
+
+    const apyValue =
+      fixedTermConfigId && fixedTermConfigId !== '0' && selectedFixedTerm?.apy
+        ? selectedFixedTerm.apy
+        : selectedTranche?.apy
+
+    openModal({
+      name: ModalsKeys.REFERRAL,
+      source: 'lending',
+      lendingPoolName: pool.poolName,
+      trancheName: selectedTranche?.name,
+      apy: apyValue ? formatPercentage(apyValue) : undefined,
+    })
     closeModal(ModalsKeys.LEND)
   }
 

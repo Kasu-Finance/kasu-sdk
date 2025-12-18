@@ -94,7 +94,12 @@ export type Modals = {
   [ModalsKeys.LINK_WALLETS]: ModalData
   [ModalsKeys.VIEW_WALLET]: ModalData
   [ModalsKeys.NFT_DETECTED]: ModalData
-  [ModalsKeys.REFERRAL]: ModalData
+  [ModalsKeys.REFERRAL]: ModalData<{
+    source?: 'lending' | 'referral'
+    lendingPoolName?: string
+    trancheName?: string
+    apy?: string
+  }>
   [ModalsKeys.REFERRED_USERS]: ModalData<{
     referredUsers: ReferredUserDetails[]
   }>

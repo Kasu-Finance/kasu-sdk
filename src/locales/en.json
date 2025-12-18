@@ -375,7 +375,23 @@
     },
     "referral": {
       "title": "Refer new Users to earn",
-      "description": "Invite new users and earn % of generated yield for each! Your referral link:",
+      "description": "Invite new users and earn % of generated yield for each!",
+      "shareOnX": {
+        "action": "Share on X",
+        "text": "Earn real-world yield on @KasuFinance up to 22% — use my referral link to get extra 5% on yield."
+      },
+      "actions": {
+        "copyLink": "Copy link",
+        "saveImage": "Save image"
+      },
+      "overlay": {
+        "none": "No"
+      },
+      "shareImage": {
+        "defaultHeadline": "Up to 22% yield",
+        "defaultSubheadline": "Earn real-world yield on Kasu",
+        "download": "Download image"
+      },
       "subtitle": "Your referred users stats:",
       "sub-description": "Your referred users"
     },

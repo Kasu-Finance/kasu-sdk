@@ -58,6 +58,7 @@
     "d3-shape": "^3.2.0",
     "dayjs": "^1.11.10",
     "ethers": "^5.7.2",
+    "html-to-image": "^1.11.13",
     "next": "^15.4.8",
     "pino-pretty": "^11.0.0",
     "pluno-web-chatbot": "^1.0.8",
