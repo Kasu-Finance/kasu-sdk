@@ -31,7 +31,9 @@ const SimulatedBaseApy: React.FC<SimulatedBaseApyProps> = ({
       (tranche) => tranche.id === trancheId
     )
 
-    if (!selectedTranche?.fixedTermConfig.length) return selectedTranche?.apy
+    if (!selectedTranche) return 0
+
+    if (fixedTermConfigId?.toString() === '0') return selectedTranche.apy
 
     const fixedTermApy = selectedTranche.fixedTermConfig.find(
       ({ configId }) => configId === fixedTermConfigId

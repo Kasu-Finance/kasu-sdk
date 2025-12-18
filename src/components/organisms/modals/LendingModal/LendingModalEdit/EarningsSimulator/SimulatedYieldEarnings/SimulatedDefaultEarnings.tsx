@@ -49,14 +49,16 @@ const SimulatedDefaultEarnings: React.FC<SimulatedDefaultEarningsProps> = ({
       (tranche) => tranche.id === trancheId
     )
 
-    if (!selectedTranche?.fixedTermConfig.length)
-      return selectedTranche?.interestRate
+    if (!selectedTranche) return 0
 
-    const fixedTermApy = selectedTranche.fixedTermConfig.find(
+    if (fixedTermConfigId?.toString() === '0')
+      return selectedTranche.interestRate
+
+    const fixedTermConfig = selectedTranche.fixedTermConfig.find(
       ({ configId }) => configId === fixedTermConfigId
     )
 
-    return fixedTermApy?.epochInterestRate
+    return fixedTermConfig?.epochInterestRate
   }, [pool.tranches, trancheId, fixedTermConfigId])
 
   useEffect(() => {

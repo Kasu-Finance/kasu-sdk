@@ -1,12 +1,17 @@
 import { Box } from '@mui/material'
-import React, { memo, useState } from 'react'
+import React, { memo, useMemo, useState } from 'react'
 
+import useModalState from '@/hooks/context/useModalState'
 import { LoyaltyLevel } from '@/hooks/locking/useLoyaltyLevel'
 
 import SimulatedBaseApy from '@/components/organisms/modals/LendingModal/LendingModalEdit/EarningsSimulator/SimulatedYieldEarnings/SimulatedBaseApy'
 import SimulatedBonusApy from '@/components/organisms/modals/LendingModal/LendingModalEdit/EarningsSimulator/SimulatedYieldEarnings/SimulatedBonusApy'
 import SimulatedBonusEarnings from '@/components/organisms/modals/LendingModal/LendingModalEdit/EarningsSimulator/SimulatedYieldEarnings/SimulatedBonusEarnings'
 import SimulatedDefaultEarnings from '@/components/organisms/modals/LendingModal/LendingModalEdit/EarningsSimulator/SimulatedYieldEarnings/SimulatedDefaultEarnings'
+
+import { ModalsKeys } from '@/context/modal/modal.types'
+
+import { TimeConversions } from '@/utils'
 
 type SimulatedYieldEarningsProps = {
   fixedTermConfigId?: string
@@ -38,9 +43,33 @@ const SimulatedYieldEarnings: React.FC<SimulatedYieldEarningsProps> = ({
   isDebouncing,
   simulatedDuration,
 }) => {
+  const { modal } = useModalState()
+  const pool = modal[ModalsKeys.LEND].pool
+
   const [yieldEarnings, setYieldEarnings] = useState([0])
 
   const bonusEpochInterest = getBonusEpochInterest(currentLevel)
+
+  const effectiveDuration = useMemo(() => {
+    if (!fixedTermConfigId || fixedTermConfigId.toString() === '0') {
+      return simulatedDuration
+    }
+
+    const selectedTranche = pool.tranches.find(
+      (tranche) => tranche.id === trancheId
+    )
+
+    const fixedTermConfig = selectedTranche?.fixedTermConfig.find(
+      ({ configId }) => configId === fixedTermConfigId
+    )
+
+    const epochs = parseFloat(fixedTermConfig?.epochLockDuration ?? '')
+    const fixedTermDays = Number.isFinite(epochs)
+      ? Math.round(epochs * TimeConversions.DAYS_PER_WEEK)
+      : simulatedDuration
+
+    return Math.min(365, Math.max(0, fixedTermDays))
+  }, [fixedTermConfigId, pool.tranches, simulatedDuration, trancheId])
 
   return (
     <Box>
@@ -54,7 +83,7 @@ const SimulatedYieldEarnings: React.FC<SimulatedYieldEarningsProps> = ({
         setYieldEarnings={setYieldEarnings}
         trancheId={trancheId}
         fixedTermConfigId={fixedTermConfigId}
-        simulatedDuration={simulatedDuration}
+        simulatedDuration={effectiveDuration}
         isDebouncing={isDebouncing}
         amount={amount}
         amountInUSD={amountInUSD}
@@ -65,7 +94,7 @@ const SimulatedYieldEarnings: React.FC<SimulatedYieldEarningsProps> = ({
         amount={amount}
         amountInUSD={amountInUSD}
         isDebouncing={isDebouncing}
-        simulatedDuration={simulatedDuration}
+        simulatedDuration={effectiveDuration}
       />
     </Box>
   )
