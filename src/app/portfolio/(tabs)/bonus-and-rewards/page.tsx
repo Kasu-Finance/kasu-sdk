@@ -10,9 +10,7 @@ import { Routes } from '@/config/routes'
 const BonusAndRewards = () => {
   return (
     <LiteModeRenderer
-      renderOnLiteMode={
-        <RedirectHandler to={Routes.portfolio.root.url} whenNotConnected />
-      }
+      renderOnLiteMode={<RedirectHandler to={Routes.portfolio.root.url} />}
       otherwise={
         <Stack spacing={3}>
           <PortfolioRewardSummary />

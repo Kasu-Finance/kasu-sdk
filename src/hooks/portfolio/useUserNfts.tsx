@@ -99,7 +99,7 @@ const useUserNfts = () => {
   return {
     userNfts: data,
     error,
-    isLoading: isLoading || (!data && !error),
+    isLoading: Boolean(address) && (!sdk || isLoading || (!data && !error)),
     updateUserNfts: mutate,
   }
 }

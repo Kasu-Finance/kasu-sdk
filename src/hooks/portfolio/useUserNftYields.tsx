@@ -20,7 +20,7 @@ const useUserNftYields = () => {
 
   const chainId = useChainId()
 
-  const { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     address && chainId ? ['userNftYields', address, chainId] : null,
     async ([_, userAddress, chainId]): Promise<UserNftYield> => {
       const res = await fetch(
@@ -54,7 +54,8 @@ const useUserNftYields = () => {
   return {
     userNftYields: data,
     error,
-    isLoading: isLoading || (!data && !error),
+    isLoading: Boolean(address) && (!chainId || isLoading || (!data && !error)),
+    updateUserNftYields: mutate,
   }
 }
 

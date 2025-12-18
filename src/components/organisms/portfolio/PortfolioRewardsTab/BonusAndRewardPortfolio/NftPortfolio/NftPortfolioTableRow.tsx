@@ -70,11 +70,11 @@ const NftPortfolioTableRow: React.FC<NftPortfolioTableRowProps> = ({
           </Typography>
         </Box>
       </TableCell>
-      {isActive && nftYields ? (
+      {isActive ? (
         <>
           <TableCell align='right'>
             <Typography variant='baseSm'>
-              {formatAmount(formatUnits(nftYields.epochBoost, 6), {
+              {formatAmount(formatUnits(nftYields?.epochBoost || '0', 6), {
                 minDecimals: 2,
               })}{' '}
               KASU
@@ -88,7 +88,7 @@ const NftPortfolioTableRow: React.FC<NftPortfolioTableRowProps> = ({
             </Typography>
           </TableCell>
           <TableCell align='right'>
-            {formatAmount(formatUnits(nftYields.totalBoost, 6), {
+            {formatAmount(formatUnits(nftYields?.totalBoost || '0', 6), {
               minDecimals: 2,
             })}{' '}
             KASU
