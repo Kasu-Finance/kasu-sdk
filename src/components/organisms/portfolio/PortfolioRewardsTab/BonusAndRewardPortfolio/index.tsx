@@ -2,14 +2,16 @@ import { Box, Stack, Typography } from '@mui/material'
 
 import getTranslation from '@/hooks/useTranslation'
 
+import ApiCsvDownloadButton from '@/components/atoms/ApiCsvDownloadButton'
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
 import Airdrops from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/Airdrops'
 import BonusAndRewardTable from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/BonusAndRewardTable'
-import CsvDownloadButton from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/CsvDownloadButton'
 import NftPortfolio from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/NftPortfolio'
 import ReferralBonus from '@/components/organisms/portfolio/PortfolioRewardsTab/BonusAndRewardPortfolio/ReferralBonus'
+
+import { DownloadRoundedIcon } from '@/assets/icons'
 
 const BonusAndRewardPortfolio = () => {
   const { t } = getTranslation()
@@ -20,7 +22,20 @@ const BonusAndRewardPortfolio = () => {
         title={t('portfolio.rewards.title-2')}
         justifyContent='space-between'
       >
-        <CsvDownloadButton />
+        <ApiCsvDownloadButton
+          kind='rewards'
+          variant='text'
+          endIcon={<DownloadRoundedIcon />}
+          sx={{ textTransform: 'unset' }}
+        >
+          <Typography
+            variant='inherit'
+            sx={{ '&::first-letter': { textTransform: 'capitalize' } }}
+            display='block'
+          >
+            {t('general.csvDownload')}
+          </Typography>
+        </ApiCsvDownloadButton>
       </CustomCardHeader>
       <CustomInnerCardContent
         sx={{

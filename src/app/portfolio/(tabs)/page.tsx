@@ -2,6 +2,7 @@ import { Box, Stack } from '@mui/material'
 
 import getTranslation from '@/hooks/useTranslation'
 
+import ApiCsvDownloadButton from '@/components/atoms/ApiCsvDownloadButton'
 import CustomCard from '@/components/atoms/CustomCard'
 import CustomCardHeader from '@/components/atoms/CustomCard/CustomCardHeader'
 import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
@@ -9,9 +10,10 @@ import LiteModeRenderer from '@/components/atoms/LiteModeRenderer'
 import WaveBox from '@/components/atoms/WaveBox'
 import NextClearingPeriodInfo from '@/components/molecules/NextClearingPeriodInfo'
 import LiteModeApp from '@/components/organisms/lite'
-import CsvDownloadButton from '@/components/organisms/portfolio/LendingPortfolioTab/CsvDownloadButton'
 import LendingPortfolioTableFilter from '@/components/organisms/portfolio/LendingPortfolioTab/LendingPortfolioTableFilter'
 import LendingPortfolioTableWrapper from '@/components/organisms/portfolio/LendingPortfolioTab/LendingPortfolioTableWrapper'
+
+import { DownloadRoundedIcon } from '@/assets/icons'
 
 import getLockPeriods from '@/actions/getLockPeriods'
 import { getCurrentEpoch } from '@/app/_requests/currentEpoch'
@@ -72,10 +74,20 @@ const Portfolio = async () => {
                   poolOverviews={pools}
                   currentEpoch={currentEpoch}
                 />
-                <CsvDownloadButton
-                  poolOverviews={pools}
-                  currentEpoch={currentEpoch}
-                />
+                <ApiCsvDownloadButton
+                  kind='portfolio-lending'
+                  epochId={currentEpoch}
+                  variant='text'
+                  sx={{
+                    maxWidth: 368,
+                    mx: 'auto',
+                    textTransform: 'capitalize',
+                    height: 'auto',
+                  }}
+                  endIcon={<DownloadRoundedIcon />}
+                >
+                  {t('general.csvDownload')}
+                </ApiCsvDownloadButton>
               </Box>
             </CustomCardHeader>
             <CustomInnerCardContent sx={{ p: 0 }}>

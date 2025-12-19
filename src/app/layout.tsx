@@ -11,6 +11,7 @@ import ModalsContainer from '@/components/organisms/modals/ModalsContainer'
 
 import KycState from '@/context/kyc/kyc.provider'
 import LiteModeState from '@/context/liteMode/liteMode.provider'
+import LoadingMaskState from '@/context/loadingMask/loadingMask.provider'
 import ModalState from '@/context/modal/modal.provider'
 import PrivyProvider from '@/context/privy.provider'
 import SdkState from '@/context/sdk/sdk.provider'
@@ -79,19 +80,21 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             <SwrProvider unusedPools={filteredPools}>
               <SdkState>
                 <ToastState>
-                  <LiteModeState>
-                    <ModalState>
-                      <KycState>
-                        <LiteModeReady>
-                          {/* <NftTracker /> */}
-                          <Header />
-                          <Box component='main'>{children}</Box>
-                          <Footer />
-                        </LiteModeReady>
-                        <ModalsContainer />
-                      </KycState>
-                    </ModalState>
-                  </LiteModeState>
+                  <LoadingMaskState>
+                    <LiteModeState>
+                      <ModalState>
+                        <KycState>
+                          <LiteModeReady>
+                            {/* <NftTracker /> */}
+                            <Header />
+                            <Box component='main'>{children}</Box>
+                            <Footer />
+                          </LiteModeReady>
+                          <ModalsContainer />
+                        </KycState>
+                      </ModalState>
+                    </LiteModeState>
+                  </LoadingMaskState>
                 </ToastState>
               </SdkState>
             </SwrProvider>

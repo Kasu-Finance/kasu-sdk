@@ -48,6 +48,7 @@
     "none": "none",
     "amend": "amend",
     "csvDownload": "download as CSV",
+    "preparingCsv": "Preparing CSV...",
     "overview": "overview",
     "poolApy": "Loan APY",
     "apy": "APY",
