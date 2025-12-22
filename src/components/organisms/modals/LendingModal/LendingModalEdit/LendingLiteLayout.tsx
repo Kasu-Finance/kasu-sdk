@@ -1,21 +1,23 @@
 import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { Box, Skeleton, Stack, Typography } from '@mui/material'
-import { Dispatch, memo, SetStateAction } from 'react'
+import { Dispatch, memo, SetStateAction, useMemo } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
 import DepositAmountInput from '@/components/molecules/lending/lendingModal/DepositAmountInput'
 import PoolDropdown from '@/components/molecules/lending/PoolDropdown'
 import Acknowledgement from '@/components/organisms/modals/LendingModal/LendingModalEdit/Acknowledgement'
+import ApyDropdown from '@/components/organisms/modals/LendingModal/LendingModalEdit/ApyDropdown'
 import ForecastedEarnings from '@/components/organisms/modals/LendingModal/LendingModalEdit/ForecastedEarnings'
 import LendingModalEditActions from '@/components/organisms/modals/LendingModal/LendingModalEdit/LendingModalEditActions'
 import LendingTrancheDropdown from '@/components/organisms/modals/LendingModal/LendingModalEdit/LendingTrancheDropdown'
-import TrancheInfo from '@/components/organisms/modals/LendingModal/LendingModalEdit/TrancheInfo'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { SupportedTokens } from '@/constants/tokens'
+import getAvailableFixedTermConfigs from '@/utils/lending/getAvailableFixedTermConfigs'
 
 type LiteLayoutProps = {
   selectedPool: string
@@ -57,15 +59,30 @@ const LendingLiteLayout: React.FC<LiteLayoutProps> = ({
   amountInUSD,
   deferredAmountInUSD,
   selectedTranche,
+  fixedTermConfigId,
   setAmount,
   setAmountInUSD,
   validate,
   handlePoolChange,
   handleTrancheChange,
+  handleFixedTermConfigChange,
 }) => {
   const { modal } = useModalState()
+  const { address } = usePrivyAuthenticated()
 
-  const { pools } = modal[ModalsKeys.LEND]
+  const { pools, pool: defaultPool } = modal[ModalsKeys.LEND]
+
+  const selectedPoolData =
+    pools?.find((pool) => pool.id === selectedPool) ?? defaultPool
+
+  const selectedTrancheData = selectedPoolData?.tranches.find(
+    (tranche) => tranche.id === selectedTranche
+  )
+
+  const hasFixedTermOptions = useMemo(
+    () => getAvailableFixedTermConfigs(selectedTrancheData, address).length > 0,
+    [address, selectedTrancheData]
+  )
 
   return (
     <Stack spacing={3} mt={3}>
@@ -80,12 +97,16 @@ const LendingLiteLayout: React.FC<LiteLayoutProps> = ({
         selectedPool={selectedPool}
         selectedTranche={selectedTranche}
         setSelectedTranche={handleTrancheChange}
-        showApy
+        showApy={!hasFixedTermOptions}
       />
-      <TrancheInfo
-        selectedPool={selectedPool}
-        selectedTranche={selectedTranche}
-      />
+      {hasFixedTermOptions && (
+        <ApyDropdown
+          fixedTermConfigId={fixedTermConfigId}
+          selectedTrancheId={selectedTranche}
+          selectedPoolId={selectedPool}
+          setFixedTermConfigId={handleFixedTermConfigChange}
+        />
+      )}
       {!supportedTokens ? (
         <Skeleton
           variant='rounded'
@@ -129,7 +150,7 @@ const LendingLiteLayout: React.FC<LiteLayoutProps> = ({
       <LendingModalEditActions
         amount={deferredAmount}
         amountInUSD={deferredAmountInUSD}
-        fixedTermConfigId='0'
+        fixedTermConfigId={fixedTermConfigId}
         trancheId={selectedTranche}
         selectedToken={selectedToken}
         selectedPool={selectedPool}

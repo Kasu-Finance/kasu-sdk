@@ -23,9 +23,9 @@ const ForecastedEarnings: React.FC<ForecastedEarningsProps> = ({
 }) => {
   const { modal } = useModalState()
 
-  const { pools } = modal[ModalsKeys.LEND]
+  const { pools, pool: defaultPool } = modal[ModalsKeys.LEND]
 
-  const pool = pools?.find((pool) => pool.id === selectedPool)
+  const pool = pools?.find((pool) => pool.id === selectedPool) ?? defaultPool
 
   const tranche = pool?.tranches.find(
     (tranche) => tranche.id === selectedTranche

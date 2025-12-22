@@ -1,6 +1,8 @@
 import { Box, Skeleton, Stack, Typography } from '@mui/material'
 import React, { Dispatch, memo, SetStateAction } from 'react'
 
+import useModalState from '@/hooks/context/useModalState'
+import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
 import DepositAmountInput from '@/components/molecules/lending/lendingModal/DepositAmountInput'
@@ -11,7 +13,10 @@ import LendingModalEditActions from '@/components/organisms/modals/LendingModal/
 import LendingTrancheDropdown from '@/components/organisms/modals/LendingModal/LendingModalEdit/LendingTrancheDropdown'
 import SecureSpotInfo from '@/components/organisms/modals/LendingModal/LendingModalEdit/SecureSpotInfo'
 
+import { ModalsKeys } from '@/context/modal/modal.types'
+
 import { SupportedTokens } from '@/constants/tokens'
+import getAvailableFixedTermConfigs from '@/utils/lending/getAvailableFixedTermConfigs'
 
 type ProLayoutProps = {
   amount: string
@@ -56,6 +61,18 @@ const LendingProLayout: React.FC<ProLayoutProps> = ({
   handleFixedTermConfigChange,
   handleTrancheChange,
 }) => {
+  const { modal } = useModalState()
+  const { address } = usePrivyAuthenticated()
+
+  const { pool } = modal[ModalsKeys.LEND]
+
+  const selectedTrancheData = pool.tranches.find(
+    (tranche) => tranche.id === selectedTranche
+  )
+
+  const hasFixedTermOptions =
+    getAvailableFixedTermConfigs(selectedTrancheData, address).length > 0
+
   return (
     <Stack spacing={3} mt={3}>
       {!supportedTokens ? (
@@ -95,12 +112,15 @@ const LendingProLayout: React.FC<ProLayoutProps> = ({
       <LendingTrancheDropdown
         selectedTranche={selectedTranche}
         setSelectedTranche={handleTrancheChange}
+        showApy={!hasFixedTermOptions}
       />
-      <ApyDropdown
-        fixedTermConfigId={fixedTermConfigId}
-        selectedTrancheId={selectedTranche}
-        setFixedTermConfigId={handleFixedTermConfigChange}
-      />
+      {hasFixedTermOptions && (
+        <ApyDropdown
+          fixedTermConfigId={fixedTermConfigId}
+          selectedTrancheId={selectedTranche}
+          setFixedTermConfigId={handleFixedTermConfigChange}
+        />
+      )}
       <EarningsSimulator
         amount={deferredAmount}
         amountInUSD={deferredAmountInUSD}

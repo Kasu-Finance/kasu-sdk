@@ -10,15 +10,18 @@ import CustomSelect from '@/components/atoms/CustomSelect'
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { formatPercentage, formatToNearestTime, TimeConversions } from '@/utils'
+import getAvailableFixedTermConfigs from '@/utils/lending/getAvailableFixedTermConfigs'
 
 type ApyDropdownProps = {
   selectedTrancheId: `0x${string}`
+  selectedPoolId?: string
   fixedTermConfigId: string | undefined
   setFixedTermConfigId: (fixedTermConfigId: string | undefined) => void
 }
 
 const ApyDropdown: React.FC<ApyDropdownProps> = ({
   fixedTermConfigId,
+  selectedPoolId,
   selectedTrancheId,
   setFixedTermConfigId,
 }) => {
@@ -26,9 +29,14 @@ const ApyDropdown: React.FC<ApyDropdownProps> = ({
   const { address } = usePrivyAuthenticated()
   const { modal } = useModalState()
 
-  const pool = modal[ModalsKeys.LEND].pool
+  const { pools, pool: defaultPool } = modal[ModalsKeys.LEND]
 
-  const selectedTranche = pool.tranches.find(
+  const selectedPool =
+    selectedPoolId && pools
+      ? pools.find((pool) => pool.id === selectedPoolId)
+      : defaultPool
+
+  const selectedTranche = selectedPool?.tranches.find(
     (tranche) => tranche.id === selectedTrancheId
   )
 
@@ -41,16 +49,8 @@ const ApyDropdown: React.FC<ApyDropdownProps> = ({
               id: '0',
               value: selectedTranche.apy,
             },
-            ...selectedTranche.fixedTermConfig
-              .filter(
-                (fixedTermConfig) =>
-                  fixedTermConfig.fixedTermDepositStatus === 'Everyone' ||
-                  fixedTermConfig.fixedTermDepositAllowlist.find(
-                    (allowList) =>
-                      allowList.userId.toLowerCase() === address?.toLowerCase()
-                  )
-              )
-              .map((fixedTermConfig) => {
+            ...getAvailableFixedTermConfigs(selectedTranche, address).map(
+              (fixedTermConfig) => {
                 const durationInMs =
                   parseFloat(fixedTermConfig.epochLockDuration) *
                   TimeConversions.DAYS_PER_WEEK *
@@ -62,7 +62,8 @@ const ApyDropdown: React.FC<ApyDropdownProps> = ({
                   id: fixedTermConfig.configId,
                   value: fixedTermConfig.apy,
                 }
-              }),
+              }
+            ),
           ]
         : null,
     [t, address, selectedTranche]

@@ -71,10 +71,9 @@ const LendingModalEditActions: React.FC<LendingModalEditActionsProps> = ({
     setAmount(amount)
     setAmountInUSD(amountInUSD)
 
-    // default is set to 0 if defaultTranche.fixedTermConfig.length <=0
+    // Default is '0' when no fixed term options are available.
     if (fixedTermConfigId) {
-      // set to zero if pools exist ( in lite mode )
-      setFixedTermConfigId(pools?.length ? '0' : fixedTermConfigId)
+      setFixedTermConfigId(fixedTermConfigId)
     }
 
     nextStep()
