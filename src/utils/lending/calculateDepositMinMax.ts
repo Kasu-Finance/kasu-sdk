@@ -23,6 +23,12 @@ const calculateDepositMinMax = (
 
   let trancheMin = toBigNumber(tranche?.minimumDeposit ?? '0')
   let trancheMax = toBigNumber(tranche?.maximumDeposit ?? '0')
+  const trancheCapacity = toBigNumber(tranche?.poolCapacity ?? '0')
+  const defaultMinDeposit = toBigNumber('1')
+
+  if (trancheMin.lt(defaultMinDeposit)) {
+    trancheMin = defaultMinDeposit
+  }
 
   const currentEpochDepositedAmount = currentEpochDepositedAmountMap.get(
     trancheId.toLowerCase()
@@ -31,23 +37,30 @@ const calculateDepositMinMax = (
     currentEpochFtdAmountMap.get(trancheId.toLowerCase()) ?? []
 
   const currentDepositedAmount = toBigNumber(currentEpochDepositedAmount ?? '0')
+  let epochMaxDeposit = trancheMax
 
-  // if user has deposited once in this epoch, they already have deposited the minimum requirement
-  // and such, the max amount he can deposit into this epoch
-  // should reflect/subtracted from his previous deposits in the same epoch
   if (!currentDepositedAmount.isZero()) {
     const ftdDepositedAmount =
       currentEpochFtdAmount[parseFloat(fixedTermConfigId ?? '0')]
 
     if (ftdDepositedAmount) {
-      trancheMin = toBigNumber('1')
+      trancheMin = defaultMinDeposit
     }
-    trancheMax = trancheMax.sub(currentDepositedAmount)
+    trancheMax = currentDepositedAmount.gte(trancheMax)
+      ? toBigNumber('0')
+      : trancheMax.sub(currentDepositedAmount)
+    epochMaxDeposit = trancheMax
+  }
+
+  if (trancheMax.gt(trancheCapacity)) {
+    trancheMax = trancheCapacity
   }
 
   return {
     minDeposit: formatEther(trancheMin),
     maxDeposit: formatEther(trancheMax),
+    remainingCapacity: formatEther(trancheCapacity),
+    epochMaxDeposit: formatEther(epochMaxDeposit),
   }
 }
 

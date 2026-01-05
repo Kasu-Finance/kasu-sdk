@@ -39,8 +39,15 @@ type ProLayoutProps = {
   validate: (
     amount: string,
     amountInUSD?: string | undefined,
-    depositMinMax?: { minDeposit: string; maxDeposit: string } | undefined,
-    token?: SupportedTokens | undefined
+    depositMinMax?:
+      | {
+          minDeposit: string
+          maxDeposit: string
+          remainingCapacity?: string
+          epochMaxDeposit?: string
+        }
+      | undefined,
+    trancheId?: `0x${string}`
   ) => void
 }
 
