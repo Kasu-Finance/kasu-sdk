@@ -51,10 +51,13 @@ const ViewWalletModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const handleFundWallet = () => {
     if (!address) return
 
-    fundWallet(address, {
-      chain: { id: chainId },
-      uiConfig: {
-        receiveFundsTitle: 'Receive Funds',
+    fundWallet({
+      address,
+      options: {
+        chain: { id: chainId },
+        uiConfig: {
+          receiveFundsTitle: 'Receive Funds',
+        },
       },
     })
   }
