@@ -9,6 +9,7 @@ import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import { SupportedChainIds } from '@/connection/chains'
 import { RPC_URLS } from '@/connection/rpc'
+import { MANAGED_DATA_CACHE_TTL } from '@/constants/general'
 
 const useLendingPortfolioData = (
   poolOverviews: PoolOverview[],
@@ -60,7 +61,8 @@ const useLendingPortfolioData = (
     },
     {
       keepPreviousData: true,
-      revalidateIfStale: false,
+      revalidateIfStale: true,
+      refreshInterval: MANAGED_DATA_CACHE_TTL,
     }
   )
 
