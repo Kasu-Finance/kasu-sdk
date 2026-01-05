@@ -20,6 +20,13 @@ import { formatAmount, toBigNumber } from '@/utils'
 import calculateDepositMinMax from '@/utils/lending/calculateDepositMinMax'
 import getAvailableFixedTermConfigs from '@/utils/lending/getAvailableFixedTermConfigs'
 
+type DepositMinMax = {
+  minDeposit: string
+  maxDeposit: string
+  remainingCapacity?: string
+  epochMaxDeposit?: string
+}
+
 const LendingModalEdit = () => {
   const { setModalStatus } = useModalStatusState()
 
@@ -97,7 +104,8 @@ const LendingModalEdit = () => {
     (
       amount: string,
       amountInUSD?: string,
-      depositMinMax?: { minDeposit: string; maxDeposit: string }
+      depositMinMax?: DepositMinMax,
+      trancheId?: `0x${string}`
     ) => {
       try {
         if (!amount || !balance) return
@@ -107,12 +115,27 @@ const LendingModalEdit = () => {
         const inputBN = toBigNumber(amount)
         const inputUsdBN = toBigNumber(amountInUSD ?? amount)
 
-        const min = depositMinMax?.minDeposit ?? minDeposit
-        const max = depositMinMax?.maxDeposit ?? maxDeposit
+        const activeTrancheId = trancheId ?? selectedTranche
+        const limits =
+          depositMinMax ??
+          calculateDepositMinMax(
+            selectedPoolData?.tranches ?? pool.tranches,
+            activeTrancheId,
+            currentEpochDepositedAmountMap,
+            currentEpochFtdAmountMap,
+            fixedTermConfigId
+          )
+
+        const min = limits.minDeposit ?? minDeposit
+        const max = limits.maxDeposit ?? maxDeposit
+        const remainingCapacityValue = limits.remainingCapacity ?? '0'
+        const epochMaxDepositValue = limits.epochMaxDeposit ?? max
 
         const minDepositBN = toBigNumber(min)
         const maxDepositBN = toBigNumber(max)
         const balanceBN = toBigNumber(balanceValue)
+        const remainingCapacityBN = toBigNumber(remainingCapacityValue)
+        const epochMaxDepositBN = toBigNumber(epochMaxDepositValue)
 
         if (inputBN.isZero()) {
           setModalStatus({ type: 'error', errorMessage: 'Amount is required' })
@@ -127,18 +150,34 @@ const LendingModalEdit = () => {
           return
         }
 
-        if (inputUsdBN.gt(maxDepositBN)) {
+        if (inputBN.gt(balanceBN)) {
           setModalStatus({
             type: 'error',
-            errorMessage: `The value entered is above the maximum of ${formatAmount(max)} USDC`,
+            errorMessage: `The value entered is above your available balance of ${formatAmount(balanceValue)} USDC`,
           })
           return
         }
 
-        if (inputBN.gt(balanceBN)) {
+        if (inputUsdBN.gt(remainingCapacityBN)) {
           setModalStatus({
             type: 'error',
-            errorMessage: 'Insufficient balance',
+            errorMessage: `The value entered is above the remaining capacity of ${formatAmount(remainingCapacityValue)} USDC`,
+          })
+          return
+        }
+
+        if (inputUsdBN.gt(epochMaxDepositBN)) {
+          setModalStatus({
+            type: 'error',
+            errorMessage: `The value entered is above the maximum deposit size for this epoch of ${formatAmount(epochMaxDepositValue)} USDC`,
+          })
+          return
+        }
+
+        if (inputUsdBN.gt(maxDepositBN)) {
+          setModalStatus({
+            type: 'error',
+            errorMessage: `The value entered is above the maximum deposit size for this epoch of ${formatAmount(max)} USDC`,
           })
           return
         }
@@ -148,7 +187,19 @@ const LendingModalEdit = () => {
         console.error(error)
       }
     },
-    [setModalStatus, minDeposit, maxDeposit, balance, usdcDecimals]
+    [
+      setModalStatus,
+      minDeposit,
+      maxDeposit,
+      balance,
+      usdcDecimals,
+      selectedTranche,
+      selectedPoolData,
+      pool.tranches,
+      currentEpochDepositedAmountMap,
+      currentEpochFtdAmountMap,
+      fixedTermConfigId,
+    ]
   )
 
   const handlePoolChange = useCallback(
@@ -174,7 +225,12 @@ const LendingModalEdit = () => {
 
       if (!nextFixedTermConfigId) return
 
-      validate(deferredAmount, deferredAmountInUSD, depositMinMax)
+      validate(
+        deferredAmount,
+        deferredAmountInUSD,
+        depositMinMax,
+        nextTranche.id as `0x${string}`
+      )
     },
     [
       setModalStatus,
@@ -216,7 +272,7 @@ const LendingModalEdit = () => {
       // since it will be validated when user selects a fixed term option which is required
       if (!nextFixedTermConfigId) return
 
-      validate(deferredAmount, deferredAmountInUSD, depositMinMax)
+      validate(deferredAmount, deferredAmountInUSD, depositMinMax, tranche)
     },
     [
       setModalStatus,

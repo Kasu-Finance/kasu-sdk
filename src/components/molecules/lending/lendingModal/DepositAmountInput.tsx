@@ -58,7 +58,17 @@ type DepositAmountInputProps = {
   endAdornment?: ReactNode
   applyConversion: (fromAmount: string, token: SupportedTokens) => void
   debounceTime?: number
-  validate: (amount: string, amountInUSD?: string) => void
+  validate: (
+    amount: string,
+    amountInUSD?: string,
+    depositMinMax?: {
+      minDeposit: string
+      maxDeposit: string
+      remainingCapacity?: string
+      epochMaxDeposit?: string
+    },
+    trancheId?: `0x${string}`
+  ) => void
 }
 
 const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
@@ -243,6 +253,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
       if (toBigNumber(currentBalance).isZero()) {
         setAmount('0')
         setAmountInUSD('0')
+        validate('0', '0')
         return
       }
 
@@ -252,16 +263,19 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
         ? maxDeposit
         : currentBalance
 
-      setAmount(maxPossible)
+      const [wholeMax] = maxPossible.split('.')
+      const flooredMax = wholeMax || '0'
+
+      setAmount(flooredMax)
 
       if (selectedToken === SupportedTokens.USDC) {
-        setAmountInUSD(maxPossible)
-        debouncedValidate(maxPossible)
+        setAmountInUSD(flooredMax)
+        debouncedValidate(flooredMax)
 
         return
       }
 
-      applyConversion(maxPossible, selectedToken)
+      applyConversion(flooredMax, selectedToken)
     },
     [
       applyConversion,
@@ -271,6 +285,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
       selectedToken,
       setAmount,
       setAmountInUSD,
+      validate,
     ]
   )
 
