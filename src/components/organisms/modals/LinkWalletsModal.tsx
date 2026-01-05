@@ -14,6 +14,7 @@ import {
   useWallets,
 } from '@privy-io/react-auth'
 import { useSetActiveWallet } from '@privy-io/wagmi'
+import Image from 'next/image'
 import { redirect, usePathname } from 'next/navigation'
 import React, { useState } from 'react'
 
@@ -32,9 +33,29 @@ import { CopyIcon } from '@/assets/icons'
 import BaseLogo from '@/assets/logo/BaseLogo'
 
 import { Routes } from '@/config/routes'
+import { PRIVY_BRAND_NAME, PRIVY_LOGO_URL } from '@/constants/privy'
 import { customPalette } from '@/themes/palette'
 import { customTypography } from '@/themes/typography'
 import { formatAccount } from '@/utils'
+
+const LINK_WALLET_DESCRIPTION = (
+  <span
+    style={{
+      display: 'inline-flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: 8,
+    }}
+  >
+    <Image
+      src={PRIVY_LOGO_URL}
+      alt={PRIVY_BRAND_NAME}
+      width={120}
+      height={28}
+      style={{ height: 28, width: 'auto' }}
+    />
+  </span>
+)
 
 const LinkWalletsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   const { wallets } = useWallets()
@@ -234,7 +255,9 @@ const LinkWalletsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               variant='contained'
               color='secondary'
               fullWidth
-              onClick={linkWallet}
+              onClick={() =>
+                linkWallet({ description: LINK_WALLET_DESCRIPTION })
+              }
               sx={{ textTransform: 'capitalize' }}
             >
               Link another wallet
