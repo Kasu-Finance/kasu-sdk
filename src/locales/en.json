@@ -6,6 +6,9 @@
     "amounts": "amounts",
     "cancel": "cancel",
     "cancelled": "cancelled",
+    "cancelledStatus": "Cancelled",
+    "retry": "retry",
+    "tryAgain": "Try again",
     "balance": "balance",
     "variableApy": "Variable Gross APY",
     "netApy": "Net APY",
@@ -19,6 +22,8 @@
     "lend": "lend",
     "lendingStrategy": "lending strategy",
     "confirm": "confirm",
+    "completed": "Completed",
+    "failed": "Failed",
     "goBack": "Back to Lending Strategies",
     "close": "close",
     "back": "back",
@@ -911,6 +916,43 @@
         "metric-5": "Fixed Loan Term Expiry Date",
         "metric-5-tooltip": "A Fixed APY Term Loan will be fixed (locked) for the specified period of time. The fixed term start date will be on the first day of the next epoch after the Lending Request is accepted. During a Fixed APY Term, no Withdrawal Request can be submitted.",
         "nextClearingText": "The outcome of your Lending Request will be determined at the end of the epoch clearing period."
+      },
+      "stepper": {
+        "title": "Complete your Lending Request",
+        "steps": {
+          "generate": "Generate loan contract",
+          "review": "Review loan contract",
+          "confirm": "Confirm loan contract",
+          "approve": "Approve USDC spending",
+          "request": "Request deposit"
+        },
+        "descriptions": {
+          "generate": "Please sign the transaction in your wallet to generate the Loan Contract.",
+          "generateProcessing": "Generating the loan contract...",
+          "confirm": "Please sign the transaction in your wallet to accept the Loan Contract.",
+          "approve": "Please confirm the transaction.",
+          "request": "Please confirm the transaction.",
+          "waitingConfirmation": "Waiting for confirmation..."
+        },
+        "errors": {
+          "generate": {
+            "failed": "Unable to generate the Loan Contract. Please try again.",
+            "cancelled": "Loan Contract generation was cancelled. Please try again."
+          },
+          "confirm": {
+            "failed": "Unable to accept the Loan Contract. Please try again.",
+            "cancelled": "Loan Contract signing was cancelled. Please sign again to continue."
+          },
+          "approve": {
+            "failed": "USDC approval failed. Please try again.",
+            "cancelled": "USDC approval was cancelled in your wallet. Please try again."
+          },
+          "request": {
+            "failed": "Deposit request failed. Please try again.",
+            "cancelled": "Deposit request was cancelled in your wallet. Please try again.",
+            "expired": "The Loan Contract has expired. Please generate a new contract to continue."
+          }
+        }
       },
       "completed": {
         "description-1": "Your Lending Request has been successfully queued​:",

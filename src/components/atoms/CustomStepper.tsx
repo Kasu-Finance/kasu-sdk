@@ -11,6 +11,7 @@ const CustomStepper = () => {
       connector={null}
       component={Grid}
       container
+      sx={{ width: '100%', flexWrap: { xs: 'wrap', sm: 'nowrap' } }}
     >
       {steps.map((step, index, origialArray) => (
         <Step
@@ -20,7 +21,7 @@ const CustomStepper = () => {
           sx={{
             zIndex: origialArray.length - index,
             flex: 1,
-            ml: index !== 0 ? -4 : 0,
+            ml: index !== 0 ? { xs: 0, sm: -4 } : 0,
             height: 36,
             display: 'flex',
             justifyContent: 'end',
@@ -29,8 +30,12 @@ const CustomStepper = () => {
             borderRadius: 30,
             color: 'gold.middle',
             textAlign: 'right',
-            pr: 2,
+            pr: { xs: 1.5, sm: 2 },
             position: 'relative',
+            minWidth: 0,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
             '&::before': {
               position: 'absolute',
               content: '""',

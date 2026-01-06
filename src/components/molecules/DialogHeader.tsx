@@ -34,7 +34,7 @@ const DialogHeader: React.FC<DialogHeaderProps> = ({
       justifyContent='center'
     >
       <Box
-        width={isFullscreen ? '100%' : 600}
+        width={{ xs: '100%', sm: isFullscreen ? '100%' : 600 }}
         position='absolute'
         sx={{ transform: 'translateY(-72px)' }}
         display='flex'

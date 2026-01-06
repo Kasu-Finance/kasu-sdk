@@ -40,8 +40,24 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const [showScrollDown, setShowScrollDown] = useState(true)
 
-  const { acceptLoanContract, canAccept, generatedContract, isFullscreen } =
-    modal[ModalsKeys.LOAN_CONTRACT]
+  const {
+    acceptLoanContract,
+    canAccept,
+    generatedContract,
+    isFullscreen,
+    onAcceptError,
+    onClose,
+    suppressToast,
+  } = modal[ModalsKeys.LOAN_CONTRACT]
+
+  const [isAccepting, setIsAccepting] = useState(false)
+
+  const shouldToast = !suppressToast
+
+  const handleCloseWithCallback = () => {
+    onClose?.()
+    handleClose()
+  }
 
   const scrollDown = () => {
     if (!containerRef.current) return
@@ -69,13 +85,17 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
     }
 
     try {
-      setToast({
-        type: 'info',
-        title: 'Accepting Contract...',
-        message:
-          'Please sign the transaction in your wallet to accept the Loan Contract.',
-        isClosable: false,
-      })
+      setIsAccepting(true)
+
+      if (shouldToast) {
+        setToast({
+          type: 'info',
+          title: 'Accepting Contract...',
+          message:
+            'Please sign the transaction in your wallet to accept the Loan Contract.',
+          isClosable: false,
+        })
+      }
 
       signMessage(
         {
@@ -85,21 +105,52 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
           onSuccess: (signature) => {
             acceptLoanContract && acceptLoanContract(signature)
 
-            removeToast()
+            if (shouldToast) {
+              removeToast()
+            }
+            setIsAccepting(false)
             handleClose()
+          },
+          onError: (error) => {
+            setIsAccepting(false)
+            onAcceptError?.(error as Error)
+            if (userRejectedTransaction(error)) {
+              if (shouldToast) {
+                handleError(
+                  error,
+                  'Accept Contract Error',
+                  'Message signature request declined. Unable to accept Loan contract.',
+                  true
+                )
+              }
+            } else {
+              if (shouldToast) {
+                handleError(error)
+              } else {
+                console.error(error)
+              }
+            }
           },
         }
       )
     } catch (error) {
+      setIsAccepting(false)
+      onAcceptError?.(error as Error)
       if (userRejectedTransaction(error)) {
-        handleError(
-          error,
-          'Accept Contract Error',
-          'Message signature request declined. Unable to accept Loan contract.',
-          true
-        )
+        if (shouldToast) {
+          handleError(
+            error,
+            'Accept Contract Error',
+            'Message signature request declined. Unable to accept Loan contract.',
+            true
+          )
+        }
       } else {
-        handleError(error)
+        if (shouldToast) {
+          handleError(error)
+        } else {
+          console.error(error)
+        }
       }
     }
   }
@@ -108,6 +159,9 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
     openModal({
       name: ModalsKeys.LOAN_CONTRACT,
       acceptLoanContract,
+      onAcceptError,
+      onClose,
+      suppressToast,
       canAccept,
       generatedContract,
       isFullscreen: isFullscreen ? false : true,
@@ -121,7 +175,7 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
       <DialogHeader
         isFullscreen={modal[ModalsKeys.LOAN_CONTRACT].isFullscreen}
         title='Loan Contract'
-        onClose={handleClose}
+        onClose={handleCloseWithCallback}
       />
       <DialogContent
         sx={{
@@ -201,8 +255,10 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         {canAccept && (
           <Box
             display='flex'
-            alignItems='center'
+            alignItems={{ xs: 'flex-start', sm: 'center' }}
+            flexDirection={{ xs: 'column', sm: 'row' }}
             justifyContent='space-between'
+            gap={{ xs: 1, sm: 0 }}
             mt={6}
           >
             <Typography variant='h5'>
@@ -213,13 +269,18 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             </Typography>
           </Box>
         )}
-        <Box display='flex' gap={4} mt={5}>
+        <Box
+          display='flex'
+          gap={{ xs: 2, sm: 4 }}
+          flexDirection={{ xs: 'column', sm: 'row' }}
+          mt={5}
+        >
           {canAccept ? (
             <>
               <Button
                 variant='outlined'
                 color='secondary'
-                onClick={handleClose}
+                onClick={handleCloseWithCallback}
                 fullWidth
                 sx={{ textTransform: 'capitalize' }}
               >
@@ -240,7 +301,7 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
               variant='contained'
               color='secondary'
               fullWidth
-              onClick={handleClose}
+              onClick={handleCloseWithCallback}
               sx={{ textTransform: 'capitalize' }}
               ref={targetRef}
             >
@@ -248,6 +309,11 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
             </Button>
           )}
         </Box>
+        {canAccept && isAccepting ? (
+          <Typography variant='baseSm' color='gold.middle' mt={2}>
+            {t('modals.lending.stepper.descriptions.confirm')}
+          </Typography>
+        ) : null}
       </DialogContent>
     </CustomCard>
   )
