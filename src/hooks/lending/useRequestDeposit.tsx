@@ -20,7 +20,12 @@ import generateKycSignature from '@/actions/generateKycSignature'
 import { Routes } from '@/config/routes'
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { SupportedTokens } from '@/constants/tokens'
-import { capitalize, toBigNumber, waitForReceipt } from '@/utils'
+import {
+  capitalize,
+  toBigNumber,
+  userRejectedTransaction,
+  waitForReceipt,
+} from '@/utils'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
@@ -59,34 +64,55 @@ const useRequestDeposit = () => {
     contractAcceptedSignature: string,
     contractAcceptedTimstamp: EpochTimeStamp,
     contractVersion: number,
-    contractType: 'retail' | 'exempt'
-  ) => {
+    contractType: 'retail' | 'exempt',
+    options?: {
+      suppressToast?: boolean
+      onError?: (status: 'cancelled' | 'error', error?: unknown) => void
+      onStatus?: (status: 'signing' | 'confirming') => void
+    }
+  ): Promise<boolean> => {
+    const shouldToast = !options?.suppressToast
+
     if (!address) {
-      return console.error('RequestDeposit:: Account is undefined')
+      const error = new Error('RequestDeposit:: Account is undefined')
+      console.error(error.message)
+      options?.onError?.('error', error)
+      return false
     }
 
     if (!chainId) {
-      return console.error('RequestDeposit:: ChainId is undefined')
+      const error = new Error('RequestDeposit:: ChainId is undefined')
+      console.error(error.message)
+      options?.onError?.('error', error)
+      return false
     }
 
     if (!supportedTokens) {
-      return console.error('RequestDeposit:: SupportedTokens is undefined')
+      const error = new Error('RequestDeposit:: SupportedTokens is undefined')
+      console.error(error.message)
+      options?.onError?.('error', error)
+      return false
     }
 
     if (!kycInfo) {
-      return console.error('RequestDeposit:: KycInfo is undefined')
+      const error = new Error('RequestDeposit:: KycInfo is undefined')
+      console.error(error.message)
+      options?.onError?.('error', error)
+      return false
     }
     try {
       if (!sdk) {
         throw new KasuSdkNotReadyError()
       }
 
-      setToast({
-        type: 'info',
-        title: capitalize(ActionStatus.PROCESSING),
-        message: ACTION_MESSAGES[ActionStatus.PROCESSING],
-        isClosable: false,
-      })
+      if (shouldToast) {
+        setToast({
+          type: 'info',
+          title: capitalize(ActionStatus.PROCESSING),
+          message: ACTION_MESSAGES[ActionStatus.PROCESSING],
+          isClosable: false,
+        })
+      }
 
       const kycSignatureParams = await sdk.UserLending.buildKycSignatureParams(
         address,
@@ -100,7 +126,10 @@ const useRequestDeposit = () => {
       }
 
       if (selectedToken !== SupportedTokens.USDC) {
-        return console.error('RequestDeposit:: Only USDC is supported')
+        const error = new Error('RequestDeposit:: Only USDC is supported')
+        console.error(error.message)
+        options?.onError?.('error', error)
+        return false
       }
 
       const fromToken = supportedTokens[SupportedTokens.USDC]
@@ -127,6 +156,8 @@ const useRequestDeposit = () => {
         versionType
       )
 
+      options?.onStatus?.('signing')
+
       const deposit = await sdk.UserLending.requestDepositWithKyc(
         lendingPoolId,
         trancheId,
@@ -138,23 +169,36 @@ const useRequestDeposit = () => {
         '0' // when using ETH, pass the value directly here; USDC has no native value
       )
 
+      options?.onStatus?.('confirming')
+
       const receipt = await waitForReceipt(deposit)
 
       setTxHash(receipt.transactionHash)
 
-      removeToast()
+      if (shouldToast) {
+        removeToast()
+      }
 
       if (isLiteMode && pathname !== Routes.portfolio.root.url) {
         router.push(Routes.portfolio.root.url)
       }
 
       nextStep()
+      return true
     } catch (error) {
-      handleError(
-        error,
-        capitalize(`${ActionType.DEPOSIT} ${ActionStatus.ERROR}`),
-        ACTION_MESSAGES[ActionType.DEPOSIT][ActionStatus.ERROR]
-      )
+      const status = userRejectedTransaction(error) ? 'cancelled' : 'error'
+      options?.onError?.(status, error)
+
+      if (shouldToast) {
+        handleError(
+          error,
+          capitalize(`${ActionType.DEPOSIT} ${ActionStatus.ERROR}`),
+          ACTION_MESSAGES[ActionType.DEPOSIT][ActionStatus.ERROR]
+        )
+      } else {
+        console.error(error)
+      }
+      return false
     }
   }
 }

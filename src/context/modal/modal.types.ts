@@ -166,6 +166,9 @@ export type Modals = {
   }>
   [ModalsKeys.LOAN_CONTRACT]: ModalData<{
     acceptLoanContract?: (contractSignature: string) => void
+    onAcceptError?: (error?: Error) => void
+    onClose?: () => void
+    suppressToast?: boolean
     generatedContract?: {
       contractMessage: string
       formattedMessage: RetailLoanContract | ExemptLoanContract

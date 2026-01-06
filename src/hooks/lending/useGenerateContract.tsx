@@ -24,6 +24,12 @@ const initialGeneratedContractState = {
   fullName: '',
 }
 
+type GeneratedContractState = typeof initialGeneratedContractState
+
+type GenerateContractResult =
+  | { status: 'success'; contract: GeneratedContractState }
+  | { status: 'cancelled' | 'error'; contract: null }
+
 const useGenerateContract = () => {
   const { address } = usePrivyAuthenticated()
 
@@ -43,95 +49,146 @@ const useGenerateContract = () => {
     generatedContract,
     resetGeneratedContract: () =>
       setGeneratedContract(initialGeneratedContractState),
-    generateContract: async (amount: string) => {
+    generateContract: async (
+      amount: string,
+      options?: {
+        suppressToast?: boolean
+        onStatus?: (status: 'signing' | 'generating') => void
+      }
+    ): Promise<GenerateContractResult> => {
+      const shouldToast = !options?.suppressToast
+
       if (!address) {
-        return console.error('Generate contract:: Account is undefiend')
+        console.error('Generate contract:: Account is undefiend')
+        return { status: 'error', contract: null }
       }
 
       if (!chainId) {
-        return console.error('Generate contract:: ChainID is undefiend')
+        console.error('Generate contract:: ChainID is undefiend')
+        return { status: 'error', contract: null }
       }
 
       const now = dayjs().unix() * 1000
 
       try {
-        setToast({
-          type: 'info',
-          title: 'Generating Loan Contract...',
-          message:
-            'Please sign the transaction in your wallet to generate the Loan Contract.',
-          isClosable: false,
-        })
+        if (shouldToast) {
+          setToast({
+            type: 'info',
+            title: 'Generating Loan Contract...',
+            message:
+              'Please sign the transaction in your wallet to generate the Loan Contract.',
+            isClosable: false,
+          })
+        }
 
-        signMessage(
-          {
-            message: `I request contract content for ${address.toLowerCase()} at ${now}.`,
-          },
-          {
-            onSuccess: async (signature) => {
-              if (!address) {
-                return console.error('Generate contract:: Account is undefiend')
-              }
+        return await new Promise<GenerateContractResult>((resolve) => {
+          options?.onStatus?.('signing')
 
-              const res = await fetch(
-                '/api/lender-agreements?' +
-                  new URLSearchParams({
-                    chainId: chainId.toString(),
-                  }),
-                {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                    address: address.toLowerCase(),
-                    signature,
-                    timestamp: now,
-                    depositAmount: parseFloat(amount),
-                  }),
-                }
-              )
-
-              if (res.status !== 200) {
-                throw new Error('Failed to retrieve fullname')
-              }
-
-              const data: FundingConsentGenerateContractRes = await res.json()
-
-              if ('error' in data) {
-                throw new Error(data.message)
-              }
-
-              setGeneratedContract({
-                createdAt: now,
-                status: true,
-                contractMessage: data.contractMessage
-                  .replaceAll('\\n', '\n')
-                  .replaceAll('\\t', '\t'),
-                fullName: data.fullName,
-                contractType: data.contractType,
-                contractVersion: data.contractVersion,
-                formattedMessage: JSON.parse(data.formattedMessage),
-              })
-
-              removeToast()
-            },
-            onError: (error) => {
-              if (userRejectedTransaction(error)) {
+          const handleReject = (error: unknown) => {
+            if (userRejectedTransaction(error)) {
+              if (shouldToast) {
                 handleError(
                   error,
                   'Generate Loan Contract Error',
                   'Message signature request declined. Unable to generate Loan Contract.',
                   true
                 )
-              } else {
-                handleError(error)
               }
-            },
+              resolve({ status: 'cancelled', contract: null })
+              return
+            }
+
+            if (shouldToast) {
+              handleError(error)
+            } else {
+              console.error(error)
+            }
+
+            resolve({ status: 'error', contract: null })
           }
-        )
+
+          signMessage(
+            {
+              message: `I request contract content for ${address.toLowerCase()} at ${now}.`,
+            },
+            {
+              onSuccess: async (signature) => {
+                if (!address) {
+                  console.error('Generate contract:: Account is undefiend')
+                  resolve({ status: 'error', contract: null })
+                  return
+                }
+
+                try {
+                  options?.onStatus?.('generating')
+
+                  const res = await fetch(
+                    '/api/lender-agreements?' +
+                      new URLSearchParams({
+                        chainId: chainId.toString(),
+                      }),
+                    {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                        address: address.toLowerCase(),
+                        signature,
+                        timestamp: now,
+                        depositAmount: parseFloat(amount),
+                      }),
+                    }
+                  )
+
+                  if (res.status !== 200) {
+                    throw new Error('Failed to retrieve fullname')
+                  }
+
+                  const data: FundingConsentGenerateContractRes =
+                    await res.json()
+
+                  if ('error' in data) {
+                    throw new Error(data.message)
+                  }
+
+                  const nextGeneratedContract = {
+                    createdAt: now,
+                    status: true,
+                    contractMessage: data.contractMessage
+                      .replaceAll('\\n', '\n')
+                      .replaceAll('\\t', '\t'),
+                    fullName: data.fullName,
+                    contractType: data.contractType,
+                    contractVersion: data.contractVersion,
+                    formattedMessage: JSON.parse(data.formattedMessage),
+                  }
+
+                  setGeneratedContract(nextGeneratedContract)
+                  if (shouldToast) {
+                    removeToast()
+                  }
+                  resolve({
+                    status: 'success',
+                    contract: nextGeneratedContract,
+                  })
+                } catch (error) {
+                  handleReject(error)
+                }
+              },
+              onError: (error) => {
+                handleReject(error)
+              },
+            }
+          )
+        })
       } catch (error) {
-        handleError(error)
+        if (shouldToast) {
+          handleError(error)
+        } else {
+          console.error(error)
+        }
+        return { status: 'error', contract: null }
       }
     },
   }

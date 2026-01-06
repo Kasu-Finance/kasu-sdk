@@ -38,7 +38,11 @@ const LendingModalConfirmedActions = () => {
   const handleClose = () => closeModal(ModalsKeys.LEND)
 
   return (
-    <Box display='flex' gap={4}>
+    <Box
+      display='flex'
+      gap={{ xs: 2, sm: 4 }}
+      flexDirection={{ xs: 'column', sm: 'row' }}
+    >
       {!isLiteMode && txHash && (
         <Button
           variant='outlined'

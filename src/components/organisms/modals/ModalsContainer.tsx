@@ -108,6 +108,8 @@ export const getModal = (
         sx: {
           overflow: 'hidden',
         },
+        disableBackdropClose: true,
+        disableEscapeKeyDown: true,
       }
     case ModalsKeys.BORROWER_IDENTIFIED:
       return {

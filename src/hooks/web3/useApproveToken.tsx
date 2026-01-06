@@ -1,10 +1,8 @@
-import { BigNumber, ethers } from 'ethers'
+import { BigNumber } from 'ethers'
 import { parseEther, parseUnits } from 'ethers/lib/utils'
 import { useEffect, useState } from 'react'
 import useSWR from 'swr'
-import { encodeFunctionData } from 'viem'
 import {
-  estimateGas,
   readContract,
   waitForTransactionReceipt,
   writeContract,
@@ -71,68 +69,62 @@ const useApproveToken = (
     setIsApproved(false)
   }, [allowance, amount, decimals])
 
-  const approve = async (approveAmount: string) => {
+  const approve = async (
+    approveAmount: string,
+    options?: {
+      suppressToast?: boolean
+      onError?: (status: 'cancelled' | 'error', error?: unknown) => void
+      onStatus?: (status: 'signing' | 'confirming') => void
+    }
+  ): Promise<boolean> => {
+    const shouldToast = !options?.suppressToast
+
     try {
       if (!tokenAddress)
         throw new Error('useApproveToken: tokenAddress not specified')
       if (!spender) throw new Error('useApproveToken: spender not specified')
 
-      setToast({
-        type: 'info',
-        title: capitalize(ActionStatus.PROCESSING),
-        message: ACTION_MESSAGES[ActionType.APPROVE][ActionStatus.PROCESSING],
-        isClosable: false,
-      })
-
-      let useExact = false
-
-      let estimatedGasTest: bigint
-
-      try {
-        estimatedGasTest = await estimateGas(wagmiConfig, {
-          to: tokenAddress,
-          data: encodeFunctionData({
-            abi: IERC20__factory.abi,
-            functionName: 'approve',
-            args: [spender, ethers.constants.MaxUint256.toBigInt()],
-          }),
-        })
-      } catch (error) {
-        useExact = true
-
-        estimatedGasTest = await estimateGas(wagmiConfig, {
-          to: tokenAddress,
-          data: encodeFunctionData({
-            abi: IERC20__factory.abi,
-            functionName: 'approve',
-            args: [spender, parseUnits(approveAmount, decimals).toBigInt()],
-          }),
+      if (shouldToast) {
+        setToast({
+          type: 'info',
+          title: capitalize(ActionStatus.PROCESSING),
+          message: ACTION_MESSAGES[ActionType.APPROVE][ActionStatus.PROCESSING],
+          isClosable: false,
         })
       }
+
+      options?.onStatus?.('signing')
 
       const hash = await writeContract(wagmiConfig, {
         abi: IERC20__factory.abi,
         address: tokenAddress,
         functionName: 'approve',
-        args: [
-          spender,
-          useExact
-            ? parseUnits(approveAmount, decimals).toBigInt()
-            : ethers.constants.MaxUint256.toBigInt(),
-        ],
-        gas: estimatedGasTest,
+        args: [spender, parseUnits(approveAmount, decimals).toBigInt()],
       })
+
+      options?.onStatus?.('confirming')
 
       await waitForTransactionReceipt(wagmiConfig, { hash })
 
       await mutate()
 
-      removeToast()
+      if (shouldToast) {
+        removeToast()
+      }
       setIsApproved(true)
+      return true
     } catch (error) {
+      const status = userRejectedTransaction(error) ? 'cancelled' : 'error'
+      options?.onError?.(status, error)
+
+      if (!shouldToast) {
+        console.error(error)
+        return false
+      }
+
       let title: string, message: string
 
-      if (userRejectedTransaction(error)) {
+      if (status === 'cancelled') {
         message = ACTION_MESSAGES[ActionStatus.REJECTED]
         title = capitalize(`${ActionType.APPROVE} ${ActionStatus.REJECTED}`)
       } else {
@@ -145,6 +137,7 @@ const useApproveToken = (
         title,
         message,
       })
+      return false
     }
   }
 
