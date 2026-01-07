@@ -1,10 +1,12 @@
 'use client'
 
 import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
+import { PortfolioLendingPool } from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
 import { Skeleton, SkeletonProps } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import usePortfolioSummaryLite from '@/hooks/context/usePortfolioSummaryLite'
+import useLatestClearingTimestamp from '@/hooks/lending/useLatestClearingTimestamp'
 
 import TokenAmount, { TokenAmountProps } from '@/components/atoms/TokenAmount'
 
@@ -14,17 +16,37 @@ import { formatAmount, TimeConversions } from '@/utils'
 type IncrementalLifetimeInterestEarningsProps = Partial<TokenAmountProps> & {
   currentEpoch: string
   poolOverviews: PoolOverview[]
+  portfolioLendingPools?: PortfolioLendingPool[]
   skeletonProps?: SkeletonProps
   incrementIntervalMs?: number
 }
 
 const IncrementalLifetimeInterestEarnings: React.FC<
   IncrementalLifetimeInterestEarningsProps
-> = ({ skeletonProps, incrementIntervalMs = 3000, ...rest }) => {
+> = ({
+  skeletonProps,
+  incrementIntervalMs = 3000,
+  poolOverviews,
+  portfolioLendingPools,
+  ...rest
+}) => {
   const { portfolioSummary, isLoading } = usePortfolioSummaryLite()
   const [amount, setAmount] = useState(
     portfolioSummary?.lifetime.yieldEarnings || '0'
   )
+
+  const poolIds = useMemo(() => {
+    const sourcePools =
+      portfolioLendingPools && portfolioLendingPools.length
+        ? portfolioLendingPools
+        : poolOverviews
+
+    return Array.from(
+      new Set(sourcePools.map((pool) => pool.id.toLowerCase()).filter(Boolean))
+    )
+  }, [poolOverviews, portfolioLendingPools])
+
+  const { latestClearingTimestamp } = useLatestClearingTimestamp(poolIds)
 
   useEffect(() => {
     if (!portfolioSummary) return
@@ -32,30 +54,36 @@ const IncrementalLifetimeInterestEarnings: React.FC<
   }, [portfolioSummary])
 
   useEffect(() => {
-    if (!portfolioSummary) return
+    if (!portfolioSummary || !latestClearingTimestamp) return
 
-    const interval = setInterval(() => {
-      const startOfWeek = dayjs().startOf('week').unix()
+    const updateAmount = () => {
       const now = dayjs().unix()
+      const secondsPassed = Math.max(0, now - latestClearingTimestamp)
+      const cappedSeconds = Math.min(
+        TimeConversions.SECONDS_PER_WEEK,
+        secondsPassed
+      )
 
-      const secondsPassed = now - startOfWeek
-
-      const eariningsPerSecond =
+      const earningsPerSecond =
         parseFloat(portfolioSummary.weekly.yieldEarnings) /
         TimeConversions.SECONDS_PER_WEEK
 
-      const earningsNow = eariningsPerSecond * secondsPassed
+      const earningsNow = earningsPerSecond * cappedSeconds
 
       const newLifetimeAmount =
         parseFloat(portfolioSummary.lifetime.yieldEarnings) + earningsNow
 
       setAmount(newLifetimeAmount.toString())
-    }, incrementIntervalMs)
+    }
+
+    updateAmount()
+
+    const interval = setInterval(updateAmount, incrementIntervalMs)
 
     return () => {
       clearInterval(interval)
     }
-  }, [portfolioSummary, incrementIntervalMs])
+  }, [portfolioSummary, latestClearingTimestamp, incrementIntervalMs])
 
   if (isLoading) {
     return (

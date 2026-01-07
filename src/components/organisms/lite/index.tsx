@@ -72,6 +72,7 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({
                   <LendingBasicStats
                     pools={pools}
                     currentEpoch={currentEpoch}
+                    portfolioLendingPools={portfolioLendingPools}
                     hasActiveDeposits={hasActiveDeposits}
                     isPortfolioLoading={isPortfolioDataLoading}
                   />
