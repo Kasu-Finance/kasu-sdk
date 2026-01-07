@@ -2,13 +2,24 @@ import { Stack, Typography } from '@mui/material'
 
 import OrderedList from '@/components/atoms/OrderedList'
 
-const EpochCountdownTooltip = () => {
+type EpochCountdownTooltipProps = {
+  mode?: 'epoch' | 'clearing'
+}
+
+const EpochCountdownTooltip: React.FC<EpochCountdownTooltipProps> = ({
+  mode = 'epoch',
+}) => {
+  const isClearing = mode === 'clearing'
+  const introText = isClearing
+    ? 'Time remaining until the end of the 48-hour Clearing Period. At close, the next Epoch begins. During this period:'
+    : 'Time remaining until the close of the current 7-day Epoch. At close, a 48-hour Clearing Period begins. During this period:'
+  const requestTimingText = isClearing
+    ? 'Requests submitted during the Clearing Period are queued for the next Clearing Period.'
+    : 'Requests submitted after Epoch close are queued for the next Clearing Period.'
+
   return (
     <Stack spacing={2}>
-      <Typography variant='baseXs'>
-        Time remaining until the close of the current 7-day Epoch. At close, a
-        48-hour Clearing Period begins. During this period:
-      </Typography>
+      <Typography variant='baseXs'>{introText}</Typography>
       <OrderedList
         sx={{
           pl: 1.5,
@@ -23,8 +34,7 @@ const EpochCountdownTooltip = () => {
               Lending Requests and Withdrawal Requests
             </Typography>{' '}
             are processed based on available capacity and liquidity. Unfilled
-            Withdrawal Requests roll over to the next Epoch. Requests submitted
-            after Epoch close are queued for the next Clearing Period.
+            Withdrawal Requests roll over to the next Epoch. {requestTimingText}
           </Typography>
         </li>
         <li>
