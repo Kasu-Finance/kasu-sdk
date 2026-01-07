@@ -1,4 +1,5 @@
 import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
+import { PortfolioLendingPool } from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
 import { Box, Grid2, Typography } from '@mui/material'
 import React from 'react'
 
@@ -20,6 +21,7 @@ import { customPalette } from '@/themes/palette'
 type LendingBasicStatsProps = {
   currentEpoch: string
   pools: PoolOverview[]
+  portfolioLendingPools?: PortfolioLendingPool[]
   hasActiveDeposits?: boolean
   isPortfolioLoading?: boolean
 }
@@ -27,6 +29,7 @@ type LendingBasicStatsProps = {
 const LendingBasicStats: React.FC<LendingBasicStatsProps> = ({
   currentEpoch,
   pools,
+  portfolioLendingPools,
   hasActiveDeposits = true,
   isPortfolioLoading,
 }) => {
@@ -92,6 +95,7 @@ const LendingBasicStats: React.FC<LendingBasicStatsProps> = ({
             <IncrementalLifetimeInterestEarnings
               poolOverviews={pools}
               currentEpoch={currentEpoch}
+              portfolioLendingPools={portfolioLendingPools}
               amountProps={{
                 variant: 'h2',
               }}

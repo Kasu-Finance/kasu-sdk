@@ -4,7 +4,12 @@ import React, { Fragment } from 'react'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
 
-import { formatAmount, formatPercentage, mapFixedLoanToConfig } from '@/utils'
+import {
+  formatAmount,
+  formatPercentage,
+  mapFixedLoanToConfig,
+  toBigNumber,
+} from '@/utils'
 
 type LiteLendingPortfolioTableRowProps = {
   portfolioLendingPool: PortfolioLendingPool
@@ -14,24 +19,52 @@ type LiteLendingPortfolioTableRowProps = {
 const LiteLendingPortfolioTableRow: React.FC<
   LiteLendingPortfolioTableRowProps
 > = ({ portfolioLendingPool, poolPositionPercentage }) => {
-  return portfolioLendingPool.tranches.map((tranche, index) => {
+  const rows = portfolioLendingPool.tranches.flatMap((tranche) => {
     const mappedFixedTermConfig = mapFixedLoanToConfig(
       tranche.fixedLoans,
       tranche.fixedTermConfig
     )
 
-    const fixedTermDeposit = mappedFixedTermConfig.reduce(
-      (acc, cur) => {
-        acc.investedAmount += parseFloat(cur.investedAmount)
-        acc.lifetimeYield += parseFloat(cur.yieldEarnings.lifetime)
+    const hasDepositedIntoVariable =
+      !toBigNumber(tranche.investedAmount ?? '0').isZero() ||
+      !toBigNumber(tranche.yieldEarnings.lifetime ?? '0').isZero()
 
-        return acc
-      },
-      { investedAmount: 0, lifetimeYield: 0 }
-    )
+    const trancheRows: Array<{
+      key: string
+      trancheName: string
+      apy: string
+      investedAmount: string
+      lifetimeYield: string
+    }> = []
+
+    if (hasDepositedIntoVariable) {
+      trancheRows.push({
+        key: `${tranche.id}-variable`,
+        trancheName: tranche.name,
+        apy: tranche.apy,
+        investedAmount: tranche.investedAmount ?? '0',
+        lifetimeYield: tranche.yieldEarnings.lifetime ?? '0',
+      })
+    }
+
+    mappedFixedTermConfig.forEach((fixedTermConfig) => {
+      trancheRows.push({
+        key: `${tranche.id}-fixed-${fixedTermConfig.configId}`,
+        trancheName: tranche.name,
+        apy: fixedTermConfig.apy,
+        investedAmount: fixedTermConfig.investedAmount ?? '0',
+        lifetimeYield: fixedTermConfig.yieldEarnings.lifetime ?? '0',
+      })
+    })
+
+    return trancheRows
+  })
+
+  return rows.map((row, rowIndex) => {
+    const showPoolName = rowIndex === 0
 
     return (
-      <Fragment key={index}>
+      <Fragment key={row.key}>
         <TableRow
           sx={{
             '.MuiTableCell-root': {
@@ -40,7 +73,7 @@ const LiteLendingPortfolioTableRow: React.FC<
           }}
         >
           <TableCell>
-            {index === 0 && (
+            {showPoolName && (
               <Box display='flex' alignItems='center' gap={1}>
                 <Box
                   width={16}
@@ -55,28 +88,18 @@ const LiteLendingPortfolioTableRow: React.FC<
               </Box>
             )}
           </TableCell>
-          <TableCell align='left'>{tranche.name}</TableCell>
+          <TableCell align='left'>{row.trancheName}</TableCell>
           <TableCell align='right'>
-            {formatAmount(
-              parseFloat(tranche.investedAmount) +
-                fixedTermDeposit.investedAmount,
-              { minDecimals: 2 }
-            )}{' '}
-            USDC
+            {formatAmount(row.investedAmount, { minDecimals: 2 })} USDC
           </TableCell>
-          <TableCell align='right'>{formatPercentage(tranche.apy)}</TableCell>
+          <TableCell align='right'>{formatPercentage(row.apy)}</TableCell>
           <TableCell align='right'>
-            {formatAmount(
-              parseFloat(tranche.yieldEarnings.lifetime) +
-                fixedTermDeposit.lifetimeYield,
-              { minDecimals: 2 }
-            )}{' '}
-            USDDC
+            {formatAmount(row.lifetimeYield, { minDecimals: 2 })} USDDC
           </TableCell>
         </TableRow>
         <TableRow>
-          {index === 0 && <TableCell padding='none' />}
-          <TableCell colSpan={index === 0 ? 4 : 5} padding='none'>
+          {showPoolName && <TableCell padding='none' />}
+          <TableCell colSpan={showPoolName ? 4 : 5} padding='none'>
             <DottedDivider />
           </TableCell>
         </TableRow>

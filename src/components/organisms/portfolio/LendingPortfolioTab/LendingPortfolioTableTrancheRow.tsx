@@ -7,6 +7,7 @@ import { Box, TableCell, TableRow } from '@mui/material'
 
 import getTranslation from '@/hooks/useTranslation'
 
+import ToolTip from '@/components/atoms/ToolTip'
 import LendingPortfolioTableActionColumn from '@/components/organisms/portfolio/LendingPortfolioTab/LendingPortfolioTableActionColumn'
 
 import { TRANCHE_ICONS } from '@/constants/pool'
@@ -14,6 +15,7 @@ import { customTypography } from '@/themes/typography'
 import {
   formatAmount,
   formatPercentage,
+  formatTimestamp,
   mapFixedLoanToConfig,
   toBigNumber,
 } from '@/utils'
@@ -24,11 +26,19 @@ export type LendingPortfolioTableTrancheRowProps = {
   tranche:
     | PortfolioTranche
     | (PortfolioTranche & { balanceData: UserTrancheBalance })
+  isClearingPeriod?: boolean
+  clearingPeriodEndTime?: number
 }
 
 const LendingPortfolioTableTrancheRow: React.FC<
   LendingPortfolioTableTrancheRowProps
-> = ({ tranche, pool, currentEpoch }) => {
+> = ({
+  tranche,
+  pool,
+  currentEpoch,
+  isClearingPeriod,
+  clearingPeriodEndTime,
+}) => {
   const { t } = getTranslation()
 
   const hasDepositedIntoVariable =
@@ -39,6 +49,55 @@ const LendingPortfolioTableTrancheRow: React.FC<
     tranche.fixedLoans,
     tranche.fixedTermConfig
   )
+
+  const clearingPeriodTooltip = t(
+    'portfolio.lendingPortfolio.lastEpochClearingTooltip'
+  )
+  const clearingPeriodEndsAtLabel = t(
+    'portfolio.lendingPortfolio.clearingEndsAt'
+  )
+
+  const clearingPeriodEndText = clearingPeriodEndTime
+    ? (() => {
+        const { date, timestamp, utcOffset } = formatTimestamp(
+          clearingPeriodEndTime,
+          {
+            format: 'DD.MM.YYYY HH:mm:ss',
+            includeUtcOffset: true,
+          }
+        )
+
+        return `${date} ${timestamp} ${utcOffset}`
+      })()
+    : ''
+
+  const renderLastEpochValue = (value: string) => {
+    const shouldShowClearingPlaceholder =
+      Boolean(isClearingPeriod) && Number(value) === 0
+
+    if (shouldShowClearingPlaceholder) {
+      const tooltipText = clearingPeriodEndText
+        ? `${clearingPeriodTooltip} ${clearingPeriodEndsAtLabel} ${clearingPeriodEndText}.`
+        : clearingPeriodTooltip
+
+      return (
+        <Box display='flex' alignItems='center' justifyContent='flex-end'>
+          <Box component='span'>-</Box>
+          <ToolTip title={tooltipText} />
+        </Box>
+      )
+    }
+
+    return (
+      <>
+        {formatAmount(value || '0', {
+          minValue: 10_000_000,
+          minDecimals: 2,
+        })}{' '}
+        USDC
+      </>
+    )
+  }
 
   return (
     <>
@@ -74,11 +133,7 @@ const LendingPortfolioTableTrancheRow: React.FC<
             USDC
           </TableCell>
           <TableCell align='right'>
-            {formatAmount(tranche.yieldEarnings.lastEpoch || '0', {
-              minValue: 10_000_000,
-              minDecimals: 2,
-            })}{' '}
-            USDC
+            {renderLastEpochValue(tranche.yieldEarnings.lastEpoch || '0')}
           </TableCell>
           <TableCell align='right'>
             {formatAmount(tranche.yieldEarnings.lifetime || '0', {
@@ -131,11 +186,9 @@ const LendingPortfolioTableTrancheRow: React.FC<
                 USDC
               </TableCell>
               <TableCell align='right'>
-                {formatAmount(fixedTermConfig.yieldEarnings.lastEpoch || '0', {
-                  minValue: 10_000_000,
-                  minDecimals: 2,
-                })}{' '}
-                USDC
+                {renderLastEpochValue(
+                  fixedTermConfig.yieldEarnings.lastEpoch || '0'
+                )}
               </TableCell>
               <TableCell align='right'>
                 {formatAmount(fixedTermConfig.yieldEarnings.lifetime || '0', {

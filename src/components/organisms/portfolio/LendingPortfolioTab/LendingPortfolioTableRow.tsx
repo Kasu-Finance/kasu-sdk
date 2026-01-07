@@ -2,6 +2,8 @@ import { PortfolioLendingPool } from '@kasufinance/kasu-sdk/src/services/Portfol
 import { TableCell, TableRow, Typography } from '@mui/material'
 
 import useUserLendingTrancheBalance from '@/hooks/lending/useUserLendingTrancheBalance'
+import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
+import useNextClearingPeriod from '@/hooks/web3/useNextClearingPeriod'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
 import NextLink from '@/components/atoms/NextLink'
@@ -23,6 +25,12 @@ const LendingPortfolioTableRow: React.FC<LendingPortfolioTableRowProps> = ({
     portfolioPool.id,
     portfolioPool.tranches
   )
+  const { nextEpochTime } = useNextEpochTime()
+  const { nextClearingPeriod } = useNextClearingPeriod()
+
+  const isClearingPeriod =
+    Boolean(nextEpochTime && nextClearingPeriod) &&
+    nextClearingPeriod > nextEpochTime
 
   return (
     <>
@@ -51,6 +59,8 @@ const LendingPortfolioTableRow: React.FC<LendingPortfolioTableRowProps> = ({
             pool={portfolioPool}
             tranche={tranche}
             currentEpoch={currentEpoch}
+            isClearingPeriod={isClearingPeriod}
+            clearingPeriodEndTime={nextEpochTime}
             key={tranche.name}
           />
         ))}
