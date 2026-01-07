@@ -5,6 +5,7 @@ import React, { useMemo } from 'react'
 
 import useTransactionHistory from '@/hooks/lending/useTransactionHistory'
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
+import useNextClearingPeriod from '@/hooks/web3/useNextClearingPeriod'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import LiteModeSkeleton from '@/components/atoms/LiteModeSkeleton'
@@ -27,6 +28,7 @@ const PendingTransactionRequests: React.FC<PendingTransactionRequestsProps> = ({
   currentEpoch,
 }) => {
   const { nextEpochTime } = useNextEpochTime()
+  const { nextClearingPeriod } = useNextClearingPeriod()
 
   const { isAuthenticated } = usePrivyAuthenticated()
 
@@ -39,6 +41,9 @@ const PendingTransactionRequests: React.FC<PendingTransactionRequestsProps> = ({
         : [],
     [transactionHistory]
   )
+  const countdownTime = nextClearingPeriod || nextEpochTime
+  const descriptionText =
+    'The outcomes of lending and withdrawal requests will be determined at the end of each 7-day epoch'
 
   if (!isAuthenticated) return null
 
@@ -65,8 +70,7 @@ const PendingTransactionRequests: React.FC<PendingTransactionRequestsProps> = ({
                 Pending Transaction Requests
               </Typography>
               <Typography variant='baseSm' color='white'>
-                The outcomes of lending and withdrawal requests will be
-                determined at the end of each 7-day epoch
+                {descriptionText}
               </Typography>
             </Stack>
           </Grid2>
@@ -87,7 +91,7 @@ const PendingTransactionRequests: React.FC<PendingTransactionRequestsProps> = ({
                 />
               </Box>
               <CountdownCard
-                time={nextEpochTime}
+                time={countdownTime}
                 gap={0.75}
                 justifyContent={{ xs: 'flex-start', md: 'space-between' }}
                 labelProps={{
