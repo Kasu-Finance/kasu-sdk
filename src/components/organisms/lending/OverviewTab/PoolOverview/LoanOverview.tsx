@@ -6,13 +6,9 @@ import getTranslation from '@/hooks/useTranslation'
 import InfoRow from '@/components/atoms/InfoRow'
 import ToolTip from '@/components/atoms/ToolTip'
 import VariableAndFixedApyTooltip from '@/components/molecules/tooltips/VariableAndFixedApyTooltip'
+import FixedTermOptions from '@/components/organisms/lending/FixedTermOptions'
 
-import {
-  formatAmount,
-  formatPercentage,
-  formatToNearestTime,
-  TimeConversions,
-} from '@/utils'
+import { formatAmount, formatPercentage } from '@/utils'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
@@ -58,38 +54,11 @@ const LoanOverview: React.FC<LoanOverviewProps> = ({ pool }) => {
             }
             showDivider
           />
-          {tranche.fixedTermConfig.map(
-            ({ epochLockDuration, apy, configId }) => {
-              const durationInMs =
-                parseFloat(epochLockDuration) *
-                TimeConversions.DAYS_PER_WEEK *
-                TimeConversions.SECONDS_PER_DAY *
-                1000
-
-              return (
-                <InfoRow
-                  key={configId}
-                  title={`${t('general.fixedApy')}, ${epochLockDuration} ${t('general.epoch')}`}
-                  subtitle={`(~${formatToNearestTime(durationInMs)})`}
-                  toolTipInfo={
-                    <ToolTip title={<VariableAndFixedApyTooltip />} />
-                  }
-                  titleStyle={{
-                    variant: 'h5',
-                  }}
-                  subtitleStyle={{
-                    color: 'gray.middle',
-                  }}
-                  metric={
-                    <Typography variant='h5' color='gold.dark'>
-                      {formatPercentage(apy)}
-                    </Typography>
-                  }
-                  showDivider
-                />
-              )
-            }
-          )}
+          <FixedTermOptions
+            tranche={tranche}
+            tooltipVariant='variableFixed'
+            subtitleMuted
+          />
           <InfoRow
             title={t(
               'lending.poolOverview.trancheCard.remainingCapacity.label'
