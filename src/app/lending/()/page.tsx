@@ -12,20 +12,26 @@ import PoolLayoutWrapperSkeleton from '@/components/organisms/home/PoolLayoutWra
 import LiteHome from '@/components/organisms/lite/LiteHome'
 
 import { getCurrentEpoch } from '@/app/_requests/currentEpoch'
+import { getPoolOverview } from '@/app/_requests/pools'
 import { getPoolWithDelegate } from '@/app/_requests/poolWithDelegate'
 
 const LendingPage = async () => {
   const { t } = getTranslation()
 
-  const [poolsWithDelegate, currentEpoch] = await Promise.all([
+  const [poolsWithDelegate, poolOverviews, currentEpoch] = await Promise.all([
     getPoolWithDelegate(),
+    getPoolOverview(),
     getCurrentEpoch(),
   ])
 
   return (
     <LiteModeRenderer
       renderOnLiteMode={
-        <LiteHome pools={poolsWithDelegate} currentEpoch={currentEpoch} />
+        <LiteHome
+          pools={poolsWithDelegate}
+          portfolioPools={poolOverviews}
+          currentEpoch={currentEpoch}
+        />
       }
       otherwise={
         <Box mt={3}>

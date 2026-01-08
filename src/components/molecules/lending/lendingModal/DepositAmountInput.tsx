@@ -538,10 +538,9 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
       <Typography
         variant='caption'
         component='span'
-        sx={{ color: (theme) => theme.palette.error.main }}
+        sx={{ color: (theme) => theme.palette.error.main, mt: 0.5 }}
         display={modalStatus.type === 'error' ? 'block' : 'none'}
       >
-        <br />
         {modalStatus.type === 'error' ? modalStatus.errorMessage : 'message'}
       </Typography>
     </Box>

@@ -7,13 +7,18 @@ import useTotalLendingPoolDeposits from '@/hooks/web3/useTotalLendingPoolDeposit
 
 import { convertToUSD, toBigNumber } from '@/utils'
 
-const useLockingPercentage = () => {
+type UseLockingPercentageOptions = {
+  enabled?: boolean
+}
+
+const useLockingPercentage = (options?: UseLockingPercentageOptions) => {
+  const enabled = options?.enabled ?? true
   const { totalDeposits, isLoading: totalDepositsLoading } =
-    useTotalLendingPoolDeposits()
+    useTotalLendingPoolDeposits({ enabled })
 
-  const { rKsuAmount, isLoading: rKsuLoading } = useEarnedRKsu()
+  const { rKsuAmount, isLoading: rKsuLoading } = useEarnedRKsu({ enabled })
 
-  const { ksuPrice, isLoading: ksuPriceLoading } = useKsuPrice()
+  const { ksuPrice, isLoading: ksuPriceLoading } = useKsuPrice({ enabled })
 
   const rKsuInUSD = convertToUSD(
     toBigNumber(rKsuAmount || '0'),
@@ -30,7 +35,8 @@ const useLockingPercentage = () => {
 
   return {
     stakedPercentage,
-    isLoading: (totalDepositsLoading || rKsuLoading) && ksuPriceLoading,
+    isLoading:
+      enabled && (totalDepositsLoading || rKsuLoading || ksuPriceLoading),
   }
 }
 

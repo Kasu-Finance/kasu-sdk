@@ -20,6 +20,7 @@ type LendButtonProps = ButtonProps &
     pools?: PoolOverview[]
     pool: PoolOverviewWithDelegate
     currentEpoch: string
+    enabled?: boolean
   }>
 
 const LendButton: React.FC<LendButtonProps> = ({
@@ -27,6 +28,7 @@ const LendButton: React.FC<LendButtonProps> = ({
   pool,
   currentEpoch,
   children,
+  enabled = true,
   ...rest
 }) => {
   const { t } = getTranslation()
@@ -37,13 +39,15 @@ const LendButton: React.FC<LendButtonProps> = ({
     currentEpochDepositedAmount,
     isLoading: currentEpochDepositedAmountLoading,
   } = useCurrentEpochDepositedAmount(
-    pools ? pools.map((pool) => pool.id) : pool.id
+    pools ? pools.map((pool) => pool.id) : pool.id,
+    { enabled }
   )
 
   const { currentEpochFtdAmount, isLoading: currentEpochFtdAmountLoading } =
     useCurrentEpochFtdAmount(
       pools ? pools.map((pool) => pool.id) : pool.id,
-      currentEpoch
+      currentEpoch,
+      { enabled }
     )
 
   const handleOpen = () => {

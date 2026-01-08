@@ -22,13 +22,18 @@ export type NftDetail = {
   )[]
 }
 
-const useUserNfts = () => {
+type UseUserNftsOptions = {
+  enabled?: boolean
+}
+
+const useUserNfts = (options?: UseUserNftsOptions) => {
   const sdk = useSdk()
 
   const { address } = usePrivyAuthenticated()
+  const enabled = options?.enabled ?? true
 
   const { data, error, isLoading, mutate } = useSWR(
-    address && sdk ? ['userNfts', address, sdk] : null,
+    enabled && address && sdk ? ['userNfts', address, sdk] : null,
     async ([_, userAddress, sdk]): Promise<NftDetail[]> => {
       const [nftIds, nftBoosts] = await Promise.all([
         sdk.Portfolio.getUserNfts(userAddress.toLowerCase()),
@@ -99,7 +104,8 @@ const useUserNfts = () => {
   return {
     userNfts: data,
     error,
-    isLoading: Boolean(address) && (!sdk || isLoading || (!data && !error)),
+    isLoading:
+      enabled && Boolean(address) && (!sdk || isLoading || (!data && !error)),
     updateUserNfts: mutate,
   }
 }

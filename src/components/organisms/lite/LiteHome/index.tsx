@@ -1,23 +1,58 @@
 'use client'
 
+import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { Grid2, Pagination, Stack, Typography } from '@mui/material'
 import React from 'react'
 
+import useLendingPortfolioData from '@/hooks/portfolio/useLendingPortfolioData'
 import usePagination from '@/hooks/usePagination'
 
 import KasuIntroVideo from '@/components/organisms/lite/LiteHome/KasuIntroVideo'
 import LiteHomePool from '@/components/organisms/lite/LiteHome/LiteHomePool'
+
+import PortfolioSummaryLiteProvider from '@/context/portfolioSummaryLite/PortfolioSummaryLiteProvider'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
 type LiteHomeProps = {
   currentEpoch: string
   pools: PoolOverviewWithDelegate[]
+  portfolioPools?: PoolOverview[]
 }
 
 const CARDS_PER_PAGE = 3
 
-const LiteHome: React.FC<LiteHomeProps> = ({ pools, currentEpoch }) => {
+type LitePortfolioPhaseOnePreloadProps = {
+  currentEpoch: string
+  portfolioPools: PoolOverview[]
+}
+
+const LitePortfolioPhaseOnePreload: React.FC<
+  LitePortfolioPhaseOnePreloadProps
+> = ({ currentEpoch, portfolioPools }) => {
+  const { portfolioLendingPools } = useLendingPortfolioData(
+    portfolioPools,
+    currentEpoch
+  )
+
+  if (!portfolioLendingPools) return null
+
+  return (
+    <PortfolioSummaryLiteProvider
+      currentEpoch={currentEpoch}
+      poolOverviews={portfolioPools}
+      portfolioLendingPools={portfolioLendingPools}
+    >
+      {null}
+    </PortfolioSummaryLiteProvider>
+  )
+}
+
+const LiteHome: React.FC<LiteHomeProps> = ({
+  pools,
+  currentEpoch,
+  portfolioPools,
+}) => {
   const { currentPage, setPage, paginateData } = usePagination(
     CARDS_PER_PAGE,
     pools.length
@@ -25,6 +60,12 @@ const LiteHome: React.FC<LiteHomeProps> = ({ pools, currentEpoch }) => {
 
   return (
     <Stack>
+      {portfolioPools?.length ? (
+        <LitePortfolioPhaseOnePreload
+          portfolioPools={portfolioPools}
+          currentEpoch={currentEpoch}
+        />
+      ) : null}
       <Typography
         variant='h1'
         fontWeight={300}

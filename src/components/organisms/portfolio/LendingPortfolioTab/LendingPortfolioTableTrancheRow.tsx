@@ -71,9 +71,13 @@ const LendingPortfolioTableTrancheRow: React.FC<
       })()
     : ''
 
+  const getSafeAmount = (value: string) =>
+    Number.isFinite(Number(value)) ? value : '0'
+
   const renderLastEpochValue = (value: string) => {
+    const safeValue = getSafeAmount(value)
     const shouldShowClearingPlaceholder =
-      Boolean(isClearingPeriod) && Number(value) === 0
+      Boolean(isClearingPeriod) && Number(safeValue) === 0
 
     if (shouldShowClearingPlaceholder) {
       const tooltipText = clearingPeriodEndText
@@ -90,7 +94,7 @@ const LendingPortfolioTableTrancheRow: React.FC<
 
     return (
       <>
-        {formatAmount(value || '0', {
+        {formatAmount(safeValue, {
           minValue: 10_000_000,
           minDecimals: 2,
         })}{' '}

@@ -4,14 +4,19 @@ import { useChainId } from 'wagmi'
 import useSdk from '@/hooks/context/useSdk'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
-const useUserBonusData = () => {
+type UseUserBonusDataOptions = {
+  enabled?: boolean
+}
+
+const useUserBonusData = (options?: UseUserBonusDataOptions) => {
   const sdk = useSdk()
   const chainId = useChainId()
   const { address } = usePrivyAuthenticated()
   const addressLower = address?.toLowerCase()
+  const enabled = options?.enabled ?? true
 
   const { data, error, isLoading, mutate } = useSWR(
-    addressLower && sdk && chainId
+    enabled && addressLower && sdk && chainId
       ? ['userBonusData', chainId, addressLower]
       : null,
     async ([_, __chainId, userAddress]) => {
@@ -27,7 +32,7 @@ const useUserBonusData = () => {
   return {
     userBonus: data,
     error,
-    isLoading,
+    isLoading: enabled && isLoading,
     updateUserBonus: mutate,
   }
 }

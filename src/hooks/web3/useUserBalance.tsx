@@ -8,17 +8,28 @@ import useTokenDetails from '@/hooks/web3/useTokenDetails'
 
 import { IERC20__factory } from '@/contracts/output'
 
-const useUserBalance = (tokenAddress: string | undefined) => {
+type UseUserBalanceOptions = {
+  enabled?: boolean
+}
+
+const useUserBalance = (
+  tokenAddress: string | undefined,
+  options?: UseUserBalanceOptions
+) => {
   const { address } = usePrivyAuthenticated()
 
   const { wallets } = useWallets()
 
   const wallet = wallets[0]
+  const enabled = options?.enabled ?? true
+  const addressLower = address?.toLowerCase()
+  const walletAddressLower = wallet?.address?.toLowerCase()
 
   const [hasLoaded, setHasLoaded] = useState(false)
 
   const { decimals, symbol, error } = useTokenDetails(
-    tokenAddress as `0x${string}`
+    tokenAddress as `0x${string}`,
+    { enabled: enabled && Boolean(tokenAddress) }
   )
 
   const {
@@ -27,19 +38,22 @@ const useUserBalance = (tokenAddress: string | undefined) => {
     isLoading,
     mutate: refetchUserBalance,
   } = useSWR(
-    wallet && address && tokenAddress
-      ? [`userBalance-${tokenAddress}`, wallet, address, tokenAddress]
+    enabled && wallet && addressLower && tokenAddress
+      ? [
+          'userBalance',
+          tokenAddress.toLowerCase(),
+          addressLower,
+          walletAddressLower,
+        ]
       : null,
-    async ([_, wallet, userAddress, token]) => {
+    async () => {
       const privyProvider = await wallet.getEthereumProvider()
 
       const provider = new ethers.providers.Web3Provider(privyProvider)
 
-      const erc20 = IERC20__factory.connect(token, provider)
+      const erc20 = IERC20__factory.connect(tokenAddress as string, provider)
 
-      const balance = await erc20.balanceOf(userAddress)
-
-      return balance
+      return await erc20.balanceOf(addressLower as string)
     },
     { fallbackData: ethers.constants.Zero, onSuccess: () => setHasLoaded(true) }
   )
@@ -49,7 +63,7 @@ const useUserBalance = (tokenAddress: string | undefined) => {
     decimals,
     symbol,
     error: error || balanceError,
-    isUserBalanceLoading: isLoading,
+    isUserBalanceLoading: enabled && isLoading,
     hasLoaded,
     refetchUserBalance,
   }

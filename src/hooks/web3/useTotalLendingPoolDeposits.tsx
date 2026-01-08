@@ -8,14 +8,21 @@ import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
 import { SupportedTokens } from '@/constants/tokens'
 
-const useTotalLendingPoolDeposits = () => {
+type UseTotalLendingPoolDepositsOptions = {
+  enabled?: boolean
+}
+
+const useTotalLendingPoolDeposits = (
+  options?: UseTotalLendingPoolDepositsOptions
+) => {
   const { address } = usePrivyAuthenticated()
   const sdk = useSdk()
+  const enabled = options?.enabled ?? true
 
   const supportedToken = useSupportedTokenInfo()
 
   const { data, error, isLoading, mutate } = useSWR(
-    address && sdk ? ['totalPoolDeposits', address, sdk] : null,
+    enabled && address && sdk ? ['totalPoolDeposits', address, sdk] : null,
     async ([_, account, sdk]) =>
       sdk.UserLending.getUserTotalPendingAndActiveDepositedAmount(account),
 
@@ -46,7 +53,7 @@ const useTotalLendingPoolDeposits = () => {
   return {
     totalDeposits: { activeDepositAmount, pendingDepositAmount },
     error,
-    isLoading,
+    isLoading: enabled && isLoading,
     refresh: mutate,
   }
 }

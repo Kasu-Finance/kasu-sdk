@@ -15,13 +15,18 @@ export type UserNftYield = {
   totalBoost: string
 }
 
-const useUserNftYields = () => {
+type UseUserNftYieldsOptions = {
+  enabled?: boolean
+}
+
+const useUserNftYields = (options?: UseUserNftYieldsOptions) => {
   const { address } = usePrivyAuthenticated()
 
   const chainId = useChainId()
+  const enabled = options?.enabled ?? true
 
   const { data, error, isLoading, mutate } = useSWR(
-    address && chainId ? ['userNftYields', address, chainId] : null,
+    enabled && address && chainId ? ['userNftYields', address, chainId] : null,
     async ([_, userAddress, chainId]): Promise<UserNftYield> => {
       const res = await fetch(
         '/api/nft?' +
@@ -54,7 +59,10 @@ const useUserNftYields = () => {
   return {
     userNftYields: data,
     error,
-    isLoading: Boolean(address) && (!chainId || isLoading || (!data && !error)),
+    isLoading:
+      enabled &&
+      Boolean(address) &&
+      (!chainId || isLoading || (!data && !error)),
     updateUserNftYields: mutate,
   }
 }

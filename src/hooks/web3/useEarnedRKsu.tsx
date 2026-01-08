@@ -1,16 +1,21 @@
 import useUserLockDepositsInfo from '@/hooks/locking/useUserLockDepositsInfo'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
-const useEarnedRKsu = () => {
+type UseEarnedRKsuOptions = {
+  enabled?: boolean
+}
+
+const useEarnedRKsu = (options?: UseEarnedRKsuOptions) => {
   const { address } = usePrivyAuthenticated()
+  const enabled = options?.enabled ?? true
 
   const { userLockDepositsInfo, error, isLoading, updateUserLockDepositsInfo } =
-    useUserLockDepositsInfo()
+    useUserLockDepositsInfo({ enabled })
 
   return {
     rKsuAmount: address ? userLockDepositsInfo?.rKSUAmount : undefined,
     error,
-    isLoading,
+    isLoading: enabled && isLoading,
     updateEarnedRKsu: updateUserLockDepositsInfo,
   }
 }

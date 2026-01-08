@@ -26,11 +26,13 @@ import { PoolOverviewWithDelegate } from '@/types/page'
 type PoolAccordionProps = {
   pools: PoolOverviewWithDelegate[]
   currentEpoch: string
+  enabled?: boolean
 }
 
 const PoolAccordion: React.FC<PoolAccordionProps> = ({
   pools,
   currentEpoch,
+  enabled = true,
 }) => {
   const { t } = getTranslation()
 
@@ -148,6 +150,7 @@ const PoolAccordion: React.FC<PoolAccordionProps> = ({
                   pools={pools}
                   pool={pool}
                   currentEpoch={currentEpoch}
+                  enabled={enabled}
                 >
                   Lend Now
                 </LendButton>

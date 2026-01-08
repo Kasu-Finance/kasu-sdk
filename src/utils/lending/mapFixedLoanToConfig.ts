@@ -15,6 +15,11 @@ type MappedFixedTermConfig = TrancheData['fixedTermConfig'][number] & {
   }
 }
 
+const toNumber = (value: string) => {
+  const parsed = parseFloat(value)
+  return Number.isFinite(parsed) ? parsed : 0
+}
+
 const mapFixedLoanToConfig = (
   fixedLoans: PortfolioTranche['fixedLoans'],
   fixedTermConfig: TrancheData['fixedTermConfig']
@@ -27,21 +32,21 @@ const mapFixedLoanToConfig = (
     if (item) {
       fixLoanMap.set(loan.configId, {
         investedAmount: loan.isLocked
-          ? item.investedAmount + parseFloat(loan.amount)
+          ? item.investedAmount + toNumber(loan.amount)
           : item.investedAmount,
         lastEpochYield:
-          item.lastEpochYield + parseFloat(loan.yieldEarnings.lastEpoch),
+          item.lastEpochYield + toNumber(loan.yieldEarnings.lastEpoch),
         lifetimeYield:
-          item.lifetimeYield + parseFloat(loan.yieldEarnings.lifetime),
+          item.lifetimeYield + toNumber(loan.yieldEarnings.lifetime),
       })
 
       continue
     }
 
     fixLoanMap.set(loan.configId, {
-      investedAmount: loan.isLocked ? parseFloat(loan.amount) : 0,
-      lastEpochYield: parseFloat(loan.yieldEarnings.lastEpoch),
-      lifetimeYield: parseFloat(loan.yieldEarnings.lifetime),
+      investedAmount: loan.isLocked ? toNumber(loan.amount) : 0,
+      lastEpochYield: toNumber(loan.yieldEarnings.lastEpoch),
+      lifetimeYield: toNumber(loan.yieldEarnings.lifetime),
     })
   }
 

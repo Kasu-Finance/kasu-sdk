@@ -4,13 +4,18 @@ import { useChainId } from 'wagmi'
 import useSdk from '@/hooks/context/useSdk'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
-const useUserLocks = () => {
+type UseUserLocksOptions = {
+  enabled?: boolean
+}
+
+const useUserLocks = (options?: UseUserLocksOptions) => {
   const sdk = useSdk()
   const chainId = useChainId()
   const { address } = usePrivyAuthenticated()
+  const enabled = options?.enabled ?? true
 
   const { data, error, isLoading, mutate } = useSWR(
-    address && sdk && chainId
+    enabled && address && sdk && chainId
       ? ['userLocks', chainId, address.toLowerCase()]
       : null,
     async ([_, __chainId, userAddress]) => {
@@ -26,7 +31,7 @@ const useUserLocks = () => {
   return {
     userLocks: data,
     error,
-    isLoading,
+    isLoading: enabled && isLoading,
     updateUserLocks: mutate,
   }
 }

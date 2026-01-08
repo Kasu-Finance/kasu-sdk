@@ -7,12 +7,17 @@ import useSdk from '@/hooks/context/useSdk'
 import useUserLockDepositsInfo from '@/hooks/locking/useUserLockDepositsInfo'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
-const useLockingRewards = () => {
+type UseLockingRewardsOptions = {
+  enabled?: boolean
+}
+
+const useLockingRewards = (options?: UseLockingRewardsOptions) => {
   const sdk = useSdk()
 
   const chainId = useChainId()
 
   const { address } = usePrivyAuthenticated()
+  const enabled = options?.enabled ?? true
 
   const addressLower = address?.toLowerCase()
 
@@ -21,7 +26,7 @@ const useLockingRewards = () => {
     error: userLockDepositsInfoError,
     isLoading: userLockDepositsInfoLoading,
     updateUserLockDepositsInfo,
-  } = useUserLockDepositsInfo()
+  } = useUserLockDepositsInfo({ enabled })
 
   const {
     data: claimableRewards,
@@ -29,7 +34,7 @@ const useLockingRewards = () => {
     isLoading: claimableRewardsLoading,
     mutate: updateClaimableRewards,
   } = useSWR(
-    addressLower && sdk && chainId
+    enabled && addressLower && sdk && chainId
       ? ['lockingClaimableRewards', chainId, addressLower]
       : null,
     async ([_, __chainId, userAddress]) => {
@@ -66,7 +71,8 @@ const useLockingRewards = () => {
   return {
     lockingRewards,
     error: userLockDepositsInfoError || claimableRewardsError,
-    isLoading: userLockDepositsInfoLoading || claimableRewardsLoading,
+    isLoading:
+      enabled && (userLockDepositsInfoLoading || claimableRewardsLoading),
     updateLockingRewards,
   }
 }
