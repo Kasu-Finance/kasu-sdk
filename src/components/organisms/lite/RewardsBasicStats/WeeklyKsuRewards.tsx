@@ -7,7 +7,7 @@ import {
   TypographyProps,
 } from '@mui/material'
 
-import usePortfolioSummaryLite from '@/hooks/context/usePortfolioSummaryLite'
+import usePortfolioSummaryContext from '@/hooks/context/usePortfolioSummaryContext'
 
 import { formatAmount } from '@/utils'
 
@@ -19,7 +19,7 @@ const WeeklyKsuRewards: React.FC<WeeklyKsuRewardsProps> = ({
   skeletonProps,
   ...rest
 }) => {
-  const { portfolioSummary, isLoading } = usePortfolioSummaryLite()
+  const { portfolioSummary, isLoading } = usePortfolioSummaryContext()
 
   if (isLoading) {
     return (

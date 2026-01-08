@@ -1,10 +1,9 @@
 'use client'
 
-import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { Box, Skeleton, SkeletonProps, Typography } from '@mui/material'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 
-import usePortfolioSummary from '@/hooks/portfolio/usePortfolioSummary'
+import usePortfolioSummaryContext from '@/hooks/context/usePortfolioSummaryContext'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
 import TokenAmount, { TokenAmountProps } from '@/components/atoms/TokenAmount'
@@ -12,23 +11,16 @@ import TokenAmount, { TokenAmountProps } from '@/components/atoms/TokenAmount'
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
 type LifetimeKsuBonusRewardsProps = Partial<TokenAmountProps> & {
-  currentEpoch: string
-  poolOverviews: PoolOverview[]
   showUsdAmout?: boolean
   skeletonProps?: SkeletonProps
 }
 
 const LifetimeKsuBonusRewards: React.FC<LifetimeKsuBonusRewardsProps> = ({
-  currentEpoch,
-  poolOverviews,
   showUsdAmout = true,
   skeletonProps,
   ...rest
 }) => {
-  const { portfolioSummary, isLoading } = usePortfolioSummary(
-    currentEpoch,
-    poolOverviews
-  )
+  const { portfolioSummary, isLoading } = usePortfolioSummaryContext()
 
   const { ksuPrice, isLoading: ksuPriceLoading } = useKsuPrice()
 

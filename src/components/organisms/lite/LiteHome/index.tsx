@@ -10,7 +10,7 @@ import usePagination from '@/hooks/usePagination'
 import KasuIntroVideo from '@/components/organisms/lite/LiteHome/KasuIntroVideo'
 import LiteHomePool from '@/components/organisms/lite/LiteHome/LiteHomePool'
 
-import PortfolioSummaryLiteProvider from '@/context/portfolioSummaryLite/PortfolioSummaryLiteProvider'
+import PortfolioSummaryProvider from '@/context/portfolioSummary/PortfolioSummaryProvider'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
@@ -38,13 +38,13 @@ const LitePortfolioPhaseOnePreload: React.FC<
   if (!portfolioLendingPools) return null
 
   return (
-    <PortfolioSummaryLiteProvider
+    <PortfolioSummaryProvider
       currentEpoch={currentEpoch}
       poolOverviews={portfolioPools}
       portfolioLendingPools={portfolioLendingPools}
     >
       {null}
-    </PortfolioSummaryLiteProvider>
+    </PortfolioSummaryProvider>
   )
 }
 

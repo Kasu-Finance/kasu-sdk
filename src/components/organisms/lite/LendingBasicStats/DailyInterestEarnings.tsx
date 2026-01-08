@@ -8,7 +8,7 @@ import {
   TypographyProps,
 } from '@mui/material'
 
-import usePortfolioSummaryLite from '@/hooks/context/usePortfolioSummaryLite'
+import usePortfolioSummaryContext from '@/hooks/context/usePortfolioSummaryContext'
 
 import { formatAmount } from '@/utils'
 
@@ -19,10 +19,12 @@ type DailyInterestEarningsProps = TypographyProps & {
 }
 
 const DailyInterestEarnings: React.FC<DailyInterestEarningsProps> = ({
+  currentEpoch: _currentEpoch,
+  poolOverviews: _poolOverviews,
   skeletonProps,
   ...rest
 }) => {
-  const { portfolioSummary, isLoading } = usePortfolioSummaryLite()
+  const { portfolioSummary, isLoading } = usePortfolioSummaryContext()
 
   if (isLoading) {
     return (

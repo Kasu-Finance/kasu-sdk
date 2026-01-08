@@ -28,7 +28,7 @@ import NftRewards from '@/components/organisms/lite/NftRewards'
 import PendingTransactionRequests from '@/components/organisms/lite/PendingTransactionRequests'
 import RewardsBasicStats from '@/components/organisms/lite/RewardsBasicStats'
 
-import PortfolioSummaryLiteProvider from '@/context/portfolioSummaryLite/PortfolioSummaryLiteProvider'
+import PortfolioSummaryProvider from '@/context/portfolioSummary/PortfolioSummaryProvider'
 
 import sdkConfig, { USDC } from '@/config/sdk'
 
@@ -194,7 +194,7 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({
     <Grid2 container spacing={{ xs: 2, md: 3 }} alignItems='stretch'>
       <Grid2 size={{ xs: 12, md: 8 }} sx={{ minWidth: 0 }}>
         <WaveBox variant='dark-gray' borderRadius={6} p={2}>
-          <PortfolioSummaryLiteProvider
+          <PortfolioSummaryProvider
             currentEpoch={currentEpoch}
             poolOverviews={pools}
             portfolioLendingPools={portfolioLendingPools}
@@ -252,7 +252,7 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({
                 </Stack>
               )}
             </Stack>
-          </PortfolioSummaryLiteProvider>
+          </PortfolioSummaryProvider>
         </WaveBox>
       </Grid2>
       <Grid2 size={{ xs: 12, md: 4 }} sx={{ minWidth: 0 }}>
