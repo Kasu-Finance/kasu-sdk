@@ -1,11 +1,11 @@
 import { Box } from '@mui/material'
-import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
 
 import getTranslation from '@/hooks/useTranslation'
 
 import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
 import LiteModeRenderer from '@/components/atoms/LiteModeRenderer'
+import RedirectHandler from '@/components/atoms/RedirectHandler'
 import PoolLayoutWrapper from '@/components/organisms/home/PoolLayoutWrapper'
 import PoolLayoutWrapperSkeleton from '@/components/organisms/home/PoolLayoutWrapperSkeleton'
 
@@ -23,7 +23,7 @@ const OversubscribedLendingStrategies = async () => {
 
   return (
     <LiteModeRenderer
-      renderOnLiteMode={redirect(Routes.lending.root.url)}
+      renderOnLiteMode={<RedirectHandler to={Routes.lending.root.url} />}
       otherwise={
         <Box mt={3}>
           <Suspense fallback={<PoolLayoutWrapperSkeleton />}>
