@@ -3,13 +3,15 @@
 import { Grid2, Step, Stepper, Typography } from '@mui/material'
 import Image from 'next/image'
 
+import useReadOnlySdk from '@/hooks/context/useReadOnlySdk'
 import useLoyaltyLevel, { LoyaltyLevel } from '@/hooks/locking/useLoyaltyLevel'
 import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
 
 import { getCrown } from '@/components/organisms/header/CurrentLoyaltyCrown'
 
 const CurrentLoyaltyProgressStepper = () => {
-  const { stakedPercentage } = useLockingPercentage()
+  const readOnlySdk = useReadOnlySdk()
+  const { stakedPercentage } = useLockingPercentage({ sdk: readOnlySdk })
 
   const { currentLevel } = useLoyaltyLevel(stakedPercentage)
 

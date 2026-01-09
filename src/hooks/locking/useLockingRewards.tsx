@@ -1,3 +1,4 @@
+import type { KasuSdk } from '@kasufinance/kasu-sdk'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import useSWR from 'swr'
@@ -9,10 +10,12 @@ import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 type UseLockingRewardsOptions = {
   enabled?: boolean
+  sdk?: KasuSdk
 }
 
 const useLockingRewards = (options?: UseLockingRewardsOptions) => {
-  const sdk = useSdk()
+  const sdkFromContext = useSdk()
+  const sdk = options?.sdk ?? sdkFromContext
 
   const chainId = useChainId()
 

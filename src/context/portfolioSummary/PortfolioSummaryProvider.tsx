@@ -11,7 +11,7 @@ import { useChainId } from 'wagmi'
 
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
-import portfolioSummaryLiteContext from '@/context/portfolioSummaryLite/portfolioSummaryLite.context'
+import portfolioSummaryContext from '@/context/portfolioSummary/portfolioSummary.context'
 
 import sdkConfig from '@/config/sdk'
 import { SupportedChainIds } from '@/connection/chains'
@@ -19,7 +19,7 @@ import { RPC_URLS } from '@/connection/rpc'
 import { USER_FINANCIAL_DATA_CACHE_TTL } from '@/constants/general'
 import QueuedJsonRpcProvider from '@/utils/rpc/QueuedJsonRpcProvider'
 
-type PortfolioSummaryLiteProviderProps = {
+type PortfolioSummaryProviderProps = {
   children: React.ReactNode
   currentEpoch: string
   poolOverviews: PoolOverview[]
@@ -43,9 +43,12 @@ const unusedPoolsFetcher = async () => {
   return filteredPools
 }
 
-const PortfolioSummaryLiteProvider: React.FC<
-  PortfolioSummaryLiteProviderProps
-> = ({ children, currentEpoch, poolOverviews, portfolioLendingPools }) => {
+const PortfolioSummaryProvider: React.FC<PortfolioSummaryProviderProps> = ({
+  children,
+  currentEpoch,
+  poolOverviews,
+  portfolioLendingPools,
+}) => {
   const chainId = useChainId()
 
   const { address } = usePrivyAuthenticated()
@@ -87,7 +90,7 @@ const PortfolioSummaryLiteProvider: React.FC<
 
   const key = canFetch
     ? ([
-        'portfolioSummaryLite',
+        'portfolioSummary',
         chainId,
         addressLower!,
         currentEpoch,
@@ -124,7 +127,7 @@ const PortfolioSummaryLiteProvider: React.FC<
   const isLoading = shouldEnable && !portfolioLendingPools ? true : swrIsLoading
 
   return (
-    <portfolioSummaryLiteContext.Provider
+    <portfolioSummaryContext.Provider
       value={{
         portfolioSummary,
         isLoading,
@@ -133,8 +136,8 @@ const PortfolioSummaryLiteProvider: React.FC<
       }}
     >
       {children}
-    </portfolioSummaryLiteContext.Provider>
+    </portfolioSummaryContext.Provider>
   )
 }
 
-export default PortfolioSummaryLiteProvider
+export default PortfolioSummaryProvider

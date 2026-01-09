@@ -15,6 +15,7 @@ class QueuedJsonRpcProvider extends providers.JsonRpcProvider {
     return new Promise((resolve, reject) => {
       const run = () => {
         this.inFlight += 1
+
         super
           .send(method, params)
           .then(resolve, reject)

@@ -1,3 +1,4 @@
+import type { KasuSdk } from '@kasufinance/kasu-sdk'
 import useSWR from 'swr'
 
 import useSdk from '@/hooks/context/useSdk'
@@ -24,10 +25,12 @@ export type NftDetail = {
 
 type UseUserNftsOptions = {
   enabled?: boolean
+  sdk?: KasuSdk
 }
 
 const useUserNfts = (options?: UseUserNftsOptions) => {
-  const sdk = useSdk()
+  const sdkFromContext = useSdk()
+  const sdk = options?.sdk ?? sdkFromContext
 
   const { address } = usePrivyAuthenticated()
   const enabled = options?.enabled ?? true

@@ -7,6 +7,7 @@ import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 import useTokenDetails from '@/hooks/web3/useTokenDetails'
 
 import { IERC20__factory } from '@/contracts/output'
+import { wrapQueuedProvider } from '@/utils/rpc/rpcQueue'
 
 type UseUserBalanceOptions = {
   enabled?: boolean
@@ -47,7 +48,12 @@ const useUserBalance = (
         ]
       : null,
     async () => {
-      const privyProvider = await wallet.getEthereumProvider()
+      const privyProvider = wrapQueuedProvider(
+        await wallet.getEthereumProvider()
+      )
+      if (!privyProvider) {
+        throw new Error('Wallet provider not available')
+      }
 
       const provider = new ethers.providers.Web3Provider(privyProvider)
 

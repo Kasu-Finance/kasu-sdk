@@ -3,6 +3,7 @@
 import { Stack, Typography } from '@mui/material'
 import { type FC, useCallback, useEffect, useRef, useState } from 'react'
 
+import useReadOnlySdk from '@/hooks/context/useReadOnlySdk'
 import useUserNfts from '@/hooks/portfolio/useUserNfts'
 import useUserNftYields from '@/hooks/portfolio/useUserNftYields'
 import getTranslation from '@/hooks/useTranslation'
@@ -18,6 +19,7 @@ type NftRewardsProps = {
 const NftRewards: FC<NftRewardsProps> = ({ onReady }) => {
   const { t } = getTranslation()
 
+  const readOnlySdk = useReadOnlySdk()
   const [shouldLoadYields, setShouldLoadYields] = useState(false)
   const readyRef = useRef(false)
 
@@ -27,7 +29,9 @@ const NftRewards: FC<NftRewardsProps> = ({ onReady }) => {
     onReady?.()
   }, [onReady])
 
-  const { userNfts, isLoading: isUserNftsLoading } = useUserNfts()
+  const { userNfts, isLoading: isUserNftsLoading } = useUserNfts({
+    sdk: readOnlySdk,
+  })
 
   useEffect(() => {
     if (isUserNftsLoading) return

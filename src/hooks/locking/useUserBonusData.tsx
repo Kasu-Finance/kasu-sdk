@@ -1,3 +1,4 @@
+import type { KasuSdk } from '@kasufinance/kasu-sdk'
 import useSWR from 'swr'
 import { useChainId } from 'wagmi'
 
@@ -6,10 +7,12 @@ import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 type UseUserBonusDataOptions = {
   enabled?: boolean
+  sdk?: KasuSdk
 }
 
 const useUserBonusData = (options?: UseUserBonusDataOptions) => {
-  const sdk = useSdk()
+  const sdkFromContext = useSdk()
+  const sdk = options?.sdk ?? sdkFromContext
   const chainId = useChainId()
   const { address } = usePrivyAuthenticated()
   const addressLower = address?.toLowerCase()

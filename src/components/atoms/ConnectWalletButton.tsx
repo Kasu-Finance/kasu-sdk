@@ -28,6 +28,7 @@ import { SupportedChainIds } from '@/connection/chains'
 import { customPalette } from '@/themes/palette'
 import { customTypography } from '@/themes/typography'
 import { formatAccount } from '@/utils'
+import { wrapQueuedProvider } from '@/utils/rpc/rpcQueue'
 
 type ConnectWalletButtonProps = ButtonProps & {
   compact?: boolean
@@ -123,7 +124,13 @@ const ConnectWalletButton = forwardRef<
         return
       }
 
-      const provider: any = await wallet.getEthereumProvider()
+      const provider: any = wrapQueuedProvider(
+        await wallet.getEthereumProvider()
+      )
+      if (!provider) {
+        setActualChainId(undefined)
+        return
+      }
 
       const chain = provider?.chainId
         ? provider.chainId

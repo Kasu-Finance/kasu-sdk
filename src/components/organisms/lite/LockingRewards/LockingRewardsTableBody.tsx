@@ -4,6 +4,7 @@ import { Stack, TableCell, TableRow, Typography } from '@mui/material'
 import { formatEther } from 'ethers/lib/utils'
 import { type FC, useCallback, useEffect, useRef, useState } from 'react'
 
+import useReadOnlySdk from '@/hooks/context/useReadOnlySdk'
 import useEarnedBonusLockingAmount from '@/hooks/locking/useEarnedBonusLockingAmount'
 import useLockingRewards from '@/hooks/locking/useLockingRewards'
 import useUserBonusData from '@/hooks/locking/useUserBonusData'
@@ -26,6 +27,7 @@ const LockingRewardsTableBody: FC<LockingRewardsTableBodyProps> = ({
 
   const [step, setStep] = useState(0)
   const readyRef = useRef(false)
+  const readOnlySdk = useReadOnlySdk()
 
   const signalReady = useCallback(() => {
     if (readyRef.current) return
@@ -41,6 +43,7 @@ const LockingRewardsTableBody: FC<LockingRewardsTableBodyProps> = ({
 
   const { userBonus, isLoading: isUserBonusLoading } = useUserBonusData({
     enabled: step >= 1,
+    sdk: readOnlySdk,
   })
 
   useEffect(() => {
@@ -52,6 +55,7 @@ const LockingRewardsTableBody: FC<LockingRewardsTableBodyProps> = ({
   const { lockingRewards, isLoading: isLockingRewardsLoading } =
     useLockingRewards({
       enabled: step >= 2,
+      sdk: readOnlySdk,
     })
 
   useEffect(() => {
@@ -73,6 +77,7 @@ const LockingRewardsTableBody: FC<LockingRewardsTableBodyProps> = ({
 
   const { ksuPrice, isLoading: isKsuPriceLoading } = useKsuPrice({
     enabled: step >= 4,
+    sdk: readOnlySdk,
   })
 
   useEffect(() => {

@@ -1,3 +1,4 @@
+import type { KasuSdk } from '@kasufinance/kasu-sdk'
 import { formatUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import useSWR from 'swr'
@@ -10,13 +11,15 @@ import { SupportedTokens } from '@/constants/tokens'
 
 type UseTotalLendingPoolDepositsOptions = {
   enabled?: boolean
+  sdk?: KasuSdk
 }
 
 const useTotalLendingPoolDeposits = (
   options?: UseTotalLendingPoolDepositsOptions
 ) => {
   const { address } = usePrivyAuthenticated()
-  const sdk = useSdk()
+  const sdkFromContext = useSdk()
+  const sdk = options?.sdk ?? sdkFromContext
   const enabled = options?.enabled ?? true
 
   const supportedToken = useSupportedTokenInfo()

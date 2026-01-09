@@ -1,3 +1,4 @@
+import type { KasuSdk } from '@kasufinance/kasu-sdk'
 import { formatUnits } from 'ethers/lib/utils'
 import useSWR from 'swr'
 
@@ -5,10 +6,12 @@ import useSdk from '@/hooks/context/useSdk'
 
 type UseKsuPriceOptions = {
   enabled?: boolean
+  sdk?: KasuSdk
 }
 
 const useKsuPrice = (options?: UseKsuPriceOptions) => {
-  const sdk = useSdk()
+  const sdkFromContext = useSdk()
+  const sdk = options?.sdk ?? sdkFromContext
   const enabled = options?.enabled ?? true
 
   const { data, error, isLoading } = useSWR(
