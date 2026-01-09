@@ -1,6 +1,12 @@
 import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { formatUnits } from 'ethers/lib/utils'
-import { useCallback, useDeferredValue, useMemo, useState } from 'react'
+import {
+  useCallback,
+  useDeferredValue,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useLiteModeState from '@/hooks/context/useLiteModeState'
@@ -26,6 +32,11 @@ type DepositMinMax = {
   remainingCapacity?: string
   epochMaxDeposit?: string
 }
+
+const getRemainingCapacityError = (remainingCapacityValue: string) =>
+  toBigNumber(remainingCapacityValue).isZero()
+    ? 'No remaining capacity for this tranche.'
+    : `The value entered is above the remaining capacity of ${formatAmount(remainingCapacityValue)} USDC`
 
 const LendingModalEdit = () => {
   const { setModalStatus } = useModalStatusState()
@@ -161,7 +172,7 @@ const LendingModalEdit = () => {
         if (inputUsdBN.gt(remainingCapacityBN)) {
           setModalStatus({
             type: 'error',
-            errorMessage: `The value entered is above the remaining capacity of ${formatAmount(remainingCapacityValue)} USDC`,
+            errorMessage: getRemainingCapacityError(remainingCapacityValue),
           })
           return
         }
@@ -202,6 +213,46 @@ const LendingModalEdit = () => {
     ]
   )
 
+  const setRemainingCapacityStatus = useCallback(
+    (depositMinMax: DepositMinMax) => {
+      const remainingCapacityValue = depositMinMax.remainingCapacity ?? '0'
+      if (toBigNumber(remainingCapacityValue).isZero()) {
+        setModalStatus({
+          type: 'error',
+          errorMessage: getRemainingCapacityError(remainingCapacityValue),
+        })
+        return true
+      }
+
+      return false
+    },
+    [setModalStatus]
+  )
+
+  useEffect(() => {
+    if (amount || amountInUSD) return
+
+    const depositMinMax = calculateDepositMinMax(
+      selectedPoolData?.tranches ?? pool.tranches,
+      selectedTranche,
+      currentEpochDepositedAmountMap,
+      currentEpochFtdAmountMap,
+      fixedTermConfigId
+    )
+
+    setRemainingCapacityStatus(depositMinMax)
+  }, [
+    amount,
+    amountInUSD,
+    selectedPoolData,
+    pool.tranches,
+    selectedTranche,
+    currentEpochDepositedAmountMap,
+    currentEpochFtdAmountMap,
+    fixedTermConfigId,
+    setRemainingCapacityStatus,
+  ])
+
   const handlePoolChange = useCallback(
     (pool: PoolOverview) => {
       setModalStatus({ type: 'default' })
@@ -223,7 +274,8 @@ const LendingModalEdit = () => {
 
       setDepositMinMax(depositMinMax)
 
-      if (!nextFixedTermConfigId) return
+      const hasNoCapacity = setRemainingCapacityStatus(depositMinMax)
+      if (!nextFixedTermConfigId || hasNoCapacity) return
 
       validate(
         deferredAmount,
@@ -239,6 +291,7 @@ const LendingModalEdit = () => {
       currentEpochDepositedAmountMap,
       currentEpochFtdAmountMap,
       setDepositMinMax,
+      setRemainingCapacityStatus,
       validate,
       deferredAmount,
       deferredAmountInUSD,
@@ -268,9 +321,11 @@ const LendingModalEdit = () => {
 
       setDepositMinMax(depositMinMax)
 
+      const hasNoCapacity = setRemainingCapacityStatus(depositMinMax)
+
       // skip validation and conversion when new tranche has fixed term options
       // since it will be validated when user selects a fixed term option which is required
-      if (!nextFixedTermConfigId) return
+      if (!nextFixedTermConfigId || hasNoCapacity) return
 
       validate(deferredAmount, deferredAmountInUSD, depositMinMax, tranche)
     },
@@ -285,11 +340,13 @@ const LendingModalEdit = () => {
       currentEpochFtdAmountMap,
       setDepositMinMax,
       getDefaultFixedTermConfigId,
+      setRemainingCapacityStatus,
     ]
   )
 
   const handleFixedTermConfigChange = useCallback(
     (fixedTermConfigId: string | undefined) => {
+      setModalStatus({ type: 'default' })
       setFixedTermConfigId(fixedTermConfigId)
 
       const depositMinMax = calculateDepositMinMax(
@@ -302,9 +359,13 @@ const LendingModalEdit = () => {
 
       setDepositMinMax(depositMinMax)
 
+      const hasNoCapacity = setRemainingCapacityStatus(depositMinMax)
+      if (hasNoCapacity) return
+
       validate(deferredAmount, deferredAmountInUSD, depositMinMax)
     },
     [
+      setModalStatus,
       selectedTranche,
       deferredAmount,
       deferredAmountInUSD,
@@ -313,6 +374,7 @@ const LendingModalEdit = () => {
       currentEpochDepositedAmountMap,
       currentEpochFtdAmountMap,
       setDepositMinMax,
+      setRemainingCapacityStatus,
       validate,
     ]
   )

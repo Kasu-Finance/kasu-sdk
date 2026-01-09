@@ -2,7 +2,9 @@
 
 import { Stack, TableCell, TableRow, Typography } from '@mui/material'
 import { formatEther } from 'ethers/lib/utils'
+import { type FC, useCallback, useEffect, useRef, useState } from 'react'
 
+import useReadOnlySdk from '@/hooks/context/useReadOnlySdk'
 import useEarnedBonusLockingAmount from '@/hooks/locking/useEarnedBonusLockingAmount'
 import useLockingRewards from '@/hooks/locking/useLockingRewards'
 import useUserBonusData from '@/hooks/locking/useUserBonusData'
@@ -14,22 +16,85 @@ import LockingRewardsTableRow from '@/components/organisms/lite/LockingRewards/L
 
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
-const LockingRewardsTableBody = () => {
+type LockingRewardsTableBodyProps = {
+  onReady?: () => void
+}
+
+const LockingRewardsTableBody: FC<LockingRewardsTableBodyProps> = ({
+  onReady,
+}) => {
   const { t } = getTranslation()
 
-  const { userBonus, isLoading: isUserBonusLoading } = useUserBonusData()
-  const { lockingRewards, isLoading: isLockingRewardsLoading } =
-    useLockingRewards()
-  const { totalLaunchBonus, isLoading: isLaunchBonusLoading } =
-    useEarnedBonusLockingAmount()
-  const { ksuPrice, isLoading: isKsuPriceLoading } = useKsuPrice()
+  const [step, setStep] = useState(0)
+  const readyRef = useRef(false)
+  const readOnlySdk = useReadOnlySdk()
 
-  if (
+  const signalReady = useCallback(() => {
+    if (readyRef.current) return
+    readyRef.current = true
+    onReady?.()
+  }, [onReady])
+
+  useEffect(() => {
+    if (step === 0) {
+      setStep(1)
+    }
+  }, [step])
+
+  const { userBonus, isLoading: isUserBonusLoading } = useUserBonusData({
+    enabled: step >= 1,
+    sdk: readOnlySdk,
+  })
+
+  useEffect(() => {
+    if (step === 1 && !isUserBonusLoading) {
+      setStep(2)
+    }
+  }, [step, isUserBonusLoading])
+
+  const { lockingRewards, isLoading: isLockingRewardsLoading } =
+    useLockingRewards({
+      enabled: step >= 2,
+      sdk: readOnlySdk,
+    })
+
+  useEffect(() => {
+    if (step === 2 && !isLockingRewardsLoading) {
+      setStep(3)
+    }
+  }, [step, isLockingRewardsLoading])
+
+  const { totalLaunchBonus, isLoading: isLaunchBonusLoading } =
+    useEarnedBonusLockingAmount({
+      enabled: step >= 3,
+    })
+
+  useEffect(() => {
+    if (step === 3 && !isLaunchBonusLoading) {
+      setStep(4)
+    }
+  }, [step, isLaunchBonusLoading])
+
+  const { ksuPrice, isLoading: isKsuPriceLoading } = useKsuPrice({
+    enabled: step >= 4,
+    sdk: readOnlySdk,
+  })
+
+  useEffect(() => {
+    if (step === 4 && !isKsuPriceLoading) {
+      setStep(5)
+      signalReady()
+    }
+  }, [step, isKsuPriceLoading, signalReady])
+
+  const isLoading =
+    step < 5 ||
     isUserBonusLoading ||
     isLockingRewardsLoading ||
     isLaunchBonusLoading ||
     isKsuPriceLoading
-  ) {
+
+  if (isLoading) {
     return (
       <TableRow sx={{ '.MuiTableCell-root': { py: 1 } }}>
         <TableCell>

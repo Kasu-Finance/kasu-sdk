@@ -5,9 +5,14 @@ import { useChainId } from 'wagmi'
 import useSdk from '@/hooks/context/useSdk'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
+type UseCurrentEpochFtdAmountOptions = {
+  enabled?: boolean
+}
+
 const useCurrentEpochFtdAmount = (
   lendingPoolIds: string | string[],
-  currentEpoch: string
+  currentEpoch: string,
+  options?: UseCurrentEpochFtdAmountOptions
 ) => {
   const sdk = useSdk()
   const chainId = useChainId()
@@ -15,6 +20,7 @@ const useCurrentEpochFtdAmount = (
   const { address } = usePrivyAuthenticated()
 
   const addressLower = address?.toLowerCase()
+  const enabled = options?.enabled ?? true
 
   const normalizedPoolIds = useMemo(() => {
     const ids = Array.isArray(lendingPoolIds)
@@ -29,7 +35,7 @@ const useCurrentEpochFtdAmount = (
   )
 
   const { data, error, isLoading, mutate } = useSWR(
-    addressLower && sdk && chainId && currentEpoch
+    enabled && addressLower && sdk && chainId && currentEpoch
       ? [
           'currentEpochFtdAmount',
           chainId,
@@ -56,7 +62,7 @@ const useCurrentEpochFtdAmount = (
   return {
     currentEpochFtdAmount: data,
     error,
-    isLoading,
+    isLoading: enabled && isLoading,
     updateCurrentEpochFtdAmount: mutate,
   }
 }

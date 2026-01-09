@@ -1,3 +1,4 @@
+import type { KasuSdk } from '@kasufinance/kasu-sdk'
 import { formatEther } from 'ethers/lib/utils'
 
 import useRatio from '@/hooks/useRatio'
@@ -7,13 +8,22 @@ import useTotalLendingPoolDeposits from '@/hooks/web3/useTotalLendingPoolDeposit
 
 import { convertToUSD, toBigNumber } from '@/utils'
 
-const useLockingPercentage = () => {
+type UseLockingPercentageOptions = {
+  enabled?: boolean
+  sdk?: KasuSdk
+}
+
+const useLockingPercentage = (options?: UseLockingPercentageOptions) => {
+  const enabled = options?.enabled ?? true
   const { totalDeposits, isLoading: totalDepositsLoading } =
-    useTotalLendingPoolDeposits()
+    useTotalLendingPoolDeposits({ enabled, sdk: options?.sdk })
 
-  const { rKsuAmount, isLoading: rKsuLoading } = useEarnedRKsu()
+  const { rKsuAmount, isLoading: rKsuLoading } = useEarnedRKsu({ enabled })
 
-  const { ksuPrice, isLoading: ksuPriceLoading } = useKsuPrice()
+  const { ksuPrice, isLoading: ksuPriceLoading } = useKsuPrice({
+    enabled,
+    sdk: options?.sdk,
+  })
 
   const rKsuInUSD = convertToUSD(
     toBigNumber(rKsuAmount || '0'),
@@ -30,7 +40,8 @@ const useLockingPercentage = () => {
 
   return {
     stakedPercentage,
-    isLoading: (totalDepositsLoading || rKsuLoading) && ksuPriceLoading,
+    isLoading:
+      enabled && (totalDepositsLoading || rKsuLoading || ksuPriceLoading),
   }
 }
 

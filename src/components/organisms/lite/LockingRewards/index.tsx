@@ -1,4 +1,5 @@
 import { Stack, Typography } from '@mui/material'
+import type { FC } from 'react'
 
 import getTranslation from '@/hooks/useTranslation'
 
@@ -6,7 +7,11 @@ import LiteModeTable from '@/components/molecules/CustomTable/LiteModeTable'
 import LockingRewardsTableBody from '@/components/organisms/lite/LockingRewards/LockingRewardsTableBody'
 import LockingRewardsTableHeader from '@/components/organisms/lite/LockingRewards/LockingRewardsTableHeader'
 
-const LockingRewards = () => {
+type LockingRewardsProps = {
+  onReady?: () => void
+}
+
+const LockingRewards: FC<LockingRewardsProps> = ({ onReady }) => {
   const { t } = getTranslation()
 
   return (
@@ -16,7 +21,7 @@ const LockingRewards = () => {
       </Typography>
       <LiteModeTable
         tableHeader={<LockingRewardsTableHeader />}
-        tableBody={<LockingRewardsTableBody />}
+        tableBody={<LockingRewardsTableBody onReady={onReady} />}
       />
     </Stack>
   )

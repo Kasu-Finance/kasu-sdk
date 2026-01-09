@@ -1,29 +1,17 @@
 'use client'
 
-import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { Box, Skeleton, Typography } from '@mui/material'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 
-import usePortfolioSummary from '@/hooks/portfolio/usePortfolioSummary'
+import usePortfolioSummaryContext from '@/hooks/context/usePortfolioSummaryContext'
 import useKsuPrice from '@/hooks/web3/useKsuPrice'
 
 import TokenAmount from '@/components/atoms/TokenAmount'
 
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
-type TotalKsuLockedProps = {
-  currentEpoch: string
-  poolOverviews: PoolOverview[]
-}
-
-const TotalKsuLocked: React.FC<TotalKsuLockedProps> = ({
-  currentEpoch,
-  poolOverviews,
-}) => {
-  const { portfolioSummary, isLoading } = usePortfolioSummary(
-    currentEpoch,
-    poolOverviews
-  )
+const TotalKsuLocked: React.FC = () => {
+  const { portfolioSummary, isLoading } = usePortfolioSummaryContext()
 
   const { ksuPrice, isLoading: ksuPriceLoading } = useKsuPrice()
 

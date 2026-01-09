@@ -3,10 +3,11 @@ import { unstable_cache } from 'next/cache'
 import { getKasuSDK } from '@/actions/getKasuSDK'
 import { getCurrentEpoch } from '@/app/_requests/currentEpoch'
 import { getPoolDelegate } from '@/app/_requests/poolDelegate'
+import { GENERAL_DATA_CACHE_TTL } from '@/constants/general'
 
 import { PoolOverviewWithDelegate } from '@/types/page'
 
-const CACHE_TTL = 60 * 5 // 5 minutes
+const CACHE_TTL = GENERAL_DATA_CACHE_TTL / 1000
 
 export const getPoolWithDelegate = async (
   poolId?: string,

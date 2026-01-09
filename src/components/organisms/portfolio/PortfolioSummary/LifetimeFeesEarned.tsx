@@ -1,30 +1,22 @@
 'use client'
 
-import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { Skeleton, SkeletonProps } from '@mui/material'
 
-import usePortfolioSummary from '@/hooks/portfolio/usePortfolioSummary'
+import usePortfolioSummaryContext from '@/hooks/context/usePortfolioSummaryContext'
 
 import TokenAmount, { TokenAmountProps } from '@/components/atoms/TokenAmount'
 
 import { formatAmount } from '@/utils'
 
 type LifetimeFeesEarnedProps = Partial<TokenAmountProps> & {
-  currentEpoch: string
-  poolOverviews: PoolOverview[]
   skeletonProps?: SkeletonProps
 }
 
 const LifetimeFeesEarned: React.FC<LifetimeFeesEarnedProps> = ({
-  currentEpoch,
-  poolOverviews,
   skeletonProps,
   ...rest
 }) => {
-  const { portfolioSummary, isLoading } = usePortfolioSummary(
-    currentEpoch,
-    poolOverviews
-  )
+  const { portfolioSummary, isLoading } = usePortfolioSummaryContext()
 
   if (isLoading) {
     return (

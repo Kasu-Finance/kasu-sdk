@@ -2,6 +2,7 @@
 
 import { Box, Icon, Stack, Typography } from '@mui/material'
 
+import useReadOnlySdk from '@/hooks/context/useReadOnlySdk'
 import useLoyaltyLevel from '@/hooks/locking/useLoyaltyLevel'
 import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
 
@@ -37,7 +38,8 @@ const benefits = {
 } as const
 
 const CurrentLoyaltyBenefits = () => {
-  const { stakedPercentage } = useLockingPercentage()
+  const readOnlySdk = useReadOnlySdk()
+  const { stakedPercentage } = useLockingPercentage({ sdk: readOnlySdk })
 
   const { currentLevel } = useLoyaltyLevel(stakedPercentage)
 

@@ -32,12 +32,17 @@ const userLockDepositsInfoQuery = gql`
 
 const graphClient = new GraphQLClient(sdkConfig.subgraphUrl)
 
-const useUserLockDepositsInfo = () => {
+type UseUserLockDepositsInfoOptions = {
+  enabled?: boolean
+}
+
+const useUserLockDepositsInfo = (options?: UseUserLockDepositsInfoOptions) => {
   const chainId = useChainId()
   const { address } = usePrivyAuthenticated()
+  const enabled = options?.enabled ?? true
 
   const { data, error, isLoading, mutate } = useSWR(
-    address && chainId
+    enabled && address && chainId
       ? ['userLockDepositsInfo', chainId, address.toLowerCase()]
       : null,
     async ([
@@ -61,7 +66,7 @@ const useUserLockDepositsInfo = () => {
   return {
     userLockDepositsInfo: data,
     error,
-    isLoading,
+    isLoading: enabled && isLoading,
     updateUserLockDepositsInfo: mutate,
   }
 }

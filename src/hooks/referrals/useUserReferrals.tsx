@@ -12,13 +12,18 @@ export type ReferredUserDetails = {
   referralReward: string
 }
 
-const useUserReferrals = () => {
+type UseUserReferralsOptions = {
+  enabled?: boolean
+}
+
+const useUserReferrals = (options?: UseUserReferralsOptions) => {
   const { address } = usePrivyAuthenticated()
 
   const chainId = useChainId()
+  const enabled = options?.enabled ?? true
 
   const { data, error, isLoading } = useSWR(
-    address ? ['userReferrals', address] : null,
+    enabled && address && chainId ? ['userReferrals', address, chainId] : null,
     async ([_, userAddress]) => {
       const res = await fetch(
         `/api/referral/userYields?${new URLSearchParams({
@@ -49,7 +54,7 @@ const useUserReferrals = () => {
   return {
     userReferrals: data,
     error,
-    isLoading,
+    isLoading: enabled && isLoading,
   }
 }
 

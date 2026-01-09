@@ -1,27 +1,15 @@
 'use client'
 
-import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { Skeleton } from '@mui/material'
 
-import usePortfolioSummary from '@/hooks/portfolio/usePortfolioSummary'
+import usePortfolioSummaryContext from '@/hooks/context/usePortfolioSummaryContext'
 
 import TokenAmount from '@/components/atoms/TokenAmount'
 
 import { formatAmount } from '@/utils'
 
-type WeightedAverageApyProps = {
-  currentEpoch: string
-  poolOverviews: PoolOverview[]
-}
-
-const WeightedAverageApy: React.FC<WeightedAverageApyProps> = ({
-  currentEpoch,
-  poolOverviews,
-}) => {
-  const { portfolioSummary, isLoading } = usePortfolioSummary(
-    currentEpoch,
-    poolOverviews
-  )
+const WeightedAverageApy: React.FC = () => {
+  const { portfolioSummary, isLoading } = usePortfolioSummaryContext()
 
   if (isLoading) {
     return <Skeleton variant='rounded' width={60} height={24} />

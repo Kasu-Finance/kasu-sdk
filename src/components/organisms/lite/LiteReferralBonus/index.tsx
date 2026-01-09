@@ -1,4 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material'
+import type { FC } from 'react'
 
 import getTranslation from '@/hooks/useTranslation'
 
@@ -9,7 +10,11 @@ import LiteReferralBonusTableBody from '@/components/organisms/lite/LiteReferral
 import LiteReferralBonusTableHeader from '@/components/organisms/lite/LiteReferralBonus/LiteReferralBonusTableHeader'
 import LiteReferralLink from '@/components/organisms/lite/LiteReferralBonus/LiteReferralLink'
 
-const LiteReferralBonus = () => {
+type LiteReferralBonusProps = {
+  onReady?: () => void
+}
+
+const LiteReferralBonus: FC<LiteReferralBonusProps> = ({ onReady }) => {
   const { t } = getTranslation()
 
   return (
@@ -30,7 +35,7 @@ const LiteReferralBonus = () => {
       </Box>
       <LiteModeTable
         tableHeader={<LiteReferralBonusTableHeader />}
-        tableBody={<LiteReferralBonusTableBody />}
+        tableBody={<LiteReferralBonusTableBody onReady={onReady} />}
       />
       <LiteReferralLink />
     </Stack>

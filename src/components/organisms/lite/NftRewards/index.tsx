@@ -1,7 +1,9 @@
 'use client'
 
 import { Stack, Typography } from '@mui/material'
+import { type FC, useCallback, useEffect, useRef, useState } from 'react'
 
+import useReadOnlySdk from '@/hooks/context/useReadOnlySdk'
 import useUserNfts from '@/hooks/portfolio/useUserNfts'
 import useUserNftYields from '@/hooks/portfolio/useUserNftYields'
 import getTranslation from '@/hooks/useTranslation'
@@ -10,12 +12,47 @@ import LiteModeTable from '@/components/molecules/CustomTable/LiteModeTable'
 import NftRewardsTableBody from '@/components/organisms/lite/NftRewards/NftRewardsTableBody'
 import NftRewardsTableHeader from '@/components/organisms/lite/NftRewards/NftRewardsTableHeader'
 
-const NftRewards = () => {
+type NftRewardsProps = {
+  onReady?: () => void
+}
+
+const NftRewards: FC<NftRewardsProps> = ({ onReady }) => {
   const { t } = getTranslation()
 
-  const { userNfts } = useUserNfts()
+  const readOnlySdk = useReadOnlySdk()
+  const [shouldLoadYields, setShouldLoadYields] = useState(false)
+  const readyRef = useRef(false)
 
-  const { userNftYields } = useUserNftYields()
+  const signalReady = useCallback(() => {
+    if (readyRef.current) return
+    readyRef.current = true
+    onReady?.()
+  }, [onReady])
+
+  const { userNfts, isLoading: isUserNftsLoading } = useUserNfts({
+    sdk: readOnlySdk,
+  })
+
+  useEffect(() => {
+    if (isUserNftsLoading) return
+    if (userNfts?.length) {
+      setShouldLoadYields(true)
+      return
+    }
+    signalReady()
+  }, [isUserNftsLoading, userNfts, signalReady])
+
+  const { userNftYields, isLoading: isUserNftYieldsLoading } = useUserNftYields(
+    {
+      enabled: shouldLoadYields,
+    }
+  )
+
+  useEffect(() => {
+    if (shouldLoadYields && !isUserNftYieldsLoading) {
+      signalReady()
+    }
+  }, [shouldLoadYields, isUserNftYieldsLoading, signalReady])
 
   if (!userNfts?.length) return null
 

@@ -3,6 +3,7 @@
 import { Typography, TypographyProps } from '@mui/material'
 import React from 'react'
 
+import useReadOnlySdk from '@/hooks/context/useReadOnlySdk'
 import useLoyaltyLevel, {
   LoyalLoyaltyLevels,
 } from '@/hooks/locking/useLoyaltyLevel'
@@ -12,7 +13,8 @@ import useLockingPercentage from '@/hooks/web3/useLockingPercentage'
 const CurrentLoyaltyLevel: React.FC<TypographyProps> = (props) => {
   const { t } = getTranslation()
 
-  const { stakedPercentage } = useLockingPercentage()
+  const readOnlySdk = useReadOnlySdk()
+  const { stakedPercentage } = useLockingPercentage({ sdk: readOnlySdk })
 
   const { currentLevel, isLoyal } = useLoyaltyLevel(stakedPercentage)
 

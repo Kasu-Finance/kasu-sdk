@@ -13,6 +13,7 @@ import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 import SdkContext from '@/context/sdk/sdk.context'
 
 import sdkConfig from '@/config/sdk'
+import { wrapQueuedProvider } from '@/utils/rpc/rpcQueue'
 
 const unusedPoolsFetcher = async () => {
   const res = await fetch(
@@ -51,7 +52,11 @@ const SdkState: React.FC<PropsWithChildren> = ({ children }) => {
     if (!wallet || !unusedPools) return
     ;(async () => {
       try {
-        const privyProvider = await wallet.getEthereumProvider()
+        const privyProvider = wrapQueuedProvider(
+          await wallet.getEthereumProvider(),
+          { maxConcurrent: 1 }
+        )
+        if (!privyProvider) return
 
         const provider = new ethers.providers.Web3Provider(privyProvider)
 

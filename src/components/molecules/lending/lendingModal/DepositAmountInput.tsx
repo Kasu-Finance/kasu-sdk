@@ -37,6 +37,7 @@ import { CloseRoundedIcon } from '@/assets/icons'
 import { SupportedTokens } from '@/constants/tokens'
 import { customTypography } from '@/themes/typography'
 import { toBigNumber } from '@/utils'
+import { wrapQueuedProvider } from '@/utils/rpc/rpcQueue'
 
 const CowSwapWidget = dynamic(
   () => import('@cowprotocol/widget-react').then((mod) => mod.CowSwapWidget),
@@ -142,7 +143,9 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
     let isMounted = true
 
     const resolveProvider = async () => {
-      const privyProvider = await wallets?.[0]?.getEthereumProvider?.()
+      const privyProvider = wrapQueuedProvider(
+        await wallets?.[0]?.getEthereumProvider?.()
+      )
       const normalizedPrivy = normalizeCowProvider(privyProvider)
       const normalizedWindow = normalizeCowProvider(
         typeof window !== 'undefined' ? (window as any).ethereum : undefined
@@ -538,10 +541,9 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
       <Typography
         variant='caption'
         component='span'
-        sx={{ color: (theme) => theme.palette.error.main }}
+        sx={{ color: (theme) => theme.palette.error.main, mt: 0.5 }}
         display={modalStatus.type === 'error' ? 'block' : 'none'}
       >
-        <br />
         {modalStatus.type === 'error' ? modalStatus.errorMessage : 'message'}
       </Typography>
     </Box>

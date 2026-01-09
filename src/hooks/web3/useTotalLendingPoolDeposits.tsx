@@ -1,3 +1,4 @@
+import type { KasuSdk } from '@kasufinance/kasu-sdk'
 import { formatUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import useSWR from 'swr'
@@ -8,14 +9,23 @@ import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
 
 import { SupportedTokens } from '@/constants/tokens'
 
-const useTotalLendingPoolDeposits = () => {
+type UseTotalLendingPoolDepositsOptions = {
+  enabled?: boolean
+  sdk?: KasuSdk
+}
+
+const useTotalLendingPoolDeposits = (
+  options?: UseTotalLendingPoolDepositsOptions
+) => {
   const { address } = usePrivyAuthenticated()
-  const sdk = useSdk()
+  const sdkFromContext = useSdk()
+  const sdk = options?.sdk ?? sdkFromContext
+  const enabled = options?.enabled ?? true
 
   const supportedToken = useSupportedTokenInfo()
 
   const { data, error, isLoading, mutate } = useSWR(
-    address && sdk ? ['totalPoolDeposits', address, sdk] : null,
+    enabled && address && sdk ? ['totalPoolDeposits', address, sdk] : null,
     async ([_, account, sdk]) =>
       sdk.UserLending.getUserTotalPendingAndActiveDepositedAmount(account),
 
@@ -46,7 +56,7 @@ const useTotalLendingPoolDeposits = () => {
   return {
     totalDeposits: { activeDepositAmount, pendingDepositAmount },
     error,
-    isLoading,
+    isLoading: enabled && isLoading,
     refresh: mutate,
   }
 }

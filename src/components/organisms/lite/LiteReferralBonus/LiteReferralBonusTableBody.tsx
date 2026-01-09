@@ -2,6 +2,7 @@
 
 import { Button, TableCell, TableRow, Typography } from '@mui/material'
 import { formatEther, parseEther } from 'ethers/lib/utils'
+import { type FC, useCallback, useEffect, useRef, useState } from 'react'
 
 import useModalState from '@/hooks/context/useModalState'
 import useUserReferrals, {
@@ -19,12 +20,41 @@ import { customPalette } from '@/themes/palette'
 import { customTypography } from '@/themes/typography'
 import { convertToUSD, formatAmount, toBigNumber } from '@/utils'
 
-const LiteReferralBonusTableBody = () => {
-  const { ksuPrice } = useKsuPrice()
+type LiteReferralBonusTableBodyProps = {
+  onReady?: () => void
+}
+
+const LiteReferralBonusTableBody: FC<LiteReferralBonusTableBodyProps> = ({
+  onReady,
+}) => {
+  const [shouldLoadPrice, setShouldLoadPrice] = useState(false)
+  const readyRef = useRef(false)
+
+  const signalReady = useCallback(() => {
+    if (readyRef.current) return
+    readyRef.current = true
+    onReady?.()
+  }, [onReady])
+
+  const { userReferrals, isLoading: isUserReferralsLoading } =
+    useUserReferrals()
+
+  useEffect(() => {
+    if (isUserReferralsLoading) return
+    setShouldLoadPrice(true)
+  }, [isUserReferralsLoading])
+
+  const { ksuPrice, isLoading: isKsuPriceLoading } = useKsuPrice({
+    enabled: shouldLoadPrice,
+  })
 
   const { openModal } = useModalState()
 
-  const { userReferrals } = useUserReferrals()
+  useEffect(() => {
+    if (shouldLoadPrice && !isKsuPriceLoading) {
+      signalReady()
+    }
+  }, [shouldLoadPrice, isKsuPriceLoading, signalReady])
 
   const handleClick = (referredUsers: ReferredUserDetails[]) => {
     openModal({ name: ModalsKeys.REFERRED_USERS, referredUsers })

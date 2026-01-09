@@ -2,7 +2,7 @@
 
 import { Skeleton, SkeletonProps } from '@mui/material'
 
-import usePortfolioSummaryLite from '@/hooks/context/usePortfolioSummaryLite'
+import usePortfolioSummaryContext from '@/hooks/context/usePortfolioSummaryContext'
 
 import TokenAmount, { TokenAmountProps } from '@/components/atoms/TokenAmount'
 
@@ -16,7 +16,7 @@ const LiteTotalLendingBalance: React.FC<LiteTotalLendingBalanceProps> = ({
   skeletonProps,
   ...rest
 }) => {
-  const { portfolioSummary, isLoading } = usePortfolioSummaryLite()
+  const { portfolioSummary, isLoading } = usePortfolioSummaryContext()
 
   if (isLoading) {
     return (
