@@ -1,4 +1,5 @@
-import { BigNumber } from 'ethers'
+import { useWallets } from '@privy-io/react-auth'
+import { BigNumber, ethers } from 'ethers'
 import { parseEther, parseUnits } from 'ethers/lib/utils'
 import { useEffect, useState } from 'react'
 import useSWR from 'swr'
@@ -17,6 +18,8 @@ import { wagmiConfig } from '@/context/privy.provider'
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { IERC20__factory } from '@/contracts/output'
 import { capitalize, userRejectedTransaction } from '@/utils'
+import { wrapQueuedProvider } from '@/utils/rpc/rpcQueue'
+import isPrivyEmbeddedWallet from '@/utils/web3/isPrivyEmbeddedWallet'
 
 const useApproveToken = (
   tokenAddress: `0x${string}` | undefined,
@@ -26,6 +29,14 @@ const useApproveToken = (
   const { address } = usePrivyAuthenticated()
 
   const { decimals } = useTokenDetails(tokenAddress)
+
+  const { wallets } = useWallets()
+
+  const activeWallet = wallets.find(
+    (wallet) => wallet.address.toLowerCase() === address?.toLowerCase()
+  )
+
+  const shouldSponsor = isPrivyEmbeddedWallet(activeWallet)
 
   const [isApproved, setIsApproved] = useState(false)
 
@@ -95,12 +106,33 @@ const useApproveToken = (
 
       options?.onStatus?.('signing')
 
-      const hash = await writeContract(wagmiConfig, {
-        abi: IERC20__factory.abi,
-        address: tokenAddress,
-        functionName: 'approve',
-        args: [spender, parseUnits(approveAmount, decimals).toBigInt()],
-      })
+      let hash: `0x${string}`
+
+      if (shouldSponsor && activeWallet) {
+        const privyProvider = wrapQueuedProvider(
+          await activeWallet.getEthereumProvider(),
+          { sponsorTransactions: true }
+        )
+        if (!privyProvider) {
+          throw new Error('useApproveToken: wallet provider not available')
+        }
+
+        const provider = new ethers.providers.Web3Provider(privyProvider)
+        const signer = provider.getSigner(activeWallet.address)
+        const tokenContract = IERC20__factory.connect(tokenAddress, signer)
+        const tx = await tokenContract.approve(
+          spender,
+          parseUnits(approveAmount, decimals)
+        )
+        hash = tx.hash as `0x${string}`
+      } else {
+        hash = await writeContract(wagmiConfig, {
+          abi: IERC20__factory.abi,
+          address: tokenAddress,
+          functionName: 'approve',
+          args: [spender, parseUnits(approveAmount, decimals).toBigInt()],
+        })
+      }
 
       options?.onStatus?.('confirming')
 

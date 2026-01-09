@@ -22,6 +22,7 @@ import { CloseRoundedIcon } from '@/assets/icons'
 import sdkConfig from '@/config/sdk'
 import { customTypography } from '@/themes/typography'
 import { wrapQueuedProvider } from '@/utils/rpc/rpcQueue'
+import isPrivyEmbeddedWallet from '@/utils/web3/isPrivyEmbeddedWallet'
 
 const CowSwapWidget = dynamic(
   () => import('@cowprotocol/widget-react').then((mod) => mod.CowSwapWidget),
@@ -87,8 +88,10 @@ const BuyKasuCowSwap: React.FC<BuyKasuCowSwapProps> = ({ buttonProps }) => {
     let isMounted = true
 
     const resolveProvider = async () => {
+      const activeWallet = wallets?.[0]
       const privyProvider = wrapQueuedProvider(
-        await wallets?.[0]?.getEthereumProvider?.()
+        await activeWallet?.getEthereumProvider?.(),
+        { sponsorTransactions: isPrivyEmbeddedWallet(activeWallet) }
       )
       const normalizedPrivy = normalizeCowProvider(privyProvider)
       const normalizedWindow = normalizeCowProvider(

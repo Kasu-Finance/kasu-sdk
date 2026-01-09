@@ -1,5 +1,6 @@
 type WrapOptions = {
   maxConcurrent?: number
+  sponsorTransactions?: boolean
 }
 
 const readOnlyMethods = new Set([
@@ -20,6 +21,32 @@ export const wrapQueuedProvider = <T extends object>(
   options?: WrapOptions
 ) => {
   if (!provider) return provider
+
+  const withSponsorParam = (params: unknown) => {
+    if (!options?.sponsorTransactions) return params
+
+    const addSponsor = (tx: unknown) => {
+      if (!tx || typeof tx !== 'object') return tx
+      if ('sponsor' in (tx as Record<string, unknown>)) return tx
+      return { ...(tx as Record<string, unknown>), sponsor: true }
+    }
+
+    if (Array.isArray(params)) {
+      if (!params.length) return params
+      const [tx, ...rest] = params
+      return [addSponsor(tx), ...rest]
+    }
+
+    if (params && typeof params === 'object' && 'transaction' in params) {
+      const paramRecord = params as Record<string, unknown>
+      return {
+        ...paramRecord,
+        transaction: addSponsor(paramRecord.transaction),
+      }
+    }
+
+    return params
+  }
 
   const maxConcurrent = Math.max(1, options?.maxConcurrent ?? 2)
   let inFlight = 0
@@ -53,21 +80,28 @@ export const wrapQueuedProvider = <T extends object>(
   return new Proxy(provider, {
     get(target, prop) {
       if (prop === 'request') {
-        return async (args: { method?: string; params?: unknown[] }) => {
+        return async (args: { method?: string; params?: unknown }) => {
+          const method = args?.method || ''
+          const nextArgs =
+            method === 'eth_sendTransaction'
+              ? { ...args, params: withSponsorParam(args?.params) }
+              : args
           const runner = async () => {
-            return await (target as any).request?.(args)
+            return await (target as any).request?.(nextArgs)
           }
 
-          return readOnlyMethods.has(args?.method || '')
-            ? enqueue(runner)
-            : runner()
+          return readOnlyMethods.has(method) ? enqueue(runner) : runner()
         }
       }
 
       if (prop === 'send') {
         return async (method: string, params: unknown[] = []) => {
+          const nextParams =
+            method === 'eth_sendTransaction'
+              ? (withSponsorParam(params) as unknown[])
+              : params
           const runner = async () => {
-            return await (target as any).send?.(method, params)
+            return await (target as any).send?.(method, nextParams)
           }
 
           return readOnlyMethods.has(method) ? enqueue(runner) : runner()

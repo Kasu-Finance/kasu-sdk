@@ -38,6 +38,7 @@ import { SupportedTokens } from '@/constants/tokens'
 import { customTypography } from '@/themes/typography'
 import { toBigNumber } from '@/utils'
 import { wrapQueuedProvider } from '@/utils/rpc/rpcQueue'
+import isPrivyEmbeddedWallet from '@/utils/web3/isPrivyEmbeddedWallet'
 
 const CowSwapWidget = dynamic(
   () => import('@cowprotocol/widget-react').then((mod) => mod.CowSwapWidget),
@@ -143,8 +144,10 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
     let isMounted = true
 
     const resolveProvider = async () => {
+      const activeWallet = wallets?.[0]
       const privyProvider = wrapQueuedProvider(
-        await wallets?.[0]?.getEthereumProvider?.()
+        await activeWallet?.getEthereumProvider?.(),
+        { sponsorTransactions: isPrivyEmbeddedWallet(activeWallet) }
       )
       const normalizedPrivy = normalizeCowProvider(privyProvider)
       const normalizedWindow = normalizeCowProvider(

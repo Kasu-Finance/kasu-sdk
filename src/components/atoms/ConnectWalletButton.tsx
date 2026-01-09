@@ -29,6 +29,7 @@ import { customPalette } from '@/themes/palette'
 import { customTypography } from '@/themes/typography'
 import { formatAccount } from '@/utils'
 import { wrapQueuedProvider } from '@/utils/rpc/rpcQueue'
+import isPrivyEmbeddedWallet from '@/utils/web3/isPrivyEmbeddedWallet'
 
 type ConnectWalletButtonProps = ButtonProps & {
   compact?: boolean
@@ -125,7 +126,8 @@ const ConnectWalletButton = forwardRef<
       }
 
       const provider: any = wrapQueuedProvider(
-        await wallet.getEthereumProvider()
+        await wallet.getEthereumProvider(),
+        { sponsorTransactions: isPrivyEmbeddedWallet(wallet) }
       )
       if (!provider) {
         setActualChainId(undefined)

@@ -14,6 +14,7 @@ import SdkContext from '@/context/sdk/sdk.context'
 
 import sdkConfig from '@/config/sdk'
 import { wrapQueuedProvider } from '@/utils/rpc/rpcQueue'
+import isPrivyEmbeddedWallet from '@/utils/web3/isPrivyEmbeddedWallet'
 
 const unusedPoolsFetcher = async () => {
   const res = await fetch(
@@ -54,7 +55,10 @@ const SdkState: React.FC<PropsWithChildren> = ({ children }) => {
       try {
         const privyProvider = wrapQueuedProvider(
           await wallet.getEthereumProvider(),
-          { maxConcurrent: 1 }
+          {
+            maxConcurrent: 1,
+            sponsorTransactions: isPrivyEmbeddedWallet(wallet),
+          }
         )
         if (!privyProvider) return
 
