@@ -33,9 +33,12 @@ const ForecastedEarnings: React.FC<ForecastedEarningsProps> = ({
 
   if (!tranche || !pool) return null
 
+  const amountValue = Number.parseFloat(amountInUSD ?? '0')
+  const apyValue = Number.parseFloat(tranche.apy)
   const forecastedEarnings =
-    (parseFloat(amountInUSD ?? '0') * parseFloat(tranche.apy)) /
-    TimeConversions.MONTH_PER_YEAR
+    Number.isFinite(amountValue) && Number.isFinite(apyValue)
+      ? (amountValue * apyValue) / TimeConversions.MONTH_PER_YEAR
+      : 0
 
   return (
     <Box>
