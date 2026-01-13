@@ -134,7 +134,16 @@ const ReferralModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         titleProps={{ sx: { textTransform: 'unset' } }}
         onClose={handleClose}
       />
-      <WaveBox variant='gold' px={1.5} py={2} borderRadius={2}>
+      <WaveBox
+        variant='gold'
+        px={1.5}
+        py={2}
+        borderRadius={2}
+        sx={{
+          maxHeight: { xs: '80vh', sm: '82vh' },
+          overflowY: 'auto',
+        }}
+      >
         <Stack spacing={2.5}>
           <Stack spacing={1.5}>
             <Typography variant='baseMd' textAlign='center'>

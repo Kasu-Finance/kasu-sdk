@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material'
 import { forwardRef } from 'react'
 
-import KasuGold from '@/assets/logo/KasuGold'
+import KasuHorizontalGoldWhite from '@/assets/logo/KasuHorizontalGoldWhite'
 
 type ReferralShareImageCardProps = {
   headline: string
@@ -67,14 +67,13 @@ const ReferralShareImageCard = forwardRef<
         p={2.5}
         zIndex={3}
       >
-        <Box display='flex' alignItems='center' gap={1}>
-          <KasuGold />
-          <Typography
-            variant='h4'
-            sx={{ color: 'rgba(232, 192, 145, 1)', fontWeight: 700 }}
-          >
-            Kasu
-          </Typography>
+        <Box
+          display='flex'
+          justifyContent='flex-start'
+          alignItems='flex-start'
+          sx={{ mt: -1.25 }}
+        >
+          <KasuHorizontalGoldWhite height={80} />
         </Box>
 
         <Box
@@ -129,15 +128,23 @@ const ReferralShareImageCard = forwardRef<
             pt: 1.5,
           }}
         >
-          <Typography sx={{ color: 'rgba(205, 206, 208, 1)', fontSize: 12 }}>
-            Referral code:
+          <Typography
+            sx={{
+              color: 'rgba(205, 206, 208, 1)',
+              fontSize: 12,
+              mb: 0.25,
+            }}
+          >
+            Referral link:
           </Typography>
           <Typography
             sx={{
               color: 'white',
-              fontSize: 14,
+              fontSize: 12,
               fontWeight: 700,
-              wordBreak: 'break-all',
+              wordBreak: 'break-word',
+              overflowWrap: 'anywhere',
+              lineHeight: 1.25,
             }}
           >
             {referralUrl}

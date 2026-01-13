@@ -14,6 +14,7 @@ type LendingTrancheDropdownProps = {
     defaultFixedTermConfigId: string | undefined
   ) => void
   showApy?: boolean
+  isTrancheDisabled?: (trancheId: `0x${string}`) => boolean
 }
 
 const LendingTrancheDropdown: React.FC<LendingTrancheDropdownProps> = ({
@@ -21,6 +22,7 @@ const LendingTrancheDropdown: React.FC<LendingTrancheDropdownProps> = ({
   selectedTranche,
   setSelectedTranche,
   showApy,
+  isTrancheDisabled,
 }) => {
   const { modal } = useModalState()
 
@@ -35,6 +37,7 @@ const LendingTrancheDropdown: React.FC<LendingTrancheDropdownProps> = ({
       setSelectedTranche={setSelectedTranche}
       disableOversubscribed
       showApy={showApy}
+      isTrancheDisabled={isTrancheDisabled}
     />
   )
 }

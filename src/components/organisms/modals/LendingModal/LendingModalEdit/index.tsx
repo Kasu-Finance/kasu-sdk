@@ -63,33 +63,9 @@ const LendingModalEdit = () => {
     maxDeposit,
     currentEpochDepositedAmountMap,
     currentEpochFtdAmountMap,
+    setSelectedPool: setSelectedPoolState,
     setDepositMinMax,
   } = useDepositModalState()
-
-  const getDefaultTranche = useCallback(
-    (pool: PoolOverview) =>
-      pool.tranches.find(
-        (tranche) => !toBigNumber(tranche.maximumDeposit).isZero()
-      ) ?? pool.tranches[0],
-    []
-  )
-
-  const defaultTranche = useMemo(
-    () => getDefaultTranche(pool),
-    [getDefaultTranche, pool]
-  )
-
-  const [selectedPool, setSelectedPool] = useState(pool.id)
-  const selectedToken = SupportedTokens.USDC
-  const [amount, setAmount] = useState(prevAmount ?? '')
-
-  const [amountInUSD, setAmountInUSD] = useState<string | undefined>(
-    prevAmountInUSD ?? undefined
-  )
-
-  const [selectedTranche, setSelectedTranche] = useState(
-    prevTrancheId ?? (defaultTranche.id as `0x${string}`)
-  )
 
   const getDefaultFixedTermConfigId = useCallback(
     (tranche: PoolOverview['tranches'][number] | undefined) => {
@@ -99,13 +75,107 @@ const LendingModalEdit = () => {
     [address]
   )
 
+  const trancheHasCapacity = useCallback(
+    (candidatePool: PoolOverview, trancheId?: `0x${string}`) => {
+      if (!trancheId) return false
+
+      const tranche = candidatePool.tranches.find((tr) => tr.id === trancheId)
+      if (!tranche) return false
+
+      const defaultFixedTermConfigId = getDefaultFixedTermConfigId(tranche)
+      const depositMinMax = calculateDepositMinMax(
+        candidatePool.tranches,
+        tranche.id as `0x${string}`,
+        currentEpochDepositedAmountMap,
+        currentEpochFtdAmountMap,
+        defaultFixedTermConfigId
+      )
+
+      const remainingCapacityValue = depositMinMax.remainingCapacity ?? '0'
+
+      return !toBigNumber(remainingCapacityValue).isZero()
+    },
+    [
+      currentEpochDepositedAmountMap,
+      currentEpochFtdAmountMap,
+      getDefaultFixedTermConfigId,
+    ]
+  )
+
+  const hasCapacity = useCallback(
+    (candidate: PoolOverview) =>
+      candidate.tranches.some((tranche) =>
+        trancheHasCapacity(candidate, tranche.id as `0x${string}`)
+      ),
+    [trancheHasCapacity]
+  )
+
+  const getDefaultTranche = useCallback(
+    (pool: PoolOverview) =>
+      pool.tranches.find((tranche) =>
+        trancheHasCapacity(pool, tranche.id as `0x${string}`)
+      ) ?? pool.tranches[0],
+    [trancheHasCapacity]
+  )
+
+  const initialPool = useMemo(() => {
+    if (pools?.length) {
+      const firstWithCapacity = pools.find((p) => hasCapacity(p))
+      if (firstWithCapacity) return firstWithCapacity
+    }
+
+    return pool
+  }, [pools, pool, hasCapacity])
+
+  const defaultTranche = useMemo(
+    () => getDefaultTranche(initialPool),
+    [getDefaultTranche, initialPool]
+  )
+
+  const initialTrancheId = useMemo(() => {
+    const existsInInitialPool = initialPool.tranches.some(
+      (tranche) => tranche.id === prevTrancheId
+    )
+
+    if (existsInInitialPool && trancheHasCapacity(initialPool, prevTrancheId)) {
+      return prevTrancheId as `0x${string}`
+    }
+
+    return defaultTranche.id as `0x${string}`
+  }, [initialPool, prevTrancheId, defaultTranche.id, trancheHasCapacity])
+
+  const [selectedPool, setSelectedPool] = useState(initialPool.id)
+  const selectedToken = SupportedTokens.USDC
+  const [amount, setAmount] = useState(prevAmount ?? '')
+
+  const [amountInUSD, setAmountInUSD] = useState<string | undefined>(
+    prevAmountInUSD ?? undefined
+  )
+
+  const [selectedTranche, setSelectedTranche] = useState(initialTrancheId)
+
+  const initialTrancheData = useMemo(
+    () =>
+      initialPool.tranches.find((tranche) => tranche.id === initialTrancheId) ??
+      defaultTranche,
+    [initialPool.tranches, initialTrancheId, defaultTranche]
+  )
+
   const [fixedTermConfigId, setFixedTermConfigId] = useState(
-    prevFixedTermConfigId ?? getDefaultFixedTermConfigId(defaultTranche)
+    prevFixedTermConfigId ?? getDefaultFixedTermConfigId(initialTrancheData)
   )
 
   const selectedPoolData = useMemo(
     () => pools?.find((pool) => pool.id === selectedPool) ?? pool,
     [pools, pool, selectedPool]
+  )
+
+  const isTrancheDisabled = useCallback(
+    (trancheId: `0x${string}`) => {
+      const activePool = selectedPoolData ?? pool
+      return !trancheHasCapacity(activePool, trancheId)
+    },
+    [selectedPoolData, pool, trancheHasCapacity]
   )
 
   const deferredAmountInUSD = useDeferredValue(amountInUSD)
@@ -240,6 +310,10 @@ const LendingModalEdit = () => {
       fixedTermConfigId
     )
 
+    setDepositMinMax({
+      minDeposit: depositMinMax.minDeposit,
+      maxDeposit: depositMinMax.maxDeposit,
+    })
     setRemainingCapacityStatus(depositMinMax)
   }, [
     amount,
@@ -250,8 +324,15 @@ const LendingModalEdit = () => {
     currentEpochDepositedAmountMap,
     currentEpochFtdAmountMap,
     fixedTermConfigId,
+    setDepositMinMax,
     setRemainingCapacityStatus,
   ])
+
+  useEffect(() => {
+    if (selectedPoolData) {
+      setSelectedPoolState(selectedPoolData)
+    }
+  }, [selectedPoolData, setSelectedPoolState])
 
   const handlePoolChange = useCallback(
     (pool: PoolOverview) => {
@@ -263,6 +344,7 @@ const LendingModalEdit = () => {
       setSelectedPool(pool.id)
       setSelectedTranche(nextTranche.id as `0x${string}`)
       setFixedTermConfigId(nextFixedTermConfigId)
+      setSelectedPoolState(pool)
 
       const depositMinMax = calculateDepositMinMax(
         pool.tranches,
@@ -295,6 +377,7 @@ const LendingModalEdit = () => {
       validate,
       deferredAmount,
       deferredAmountInUSD,
+      setSelectedPoolState,
     ]
   )
 
@@ -306,6 +389,8 @@ const LendingModalEdit = () => {
       )
       const nextFixedTermConfigId =
         getDefaultFixedTermConfigId(selectedTrancheData)
+
+      if (!trancheHasCapacity(selectedPoolData ?? pool, tranche)) return
 
       setModalStatus({ type: 'default' })
       setSelectedTranche(tranche)
@@ -335,12 +420,13 @@ const LendingModalEdit = () => {
       deferredAmount,
       deferredAmountInUSD,
       selectedPoolData,
-      pool.tranches,
       currentEpochDepositedAmountMap,
       currentEpochFtdAmountMap,
       setDepositMinMax,
       getDefaultFixedTermConfigId,
       setRemainingCapacityStatus,
+      trancheHasCapacity,
+      pool,
     ]
   )
 
@@ -396,6 +482,8 @@ const LendingModalEdit = () => {
     handlePoolChange,
     handleFixedTermConfigChange,
     handleTrancheChange,
+    isTrancheDisabled,
+    isPoolFull: (candidate: PoolOverview) => !hasCapacity(candidate),
     usdcBalance,
     usdcDecimals,
   }

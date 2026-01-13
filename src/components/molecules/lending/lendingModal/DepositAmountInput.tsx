@@ -36,7 +36,7 @@ import { CloseRoundedIcon } from '@/assets/icons'
 
 import { SupportedTokens } from '@/constants/tokens'
 import { customTypography } from '@/themes/typography'
-import { toBigNumber } from '@/utils'
+import { formatAmount, toBigNumber } from '@/utils'
 import { wrapQueuedProvider } from '@/utils/rpc/rpcQueue'
 import isPrivyEmbeddedWallet from '@/utils/web3/isPrivyEmbeddedWallet'
 
@@ -404,9 +404,16 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
           },
         }}
       />
+      <Typography
+        variant='caption'
+        color='text.secondary'
+        sx={{ mt: 1, display: 'block' }}
+      >
+        Available balance: {formatAmount(balance)} USDC
+      </Typography>
       <Box
         sx={{
-          mt: 1,
+          mt: 0.5,
           display: 'flex',
           alignItems: 'center',
           gap: 1,

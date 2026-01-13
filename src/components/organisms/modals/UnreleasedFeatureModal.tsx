@@ -14,11 +14,13 @@ const UnreleasedFeatureModal: React.FC<DialogChildProps> = ({
 
   return (
     <CustomCard>
-      <DialogHeader title={t('general.sorry')} onClose={handleClose} />
+      <DialogHeader title={t('general.comingSoon')} onClose={handleClose} />
       <WaveBox variant='gold' px={2} py={3} borderRadius={2}>
         <Stack alignItems='center' spacing={3}>
-          <Typography variant='baseMd'>
-            {t('modals.unreleasedFeature.message')}
+          <Typography variant='baseMd' textAlign='center'>
+            {t('modals.unreleasedFeature.message.line1')}
+            <br />
+            {t('modals.unreleasedFeature.message.line2')}
           </Typography>
           <Button
             variant='contained'

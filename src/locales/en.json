@@ -1,5 +1,6 @@
 {
   "general": {
+    "comingSoon": "Coming soon",
     "approve": "approve",
     "connectWallet": "Connect Wallet",
     "amount": "amount",
@@ -371,7 +372,10 @@
   },
   "modals": {
     "unreleasedFeature": {
-      "message": "This feature will be released shortly",
+      "message": {
+        "line1": "We’re working hard on the launch of the KASU token.",
+        "line2": "In the meantime, start lending so you’re the first to benefit once KASU launches."
+      },
       "action": "Ok"
     },
     "missingEmail": {
