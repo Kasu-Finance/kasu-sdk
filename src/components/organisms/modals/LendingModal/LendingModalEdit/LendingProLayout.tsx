@@ -29,6 +29,7 @@ type ProLayoutProps = {
   supportedTokens: ReturnType<typeof useSupportedTokenInfo>
   usdcBalance: string
   usdcDecimals?: number
+  isPoolFull?: (pool: any) => boolean
   setAmount: Dispatch<SetStateAction<string>>
   setAmountInUSD: Dispatch<SetStateAction<string | undefined>>
   handleTrancheChange: (
@@ -36,6 +37,7 @@ type ProLayoutProps = {
     defaultFixedTermConfigId: string | undefined
   ) => void
   handleFixedTermConfigChange: (fixedTermConfigId: string | undefined) => void
+  isTrancheDisabled?: (trancheId: `0x${string}`) => boolean
   validate: (
     amount: string,
     amountInUSD?: string | undefined,
@@ -67,6 +69,7 @@ const LendingProLayout: React.FC<ProLayoutProps> = ({
   validate,
   handleFixedTermConfigChange,
   handleTrancheChange,
+  isTrancheDisabled,
 }) => {
   const { modal } = useModalState()
   const { address } = usePrivyAuthenticated()
@@ -120,6 +123,7 @@ const LendingProLayout: React.FC<ProLayoutProps> = ({
         selectedTranche={selectedTranche}
         setSelectedTranche={handleTrancheChange}
         showApy={!hasFixedTermOptions}
+        isTrancheDisabled={isTrancheDisabled}
       />
       {hasFixedTermOptions && (
         <ApyDropdown

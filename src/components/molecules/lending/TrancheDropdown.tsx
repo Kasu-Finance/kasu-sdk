@@ -19,6 +19,7 @@ type TrancheDropdownProps = {
   disableOversubscribed?: boolean
   isWithdrawal?: boolean
   showApy?: boolean
+  isTrancheDisabled?: (trancheId: `0x${string}`) => boolean
 }
 
 const TrancheDropdown: React.FC<TrancheDropdownProps> = ({
@@ -28,6 +29,7 @@ const TrancheDropdown: React.FC<TrancheDropdownProps> = ({
   disableOversubscribed,
   isWithdrawal,
   showApy,
+  isTrancheDisabled,
 }) => {
   const { t } = getTranslation()
 
@@ -35,10 +37,19 @@ const TrancheDropdown: React.FC<TrancheDropdownProps> = ({
     return null
   }
 
+  const firstAvailableTranche = tranches.find(
+    (tranche) =>
+      !disableOversubscribed &&
+      !isTrancheDisabled?.(tranche.id as `0x${string}`) &&
+      !toBigNumber(tranche.maximumDeposit).isZero()
+  )
+
   const handleChange = (e: SelectChangeEvent) => {
     const trancheValue = e.target.value
 
     const tranche = tranches.find((tranche) => tranche.id === trancheValue)
+
+    if (tranche && isTrancheDisabled?.(tranche.id as `0x${string}`)) return
 
     if (
       !tranche ||
@@ -61,50 +72,55 @@ const TrancheDropdown: React.FC<TrancheDropdownProps> = ({
       onChange={handleChange}
       value={selectedTranche ?? ''}
       variant='secondary'
-      renderItem={(val) => (
-        <Box
-          py={1}
-          display='flex'
-          alignItems='center'
-          justifyContent='space-between'
-          color={
-            disableOversubscribed && toBigNumber(val.maximumDeposit).isZero()
-              ? customPalette.gray.dark
-              : undefined
-          }
-          width='100%'
-        >
-          <Typography
-            variant='baseMd'
-            display='inline-flex'
+      renderItem={(val) => {
+        const isFull =
+          (disableOversubscribed && toBigNumber(val.maximumDeposit).isZero()) ||
+          isTrancheDisabled?.(val.id as `0x${string}`)
+
+        return (
+          <Box
+            py={1}
+            display='flex'
             alignItems='center'
-            color='inherit'
+            justifyContent='space-between'
+            color={isFull ? customPalette.gray.dark : undefined}
+            width='100%'
+            sx={{
+              cursor: isFull ? 'not-allowed' : 'pointer',
+              opacity: isFull ? 0.8 : 1,
+            }}
           >
-            {val.name} {t('general.tranche')}{' '}
-            {disableOversubscribed &&
-            toBigNumber(val.maximumDeposit).isZero() ? (
-              <>
-                (Full)
-                <ToolTip
-                  placement='top'
-                  title='This Loan Tranche is temporarily full. Please check again in the next weekly epoch. Each weekly epoch ends every Tuesday at 6am UTC.'
-                  iconSx={{
-                    color: customPalette.gold.dark,
-                    '&:hover': {
-                      color: customPalette.gold.extraDark,
-                    },
-                  }}
-                />
-              </>
-            ) : null}
-          </Typography>
-          {showApy && (
-            <Typography variant='baseMd' color='inherit'>
-              {formatPercentage(val.apy)} {t('general.grossApy')}
+            <Typography
+              variant='baseMd'
+              display='inline-flex'
+              alignItems='center'
+              color='inherit'
+            >
+              {val.name} {t('general.tranche')}{' '}
+              {isFull ? (
+                <>
+                  (Full)
+                  <ToolTip
+                    placement='top'
+                    title='This Loan Tranche is temporarily full. Please check again in the next weekly epoch. Each weekly epoch ends every Tuesday at 6am UTC.'
+                    iconSx={{
+                      color: customPalette.gold.dark,
+                      '&:hover': {
+                        color: customPalette.gold.extraDark,
+                      },
+                    }}
+                  />
+                </>
+              ) : null}
             </Typography>
-          )}
-        </Box>
-      )}
+            {showApy && (
+              <Typography variant='baseMd' color='inherit'>
+                {formatPercentage(val.apy)} {t('general.grossApy')}
+              </Typography>
+            )}
+          </Box>
+        )
+      }}
       selectSx={{
         '.MuiOutlinedInput-input': {
           pl: 3,
@@ -127,9 +143,11 @@ const TrancheDropdown: React.FC<TrancheDropdownProps> = ({
               </Typography>
             )}
           </Box>
-        ) : (
-          t('modals.withdrawal.selectTranche')
-        )
+        ) : firstAvailableTranche ? (
+          <Typography variant='baseMd'>
+            {firstAvailableTranche.name} {t('general.tranche')}
+          </Typography>
+        ) : null
       }
     />
   )

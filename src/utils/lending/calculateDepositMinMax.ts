@@ -5,12 +5,12 @@ import toBigNumber from '@/utils/toBigNumber'
 
 const calculateDepositMinMax = (
   tranches: PoolOverview['tranches'],
-  trancheId: `0x${string}`,
+  trancheId: `0x${string}` | undefined,
   currentEpochDepositedAmountMap: Map<string, string>,
   currentEpochFtdAmountMap: Map<string, string[]>,
   fixedTermConfigId?: string
 ) => {
-  let tranche = tranches.find((t) => t.id === trancheId)
+  let tranche = trancheId ? tranches.find((t) => t.id === trancheId) : undefined
 
   // If the tranche is not found by ID, fall back to names
   if (!tranche) {
@@ -30,11 +30,17 @@ const calculateDepositMinMax = (
     trancheMin = defaultMinDeposit
   }
 
-  const currentEpochDepositedAmount = currentEpochDepositedAmountMap.get(
-    trancheId.toLowerCase()
-  )
-  const currentEpochFtdAmount =
-    currentEpochFtdAmountMap.get(trancheId.toLowerCase()) ?? []
+  const trancheKey =
+    typeof trancheId === 'string'
+      ? trancheId.toLowerCase()
+      : tranche?.id?.toLowerCase?.()
+
+  const currentEpochDepositedAmount = trancheKey
+    ? currentEpochDepositedAmountMap.get(trancheKey)
+    : undefined
+  const currentEpochFtdAmount = trancheKey
+    ? (currentEpochFtdAmountMap.get(trancheKey) ?? [])
+    : []
 
   const currentDepositedAmount = toBigNumber(currentEpochDepositedAmount ?? '0')
   let epochMaxDeposit = trancheMax

@@ -35,11 +35,13 @@ type LiteLayoutProps = {
   setAmount: Dispatch<SetStateAction<string>>
   setAmountInUSD: Dispatch<SetStateAction<string | undefined>>
   handlePoolChange: (pool: PoolOverview) => void
+  isPoolFull?: (pool: PoolOverview) => boolean
   handleTrancheChange: (
     tranche: `0x${string}`,
     defaultFixedTermConfigId: string | undefined
   ) => void
   handleFixedTermConfigChange: (fixedTermConfigId: string | undefined) => void
+  isTrancheDisabled?: (trancheId: `0x${string}`) => boolean
   validate: (
     amount: string,
     amountInUSD?: string | undefined,
@@ -73,6 +75,8 @@ const LendingLiteLayout: React.FC<LiteLayoutProps> = ({
   handlePoolChange,
   handleTrancheChange,
   handleFixedTermConfigChange,
+  isTrancheDisabled,
+  isPoolFull,
 }) => {
   const { modal } = useModalState()
   const { address } = usePrivyAuthenticated()
@@ -98,6 +102,7 @@ const LendingLiteLayout: React.FC<LiteLayoutProps> = ({
           selectedPool={selectedPool}
           handlePoolChange={handlePoolChange}
           pools={pools}
+          isPoolFull={isPoolFull}
         />
       )}
       <LendingTrancheDropdown
@@ -105,6 +110,7 @@ const LendingLiteLayout: React.FC<LiteLayoutProps> = ({
         selectedTranche={selectedTranche}
         setSelectedTranche={handleTrancheChange}
         showApy={!hasFixedTermOptions}
+        isTrancheDisabled={isTrancheDisabled}
       />
       {hasFixedTermOptions && (
         <ApyDropdown

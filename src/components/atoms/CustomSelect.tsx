@@ -37,6 +37,7 @@ type CustomSelectProps<
   variant?: 'primary' | 'secondary'
   renderItem?: (val: Option) => ReactNode
   renderSelected?: (val: Option | undefined) => ReactNode
+  isOptionDisabled?: (val: Option) => boolean
 }
 
 const CustomSelect = <
@@ -57,6 +58,7 @@ const CustomSelect = <
   variant = 'primary',
   renderItem,
   renderSelected,
+  isOptionDisabled,
 }: CustomSelectProps<OptionKey, OptionValue, Option, TValue>) => {
   const [open, setOpen] = useState(false)
 
@@ -159,7 +161,7 @@ const CustomSelect = <
               whiteSpace='nowrap'
               overflow='hidden'
               textOverflow='ellipsis'
-              component='span'
+              component='div'
               py={1}
             >
               {option[labelKey] as string}
@@ -171,6 +173,7 @@ const CustomSelect = <
           <MenuItem
             key={index}
             value={option[valueKey] as string}
+            disabled={isOptionDisabled?.(option)}
             sx={{
               maxWidth,
               display: 'flex',
