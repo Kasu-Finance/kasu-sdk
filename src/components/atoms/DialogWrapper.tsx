@@ -30,6 +30,8 @@ const DialogWrapper: React.FC<{
   return (
     <Dialog
       open={modal[modalName].isOpen}
+      maxWidth={modalDetails.maxWidth}
+      fullWidth={modalDetails.fullWidth}
       PaperProps={{
         elevation: modalDetails.disableElevation ? 0 : 24,
         sx: [

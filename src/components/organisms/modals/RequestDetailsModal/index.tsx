@@ -33,7 +33,9 @@ const RequestDetailsModal: React.FC<DialogChildProps> = ({ handleClose }) => {
   )
 
   return (
-    <CustomCard>
+    <CustomCard
+      sx={{ maxWidth: '100%', width: '100%', boxSizing: 'border-box' }}
+    >
       <DialogHeader
         title={t('modals.requestDetails.title')}
         onClose={handleClose}
