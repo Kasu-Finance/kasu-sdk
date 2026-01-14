@@ -11,11 +11,15 @@ const TraansactionHistoryTableHeader: React.FC<
   <TableHead>
     <TableRow
       sx={{
+        whiteSpace: 'normal',
         '.MuiTableCell-root': {
           ...(showBorder
             ? { borderColor: 'gray.extraDark' }
             : { border: 'none' }),
           px: 1,
+          whiteSpace: 'normal',
+          wordBreak: 'break-word',
+          overflowWrap: 'anywhere',
           '&:first-child': {
             pl: 0,
           },
@@ -25,13 +29,13 @@ const TraansactionHistoryTableHeader: React.FC<
         },
       }}
     >
-      <TableCell width='5%'>Epoch</TableCell>
-      <TableCell width='20%'>Date</TableCell>
-      <TableCell width='30%'>Transaction</TableCell>
-      <TableCell width='10%' align='right'>
+      <TableCell width='10%'>Epoch</TableCell>
+      <TableCell width='24%'>Date</TableCell>
+      <TableCell width='26%'>Transaction</TableCell>
+      <TableCell width='12%' align='right'>
         Amount
       </TableCell>
-      <TableCell width='30%' align={isWithdrawal ? 'right' : 'left'}>
+      <TableCell width='23%' align={isWithdrawal ? 'right' : 'left'}>
         {isWithdrawal ? 'Remaing Amount Queued' : 'Status/Outcome'}
       </TableCell>
       <TableCell width='5%'>TX</TableCell>

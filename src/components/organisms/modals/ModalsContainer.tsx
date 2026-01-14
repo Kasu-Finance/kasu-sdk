@@ -1,6 +1,6 @@
 'use client'
 
-import { SxProps, Theme } from '@mui/material'
+import { DialogProps, SxProps, Theme } from '@mui/material'
 
 import useModalState from '@/hooks/context/useModalState'
 
@@ -49,6 +49,8 @@ type ModalDetails = {
   disableBackdropClose?: boolean
   disableElevation?: boolean
   disableEscapeKeyDown?: boolean
+  maxWidth?: DialogProps['maxWidth']
+  fullWidth?: DialogProps['fullWidth']
 }
 
 export const getModal = (
@@ -126,9 +128,13 @@ export const getModal = (
     case ModalsKeys.REQUEST_DETAILS:
       return {
         component: <RequestDetailsModal handleClose={handleClose} />,
+        maxWidth: false,
         sx: {
-          maxWidth: 1000,
-          width: '100%',
+          maxWidth: '800px',
+          width: {
+            xs: 'calc(100% - 32px)',
+            sm: 'min(800px, calc(100% - 32px))',
+          },
         },
       }
     case ModalsKeys.PENDING_DECISIONS:

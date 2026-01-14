@@ -48,9 +48,13 @@ const SystemProcessHistoryRow: React.FC<SystemProcessHistoryRowProps> = ({
   return (
     <TableRow
       sx={{
+        whiteSpace: 'normal',
         '.MuiTableCell-root': {
           border: 'none',
           px: 1,
+          whiteSpace: 'normal',
+          overflowWrap: 'anywhere',
+          wordBreak: 'break-word',
           '&:first-child': {
             pl: 0.5,
           },
@@ -105,8 +109,17 @@ const SystemProcessHistoryRow: React.FC<SystemProcessHistoryRowProps> = ({
         </Box>
       </TableCell>
       <TableCell>
-        <Typography variant='baseMd'>
-          {formattedTime.date} •
+        <Typography
+          variant='baseMd'
+          sx={{
+            wordBreak: 'break-word',
+            overflowWrap: 'anywhere',
+            whiteSpace: 'normal',
+            lineHeight: 1.25,
+          }}
+        >
+          {formattedTime.date}
+          <br />
           <Typography
             variant='inherit'
             color='rgba(133, 87, 38, 1)'
@@ -116,18 +129,38 @@ const SystemProcessHistoryRow: React.FC<SystemProcessHistoryRowProps> = ({
           </Typography>
         </Typography>
       </TableCell>
-      <TableCell>
-        <Typography variant='baseMdBold'>{description}</Typography>
+      <TableCell
+        sx={{
+          wordBreak: 'break-word',
+          overflowWrap: 'anywhere',
+          whiteSpace: 'normal',
+        }}
+      >
+        <Typography variant='baseMdBold' sx={{ lineHeight: 1.3 }}>
+          {description}
+        </Typography>
       </TableCell>
       <TableCell align='right'>
         <Typography variant='baseMdBold'>
           {formatAmount(amount, { minDecimals: 2 })} USDC
         </Typography>
       </TableCell>
-      <TableCell align={remainingAmount ? 'right' : 'left'}>
-        {remainingAmount
-          ? `${formatAmount(remainingAmount, { minDecimals: 2 })} USDC`
-          : status}
+      <TableCell
+        align={remainingAmount ? 'right' : 'left'}
+        sx={{
+          wordBreak: 'break-word',
+          overflowWrap: 'anywhere',
+          whiteSpace: 'normal',
+          lineHeight: 1.25,
+        }}
+      >
+        {remainingAmount ? (
+          `${formatAmount(remainingAmount, { minDecimals: 2 })} USDC`
+        ) : (
+          <Typography variant='baseMd' sx={{ lineHeight: 1.3 }}>
+            {status}
+          </Typography>
+        )}
       </TableCell>
       <TableCell>
         <IconButton

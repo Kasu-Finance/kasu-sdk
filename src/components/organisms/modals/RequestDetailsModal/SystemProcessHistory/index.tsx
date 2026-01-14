@@ -1,4 +1,4 @@
-import { Stack, Table, TableBody, Typography } from '@mui/material'
+import { Box, Stack, Table, TableBody, Typography } from '@mui/material'
 import { Fragment } from 'react'
 
 import SystemProcessHistoryRow from '@/components/organisms/modals/RequestDetailsModal/SystemProcessHistory/SystemProcessHistoryRow'
@@ -104,94 +104,101 @@ const SystemProcessHistory: React.FC<SystemProcessHistoryProps> = ({
             Lending Request Transaction Status/Outcome
           </Typography>
         ))}
-      <Table>
-        <TraansactionHistoryTableHeader
-          showBorder={
-            isProcessed ||
-            ('transactions' in transaction &&
-              transaction.transactions.length > 1)
-          }
-          isWithdrawal={!isReallocation && transaction.type === 'Withdrawal'}
-        />
-        <TableBody>
-          {isReallocation ? (
-            <>
-              {parseFloat(transaction.reallocatedOutAmount) > 0 && (
-                <SystemProcessHistoryRow
-                  amount={transaction.reallocatedOutAmount}
-                  date={transaction.requestTimestamp}
-                  transactionEpoch={transaction.epochId}
-                  currentEpoch={currentEpoch}
-                  tranasctionHash='hash'
-                  description={`Reallocated Out to ${getReallocatedOutTrancheName(transaction.trancheName)} Tranche`}
-                  status={`${transaction.trancheName} Tranche Full/Overflow`}
-                />
-              )}
-              {parseFloat(transaction.rejectedAmount) > 0 && (
-                <SystemProcessHistoryRow
-                  amount={transaction.rejectedAmount}
-                  date={transaction.requestTimestamp}
-                  transactionEpoch={transaction.epochId}
-                  currentEpoch={currentEpoch}
-                  tranasctionHash={transaction.transactionHash}
-                  description='Rejected'
-                  status={`Funds Returned - ${transaction.trancheName} Tranche Full/Overflow`}
-                />
-              )}
-              {parseFloat(transaction.acceptedAmount) > 0 && (
-                <SystemProcessHistoryRow
-                  amount={transaction.acceptedAmount}
-                  date={transaction.requestTimestamp}
-                  transactionEpoch={transaction.epochId}
-                  currentEpoch={currentEpoch}
-                  tranasctionHash={transaction.transactionHash}
-                  description='Accepted'
-                  status='Accepted by Delegate'
-                />
-              )}
-              <SystemProcessHistoryRow
-                amount={transaction.reallocatedInAmount}
-                date={transaction.requestTimestamp}
-                transactionEpoch={transaction.epochId}
-                currentEpoch={currentEpoch}
-                tranasctionHash={transaction.transactionHash}
-                description={`Reallocated In from ${getReallocateFromTranscheName(transaction.trancheName)} Tranche`}
-                status={`${getReallocateFromTranscheName(transaction.trancheName)} Tranche Full/Overflow`}
-                highlight
-              />
-            </>
-          ) : (
-            [...transaction.events].reverse().map((event, index) => {
-              return (
-                <Fragment key={index}>
+      <Box sx={{ overflowX: 'hidden', minWidth: 0 }}>
+        <Table
+          sx={{
+            tableLayout: 'fixed',
+            width: '100%',
+          }}
+        >
+          <TraansactionHistoryTableHeader
+            showBorder={
+              isProcessed ||
+              ('transactions' in transaction &&
+                transaction.transactions.length > 1)
+            }
+            isWithdrawal={!isReallocation && transaction.type === 'Withdrawal'}
+          />
+          <TableBody>
+            {isReallocation ? (
+              <>
+                {parseFloat(transaction.reallocatedOutAmount) > 0 && (
                   <SystemProcessHistoryRow
-                    transactionEpoch={event.epochId}
+                    amount={transaction.reallocatedOutAmount}
+                    date={transaction.requestTimestamp}
+                    transactionEpoch={transaction.epochId}
                     currentEpoch={currentEpoch}
-                    amount={event.amount}
-                    date={event.timestamp}
-                    tranasctionHash={event.transactionHash}
-                    description={getDescription(event)}
-                    remainingAmount={
-                      'remainingQueuedAmount' in event
-                        ? event.remainingQueuedAmount
-                        : undefined
-                    }
-                    status={
-                      'type' in event
-                        ? getStatus(event, event.trancheName)
-                        : undefined
-                    }
-                    highlight={
-                      'remainingQueuedAmount' in event ||
-                      event.type === 'Request'
-                    }
+                    tranasctionHash='hash'
+                    description={`Reallocated Out to ${getReallocatedOutTrancheName(transaction.trancheName)} Tranche`}
+                    status={`${transaction.trancheName} Tranche Full/Overflow`}
                   />
-                </Fragment>
-              )
-            })
-          )}
-        </TableBody>
-      </Table>
+                )}
+                {parseFloat(transaction.rejectedAmount) > 0 && (
+                  <SystemProcessHistoryRow
+                    amount={transaction.rejectedAmount}
+                    date={transaction.requestTimestamp}
+                    transactionEpoch={transaction.epochId}
+                    currentEpoch={currentEpoch}
+                    tranasctionHash={transaction.transactionHash}
+                    description='Rejected'
+                    status={`Funds Returned - ${transaction.trancheName} Tranche Full/Overflow`}
+                  />
+                )}
+                {parseFloat(transaction.acceptedAmount) > 0 && (
+                  <SystemProcessHistoryRow
+                    amount={transaction.acceptedAmount}
+                    date={transaction.requestTimestamp}
+                    transactionEpoch={transaction.epochId}
+                    currentEpoch={currentEpoch}
+                    tranasctionHash={transaction.transactionHash}
+                    description='Accepted'
+                    status='Accepted by Delegate'
+                  />
+                )}
+                <SystemProcessHistoryRow
+                  amount={transaction.reallocatedInAmount}
+                  date={transaction.requestTimestamp}
+                  transactionEpoch={transaction.epochId}
+                  currentEpoch={currentEpoch}
+                  tranasctionHash={transaction.transactionHash}
+                  description={`Reallocated In from ${getReallocateFromTranscheName(transaction.trancheName)} Tranche`}
+                  status={`${getReallocateFromTranscheName(transaction.trancheName)} Tranche Full/Overflow`}
+                  highlight
+                />
+              </>
+            ) : (
+              [...transaction.events].reverse().map((event, index) => {
+                return (
+                  <Fragment key={index}>
+                    <SystemProcessHistoryRow
+                      transactionEpoch={event.epochId}
+                      currentEpoch={currentEpoch}
+                      amount={event.amount}
+                      date={event.timestamp}
+                      tranasctionHash={event.transactionHash}
+                      description={getDescription(event)}
+                      remainingAmount={
+                        'remainingQueuedAmount' in event
+                          ? event.remainingQueuedAmount
+                          : undefined
+                      }
+                      status={
+                        'type' in event
+                          ? getStatus(event, event.trancheName)
+                          : undefined
+                      }
+                      highlight={
+                        'remainingQueuedAmount' in event ||
+                        event.type === 'Request'
+                      }
+                    />
+                  </Fragment>
+                )
+              })
+            )}
+          </TableBody>
+        </Table>
+      </Box>
     </Stack>
   )
 }
