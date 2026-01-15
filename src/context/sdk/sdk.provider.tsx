@@ -2,7 +2,7 @@
 
 import { KasuSdk } from '@kasufinance/kasu-sdk'
 import { PoolOverviewDirectus } from '@kasufinance/kasu-sdk/src/services/DataService/directus-types'
-import { useWallets } from '@privy-io/react-auth'
+import { useSendTransaction, useWallets } from '@privy-io/react-auth'
 import { ethers } from 'ethers'
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { preload } from 'swr'
@@ -40,6 +40,8 @@ const SdkState: React.FC<PropsWithChildren> = ({ children }) => {
 
   const { wallets } = useWallets()
 
+  const { sendTransaction } = useSendTransaction()
+
   const { address } = usePrivyAuthenticated()
 
   const wallet = wallets.find((wallet) => wallet.address === address)
@@ -53,11 +55,14 @@ const SdkState: React.FC<PropsWithChildren> = ({ children }) => {
     if (!wallet || !unusedPools) return
     ;(async () => {
       try {
+        const shouldSponsor = isPrivyEmbeddedWallet(wallet)
         const privyProvider = wrapQueuedProvider(
           await wallet.getEthereumProvider(),
           {
             maxConcurrent: 1,
-            sponsorTransactions: isPrivyEmbeddedWallet(wallet),
+            sponsorTransactions: shouldSponsor,
+            sendTransaction: shouldSponsor ? sendTransaction : undefined,
+            sendTransactionAddress: wallet.address,
           }
         )
         if (!privyProvider) return
@@ -77,7 +82,7 @@ const SdkState: React.FC<PropsWithChildren> = ({ children }) => {
         console.error(error)
       }
     })()
-  }, [wallet, unusedPools])
+  }, [wallet, unusedPools, sendTransaction])
 
   return (
     <SdkContext.Provider value={{ sdk: kasuSdk }}>
