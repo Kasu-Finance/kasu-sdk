@@ -1,4 +1,4 @@
-import { useWallets } from '@privy-io/react-auth'
+import { useSendTransaction, useWallets } from '@privy-io/react-auth'
 import { BigNumber, ethers } from 'ethers'
 import { parseEther, parseUnits } from 'ethers/lib/utils'
 import { useEffect, useState } from 'react'
@@ -31,6 +31,8 @@ const useApproveToken = (
   const { decimals } = useTokenDetails(tokenAddress)
 
   const { wallets } = useWallets()
+
+  const { sendTransaction } = useSendTransaction()
 
   const activeWallet = wallets.find(
     (wallet) => wallet.address.toLowerCase() === address?.toLowerCase()
@@ -111,7 +113,11 @@ const useApproveToken = (
       if (shouldSponsor && activeWallet) {
         const privyProvider = wrapQueuedProvider(
           await activeWallet.getEthereumProvider(),
-          { sponsorTransactions: true }
+          {
+            sponsorTransactions: true,
+            sendTransaction,
+            sendTransactionAddress: activeWallet.address,
+          }
         )
         if (!privyProvider) {
           throw new Error('useApproveToken: wallet provider not available')

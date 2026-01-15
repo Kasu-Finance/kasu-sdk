@@ -11,7 +11,7 @@ import type {
 } from '@cowprotocol/widget-lib'
 import LoginIcon from '@mui/icons-material/Login'
 import { Box, IconButton, Portal, Typography } from '@mui/material'
-import { useWallets } from '@privy-io/react-auth'
+import { useSendTransaction, useWallets } from '@privy-io/react-auth'
 import dynamic from 'next/dynamic'
 import {
   Dispatch,
@@ -96,6 +96,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
 
   const chainId = useChainId()
   const { wallets } = useWallets()
+  const { sendTransaction } = useSendTransaction()
   const [isSwapWidgetOpen, setIsSwapWidgetOpen] = useState(false)
   const [widgetProvider, setWidgetProvider] = useState<EthereumProvider>()
   const [widgetLoaded, setWidgetLoaded] = useState(false)
@@ -145,9 +146,14 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
 
     const resolveProvider = async () => {
       const activeWallet = wallets?.[0]
+      const shouldSponsor = isPrivyEmbeddedWallet(activeWallet)
       const privyProvider = wrapQueuedProvider(
         await activeWallet?.getEthereumProvider?.(),
-        { sponsorTransactions: isPrivyEmbeddedWallet(activeWallet) }
+        {
+          sponsorTransactions: shouldSponsor,
+          sendTransaction: shouldSponsor ? sendTransaction : undefined,
+          sendTransactionAddress: activeWallet?.address,
+        }
       )
       const normalizedPrivy = normalizeCowProvider(privyProvider)
       const normalizedWindow = normalizeCowProvider(
@@ -164,7 +170,7 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
     return () => {
       isMounted = false
     }
-  }, [wallets, normalizeCowProvider])
+  }, [wallets, normalizeCowProvider, sendTransaction])
 
   useEffect(() => {
     if (!isSwapWidgetOpen) return
