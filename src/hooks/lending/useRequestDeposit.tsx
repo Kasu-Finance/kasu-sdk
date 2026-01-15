@@ -1,6 +1,7 @@
 import { BigNumber, BytesLike } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
 import { usePathname, useRouter } from 'next/navigation'
+import { useSWRConfig } from 'swr'
 import { useChainId } from 'wagmi'
 
 import useDepositModalState from '@/hooks/context/useDepositModalState'
@@ -55,6 +56,8 @@ const useRequestDeposit = () => {
   const { setToast, removeToast } = useToastState()
 
   const buildDepositData = useBuildDepositData()
+
+  const { mutate } = useSWRConfig()
 
   return async (
     lendingPoolId: `0x${string}`,
@@ -174,6 +177,12 @@ const useRequestDeposit = () => {
       const receipt = await waitForReceipt(deposit)
 
       setTxHash(receipt.transactionHash)
+
+      void mutate(
+        (key) => Array.isArray(key) && key[0] === 'transactionHistory',
+        undefined,
+        { revalidate: true }
+      )
 
       if (shouldToast) {
         removeToast()

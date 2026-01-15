@@ -1,4 +1,5 @@
 import { ContractTransaction } from 'ethers'
+import { useSWRConfig } from 'swr'
 
 import useSdk from '@/hooks/context/useSdk'
 import useStepperState from '@/hooks/context/useStepperState'
@@ -24,6 +25,8 @@ const useRequestWithdrawal = () => {
   const { setTxHash } = useWithdrawModalState()
 
   const { setToast, removeToast } = useToastState()
+
+  const { mutate } = useSWRConfig()
 
   return async (
     lendingPool: string,
@@ -65,6 +68,12 @@ const useRequestWithdrawal = () => {
 
       const receipt = await waitForReceipt(txResponse)
       setTxHash(receipt.transactionHash)
+
+      void mutate(
+        (key) => Array.isArray(key) && key[0] === 'transactionHistory',
+        undefined,
+        { revalidate: true }
+      )
 
       removeToast()
 
