@@ -1,3 +1,5 @@
+import { useSWRConfig } from 'swr'
+
 import useSdk from '@/hooks/context/useSdk'
 import useToastState from '@/hooks/context/useToastState'
 import useHandleError from '@/hooks/web3/useHandleError'
@@ -13,6 +15,8 @@ const useCancelDeposit = () => {
   const handleError = useHandleError()
 
   const { setToast, removeToast } = useToastState()
+
+  const { mutate } = useSWRConfig()
 
   return async (lendingPoolId: `0x${string}`, dNft: string) => {
     try {
@@ -34,6 +38,12 @@ const useCancelDeposit = () => {
 
       const response = await waitForReceipt(cancel)
       removeToast()
+
+      void mutate(
+        (key) => Array.isArray(key) && key[0] === 'transactionHistory',
+        undefined,
+        { revalidate: true }
+      )
 
       return response
     } catch (error) {
