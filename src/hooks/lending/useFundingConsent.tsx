@@ -1,10 +1,11 @@
-import { useChainId, useSignMessage } from 'wagmi'
+import { useChainId } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
 import useToastState from '@/hooks/context/useToastState'
 import useLoanTickets from '@/hooks/lending/useLoanTickets'
 import useHandleError from '@/hooks/web3/useHandleError'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
+import usePrivySignMessage from '@/hooks/web3/usePrivySignMessage'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
@@ -19,7 +20,7 @@ const useFundingConsent = () => {
 
   const chainId = useChainId()
 
-  const { signMessage } = useSignMessage()
+  const { signMessage } = usePrivySignMessage()
 
   const handleError = useHandleError()
 

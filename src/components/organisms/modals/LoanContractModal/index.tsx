@@ -1,12 +1,12 @@
 import { Box, Button, IconButton, Stack, Typography } from '@mui/material'
 import { useRef, useState } from 'react'
-import { useSignMessage } from 'wagmi'
 
 import useModalState from '@/hooks/context/useModalState'
 import useToastState from '@/hooks/context/useToastState'
 import useDebounce from '@/hooks/useDebounce'
 import getTranslation from '@/hooks/useTranslation'
 import useHandleError from '@/hooks/web3/useHandleError'
+import usePrivySignMessage from '@/hooks/web3/usePrivySignMessage'
 
 import CustomCard from '@/components/atoms/CustomCard'
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
@@ -29,7 +29,7 @@ const LoanContractModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { modal, openModal } = useModalState()
 
-  const { signMessage } = useSignMessage()
+  const { signMessage } = usePrivySignMessage()
 
   const { setToast, removeToast } = useToastState()
 

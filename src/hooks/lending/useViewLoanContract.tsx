@@ -1,8 +1,9 @@
-import { useChainId, useSignMessage } from 'wagmi'
+import { useChainId } from 'wagmi'
 
 import useToastState from '@/hooks/context/useToastState'
 import useHandleError from '@/hooks/web3/useHandleError'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
+import usePrivySignMessage from '@/hooks/web3/usePrivySignMessage'
 
 import downloadLoanContract from '@/actions/downloadLoanContract'
 import getLoanContracts from '@/actions/viewLoanContract'
@@ -14,7 +15,7 @@ const useViewLoanContract = () => {
 
   const chainId = useChainId()
 
-  const { signMessage } = useSignMessage()
+  const { signMessage } = usePrivySignMessage()
 
   const handleError = useHandleError()
 
