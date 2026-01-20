@@ -412,6 +412,14 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
       />
       <Typography
         variant='caption'
+        component='span'
+        sx={{ color: (theme) => theme.palette.error.main, mt: 0.5 }}
+        display={modalStatus.type === 'error' ? 'block' : 'none'}
+      >
+        {modalStatus.type === 'error' ? modalStatus.errorMessage : 'message'}
+      </Typography>
+      <Typography
+        variant='caption'
         color='text.secondary'
         sx={{ mt: 1, display: 'block' }}
       >
@@ -554,14 +562,6 @@ const DepositAmountInput: React.FC<DepositAmountInputProps> = ({
           </Box>
         </Portal>
       )}
-      <Typography
-        variant='caption'
-        component='span'
-        sx={{ color: (theme) => theme.palette.error.main, mt: 0.5 }}
-        display={modalStatus.type === 'error' ? 'block' : 'none'}
-      >
-        {modalStatus.type === 'error' ? modalStatus.errorMessage : 'message'}
-      </Typography>
     </Box>
   )
 }
