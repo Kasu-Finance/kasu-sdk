@@ -6,8 +6,8 @@ const useNextEpochTime = () => {
   const sdk = useSdk()
 
   const { data, isLoading, error } = useSWR(
-    sdk ? ['nextEpochTime', sdk] : null,
-    async ([_, sdk]) => await sdk.Locking.getNextEpochDate()
+    sdk ? ['nextEpochTime'] : null,
+    async () => await sdk!.Locking.getNextEpochDate()
   )
 
   return {

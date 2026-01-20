@@ -33,8 +33,10 @@ type DepositMinMax = {
   epochMaxDeposit?: string
 }
 
+const MIN_CAPACITY = toBigNumber('1')
+
 const getRemainingCapacityError = (remainingCapacityValue: string) =>
-  toBigNumber(remainingCapacityValue).isZero()
+  toBigNumber(remainingCapacityValue).lt(MIN_CAPACITY)
     ? 'No remaining capacity for this tranche.'
     : `The value entered is above the remaining capacity of ${formatAmount(remainingCapacityValue)} USDC`
 
@@ -93,7 +95,7 @@ const LendingModalEdit = () => {
 
       const remainingCapacityValue = depositMinMax.remainingCapacity ?? '0'
 
-      return !toBigNumber(remainingCapacityValue).isZero()
+      return !toBigNumber(remainingCapacityValue).lt(MIN_CAPACITY)
     },
     [
       currentEpochDepositedAmountMap,
@@ -286,7 +288,7 @@ const LendingModalEdit = () => {
   const setRemainingCapacityStatus = useCallback(
     (depositMinMax: DepositMinMax) => {
       const remainingCapacityValue = depositMinMax.remainingCapacity ?? '0'
-      if (toBigNumber(remainingCapacityValue).isZero()) {
+      if (toBigNumber(remainingCapacityValue).lt(MIN_CAPACITY)) {
         setModalStatus({
           type: 'error',
           errorMessage: getRemainingCapacityError(remainingCapacityValue),

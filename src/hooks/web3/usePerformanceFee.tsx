@@ -6,8 +6,8 @@ const usePerformanceFee = () => {
   const sdk = useSdk()
 
   const { data, error } = useSWRImmutable(
-    sdk ? ['performanceFee', sdk] : null,
-    async ([_, sdk]) => await sdk.DataService.getPerformanceFee()
+    sdk ? ['performanceFee'] : null,
+    async () => await sdk!.DataService.getPerformanceFee()
   )
 
   return {

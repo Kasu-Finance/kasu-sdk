@@ -15,8 +15,8 @@ const useKsuPrice = (options?: UseKsuPriceOptions) => {
   const enabled = options?.enabled ?? true
 
   const { data, error, isLoading } = useSWR(
-    enabled && sdk ? ['ksuPrice', sdk] : null,
-    async ([_, sdk]) => sdk.Locking.getKasuTokenPrice()
+    enabled && sdk ? ['ksuPrice'] : null,
+    async () => sdk!.Locking.getKasuTokenPrice()
   )
 
   return {

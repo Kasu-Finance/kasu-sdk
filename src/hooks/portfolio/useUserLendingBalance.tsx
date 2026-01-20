@@ -17,16 +17,16 @@ const useUserLendingBalance = <T extends PortfolioLendingPool | PoolOverview>(
   const sdk = useSdk()
 
   const { data, error, isLoading } = useSWR(
-    address && sdk ? ['userLendingTrancheBalance', address, pools, sdk] : null,
-    async ([_, userId, pools, sdk]) =>
+    address && sdk ? ['userLendingTrancheBalance', address, pools] : null,
+    async () =>
       Promise.all(
         pools.map(async (pool) => ({
           ...pool,
           tranches: await Promise.all(
             pool.tranches.map(async (tranche) => ({
               ...tranche,
-              balanceData: await sdk.UserLending.getUserTrancheBalance(
-                userId.toLowerCase(),
+              balanceData: await sdk!.UserLending.getUserTrancheBalance(
+                address!.toLowerCase(),
                 pool.id,
                 tranche.id
               ),

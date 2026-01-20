@@ -103,6 +103,7 @@ export const getModal = (
     case ModalsKeys.LEND:
       return {
         component: <LendingModalWrapper handleClose={handleClose} />,
+        disableBackdropClose: true,
       }
     case ModalsKeys.LOAN_CONTRACT:
       return {

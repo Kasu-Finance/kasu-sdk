@@ -25,9 +25,9 @@ const useTotalLendingPoolDeposits = (
   const supportedToken = useSupportedTokenInfo()
 
   const { data, error, isLoading, mutate } = useSWR(
-    enabled && address && sdk ? ['totalPoolDeposits', address, sdk] : null,
-    async ([_, account, sdk]) =>
-      sdk.UserLending.getUserTotalPendingAndActiveDepositedAmount(account),
+    enabled && address && sdk ? ['totalPoolDeposits', address] : null,
+    async () =>
+      sdk!.UserLending.getUserTotalPendingAndActiveDepositedAmount(address!),
 
     {
       shouldRetryOnError: false,

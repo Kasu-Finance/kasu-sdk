@@ -36,11 +36,11 @@ const useUserNfts = (options?: UseUserNftsOptions) => {
   const enabled = options?.enabled ?? true
 
   const { data, error, isLoading, mutate } = useSWR(
-    enabled && address && sdk ? ['userNfts', address, sdk] : null,
-    async ([_, userAddress, sdk]): Promise<NftDetail[]> => {
+    enabled && address && sdk ? ['userNfts', address] : null,
+    async (): Promise<NftDetail[]> => {
       const [nftIds, nftBoosts] = await Promise.all([
-        sdk.Portfolio.getUserNfts(userAddress.toLowerCase()),
-        sdk.DataService.getNftBoost(),
+        sdk!.Portfolio.getUserNfts(address!.toLowerCase()),
+        sdk!.DataService.getNftBoost(),
       ])
 
       const nftWithFallback = nftIds
