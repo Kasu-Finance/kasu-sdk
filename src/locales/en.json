@@ -137,7 +137,7 @@
     "tooltip-3": "Half of this fee is to fund Protocol Fee Sharing for Lenders who are also KASU Token Lockers. The remaining half of this fee is retained by the Kasu protocol to fund operations.​"
   },
   "apyStructure": {
-    "tooltip-1": "Indicates whether the Delegate is offering Fixed and/or Variable APY loans for this Lending Strategy.",
+    "tooltip-1": "Indicates whether the Credit Originator is offering Fixed and/or Variable APY loans for this Lending Strategy.",
     "tooltip-2": "A Variable APY is subject to change depending on interest rate market fluctuations (increases/decrease). A Fixed APY will be locked for the specified period of time. During a fixed APY period, now Withdrawal Request can be submitted."
   },
   "lite": {
@@ -481,8 +481,8 @@
       "subheader-2": {
         "title": "Income and Capital Risks",
         "description-1": "Risks attaching to Lending on Kasu include (but are not limited to):",
-        "description-2": "The degree of income and capital risk associated with Lending on Kasu relate to the financial performance of Delegates and their End Borrower customers, to which your funds are on-lent. This will be affected by factors including End Borrowers’ ability to repay their Loans and Delegates’ competence in credit diligence, credit risk structuring and risk management.",
-        "description-3": "Neither Kasu, nor any of its directors, employees and contractors, nor any other related company or Delegates, guarantee the performance of the loans or the repayment of loaned capital. Loans on Kasu are subject to credit (and other) risks. This could involve delays in repayment of Loans, loss of some or all of interest returns and capital, and interest returns that fluctuate.",
+        "description-2": "The degree of income and capital risk associated with Lending on Kasu relate to the financial performance of Credit Originators and their End Borrower customers, to which your funds are on-lent. This will be affected by factors including End Borrowers’ ability to repay their Loans and Credit Originators’ competence in credit diligence, credit risk structuring and risk management.",
+        "description-3": "Neither Kasu, nor any of its directors, employees and contractors, nor any other related company or Credit Originators, guarantee the performance of the loans or the repayment of loaned capital. Loans on Kasu are subject to credit (and other) risks. This could involve delays in repayment of Loans, loss of some or all of interest returns and capital, and interest returns that fluctuate.",
         "list": {
           "list-0": "You may not receive the interest return you expected; and/or,",
           "list-1": "You may lose some or all of your capital."
@@ -503,11 +503,11 @@
       "subheader-6": {
         "title": "Credit Risk",
         "description-1": "Credit risk is the risk that the Underlying Borrowers (End Borrowers) may not meet their obligations in full and not pay interest and repay capital or other financial obligations on time. In the case that this results in losses, the balance of your lending may reduce. Examples of credit risk include where the End Borrower is a business and becomes insolvent or under external administration, or a guarantor is an individual and becomes bankrupt or dies.",
-        "description-2": "All lending to Kasu is completely unsecured, which increases risk compared with secured lending. Kasu on-lends Lenders’ funds to Delegates, who on-lend to End Borrowers. There is no direct security taken by Lenders over Kasu or Delegates. Delegates seek to reduce credit risk by taking security over End Borrowers for the benefit of Lenders. Delegates also provide choice of loans across a range of End Borrowers, industries and geographic sectors. Delegates employ a range of risk management strategies and credit structuring to reduce credit risk where possible."
+        "description-2": "All lending to Kasu is completely unsecured, which increases risk compared with secured lending. Kasu on-lends Lenders’ funds to Credit Originators, who on-lend to End Borrowers. There is no direct security taken by Lenders over Kasu or Credit Originators. Credit Originators seek to reduce credit risk by taking security over End Borrowers for the benefit of Lenders. Credit Originators also provide choice of loans across a range of End Borrowers, industries and geographic sectors. Credit Originators employ a range of risk management strategies and credit structuring to reduce credit risk where possible."
       },
       "subheader-7": {
-        "title": "Delegate Counterparty Risk",
-        "description": "Kasu does not guarantee the performance of Delegates and their End Borrower customers. All credit due diligence, credit underwriting and credit risk management related to End Borrowers is undertaken by Delegates. Kasu accepts no responsibility for any losses. This includes the potential failure and credit risk of a Delegate."
+        "title": "Credit Originator Counterparty Risk",
+        "description": "Kasu does not guarantee the performance of Credit Originators and their End Borrower customers. All credit due diligence, credit underwriting and credit risk management related to End Borrowers is undertaken by Credit Originators. Kasu accepts no responsibility for any losses. This includes the potential failure and credit risk of a Credit Originator."
       },
       "subheader-8": {
         "title": "Protocol Risks",
@@ -519,7 +519,7 @@
       },
       "subheader-10": {
         "title": "End Borrower Concentration Risk",
-        "description": "Lending Strategies may be subject to some degree of concentration risk, being the risk associated with Delegates that may only on-lend to a limited number of End Borrowers, thus increasing the risk if an End Borrower fails to repay its loan."
+        "description": "Lending Strategies may be subject to some degree of concentration risk, being the risk associated with Credit Originators that may only on-lend to a limited number of End Borrowers, thus increasing the risk if an End Borrower fails to repay its loan."
       },
       "subheader-11": {
         "title": "Tranche Risk",
@@ -527,8 +527,8 @@
       },
       "subheader-12": {
         "title": "Currency Exchange Risk",
-        "description-1": "Cryptocurrency-Fiat Exchange Rate Risk: Lenders deploy USDC, which Delegates convert to fiat currency to originate business loans to End Borrowers. Delegates also convert fiat currency to USDC to meet Withdrawal Requests from Lenders and other forms of repayments. These transactions carry currency exchange risk. Given that not all fiat loans will be denominated in US Dollars (e.g. loan will also be originated in AUD, GBP and CAD), currency exchange rate risk is highly evident. This risk is exacerbated by the varying durations of Lenders' loan timeframes (given by the volume and unpredictability of how often Withdrawal Requests are submitted), versus the duration of each loan to End Borrowers, for which there will inevitably be mismatched durations.",
-        "description-2": "Where deemed appropriate, Delegates may use currency hedging instruments to mitigate such risks. However, this does not fully mitigate potential losses associated with exchange rate risk. Consequently, in the event that such exchange rate risk cannot be mitigated, Lenders may suffer losses."
+        "description-1": "Cryptocurrency-Fiat Exchange Rate Risk: Lenders deploy USDC, which Credit Originators convert to fiat currency to originate business loans to End Borrowers. Credit Originators also convert fiat currency to USDC to meet Withdrawal Requests from Lenders and other forms of repayments. These transactions carry currency exchange risk. Given that not all fiat loans will be denominated in US Dollars (e.g. loan will also be originated in AUD, GBP and CAD), currency exchange rate risk is highly evident. This risk is exacerbated by the varying durations of Lenders' loan timeframes (given by the volume and unpredictability of how often Withdrawal Requests are submitted), versus the duration of each loan to End Borrowers, for which there will inevitably be mismatched durations.",
+        "description-2": "Where deemed appropriate, Credit Originators may use currency hedging instruments to mitigate such risks. However, this does not fully mitigate potential losses associated with exchange rate risk. Consequently, in the event that such exchange rate risk cannot be mitigated, Lenders may suffer losses."
       },
       "subheader-13": {
         "title": "Political, Legal and Regulatory Risks",
@@ -544,15 +544,15 @@
       },
       "subheader-16": {
         "title": "No Guarantee",
-        "description": "None of Kasu and its related entities, officers or personnel, or Delegates on Kasu, guarantee the performance of your loans, or the repayment of any loan amount, or the interest returns. Lending on Kasu is entirely at the risk of Lenders. No one and no entity makes any representation as to the success or otherwise of your lending on Kasu."
+        "description": "None of Kasu and its related entities, officers or personnel, or Credit Originators on Kasu, guarantee the performance of your loans, or the repayment of any loan amount, or the interest returns. Lending on Kasu is entirely at the risk of Lenders. No one and no entity makes any representation as to the success or otherwise of your lending on Kasu."
       },
       "subheader-17": {
         "title": "KASU Token Price Risk",
         "description": "The KASU token is subject to price volatility. If you lock KASU to avail of the token’s utility and benefits, negative price fluctuations in the token may negate some, or all, of these benefits and may even fluctuate to the point where you may be in a less favourable overall position than if you didn’t purchase and lock KASU to achieve utility and benefits."
       },
       "subheader-18": {
-        "title": "Delegate Concentration and KASU Token Price Risk",
-        "description": "At the current point in time, Apxium is the only Delegate Kasu has partnered with. This not only presents concentration risk in the event that the Delegate and/or its End Borrower clients fail, but also presents risk to KASU token holders. For example, if Apxium ceased participating as a Delegate on Kasu, then the KASU token may no longer have utility, which in turn, may affect the KASU token price significantly."
+        "title": "Credit Originator Concentration and KASU Token Price Risk",
+        "description": "At the current point in time, Apxium is the only Credit Originator Kasu has partnered with. This not only presents concentration risk in the event that the Credit Originator and/or its End Borrower clients fail, but also presents risk to KASU token holders. For example, if Apxium ceased participating as a Credit Originator on Kasu, then the KASU token may no longer have utility, which in turn, may affect the KASU token price significantly."
       }
     },
     "termsAndConditions": {
@@ -673,7 +673,7 @@
       },
       "subheader-6": {
         "title": "Loan Withdrawal Requests",
-        "description": "When Lenders submit a Loan Withdrawal Request to Kasu, their request enters a Pending Phase (queued). Acceptance of these Loan Withdrawal Requests is determined during each Clearing Period (end of each 7-day epoch) and is contingent upon the excess liquidity within the specific Lending Strategy, and may therefore remain outstanding (or partially outstanding) for one or more epochs. Excess liquidity is based on various factors outside of Kasu and Delegates’ control, such as (but not limited to) demand for Lending Strategies and End Borrowers meeting repayment requirements.",
+        "description": "When Lenders submit a Loan Withdrawal Request to Kasu, their request enters a Pending Phase (queued). Acceptance of these Loan Withdrawal Requests is determined during each Clearing Period (end of each 7-day epoch) and is contingent upon the excess liquidity within the specific Lending Strategy, and may therefore remain outstanding (or partially outstanding) for one or more epochs. Excess liquidity is based on various factors outside of Kasu and Credit Originators’ control, such as (but not limited to) demand for Lending Strategies and End Borrowers meeting repayment requirements.",
         "subtitle": "Acknowledgment of Loan Withdrawal Request Process",
         "subtitle-description": "By submitting a Loan Withdrawal Request through Kasu, Lenders acknowledge and accept the Pending Phase and the process based on excess liquidity. Lenders understand that:",
         "list-0": {
@@ -704,7 +704,7 @@
           }
         },
         "list-1": {
-          "list-0": "Access to their funds is contingent upon the availability of excess liquidity within the Lending Strategy, which is determined during each Clearing Period (end of each 7-day epoch). Excess liquidity is based on various factors outside of Kasu and Delegates’ control, such as (but not limited to) demand for Lending Strategies and End Borrowers meeting repayment requirements.",
+          "list-0": "Access to their funds is contingent upon the availability of excess liquidity within the Lending Strategy, which is determined during each Clearing Period (end of each 7-day epoch). Excess liquidity is based on various factors outside of Kasu and Credit Originators’ control, such as (but not limited to) demand for Lending Strategies and End Borrowers meeting repayment requirements.",
           "list-1": "Withdrawal Requests are prioritised based on Loyalty Level, potentially resulting in longer waiting times for lower or no Loyalty Level Lenders.",
           "list-2": "Withdrawal Requests may therefore remain outstanding (or partially outstanding) for more than one epoch until sufficient liquidity is available.",
           "list-3": "Any Withdrawal Request that has been outstanding for more than five epochs will automatically receive the highest Loyalty Level until the withdrawal is processed.",
@@ -771,12 +771,12 @@
         "subtitle": "Acknowledgment of Automated Opt-In",
         "subtitle-description": "By lending through Kasu, Lenders acknowledge and accept that if they do not select Opt-out within the 48 hour timeframe of being informed of the identity of the end borrower(s) to which their funds will be loaned, their funds will be automatically deployed. At that point, funds can only be returned via the normal Withdrawal Request process.",
         "description-8": "The following applies to Lenders with aggregate value of existing loans and queued Lending Requests equal to or greater than 350,000 USDC.",
-        "description-1": "Once a Lending Request is accepted, the Delegate has 30 days to identify an end borrower to which a Lender’s funds will be deployed. Once the Delegate identifies a suitable end borrower(s), the Lender is informed via email of the identity of the end borrower(s) to which their funds will be loaned.",
+        "description-1": "Once a Lending Request is accepted, the Credit Originator has 30 days to identify an end borrower to which a Lender’s funds will be deployed. Once the Credit Originator identifies a suitable end borrower(s), the Lender is informed via email of the identity of the end borrower(s) to which their funds will be loaned.",
         "description-2": "The Lender is offered the following choices:",
         "description-3": "Lenders are able to select Opt-in or Opt-out requests via the",
         "description-4": ", after connecting their Web3 wallet to the Kasu platform.",
         "description-5": "The above process repeats each time a Lender’s funds are deployed to another end borrower(s).",
-        "description-9": "It is noted that should an end borrower not be identified within 30 days, the Delegate will return the funds to the Lender (subject to available liquidity).",
+        "description-9": "It is noted that should an end borrower not be identified within 30 days, the Credit Originator will return the funds to the Lender (subject to available liquidity).",
         "description-6": "It is each Lender's responsibility to ensure their email spam filters are adjusted to accept emails from the address:",
         "description-7": "Kasu accepts no responsibility for any emails that have been missed.",
         "list-1": {
@@ -1529,7 +1529,7 @@
       },
       "simulatedYieldEarnings": {
         "title": "Simulated Yield Earnings",
-        "metric-1-tooltip": "The Annual Percentage Yield that will be applied to determine your interest earnings simulation, assuming all repayments will be made as expected. This is based on the APY currently offered by the Delegate and is subject to change during the simulation forecast period.",
+        "metric-1-tooltip": "The Annual Percentage Yield that will be applied to determine your interest earnings simulation, assuming all repayments will be made as expected. This is based on the APY currently offered by the Credit Originator and is subject to change during the simulation forecast period.",
         "metric-2-title": "Simulated Interest Earnings",
         "metric-2-tooltip": "Forecast USDC interest earnings (after fees) associated with the lending amount entered and duration selected for this Lending Strategy at the given APY, assuming all repayments will be made as expected.",
         "metric-3-title": "APY Bonus",
@@ -1590,12 +1590,12 @@
     "poolOverview": {
       "title": "Lending Strategy Overview",
       "subtitle": "Loan Overview",
-      "subtitle-2": "Delegate Background & Lending Structure Overview",
+      "subtitle-2": "Credit Originator Background & Lending Structure Overview",
       "strategyDeck": "Strategy Deck",
       "detailCard": {
         "apyStructure": {
           "label": "APY Structure",
-          "tooltip-1": "Indicates whether the Delegate is offering Fixed and/or Variable APY loans for this Lending Strategy.",
+          "tooltip-1": "Indicates whether the Credit Originator is offering Fixed and/or Variable APY loans for this Lending Strategy.",
           "tooltip-2": "A Variable APY is subject to change depending on interest rate market fluctuations (increases/decrease). A Fixed APY will be locked for the specified period of time. During a fixed APY period, now Withdrawal Request can be submitted."
         },
         "fixedApyExpiry": {
@@ -1604,27 +1604,27 @@
         },
         "assetClass": {
           "label": "Asset Class",
-          "tooltip": "The lending specialisation, type or category adopted by the Delegate for this Lending Strategy."
+          "tooltip": "The lending specialisation, type or category adopted by the Credit Originator for this Lending Strategy."
         },
         "industry": {
           "label": "Industry Exposure",
-          "tooltip": "Industry and/or business category in which the Delegate's customers (End Borrowers) operate."
+          "tooltip": "Industry and/or business category in which the Credit Originator's customers (End Borrowers) operate."
         },
         "security": {
           "label": "Security",
-          "tooltip": "The form of collateral or commitment provided by the Delegate's customers (End Borrowers) to secure their loans, so that in the event of default, the Delegate has recourse to recover the debt."
+          "tooltip": "The form of collateral or commitment provided by the Credit Originator's customers (End Borrowers) to secure their loans, so that in the event of default, the Credit Originator has recourse to recover the debt."
         },
         "lendingHistory": {
           "label": "Lending History",
-          "tooltip": "Total length of time the Delegate has been operating as a lending business."
+          "tooltip": "Total length of time the Credit Originator has been operating as a lending business."
         },
         "loansUnder": {
           "label": "Total Lending",
-          "tooltip": "Total USDC equivalent of all approved loan limits that the Delegate currently have in place to End Borrowers for this Lending Strategy."
+          "tooltip": "Total USDC equivalent of all approved loan limits that the Credit Originator currently have in place to End Borrowers for this Lending Strategy."
         },
         "tvl": {
           "label": "Total Value Locked (TVL)",
-          "tooltip": "Total USDC funds deployed by Lenders to this Lending Strategy, plus first loss capital (if contributed by the Delegate)."
+          "tooltip": "Total USDC funds deployed by Lenders to this Lending Strategy, plus first loss capital (if contributed by the Credit Originator)."
         },
         "terms": {
           "label": "Term & Structure",
@@ -1643,18 +1643,18 @@
       },
       "trancheCard": {
         "minDeposit": "Minimum Lending Amount",
-        "minDeposit-tooltip": "The minimum Lending Request amount the Delegate will accept from a single Lender​.",
+        "minDeposit-tooltip": "The minimum Lending Request amount the Credit Originator will accept from a single Lender​.",
         "maxDeposit": "Maximum Lending Amount",
-        "maxDeposit-tooltip": "The maximum Lending Request amount the Delegate will accept from a single Lender​.",
+        "maxDeposit-tooltip": "The maximum Lending Request amount the Credit Originator will accept from a single Lender​.",
         "remainingCapacity": {
           "label": "Remaining Capacity",
-          "tooltip": "Amount of additional USDC funds the Delegate can accept within this Lending Strategy, also represented as a percentage of the maximum Lending Strategy target amount.​"
+          "tooltip": "Amount of additional USDC funds the Credit Originator can accept within this Lending Strategy, also represented as a percentage of the maximum Lending Strategy target amount.​"
         }
       },
       "investmentCard": {
         "title": "Your Lending",
         "loanApy": "Loan APY",
-        "tooltip": "The Annual Percentage Yield currently offered by the Delegate for this Lending Strategy, assuming all repayments will be made as expected.",
+        "tooltip": "The Annual Percentage Yield currently offered by the Credit Originator for this Lending Strategy, assuming all repayments will be made as expected.",
         "totalAmount": {
           "label": "Total Lending Balance",
           "tooltip": "Your combined total USDC lending balance across all Tranches (or single Lending Strategy offer in the absence of multiple Tranches) within this Lending Strategy."
@@ -1673,7 +1673,7 @@
         },
         "trancheApy": {
           "label": "Gross APY",
-          "tooltip": "The Annual Percentage Yield currently offered by the Delegate for this Tranche of this Lending Strategy, assuming all repayments will be made as expected."
+          "tooltip": "The Annual Percentage Yield currently offered by the Credit Originator for this Tranche of this Lending Strategy, assuming all repayments will be made as expected."
         },
         "yieldEarned": {
           "label": "Lifetime Interest Earned",
@@ -1734,15 +1734,15 @@
     "tranche": {
       "senior": {
         "title": "Senior Tranche APY",
-        "tooltip": "The Annual Percentage Yield currently offered by the Delegate for the Senior Tranche of this Lending Strategy, assuming all repayments will be made as expected. The Senior tranche offers the lowest APY (and therefore, the lowest risk) of all tranches, as it has the highest ranking repayment priority in the event of losses. In the event of losses, if any funds are recovered, Senior tranche Lenders are therefore repaid prior to Mezzanine and Junior tranche Lenders."
+        "tooltip": "The Annual Percentage Yield currently offered by the Credit Originator for the Senior Tranche of this Lending Strategy, assuming all repayments will be made as expected. The Senior tranche offers the lowest APY (and therefore, the lowest risk) of all tranches, as it has the highest ranking repayment priority in the event of losses. In the event of losses, if any funds are recovered, Senior tranche Lenders are therefore repaid prior to Mezzanine and Junior tranche Lenders."
       },
       "mezzanine": {
         "title": "Mezzanine Tranche APY",
-        "tooltip": "The Annual Percentage Yield currently offered by the Delegate for the Mezzanine Tranche of this Lending Strategy, assuming all repayments will be made as expected. The Mezzanine tranche offers a higher APY (and therefore, higher risk) than the Senior tranche, but a lower APY (and therefore, lower risk) than the Junior tranche. In the event of losses, the Mezzanine tranche has a higher ranking repayment priority than the Junior tranche, but lower than the Senior tranche. In the event of losses, if any funds are recovered, Mezzanine tranche Lenders are therefore repaid prior to Junior tranche Lenders, but after Senior tranche Lenders."
+        "tooltip": "The Annual Percentage Yield currently offered by the Credit Originator for the Mezzanine Tranche of this Lending Strategy, assuming all repayments will be made as expected. The Mezzanine tranche offers a higher APY (and therefore, higher risk) than the Senior tranche, but a lower APY (and therefore, lower risk) than the Junior tranche. In the event of losses, the Mezzanine tranche has a higher ranking repayment priority than the Junior tranche, but lower than the Senior tranche. In the event of losses, if any funds are recovered, Mezzanine tranche Lenders are therefore repaid prior to Junior tranche Lenders, but after Senior tranche Lenders."
       },
       "junior": {
         "title": "Junior Tranche APY",
-        "tooltip": "The Annual Percentage Yield currently offered by the Delegate for the Junior Tranche of this Lending Strategy, assuming all repayments will be made as expected. The Junior tranche offers the highest APY (and therefore, the highest risk) of all tranches, as it has the lowest ranking repayment priority in the event of losses. In the event of losses, if any funds are recovered, Junior tranche Lenders are therefore repaid after Senior and Mezzanine tranche Lenders. In the absence of a Mezzanine tranche, Junior tranche Lenders simply rank behind Senior Tranche Lenders."
+        "tooltip": "The Annual Percentage Yield currently offered by the Credit Originator for the Junior Tranche of this Lending Strategy, assuming all repayments will be made as expected. The Junior tranche offers the highest APY (and therefore, the highest risk) of all tranches, as it has the lowest ranking repayment priority in the event of losses. In the event of losses, if any funds are recovered, Junior tranche Lenders are therefore repaid after Senior and Mezzanine tranche Lenders. In the absence of a Mezzanine tranche, Junior tranche Lenders simply rank behind Senior Tranche Lenders."
       }
     },
     "withdraw": {
@@ -1798,15 +1798,15 @@
       },
       "senior": {
         "title": "Senior Tranche",
-        "tooltip": "The current Annual Percentage Interest offered by the Delegate for the Senior Tranche within this Lending Strategy, assuming all repayments will be made as expected."
+        "tooltip": "The current Annual Percentage Interest offered by the Credit Originator for the Senior Tranche within this Lending Strategy, assuming all repayments will be made as expected."
       },
       "mezzanine": {
         "title": "Mezzanine Tranche",
-        "tooltip": "The current Annual Percentage Interest offered by the Delegate for the Mezzanine Tranche within this Lending Strategy, assuming all repayments will be made as expected."
+        "tooltip": "The current Annual Percentage Interest offered by the Credit Originator for the Mezzanine Tranche within this Lending Strategy, assuming all repayments will be made as expected."
       },
       "junior": {
         "title": "Junior Tranche",
-        "tooltip": "The current Annual Percentage Interest offered by the Delegate for the Junior Tranche within this Lending Strategy, assuming all repayments will be made as expected."
+        "tooltip": "The current Annual Percentage Interest offered by the Credit Originator for the Junior Tranche within this Lending Strategy, assuming all repayments will be made as expected."
       }
     },
     "shortcutTranche": {
@@ -1823,38 +1823,38 @@
   },
   "details": {
     "poolDelegate": {
-      "title": "Delegate Profile and History",
+      "title": "Credit Originator Profile and History",
       "history": {
         "label": "Lending History",
-        "tooltip": "​The total length of time the Delegate has been operating as a lending business.​"
+        "tooltip": "​The total length of time the Credit Originator has been operating as a lending business.​"
       },
       "totalFunds": {
         "label": "Historical Origination Volume",
-        "tooltip": "Cumulative total USDC equivalent face value of all current and historical loans originated by the Delegate to End Borrowers across all Lending Asset Classes, regardless of whether the loans have been made available to Lenders on Kasu or not.​​​"
+        "tooltip": "Cumulative total USDC equivalent face value of all current and historical loans originated by the Credit Originator to End Borrowers across all Lending Asset Classes, regardless of whether the loans have been made available to Lenders on Kasu or not.​​​"
       },
       "totalLoans": {
         "label": "Total Loans Originated",
-        "tooltip": "Cumulative total number of all current and historical individual loans originated by the Delegate to End Borrowers across all Lending Asset Classes, regardless of whether the loans have been made available to Lenders on Kasu or not.​"
+        "tooltip": "Cumulative total number of all current and historical individual loans originated by the Credit Originator to End Borrowers across all Lending Asset Classes, regardless of whether the loans have been made available to Lenders on Kasu or not.​"
       },
       "assetClass": {
         "label": "Asset Class(es)",
-        "tooltip": "All lending specialisations, types or categories in which the Delegate has a track record of expertise, regardless of the Lending Strategies the Delegate has made available on Kasu."
+        "tooltip": "All lending specialisations, types or categories in which the Credit Originator has a track record of expertise, regardless of the Lending Strategies the Credit Originator has made available on Kasu."
       },
       "otherPools": {
         "label": "Other Kasu Lending Strategies",
-        "tooltip": "​Other Lending Strategies that the Delegate has made available on Kasu.​"
+        "tooltip": "​Other Lending Strategies that the Credit Originator has made available on Kasu.​"
       },
       "loans": {
         "label": "Total Lending",
-        "tooltip": "Cumulative total USDC equivalent face value of all outstanding loans that the Delegate currently has deployed to End Borrowers across all Lending Asset Classes, regardless of whether the loans have been made available to Lenders on Kasu or not.​"
+        "tooltip": "Cumulative total USDC equivalent face value of all outstanding loans that the Credit Originator currently has deployed to End Borrowers across all Lending Asset Classes, regardless of whether the loans have been made available to Lenders on Kasu or not.​"
       },
       "loss": {
         "label": "Historical Loss Rate",
-        "tooltip": "Total unrecoverable losses expressed percentage of total loans originated by the Delegate since its inception, regardless of whether they relate to Lending Strategies made available on Kasu or not."
+        "tooltip": "Total unrecoverable losses expressed percentage of total loans originated by the Credit Originator since its inception, regardless of whether they relate to Lending Strategies made available on Kasu or not."
       },
       "totalLossRate": {
         "label": "Total Loss Rate",
-        "tooltip": "Total unrecoverable losses expressed as a percentage of total loans associated with the Delegate's history with this particular lending asset class, regardless of whether the loans have been made available on Kasu or not.​"
+        "tooltip": "Total unrecoverable losses expressed as a percentage of total loans associated with the Credit Originator's history with this particular lending asset class, regardless of whether the loans have been made available on Kasu or not.​"
       }
     },
     "poolDetails": {
@@ -1868,19 +1868,19 @@
       "title": "Lending Strategy Details",
       "apy": {
         "label": "APY",
-        "tooltip": "The Annual Percentage Yield currently offered by the Delegate for this loan Tranche (in the case that there are multiple loan Tranches within this Lending Strategy). In the absence of multiple loan Tranches, then this reflects the APY offered for the entire Lending Strategy. This assumes all repayments will be made as expected."
+        "tooltip": "The Annual Percentage Yield currently offered by the Credit Originator for this loan Tranche (in the case that there are multiple loan Tranches within this Lending Strategy). In the absence of multiple loan Tranches, then this reflects the APY offered for the entire Lending Strategy. This assumes all repayments will be made as expected."
       },
       "assetClass": {
         "label": "Asset Class",
-        "tooltip": "The lending specialisation, type or category adopted by the Delegate for this Lending Strategy."
+        "tooltip": "The lending specialisation, type or category adopted by the Credit Originator for this Lending Strategy."
       },
       "exposureIndustry": {
         "label": "Industry Exposure",
-        "tooltip": "​Industry and/or business category in which the Delegate's customers (End Borrowers) operate.​"
+        "tooltip": "​Industry and/or business category in which the Credit Originator's customers (End Borrowers) operate.​"
       },
       "structureApy": {
         "label": "Lending Strategy APY Structure",
-        "tooltip": "Indicates whether the APY offered by the Delegate is fixed for a specified period of time, or variable (subject to change every 4 epochs)."
+        "tooltip": "Indicates whether the APY offered by the Credit Originator is fixed for a specified period of time, or variable (subject to change every 4 epochs)."
       },
       "term": {
         "label": "Lending Strategy Loan Term",
@@ -1888,7 +1888,7 @@
       },
       "loan": {
         "label": "Loan Structure (End Borrowers)",
-        "tooltip-1": "The structure of each loan provided by the Delegate to its customers (End Borrowers) with regard to maturity date and repayment profile to suit the lending asset class related to this Lending Strategy.",
+        "tooltip-1": "The structure of each loan provided by the Credit Originator to its customers (End Borrowers) with regard to maturity date and repayment profile to suit the lending asset class related to this Lending Strategy.",
         "list": {
           "list-0": "A Revolving Loan refers to a loan structure that has no defined end date as it is typically utilised to fund ongoing operations (akin to a Line of Credit, Working Capital Loan or Evergreen Facility).",
           "list-1": "An Amortising Term Loan refers to a loan structure that has defined Principal and Interest repayment periods until it is fully repaid upon a specific end/maturity date, as it is typically utilised to fund core debt, capital expenditure and long term projects.",
@@ -1900,11 +1900,11 @@
       "title": "Lending Strategy Traction",
       "valueLocked": {
         "label": "Total Value Locked (TVL)",
-        "tooltip": "Total USDC funds deployed by Lenders to this Lending Strategy, plus first loss capital (if contributed by the Delegate)."
+        "tooltip": "Total USDC funds deployed by Lenders to this Lending Strategy, plus first loss capital (if contributed by the Credit Originator)."
       },
       "management": {
         "label": "Total Lending",
-        "tooltip": "Total USDC equivalent face value of all outstanding loans that the Delegate currently has deployed to End Borrowers from this Lending Strategy.​"
+        "tooltip": "Total USDC equivalent face value of all outstanding loans that the Credit Originator currently has deployed to End Borrowers from this Lending Strategy.​"
       },
       "yield": {
         "label": "Total Interest Earned",
@@ -1912,11 +1912,11 @@
       },
       "activeLoans": {
         "label": "Active Loans",
-        "tooltip": "Total number of all current outstanding loans that the Delegate currently has deployed to End Borrowers from this Lending Strategy."
+        "tooltip": "Total number of all current outstanding loans that the Credit Originator currently has deployed to End Borrowers from this Lending Strategy."
       },
       "capacity": {
         "label": "Remaining Capacity",
-        "tooltip": "Amount of additional USDC the Delegate is able to accept for this Lending Strategy, also represented as a percentage of the maximum Lending Strategy target USDC amount.​"
+        "tooltip": "Amount of additional USDC the Credit Originator is able to accept for this Lending Strategy, also represented as a percentage of the maximum Lending Strategy target USDC amount.​"
       }
     },
     "riskManagement": {
@@ -1925,7 +1925,7 @@
         "title": "Risk Status",
         "firstLoss": {
           "label": "First Loss Capital",
-          "tooltip": "The amount of capital contributed by the Delegate that will be absorbed first in the event of any losses, prior to losses being absorbed by Lenders, thereby providing a degree of loss protection to Lenders.​ First Loss Capital cannot be deployed into loans."
+          "tooltip": "The amount of capital contributed by the Credit Originator that will be absorbed first in the event of any losses, prior to losses being absorbed by Lenders, thereby providing a degree of loss protection to Lenders.​ First Loss Capital cannot be deployed into loans."
         },
         "lossRate": {
           "label": "Lending Strategy Loss Rate",
@@ -1944,7 +1944,7 @@
         "title": "Security Structure over End Borrowers",
         "guarantees": {
           "label": "Guarantees",
-          "tooltip": "A legal undertaking over a Company, Trust or Director placing liability upon that particular party to repay the loan provided by the Delegate to its customer (end borrower) in the case that it cannot repay its debt."
+          "tooltip": "A legal undertaking over a Company, Trust or Director placing liability upon that particular party to repay the loan provided by the Credit Originator to its customer (end borrower) in the case that it cannot repay its debt."
         },
         "chargeAssets": {
           "label": "Charge over Business Assets",
@@ -1952,25 +1952,25 @@
         },
         "bankControl": {
           "label": "Control over Bank Accounts",
-          "tooltip": "Whether the Delegate has control over any of its customers' (End Borrowers) bank accounts which derive cash revenues, providing the immediate right to these cash revenues to repay loans prior to the customer (end borrower) having access to these funds. "
+          "tooltip": "Whether the Credit Originator has control over any of its customers' (End Borrowers) bank accounts which derive cash revenues, providing the immediate right to these cash revenues to repay loans prior to the customer (end borrower) having access to these funds. "
         }
       },
       "criteria": {
         "title": "Minimum Criteria for End Borrowers",
         "yearsBusiness": {
           "label": "Minimum 3 years in Business",
-          "tooltip": "A condition which requires a Delegate's customers (End Borrowers) to prove that it has been operating for at least 3 years with adequate financial reporting history."
+          "tooltip": "A condition which requires a Credit Originator's customers (End Borrowers) to prove that it has been operating for at least 3 years with adequate financial reporting history."
         },
         "propertyOwners": {
           "label": "Director(s)/Beneficial Owner(s) must be property owners",
-          "tooltip": "A condition enforced by the Delegate which requires at least one Director (or beneficial owner) for every customer (end borrower) to be a property owner with sufficient equity. The purpose of this condition is to confirm a minimum level of wealth in order to provide comfort in the event that a Director (or beneficial owner) may become personally liable for its business loan(s) where recovery action may be required."
+          "tooltip": "A condition enforced by the Credit Originator which requires at least one Director (or beneficial owner) for every customer (end borrower) to be a property owner with sufficient equity. The purpose of this condition is to confirm a minimum level of wealth in order to provide comfort in the event that a Director (or beneficial owner) may become personally liable for its business loan(s) where recovery action may be required."
         }
       }
     }
   },
   "repayments": {
     "title": "Repayments",
-    "loanModelDescription": "The Delegate's lending model is to facilitate Fiat currency loans to real world businesses off-chain. The Asset Class and Loan Structure outlined in the 'Details' screen of the Lending Strategy indicates that these loans are 'Revolving/Evergreen' Loan Facilities, with fluctuating loan balances, being a function of ongoing and simultaneous loan repayments and loan redraws in Fiat currency off-chain. Accordingly, these Fiat currency transactions can only be viewed via CSV download at this current point in time. These transactions will be available to view on-chain shortly.",
+    "loanModelDescription": "The Credit Originator's lending model is to facilitate Fiat currency loans to real world businesses off-chain. The Asset Class and Loan Structure outlined in the 'Details' screen of the Lending Strategy indicates that these loans are 'Revolving/Evergreen' Loan Facilities, with fluctuating loan balances, being a function of ongoing and simultaneous loan repayments and loan redraws in Fiat currency off-chain. Accordingly, these Fiat currency transactions can only be viewed via CSV download at this current point in time. These transactions will be available to view shortly.",
     "borrowerFundsCSV": "Download to view fiat currency Loan Tape on a per borrower basis:",
     "summaryStatistics": {
       "title": "Summary Statistics"
@@ -1995,7 +1995,7 @@
         "metrics": {
           "totalBorrowers": {
             "label": "Total End Borrowers (Current)",
-            "tooltip": "The number of individual businesses that the Delegate is currently lending to."
+            "tooltip": "The number of individual businesses that the Credit Originator is currently lending to."
           }
         }
       },
@@ -2133,9 +2133,9 @@
       "metric-1": "Total Value Locked (TVL)",
       "metric-1-tooltip": "Total Combined USDC funds deployed by Lenders across all Lending Strategies, plus the current value of all KASU locked in the Kasu protocol.",
       "metric-2": "Total Lending",
-      "metric-2-tooltip": "Combined USDC equivalent amount of all approved loan limits that Delegates currently have in place to End Borrowers",
+      "metric-2-tooltip": "Combined USDC equivalent amount of all approved loan limits that Credit Originators currently have in place to End Borrowers",
       "metric-3": "Loan Origination Volume",
-      "metric-3-tooltip": "Cumulative total USDC equivalent face value of all current and historical loans originated by Delegates to End Borrowers from all Lending Strategies on the Kasu protocol.",
+      "metric-3-tooltip": "Cumulative total USDC equivalent face value of all current and historical loans originated by Credit Originators to End Borrowers from all Lending Strategies on the Kasu protocol.",
       "metric-4": "Total Interest Earned​",
       "metric-4-tooltip": "Cumulative total gross interest earned by Lenders from all loans since the inception of the Kasu protocol.",
       "metric-5": "Total Loss Rate",
@@ -2240,13 +2240,13 @@
           "title": "Lending Requests",
           "metric-1": "Requested",
           "metric-1-tooltip-1": "The total USDC amount of Lending Requests you have submitted across all Lending Strategies.",
-          "metric-1-tooltip-2": "If a Lending Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Delegate will accept/reject the Lending Request in full by the end of this epoch. Otherwise, a Lending Request will remain queued (‘Requested’ status) until the next clearing period (to be Accepted/Rejected at the end of the next epoch). Similarly, if a Lending Request is submitted during the clearing period of the current epoch, it will also remain queued until the next epoch.",
+          "metric-1-tooltip-2": "If a Lending Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Credit Originator will accept/reject the Lending Request in full by the end of this epoch. Otherwise, a Lending Request will remain queued (‘Requested’ status) until the next clearing period (to be Accepted/Rejected at the end of the next epoch). Similarly, if a Lending Request is submitted during the clearing period of the current epoch, it will also remain queued until the next epoch.",
           "metric-2": "Accepted",
-          "metric-2-tooltip-1": "The total USDC amount of Lending Requests that has been accepted by the Delegate(s) across all Lending Strategies.",
-          "metric-2-tooltip-2": "If a Lending Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Delegate will accept/reject the Lending Requests in full by the end of this epoch. Otherwise, a Lending Request will remain queued (‘Requested’ status) until the next clearing period (to be Accepted/Rejected at the end of the next epoch). Similarly, if a Lending Request is submitted during the clearing period of the current epoch, it will also remain queued until the next epoch.",
+          "metric-2-tooltip-1": "The total USDC amount of Lending Requests that has been accepted by the Credit Originator(s) across all Lending Strategies.",
+          "metric-2-tooltip-2": "If a Lending Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Credit Originator will accept/reject the Lending Requests in full by the end of this epoch. Otherwise, a Lending Request will remain queued (‘Requested’ status) until the next clearing period (to be Accepted/Rejected at the end of the next epoch). Similarly, if a Lending Request is submitted during the clearing period of the current epoch, it will also remain queued until the next epoch.",
           "metric-3": "Rejected",
-          "metric-3-tooltip-1": "The total USDC amount of Lending Requests that has been rejected by the Delegate(s) across all Lending Strategies, due to lack of end borrower demand, or excess liquidity.",
-          "metric-3-tooltip-2": "If a Lending Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Delegate will accept/reject the Lending Requests in full by the end of this epoch. Otherwise, a Lending Request will remain queued (‘Requested’ status)  until the next clearing period (to be Accepted/Rejected at the end of the next epoch). Similarly, if a Lending Request is submitted during the clearing period of the current epoch, it will also remain queued until the next epoch.",
+          "metric-3-tooltip-1": "The total USDC amount of Lending Requests that has been rejected by the Credit Originator(s) across all Lending Strategies, due to lack of end borrower demand, or excess liquidity.",
+          "metric-3-tooltip-2": "If a Lending Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Credit Originator will accept/reject the Lending Requests in full by the end of this epoch. Otherwise, a Lending Request will remain queued (‘Requested’ status)  until the next clearing period (to be Accepted/Rejected at the end of the next epoch). Similarly, if a Lending Request is submitted during the clearing period of the current epoch, it will also remain queued until the next epoch.",
           "metric-4": "Reallocations In/Out",
           "metric-4-tooltip-1": "The total USDC amount of accepted Lending Requests that has been reallocated out from your initial requested Tranche(s) to the next available Tranche(s), due to the initial requested Tranche(s) being oversubscribed (full).​",
           "metric-4-tooltip-2": "Please refer to the",
@@ -2260,17 +2260,17 @@
           "title": "Subsequent Transactions",
           "subtitle": "(Post Acceptance)",
           "metric-1": "Funds Returned",
-          "metric-1-tooltip": "The total USDC amount returned to you by the Delegate(s), due to lack of demand for funding from End Borrowers.",
+          "metric-1-tooltip": "The total USDC amount returned to you by the Credit Originator(s), due to lack of demand for funding from End Borrowers.",
           "metric-2": "Current Opt In/Out Pending",
-          "metric-2-tooltip-1": "The total USDC amount currently awaiting your instructions for the Delegate to either deploy to End Borrowers, or return your funds to you instead.",
+          "metric-2-tooltip-1": "The total USDC amount currently awaiting your instructions for the Credit Originator to either deploy to End Borrowers, or return your funds to you instead.",
           "metric-2-tooltip-2": "As per your acknowledgement in the",
           "metric-2-tooltip-3": "if you do not provide any ‘Opt In/Out’ instructions within 48 hours of receiving an email requesting your decision, then you will be deemed to have automatically opted in (otherwise known as ‘negative consent’).",
           "metric-3": "Opted In",
-          "metric-3-tooltip-1": "The total USDC amount that you have ‘Opted In’ for the Delegate to deploy to End Borrowers.",
+          "metric-3-tooltip-1": "The total USDC amount that you have ‘Opted In’ for the Credit Originator to deploy to End Borrowers.",
           "metric-3-tooltip-2": "As per your acknowledgement in the",
           "metric-3-tooltip-3": "if you did not provide any ‘Opt In/Out’ instructions within 48 hours of receiving an email requesting your decision, then you are deemed to have automatically opted in (otherwise known as ‘negative consent’).",
           "metric-4": "Opted Out",
-          "metric-4-tooltip-1": "The total USDC amount that you have ‘Opted Out’ from the Delegate deploying to End Borrowers, where funds will be returned to you instead.",
+          "metric-4-tooltip-1": "The total USDC amount that you have ‘Opted Out’ from the Credit Originator deploying to End Borrowers, where funds will be returned to you instead.",
           "metric-4-tooltip-2": "Refer to the",
           "metric-4-tooltip-3": "for further details as to how the ‘Opt In/Out’ process works."
         }
@@ -2280,17 +2280,17 @@
         "withdrawalRequests": {
           "title": "Withdrawal Requests",
           "metric-1": "Requested",
-          "metric-1-tooltip-1": "If a Withdrawal Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Delegate will process the Withdrawal Request by the end of this epoch, by submitting it to a queue to accept nil, part, or all of the Request . Otherwise, a Withdrawal Request will not be submitted to the queue until the next clearing period (end of the next epoch). Similarly, if a Withdrawal Request is submitted during the clearing period of the current epoch, it will also not be submitted to the queue until the next epoch.",
+          "metric-1-tooltip-1": "If a Withdrawal Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Credit Originator will process the Withdrawal Request by the end of this epoch, by submitting it to a queue to accept nil, part, or all of the Request . Otherwise, a Withdrawal Request will not be submitted to the queue until the next clearing period (end of the next epoch). Similarly, if a Withdrawal Request is submitted during the clearing period of the current epoch, it will also not be submitted to the queue until the next epoch.",
           "metric-1-tooltip-2": "As per your acknowledgement in the",
           "metric-1-tooltip-3": "the processing of your Withdrawal Requests is contingent upon the excess liquidity within each specific Lending Strategy, and may therefore remain outstanding (or partially outstanding) for one or more epochs.",
           "metric-2": "Queued",
-          "metric-2-tooltip-1": "The current USDC amount of Withdrawal Requests you have submitted across all Lending Strategies that remains queued (where a Delegate will accept nil, part, of all of the Request). The Delegate will continually accept nil, part, or all of the Withdrawal Requests at the end of each epoch, until the funds are fully returned to the Lender (assuming no losses or defaults by End Borrowers).",
+          "metric-2-tooltip-1": "The current USDC amount of Withdrawal Requests you have submitted across all Lending Strategies that remains queued (where a Credit Originator will accept nil, part, of all of the Request). The Credit Originator will continually accept nil, part, or all of the Withdrawal Requests at the end of each epoch, until the funds are fully returned to the Lender (assuming no losses or defaults by End Borrowers).",
           "metric-2-tooltip-2": "Should any amount(s) of your Withdrawal Request(s)  remain queued for more than five epochs, they will automatically be prioritised above all Loyalty Levels.​",
           "metric-2-tooltip-3": "As per your acknowledgement in the",
           "metric-2-tooltip-4": "the acceptance of Withdrawal Requests is contingent upon the excess liquidity within each specific Lending Strategy, and may therefore remain outstanding (or partially outstanding) for one or more epochs.",
           "metric-3": "Accepted",
-          "metric-3-tooltip-1": "The total USDC amount of Withdrawal Requests that has been accepted (in part or full) by the Delegate(s) across all Lending Strategies.​",
-          "metric-3-tooltip-2": "The Delegate will continually accept nil, part, or all of the Withdrawal Requests at the end of each epoch until funds are fully returned to the Lender (assuming no losses or defaults by End Borrowers).",
+          "metric-3-tooltip-1": "The total USDC amount of Withdrawal Requests that has been accepted (in part or full) by the Credit Originator(s) across all Lending Strategies.​",
+          "metric-3-tooltip-2": "The Credit Originator will continually accept nil, part, or all of the Withdrawal Requests at the end of each epoch until funds are fully returned to the Lender (assuming no losses or defaults by End Borrowers).",
           "metric-4": "Cancelled",
           "metric-4-tooltip-1": "The total USDC amount of Withdrawal Requests that you have cancelled across all Lending Strategies.",
           "metric-4-tooltip-2": "Withdrawal Request Cancellations can only be submitted prior to the closure of the clearing period of the current epoch.",
@@ -2327,36 +2327,36 @@
             "tooltip-3": "you acknowledged during the Loan Contract Acceptance process for more details."
           },
           "fundsReturned": {
-            "tooltip-1": "Funds will be returned to you by the Delegate due to lack of demand for funding from End Borrowers, or the Delegate’s being unable to identify a suitable end borrower.",
-            "tooltip-2": "The USDC amount of a single Lending Request that was previously accepted, but will now be returned to you by the Delegate due to lack of demand for funding from End Borrowers, or the Delegate being unable to identify a suitable end borrower."
+            "tooltip-1": "Funds will be returned to you by the Credit Originator due to lack of demand for funding from End Borrowers, or the Credit Originator’s being unable to identify a suitable end borrower.",
+            "tooltip-2": "The USDC amount of a single Lending Request that was previously accepted, but will now be returned to you by the Credit Originator due to lack of demand for funding from End Borrowers, or the Credit Originator being unable to identify a suitable end borrower."
           },
           "deposit": {
             "requested": {
               "tooltip-1": "The USDC amount of this single Lending request.",
-              "tooltip-2": "If a Lending Request is submitted prior to the commencement of the learing period of the current epoch (which occurs at the end of each poch), then the Delegate will accept/reject the Lending Request in full y the end of this epoch. Otherwise, a Lending Request will remain queued ‘Requested’ status) until the next clearing period (to be ccepted/Rejected at the end of the next epoch). Similarly, if a Lending equest is submitted during the clearing period of the current epoch, it ill also remain queued until the next epoch."
+              "tooltip-2": "If a Lending Request is submitted prior to the commencement of the learing period of the current epoch (which occurs at the end of each poch), then the Credit Originator will accept/reject the Lending Request in full y the end of this epoch. Otherwise, a Lending Request will remain queued ‘Requested’ status) until the next clearing period (to be ccepted/Rejected at the end of the next epoch). Similarly, if a Lending equest is submitted during the clearing period of the current epoch, it ill also remain queued until the next epoch."
             },
             "accepted": {
-              "tooltip-1": "The portion of the single Lending Request that has been accepted by the Delegate.",
-              "tooltip-2": "If a Lending Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Delegate will accept/reject the Lending Requests in full by the end of this epoch. Otherwise, a Lending Request will remain queued (‘Requested’ status) until the next clearing period (to be Accepted/Rejected at the end of the next epoch). Similarly, if a Lending Request is submitted during the clearing period of the current epoch, it will also remain queued until the next epoch."
+              "tooltip-1": "The portion of the single Lending Request that has been accepted by the Credit Originator.",
+              "tooltip-2": "If a Lending Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Credit Originator will accept/reject the Lending Requests in full by the end of this epoch. Otherwise, a Lending Request will remain queued (‘Requested’ status) until the next clearing period (to be Accepted/Rejected at the end of the next epoch). Similarly, if a Lending Request is submitted during the clearing period of the current epoch, it will also remain queued until the next epoch."
             },
             "rejected": {
-              "tooltip-1": "The portion of the single Lending Request that has been rejected by the Delegate, due to factors such as lack of end borrower demand or excess liquidity within this Lending Strategy.",
-              "tooltip-2": "If a Lending Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Delegate will accept/reject the Lending Request in full by the end of this epoch. Otherwise, a Lending Request will remain queued (‘Requested’ status) until the next clearing period (to be Accepted/Rejected at the end of the next epoch). Similarly, if a Lending Request is submitted during the clearing period of the current epoch, it will also remain queued until the next epoch."
+              "tooltip-1": "The portion of the single Lending Request that has been rejected by the Credit Originator, due to factors such as lack of end borrower demand or excess liquidity within this Lending Strategy.",
+              "tooltip-2": "If a Lending Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Credit Originator will accept/reject the Lending Request in full by the end of this epoch. Otherwise, a Lending Request will remain queued (‘Requested’ status) until the next clearing period (to be Accepted/Rejected at the end of the next epoch). Similarly, if a Lending Request is submitted during the clearing period of the current epoch, it will also remain queued until the next epoch."
             }
           },
           "withdrawal": {
             "requested": {
               "tooltip-1": "The USDC amount of this single Withdrawal Request.",
-              "tooltip-2": "If a Withdrawal Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Delegate will process the Withdrawal Request by the end of this epoch, by submitting it to a queue to accept nil, part, or all of the Request . Otherwise, a Withdrawal Request will not be submitted to the queue until the next clearing period (end of the next epoch). Similarly, if a Withdrawal Request is submitted during the clearing period of the current epoch, it will also not be submitted to the queue until the next epoch.",
+              "tooltip-2": "If a Withdrawal Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Credit Originator will process the Withdrawal Request by the end of this epoch, by submitting it to a queue to accept nil, part, or all of the Request . Otherwise, a Withdrawal Request will not be submitted to the queue until the next clearing period (end of the next epoch). Similarly, if a Withdrawal Request is submitted during the clearing period of the current epoch, it will also not be submitted to the queue until the next epoch.",
               "tooltip-3": "As per your acknowledgement in the",
               "tooltip-4": "the processing of your Withdrawal Requests is contingent upon the excess liquidity within each specific Lending Strategy, and may therefore remain outstanding (or partially outstanding) for one or more epochs."
             },
             "accepted": {
-              "tooltip-1": "The portion of the single Withdrawal Requests that has been accepted (in part or full) by the Delegate.",
-              "tooltip-2": "If a Lending Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Delegate will accept/reject the Lending Requests in full by the end of this epoch. Otherwise, a Lending Request will remain queued (‘Requested’ status) until the next clearing period (to be Accepted/Rejected at the end of the next epoch). Similarly, if a Lending Request is submitted during the clearing period of the current epoch, it will also remain queued until the next epoch."
+              "tooltip-1": "The portion of the single Withdrawal Requests that has been accepted (in part or full) by the Credit Originator.",
+              "tooltip-2": "If a Lending Request is submitted prior to the commencement of the clearing period of the current epoch (which occurs at the end of each epoch), then the Credit Originator will accept/reject the Lending Requests in full by the end of this epoch. Otherwise, a Lending Request will remain queued (‘Requested’ status) until the next clearing period (to be Accepted/Rejected at the end of the next epoch). Similarly, if a Lending Request is submitted during the clearing period of the current epoch, it will also remain queued until the next epoch."
             },
             "queued": {
-              "tooltip-1": "The portion of the single Withdrawal Requests that remains queued (where a Delegate will accept nil, part, of all of the Request). The Delegate will continually accept nil, part, or all of the Withdrawal Requests at the end of each epoch, until the funds are fully returned to the Lender (assuming no losses or defaults by End Borrowers).",
+              "tooltip-1": "The portion of the single Withdrawal Requests that remains queued (where a Credit Originator will accept nil, part, of all of the Request). The Credit Originator will continually accept nil, part, or all of the Withdrawal Requests at the end of each epoch, until the funds are fully returned to the Lender (assuming no losses or defaults by End Borrowers).",
               "tooltip-2": "Should any amount(s) of your Withdrawal Request(s) remain queued for more than five epochs, they will automatically be prioritised above all Loyalty Levels.",
               "tooltip-3": "As per your acknowledgement in the",
               "tooltip-4": "the acceptance of Withdrawal Requests is contingent upon the excess liquidity within each specific Lending Strategy, and may therefore remain outstanding (or partially outstanding) for one or more epochs."
