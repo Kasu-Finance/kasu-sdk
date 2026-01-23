@@ -27,7 +27,7 @@ const RiskReportingTab: React.FC<RiskReportingProps> = async ({ poolId }) => {
       <BadAndDoubtfulDebts badAndDoubltfulDebts={debts} />
       <CustomCard sx={{ bgcolor: 'white' }}>
         <CustomInnerCardContent sx={{ py: 6 }}>
-          <EmptyDataPlaceholder text='Comprehensive on-chain risk reporting dashboards coming soon' />
+          <EmptyDataPlaceholder text='Comprehensive risk reporting dashboards coming soon' />
         </CustomInnerCardContent>
       </CustomCard>
       {/* {isFulfilledPromise(financialReportingDocuments) &&

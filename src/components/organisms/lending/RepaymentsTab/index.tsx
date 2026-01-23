@@ -45,7 +45,7 @@ const RepaymentsTab: React.FC<PoolDetailsProps> = async ({ poolId }) => {
         </Box>
         <CustomInnerCardContent sx={{ py: 3 }}>
           {/* <AggregatedFundsFlow repayment={repayment} /> */}
-          <EmptyDataPlaceholder text='On-chain loan repayments data coming soon' />
+          <EmptyDataPlaceholder text='Loan repayments data coming soon' />
           {/* {repayment && (
             <Grid container columnSpacing={4} mt={6}>
               <Grid item xs={6}>
