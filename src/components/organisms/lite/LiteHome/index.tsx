@@ -96,7 +96,7 @@ const LiteHome: React.FC<LiteHomeProps> = ({
         px={{ xs: 1, sm: 2, md: 0 }}
       >
         Our partner Apxium has originated over $30M in loans with zero losses
-        across its full 8-year operating history.
+        across its full 9-year operating history.
       </Typography>
       <Grid2
         container

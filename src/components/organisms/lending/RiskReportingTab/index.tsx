@@ -1,41 +1,92 @@
 import { Stack } from '@mui/material'
 
-import CustomCard from '@/components/atoms/CustomCard'
-import CustomInnerCardContent from '@/components/atoms/CustomCard/CustomInnerCardContent'
-import EmptyDataPlaceholder from '@/components/atoms/EmptyDataPlaceholder'
-import BadAndDoubtfulDebts from '@/components/organisms/lending/RiskReportingTab/BadAndDoubtfulDebts'
+import ArrearsCharts from '@/components/organisms/lending/RiskReportingTab/ArrearsCharts'
+import BorrowerSchedule from '@/components/organisms/lending/RiskReportingTab/BorrowerSchedule'
+import CreditRiskMetricsTable from '@/components/organisms/lending/RiskReportingTab/CreditRiskMetricsTable'
+import DTIConcentrationTable from '@/components/organisms/lending/RiskReportingTab/DTIConcentrationTable'
+import HistoricalCharts from '@/components/organisms/lending/RiskReportingTab/HistoricalCharts'
 import RiskReportingTabSkeleton from '@/components/organisms/lending/RiskReportingTab/RiskReportingTabSkeleton'
+import SummaryDashboard from '@/components/organisms/lending/RiskReportingTab/SummaryDashboard'
 
-import { getBadAndDoubtfulDebts } from '@/app/_requests/badAndDoubltDebts'
+import { getRiskReport } from '@/app/_requests/riskReport'
 
 type RiskReportingProps = {
   poolId: string
 }
 
 const RiskReportingTab: React.FC<RiskReportingProps> = async ({ poolId }) => {
-  const debts = await getBadAndDoubtfulDebts(poolId)
+  const riskReport = await getRiskReport(poolId)
 
-  if (!debts) return <RiskReportingTabSkeleton />
+  if (!riskReport) return <RiskReportingTabSkeleton />
 
   return (
     <Stack spacing={3} mt={3}>
-      {/* <PoolData /> */}
-      {/* <PortfolioLeadingIndicators /> */}
-      {/* {isFulfilledPromise(poolCreditMetrics) && poolCreditMetrics.value && (
-        <PoolCreditMetrics poolCreditMetrics={poolCreditMetrics.value} />
-      )} */}
-      <BadAndDoubtfulDebts badAndDoubltfulDebts={debts} />
-      <CustomCard sx={{ bgcolor: 'white' }}>
-        <CustomInnerCardContent sx={{ py: 6 }}>
-          <EmptyDataPlaceholder text='Comprehensive risk reporting dashboards coming soon' />
-        </CustomInnerCardContent>
-      </CustomCard>
-      {/* {isFulfilledPromise(financialReportingDocuments) &&
-        financialReportingDocuments.value && (
-          <FinancialReportingDocuments
-            documents={financialReportingDocuments.value}
+      {/* Risk Summary Dashboard */}
+      {riskReport && riskReport.summaryData && (
+        <SummaryDashboard
+          summaryData={riskReport.summaryData}
+          reportType={riskReport.reportType}
+        />
+      )}
+
+      {/* Borrower/Duration Schedule Table */}
+      {riskReport &&
+        riskReport.borrowers &&
+        riskReport.borrowers.length > 0 &&
+        riskReport.agingBuckets &&
+        riskReport.aggregated?.allBorrowers?.totals && (
+          <BorrowerSchedule
+            agingBuckets={riskReport.agingBuckets}
+            borrowers={riskReport.borrowers}
+            totals={riskReport.aggregated.allBorrowers.totals}
+            reportType={riskReport.reportType}
           />
-        )} */}
+        )}
+
+      {/* Arrears Analysis Charts */}
+      {riskReport &&
+        riskReport.agingBuckets &&
+        riskReport.aggregated?.allBorrowers?.totals?.loansByAgingBucket && (
+          <ArrearsCharts
+            agingBuckets={riskReport.agingBuckets}
+            loansByAgingBucket={
+              riskReport.aggregated.allBorrowers.totals.loansByAgingBucket
+            }
+            totalFunding={
+              riskReport.summaryData?.totalCurrentLedgerFundingAmount || 0
+            }
+            reportType={riskReport.reportType}
+          />
+        )}
+
+      {/* DTI Concentration Risk Table */}
+      {riskReport && (
+        <DTIConcentrationTable reportType={riskReport.reportType} />
+      )}
+
+      {/* Credit Risk Metrics Table */}
+      {riskReport &&
+        riskReport.borrowers &&
+        riskReport.borrowers.length > 0 &&
+        riskReport.aggregated?.allBorrowers && (
+          <CreditRiskMetricsTable
+            reportType={riskReport.reportType}
+            borrowers={riskReport.borrowers}
+            aggregated={riskReport.aggregated.allBorrowers}
+          />
+        )}
+
+      {/* Historical Performance Charts */}
+      {riskReport &&
+        riskReport.borrowers &&
+        riskReport.borrowers.length > 0 &&
+        riskReport.aggregated?.allBorrowers && (
+          <HistoricalCharts
+            reportType={riskReport.reportType}
+            borrowers={riskReport.borrowers}
+            aggregated={riskReport.aggregated.allBorrowers}
+          />
+        )}
     </Stack>
   )
 }
