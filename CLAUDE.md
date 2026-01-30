@@ -300,6 +300,85 @@ const { data } = useSWR(
 )
 ```
 
+## Risk Reporting Feature
+
+### Overview
+
+The Risk Reporting tab (`/lending/[address]/risk-reporting`) displays comprehensive risk metrics for lending strategies. Data is sourced from a JSON report file that maps to specific funding types.
+
+### Data Source
+
+**File**: `KasuReport2025-11-13T131952Z 2.json` (project root)
+
+The JSON contains three funding types:
+
+- `wholeLedgerFunding` - Whole Ledger Funding strategies
+- `professionalFeeFunding` - Professional Fee Funding strategies
+- `taxPayFunding` - Taxation/Tax Pay Funding strategies
+
+### Pool Name Mapping
+
+The system maps pool names/asset classes to funding types:
+
+| Pool Name Contains    | Funding Type Key         |
+| --------------------- | ------------------------ |
+| "whole ledger"        | `wholeLedgerFunding`     |
+| "professional fee"    | `professionalFeeFunding` |
+| "taxation", "tax pay" | `taxPayFunding`          |
+
+**File**: `src/app/_requests/riskReport.ts`
+
+### Components Structure
+
+```
+src/components/organisms/lending/RiskReportingTab/
+├── index.tsx                    # Main tab component
+├── SummaryDashboard/
+│   ├── index.tsx               # KPI cards grid + pie chart
+│   ├── SummaryKPICard.tsx      # Individual KPI card
+│   └── BorrowerDistributionChart.tsx  # Protected/unprotected pie chart
+├── BorrowerSchedule/
+│   ├── index.tsx               # Table container
+│   ├── BorrowerScheduleTableHeader.tsx  # Dynamic aging bucket headers
+│   ├── BorrowerScheduleTableBody.tsx    # Borrower rows
+│   └── BorrowerScheduleTableFooter.tsx  # Aggregated totals
+├── ArrearsCharts/
+│   ├── index.tsx               # Container for both charts
+│   ├── ArrearsScheduleChart.tsx    # Aging bucket distribution
+│   └── PortionOfArrearsChart.tsx   # Current vs arrears
+└── BadAndDoubtfulDebts/        # Existing component (from SDK)
+```
+
+### Types
+
+**File**: `src/types/riskReporting.ts`
+
+Key types:
+
+- `FundingReport` - Complete funding type report
+- `SummaryData` - KPI metrics (Total Invoices/WIP, Total Funding, Advance Rate, Arrears, Loss Rate)
+- `BorrowerData` - Individual borrower with aging bucket breakdown
+- `AgingBuckets` - Day-based (0-30, 31-60, etc.) or month-based bucket definitions
+- `Aggregated` - Totals for all/protected/unprotected borrowers
+
+### Server-Side Caching
+
+Uses Next.js `unstable_cache` with 1-hour TTL:
+
+| Cache Key        | Function                | Description                  |
+| ---------------- | ----------------------- | ---------------------------- |
+| `riskReport`     | `getRiskReport(poolId)` | Single funding type for pool |
+| `fullRiskReport` | `getFullRiskReport()`   | All funding types            |
+
+### Missing Data (Placeholders)
+
+The following sections from the Figma design are not yet implemented due to missing data:
+
+- DTI Concentration Risk Table
+- Credit Risk Metrics Table
+- Ratio Charts (Debt Coverage, DTI, DSCR)
+- Historical Charts (Unhedged Loans, Loss Rate, VaR)
+
 ## Development Commands
 
 ```bash
