@@ -1,12 +1,14 @@
 import useSWR from 'swr'
 
+import { useChain } from '@/hooks/context/useChain'
 import useSdk from '@/hooks/context/useSdk'
 
 const useNextEpochTime = () => {
   const sdk = useSdk()
+  const { currentChainId } = useChain()
 
   const { data, isLoading, error } = useSWR(
-    sdk ? ['nextEpochTime'] : null,
+    sdk ? ['nextEpochTime', currentChainId] : null,
     async () => await sdk!.Locking.getNextEpochDate()
   )
 

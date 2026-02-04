@@ -51,10 +51,13 @@ const useCurrentEpochDepositedAmount = (
     }
   )
 
+  // Consider loading when SDK is not ready (ensures button stays disabled during chain switch)
+  const sdkNotReady = enabled && !sdk
+
   return {
     currentEpochDepositedAmount: data,
     error,
-    isLoading: enabled && isLoading,
+    isLoading: (enabled && isLoading) || sdkNotReady,
     updateCurrentEpochDepositedAmount: mutate,
   }
 }

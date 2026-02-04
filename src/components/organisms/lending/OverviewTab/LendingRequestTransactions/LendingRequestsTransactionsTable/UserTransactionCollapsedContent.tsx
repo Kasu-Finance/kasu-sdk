@@ -1,17 +1,15 @@
 import { UserRequestEvent } from '@kasufinance/kasu-sdk/src/services/UserLending/types'
 import { Box, Button, TableCell, TableRow, Typography } from '@mui/material'
 import React from 'react'
-import { useChainId } from 'wagmi'
 
 import getTranslation from '@/hooks/useTranslation'
+import { useExplorerUrl } from '@/hooks/web3/useExplorerUrl'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
 import ToolTip from '@/components/atoms/ToolTip'
 
 import { ReceiptIcon } from '@/assets/icons'
 
-import { SupportedChainIds } from '@/connection/chains'
-import { networks } from '@/connection/networks'
 import { theme } from '@/themes/MainTheme'
 import { formatAmount, formatTimestamp } from '@/utils'
 
@@ -25,7 +23,7 @@ const UserTransactionCollapsedContent: React.FC<
 > = ({ actionHistory, requestTrancheName }) => {
   const { t } = getTranslation()
 
-  const chainId = useChainId()
+  const { getTxUrl } = useExplorerUrl()
 
   const eventTrancheName = actionHistory?.trancheName
 
@@ -95,11 +93,7 @@ const UserTransactionCollapsedContent: React.FC<
             startIcon={<ReceiptIcon />}
             sx={{ textTransform: 'capitalize', mt: -0.5 }}
             size='small'
-            disabled={!chainId}
-            href={`${
-              networks[(chainId as SupportedChainIds) || SupportedChainIds.BASE]
-                .blockExplorerUrls[0]
-            }/tx/${actionHistory.transactionHash}`}
+            href={getTxUrl(actionHistory.transactionHash)}
             target='_blank'
           >
             {t('lending.poolOverview.transactionsHistory.viewTx')}

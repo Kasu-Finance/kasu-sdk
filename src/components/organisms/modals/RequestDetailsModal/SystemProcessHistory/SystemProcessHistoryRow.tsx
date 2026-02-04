@@ -1,14 +1,12 @@
 import { Box, IconButton, TableCell, TableRow, Typography } from '@mui/material'
-import { useChainId } from 'wagmi'
 
 import useEpochDate from '@/hooks/web3/useEpochDate'
+import { useExplorerUrl } from '@/hooks/web3/useExplorerUrl'
 
 import ToolTip from '@/components/atoms/ToolTip'
 
 import { PaperIcon } from '@/assets/icons'
 
-import { SupportedChainIds } from '@/connection/chains'
-import { networks } from '@/connection/networks'
 import { formatAmount, formatTimestamp } from '@/utils'
 
 type SystemProcessHistoryRowProps = {
@@ -34,7 +32,7 @@ const SystemProcessHistoryRow: React.FC<SystemProcessHistoryRowProps> = ({
   tranasctionHash,
   highlight = false,
 }) => {
-  const chainId = useChainId()
+  const { getTxUrl } = useExplorerUrl()
 
   const formattedTime = formatTimestamp(date, {
     format: 'DD.MM.YYYY HH:mm:ss',
@@ -169,10 +167,7 @@ const SystemProcessHistoryRow: React.FC<SystemProcessHistoryRowProps> = ({
               fill: 'white',
             },
           }}
-          href={`${
-            networks[(chainId as SupportedChainIds) || SupportedChainIds.BASE]
-              .blockExplorerUrls[0]
-          }/tx/${tranasctionHash}`}
+          href={getTxUrl(tranasctionHash)}
           target='_blank'
         >
           <PaperIcon />

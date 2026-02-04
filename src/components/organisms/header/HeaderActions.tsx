@@ -25,7 +25,7 @@ const HeaderActions = () => {
   }
 
   return (
-    <Box display='flex' alignItems='center'>
+    <Box display='flex' alignItems='center' gap={1}>
       <ReferButton />
       <PortfolioRedirect />
       <ModeToggleButton />

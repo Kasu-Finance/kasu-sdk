@@ -1,24 +1,22 @@
 import { Box, Button } from '@mui/material'
 import Link from 'next/link'
-import { useChainId } from 'wagmi'
 
 import useLiteModeState from '@/hooks/context/useLiteModeState'
 import useModalState from '@/hooks/context/useModalState'
 import useUnlockModalState from '@/hooks/context/useUnlockModalState'
 import getTranslation from '@/hooks/useTranslation'
+import { useExplorerUrl } from '@/hooks/web3/useExplorerUrl'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { Routes } from '@/config/routes'
-import { SupportedChainIds } from '@/connection/chains'
-import { networks } from '@/connection/networks'
 
 const UnlockModalConfirmedActions = () => {
   const { t } = getTranslation()
 
   const { isLiteMode } = useLiteModeState()
 
-  const chainId = useChainId()
+  const { getTxUrl } = useExplorerUrl()
 
   const { txHash } = useUnlockModalState()
 
@@ -32,10 +30,7 @@ const UnlockModalConfirmedActions = () => {
         <Button
           variant='outlined'
           color='secondary'
-          href={`${
-            networks[(chainId as SupportedChainIds) || SupportedChainIds.BASE]
-              .blockExplorerUrls[0]
-          }/tx/${txHash}`}
+          href={getTxUrl(txHash)}
           target='_blank'
           fullWidth
           sx={{ textTransform: 'capitalize' }}

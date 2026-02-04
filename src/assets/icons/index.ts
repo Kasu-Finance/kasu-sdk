@@ -1,3 +1,6 @@
+// chains
+export { default as BaseIcon } from './chains/BaseIcon'
+export { default as XdcIcon } from './chains/XdcIcon'
 // general
 export { default as BitgetIcon } from './connectors/BitgetIcon'
 export { default as CoinbaseIcon } from './connectors/CoinbaseIcon'

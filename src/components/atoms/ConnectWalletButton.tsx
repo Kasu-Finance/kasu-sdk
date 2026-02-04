@@ -1,16 +1,20 @@
 'use client'
 
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import {
   Box,
   Button,
   ButtonProps,
   Chip,
   IconButton,
+  Menu,
+  MenuItem,
   Typography,
 } from '@mui/material'
 import { useLogin, usePrivy, useWallets } from '@privy-io/react-auth'
 import { useSetActiveWallet } from '@privy-io/wagmi'
 import { forwardRef, useEffect, useState } from 'react'
+import { useSwitchChain } from 'wagmi'
 
 import useLiteModeState from '@/hooks/context/useLiteModeState'
 import useModalState from '@/hooks/context/useModalState'
@@ -21,10 +25,9 @@ import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import { ConnectWalletIcon } from '@/assets/icons'
+import { BaseIcon, ConnectWalletIcon, XdcIcon } from '@/assets/icons'
 
-import { NETWORK } from '@/config/sdk'
-import { SupportedChainIds } from '@/connection/chains'
+import { isChainSupported, SUPPORTED_CHAINS } from '@/config/chains'
 import { customPalette } from '@/themes/palette'
 import { customTypography } from '@/themes/typography'
 import { formatAccount } from '@/utils'
@@ -63,9 +66,69 @@ const ConnectWalletButton = forwardRef<
 
   const { setActiveWallet } = useSetActiveWallet()
   const [actualChainId, setActualChainId] = useState<number>()
+  const [chainMenuAnchor, setChainMenuAnchor] = useState<null | HTMLElement>(
+    null
+  )
+  const chainMenuOpen = Boolean(chainMenuAnchor)
 
-  const expectedChainId =
-    NETWORK === 'BASE' ? SupportedChainIds.BASE : SupportedChainIds.BASE_SEPOLIA
+  const { switchChainAsync, isPending: isSwitchingChain } = useSwitchChain()
+
+  // Get chain icon based on chain ID
+  const getChainIcon = (chainId: number | undefined, size = 16) => {
+    const iconStyle = { width: size, height: size }
+    switch (chainId) {
+      case 8453: // Base
+        return (
+          <Box sx={iconStyle}>
+            <BaseIcon />
+          </Box>
+        )
+      case 50: // XDC
+        return (
+          <Box sx={iconStyle}>
+            <XdcIcon />
+          </Box>
+        )
+      default:
+        return null
+    }
+  }
+
+  const handleChainMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    event.stopPropagation()
+    setChainMenuAnchor(event.currentTarget)
+  }
+
+  const handleChainMenuClose = () => {
+    setChainMenuAnchor(null)
+  }
+
+  const handleSwitchChain = async (chainId: number) => {
+    try {
+      if (!switchChainAsync) {
+        setToast({
+          type: 'error',
+          title: 'Network switch unavailable',
+          message: 'Please switch networks directly in your wallet.',
+        })
+        return
+      }
+      await switchChainAsync({ chainId })
+      handleChainMenuClose()
+    } catch (error) {
+      console.error(error)
+      setToast({
+        type: 'error',
+        title: 'Network switch failed',
+        message: 'Please switch networks in your wallet and try again.',
+      })
+    }
+  }
+
+  // Check if the actual chain is one of the supported chains
+  const isOnSupportedChain = actualChainId
+    ? isChainSupported(actualChainId)
+    : false
 
   const { login } = useLogin({
     onComplete: async () => {
@@ -167,7 +230,7 @@ const ConnectWalletButton = forwardRef<
 
     if (!actualChainId) return
 
-    if (actualChainId !== expectedChainId) {
+    if (!isOnSupportedChain) {
       openModal({
         name: ModalsKeys.WRONG_NETWORK,
         detectedChainId: actualChainId,
@@ -175,7 +238,13 @@ const ConnectWalletButton = forwardRef<
     } else {
       closeModal(ModalsKeys.WRONG_NETWORK)
     }
-  }, [actualChainId, closeModal, expectedChainId, isAuthenticated, openModal])
+  }, [
+    actualChainId,
+    closeModal,
+    isOnSupportedChain,
+    isAuthenticated,
+    openModal,
+  ])
 
   useEffect(() => {
     if (!connected || !wallets.length || !address) return
@@ -271,60 +340,193 @@ const ConnectWalletButton = forwardRef<
   }
 
   return (
-    <Box
-      width={{ xs: '100%', sm: 180 }}
-      height={48}
-      borderRadius={30}
-      display='flex'
-      justifyContent='center'
-      alignItems='center'
-      px={3}
-      py={1}
-      sx={{
-        'svg path': {
-          fill: customPalette.gold.dark,
-        },
-        cursor: 'pointer',
-      }}
-      bgcolor={isLiteMode ? 'rgba(0,0,0,0.7)' : 'gray.extraLight'}
-      position='relative'
-      onClick={handleOpen}
-    >
-      <ConnectWalletIcon key='connected' />
-      <Typography variant='baseSm' color='gold.dark' mx={1.5} mt={0.5}>
-        {formatAccount(address)}
-      </Typography>
-
-      <Chip
-        label={
-          <Typography
-            textTransform='capitalize'
-            variant='subtitle2'
-            component='span'
-            fontSize={10}
-            color='white'
-          >
-            Connected
-          </Typography>
-        }
-        variant='filled'
+    <>
+      <Box
+        width={{ xs: '100%', sm: 220 }}
+        height={48}
+        borderRadius={30}
+        display='flex'
+        justifyContent='center'
+        alignItems='center'
+        px={2}
+        py={1}
         sx={{
-          px: '3px',
-          pb: 0.5,
-          width: 69,
-          height: 20,
-          position: 'absolute',
-          bottom: 0,
-          transform: 'translateY(50%)',
-          ...(isLiteMode && { bgcolor: 'rgb(102 148 67)' }),
-          '& .MuiChip-label': {
-            padding: 0,
+          cursor: 'pointer',
+        }}
+        bgcolor={isLiteMode ? 'rgba(0,0,0,0.7)' : 'gray.extraLight'}
+        position='relative'
+      >
+        {/* Wallet section - opens wallet modal */}
+        <Box
+          display='flex'
+          alignItems='center'
+          onClick={handleOpen}
+          sx={{
+            cursor: 'pointer',
+            'svg path': {
+              fill: customPalette.gold.dark,
+            },
+          }}
+        >
+          <ConnectWalletIcon key='connected' />
+          <Typography variant='baseSm' color='gold.dark' mx={1.5} mt={0.5}>
+            {formatAccount(address)}
+          </Typography>
+        </Box>
+
+        {/* Chain selector section */}
+        <Box
+          display='flex'
+          alignItems='center'
+          onClick={handleChainMenuOpen}
+          sx={{
+            cursor: isSwitchingChain ? 'wait' : 'pointer',
+            opacity: isSwitchingChain ? 0.6 : 1,
+            '&:hover': {
+              opacity: 0.8,
+            },
+          }}
+        >
+          <Box
+            sx={{
+              width: 24,
+              height: 24,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '50%',
+              bgcolor: 'white',
+              overflow: 'hidden',
+              '& svg': {
+                width: 24,
+                height: 24,
+              },
+            }}
+          >
+            {getChainIcon(actualChainId, 24)}
+          </Box>
+          <KeyboardArrowDownIcon
+            sx={{
+              color: customPalette.gold.dark,
+              fontSize: 18,
+              ml: 0.25,
+              transform: chainMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 0.2s',
+            }}
+          />
+        </Box>
+
+        <Chip
+          label={
+            <Typography
+              textTransform='capitalize'
+              variant='subtitle2'
+              component='span'
+              fontSize={10}
+              color='white'
+            >
+              Connected
+            </Typography>
+          }
+          variant='filled'
+          sx={{
+            px: '3px',
+            pb: 0.5,
+            width: 69,
+            height: 20,
+            position: 'absolute',
+            bottom: 0,
+            transform: 'translateY(50%)',
+            ...(isLiteMode && { bgcolor: 'rgb(102 148 67)' }),
+            '& .MuiChip-label': {
+              padding: 0,
+            },
+          }}
+          size='small'
+          color='success'
+        />
+      </Box>
+
+      {/* Chain selection menu */}
+      <Menu
+        anchorEl={chainMenuAnchor}
+        open={chainMenuOpen}
+        onClose={handleChainMenuClose}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        slotProps={{
+          paper: {
+            sx: {
+              bgcolor: isLiteMode ? 'gray.extraDark' : 'white',
+              borderRadius: 2,
+              mt: 1,
+              minWidth: 160,
+              boxShadow: isLiteMode ? 'none' : 3,
+            },
           },
         }}
-        size='small'
-        color='success'
-      />
-    </Box>
+      >
+        {Object.values(SUPPORTED_CHAINS).map((chain) => (
+          <MenuItem
+            key={chain.chainId}
+            onClick={() => handleSwitchChain(chain.chainId)}
+            selected={actualChainId === chain.chainId}
+            disabled={isSwitchingChain}
+            sx={{
+              color: isLiteMode ? customPalette.gold.dark : 'gray.extraDark',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1.5,
+              py: 1.5,
+              '&:hover': {
+                bgcolor: isLiteMode
+                  ? 'rgba(255,255,255,0.1)'
+                  : 'rgba(0,0,0,0.04)',
+              },
+              '&.Mui-selected': {
+                bgcolor: isLiteMode
+                  ? 'rgba(255,255,255,0.05)'
+                  : 'rgba(0,0,0,0.08)',
+                '&:hover': {
+                  bgcolor: isLiteMode
+                    ? 'rgba(255,255,255,0.1)'
+                    : 'rgba(0,0,0,0.12)',
+                },
+              },
+            }}
+          >
+            <Box
+              sx={{
+                width: 24,
+                height: 24,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {getChainIcon(chain.chainId, 24)}
+            </Box>
+            <Typography
+              variant='baseSm'
+              color={isLiteMode ? 'gold.dark' : 'gray.extraDark'}
+            >
+              {chain.name}
+            </Typography>
+            {actualChainId === chain.chainId && (
+              <Box
+                sx={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
+                  bgcolor: 'success.main',
+                  ml: 'auto',
+                }}
+              />
+            )}
+          </MenuItem>
+        ))}
+      </Menu>
+    </>
   )
 })
 

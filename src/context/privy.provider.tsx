@@ -11,6 +11,9 @@ import { PropsWithChildren } from 'react'
 import { base, baseSepolia } from 'viem/chains'
 import { http } from 'wagmi'
 
+import { ChainProvider } from '@/context/chain'
+
+import { xdc } from '@/config/chains/xdc'
 import { NETWORK } from '@/config/sdk'
 import { SupportedChainIds } from '@/connection/chains'
 import { RPC_URLS } from '@/connection/rpc'
@@ -19,10 +22,11 @@ import { PRIVY_LOGO_URL } from '@/constants/privy'
 const queryClient = new QueryClient()
 
 export const wagmiConfig = createConfig({
-  chains: [base, baseSepolia],
+  chains: [base, baseSepolia, xdc] as const,
   transports: {
     [base.id]: http(RPC_URLS[SupportedChainIds.BASE][0]),
     [baseSepolia.id]: http(RPC_URLS[SupportedChainIds.BASE_SEPOLIA][0]),
+    [xdc.id]: http(RPC_URLS[SupportedChainIds.XDC][0]),
   },
 })
 
@@ -48,7 +52,7 @@ const PRIVY_CONFIG: PrivyClientConfig = {
     },
   },
   defaultChain: NETWORK === 'BASE' ? base : baseSepolia,
-  supportedChains: [base, baseSepolia],
+  supportedChains: [base, baseSepolia, xdc],
 }
 
 const PrivyProvider: React.FC<PropsWithChildren> = ({ children }) => {
@@ -59,7 +63,7 @@ const PrivyProvider: React.FC<PropsWithChildren> = ({ children }) => {
     >
       <QueryClientProvider client={queryClient}>
         <WagmiProvider config={wagmiConfig} reconnectOnMount={false}>
-          {children}
+          <ChainProvider>{children}</ChainProvider>
         </WagmiProvider>
       </QueryClientProvider>
     </PrivyRootProvider>

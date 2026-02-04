@@ -3,6 +3,7 @@ import { formatUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import useSWR from 'swr'
 
+import { useChain } from '@/hooks/context/useChain'
 import useSdk from '@/hooks/context/useSdk'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 import useSupportedTokenInfo from '@/hooks/web3/useSupportedTokenInfo'
@@ -18,6 +19,7 @@ const useTotalLendingPoolDeposits = (
   options?: UseTotalLendingPoolDepositsOptions
 ) => {
   const { address } = usePrivyAuthenticated()
+  const { currentChainId } = useChain()
   const sdkFromContext = useSdk()
   const sdk = options?.sdk ?? sdkFromContext
   const enabled = options?.enabled ?? true
@@ -25,7 +27,9 @@ const useTotalLendingPoolDeposits = (
   const supportedToken = useSupportedTokenInfo()
 
   const { data, error, isLoading, mutate } = useSWR(
-    enabled && address && sdk ? ['totalPoolDeposits', address] : null,
+    enabled && address && sdk
+      ? ['totalPoolDeposits', currentChainId, address]
+      : null,
     async () =>
       sdk!.UserLending.getUserTotalPendingAndActiveDepositedAmount(address!),
 

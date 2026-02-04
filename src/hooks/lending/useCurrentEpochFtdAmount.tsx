@@ -59,10 +59,13 @@ const useCurrentEpochFtdAmount = (
     }
   )
 
+  // Consider loading when SDK is not ready (ensures button stays disabled during chain switch)
+  const sdkNotReady = enabled && !sdk
+
   return {
     currentEpochFtdAmount: data,
     error,
-    isLoading: enabled && isLoading,
+    isLoading: (enabled && isLoading) || sdkNotReady,
     updateCurrentEpochFtdAmount: mutate,
   }
 }

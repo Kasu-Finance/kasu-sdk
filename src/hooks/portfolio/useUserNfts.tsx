@@ -1,6 +1,7 @@
 import type { KasuSdk } from '@kasufinance/kasu-sdk'
 import useSWR from 'swr'
 
+import { useChain } from '@/hooks/context/useChain'
 import useSdk from '@/hooks/context/useSdk'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
@@ -31,12 +32,13 @@ type UseUserNftsOptions = {
 const useUserNfts = (options?: UseUserNftsOptions) => {
   const sdkFromContext = useSdk()
   const sdk = options?.sdk ?? sdkFromContext
+  const { currentChainId } = useChain()
 
   const { address } = usePrivyAuthenticated()
   const enabled = options?.enabled ?? true
 
   const { data, error, isLoading, mutate } = useSWR(
-    enabled && address && sdk ? ['userNfts', address] : null,
+    enabled && address && sdk ? ['userNfts', currentChainId, address] : null,
     async (): Promise<NftDetail[]> => {
       const [nftIds, nftBoosts] = await Promise.all([
         sdk!.Portfolio.getUserNfts(address!.toLowerCase()),

@@ -4,7 +4,9 @@ import sepolia from '@/config/sdk/addresses-base-sepolia.json'
 
 export const USDC = sepolia.USDC.address
 
-export const sdkConfig: SdkConfig = {
+export const sdkConfig = new SdkConfig({
+  subgraphUrl:
+    'https://api.goldsky.com/api/public/project_cmgzlpxm300765np2a19421om/subgraphs/kasu-sepolia/v0.0.42/gn',
   contracts: {
     IKSULockBonus: sepolia.KSULocking.address,
     IKSULocking: sepolia.KSULocking.address,
@@ -21,8 +23,4 @@ export const sdkConfig: SdkConfig = {
   },
   directusUrl: 'https://kasu-dev.directus.app/',
   UNUSED_LENDING_POOL_IDS: [''], // will be initialized later
-  subgraphUrl:
-    'https://api.goldsky.com/api/public/project_cmgzlpxm300765np2a19421om/subgraphs/kasu-sepolia/v0.0.42/gn',
-  plumeSubgraphUrl:
-    'https://api.goldsky.com/api/public/project_cm9t3064xeuyn01tgctdo3c17/subgraphs/kasu-plume/prod/gn',
-}
+})

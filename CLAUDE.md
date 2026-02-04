@@ -60,21 +60,21 @@ useSWR(condition ? ['cacheKey', ...dependentParams] : null, async () =>
 | `loanTickets`                 | address, chainId          | User's loan tickets                      | `useLoanTickets`                 |
 | `lockingClaimableRewards`     | chainId, address          | Claimable locking rewards                | `useLockingRewards`              |
 | `nextClearingPeriod`          | -                         | Next clearing period timestamp           | `useNextClearingPeriod`          |
-| `nextEpochTime`               | -                         | Next epoch timestamp                     | `useNextEpochTime`               |
+| `nextEpochTime`               | chainId                   | Next epoch timestamp                     | `useNextEpochTime`               |
 | `performanceFee`              | -                         | Protocol performance fee                 | `usePerformanceFee`              |
 | `poolOverview`                | chainId, poolId           | Single pool overview data                | `usePoolOverview`                |
 | `poolOverviews`               | chainId                   | All pools overview                       | `usePoolOverviews`               |
 | `portfolioRewards`            | chainId, address          | User's portfolio rewards                 | `usePortfolioRewards`            |
 | `qualifiedAirdrops`           | chainId                   | Qualified airdrop campaigns              | `useQualifiedAirdrops`           |
 | `symbol`                      | tokenAddress              | ERC20 token symbol                       | `useTokenDetails`                |
-| `totalPoolDeposits`           | address                   | User's total pool deposits               | `useTotalLendingPoolDeposits`    |
+| `totalPoolDeposits`           | chainId, address          | User's total pool deposits               | `useTotalLendingPoolDeposits`    |
 | `transactionHistory`          | chainId, address, epochId | User's transaction history               | `useTransactionHistory`          |
 | `userApyBonus`                | chainId, address          | User's APY bonus                         | `useUserApyBonus`                |
 | `userBonusData`               | chainId, address          | User bonus data                          | `useUserBonusData`               |
-| `userLendingTrancheBalance`   | address, pools            | User's balance per tranche               | `useUserLendingBalance`          |
+| `userLendingTrancheBalance`   | chainId, address, poolIds | User's balance per tranche               | `useUserLendingBalance`          |
 | `userLockDepositsInfo`        | chainId, address          | User's lock deposits info                | `useUserLockDepositsInfo`        |
 | `userLocks`                   | chainId, address          | User's KSU locks                         | `useUserLocks`                   |
-| `userNfts`                    | address                   | User's NFTs                              | `useUserNfts`                    |
+| `userNfts`                    | chainId, address          | User's NFTs                              | `useUserNfts`                    |
 | `userNftYields`               | address, chainId          | User's NFT yield boosts                  | `useUserNftYields`               |
 | `userReferrals`               | address, chainId          | User's referral data                     | `useUserReferrals`               |
 
@@ -387,3 +387,110 @@ npm run build      # Production build
 npm run lint:fix   # Fix linting issues
 npm run types      # Type check
 ```
+
+## Multi-Chain Support
+
+**Full integration plan:** See `docs/XDC_INTEGRATION_PLAN.md`
+
+### Target Architecture (Multi-Chain)
+
+Single deployment supporting multiple EVM chains with user-selectable chain switching:
+
+```
+User selects chain → SDK re-initialized with chain config → UI adapts to chain features
+```
+
+Key new components:
+
+- `ChainProvider` - Context for current chain state and switching
+- `useChain()` hook - Access chain config and feature flags
+- `ChainSwitcher` - UI component for switching chains
+- Chain registry in `src/config/chains/`
+
+### Supported Networks
+
+| Network       | Chain ID | Deployment Mode  | Status     |
+| ------------- | -------- | ---------------- | ---------- |
+| Base Mainnet  | 8453     | Full (KSU token) | Production |
+| XDC Mainnet   | 50       | Lite (no KSU)    | WIP        |
+| Plume Mainnet | 98866    | Lite (no KSU)    | Future     |
+
+### Full vs Lite Deployments
+
+| Feature             | Full (Base)    | Lite (XDC, Plume) |
+| ------------------- | -------------- | ----------------- |
+| KSU Token           | Yes            | No                |
+| KSU Locking         | Yes            | No                |
+| Loyalty Levels      | Yes            | No                |
+| APY Bonus           | Yes            | No                |
+| NFT Boosts          | Yes            | No                |
+| KYC/KYB             | Yes            | Yes               |
+| Lending Pools       | Yes            | Yes               |
+| Fixed Term Deposits | Yes            | Yes               |
+| Pool Descriptions   | Yes (Directus) | Yes (Directus)    |
+
+### Chain Configuration
+
+**Chain Registry:** `src/config/chains/index.ts`
+
+Each chain has:
+
+- `chainId` - Network identifier
+- `isLiteDeployment` - Feature flag for UI
+- `contracts` - Contract addresses
+- `subgraphUrl` - Goldsky subgraph endpoint
+- `usdc` - USDC token address
+- `blockExplorer` - Explorer URL (e.g., https://xdcscan.com)
+- `rpcUrls` - RPC endpoints
+
+### XDC Network Details
+
+- **Chain ID:** 50
+- **Native Token:** XDC
+- **USDC:** `0xfa2958cb79b0491cc627c1557f441ef849ca8eb1`
+- **Block Explorer:** https://xdcscan.com
+- **RPC:** https://rpc.xdc.org
+- **Subgraph:** https://api.goldsky.com/api/public/project_cmgzlpxm300765np2a19421om/subgraphs/kasu-xdc/v1.0.0/gn
+- **Contract Addresses:** `src/config/sdk/addresses-xdc.json`
+
+### SDK Changes Required
+
+The SDK needs updates for multi-chain:
+
+- `SdkConfig.isLiteDeployment` - Required flag
+- `SdkConfig.chainId` - Required chain identifier
+- Optional `KSUToken` in contract addresses
+- Lite mode guards in Locking service
+
+### UI Conditional Rendering
+
+Use `useChain()` hook for feature detection:
+
+```typescript
+const { hasLocking, hasLoyalty, hasKsuToken } = useChain()
+
+// Hide locking tab
+{hasLocking && <Link href="/locking">Locking</Link>}
+
+// Hide loyalty badges
+{hasLoyalty && <LoyaltyBadge level={user.level} />}
+```
+
+### Related Projects
+
+- **kasu-contracts**: `/Users/kirilivanov/DEV/Kasu/kasu-contracts`
+
+  - XDC addresses: `.openzeppelin/xdc-addresses.json`
+  - Chain config: `scripts/_config/chains.ts`
+
+- **kasu-subgraph**: `/Users/kirilivanov/DEV/Kasu/kasu-subgraph`
+  - XDC config: `src/config/xdc.json`
+  - Deployed at Goldsky
+
+### XDC Multisig Addresses
+
+| Role                  | Address                                      |
+| --------------------- | -------------------------------------------- |
+| Kasu Multisig         | `0x1E9ed74140DA7B81a1612AA5df33F98Eb5Ea0B4D` |
+| Pool Manager Multisig | `0x21567eA21b14BEd14657e9725C2FE11C7be942B1` |
+| Pool Admin Multisig   | `0x880Aa2d6eEC5bD573059444cF1b3C09658f8c112` |

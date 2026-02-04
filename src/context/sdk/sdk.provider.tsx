@@ -1,24 +1,27 @@
 'use client'
 
 import { KasuSdk } from '@kasufinance/kasu-sdk'
-import { PoolOverviewDirectus } from '@kasufinance/kasu-sdk/src/services/DataService/directus-types'
+import { SdkConfig } from '@kasufinance/kasu-sdk/src/sdk-config'
+import type { PoolOverviewDirectus } from '@kasufinance/kasu-sdk/src/services/DataService/directus-types'
 import { useSendTransaction, useWallets } from '@privy-io/react-auth'
 import { ethers } from 'ethers'
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { preload } from 'swr'
 import useSWRImmutable from 'swr/immutable'
 
+import { useChain } from '@/hooks/context/useChain'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import SdkContext from '@/context/sdk/sdk.context'
 
-import sdkConfig from '@/config/sdk'
 import { wrapQueuedProvider } from '@/utils/rpc/rpcQueue'
 import isPrivyEmbeddedWallet from '@/utils/web3/isPrivyEmbeddedWallet'
 
+const DIRECTUS_URL = 'https://kasu-finance.directus.app/'
+
 const unusedPoolsFetcher = async () => {
   const res = await fetch(
-    `${sdkConfig.directusUrl}items/PoolOverview?filter[enabled][_neq]=true`
+    `${DIRECTUS_URL}items/PoolOverview?filter[enabled][_neq]=true`
   )
 
   if (!res.ok) {
@@ -39,10 +42,9 @@ const SdkState: React.FC<PropsWithChildren> = ({ children }) => {
   const [kasuSdk, setKasuSdk] = useState<KasuSdk | undefined>(undefined)
 
   const { wallets } = useWallets()
-
   const { sendTransaction } = useSendTransaction()
-
   const { address } = usePrivyAuthenticated()
+  const { chainConfig, currentChainId } = useChain()
 
   const wallet = wallets.find((wallet) => wallet.address === address)
 
@@ -51,6 +53,7 @@ const SdkState: React.FC<PropsWithChildren> = ({ children }) => {
     unusedPoolsFetcher
   )
 
+  // Recreate SDK when chain or wallet changes
   useEffect(() => {
     if (!wallet || !unusedPools) return
     ;(async () => {
@@ -70,10 +73,13 @@ const SdkState: React.FC<PropsWithChildren> = ({ children }) => {
         const provider = new ethers.providers.Web3Provider(privyProvider)
 
         const sdk = new KasuSdk(
-          {
-            ...sdkConfig,
+          new SdkConfig({
+            subgraphUrl: chainConfig.subgraphUrl,
+            contracts: chainConfig.contracts,
+            directusUrl: DIRECTUS_URL,
             UNUSED_LENDING_POOL_IDS: unusedPools?.length ? unusedPools : [''],
-          },
+            isLiteDeployment: chainConfig.isLiteDeployment,
+          }),
           provider.getSigner()
         )
 
@@ -82,7 +88,7 @@ const SdkState: React.FC<PropsWithChildren> = ({ children }) => {
         console.error(error)
       }
     })()
-  }, [wallet, unusedPools, sendTransaction])
+  }, [wallet, unusedPools, sendTransaction, chainConfig, currentChainId])
 
   return (
     <SdkContext.Provider value={{ sdk: kasuSdk }}>

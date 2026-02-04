@@ -4,7 +4,9 @@ import base from '@/config/sdk/addresses-base-mainnet.json'
 
 export const USDC = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'
 
-export const sdkConfig: SdkConfig = {
+export const sdkConfig = new SdkConfig({
+  subgraphUrl:
+    'https://api.goldsky.com/api/public/project_cmgzlpxm300765np2a19421om/subgraphs/kasu-base/v1.0.13/gn',
   contracts: {
     IKSULockBonus: base.KSULocking.address,
     IKSULocking: base.KSULocking.address,
@@ -19,10 +21,6 @@ export const sdkConfig: SdkConfig = {
     KasuNFTs: base.KasuNFTs.address,
     ExternalTVL: base.ExternalTVL.address,
   },
-  UNUSED_LENDING_POOL_IDS: [''], // will be initialized later
   directusUrl: 'https://kasu-finance.directus.app/',
-  subgraphUrl:
-    'https://api.goldsky.com/api/public/project_cmgzlpxm300765np2a19421om/subgraphs/kasu-base/v1.0.13/gn',
-  plumeSubgraphUrl:
-    'https://api.goldsky.com/api/public/project_cm9t3064xeuyn01tgctdo3c17/subgraphs/kasu-plume/prod/gn',
-}
+  UNUSED_LENDING_POOL_IDS: [''], // will be initialized later
+})

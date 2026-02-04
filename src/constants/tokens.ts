@@ -45,6 +45,18 @@ export const TOKENS = {
       },
     },
   },
+  [SupportedChainIds.XDC]: {
+    [SupportedTokens.USDC]: {
+      symbol: SupportedTokens.USDC,
+      name: 'USD Coin',
+      address: '0xfa2958cb79b0491cc627c1557f441ef849ca8eb1',
+      decimals: 6,
+      icon: {
+        dark: UsdCoinIcon(),
+        light: UsdCoinLightIcon(),
+      },
+    },
+  },
 } as const satisfies Record<
   SupportedChainIds,
   Record<SupportedTokens, SupportedTokenInfo>

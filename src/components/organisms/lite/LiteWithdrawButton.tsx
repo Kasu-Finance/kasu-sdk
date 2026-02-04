@@ -3,8 +3,8 @@
 import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { Button, ButtonProps } from '@mui/material'
 import { useCallback, useMemo, useState } from 'react'
-import { useChainId } from 'wagmi'
 
+import { useChain } from '@/hooks/context/useChain'
 import useModalState from '@/hooks/context/useModalState'
 import useToastState from '@/hooks/context/useToastState'
 import { fetchUserTrancheBalancesForPools } from '@/hooks/lending/fetchUserTrancheBalancesForPools'
@@ -24,7 +24,7 @@ const LiteWithdrawButton: React.FC<LiteWithdrawButtonProps> = ({
   ...rest
 }) => {
   const { t } = getTranslation()
-  const chainId = useChainId()
+  const { currentChainId, chainConfig } = useChain()
 
   const { address } = usePrivyAuthenticated()
   const addressLower = address?.toLowerCase()
@@ -37,15 +37,16 @@ const LiteWithdrawButton: React.FC<LiteWithdrawButtonProps> = ({
   const poolOptions = useMemo(() => pools as PoolOverview[], [pools])
 
   const handleWithdraw = useCallback(async () => {
-    if (!addressLower || !chainId) return
+    if (!addressLower || !currentChainId) return
 
     try {
       setIsOpening(true)
 
       const trancheBalance = await fetchUserTrancheBalancesForPools({
-        chainId,
+        chainId: currentChainId,
         pools: poolOptions,
         userAddressLower: addressLower,
+        subgraphUrl: chainConfig.subgraphUrl,
       })
 
       const hasBalance = trancheBalance.some(
@@ -78,7 +79,15 @@ const LiteWithdrawButton: React.FC<LiteWithdrawButtonProps> = ({
     } finally {
       setIsOpening(false)
     }
-  }, [addressLower, chainId, openModal, poolOptions, pools, setToast])
+  }, [
+    addressLower,
+    currentChainId,
+    chainConfig.subgraphUrl,
+    openModal,
+    poolOptions,
+    pools,
+    setToast,
+  ])
 
   return (
     <Button

@@ -10,7 +10,7 @@ import CustomCard from '@/components/atoms/CustomCard'
 import { DialogChildProps } from '@/components/atoms/DialogWrapper'
 import DialogHeader from '@/components/molecules/DialogHeader'
 
-import { NETWORK } from '@/config/sdk'
+import { SUPPORTED_CHAINS } from '@/config/chains'
 import { SupportedChainIds } from '@/connection/chains'
 import { networks } from '@/connection/networks'
 import { customPalette } from '@/themes/palette'
@@ -22,10 +22,10 @@ const WrongNetworkModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { setToast } = useToastState()
 
-  const expectedChainId =
-    NETWORK === 'BASE' ? SupportedChainIds.BASE : SupportedChainIds.BASE_SEPOLIA
-
-  const expectedNetwork = networks[expectedChainId]
+  // Get list of supported chain names for display
+  const supportedChainNames = Object.values(SUPPORTED_CHAINS)
+    .map((chain) => chain.name)
+    .join(' and ')
 
   const currentNetwork =
     (detectedChainId && networks[detectedChainId as SupportedChainIds]) ||
@@ -33,7 +33,7 @@ const WrongNetworkModal: React.FC<DialogChildProps> = ({ handleClose }) => {
 
   const { switchChainAsync, isPending } = useSwitchChain()
 
-  const handleSwitch = async () => {
+  const handleSwitch = async (chainId: number) => {
     try {
       if (!switchChainAsync) {
         setToast({
@@ -44,7 +44,7 @@ const WrongNetworkModal: React.FC<DialogChildProps> = ({ handleClose }) => {
         return
       }
 
-      await switchChainAsync({ chainId: expectedChainId })
+      await switchChainAsync({ chainId })
     } catch (error) {
       console.error(error)
       setToast({
@@ -64,25 +64,35 @@ const WrongNetworkModal: React.FC<DialogChildProps> = ({ handleClose }) => {
       />
       <Box px={4} py={4}>
         <Stack spacing={2.5} alignItems='center' textAlign='center'>
-          <Link
-            component='button'
-            variant='h5'
-            color={customPalette.gold.dark}
-            underline='always'
-            onClick={handleSwitch}
-            aria-disabled={isPending}
-            sx={{
-              fontWeight: 600,
-              cursor: isPending ? 'not-allowed' : 'pointer',
-              pointerEvents: isPending ? 'none' : 'auto',
-            }}
+          <Stack
+            direction='row'
+            spacing={2}
+            flexWrap='wrap'
+            justifyContent='center'
           >
-            Switch to {expectedNetwork.chainName}
-          </Link>
+            {Object.values(SUPPORTED_CHAINS).map((chain) => (
+              <Link
+                key={chain.chainId}
+                component='button'
+                variant='h5'
+                color={customPalette.gold.dark}
+                underline='always'
+                onClick={() => handleSwitch(chain.chainId)}
+                aria-disabled={isPending}
+                sx={{
+                  fontWeight: 600,
+                  cursor: isPending ? 'not-allowed' : 'pointer',
+                  pointerEvents: isPending ? 'none' : 'auto',
+                }}
+              >
+                Switch to {chain.name}
+              </Link>
+            ))}
+          </Stack>
           <Typography variant='baseMd' color='white'>
-            Kasu is live on {expectedNetwork.chainName}. Please change your
-            wallet network to continue. This dialog will close automatically
-            once you are on the correct chain.
+            Kasu is live on {supportedChainNames}. Please change your wallet
+            network to continue. This dialog will close automatically once you
+            are on a supported chain.
           </Typography>
           <Typography variant='baseSm' color='gray.light'>
             Detected network:{' '}

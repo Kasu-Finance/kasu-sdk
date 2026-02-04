@@ -50,4 +50,12 @@ export const networks: Record<SupportedChainIds, ChainDetails> = {
     blockExplorerUrls: ['https://sepolia.basescan.org'],
     rpcUrls: RPC_URLS[SupportedChainIds.BASE_SEPOLIA],
   },
+  [SupportedChainIds.XDC]: {
+    chainId: SupportedChainIds.XDC,
+    chainName: 'XDC Network',
+    label: 'XDC',
+    nativeCurrency: { name: 'XDC', symbol: 'XDC', decimals: 18 },
+    blockExplorerUrls: ['https://xdcscan.com'],
+    rpcUrls: RPC_URLS[SupportedChainIds.XDC],
+  },
 }

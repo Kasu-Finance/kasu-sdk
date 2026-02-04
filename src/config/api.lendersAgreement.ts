@@ -47,4 +47,5 @@ export const LENDERS_AGREEMENT_CHAIN_ID_MAP: Record<SupportedChainIds, string> =
   {
     [SupportedChainIds.BASE]: '8453',
     [SupportedChainIds.BASE_SEPOLIA]: '84532',
+    [SupportedChainIds.XDC]: '50',
   }

@@ -1,9 +1,8 @@
 import { gql, GraphQLClient } from 'graphql-request'
 import { useMemo } from 'react'
 import useSWR from 'swr'
-import { useChainId } from 'wagmi'
 
-import sdkConfig from '@/config/sdk'
+import { useChain } from '@/hooks/context/useChain'
 
 type LendingPoolClearing = {
   startTimestamp: string
@@ -26,10 +25,15 @@ const latestClearingQuery = gql`
   }
 `
 
-const graphClient = new GraphQLClient(sdkConfig.subgraphUrl)
-
 const useLatestClearingTimestamp = (poolIds?: string[]) => {
-  const chainId = useChainId()
+  const { currentChainId, chainConfig } = useChain()
+
+  // Create GraphQL client with chain-specific subgraph URL
+  // Guard against empty URL during SSR/prerendering
+  const graphClient = useMemo(() => {
+    if (!chainConfig.subgraphUrl) return null
+    return new GraphQLClient(chainConfig.subgraphUrl)
+  }, [chainConfig.subgraphUrl])
 
   const normalizedPoolIds = useMemo(() => {
     if (!poolIds?.length) return []
@@ -44,10 +48,11 @@ const useLatestClearingTimestamp = (poolIds?: string[]) => {
   }, [poolIds])
 
   const { data, error, isLoading } = useSWR(
-    normalizedPoolIds.length && chainId
-      ? ['latestClearingTimestamp', chainId, normalizedPoolIds.join(',')]
+    normalizedPoolIds.length && currentChainId && graphClient
+      ? ['latestClearingTimestamp', currentChainId, normalizedPoolIds.join(',')]
       : null,
     async () => {
+      if (!graphClient) throw new Error('GraphQL client not ready')
       const result = await graphClient.request<LatestClearingQueryResult>(
         latestClearingQuery,
         {

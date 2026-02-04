@@ -2,8 +2,8 @@
 
 import { useMemo } from 'react'
 import useSWR from 'swr'
-import { useChainId } from 'wagmi'
 
+import { useChain } from '@/hooks/context/useChain'
 import useSdk from '@/hooks/context/useSdk'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
@@ -14,10 +14,8 @@ const useUserLendingTrancheBalance = <T extends { id: string }>(
   tranches: T[]
 ) => {
   const { address } = usePrivyAuthenticated()
-
   const sdk = useSdk()
-
-  const chainId = useChainId()
+  const { currentChainId } = useChain()
 
   const addressLower = address?.toLowerCase()
 
@@ -29,10 +27,10 @@ const useUserLendingTrancheBalance = <T extends { id: string }>(
   }, [tranches])
 
   const { data, error, isLoading } = useSWR(
-    addressLower && sdk && chainId
+    addressLower && sdk && currentChainId
       ? [
           'userLendingTrancheBalance',
-          chainId,
+          currentChainId,
           addressLower,
           poolId.toLowerCase(),
           trancheIdsKey,

@@ -2,8 +2,8 @@ import type { KasuSdk } from '@kasufinance/kasu-sdk'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import useSWR from 'swr'
-import { useChainId } from 'wagmi'
 
+import { useChain } from '@/hooks/context/useChain'
 import useSdk from '@/hooks/context/useSdk'
 import useUserLockDepositsInfo from '@/hooks/locking/useUserLockDepositsInfo'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
@@ -16,9 +16,7 @@ type UseLockingRewardsOptions = {
 const useLockingRewards = (options?: UseLockingRewardsOptions) => {
   const sdkFromContext = useSdk()
   const sdk = options?.sdk ?? sdkFromContext
-
-  const chainId = useChainId()
-
+  const { currentChainId } = useChain()
   const { address } = usePrivyAuthenticated()
   const enabled = options?.enabled ?? true
 
@@ -37,8 +35,8 @@ const useLockingRewards = (options?: UseLockingRewardsOptions) => {
     isLoading: claimableRewardsLoading,
     mutate: updateClaimableRewards,
   } = useSWR(
-    enabled && addressLower && sdk && chainId
-      ? ['lockingClaimableRewards', chainId, addressLower]
+    enabled && addressLower && sdk && currentChainId
+      ? ['lockingClaimableRewards', currentChainId, addressLower]
       : null,
     async ([_, __chainId, userAddress]) => {
       if (!sdk) throw new Error('SDK not ready')

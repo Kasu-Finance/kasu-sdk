@@ -1,16 +1,14 @@
 import { Box, Button, Stack, Typography } from '@mui/material'
-import { useChainId } from 'wagmi'
 
 import useFixApyState from '@/hooks/context/useFixApyState'
 import useModalState from '@/hooks/context/useModalState'
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
 import getTranslation from '@/hooks/useTranslation'
+import { useExplorerUrl } from '@/hooks/web3/useExplorerUrl'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
 import { Routes } from '@/config/routes'
-import { SupportedChainIds } from '@/connection/chains'
-import { networks } from '@/connection/networks'
 import {
   capitalize,
   formatAmount,
@@ -21,7 +19,7 @@ import {
 const FixApyConfirmed = () => {
   const { t } = getTranslation()
 
-  const chainId = useChainId()
+  const { getTxUrl } = useExplorerUrl()
 
   const { amount, txHash } = useFixApyState()
 
@@ -80,10 +78,7 @@ const FixApyConfirmed = () => {
           <Button
             variant='outlined'
             color='secondary'
-            href={`${
-              networks[(chainId as SupportedChainIds) || SupportedChainIds.BASE]
-                .blockExplorerUrls[0]
-            }/tx/${txHash}`}
+            href={getTxUrl(txHash)}
             target='_blank'
             fullWidth
             sx={{ textTransform: 'capitalize' }}

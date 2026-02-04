@@ -22,7 +22,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*", "./public/*"]
+      "@/*": ["./src/*", "./public/*"],
+      "@kasufinance/kasu-sdk": ["../kasu-sdk/src/index.ts"],
+      "@kasufinance/kasu-sdk/*": ["../kasu-sdk/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

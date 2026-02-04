@@ -8,6 +8,7 @@ import {
 } from '@mui/material'
 import Link from 'next/link'
 
+import { useChain } from '@/hooks/context/useChain'
 import getTranslation from '@/hooks/useTranslation'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
@@ -26,8 +27,8 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
   isActiveLink,
 }) => {
   const { t } = getTranslation()
-
   const { address } = usePrivyAuthenticated()
+  const { isLiteDeployment } = useChain()
 
   return (
     <Box
@@ -40,8 +41,13 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
     >
       <DrawerHeader onClose={handleDrawerToggle} />
       <List>
-        {NAV_ITEMS.map((link) =>
-          link.accountRequired && !address ? null : (
+        {NAV_ITEMS.map((link) => {
+          // Hide account-required items if not logged in
+          if (link.accountRequired && !address) return null
+          // Hide Full deployment items on Lite chains
+          if (link.requiresFullDeployment && isLiteDeployment) return null
+
+          return (
             <ListItem
               key={link.label}
               disablePadding
@@ -64,7 +70,7 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
               </ListItemButton>
             </ListItem>
           )
-        )}
+        })}
       </List>
       <Box
         mt={3}

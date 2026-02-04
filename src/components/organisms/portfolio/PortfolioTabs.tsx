@@ -4,6 +4,7 @@ import { Box, Container, Tabs } from '@mui/material'
 import { usePathname } from 'next/navigation'
 import { memo, useRef } from 'react'
 
+import { useChain } from '@/hooks/context/useChain'
 import useIsSticky from '@/hooks/useIsSticky'
 import getTranslation from '@/hooks/useTranslation'
 
@@ -16,6 +17,7 @@ const PortfolioTabs = () => {
   const ref = useRef(null)
 
   const { t } = getTranslation()
+  const { isLiteDeployment } = useChain()
 
   const pathName = usePathname()
 
@@ -60,10 +62,12 @@ const PortfolioTabs = () => {
               label={t('portfolio.tabs.yourTransactions')}
               value={Routes.portfolio.yourTransactions.url}
             />
-            <CustomTab
-              label={t('portfolio.tabs.bonusAndRewards')}
-              value={Routes.portfolio.rewards.url}
-            />
+            {!isLiteDeployment && (
+              <CustomTab
+                label={t('portfolio.tabs.bonusAndRewards')}
+                value={Routes.portfolio.rewards.url}
+              />
+            )}
           </Tabs>
         </TabsContainer>
       </Container>

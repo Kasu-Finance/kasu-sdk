@@ -1,6 +1,6 @@
 import useSWR from 'swr'
-import { useChainId } from 'wagmi'
 
+import { useChain } from '@/hooks/context/useChain'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import { LoanTicketDto, LoanTicketDtoRaw } from '@/config/api.lendersAgreement'
@@ -8,11 +8,10 @@ import dayjs from '@/dayjs'
 
 const useLoanTickets = () => {
   const { address } = usePrivyAuthenticated()
-
-  const chainId = useChainId()
+  const { currentChainId } = useChain()
 
   const { data, error, isLoading, mutate } = useSWR(
-    address && chainId ? ['loanTickets', address, chainId] : null,
+    address && currentChainId ? ['loanTickets', address, currentChainId] : null,
     async ([_, userAddress, chainId]): Promise<LoanTicketDto[]> => {
       const res = await fetch(
         '/api/loan-tickets?' +

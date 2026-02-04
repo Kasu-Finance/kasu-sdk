@@ -7,7 +7,6 @@ import { ethers } from 'ethers'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { gql, GraphQLClient } from 'graphql-request'
 
-import sdkConfig from '@/config/sdk'
 import { SupportedChainIds } from '@/connection/chains'
 import { RPC_URLS } from '@/connection/rpc'
 
@@ -55,8 +54,6 @@ const portfolioUserTrancheDetailsQuery = gql`
   }
 `
 
-const graphClient = new GraphQLClient(sdkConfig.subgraphUrl)
-
 const convertSharesToAssets = (
   sharesAmount: string,
   totalAssets: string,
@@ -79,17 +76,24 @@ export const fetchUserTrancheBalancesForPools = async <T extends PoolOverview>({
   chainId,
   pools,
   userAddressLower,
+  subgraphUrl,
 }: {
   chainId: number
   pools: T[]
   userAddressLower: string
+  subgraphUrl: string
 }): Promise<TrancheWithBalanceData[]> => {
   const rpcUrl = RPC_URLS[chainId as SupportedChainIds]?.[0]
   if (!rpcUrl) {
     throw new Error(`RPC URL not configured for chainId=${chainId}`)
   }
 
+  if (!subgraphUrl) {
+    throw new Error(`Subgraph URL not configured for chainId=${chainId}`)
+  }
+
   const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+  const graphClient = new GraphQLClient(subgraphUrl)
 
   const result =
     await graphClient.request<PortfolioUserTrancheDetailsQueryResult>(

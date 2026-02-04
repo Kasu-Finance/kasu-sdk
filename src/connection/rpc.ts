@@ -3,6 +3,7 @@ import { SupportedChainIds } from './chains'
 export const FALLBACK_URLS: Record<SupportedChainIds, string[]> = {
   [SupportedChainIds.BASE]: ['https://mainnet.base.org'],
   [SupportedChainIds.BASE_SEPOLIA]: ['https://sepolia.base.org'],
+  [SupportedChainIds.XDC]: ['https://erpc.xdc.org'],
 }
 
 export const RPC_URLS: Record<SupportedChainIds, string[]> = {
@@ -14,5 +15,9 @@ export const RPC_URLS: Record<SupportedChainIds, string[]> = {
   [SupportedChainIds.BASE_SEPOLIA]: [
     'https://sepolia.base.org',
     ...FALLBACK_URLS[SupportedChainIds.BASE_SEPOLIA],
+  ],
+  [SupportedChainIds.XDC]: [
+    'https://rpc.xdc.org',
+    ...FALLBACK_URLS[SupportedChainIds.XDC],
   ],
 }

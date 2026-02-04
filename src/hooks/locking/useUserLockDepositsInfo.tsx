@@ -1,10 +1,9 @@
 import { gql, GraphQLClient } from 'graphql-request'
+import { useMemo } from 'react'
 import useSWR from 'swr'
-import { useChainId } from 'wagmi'
 
+import { useChain } from '@/hooks/context/useChain'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
-
-import sdkConfig from '@/config/sdk'
 
 export type UserLockDepositsInfo = {
   id: string
@@ -30,26 +29,31 @@ const userLockDepositsInfoQuery = gql`
   }
 `
 
-const graphClient = new GraphQLClient(sdkConfig.subgraphUrl)
-
 type UseUserLockDepositsInfoOptions = {
   enabled?: boolean
 }
 
 const useUserLockDepositsInfo = (options?: UseUserLockDepositsInfoOptions) => {
-  const chainId = useChainId()
+  const { currentChainId, chainConfig } = useChain()
   const { address } = usePrivyAuthenticated()
   const enabled = options?.enabled ?? true
 
+  // Create GraphQL client with chain-specific subgraph URL
+  const graphClient = useMemo(() => {
+    if (!chainConfig.subgraphUrl) return null
+    return new GraphQLClient(chainConfig.subgraphUrl)
+  }, [chainConfig.subgraphUrl])
+
   const { data, error, isLoading, mutate } = useSWR(
-    enabled && address && chainId
-      ? ['userLockDepositsInfo', chainId, address.toLowerCase()]
+    enabled && address && currentChainId && graphClient
+      ? ['userLockDepositsInfo', currentChainId, address.toLowerCase()]
       : null,
     async ([
       _,
       __chainId,
       userAddress,
     ]): Promise<UserLockDepositsInfo | null> => {
+      if (!graphClient) throw new Error('GraphQL client not ready')
       const result = await graphClient.request<UserLockDepositsInfoQueryResult>(
         userLockDepositsInfoQuery,
         { userAddress }

@@ -9,6 +9,7 @@ import Footer from '@/components/organisms/footer'
 import Header from '@/components/organisms/header'
 import ModalsContainer from '@/components/organisms/modals/ModalsContainer'
 
+import { ChainProvider } from '@/context/chain/chain.provider'
 import KycState from '@/context/kyc/kyc.provider'
 import LiteModeState from '@/context/liteMode/liteMode.provider'
 import LoadingMaskState from '@/context/loadingMask/loadingMask.provider'
@@ -77,27 +78,29 @@ export default async function RootLayout({ children }: RootLayoutProps) {
       <body>
         <ThemeRegistry>
           <PrivyProvider>
-            <SwrProvider unusedPools={filteredPools}>
-              <SdkState>
-                <ToastState>
-                  <LoadingMaskState>
-                    <LiteModeState>
-                      <ModalState>
-                        <KycState>
-                          <LiteModeReady>
-                            {/* <NftTracker /> */}
-                            <Header />
-                            <Box component='main'>{children}</Box>
-                            <Footer />
-                          </LiteModeReady>
-                          <ModalsContainer />
-                        </KycState>
-                      </ModalState>
-                    </LiteModeState>
-                  </LoadingMaskState>
-                </ToastState>
-              </SdkState>
-            </SwrProvider>
+            <ChainProvider>
+              <SwrProvider unusedPools={filteredPools}>
+                <SdkState>
+                  <ToastState>
+                    <LoadingMaskState>
+                      <LiteModeState>
+                        <ModalState>
+                          <KycState>
+                            <LiteModeReady>
+                              {/* <NftTracker /> */}
+                              <Header />
+                              <Box component='main'>{children}</Box>
+                              <Footer />
+                            </LiteModeReady>
+                            <ModalsContainer />
+                          </KycState>
+                        </ModalState>
+                      </LiteModeState>
+                    </LoadingMaskState>
+                  </ToastState>
+                </SdkState>
+              </SwrProvider>
+            </ChainProvider>
           </PrivyProvider>
         </ThemeRegistry>
       </body>

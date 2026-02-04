@@ -1,13 +1,15 @@
 import useSWR from 'swr'
 
+import { useChain } from '@/hooks/context/useChain'
+
 import { getPoolOverview } from '@/app/_requests/pools'
 
 const usePoolOverview = (poolId?: string) => {
-  const poolQuery = poolId ? `?id=${poolId}` : ''
+  const { currentChainId } = useChain()
 
   const { data, isLoading, error } = useSWR(
-    `/api/pools${poolQuery}`,
-    getPoolOverview
+    ['poolOverview', currentChainId, poolId ?? 'all'],
+    () => getPoolOverview(poolId, currentChainId)
   )
 
   return {
