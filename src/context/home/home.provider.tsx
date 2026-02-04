@@ -6,6 +6,7 @@ import useHomeActions from '@/context/home/home.actions'
 import HomeContext from '@/context/home/home.context'
 import homeReducer from '@/context/home/home.reducer'
 import { HomeStateType, LayoutTypes } from '@/context/home/home.types'
+import { PortfolioSubgraphProvider } from '@/context/portfolioSubgraph'
 
 type HomeStateProps = {
   children: ReactNode
@@ -32,7 +33,7 @@ const HomeState: React.FC<HomeStateProps> = ({ children }) => {
 
   return (
     <HomeContext.Provider value={{ ...state, ...homeActions }}>
-      {children}
+      <PortfolioSubgraphProvider>{children}</PortfolioSubgraphProvider>
     </HomeContext.Provider>
   )
 }

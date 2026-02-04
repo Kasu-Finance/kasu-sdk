@@ -8,7 +8,6 @@ import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import { SupportedChainIds } from '@/connection/chains'
 import { RPC_URLS } from '@/connection/rpc'
-import { USER_FINANCIAL_DATA_CACHE_TTL } from '@/constants/general'
 import QueuedJsonRpcProvider from '@/utils/rpc/QueuedJsonRpcProvider'
 
 const useLendingPortfolioData = (
@@ -37,7 +36,7 @@ const useLendingPortfolioData = (
   const rpcUrl = RPC_URLS[chainId as SupportedChainIds]?.[0]
   const provider = useMemo(() => {
     if (!rpcUrl) return undefined
-    return new QueuedJsonRpcProvider(rpcUrl, 2)
+    return new QueuedJsonRpcProvider(rpcUrl, 5)
   }, [rpcUrl])
 
   const { data, error, isValidating, mutate } = useSWR(
@@ -62,7 +61,6 @@ const useLendingPortfolioData = (
     {
       keepPreviousData: true,
       revalidateIfStale: true,
-      refreshInterval: USER_FINANCIAL_DATA_CACHE_TTL,
     }
   )
 

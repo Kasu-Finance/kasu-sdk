@@ -1,6 +1,9 @@
 # types
 /src/@types
 
+# Next.js auto-generated
+next-env.d.ts
+
 # commitling 
 commitlint.config.cjs
 

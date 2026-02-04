@@ -1,7 +1,7 @@
 import { PortfolioLendingPool } from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
 import { TableCell, TableRow, Typography } from '@mui/material'
 
-import useUserLendingTrancheBalance from '@/hooks/lending/useUserLendingTrancheBalance'
+import useUserLendingTrancheBalanceSubgraph from '@/hooks/lending/useUserLendingTrancheBalanceSubgraph'
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
 import useNextClearingPeriod from '@/hooks/web3/useNextClearingPeriod'
 
@@ -21,7 +21,7 @@ const LendingPortfolioTableRow: React.FC<LendingPortfolioTableRowProps> = ({
   portfolioPool,
   currentEpoch,
 }) => {
-  const { userLendingTrancheBalance } = useUserLendingTrancheBalance(
+  const { userLendingTrancheBalance } = useUserLendingTrancheBalanceSubgraph(
     portfolioPool.id,
     portfolioPool.tranches
   )

@@ -19,7 +19,7 @@
     "postinstall": "npx puppeteer browsers install"
   },
   "lint-staged": {
-    "**/*.{js,jsx,ts,tsx}": [
+    "**/!(next-env).{js,jsx,ts,tsx}": [
       "eslint --max-warnings=0",
       "prettier -w"
     ],

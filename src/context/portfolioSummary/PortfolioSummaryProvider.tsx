@@ -16,7 +16,7 @@ import portfolioSummaryContext from '@/context/portfolioSummary/portfolioSummary
 import sdkConfig from '@/config/sdk'
 import { SupportedChainIds } from '@/connection/chains'
 import { RPC_URLS } from '@/connection/rpc'
-import { USER_FINANCIAL_DATA_CACHE_TTL } from '@/constants/general'
+import { FIVE_MINUTES } from '@/constants/general'
 import QueuedJsonRpcProvider from '@/utils/rpc/QueuedJsonRpcProvider'
 
 type PortfolioSummaryProviderProps = {
@@ -62,7 +62,7 @@ const PortfolioSummaryProvider: React.FC<PortfolioSummaryProviderProps> = ({
 
   const readOnlySdk = useMemo(() => {
     if (!rpcUrl || !unusedPools) return undefined
-    const provider = new QueuedJsonRpcProvider(rpcUrl, 1)
+    const provider = new QueuedJsonRpcProvider(rpcUrl, 5)
     return new KasuSdk(
       {
         ...sdkConfig,
@@ -117,10 +117,9 @@ const PortfolioSummaryProvider: React.FC<PortfolioSummaryProviderProps> = ({
       )
     },
     {
-      dedupingInterval: USER_FINANCIAL_DATA_CACHE_TTL,
+      dedupingInterval: FIVE_MINUTES,
       keepPreviousData: true,
       revalidateIfStale: false,
-      refreshInterval: USER_FINANCIAL_DATA_CACHE_TTL,
     }
   )
 
