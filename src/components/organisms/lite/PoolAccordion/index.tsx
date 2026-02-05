@@ -36,7 +36,12 @@ const PoolAccordion: React.FC<PoolAccordionProps> = ({
 }) => {
   const { t } = getTranslation()
 
-  const [expanded, setExpanded] = useState<string | false>(pools[0].id)
+  const [expanded, setExpanded] = useState<string | false>(
+    pools[0]?.id ?? false
+  )
+
+  // Don't render anything if no pools
+  if (!pools.length) return null
 
   const handleChange =
     (panel: string) => (_: React.SyntheticEvent, newExpanded: boolean) => {

@@ -1,9 +1,4 @@
-import { Stack } from '@mui/material'
-
-import DelegateProfile from '@/components/organisms/lending/DetailsTab/DelegateProfile'
-import PoolDetails from '@/components/organisms/lending/DetailsTab/PoolDetails'
-import PoolTraction from '@/components/organisms/lending/DetailsTab/PoolTraction'
-import RiskManagement from '@/components/organisms/lending/DetailsTab/RiskManagement'
+import DetailsTabChainWrapper from '@/components/organisms/lending/DetailsTab/DetailsTabChainWrapper'
 
 import { getPoolWithDelegate } from '@/app/_requests/poolWithDelegate'
 import { getRiskManagement } from '@/app/_requests/riskManagement'
@@ -12,19 +7,25 @@ type PoolDetailsProps = {
   poolId: string
 }
 
+/**
+ * Server component that fetches pool details from the default chain (Base).
+ * The DetailsTabChainWrapper handles chain-specific rendering.
+ */
 const PoolDetailsTab: React.FC<PoolDetailsProps> = async ({ poolId }) => {
   const [poolsWithDelegate, riskManagement] = await Promise.all([
     getPoolWithDelegate(poolId),
     getRiskManagement(poolId),
   ])
 
+  const serverPool = poolsWithDelegate[0] ?? null
+  const serverRiskManagement = riskManagement ?? null
+
   return (
-    <Stack spacing={3} mt={3}>
-      <DelegateProfile pool={poolsWithDelegate[0]} />
-      <PoolDetails pool={poolsWithDelegate[0]} />
-      <PoolTraction pool={poolsWithDelegate[0]} />
-      {riskManagement && <RiskManagement riskManagement={riskManagement} />}
-    </Stack>
+    <DetailsTabChainWrapper
+      poolId={poolId}
+      serverPool={serverPool}
+      serverRiskManagement={serverRiskManagement}
+    />
   )
 }
 

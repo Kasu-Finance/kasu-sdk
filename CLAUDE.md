@@ -2,7 +2,14 @@
 
 ## Overview
 
-Kasu Finance DeFi frontend built with Next.js 15. Provides lending, locking, and portfolio management functionality for users interacting with the Kasu protocol on Base chain.
+Kasu Finance DeFi frontend built with Next.js 15. Provides lending, locking, and portfolio management functionality for users interacting with the Kasu protocol.
+
+**Multi-chain Support:** The app supports multiple EVM chains with different deployment types:
+
+- **Full Deployments** (Base): All features including KSU token, locking, loyalty, NFTs
+- **Lite Deployments** (XDC, Plume): Core lending only, no KSU token ecosystem
+
+See `docs/MULTICHAIN.md` for detailed multi-chain architecture and adding new chains.
 
 ## Tech Stack
 
@@ -59,7 +66,7 @@ useSWR(condition ? ['cacheKey', ...dependentParams] : null, async () =>
 | `latestClearingTimestamp`     | chainId, poolIds          | Last clearing timestamp                  | `useLatestClearingTimestamp`     |
 | `loanTickets`                 | address, chainId          | User's loan tickets                      | `useLoanTickets`                 |
 | `lockingClaimableRewards`     | chainId, address          | Claimable locking rewards                | `useLockingRewards`              |
-| `nextClearingPeriod`          | -                         | Next clearing period timestamp           | `useNextClearingPeriod`          |
+| `nextClearingPeriod`          | chainId                   | Next clearing period timestamp           | `useNextClearingPeriod`          |
 | `nextEpochTime`               | chainId                   | Next epoch timestamp                     | `useNextEpochTime`               |
 | `performanceFee`              | -                         | Protocol performance fee                 | `usePerformanceFee`              |
 | `poolOverview`                | chainId, poolId           | Single pool overview data                | `usePoolOverview`                |
@@ -77,6 +84,9 @@ useSWR(condition ? ['cacheKey', ...dependentParams] : null, async () =>
 | `userNfts`                    | chainId, address          | User's NFTs                              | `useUserNfts`                    |
 | `userNftYields`               | address, chainId          | User's NFT yield boosts                  | `useUserNftYields`               |
 | `userReferrals`               | address, chainId          | User's referral data                     | `useUserReferrals`               |
+| `currentEpoch`                | chainId                   | Current epoch number                     | `useCurrentEpoch`                |
+| `liteModeSubgraph`            | chainId, address          | All Lite mode data (single query)        | `useLiteModeSubgraph`            |
+| `portfolioSummary`            | chainId, address, epoch   | Portfolio summary metrics                | `PortfolioSummaryProvider`       |
 
 ### Cache Invalidation
 

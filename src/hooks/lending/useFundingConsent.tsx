@@ -1,5 +1,4 @@
-import { useChainId } from 'wagmi'
-
+import { useChain } from '@/hooks/context/useChain'
 import useModalState from '@/hooks/context/useModalState'
 import useToastState from '@/hooks/context/useToastState'
 import useLoanTickets from '@/hooks/lending/useLoanTickets'
@@ -18,7 +17,7 @@ import { capitalize } from '@/utils'
 const useFundingConsent = () => {
   const { address } = usePrivyAuthenticated()
 
-  const chainId = useChainId()
+  const { currentChainId: chainId } = useChain()
 
   const { signMessage } = usePrivySignMessage()
 

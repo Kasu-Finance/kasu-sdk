@@ -17,6 +17,8 @@ const LendingActions: React.FC<LendingActionsProps> = ({
   currentEpoch,
   pools,
 }) => {
+  if (!pools.length) return null
+
   return (
     <Grid2 container spacing={{ xs: 2, md: 3 }}>
       <Grid2 size={{ xs: 12, sm: 6 }}>

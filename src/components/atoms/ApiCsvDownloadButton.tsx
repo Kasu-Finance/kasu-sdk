@@ -2,8 +2,8 @@
 
 import { Button, ButtonProps } from '@mui/material'
 import { useState } from 'react'
-import { useChainId } from 'wagmi'
 
+import { useChain } from '@/hooks/context/useChain'
 import useLoadingMaskState from '@/hooks/context/useLoadingMaskState'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
@@ -31,7 +31,7 @@ const ApiCsvDownloadButton: React.FC<ApiCsvDownloadButtonProps> = ({
   ...buttonProps
 }) => {
   const { address } = usePrivyAuthenticated()
-  const chainId = useChainId()
+  const { currentChainId: chainId } = useChain()
   const { showLoadingMask, hideLoadingMask } = useLoadingMaskState()
   const [isDownloading, setIsDownloading] = useState(false)
 

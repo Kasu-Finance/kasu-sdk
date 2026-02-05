@@ -1,4 +1,8 @@
+'use client'
+
 import { Stack } from '@mui/material'
+
+import { useChain } from '@/hooks/context/useChain'
 
 import LiteModeRenderer from '@/components/atoms/LiteModeRenderer'
 import RedirectHandler from '@/components/atoms/RedirectHandler'
@@ -8,6 +12,13 @@ import PortfolioRewardSummary from '@/components/organisms/portfolio/PortfolioRe
 import { Routes } from '@/config/routes'
 
 const BonusAndRewards = () => {
+  const { isLiteDeployment } = useChain()
+
+  // Redirect on lite deployments (XDC) - KSU rewards not available
+  if (isLiteDeployment) {
+    return <RedirectHandler to={Routes.portfolio.root.url} />
+  }
+
   return (
     <LiteModeRenderer
       renderOnLiteMode={<RedirectHandler to={Routes.portfolio.root.url} />}

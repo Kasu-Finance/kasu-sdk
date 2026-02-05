@@ -3,8 +3,8 @@
 import { Stack, Typography } from '@mui/material'
 import Image from 'next/image'
 import { useEffect } from 'react'
-import { useChainId } from 'wagmi'
 
+import { useChain } from '@/hooks/context/useChain'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import LiteModeRenderer from '@/components/atoms/LiteModeRenderer'
@@ -18,7 +18,7 @@ export default function Error({
   error: Error & { digest?: string }
   // reset: () => void
 }) {
-  const chainId = useChainId()
+  const { currentChainId: chainId } = useChain()
 
   const { address } = usePrivyAuthenticated()
 

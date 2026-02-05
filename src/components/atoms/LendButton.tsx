@@ -50,6 +50,13 @@ const LendButton: React.FC<LendButtonProps> = ({
       { enabled }
     )
 
+  // Check if data is ready (not loading AND has data)
+  const isDataReady =
+    !currentEpochDepositedAmountLoading &&
+    !currentEpochFtdAmountLoading &&
+    currentEpochDepositedAmount !== undefined &&
+    currentEpochFtdAmount !== undefined
+
   const handleOpen = () => {
     if (!currentEpochDepositedAmount || !currentEpochFtdAmount) {
       console.error('CurrentEpochAmount is undefined')
@@ -71,12 +78,7 @@ const LendButton: React.FC<LendButtonProps> = ({
       variant='contained'
       sx={{ pl: 2.25, pr: 2.25, flex: 1, textTransform: 'capitalize' }}
       onKycCompleted={handleOpen}
-      disabled={
-        pool.isOversubscribed ||
-        !pool.enabled ||
-        currentEpochDepositedAmountLoading ||
-        currentEpochFtdAmountLoading
-      }
+      disabled={pool.isOversubscribed || !pool.enabled || !isDataReady}
       {...rest}
     >
       {children ?? t('general.lend')}

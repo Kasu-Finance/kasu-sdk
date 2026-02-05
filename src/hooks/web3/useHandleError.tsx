@@ -1,6 +1,6 @@
 import { Logger } from 'ethers/lib/utils'
-import { useChainId } from 'wagmi'
 
+import { useChain } from '@/hooks/context/useChain'
 import useToastState from '@/hooks/context/useToastState'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
@@ -20,7 +20,7 @@ const useHandleError = () => {
 
   const { address } = usePrivyAuthenticated()
 
-  const chainId = useChainId()
+  const { currentChainId: chainId } = useChain()
 
   // refer to https://docs.ethers.org/v5/troubleshooting/errors/
   return (

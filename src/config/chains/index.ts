@@ -28,6 +28,13 @@ export interface ChainConfig {
   blockExplorer: string
   /** RPC URLs (primary first) */
   rpcUrls: string[]
+  /**
+   * Maps pool addresses to their metadata source pool address in Directus.
+   * Used for chains (XDC, Plume) that share pool descriptions with Base.
+   * Key: pool address on this chain (lowercase)
+   * Value: pool address in Directus / Base pool (lowercase)
+   */
+  poolMetadataMapping?: Record<string, string>
 }
 
 /**
@@ -83,6 +90,18 @@ export const SUPPORTED_CHAINS: Record<number, ChainConfig> = {
     usdc: '0xfa2958cb79b0491cc627c1557f441ef849ca8eb1',
     blockExplorer: 'https://xdcscan.com',
     rpcUrls: ['https://rpc.xdc.org', 'https://erpc.xdc.org'],
+    // Map XDC pools to Base pools for Directus metadata lookup
+    poolMetadataMapping: {
+      // Taxation Funding (XDC) → Taxation Funding Tax Pay (Base)
+      '0x20f42fb45f91657acf9528b99a5a16d0229c7800':
+        '0xc987350716fe4a7d674c3591c391d29eba26b8ce',
+      // Whole Ledger Funding (XDC) → Whole Ledger Funding (Base)
+      '0x3b7cb493aa22f731db2ab424d918e7375e00f6a9':
+        '0x03f93c8caa9a82e000d35673ba34a4c0e6e117a2',
+      // Professional Fee Funding (XDC) → Professional Fee Funding (Base)
+      '0xeda50c91a8c4ca8a83652b8542c0b3bd00a71fad':
+        '0xc347a9e4aec8c8d11a149d2907deb2bf23b81c6f',
+    },
   },
 }
 

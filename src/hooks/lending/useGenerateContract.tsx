@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useChainId } from 'wagmi'
 
+import { useChain } from '@/hooks/context/useChain'
 import useToastState from '@/hooks/context/useToastState'
 import useHandleError from '@/hooks/web3/useHandleError'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
@@ -34,7 +34,7 @@ type GenerateContractResult =
 const useGenerateContract = () => {
   const { address } = usePrivyAuthenticated()
 
-  const chainId = useChainId()
+  const { currentChainId: chainId } = useChain()
 
   const { signMessage } = usePrivySignMessage()
 

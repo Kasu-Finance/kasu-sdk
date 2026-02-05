@@ -1,8 +1,8 @@
 import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { useMemo } from 'react'
 import useSWR from 'swr'
-import { useChainId } from 'wagmi'
 
+import { useChain } from '@/hooks/context/useChain'
 import useSdk from '@/hooks/context/useSdk'
 import useLendingPortfolioData from '@/hooks/portfolio/useLendingPortfolioData'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
@@ -15,7 +15,7 @@ const usePortfolioSummary = (
 ) => {
   const sdk = useSdk()
 
-  const chainId = useChainId()
+  const { currentChainId: chainId } = useChain()
 
   const { address, isAuthenticated } = usePrivyAuthenticated()
   const addressLower = address?.toLowerCase()

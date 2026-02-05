@@ -5,6 +5,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 import { useAccount, useSwitchChain } from 'wagmi'
@@ -28,6 +29,9 @@ export const ChainProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const { chain: walletChain } = useAccount()
   const { switchChainAsync, isPending: isSwitchingChain } = useSwitchChain()
 
+  // Track previous chain to detect changes
+  const prevChainIdRef = useRef<number | null>(null)
+
   // Initialize from localStorage or wallet chain or default
   const [currentChainId, setCurrentChainId] = useState<number>(() => {
     if (typeof window !== 'undefined') {
@@ -48,6 +52,15 @@ export const ChainProvider: React.FC<PropsWithChildren> = ({ children }) => {
       }
     }
   }, [walletChain])
+
+  // Track chain changes (cache invalidation moved to SdkState after SDK is ready)
+  useEffect(() => {
+    if (prevChainIdRef.current === null) {
+      prevChainIdRef.current = currentChainId
+      return
+    }
+    prevChainIdRef.current = currentChainId
+  }, [currentChainId])
 
   const chainConfig = useMemo(
     () => getChainConfig(currentChainId) || SUPPORTED_CHAINS[DEFAULT_CHAIN_ID],

@@ -2,8 +2,8 @@ import { BigNumber, BytesLike } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSWRConfig } from 'swr'
-import { useChainId } from 'wagmi'
 
+import { useChain } from '@/hooks/context/useChain'
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useKycState from '@/hooks/context/useKycState'
 import useLiteModeState from '@/hooks/context/useLiteModeState'
@@ -41,7 +41,7 @@ const useRequestDeposit = () => {
 
   const router = useRouter()
 
-  const chainId = useChainId()
+  const { currentChainId: chainId } = useChain()
 
   const handleError = useHandleError()
 

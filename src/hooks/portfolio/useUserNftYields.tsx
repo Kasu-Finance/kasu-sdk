@@ -1,6 +1,6 @@
 import useSWR from 'swr'
-import { useChainId } from 'wagmi'
 
+import { useChain } from '@/hooks/context/useChain'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import { NftRes } from '@/app/api/nft/route'
@@ -22,7 +22,7 @@ type UseUserNftYieldsOptions = {
 const useUserNftYields = (options?: UseUserNftYieldsOptions) => {
   const { address } = usePrivyAuthenticated()
 
-  const chainId = useChainId()
+  const { currentChainId: chainId } = useChain()
   const enabled = options?.enabled ?? true
 
   const { data, error, isLoading, mutate } = useSWR(

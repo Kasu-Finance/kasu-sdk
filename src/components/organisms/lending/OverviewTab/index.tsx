@@ -1,10 +1,4 @@
-import { Stack } from '@mui/material'
-
-import LendingRequestionTransactions from '@/components/organisms/lending/OverviewTab/LendingRequestTransactions'
-import PoolOverview from '@/components/organisms/lending/OverviewTab/PoolOverview'
-import UserLending from '@/components/organisms/lending/OverviewTab/UserLending'
-import UserLoyalty from '@/components/organisms/lending/OverviewTab/UserLoyalty'
-import WithdrawalRequestTransactions from '@/components/organisms/lending/OverviewTab/WithdrawalRequestTransactions'
+import PoolOverviewTabChainWrapper from '@/components/organisms/lending/OverviewTab/PoolOverviewTabChainWrapper'
 
 import getLockPeriods from '@/actions/getLockPeriods'
 import { getCurrentEpoch } from '@/app/_requests/currentEpoch'
@@ -14,6 +8,12 @@ type PoolOverviewProps = {
   poolId: string
 }
 
+/**
+ * Server component that fetches pool data from the default chain (Base).
+ * The PoolOverviewTabChainWrapper handles chain-specific rendering:
+ * - On Base: Uses server data
+ * - On other chains (XDC): Fetches client-side from the correct subgraph
+ */
 const PoolOverviewTab: React.FC<PoolOverviewProps> = async ({ poolId }) => {
   const [poolsWithDelegate, lockPeriods, currentEpoch] = await Promise.all([
     getPoolWithDelegate(poolId),
@@ -21,25 +21,18 @@ const PoolOverviewTab: React.FC<PoolOverviewProps> = async ({ poolId }) => {
     getCurrentEpoch(),
   ])
 
+  // Server data might be empty if poolId doesn't exist on Base (XDC pool address)
+  // The chain wrapper will handle fetching the correct data client-side
+  const serverPool = poolsWithDelegate[0] ?? null
+
   return (
-    <Stack spacing={3} mt={3}>
-      <PoolOverview pool={poolsWithDelegate[0]} currentEpoch={currentEpoch} />
-      <UserLending pool={poolsWithDelegate[0]} />
-      <UserLoyalty
-        pools={poolsWithDelegate}
-        poolId={poolId}
-        currentEpoch={currentEpoch}
-        lockPeriods={lockPeriods}
-      />
-      <LendingRequestionTransactions
-        poolId={poolId}
-        currentEpoch={currentEpoch}
-      />
-      <WithdrawalRequestTransactions
-        poolId={poolId}
-        currentEpoch={currentEpoch}
-      />
-    </Stack>
+    <PoolOverviewTabChainWrapper
+      serverPool={serverPool}
+      serverPools={poolsWithDelegate}
+      poolId={poolId}
+      lockPeriods={lockPeriods}
+      currentEpoch={currentEpoch}
+    />
   )
 }
 

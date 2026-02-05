@@ -1,7 +1,7 @@
 import { formatUnits } from 'ethers/lib/utils'
 import useSWR from 'swr'
-import { useChainId } from 'wagmi'
 
+import { useChain } from '@/hooks/context/useChain'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import { UserReferralYieldRes } from '@/app/api/referral/userYields/route'
@@ -19,7 +19,7 @@ type UseUserReferralsOptions = {
 const useUserReferrals = (options?: UseUserReferralsOptions) => {
   const { address } = usePrivyAuthenticated()
 
-  const chainId = useChainId()
+  const { currentChainId: chainId } = useChain()
   const enabled = options?.enabled ?? true
 
   const { data, error, isLoading } = useSWR(

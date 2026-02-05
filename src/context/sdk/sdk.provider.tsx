@@ -5,8 +5,8 @@ import { SdkConfig } from '@kasufinance/kasu-sdk/src/sdk-config'
 import type { PoolOverviewDirectus } from '@kasufinance/kasu-sdk/src/services/DataService/directus-types'
 import { useSendTransaction, useWallets } from '@privy-io/react-auth'
 import { ethers } from 'ethers'
-import React, { PropsWithChildren, useEffect, useState } from 'react'
-import { preload } from 'swr'
+import React, { PropsWithChildren, useEffect, useRef, useState } from 'react'
+import { preload, useSWRConfig } from 'swr'
 import useSWRImmutable from 'swr/immutable'
 
 import { useChain } from '@/hooks/context/useChain'
@@ -40,11 +40,16 @@ preload('unusedPools', unusedPoolsFetcher)
 
 const SdkState: React.FC<PropsWithChildren> = ({ children }) => {
   const [kasuSdk, setKasuSdk] = useState<KasuSdk | undefined>(undefined)
+  const [isChainTransitioning, setIsChainTransitioning] = useState(false)
 
   const { wallets } = useWallets()
   const { sendTransaction } = useSendTransaction()
   const { address } = usePrivyAuthenticated()
   const { chainConfig, currentChainId } = useChain()
+  const { mutate } = useSWRConfig()
+
+  // Track previous chain to detect changes
+  const prevChainIdRef = useRef<number | null>(null)
 
   const wallet = wallets.find((wallet) => wallet.address === address)
 
@@ -52,6 +57,29 @@ const SdkState: React.FC<PropsWithChildren> = ({ children }) => {
     'unusedPools',
     unusedPoolsFetcher
   )
+
+  // Clear SDK and cache immediately when chain changes to prevent stale data
+  useEffect(() => {
+    if (prevChainIdRef.current === null) {
+      prevChainIdRef.current = currentChainId
+      return
+    }
+
+    if (prevChainIdRef.current !== currentChainId) {
+      // Chain is changing - clear SDK and set transitioning flag
+      setKasuSdk(undefined)
+      setIsChainTransitioning(true)
+      prevChainIdRef.current = currentChainId
+
+      // Clear all SWR cache data immediately (not just invalidate)
+      // This prevents stale data from old chain being shown
+      void mutate(
+        () => true,
+        undefined,
+        { revalidate: false } // Don't trigger refetch yet - wait for SDK
+      )
+    }
+  }, [currentChainId, mutate])
 
   // Recreate SDK when chain or wallet changes
   useEffect(() => {
@@ -79,19 +107,36 @@ const SdkState: React.FC<PropsWithChildren> = ({ children }) => {
             directusUrl: DIRECTUS_URL,
             UNUSED_LENDING_POOL_IDS: unusedPools?.length ? unusedPools : [''],
             isLiteDeployment: chainConfig.isLiteDeployment,
+            poolMetadataMapping: chainConfig.poolMetadataMapping,
           }),
           provider.getSigner()
         )
 
         setKasuSdk(sdk)
+        setIsChainTransitioning(false)
+
+        // Trigger revalidation after React has committed state updates
+        // setTimeout(0) ensures this runs in a new task after the current render cycle
+        // This is needed because we cleared cache during chain transition
+        setTimeout(() => {
+          void mutate(() => true, undefined, { revalidate: true })
+        }, 0)
       } catch (error) {
         console.error(error)
+        setIsChainTransitioning(false)
       }
     })()
-  }, [wallet, unusedPools, sendTransaction, chainConfig, currentChainId])
+  }, [
+    wallet,
+    unusedPools,
+    sendTransaction,
+    chainConfig,
+    currentChainId,
+    mutate,
+  ])
 
   return (
-    <SdkContext.Provider value={{ sdk: kasuSdk }}>
+    <SdkContext.Provider value={{ sdk: kasuSdk, isChainTransitioning }}>
       {children}
     </SdkContext.Provider>
   )

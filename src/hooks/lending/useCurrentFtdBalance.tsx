@@ -1,12 +1,12 @@
 import useSWR from 'swr'
-import { useChainId } from 'wagmi'
 
+import { useChain } from '@/hooks/context/useChain'
 import useSdk from '@/hooks/context/useSdk'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 const useCurrentFtdBalance = (poolId: string) => {
   const sdk = useSdk()
-  const chainId = useChainId()
+  const { currentChainId: chainId } = useChain()
 
   const { address } = usePrivyAuthenticated()
 

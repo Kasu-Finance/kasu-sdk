@@ -398,7 +398,9 @@ export const useLiteModeSubgraph = (options?: UseLiteModeSubgraphOptions) => {
     enabled && address && currentChainId && graphClient
       ? ['liteModeSubgraph', currentChainId, address.toLowerCase()]
       : null,
-    async ([_, __chainId, userAddress]): Promise<LiteModeData> => {
+    async ([_, chainId, userAddress]): Promise<
+      LiteModeData & { _chainId: number }
+    > => {
       if (!graphClient) throw new Error('GraphQL client not ready')
 
       const result = await graphClient.request<LiteModeQueryResult>(
@@ -406,7 +408,8 @@ export const useLiteModeSubgraph = (options?: UseLiteModeSubgraphOptions) => {
         { userAddress }
       )
 
-      return processLiteModeData(result, userAddress)
+      // Include chainId in data to verify it matches current chain
+      return { ...processLiteModeData(result, userAddress), _chainId: chainId }
     },
     {
       dedupingInterval: FIVE_MINUTES,
@@ -415,10 +418,18 @@ export const useLiteModeSubgraph = (options?: UseLiteModeSubgraphOptions) => {
     }
   )
 
+  // Only return data if it's for the current chain (prevents stale data from old chain)
+  const validData = data && data._chainId === currentChainId ? data : undefined
+
+  // Loading if enabled and either SWR is loading or we have stale data from wrong chain
+  const isLoadingState = Boolean(
+    enabled && (isLoading || (data && data._chainId !== currentChainId))
+  )
+
   return {
-    liteModeData: data,
+    liteModeData: validData,
     error,
-    isLoading: enabled && isLoading,
+    isLoading: isLoadingState,
     isValidating,
     updateLiteModeData: mutate,
   }

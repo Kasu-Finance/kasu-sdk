@@ -5,6 +5,11 @@ import { LockPeriod } from '@kasufinance/kasu-sdk/src/services/Locking/types'
 import { Grid2, Stack, Typography } from '@mui/material'
 import React, { useCallback, useEffect, useState } from 'react'
 
+import { useChain } from '@/hooks/context/useChain'
+import { useSdkState } from '@/hooks/context/useSdk'
+import useCurrentEpoch from '@/hooks/lending/useCurrentEpoch'
+import usePoolOverviews from '@/hooks/lending/usePoolOverviews'
+import usePoolsWithDelegate from '@/hooks/lending/usePoolsWithDelegate'
 import { useLiteModeSubgraph } from '@/hooks/lite/useLiteModeSubgraph'
 import useLendingPortfolioData from '@/hooks/portfolio/useLendingPortfolioData'
 import getTranslation from '@/hooks/useTranslation'
@@ -29,6 +34,7 @@ import RewardsBasicStats from '@/components/organisms/lite/RewardsBasicStats'
 import { LiteModeSubgraphProvider } from '@/context/liteModeSubgraph'
 import PortfolioSummaryProvider from '@/context/portfolioSummary/PortfolioSummaryProvider'
 
+import { DEFAULT_CHAIN_ID } from '@/config/chains'
 import sdkConfig, { USDC } from '@/config/sdk'
 
 import PoolAccordion from './PoolAccordion'
@@ -62,8 +68,39 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({
   activePools,
 }) => {
   const { t } = getTranslation()
+  const { isLiteDeployment, currentChainId } = useChain()
+  const { isChainTransitioning } = useSdkState()
+
+  // Server-side props (pools, currentEpoch) are always for DEFAULT_CHAIN_ID.
+  // Only use SDK portfolio data when on the default chain.
+  const isOnDefaultChain = currentChainId === DEFAULT_CHAIN_ID
 
   const { isAuthenticated } = usePrivyAuthenticated()
+
+  // Client-side data for non-default chains
+  // Server-side props are only valid for default chain
+  const { poolOverviews: clientPoolOverviews, isLoading: isPoolsLoading } =
+    usePoolOverviews()
+  const { currentEpoch: clientCurrentEpoch, isLoading: isEpochLoading } =
+    useCurrentEpoch()
+  const {
+    poolsWithDelegate: clientPoolsWithDelegate,
+    isLoading: isPoolsWithDelegateLoading,
+  } = usePoolsWithDelegate()
+
+  // Use server-side data on default chain, client-side on others
+  const effectivePools = isOnDefaultChain ? pools : (clientPoolOverviews ?? [])
+  const effectiveEpoch = isOnDefaultChain
+    ? currentEpoch
+    : (clientCurrentEpoch ?? currentEpoch)
+  const effectiveActivePools = isOnDefaultChain
+    ? activePools
+    : clientPoolsWithDelegate
+
+  // Track if client-side data is still loading (for non-default chains)
+  const isClientDataLoading =
+    !isOnDefaultChain &&
+    (isPoolsLoading || isEpochLoading || isPoolsWithDelegateLoading)
 
   // Subgraph data - fetches portfolio, locks, KSU price in 1 query
   const {
@@ -75,42 +112,61 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({
 
   // SDK portfolio data - kept for PortfolioSummaryProvider compatibility
   // This will be phased out once child components use subgraph context
+  // NOTE: Only enabled on default chain because server-side props are for that chain
   const {
     portfolioLendingPools,
     isLoading: isPortfolioLoading,
     isValidating: isPortfolioValidating,
     error: portfolioError,
-  } = useLendingPortfolioData(pools, currentEpoch)
+  } = useLendingPortfolioData(pools, currentEpoch, {
+    enabled: isOnDefaultChain,
+  })
 
   // Token balances - must be RPC (real-time on-chain state)
   // These run in parallel with subgraph query
+  // KSU balance only needed on full deployments (not XDC)
   const { hasLoaded: ksuLoaded } = useUserBalance(
     sdkConfig.contracts.KSUToken,
     {
-      enabled: isAuthenticated,
+      enabled: isAuthenticated && !isLiteDeployment && !isChainTransitioning,
     }
   )
   const { hasLoaded: usdcLoaded } = useUserBalance(USDC, {
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && !isChainTransitioning,
   })
 
   // Phase tracking for rewards section (child components still have sequential loading)
   const [phase4Stage, setPhase4Stage] = useState(0)
 
-  // Simplified loading states
-  const isSubgraphReady = isAuthenticated
-    ? !isSubgraphLoading &&
-      !isSubgraphValidating &&
-      (liteModeData || subgraphError)
-    : true
+  // During chain transition, treat everything as loading
+  const isSubgraphReady = isChainTransitioning
+    ? false
+    : isAuthenticated
+      ? !isSubgraphLoading &&
+        !isSubgraphValidating &&
+        (liteModeData || subgraphError)
+      : true
 
-  const isPortfolioReady = isAuthenticated
-    ? !isPortfolioLoading &&
-      !isPortfolioValidating &&
-      (portfolioLendingPools || portfolioError)
-    : true
+  // Portfolio SDK data is only available on default chain
+  // On other chains, we rely solely on subgraph data
+  const isPortfolioReady = isChainTransitioning
+    ? false
+    : !isOnDefaultChain
+      ? true // Skip waiting for portfolio data on non-default chains
+      : isAuthenticated
+        ? !isPortfolioLoading &&
+          !isPortfolioValidating &&
+          (portfolioLendingPools || portfolioError)
+        : true
 
-  const isTokenBalancesReady = isAuthenticated ? ksuLoaded && usdcLoaded : true
+  // On lite deployments, we don't need KSU balance
+  const isTokenBalancesReady = isChainTransitioning
+    ? false
+    : isAuthenticated
+      ? isLiteDeployment
+        ? usdcLoaded
+        : ksuLoaded && usdcLoaded
+      : true
 
   // Main content can show once subgraph OR portfolio data is ready
   const isMainContentReady = isSubgraphReady || isPortfolioReady
@@ -125,12 +181,29 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({
   const isPhase4ReferralEnabled = phase4Stage >= 4
   const isPhase4RightColumnEnabled = phase4Stage >= 5
 
-  const hasActiveDeposits = isAuthenticated
-    ? Boolean(portfolioLendingPools?.length || liteModeData?.pools.length)
-    : true
+  // Clear stale data during chain transition to prevent showing old chain's data
+  const safePortfolioLendingPools = isChainTransitioning
+    ? undefined
+    : portfolioLendingPools
+  const safeLiteModeData = isChainTransitioning ? undefined : liteModeData
 
+  // During chain transition, assume deposits exist to avoid "no deposits" flash
+  // On non-default chains, portfolio data is not available - rely on subgraph only
+  const hasActiveDeposits = isChainTransitioning
+    ? true
+    : isAuthenticated
+      ? Boolean(
+          (isOnDefaultChain && safePortfolioLendingPools?.length) ||
+            safeLiteModeData?.pools.length
+        )
+      : true
+
+  // On non-default chains, portfolio SDK data is disabled, so only check subgraph
   const isPortfolioDataLoading =
-    (isPortfolioLoading || isSubgraphLoading) && isAuthenticated
+    ((isOnDefaultChain && isPortfolioLoading) ||
+      isSubgraphLoading ||
+      isChainTransitioning) &&
+    isAuthenticated
 
   // Callbacks for child component ready signals
   const handleLockingRewardsReady = useCallback(() => {
@@ -170,9 +243,9 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({
         <Grid2 size={{ xs: 12, md: 8 }} sx={{ minWidth: 0 }}>
           <WaveBox variant='dark-gray' borderRadius={6} p={2}>
             <PortfolioSummaryProvider
-              currentEpoch={currentEpoch}
-              poolOverviews={pools}
-              portfolioLendingPools={portfolioLendingPools}
+              currentEpoch={effectiveEpoch}
+              poolOverviews={effectivePools}
+              portfolioLendingPools={safePortfolioLendingPools}
             >
               <Stack spacing={6.5}>
                 <Stack spacing={4.5}>
@@ -181,32 +254,39 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({
                   </Typography>
                   <Stack spacing={3}>
                     <LendingBasicStats
-                      pools={pools}
-                      currentEpoch={currentEpoch}
-                      portfolioLendingPools={portfolioLendingPools}
+                      pools={effectivePools}
+                      currentEpoch={effectiveEpoch}
+                      portfolioLendingPools={safePortfolioLendingPools}
                       hasActiveDeposits={hasActiveDeposits}
-                      isPortfolioLoading={isPortfolioDataLoading}
+                      isPortfolioLoading={
+                        isPortfolioDataLoading || isClientDataLoading
+                      }
                     />
-                    {isMainContentReady && (
-                      <PendingTransactionRequests currentEpoch={currentEpoch} />
+                    {isMainContentReady && !isClientDataLoading && (
+                      <PendingTransactionRequests
+                        currentEpoch={effectiveEpoch}
+                      />
                     )}
-                    {isMainContentReady && (
-                      <LendingDecisionsPending pools={pools} />
+                    {isMainContentReady && !isClientDataLoading && (
+                      <LendingDecisionsPending pools={effectivePools} />
                     )}
                     <LiteLendingPortfolio
-                      portfolioLendingPools={portfolioLendingPools}
+                      portfolioLendingPools={safePortfolioLendingPools}
                       isLoading={isPortfolioDataLoading}
                       isAuthenticated={isAuthenticated}
                     />
-                    {isMainContentReady && (
-                      <LendingActions
-                        pools={activePools}
-                        currentEpoch={currentEpoch}
-                      />
-                    )}
+                    {isMainContentReady &&
+                      !isClientDataLoading &&
+                      effectiveActivePools.length > 0 && (
+                        <LendingActions
+                          pools={effectiveActivePools}
+                          currentEpoch={effectiveEpoch}
+                        />
+                      )}
                   </Stack>
                 </Stack>
-                {isPhase4Enabled && (
+                {/* Rewards Portfolio - only on full deployments (not XDC) */}
+                {isPhase4Enabled && !isLiteDeployment && (
                   <Stack spacing={3}>
                     <Typography variant='h2' color='gold.dark'>
                       {t('lite.rewardsPortfolio.title')}
@@ -242,70 +322,84 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({
             height={{ xs: 'auto', md: '100%' }}
           >
             <Stack spacing={{ xs: 3, md: 4 }}>
-              {isRightPanelReady ? (
+              {/* Buy & Lock section - only on full deployments (not XDC) */}
+              {!isLiteDeployment && (
                 <>
+                  {isRightPanelReady ? (
+                    <>
+                      <Typography
+                        textAlign='center'
+                        maxWidth={330}
+                        variant='h3'
+                        color='gold.dark'
+                        mt={0.5}
+                      >
+                        {t('lite.buyAndLock.title')}
+                      </Typography>
+                      <Stack>
+                        <LockBasicStats />
+                        <LockActions lockPeriods={lockPeriods} />
+                      </Stack>
+                    </>
+                  ) : (
+                    <Stack spacing={2}>
+                      <LiteModeSkeleton
+                        variant='rounded'
+                        height={30}
+                        width='70%'
+                        sx={{ mx: 'auto', mt: 0.5 }}
+                      />
+                      <LiteModeSkeleton
+                        variant='rounded'
+                        height={140}
+                        width='100%'
+                      />
+                      <LiteModeSkeleton
+                        variant='rounded'
+                        height={90}
+                        width='100%'
+                      />
+                      <LiteModeSkeleton
+                        variant='rounded'
+                        height={26}
+                        width='45%'
+                      />
+                      <Grid2 container spacing={{ xs: 2, md: 2 }}>
+                        <Grid2 size={{ xs: 12, sm: 6 }}>
+                          <LiteModeSkeleton variant='rounded' height={44} />
+                        </Grid2>
+                        <Grid2 size={{ xs: 12, sm: 6 }}>
+                          <LiteModeSkeleton variant='rounded' height={44} />
+                        </Grid2>
+                      </Grid2>
+                    </Stack>
+                  )}
+                </>
+              )}
+              {/* Loyalty info - only on full deployments (not XDC) */}
+              {isPhase4RightColumnEnabled && !isLiteDeployment && (
+                <LiteLoyaltyInfo />
+              )}
+              {/* Lending Strategies - always visible */}
+              {(isPhase4RightColumnEnabled || isLiteDeployment) && (
+                <Stack spacing={2}>
                   <Typography
-                    textAlign='center'
-                    maxWidth={330}
                     variant='h3'
                     color='gold.dark'
-                    mt={0.5}
+                    textTransform='capitalize'
+                    textAlign='center'
                   >
-                    {t('lite.buyAndLock.title')}
+                    Lending Strategies
                   </Typography>
-                  <Stack>
-                    <LockBasicStats />
-                    <LockActions lockPeriods={lockPeriods} />
-                  </Stack>
-                </>
-              ) : (
-                <Stack spacing={2}>
-                  <LiteModeSkeleton
-                    variant='rounded'
-                    height={30}
-                    width='70%'
-                    sx={{ mx: 'auto', mt: 0.5 }}
+                  <PoolAccordion
+                    pools={effectiveActivePools}
+                    currentEpoch={effectiveEpoch}
+                    enabled={
+                      (isPhase4RightColumnEnabled || isLiteDeployment) &&
+                      !isClientDataLoading
+                    }
                   />
-                  <LiteModeSkeleton
-                    variant='rounded'
-                    height={140}
-                    width='100%'
-                  />
-                  <LiteModeSkeleton
-                    variant='rounded'
-                    height={90}
-                    width='100%'
-                  />
-                  <LiteModeSkeleton variant='rounded' height={26} width='45%' />
-                  <Grid2 container spacing={{ xs: 2, md: 2 }}>
-                    <Grid2 size={{ xs: 12, sm: 6 }}>
-                      <LiteModeSkeleton variant='rounded' height={44} />
-                    </Grid2>
-                    <Grid2 size={{ xs: 12, sm: 6 }}>
-                      <LiteModeSkeleton variant='rounded' height={44} />
-                    </Grid2>
-                  </Grid2>
                 </Stack>
-              )}
-              {isPhase4RightColumnEnabled && (
-                <>
-                  <LiteLoyaltyInfo />
-                  <Stack spacing={2}>
-                    <Typography
-                      variant='h3'
-                      color='gold.dark'
-                      textTransform='capitalize'
-                      textAlign='center'
-                    >
-                      Lending Strategies
-                    </Typography>
-                    <PoolAccordion
-                      pools={activePools}
-                      currentEpoch={currentEpoch}
-                      enabled={isPhase4RightColumnEnabled}
-                    />
-                  </Stack>
-                </>
               )}
             </Stack>
           </WaveBox>

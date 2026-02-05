@@ -2,8 +2,8 @@ import { PortfolioRewards } from '@kasufinance/kasu-sdk/src/services/Portfolio/t
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import useSWR from 'swr'
-import { useChainId } from 'wagmi'
 
+import { useChain } from '@/hooks/context/useChain'
 import useSdk from '@/hooks/context/useSdk'
 import getTranslation from '@/hooks/useTranslation'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
@@ -41,7 +41,7 @@ export type PortfolioRewardsType = {
 const usePortfolioRewards = () => {
   const sdk = useSdk()
 
-  const chainId = useChainId()
+  const { currentChainId: chainId } = useChain()
 
   const { address } = usePrivyAuthenticated()
 

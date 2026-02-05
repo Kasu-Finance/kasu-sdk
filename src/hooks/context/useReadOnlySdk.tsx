@@ -1,6 +1,7 @@
 import { KasuSdk } from '@kasufinance/kasu-sdk'
 import { useMemo } from 'react'
-import { useChainId } from 'wagmi'
+
+import { useChain } from '@/hooks/context/useChain'
 
 import sdkConfig from '@/config/sdk'
 import { SupportedChainIds } from '@/connection/chains'
@@ -14,7 +15,7 @@ type UseReadOnlySdkOptions = {
 const sdkCache = new Map<string, KasuSdk>()
 
 const useReadOnlySdk = (options?: UseReadOnlySdkOptions) => {
-  const chainId = useChainId()
+  const { currentChainId: chainId } = useChain()
   const rpcUrl = RPC_URLS[chainId as SupportedChainIds]?.[0]
   const maxConcurrent = options?.maxConcurrent ?? 2
 

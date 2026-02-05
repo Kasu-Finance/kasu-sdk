@@ -1,12 +1,14 @@
 import useSWRImmutable from 'swr/immutable'
 
+import { useChain } from '@/hooks/context/useChain'
 import useSdk from '@/hooks/context/useSdk'
 
 const useNextClearingPeriod = () => {
   const sdk = useSdk()
+  const { currentChainId } = useChain()
 
   const { data, error } = useSWRImmutable(
-    sdk ? ['nextClearingPeriod'] : null,
+    sdk && currentChainId ? ['nextClearingPeriod', currentChainId] : null,
     async () => await sdk!.Locking.getNextClearingPeriodDate()
   )
 

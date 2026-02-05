@@ -54,6 +54,7 @@ export const getKasuSDK = async (chainId?: number) => {
         directusUrl: 'https://kasu-finance.directus.app/',
         UNUSED_LENDING_POOL_IDS: unusedPools.length ? unusedPools : [''],
         isLiteDeployment: chainConfig.isLiteDeployment,
+        poolMetadataMapping: chainConfig.poolMetadataMapping,
       }),
       provider
     )

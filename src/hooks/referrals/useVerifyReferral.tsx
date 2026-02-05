@@ -1,5 +1,4 @@
-import { useChainId } from 'wagmi'
-
+import { useChain } from '@/hooks/context/useChain'
 import useToastState from '@/hooks/context/useToastState'
 import useHandleError from '@/hooks/web3/useHandleError'
 import usePrivySignMessage from '@/hooks/web3/usePrivySignMessage'
@@ -7,7 +6,7 @@ import usePrivySignMessage from '@/hooks/web3/usePrivySignMessage'
 import { VerifyReferralRes } from '@/app/api/referral/route'
 
 const useVerifyReferral = () => {
-  const chainId = useChainId()
+  const { currentChainId: chainId } = useChain()
 
   const handleError = useHandleError()
 

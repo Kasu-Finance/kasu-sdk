@@ -1,10 +1,11 @@
 import useSWR from 'swr'
-import { useChainId } from 'wagmi'
+
+import { useChain } from '@/hooks/context/useChain'
 
 import { UserAirDropTicket } from '@/app/api/airdrop-tickets/route'
 
 const useQualifiedAirdrops = () => {
-  const chainId = useChainId()
+  const { currentChainId: chainId } = useChain()
 
   const { data, error, isLoading } = useSWR(
     ['qualifiedAirdrops', chainId],

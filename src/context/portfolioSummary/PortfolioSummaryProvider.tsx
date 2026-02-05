@@ -1,21 +1,20 @@
 'use client'
 
 import { KasuSdk } from '@kasufinance/kasu-sdk'
+import { SdkConfig } from '@kasufinance/kasu-sdk/src/sdk-config'
 import { PoolOverviewDirectus } from '@kasufinance/kasu-sdk/src/services/DataService/directus-types'
 import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
 import { PortfolioLendingPool } from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
 import { useMemo } from 'react'
 import useSWR from 'swr'
 import useSWRImmutable from 'swr/immutable'
-import { useChainId } from 'wagmi'
 
+import { useChain } from '@/hooks/context/useChain'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 
 import portfolioSummaryContext from '@/context/portfolioSummary/portfolioSummary.context'
 
 import sdkConfig from '@/config/sdk'
-import { SupportedChainIds } from '@/connection/chains'
-import { RPC_URLS } from '@/connection/rpc'
 import { FIVE_MINUTES } from '@/constants/general'
 import QueuedJsonRpcProvider from '@/utils/rpc/QueuedJsonRpcProvider'
 
@@ -49,12 +48,12 @@ const PortfolioSummaryProvider: React.FC<PortfolioSummaryProviderProps> = ({
   poolOverviews,
   portfolioLendingPools,
 }) => {
-  const chainId = useChainId()
+  const { currentChainId: chainId, chainConfig } = useChain()
 
   const { address } = usePrivyAuthenticated()
   const addressLower = address?.toLowerCase()
 
-  const rpcUrl = RPC_URLS[chainId as SupportedChainIds]?.[0]
+  const rpcUrl = chainConfig.rpcUrls[0]
   const { data: unusedPools } = useSWRImmutable<string[]>(
     'unusedPools',
     unusedPoolsFetcher
@@ -64,13 +63,17 @@ const PortfolioSummaryProvider: React.FC<PortfolioSummaryProviderProps> = ({
     if (!rpcUrl || !unusedPools) return undefined
     const provider = new QueuedJsonRpcProvider(rpcUrl, 5)
     return new KasuSdk(
-      {
-        ...sdkConfig,
+      new SdkConfig({
+        subgraphUrl: chainConfig.subgraphUrl,
+        contracts: chainConfig.contracts,
+        directusUrl: sdkConfig.directusUrl,
         UNUSED_LENDING_POOL_IDS: unusedPools.length ? unusedPools : [''],
-      },
+        isLiteDeployment: chainConfig.isLiteDeployment,
+        poolMetadataMapping: chainConfig.poolMetadataMapping,
+      }),
       provider
     )
-  }, [rpcUrl, unusedPools])
+  }, [rpcUrl, unusedPools, chainConfig])
 
   const poolOverviewsKey = useMemo(() => {
     return poolOverviews
