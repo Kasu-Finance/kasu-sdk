@@ -1,8 +1,11 @@
 import useSWR from 'swr'
 import { readContracts } from 'wagmi/actions'
 
+import { useChain } from '@/hooks/context/useChain'
+
 import { wagmiConfig } from '@/context/privy.provider'
 
+import { SupportedChainIds } from '@/connection/chains'
 import { IERC20__factory } from '@/contracts/output'
 
 type UseTokenDetailsOptions = {
@@ -13,6 +16,7 @@ const useTokenDetails = (
   tokenAddress: `0x${string}` | undefined,
   options?: UseTokenDetailsOptions
 ) => {
+  const { currentChainId } = useChain()
   const enabled = options?.enabled ?? true
   const error =
     enabled && !tokenAddress
@@ -20,8 +24,10 @@ const useTokenDetails = (
       : undefined
 
   const { data, error: rpcError } = useSWR(
-    enabled && tokenAddress ? ['symbol', tokenAddress] : null,
-    async ([_, tokenAddress]) => {
+    enabled && tokenAddress && currentChainId
+      ? ['symbol', currentChainId, tokenAddress]
+      : null,
+    async ([_, chainId, tokenAddress]) => {
       const [symbol, decimals] = await readContracts(wagmiConfig, {
         allowFailure: false,
         contracts: [
@@ -29,11 +35,13 @@ const useTokenDetails = (
             abi: IERC20__factory.abi,
             address: tokenAddress,
             functionName: 'symbol',
+            chainId: chainId as SupportedChainIds,
           },
           {
             abi: IERC20__factory.abi,
             address: tokenAddress,
             functionName: 'decimals',
+            chainId: chainId as SupportedChainIds,
           },
         ],
       })

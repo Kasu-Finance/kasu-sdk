@@ -3,6 +3,7 @@ import { ethers } from 'ethers'
 import { useState } from 'react'
 import useSWR from 'swr'
 
+import { useChain } from '@/hooks/context/useChain'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 import useTokenDetails from '@/hooks/web3/useTokenDetails'
 
@@ -19,6 +20,7 @@ const useUserBalance = (
   options?: UseUserBalanceOptions
 ) => {
   const { address } = usePrivyAuthenticated()
+  const { currentChainId } = useChain()
 
   const { wallets } = useWallets()
 
@@ -40,9 +42,10 @@ const useUserBalance = (
     isLoading,
     mutate: refetchUserBalance,
   } = useSWR(
-    enabled && wallet && addressLower && tokenAddress
+    enabled && wallet && addressLower && tokenAddress && currentChainId
       ? [
           'userBalance',
+          currentChainId,
           tokenAddress.toLowerCase(),
           addressLower,
           walletAddressLower,

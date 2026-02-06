@@ -35,7 +35,7 @@ import { LiteModeSubgraphProvider } from '@/context/liteModeSubgraph'
 import PortfolioSummaryProvider from '@/context/portfolioSummary/PortfolioSummaryProvider'
 
 import { DEFAULT_CHAIN_ID } from '@/config/chains'
-import sdkConfig, { USDC } from '@/config/sdk'
+import sdkConfig from '@/config/sdk'
 
 import PoolAccordion from './PoolAccordion'
 
@@ -68,7 +68,7 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({
   activePools,
 }) => {
   const { t } = getTranslation()
-  const { isLiteDeployment, currentChainId } = useChain()
+  const { isLiteDeployment, currentChainId, chainConfig } = useChain()
   const { isChainTransitioning } = useSdkState()
 
   // Server-side props (pools, currentEpoch) are always for DEFAULT_CHAIN_ID.
@@ -131,7 +131,7 @@ const LiteModeApp: React.FC<LiteModeAppProps> = ({
       enabled: isAuthenticated && !isLiteDeployment && !isChainTransitioning,
     }
   )
-  const { hasLoaded: usdcLoaded } = useUserBalance(USDC, {
+  const { hasLoaded: usdcLoaded } = useUserBalance(chainConfig.usdc, {
     enabled: isAuthenticated && !isChainTransitioning,
   })
 

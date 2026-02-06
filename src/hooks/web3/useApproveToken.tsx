@@ -9,12 +9,14 @@ import {
   writeContract,
 } from 'wagmi/actions'
 
+import { useChain } from '@/hooks/context/useChain'
 import useToastState from '@/hooks/context/useToastState'
 import usePrivyAuthenticated from '@/hooks/web3/usePrivyAuthenticated'
 import useTokenDetails from '@/hooks/web3/useTokenDetails'
 
 import { wagmiConfig } from '@/context/privy.provider'
 
+import { SupportedChainIds } from '@/connection/chains'
 import { ACTION_MESSAGES, ActionStatus, ActionType } from '@/constants'
 import { IERC20__factory } from '@/contracts/output'
 import { capitalize, userRejectedTransaction } from '@/utils'
@@ -27,6 +29,7 @@ const useApproveToken = (
   amount: string
 ) => {
   const { address } = usePrivyAuthenticated()
+  const { currentChainId } = useChain()
 
   const { decimals } = useTokenDetails(tokenAddress)
 
@@ -45,22 +48,23 @@ const useApproveToken = (
   const { setToast, removeToast } = useToastState()
 
   const { data: allowance, mutate } = useSWR(
-    address && tokenAddress && spender
+    address && tokenAddress && spender && currentChainId
       ? [
           `allowance-${tokenAddress}-${spender}-${address}`,
+          currentChainId,
           tokenAddress,
           address,
           spender,
         ]
       : null,
-    async ([_, token, userAddress, spender]) => {
+    async ([_, chainId, token, userAddress, spenderAddress]) => {
       const allowance = await readContract(wagmiConfig, {
         address: token,
         abi: IERC20__factory.abi,
         functionName: 'allowance',
-        args: [userAddress, spender],
+        args: [userAddress, spenderAddress],
+        chainId: chainId as SupportedChainIds,
       })
-
       return BigNumber.from(allowance)
     },
     {
@@ -137,13 +141,44 @@ const useApproveToken = (
           address: tokenAddress,
           functionName: 'approve',
           args: [spender, parseUnits(approveAmount, decimals).toBigInt()],
+          chainId: currentChainId as SupportedChainIds,
         })
       }
 
       options?.onStatus?.('confirming')
 
-      await waitForTransactionReceipt(wagmiConfig, { hash })
+      // Use ethers.js provider as fallback for chains where wagmi polling may not work well
+      const waitForReceipt = async () => {
+        // Try wagmi first with short timeout
+        try {
+          return await waitForTransactionReceipt(wagmiConfig, {
+            hash,
+            chainId: currentChainId as SupportedChainIds,
+            confirmations: 1,
+            pollingInterval: 2_000,
+            timeout: 30_000,
+          })
+        } catch (wagmiError) {
+          // Fallback to ethers.js for chains like XDC where wagmi polling may timeout
+          if (activeWallet) {
+            const privyProvider = wrapQueuedProvider(
+              await activeWallet.getEthereumProvider(),
+              { sponsorTransactions: false }
+            )
+            if (privyProvider) {
+              const provider = new ethers.providers.Web3Provider(privyProvider)
+              const receipt = await provider.waitForTransaction(hash, 1, 60_000)
+              return {
+                status: receipt.status === 1 ? 'success' : 'reverted',
+                blockNumber: receipt.blockNumber,
+              }
+            }
+          }
+          throw wagmiError
+        }
+      }
 
+      await waitForReceipt()
       await mutate()
 
       if (shouldToast) {

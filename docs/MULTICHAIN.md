@@ -252,7 +252,19 @@ Deploy a Goldsky subgraph for the new chain with the Kasu schema.
 
 Add chain to Privy's supported chains in `src/context/privy.provider.tsx`.
 
-### 6. Test
+### 6. Configure Nexera/Compilot
+
+Add the new chain to the Nexera Signature Gating Workflow:
+
+1. Go to Compilot Dashboard → Signature Gating Workflows
+2. Add new chain with:
+   - Chain ID (e.g., 50 for XDC)
+   - KasuAllowList contract address for that chain
+3. Or create a separate workflow per chain
+
+**Note:** Without this, deposit transactions will fail with `invalid input value for enum chain_id`.
+
+### 7. Test
 
 - [ ] Chain switching works from Base to new chain
 - [ ] Pool overview loads correctly
@@ -292,3 +304,23 @@ Add chain to Privy's supported chains in `src/context/privy.provider.tsx`.
 
 **Cause:** Pool addresses don't match Directus
 **Solution:** Add `poolMetadataMapping` in chain config to map chain pools to Directus pools
+
+### Deposit fails with "Error generating signature"
+
+**Cause:** Nexera/Compilot doesn't support the chain ID
+**Solution:** Add chain to Compilot Signature Gating Workflow with correct KasuAllowList address
+
+### Token approval hangs / waitForTransactionReceipt times out
+
+**Cause:** Some RPCs (like XDC) don't support wagmi's polling mechanism well
+**Solution:** The `useApproveToken` hook has a fallback to ethers.js `waitForTransaction`. If wagmi times out after 30s, it falls back to ethers.
+
+### RPC returns stale allowance data
+
+**Cause:** Some RPC endpoints cache or return stale state
+**Solution:** Try different RPC endpoint, or add manual delay/retry after transactions
+
+### Token details (symbol/decimals) not loading
+
+**Cause:** `readContracts` missing chainId parameter
+**Solution:** All wagmi `readContract`/`readContracts` calls must include `chainId` in each contract object

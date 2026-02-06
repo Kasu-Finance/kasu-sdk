@@ -1,6 +1,7 @@
 import { Box, Button } from '@mui/material'
 import { useCallback, useMemo, useRef, useState } from 'react'
 
+import { useChain } from '@/hooks/context/useChain'
 import useDepositModalState from '@/hooks/context/useDepositModalState'
 import useModalState from '@/hooks/context/useModalState'
 import useStepperState from '@/hooks/context/useStepperState'
@@ -14,7 +15,6 @@ import BlockingStepperModal from '@/components/molecules/BlockingStepperModal'
 
 import { ModalsKeys } from '@/context/modal/modal.types'
 
-import sdkConfig, { USDC } from '@/config/sdk'
 import dayjs from '@/dayjs'
 import { userRejectedTransaction } from '@/utils'
 
@@ -61,6 +61,8 @@ const getNextIncompleteStepIndex = (steps: LendingActionStep[]) =>
 const LendingModalReviewActions = () => {
   const { t } = getTranslation()
 
+  const { chainConfig } = useChain()
+
   const { generatedContract, generateContract, resetGeneratedContract } =
     useGenerateContract()
 
@@ -89,8 +91,8 @@ const LendingModalReviewActions = () => {
   } = useDepositModalState()
 
   const { isApproved, approve } = useApproveToken(
-    USDC as `0x${string}`,
-    sdkConfig.contracts.LendingPoolManager as `0x${string}`,
+    chainConfig.usdc as `0x${string}`,
+    chainConfig.contracts.LendingPoolManager as `0x${string}`,
     amount
   )
 

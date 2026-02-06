@@ -8,7 +8,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 
 import getTranslation from '@/hooks/useTranslation'
@@ -39,6 +39,13 @@ const PoolAccordion: React.FC<PoolAccordionProps> = ({
   const [expanded, setExpanded] = useState<string | false>(
     pools[0]?.id ?? false
   )
+
+  // Expand first pool when pools become available (needed for client-side fetched pools on non-default chains)
+  useEffect(() => {
+    if (pools.length > 0 && expanded === false) {
+      setExpanded(pools[0].id)
+    }
+  }, [pools, expanded])
 
   // Don't render anything if no pools
   if (!pools.length) return null
