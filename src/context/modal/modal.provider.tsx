@@ -10,14 +10,16 @@ import {
   UserRequest,
   UserTrancheBalance,
 } from '@kasufinance/kasu-sdk'
-import { ReactNode, useReducer } from 'react'
+import { ReactNode, useEffect, useReducer, useRef } from 'react'
+
+import { useChain } from '@/hooks/context/useChain'
 
 import { LoanStatus } from '@/components/organisms/lending/RepaymentsTab/LoanStatus/LoanStatusTableBody'
 
 import useModalActions from '@/context/modal/modal.actions'
 import ModalContext from '@/context/modal/modal.context'
 import { modalReducer } from '@/context/modal/modal.reducer'
-import { Modals } from '@/context/modal/modal.types'
+import { Modals, ModalsActionTypes } from '@/context/modal/modal.types'
 
 import { PendingDecision } from '@/utils'
 import { DetailedTransactionWrapper } from '@/utils/lending/getDetailedTransactions'
@@ -170,6 +172,21 @@ const initialState: Modals = {
 
 const ModalState: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [modal, dispatch] = useReducer(modalReducer, initialState)
+  const { currentChainId } = useChain()
+  const prevChainIdRef = useRef<number | null>(null)
+
+  // Reset all modals on chain switch to prevent stale cross-chain data
+  useEffect(() => {
+    if (prevChainIdRef.current === null) {
+      prevChainIdRef.current = currentChainId
+      return
+    }
+
+    if (prevChainIdRef.current !== currentChainId) {
+      prevChainIdRef.current = currentChainId
+      dispatch({ type: ModalsActionTypes.RESET_ALL, initialState })
+    }
+  }, [currentChainId])
 
   const modalActions = useModalActions(dispatch)
 

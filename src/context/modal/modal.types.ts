@@ -36,6 +36,7 @@ export type ModalBase = {
 export enum ModalsActionTypes {
   OPEN_MODAL = 'OPEN_MODAL',
   CLOSE_MODAL = 'CLOSE_MODAL',
+  RESET_ALL = 'RESET_ALL',
 }
 
 export enum ModalsKeys {
@@ -79,6 +80,7 @@ export type ModalAction =
       isFullscreen?: boolean
     }
   | { type: ModalsActionTypes.CLOSE_MODAL; name: keyof Modals }
+  | { type: ModalsActionTypes.RESET_ALL; initialState: Modals }
 
 export type ModalData<T = void> = T extends void ? ModalBase : T & ModalBase
 

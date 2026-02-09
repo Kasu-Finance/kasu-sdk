@@ -89,15 +89,20 @@ const SdkState: React.FC<PropsWithChildren> = ({ children }) => {
     ;(async () => {
       try {
         const shouldSponsor = isPrivyEmbeddedWallet(wallet)
-        const privyProvider = wrapQueuedProvider(
-          await wallet.getEthereumProvider(),
-          {
-            maxConcurrent: 1,
-            sponsorTransactions: shouldSponsor,
-            sendTransaction: shouldSponsor ? sendTransaction : undefined,
-            sendTransactionAddress: wallet.address,
-          }
-        )
+        const rawProvider = await wallet.getEthereumProvider()
+        if (!rawProvider) return
+
+        // Only wrap with Proxy for embedded wallets that need sponsorship + queuing.
+        // External wallets use their own RPC and don't need the Proxy layer,
+        // which can interfere with ethers' transaction response parsing.
+        const privyProvider = shouldSponsor
+          ? wrapQueuedProvider(rawProvider, {
+              maxConcurrent: 1,
+              sponsorTransactions: true,
+              sendTransaction,
+              sendTransactionAddress: wallet.address,
+            })
+          : rawProvider
         if (!privyProvider) return
 
         const provider = new ethers.providers.Web3Provider(privyProvider)

@@ -20,5 +20,7 @@ export const modalReducer = (state: Modals, action: ModalAction): Modals => {
         ...state,
         [action.name]: { isOpen: false },
       }
+    case ModalsActionTypes.RESET_ALL:
+      return action.initialState
   }
 }
