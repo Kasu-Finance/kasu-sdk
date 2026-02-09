@@ -1,27 +1,61 @@
-import { Provider } from '@ethersproject/providers';
-import { ethers, Signer } from 'ethers';
-import { GraphQLClient } from 'graphql-request';
+// ---------------------------------------------------------------------------
+// Core SDK class (low-level service access)
+// ---------------------------------------------------------------------------
+export { KasuSdk } from './kasu-sdk';
 
-import { SdkConfig } from './sdk-config';
-import { DataService } from './services/DataService/data-service';
-import { KSULocking } from './services/Locking/locking';
-import { Portfolio } from './services/Portfolio/portfolio';
-import { Swapper } from './services/Swapper/swapper';
-import { UserLending } from './services/UserLending/user-lending';
+// ---------------------------------------------------------------------------
+// Re-export config types
+// ---------------------------------------------------------------------------
+export type { ContractAddresses, SdkConfigOptions } from './sdk-config';
+export { SdkConfig } from './sdk-config';
 
-export class KasuSdk {
-    private readonly _graphClient: GraphQLClient;
-    public readonly Locking: KSULocking;
-    public readonly DataService: DataService;
-    public readonly UserLending: UserLending;
-    public readonly Portfolio: Portfolio;
-    public readonly Swapper: Swapper;
-    constructor(config: SdkConfig, signerOrProvider: Provider | Signer) {
-        this._graphClient = new GraphQLClient(config.subgraphUrl);
-        this.Locking = new KSULocking(config, signerOrProvider);
-        this.UserLending = new UserLending(config, signerOrProvider);
-        this.DataService = new DataService(config, signerOrProvider);
-        this.Portfolio = new Portfolio(config, signerOrProvider);
-        this.Swapper = new Swapper();
-    }
-}
+// ---------------------------------------------------------------------------
+// Re-export service types so consumers don't need deep imports
+// ---------------------------------------------------------------------------
+export type {
+    PoolOverview,
+    TrancheData,
+    LendingTotals,
+    PoolRepayment,
+    RiskManagement,
+    PoolDelegateProfileAndHistory,
+    PoolTranche,
+    PoolCreditMetrics,
+    BadAndDoubtfulDebts,
+    FinancialReportingDocuments,
+} from './services/DataService/types';
+
+export type {
+    UserRequest,
+    UserRequestEvent,
+    UserTrancheBalance,
+    UserPoolBalance,
+    UserApyBonus,
+    PortfolioUserTrancheBalance,
+} from './services/UserLending/types';
+
+export type {
+    PortfolioSummary,
+    PortfolioLendingPool,
+    PortfolioTranche,
+    PortfolioRewards,
+    PortfolioTrancheDepositDetails,
+} from './services/Portfolio/types';
+
+export type {
+    UserLock,
+    UserBonusData,
+    LockPeriod,
+    GQLGetLockingPeriods,
+    SystemVariables,
+} from './services/Locking/types';
+
+export type {
+    PoolOverviewDirectus,
+    PlatformOverviewDirectus,
+} from './services/DataService/directus-types';
+
+// ---------------------------------------------------------------------------
+// Re-export facade (high-level integrator API)
+// ---------------------------------------------------------------------------
+export * from './facade';

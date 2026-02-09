@@ -57,29 +57,37 @@ import {
 
 export class KSULocking {
     private readonly _contractAbi: IKSULockingAbi;
-    private readonly _kasuToken: IERC20MetadataAbi;
+    private readonly _kasuToken: IERC20MetadataAbi | null;
     private readonly _kasuBonusAddress: string;
     private readonly _graph: GraphQLClient;
     private readonly _userManagerAbi: IUserManagerAbi;
     private readonly _systemVariablesAbi: ISystemVariablesAbi;
     private readonly _ksuPriceAbi: IKsuPriceAbi;
     private readonly _userLoyaltyRewardsAbi: IUserLoyaltyRewardsAbi;
+    private readonly _isLiteDeployment: boolean;
     private readonly apyBonuses: number[] = [0, 0.001, 0.002];
-    /**
-     *
-     */
+
     constructor(
         private _kasuConfig: SdkConfig,
         signerOrProvider: Signer | Provider,
     ) {
+        this._isLiteDeployment = _kasuConfig.isLiteDeployment;
+
         this._contractAbi = IKSULockingAbi__factory.connect(
             _kasuConfig.contracts.IKSULocking,
             signerOrProvider,
         );
-        this._kasuToken = IERC20MetadataAbi__factory.connect(
-            _kasuConfig.contracts.KSUToken,
-            signerOrProvider,
-        );
+
+        // Only initialize KSU token contract if not a Lite deployment and address is provided
+        if (!this._isLiteDeployment && _kasuConfig.contracts.KSUToken) {
+            this._kasuToken = IERC20MetadataAbi__factory.connect(
+                _kasuConfig.contracts.KSUToken,
+                signerOrProvider,
+            );
+        } else {
+            this._kasuToken = null;
+        }
+
         this._userManagerAbi = IUserManagerAbi__factory.connect(
             _kasuConfig.contracts.UserManager,
             signerOrProvider,
@@ -100,10 +108,20 @@ export class KSULocking {
         );
     }
 
+    /**
+     * Check if this is a Lite deployment (no KSU token functionality)
+     */
+    get isLiteDeployment(): boolean {
+        return this._isLiteDeployment;
+    }
+
     async lockKSUTokens(
         amount: BigNumber,
         lockPeriod: BigNumber,
     ): Promise<ContractTransaction> {
+        if (this._isLiteDeployment) {
+            throw new Error('Locking is not available on Lite deployments');
+        }
         return this._contractAbi.lock(amount, lockPeriod);
     }
 
@@ -112,6 +130,10 @@ export class KSULocking {
         lockPeriod: number,
         permit: RSVDeadlineValue,
     ): Promise<ContractTransaction> {
+        if (this._isLiteDeployment) {
+            throw new Error('Locking is not available on Lite deployments');
+        }
+
         const amountBN = BigNumber.from(amount);
         const lockPeriodBN = BigNumber.from(lockPeriod);
 
@@ -134,13 +156,27 @@ export class KSULocking {
         amount: BigNumber,
         userLockId: BigNumber,
     ): Promise<ContractTransaction> {
+        if (this._isLiteDeployment) {
+            throw new Error('Locking is not available on Lite deployments');
+        }
         return this._contractAbi.unlock(amount, userLockId);
     }
 
     async claimFees(): Promise<ContractTransaction> {
+        if (this._isLiteDeployment) {
+            throw new Error('Fee claiming is not available on Lite deployments');
+        }
         return await this._contractAbi.claimFees();
     }
+
     async lockDetails(lockPeriod: BigNumber): Promise<LockPeriodInterface> {
+        if (this._isLiteDeployment) {
+            return {
+                rKsuMultiplier: 0,
+                ksuBonusMultiplier: 0,
+                isActive: false,
+            };
+        }
         const result = await this._contractAbi.lockDetails(lockPeriod);
         return {
             rKsuMultiplier: result[0].toNumber(),
@@ -150,6 +186,9 @@ export class KSULocking {
     }
 
     async userTotalDeposits(userAddress: string): Promise<BigNumber> {
+        if (this._isLiteDeployment) {
+            return BigNumber.from(0);
+        }
         return await this._contractAbi.userTotalDeposits(userAddress);
     }
 
@@ -158,7 +197,7 @@ export class KSULocking {
         KSULocked: number,
         lockPeriod: BigNumber,
     ): Promise<number> {
-        if (KSULocked === 0) {
+        if (this._isLiteDeployment || KSULocked === 0) {
             return 0;
         }
 
@@ -232,6 +271,10 @@ export class KSULocking {
     }
 
     async getUserLocks(userAddress: string): Promise<UserLock[]> {
+        if (this._isLiteDeployment) {
+            return [];
+        }
+
         const result: GQLUserLocks = await this._graph.request(userLocksQuery, {
             userAddress: userAddress.toLowerCase(),
         });
@@ -261,8 +304,14 @@ export class KSULocking {
     }
 
     async getUserBonusData(userAddress: string): Promise<UserBonusData> {
-        // TODO this userLocks query is kinda bad -> change to userLocksDepositInfo as u never need user locks by themselves
-        // whole function takes between 500 - 800ms
+        if (this._isLiteDeployment) {
+            return {
+                ksuBonusAndRewards: '0',
+                ksuBonusAndRewardsLifetime: '0',
+                protocolFeesEarned: '0',
+                totalLockedAmount: '0',
+            };
+        }
 
         const DECIMALS = 18;
 
@@ -322,6 +371,11 @@ export class KSULocking {
         loyaltyLevel: number;
         apyBonus: number;
     } {
+        // On Lite deployments, always return level 0 with no bonus
+        if (this._isLiteDeployment) {
+            return { loyaltyLevel: 0, apyBonus: 0 };
+        }
+
         if (rKSUtoUSDCRatio < 0.01) {
             return { loyaltyLevel: 0, apyBonus: this.apyBonuses[0] };
         } else if (rKSUtoUSDCRatio < 0.05) {
@@ -334,6 +388,10 @@ export class KSULocking {
         rKSUAmount: string,
         userAddress: string,
     ): Promise<number> {
+        if (this._isLiteDeployment) {
+            return 0;
+        }
+
         const [depositedAmount, pendingAmount]: [BigNumber, BigNumber] =
             await this._userManagerAbi.userTotalPendingAndActiveDepositedAmountForCurrentEpoch(
                 userAddress,
@@ -357,6 +415,9 @@ export class KSULocking {
     }
 
     async getClaimableRewards(userAddress: string): Promise<BigNumber> {
+        if (this._isLiteDeployment) {
+            return BigNumber.from(0);
+        }
         const result = await this._contractAbi.rewards(userAddress);
         return result;
     }
@@ -364,6 +425,7 @@ export class KSULocking {
     async getKasuTokenPrice(): Promise<{ price: BigNumber; decimals: number }> {
         const decimals = 18;
 
+        // Price can still be queried on Lite deployments (set to 0 or configured value)
         return Promise.resolve({
             price: await this._ksuPriceAbi.ksuTokenPrice(),
             decimals,
@@ -387,6 +449,10 @@ export class KSULocking {
         rewardDecimals: number,
         claimableRewards?: BigNumber,
     ): Promise<BigNumber> {
+        if (this._isLiteDeployment) {
+            return BigNumber.from(0);
+        }
+
         const result: GQLClaimedFeesForAddress = await this._graph.request(
             claimedFeesQuery,
             {
@@ -408,6 +474,10 @@ export class KSULocking {
         bonusMultiplier: number,
         bonusTokensLeft: BigNumber,
     ): BigNumber {
+        if (this._isLiteDeployment) {
+            return BigNumber.from(0);
+        }
+
         const bonusMultiplierBN = ethers.utils.parseUnits(
             bonusMultiplier.toFixed(2),
             2,
@@ -422,6 +492,10 @@ export class KSULocking {
     }
 
     async getUserStakedKsu(userAddress: string): Promise<string> {
+        if (this._isLiteDeployment) {
+            return '0';
+        }
+
         const result: GQLStakedAmountForAddress = await this._graph.request(
             userStakedKsuQuery,
             {
@@ -435,6 +509,10 @@ export class KSULocking {
     }
 
     async getUserEarnedrKsu(userAddress: string): Promise<string> {
+        if (this._isLiteDeployment) {
+            return '0';
+        }
+
         const result: GQLEarnedRKsuForAddress = await this._graph.request(
             userEarnedrKsuQuery,
             {
@@ -449,6 +527,10 @@ export class KSULocking {
     }
 
     async getUserTotalBonusAmount(userAddress: string): Promise<string> {
+        if (this._isLiteDeployment) {
+            return '0';
+        }
+
         const result: GQLTotalBonusAmountForAddress = await this._graph.request(
             userTotalBonusAmountQuery,
             {
@@ -465,6 +547,13 @@ export class KSULocking {
     async getLockingRewards(
         userAddress: string,
     ): Promise<{ claimableRewards: string; lifeTimeRewards: string }> {
+        if (this._isLiteDeployment) {
+            return {
+                claimableRewards: '0',
+                lifeTimeRewards: '0',
+            };
+        }
+
         const rewardDecimals = 6;
 
         const claimableRewards = await this.getClaimableRewards(userAddress);
@@ -486,18 +575,26 @@ export class KSULocking {
     }
 
     async getAvailableKsuBonus(): Promise<string> {
-        const amount = await this._kasuToken.balanceOf(this._kasuBonusAddress);
+        if (this._isLiteDeployment || !this._kasuToken) {
+            return '0';
+        }
 
+        const amount = await this._kasuToken.balanceOf(this._kasuBonusAddress);
         return formatEther(amount);
     }
 
     async getUserKsuBalance(userAddress: string): Promise<string> {
+        if (this._isLiteDeployment || !this._kasuToken) {
+            return '0';
+        }
+
         const balance = await this._kasuToken.balanceOf(
             userAddress.toLowerCase(),
         );
 
         return formatEther(balance);
     }
+
     async getNextEpochDate(): Promise<EpochTimeStamp> {
         return (
             await this._systemVariablesAbi.nextEpochStartTimestamp()
@@ -526,6 +623,10 @@ export class KSULocking {
     }
 
     async getActiveLockPeriods(): Promise<LockPeriod[]> {
+        if (this._isLiteDeployment) {
+            return [];
+        }
+
         const data: GQLGetLockingPeriods =
             await this._graph.request(lockingPeriodsQuery);
         return data.lockPeriods;

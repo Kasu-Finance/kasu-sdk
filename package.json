@@ -1,10 +1,10 @@
 {
     "name": "@kasufinance/kasu-sdk",
-    "version": "1.0.4",
+    "version": "2.1.0",
     "description": "",
     "main": "dist/bundle.cjs.js",
     "module": "dist/bundle.esm.js",
-    "types": "dist/types/index.d.ts",
+    "types": "dist/index.d.ts",
     "scripts": {
         "test": "jest --config=jest-config.ts",
         "build-tc": "typechain --target ethers-v5 --out-dir src/contracts './abis/*.json'",

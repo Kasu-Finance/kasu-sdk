@@ -19,7 +19,6 @@ export interface PoolOverview {
     totalValueLocked: {
         total: string;
         offchain: string;
-        plume: string;
     };
     loansUnderManagement: string;
     yieldEarned: string;

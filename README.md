@@ -33,9 +33,92 @@ on it (or install it alongside the SDK).
   `Provider` for read-only usage. The SDK does not create its own provider,
   so you are free to reuse whatever the dapp already uses.
 
-## Configuring the SDK
+## Integrator Quick Start
 
-The `SdkConfig` object wires the SDK to the right contracts and backends:
+The simplest way to use the SDK is via the `Kasu` facade, which bundles built-in
+chain configs and provides three domain-specific interfaces:
+
+```ts
+import { JsonRpcProvider } from '@ethersproject/providers';
+import { Kasu } from '@kasufinance/kasu-sdk';
+
+const provider = new JsonRpcProvider('https://mainnet.base.org');
+const kasu = Kasu.create({ chain: 'base', signerOrProvider: provider });
+
+// 1. Browse lending strategies
+const strategies = await kasu.strategies.getAll();
+for (const s of strategies) {
+  console.log(s.name, `${(s.apy * 100).toFixed(1)}% APY`, `TVL: $${s.tvl.total}`);
+}
+
+// 2. Get a single strategy and check deposit limits
+const strategy = await kasu.strategies.getById(poolId);
+const limits = kasu.strategies.calculateDepositLimits(strategy.tranches[0]);
+console.log(`Min: ${limits.min} USDC, Max: ${limits.max} USDC`);
+
+// 3. Deposit (requires a Signer and KYC signature from Nexera)
+const kycParams = kasu.deposits.buildKycParams('0xYourAddress...');
+// ... obtain kycSignature via your backend + Nexera signing service ...
+const tx = await kasu.deposits.deposit({
+  poolId: strategy.id,
+  trancheId: strategy.tranches[0].id,
+  amount: parseUnits('1000', 6), // 1000 USDC
+  kycSignature: { blockExpiration, signature },
+});
+
+// 4. Check user positions and yield
+const positions = await kasu.portfolio.getPositions('0xUserAddress...');
+console.log(positions.summary.current.totalLendingPoolInvestments);
+
+// 5. Withdraw
+const withdrawTx = await kasu.deposits.withdraw({
+  poolId: strategy.id,
+  trancheId: strategy.tranches[0].id,
+  amount: parseUnits('500', 6),
+});
+```
+
+### Supported chains
+
+| Chain | Usage | Deployment Type |
+|-------|-------|-----------------|
+| Base  | `Kasu.create({ chain: 'base', ... })` | Full (KSU + lending) |
+| XDC   | `Kasu.create({ chain: 'xdc', ... })` | Lite (lending only) |
+| Plume | `Kasu.create({ chain: 'plume', ... })` | Lite (lending only) |
+
+You can also provide a custom `ChainConfigEntry` instead of a chain name:
+
+```ts
+const kasu = Kasu.create({
+  chain: { chainId: 123, name: 'MyChain', isLiteDeployment: true, contracts: { ... }, ... },
+  signerOrProvider: provider,
+});
+```
+
+### Facade API overview
+
+| Facade | Methods | Purpose |
+|--------|---------|---------|
+| `kasu.strategies` | `getAll()`, `getById()`, `getPlatformStats()`, `calculateDepositLimits()` | Browse pools, APY, capacity |
+| `kasu.deposits` | `deposit()`, `withdraw()`, `withdrawMax()`, `buildKycParams()`, `isClearingPending()` | Submit transactions |
+| `kasu.portfolio` | `getPositions()`, `getTransactionHistory()` | User balances, yield, history |
+
+For advanced use cases (locking, swaps, NFTs), access the underlying services directly:
+
+```ts
+const locks = await kasu.services.Locking.getUserLocks('0x...');
+```
+
+---
+
+## Low-level SDK Configuration
+
+The sections below show how to configure the SDK manually using `SdkConfig` and
+`KasuSdk` directly. Most integrators should use the `Kasu` facade above instead.
+
+### Full Deployment (Base)
+
+Full deployments have all features including KSU token, locking, and loyalty rewards:
 
 ```ts
 import { JsonRpcProvider } from '@ethersproject/providers';
@@ -46,9 +129,9 @@ global.XMLHttpRequest = XMLHttpRequest; // required on Node runtimes
 
 const provider = new JsonRpcProvider(process.env.RPC_URL!, { skipFetchSetup: true });
 
-const config: SdkConfig = {
+const config = new SdkConfig({
   contracts: {
-    KSUToken: '0x…',
+    KSUToken: '0x…',         // Required for Full deployment
     IKSULocking: '0x…',
     IKSULockBonus: '0x…',
     UserManager: '0x…',
@@ -58,25 +141,84 @@ const config: SdkConfig = {
     UserLoyaltyRewards: '0x…',
     KsuPrice: '0x…',
     ClearingCoordinator: '0x…',
-    KasuNFTs: '0x…',
+    KasuNFTs: '0x…',         // Required for Full deployment
     ExternalTVL: '0x…',
   },
-  // If certain pools should be hidden from users, provide their ids. Empty string
-  // keeps the Graph queries happy when nothing is filtered out.
   UNUSED_LENDING_POOL_IDS: [''],
   directusUrl: 'https://kasu-finance.directus.app/',
-  subgraphUrl: 'https://subgraph.satsuma-prod.com/.../api',
-  plumeSubgraphUrl: 'https://api.goldsky.com/.../kasu-plume/prod/gn',
-};
+  subgraphUrl: 'https://api.goldsky.com/.../kasu-base/v1/gn',
+  isLiteDeployment: false,   // Full deployment (default)
+});
 
 export const kasuSdk = new KasuSdk(config, provider);
+```
+
+### Lite Deployment (XDC, Plume)
+
+Lite deployments don't have KSU token, locking, or loyalty features. They still support
+KYC/KYB gated deposits and all lending pool functionality:
+
+```ts
+const config = new SdkConfig({
+  contracts: {
+    // KSUToken: undefined,   // Not available on Lite
+    IKSULocking: '0x…',       // Lite version contract
+    IKSULockBonus: '0x…',     // Lite version contract
+    UserManager: '0x…',       // Lite version contract
+    LendingPoolManager: '0x…',
+    KasuAllowList: '0x…',
+    SystemVariables: '0x…',
+    UserLoyaltyRewards: '0x…', // Lite version contract
+    KsuPrice: '0x…',           // Lite version contract
+    ClearingCoordinator: '0x…',
+    // KasuNFTs: undefined,    // Not available on Lite
+    ExternalTVL: '0x…',
+  },
+  UNUSED_LENDING_POOL_IDS: [''],
+  directusUrl: 'https://kasu-finance.directus.app/',
+  subgraphUrl: 'https://api.goldsky.com/.../kasu-xdc/v1.0.0/gn',
+  isLiteDeployment: true,     // Lite deployment - disables KSU features
+});
+
+export const kasuSdk = new KasuSdk(config, provider);
+```
+
+### Multi-Chain Configuration
+
+For frontends supporting multiple chains, create a config per chain:
+
+```ts
+// config/chains.ts
+const chainConfigs = {
+  base: {
+    chainId: 8453,
+    subgraphUrl: 'https://api.goldsky.com/.../kasu-base/v1/gn',
+    isLiteDeployment: false,
+    contracts: { /* Base contract addresses */ },
+  },
+  xdc: {
+    chainId: 50,
+    subgraphUrl: 'https://api.goldsky.com/.../kasu-xdc/v1.0.0/gn',
+    isLiteDeployment: true,
+    contracts: { /* XDC contract addresses */ },
+  },
+};
+
+// Create SDK for current chain
+const chainConfig = chainConfigs[currentChain];
+const config = new SdkConfig({
+  ...chainConfig,
+  directusUrl: 'https://kasu-finance.directus.app/',
+  UNUSED_LENDING_POOL_IDS: [''],
+});
+const sdk = new KasuSdk(config, provider);
 ```
 
 See `kasu-fe-next/src/config/sdk` in the Kasu frontend repository for full
 mainnet and testnet examples, including how Kasu fetches unused pool ids before
 instantiating the SDK.
 
-## Quick start
+### Low-level Quick start
 
 ```ts
 import { JsonRpcProvider } from '@ethersproject/providers';
@@ -91,7 +233,7 @@ const userSummary = await sdk.Portfolio.getPortfolioSummary(userAddress);
 await sdk.Locking.lockKSUTokens(amountBn, lockPeriodBn); // signer required
 ```
 
-The SDK exposes services as properties on `KasuSdk`. Each service contains the
+`KasuSdk` exposes services as properties. Each service contains the
 methods for a single protocol facet:
 
 | Service       | Purpose                                                                                                      |
@@ -105,6 +247,23 @@ methods for a single protocol facet:
 Every method is fully typed, so your editor can discover the shape of responses
 (`PoolOverview`, `LockPeriod`, `PortfolioRewards`, etc.) without digging into
 the implementation.
+
+## Lite Deployment Behavior
+
+When `isLiteDeployment: true` is set in the config, the SDK gracefully handles
+missing KSU-related functionality:
+
+| Service Method | Full Deployment | Lite Deployment |
+|----------------|-----------------|-----------------|
+| `Locking.lockKSUTokens()` | Works normally | Throws error |
+| `Locking.getUserTotalLockedAmount()` | Returns locked amount | Returns `'0'` |
+| `Locking.getLoyaltyLevelAndApyBonusFromRatio()` | Calculates level | Returns level 0, 0% bonus |
+| `Locking.getKasuEpochTokenPrice()` | Returns current price | Returns `{ price: 0, decimals: 18 }` |
+| `Portfolio.getUserNfts()` | Returns NFT ids | Returns `[]` |
+| `Portfolio.getPortfolioRewards()` | Returns rewards | Returns zeros |
+
+**UI Implications**: Frontends should hide KSU-related UI elements (locking panel,
+loyalty badges, KSU rewards) when `config.isLiteDeployment` is true.
 
 ### Working with pool filters
 
@@ -135,6 +294,14 @@ npm test
 
 These are the same steps executed by the release workflow before publishing to
 npm.
+
+## Networks
+
+| Network | Chain ID | Deployment Type | Subgraph |
+|---------|----------|-----------------|----------|
+| Base    | 8453     | Full            | `kasu-base/v1` |
+| XDC     | 50       | Lite            | `kasu-xdc/v1.0.0` |
+| Plume   | 98866    | Lite            | `kasu-plume/prod` |
 
 ## Support
 For questions, issues, or contributions:

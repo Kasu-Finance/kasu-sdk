@@ -12,10 +12,10 @@ test('subgraphCall', async () => {
         'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd',
         provider,
     );
-    const config = new SdkConfig(
-        'https://api.studio.thegraph.com/query/63245/kasu-wip-sepolia/version/latest',
-        'https://api.goldsky.com/api/public/project_cm9t3064xeuyn01tgctdo3c17/subgraphs/kasu-plume/prod/gn',
-        {
+    const config = new SdkConfig({
+        subgraphUrl:
+            'https://api.studio.thegraph.com/query/63245/kasu-wip-sepolia/version/latest',
+        contracts: {
             IKSULocking: '0x529A81c11ab6176c5E88670d293BB771800066a2',
             IKSULockBonus: '0xBBfFd5F744156FFc526df12F5e09dC7b208Be740',
             KSUToken: '0xa0f698Feb9Bc2BeA6E85eb071D5E3F59dc5bC56b',
@@ -29,11 +29,9 @@ test('subgraphCall', async () => {
             KasuNFTs: '0x0000000000000000000000000000000000000000',
             ExternalTVL: '0x0000000000000000000000000000000000000000',
         },
-
-        'https://kasu-finance.directus.app',
-
-        [''],
-    );
+        directusUrl: 'https://kasu-finance.directus.app',
+        UNUSED_LENDING_POOL_IDS: [''],
+    });
     const sdk = new KasuSdk(config, wallet);
 
     console.log(

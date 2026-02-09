@@ -38,7 +38,6 @@ import {
     getAllTrancheConfigurationsQuery,
     getAllTranchesQuery,
     getLendingPoolWithdrawalAndDepositsQuery,
-    getPlumeTvl,
     getPoolNameQuery,
     getPoolOverviewQuery,
 } from './queries';
@@ -47,7 +46,6 @@ import {
     LendingPoolSubgraph,
     LendingPoolSubgraphReturn,
     LendingPoolWithdrawalAndDepositSubgraph,
-    PlumeSubgraphReturn,
     TrancheConfigurationSubgraphResult,
     TrancheSubgraphResult,
 } from './subgraph-types';
@@ -67,13 +65,11 @@ import {
 
 export class DataService {
     private readonly _graph: GraphQLClient;
-    private readonly _plumeGraph: GraphQLClient;
     private readonly _externalTvlAbi: KasuPoolExternalTVLAbi;
     private readonly _directus: DirectusClient<DirectusSchema> &
         AuthenticationClient<DirectusSchema> &
         RestClient<DirectusSchema>;
     private _directusPoolOverview: PoolOverviewDirectus[] | undefined;
-    private _plumeTvl = new Map<string, string>();
 
     constructor(
         private _kasuConfig: SdkConfig,
@@ -84,15 +80,37 @@ export class DataService {
             signerOrProvider,
         );
         this._graph = new GraphQLClient(_kasuConfig.subgraphUrl);
-        this._plumeGraph = new GraphQLClient(_kasuConfig.plumeSubgraphUrl);
 
-        this._directus = createDirectus<DirectusSchema>(_kasuConfig.directusUrl)
-            .with(authentication())
-            .with(rest());
+        if (_kasuConfig.directusUrl) {
+            this._directus = createDirectus<DirectusSchema>(
+                _kasuConfig.directusUrl,
+            )
+                .with(authentication())
+                .with(rest());
+        } else {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+            this._directus = null as any;
+        }
     }
 
     private getUrlFromFile(fileName: string): string {
         return `${this._kasuConfig.directusUrl}assets/${fileName}`;
+    }
+
+    /**
+     * Maps a pool ID to its metadata source pool ID.
+     * Used for chains (XDC, Plume) that share Directus metadata with Base pools.
+     */
+    private getMetadataPoolId(poolId: string): string {
+        const normalizedId = poolId.toLowerCase();
+        return this._kasuConfig.poolMetadataMapping[normalizedId] ?? normalizedId;
+    }
+
+    /**
+     * Maps an array of pool IDs to their metadata source pool IDs.
+     */
+    private getMetadataPoolIds(poolIds: string[]): string[] {
+        return poolIds.map((id) => this.getMetadataPoolId(id));
     }
 
     calculatePoolCapacity(
@@ -206,25 +224,28 @@ export class DataService {
                 epochId,
             });
 
-        if (!this._plumeTvl.size) {
-            const plumeResults: PlumeSubgraphReturn =
-                await this._plumeGraph.request(getPlumeTvl);
-
-            for (const pool of plumeResults.lendingPools) {
-                this._plumeTvl.set(pool.id, pool.balance);
-            }
-        }
-
         if (!this._directusPoolOverview) {
-            this._directusPoolOverview = await this._directus.request(
-                readItems('PoolOverview', {
-                    filter: {
-                        enabled: {
-                            _eq: true,
-                        },
-                    },
-                }),
-            );
+            if (this._kasuConfig.directusUrl) {
+                try {
+                    this._directusPoolOverview = await this._directus.request(
+                        readItems('PoolOverview', {
+                            filter: {
+                                enabled: {
+                                    _eq: true,
+                                },
+                            },
+                        }),
+                    );
+                } catch (error) {
+                    console.warn(
+                        'Directus fetch failed, falling back to on-chain data only:',
+                        error,
+                    );
+                    this._directusPoolOverview = [];
+                }
+            } else {
+                this._directusPoolOverview = [];
+            }
         }
 
         const offchainTvlMap = await this.getOffChainTvl(
@@ -233,9 +254,14 @@ export class DataService {
 
         const retn: PoolOverview[] = [];
         for (const lendingPoolSubgraph of poolOverviewResults.lendingPools) {
+            // Use metadata mapping if available (for XDC/Plume pools that share metadata with Base)
+            const metadataPoolId =
+                this._kasuConfig.poolMetadataMapping[lendingPoolSubgraph.id] ??
+                lendingPoolSubgraph.id;
+
             const lendingPoolDirectus: PoolOverviewDirectus | undefined =
                 this._directusPoolOverview.find(
-                    (r) => r.id.toLowerCase() == lendingPoolSubgraph.id,
+                    (r) => r.id.toLowerCase() === metadataPoolId,
                 );
 
             const lendingPoolConfig = lendingPoolSubgraph.configuration;
@@ -244,8 +270,12 @@ export class DataService {
                 console.warn(
                     "Couldn't find directus pool for id: ",
                     lendingPoolSubgraph.id,
+                    metadataPoolId !== lendingPoolSubgraph.id
+                        ? `(mapped from ${metadataPoolId})`
+                        : '',
                 );
-                continue;
+                // When Directus is unavailable or pool has no CMS entry,
+                // use a fallback so the pool is still returned with on-chain data.
             }
             const poolCapacities = this.calculatePoolCapacity(
                 [],
@@ -380,57 +410,56 @@ export class DataService {
                 averageApy += parseFloat(trancheData.averageApy) * weight;
             }
 
-            const plumeTvl =
-                lendingPoolDirectus.plumeStrategy &&
-                this._plumeTvl.has(lendingPoolDirectus.plumeStrategy)
-                    ? this._plumeTvl.get(lendingPoolDirectus.plumeStrategy) ??
-                      '0'
-                    : '0';
-
             const offChainTvl =
                 offchainTvlMap.get(lendingPoolSubgraph.id) ?? '0';
 
             const poolOverview: PoolOverview = {
                 id: lendingPoolSubgraph.id,
-                security: lendingPoolDirectus.security,
-                enabled: lendingPoolDirectus.enabled,
-                isOversubscribed: lendingPoolDirectus.oversubscribed,
+                security: lendingPoolDirectus?.security ?? [],
+                enabled: lendingPoolDirectus?.enabled ?? true,
+                isOversubscribed:
+                    lendingPoolDirectus?.oversubscribed ?? false,
                 apy: averageApy,
-                description: lendingPoolDirectus.description,
-                liteDescription: lendingPoolDirectus.liteDescription,
-                thumbnailImageUrl: this.getUrlFromFile(
-                    lendingPoolDirectus.thumbnailImage,
-                ),
-                bannerImageUrl: this.getUrlFromFile(
-                    lendingPoolDirectus.bannerImage,
-                ),
-                strategyDeckUrl: this.getUrlFromFile(
-                    lendingPoolDirectus.strategyDeck,
-                ),
-                assetClass: lendingPoolDirectus.assetClass,
-                industryExposure: lendingPoolDirectus.industryExposure,
-                poolApyStructure: lendingPoolDirectus.poolApyStructure,
-                apyExpiryDate: lendingPoolDirectus.apyExpiryDate,
-                poolInvestmentTerm: lendingPoolDirectus.poolInvestmentTerm,
-                loanStructure: lendingPoolDirectus.loanStructure,
+                description: lendingPoolDirectus?.description ?? '',
+                liteDescription: lendingPoolDirectus?.liteDescription ?? '',
+                thumbnailImageUrl: lendingPoolDirectus?.thumbnailImage
+                    ? this.getUrlFromFile(lendingPoolDirectus.thumbnailImage)
+                    : '',
+                bannerImageUrl: lendingPoolDirectus?.bannerImage
+                    ? this.getUrlFromFile(lendingPoolDirectus.bannerImage)
+                    : '',
+                strategyDeckUrl: lendingPoolDirectus?.strategyDeck
+                    ? this.getUrlFromFile(lendingPoolDirectus.strategyDeck)
+                    : '',
+                assetClass: lendingPoolDirectus?.assetClass ?? '',
+                industryExposure:
+                    lendingPoolDirectus?.industryExposure ?? '',
+                poolApyStructure:
+                    lendingPoolDirectus?.poolApyStructure ?? 'Variable',
+                apyExpiryDate:
+                    lendingPoolDirectus?.apyExpiryDate ?? null,
+                poolInvestmentTerm:
+                    lendingPoolDirectus?.poolInvestmentTerm ?? '',
+                loanStructure: lendingPoolDirectus?.loanStructure ?? '',
                 poolName:
-                    lendingPoolDirectus.poolName ?? lendingPoolSubgraph.name,
-                subheading: lendingPoolDirectus.subheading,
+                    lendingPoolDirectus?.poolName ??
+                    lendingPoolSubgraph.name,
+                subheading: lendingPoolDirectus?.subheading,
                 totalValueLocked: {
                     total: (
                         parseFloat(lendingPoolSubgraph.balance) +
-                        parseFloat(plumeTvl) +
                         parseFloat(offChainTvl)
                     ).toString(),
                     offchain: offChainTvl,
-                    plume: plumeTvl,
                 },
-                loansUnderManagement: lendingPoolDirectus.loansUnderManagement,
+                loansUnderManagement:
+                    lendingPoolDirectus?.loansUnderManagement ?? '0',
                 yieldEarned: lendingPoolSubgraph.totalUserInterestAmount,
                 poolCapacity: poolCapacitySum.toString(),
                 poolCapacityPercentage: poolCapacityPercentageSum.toString(),
-                activeLoans: lendingPoolDirectus.activeLoans,
-                loanFundsOriginated: lendingPoolDirectus.loanFundsOriginated,
+                activeLoans: lendingPoolDirectus?.activeLoans ?? '0',
+                loanFundsOriginated:
+                    lendingPoolDirectus?.loanFundsOriginated ?? '0',
                 tranches: tranches,
                 isActive: !lendingPoolSubgraph.isStopped,
                 requestEpochsInAdvance:
@@ -438,7 +467,8 @@ export class DataService {
                         .lendingPoolWithdrawalConfig.requestEpochsInAdvance,
             };
 
-            // show only enabled pools from cms
+            // When Directus is available, show only enabled pools.
+            // When Directus is unavailable, include all pools.
             if (poolOverview.enabled) {
                 retn.push(poolOverview);
             }
@@ -797,9 +827,14 @@ export class DataService {
             );
         const retn: PoolRepayment[] = [];
         for (const data of poolRepaymentDirectus) {
+            // Find subgraph pool that maps to this Directus pool
+            // On non-Base chains, subgraph pool IDs are different from Directus poolIdFK
+            // Use getMetadataPoolId to map subgraph pool ID -> Directus/Base pool ID
             const lendingPoolSubgraph =
                 lendingPoolsWithdrawalsAndDepositsSubgraph.lendingPools.find(
-                    (pool) => pool.id == data.poolIdFK,
+                    (pool) =>
+                        this.getMetadataPoolId(pool.id) ===
+                        data.poolIdFK.toLowerCase(),
                 );
 
             if (lendingPoolSubgraph === undefined) {
@@ -949,14 +984,19 @@ export class DataService {
             retn.totalYieldEarned += parseFloat(poolOverview.yieldEarned);
         }
         for (const poolOverview of poolOverviews) {
+            // Map to metadata pool ID for Directus lookup (XDC pools → Base pools)
+            const metadataPoolId = this.getMetadataPoolId(poolOverview.id);
             const riskManagement = riskManagements.find(
                 (rm) =>
-                    rm.poolIdFK.toLowerCase() === poolOverview.id.toLowerCase(),
+                    rm.poolIdFK.toLowerCase() === metadataPoolId.toLowerCase(),
             );
             if (!riskManagement) {
                 console.warn(
                     "Couldn't find risk management for id: ",
                     poolOverview.id,
+                    metadataPoolId !== poolOverview.id
+                        ? `(mapped to ${metadataPoolId})`
+                        : '',
                 );
                 continue;
             }

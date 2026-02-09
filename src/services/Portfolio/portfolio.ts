@@ -11,6 +11,7 @@ import {
     IUserLoyaltyRewardsAbi__factory,
 } from '../../contracts';
 import { SdkConfig } from '../../sdk-config';
+import { isLiteDeployment } from '../../utils/deployment-mode';
 import { DataService } from '../DataService/data-service';
 import {
     getAllTrancheConfigurationsQuery,
@@ -53,8 +54,9 @@ export class Portfolio {
     private _userLoyaltyRewardsAbi: ReturnType<
         typeof IUserLoyaltyRewardsAbi__factory.connect
     >;
-    private _kasuNftContract: IKasuNFTsAbi;
+    private _kasuNftContract: IKasuNFTsAbi | null;
     readonly _signerOrProvider: Signer | Provider;
+    private _isLiteDeployment: boolean;
 
     constructor(
         private _kasuConfig: SdkConfig,
@@ -75,10 +77,13 @@ export class Portfolio {
             _kasuConfig,
             signerOrProvider,
         );
-        this._kasuNftContract = IKasuNFTsAbi__factory.connect(
-            _kasuConfig.contracts.KasuNFTs,
-            signerOrProvider,
-        );
+        this._isLiteDeployment = isLiteDeployment(_kasuConfig);
+        this._kasuNftContract = _kasuConfig.contracts.KasuNFTs
+            ? IKasuNFTsAbi__factory.connect(
+                  _kasuConfig.contracts.KasuNFTs,
+                  signerOrProvider,
+              )
+            : null;
         this._graph = new GraphQLClient(_kasuConfig.subgraphUrl);
     }
 
@@ -293,6 +298,11 @@ export class Portfolio {
     }
 
     async getUserNfts(userAddress: string): Promise<number[]> {
+        // NFTs are not available on Lite deployments
+        if (this._isLiteDeployment || !this._kasuNftContract) {
+            return [];
+        }
+
         const usernfts = await this._kasuNftContract.tokensOfOwner(userAddress);
 
         return usernfts.map((nft) => nft.toNumber());

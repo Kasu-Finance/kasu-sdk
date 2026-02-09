@@ -16,13 +16,6 @@ export interface LendingPoolSubgraph {
     configuration: LendingPoolConfigurationSubgraph;
 }
 
-export interface PlumeSubgraphReturn {
-    lendingPools: {
-        id: string;
-        balance: string;
-    }[];
-}
-
 export interface LendingPoolSubgraphReturn {
     lendingPools: LendingPoolSubgraph[];
 }
