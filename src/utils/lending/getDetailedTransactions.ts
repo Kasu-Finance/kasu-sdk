@@ -1,4 +1,4 @@
-import { UserRequest } from '@kasufinance/kasu-sdk/src/services/UserLending/types'
+import { UserRequest } from '@kasufinance/kasu-sdk'
 
 import { LoanTicketDto } from '@/config/api.lendersAgreement'
 import getCurrentDecisionStatus from '@/utils/lending/getCurrentDecisionStatus'

@@ -1,6 +1,6 @@
 'use client'
 
-import { PortfolioLendingPool } from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
+import { PortfolioLendingPool } from '@kasufinance/kasu-sdk'
 import { Grid2, Stack, Typography } from '@mui/material'
 import React from 'react'
 

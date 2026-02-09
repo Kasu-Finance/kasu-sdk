@@ -1,4 +1,4 @@
-import { PoolCreditMetrics } from '@kasufinance/kasu-sdk/src/services/DataService/types'
+import { PoolCreditMetrics } from '@kasufinance/kasu-sdk'
 import { Box, TableCell, TableRow } from '@mui/material'
 import React from 'react'
 

@@ -1,8 +1,8 @@
 import {
   PoolOverview,
   TrancheData,
-} from '@kasufinance/kasu-sdk/src/services/DataService/types'
-import { UserTrancheBalance } from '@kasufinance/kasu-sdk/src/services/UserLending/types'
+  UserTrancheBalance,
+} from '@kasufinance/kasu-sdk'
 import { ethers } from 'ethers'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { gql, GraphQLClient } from 'graphql-request'

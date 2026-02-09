@@ -1,4 +1,4 @@
-import { SdkConfig } from '@kasufinance/kasu-sdk/src/sdk-config'
+import { SdkConfig } from '@kasufinance/kasu-sdk'
 
 import * as mainnetConfig from './mainnet.config'
 import * as testnetConfig from './testnet.config'

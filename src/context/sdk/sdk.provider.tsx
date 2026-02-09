@@ -1,8 +1,10 @@
 'use client'
 
-import { KasuSdk } from '@kasufinance/kasu-sdk'
-import { SdkConfig } from '@kasufinance/kasu-sdk/src/sdk-config'
-import type { PoolOverviewDirectus } from '@kasufinance/kasu-sdk/src/services/DataService/directus-types'
+import {
+  KasuSdk,
+  type PoolOverviewDirectus,
+  SdkConfig,
+} from '@kasufinance/kasu-sdk'
 import { useSendTransaction, useWallets } from '@privy-io/react-auth'
 import { ethers } from 'ethers'
 import React, { PropsWithChildren, useEffect, useRef, useState } from 'react'

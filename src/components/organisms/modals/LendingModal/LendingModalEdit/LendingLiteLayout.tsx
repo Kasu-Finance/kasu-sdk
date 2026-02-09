@@ -1,4 +1,4 @@
-import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
+import { PoolOverview } from '@kasufinance/kasu-sdk'
 import { Box, Skeleton, Stack, Typography } from '@mui/material'
 import { Dispatch, memo, SetStateAction, useMemo } from 'react'
 

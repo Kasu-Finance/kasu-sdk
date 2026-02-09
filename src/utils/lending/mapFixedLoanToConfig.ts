@@ -1,5 +1,4 @@
-import { TrancheData } from '@kasufinance/kasu-sdk/src/services/DataService/types'
-import { PortfolioTranche } from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
+import { PortfolioTranche, TrancheData } from '@kasufinance/kasu-sdk'
 
 type FixLoan = {
   investedAmount: number

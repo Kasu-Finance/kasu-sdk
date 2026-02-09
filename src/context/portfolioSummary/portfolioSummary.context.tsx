@@ -1,6 +1,6 @@
 'use client'
 
-import { PortfolioSummary } from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
+import { PortfolioSummary } from '@kasufinance/kasu-sdk'
 import { createContext } from 'react'
 
 export type PortfolioSummaryContextValue = {

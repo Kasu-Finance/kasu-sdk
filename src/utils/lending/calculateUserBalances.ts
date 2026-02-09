@@ -1,5 +1,4 @@
-import { TrancheData } from '@kasufinance/kasu-sdk/src/services/DataService/types'
-import { UserTrancheBalance } from '@kasufinance/kasu-sdk/src/services/UserLending/types'
+import { TrancheData, UserTrancheBalance } from '@kasufinance/kasu-sdk'
 import { BigNumber, ethers } from 'ethers'
 import { formatUnits } from 'ethers/lib/utils'
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { TrancheData } from '@kasufinance/kasu-sdk/src/services/DataService/types'
+import { TrancheData } from '@kasufinance/kasu-sdk'
 import { Typography } from '@mui/material'
 import React from 'react'
 

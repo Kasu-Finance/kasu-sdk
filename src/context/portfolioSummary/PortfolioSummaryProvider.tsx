@@ -1,10 +1,12 @@
 'use client'
 
-import { KasuSdk } from '@kasufinance/kasu-sdk'
-import { SdkConfig } from '@kasufinance/kasu-sdk/src/sdk-config'
-import { PoolOverviewDirectus } from '@kasufinance/kasu-sdk/src/services/DataService/directus-types'
-import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
-import { PortfolioLendingPool } from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
+import {
+  KasuSdk,
+  PoolOverview,
+  PoolOverviewDirectus,
+  PortfolioLendingPool,
+  SdkConfig,
+} from '@kasufinance/kasu-sdk'
 import { useMemo } from 'react'
 import useSWR from 'swr'
 import useSWRImmutable from 'swr/immutable'

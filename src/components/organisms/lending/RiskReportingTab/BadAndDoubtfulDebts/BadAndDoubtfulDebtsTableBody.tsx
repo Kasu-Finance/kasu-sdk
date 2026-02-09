@@ -1,4 +1,4 @@
-import { BadAndDoubtfulDebts } from '@kasufinance/kasu-sdk/src/services/DataService/types'
+import { BadAndDoubtfulDebts } from '@kasufinance/kasu-sdk'
 import { Box, TableCell, TableRow, Typography } from '@mui/material'
 import React from 'react'
 

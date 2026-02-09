@@ -1,4 +1,4 @@
-import { LendingTotals } from '@kasufinance/kasu-sdk/src/services/DataService/types'
+import { LendingTotals } from '@kasufinance/kasu-sdk'
 
 import { getKasuSDK } from '@/actions/getKasuSDK'
 import { getPoolOverview } from '@/app/_requests/pools'

@@ -1,4 +1,4 @@
-import { PortfolioLendingPool } from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
+import { PortfolioLendingPool } from '@kasufinance/kasu-sdk'
 import { TableCell, TableRow, Typography } from '@mui/material'
 
 import useUserLendingTrancheBalanceSubgraph from '@/hooks/lending/useUserLendingTrancheBalanceSubgraph'

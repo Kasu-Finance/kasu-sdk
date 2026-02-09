@@ -1,7 +1,4 @@
-import {
-  UserRequest,
-  UserRequestEvent,
-} from '@kasufinance/kasu-sdk/src/services/UserLending/types'
+import { UserRequest, UserRequestEvent } from '@kasufinance/kasu-sdk'
 
 export type PendingTransactions = {
   id: string

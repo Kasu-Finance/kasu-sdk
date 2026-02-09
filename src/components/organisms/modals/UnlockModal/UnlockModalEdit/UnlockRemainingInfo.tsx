@@ -1,4 +1,4 @@
-import { UserLock } from '@kasufinance/kasu-sdk/src/services/Locking/types'
+import { UserLock } from '@kasufinance/kasu-sdk'
 import { Box, Typography } from '@mui/material'
 import { formatEther } from 'ethers/lib/utils'
 import React from 'react'

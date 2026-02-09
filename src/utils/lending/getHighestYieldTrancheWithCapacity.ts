@@ -1,4 +1,4 @@
-import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
+import { PoolOverview } from '@kasufinance/kasu-sdk'
 
 export type HighestYieldTrancheWithCapacity = {
   pool: PoolOverview

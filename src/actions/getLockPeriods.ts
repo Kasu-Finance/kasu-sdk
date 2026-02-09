@@ -1,9 +1,6 @@
 'use server'
 
-import {
-  GQLGetLockingPeriods,
-  LockPeriod,
-} from '@kasufinance/kasu-sdk/src/services/Locking/types'
+import { GQLGetLockingPeriods, LockPeriod } from '@kasufinance/kasu-sdk'
 import { unstable_cache } from 'next/cache'
 
 import FALLBACK_LOCK_PERIODS from '@/config/lockPeriod'

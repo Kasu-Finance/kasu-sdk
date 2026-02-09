@@ -1,4 +1,4 @@
-import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
+import { PoolOverview } from '@kasufinance/kasu-sdk'
 import { ReactNode, useReducer } from 'react'
 
 import useWithdrawModalActions from '@/context/withdrawModal/withdrawModal.actions'

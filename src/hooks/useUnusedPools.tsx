@@ -1,4 +1,4 @@
-import { PoolOverviewDirectus } from '@kasufinance/kasu-sdk/src/services/DataService/directus-types'
+import { PoolOverviewDirectus } from '@kasufinance/kasu-sdk'
 import { preload } from 'swr'
 import useSWRImmutable from 'swr/immutable'
 

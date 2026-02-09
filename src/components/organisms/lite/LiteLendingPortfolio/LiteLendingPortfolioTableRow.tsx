@@ -1,4 +1,4 @@
-import { PortfolioLendingPool } from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
+import { PortfolioLendingPool } from '@kasufinance/kasu-sdk'
 import { Box, TableCell, TableRow, Typography } from '@mui/material'
 import React, { Fragment } from 'react'
 

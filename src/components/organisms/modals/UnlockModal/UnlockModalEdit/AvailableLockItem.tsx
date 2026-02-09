@@ -1,4 +1,4 @@
-import { UserLock } from '@kasufinance/kasu-sdk/src/services/Locking/types'
+import { UserLock } from '@kasufinance/kasu-sdk'
 import { Box, BoxProps, Typography } from '@mui/material'
 import React from 'react'
 

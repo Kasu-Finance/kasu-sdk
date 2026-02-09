@@ -1,4 +1,4 @@
-import { UserRequest } from '@kasufinance/kasu-sdk/src/services/UserLending/types'
+import { UserRequest } from '@kasufinance/kasu-sdk'
 
 type WithdrawalTransactionBase = {
   id: string

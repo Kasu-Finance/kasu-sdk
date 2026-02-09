@@ -1,6 +1,6 @@
 'use client'
 
-import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
+import { PoolOverview } from '@kasufinance/kasu-sdk'
 import { Box, Button } from '@mui/material'
 
 import { useChain } from '@/hooks/context/useChain'

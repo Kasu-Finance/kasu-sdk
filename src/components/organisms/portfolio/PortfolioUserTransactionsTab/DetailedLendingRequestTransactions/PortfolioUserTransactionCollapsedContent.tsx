@@ -1,4 +1,4 @@
-import { UserRequestEvent } from '@kasufinance/kasu-sdk/src/services/UserLending/types'
+import { UserRequestEvent } from '@kasufinance/kasu-sdk'
 import {
   Box,
   Button,

@@ -1,4 +1,4 @@
-import { PoolDelegateProfileAndHistory } from '@kasufinance/kasu-sdk/src/services/DataService/types'
+import { PoolDelegateProfileAndHistory } from '@kasufinance/kasu-sdk'
 import useSWR from 'swr'
 
 import { useChain } from '@/hooks/context/useChain'

@@ -1,21 +1,15 @@
 'use client'
 
 import {
-  PoolOverview,
-  TrancheData,
-} from '@kasufinance/kasu-sdk/src/services/DataService/types'
-import {
   LockPeriod,
-  UserLock,
-} from '@kasufinance/kasu-sdk/src/services/Locking/types'
-import {
+  PoolOverview,
   PortfolioLendingPool,
   PortfolioTranche,
-} from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
-import {
+  TrancheData,
+  UserLock,
   UserRequest,
   UserTrancheBalance,
-} from '@kasufinance/kasu-sdk/src/services/UserLending/types'
+} from '@kasufinance/kasu-sdk'
 import { ReactNode, useReducer } from 'react'
 
 import { LoanStatus } from '@/components/organisms/lending/RepaymentsTab/LoanStatus/LoanStatusTableBody'

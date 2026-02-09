@@ -1,6 +1,6 @@
 'use client'
 
-import { UserLock } from '@kasufinance/kasu-sdk/src/services/Locking/types'
+import { UserLock } from '@kasufinance/kasu-sdk'
 import { ReactNode, useReducer } from 'react'
 
 import useUnlockModalActions from '@/context/unlockModal/unlockModal.actions'

@@ -1,4 +1,4 @@
-import type { ContractAddresses } from '@kasufinance/kasu-sdk/src/sdk-config'
+import type { ContractAddresses } from '@kasufinance/kasu-sdk'
 import { Chain } from 'viem'
 import { base } from 'viem/chains'
 

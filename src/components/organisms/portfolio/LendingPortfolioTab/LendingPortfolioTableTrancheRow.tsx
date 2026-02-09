@@ -1,8 +1,8 @@
 import {
   PortfolioLendingPool,
   PortfolioTranche,
-} from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
-import { UserTrancheBalance } from '@kasufinance/kasu-sdk/src/services/UserLending/types'
+  UserTrancheBalance,
+} from '@kasufinance/kasu-sdk'
 import { Box, TableCell, TableRow } from '@mui/material'
 
 import getTranslation from '@/hooks/useTranslation'

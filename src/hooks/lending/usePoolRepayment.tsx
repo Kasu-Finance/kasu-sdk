@@ -1,4 +1,4 @@
-import { PoolRepayment } from '@kasufinance/kasu-sdk/src/services/DataService/types'
+import { PoolRepayment } from '@kasufinance/kasu-sdk'
 import useSWR from 'swr'
 
 import { useChain } from '@/hooks/context/useChain'

@@ -1,4 +1,4 @@
-import { TrancheData } from '@kasufinance/kasu-sdk/src/services/DataService/types'
+import { TrancheData } from '@kasufinance/kasu-sdk'
 
 const getAvailableFixedTermConfigs = (
   tranche: TrancheData | undefined,

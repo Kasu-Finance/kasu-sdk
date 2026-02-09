@@ -1,6 +1,6 @@
 'use client'
 
-import { LockPeriod } from '@kasufinance/kasu-sdk/src/services/Locking/types'
+import { LockPeriod } from '@kasufinance/kasu-sdk'
 import { Box, CircularProgress, Stack, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 

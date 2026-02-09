@@ -1,4 +1,4 @@
-import { SdkConfig } from '@kasufinance/kasu-sdk/src/sdk-config'
+import { SdkConfig } from '@kasufinance/kasu-sdk'
 
 import base from '@/config/sdk/addresses-base-mainnet.json'
 

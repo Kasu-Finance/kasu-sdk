@@ -1,5 +1,4 @@
-import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
-import { PortfolioLendingPool } from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
+import { PoolOverview, PortfolioLendingPool } from '@kasufinance/kasu-sdk'
 import { Box, Grid2, Typography } from '@mui/material'
 import React from 'react'
 

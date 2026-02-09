@@ -1,5 +1,4 @@
-import { PlatformOverviewDirectus } from '@kasufinance/kasu-sdk/src/services/DataService/directus-types'
-import { LendingTotals } from '@kasufinance/kasu-sdk/src/services/DataService/types'
+import { LendingTotals, PlatformOverviewDirectus } from '@kasufinance/kasu-sdk'
 import { Box } from '@mui/material'
 
 import getTranslation from '@/hooks/useTranslation'

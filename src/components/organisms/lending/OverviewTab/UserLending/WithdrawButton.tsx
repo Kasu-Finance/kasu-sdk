@@ -3,8 +3,8 @@
 import {
   PoolOverview,
   TrancheData,
-} from '@kasufinance/kasu-sdk/src/services/DataService/types'
-import { UserTrancheBalance } from '@kasufinance/kasu-sdk/src/services/UserLending/types'
+  UserTrancheBalance,
+} from '@kasufinance/kasu-sdk'
 import { Button, ButtonProps } from '@mui/material'
 
 import useModalState from '@/hooks/context/useModalState'

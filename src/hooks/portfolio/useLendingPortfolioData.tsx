@@ -1,5 +1,4 @@
-import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
-import { PortfolioLendingPool } from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
+import { PoolOverview, PortfolioLendingPool } from '@kasufinance/kasu-sdk'
 import { useMemo } from 'react'
 import useSWR from 'swr'
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
+import { PoolOverview } from '@kasufinance/kasu-sdk'
 import { Stack, Typography } from '@mui/material'
 import { useMemo } from 'react'
 

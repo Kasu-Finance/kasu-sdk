@@ -1,6 +1,6 @@
 'use client'
 
-import { LockPeriod } from '@kasufinance/kasu-sdk/src/services/Locking/types'
+import { LockPeriod } from '@kasufinance/kasu-sdk'
 import { Button, Grid2, Stack } from '@mui/material'
 import React from 'react'
 

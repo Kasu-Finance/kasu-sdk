@@ -1,4 +1,4 @@
-import { FinancialReportingDocuments } from '@kasufinance/kasu-sdk/src/services/DataService/types'
+import { FinancialReportingDocuments } from '@kasufinance/kasu-sdk'
 import {
   IconButton,
   Stack,

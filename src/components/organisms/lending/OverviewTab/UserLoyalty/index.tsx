@@ -1,4 +1,4 @@
-import { LockPeriod } from '@kasufinance/kasu-sdk/src/services/Locking/types'
+import { LockPeriod } from '@kasufinance/kasu-sdk'
 import { Stack } from '@mui/material'
 
 import getTranslation from '@/hooks/useTranslation'

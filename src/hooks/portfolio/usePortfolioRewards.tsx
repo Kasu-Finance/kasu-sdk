@@ -1,4 +1,4 @@
-import { PortfolioRewards } from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
+import { PortfolioRewards } from '@kasufinance/kasu-sdk'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import useSWR from 'swr'

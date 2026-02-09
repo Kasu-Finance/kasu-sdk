@@ -1,7 +1,6 @@
 'use client'
 
-import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
-import { LockPeriod } from '@kasufinance/kasu-sdk/src/services/Locking/types'
+import { LockPeriod, PoolOverview } from '@kasufinance/kasu-sdk'
 import { Grid2, Stack, Typography } from '@mui/material'
 import React, { useCallback, useEffect, useState } from 'react'
 

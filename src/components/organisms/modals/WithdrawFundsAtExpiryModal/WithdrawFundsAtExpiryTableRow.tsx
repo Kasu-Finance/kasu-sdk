@@ -1,4 +1,4 @@
-import { PortfolioTranche } from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
+import { PortfolioTranche } from '@kasufinance/kasu-sdk'
 import { Box, Radio, TableCell, TableRow } from '@mui/material'
 import { ChangeEvent, Dispatch, SetStateAction } from 'react'
 

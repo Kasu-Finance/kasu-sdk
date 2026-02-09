@@ -1,6 +1,6 @@
 'use client'
 
-import { RiskManagement } from '@kasufinance/kasu-sdk/src/services/DataService/types'
+import { RiskManagement } from '@kasufinance/kasu-sdk'
 import { Box, CircularProgress, Stack, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 

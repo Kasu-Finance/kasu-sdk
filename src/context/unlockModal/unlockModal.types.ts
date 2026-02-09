@@ -1,4 +1,4 @@
-import { UserLock } from '@kasufinance/kasu-sdk/src/services/Locking/types'
+import { UserLock } from '@kasufinance/kasu-sdk'
 
 export enum UnlockModalActionType {
   SET_AMOUNT = 'SET_AMOUNT',

@@ -1,8 +1,7 @@
 'use server'
 
 import { JsonRpcProvider } from '@ethersproject/providers'
-import { KasuSdk } from '@kasufinance/kasu-sdk'
-import { SdkConfig } from '@kasufinance/kasu-sdk/src/sdk-config'
+import { KasuSdk, SdkConfig } from '@kasufinance/kasu-sdk'
 // @ts-ignore: xhr2 type exported as any
 import { XMLHttpRequest } from 'xhr2'
 

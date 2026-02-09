@@ -1,6 +1,6 @@
 'use client'
 
-import { PoolRepayment } from '@kasufinance/kasu-sdk/src/services/DataService/types'
+import { PoolRepayment } from '@kasufinance/kasu-sdk'
 import { Box, CircularProgress, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 

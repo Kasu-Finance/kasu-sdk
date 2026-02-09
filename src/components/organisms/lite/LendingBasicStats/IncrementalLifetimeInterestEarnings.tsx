@@ -1,7 +1,6 @@
 'use client'
 
-import { PoolOverview } from '@kasufinance/kasu-sdk/src/services/DataService/types'
-import { PortfolioLendingPool } from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
+import { PoolOverview, PortfolioLendingPool } from '@kasufinance/kasu-sdk'
 import { Skeleton, SkeletonProps } from '@mui/material'
 import { useEffect, useMemo, useState } from 'react'
 

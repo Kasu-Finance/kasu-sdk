@@ -1,4 +1,4 @@
-import { PortfolioLendingPool } from '@kasufinance/kasu-sdk/src/services/Portfolio/types'
+import { PortfolioLendingPool } from '@kasufinance/kasu-sdk'
 import React from 'react'
 
 import LiteLendingPortfolioTableRow from '@/components/organisms/lite/LiteLendingPortfolio/LiteLendingPortfolioTableRow'

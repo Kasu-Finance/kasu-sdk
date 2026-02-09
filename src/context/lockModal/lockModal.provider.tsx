@@ -1,6 +1,6 @@
 'use client'
 
-import { LockPeriod } from '@kasufinance/kasu-sdk/src/services/Locking/types'
+import { LockPeriod } from '@kasufinance/kasu-sdk'
 import { ReactNode, useReducer } from 'react'
 
 import useLockModalActions from '@/context/lockModal/lockModal.actions'
