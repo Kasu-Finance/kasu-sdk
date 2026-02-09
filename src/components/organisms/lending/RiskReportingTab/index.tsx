@@ -13,7 +13,12 @@ type RiskReportingProps = {
 const RiskReportingTab: React.FC<RiskReportingProps> = async ({ poolId }) => {
   const riskReport = await getRiskReport(poolId)
 
-  return <RiskReportingTabChainWrapper serverRiskReport={riskReport} />
+  return (
+    <RiskReportingTabChainWrapper
+      poolId={poolId}
+      serverRiskReport={riskReport}
+    />
+  )
 }
 
 export default RiskReportingTab

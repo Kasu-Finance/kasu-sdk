@@ -13,7 +13,12 @@ type PoolDetailsProps = {
 const RepaymentsTab: React.FC<PoolDetailsProps> = async ({ poolId }) => {
   const repayment = await getRepayments(poolId)
 
-  return <RepaymentsTabChainWrapper serverRepayment={repayment ?? null} />
+  return (
+    <RepaymentsTabChainWrapper
+      poolId={poolId}
+      serverRepayment={repayment ?? null}
+    />
+  )
 }
 
 export default RepaymentsTab

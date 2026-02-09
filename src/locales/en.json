@@ -2213,6 +2213,7 @@
       "interestEarningsLifetime": "Interest Earnings​ Lifetime",
       "lastEpochClearingTooltip": "We are currently in the clearing period. Last epoch interest will appear once clearing is complete.",
       "clearingEndsAt": "Clearing ends at",
+      "pendingDepositsMessage": "Your deposit is pending and will appear here after the next clearing period.",
       "tableHeader": {
         "cell-1": "APY Structure",
         "cell-2": "Loan Balance",

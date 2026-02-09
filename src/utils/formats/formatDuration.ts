@@ -26,8 +26,20 @@ const formatDuration = (
     days: true,
   }
 ): string => {
+  // Handle missing, zero, or invalid timestamps
+  // Zero timestamp (1970-01-01) is almost certainly invalid data
+  if (!timestamp || timestamp === 0 || timestamp === '0') {
+    return 'N/A'
+  }
+
   const date = parseTimestamp(timestamp)
   const now = dayjs()
+
+  // Additional check: if timestamp results in a date before year 2000, it's likely invalid
+  // (Kasu didn't exist before 2020, so any earlier date is incorrect data)
+  if (date.year() < 2000) {
+    return 'N/A'
+  }
 
   const durationFromDate = dayjs.duration(now.diff(date))
 

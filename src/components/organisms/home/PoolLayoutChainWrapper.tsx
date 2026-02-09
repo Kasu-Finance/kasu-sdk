@@ -4,7 +4,7 @@ import { Box, CircularProgress, Typography } from '@mui/material'
 import { ReactNode } from 'react'
 
 import { useChain } from '@/hooks/context/useChain'
-import usePoolOverviews from '@/hooks/lending/usePoolOverviews'
+import usePoolsWithDelegate from '@/hooks/lending/usePoolsWithDelegate'
 
 import PoolLayoutWrapper from '@/components/organisms/home/PoolLayoutWrapper'
 
@@ -35,8 +35,11 @@ const PoolLayoutChainWrapper: React.FC<PoolLayoutChainWrapperProps> = ({
   const { currentChainId, chainConfig } = useChain()
   const isDefaultChain = currentChainId === DEFAULT_CHAIN_ID
 
-  // Fetch pools client-side for non-default chains
-  const { poolOverviews, isLoading, error } = usePoolOverviews()
+  // Fetch pools with delegate data client-side (applies pool mapping for XDC -> Base)
+  const { poolsWithDelegate, isLoading } = usePoolsWithDelegate({
+    activePools: true,
+    oversubscribed: false,
+  })
 
   // On default chain, use server-rendered data
   if (isDefaultChain) {
@@ -68,8 +71,8 @@ const PoolLayoutChainWrapper: React.FC<PoolLayoutChainWrapperProps> = ({
     )
   }
 
-  // Handle error state
-  if (error || !poolOverviews) {
+  // Handle empty state
+  if (!poolsWithDelegate || poolsWithDelegate.length === 0) {
     return (
       <Box
         display='flex'
@@ -81,43 +84,14 @@ const PoolLayoutChainWrapper: React.FC<PoolLayoutChainWrapperProps> = ({
         px={3}
       >
         <Typography variant='h4' color='gold.dark' mb={2}>
-          Unable to load pools
+          No pools available
         </Typography>
         <Typography variant='baseMd' color='white'>
-          Could not fetch lending pools for {chainConfig.name}.
+          No active lending pools found on {chainConfig.name}.
         </Typography>
       </Box>
     )
   }
-
-  // Filter to only active, non-oversubscribed pools
-  const activePools = poolOverviews.filter(
-    (pool) => pool.isActive && !pool.isOversubscribed
-  )
-
-  // Transform to PoolOverviewWithDelegate
-  const poolsWithDelegate: PoolOverviewWithDelegate[] = activePools.map(
-    (pool) => ({
-      ...pool,
-      delegate: {
-        id: pool.id,
-        delegateLendingHistory: 0,
-        assetClasses: pool.assetClass,
-        otherKASUPools: [
-          {
-            id: pool.id,
-            name: pool.poolName,
-            isActive: pool.isActive,
-            isOversubscribed: pool.isOversubscribed,
-          },
-        ],
-        totalLoanFundsOriginated: parseFloat(pool.loanFundsOriginated) || 0,
-        totalLoansOriginated: parseInt(pool.activeLoans) || 0,
-        loansUnderManagement: parseFloat(pool.loansUnderManagement) || 0,
-        historicLossRate: 0,
-      },
-    })
-  )
 
   return (
     <PoolLayoutWrapper

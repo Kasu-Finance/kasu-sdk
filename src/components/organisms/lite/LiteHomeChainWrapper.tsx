@@ -6,6 +6,7 @@ import { ReactNode } from 'react'
 
 import { useChain } from '@/hooks/context/useChain'
 import usePoolOverviews from '@/hooks/lending/usePoolOverviews'
+import usePoolsWithDelegate from '@/hooks/lending/usePoolsWithDelegate'
 
 import LiteHome from '@/components/organisms/lite/LiteHome'
 
@@ -42,7 +43,17 @@ const LiteHomeChainWrapper: React.FC<LiteHomeChainWrapperProps> = ({
   const isDefaultChain = currentChainId === DEFAULT_CHAIN_ID
 
   // Fetch pools client-side for non-default chains
-  const { poolOverviews, isLoading, error } = usePoolOverviews()
+  // poolOverviews is used for portfolioPools (doesn't need delegate data)
+  const { poolOverviews, isLoading: isPoolsLoading } = usePoolOverviews()
+
+  // Fetch pools with delegate data (applies pool mapping for XDC -> Base Directus)
+  const { poolsWithDelegate, isLoading: isDelegatesLoading } =
+    usePoolsWithDelegate({
+      activePools: true,
+      oversubscribed: false,
+    })
+
+  const isLoading = isPoolsLoading || isDelegatesLoading
 
   // On default chain, use server-rendered data
   if (isDefaultChain) {
@@ -77,7 +88,7 @@ const LiteHomeChainWrapper: React.FC<LiteHomeChainWrapperProps> = ({
   }
 
   // Handle error state
-  if (error || !poolOverviews) {
+  if (!poolOverviews || !poolsWithDelegate) {
     return (
       <Box
         display='flex'
@@ -99,36 +110,6 @@ const LiteHomeChainWrapper: React.FC<LiteHomeChainWrapperProps> = ({
       </Box>
     )
   }
-
-  // Filter to only active, non-oversubscribed pools (same as server logic)
-  const activePools = poolOverviews.filter(
-    (pool) => pool.isActive && !pool.isOversubscribed
-  )
-
-  // Transform to PoolOverviewWithDelegate (delegate data not critical for lite mode display)
-  // The delegate info is only used in full mode, not in lite mode UI
-  const poolsWithDelegate: PoolOverviewWithDelegate[] = activePools.map(
-    (pool) => ({
-      ...pool,
-      delegate: {
-        id: pool.id,
-        delegateLendingHistory: 0,
-        assetClasses: pool.assetClass,
-        otherKASUPools: [
-          {
-            id: pool.id,
-            name: pool.poolName,
-            isActive: pool.isActive,
-            isOversubscribed: pool.isOversubscribed,
-          },
-        ],
-        totalLoanFundsOriginated: parseFloat(pool.loanFundsOriginated) || 0,
-        totalLoansOriginated: parseInt(pool.activeLoans) || 0,
-        loansUnderManagement: parseFloat(pool.loansUnderManagement) || 0,
-        historicLossRate: 0,
-      },
-    })
-  )
 
   return (
     <LiteHome

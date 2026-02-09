@@ -5,6 +5,9 @@ import { Box, CircularProgress, Stack, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 
 import { useChain } from '@/hooks/context/useChain'
+import usePoolDelegate, {
+  createFallbackDelegate,
+} from '@/hooks/lending/usePoolDelegate'
 import usePoolOverview from '@/hooks/lending/usePoolOverview'
 
 import DelegateProfile from '@/components/organisms/lending/DetailsTab/DelegateProfile'
@@ -46,6 +49,9 @@ const DetailsTabChainWrapper: React.FC<DetailsTabChainWrapperProps> = ({
 
   // Fetch pool client-side (for non-default chains)
   const { data: clientPools, isLoading, error } = usePoolOverview(poolId)
+
+  // Fetch delegate data with proper pool mapping (XDC -> Base)
+  const { delegate, isLoading: isDelegateLoading } = usePoolDelegate(poolId)
 
   // Loading state helper
   const renderLoading = () => (
@@ -125,7 +131,7 @@ const DetailsTabChainWrapper: React.FC<DetailsTabChainWrapperProps> = ({
   }
 
   // Non-default chain - loading
-  if (isLoading) {
+  if (isLoading || isDelegateLoading) {
     return renderLoading()
   }
 
@@ -135,26 +141,11 @@ const DetailsTabChainWrapper: React.FC<DetailsTabChainWrapperProps> = ({
   }
 
   // Transform client pool to PoolOverviewWithDelegate
+  // Use delegate from Directus (with pool mapping) or fallback to constructed data
   const clientPool = clientPools[0]
   const poolWithDelegate: PoolOverviewWithDelegate = {
     ...clientPool,
-    delegate: {
-      id: clientPool.id,
-      delegateLendingHistory: 0,
-      assetClasses: clientPool.assetClass,
-      otherKASUPools: [
-        {
-          id: clientPool.id,
-          name: clientPool.poolName,
-          isActive: clientPool.isActive,
-          isOversubscribed: clientPool.isOversubscribed,
-        },
-      ],
-      totalLoanFundsOriginated: parseFloat(clientPool.loanFundsOriginated) || 0,
-      totalLoansOriginated: parseInt(clientPool.activeLoans) || 0,
-      loansUnderManagement: parseFloat(clientPool.loansUnderManagement) || 0,
-      historicLossRate: 0,
-    },
+    delegate: delegate ?? createFallbackDelegate(clientPool),
   }
 
   return (

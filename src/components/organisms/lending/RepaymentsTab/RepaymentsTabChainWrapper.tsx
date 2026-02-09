@@ -1,10 +1,11 @@
 'use client'
 
 import { PoolRepayment } from '@kasufinance/kasu-sdk/src/services/DataService/types'
-import { Box, Typography } from '@mui/material'
+import { Box, CircularProgress, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 
 import { useChain } from '@/hooks/context/useChain'
+import usePoolRepayment from '@/hooks/lending/usePoolRepayment'
 import getTranslation from '@/hooks/useTranslation'
 
 import CustomCard from '@/components/atoms/CustomCard'
@@ -17,6 +18,8 @@ import CsvDownloadButton from '@/components/organisms/lending/RepaymentsTab/CsvD
 import { DEFAULT_CHAIN_ID } from '@/config/chains'
 
 type RepaymentsTabChainWrapperProps = {
+  /** Pool ID */
+  poolId: string
   /** Server-rendered repayment data (from default chain, null if not found) */
   serverRepayment: PoolRepayment | null
 }
@@ -25,15 +28,19 @@ type RepaymentsTabChainWrapperProps = {
  * Chain-aware wrapper for RepaymentsTab content.
  *
  * On DEFAULT_CHAIN (Base): Uses server-rendered data.
- * On other chains (XDC): Shows coming soon message (repayment data not available yet).
+ * On other chains (XDC): Fetches repayment data client-side with pool mapping.
  */
 const RepaymentsTabChainWrapper: React.FC<RepaymentsTabChainWrapperProps> = ({
+  poolId,
   serverRepayment,
 }) => {
   const { t } = getTranslation()
-  const { currentChainId, chainConfig } = useChain()
+  const { currentChainId } = useChain()
   const isDefaultChain = currentChainId === DEFAULT_CHAIN_ID
   const [hasMounted, setHasMounted] = useState(false)
+
+  // Fetch repayment data client-side for non-default chains (with pool mapping)
+  const { repayment: clientRepayment, isLoading } = usePoolRepayment(poolId)
 
   useEffect(() => {
     setHasMounted(true)
@@ -70,8 +77,8 @@ const RepaymentsTabChainWrapper: React.FC<RepaymentsTabChainWrapperProps> = ({
     </CustomCard>
   )
 
-  // Coming soon content for non-default chains
-  const renderComingSoon = () => (
+  // Loading content for non-default chains
+  const renderLoading = () => (
     <CustomCard sx={{ mt: 3 }}>
       <CustomCardHeader title={t('repayments.title')} />
       <WaveBox borderRadius={2}>
@@ -81,16 +88,11 @@ const RepaymentsTabChainWrapper: React.FC<RepaymentsTabChainWrapperProps> = ({
           alignItems='center'
           justifyContent='center'
           minHeight={200}
-          textAlign='center'
-          px={3}
-          py={4}
+          gap={2}
         >
-          <Typography variant='h5' color='gold.dark' mb={2}>
-            Coming Soon to {chainConfig.name}
-          </Typography>
+          <CircularProgress color='primary' />
           <Typography variant='baseMd' color='white'>
-            Repayment tracking for {chainConfig.name} pools is not yet
-            available.
+            Loading repayment data...
           </Typography>
         </Box>
       </WaveBox>
@@ -107,8 +109,13 @@ const RepaymentsTabChainWrapper: React.FC<RepaymentsTabChainWrapperProps> = ({
     return renderContent(serverRepayment)
   }
 
-  // On non-default chains, show coming soon
-  return renderComingSoon()
+  // On non-default chains, show loading while fetching
+  if (isLoading) {
+    return renderLoading()
+  }
+
+  // On non-default chains, use client-fetched data
+  return renderContent(clientRepayment ?? null)
 }
 
 export default RepaymentsTabChainWrapper

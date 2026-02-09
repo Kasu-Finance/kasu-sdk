@@ -264,13 +264,201 @@ Add the new chain to the Nexera Signature Gating Workflow:
 
 **Note:** Without this, deposit transactions will fail with `invalid input value for enum chain_id`.
 
-### 7. Test
+### 7. Add Pool Metadata Mapping (if sharing Directus data)
+
+If the new chain's pools should share metadata with Base pools in Directus:
+
+```typescript
+// In src/config/chains/index.ts
+poolMetadataMapping: {
+  // New chain pool address → Base pool address
+  '0xNewChainPoolAddress': '0xBasePoolAddress',
+}
+```
+
+### 8. Verify Chain Wrapper Components
+
+Ensure all chain wrapper components work with the new chain. They should automatically:
+
+- Fetch data client-side via hooks
+- Use pool mapping for Directus lookups
+- Show loading states while fetching
+
+Key wrappers to verify:
+
+- `PageHeaderChainWrapper` - Pool header
+- `PoolOverviewTabChainWrapper` - Overview tab with delegate data
+- `DetailsTabChainWrapper` - Details tab
+- `RepaymentsTabChainWrapper` - Repayments data
+- `RiskReportingTabChainWrapper` - Risk reports
+- `LiteHomeChainWrapper` - Home page pools
+
+### 9. Test Checklist
+
+**Basic Functionality:**
 
 - [ ] Chain switching works from Base to new chain
 - [ ] Pool overview loads correctly
+- [ ] Pool details page loads with correct data
 - [ ] Portfolio shows user's positions
-- [ ] Deposit/withdrawal flows work
+- [ ] Deposit flow works
+- [ ] Withdrawal flow works
+
+**Directus Data (if using pool mapping):**
+
+- [ ] Delegate info loads on pool overview
+- [ ] Pool descriptions load correctly
+- [ ] Repayments tab shows data (not "Coming Soon")
+- [ ] Risk reporting tab shows data (not "Coming Soon")
+- [ ] Lending History shows correct duration (not "56 years")
+
+**Lite Deployment Specifics:**
+
 - [ ] No KSU-related UI elements appear
+- [ ] Locking tab hidden in navigation
+- [ ] Loyalty badges hidden
+- [ ] Subgraph data loads (check network tab for single GraphQL query)
+- [ ] No excessive RPC calls (should be minimal, not 49+)
+
+**Edge Cases:**
+
+- [ ] Chain switch doesn't show stale data
+- [ ] Token approvals complete (check for timeout fallback)
+- [ ] Empty portfolio shows appropriate message
+- [ ] Loading states appear correctly
+
+## Chain Wrapper Components Pattern
+
+Server components fetch data from the default chain (Base). For multi-chain support, we use "ChainWrapper" client components that:
+
+1. Accept server-rendered data as props
+2. Check if current chain is default chain
+3. If non-default chain: fetch data client-side with chain-aware hooks
+4. Handle loading states for non-default chains
+
+### Pattern Structure
+
+```typescript
+// Server component (index.tsx)
+const RepaymentsTab: React.FC<{ poolId: string }> = async ({ poolId }) => {
+  const serverData = await getRepayments(poolId) // Always fetches from DEFAULT_CHAIN
+  return (
+    <RepaymentsTabChainWrapper
+      poolId={poolId}
+      serverRepayment={serverData}
+    />
+  )
+}
+
+// Client wrapper component (*ChainWrapper.tsx)
+const RepaymentsTabChainWrapper: React.FC<Props> = ({ poolId, serverRepayment }) => {
+  const { currentChainId } = useChain()
+  const isDefaultChain = currentChainId === DEFAULT_CHAIN_ID
+  const [hasMounted, setHasMounted] = useState(false)
+
+  // Fetch client-side for non-default chains
+  const { repayment: clientRepayment, isLoading } = usePoolRepayment(poolId)
+
+  useEffect(() => setHasMounted(true), [])
+
+  // Before mount: render server data (prevents hydration mismatch)
+  if (!hasMounted) return renderContent(serverRepayment)
+
+  // Default chain: use server data
+  if (isDefaultChain) return renderContent(serverRepayment)
+
+  // Non-default chain: loading state
+  if (isLoading) return renderLoading()
+
+  // Non-default chain: use client data
+  return renderContent(clientRepayment)
+}
+```
+
+### Existing Chain Wrappers
+
+| Component                      | Location                    | Purpose                          |
+| ------------------------------ | --------------------------- | -------------------------------- |
+| `PageHeaderChainWrapper`       | `lending/`                  | Pool header with name/image      |
+| `PoolOverviewTabChainWrapper`  | `lending/OverviewTab/`      | Pool overview with delegate data |
+| `DetailsTabChainWrapper`       | `lending/DetailsTab/`       | Pool details tab                 |
+| `RepaymentsTabChainWrapper`    | `lending/RepaymentsTab/`    | Pool repayments data             |
+| `RiskReportingTabChainWrapper` | `lending/RiskReportingTab/` | Risk report data                 |
+| `LiteHomeChainWrapper`         | `lite/`                     | Lite mode home pools             |
+| `PoolLayoutChainWrapper`       | `home/`                     | Homepage pool layout             |
+
+## Directus Data Fetching Hooks
+
+Pool metadata (descriptions, images, delegate info, repayments, risk reports) is stored in Directus and indexed by **Base pool addresses**. For non-default chains, we need to map their pool addresses to Base addresses.
+
+### Pool Metadata Mapping
+
+In `src/config/chains/index.ts`, each chain config can define `poolMetadataMapping`:
+
+```typescript
+poolMetadataMapping: {
+  // XDC pool address → Base pool address (for Directus lookup)
+  '0x20f42fb45f91657acf9528b99a5a16d0229c7800':
+    '0xc987350716fe4a7d674c3591c391d29eba26b8ce',
+  '0x3b7cb493aa22f731db2ab424d918e7375e00f6a9':
+    '0x03f93c8caa9a82e000d35673ba34a4c0e6e117a2',
+}
+```
+
+### Hooks Using Pool Mapping
+
+| Hook                   | File                                         | Purpose                                   |
+| ---------------------- | -------------------------------------------- | ----------------------------------------- |
+| `usePoolDelegate`      | `src/hooks/lending/usePoolDelegate.tsx`      | Fetches delegate data from Directus       |
+| `usePoolRepayment`     | `src/hooks/lending/usePoolRepayment.tsx`     | Fetches repayment data from Directus      |
+| `usePoolRiskReport`    | `src/hooks/lending/usePoolRiskReport.tsx`    | Fetches risk report (uses pool name/type) |
+| `usePoolsWithDelegate` | `src/hooks/lending/usePoolsWithDelegate.tsx` | Fetches pools with delegate data          |
+
+### Hook Pattern for Directus Data
+
+```typescript
+const usePoolDelegate = (poolId: string | undefined) => {
+  const sdk = useSdk()
+  const { currentChainId, chainConfig } = useChain()
+
+  // Map pool ID to Base pool ID for Directus lookup
+  const poolMetadataMapping = chainConfig.poolMetadataMapping
+  const lookupPoolId = poolId
+    ? (poolMetadataMapping?.[poolId.toLowerCase()] ?? poolId)
+    : undefined
+
+  const { data, isLoading } = useSWR(
+    sdk && currentChainId
+      ? ['poolDelegate', currentChainId, lookupPoolId]
+      : null,
+    async () => {
+      const delegates = await sdk.DataService.getPoolDelegateProfileAndHistory()
+      // Find delegate using MAPPED Base pool ID
+      return delegates.find((d) =>
+        d.otherKASUPools.some(
+          (p) => p.id.toLowerCase() === lookupPoolId?.toLowerCase()
+        )
+      )
+    }
+  )
+
+  return { delegate: data, isLoading }
+}
+```
+
+### When to Use Pool Mapping
+
+Use `poolMetadataMapping` when fetching data that is:
+
+1. **Stored in Directus** (delegate profiles, repayments, pool descriptions)
+2. **Indexed by Base pool addresses**
+3. **Needed for non-Base chains that share pool metadata**
+
+Data that does NOT need mapping:
+
+- Subgraph data (uses chain's own pool addresses)
+- On-chain data via SDK (uses chain's own addresses)
+- Risk reports (use pool name/assetClass, not address)
 
 ## Components with Deployment-Aware Logic
 
@@ -324,3 +512,28 @@ Add the new chain to the Nexera Signature Gating Workflow:
 
 **Cause:** `readContracts` missing chainId parameter
 **Solution:** All wagmi `readContract`/`readContracts` calls must include `chainId` in each contract object
+
+### "Lending History 56 years" on non-Base chains
+
+**Cause:** `delegateLendingHistory` is 0, causing `dayjs.unix(0)` to return 1970
+**Solution:** Use `usePoolDelegate` hook which applies pool mapping to fetch actual delegate data from Directus
+
+### Repayments/Risk Reporting shows "Coming Soon to XDC"
+
+**Cause:** ChainWrapper component not fetching data client-side for non-default chains
+**Solution:** Create hooks (`usePoolRepayment`, `usePoolRiskReport`) that fetch data client-side and update wrapper to use them
+
+### Repayments download button not showing on XDC (but tab loads)
+
+**Cause:** SDK's `getRepayments()` method was comparing Directus `poolIdFK` (Base addresses) with subgraph pool IDs (current chain addresses) directly. On XDC, these don't match, so repayments were filtered out.
+**Solution:** Fixed in SDK - `getRepayments()` now uses `getMetadataPoolId()` to map subgraph pool IDs to their Directus metadata source before comparison. This allows proper matching on non-Base chains.
+
+### Empty tranches under pool names on portfolio
+
+**Cause:** Pending deposits have empty `lendingPoolTrancheUserDetails` or zero-balance tranches
+**Solution:** Check for visible tranches (with invested amount, yield earnings, or fixed loans) and show appropriate message for pending deposits
+
+### Delegate data not loading for non-Base pools
+
+**Cause:** Hook looking up delegate by wrong pool address (not mapped to Base)
+**Solution:** Use `poolMetadataMapping` to map chain pool address to Base pool address before Directus lookup, fall back to first delegate if no match

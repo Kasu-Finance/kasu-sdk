@@ -3,6 +3,7 @@ import { TableCell, TableRow, Typography } from '@mui/material'
 
 import useUserLendingTrancheBalanceSubgraph from '@/hooks/lending/useUserLendingTrancheBalanceSubgraph'
 import useNextEpochTime from '@/hooks/locking/useNextEpochTime'
+import getTranslation from '@/hooks/useTranslation'
 import useNextClearingPeriod from '@/hooks/web3/useNextClearingPeriod'
 
 import DottedDivider from '@/components/atoms/DottedDivider'
@@ -21,6 +22,7 @@ const LendingPortfolioTableRow: React.FC<LendingPortfolioTableRowProps> = ({
   portfolioPool,
   currentEpoch,
 }) => {
+  const { t } = getTranslation()
   const { userLendingTrancheBalance } = useUserLendingTrancheBalanceSubgraph(
     portfolioPool.id,
     portfolioPool.tranches
@@ -31,6 +33,19 @@ const LendingPortfolioTableRow: React.FC<LendingPortfolioTableRowProps> = ({
   const isClearingPeriod =
     Boolean(nextEpochTime && nextClearingPeriod) &&
     nextClearingPeriod > nextEpochTime
+
+  const tranches = userLendingTrancheBalance ?? portfolioPool.tranches
+
+  // Check if any tranche would actually be visible
+  // Tranches only render if they have non-zero investedAmount or yieldEarnings
+  const hasVisibleTranches = tranches.some((tranche) => {
+    const investedAmount = parseFloat(tranche.investedAmount || '0')
+    const yieldLifetime = parseFloat(
+      tranche.yieldEarnings?.lifetime?.toString() || '0'
+    )
+    const hasFixedLoans = (tranche.fixedLoans?.length ?? 0) > 0
+    return investedAmount > 0 || yieldLifetime > 0 || hasFixedLoans
+  })
 
   return (
     <>
@@ -52,18 +67,28 @@ const LendingPortfolioTableRow: React.FC<LendingPortfolioTableRowProps> = ({
           <DottedDivider />
         </TableCell>
       </TableRow>
-      {(userLendingTrancheBalance ?? portfolioPool.tranches)
-        .toReversed()
-        .map((tranche) => (
-          <LendingPortfolioTableTrancheRow
-            pool={portfolioPool}
-            tranche={tranche}
-            currentEpoch={currentEpoch}
-            isClearingPeriod={isClearingPeriod}
-            clearingPeriodEndTime={nextEpochTime}
-            key={tranche.name}
-          />
-        ))}
+      {hasVisibleTranches ? (
+        tranches
+          .toReversed()
+          .map((tranche) => (
+            <LendingPortfolioTableTrancheRow
+              pool={portfolioPool}
+              tranche={tranche}
+              currentEpoch={currentEpoch}
+              isClearingPeriod={isClearingPeriod}
+              clearingPeriodEndTime={nextEpochTime}
+              key={tranche.name}
+            />
+          ))
+      ) : (
+        <TableRow>
+          <TableCell colSpan={7} sx={{ py: 2 }}>
+            <Typography variant='baseSm' color='text.secondary'>
+              {t('portfolio.lendingPortfolio.pendingDepositsMessage')}
+            </Typography>
+          </TableCell>
+        </TableRow>
+      )}
     </>
   )
 }

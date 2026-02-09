@@ -5,6 +5,9 @@ import { Box, CircularProgress, Stack, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 
 import { useChain } from '@/hooks/context/useChain'
+import usePoolDelegate, {
+  createFallbackDelegate,
+} from '@/hooks/lending/usePoolDelegate'
 import usePoolOverview from '@/hooks/lending/usePoolOverview'
 
 import LendingRequestionTransactions from '@/components/organisms/lending/OverviewTab/LendingRequestTransactions'
@@ -53,6 +56,9 @@ const PoolOverviewTabChainWrapper: React.FC<
 
   // Fetch pool client-side for non-default chains
   const { data: clientPools, isLoading, error } = usePoolOverview(poolId)
+
+  // Fetch delegate data with proper pool mapping (XDC -> Base)
+  const { delegate, isLoading: isDelegateLoading } = usePoolDelegate(poolId)
 
   // Before mount, show loading to match server (which has no chain context)
   // This prevents hydration mismatch when client has XDC selected
@@ -152,7 +158,7 @@ const PoolOverviewTabChainWrapper: React.FC<
   }
 
   // On other chains, show loading while fetching
-  if (isLoading) {
+  if (isLoading || isDelegateLoading) {
     return (
       <Box
         display='flex'
@@ -197,26 +203,11 @@ const PoolOverviewTabChainWrapper: React.FC<
   }
 
   // Transform client pool to PoolOverviewWithDelegate
+  // Use delegate from Directus (with pool mapping) or fallback to constructed data
   const clientPool = clientPools[0]
   const poolWithDelegate: PoolOverviewWithDelegate = {
     ...clientPool,
-    delegate: {
-      id: clientPool.id,
-      delegateLendingHistory: 0,
-      assetClasses: clientPool.assetClass,
-      otherKASUPools: [
-        {
-          id: clientPool.id,
-          name: clientPool.poolName,
-          isActive: clientPool.isActive,
-          isOversubscribed: clientPool.isOversubscribed,
-        },
-      ],
-      totalLoanFundsOriginated: parseFloat(clientPool.loanFundsOriginated) || 0,
-      totalLoansOriginated: parseInt(clientPool.activeLoans) || 0,
-      loansUnderManagement: parseFloat(clientPool.loansUnderManagement) || 0,
-      historicLossRate: 0,
-    },
+    delegate: delegate ?? createFallbackDelegate(clientPool),
   }
 
   const poolsWithDelegate: PoolOverviewWithDelegate[] = [poolWithDelegate]
