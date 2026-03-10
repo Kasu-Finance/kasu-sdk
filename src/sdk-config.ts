@@ -34,6 +34,11 @@ export interface SdkConfigOptions {
      * Value: pool address in Directus / Base pool (lowercase)
      */
     poolMetadataMapping?: Record<string, string>;
+    /**
+     * Decimals of the stable asset used by lending pools (e.g. 6 for USDC/AUDD).
+     * @default 6
+     */
+    stableAssetDecimals?: number;
 }
 
 export class SdkConfig {
@@ -44,6 +49,7 @@ export class SdkConfig {
     UNUSED_LENDING_POOL_IDS: string[];
     isLiteDeployment: boolean;
     poolMetadataMapping: Record<string, string>;
+    stableAssetDecimals: number;
 
     constructor(options: SdkConfigOptions) {
         this.subgraphUrl = options.subgraphUrl;
@@ -52,5 +58,6 @@ export class SdkConfig {
         this.UNUSED_LENDING_POOL_IDS = options.UNUSED_LENDING_POOL_IDS;
         this.isLiteDeployment = options.isLiteDeployment ?? false;
         this.poolMetadataMapping = options.poolMetadataMapping ?? {};
+        this.stableAssetDecimals = options.stableAssetDecimals ?? 6;
     }
 }

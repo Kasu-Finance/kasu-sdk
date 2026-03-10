@@ -28,7 +28,7 @@ export class DepositsFacade {
      * const tx = await kasu.deposits.deposit({
      *   poolId: '0x...',
      *   trancheId: '0x...',
-     *   amount: parseUnits('1000', 6),
+     *   amount: parseUnits('1000', 6), // 6 decimals for USDC/AUDD; use token's actual decimals
      *   kycSignature: { blockExpiration, signature },
      * });
      * ```
@@ -47,10 +47,10 @@ export class DepositsFacade {
     }
 
     /**
-     * Submit a withdrawal request for a specific USDC amount.
+     * Submit a withdrawal request for a specific stable asset amount.
      */
     async withdraw(params: WithdrawParams): Promise<ContractTransaction> {
-        return await this._userLending.requestWithdrawalInUSDC(
+        return await this._userLending.requestWithdrawalInAsset(
             params.poolId,
             params.trancheId,
             params.amount,

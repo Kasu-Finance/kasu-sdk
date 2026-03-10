@@ -199,7 +199,7 @@ export class DataService {
             );
 
             for (const [id, tvl] of results) {
-                tvlMap.set(id, formatUnits(tvl, 6));
+                tvlMap.set(id, formatUnits(tvl, this._kasuConfig.stableAssetDecimals));
             }
         } catch (error) {
             console.error('getOffChainTvl :', error);

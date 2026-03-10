@@ -25,7 +25,7 @@ export interface UserLock {
     id: BigNumber;
     lockedAmount: string;
     rKSUAmount: string;
-    rKSUtoUSDCRatio: number;
+    rKSUtoStableRatio: number;
     apyBonus: number;
     startTime: EpochTimeStamp;
     endTime: EpochTimeStamp;

@@ -287,23 +287,32 @@ export class UserLending {
         );
     }
 
-    async requestWithdrawalInUSDC(
+    async requestWithdrawalInAsset(
         lendingPool: string,
         tranche: string,
-        usdcAmount: BigNumberish,
+        assetAmount: BigNumberish,
     ): Promise<ContractTransaction> {
         const trancheContract: ILendingPoolTrancheAbi =
             ILendingPoolTrancheAbi__factory.connect(
                 tranche,
                 this._signerOrProvider,
             );
-        const shareAmount = await trancheContract.convertToShares(usdcAmount);
+        const shareAmount = await trancheContract.convertToShares(assetAmount);
 
         return await this._lendingPoolManagerAbi.requestWithdrawal(
             lendingPool,
             tranche,
             shareAmount,
         );
+    }
+
+    /** @deprecated Use `requestWithdrawalInAsset` instead. */
+    async requestWithdrawalInUSDC(
+        lendingPool: string,
+        tranche: string,
+        amount: BigNumberish,
+    ): Promise<ContractTransaction> {
+        return this.requestWithdrawalInAsset(lendingPool, tranche, amount);
     }
 
     async requestWithdrawalMax(
@@ -775,7 +784,7 @@ export class UserLending {
                 return {
                     poolId: lendingPool.id,
                     yieldEarned:
-                        parseFloat(ethers.utils.formatUnits(balance, 6)) -
+                        parseFloat(ethers.utils.formatUnits(balance, this._kasuConfig.stableAssetDecimals)) -
                         parseFloat(totalAcceptedDeposits) -
                         -parseFloat(totalAcceptedWithdrawnAmount),
                     balance,

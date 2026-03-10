@@ -160,8 +160,8 @@ export class Portfolio {
     }
 
     /**
-     * Calculate the user's weekly protocol fee share (USDC) given tranche balances/configs,
-     * system variables and locking summary. All inputs are expected to be pre-fetched.
+     * Calculate the user's weekly protocol fee share (in stable asset units) given tranche
+     * balances/configs, system variables and locking summary. All inputs are expected to be pre-fetched.
      */
     public calculateWeeklyProtocolFees(params: {
         trancheBalances: TrancheSubgraphResult;
@@ -245,13 +245,13 @@ export class Portfolio {
 
         if (totalUserDeposits.isZero()) return 0;
 
-        const rKSUtoUSDCRatio = await this._lockingService.getRKSUvsUSDCRatio(
+        const rKSUtoStableRatio = await this._lockingService.getRKSUvsStableRatio(
             userRksuAmount,
             userAddress,
         );
         const { loyaltyLevel } =
             this._lockingService.getLoyaltyLevelAndApyBonusFromRatio(
-                rKSUtoUSDCRatio,
+                rKSUtoStableRatio,
             );
 
         const loyaltyRewardRate =
@@ -289,9 +289,9 @@ export class Portfolio {
             },
             protocolFees: {
                 claimableBalance: {
-                    usdcAmount: lockingRewards.claimableRewards,
+                    stableAmount: lockingRewards.claimableRewards,
                 },
-                lifeTime: { usdcAmount: lockingRewards.lifeTimeRewards },
+                lifeTime: { stableAmount: lockingRewards.lifeTimeRewards },
             },
             ksuLaunchBonus: { lifeTime: { ksuAmount: ksuLaunchBonus } },
         };

@@ -16,10 +16,10 @@ export interface PortfolioRewards {
     };
     protocolFees: {
         claimableBalance: {
-            usdcAmount: string;
+            stableAmount: string;
         };
         lifeTime: {
-            usdcAmount: string;
+            stableAmount: string;
         };
     };
 }

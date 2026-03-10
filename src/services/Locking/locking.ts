@@ -280,17 +280,17 @@ export class KSULocking {
         });
         const resultPromises = result.userLocks.map(async (userLock) => {
             const [, id] = userLock.id.split('-');
-            const rKSUtoUSDCRatio = await this.getRKSUvsUSDCRatio(
+            const rKSUtoStableRatio = await this.getRKSUvsStableRatio(
                 userLock.rKSUAmount,
                 userAddress,
             );
             const loyaltyStatus =
-                this.getLoyaltyLevelAndApyBonusFromRatio(rKSUtoUSDCRatio);
+                this.getLoyaltyLevelAndApyBonusFromRatio(rKSUtoStableRatio);
             return {
                 id: BigNumber.from(id),
                 lockedAmount: userLock.ksuAmount,
                 rKSUAmount: userLock.rKSUAmount,
-                rKSUtoUSDCRatio: rKSUtoUSDCRatio,
+                rKSUtoStableRatio: rKSUtoStableRatio,
                 apyBonus: loyaltyStatus.apyBonus,
                 loyaltyLevel: loyaltyStatus.loyaltyLevel,
                 startTime: parseFloat(userLock.startTimestamp),
@@ -367,7 +367,7 @@ export class KSULocking {
         };
     }
 
-    getLoyaltyLevelAndApyBonusFromRatio(rKSUtoUSDCRatio: number): {
+    getLoyaltyLevelAndApyBonusFromRatio(rKSUtoStableRatio: number): {
         loyaltyLevel: number;
         apyBonus: number;
     } {
@@ -376,15 +376,15 @@ export class KSULocking {
             return { loyaltyLevel: 0, apyBonus: 0 };
         }
 
-        if (rKSUtoUSDCRatio < 0.01) {
+        if (rKSUtoStableRatio < 0.01) {
             return { loyaltyLevel: 0, apyBonus: this.apyBonuses[0] };
-        } else if (rKSUtoUSDCRatio < 0.05) {
+        } else if (rKSUtoStableRatio < 0.05) {
             return { loyaltyLevel: 1, apyBonus: this.apyBonuses[1] };
         }
         return { loyaltyLevel: 2, apyBonus: this.apyBonuses[2] };
     }
 
-    async getRKSUvsUSDCRatio(
+    async getRKSUvsStableRatio(
         rKSUAmount: string,
         userAddress: string,
     ): Promise<number> {
@@ -403,15 +403,25 @@ export class KSULocking {
             18,
         );
 
-        const totalUserUsdcAmount =
+        const totalUserStableAmount =
             depositedAmount.toNumber() + pendingAmount.toNumber();
 
-        const rKSUInUSDC = rKSUAmountBignumber
+        // Convert rKSU value to stable asset units: rKSU * ksuPrice / 1e18 / 1e(18 - stableDecimals)
+        const decimalDiff = 18 - this._kasuConfig.stableAssetDecimals;
+        const rKSUInStable = rKSUAmountBignumber
             .mul(ksuPrice)
             .div(ethers.utils.parseUnits('1', 18))
-            .div(ethers.utils.parseUnits('1', 12));
+            .div(ethers.utils.parseUnits('1', decimalDiff));
 
-        return rKSUInUSDC.toNumber() / totalUserUsdcAmount;
+        return rKSUInStable.toNumber() / totalUserStableAmount;
+    }
+
+    /** @deprecated Use `getRKSUvsStableRatio` instead. */
+    async getRKSUvsUSDCRatio(
+        rKSUAmount: string,
+        userAddress: string,
+    ): Promise<number> {
+        return this.getRKSUvsStableRatio(rKSUAmount, userAddress);
     }
 
     async getClaimableRewards(userAddress: string): Promise<BigNumber> {
@@ -554,7 +564,7 @@ export class KSULocking {
             };
         }
 
-        const rewardDecimals = 6;
+        const rewardDecimals = this._kasuConfig.stableAssetDecimals;
 
         const claimableRewards = await this.getClaimableRewards(userAddress);
 
@@ -636,7 +646,12 @@ export class KSULocking {
         return '10.00';
     }
 
-    getProjectedUSDC(): string {
+    getProjectedStableAmount(): string {
         return '20.00';
+    }
+
+    /** @deprecated Use `getProjectedStableAmount` instead. */
+    getProjectedUSDC(): string {
+        return this.getProjectedStableAmount();
     }
 }

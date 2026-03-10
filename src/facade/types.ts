@@ -74,9 +74,9 @@ export interface StrategyTranche {
     apy: number;
     minApy: number;
     maxApy: number;
-    /** Minimum deposit in USDC (ether-formatted string). */
+    /** Minimum deposit in stable asset units (ether-formatted string). */
     minimumDeposit: string;
-    /** Maximum deposit in USDC (ether-formatted string). */
+    /** Maximum deposit in stable asset units (ether-formatted string). */
     maximumDeposit: string;
     /** Remaining tranche capacity (ether-formatted string). */
     availableCapacity: string;
@@ -101,7 +101,7 @@ export interface FixedTermOption {
 export interface DepositParams {
     poolId: string;
     trancheId: string;
-    /** Amount in USDC base units (BigNumberish). */
+    /** Amount in stable asset base units (BigNumberish). */
     amount: BigNumberish;
     /** KYC signature obtained from the Nexera flow. */
     kycSignature: {
@@ -112,7 +112,7 @@ export interface DepositParams {
     depositData?: BytesLike;
     /** Fixed-term config ID. Pass `0` for variable deposits. */
     fixedTermConfigId?: BigNumberish;
-    /** Swap calldata. Pass `'0x'` when depositing USDC directly. */
+    /** Swap calldata. Pass `'0x'` when depositing the stable asset directly. */
     swapData?: BytesLike;
     /** Native token value to send (e.g. for gas on some chains). Defaults to `'0'`. */
     ethValue?: string;
@@ -121,18 +121,18 @@ export interface DepositParams {
 export interface WithdrawParams {
     poolId: string;
     trancheId: string;
-    /** USDC amount to withdraw, or `'max'` to withdraw entire balance. */
+    /** Stable asset amount to withdraw, or `'max'` to withdraw entire balance. */
     amount: BigNumberish;
     /** Required when `amount` is `'max'`. */
     userAddress?: string;
 }
 
 export interface DepositLimits {
-    /** Minimum deposit (ether-formatted USDC). */
+    /** Minimum deposit (ether-formatted stable asset amount). */
     min: string;
-    /** Maximum deposit (ether-formatted USDC). */
+    /** Maximum deposit (ether-formatted stable asset amount). */
     max: string;
-    /** Remaining tranche capacity (ether-formatted USDC). */
+    /** Remaining tranche capacity (ether-formatted stable asset amount). */
     availableCapacity: string;
 }
 
