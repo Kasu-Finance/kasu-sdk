@@ -9,7 +9,7 @@ import { ChainConfigEntry } from './types';
  * const base = CHAIN_CONFIGS.base;
  * ```
  */
-export const CHAIN_CONFIGS: Record<'base' | 'xdc' | 'plume', ChainConfigEntry> = {
+export const CHAIN_CONFIGS: Record<'base' | 'xdc' | 'xdc-usdc' | 'plume', ChainConfigEntry> = {
     base: {
         chainId: 8453,
         name: 'Base Mainnet',
@@ -65,6 +65,31 @@ export const CHAIN_CONFIGS: Record<'base' | 'xdc' | 'plume', ChainConfigEntry> =
             '0xeda50c91a8c4ca8a83652b8542c0b3bd00a71fad':
                 '0xc347a9e4aec8c8d11a149d2907deb2bf23b81c6f',
         },
+    },
+
+    'xdc-usdc': {
+        chainId: 50,
+        name: 'XDC Mainnet (USDC)',
+        isLiteDeployment: true,
+        contracts: {
+            // No KSUToken on Lite deployments
+            IKSULocking: '0x47e7C147955FAC86c4AeAe5a8691C1A702A9C4FA',
+            IKSULockBonus: '0xe99c77d800E1065f2f1Ab23A6D70cBc7D1102943',
+            LendingPoolManager: '0x5ba223175F61221fbc795F71a41f52Bff825C68b',
+            UserManager: '0xFd407a09049C4d60a81C708E5587B8C7b6Cf6BdD',
+            KasuAllowList: '0xaf911547FD38686a88fc26B2A722F870426bCD6D',
+            SystemVariables: '0xb73Ebe67c8597d55A5F4FCc2C1638eDd5512BfBb',
+            KsuPrice: '0xA622DE9d439C05266C63EfeA3B7853792aD61f45',
+            UserLoyaltyRewards: '0x8e2033DcF9C6D3B9D3B24C651a03c0Af65A113b8',
+            ClearingCoordinator: '0x84022117eAD4C22D8A01bC7Fc9743dd101C6a882',
+            // No KasuNFTs on Lite deployments
+            ExternalTVL: '0xb2367F0B074Ec1788b28283A8af953aaA498d779',
+        },
+        subgraphUrl:
+            'https://api.goldsky.com/api/public/project_cmgzlpxm300765np2a19421om/subgraphs/kasu-xdc-usdc/v1.0.0/gn',
+        directusUrl: 'https://kasu-finance.directus.app/',
+        unusedPoolIds: [],
+        poolMetadataMapping: undefined,
     },
 
     plume: {

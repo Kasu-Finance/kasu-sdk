@@ -11,7 +11,7 @@ import {
 // Chain & SDK Configuration
 // ---------------------------------------------------------------------------
 
-export type SupportedChain = 'base' | 'xdc' | 'plume';
+export type SupportedChain = 'base' | 'xdc' | 'xdc-usdc' | 'plume';
 
 export interface ChainConfigEntry {
     chainId: number;
