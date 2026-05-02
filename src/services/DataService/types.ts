@@ -51,6 +51,8 @@ export interface PoolDelegateProfileAndHistory {
     totalLoansOriginated: number;
     loansUnderManagement: number;
     historicLossRate: number;
+    region?: string;
+    onTimeRate?: number;
 }
 
 export interface PoolTranche {

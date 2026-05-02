@@ -557,7 +557,7 @@ export class DataService {
         const poolDelegateProfileAndHistoryDirectus: PoolDelegateProfileAndHistoryDirectus[] =
             (await this._directus.request(
                 readItems('PoolDelegateProfileAndHistory', {
-                    // @ts-expect-error this is correct and works
+                    // @ts-ignore Directus' deep-fields typing is fragile across versions
                     fields: ['*', { otherPools: ['*'] }],
                 }),
             )) as unknown as PoolDelegateProfileAndHistoryDirectus[];
@@ -620,6 +620,8 @@ export class DataService {
                 totalLoansOriginated: data.totalLoansOriginated,
                 loansUnderManagement: data.loansUnderManagement,
                 historicLossRate: data.historicLossRate,
+                region: data.region,
+                onTimeRate: data.onTimeRate,
             });
         }
         return filterArray(retn, id_in);

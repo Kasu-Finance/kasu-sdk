@@ -68,6 +68,8 @@ export interface PoolDelegateProfileAndHistoryDirectus {
     totalLoansOriginated: number;
     loansUnderManagement: number;
     historicLossRate: number;
+    region?: string;
+    onTimeRate?: number;
 }
 
 export interface RiskManagementDirectus {
