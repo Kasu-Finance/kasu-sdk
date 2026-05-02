@@ -1,4 +1,8 @@
-name: Publish to npm
+name: Verify release tag
+
+# npm publishes are intentionally manual (policy: always run `npm publish`
+# locally as a kasu_finance org member). This workflow only verifies the
+# pushed tag matches package.json — it does NOT publish.
 
 on:
   push:
@@ -8,14 +12,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  publish:
+  verify:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Get tag version
         id: tag_version
@@ -32,16 +35,7 @@ jobs:
       - name: Ensure tag matches package.json
         run: |
           if [ "${{ steps.tag_version.outputs.TAG_VERSION }}" != "${{ steps.package_version.outputs.PACKAGE_VERSION }}" ]; then
-            echo "Tag version ${{ steps.tag_version.outputs.TAG_VERSION }} does not match package.json version ${{ steps.package_version.outputs.PACKAGE_VERSION }}."
+            echo "Tag ${{ steps.tag_version.outputs.TAG_VERSION }} does not match package.json ${{ steps.package_version.outputs.PACKAGE_VERSION }}."
             exit 1
           fi
-
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          registry-url: https://registry.npmjs.org/
-          scope: '@kasufinance'
-
-      - run: npm install && npm run build-tc && npm run build && npm run rollup-build && npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          echo "Tag ${{ steps.tag_version.outputs.TAG_VERSION }} matches package.json. Run 'npm publish' locally to release."
