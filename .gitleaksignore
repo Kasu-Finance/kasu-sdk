@@ -1,0 +1,19 @@
+# Baseline: historical findings triaged 2026-08-11 (real ones rotated, rest false positives).
+# New findings will still fail CI. Format: commit:file:rule:line
+0a13e5c82c4b0dea51a1bca2bcffd4dbe7d9e9c8:src/config/sdk/mainnet.config.ts:generic-api-key:9
+0a13e5c82c4b0dea51a1bca2bcffd4dbe7d9e9c8:src/config/sdk/testnet.config.ts:generic-api-key:9
+1a0e64886602fdbb0789b72e3be80460dfb2a9bc:src/tests/sample.test.ts:generic-api-key:18
+41992e186efdd602e49a07a9cfaa17a046194afd:src/tests/sample.test.ts:generic-api-key:20
+61345a2c016dd28bd3fe647b01ae92321f4e6797:src/config/sdk/mainnet.config.ts:generic-api-key:9
+61345a2c016dd28bd3fe647b01ae92321f4e6797:src/config/sdk/testnet.config.ts:generic-api-key:9
+678e94f28e9894246569775e06b7bfc145c90db9:src/config/sdk/mainnet.config.ts:generic-api-key:9
+678e94f28e9894246569775e06b7bfc145c90db9:src/config/sdk/testnet.config.ts:generic-api-key:9
+76241c92f25050ca6b73e77ce0514abc8c5038d8:src/config/sdk/mainnet.config.ts:generic-api-key:9
+76241c92f25050ca6b73e77ce0514abc8c5038d8:src/config/sdk/testnet.config.ts:generic-api-key:9
+aa4522559522cf1f207b834fbd0318ef96f1f635:src/app/api/kyc-challenge/route.ts:generic-api-key:5
+c65a422c4f96ba302c047fe1a4e3d6d74dcc2744:src/facade/chain-configs.ts:generic-api-key:18
+cee7050d62ae95f1b6d88592de8eaff576719d28:src/tests/sample.test.ts:generic-api-key:18
+f085d18b3b818f5853a934aee12ce1611afc738e:src/config/sdk/mainnet.config.ts:generic-api-key:9
+f085d18b3b818f5853a934aee12ce1611afc738e:src/config/sdk/testnet.config.ts:generic-api-key:9
+f92e12c74df7990a519eec7c4940a655cbaa3160:src/actions/getTokenPrice.ts:generic-api-key:52
+fc75e2491f414032d69a352f7a0e1fcd3f515f99:.env.local:generic-api-key:2
