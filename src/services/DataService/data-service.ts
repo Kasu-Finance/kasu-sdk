@@ -352,6 +352,7 @@ export class DataService {
 
                     return {
                         id: tranche.id,
+                        balance: tranche.balance,
                         apy: baseApy.toString(),
                         minApy: minApy.toString(),
                         maxApy: maxApy.toString(),
@@ -445,6 +446,7 @@ export class DataService {
                     lendingPoolDirectus?.poolName ??
                     lendingPoolSubgraph.name,
                 subheading: lendingPoolDirectus?.subheading,
+                operatingSince: lendingPoolDirectus?.operatingSince,
                 totalValueLocked: {
                     total: (
                         parseFloat(lendingPoolSubgraph.balance) +
