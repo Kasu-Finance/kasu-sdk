@@ -34,6 +34,7 @@ export interface PoolOverviewDirectus {
     id: string;
     poolName?: string;
     subheading?: string;
+    operatingSince?: string;
     enabled: boolean;
     oversubscribed: boolean;
     security: string[];

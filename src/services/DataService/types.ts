@@ -6,6 +6,11 @@ import {
 export interface PoolOverview {
     poolName: string;
     subheading?: string;
+    /**
+     * Month/year the strategy began operating, editor-authored in Directus.
+     * Absent until the CMS column is populated.
+     */
+    operatingSince?: string;
     id: string;
     enabled: boolean;
     isOversubscribed: boolean;
@@ -87,6 +92,11 @@ export interface RiskPerformance {
 
 export interface TrancheData {
     id: string;
+    /**
+     * Current amount lent through this tranche, in the pool's stable-asset
+     * units, from the subgraph tranche entity.
+     */
+    balance: string;
     minApy: string;
     maxApy: string;
     apy: string;
