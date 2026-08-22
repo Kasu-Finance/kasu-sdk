@@ -1,6 +1,6 @@
 {
     "name": "@kasufinance/kasu-sdk",
-    "version": "2.4.0",
+    "version": "2.4.1",
     "description": "",
     "main": "dist/bundle.cjs.js",
     "module": "dist/bundle.esm.js",
@@ -9,6 +9,7 @@
         "test": "jest --config=jest-config.ts",
         "build-tc": "typechain --target ethers-v5 --out-dir src/contracts './abis/*.json'",
         "build": "eslint . && tsc --build --force tsconfig.json",
+        "prepublishOnly": "npm run build",
         "build:watch": "npx tsc -b --force --watch",
         "rollup-build": "rollup -c",
         "lint": "eslint . --fix"
