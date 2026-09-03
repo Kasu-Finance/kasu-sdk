@@ -5,13 +5,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Overview
 
 `@kasufinance/kasu-sdk` is the shared TypeScript SDK for Kasu frontends. It provides:
+
 - Contract wrappers (ethers.js v5) for all Kasu smart contracts
 - Subgraph queries for pool data, user positions, and locking info
 - Directus CMS integration for pool descriptions and KPIs
 - Portfolio calculations (APY, yield, rewards)
 - Support for both Full (Base) and Lite (XDC, Plume) deployments
 
-**Current Version:** 2.0.0 (added Lite deployment support)
+**Version:** see `package.json`. `prepublishOnly` runs `build` + `rollup-build`; the runtime entry is the rollup bundle, so verify a published tarball's `dist/bundle.*`, never the version number (workspace `/kasu-infra` skill §5b).
 
 ## Build Commands
 
@@ -47,15 +48,15 @@ src/
 
 ### Key Files
 
-| File | Purpose |
-|------|---------|
-| `src/sdk-config.ts` | `SdkConfig` class and `ContractAddresses` interface |
-| `src/index.ts` | `KasuSdk` main class, exports all services |
-| `src/services/Locking/locking.ts` | KSU locking service with Lite mode guards |
-| `src/services/Portfolio/portfolio.ts` | Portfolio aggregation service |
-| `src/services/DataService/data-service.ts` | Subgraph + Directus data fetching |
-| `src/services/UserLending/user-lending.ts` | User deposit/withdraw operations |
-| `src/utils/deployment-mode.ts` | `isLiteDeployment()` utility |
+| File                                       | Purpose                                             |
+| ------------------------------------------ | --------------------------------------------------- |
+| `src/sdk-config.ts`                        | `SdkConfig` class and `ContractAddresses` interface |
+| `src/index.ts`                             | `KasuSdk` main class, exports all services          |
+| `src/services/Locking/locking.ts`          | KSU locking service with Lite mode guards           |
+| `src/services/Portfolio/portfolio.ts`      | Portfolio aggregation service                       |
+| `src/services/DataService/data-service.ts` | Subgraph + Directus data fetching                   |
+| `src/services/UserLending/user-lending.ts` | User deposit/withdraw operations                    |
+| `src/utils/deployment-mode.ts`             | `isLiteDeployment()` utility                        |
 
 ---
 
@@ -63,20 +64,23 @@ src/
 
 ### Supported Networks
 
-| Network | Chain ID | Deployment Type | Status | Subgraph |
-|---------|----------|-----------------|--------|----------|
-| Base Mainnet | 8453 | Full | Production | `kasu-base/v1.0.13` |
-| XDC Mainnet | 50 | Lite | WIP (frontend pending pools) | `kasu-xdc/v1.0.0` |
-| Plume Mainnet | 98866 | Lite | Future | `kasu-plume/prod` |
+| Network            | Chain ID | Deployment Type | Status                                     | Subgraph               |
+| ------------------ | -------- | --------------- | ------------------------------------------ | ---------------------- |
+| Base Mainnet       | 8453     | Full            | Production                                 | `kasu-base/v1.0.13`    |
+| XDC Mainnet (AUDD) | 50       | Lite            | Production                                 | `kasu-xdc/v1.0.0`      |
+| XDC Mainnet (USDC) | 50       | Lite            | Production (separate stack, same chain id) | `kasu-xdc-usdc/v1.0.0` |
+| Plume Mainnet      | 98866    | Lite            | Retired — drained; frozen history only     | legacy Goldsky project |
 
 ### Full vs Lite Deployments
 
 **Full Deployment** (Base mainnet):
+
 - KSU token, locking, loyalty rewards enabled
 - `KSUToken` and `KasuNFTs` contract addresses required
 - `isLiteDeployment: false`
 
 **Lite Deployment** (XDC, Plume):
+
 - No KSU token or locking features
 - KYC/KYB deposits still work
 - `KSUToken` and `KasuNFTs` are `undefined`
@@ -86,17 +90,17 @@ src/
 
 ### Feature Matrix
 
-| Feature | Full (Base) | Lite (XDC, Plume) |
-|---------|-------------|-------------------|
-| KSU Token | Yes | No |
-| KSU Locking | Yes | No |
-| Loyalty Levels | Yes | No |
-| APY Bonus | Yes | No |
-| NFT Boosts | Yes | No |
-| KYC/KYB Deposits | Yes | Yes |
-| Lending Pools | Yes | Yes |
-| Fixed Term Deposits | Yes | Yes |
-| Pool Descriptions | Yes (Directus) | Yes (Directus) |
+| Feature             | Full (Base)    | Lite (XDC, Plume) |
+| ------------------- | -------------- | ----------------- |
+| KSU Token           | Yes            | No                |
+| KSU Locking         | Yes            | No                |
+| Loyalty Levels      | Yes            | No                |
+| APY Bonus           | Yes            | No                |
+| NFT Boosts          | Yes            | No                |
+| KYC/KYB Deposits    | Yes            | Yes               |
+| Lending Pools       | Yes            | Yes               |
+| Fixed Term Deposits | Yes            | Yes               |
+| Pool Descriptions   | Yes (Directus) | Yes (Directus)    |
 
 ---
 
@@ -133,7 +137,7 @@ export interface SdkConfigOptions {
     contracts: ContractAddresses;
     directusUrl: string;
     UNUSED_LENDING_POOL_IDS: string[];
-    isLiteDeployment?: boolean;  // default: false
+    isLiteDeployment?: boolean; // default: false
 }
 ```
 
@@ -181,11 +185,12 @@ See `kasu-fe-next/src/config/sdk/addresses-xdc.json` for full addresses.
 
 ### Subgraph URLs
 
-| Chain | URL |
-|-------|-----|
-| Base | `https://api.goldsky.com/api/public/project_cmgzlpxm300765np2a19421om/subgraphs/kasu-base/v1.0.13/gn` |
-| XDC | `https://api.goldsky.com/api/public/project_cmgzlpxm300765np2a19421om/subgraphs/kasu-xdc/v1.0.0/gn` |
-| Plume | `https://api.goldsky.com/api/public/project_cmgzlpxm300765np2a19421om/subgraphs/kasu-plume/prod` |
+| Chain      | URL                                                                                                                                         |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Base       | `https://api.goldsky.com/api/public/project_cmgzlpxm300765np2a19421om/subgraphs/kasu-base/v1.0.13/gn`                                       |
+| XDC (AUDD) | `https://api.goldsky.com/api/public/project_cmgzlpxm300765np2a19421om/subgraphs/kasu-xdc/v1.0.0/gn`                                         |
+| XDC (USDC) | `https://api.goldsky.com/api/public/project_cmgzlpxm300765np2a19421om/subgraphs/kasu-xdc-usdc/v1.0.0/gn`                                    |
+| Plume      | retired — indexed on the legacy Goldsky project (`project_cm9t3064x…`); the `kasu-plume/prod` URL on the current project 404s. History only |
 
 ---
 
@@ -237,54 +242,18 @@ async lockTokens(amount: BigNumber): Promise<TransactionResponse> {
 | `getPortfolioRewards()` | Returns zeros for KSU-related fields |
 
 **UserLending Service** (0 guard clauses):
+
 - All lending operations work identically on all chains
 - KYC/KYB deposit flows supported
 
 **DataService** (0 guard clauses):
+
 - Pool data queries are chain-agnostic
 - Works on any subgraph
 
 **Swapper Service** (0 guard clauses):
+
 - Swap operations identical across chains
-
----
-
-## Current Integration Status
-
-### SDK (This Repository)
-
-| Task | Status |
-|------|--------|
-| `isLiteDeployment` config flag | Done |
-| Optional `KSUToken` contract address | Done |
-| Optional `KasuNFTs` contract address | Done |
-| Locking service Lite mode guards | Done |
-| Portfolio service Lite mode guards | Done |
-| README multi-chain documentation | Done |
-
-### Frontend (kasu-fe-next)
-
-| Task | Status |
-|------|--------|
-| Chain configuration system | Done |
-| Chain context provider | Done |
-| Chain switcher UI | Done |
-| SDK provider chain awareness | Done |
-| Conditional UI rendering | Done |
-| SWR cache keys with chainId | Partial |
-| Block explorer links | TODO |
-
-### Blocking Issue: XDC Pools
-
-XDC chain integration in the frontend is blocked because:
-1. No lending pools are deployed on XDC yet
-2. Server-side data fetching always uses Base (DEFAULT_CHAIN_ID)
-3. Frontend shows "Coming Soon to XDC" when user switches to XDC
-
-**To enable XDC:**
-1. Deploy lending pools via kasu-contracts
-2. Remove `ChainAwareContent` wrapper in `kasu-fe-next/src/app/lending/()/layout.tsx`
-3. Test deposit/withdraw flows with Nexera KYC
 
 ---
 
@@ -363,11 +332,13 @@ npm publish
 
 ## Related Repositories
 
-| Repository | Path | Relationship |
-|------------|------|--------------|
-| `kasu-fe-next` | `/Users/kirilivanov/DEV/Kasu/kasu-fe-next` | Main consumer - imports SDK for all contract/data interactions |
-| `kasu-contracts` | `/Users/kirilivanov/DEV/Kasu/kasu-contracts` | Source of ABIs and contract logic |
-| `kasu-subgraph` | `/Users/kirilivanov/DEV/Kasu/kasu-subgraph` | Source of subgraph schema and queries |
+| Repository                      | Path                                  | Relationship                                                   |
+| ------------------------------- | ------------------------------------- | -------------------------------------------------------------- |
+| `kasu-ui`                       | `../kasu-ui`                          | Primary consumer (production lender app)                       |
+| `kasu-fe-next`                  | `../kasu-fe-next`                     | Legacy consumer (frozen, bugfixes only)                        |
+| `kasu-app-admin`, `kasu-mobile` | `../kasu-app-admin`, `../kasu-mobile` | Consumers — every publish is followed by `npm install` in each |
+| `kasu-contracts`                | `../kasu-contracts`                   | Source of ABIs and contract logic                              |
+| `kasu-subgraph`                 | `../kasu-subgraph`                    | Source of subgraph schema and queries                          |
 
 ---
 
@@ -376,35 +347,39 @@ npm publish
 1. **Determine deployment type**: Full (has KSU token) or Lite (no KSU token)
 
 2. **Deploy contracts** via kasu-contracts:
-   - For Lite: Deploy all contracts except KSU, KasuNFTs
-   - Record addresses in `.openzeppelin/<chain>-addresses.json`
+
+    - For Lite: Deploy all contracts except KSU, KasuNFTs
+    - Record addresses in `.openzeppelin/<chain>-addresses.json`
 
 3. **Deploy subgraph** via kasu-subgraph:
-   - Create chain config in `src/config/<chain>.json`
-   - Deploy to Goldsky
-   - Note subgraph URL
+
+    - Create chain config in `src/config/<chain>.json`
+    - Deploy to Goldsky
+    - Note subgraph URL
 
 4. **No SDK changes needed** if contracts match existing ABIs:
-   - SDK already supports `isLiteDeployment` flag
-   - Just configure frontend with new chain config
+
+    - SDK already supports `isLiteDeployment` flag
+    - Just configure frontend with new chain config
 
 5. **Frontend changes** (in kasu-fe-next):
-   - Add chain to `src/config/chains/index.ts`
-   - Add contract addresses to `src/config/sdk/addresses-<chain>.json`
-   - Chain switcher will automatically include new chain
+
+    - Add chain to `src/config/chains/index.ts`
+    - Add contract addresses to `src/config/sdk/addresses-<chain>.json`
+    - Chain switcher will automatically include new chain
 
 6. **If new ABIs needed**:
-   - Copy ABIs to `abis/`
-   - Run `npm run build-tc`
-   - Update services if signatures changed
-   - Publish new SDK version
+    - Copy ABIs to `abis/`
+    - Run `npm run build-tc`
+    - Update services if signatures changed
+    - Publish new SDK version
 
 ---
 
 ## XDC Multisig Addresses
 
-| Role | Address |
-|------|---------|
-| Kasu Multisig | `0x1E9ed74140DA7B81a1612AA5df33F98Eb5Ea0B4D` |
+| Role                  | Address                                      |
+| --------------------- | -------------------------------------------- |
+| Kasu Multisig         | `0x1E9ed74140DA7B81a1612AA5df33F98Eb5Ea0B4D` |
 | Pool Manager Multisig | `0x21567eA21b14BEd14657e9725C2FE11C7be942B1` |
-| Pool Admin Multisig | `0x880Aa2d6eEC5bD573059444cF1b3C09658f8c112` |
+| Pool Admin Multisig   | `0x880Aa2d6eEC5bD573059444cF1b3C09658f8c112` |
