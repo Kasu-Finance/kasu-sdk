@@ -17,6 +17,7 @@ import {
     IUserManagerAbi,
     IUserManagerAbi__factory,
 } from '../../contracts';
+import { epochRateToApy } from '../../domain/rates';
 import { SdkConfig } from '../../sdk-config';
 import {
     getAllTrancheConfigurationsQuery,
@@ -265,9 +266,22 @@ export class KSULocking {
         );
     }
 
+    /**
+     * A per-epoch interest rate compounded into an APY.
+     *
+     * This used to read `(1 + epochInterestRate) ^ (EPOCHS_IN_YEAR - 1)`.
+     * `^` is JavaScript's BITWISE XOR, not exponentiation: both operands were
+     * coerced to int32, so for a realistic epoch rate of ~0.003 it computed
+     * `1 ^ 51` and returned the constant 50 — a 5000% APY — for every tranche,
+     * regardless of its rate. Its only caller,
+     * `calculateUserLockProjectedProtocolFeeRewards`, multiplied that by each
+     * tranche balance, so its projection was nonsense rather than merely
+     * imprecise.
+     *
+     * Now the same compounding every other rate in the SDK uses.
+     */
     calculateApy(epochInterestRate: number): number {
-        const EPOCHS_IN_YEAR = 52.17857;
-        return (1 + epochInterestRate) ^ (EPOCHS_IN_YEAR - 1);
+        return epochRateToApy(epochInterestRate);
     }
 
     async getUserLocks(userAddress: string): Promise<UserLock[]> {
