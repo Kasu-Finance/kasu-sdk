@@ -20,6 +20,17 @@ export interface SdkConfigOptions {
     contracts: ContractAddresses;
     /** Directus CMS URL. Optional – when omitted, pool descriptions/images will not be available but on-chain data still works. */
     directusUrl?: string;
+    /**
+     * Pool ids to EXCLUDE from every subgraph query (`id_not_in`).
+     *
+     * An empty array is normalised to `['']` by the `SdkConfig` constructor.
+     * The subgraph reads `id_not_in: []` as "match nothing", not "exclude
+     * nothing": on Base, `[]` returns 0 pools where `['']` returns all 9
+     * (verified live 2026-09-04). Passing `[]` therefore used to make the SDK
+     * silently return an empty platform, which is why every consumer already
+     * passes a sentinel of its own. A sentinel you pass yourself is left
+     * untouched.
+     */
     UNUSED_LENDING_POOL_IDS: string[];
     /**
      * Whether this is a Lite deployment (no KSU token, locking, or loyalty features).
@@ -55,7 +66,14 @@ export class SdkConfig {
         this.subgraphUrl = options.subgraphUrl;
         this.contracts = options.contracts;
         this.directusUrl = options.directusUrl ?? '';
-        this.UNUSED_LENDING_POOL_IDS = options.UNUSED_LENDING_POOL_IDS;
+        // `id_not_in: []` matches NOTHING in the subgraph, so an empty
+        // exclusion list would hide every pool. The empty-string sentinel is
+        // the "exclude nothing" spelling — no pool id is the empty string, and
+        // it is what the consumers already work around this with.
+        this.UNUSED_LENDING_POOL_IDS =
+            options.UNUSED_LENDING_POOL_IDS.length > 0
+                ? options.UNUSED_LENDING_POOL_IDS
+                : [''];
         this.isLiteDeployment = options.isLiteDeployment ?? false;
         this.poolMetadataMapping = options.poolMetadataMapping ?? {};
         this.stableAssetDecimals = options.stableAssetDecimals ?? 6;

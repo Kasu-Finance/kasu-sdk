@@ -1,6 +1,21 @@
 import { ChainConfigEntry } from './types';
 
 /**
+ * Browser-viable XDC RPCs only. `rpc.xdc.org` / `erpc.xdc.org` answer OPTIONS
+ * without `access-control-allow-origin`, so a browser call hangs on preflight
+ * — they must never appear here. The four below ship CORS `*` and are DISTINCT
+ * operators, so one vendor incident cannot exhaust the list. Order is a
+ * STARTING preference only; consumers are expected to fold the list into their
+ * own failover. Shared by both XDC deployments (same chain, same endpoints).
+ */
+const XDC_RPC_URLS: string[] = [
+    'https://rpc.ankr.com/xdc',
+    'https://rpc.xdcrpc.com',
+    'https://rpc.xinfin.network',
+    'https://rpc.primenumbers.xyz/',
+];
+
+/**
  * Built-in chain configurations for Kasu-supported networks.
  *
  * Usage:
@@ -33,6 +48,17 @@ export const CHAIN_CONFIGS: Record<'base' | 'xdc' | 'xdc-usdc' | 'plume', ChainC
         directusUrl: 'https://kasu-finance.directus.app/',
         unusedPoolIds: [],
         poolMetadataMapping: undefined,
+        stableAsset: {
+            address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+            symbol: 'USDC',
+            name: 'USD Coin',
+            decimals: 6,
+            currencyCode: 'USD',
+        },
+        rpcUrls: [
+            'https://base-rpc.publicnode.com',
+            'https://mainnet.base.org',
+        ],
     },
 
     xdc: {
@@ -65,6 +91,14 @@ export const CHAIN_CONFIGS: Record<'base' | 'xdc' | 'xdc-usdc' | 'plume', ChainC
             '0xeda50c91a8c4ca8a83652b8542c0b3bd00a71fad':
                 '0xc347a9e4aec8c8d11a149d2907deb2bf23b81c6f',
         },
+        stableAsset: {
+            address: '0x9fe4e6321eeb7c4bc537570f015e4734b15002b8',
+            symbol: 'AUDD',
+            name: 'Novatti Australian Dollar',
+            decimals: 6,
+            currencyCode: 'AUD',
+        },
+        rpcUrls: XDC_RPC_URLS,
     },
 
     'xdc-usdc': {
@@ -90,6 +124,14 @@ export const CHAIN_CONFIGS: Record<'base' | 'xdc' | 'xdc-usdc' | 'plume', ChainC
         directusUrl: 'https://kasu-finance.directus.app/',
         unusedPoolIds: [],
         poolMetadataMapping: undefined,
+        stableAsset: {
+            address: '0xfa2958cb79b0491cc627c1557f441ef849ca8eb1',
+            symbol: 'USDC',
+            name: 'USD Coin',
+            decimals: 6,
+            currencyCode: 'USD',
+        },
+        rpcUrls: XDC_RPC_URLS,
     },
 
     plume: {
@@ -114,5 +156,18 @@ export const CHAIN_CONFIGS: Record<'base' | 'xdc' | 'xdc-usdc' | 'plume', ChainC
         directusUrl: 'https://kasu-finance.directus.app/',
         unusedPoolIds: [],
         poolMetadataMapping: undefined,
+        stableAsset: {
+            address: '0xdddD73F5Df1F0DC31373357beAC77545dC5A6f3F',
+            symbol: 'pUSD',
+            name: 'Plume USD',
+            decimals: 6,
+            currencyCode: 'USD',
+        },
+        // Retired — drained and wound down. No default RPC, so a read-only
+        // `Kasu.create({ chain: 'plume' })` throws rather than quietly
+        // pointing at an endpoint nobody maintains. Pass your own
+        // `signerOrProvider` to read the frozen history.
+        rpcUrls: [],
+        retired: true,
     },
 };

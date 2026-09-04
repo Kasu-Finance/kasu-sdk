@@ -13,6 +13,7 @@ export { CHAIN_CONFIGS } from './chain-configs';
 export type {
     SupportedChain,
     ChainConfigEntry,
+    StableAsset,
     KasuOptions,
     Strategy,
     StrategyTranche,

@@ -102,6 +102,12 @@ export class Kasu {
             poolMetadataMapping:
                 overrides.poolMetadataMapping ??
                 chainConfig.poolMetadataMapping,
+            // Follow the chain's own token rather than `SdkConfig`'s default
+            // of 6. Every live deployment happens to be 6dp today, so the
+            // default was right by luck; the next one need not be.
+            stableAssetDecimals:
+                overrides.stableAssetDecimals ??
+                chainConfig.stableAsset.decimals,
         });
 
         const sdk = new KasuSdk(sdkConfig, options.signerOrProvider);
