@@ -17,6 +17,7 @@ import {
     KasuPoolExternalTVLAbi,
     KasuPoolExternalTVLAbi__factory,
 } from '../../contracts';
+import { epochRateToApy } from '../../domain/rates';
 import { SdkConfig } from '../../sdk-config';
 import { getSystemVariablesQuery } from '../Locking/queries';
 import { SystemVariables } from '../Locking/types';
@@ -171,9 +172,13 @@ export class DataService {
         );
     }
 
+    /**
+     * The subgraph's per-epoch `interestRate` compounded into an APY.
+     * Unchanged arithmetic — `EPOCHS_IN_YEAR` and the formula now come from
+     * `domain/rates` so this file and `KSULocking` cannot drift apart.
+     */
     calculateApyForTranche(interestRate: string): number {
-        const EPOCHS_IN_YEAR = 52.17857;
-        return (1 + parseFloat(interestRate)) ** EPOCHS_IN_YEAR - 1;
+        return epochRateToApy(parseFloat(interestRate));
     }
 
     async getPlatformOverview(): Promise<PlatformOverviewDirectus> {

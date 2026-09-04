@@ -15,6 +15,10 @@
         "esModuleInterop": true,
         "resolveJsonModule": true,
         "moduleResolution": "node",
+        // Third-party .d.ts only. `fast-check` (dev-only, property tests) ships
+        // subpath type imports that "node" resolution cannot follow; our own
+        // sources stay fully checked.
+        "skipLibCheck": true,
         "plugins": [
             {
                 "transform": "ts-auto-mock/transformer",
