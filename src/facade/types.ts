@@ -77,8 +77,17 @@ export interface ChainConfigEntry {
 export interface KasuOptions {
     /** A supported chain name or a custom `ChainConfigEntry`. */
     chain: SupportedChain | ChainConfigEntry;
-    /** ethers Signer (for transactions) or Provider (read-only). */
-    signerOrProvider: import('ethers').Signer | import('@ethersproject/providers').Provider;
+    /**
+     * ethers Signer (for transactions) or Provider (read-only).
+     *
+     * OPTIONAL. When omitted, `Kasu.create` builds a read-only
+     * `StaticJsonRpcProvider` on `chainConfig.rpcUrls[0]`, so browsing
+     * strategies and platform stats needs no wallet at all. Get a writable
+     * instance later with `kasu.connect(signer)`.
+     */
+    signerOrProvider?:
+        | import('ethers').Signer
+        | import('@ethersproject/providers').Provider;
     /** Override any default config value. */
     configOverrides?: Partial<SdkConfigOptions>;
 }
