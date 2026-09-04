@@ -1,5 +1,5 @@
-import { Provider, StaticJsonRpcProvider } from '@ethersproject/providers';
-import { Signer } from 'ethers';
+import { Provider } from '@ethersproject/providers';
+import { providers, Signer } from 'ethers';
 
 import { KasuSdk } from '../kasu-sdk';
 import { SdkConfig, SdkConfigOptions } from '../sdk-config';
@@ -227,9 +227,19 @@ export class Kasu {
  * exactly one chain.
  *
  * Only `rpcUrls[0]` is used. The list is a starting preference, not a failover
- * strategy: an app that needs failover builds its own provider and passes it in
- * (that is what kasu-ui does), and baking a retry policy in here would hide
- * outages from the app that has to report them.
+ * strategy: an app that needs failover builds its own provider and passes it
+ * in, and baking a retry policy in here would hide outages from the app that
+ * has to report them.
+ *
+ * Constructed through the `ethers` namespace rather than by importing
+ * `StaticJsonRpcProvider` from `@ethersproject/providers` directly. `ethers` is
+ * the only provider package the rollup config marks external, so this picks up
+ * the CONSUMER's build — the Node one under Node, the browser one in a browser.
+ * Importing the class directly would inline the browser transport into the
+ * bundle, and its `fetch` call carries `referrer: 'client'`, which Node rejects
+ * outright ("Referrer \"client\" is not a valid URL"). It would also give the
+ * SDK a second provider implementation, so `instanceof` against the consumer's
+ * ethers would quietly fail.
  */
 function defaultProvider(
     chainConfig: ChainConfigEntry,
@@ -241,7 +251,7 @@ function defaultProvider(
             `Kasu.create: chain "${chainLabel}" has no default RPC (retired); pass signerOrProvider`,
         );
     }
-    return new StaticJsonRpcProvider(url, chainConfig.chainId);
+    return new providers.StaticJsonRpcProvider(url, chainConfig.chainId);
 }
 
 function resolveChainConfig(

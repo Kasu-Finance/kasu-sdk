@@ -1,4 +1,4 @@
-import { StaticJsonRpcProvider } from '@ethersproject/providers';
+import { providers } from 'ethers';
 
 import { apyToEpochRate, epochRateToApy } from '../../domain/rates';
 import { CHAIN_CONFIGS } from '../../facade/chain-configs';
@@ -17,7 +17,7 @@ function locking(): KSULocking {
     });
     return new KSULocking(
         config,
-        new StaticJsonRpcProvider(chain.rpcUrls[0], chain.chainId),
+        new providers.StaticJsonRpcProvider(chain.rpcUrls[0], chain.chainId),
     );
 }
 

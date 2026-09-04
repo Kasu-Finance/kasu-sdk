@@ -1,5 +1,4 @@
-import { StaticJsonRpcProvider } from '@ethersproject/providers';
-import { Wallet } from 'ethers';
+import { providers, Wallet } from 'ethers';
 
 import { SdkConfig } from '../sdk-config';
 
@@ -13,7 +12,7 @@ const BASE_CONTRACTS = CHAIN_CONFIGS.base.contracts;
 /** A signer with a provider attached, offline — nothing here sends anything. */
 function signer(): Wallet {
     return Wallet.createRandom().connect(
-        new StaticJsonRpcProvider(
+        new providers.StaticJsonRpcProvider(
             CHAIN_CONFIGS.base.rpcUrls[0],
             CHAIN_CONFIGS.base.chainId,
         ),
@@ -110,12 +109,12 @@ describe('Kasu — read-only create and connect', () => {
     it('creates a read-only instance with no signerOrProvider', () => {
         const kasu = Kasu.create({ chain: 'base' });
         expect(kasu.isReadOnly).toBe(true);
-        expect(kasu.provider).toBeInstanceOf(StaticJsonRpcProvider);
+        expect(kasu.provider).toBeInstanceOf(providers.StaticJsonRpcProvider);
     });
 
     it('uses rpcUrls[0] and the config chain id, with no network detection', () => {
         const kasu = Kasu.create({ chain: 'base' });
-        const provider = kasu.provider as StaticJsonRpcProvider;
+        const provider = kasu.provider as providers.StaticJsonRpcProvider;
         expect(provider.connection.url).toBe(CHAIN_CONFIGS.base.rpcUrls[0]);
         expect(provider.network.chainId).toBe(CHAIN_CONFIGS.base.chainId);
     });
@@ -127,7 +126,7 @@ describe('Kasu — read-only create and connect', () => {
     });
 
     it('still accepts an explicit provider for the retired chain', () => {
-        const provider = new StaticJsonRpcProvider(
+        const provider = new providers.StaticJsonRpcProvider(
             'https://example.invalid/plume',
             CHAIN_CONFIGS.plume.chainId,
         );
