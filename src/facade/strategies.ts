@@ -1,3 +1,4 @@
+import { selectVisiblePools } from '../domain/pools';
 import { DataService } from '../services/DataService/data-service';
 import { PoolOverview } from '../services/DataService/types';
 import { UserLending } from '../services/UserLending/user-lending';
@@ -32,6 +33,41 @@ export class StrategiesFacade {
         const epochId = await this._userLending.getCurrentEpoch();
         const pools = await this._dataService.getPoolOverview(epochId, poolIds);
         return pools.map((pool) => this.mapPoolToStrategy(pool));
+    }
+
+    /**
+     * The strategies a lender should actually see: active, not oversubscribed,
+     * with the ones that still have capacity first and the highest max APY
+     * next. `getAll` returns everything the subgraph knows about, including
+     * pools that are wound down.
+     *
+     * The filter runs on the raw `PoolOverview[]` BEFORE mapping, so `_raw` on
+     * every returned `Strategy` is the untouched pool object.
+     */
+    async getVisible(poolIds?: string[]): Promise<Strategy[]> {
+        const epochId = await this._userLending.getCurrentEpoch();
+        const pools = await this._dataService.getPoolOverview(epochId, poolIds);
+        return selectVisiblePools(pools).map((pool) =>
+            this.mapPoolToStrategy(pool),
+        );
+    }
+
+    /**
+     * The chain's performance fee.
+     *
+     * ⚠️ A PERCENTAGE IN 0..100 (`10` means ten percent), NOT a fraction —
+     * feed it to `netEffectiveApy` as-is. Treating it as `0.10` computes a
+     * nonsense negative rate that still renders as a plausible-looking
+     * percentage, which is why the units are stated here and in
+     * `netEffectiveApy`'s own JSDoc.
+     *
+     * ```ts
+     * const feePercent = await kasu.strategies.getPerformanceFeePercent();
+     * const net = netEffectiveApy(strategy.tranches[0].apy, feePercent);
+     * ```
+     */
+    async getPerformanceFeePercent(): Promise<number> {
+        return await this._dataService.getPerformanceFee();
     }
 
     /**
