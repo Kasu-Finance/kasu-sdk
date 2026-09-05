@@ -114,3 +114,5 @@ export type {
     PoolStatus,
     TrancheCapacitySignal,
 } from './tranches';
+
+export { isUnpredictableGas, isUserRejected } from './wallet-errors';
