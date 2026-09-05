@@ -41,5 +41,13 @@ module.exports = {
     }),
     typescript({ tsconfig: './tsconfig.json' }),
   ],
-  external: ['ethers', 'ethers/lib/utils'], // Do not bundle these dependencies cus they are already bundled in frontend app
+  // Do not bundle these: every consumer already has ethers v5, which brings
+  // the @ethersproject/* packages with it. Inlining one of those would put a
+  // SECOND copy of classes like StaticJsonRpcProvider in the bundle, and an
+  // `instanceof` across the boundary would then be false for an object the
+  // consumer built with its own ethers. Nothing imports an @ethersproject
+  // value today (the current imports are types, which erase), so this entry
+  // changes no output — it stops the first one that does from breaking
+  // consumers silently.
+  external: ['ethers', 'ethers/lib/utils', /^@ethersproject\//],
 };
