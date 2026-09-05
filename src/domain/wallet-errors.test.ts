@@ -2,8 +2,11 @@ import { isUnpredictableGas, isUserRejected } from './wallet-errors';
 
 /**
  * `isUserRejected` cases ported from kasu-ui
- * `src/lib/web3/is-user-rejected.test.ts`. `isUnpredictableGas` had no test in
- * kasu-mobile; one is written here.
+ * `src/lib/web3/is-user-rejected.test.ts`, plus one per shape kasu-mobile's
+ * `features/lending/lib/errors.ts` recognised and kasu-ui did not — the wrapped
+ * `error.code` / `error.message`, ethers' `reason`, and the "request rejected"
+ * / "declined" wordings. `isUnpredictableGas` had no test in kasu-mobile; one
+ * is written here.
  */
 
 describe('isUserRejected', () => {
@@ -59,6 +62,64 @@ describe('isUserRejected', () => {
     it('is not fooled by a numeric code that only looks like 4001', () => {
         expect(isUserRejected({ code: '4001' })).toBe(false);
         expect(isUserRejected({ code: 4002 })).toBe(false);
+    });
+
+    // --- the shapes kasu-mobile carried on top of this, now folded in -------
+
+    it('reads the code off a WRAPPED provider error', () => {
+        // Privy's embedded wallet on Expo: the outer object's own code says
+        // nothing, and the wallet's is one layer down.
+        expect(
+            isUserRejected({
+                code: -32603,
+                message: 'Internal JSON-RPC error.',
+                error: { code: 4001, message: 'User rejected the request.' },
+            }),
+        ).toBe(true);
+        expect(isUserRejected({ error: { code: 'ACTION_REJECTED' } })).toBe(
+            true,
+        );
+    });
+
+    it('reads the message off a wrapped provider error', () => {
+        expect(
+            isUserRejected({
+                code: -32000,
+                message: 'Request failed',
+                error: { message: 'MetaMask Tx Signature: User denied.' },
+            }),
+        ).toBe(true);
+    });
+
+    it("detects the rejection in ethers' `reason` field", () => {
+        expect(
+            isUserRejected(
+                Object.assign(new Error('transaction failed'), {
+                    reason: 'user rejected transaction',
+                }),
+            ),
+        ).toBe(true);
+    });
+
+    it('detects the "request rejected" wording', () => {
+        expect(isUserRejected(new Error('Request rejected by user'))).toBe(
+            true,
+        );
+    });
+
+    it('detects the "declined" wording, case-insensitively', () => {
+        expect(isUserRejected(new Error('Transaction Declined'))).toBe(true);
+        expect(isUserRejected({ message: 'signature declined' })).toBe(true);
+    });
+
+    it('still says no when none of the wrapped fields mention a rejection', () => {
+        expect(
+            isUserRejected({
+                code: -32603,
+                message: 'Internal JSON-RPC error.',
+                error: { code: -32000, message: 'insufficient funds for gas' },
+            }),
+        ).toBe(false);
     });
 });
 
