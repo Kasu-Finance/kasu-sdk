@@ -63,6 +63,18 @@ export type {
     RequestStatusCode,
 } from './requests';
 
+export {
+    CLEARING_WINDOW_SECONDS,
+    computeSettlementWindow,
+    deriveCycleDates,
+    nextCycleBoundary,
+} from './settlement';
+export type {
+    CycleDates,
+    SettlementWindowInput,
+    SettlementWindowState,
+} from './settlement';
+
 export { getTrancheDisplayName, UPPER_MEZZANINE } from './tranche-display-name';
 
 export {
