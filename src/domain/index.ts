@@ -43,6 +43,27 @@ export {
 export type { PoolNameSignal, StrategyPartner } from './partners';
 
 export {
+    asContractType,
+    buildContractVersionType,
+    buildFullNameRequestMessage,
+    buildLegacyContractRequestMessage,
+    buildLoanAgreementSignMessage,
+    encodeDepositData,
+    formatSignTimestampUtc,
+    parseFormattedMessage,
+} from './loan-contract';
+export type {
+    ContractListItem,
+    ContractSection,
+    ContractType,
+    ExemptLoanContract,
+    GenerateContractResponse,
+    LoanContractFormatted,
+    ResolvedContractResponse,
+    RetailLoanContract,
+} from './loan-contract';
+
+export {
     maxNetRateCeiling,
     pickHighestYieldTranche,
     poolMaxApy,
