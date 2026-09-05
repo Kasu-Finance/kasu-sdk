@@ -56,7 +56,12 @@ src/
 │   ├── deposit-bounds.ts# Min/max deposit, cent snapping
 │   ├── pools.ts         # Visible-pool selection, best tranche, rate ceiling
 │   ├── partners.ts      # Credit originator / institutional lender
-│   └── tranche-display-name.ts  # The one display-only rename
+│   ├── tranche-display-name.ts  # The one display-only rename
+│   ├── requests.ts      # Lending-request view model as codes
+│   ├── settlement.ts    # Clearing window, cycle dates
+│   ├── loan-contract.ts # Backend-verified protocol strings + depositData
+│   ├── wallet-errors.ts # User-rejection / gas-revert predicates
+│   └── au-minimum.ts    # AU cumulative-lending minimum (numeric half)
 ├── facade/              # High-level integrator API (Kasu, chain configs, I/O)
 ├── services/
 │   ├── DataService/     # Pool data, subgraph queries, Directus
@@ -171,6 +176,19 @@ export interface SdkConfigOptions {
 }
 ```
 
+### `directusUrl` is genuinely optional
+
+Pools, tranches, positions and request history come from the subgraph and the
+chain; only CMS content needs Directus. Omitting `directusUrl` (or passing
+`''`) therefore builds a working SDK: `getPoolOverview` returns on-chain data
+with empty descriptions and images, and `getUserRequests` falls back to the raw
+subgraph pool names. A call that exists ONLY to read CMS content —
+`getPlatformOverview`, `getRiskManagement`, `getRepayments`, … — rejects with
+the exported `NO_DIRECTUS_URL_MESSAGE`. Both services build the client through
+`createDirectusClient` (`src/services/DataService/directus-client.ts`); never
+call `createDirectus` directly, because `createDirectus('')` throws
+`Invalid URL` from inside the constructor.
+
 ### Empty-exclusion-list normalisation
 
 `SdkConfig` rewrites an EMPTY `UNUSED_LENDING_POOL_IDS` to `['']`. The subgraph
@@ -235,8 +253,11 @@ they were duplicated across the applications, and the copies drifted.
    user reads. `netEffectiveApy` returns `0.196`, not `'19.60% p.a.'`;
    `derivePoolStatus` returns the code `'Full'`, not a sentence. Formatting
    belongs to each application, where the design system and the visitor's
-   language are. The single exception is `getTrancheDisplayName` (below), which
-   is here precisely so it CANNOT drift.
+   language are.
+
+   Exactly two kinds of string are exempt. `getTrancheDisplayName` (below) is
+   here precisely so it CANNOT drift. And `loan-contract.ts` builds **protocol
+   strings** — see below.
 2. **Pure.** No network, no clock, no environment. Anything with I/O goes in
    `src/facade/` — `fetchUnusedPoolIds` is the example.
 
@@ -248,6 +269,27 @@ they were duplicated across the applications, and the copies drifted.
 | `pools.ts`                | Visible-pool selection and sort, best tranche, max net rate ceiling               |
 | `partners.ts`             | Credit originator and institutional lender, inferred from the pool name           |
 | `tranche-display-name.ts` | The Senior → "Upper Mezzanine" rename                                             |
+| `requests.ts`             | Lending-request view model as codes: status, kind, amounts, bundle, cycle         |
+| `settlement.ts`           | Clearing-window phase and boundary, cycle close/outcome dates                     |
+| `loan-contract.ts`        | `depositData` bytes, the signed-message builders, the contract payload types      |
+| `wallet-errors.ts`        | `isUserRejected`, `isUnpredictableGas`                                            |
+| `au-minimum.ts`           | AU cumulative-lending minimum — thresholds, minor-unit maths, exemption test      |
+
+### Protocol strings are the exception to "never copy"
+
+`loan-contract.ts` returns strings a user never chooses to read: the message a
+lender's wallet signs, and the two legacy templates kasu-backend still accepts.
+The backend reconstructs each one **byte-for-byte** and verifies the signature
+against it. A reworded line, a different separator or another date format does
+not read differently — it stops every signature verifying, in production, for
+every app at once. `encodeDepositData` is the same rule in bytes: its output
+goes on chain, and kasu-ui (viem) and kasu-mobile (ethers) must produce
+identical blobs, which the SDK test pins against viem-generated fixtures.
+
+So these live in `domain/` for the same reason `getTrancheDisplayName` does —
+not because they are copy, but because nothing may be allowed to drift. Any
+change to one is a coordinated change with kasu-backend, landing in both repos
+at once. They are never translated and never tidied.
 
 ### The `feePercent` units rule
 
@@ -288,9 +330,12 @@ CHAIN_CONFIGS['xdc-usdc'].subgraphUrl;
 CHAIN_CONFIGS.xdc.stableAsset;
 ```
 
-The Plume subgraph is indexed on a legacy Goldsky project; the URL carried in
-`CHAIN_CONFIGS.plume` 404s on the current project. It is history-only, so
-nothing reads it.
+The Plume subgraph is indexed on a LEGACY Goldsky project, not the one the live
+chains use — the same path under the current project returns 404, and the
+legacy URL carries a `/gn` suffix the current ones do not.
+`CHAIN_CONFIGS.plume.subgraphUrl` points at the legacy project (fixed in 2.6.0;
+before that it 404'd). It is history-only, so nothing reads it in normal
+operation.
 
 ---
 

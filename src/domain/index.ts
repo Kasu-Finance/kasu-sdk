@@ -8,9 +8,14 @@
  *    user reads — `netEffectiveApy` returns `0.196`, never `'19.60% p.a.'`,
  *    and `derivePoolStatus` returns the code `'Full'`, not a sentence. The
  *    formatters that turn these into text stay in each app, where the design
- *    system and the visitor's locale are. The one exception is
- *    `getTrancheDisplayName`, which exists precisely because that rename must
- *    NOT drift between apps.
+ *    system and the visitor's locale are.
+ *
+ *    Two kinds of string are exempt, and only these two. `getTrancheDisplayName`
+ *    is here precisely because that rename must NOT drift between apps. And
+ *    `loan-contract.ts` builds PROTOCOL strings — messages kasu-backend
+ *    reconstructs byte-for-byte to verify a lender's signature. Those are not
+ *    copy: nobody may reword them, in any language, without a matching backend
+ *    change, which is exactly why they belong in one place.
  * 2. **Pure.** No network, no clock, no environment. Anything with I/O belongs
  *    in `facade/` (see `fetchUnusedPoolIds`).
  */
