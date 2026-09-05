@@ -4,6 +4,7 @@ import { SdkConfig } from '../sdk-config';
 
 import { CHAIN_CONFIGS } from './chain-configs';
 import { Kasu } from './kasu';
+import { ChainConfigEntry } from './types';
 
 // Pure config assertions — no network, unlike `facade.test.ts`.
 
@@ -221,5 +222,44 @@ describe('DepositsFacade — read-only writes', () => {
         expect(() => {
             guard.assertWritable();
         }).not.toThrow();
+    });
+});
+
+describe('Kasu.create — a ChainConfigEntry written before 2.5.0', () => {
+    // kasu-app-admin hand-builds one of these for base-sepolia. TypeScript will
+    // ask it for `stableAsset` and `rpcUrls` on bump; the runtime must not
+    // crash first.
+    const legacy = (): ChainConfigEntry =>
+        ({
+            chainId: 84532,
+            name: 'base-sepolia',
+            isLiteDeployment: false,
+            contracts: BASE_CONTRACTS,
+            subgraphUrl: 'https://example.invalid/subgraph',
+            // Non-empty: `SdkConfig` documents `directusUrl` as optional, but
+            // `createDirectus('')` throws `TypeError: Invalid URL`. Pre-existing,
+            // and unrelated to what this test covers.
+            directusUrl: 'https://example.invalid/directus/',
+            unusedPoolIds: [''],
+        }) as unknown as ChainConfigEntry;
+
+    it('constructs with an explicit provider and falls back to 6 decimals', () => {
+        const kasu = Kasu.create({
+            chain: legacy(),
+            signerOrProvider: new providers.StaticJsonRpcProvider(
+                'https://example.invalid/rpc',
+                84532,
+            ),
+        });
+        const config = (
+            kasu.services.DataService as unknown as { _kasuConfig: SdkConfig }
+        )._kasuConfig;
+        expect(config.stableAssetDecimals).toBe(6);
+    });
+
+    it('refuses a read-only create with the same message a retired chain gives', () => {
+        expect(() => Kasu.create({ chain: legacy() })).toThrow(
+            'Kasu.create: chain "base-sepolia" has no default RPC (retired); pass signerOrProvider',
+        );
     });
 });

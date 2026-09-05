@@ -7,7 +7,12 @@ import { SdkConfig, SdkConfigOptions } from '../sdk-config';
 import { CHAIN_CONFIGS } from './chain-configs';
 import { DepositsFacade } from './deposits';
 import { StrategiesFacade } from './strategies';
-import { ChainConfigEntry, KasuOptions, SupportedChain } from './types';
+import {
+    ChainConfigEntry,
+    KasuOptions,
+    StableAsset,
+    SupportedChain,
+} from './types';
 import { PortfolioFacade } from './user-portfolio';
 
 /**
@@ -125,7 +130,7 @@ export class Kasu {
             // default was right by luck; the next one need not be.
             stableAssetDecimals:
                 overrides.stableAssetDecimals ??
-                chainConfig.stableAsset.decimals,
+                stableAssetOf(chainConfig)?.decimals,
         });
 
         const signerOrProvider =
@@ -218,6 +223,24 @@ export class Kasu {
 // Helpers
 // ---------------------------------------------------------------------------
 
+// `stableAsset` and `rpcUrls` are REQUIRED on `ChainConfigEntry`, so every
+// built-in config and every entry written against 2.5.0 carries them. A custom
+// entry hand-built against an older release does not, and a consumer bumping to
+// 2.5.0 must not crash on `undefined.decimals` before TypeScript has told them
+// what to add (kasu-app-admin builds one for base-sepolia). Both readers below
+// take the field as possibly absent and fall back: the stable-asset decimals to
+// `SdkConfig`'s own default of 6, the RPC list to empty — which makes a
+// read-only `create` throw the same clear message a retired chain does.
+function stableAssetOf(
+    chainConfig: ChainConfigEntry,
+): StableAsset | undefined {
+    return (chainConfig as { stableAsset?: StableAsset }).stableAsset;
+}
+
+function rpcUrlsOf(chainConfig: ChainConfigEntry): string[] {
+    return (chainConfig as { rpcUrls?: string[] }).rpcUrls ?? [];
+}
+
 /**
  * The read-only provider used when the caller passes no `signerOrProvider`.
  *
@@ -245,7 +268,7 @@ function defaultProvider(
     chainConfig: ChainConfigEntry,
     chainLabel: string,
 ): Provider {
-    const url = chainConfig.rpcUrls[0];
+    const url = rpcUrlsOf(chainConfig)[0];
     if (!url) {
         throw new Error(
             `Kasu.create: chain "${chainLabel}" has no default RPC (retired); pass signerOrProvider`,
