@@ -1,5 +1,6 @@
 import { Provider } from '@ethersproject/providers';
 
+import { deriveRequestState, RequestState } from '../domain/requests';
 import { DataService } from '../services/DataService/data-service';
 import { Portfolio } from '../services/Portfolio/portfolio';
 import { UserRequest } from '../services/UserLending/types';
@@ -69,5 +70,28 @@ export class PortfolioFacade {
             userAddress,
             currentEpoch,
         );
+    }
+
+    /**
+     * The same history, already derived into `RequestState` rows — status
+     * code, kind, signed amount, the cancelled-amount recovery, the bundled
+     * submission count and the cycle-open signal.
+     *
+     * ```ts
+     * const rows = await kasu.portfolio.getRequestStates('0xUser...');
+     * rows.filter((r) => r.statusCode === 'pending');
+     * ```
+     *
+     * Every application derives this from `getTransactionHistory` anyway, and
+     * the derivation is the part they were each getting subtly differently.
+     * Words are still the caller's: render `statusCode` in your own
+     * vocabulary, and call `getTrancheDisplayName` on `trancheName` at the
+     * view boundary.
+     */
+    async getRequestStates(
+        userAddress: `0x${string}`,
+    ): Promise<RequestState[]> {
+        const requests = await this.getTransactionHistory(userAddress);
+        return requests.map(deriveRequestState);
     }
 }

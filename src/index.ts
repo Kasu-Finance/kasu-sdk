@@ -55,6 +55,8 @@ export type {
     PlatformOverviewDirectus,
 } from './services/DataService/directus-types';
 
+export { NO_DIRECTUS_URL_MESSAGE } from './services/DataService/directus-client';
+
 // ---------------------------------------------------------------------------
 // Re-export facade (high-level integrator API)
 // ---------------------------------------------------------------------------

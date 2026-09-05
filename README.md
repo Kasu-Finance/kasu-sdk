@@ -116,7 +116,7 @@ You can also pass a whole `ChainConfigEntry` instead of a chain key.
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
 | `kasu.strategies` | `getAll()`, `getVisible()`, `getById()`, `getPlatformStats()`, `getPerformanceFeePercent()`, `calculateDepositLimits()` | Browse pools, APY, capacity     |
 | `kasu.deposits`   | `deposit()`, `withdraw()`, `withdrawMax()`, `buildKycParams()`, `isClearingPending()`                                   | Submit transactions             |
-| `kasu.portfolio`  | `getPositions()`, `getTransactionHistory()`                                                                             | Lender balances, yield, history |
+| `kasu.portfolio`  | `getPositions()`, `getTransactionHistory()`, `getRequestStates()`                                                       | Lender balances, yield, history |
 
 On the instance itself: `kasu.connect(signer)`, `kasu.isReadOnly`,
 `kasu.provider`, `kasu.chainConfig`, `kasu.isLiteDeployment`, and
@@ -142,9 +142,20 @@ application formats them in its own design system and language.
 | Pools                | `selectVisiblePools`, `poolMaxApy`, `pickHighestYieldTranche`, `maxNetRateCeiling`                                                                                                                       |
 | Partners             | `getCreditOriginator`, `getInstitutionalLender`, `APXIUM`, `INVOICEMATE`, `RIXON_CAPITAL`                                                                                                                |
 | Tranche display name | `getTrancheDisplayName`, `UPPER_MEZZANINE`                                                                                                                                                               |
+| Requests             | `deriveRequestState`, `submissionEvents`, `countSubmissions`, `firstSubmissionTimestamp`, `isCycleClosed`                                                                                                |
+| Settlement           | `computeSettlementWindow`, `nextCycleBoundary`, `deriveCycleDates`, `CLEARING_WINDOW_SECONDS`                                                                                                            |
+| Loan contract        | `encodeDepositData`, `buildContractVersionType`, `buildLoanAgreementSignMessage`, `buildLegacyContractRequestMessage`, `buildFullNameRequestMessage`, `formatSignTimestampUtc`, `parseFormattedMessage`, `asContractType` |
+| Wallet errors        | `isUserRejected`, `isUnpredictableGas`                                                                                                                                                                   |
+| AU minimum           | `auMinimumRemaining`, `isAustralianKyc`, `auThresholdFor`, `isAuMinimumExempt`, `parseMinorUnits`, `AU_ALPHA3`, `AU_MIN_CUMULATIVE_BY_STABLE`                                                            |
 
-Two rules worth knowing:
+Three rules worth knowing:
 
+- **Protocol strings are the exception to "never copy".** The messages
+  `loan-contract` builds are reconstructed byte-for-byte by the Kasu backend to
+  verify a lender's signature, and `encodeDepositData` produces bytes that go
+  on chain. They are not text to translate or tidy: a changed word, separator
+  or date format stops signatures verifying. Everything else in this layer is
+  numbers and codes.
 - **Rates fail closed.** `netEffectiveApy`, `netTrancheApyBounds` and
   `maxNetRateCeiling` return `NaN` / `null` rather than a plausible-looking
   wrong number when an input is out of domain. Render that as "no rate", never
@@ -153,7 +164,8 @@ Two rules worth knowing:
 - **The tranche rename is display-only.** `getTrancheDisplayName` maps the
   `Senior` tranche to "Upper Mezzanine" on Apxium strategies, because the true
   senior position is held by an institutional lender. Call it at the view
-  boundary only: ranking, matching and sorting keep the raw on-chain name.
+  boundary only: ranking, matching and sorting keep the raw on-chain name —
+  which is why `deriveRequestState` returns `trancheName` raw.
 
 ## Low-level `KasuSdk`
 

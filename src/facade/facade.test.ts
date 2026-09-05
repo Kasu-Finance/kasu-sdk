@@ -3,6 +3,13 @@
  * here from `src/tests/` so it runs beside the code it covers, and so the
  * opt-in `LIVE_TESTS` gate on `src/tests/` does not take it out of CI.
  */
+import { DataService } from '../services/DataService/data-service';
+import { NO_DIRECTUS_URL_MESSAGE } from '../services/DataService/directus-client';
+import { Portfolio } from '../services/Portfolio/portfolio';
+import { UserRequestStatus } from '../services/UserLending/subgraph-types';
+import { UserRequest } from '../services/UserLending/types';
+import { UserLending } from '../services/UserLending/user-lending';
+
 import { CHAIN_CONFIGS } from './chain-configs';
 import { DepositsFacade } from './deposits';
 import { Kasu } from './kasu';
@@ -50,6 +57,18 @@ describe('CHAIN_CONFIGS', () => {
             expect(config.contracts.SystemVariables).toBeDefined();
             expect(config.subgraphUrl).toContain('goldsky.com');
         }
+    });
+
+    it('plume points at the LEGACY goldsky project its frozen history is on', () => {
+        // Plume was indexed before the live chains moved to the current
+        // project; the same path under that project returns HTTP 404, so the
+        // retired deployment's history is only readable at this spelling —
+        // note the `/gn` suffix the current project's URLs do not carry.
+        const projectOf = (url: string): string => url.split('/')[5] ?? '';
+        expect(projectOf(CHAIN_CONFIGS.plume.subgraphUrl)).not.toBe(
+            projectOf(CHAIN_CONFIGS.base.subgraphUrl),
+        );
+        expect(CHAIN_CONFIGS.plume.subgraphUrl.endsWith('/gn')).toBe(true);
     });
 
     it('xdc should have poolMetadataMapping', () => {
@@ -131,6 +150,35 @@ describe('Kasu.create()', () => {
         expect(kasu).toBeInstanceOf(Kasu);
     });
 
+    it('constructs without a directusUrl — on-chain data does not need one', () => {
+        // `createDirectus('')` throws `Invalid URL`, so an SDK configured
+        // without the (documented-optional) CMS URL used to be
+        // unconstructable rather than merely CMS-less.
+        const kasu = Kasu.create({
+            chain: 'base',
+            signerOrProvider: mockProvider as never,
+            configOverrides: { directusUrl: '' },
+        });
+
+        expect(kasu).toBeInstanceOf(Kasu);
+        expect(kasu.services.DataService).toBeDefined();
+        expect(kasu.services.UserLending).toBeDefined();
+    });
+
+    it('refuses a CMS-only call clearly when no directusUrl is configured', async () => {
+        const kasu = Kasu.create({
+            chain: 'base',
+            signerOrProvider: mockProvider as never,
+            configOverrides: { directusUrl: '' },
+        });
+
+        // A sentence naming what to configure, not a null dereference thrown
+        // from inside the vendor SDK.
+        await expect(
+            kasu.services.DataService.getPlatformOverview(),
+        ).rejects.toThrow(NO_DIRECTUS_URL_MESSAGE);
+    });
+
     it('should expose the underlying KasuSdk via .services', () => {
         const kasu = Kasu.create({
             chain: 'base',
@@ -202,6 +250,59 @@ describe('StrategiesFacade.calculateDepositLimits()', () => {
 });
 
 // ---------------------------------------------------------------------------
+// PortfolioFacade.getRequestStates()
+// ---------------------------------------------------------------------------
+
+describe('PortfolioFacade.getRequestStates()', () => {
+    it('maps the transaction history through deriveRequestState', async () => {
+        const requests: UserRequest[] = [
+            makeUserRequest({ id: 'req-1' }),
+            makeUserRequest({
+                id: 'req-2',
+                requestType: 'Withdrawal',
+                status: UserRequestStatus.PROCESSED,
+                canCancel: false,
+                acceptedAmount: '100',
+            }),
+        ];
+        const userLending = {
+            getCurrentEpoch: (): Promise<string> => Promise.resolve('42'),
+            getUserRequests: (): Promise<UserRequest[]> =>
+                Promise.resolve(requests),
+        } as unknown as UserLending;
+
+        const facade = new PortfolioFacade(
+            {} as unknown as DataService,
+            userLending,
+            {} as unknown as Portfolio,
+        );
+
+        const states = await facade.getRequestStates('0xuser');
+
+        expect(states.map((s) => s.id)).toEqual(['req-1', 'req-2']);
+        expect(states[0].statusCode).toBe('pending');
+        expect(states[0].amount).toBe(100);
+        expect(states[1].statusCode).toBe('complete');
+        expect(states[1].amount).toBe(-100);
+    });
+
+    it('returns an empty list for a wallet with no history', async () => {
+        const userLending = {
+            getCurrentEpoch: (): Promise<string> => Promise.resolve('42'),
+            getUserRequests: (): Promise<UserRequest[]> => Promise.resolve([]),
+        } as unknown as UserLending;
+
+        const facade = new PortfolioFacade(
+            {} as unknown as DataService,
+            userLending,
+            {} as unknown as Portfolio,
+        );
+
+        await expect(facade.getRequestStates('0xuser')).resolves.toEqual([]);
+    });
+});
+
+// ---------------------------------------------------------------------------
 // Type exports — verify key facade types are importable
 // ---------------------------------------------------------------------------
 
@@ -247,4 +348,27 @@ function makeTranche(raw: {
             fixedTermConfig: [],
         },
     } as never;
+}
+
+
+function makeUserRequest(overrides: Partial<UserRequest> = {}): UserRequest {
+    return {
+        id: 'req-1',
+        userId: '0xuser',
+        lendingPool: { id: '0xpool', name: 'Pool', tranches: [{ orderId: '0' }] },
+        requestType: 'Deposit',
+        trancheId: '0xtranche',
+        trancheName: 'Senior',
+        requestedAmount: '100',
+        acceptedAmount: '0',
+        rejectedAmount: '0',
+        timestamp: 1_700_000_000,
+        status: UserRequestStatus.REQUESTED,
+        canCancel: true,
+        events: [],
+        nftId: '',
+        apy: '0',
+        fixedTermConfig: undefined,
+        ...overrides,
+    };
 }

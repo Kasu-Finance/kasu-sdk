@@ -1,6 +1,6 @@
 {
     "name": "@kasufinance/kasu-sdk",
-    "version": "2.5.0",
+    "version": "2.6.0",
     "description": "TypeScript SDK for the Kasu Finance protocol — pool data, portfolio analytics, and KYC-gated deposits and withdrawals on Base and XDC",
     "keywords": [
         "kasu",

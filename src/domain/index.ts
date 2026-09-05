@@ -8,9 +8,14 @@
  *    user reads — `netEffectiveApy` returns `0.196`, never `'19.60% p.a.'`,
  *    and `derivePoolStatus` returns the code `'Full'`, not a sentence. The
  *    formatters that turn these into text stay in each app, where the design
- *    system and the visitor's locale are. The one exception is
- *    `getTrancheDisplayName`, which exists precisely because that rename must
- *    NOT drift between apps.
+ *    system and the visitor's locale are.
+ *
+ *    Two kinds of string are exempt, and only these two. `getTrancheDisplayName`
+ *    is here precisely because that rename must NOT drift between apps. And
+ *    `loan-contract.ts` builds PROTOCOL strings — messages kasu-backend
+ *    reconstructs byte-for-byte to verify a lender's signature. Those are not
+ *    copy: nobody may reword them, in any language, without a matching backend
+ *    change, which is exactly why they belong in one place.
  * 2. **Pure.** No network, no clock, no environment. Anything with I/O belongs
  *    in `facade/` (see `fetchUnusedPoolIds`).
  */
@@ -20,6 +25,17 @@ export {
     EPOCHS_IN_YEAR,
     netEffectiveApy,
 } from './rates';
+
+export {
+    AU_ALPHA3,
+    AU_MIN_CUMULATIVE_BY_STABLE,
+    auMinimumRemaining,
+    auThresholdFor,
+    isAuMinimumExempt,
+    isAustralianKyc,
+    parseMinorUnits,
+} from './au-minimum';
+export type { AuMinimumInput } from './au-minimum';
 
 export {
     ceilToCents,
@@ -43,12 +59,58 @@ export {
 export type { PoolNameSignal, StrategyPartner } from './partners';
 
 export {
+    asContractType,
+    buildContractVersionType,
+    buildFullNameRequestMessage,
+    buildLegacyContractRequestMessage,
+    buildLoanAgreementSignMessage,
+    encodeDepositData,
+    formatSignTimestampUtc,
+    parseFormattedMessage,
+} from './loan-contract';
+export type {
+    ContractListItem,
+    ContractSection,
+    ContractType,
+    ExemptLoanContract,
+    GenerateContractResponse,
+    LoanContractFormatted,
+    ResolvedContractResponse,
+    RetailLoanContract,
+} from './loan-contract';
+
+export {
     maxNetRateCeiling,
     pickHighestYieldTranche,
     poolMaxApy,
     selectVisiblePools,
 } from './pools';
 export type { BestTranche } from './pools';
+
+export {
+    countSubmissions,
+    deriveRequestState,
+    firstSubmissionTimestamp,
+    isCycleClosed,
+    submissionEvents,
+} from './requests';
+export type {
+    RequestKind,
+    RequestState,
+    RequestStatusCode,
+} from './requests';
+
+export {
+    CLEARING_WINDOW_SECONDS,
+    computeSettlementWindow,
+    deriveCycleDates,
+    nextCycleBoundary,
+} from './settlement';
+export type {
+    CycleDates,
+    SettlementWindowInput,
+    SettlementWindowState,
+} from './settlement';
 
 export { getTrancheDisplayName, UPPER_MEZZANINE } from './tranche-display-name';
 
@@ -68,3 +130,5 @@ export type {
     PoolStatus,
     TrancheCapacitySignal,
 } from './tranches';
+
+export { isUnpredictableGas, isUserRejected } from './wallet-errors';

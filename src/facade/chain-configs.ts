@@ -151,8 +151,14 @@ export const CHAIN_CONFIGS: Record<'base' | 'xdc' | 'xdc-usdc' | 'plume', ChainC
             ClearingCoordinator: '',
             ExternalTVL: '',
         },
+        // The frozen Plume history is indexed on the LEGACY Goldsky project,
+        // not the one the live chains use: the same path under the current
+        // project 404s. Verified 2026-09-05 — this URL answers
+        // `{ lendingPools { id name } }` with the three Plume pools; the
+        // current-project spelling returns HTTP 404. Note the `/gn` suffix,
+        // which the current project's URLs do not carry.
         subgraphUrl:
-            'https://api.goldsky.com/api/public/project_cmgzlpxm300765np2a19421om/subgraphs/kasu-plume/prod',
+            'https://api.goldsky.com/api/public/project_cm9t3064xeuyn01tgctdo3c17/subgraphs/kasu-plume/prod/gn',
         directusUrl: 'https://kasu-finance.directus.app/',
         unusedPoolIds: [],
         poolMetadataMapping: undefined,

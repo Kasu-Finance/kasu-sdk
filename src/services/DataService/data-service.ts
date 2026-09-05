@@ -1,13 +1,4 @@
-import {
-    authentication,
-    AuthenticationClient,
-    createDirectus,
-    DirectusClient,
-    readItems,
-    readSingleton,
-    rest,
-    RestClient,
-} from '@directus/sdk';
+import { readItems, readSingleton } from '@directus/sdk';
 import { Provider } from '@ethersproject/abstract-provider';
 import { Signer } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
@@ -24,8 +15,11 @@ import { SystemVariables } from '../Locking/types';
 import { filterArray } from '../shared';
 
 import {
+    createDirectusClient,
+    KasuDirectusClient,
+} from './directus-client';
+import {
     BadAndDoubtfulDebtsItems,
-    DirectusSchema,
     FinancialReportingDocumentsItemsDirectus,
     KeyCreditMetricsDirectus,
     NftBoostDirectus,
@@ -67,9 +61,7 @@ import {
 export class DataService {
     private readonly _graph: GraphQLClient;
     private readonly _externalTvlAbi: KasuPoolExternalTVLAbi;
-    private readonly _directus: DirectusClient<DirectusSchema> &
-        AuthenticationClient<DirectusSchema> &
-        RestClient<DirectusSchema>;
+    private readonly _directus: KasuDirectusClient;
     private _directusPoolOverview: PoolOverviewDirectus[] | undefined;
 
     constructor(
@@ -82,16 +74,7 @@ export class DataService {
         );
         this._graph = new GraphQLClient(_kasuConfig.subgraphUrl);
 
-        if (_kasuConfig.directusUrl) {
-            this._directus = createDirectus<DirectusSchema>(
-                _kasuConfig.directusUrl,
-            )
-                .with(authentication())
-                .with(rest());
-        } else {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-            this._directus = null as any;
-        }
+        this._directus = createDirectusClient(_kasuConfig.directusUrl);
     }
 
     private getUrlFromFile(fileName: string): string {
