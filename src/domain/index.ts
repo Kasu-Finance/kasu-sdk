@@ -22,6 +22,17 @@ export {
 } from './rates';
 
 export {
+    AU_ALPHA3,
+    AU_MIN_CUMULATIVE_BY_STABLE,
+    auMinimumRemaining,
+    auThresholdFor,
+    isAuMinimumExempt,
+    isAustralianKyc,
+    parseMinorUnits,
+} from './au-minimum';
+export type { AuMinimumInput } from './au-minimum';
+
+export {
     ceilToCents,
     floorToCents,
     isBelowMinimumCapacity,
