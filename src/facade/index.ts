@@ -9,10 +9,14 @@ export { PortfolioFacade } from './user-portfolio';
 // Chain configurations
 export { CHAIN_CONFIGS } from './chain-configs';
 
+// Directus-backed helpers (I/O — not part of `domain/`)
+export { fetchUnusedPoolIds } from './unused-pool-ids';
+
 // All facade types
 export type {
     SupportedChain,
     ChainConfigEntry,
+    StableAsset,
     KasuOptions,
     Strategy,
     StrategyTranche,

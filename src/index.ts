@@ -59,3 +59,9 @@ export type {
 // Re-export facade (high-level integrator API)
 // ---------------------------------------------------------------------------
 export * from './facade';
+
+// ---------------------------------------------------------------------------
+// Shared domain layer — pure rate, tranche and pool rules. Numbers and codes
+// only: no copy, no locale. See `src/domain/index.ts`.
+// ---------------------------------------------------------------------------
+export * from './domain';

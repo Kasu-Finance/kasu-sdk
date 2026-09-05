@@ -14,7 +14,29 @@ export class DepositsFacade {
     constructor(
         private _userLending: UserLending,
         private _chainId: string,
+        /**
+         * True when the SDK holds a Provider rather than a Signer. Optional and
+         * defaulting to false so constructing this facade directly keeps
+         * working; `Kasu` always passes it.
+         */
+        private _isReadOnly = false,
     ) {}
+
+    /**
+     * Refuse a write BEFORE touching the contract.
+     *
+     * ethers would throw its own "sending a transaction requires a signer" a
+     * few frames deeper, after the params have been encoded — a message that
+     * says nothing about how to get a signer onto THIS object. Failing here
+     * names the fix.
+     */
+    private assertWritable(): void {
+        if (this._isReadOnly) {
+            throw new Error(
+                'Kasu: this instance is read-only; call kasu.connect(signer) first',
+            );
+        }
+    }
 
     /**
      * Submit a deposit request.
@@ -34,6 +56,7 @@ export class DepositsFacade {
      * ```
      */
     async deposit(params: DepositParams): Promise<ContractTransaction> {
+        this.assertWritable();
         return await this._userLending.requestDepositWithKyc(
             params.poolId,
             params.trancheId,
@@ -50,6 +73,7 @@ export class DepositsFacade {
      * Submit a withdrawal request for a specific stable asset amount.
      */
     async withdraw(params: WithdrawParams): Promise<ContractTransaction> {
+        this.assertWritable();
         return await this._userLending.requestWithdrawalInAsset(
             params.poolId,
             params.trancheId,
@@ -65,6 +89,7 @@ export class DepositsFacade {
         trancheId: string,
         userAddress: string,
     ): Promise<ContractTransaction> {
+        this.assertWritable();
         return await this._userLending.requestWithdrawalMax(
             poolId,
             trancheId,

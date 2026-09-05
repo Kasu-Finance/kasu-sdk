@@ -1,10 +1,40 @@
 {
     "name": "@kasufinance/kasu-sdk",
-    "version": "2.4.2",
-    "description": "",
+    "version": "2.5.0",
+    "description": "TypeScript SDK for the Kasu Finance protocol — pool data, portfolio analytics, and KYC-gated deposits and withdrawals on Base and XDC",
+    "keywords": [
+        "kasu",
+        "defi",
+        "rwa",
+        "lending",
+        "ethers",
+        "base",
+        "xdc",
+        "sdk"
+    ],
+    "homepage": "https://github.com/Kasu-Finance/kasu-sdk#readme",
+    "bugs": {
+        "url": "https://github.com/Kasu-Finance/kasu-sdk/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Kasu-Finance/kasu-sdk.git"
+    },
+    "license": "MIT",
+    "author": "Kasu Finance",
     "main": "dist/bundle.cjs.js",
     "module": "dist/bundle.esm.js",
     "types": "dist/index.d.ts",
+    "files": [
+        "dist",
+        "src",
+        "abis",
+        "README.md",
+        "LICENSE"
+    ],
+    "engines": {
+        "node": ">=18"
+    },
     "scripts": {
         "test": "jest --config=jest-config.ts",
         "build-tc": "typechain --target ethers-v5 --out-dir src/contracts './abis/*.json'",
@@ -18,8 +48,6 @@
         "registry": "https://registry.npmjs.org/",
         "access": "public"
     },
-    "author": "",
-    "license": "ISC",
     "devDependencies": {
         "@rollup/plugin-node-resolve": "^15.2.3",
         "@rollup/plugin-typescript": "^11.1.6",
@@ -28,6 +56,7 @@
         "@typescript-eslint/eslint-plugin": "^6.19.0",
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-import": "^2.29.1",
+        "fast-check": "^4.9.0",
         "graphql": "^16.8.1",
         "prettier": "^3.2.2",
         "rollup": "^4.14.3",

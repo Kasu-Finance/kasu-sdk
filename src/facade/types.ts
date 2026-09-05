@@ -13,6 +13,34 @@ import {
 
 export type SupportedChain = 'base' | 'xdc' | 'xdc-usdc' | 'plume';
 
+/**
+ * The single stable token a deployment lends in. There is exactly ONE per
+ * deployment and it never changes: a different stable token is a separate full
+ * deployment (the XDC AUDD / XDC USDC pattern), never a companion vault on an
+ * existing one. That is why this is a plain object on the chain config rather
+ * than a list.
+ */
+export interface StableAsset {
+    /** ERC-20 address of the stable token on this chain. */
+    address: string;
+    /** Ticker as the token contract reports it (`USDC`, `AUDD`, `pUSD`). */
+    symbol: string;
+    /** Token name as the contract reports it (`USD Coin`). */
+    name: string;
+    /**
+     * Token decimals. Feeds `SdkConfig.stableAssetDecimals`, so every
+     * `parseUnits`/`formatUnits` in the SDK follows the chain rather than the
+     * hard-coded default of 6.
+     */
+    decimals: number;
+    /**
+     * ISO-4217 code of the fiat currency the token tracks (`USD`, `AUD`).
+     * A CODE, not copy: consumers pick their own symbol and locale from it.
+     * Nothing in this SDK formats it.
+     */
+    currencyCode: string;
+}
+
 export interface ChainConfigEntry {
     chainId: number;
     name: string;
@@ -20,16 +48,46 @@ export interface ChainConfigEntry {
     contracts: ContractAddresses;
     subgraphUrl: string;
     directusUrl: string;
+    /**
+     * Pools to hide. An EMPTY array is normalised to `['']` by `SdkConfig` —
+     * the subgraph reads `id_not_in: []` as "match nothing" and returns zero
+     * pools. See `SdkConfigOptions.UNUSED_LENDING_POOL_IDS`.
+     */
     unusedPoolIds: string[];
     poolMetadataMapping?: Record<string, string>;
+    /** The one stable token this deployment lends in. */
+    stableAsset: StableAsset;
+    /**
+     * Public RPC endpoints for read-only use, in STARTING preference order
+     * only. Apps are expected to override with their own paid/keyed endpoints
+     * and their own failover; `Kasu.create` uses `rpcUrls[0]` and nothing else
+     * when no `signerOrProvider` is passed.
+     *
+     * Empty on a retired deployment, which has no read-only default.
+     */
+    rpcUrls: string[];
+    /**
+     * True for a wound-down deployment kept only as frozen history. It has no
+     * default RPC, so a read-only `Kasu.create` on it throws.
+     */
+    retired?: boolean;
 }
 
 /** Options passed to `Kasu.create()`. */
 export interface KasuOptions {
     /** A supported chain name or a custom `ChainConfigEntry`. */
     chain: SupportedChain | ChainConfigEntry;
-    /** ethers Signer (for transactions) or Provider (read-only). */
-    signerOrProvider: import('ethers').Signer | import('@ethersproject/providers').Provider;
+    /**
+     * ethers Signer (for transactions) or Provider (read-only).
+     *
+     * OPTIONAL. When omitted, `Kasu.create` builds a read-only
+     * `StaticJsonRpcProvider` on `chainConfig.rpcUrls[0]`, so browsing
+     * strategies and platform stats needs no wallet at all. Get a writable
+     * instance later with `kasu.connect(signer)`.
+     */
+    signerOrProvider?:
+        | import('ethers').Signer
+        | import('@ethersproject/providers').Provider;
     /** Override any default config value. */
     configOverrides?: Partial<SdkConfigOptions>;
 }
