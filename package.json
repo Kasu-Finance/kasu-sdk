@@ -37,6 +37,8 @@
     },
     "scripts": {
         "test": "jest --config=jest-config.ts",
+        "test:unit": "jest --config=jest-config.ts --testPathIgnorePatterns /src/tests/",
+        "test:live": "LIVE_TESTS=1 jest --config=jest-config.ts src/tests",
         "build-tc": "typechain --target ethers-v5 --out-dir src/contracts './abis/*.json'",
         "build": "eslint . && tsc --build --force tsconfig.json",
         "prepublishOnly": "npm run build && npm run rollup-build",

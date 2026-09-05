@@ -1,8 +1,13 @@
-import { CHAIN_CONFIGS } from '../facade/chain-configs';
-import { DepositsFacade } from '../facade/deposits';
-import { Kasu } from '../facade/kasu';
-import { StrategiesFacade } from '../facade/strategies';
-import { PortfolioFacade } from '../facade/user-portfolio';
+/**
+ * Offline facade specs — a mock provider and pure helpers, no network. Moved
+ * here from `src/tests/` so it runs beside the code it covers, and so the
+ * opt-in `LIVE_TESTS` gate on `src/tests/` does not take it out of CI.
+ */
+import { CHAIN_CONFIGS } from './chain-configs';
+import { DepositsFacade } from './deposits';
+import { Kasu } from './kasu';
+import { StrategiesFacade } from './strategies';
+import { PortfolioFacade } from './user-portfolio';
 
 // ---------------------------------------------------------------------------
 // Chain configs
