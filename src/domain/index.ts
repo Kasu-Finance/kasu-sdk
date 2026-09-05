@@ -50,6 +50,19 @@ export {
 } from './pools';
 export type { BestTranche } from './pools';
 
+export {
+    countSubmissions,
+    deriveRequestState,
+    firstSubmissionTimestamp,
+    isCycleClosed,
+    submissionEvents,
+} from './requests';
+export type {
+    RequestKind,
+    RequestState,
+    RequestStatusCode,
+} from './requests';
+
 export { getTrancheDisplayName, UPPER_MEZZANINE } from './tranche-display-name';
 
 export {
