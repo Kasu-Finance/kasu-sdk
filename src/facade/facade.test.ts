@@ -59,6 +59,18 @@ describe('CHAIN_CONFIGS', () => {
         }
     });
 
+    it('plume points at the LEGACY goldsky project its frozen history is on', () => {
+        // Plume was indexed before the live chains moved to the current
+        // project; the same path under that project returns HTTP 404, so the
+        // retired deployment's history is only readable at this spelling —
+        // note the `/gn` suffix the current project's URLs do not carry.
+        const projectOf = (url: string): string => url.split('/')[5] ?? '';
+        expect(projectOf(CHAIN_CONFIGS.plume.subgraphUrl)).not.toBe(
+            projectOf(CHAIN_CONFIGS.base.subgraphUrl),
+        );
+        expect(CHAIN_CONFIGS.plume.subgraphUrl.endsWith('/gn')).toBe(true);
+    });
+
     it('xdc should have poolMetadataMapping', () => {
         const mapping = CHAIN_CONFIGS.xdc.poolMetadataMapping;
         expect(mapping).toBeDefined();
