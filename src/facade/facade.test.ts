@@ -3,6 +3,12 @@
  * here from `src/tests/` so it runs beside the code it covers, and so the
  * opt-in `LIVE_TESTS` gate on `src/tests/` does not take it out of CI.
  */
+import { DataService } from '../services/DataService/data-service';
+import { Portfolio } from '../services/Portfolio/portfolio';
+import { UserRequestStatus } from '../services/UserLending/subgraph-types';
+import { UserRequest } from '../services/UserLending/types';
+import { UserLending } from '../services/UserLending/user-lending';
+
 import { CHAIN_CONFIGS } from './chain-configs';
 import { DepositsFacade } from './deposits';
 import { Kasu } from './kasu';
@@ -202,6 +208,59 @@ describe('StrategiesFacade.calculateDepositLimits()', () => {
 });
 
 // ---------------------------------------------------------------------------
+// PortfolioFacade.getRequestStates()
+// ---------------------------------------------------------------------------
+
+describe('PortfolioFacade.getRequestStates()', () => {
+    it('maps the transaction history through deriveRequestState', async () => {
+        const requests: UserRequest[] = [
+            makeUserRequest({ id: 'req-1' }),
+            makeUserRequest({
+                id: 'req-2',
+                requestType: 'Withdrawal',
+                status: UserRequestStatus.PROCESSED,
+                canCancel: false,
+                acceptedAmount: '100',
+            }),
+        ];
+        const userLending = {
+            getCurrentEpoch: (): Promise<string> => Promise.resolve('42'),
+            getUserRequests: (): Promise<UserRequest[]> =>
+                Promise.resolve(requests),
+        } as unknown as UserLending;
+
+        const facade = new PortfolioFacade(
+            {} as unknown as DataService,
+            userLending,
+            {} as unknown as Portfolio,
+        );
+
+        const states = await facade.getRequestStates('0xuser');
+
+        expect(states.map((s) => s.id)).toEqual(['req-1', 'req-2']);
+        expect(states[0].statusCode).toBe('pending');
+        expect(states[0].amount).toBe(100);
+        expect(states[1].statusCode).toBe('complete');
+        expect(states[1].amount).toBe(-100);
+    });
+
+    it('returns an empty list for a wallet with no history', async () => {
+        const userLending = {
+            getCurrentEpoch: (): Promise<string> => Promise.resolve('42'),
+            getUserRequests: (): Promise<UserRequest[]> => Promise.resolve([]),
+        } as unknown as UserLending;
+
+        const facade = new PortfolioFacade(
+            {} as unknown as DataService,
+            userLending,
+            {} as unknown as Portfolio,
+        );
+
+        await expect(facade.getRequestStates('0xuser')).resolves.toEqual([]);
+    });
+});
+
+// ---------------------------------------------------------------------------
 // Type exports — verify key facade types are importable
 // ---------------------------------------------------------------------------
 
@@ -247,4 +306,27 @@ function makeTranche(raw: {
             fixedTermConfig: [],
         },
     } as never;
+}
+
+
+function makeUserRequest(overrides: Partial<UserRequest> = {}): UserRequest {
+    return {
+        id: 'req-1',
+        userId: '0xuser',
+        lendingPool: { id: '0xpool', name: 'Pool', tranches: [{ orderId: '0' }] },
+        requestType: 'Deposit',
+        trancheId: '0xtranche',
+        trancheName: 'Senior',
+        requestedAmount: '100',
+        acceptedAmount: '0',
+        rejectedAmount: '0',
+        timestamp: 1_700_000_000,
+        status: UserRequestStatus.REQUESTED,
+        canCancel: true,
+        events: [],
+        nftId: '',
+        apy: '0',
+        fixedTermConfig: undefined,
+        ...overrides,
+    };
 }
