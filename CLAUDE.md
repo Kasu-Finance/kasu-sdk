@@ -26,13 +26,20 @@ addresses, no people's names.
 ## Build Commands
 
 ```bash
-npm install          # Install dependencies
+npm ci               # Install dependencies from the lockfile
 npm run build-tc     # Regenerate typechain factories from ABIs
 npm run build        # Lint + TypeScript compile
 npm run rollup-build # Build distribution bundles
-npm test             # Run Jest tests
+npm run test:unit    # The offline suites — the fast loop, and what CI runs
+npm test             # Same, with the live specs skipped unless LIVE_TESTS=1
+npm run test:live    # Opt-in: the specs that reach real subgraphs and RPCs
 npm run lint         # Fix lint issues
 ```
+
+`dependencies` holds only what the package needs at runtime — `@directus/sdk`,
+`axios`, `ethers`, `graphql-request`. Everything else is a devDependency; a
+build/lint/test tool must never land in `dependencies`, because every consumer
+then installs it transitively.
 
 ## Architecture
 
@@ -396,17 +403,24 @@ Other:
 ## Testing
 
 ```bash
+npm run test:unit           # Every offline suite — this is what CI runs
 npx jest src/domain         # Domain layer — pure, no network, fast
-npx jest src/facade/config.test.ts   # Chain config, read-only create, connect
-npm test                    # Everything, including specs that hit live networks
+npx jest src/facade         # Chain config, read-only create, connect, facades
+npm run test:live           # Opt-in, networked: LIVE_TESTS=1 jest src/tests
+npm test                    # Everything; the live specs skip without LIVE_TESTS
 npm test -- --watch         # Watch mode
 npm test -- --coverage      # Coverage report
 ```
 
-Tests use Jest and live beside the code they cover. `src/tests/*.test.ts` reach
-real subgraphs and RPCs, so they are unsuitable for a quick loop and can fail on
-a network problem rather than a code one — prefer the two targeted commands
-above while developing.
+Tests use Jest and live beside the code they cover. The one exception is
+`src/tests/`, which holds the specs that reach real subgraphs and RPCs: they are
+OPT-IN, skipped unless `LIVE_TESTS=1`, so a network problem can never fail a
+pull request that did not touch the network. A new spec goes beside its code,
+not in `src/tests/`, unless it genuinely needs a live network.
+
+Nothing in this repository may carry a private key, not even a throwaway — it is
+a public repository. A spec that needs a signer generates one:
+`ethers.Wallet.createRandom().connect(provider)`.
 
 Property tests use `fast-check` (a devDependency).
 
@@ -424,7 +438,7 @@ not publish.
 npm run build-tc     # Regenerate typechain
 npm run build        # Type-check + lint
 npm run rollup-build # Build bundles
-npx jest src/domain  # Domain tests
+npm run test:unit    # Offline test suites
 
 # Publish:
 npm version patch|minor|major

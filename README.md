@@ -216,11 +216,17 @@ npm ci
 npm run build-tc     # regenerate typechain factories from abis/
 npm run build        # eslint + tsc
 npm run rollup-build # bundle to dist/
-npx jest src/domain  # domain-layer unit tests (no network)
-npm test             # full suite — some specs reach live networks
+npm run test:unit    # the offline suites — the fast loop, and what CI runs
+npm test             # the same suites; the live specs skip unless LIVE_TESTS=1
+npm run test:live    # opt-in: the specs that reach real subgraphs and RPCs
 ```
 
-CI runs `build-tc`, `build` and `rollup-build` on every pull request.
+Everything outside `src/tests/` is offline and fast. `src/tests/` holds the
+specs that talk to live networks; they are skipped unless `LIVE_TESTS=1`, so a
+network problem cannot fail a pull request that did not touch the network.
+
+CI runs `build-tc`, `build`, `test:unit` and `rollup-build` on every pull
+request.
 
 ## Versioning & publishing
 
