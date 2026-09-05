@@ -6,6 +6,7 @@ import { SdkConfig, SdkConfigOptions } from '../sdk-config';
 
 import { CHAIN_CONFIGS } from './chain-configs';
 import { DepositsFacade } from './deposits';
+import { FlowsFacade } from './flows';
 import { StrategiesFacade } from './strategies';
 import {
     ChainConfigEntry,
@@ -18,8 +19,9 @@ import { PortfolioFacade } from './user-portfolio';
 /**
  * High-level entry point for external integrators.
  *
- * Provides three domain facades — `strategies`, `deposits`, `portfolio` — and
- * exposes the underlying `KasuSdk` services via `.services` for power-users.
+ * Provides four domain facades — `strategies`, `deposits`, `portfolio`,
+ * `flows` — and exposes the underlying `KasuSdk` services via `.services` for
+ * power-users.
  *
  * ```ts
  * import { Kasu } from '@kasufinance/kasu-sdk';
@@ -43,6 +45,8 @@ export class Kasu {
     public readonly deposits: DepositsFacade;
     /** User positions, yields, transaction history. */
     public readonly portfolio: PortfolioFacade;
+    /** Headless deposit / withdraw state machines. */
+    public readonly flows: FlowsFacade;
 
     private readonly _sdk: KasuSdk;
     private readonly _chainConfig: ChainConfigEntry;
@@ -80,6 +84,14 @@ export class Kasu {
             sdk.DataService,
             sdk.UserLending,
             sdk.Portfolio,
+        );
+
+        this.flows = new FlowsFacade(
+            this.deposits,
+            sdk.UserLending,
+            signerOrProvider,
+            stableAssetOf(chainConfig),
+            chainConfig.chainId.toString(),
         );
     }
 

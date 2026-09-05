@@ -2,6 +2,7 @@ import { ContractTransaction } from 'ethers';
 
 import { UserLending } from '../services/UserLending/user-lending';
 
+import { READ_ONLY_MESSAGE } from './read-only';
 import { DepositParams, KycParams, WithdrawParams } from './types';
 
 /**
@@ -32,9 +33,7 @@ export class DepositsFacade {
      */
     private assertWritable(): void {
         if (this._isReadOnly) {
-            throw new Error(
-                'Kasu: this instance is read-only; call kasu.connect(signer) first',
-            );
+            throw new Error(READ_ONLY_MESSAGE);
         }
     }
 
