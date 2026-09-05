@@ -4,6 +4,7 @@
  * opt-in `LIVE_TESTS` gate on `src/tests/` does not take it out of CI.
  */
 import { DataService } from '../services/DataService/data-service';
+import { NO_DIRECTUS_URL_MESSAGE } from '../services/DataService/directus-client';
 import { Portfolio } from '../services/Portfolio/portfolio';
 import { UserRequestStatus } from '../services/UserLending/subgraph-types';
 import { UserRequest } from '../services/UserLending/types';
@@ -135,6 +136,35 @@ describe('Kasu.create()', () => {
         });
 
         expect(kasu).toBeInstanceOf(Kasu);
+    });
+
+    it('constructs without a directusUrl — on-chain data does not need one', () => {
+        // `createDirectus('')` throws `Invalid URL`, so an SDK configured
+        // without the (documented-optional) CMS URL used to be
+        // unconstructable rather than merely CMS-less.
+        const kasu = Kasu.create({
+            chain: 'base',
+            signerOrProvider: mockProvider as never,
+            configOverrides: { directusUrl: '' },
+        });
+
+        expect(kasu).toBeInstanceOf(Kasu);
+        expect(kasu.services.DataService).toBeDefined();
+        expect(kasu.services.UserLending).toBeDefined();
+    });
+
+    it('refuses a CMS-only call clearly when no directusUrl is configured', async () => {
+        const kasu = Kasu.create({
+            chain: 'base',
+            signerOrProvider: mockProvider as never,
+            configOverrides: { directusUrl: '' },
+        });
+
+        // A sentence naming what to configure, not a null dereference thrown
+        // from inside the vendor SDK.
+        await expect(
+            kasu.services.DataService.getPlatformOverview(),
+        ).rejects.toThrow(NO_DIRECTUS_URL_MESSAGE);
     });
 
     it('should expose the underlying KasuSdk via .services', () => {

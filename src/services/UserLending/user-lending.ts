@@ -1,12 +1,4 @@
-import {
-    authentication,
-    AuthenticationClient,
-    createDirectus,
-    DirectusClient,
-    readItems,
-    rest,
-    RestClient,
-} from '@directus/sdk';
+import { readItems } from '@directus/sdk';
 import { Provider } from '@ethersproject/providers';
 import {
     BigNumber,
@@ -43,7 +35,10 @@ import {
 } from '../../contracts';
 import { SdkConfig } from '../../sdk-config';
 import { DataService } from '../DataService/data-service';
-import { DirectusSchema } from '../DataService/directus-types';
+import {
+    createDirectusClient,
+    KasuDirectusClient,
+} from '../DataService/directus-client';
 
 import { mapUserRequestEventType } from './helper';
 import {
@@ -78,9 +73,7 @@ import {
 export class UserLending {
     private readonly _graph: GraphQLClient;
 
-    private readonly _directus: DirectusClient<DirectusSchema> &
-        AuthenticationClient<DirectusSchema> &
-        RestClient<DirectusSchema>;
+    private readonly _directus: KasuDirectusClient;
     private _dataService: DataService;
     private readonly _userManagerAbi: IUserManagerAbi;
     private readonly _lendingPoolManagerAbi: ILendingPoolManagerAbi;
@@ -117,9 +110,7 @@ export class UserLending {
             signerOrProvider,
         );
         this._dataService = new DataService(_kasuConfig, signerOrProvider);
-        this._directus = createDirectus<DirectusSchema>(_kasuConfig.directusUrl)
-            .with(authentication())
-            .with(rest());
+        this._directus = createDirectusClient(_kasuConfig.directusUrl);
     }
 
     async getUserTotalPendingAndActiveDepositedAmount(
@@ -372,11 +363,16 @@ export class UserLending {
                 unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
                 epochId,
             }),
-            this._directus.request(
-                readItems('PoolOverview', {
-                    fields: ['id', 'poolName', 'subheading'],
-                }),
-            ),
+            // Directus supplies the display pool NAME only; without it the
+            // raw subgraph name is used, which is what the fallback below
+            // already does for a pool with no CMS entry.
+            this._kasuConfig.directusUrl
+                ? this._directus.request(
+                      readItems('PoolOverview', {
+                          fields: ['id', 'poolName', 'subheading'],
+                      }),
+                  )
+                : [],
         ]);
 
         const retn: UserRequest[] = [];
