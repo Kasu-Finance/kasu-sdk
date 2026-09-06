@@ -208,7 +208,6 @@ await flow.start({
     amount: parseUnits('1000', 6), // BASE units
     fixedTermConfigId: '0', // '0' = variable rate
     userAddress,
-    spender: kasu.chainConfig.contracts.LendingPoolManager,
     depositAmount: 1000, // display units, for the backend's integrity check
     contractMessage: {
         format: 'loan-agreement',
@@ -257,18 +256,37 @@ Three guarantees worth knowing:
 - **The allowance is read live, before anything is signed.** An exact-amount
   approval is fully consumed by the deposit it paid for, so a cached allowance
   is exactly the value that wrongly skips the approve and reverts the deposit.
-- **`reset()` is safe mid-flight.** It abandons the run, drops its remaining
-  transitions and unparks a waiting handshake, so an abandoned run can never
-  drive a view you have left back to `success`. `start()` is guarded against
-  re-entry, so a double tap cannot fire two deposits.
+- **The spender is the SDK's, not yours.** `kasu.flows.deposit()` defaults it
+  to this chain's `LendingPoolManager` — the only contract the default deposit
+  port calls — so you no longer pass it. `spender` on the input still
+  overrides, for a consumer that replaced the `deposit` port; a wrong one is an
+  approval granted to the wrong contract and then a revert you would read as
+  `insufficient-balance`.
+- **`reset()` is safe mid-flight, and immediate.** It abandons the run, drops
+  its remaining transitions, unparks a waiting handshake and releases the
+  re-entry guard in the SAME tick — so `flow.reset(); flow.start(next)` starts
+  the next run even when the abandoned one is still parked on a wallet prompt
+  that will never answer. An abandoned run can never drive a view you have left
+  back to `success`. `start()` is otherwise guarded against re-entry, so a
+  double tap cannot fire two deposits.
+- **Only wallet errors can be `cancelled`.** The ports that reach your backend
+  — `generateContract`, `buildKycParams`, `getKycSignature` — always fail as
+  `failed`, with the error kept. A backend that words a refusal "declined" is
+  never reported to a lender as something they did in their wallet.
 
-`WithdrawFlow` is the same shape and much smaller — an optional `ensureKyc`
-pre-check, then `withdraw` or `withdrawMax`, with the same `cancelled` /
-`failed` split:
+`WithdrawFlow` is the same shape and much smaller — an optional KYC pre-check,
+then `withdraw` or `withdrawMax`, with the same `cancelled` / `failed` split:
 
 ```ts
 const flow = kasu.flows.withdraw();
 await flow.start({ poolId, trancheId, amount: 'max', userAddress });
+
+// With the pre-check: supply `getKycSignature` and the run checks the lender's
+// KYC before opening the wallet, on a `checking-kyc` phase and a `kyc` step.
+// `buildKycParams` defaults to the SDK's, exactly as on the deposit path.
+const checked = kasu.flows.withdraw({
+    getKycSignature: (params) => postJson('/api/kyc-signature', params),
+});
 ```
 
 `'max'` is a code you pass, not a balance you read: it routes to the all-shares

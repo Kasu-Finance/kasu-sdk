@@ -65,6 +65,7 @@ src/
 ├── flows/               # Headless money-path state machines — ports in, codes out
 │   ├── deposit-flow.ts  # The KYC-gated deposit pipeline
 │   ├── withdraw-flow.ts # The withdrawal pipeline
+│   ├── flow.ts          # Flow<S, I>: the run lifecycle both share
 │   └── observable.ts    # FlowStore: subscribe, patch, abandon a run
 ├── facade/              # High-level integrator API (Kasu, chain configs, I/O)
 ├── services/
@@ -92,6 +93,7 @@ src/
 | `src/utils/deployment-mode.ts`             | `isLiteDeployment()` utility                        |
 | `src/flows/deposit-flow.ts`                | `DepositFlow` — the deposit pipeline, headless      |
 | `src/flows/withdraw-flow.ts`               | `WithdrawFlow` — the withdrawal pipeline            |
+| `src/flows/flow.ts`                        | `Flow<S, I>` — the run lifecycle both flows share   |
 
 ---
 
@@ -278,7 +280,7 @@ they were duplicated across the applications, and the copies drifted.
 | `requests.ts`             | Lending-request view model as codes: status, kind, amounts, bundle, cycle         |
 | `settlement.ts`           | Clearing-window phase and boundary, cycle close/outcome dates                     |
 | `loan-contract.ts`        | `depositData` bytes, the signed-message builders, the contract payload types      |
-| `wallet-errors.ts`        | `isUserRejected`, `isUnpredictableGas`                                            |
+| `wallet-errors.ts`        | `isUserRejected`, `isUnpredictableGas`, `classifyWalletFailure`                   |
 | `au-minimum.ts`           | AU cumulative-lending minimum — thresholds, minor-unit maths, exemption test      |
 
 `requests.ts` publishes the reallocation destination as a RAW tranche name
@@ -403,9 +405,20 @@ reverting on a balance that cannot cover the deposit; it takes precedence,
 because nothing was refused and a retry would only reproduce it. Everything
 else is `failed` and carries the original error for a crash reporter.
 
-A backend failure on `generate` is NEVER reported as a cancellation. The
+A backend failure is NEVER reported as a cancellation — not on `generate`, and
+not on the KYC ports of the request step or the withdraw pre-check. The
 lender's wallet was not involved in an HTTP call, so a backend that happens to
-echo "user rejected" must not be shown to them as something they did.
+echo "user rejected" or word a refusal "declined" must not be shown to them as
+something they did, and the error must survive for the crash reporter, which a
+`cancelled` discards. `classifyWalletFailure` is for WALLET throws only.
+
+`isUserRejected` reads the text for a SUBJECT, not for a keyword, for the same
+reason: "declined" and "request rejected" are also what a rate limiter, a risk
+engine and a KYC decision say, and ethers hands those over in the very envelope
+a wallet error arrives in (`SERVER_ERROR` around `-32603`, the upstream body on
+a nested `error.message`). A rejection is a wallet CODE — `4001`,
+`ACTION_REJECTED` — or a sentence naming who did it: "user rejected", "declined
+by the user", "cancelled by the wallet".
 
 ### Ports
 
@@ -424,6 +437,27 @@ The three with no default all reach the application's own backend or wallet.
 They will never gain one: this is a public package, and a URL or a key does not
 belong in it.
 
+Each default is applied PER KEY with `??`, never by spreading the overrides
+over them. `{ ...defaults, ...ports }` lets an explicitly `undefined` value
+delete the default it was meant to keep, and
+`approve: sponsoredGasOn ? sponsoredApprove : undefined` is exactly how a
+consumer writes a conditional override — kasu-ui writes precisely that. The
+symptom was `ports.approve is not a function`, and, more quietly,
+`readAllowance: undefined` forcing an approval on every run.
+
+`spender` is NOT an input the consumer supplies. `kasu.flows.deposit()`
+defaults it to this chain's `LendingPoolManager` — the only contract the
+default deposit port calls — and `DepositFlowInput.spender` overrides it only
+for a consumer that replaced the `deposit` port. A wrong spender leaves an
+approval granted to the wrong contract and then reverts, diagnosed as
+`insufficient-balance`.
+
+`WithdrawPorts` mirrors the pair: `buildKycParams` (SDK default) plus
+`getKycSignature` (no default). Supplying `getKycSignature` is what turns the
+withdraw KYC pre-check on — it is the check kasu-mobile hand-wrote, and it is
+now the same two ports on both money paths. `withdraw` and `withdrawMax`
+default to `kasu.deposits`.
+
 ### Driving one
 
 ```ts
@@ -440,7 +474,6 @@ await flow.start({
     amount, // BASE units, BigNumber
     fixedTermConfigId: '0',
     userAddress,
-    spender: kasu.chainConfig.contracts.LendingPoolManager,
     depositAmount: 1000, // display units, for the backend's integrity check
     contractMessage: {
         format: 'loan-agreement',
@@ -454,15 +487,25 @@ await flow.start({
 await flow.acceptContract(); // or flow.declineContract()
 ```
 
-`reset()` is safe mid-flight: it abandons the run, drops its remaining
-transitions and unparks a waiting handshake, so an abandoned run can never
-drive a view the consumer has left back to `success`. `start()` is guarded
-against re-entry — a double tap cannot fire two deposits.
+`reset()` is safe mid-flight AND immediate: it abandons the run, drops its
+remaining transitions, unparks a waiting handshake, and releases the re-entry
+guard in the SAME tick, so `flow.reset(); flow.start(next)` is accepted even
+while the abandoned run is still parked on a wallet prompt that never answers.
+The abandoned run's late results are dropped by its run token, so it can never
+drive a view the consumer has left back to `success`. `start()` is otherwise
+guarded against re-entry — a double tap cannot fire two deposits.
 
-`WithdrawFlow` is the same shape and much smaller: an optional `ensureKyc`
-pre-check, then `withdraw` or `withdrawMax`, with the same `cancelled` /
-`failed` split. `'max'` is a CODE the consumer passes, not a balance it read: it
-routes to the all-shares call, which resolves the balance on chain.
+The guard and the accept flag both belong to a RUN, not to the flow. They live
+in `Flow<S, I>` (`flows/flow.ts`) with `state`, `isRunning`, `subscribe` and
+`reset`, which both pipelines share rather than each keeping its own copy —
+`WithdrawFlow` carried a line-for-line duplicate of all of it until 2.7.0, and
+one guard living in two places is one guard that can be wrong in one of them.
+
+`WithdrawFlow` is the same shape and much smaller: an optional KYC pre-check
+(`buildKycParams` + `getKycSignature`, the deposit flow's own pair), then
+`withdraw` or `withdrawMax`, with the same `cancelled` / `failed` split.
+`'max'` is a CODE the consumer passes, not a balance it read: it routes to the
+all-shares call, which resolves the balance on chain.
 
 ## Contract Addresses by Chain
 
@@ -615,6 +658,12 @@ Nothing in this repository may carry a private key, not even a throwaway — it 
 a public repository. A spec that needs a signer generates one:
 `ethers.Wallet.createRandom().connect(provider)`.
 
+Nor may a fixture be a REAL address. A wallet that exists — a deployment
+wallet, a lender, anything on an operational list — is not a test fixture, and
+`src` ships in the tarball. Use an obviously synthetic one
+(`0xAbCdEf0000000000000000000000000000000001`, `0x1111…`), mixed-case where the
+spec is about casing.
+
 Property tests use `fast-check` (a devDependency).
 
 ---
@@ -639,8 +688,13 @@ npm publish
 ```
 
 `files` in `package.json` limits the tarball to `dist`, `src`, `abis`, the
-README and the LICENSE. `src` MUST stay published: a consumer deep-imports
-`@kasufinance/kasu-sdk/src/contracts`.
+README and the LICENSE, MINUS every test file (`!src/**/*.test.ts`,
+`!src/tests`, and their `dist` counterparts). `src` MUST stay published: a
+consumer deep-imports `@kasufinance/kasu-sdk/src/contracts` — which is exactly
+why the specs must not ride along. They are dead weight in every consumer's
+`node_modules`, and their fixtures are the kind of thing that ends up
+published by accident. Check with `npm pack --dry-run` after any change to
+`files`.
 
 ---
 
