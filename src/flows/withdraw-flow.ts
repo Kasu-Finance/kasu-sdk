@@ -1,9 +1,10 @@
 import { BigNumber } from 'ethers';
 
-import { isUserRejected } from '../domain/wallet-errors';
+import { classifyWalletFailure } from '../domain/wallet-errors';
+import { KycParams } from '../facade/types';
 
-import { WaitableTransaction } from './deposit-flow';
-import { FlowStore } from './observable';
+import { Flow } from './flow';
+import { WaitableTransaction } from './observable';
 
 /**
  * The withdrawal pipeline, headless — the small sibling of `DepositFlow`.
@@ -14,6 +15,11 @@ import { FlowStore } from './observable';
  * applications need — an observable phase, one `'max'`-aware submission, and
  * the same `cancelled` / `failed` split, so a lender who pressed Reject is
  * never told something broke.
+ *
+ * The run lifecycle — the re-entrancy guard, `state`, `isRunning`,
+ * `subscribe`, `reset` — is `Flow`'s, shared with the deposit pipeline. It was
+ * a second copy here until 2.7.0, which is two places for one guard to be
+ * wrong.
  *
  * Same house rules as the deposit flow: no React, no copy, no I/O of its own.
  * `state` carries codes; the consumer owns every word a lender reads.
@@ -38,9 +44,9 @@ export type WithdrawPhase =
     | 'error';
 
 /**
- * `kyc` only exists when the consumer supplies `ensureKyc`. kasu-mobile does,
- * to fail early and legibly when a lender's KYC has lapsed rather than let the
- * on-chain call revert; kasu-ui does not.
+ * `kyc` only exists when the consumer supplies `getKycSignature`. kasu-mobile
+ * does, to fail early and legibly when a lender's KYC has lapsed rather than
+ * let the on-chain call revert; kasu-ui does not.
  */
 export type WithdrawStep = 'kyc' | 'request';
 
@@ -54,10 +60,24 @@ export type WithdrawFailure =
 
 export interface WithdrawPorts {
     /**
-     * Optional pre-check. Reject to stop the run before the wallet is opened —
-     * a lapsed KYC surfaces as `{ step: 'kyc' }` instead of an opaque revert.
+     * Build the Nexera KYC params for the pre-check. Defaults to
+     * `kasu.deposits.buildKycParams`, exactly as the deposit flow's does.
      */
-    ensureKyc?(userAddress: `0x${string}`): Promise<unknown>;
+    buildKycParams?(
+        userAddress: `0x${string}`,
+    ): KycParams | Promise<KycParams>;
+    /**
+     * Exchange those params for a signature at the consumer's own backend, and
+     * so verify the lender's KYC BEFORE the wallet is opened — a lapsed one
+     * surfaces as `{ step: 'kyc' }` instead of an opaque revert. The
+     * withdrawal call itself does not carry the signature.
+     *
+     * Supplying this port is what turns the pre-check on; there is no default,
+     * because the SDK does not know the application's backend. This is the
+     * same pair the deposit flow uses, rather than the opaque `ensureKyc` of
+     * earlier drafts, so one KYC pre-check exists across both money paths.
+     */
+    getKycSignature?(params: KycParams): Promise<unknown>;
     /** `requestWithdrawalInAsset`. Defaults to `kasu.deposits.withdraw`. */
     withdraw(params: {
         poolId: string;
@@ -103,70 +123,48 @@ const INITIAL: WithdrawState = {
     failure: null,
 };
 
-function classify(step: WithdrawStep, err: unknown): WithdrawFailure {
-    return isUserRejected(err)
-        ? { step, reason: 'cancelled' }
-        : { step, reason: 'failed', error: err };
-}
+/** What a KYC pre-check with no `buildKycParams` to call fails with. */
+export const NO_KYC_PARAMS_MESSAGE =
+    'WithdrawFlow: getKycSignature was supplied without buildKycParams; build the flow with kasu.flows.withdraw() or pass both';
 
 // ---------------------------------------------------------------------------
 // The flow
 // ---------------------------------------------------------------------------
 
-export class WithdrawFlow {
-    private readonly _store = new FlowStore<WithdrawState>(INITIAL);
-    private _running = false;
-
-    constructor(private readonly _ports: WithdrawPorts) {}
-
-    get state(): WithdrawState {
-        return this._store.state;
+export class WithdrawFlow extends Flow<WithdrawState, WithdrawFlowInput> {
+    constructor(private readonly _ports: WithdrawPorts) {
+        super(INITIAL);
     }
 
-    get isRunning(): boolean {
-        return this._running;
-    }
-
-    subscribe(listener: (state: WithdrawState) => void): () => void {
-        return this._store.subscribe(listener);
-    }
-
-    /**
-     * Run the pipeline. Resolves on a terminal phase and never rejects; the
-     * outcome is in `state`. A second call while one is in flight is a no-op,
-     * for the same reason the deposit flow guards it — one submission per
-     * intent, however many times the button is pressed.
-     */
-    async start(input: WithdrawFlowInput): Promise<void> {
-        if (this._running) return;
-        this._running = true;
-        try {
-            await this._run(input);
-        } finally {
-            this._running = false;
-        }
-    }
-
-    /** Back to `idle`, abandoning any run in flight. Subscribers are kept. */
-    reset(): void {
-        this._store.reset();
-    }
-
-    private async _run(input: WithdrawFlowInput): Promise<void> {
-        this._store.reset();
-        const token = this._store.beginRun();
+    protected async _run(
+        input: WithdrawFlowInput,
+        token: number,
+    ): Promise<void> {
+        const ports = this._ports;
         const isMax = input.amount === 'max';
 
-        if (this._ports.ensureKyc) {
+        // 1. The optional KYC pre-check: build the params, exchange them for a
+        //    signature. Both ports reach the application's own backend, so a
+        //    throw here is ALWAYS `failed` — running it through the wallet
+        //    rejection classifier would let a backend's "Declined" be reported
+        //    to a lender as something they did, with the real error dropped.
+        if (ports.getKycSignature) {
             this._store.patch(
                 { phase: 'checking-kyc', step: 'kyc', isMax },
                 token,
             );
             try {
-                await this._ports.ensureKyc(input.userAddress);
+                if (!ports.buildKycParams) {
+                    throw new Error(NO_KYC_PARAMS_MESSAGE);
+                }
+                const params = await ports.buildKycParams(input.userAddress);
+                await ports.getKycSignature(params);
             } catch (err) {
                 this._store.patch(
-                    { phase: 'error', failure: classify('kyc', err) },
+                    {
+                        phase: 'error',
+                        failure: { step: 'kyc', reason: 'failed', error: err },
+                    },
                     token,
                 );
                 return;
@@ -174,6 +172,8 @@ export class WithdrawFlow {
             if (!this._store.isCurrent(token)) return;
         }
 
+        // 2. The submission. This one IS a wallet call, so it keeps the
+        //    `cancelled` / `failed` split.
         this._store.patch(
             { phase: 'request-sign', step: 'request', isMax },
             token,
@@ -181,12 +181,12 @@ export class WithdrawFlow {
         try {
             const tx =
                 input.amount === 'max'
-                    ? await this._ports.withdrawMax(
+                    ? await ports.withdrawMax(
                           input.poolId,
                           input.trancheId,
                           input.userAddress.toLowerCase(),
                       )
-                    : await this._ports.withdraw({
+                    : await ports.withdraw({
                           poolId: input.poolId,
                           trancheId: input.trancheId,
                           amount: input.amount,
@@ -195,7 +195,10 @@ export class WithdrawFlow {
             await tx.wait();
         } catch (err) {
             this._store.patch(
-                { phase: 'error', failure: classify('request', err) },
+                {
+                    phase: 'error',
+                    failure: classifyWalletFailure('request', err),
+                },
                 token,
             );
             return;

@@ -7,10 +7,14 @@ import {
     encodeDepositData,
     GenerateContractResponse,
 } from '../domain/loan-contract';
-import { isUnpredictableGas, isUserRejected } from '../domain/wallet-errors';
+import {
+    classifyWalletFailure,
+    isUnpredictableGas,
+} from '../domain/wallet-errors';
 import { DepositParams, KycParams } from '../facade/types';
 
-import { FlowStore } from './observable';
+import { Flow } from './flow';
+import { WaitableTransaction } from './observable';
 
 /**
  * The KYC-gated deposit pipeline, headless.
@@ -57,16 +61,18 @@ import { FlowStore } from './observable';
  * ## Failure codes
  *
  * A wallet rejection (`isUserRejected`) is `'cancelled'` — the lender changed
- * their mind, and telling them something broke would be a lie. A reverted gas
- * estimate on the request step (`isUnpredictableGas`) is
- * `'insufficient-balance'` — nothing was refused, the transaction simply cannot
- * succeed as composed. Everything else is `'failed'` and carries the original
- * error for the consumer's crash reporter.
+ * their mind, and telling them something broke would be a lie. Only a WALLET
+ * call is ever classified that way: the HTTP ports are always `'failed'`,
+ * because a backend that words a refusal "declined" did not involve the
+ * lender's wallet. A reverted gas estimate on the request step
+ * (`isUnpredictableGas`) is `'insufficient-balance'` — nothing was refused, the
+ * transaction simply cannot succeed as composed. Everything else is `'failed'`
+ * and carries the original error for the consumer's crash reporter.
  *
  * ```ts
  * const flow = new DepositFlow(ports);
  * const stop = flow.subscribe((s) => render(s));
- * await flow.start({ poolId, trancheId, amount, spender, userAddress, ... });
+ * await flow.start({ poolId, trancheId, amount, userAddress, ... });
  * // …the consumer shows `flow.state.contract` and calls:
  * await flow.acceptContract();
  * ```
@@ -117,10 +123,7 @@ export type DepositFailure =
 // Ports
 // ---------------------------------------------------------------------------
 
-/** Anything with a `wait()` — an ethers `ContractTransaction`, or a fake. */
-export interface WaitableTransaction {
-    wait(): Promise<unknown>;
-}
+export type { WaitableTransaction };
 
 /** What the KYC signing service hands back. */
 export interface KycSignature {
@@ -229,6 +232,19 @@ export interface DepositPorts {
     now?(): number;
 }
 
+/** Construction options. `kasu.flows.deposit()` fills `spender` in. */
+export interface DepositFlowOptions {
+    /** Agreement validity window; defaults to `CONTRACT_TTL_MS`. */
+    contractTtlMs?: number;
+    /**
+     * The ERC-20 spender every run approves and deposits through, when the
+     * input does not name one. `kasu.flows.deposit()` passes this chain's
+     * `contracts.LendingPoolManager`, which is the only contract the default
+     * deposit port calls.
+     */
+    spender?: string;
+}
+
 // ---------------------------------------------------------------------------
 // Input and state
 // ---------------------------------------------------------------------------
@@ -241,8 +257,16 @@ export interface DepositFlowInput {
     /** `'0'` for a variable-rate deposit. */
     fixedTermConfigId: string;
     userAddress: `0x${string}`;
-    /** The ERC-20 spender — `contracts.LendingPoolManager` on this chain. */
-    spender: string;
+    /**
+     * The ERC-20 spender, when it is NOT this chain's `LendingPoolManager`.
+     *
+     * Leave it out: `kasu.flows.deposit()` defaults it from the chain config,
+     * and the default deposit port calls no other contract. It exists for a
+     * consumer that replaced the `deposit` port with one that spends
+     * somewhere else — a wrong spender is an approval granted to the wrong
+     * contract and then a revert diagnosed as `insufficient-balance`.
+     */
+    spender?: string;
     /** Which signed-message format to use, and its fields. */
     contractMessage: ContractMessageRequest;
     /**
@@ -275,6 +299,10 @@ export interface DepositState {
 /** Generated agreements are valid for five minutes upstream. */
 export const CONTRACT_TTL_MS = 5 * 60 * 1000;
 
+/** What a run without a spender, from either source, fails with. */
+export const NO_SPENDER_MESSAGE =
+    'DepositFlow: no ERC-20 spender; build the flow with kasu.flows.deposit() or pass `spender` on the input';
+
 const INITIAL: DepositState = {
     phase: 'idle',
     step: null,
@@ -289,33 +317,22 @@ const INITIAL: DepositState = {
 // Internals
 // ---------------------------------------------------------------------------
 
-const DECLINED = 'contract-declined';
-
-interface TaggedError {
-    kasuFlowReason?: string;
-}
-
-function declinedError(): Error {
-    return Object.assign(new Error(DECLINED), { kasuFlowReason: DECLINED });
-}
-
 /**
- * The marker `reset()` uses to unpark an abandoned run. It never reaches a
- * consumer: the run checks its own token before classifying anything.
+ * How the park ends, as data.
+ *
+ * It used to be signalled by throwing tagged `Error`s and sniffing them again
+ * on the way out, which meant a port error whose message happened to read
+ * `contract-declined` ENDED THE RUN AS A DECLINE — a lender's deposit
+ * abandoned on a string coincidence. A discriminated result cannot be
+ * counterfeited by an error message: `failed` carries the throw, and only
+ * `declineContract()` can produce `declined`.
  */
-function abandonedError(): Error {
-    return Object.assign(new Error('flow-abandoned'), {
-        kasuFlowReason: 'flow-abandoned',
-    });
-}
-
-function isDeclined(err: unknown): boolean {
-    if (!(err instanceof Error)) return false;
-    return (
-        (err as Error & TaggedError).kasuFlowReason === DECLINED ||
-        err.message === DECLINED
-    );
-}
+type AcceptOutcome =
+    | { kind: 'accepted'; signature: string }
+    | { kind: 'declined' }
+    | { kind: 'failed'; error: unknown }
+    /** `reset()` unparked it. The run's token check drops everything after. */
+    | { kind: 'abandoned' };
 
 /** 1-based badge position, with `approve` dropped when it is out of scope. */
 function stepIndexOf(step: DepositStep, approvalRequired: boolean): number {
@@ -337,18 +354,6 @@ function badgeFor(
 }
 
 /**
- * The `cancelled` / `failed` split, on every step but `request`.
- *
- * A lender who pressed Reject is not a fault. Reporting one as the other is
- * how a support queue fills with people who did exactly what they meant to.
- */
-function classify(step: DepositStep, err: unknown): DepositFailure {
-    return isUserRejected(err)
-        ? { step, reason: 'cancelled' }
-        : { step, reason: 'failed', error: err };
-}
-
-/**
  * The request step has a third outcome. `UNPREDICTABLE_GAS_LIMIT` here is
  * almost always `transferFrom` reverting on a balance that cannot cover the
  * deposit, and it takes precedence: nothing was refused by the lender, so
@@ -358,88 +363,48 @@ function classifyRequest(err: unknown): DepositFailure {
     if (isUnpredictableGas(err)) {
         return { step: 'request', reason: 'insufficient-balance', error: err };
     }
-    return classify('request', err);
+    return classifyWalletFailure('request', err);
 }
 
 // ---------------------------------------------------------------------------
 // The flow
 // ---------------------------------------------------------------------------
 
-export class DepositFlow {
-    private readonly _store = new FlowStore<DepositState>(INITIAL);
+export class DepositFlow extends Flow<DepositState, DepositFlowInput> {
     private readonly _ttlMs: number;
+    private readonly _defaultSpender: string | undefined;
     private readonly _now: () => number;
 
     /**
-     * The accept handshake. The run parks on this promise; `acceptContract`
-     * resolves it with the acceptance signature and `declineContract` rejects
-     * it. Cleared the moment it settles so a stale resolver from an abandoned
-     * run can never leak into the next one.
+     * The accept handshake. The run parks on this promise; `acceptContract`,
+     * `declineContract` and `reset` each settle it with an `AcceptOutcome`.
+     * Cleared the moment it settles so a stale resolver from an abandoned run
+     * can never leak into the next one.
      */
-    private _accept: {
-        resolve: (signature: string) => void;
-        reject: (err: Error) => void;
-    } | null = null;
+    private _accept: { settle: (outcome: AcceptOutcome) => void } | null = null;
 
     /**
-     * Re-entrancy guard. Claimed synchronously, before the first `await`, so a
-     * double-click cannot launch two pipelines that share `_accept` and fire
-     * two on-chain deposits.
+     * The run token that is between `acceptContract()` and the wallet
+     * settling, or `null`.
+     *
+     * A token rather than a boolean, because the flag has to belong to the RUN
+     * that set it: after `reset()` out of a wallet prompt that never answers,
+     * the abandoned run's `finally` may not arrive for minutes, and a boolean
+     * left standing refuses both Accept and Decline on every run after it.
+     * A stale token simply is not the current generation.
      */
-    private _running = false;
-
-    /**
-     * True between `acceptContract()` and the wallet settling. It guards a
-     * double tap, and it is why `_accept` is NOT cleared before the signature
-     * comes back: keeping the handshake reachable is what lets `reset()` unpark
-     * a run whose wallet prompt is still open.
-     */
-    private _accepting = false;
+    private _acceptingFor: number | null = null;
 
     constructor(
         private readonly _ports: DepositPorts,
-        opts?: { contractTtlMs?: number },
+        opts?: DepositFlowOptions,
     ) {
+        super(INITIAL);
         this._ttlMs = opts?.contractTtlMs ?? CONTRACT_TTL_MS;
+        this._defaultSpender = opts?.spender;
         // Called through the ports object, never captured off it: a consumer
         // whose clock is a method on its own object keeps its `this`.
         this._now = (): number => _ports.now?.() ?? Date.now();
-    }
-
-    /** The current state. Every transition is also published to `subscribe`. */
-    get state(): DepositState {
-        return this._store.state;
-    }
-
-    /** True while a run is in flight, including while parked on the agreement. */
-    get isRunning(): boolean {
-        return this._running;
-    }
-
-    /**
-     * Observe every transition. Returns the unsubscribe function.
-     *
-     * The listener is not called on subscribe; read `state` for the value it
-     * starts from.
-     */
-    subscribe(listener: (state: DepositState) => void): () => void {
-        return this._store.subscribe(listener);
-    }
-
-    /**
-     * Run the pipeline. Resolves when it reaches a terminal phase — it does not
-     * reject, because every outcome a consumer can act on is in `state.failure`.
-     *
-     * A second call while one is in flight is a no-op.
-     */
-    async start(input: DepositFlowInput): Promise<void> {
-        if (this._running) return;
-        this._running = true;
-        try {
-            await this._run(input);
-        } finally {
-            this._running = false;
-        }
     }
 
     /**
@@ -449,9 +414,9 @@ export class DepositFlow {
     async acceptContract(): Promise<void> {
         const bridge = this._accept;
         const contract = this._store.state.contract;
-        if (!bridge || !contract || this._accepting) return;
-        this._accepting = true;
+        if (!bridge || !contract || this._isAccepting()) return;
         const token = this._store.generation;
+        this._acceptingFor = token;
         this._store.patch(
             {
                 phase: 'accepting-sign',
@@ -460,13 +425,18 @@ export class DepositFlow {
             token,
         );
         try {
-            bridge.resolve(
-                await this._ports.signMessage(contract.contractMessage),
+            const signature = await this._ports.signMessage(
+                contract.contractMessage,
             );
+            bridge.settle({ kind: 'accepted', signature });
         } catch (err) {
-            bridge.reject(err as Error);
+            // A WALLET error, and the only one this flow classifies as a
+            // possible cancellation on the confirm step.
+            bridge.settle({ kind: 'failed', error: err });
         } finally {
-            this._accepting = false;
+            // Only if this run still holds it: a `reset()` during the prompt
+            // may have started another one, and that one's flag is its own.
+            if (this._acceptingFor === token) this._acceptingFor = null;
         }
     }
 
@@ -480,30 +450,51 @@ export class DepositFlow {
      */
     declineContract(): void {
         const bridge = this._accept;
-        if (!bridge || this._accepting) return;
+        if (!bridge || this._isAccepting()) return;
         this._accept = null;
-        bridge.reject(declinedError());
+        bridge.settle({ kind: 'declined' });
     }
 
-    /**
-     * Back to `idle`, abandoning any run in flight: its remaining transitions
-     * are dropped and a parked handshake is unparked. Subscribers are kept.
-     */
-    reset(): void {
+    /** True only while THIS generation is waiting on the acceptance signature. */
+    private _isAccepting(): boolean {
+        return (
+            this._acceptingFor !== null &&
+            this._store.isCurrent(this._acceptingFor)
+        );
+    }
+
+    /** `reset()`: unpark the abandoned run and drop its handshake. */
+    protected override _onAbandon(): void {
         const bridge = this._accept;
         this._accept = null;
-        this._store.reset();
-        bridge?.reject(abandonedError());
+        this._acceptingFor = null;
+        bridge?.settle({ kind: 'abandoned' });
     }
 
     // -----------------------------------------------------------------------
 
-    private async _run(input: DepositFlowInput): Promise<void> {
-        this._store.reset();
+    protected async _run(
+        input: DepositFlowInput,
+        token: number,
+    ): Promise<void> {
         this._accept = null;
-        const token = this._store.beginRun();
+        this._acceptingFor = null;
         const ports = this._ports;
         const owner = input.userAddress.toLowerCase();
+
+        // 0. The spender, from the input or from the chain config the facade
+        //    built this flow with. Without one there is nothing to read an
+        //    allowance against and nothing to approve — and guessing would
+        //    grant an approval to the wrong contract.
+        const spender = input.spender ?? this._defaultSpender;
+        if (!spender) {
+            this._fail(token, true, {
+                step: 'generate',
+                reason: 'failed',
+                error: new Error(NO_SPENDER_MESSAGE),
+            });
+            return;
+        }
 
         // 1. Allowance pre-check. Decides `approvalRequired` — and therefore
         //    the badge total — before the lender is shown a single step. Read
@@ -512,7 +503,7 @@ export class DepositFlow {
         //    that would wrongly skip the approve and revert the deposit.
         let approvalRequired = true;
         try {
-            const allowance = await ports.readAllowance(owner, input.spender);
+            const allowance = await ports.readAllowance(owner, spender);
             approvalRequired = allowance.lt(input.amount);
         } catch {
             // A read failure is not a reason to skip an approval. Assume one is
@@ -538,7 +529,11 @@ export class DepositFlow {
         try {
             signature = await ports.signMessage(signedMessage);
         } catch (err) {
-            this._fail(token, approvalRequired, classify('generate', err));
+            this._fail(
+                token,
+                approvalRequired,
+                classifyWalletFailure('generate', err),
+            );
             return;
         }
         if (!this._store.isCurrent(token)) return;
@@ -579,39 +574,38 @@ export class DepositFlow {
         if (!this._store.isCurrent(token)) return;
 
         // 4. Park on the agreement until the consumer accepts or declines.
-        let acceptedSignature: string;
-        try {
-            acceptedSignature = await new Promise<string>((resolve, reject) => {
-                this._accept = { resolve, reject };
-                this._store.patch(
-                    {
-                        phase: 'awaiting-accept',
-                        contract,
-                        ...badgeFor('confirm', approvalRequired),
-                    },
-                    token,
-                );
-            });
-        } catch (err) {
-            this._accept = null;
-            // An abandoned run lands here too — `reset()` unparks by rejecting.
-            // The token check is what tells the two apart.
-            if (!this._store.isCurrent(token)) return;
-            if (isDeclined(err)) {
-                this._store.patch(
-                    {
-                        phase: 'declined',
-                        ...badgeFor('confirm', approvalRequired),
-                    },
-                    token,
-                );
-                return;
-            }
-            this._fail(token, approvalRequired, classify('confirm', err));
+        const outcome = await new Promise<AcceptOutcome>((resolve) => {
+            this._accept = { settle: resolve };
+            this._store.patch(
+                {
+                    phase: 'awaiting-accept',
+                    contract,
+                    ...badgeFor('confirm', approvalRequired),
+                },
+                token,
+            );
+        });
+        this._accept = null;
+        // An abandoned run lands here too — `reset()` unparks it. The token
+        // check is what tells the two apart.
+        if (!this._store.isCurrent(token)) return;
+        if (outcome.kind === 'declined') {
+            this._store.patch(
+                { phase: 'declined', ...badgeFor('confirm', approvalRequired) },
+                token,
+            );
             return;
         }
-        this._accept = null;
-        if (!this._store.isCurrent(token)) return;
+        if (outcome.kind !== 'accepted') {
+            if (outcome.kind === 'failed') {
+                this._fail(
+                    token,
+                    approvalRequired,
+                    classifyWalletFailure('confirm', outcome.error),
+                );
+            }
+            return;
+        }
 
         // 5. TTL guard. Checked here because this is where the idling happens:
         //    the lender has just spent as long as they wanted reading. An
@@ -627,7 +621,7 @@ export class DepositFlow {
         }
 
         const depositData = encodeDepositData({
-            signature: acceptedSignature,
+            signature: outcome.signature,
             timestamp: contract.timestamp,
             contractVersion: contract.contractVersion,
             contractType: asContractType(contract.contractType),
@@ -643,25 +637,47 @@ export class DepositFlow {
                 token,
             );
             try {
-                const tx = await ports.approve(input.spender, input.amount);
+                const tx = await ports.approve(spender, input.amount);
                 await tx.wait();
             } catch (err) {
-                this._fail(token, approvalRequired, classify('approve', err));
+                this._fail(
+                    token,
+                    approvalRequired,
+                    classifyWalletFailure('approve', err),
+                );
                 return;
             }
             if (!this._store.isCurrent(token)) return;
         }
 
-        // 7. Request — KYC signature, deposit, receipt.
+        // 7. Request — KYC signature, then the deposit and its receipt.
         this._store.patch(
             { phase: 'request-sign', ...badgeFor('request', approvalRequired) },
             token,
         );
+
+        // The two KYC ports reach the consumer's own backend, so they fail the
+        // way the generate step does: `failed`, with the error kept. Running
+        // them through the rejection classifier would let a backend wording —
+        // "Declined", "request rejected" — end a run as "you cancelled in your
+        // wallet", with the real error discarded and nothing to report.
+        let kyc: KycSignature;
         try {
             const kycParams = await ports.buildKycParams(
                 owner as `0x${string}`,
             );
-            const kyc = await ports.getKycSignature(kycParams);
+            kyc = await ports.getKycSignature(kycParams);
+        } catch (err) {
+            this._fail(token, approvalRequired, {
+                step: 'request',
+                reason: 'failed',
+                error: err,
+            });
+            return;
+        }
+        if (!this._store.isCurrent(token)) return;
+
+        try {
             const tx = await ports.deposit({
                 poolId: input.poolId,
                 trancheId: input.trancheId,

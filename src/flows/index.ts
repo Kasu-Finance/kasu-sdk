@@ -10,11 +10,20 @@
  * Every application drove its own copy of the deposit pipeline before this, and
  * the copies had already started to differ.
  */
-export { CONTRACT_TTL_MS, DepositFlow } from './deposit-flow';
+export { Flow } from './flow';
+export { FlowStore } from './observable';
+export type { WaitableTransaction } from './observable';
+
+export {
+    CONTRACT_TTL_MS,
+    DepositFlow,
+    NO_SPENDER_MESSAGE,
+} from './deposit-flow';
 export type {
     ContractMessageRequest,
     DepositFailure,
     DepositFlowInput,
+    DepositFlowOptions,
     DepositPhase,
     DepositPorts,
     DepositState,
@@ -23,10 +32,9 @@ export type {
     KycSignature,
     LegacyContractRequest,
     LoanAgreementRequest,
-    WaitableTransaction,
 } from './deposit-flow';
 
-export { WithdrawFlow } from './withdraw-flow';
+export { NO_KYC_PARAMS_MESSAGE, WithdrawFlow } from './withdraw-flow';
 export type {
     WithdrawFailure,
     WithdrawFlowInput,

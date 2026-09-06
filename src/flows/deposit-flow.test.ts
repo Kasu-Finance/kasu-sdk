@@ -21,12 +21,14 @@ import {
     CONTRACT_TTL_MS,
     DepositFlow,
     DepositFlowInput,
+    DepositFlowOptions,
     DepositPhase,
     DepositPorts,
     GenerateContractRequest,
     KycSignature,
-    WaitableTransaction,
+    NO_SPENDER_MESSAGE,
 } from './deposit-flow';
+import { WaitableTransaction } from './observable';
 
 // ---------------------------------------------------------------------------
 // Fixtures
@@ -111,6 +113,8 @@ interface Harness {
     signed: string[];
     generateRequests: GenerateContractRequest[];
     approveCalls: { spender: string; amount: BigNumber }[];
+    /** `[owner, spender]` of every allowance pre-check. */
+    allowanceReads: [string, string][];
     depositCalls: DepositParams[];
     phases: DepositPhase[];
     /** Every state the flow published, in order. */
@@ -119,12 +123,13 @@ interface Harness {
 
 function makeHarness(
     overrides: Partial<DepositPorts> = {},
-    opts?: { contractTtlMs?: number },
+    opts?: DepositFlowOptions,
 ): Harness {
     const clock = { now: BASE_NOW };
     const signed: string[] = [];
     const generateRequests: GenerateContractRequest[] = [];
     const approveCalls: { spender: string; amount: BigNumber }[] = [];
+    const allowanceReads: [string, string][] = [];
     const depositCalls: DepositParams[] = [];
 
     const waitable = (): WaitableTransaction => ({
@@ -154,8 +159,13 @@ function makeHarness(
             Promise.resolve(KYC_SIGNATURE),
         // Wide open by default, so the approve step is out of scope unless a
         // test says otherwise — the same default kasu-ui's suite uses.
-        readAllowance: (): Promise<BigNumber> =>
-            Promise.resolve(constants.MaxUint256),
+        readAllowance: (
+            owner: string,
+            spender: string,
+        ): Promise<BigNumber> => {
+            allowanceReads.push([owner, spender]);
+            return Promise.resolve(constants.MaxUint256);
+        },
         approve: (
             spender: string,
             amount: BigNumber,
@@ -190,6 +200,7 @@ function makeHarness(
         signed,
         generateRequests,
         approveCalls,
+        allowanceReads,
         depositCalls,
         phases,
         states,
@@ -763,6 +774,42 @@ describe('DepositFlow — reset', () => {
             'awaiting-accept',
         );
         await h.flow.acceptContract();
+        // Wait for the SUBMISSION itself, not merely the phase: the KYC
+        // fetches sit between the two, and a run abandoned before them never
+        // submits at all (the test below).
+        await until(() => h.depositCalls.length === 1, 'the deposit call');
+
+        h.flow.reset();
+        release?.();
+        await running;
+
+        // The submission was already in flight and cannot be recalled — but it
+        // must not drive the abandoned view back to `success`.
+        expect(h.depositCalls).toHaveLength(1);
+        expect(h.flow.state.phase).toBe('idle');
+        expect(h.phases).not.toContain('success');
+    });
+
+    it('never submits at all when the run is abandoned before the deposit call', async () => {
+        // The checkpoint between the KYC fetches and the submission: a lender
+        // who left is not made to have deposited.
+        let release: (() => void) | undefined;
+        const held = new Promise<void>((resolve) => {
+            release = resolve;
+        });
+        const h = makeHarness({
+            getKycSignature: async (): Promise<KycSignature> => {
+                await held;
+                return KYC_SIGNATURE;
+            },
+        });
+
+        const running = h.flow.start(LOAN_AGREEMENT_INPUT);
+        await until(
+            () => h.flow.state.phase === 'awaiting-accept',
+            'awaiting-accept',
+        );
+        await h.flow.acceptContract();
         await until(
             () => h.flow.state.phase === 'request-sign',
             'request-sign',
@@ -772,9 +819,7 @@ describe('DepositFlow — reset', () => {
         release?.();
         await running;
 
-        // The submission was already in flight and cannot be recalled — but it
-        // must not drive the abandoned view back to `success`.
-        expect(h.depositCalls).toHaveLength(1);
+        expect(h.depositCalls).toHaveLength(0);
         expect(h.flow.state.phase).toBe('idle');
         expect(h.phases).not.toContain('success');
     });
@@ -825,5 +870,381 @@ describe('DepositFlow — subscribe', () => {
         stop();
         stop();
         expect(h.flow.state.phase).toBe('idle');
+    });
+});
+
+// ---------------------------------------------------------------------------
+// The spender
+// ---------------------------------------------------------------------------
+
+describe('DepositFlow — the spender', () => {
+    const DEFAULT_SPENDER = '0x00000000000000000000000000000000000000Aa';
+    const NO_SPENDER_INPUT: DepositFlowInput = {
+        ...LOAN_AGREEMENT_INPUT,
+        spender: undefined,
+    };
+
+    it('approves the spender the flow was built with when the input names none', async () => {
+        // `kasu.flows.deposit()` fills this in from the chain config. A
+        // consumer that has to hand-wire the address has one more chance to
+        // grant an approval to the wrong contract — and then to read the
+        // resulting revert as `insufficient-balance`.
+        const h = makeHarness(
+            {
+                readAllowance: (
+                    owner: string,
+                    spender: string,
+                ): Promise<BigNumber> => {
+                    h.allowanceReads.push([owner, spender]);
+                    return Promise.resolve(BigNumber.from(0));
+                },
+            },
+            { spender: DEFAULT_SPENDER },
+        );
+        await runAccepting(h, NO_SPENDER_INPUT);
+
+        expect(h.flow.state.phase).toBe('success');
+        expect(h.allowanceReads).toEqual([[LOWER, DEFAULT_SPENDER]]);
+        expect(h.approveCalls[0].spender).toBe(DEFAULT_SPENDER);
+    });
+
+    it('lets the input override it, for a consumer that replaced the deposit port', async () => {
+        const h = makeHarness(
+            {
+                readAllowance: (): Promise<BigNumber> =>
+                    Promise.resolve(BigNumber.from(0)),
+            },
+            { spender: DEFAULT_SPENDER },
+        );
+        await runAccepting(h, LOAN_AGREEMENT_INPUT);
+
+        expect(h.approveCalls[0].spender).toBe(SPENDER);
+    });
+
+    it('fails before signing anything when neither names one', async () => {
+        const h = makeHarness();
+        await h.flow.start(NO_SPENDER_INPUT);
+
+        const failure = h.flow.state.failure;
+        expect(failure?.step).toBe('generate');
+        expect(failure?.reason).toBe('failed');
+        const error =
+            failure && 'error' in failure ? failure.error : undefined;
+        expect((error as Error).message).toBe(NO_SPENDER_MESSAGE);
+        // Nothing signed, nothing generated, nothing approved.
+        expect(h.signed).toHaveLength(0);
+        expect(h.generateRequests).toHaveLength(0);
+        expect(h.approveCalls).toHaveLength(0);
+    });
+});
+
+// ---------------------------------------------------------------------------
+// The HTTP ports on the request step
+// ---------------------------------------------------------------------------
+
+describe('DepositFlow — the KYC ports are never a cancellation', () => {
+    // Same rule as the generate step: the lender's wallet was not involved in
+    // an HTTP call, so a backend that words a refusal "declined" or echoes
+    // "user rejected" must not be reported to them as something they did — and
+    // the error must survive for the crash reporter, which a `cancelled`
+    // discards.
+    it('reports a getKycSignature refusal as failed, whatever the body says', async () => {
+        const boom = new Error('user rejected by the compliance engine');
+        const h = makeHarness({
+            getKycSignature: (): Promise<KycSignature> => Promise.reject(boom),
+        });
+        await runAccepting(h);
+
+        expect(h.flow.state.failure).toEqual({
+            step: 'request',
+            reason: 'failed',
+            error: boom,
+        });
+        expect(h.depositCalls).toHaveLength(0);
+    });
+
+    it('reports a buildKycParams throw as failed, whatever it says', async () => {
+        const boom = new Error('User denied: no KYC record');
+        const h = makeHarness({
+            buildKycParams: (): KycParams => {
+                throw boom;
+            },
+        });
+        await runAccepting(h);
+
+        expect(h.flow.state.failure).toEqual({
+            step: 'request',
+            reason: 'failed',
+            error: boom,
+        });
+        expect(h.depositCalls).toHaveLength(0);
+    });
+
+    it('still classifies the wallet call on the same step', async () => {
+        // The deposit itself IS a wallet call, so the split survives where it
+        // belongs.
+        const h = makeHarness({
+            deposit: (): Promise<WaitableTransaction> =>
+                Promise.reject(rejection()),
+        });
+        await runAccepting(h);
+
+        expect(h.flow.state.failure).toEqual({
+            step: 'request',
+            reason: 'cancelled',
+        });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// The park handshake
+// ---------------------------------------------------------------------------
+
+describe('DepositFlow — the accept handshake is a result, not an error', () => {
+    it('reports a signing error worded "contract-declined" as failed, not as a decline', async () => {
+        // The handshake used to signal a decline by THROWING an error tagged
+        // `contract-declined`, and to recognise one by its message. A port
+        // whose own error happened to read the same way therefore ended the
+        // run as a lender choice — the deposit abandoned, `state.failure`
+        // null, and nothing to report anywhere.
+        const boom = new Error('contract-declined');
+        let calls = 0;
+        const h = makeHarness({
+            signMessage: (): Promise<string> => {
+                calls += 1;
+                if (calls === 1) return Promise.resolve(fakeSignature(1));
+                return Promise.reject(boom);
+            },
+        });
+        await runAccepting(h);
+
+        expect(h.flow.state.phase).toBe('error');
+        expect(h.flow.state.failure).toEqual({
+            step: 'confirm',
+            reason: 'failed',
+            error: boom,
+        });
+    });
+
+    it('still ends on declined when the consumer actually declines', async () => {
+        const h = makeHarness();
+        const running = h.flow.start(LOAN_AGREEMENT_INPUT);
+        await until(
+            () => h.flow.state.phase === 'awaiting-accept',
+            'awaiting-accept',
+        );
+        h.flow.declineContract();
+        await running;
+
+        expect(h.flow.state.phase).toBe('declined');
+        expect(h.flow.state.failure).toBeNull();
+    });
+});
+
+// ---------------------------------------------------------------------------
+// reset() releases the guard
+// ---------------------------------------------------------------------------
+
+describe('DepositFlow — reset releases the run guard', () => {
+    /**
+     * A run whose acceptance prompt never answers. The first acceptance
+     * signature hangs forever; every other signature resolves.
+     */
+    function hangingAcceptHarness(): Harness {
+        let calls = 0;
+        return makeHarness({
+            signMessage: (): Promise<string> => {
+                calls += 1;
+                if (calls === 2) return new Promise<string>(() => undefined);
+                return Promise.resolve(fakeSignature(calls));
+            },
+        });
+    }
+
+    it('accepts a start in the SAME tick as a reset', async () => {
+        // `reset(); start(...)` is what a consumer writes when the lender
+        // closes one sheet and opens another. A reset that abandoned the run's
+        // state but kept the guard would make this start a silent no-op:
+        // `state.phase` idle, `isRunning` true, and nothing ever arriving.
+        const h = makeHarness();
+        const abandoned = h.flow.start(LOAN_AGREEMENT_INPUT);
+        await until(
+            () => h.flow.state.phase === 'awaiting-accept',
+            'awaiting-accept',
+        );
+
+        h.flow.reset();
+        const second = h.flow.start(LOAN_AGREEMENT_INPUT);
+
+        await until(
+            () => h.flow.state.phase === 'awaiting-accept',
+            'the second run parking',
+        );
+        await h.flow.acceptContract();
+        await second;
+        await abandoned;
+
+        expect(h.flow.state.phase).toBe('success');
+        expect(h.depositCalls).toHaveLength(1);
+    });
+
+    it('runs the next flow to completion after a reset out of a hung wallet prompt', async () => {
+        const h = hangingAcceptHarness();
+        const abandoned = h.flow.start(LOAN_AGREEMENT_INPUT);
+        await until(
+            () => h.flow.state.phase === 'awaiting-accept',
+            'awaiting-accept',
+        );
+        const hung = h.flow.acceptContract();
+        await until(
+            () => h.flow.state.phase === 'accepting-sign',
+            'accepting-sign',
+        );
+
+        // The prompt is still open and will never answer. The flow must not
+        // be hostage to it.
+        h.flow.reset();
+        expect(h.flow.isRunning).toBe(false);
+
+        await runAccepting(h);
+        expect(h.flow.state.phase).toBe('success');
+        expect(h.depositCalls).toHaveLength(1);
+        void hung;
+        void abandoned;
+    });
+
+    it('lets the NEXT run decline after a reset out of a hung wallet prompt', async () => {
+        // The accept guard is per-run. A flag left standing by the abandoned
+        // run refused the next run's Accept AND its Decline — a lender parked
+        // on an agreement with both buttons dead.
+        const h = hangingAcceptHarness();
+        const abandoned = h.flow.start(LOAN_AGREEMENT_INPUT);
+        await until(
+            () => h.flow.state.phase === 'awaiting-accept',
+            'awaiting-accept',
+        );
+        const hung = h.flow.acceptContract();
+        await until(
+            () => h.flow.state.phase === 'accepting-sign',
+            'accepting-sign',
+        );
+        h.flow.reset();
+
+        const second = h.flow.start(LOAN_AGREEMENT_INPUT);
+        await until(
+            () => h.flow.state.phase === 'awaiting-accept',
+            'the second run parking',
+        );
+        h.flow.declineContract();
+        await second;
+
+        expect(h.flow.state.phase).toBe('declined');
+        expect(h.depositCalls).toHaveLength(0);
+        void hung;
+        void abandoned;
+    });
+
+    it('does not let an abandoned run clear the NEXT run’s accept guard', async () => {
+        // Two prompts open at once: the abandoned run's, and the live one's.
+        // When the abandoned one finally answers, its `finally` must not
+        // release a guard that now belongs to somebody else — a Decline
+        // accepted in the middle of a signature is an agreement both signed
+        // and refused.
+        let releaseFirst: ((signature: string) => void) | undefined;
+        let releaseSecond: ((signature: string) => void) | undefined;
+        let calls = 0;
+        const h = makeHarness({
+            signMessage: (): Promise<string> => {
+                calls += 1;
+                if (calls === 2) {
+                    return new Promise<string>((resolve) => {
+                        releaseFirst = resolve;
+                    });
+                }
+                if (calls === 4) {
+                    return new Promise<string>((resolve) => {
+                        releaseSecond = resolve;
+                    });
+                }
+                return Promise.resolve(fakeSignature(calls));
+            },
+        });
+
+        const abandoned = h.flow.start(LOAN_AGREEMENT_INPUT);
+        await until(
+            () => h.flow.state.phase === 'awaiting-accept',
+            'awaiting-accept',
+        );
+        const hungFirst = h.flow.acceptContract();
+        await until(
+            () => h.flow.state.phase === 'accepting-sign',
+            'accepting-sign',
+        );
+        h.flow.reset();
+
+        const second = h.flow.start(LOAN_AGREEMENT_INPUT);
+        await until(
+            () => h.flow.state.phase === 'awaiting-accept',
+            'the second run parking',
+        );
+        const hungSecond = h.flow.acceptContract();
+        await until(
+            () => h.flow.state.phase === 'accepting-sign',
+            'the second run signing',
+        );
+
+        releaseFirst?.(fakeSignature(99));
+        await hungFirst;
+
+        // Still signing, so a Decline is refused.
+        h.flow.declineContract();
+        await new Promise((resolve) => setImmediate(resolve));
+        expect(h.flow.state.phase).toBe('accepting-sign');
+
+        releaseSecond?.(fakeSignature(4));
+        await hungSecond;
+        await second;
+        await abandoned;
+
+        expect(h.flow.state.phase).toBe('success');
+        expect(h.depositCalls).toHaveLength(1);
+    });
+
+    it('drops the abandoned run’s late result rather than resurrecting it', async () => {
+        // The hung prompt from the first run finally answers, long after the
+        // consumer left. Its signature must go nowhere.
+        let release: ((signature: string) => void) | undefined;
+        let calls = 0;
+        const h = makeHarness({
+            signMessage: (): Promise<string> => {
+                calls += 1;
+                if (calls === 2) {
+                    return new Promise<string>((resolve) => {
+                        release = resolve;
+                    });
+                }
+                return Promise.resolve(fakeSignature(calls));
+            },
+        });
+
+        const abandoned = h.flow.start(LOAN_AGREEMENT_INPUT);
+        await until(
+            () => h.flow.state.phase === 'awaiting-accept',
+            'awaiting-accept',
+        );
+        const hung = h.flow.acceptContract();
+        await until(
+            () => h.flow.state.phase === 'accepting-sign',
+            'accepting-sign',
+        );
+        h.flow.reset();
+
+        release?.(fakeSignature(99));
+        await hung;
+        await abandoned;
+
+        expect(h.flow.state.phase).toBe('idle');
+        expect(h.depositCalls).toHaveLength(0);
+        expect(h.phases).not.toContain('success');
     });
 });

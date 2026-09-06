@@ -84,3 +84,14 @@ export class FlowStore<S> {
         return this._generation;
     }
 }
+
+/**
+ * Anything with a `wait()` — an ethers `ContractTransaction`, or a fake.
+ *
+ * Lives beside the store rather than in either flow: both submit transactions
+ * through their own ports, and neither of them should have to import the
+ * other's file to say so.
+ */
+export interface WaitableTransaction {
+    wait(): Promise<unknown>;
+}
