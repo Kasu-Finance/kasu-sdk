@@ -1,6 +1,8 @@
 import { Provider } from '@ethersproject/providers';
 import { providers, Signer } from 'ethers';
 
+import { IERC20MetadataAbi__factory } from '../contracts';
+import type { IERC20MetadataAbi } from '../contracts';
 import { KasuSdk } from '../kasu-sdk';
 import { SdkConfig, SdkConfigOptions } from '../sdk-config';
 
@@ -74,10 +76,15 @@ export class Kasu {
             sdk.UserLending,
         );
 
+        // Derived ONCE and handed to every facade that needs it. Each of them
+        // re-deriving `Signer.isSigner` is how two facades come to disagree
+        // about whether the same instance can write.
+        const isReadOnly = !Signer.isSigner(signerOrProvider);
+
         this.deposits = new DepositsFacade(
             sdk.UserLending,
             chainConfig.chainId.toString(),
-            !Signer.isSigner(signerOrProvider),
+            isReadOnly,
         );
 
         this.portfolio = new PortfolioFacade(
@@ -88,10 +95,9 @@ export class Kasu {
 
         this.flows = new FlowsFacade(
             this.deposits,
-            sdk.UserLending,
-            signerOrProvider,
-            stableAssetOf(chainConfig),
-            chainConfig.chainId.toString(),
+            () => erc20Of(chainConfig, signerOrProvider),
+            isReadOnly,
+            chainConfig.contracts.LendingPoolManager,
         );
     }
 
@@ -251,6 +257,28 @@ function stableAssetOf(
 
 function rpcUrlsOf(chainConfig: ChainConfigEntry): string[] {
     return (chainConfig as { rpcUrls?: string[] }).rpcUrls ?? [];
+}
+
+/**
+ * The chain's stable token, bound to whatever this instance holds.
+ *
+ * Built per call rather than cached: it is one `new Contract`, and a cached
+ * binding would outlive the signer a `connect()` replaced. A config with no
+ * `stableAsset` (a hand-written entry from before 2.5.0) throws here rather
+ * than inside ethers, naming the two ports that make the flow work without
+ * one.
+ */
+function erc20Of(
+    chainConfig: ChainConfigEntry,
+    signerOrProvider: Provider | Signer,
+): IERC20MetadataAbi {
+    const address = stableAssetOf(chainConfig)?.address;
+    if (!address) {
+        throw new Error(
+            'Kasu: this chain config has no stableAsset; pass readAllowance and approve ports explicitly',
+        );
+    }
+    return IERC20MetadataAbi__factory.connect(address, signerOrProvider);
 }
 
 /**

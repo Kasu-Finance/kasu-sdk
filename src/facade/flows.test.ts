@@ -6,7 +6,7 @@
  * overridden here or refused by the read-only guard before it can dial out, so
  * these specs run in CI beside the pure ones.
  */
-import { BigNumber, constants } from 'ethers';
+import { BigNumber, constants, providers, utils } from 'ethers';
 
 import { GenerateContractResponse } from '../domain/loan-contract';
 import { DepositFlow, WithdrawFlow } from '../flows';
@@ -63,9 +63,40 @@ function appPorts(): {
     };
 }
 
+/**
+ * A provider that answers every `eth_call` from memory.
+ *
+ * The SDK's own `readAllowance` port dials the chain's ERC-20, and these specs
+ * are offline — so the ONE call it makes is answered here, and counted, which
+ * is also how a spec can tell the SDK's default from a port that was silently
+ * replaced by `undefined`.
+ */
+class StubProvider extends providers.StaticJsonRpcProvider {
+    /** How many `eth_call`s the SDK's own ports made. */
+    public calls = 0;
+
+    constructor(private readonly _allowance = constants.Zero) {
+        super('http://127.0.0.1:1/never-dialled', 8453);
+    }
+
+    override call(): Promise<string> {
+        this.calls += 1;
+        return Promise.resolve(
+            utils.defaultAbiCoder.encode(['uint256'], [this._allowance]),
+        );
+    }
+}
+
+const waitable = (): WaitableTransaction => ({
+    wait: (): Promise<unknown> => Promise.resolve(null),
+});
+
 /** Start, accept the agreement, and wait for the run to finish. */
-async function runAccepting(flow: DepositFlow): Promise<void> {
-    const running = flow.start(INPUT);
+async function runAccepting(
+    flow: DepositFlow,
+    input: DepositFlowInput = INPUT,
+): Promise<void> {
+    const running = flow.start(input);
     for (let i = 0; i < 500; i += 1) {
         if (flow.state.phase === 'awaiting-accept') break;
         await new Promise((resolve) => setImmediate(resolve));
@@ -212,6 +243,111 @@ describe('FlowsFacade', () => {
 
         expect(flow.state.phase).toBe('success');
         expect(called).toEqual(['0xpool', '0xtranche', USER.toLowerCase()]);
+    });
+
+    it('keeps its own default when an optional port is explicitly undefined', async () => {
+        // `approve: sponsoredGasOn ? sponsoredApprove : undefined` is how a
+        // consumer writes a conditional override — kasu-ui writes exactly
+        // that. Spreading the overrides over the defaults would let the
+        // `undefined` DELETE the default: `ports.approve is not a function`
+        // at the approve step, and a `readAllowance` that silently forces an
+        // approval on every run.
+        const provider = new StubProvider();
+        const kasu = Kasu.create({ chain: 'base', signerOrProvider: provider });
+        const flow = kasu.flows.deposit({
+            ...appPorts(),
+            readAllowance: undefined,
+            approve: undefined,
+            deposit: undefined,
+            buildKycParams: undefined,
+            now: undefined,
+        });
+        // No `spender` on the input either: the facade's default is a real
+        // address, and the ERC-20 read needs one.
+        await runAccepting(flow, { ...INPUT, spender: undefined });
+
+        // The SDK's own allowance read ran — it is the only thing that dials.
+        expect(provider.calls).toBe(1);
+        // And the SDK's own approve ran, refusing as a read-only instance
+        // must, rather than throwing a TypeError from an absent function.
+        expect(flow.state.failure?.step).toBe('approve');
+        const failure = flow.state.failure;
+        const error = failure && 'error' in failure ? failure.error : undefined;
+        expect((error as Error).message).toBe(READ_ONLY_MESSAGE);
+    });
+
+    it('defaults the spender to this chain’s LendingPoolManager', async () => {
+        // A spender the consumer has to supply is a spender the consumer can
+        // get wrong: an approval granted to the wrong contract, and then a
+        // revert diagnosed as `insufficient-balance`.
+        const provider = new StubProvider();
+        const kasu = Kasu.create({ chain: 'base', signerOrProvider: provider });
+        let approved: { spender: string; amount: BigNumber } | undefined;
+        const flow = kasu.flows.deposit({
+            ...appPorts(),
+            approve: (
+                spender: string,
+                amount: BigNumber,
+            ): Promise<WaitableTransaction> => {
+                approved = { spender, amount };
+                return Promise.resolve(waitable());
+            },
+        });
+        await runAccepting(flow, { ...INPUT, spender: undefined });
+
+        expect(approved?.spender).toBe(
+            kasu.chainConfig.contracts.LendingPoolManager,
+        );
+        expect(approved?.amount.eq(AMOUNT)).toBe(true);
+        // Still overridable, for a consumer that replaced the deposit port.
+        expect(INPUT.spender).toBe('0xspender');
+    });
+
+    it('defaults buildKycParams on the withdraw pre-check, bound to this chain', async () => {
+        // kasu-mobile's withdraw pre-check IS these two ports. The SDK owns
+        // the first exactly as it does on the deposit path, so the pre-check
+        // is one thing across both money paths rather than two.
+        let seen: KycParams | undefined;
+        const kasu = readOnly();
+        const flow = kasu.flows.withdraw({
+            getKycSignature: (params: KycParams): Promise<unknown> => {
+                seen = params;
+                return Promise.resolve(null);
+            },
+            withdraw: (): Promise<WaitableTransaction> =>
+                Promise.resolve(waitable()),
+        });
+        await flow.start({
+            poolId: '0xpool',
+            trancheId: '0xtranche',
+            amount: AMOUNT,
+            userAddress: USER,
+        });
+
+        expect(seen?.chainId).toBe('8453');
+        expect(seen?.userAddress).toBe(USER.toLowerCase());
+        expect(seen?.contractAddress).toBe(
+            kasu.chainConfig.contracts.KasuAllowList.toLowerCase(),
+        );
+        expect(flow.state.phase).toBe('success');
+    });
+
+    it('keeps the withdraw defaults when a port is explicitly undefined', async () => {
+        const flow = readOnly().flows.withdraw({
+            withdraw: undefined,
+            withdrawMax: undefined,
+        });
+        await flow.start({
+            poolId: '0xpool',
+            trancheId: '0xtranche',
+            amount: AMOUNT,
+            userAddress: USER,
+        });
+
+        expect(flow.state.failure?.step).toBe('request');
+        const failure = flow.state.failure;
+        const error = failure && 'error' in failure ? failure.error : undefined;
+        expect((error as Error).message).toBe(READ_ONLY_MESSAGE);
     });
 
     it('exposes the same read-only refusal the deposits facade uses', () => {
