@@ -9,6 +9,7 @@ import {
     deriveRequestState,
     firstSubmissionTimestamp,
     isCycleClosed,
+    lastEventTimestamp,
     submissionEvents,
 } from './requests';
 
@@ -649,5 +650,182 @@ describe('isCycleClosed', () => {
     it('is the inverse of the SDK per-pool cancel signal', () => {
         expect(isCycleClosed({ canCancel: true })).toBe(false);
         expect(isCycleClosed({ canCancel: false })).toBe(true);
+    });
+});
+
+describe('deriveRequestState — the reported figures', () => {
+    it('carries the rejected figure through, parsed the same way as the rest', () => {
+        const state = deriveRequestState(
+            makeRequest({
+                status: PROCESSED,
+                canCancel: false,
+                acceptedAmount: '60',
+                rejectedAmount: '40',
+            }),
+        );
+        expect(state.statusCode).toBe('partial');
+        expect(state.acceptedAmount).toBe(60);
+        expect(state.rejectedAmount).toBe(40);
+        // The three add up: what was asked for, what was taken, what was not.
+        expect((state.acceptedAmount ?? 0) + state.rejectedAmount).toBe(
+            state.requestedAmount,
+        );
+    });
+
+    it('reads an absent or unparseable rejected figure as 0, never as null', () => {
+        // Unlike `acceptedAmount`, this one feeds the partial-vs-complete
+        // branch, where "no figure" and "nothing rejected" mean the same.
+        expect(deriveRequestState(makeRequest()).rejectedAmount).toBe(0);
+        expect(
+            deriveRequestState(makeRequest({ rejectedAmount: 'not a number' }))
+                .rejectedAmount,
+        ).toBe(0);
+    });
+
+    it('reports the reallocation amount and its RAW destination tranche name', () => {
+        const state = deriveRequestState(
+            makeRequest({
+                status: PROCESSED,
+                canCancel: false,
+                acceptedAmount: '100',
+                events: [
+                    event({
+                        requestType: 'Accepted',
+                        trancheId: OTHER_TRANCHE_ID,
+                        trancheName: 'Mezzanine',
+                        assetAmount: '100',
+                    }),
+                ],
+            }),
+        );
+        expect(state.statusCode).toBe('reallocated');
+        expect(state.reallocatedOutAmount).toBe(100);
+        // RAW, like `trancheName`: the app renames at the view boundary, and a
+        // renamed value reaching matching code would reorder the waterfall.
+        expect(state.reallocationTargetTrancheName).toBe('Mezzanine');
+    });
+
+    it('reports the amount that LEFT the tranche, which need not be the accepted total', () => {
+        const state = deriveRequestState(
+            makeRequest({
+                status: PROCESSED,
+                canCancel: false,
+                acceptedAmount: '100',
+                events: [
+                    event({
+                        requestType: 'Reallocated',
+                        trancheId: OTHER_TRANCHE_ID,
+                        trancheName: 'Mezzanine',
+                        assetAmount: '30',
+                    }),
+                ],
+            }),
+        );
+        expect(state.reallocatedOutAmount).toBe(30);
+        expect(state.acceptedAmount).toBe(100);
+    });
+
+    it('leaves both reallocation fields empty when there was no reallocation', () => {
+        const state = deriveRequestState(makeRequest());
+        expect(state.reallocatedOutAmount).toBe(0);
+        expect(state.reallocationTargetTrancheName).toBeNull();
+    });
+
+    it('never reads a reallocation off a WITHDRAWAL', () => {
+        // `findReallocation` is gated on the request being a deposit; a
+        // withdrawal accepted into another tranche is not a thing.
+        const state = deriveRequestState(
+            makeRequest({
+                requestType: 'Withdrawal',
+                status: PROCESSED,
+                canCancel: false,
+                acceptedAmount: '100',
+                events: [
+                    event({
+                        requestType: 'Accepted',
+                        trancheId: OTHER_TRANCHE_ID,
+                        trancheName: 'Mezzanine',
+                        assetAmount: '100',
+                    }),
+                ],
+            }),
+        );
+        expect(state.statusCode).toBe('complete');
+        expect(state.reallocatedOutAmount).toBe(0);
+        expect(state.reallocationTargetTrancheName).toBeNull();
+    });
+
+    it('reports the LATEST event as lastTimestamp, alongside the FIRST submission', () => {
+        const state = deriveRequestState(
+            makeRequest({
+                timestamp: 100,
+                events: [
+                    event({ requestType: 'Initiated', timestamp: 200 }),
+                    event({ requestType: 'Increased', timestamp: 300 }),
+                    event({ requestType: 'Accepted', timestamp: 400 }),
+                ],
+            }),
+        );
+        // One says when the lender asked, the other when anything last
+        // happened to the request.
+        expect(state.firstSubmissionTimestamp).toBe(200);
+        expect(state.lastTimestamp).toBe(400);
+    });
+
+    it('falls back to the request timestamp when the timeline is empty', () => {
+        const state = deriveRequestState(makeRequest({ timestamp: 12345 }));
+        expect(state.lastTimestamp).toBe(12345);
+        expect(state.firstSubmissionTimestamp).toBeNull();
+    });
+});
+
+describe('lastEventTimestamp', () => {
+    it('returns the latest timestamp on the timeline', () => {
+        expect(
+            lastEventTimestamp(
+                [
+                    event({ timestamp: 100 }),
+                    event({ timestamp: 300 }),
+                    event({ timestamp: 200 }),
+                ],
+                1,
+            ),
+        ).toBe(300);
+    });
+
+    it('returns the fallback for an empty timeline', () => {
+        expect(lastEventTimestamp([], 42)).toBe(42);
+    });
+
+    it('never goes BEHIND the fallback, because the fallback seeds the reduction', () => {
+        // `request.timestamp` is a fact about the request. An event indexed
+        // with an earlier clock must not make the row look older than the
+        // request it belongs to.
+        expect(
+            lastEventTimestamp([event({ timestamp: 5 })], 999),
+        ).toBe(999);
+    });
+
+    // Counts every event, not just submissions — that is the difference from
+    // `firstSubmissionTimestamp`, which filters outcomes out.
+    it('counts outcome events too', () => {
+        expect(
+            lastEventTimestamp(
+                [
+                    event({ requestType: 'Initiated', timestamp: 100 }),
+                    event({ requestType: 'Cancelled', timestamp: 900 }),
+                ],
+                0,
+            ),
+        ).toBe(900);
+        expect(
+            firstSubmissionTimestamp(
+                [
+                    event({ requestType: 'Initiated', timestamp: 100 }),
+                    event({ requestType: 'Cancelled', timestamp: 900 }),
+                ],
+                0,
+            ),
+        ).toBe(100);
     });
 });

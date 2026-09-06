@@ -92,6 +92,7 @@ export {
     deriveRequestState,
     firstSubmissionTimestamp,
     isCycleClosed,
+    lastEventTimestamp,
     submissionEvents,
 } from './requests';
 export type {

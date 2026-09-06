@@ -103,6 +103,36 @@ export interface RequestState {
      */
     initiatedAmount: number | null;
     /**
+     * The rejected figure the subgraph reported, parsed with the same `num`
+     * rule as the rest: an absent or unparseable value is 0. Unlike
+     * `acceptedAmount` this is NOT nullable — it feeds the partial-vs-complete
+     * branch, where "no figure" and "nothing rejected" mean the same thing.
+     */
+    rejectedAmount: number;
+    /**
+     * `assetAmount` of the reallocation event, or 0 when the request was not
+     * reallocated. The amount that LEFT the requested tranche — which is not
+     * necessarily `acceptedAmount`, because a partly-filled request can be
+     * reallocated for only part of itself.
+     */
+    reallocatedOutAmount: number;
+    /**
+     * RAW name of the tranche a reallocated deposit was accepted into, or
+     * `null` when there was no reallocation. RAW for the same reason
+     * `trancheName` is: the app calls `getTrancheDisplayName` on it at the
+     * view boundary, and a renamed value must never reach matching code.
+     */
+    reallocationTargetTrancheName: string | null;
+    /**
+     * The row's highest-resolution timestamp: the LATEST event, or
+     * `request.timestamp` when the timeline is empty or older. Unix seconds.
+     *
+     * `firstSubmissionTimestamp` says when the lender asked; this says when
+     * anything last happened to the request, which is what a "last updated"
+     * column and a recency sort need.
+     */
+    lastTimestamp: number;
+    /**
      * The signed figure the row shows, chosen by the same branch logic
      * kasu-ui uses: positive for an inflow, negative for an outflow, 0 for a
      * cancelled or fully-rejected request.
@@ -168,6 +198,23 @@ export function firstSubmissionTimestamp(
     return submissions.reduce(
         (min, e) => (e.timestamp < min ? e.timestamp : min),
         Infinity,
+    );
+}
+
+/**
+ * The LATEST event timestamp, or `fallback` when the timeline is empty — or
+ * when every event predates it, because `fallback` seeds the reduction. That
+ * seeding is deliberate and is kasu-ui's behaviour: `request.timestamp` is a
+ * fact about the request, and an event indexed with an earlier clock must not
+ * make the row look older than the request itself.
+ */
+export function lastEventTimestamp(
+    events: Pick<UserRequestEvent, 'timestamp'>[],
+    fallback: number,
+): number {
+    return events.reduce(
+        (max, e) => (e.timestamp > max ? e.timestamp : max),
+        fallback,
     );
 }
 
@@ -273,10 +320,10 @@ const numOrNull = (str: string | null | undefined): number | null => {
  * status would strand it.
  *
  * WHAT THE APPLICATION STILL OWNS: the status word and the detail line beneath
- * it; the tranche display rename (`getTrancheDisplayName` on `trancheName`,
- * and on the reallocation destination read off `request.events`); the pool-name
- * split; the amount format. The "view loan agreement" affordance is a fact, and
- * it follows from two fields already here —
+ * it; the tranche display rename (`getTrancheDisplayName` on `trancheName`
+ * and on `reallocationTargetTrancheName`, both of which are RAW here); the
+ * pool-name split; the amount format. The "view loan agreement" affordance is
+ * a fact, and it follows from two fields already here —
  * `requestType === 'Deposit' && statusCode !== 'cancelled' && statusCode !== 'rejected'`
  * — because neither a cancelled nor a fully-rejected deposit ever issued one,
  * and withdrawals sign no agreement at all.
@@ -313,6 +360,12 @@ export function deriveRequestState(request: UserRequest): RequestState {
         initiatedAmount: initiated
             ? initiatedAmountOf(request.events)
             : null,
+        rejectedAmount: rejected,
+        reallocatedOutAmount: reallocation ? num(reallocation.assetAmount) : 0,
+        reallocationTargetTrancheName: reallocation
+            ? reallocation.trancheName
+            : null,
+        lastTimestamp: lastEventTimestamp(request.events, request.timestamp),
         submissionCount: countSubmissions(request.events),
         // `firstSubmissionTimestamp` needs a fallback it will never use here:
         // the bundle is non-empty on every path that reaches the call.
