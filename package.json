@@ -30,7 +30,13 @@
         "src",
         "abis",
         "README.md",
-        "LICENSE"
+        "LICENSE",
+        "!src/**/*.test.ts",
+        "!src/tests",
+        "!dist/**/*.test.js",
+        "!dist/**/*.test.js.map",
+        "!dist/**/*.test.d.ts",
+        "!dist/tests"
     ],
     "engines": {
         "node": ">=18"

@@ -547,7 +547,6 @@ export class DataService {
         const poolDelegateProfileAndHistoryDirectus: PoolDelegateProfileAndHistoryDirectus[] =
             (await this._directus.request(
                 readItems('PoolDelegateProfileAndHistory', {
-                    // @ts-ignore Directus' deep-fields typing is fragile across versions
                     fields: ['*', { otherPools: ['*'] }],
                 }),
             )) as unknown as PoolDelegateProfileAndHistoryDirectus[];
