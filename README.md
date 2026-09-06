@@ -147,7 +147,8 @@ application formats them in its own design system and language.
 | Requests             | `deriveRequestState`, `submissionEvents`, `countSubmissions`, `firstSubmissionTimestamp`, `isCycleClosed`                                                                                                |
 | Settlement           | `computeSettlementWindow`, `nextCycleBoundary`, `deriveCycleDates`, `CLEARING_WINDOW_SECONDS`                                                                                                            |
 | Loan contract        | `encodeDepositData`, `buildContractVersionType`, `buildLoanAgreementSignMessage`, `buildLegacyContractRequestMessage`, `buildFullNameRequestMessage`, `formatSignTimestampUtc`, `parseFormattedMessage`, `asContractType` |
-| Wallet errors        | `isUserRejected`, `isUnpredictableGas`                                                                                                                                                                   |
+| Wallet errors        | `isUserRejected`, `isUnpredictableGas`, `classifyWalletFailure`                                                                                                                                          |
+| Revert errors        | `decodeRevert`, `extractRevertData` — the bytes a reverted call came back with, read as the custom error the contract named                                                                              |
 | AU minimum           | `auMinimumRemaining`, `isAustralianKyc`, `auThresholdFor`, `isAuMinimumExempt`, `parseMinorUnits`, `AU_ALPHA3`, `AU_MIN_CUMULATIVE_BY_STABLE`                                                            |
 
 Three rules worth knowing:
@@ -239,14 +240,51 @@ type DepositFailure =
     | { step: DepositStep; reason: 'cancelled' } // isUserRejected
     | { step: DepositStep; reason: 'failed'; error: unknown }
     | { step: 'request'; reason: 'insufficient-balance'; error: unknown }
+    | {
+          step: 'request';
+          reason: 'reverted';
+          revertError: string; // e.g. 'ClearingIsPending'
+          error: unknown;
+      }
     | { step: 'request'; reason: 'contract-expired' }; // the 5-minute TTL
 ```
 
 A wallet rejection is `cancelled`, not a failure: the lender changed their
-mind, and telling them something broke would be a lie. A reverted gas estimate
-on the request step is `insufficient-balance` — nothing was refused, so a retry
-would only reproduce it. Everything else is `failed` and carries the original
-error for your crash reporter.
+mind, and telling them something broke would be a lie. Everything else is
+`failed` and carries the original error for your crash reporter.
+
+A revert on the request step is read for WHAT reverted. `requestDepositWithKyc`
+reverts for a family of reasons the ABI declares — `LendingPoolIsStopped`,
+`ClearingIsPending`, `InvalidTranche`, `UserNotKycd`, `UserBlocked`,
+`UserNotInAllowList`, `BlockExpired` — and none of them is a shortfall. Those
+come back as `reverted`, with `revertError` naming the contract error. Only a
+token balance or allowance failure, or revert data nothing can decode, is
+`insufficient-balance`.
+
+**Render `reverted` with generic copy and special-case only the names you have
+words for.** A contract upgrade can add an error, so treat the set as open: a
+consumer that assumed it was closed has nothing to show for a new one.
+`decodeRevert(err)` is exported if you want the same reading elsewhere.
+
+```ts
+if (failure.reason === 'reverted') {
+    switch (failure.revertError) {
+        case 'ClearingIsPending':
+            return t('deposit.error.clearing');
+        case 'UserNotKycd':
+            return t('deposit.error.kyc');
+        default:
+            return t('deposit.error.rejectedOnChain'); // generic
+    }
+}
+```
+
+**Both personal signs are length-checked where they are taken.** A wallet is
+not obliged to return 65 bytes and the ABI coder will not catch one that does
+not — `0x` encodes into `depositData` as happily as a real signature does, and
+the agreements service could then never verify the deposit. A malformed auth
+signature fails the `generate` step and a malformed acceptance signature fails
+`confirm`, both as `failed`, before anything is broadcast.
 
 Three guarantees worth knowing:
 

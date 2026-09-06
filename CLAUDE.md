@@ -61,6 +61,7 @@ src/
 │   ├── settlement.ts    # Clearing window, cycle dates
 │   ├── loan-contract.ts # Backend-verified protocol strings + depositData
 │   ├── wallet-errors.ts # User-rejection / gas-revert predicates
+│   ├── revert-errors.ts # Revert data → the custom error the contract named
 │   └── au-minimum.ts    # AU cumulative-lending minimum (numeric half)
 ├── flows/               # Headless money-path state machines — ports in, codes out
 │   ├── deposit-flow.ts  # The KYC-gated deposit pipeline
@@ -281,6 +282,7 @@ they were duplicated across the applications, and the copies drifted.
 | `settlement.ts`           | Clearing-window phase and boundary, cycle close/outcome dates                     |
 | `loan-contract.ts`        | `depositData` bytes, the signed-message builders, the contract payload types      |
 | `wallet-errors.ts`        | `isUserRejected`, `isUnpredictableGas`, `classifyWalletFailure`                   |
+| `revert-errors.ts`        | `extractRevertData`, `decodeRevert` — revert bytes → the ABI's error name          |
 | `au-minimum.ts`           | AU cumulative-lending minimum — thresholds, minor-unit maths, exemption test      |
 
 `requests.ts` publishes the reallocation destination as a RAW tranche name
@@ -395,15 +397,69 @@ type DepositFailure =
     | { step: DepositStep; reason: 'cancelled' }
     | { step: DepositStep; reason: 'failed'; error: unknown }
     | { step: 'request'; reason: 'insufficient-balance'; error: unknown }
+    | {
+          step: 'request';
+          reason: 'reverted';
+          revertError: string;
+          error: unknown;
+      }
     | { step: 'request'; reason: 'contract-expired' };
 ```
 
 `cancelled` is `isUserRejected` — the lender changed their mind, and telling
-them something broke would be a lie. `insufficient-balance` is
-`isUnpredictableGas` on the request step, which is almost always `transferFrom`
-reverting on a balance that cannot cover the deposit; it takes precedence,
-because nothing was refused and a retry would only reproduce it. Everything
-else is `failed` and carries the original error for a crash reporter.
+them something broke would be a lie. Everything else is `failed` and carries
+the original error for a crash reporter.
+
+A revert on the request step is read for WHAT reverted, not just THAT it would.
+Until 2.7.1 every `UNPREDICTABLE_GAS_LIMIT` was `insufficient-balance`, and
+`requestDepositWithKyc` reverts for a whole family of declared reasons that are
+not a shortfall — `LendingPoolIsStopped`, `ClearingIsPending`, `InvalidTranche`,
+`UserNotKycd`, `UserBlocked`, `UserNotInAllowList` (`ILendingPoolManagerAbi`)
+and `BlockExpired` (`IKasuAllowListAbi`). The consequence was a fully funded
+lender being told to top up while their pool was simply mid-clearing.
+
+`domain/revert-errors.ts` decodes the revert data off the error — providers
+nest it differently (`error.data`, `error.error.data`,
+`error.data.originalError.data`, or only inside a `SERVER_ERROR`'s JSON body),
+so a bounded walk over a fixed key set finds it — and matches the 4-byte
+selector against a table built from the GENERATED typechain ABIs, which is what
+stops the table drifting from the contracts. A protocol error becomes
+`reverted` and names itself in `revertError`; the ERC-20 family
+(`SafeERC20FailedOperation`, `AddressInsufficientBalance`, OZ v5's
+`ERC20Insufficient*`, and a `require` string about a balance or an allowance)
+and anything undecodable stay `insufficient-balance`, which is the case that
+reason was named for.
+
+`revertError` is typed `string`, not a union of the current names: a contract
+upgrade can add an error, and a consumer should render `reverted` with generic
+copy and special-case only the names it has words for.
+
+`WithdrawFlow` is deliberately NOT changed. It has no `insufficient-balance` —
+its request step is a plain `classifyWalletFailure` — so there is no wrong
+diagnosis there to correct, and adding a code to `WithdrawFailure` that nothing
+produces would be a widened type with no behaviour behind it.
+
+### Both signatures are validated in the flow
+
+`encodeDepositData` does NOT reject a malformed signature: `defaultAbiCoder`
+encodes any even-length hex as `bytes`, `0x` included. A wallet that returns
+something other than 65 bytes therefore used to put a `depositData` blob on
+chain that the agreements service can never verify. kasu-ui's review of its own
+port caught it and patched it there; kasu-mobile had the same hole unpatched,
+which is exactly why the guard belongs in the shared flow. It is
+`isHexString(sig, 65)` at BOTH personal signs, where each is taken:
+
+- the auth signature, in `_run` → `{ step: 'generate', reason: 'failed' }`
+  (`INVALID_AUTH_SIGNATURE_MESSAGE`), before the generate request is posted;
+- the acceptance signature, in `acceptContract()` → the park settles
+  `{ kind: 'failed' }` and lands as `{ step: 'confirm', reason: 'failed' }`
+  (`INVALID_ACCEPTANCE_SIGNATURE_MESSAGE`), before the approve.
+
+Not `failed` at the step it would eventually have broken, and never
+`cancelled`: the lender did not do this. The `encodeDepositData` call is also
+inside the guarded path, so a response the SDK did not produce cannot make
+`start()` reject — its contract says it does not — and becomes
+`{ step: 'request', reason: 'failed' }` instead.
 
 A backend failure is NEVER reported as a cancellation — not on `generate`, and
 not on the KYC ports of the request step or the withdraw pre-check. The

@@ -101,6 +101,9 @@ export type {
     RequestStatusCode,
 } from './requests';
 
+export { decodeRevert, extractRevertData } from './revert-errors';
+export type { DecodedRevert, RevertFamily } from './revert-errors';
+
 export {
     CLEARING_WINDOW_SECONDS,
     computeSettlementWindow,

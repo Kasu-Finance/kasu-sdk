@@ -17,6 +17,8 @@ export type { WaitableTransaction } from './observable';
 export {
     CONTRACT_TTL_MS,
     DepositFlow,
+    INVALID_ACCEPTANCE_SIGNATURE_MESSAGE,
+    INVALID_AUTH_SIGNATURE_MESSAGE,
     NO_SPENDER_MESSAGE,
 } from './deposit-flow';
 export type {

@@ -7,8 +7,10 @@
  * here, plus the ones only a headless harness can reach: `reset()` mid-flight,
  * unsubscription, and the exact bytes handed to `approve`.
  */
-import { BigNumber, constants } from 'ethers';
+import { BigNumber, constants, ethers } from 'ethers';
 
+import { IKasuAllowListAbi__factory } from '../contracts/factories/IKasuAllowListAbi__factory';
+import { ILendingPoolManagerAbi__factory } from '../contracts/factories/ILendingPoolManagerAbi__factory';
 import {
     buildLegacyContractRequestMessage,
     buildLoanAgreementSignMessage,
@@ -25,6 +27,8 @@ import {
     DepositPhase,
     DepositPorts,
     GenerateContractRequest,
+    INVALID_ACCEPTANCE_SIGNATURE_MESSAGE,
+    INVALID_AUTH_SIGNATURE_MESSAGE,
     KycSignature,
     NO_SPENDER_MESSAGE,
 } from './deposit-flow';
@@ -100,6 +104,47 @@ function revert(): Error {
     return Object.assign(new Error('cannot estimate gas'), {
         code: 'UNPREDICTABLE_GAS_LIMIT',
     });
+}
+
+const MANAGER = ILendingPoolManagerAbi__factory.createInterface();
+const ALLOW_LIST = IKasuAllowListAbi__factory.createInterface();
+
+/**
+ * A reverted gas estimate that carries the contract's own revert data, in the
+ * shape a JSON-RPC node hands ethers v5.
+ */
+function revertWith(data: string): Error {
+    return Object.assign(new Error('cannot estimate gas'), {
+        code: 'UNPREDICTABLE_GAS_LIMIT',
+        error: { code: 3, message: 'execution reverted', data },
+    });
+}
+
+/** A `require(..., "reason")` revert, as Solidity encodes one. */
+function stringRevert(reason: string): string {
+    return ethers.utils.hexConcat([
+        '0x08c379a0',
+        ethers.utils.defaultAbiCoder.encode(['string'], [reason]),
+    ]);
+}
+
+/**
+ * The signatures a wallet has no business returning, and every one of which
+ * `encodeDepositData` would happily ABI-encode into a `depositData` blob that
+ * the agreements service could then never verify.
+ */
+const MALFORMED_SIGNATURES: [string, string][] = [
+    ['64 bytes', `0x${'ab'.repeat(64)}`],
+    ['odd-length', `0x${'ab'.repeat(64)}a`],
+    ['un-prefixed', 'ab'.repeat(65)],
+    ['empty (`0x`)', '0x'],
+];
+
+/** The error a failure carries, for an assertion that names the message. */
+function failureMessage(h: Harness): string | undefined {
+    const failure = h.flow.state.failure;
+    if (!failure || !('error' in failure)) return undefined;
+    return failure.error instanceof Error ? failure.error.message : undefined;
 }
 
 // ---------------------------------------------------------------------------
@@ -591,6 +636,234 @@ describe('DepositFlow — failures', () => {
             error: boom,
         });
         expect(h.depositCalls).toHaveLength(0);
+    });
+});
+
+// ---------------------------------------------------------------------------
+// The two signatures
+// ---------------------------------------------------------------------------
+
+describe('DepositFlow — a malformed signature never reaches the chain', () => {
+    it.each(MALFORMED_SIGNATURES)(
+        'fails the generate step on an auth signature that is %s',
+        async (_label, signature) => {
+            const h = makeHarness({
+                signMessage: (): Promise<string> => Promise.resolve(signature),
+                readAllowance: (): Promise<BigNumber> =>
+                    Promise.resolve(BigNumber.from(0)),
+            });
+            await h.flow.start(LOAN_AGREEMENT_INPUT);
+
+            expect(h.flow.state.phase).toBe('error');
+            expect(h.flow.state.step).toBe('generate');
+            expect(h.flow.state.failure?.reason).toBe('failed');
+            expect(failureMessage(h)).toBe(INVALID_AUTH_SIGNATURE_MESSAGE);
+            // Nothing downstream ran: not the agreements service, and not a
+            // single on-chain port.
+            expect(h.generateRequests).toHaveLength(0);
+            expect(h.approveCalls).toHaveLength(0);
+            expect(h.depositCalls).toHaveLength(0);
+        },
+    );
+
+    it.each(MALFORMED_SIGNATURES)(
+        'fails the confirm step on an acceptance signature that is %s',
+        async (_label, bad) => {
+            let calls = 0;
+            const h = makeHarness({
+                signMessage: (): Promise<string> => {
+                    calls += 1;
+                    // The auth signature is fine; only the acceptance is not.
+                    return Promise.resolve(calls === 1 ? fakeSignature(1) : bad);
+                },
+                // Short, so an approve WOULD have been called had the run got
+                // that far — which is what makes the assertion below mean
+                // something.
+                readAllowance: (): Promise<BigNumber> =>
+                    Promise.resolve(BigNumber.from(0)),
+            });
+            await runAccepting(h);
+
+            expect(h.flow.state.phase).toBe('error');
+            expect(h.flow.state.step).toBe('confirm');
+            expect(h.flow.state.failure?.reason).toBe('failed');
+            expect(failureMessage(h)).toBe(
+                INVALID_ACCEPTANCE_SIGNATURE_MESSAGE,
+            );
+            expect(h.approveCalls).toHaveLength(0);
+            expect(h.depositCalls).toHaveLength(0);
+        },
+    );
+
+    it('accepts a well-formed 65-byte signature, which is the whole point', () => {
+        // The guard rejects four shapes ethers' ABI coder would have taken;
+        // the shape a wallet actually returns must still pass.
+        expect(ethers.utils.isHexString(fakeSignature(1), 65)).toBe(true);
+    });
+
+    it('is a failure, never a cancellation — the lender did not do this', async () => {
+        let calls = 0;
+        const h = makeHarness({
+            signMessage: (): Promise<string> => {
+                calls += 1;
+                return Promise.resolve(calls === 1 ? fakeSignature(1) : '0x');
+            },
+        });
+        await runAccepting(h);
+
+        expect(h.flow.state.failure?.reason).not.toBe('cancelled');
+        expect(h.flow.state.failure?.reason).toBe('failed');
+    });
+
+    it('does not reject start() when the agreement cannot be encoded', async () => {
+        // `start()`'s contract is that it never rejects. A response whose
+        // timestamp is not a number the ABI coder can take used to throw
+        // straight out of the run, into an application that had been told it
+        // did not have to catch anything.
+        const h = makeHarness({
+            generateContract: (): Promise<GenerateContractResponse> =>
+                Promise.resolve({
+                    fullName: 'A Lender',
+                    contractMessage: CONTRACT_MESSAGE,
+                    formattedMessage: JSON.stringify({}),
+                    contractType: 'retail',
+                    contractVersion: 1,
+                    timestamp: Number.NaN,
+                }),
+        });
+        await expect(runAccepting(h)).resolves.toBeUndefined();
+
+        expect(h.flow.state.phase).toBe('error');
+        expect(h.flow.state.failure).toMatchObject({
+            step: 'request',
+            reason: 'failed',
+        });
+        expect(h.depositCalls).toHaveLength(0);
+    });
+});
+
+// ---------------------------------------------------------------------------
+// A revert is read for what reverted
+// ---------------------------------------------------------------------------
+
+describe('DepositFlow — a protocol revert is not a balance problem', () => {
+    const PROTOCOL_REVERTS: [string, string][] = [
+        [
+            'LendingPoolIsStopped',
+            MANAGER.encodeErrorResult('LendingPoolIsStopped', []),
+        ],
+        [
+            'ClearingIsPending',
+            MANAGER.encodeErrorResult('ClearingIsPending', []),
+        ],
+        [
+            'InvalidTranche',
+            MANAGER.encodeErrorResult('InvalidTranche', [
+                `0x${'11'.repeat(20)}`,
+                `0x${'22'.repeat(20)}`,
+            ]),
+        ],
+        ['UserNotKycd', MANAGER.encodeErrorResult('UserNotKycd', [LOWER])],
+        ['UserBlocked', MANAGER.encodeErrorResult('UserBlocked', [LOWER])],
+        [
+            'UserNotInAllowList',
+            MANAGER.encodeErrorResult('UserNotInAllowList', [LOWER]),
+        ],
+        ['BlockExpired', ALLOW_LIST.encodeErrorResult('BlockExpired', [])],
+    ];
+
+    it.each(PROTOCOL_REVERTS)('reports %s as reverted, by name', async (name, data) => {
+        const err = revertWith(data);
+        const h = makeHarness({
+            deposit: (): Promise<WaitableTransaction> => Promise.reject(err),
+        });
+        await runAccepting(h);
+
+        expect(h.flow.state.failure).toEqual({
+            step: 'request',
+            reason: 'reverted',
+            revertError: name,
+            error: err,
+        });
+    });
+
+    it('never tells a lender mid-clearing that their balance is short', async () => {
+        // The bug this replaces: a funded lender, a pool in its clearing
+        // window, and a screen asking them to top up.
+        const h = makeHarness({
+            deposit: (): Promise<WaitableTransaction> =>
+                Promise.reject(
+                    revertWith(
+                        MANAGER.encodeErrorResult('ClearingIsPending', []),
+                    ),
+                ),
+        });
+        await runAccepting(h);
+
+        expect(h.flow.state.failure?.reason).not.toBe('insufficient-balance');
+    });
+
+    it('decodes a revert that did not arrive as a failed gas estimate', async () => {
+        // A node that answers the call rather than the estimate raises
+        // `CALL_EXCEPTION`, with the same data in the same place.
+        const err = Object.assign(new Error('call revert exception'), {
+            code: 'CALL_EXCEPTION',
+            data: MANAGER.encodeErrorResult('LendingPoolIsStopped', []),
+        });
+        const h = makeHarness({
+            deposit: (): Promise<WaitableTransaction> => Promise.reject(err),
+        });
+        await runAccepting(h);
+
+        expect(h.flow.state.failure).toMatchObject({
+            step: 'request',
+            reason: 'reverted',
+            revertError: 'LendingPoolIsStopped',
+        });
+    });
+
+    it('still reports a plain transferFrom revert as insufficient balance', async () => {
+        const err = revertWith(
+            stringRevert('ERC20: transfer amount exceeds balance'),
+        );
+        const h = makeHarness({
+            deposit: (): Promise<WaitableTransaction> => Promise.reject(err),
+        });
+        await runAccepting(h);
+
+        expect(h.flow.state.failure).toEqual({
+            step: 'request',
+            reason: 'insufficient-balance',
+            error: err,
+        });
+    });
+
+    it('still reports an undecodable blob as insufficient balance', async () => {
+        // Nothing can be named from it, so the reason it had before stands.
+        const err = revertWith(`0xdeadbeef${'00'.repeat(32)}`);
+        const h = makeHarness({
+            deposit: (): Promise<WaitableTransaction> => Promise.reject(err),
+        });
+        await runAccepting(h);
+
+        expect(h.flow.state.failure).toEqual({
+            step: 'request',
+            reason: 'insufficient-balance',
+            error: err,
+        });
+    });
+
+    it('does not read a wallet rejection as a revert', async () => {
+        const err = rejection();
+        const h = makeHarness({
+            deposit: (): Promise<WaitableTransaction> => Promise.reject(err),
+        });
+        await runAccepting(h);
+
+        expect(h.flow.state.failure).toEqual({
+            step: 'request',
+            reason: 'cancelled',
+        });
     });
 });
 
