@@ -67,3 +67,10 @@ export * from './facade';
 // only: no copy, no locale. See `src/domain/index.ts`.
 // ---------------------------------------------------------------------------
 export * from './domain';
+
+// ---------------------------------------------------------------------------
+// Flows — the headless deposit / withdraw state machines. No React, no copy,
+// no I/O of their own: every side effect is an injected port and every
+// observable state is a code. See `src/flows/index.ts`.
+// ---------------------------------------------------------------------------
+export * from './flows';

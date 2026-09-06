@@ -8,9 +8,10 @@
 real-world credit funded on-chain. It wraps the core contracts, the subgraphs
 and the CMS behind one object, so an application can list lending strategies,
 read a lender's positions and submit KYC-gated deposits and withdrawals without
-re-implementing the plumbing. It also ships a pure domain layer: the rate,
+re-implementing the plumbing. It also ships a pure domain layer — the rate,
 tranche and pool rules every Kasu frontend agrees on, as numbers rather than
-copy.
+copy — and headless deposit and withdrawal flows that own the ORDER of those
+transactions so no application has to.
 
 ## Installation
 
@@ -117,6 +118,7 @@ You can also pass a whole `ChainConfigEntry` instead of a chain key.
 | `kasu.strategies` | `getAll()`, `getVisible()`, `getById()`, `getPlatformStats()`, `getPerformanceFeePercent()`, `calculateDepositLimits()` | Browse pools, APY, capacity     |
 | `kasu.deposits`   | `deposit()`, `withdraw()`, `withdrawMax()`, `buildKycParams()`, `isClearingPending()`                                   | Submit transactions             |
 | `kasu.portfolio`  | `getPositions()`, `getTransactionHistory()`, `getRequestStates()`                                                       | Lender balances, yield, history |
+| `kasu.flows`      | `deposit(ports)`, `withdraw(ports?)`                                                                                    | Headless transaction pipelines  |
 
 On the instance itself: `kasu.connect(signer)`, `kasu.isReadOnly`,
 `kasu.provider`, `kasu.chainConfig`, `kasu.isLiteDeployment`, and
@@ -165,7 +167,130 @@ Three rules worth knowing:
   `Senior` tranche to "Upper Mezzanine" on Apxium strategies, because the true
   senior position is held by an institutional lender. Call it at the view
   boundary only: ranking, matching and sorting keep the raw on-chain name —
-  which is why `deriveRequestState` returns `trancheName` raw.
+  which is why `deriveRequestState` returns `trancheName` raw — and
+  `reallocationTargetTrancheName` with it.
+
+## Flows
+
+`DepositFlow` and `WithdrawFlow` are the domain layer one level up: a rule that
+unfolds over TIME. They own the order of a deposit and a withdrawal, the guards
+around them, and the codes that describe where a run got to. They own no UI, no
+framework, no network and **no copy** — every observable state is a code, and
+your application maps it to its own words in its own language.
+
+Every side effect is an injected port, so the SDK never learns a URL, a key or
+a wallet. `kasu.flows.deposit()` fills the ports it can from this instance; the
+three that reach your own backend or wallet you always supply.
+
+```ts
+import { Kasu } from '@kasufinance/kasu-sdk';
+import { parseUnits } from 'ethers/lib/utils';
+
+const kasu = Kasu.create({ chain: 'base' }).connect(signer);
+
+const flow = kasu.flows.deposit({
+    signMessage: (message) => signer.signMessage(message),
+    generateContract: (req) => postJson('/api/agreements/generate', req),
+    getKycSignature: (params) => postJson('/api/kyc-signature', params),
+    // readAllowance, approve, deposit and buildKycParams default to the SDK's
+    // own signer-bound implementations — override any of them if you need to.
+});
+
+const stop = flow.subscribe((state) => {
+    // Every transition. `state.phase`, `state.step`, `state.stepIndex`,
+    // `state.stepTotal`, `state.contract`, `state.failure` — all codes.
+    render(state);
+});
+
+await flow.start({
+    poolId,
+    trancheId,
+    amount: parseUnits('1000', 6), // BASE units
+    fixedTermConfigId: '0', // '0' = variable rate
+    userAddress,
+    depositAmount: 1000, // display units, for the backend's integrity check
+    contractMessage: {
+        format: 'loan-agreement',
+        strategyName,
+        region,
+        optionName,
+        amountLabel, // built from the SAME value as depositAmount
+    },
+});
+
+// The run PARKS on `awaiting-accept` with the agreement in `state.contract`.
+// Show it, then settle the handshake:
+await flow.acceptContract(); // signs it and carries on
+// or: flow.declineContract();  → phase 'declined', nothing submitted
+```
+
+**Phases** — `idle`, `generating-sign`, `generating-fetch`, `awaiting-accept`,
+`accepting-sign`, `approve`, `request-sign`, `request-confirm`, and the
+terminal `success` / `declined` / `error`. Each maps to one of four steps
+(`generate`, `confirm`, `approve`, `request`); `stepIndex` and `stepTotal` are
+published because the approve step drops out of the sequence when the allowance
+already covers the deposit, and a badge total that changed under a lender would
+be describing a pipeline they are not in.
+
+**Failures** are codes, never sentences:
+
+```ts
+type DepositFailure =
+    | { step: DepositStep; reason: 'cancelled' } // isUserRejected
+    | { step: DepositStep; reason: 'failed'; error: unknown }
+    | { step: 'request'; reason: 'insufficient-balance'; error: unknown }
+    | { step: 'request'; reason: 'contract-expired' }; // the 5-minute TTL
+```
+
+A wallet rejection is `cancelled`, not a failure: the lender changed their
+mind, and telling them something broke would be a lie. A reverted gas estimate
+on the request step is `insufficient-balance` — nothing was refused, so a retry
+would only reproduce it. Everything else is `failed` and carries the original
+error for your crash reporter.
+
+Three guarantees worth knowing:
+
+- **The approve is for the EXACT amount, never unlimited.** An unlimited
+  allowance outlives the deposit it was granted for; a later exploit of the
+  spender would drain a wallet that stopped lending months ago.
+- **The allowance is read live, before anything is signed.** An exact-amount
+  approval is fully consumed by the deposit it paid for, so a cached allowance
+  is exactly the value that wrongly skips the approve and reverts the deposit.
+- **The spender is the SDK's, not yours.** `kasu.flows.deposit()` defaults it
+  to this chain's `LendingPoolManager` — the only contract the default deposit
+  port calls — so you no longer pass it. `spender` on the input still
+  overrides, for a consumer that replaced the `deposit` port; a wrong one is an
+  approval granted to the wrong contract and then a revert you would read as
+  `insufficient-balance`.
+- **`reset()` is safe mid-flight, and immediate.** It abandons the run, drops
+  its remaining transitions, unparks a waiting handshake and releases the
+  re-entry guard in the SAME tick — so `flow.reset(); flow.start(next)` starts
+  the next run even when the abandoned one is still parked on a wallet prompt
+  that will never answer. An abandoned run can never drive a view you have left
+  back to `success`. `start()` is otherwise guarded against re-entry, so a
+  double tap cannot fire two deposits.
+- **Only wallet errors can be `cancelled`.** The ports that reach your backend
+  — `generateContract`, `buildKycParams`, `getKycSignature` — always fail as
+  `failed`, with the error kept. A backend that words a refusal "declined" is
+  never reported to a lender as something they did in their wallet.
+
+`WithdrawFlow` is the same shape and much smaller — an optional KYC pre-check,
+then `withdraw` or `withdrawMax`, with the same `cancelled` / `failed` split:
+
+```ts
+const flow = kasu.flows.withdraw();
+await flow.start({ poolId, trancheId, amount: 'max', userAddress });
+
+// With the pre-check: supply `getKycSignature` and the run checks the lender's
+// KYC before opening the wallet, on a `checking-kyc` phase and a `kyc` step.
+// `buildKycParams` defaults to the SDK's, exactly as on the deposit path.
+const checked = kasu.flows.withdraw({
+    getKycSignature: (params) => postJson('/api/kyc-signature', params),
+});
+```
+
+`'max'` is a code you pass, not a balance you read: it routes to the all-shares
+call, which resolves the balance on chain at execution.
 
 ## Low-level `KasuSdk`
 

@@ -62,6 +62,11 @@ src/
 │   ├── loan-contract.ts # Backend-verified protocol strings + depositData
 │   ├── wallet-errors.ts # User-rejection / gas-revert predicates
 │   └── au-minimum.ts    # AU cumulative-lending minimum (numeric half)
+├── flows/               # Headless money-path state machines — ports in, codes out
+│   ├── deposit-flow.ts  # The KYC-gated deposit pipeline
+│   ├── withdraw-flow.ts # The withdrawal pipeline
+│   ├── flow.ts          # Flow<S, I>: the run lifecycle both share
+│   └── observable.ts    # FlowStore: subscribe, patch, abandon a run
 ├── facade/              # High-level integrator API (Kasu, chain configs, I/O)
 ├── services/
 │   ├── DataService/     # Pool data, subgraph queries, Directus
@@ -86,6 +91,9 @@ src/
 | `src/services/DataService/data-service.ts` | Subgraph + Directus data fetching                   |
 | `src/services/UserLending/user-lending.ts` | User deposit/withdraw operations                    |
 | `src/utils/deployment-mode.ts`             | `isLiteDeployment()` utility                        |
+| `src/flows/deposit-flow.ts`                | `DepositFlow` — the deposit pipeline, headless      |
+| `src/flows/withdraw-flow.ts`               | `WithdrawFlow` — the withdrawal pipeline            |
+| `src/flows/flow.ts`                        | `Flow<S, I>` — the run lifecycle both flows share   |
 
 ---
 
@@ -272,8 +280,12 @@ they were duplicated across the applications, and the copies drifted.
 | `requests.ts`             | Lending-request view model as codes: status, kind, amounts, bundle, cycle         |
 | `settlement.ts`           | Clearing-window phase and boundary, cycle close/outcome dates                     |
 | `loan-contract.ts`        | `depositData` bytes, the signed-message builders, the contract payload types      |
-| `wallet-errors.ts`        | `isUserRejected`, `isUnpredictableGas`                                            |
+| `wallet-errors.ts`        | `isUserRejected`, `isUnpredictableGas`, `classifyWalletFailure`                   |
 | `au-minimum.ts`           | AU cumulative-lending minimum — thresholds, minor-unit maths, exemption test      |
+
+`requests.ts` publishes the reallocation destination as a RAW tranche name
+(`reallocationTargetTrancheName`), like `trancheName` — rename both at the view
+boundary, never before.
 
 ### Protocol strings are the exception to "never copy"
 
@@ -315,6 +327,185 @@ an institutional lender. Call it at the view-model boundary ONLY. Ranking,
 matching and sorting — `trancheRiskRank`, `compareTrancheSeniority`,
 `pickDefaultTrancheId` — read the RAW subgraph name and must keep doing so; a
 display name that reached them would silently reorder the risk waterfall.
+
+## Flows
+
+`src/flows/` is the domain layer one level up: a rule that unfolds over TIME.
+`DepositFlow` and `WithdrawFlow` own the order of a deposit and a withdrawal,
+the guards around them, and the codes that describe where a run got to. They
+own no UI, no framework, no network and no words.
+
+Before 2.7.0 each application drove its own copy of the deposit pipeline —
+kasu-ui's `use-deposit-submit.ts` (786 lines) and kasu-mobile's
+`use-deposit.ts` (a port of it) — and the copies had started to differ. It is
+the money path, so one of them being subtly wrong was not a hypothetical cost.
+
+**Three rules govern this layer.**
+
+1. **No I/O of its own.** Every side effect is an injected port. The flow never
+   learns a URL, a key or a wallet.
+2. **No copy.** Every observable state is a code. `{ step: 'approve', reason:
+   'cancelled' }`, never "USDC approval was cancelled in your wallet". Each app
+   keeps its own `DEPOSIT_STEP_ERRORS` table and maps the codes to its words,
+   in its design system and its language.
+3. **No framework.** A `subscribe` callback and a plain `state` getter. React,
+   Svelte, or a script in Node — the flow does not know.
+
+### The deposit pipeline
+
+| Phase              | Step       | What is happening                            |
+| ------------------ | ---------- | -------------------------------------------- |
+| `idle`             | —          | Nothing started, or `reset()` was called     |
+| `generating-sign`  | `generate` | Lender signs the auth message                |
+| `generating-fetch` | `generate` | `POST /contract/generate`                    |
+| `awaiting-accept`  | `confirm`  | Agreement on screen; the run is PARKED       |
+| `accepting-sign`   | `confirm`  | Lender signs the agreement                   |
+| `approve`          | `approve`  | Exact-amount ERC-20 approve, and its receipt |
+| `request-sign`     | `request`  | KYC signature, then the deposit call         |
+| `request-confirm`  | `request`  | Waiting for the receipt                      |
+| `success`          | `request`  | Terminal                                     |
+| `declined`         | `confirm`  | Terminal — the lender backed out             |
+| `error`            | (failing)  | Terminal — read `state.failure`              |
+
+The order is reproduced from the web pipeline, and each position is
+load-bearing:
+
+- **The allowance pre-check runs FIRST**, before anything is signed, because it
+  decides `approvalRequired` and therefore `stepTotal`. A badge that said "3 of
+  4" and then silently became "3 of 3" would be describing a pipeline the
+  lender is not in. It reads LIVE, never a cache: an exact-amount approval is
+  fully consumed by the deposit it paid for, so a stale allowance is exactly
+  the value that wrongly skips the approve and reverts the deposit. A FAILED
+  read assumes an approve is needed — the cost is a redundant approval, the
+  alternative is a reverted deposit.
+- **The approve is for the EXACT amount, never `MaxUint256`** (house rule). An
+  unlimited allowance outlives the deposit it was granted for, and a later
+  exploit of the spender would drain a wallet that stopped lending months ago.
+  A spec asserts the approved amount equals the deposit amount and is not
+  `MaxUint256`.
+- **The 5-minute TTL guard is checked AFTER the accept**, because that is where
+  the idling happens — the lender has just spent as long as they wanted
+  reading. An expired agreement fails with `contract-expired` instead of being
+  broadcast as a transaction that cannot succeed.
+
+### Failure codes
+
+```ts
+type DepositFailure =
+    | { step: DepositStep; reason: 'cancelled' }
+    | { step: DepositStep; reason: 'failed'; error: unknown }
+    | { step: 'request'; reason: 'insufficient-balance'; error: unknown }
+    | { step: 'request'; reason: 'contract-expired' };
+```
+
+`cancelled` is `isUserRejected` — the lender changed their mind, and telling
+them something broke would be a lie. `insufficient-balance` is
+`isUnpredictableGas` on the request step, which is almost always `transferFrom`
+reverting on a balance that cannot cover the deposit; it takes precedence,
+because nothing was refused and a retry would only reproduce it. Everything
+else is `failed` and carries the original error for a crash reporter.
+
+A backend failure is NEVER reported as a cancellation — not on `generate`, and
+not on the KYC ports of the request step or the withdraw pre-check. The
+lender's wallet was not involved in an HTTP call, so a backend that happens to
+echo "user rejected" or word a refusal "declined" must not be shown to them as
+something they did, and the error must survive for the crash reporter, which a
+`cancelled` discards. `classifyWalletFailure` is for WALLET throws only.
+
+`isUserRejected` reads the text for a SUBJECT, not for a keyword, for the same
+reason: "declined" and "request rejected" are also what a rate limiter, a risk
+engine and a KYC decision say, and ethers hands those over in the very envelope
+a wallet error arrives in (`SERVER_ERROR` around `-32603`, the upstream body on
+a nested `error.message`). A rejection is a wallet CODE — `4001`,
+`ACTION_REJECTED` — or a sentence naming who did it: "user rejected", "declined
+by the user", "cancelled by the wallet".
+
+### Ports
+
+| Port               | Default                        | Who owns it                    |
+| ------------------ | ------------------------------ | ------------------------------ |
+| `signMessage`      | none                           | The app's wallet               |
+| `generateContract` | none                           | The app's proxy or the service |
+| `getKycSignature`  | none                           | The app's own backend          |
+| `buildKycParams`   | `kasu.deposits.buildKycParams` | SDK                            |
+| `readAllowance`    | ERC-20 `allowance`             | SDK                            |
+| `approve`          | ERC-20 `approve`               | SDK                            |
+| `deposit`          | `kasu.deposits.deposit`        | SDK                            |
+| `now`              | `Date.now`                     | SDK (injected for tests)       |
+
+The three with no default all reach the application's own backend or wallet.
+They will never gain one: this is a public package, and a URL or a key does not
+belong in it.
+
+Each default is applied PER KEY with `??`, never by spreading the overrides
+over them. `{ ...defaults, ...ports }` lets an explicitly `undefined` value
+delete the default it was meant to keep, and
+`approve: sponsoredGasOn ? sponsoredApprove : undefined` is exactly how a
+consumer writes a conditional override — kasu-ui writes precisely that. The
+symptom was `ports.approve is not a function`, and, more quietly,
+`readAllowance: undefined` forcing an approval on every run.
+
+`spender` is NOT an input the consumer supplies. `kasu.flows.deposit()`
+defaults it to this chain's `LendingPoolManager` — the only contract the
+default deposit port calls — and `DepositFlowInput.spender` overrides it only
+for a consumer that replaced the `deposit` port. A wrong spender leaves an
+approval granted to the wrong contract and then reverts, diagnosed as
+`insufficient-balance`.
+
+`WithdrawPorts` mirrors the pair: `buildKycParams` (SDK default) plus
+`getKycSignature` (no default). Supplying `getKycSignature` is what turns the
+withdraw KYC pre-check on — it is the check kasu-mobile hand-wrote, and it is
+now the same two ports on both money paths. `withdraw` and `withdrawMax`
+default to `kasu.deposits`.
+
+### Driving one
+
+```ts
+const flow = kasu.connect(signer).flows.deposit({
+    signMessage: (message) => signer.signMessage(message),
+    generateContract: (req) => postToMyProxy(req),
+    getKycSignature: (params) => postToMyBackend(params),
+});
+
+const stop = flow.subscribe((state) => render(state)); // every transition
+await flow.start({
+    poolId,
+    trancheId,
+    amount, // BASE units, BigNumber
+    fixedTermConfigId: '0',
+    userAddress,
+    depositAmount: 1000, // display units, for the backend's integrity check
+    contractMessage: {
+        format: 'loan-agreement',
+        strategyName,
+        region,
+        optionName,
+        amountLabel, // built from the SAME value as depositAmount
+    },
+});
+// …the run parks on `awaiting-accept`; the UI shows `flow.state.contract`
+await flow.acceptContract(); // or flow.declineContract()
+```
+
+`reset()` is safe mid-flight AND immediate: it abandons the run, drops its
+remaining transitions, unparks a waiting handshake, and releases the re-entry
+guard in the SAME tick, so `flow.reset(); flow.start(next)` is accepted even
+while the abandoned run is still parked on a wallet prompt that never answers.
+The abandoned run's late results are dropped by its run token, so it can never
+drive a view the consumer has left back to `success`. `start()` is otherwise
+guarded against re-entry — a double tap cannot fire two deposits.
+
+The guard and the accept flag both belong to a RUN, not to the flow. They live
+in `Flow<S, I>` (`flows/flow.ts`) with `state`, `isRunning`, `subscribe` and
+`reset`, which both pipelines share rather than each keeping its own copy —
+`WithdrawFlow` carried a line-for-line duplicate of all of it until 2.7.0, and
+one guard living in two places is one guard that can be wrong in one of them.
+
+`WithdrawFlow` is the same shape and much smaller: an optional KYC pre-check
+(`buildKycParams` + `getKycSignature`, the deposit flow's own pair), then
+`withdraw` or `withdrawMax`, with the same `cancelled` / `failed` split.
+`'max'` is a CODE the consumer passes, not a balance it read: it routes to the
+all-shares call, which resolves the balance on chain.
 
 ## Contract Addresses by Chain
 
@@ -467,6 +658,12 @@ Nothing in this repository may carry a private key, not even a throwaway — it 
 a public repository. A spec that needs a signer generates one:
 `ethers.Wallet.createRandom().connect(provider)`.
 
+Nor may a fixture be a REAL address. A wallet that exists — a deployment
+wallet, a lender, anything on an operational list — is not a test fixture, and
+`src` ships in the tarball. Use an obviously synthetic one
+(`0xAbCdEf0000000000000000000000000000000001`, `0x1111…`), mixed-case where the
+spec is about casing.
+
 Property tests use `fast-check` (a devDependency).
 
 ---
@@ -491,8 +688,13 @@ npm publish
 ```
 
 `files` in `package.json` limits the tarball to `dist`, `src`, `abis`, the
-README and the LICENSE. `src` MUST stay published: a consumer deep-imports
-`@kasufinance/kasu-sdk/src/contracts`.
+README and the LICENSE, MINUS every test file (`!src/**/*.test.ts`,
+`!src/tests`, and their `dist` counterparts). `src` MUST stay published: a
+consumer deep-imports `@kasufinance/kasu-sdk/src/contracts` — which is exactly
+why the specs must not ride along. They are dead weight in every consumer's
+`node_modules`, and their fixtures are the kind of thing that ends up
+published by accident. Check with `npm pack --dry-run` after any change to
+`files`.
 
 ---
 

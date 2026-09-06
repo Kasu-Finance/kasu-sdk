@@ -1,6 +1,6 @@
 {
     "name": "@kasufinance/kasu-sdk",
-    "version": "2.6.0",
+    "version": "2.7.0",
     "description": "TypeScript SDK for the Kasu Finance protocol — pool data, portfolio analytics, and KYC-gated deposits and withdrawals on Base and XDC",
     "keywords": [
         "kasu",
@@ -30,7 +30,13 @@
         "src",
         "abis",
         "README.md",
-        "LICENSE"
+        "LICENSE",
+        "!src/**/*.test.ts",
+        "!src/tests",
+        "!dist/**/*.test.js",
+        "!dist/**/*.test.js.map",
+        "!dist/**/*.test.d.ts",
+        "!dist/tests"
     ],
     "engines": {
         "node": ">=18"

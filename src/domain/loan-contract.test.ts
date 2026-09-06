@@ -265,12 +265,16 @@ describe('buildLoanAgreementSignMessage', () => {
 });
 
 describe('buildLegacyContractRequestMessage', () => {
-    const ADDRESS = '0x4c0d92e9c862B58b0FFeAAD031004A049d2c360D';
+    // Synthetic, and deliberately so: this is a public package and its `src`
+    // ships in the tarball, so no fixture here may be a wallet that exists.
+    // Mixed case on purpose — the casing test below has nothing to prove
+    // against an address with no letters in it.
+    const ADDRESS = '0xAbCdEf0000000000000000000000000000000001';
 
     it('builds the exact legacy template with a lowercased address', () => {
         expect(buildLegacyContractRequestMessage(ADDRESS, 1785313320000)).toBe(
             'I request contract content for ' +
-                '0x4c0d92e9c862b58b0ffeaad031004a049d2c360d at 1785313320000.',
+                '0xabcdef0000000000000000000000000000000001 at 1785313320000.',
         );
     });
 
@@ -285,18 +289,18 @@ describe('buildLegacyContractRequestMessage', () => {
         // verifies, so whatever is signed must be what is sent.
         expect(buildLegacyContractRequestMessage(ADDRESS, 1785313320)).toBe(
             'I request contract content for ' +
-                '0x4c0d92e9c862b58b0ffeaad031004a049d2c360d at 1785313320.',
+                '0xabcdef0000000000000000000000000000000001 at 1785313320.',
         );
     });
 });
 
 describe('buildFullNameRequestMessage', () => {
-    const ADDRESS = '0x26b5b8060A704b0420734d5Ccd657384fb1366C2';
+    const ADDRESS = '0xAbCdEf0000000000000000000000000000000002';
 
     it('builds the exact full-name template with a lowercased address', () => {
         expect(buildFullNameRequestMessage(ADDRESS, 1785313320000)).toBe(
             'I request my full name for ' +
-                '0x26b5b8060a704b0420734d5ccd657384fb1366c2 at 1785313320000.',
+                '0xabcdef0000000000000000000000000000000002 at 1785313320000.',
         );
     });
 
