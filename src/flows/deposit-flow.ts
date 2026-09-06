@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 
 import {
     asContractType,
@@ -7,6 +7,7 @@ import {
     encodeDepositData,
     GenerateContractResponse,
 } from '../domain/loan-contract';
+import { decodeRevert } from '../domain/revert-errors';
 import {
     classifyWalletFailure,
     isUnpredictableGas,
@@ -64,10 +65,21 @@ import { WaitableTransaction } from './observable';
  * their mind, and telling them something broke would be a lie. Only a WALLET
  * call is ever classified that way: the HTTP ports are always `'failed'`,
  * because a backend that words a refusal "declined" did not involve the
- * lender's wallet. A reverted gas estimate on the request step
- * (`isUnpredictableGas`) is `'insufficient-balance'` — nothing was refused, the
- * transaction simply cannot succeed as composed. Everything else is `'failed'`
- * and carries the original error for the consumer's crash reporter.
+ * lender's wallet. A revert on the request step is read for WHAT reverted: a
+ * protocol error the ABI declares is `'reverted'` with the name, and only a
+ * token balance or allowance failure — or a revert nothing can decode — stays
+ * `'insufficient-balance'`. Everything else is `'failed'` and carries the
+ * original error for the consumer's crash reporter.
+ *
+ * ## Both signatures are checked before they are used
+ *
+ * A wallet is not obliged to hand back 65 bytes, and `encodeDepositData` will
+ * not catch one that does not: `defaultAbiCoder` encodes any even-length hex
+ * as `bytes`, `0x` included, so a malformed acceptance signature becomes a
+ * `depositData` blob that is broadcast, mined, and then can never be verified
+ * by the agreements service. Both personal signs are therefore length-checked
+ * where they are taken, and a bad one fails the step it was taken on rather
+ * than the one it would eventually have broken.
  *
  * ```ts
  * const flow = new DepositFlow(ports);
@@ -117,6 +129,23 @@ export type DepositFailure =
     | { step: DepositStep; reason: 'cancelled' }
     | { step: DepositStep; reason: 'failed'; error: unknown }
     | { step: 'request'; reason: 'insufficient-balance'; error: unknown }
+    | {
+          step: 'request';
+          reason: 'reverted';
+          /**
+           * The custom error the contract reverted with, exactly as the ABI
+           * declares it — `'ClearingIsPending'`, `'LendingPoolIsStopped'`,
+           * `'UserNotKycd'`, and the rest of
+           * `ILendingPoolManagerAbi` / `IKasuAllowListAbi`.
+           *
+           * Render `reverted` with generic copy and special-case only the
+           * names you have words for: a contract upgrade can add an error, and
+           * a consumer that assumed the set was closed would have nothing to
+           * show for the new one.
+           */
+          revertError: string;
+          error: unknown;
+      }
     | { step: 'request'; reason: 'contract-expired' };
 
 // ---------------------------------------------------------------------------
@@ -303,6 +332,27 @@ export const CONTRACT_TTL_MS = 5 * 60 * 1000;
 export const NO_SPENDER_MESSAGE =
     'DepositFlow: no ERC-20 spender; build the flow with kasu.flows.deposit() or pass `spender` on the input';
 
+/** What a malformed auth signature fails the generate step with. */
+export const INVALID_AUTH_SIGNATURE_MESSAGE =
+    'DepositFlow: the wallet returned a malformed authentication signature; expected 65 bytes of 0x-prefixed hex';
+
+/** What a malformed acceptance signature fails the confirm step with. */
+export const INVALID_ACCEPTANCE_SIGNATURE_MESSAGE =
+    'DepositFlow: the wallet returned a malformed acceptance signature; expected 65 bytes of 0x-prefixed hex';
+
+/**
+ * Is this an EIP-191 personal sign, in the only shape the protocol accepts?
+ *
+ * 65 bytes — `r`, `s`, `v` — 0x-prefixed. Nothing downstream checks it: the
+ * ABI coder takes any even-length hex as `bytes`, so `'0x'` and a 64-byte
+ * string both encode happily into a `depositData` the agreements service then
+ * cannot verify against anything. The check has to happen where the signature
+ * is taken, which is here.
+ */
+function isPersonalSignature(signature: unknown): signature is string {
+    return utils.isHexString(signature, 65);
+}
+
 const INITIAL: DepositState = {
     phase: 'idle',
     step: null,
@@ -354,13 +404,32 @@ function badgeFor(
 }
 
 /**
- * The request step has a third outcome. `UNPREDICTABLE_GAS_LIMIT` here is
- * almost always `transferFrom` reverting on a balance that cannot cover the
- * deposit, and it takes precedence: nothing was refused by the lender, so
- * inviting a retry would just reproduce it.
+ * The request step's extra outcomes, in the order the evidence supports.
+ *
+ * A revert is read for WHAT reverted before it is read as a shortfall.
+ * `requestDepositWithKyc` reverts for a whole family of declared reasons —
+ * `LendingPoolIsStopped`, `ClearingIsPending`, `UserNotKycd`, `UserBlocked`,
+ * `UserNotInAllowList`, `InvalidTranche`, `BlockExpired` — and every one of
+ * them used to arrive as `insufficient-balance`, which told a fully funded
+ * lender to top up a wallet that was never short while their pool was simply
+ * mid-clearing. So: a decoded protocol error is `reverted` and names itself.
+ *
+ * Only a token balance or allowance failure — or revert data nothing can
+ * decode, on the `UNPREDICTABLE_GAS_LIMIT` ethers raises for a failed gas
+ * estimate — is still `insufficient-balance`, which is the case that reason
+ * was named for and the one where topping up is genuinely the answer.
  */
 function classifyRequest(err: unknown): DepositFailure {
-    if (isUnpredictableGas(err)) {
+    const revert = decodeRevert(err);
+    if (revert?.family === 'protocol') {
+        return {
+            step: 'request',
+            reason: 'reverted',
+            revertError: revert.name,
+            error: err,
+        };
+    }
+    if (revert !== null || isUnpredictableGas(err)) {
         return { step: 'request', reason: 'insufficient-balance', error: err };
     }
     return classifyWalletFailure('request', err);
@@ -428,6 +497,18 @@ export class DepositFlow extends Flow<DepositState, DepositFlowInput> {
             const signature = await this._ports.signMessage(
                 contract.contractMessage,
             );
+            // Checked HERE, not at the encoder: this is the signature the
+            // agreements service verifies the deposit against, and a wallet
+            // that returned something other than 65 bytes has not signed
+            // anything. Failing the confirm step names the step that produced
+            // it; letting it through would put an unverifiable blob on chain.
+            if (!isPersonalSignature(signature)) {
+                bridge.settle({
+                    kind: 'failed',
+                    error: new Error(INVALID_ACCEPTANCE_SIGNATURE_MESSAGE),
+                });
+                return;
+            }
             bridge.settle({ kind: 'accepted', signature });
         } catch (err) {
             // A WALLET error, and the only one this flow classifies as a
@@ -536,6 +617,18 @@ export class DepositFlow extends Flow<DepositState, DepositFlowInput> {
             );
             return;
         }
+        // The same EIP-191 shape as the acceptance, and the same reason to
+        // check it: kasu-backend verifies this one to decide whether to issue
+        // an agreement at all, so a malformed signature is a 4xx that says
+        // nothing about which step produced it. Named here instead.
+        if (!isPersonalSignature(signature)) {
+            this._fail(token, approvalRequired, {
+                step: 'generate',
+                reason: 'failed',
+                error: new Error(INVALID_AUTH_SIGNATURE_MESSAGE),
+            });
+            return;
+        }
         if (!this._store.isCurrent(token)) return;
 
         // 3. Generate — POST the request.
@@ -620,12 +713,28 @@ export class DepositFlow extends Flow<DepositState, DepositFlowInput> {
             return;
         }
 
-        const depositData = encodeDepositData({
-            signature: outcome.signature,
-            timestamp: contract.timestamp,
-            contractVersion: contract.contractVersion,
-            contractType: asContractType(contract.contractType),
-        });
+        // The acceptance signature is already known to be 65 bytes, but the
+        // encoder also reads `timestamp`, `contractVersion` and
+        // `contractType` off a response the SDK did not produce. `start()`
+        // promises it does not reject, so anything that throws in here becomes
+        // a failure the consumer can render rather than an unhandled rejection
+        // in an application that was told it never had to catch one.
+        let depositData: string;
+        try {
+            depositData = encodeDepositData({
+                signature: outcome.signature,
+                timestamp: contract.timestamp,
+                contractVersion: contract.contractVersion,
+                contractType: asContractType(contract.contractType),
+            });
+        } catch (err) {
+            this._fail(token, approvalRequired, {
+                step: 'request',
+                reason: 'failed',
+                error: err,
+            });
+            return;
+        }
 
         // 6. Approve — the EXACT amount, never `MaxUint256`. House rule: an
         //    unlimited allowance outlives the deposit it was granted for, and a
