@@ -1,4 +1,8 @@
-import { isUnpredictableGas, isUserRejected } from './wallet-errors';
+import {
+    classifyWalletFailure,
+    isUnpredictableGas,
+    isUserRejected,
+} from './wallet-errors';
 
 /**
  * `isUserRejected` cases ported from kasu-ui
@@ -101,15 +105,29 @@ describe('isUserRejected', () => {
         ).toBe(true);
     });
 
-    it('detects the "request rejected" wording', () => {
+    it('detects the "request rejected" wording when it names the user', () => {
         expect(isUserRejected(new Error('Request rejected by user'))).toBe(
+            true,
+        );
+        expect(isUserRejected(new Error('Request rejected by the user'))).toBe(
             true,
         );
     });
 
     it('detects the "declined" wording, case-insensitively', () => {
-        expect(isUserRejected(new Error('Transaction Declined'))).toBe(true);
-        expect(isUserRejected({ message: 'signature declined' })).toBe(true);
+        expect(isUserRejected(new Error('The User Declined the signature'))).toBe(
+            true,
+        );
+        expect(isUserRejected({ message: 'signature declined by wallet' })).toBe(
+            true,
+        );
+    });
+
+    it("detects viem's UserRejectedRequestError by name", () => {
+        const err = Object.assign(new Error('Something went wrong'), {
+            name: 'UserRejectedRequestError',
+        });
+        expect(isUserRejected(err)).toBe(true);
     });
 
     it('still says no when none of the wrapped fields mention a rejection', () => {
@@ -120,6 +138,130 @@ describe('isUserRejected', () => {
                 error: { code: -32000, message: 'insufficient funds for gas' },
             }),
         ).toBe(false);
+    });
+});
+
+/**
+ * The words alone are not the signal.
+ *
+ * "Declined" and "request rejected" are also what a rate limiter, a risk
+ * engine and a KYC decision say, and ethers hands those to us in the same
+ * envelope a wallet error arrives in — the upstream body on a nested
+ * `error.message`, under a `SERVER_ERROR` / `-32603` of its own. Classifying
+ * one of those as "you cancelled in your wallet" tells a lender they refused
+ * something they never saw AND discards the real error, which is the one
+ * anybody could have acted on.
+ */
+describe('isUserRejected — the bare words are contextual', () => {
+    it('does not fire on an RPC refusal wrapped by ethers', () => {
+        expect(
+            isUserRejected({
+                code: 'SERVER_ERROR',
+                reason: 'processing response error',
+                error: { message: 'request rejected: rate limit exceeded' },
+            }),
+        ).toBe(false);
+    });
+
+    it('does not fire on a KYC decision that says "Declined"', () => {
+        expect(isUserRejected(new Error('KYC status: Declined'))).toBe(false);
+    });
+
+    it('does not fire on a backend 4xx whose body says "request rejected"', () => {
+        expect(
+            isUserRejected({
+                status: 403,
+                message: 'Request failed with status code 403',
+                error: { message: 'request rejected by the risk engine' },
+            }),
+        ).toBe(false);
+    });
+
+    it('does not fire on a bare "declined" or a bare "rejected"', () => {
+        expect(isUserRejected(new Error('Transaction Declined'))).toBe(false);
+        expect(isUserRejected({ message: 'signature declined' })).toBe(false);
+        expect(isUserRejected(new Error('Request rejected'))).toBe(false);
+    });
+
+    it('still fires when the same words name the party who did it', () => {
+        expect(isUserRejected(new Error('Transaction declined by user'))).toBe(
+            true,
+        );
+        expect(
+            isUserRejected({
+                code: 'SERVER_ERROR',
+                error: { message: 'user rejected the request' },
+            }),
+        ).toBe(true);
+    });
+});
+
+/**
+ * Parity with kasu-mobile's `features/lending/lib/errors.ts`, the wrapper this
+ * predicate exists to delete. Every shape its spec pins as a rejection has to
+ * pass here, or removing the wrapper would silently narrow what the app
+ * recognises — and a missed rejection tells a lender their deliberate cancel
+ * "went wrong".
+ */
+describe('isUserRejected — every shape kasu-mobile recognised', () => {
+    it.each([
+        ['EIP-1193 rejection code', { code: 4001 }],
+        ['ethers v5 ACTION_REJECTED', { code: 'ACTION_REJECTED' }],
+        ['nested provider code', { error: { code: 4001 } }],
+        [
+            'nested provider ACTION_REJECTED',
+            { error: { code: 'ACTION_REJECTED' } },
+        ],
+        [
+            'nested provider message',
+            { error: { message: 'User rejected the request' } },
+        ],
+        ['ethers reason', { reason: 'user rejected transaction' }],
+        ['Error: user rejected', new Error('User rejected the request')],
+        [
+            'Error: user denied',
+            new Error('MetaMask Tx Signature: User denied transaction signature.'),
+        ],
+        ['plain object carrying message', { message: 'User rejected the request' }],
+        ['wording: request rejected', new Error('Request rejected by the user')],
+        ['wording: declined', new Error('The user declined the signature')],
+    ])('recognises %s', (_name, err) => {
+        expect(isUserRejected(err)).toBe(true);
+    });
+
+    it.each([
+        ['a network failure', new Error('network timeout')],
+        ['a revert', { code: 'UNPREDICTABLE_GAS_LIMIT' }],
+        ['an unrelated nested code', { error: { code: -32000 } }],
+        ['null', null],
+        ['undefined', undefined],
+        ['a bare string', 'something else'],
+    ])('does not fire on %s', (_name, err) => {
+        expect(isUserRejected(err)).toBe(false);
+    });
+});
+
+describe('classifyWalletFailure', () => {
+    it('calls a wallet rejection cancelled, and carries no error with it', () => {
+        expect(
+            classifyWalletFailure('approve', { code: 4001 }),
+        ).toEqual({ step: 'approve', reason: 'cancelled' });
+    });
+
+    it('calls everything else failed, keeping the throw for a crash reporter', () => {
+        const boom = new Error('nonce too low');
+        expect(classifyWalletFailure('request', boom)).toEqual({
+            step: 'request',
+            reason: 'failed',
+            error: boom,
+        });
+    });
+
+    it('is generic in the step, so both flows share one implementation', () => {
+        expect(classifyWalletFailure('kyc', new Error('x')).step).toBe('kyc');
+        expect(classifyWalletFailure('confirm', new Error('x')).step).toBe(
+            'confirm',
+        );
     });
 });
 

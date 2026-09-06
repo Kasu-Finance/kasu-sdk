@@ -132,4 +132,9 @@ export type {
     TrancheCapacitySignal,
 } from './tranches';
 
-export { isUnpredictableGas, isUserRejected } from './wallet-errors';
+export {
+    classifyWalletFailure,
+    isUnpredictableGas,
+    isUserRejected,
+} from './wallet-errors';
+export type { WalletFailure } from './wallet-errors';
