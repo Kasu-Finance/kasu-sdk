@@ -1,5 +1,7 @@
 import { BigNumber, utils } from 'ethers';
 
+import { IERC20MetadataAbi__factory } from '../contracts/factories/IERC20MetadataAbi__factory';
+import { ILendingPoolManagerAbi__factory } from '../contracts/factories/ILendingPoolManagerAbi__factory';
 import {
     asContractType,
     buildLegacyContractRequestMessage,
@@ -59,6 +61,20 @@ import { WaitableTransaction } from './observable';
  * 8. **`request-sign` / `request-confirm`** — KYC signature, then the deposit,
  *    then the receipt.
  *
+ * ## The batch path
+ *
+ * A consumer that can submit several calls as ONE atomic transaction supplies
+ * the optional `depositBatch` port. When the allowance is short, that port is
+ * present and the stable token is known, steps 7 and 8 become one: the SDK
+ * encodes `approve(spender, amount)` and `requestDepositWithKyc(...)` itself
+ * and hands both to the port. Because a batch has no wallet prompt per call,
+ * the run first PARKS on `awaiting-authorise` until the consumer calls
+ * `authoriseTransfer()` (or `declineTransfer()`) — nothing moves money
+ * without an explicit authorisation. The TTL is checked again after it, and
+ * the KYC signature is fetched only then, because it carries a block
+ * expiration of its own. Without the port, or with the allowance already
+ * sufficient, the run is exactly the two-transaction pipeline above.
+ *
  * ## Failure codes
  *
  * A wallet rejection (`isUserRejected`) is `'cancelled'` — the lender changed
@@ -105,6 +121,11 @@ export type DepositPhase =
     | 'awaiting-accept'
     | 'accepting-sign'
     | 'approve'
+    /**
+     * Batch path only: the run is PARKED until `authoriseTransfer()` or
+     * `declineTransfer()`. Step `request`.
+     */
+    | 'awaiting-authorise'
     | 'request-sign'
     | 'request-confirm'
     | 'success'
@@ -153,6 +174,48 @@ export type DepositFailure =
 // ---------------------------------------------------------------------------
 
 export type { WaitableTransaction };
+
+/**
+ * One call of an atomic batch: a target and its ABI-encoded calldata. No
+ * value — neither call the deposit batch makes sends the native token.
+ */
+export interface BatchCall {
+    to: string;
+    data: string;
+}
+
+/**
+ * What a `depositBatch` port throws when it KNOWS the batch reverted — from a
+ * simulation before sending, or from the submitter refusing to broadcast a
+ * batch that would revert. The run ends `{ step: 'request', reason:
+ * 'reverted', revertError }`.
+ *
+ * `revertError` is the custom error the contract named (`'ClearingIsPending'`,
+ * `'UserNotKycd'`, …), exactly as the ABI declares it. Pass `''` when the
+ * batch is known to revert but not why: the consumer then renders its generic
+ * `reverted` copy, which is what an unknown name gets anyway.
+ *
+ * Any OTHER throw from the port is read the way a direct deposit's is — a
+ * wallet rejection is `cancelled`, a decodable revert is `reverted`, and
+ * everything else is `failed` with the error kept. A port that cannot tell is
+ * better off throwing what it has than guessing a name.
+ */
+export class BatchRevertedError extends Error {
+    readonly revertError: string;
+
+    constructor(revertError: string, message?: string) {
+        super(
+            message ??
+                `DepositFlow: the batch reverted${
+                    revertError ? ` with ${revertError}` : ''
+                }`,
+        );
+        this.name = 'BatchRevertedError';
+        this.revertError = revertError;
+        // Keeps `instanceof` honest under a down-levelled build.
+        Object.setPrototypeOf(this, BatchRevertedError.prototype);
+    }
+}
 
 /** What the KYC signing service hands back. */
 export interface KycSignature {
@@ -257,11 +320,35 @@ export interface DepositPorts {
     approve(spender: string, amount: BigNumber): Promise<WaitableTransaction>;
     /** `requestDepositWithKyc`. Defaults to `kasu.deposits.deposit`. */
     deposit(params: DepositParams): Promise<WaitableTransaction>;
+    /**
+     * OPTIONAL, and with no default: submit several calls as ONE atomic
+     * transaction — all of them apply, or none does. How is the consumer's
+     * business; the SDK owns what goes in and in which order.
+     *
+     * When supplied, the allowance is short and the flow knows the stable
+     * token (`DepositFlowOptions.stableAsset`), the run takes the batch path:
+     * it parks on `awaiting-authorise`, then hands this port exactly two calls
+     * —
+     *
+     * 0. `stableAsset.approve(spender, amount)` — the EXACT deposit amount,
+     *    never `MaxUint256`;
+     * 1. `spender.requestDepositWithKyc(pool, tranche, amount, '0x',
+     *    fixedTermConfigId, depositData, { blockExpiration, signature })` —
+     *    the call the default `deposit` port makes.
+     *
+     * and neither `approve` nor `deposit` is called. Resolve with something
+     * whose `wait()` settles when the batch is mined. Throw
+     * `BatchRevertedError` when the batch is known to revert.
+     */
+    depositBatch?(calls: BatchCall[]): Promise<WaitableTransaction>;
     /** ms-epoch clock. Defaults to `Date.now`; injected so the TTL is testable. */
     now?(): number;
 }
 
-/** Construction options. `kasu.flows.deposit()` fills `spender` in. */
+/**
+ * Construction options. `kasu.flows.deposit()` fills `spender` and
+ * `stableAsset` in.
+ */
 export interface DepositFlowOptions {
     /** Agreement validity window; defaults to `CONTRACT_TTL_MS`. */
     contractTtlMs?: number;
@@ -272,6 +359,17 @@ export interface DepositFlowOptions {
      * deposit port calls.
      */
     spender?: string;
+    /**
+     * The ERC-20 the deposit is paid in — the target of the batch path's
+     * approve call. `kasu.flows.deposit()` passes this chain's
+     * `stableAsset.address`.
+     *
+     * Without it the batch path is never taken, even when `depositBatch` is
+     * supplied: an approve encoded against a guessed token is an approval
+     * granted on the wrong contract inside a transaction that then reverts.
+     * The run falls back to the `approve` and `deposit` ports instead.
+     */
+    stableAsset?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -315,10 +413,24 @@ export interface DepositState {
     step: DepositStep | null;
     /** 1-based badge position of `step`; `0` while idle. */
     stepIndex: number;
-    /** `4`, or `3` when the allowance already covers the deposit. */
+    /**
+     * `4`, or `3` when the allowance already covers the deposit or the run
+     * is batched.
+     */
     stepTotal: number;
-    /** Whether the approve step is in scope for this run. */
+    /**
+     * Whether the separate approve STEP is in scope for this run. `false`
+     * on a batched run too: its approval rides inside the request step's
+     * single transaction, so it never enters `approve` and counts as a
+     * three-step run on every badge.
+     */
     approvalRequired: boolean;
+    /**
+     * Whether this run approves and deposits as ONE atomic batch through the
+     * `depositBatch` port. Decided by the allowance pre-check, before the
+     * first signature, and `false` on every two-transaction run.
+     */
+    batched: boolean;
     /** The generated agreement, from `generating-fetch` onwards. */
     contract: GenerateContractResponse | null;
     /** Set with `phase: 'error'`, cleared by `reset()`. */
@@ -359,6 +471,7 @@ const INITIAL: DepositState = {
     stepIndex: 0,
     stepTotal: 4,
     approvalRequired: true,
+    batched: false,
     contract: null,
     failure: null,
 };
@@ -383,6 +496,56 @@ type AcceptOutcome =
     | { kind: 'failed'; error: unknown }
     /** `reset()` unparked it. The run's token check drops everything after. */
     | { kind: 'abandoned' };
+
+/** How the batch path's authorisation park ends. Same rules as `AcceptOutcome`. */
+type AuthoriseOutcome =
+    | { kind: 'authorised' }
+    | { kind: 'declined' }
+    | { kind: 'abandoned' };
+
+const ERC20 = IERC20MetadataAbi__factory.createInterface();
+const LENDING_POOL_MANAGER = ILendingPoolManagerAbi__factory.createInterface();
+
+/**
+ * The batch path's two calls, encoded by the SDK so no consumer has to: the
+ * EXACT-amount approve, then the very `requestDepositWithKyc` the default
+ * `deposit` port sends — `swapData` `'0x'`, no value. Both read `amount` from
+ * the same variable, so the batch cannot approve one figure and deposit
+ * another.
+ */
+function encodeDepositBatch(args: {
+    stableAsset: string;
+    spender: string;
+    input: DepositFlowInput;
+    depositData: string;
+    kyc: KycSignature;
+}): BatchCall[] {
+    const { stableAsset, spender, input, depositData, kyc } = args;
+    return [
+        {
+            to: stableAsset,
+            data: ERC20.encodeFunctionData('approve', [spender, input.amount]),
+        },
+        {
+            to: spender,
+            data: LENDING_POOL_MANAGER.encodeFunctionData(
+                'requestDepositWithKyc',
+                [
+                    input.poolId,
+                    input.trancheId,
+                    input.amount,
+                    '0x',
+                    input.fixedTermConfigId,
+                    depositData,
+                    {
+                        blockExpiration: kyc.blockExpiration,
+                        signature: kyc.signature,
+                    },
+                ],
+            ),
+        },
+    ];
+}
 
 /** 1-based badge position, with `approve` dropped when it is out of scope. */
 function stepIndexOf(step: DepositStep, approvalRequired: boolean): number {
@@ -435,6 +598,23 @@ function classifyRequest(err: unknown): DepositFailure {
     return classifyWalletFailure('request', err);
 }
 
+/**
+ * A `depositBatch` rejection. A submitter that KNOWS the batch reverts says so
+ * with `BatchRevertedError`; anything else is read exactly as a direct
+ * deposit's throw is, so a non-wallet error can never become `cancelled`.
+ */
+function classifyBatch(err: unknown): DepositFailure {
+    if (err instanceof BatchRevertedError) {
+        return {
+            step: 'request',
+            reason: 'reverted',
+            revertError: err.revertError,
+            error: err,
+        };
+    }
+    return classifyRequest(err);
+}
+
 // ---------------------------------------------------------------------------
 // The flow
 // ---------------------------------------------------------------------------
@@ -442,6 +622,7 @@ function classifyRequest(err: unknown): DepositFailure {
 export class DepositFlow extends Flow<DepositState, DepositFlowInput> {
     private readonly _ttlMs: number;
     private readonly _defaultSpender: string | undefined;
+    private readonly _stableAsset: string | undefined;
     private readonly _now: () => number;
 
     /**
@@ -464,6 +645,15 @@ export class DepositFlow extends Flow<DepositState, DepositFlowInput> {
      */
     private _acceptingFor: number | null = null;
 
+    /**
+     * The batch path's authorisation handshake. Same shape and lifetime as
+     * `_accept`: the run parks on it, `authoriseTransfer`, `declineTransfer`
+     * and `reset` settle it, and it is cleared the moment it settles.
+     */
+    private _authorise: {
+        settle: (outcome: AuthoriseOutcome) => void;
+    } | null = null;
+
     constructor(
         private readonly _ports: DepositPorts,
         opts?: DepositFlowOptions,
@@ -471,6 +661,7 @@ export class DepositFlow extends Flow<DepositState, DepositFlowInput> {
         super(INITIAL);
         this._ttlMs = opts?.contractTtlMs ?? CONTRACT_TTL_MS;
         this._defaultSpender = opts?.spender;
+        this._stableAsset = opts?.stableAsset;
         // Called through the ports object, never captured off it: a consumer
         // whose clock is a method on its own object keeps its `this`.
         this._now = (): number => _ports.now?.() ?? Date.now();
@@ -536,6 +727,33 @@ export class DepositFlow extends Flow<DepositState, DepositFlowInput> {
         bridge.settle({ kind: 'declined' });
     }
 
+    /**
+     * Batch path: authorise the single transaction that approves and deposits,
+     * and resume the parked run. A no-op when nothing is parked on
+     * `awaiting-authorise`, so a double tap cannot submit twice.
+     *
+     * The batch has no wallet prompt per call, so this is the lender's
+     * explicit consent to the transfer — call it only from their action.
+     */
+    authoriseTransfer(): void {
+        const bridge = this._authorise;
+        if (!bridge) return;
+        this._authorise = null;
+        bridge.settle({ kind: 'authorised' });
+    }
+
+    /**
+     * Batch path: refuse the transfer. The run ends on `error` with `{ step:
+     * 'request', reason: 'cancelled' }` and nothing is submitted. A no-op when
+     * nothing is parked on `awaiting-authorise`.
+     */
+    declineTransfer(): void {
+        const bridge = this._authorise;
+        if (!bridge) return;
+        this._authorise = null;
+        bridge.settle({ kind: 'declined' });
+    }
+
     /** True only while THIS generation is waiting on the acceptance signature. */
     private _isAccepting(): boolean {
         return (
@@ -550,6 +768,9 @@ export class DepositFlow extends Flow<DepositState, DepositFlowInput> {
         this._accept = null;
         this._acceptingFor = null;
         bridge?.settle({ kind: 'abandoned' });
+        const authorise = this._authorise;
+        this._authorise = null;
+        authorise?.settle({ kind: 'abandoned' });
     }
 
     // -----------------------------------------------------------------------
@@ -560,6 +781,7 @@ export class DepositFlow extends Flow<DepositState, DepositFlowInput> {
     ): Promise<void> {
         this._accept = null;
         this._acceptingFor = null;
+        this._authorise = null;
         const ports = this._ports;
         const owner = input.userAddress.toLowerCase();
 
@@ -582,22 +804,35 @@ export class DepositFlow extends Flow<DepositState, DepositFlowInput> {
         //    live, never cached: an exact-amount approval is fully consumed by
         //    the deposit it paid for, so a stale allowance is exactly the value
         //    that would wrongly skip the approve and revert the deposit.
-        let approvalRequired = true;
+        let allowanceShort = true;
         try {
             const allowance = await ports.readAllowance(owner, spender);
-            approvalRequired = allowance.lt(input.amount);
+            allowanceShort = allowance.lt(input.amount);
         } catch {
             // A read failure is not a reason to skip an approval. Assume one is
             // needed: the cost is a redundant approve, the alternative is a
             // reverted deposit.
-            approvalRequired = true;
+            allowanceShort = true;
         }
         if (!this._store.isCurrent(token)) return;
+
+        // The path is chosen HERE, with the allowance, so the badge is right
+        // from the first state the lender sees. Batch only when there is an
+        // approval to fold in, a port to submit it, and a known token to
+        // approve on — never a guessed one. A batched run never enters the
+        // `approve` step, so every badge counts it as a three-step run.
+        const stableAsset = this._stableAsset;
+        const batched =
+            allowanceShort &&
+            typeof ports.depositBatch === 'function' &&
+            !!stableAsset;
+        const approvalRequired = allowanceShort && !batched;
 
         // 2. Generate — sign the auth message.
         this._store.patch(
             {
                 approvalRequired,
+                batched,
                 phase: 'generating-sign',
                 ...badgeFor('generate', approvalRequired),
             },
@@ -736,6 +971,19 @@ export class DepositFlow extends Flow<DepositState, DepositFlowInput> {
             return;
         }
 
+        if (batched && stableAsset) {
+            await this._runBatch({
+                token,
+                input,
+                owner,
+                spender,
+                stableAsset,
+                depositData,
+                contract,
+            });
+            return;
+        }
+
         // 6. Approve — the EXACT amount, never `MaxUint256`. House rule: an
         //    unlimited allowance outlives the deposit it was granted for, and a
         //    later exploit of the spender would drain a wallet that has long
@@ -808,6 +1056,136 @@ export class DepositFlow extends Flow<DepositState, DepositFlowInput> {
             await tx.wait();
         } catch (err) {
             this._fail(token, approvalRequired, classifyRequest(err));
+            return;
+        }
+        if (!this._store.isCurrent(token)) return;
+
+        this._store.patch(
+            { phase: 'success', ...badgeFor('request', approvalRequired) },
+            token,
+        );
+    }
+
+    /**
+     * The batch path, from the accepted agreement to the receipt.
+     *
+     * 1. PARK on `awaiting-authorise`. A batch puts no wallet prompt in front
+     *    of each call, so the flow waits for an explicit authorisation before
+     *    any money moves. `declineTransfer()` ends it as `cancelled`.
+     * 2. Re-check the TTL: the lender may have idled on the authorisation as
+     *    long as they did on the agreement.
+     * 3. Only now fetch the KYC signature — it has a block expiration of its
+     *    own, and an authorisation left open must not spend it.
+     * 4. Encode both calls and hand them to `depositBatch`; then the receipt.
+     */
+    private async _runBatch(args: {
+        token: number;
+        input: DepositFlowInput;
+        owner: string;
+        spender: string;
+        stableAsset: string;
+        depositData: string;
+        contract: GenerateContractResponse;
+    }): Promise<void> {
+        const { token, input, owner, spender, stableAsset, depositData } =
+            args;
+        const ports = this._ports;
+        // A batched run is a three-step run on every badge.
+        const approvalRequired = false;
+
+        // Every settler clears the handshake before settling it, so there is
+        // nothing to clear here — and clearing it anyway could drop the
+        // handshake of a NEWER run that `reset(); start()` already parked.
+        const outcome = await new Promise<AuthoriseOutcome>((resolve) => {
+            this._authorise = { settle: resolve };
+            this._store.patch(
+                {
+                    phase: 'awaiting-authorise',
+                    ...badgeFor('request', approvalRequired),
+                },
+                token,
+            );
+        });
+        if (!this._store.isCurrent(token)) return;
+        if (outcome.kind === 'declined') {
+            this._fail(token, approvalRequired, {
+                step: 'request',
+                reason: 'cancelled',
+            });
+            return;
+        }
+        if (outcome.kind !== 'authorised') return;
+
+        if (this._now() > args.contract.timestamp + this._ttlMs) {
+            this._fail(token, approvalRequired, {
+                step: 'request',
+                reason: 'contract-expired',
+            });
+            return;
+        }
+
+        this._store.patch(
+            { phase: 'request-sign', ...badgeFor('request', approvalRequired) },
+            token,
+        );
+
+        // The consumer's backend, so `failed` — never `cancelled` — exactly as
+        // on the two-transaction path.
+        let kyc: KycSignature;
+        try {
+            const kycParams = await ports.buildKycParams(
+                owner as `0x${string}`,
+            );
+            kyc = await ports.getKycSignature(kycParams);
+        } catch (err) {
+            this._fail(token, approvalRequired, {
+                step: 'request',
+                reason: 'failed',
+                error: err,
+            });
+            return;
+        }
+        if (!this._store.isCurrent(token)) return;
+
+        // Encoded from values a backend returned (the KYC signature), so a
+        // shape the coder refuses is a failure the consumer can render, not a
+        // rejection out of a `start()` that promises it has none.
+        let calls: BatchCall[];
+        try {
+            calls = encodeDepositBatch({
+                stableAsset,
+                spender,
+                input,
+                depositData,
+                kyc,
+            });
+        } catch (err) {
+            this._fail(token, approvalRequired, {
+                step: 'request',
+                reason: 'failed',
+                error: err,
+            });
+            return;
+        }
+
+        try {
+            // Called through the ports object, so a port that is a method
+            // keeps its `this`. Its presence decided the path; a consumer
+            // that removed it since gets a `failed`, not a crash.
+            if (typeof ports.depositBatch !== 'function') {
+                throw new Error('DepositFlow: the depositBatch port is gone');
+            }
+            const tx = await ports.depositBatch(calls);
+            this._store.patch(
+                {
+                    phase: 'request-confirm',
+                    ...badgeFor('request', approvalRequired),
+                },
+                token,
+            );
+            await tx.wait();
+        } catch (err) {
+            this._fail(token, approvalRequired, classifyBatch(err));
             return;
         }
         if (!this._store.isCurrent(token)) return;

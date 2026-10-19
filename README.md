@@ -225,8 +225,52 @@ await flow.acceptContract(); // signs it and carries on
 // or: flow.declineContract();  → phase 'declined', nothing submitted
 ```
 
+### One atomic transaction: the `depositBatch` port
+
+If your application can submit several calls as ONE atomic transaction (all
+apply or none does), supply the optional `depositBatch` port. When the
+allowance is short, the run then approves and deposits in a single batch
+instead of two transactions. You decide how the batch is sent; the SDK decides
+what is in it:
+
+```ts
+import { BatchRevertedError, type BatchCall } from '@kasufinance/kasu-sdk';
+
+const flow = kasu.flows.deposit({
+    signMessage,
+    generateContract,
+    getKycSignature,
+    depositBatch: async (calls: BatchCall[]) => {
+        // calls[0]: stableAsset.approve(LendingPoolManager, amount) — EXACT amount
+        // calls[1]: LendingPoolManager.requestDepositWithKyc(…) — value 0
+        const tx = await submitAtomically(calls); // your mechanism
+        return tx; // anything with wait()
+        // Known to revert? throw new BatchRevertedError('ClearingIsPending')
+    },
+});
+
+// …after acceptContract(), a batched run parks on `awaiting-authorise`:
+flow.authoriseTransfer(); // the lender's explicit go-ahead
+// or: flow.declineTransfer(); → error { step: 'request', reason: 'cancelled' }
+```
+
+- The batch path is taken only when the allowance is short, the port is
+  supplied and the chain's stable token is known (`kasu.flows.deposit()` fills
+  it from the chain config). Otherwise the run is exactly the two-transaction
+  pipeline.
+- A batch has no wallet prompt per call, so the run **parks for an explicit
+  authorisation** before any money moves. The agreement's TTL is checked again
+  after it, and the KYC signature is fetched only then.
+- `state.batched` is `true` from the first state of a batched run. It never
+  enters `approve`, so it counts as a three-step run (`stepTotal` 3).
+- Throw `BatchRevertedError(revertError)` when the batch is known to revert →
+  `{ step: 'request', reason: 'reverted', revertError }`. Any other throw is
+  read like a direct deposit's: a wallet rejection is `cancelled`, everything
+  else `failed`.
+
 **Phases** — `idle`, `generating-sign`, `generating-fetch`, `awaiting-accept`,
-`accepting-sign`, `approve`, `request-sign`, `request-confirm`, and the
+`accepting-sign`, `approve`, `awaiting-authorise` (batch path only),
+`request-sign`, `request-confirm`, and the
 terminal `success` / `declined` / `error`. Each maps to one of four steps
 (`generate`, `confirm`, `approve`, `request`); `stepIndex` and `stepTotal` are
 published because the approve step drops out of the sequence when the allowance

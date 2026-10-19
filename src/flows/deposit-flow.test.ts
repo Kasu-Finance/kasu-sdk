@@ -20,6 +20,8 @@ import {
 import { DepositParams, KycParams } from '../facade/types';
 
 import {
+    BatchCall,
+    BatchRevertedError,
     CONTRACT_TTL_MS,
     DepositFlow,
     DepositFlowInput,
@@ -1002,6 +1004,7 @@ describe('DepositFlow — reset', () => {
             stepIndex: 0,
             stepTotal: 4,
             approvalRequired: true,
+            batched: false,
             contract: null,
             failure: null,
         });
@@ -1519,5 +1522,587 @@ describe('DepositFlow — reset releases the run guard', () => {
         expect(h.flow.state.phase).toBe('idle');
         expect(h.depositCalls).toHaveLength(0);
         expect(h.phases).not.toContain('success');
+    });
+});
+
+// ---------------------------------------------------------------------------
+// The batch path
+// ---------------------------------------------------------------------------
+
+describe('DepositFlow — the atomic batch path', () => {
+    // Real 20-byte addresses, lowercase so no checksum is implied: the batch
+    // path ABI-encodes them, and the coder refuses `'0xpool'`. All synthetic.
+    const B_POOL = '0xabcdef0000000000000000000000000000000002';
+    const B_TRANCHE = '0xabcdef0000000000000000000000000000000003';
+    const B_SPENDER = '0xabcdef0000000000000000000000000000000004';
+    const B_STABLE = '0xabcdef0000000000000000000000000000000005';
+    const B_KYC: KycSignature = {
+        signature: `0x${'cd'.repeat(65)}`,
+        blockExpiration: 4242,
+    };
+    const ERC20_IFACE = new ethers.utils.Interface([
+        'function approve(address spender, uint256 amount) returns (bool)',
+    ]);
+
+    /** The decoded approve, typed — `decodeFunctionData` returns `any`. */
+    function decodeApprove(data: string): {
+        spender: string;
+        amount: BigNumber;
+    } {
+        const r = ERC20_IFACE.decodeFunctionData('approve', data);
+        return {
+            spender: String(r[0]),
+            amount: BigNumber.from(r[1] as BigNumber),
+        };
+    }
+
+    /** The decoded requestDepositWithKyc, typed. */
+    function decodeRequest(data: string): {
+        lendingPool: string;
+        tranche: string;
+        maxAmount: BigNumber;
+        swapData: string;
+        fixedTermConfigId: BigNumber;
+        depositData: string;
+        blockExpiration: BigNumber;
+        signature: string;
+    } {
+        const r = MANAGER.decodeFunctionData('requestDepositWithKyc', data);
+        const kycData = r[6] as [BigNumber, string];
+        return {
+            lendingPool: String(r[0]),
+            tranche: String(r[1]),
+            maxAmount: BigNumber.from(r[2] as BigNumber),
+            swapData: String(r[3]),
+            fixedTermConfigId: BigNumber.from(r[4] as BigNumber),
+            depositData: String(r[5]),
+            blockExpiration: BigNumber.from(kycData[0]),
+            signature: String(kycData[1]),
+        };
+    }
+
+    const BATCH_INPUT: DepositFlowInput = {
+        ...LOAN_AGREEMENT_INPUT,
+        poolId: B_POOL,
+        trancheId: B_TRANCHE,
+        spender: B_SPENDER,
+        fixedTermConfigId: '7',
+    };
+
+    interface BatchHarness extends Harness {
+        batches: BatchCall[][];
+        kycFetches: number;
+    }
+
+    /**
+     * A short allowance, a `depositBatch` port and a known stable token —
+     * the three conditions the batch path needs. Each can be withdrawn by
+     * the overrides / options.
+     */
+    function batchHarness(
+        overrides: Partial<DepositPorts> = {},
+        opts: DepositFlowOptions = { stableAsset: B_STABLE },
+    ): BatchHarness {
+        const batches: BatchCall[][] = [];
+        const counter = { kycFetches: 0 };
+        const h = makeHarness(
+            {
+                readAllowance: (): Promise<BigNumber> =>
+                    Promise.resolve(BigNumber.from(0)),
+                getKycSignature: (): Promise<KycSignature> => {
+                    counter.kycFetches += 1;
+                    return Promise.resolve(B_KYC);
+                },
+                depositBatch: (
+                    calls: BatchCall[],
+                ): Promise<WaitableTransaction> => {
+                    batches.push(calls);
+                    return Promise.resolve({
+                        wait: (): Promise<unknown> =>
+                            Promise.resolve({ status: 1 }),
+                    });
+                },
+                ...overrides,
+            },
+            opts,
+        );
+        return Object.defineProperties(h as BatchHarness, {
+            batches: { get: () => batches },
+            kycFetches: { get: () => counter.kycFetches },
+        });
+    }
+
+    /**
+     * Start, accept the agreement, and stop on the authorisation park. The
+     * run's promise comes back WRAPPED: an async function returning it bare
+     * would flatten it and wait for the parked run to finish.
+     */
+    async function toAuthorise(
+        h: Harness,
+        input: DepositFlowInput = BATCH_INPUT,
+    ): Promise<{ running: Promise<void> }> {
+        const running = h.flow.start(input);
+        await until(
+            () => h.flow.state.phase === 'awaiting-accept',
+            'awaiting-accept',
+        );
+        await h.flow.acceptContract();
+        await until(
+            () => h.flow.state.phase === 'awaiting-authorise',
+            'awaiting-authorise',
+        );
+        return { running };
+    }
+
+    async function runAuthorising(
+        h: Harness,
+        input: DepositFlowInput = BATCH_INPUT,
+    ): Promise<void> {
+        const { running } = await toAuthorise(h, input);
+        h.flow.authoriseTransfer();
+        await running;
+    }
+
+    it('approves and deposits in one batch, through an explicit authorisation', async () => {
+        const h = batchHarness();
+        await runAuthorising(h);
+
+        expect(h.flow.state.phase).toBe('success');
+        expect(h.flow.state.failure).toBeNull();
+        expect(h.flow.state.batched).toBe(true);
+        expect(h.batches).toHaveLength(1);
+        // Neither of the two-transaction ports is touched.
+        expect(h.approveCalls).toHaveLength(0);
+        expect(h.depositCalls).toHaveLength(0);
+        expect(phasePath(h.phases)).toEqual([
+            'idle',
+            'generating-sign',
+            'generating-fetch',
+            'awaiting-accept',
+            'accepting-sign',
+            'awaiting-authorise',
+            'request-sign',
+            'request-confirm',
+            'success',
+        ]);
+    });
+
+    it('encodes call 0 as an approve of EXACTLY the amount — never MaxUint256 — on the stable token', async () => {
+        const h = batchHarness();
+        await runAuthorising(h);
+
+        const [approve] = h.batches[0];
+        expect(approve.to).toBe(B_STABLE);
+        // No value: the type has no such field, and nothing slipped one in.
+        expect(Object.keys(approve).sort()).toEqual(['data', 'to']);
+        const decoded = decodeApprove(approve.data);
+        expect(decoded.spender.toLowerCase()).toBe(B_SPENDER);
+        expect(decoded.amount.eq(AMOUNT)).toBe(true);
+        expect(decoded.amount.eq(constants.MaxUint256)).toBe(false);
+    });
+
+    it('encodes call 1 as the requestDepositWithKyc the deposit port would send', async () => {
+        const h = batchHarness();
+        await runAuthorising(h);
+
+        const [approve, request] = h.batches[0];
+        expect(h.batches[0]).toHaveLength(2);
+        expect(request.to).toBe(B_SPENDER);
+        expect(Object.keys(request).sort()).toEqual(['data', 'to']);
+        const args = decodeRequest(request.data);
+        expect(args.lendingPool.toLowerCase()).toBe(B_POOL);
+        expect(args.tranche.toLowerCase()).toBe(B_TRANCHE);
+        // The SAME amount the approve grants — one figure, not two.
+        expect(args.maxAmount.eq(AMOUNT)).toBe(true);
+        expect(args.maxAmount.eq(decodeApprove(approve.data).amount)).toBe(
+            true,
+        );
+        expect(args.swapData).toBe('0x');
+        expect(args.fixedTermConfigId.toNumber()).toBe(7);
+        expect(args.depositData).toBe(
+            encodeDepositData({
+                signature: fakeSignature(2),
+                timestamp: BASE_NOW,
+                contractVersion: 1,
+                contractType: 'retail',
+            }),
+        );
+        expect(args.blockExpiration.toNumber()).toBe(4242);
+        expect(args.signature).toBe(B_KYC.signature);
+    });
+
+    it('fetches the KYC signature only AFTER the transfer is authorised', async () => {
+        const h = batchHarness();
+        const { running } = await toAuthorise(h);
+
+        // Parked: nothing fetched, nothing sent.
+        expect(h.kycFetches).toBe(0);
+        expect(h.batches).toHaveLength(0);
+
+        h.flow.authoriseTransfer();
+        await running;
+        expect(h.kycFetches).toBe(1);
+        expect(h.batches).toHaveLength(1);
+    });
+
+    it('ends as a request-step cancel when the transfer is declined, with nothing fetched or sent', async () => {
+        const h = batchHarness();
+        const { running } = await toAuthorise(h);
+        h.flow.declineTransfer();
+        await running;
+
+        expect(h.flow.state.phase).toBe('error');
+        expect(h.flow.state.failure).toEqual({
+            step: 'request',
+            reason: 'cancelled',
+        });
+        expect(h.kycFetches).toBe(0);
+        expect(h.batches).toHaveLength(0);
+        expect(h.approveCalls).toHaveLength(0);
+        expect(h.depositCalls).toHaveLength(0);
+    });
+
+    it('ignores authorise and decline when nothing is parked on the authorisation', async () => {
+        const h = batchHarness();
+        h.flow.authoriseTransfer();
+        h.flow.declineTransfer();
+        expect(h.flow.state.phase).toBe('idle');
+
+        const running = h.flow.start(BATCH_INPUT);
+        await until(
+            () => h.flow.state.phase === 'awaiting-accept',
+            'awaiting-accept',
+        );
+        // Parked on the AGREEMENT: neither may skip past it.
+        h.flow.authoriseTransfer();
+        h.flow.declineTransfer();
+        await new Promise((resolve) => setImmediate(resolve));
+        expect(h.flow.state.phase).toBe('awaiting-accept');
+
+        await h.flow.acceptContract();
+        await until(
+            () => h.flow.state.phase === 'awaiting-authorise',
+            'awaiting-authorise',
+        );
+        h.flow.authoriseTransfer();
+        // A double tap cannot submit twice, nor decline what it authorised.
+        h.flow.authoriseTransfer();
+        h.flow.declineTransfer();
+        await running;
+
+        expect(h.flow.state.phase).toBe('success');
+        expect(h.batches).toHaveLength(1);
+    });
+
+    it('refuses an agreement that expired while the lender sat on the authorisation', async () => {
+        const h = batchHarness();
+        const { running } = await toAuthorise(h);
+        h.clock.now = BASE_NOW + CONTRACT_TTL_MS + 1;
+        h.flow.authoriseTransfer();
+        await running;
+
+        expect(h.flow.state.failure).toEqual({
+            step: 'request',
+            reason: 'contract-expired',
+        });
+        expect(h.kycFetches).toBe(0);
+        expect(h.batches).toHaveLength(0);
+    });
+
+    it('still refuses an agreement that expired before the authorisation park', async () => {
+        const h = batchHarness();
+        const running = h.flow.start(BATCH_INPUT);
+        await until(
+            () => h.flow.state.phase === 'awaiting-accept',
+            'awaiting-accept',
+        );
+        h.clock.now = BASE_NOW + CONTRACT_TTL_MS + 1;
+        await h.flow.acceptContract();
+        await running;
+
+        expect(h.flow.state.failure).toEqual({
+            step: 'request',
+            reason: 'contract-expired',
+        });
+        expect(h.phases).not.toContain('awaiting-authorise');
+        expect(h.batches).toHaveLength(0);
+    });
+
+    it('resets out of the authorisation park to idle, at once, and drops the abandoned run', async () => {
+        const h = batchHarness();
+        const { running: abandoned } = await toAuthorise(h);
+
+        h.flow.reset();
+        expect(h.flow.isRunning).toBe(false);
+        expect(h.flow.state.phase).toBe('idle');
+        expect(h.flow.state.batched).toBe(false);
+
+        // A late authorise for the abandoned run goes nowhere.
+        h.flow.authoriseTransfer();
+        await abandoned;
+        expect(h.flow.state.phase).toBe('idle');
+        expect(h.kycFetches).toBe(0);
+        expect(h.batches).toHaveLength(0);
+        expect(h.phases).not.toContain('error');
+    });
+
+    it('accepts a new start in the SAME tick as a reset out of the authorisation park', async () => {
+        const h = batchHarness();
+        const { running: abandoned } = await toAuthorise(h);
+
+        h.flow.reset();
+        const second = h.flow.start(BATCH_INPUT);
+        await abandoned;
+        await until(
+            () => h.flow.state.phase === 'awaiting-accept',
+            'the second run parking',
+        );
+        await h.flow.acceptContract();
+        await until(
+            () => h.flow.state.phase === 'awaiting-authorise',
+            'the second run awaiting authorisation',
+        );
+        h.flow.authoriseTransfer();
+        await second;
+
+        expect(h.flow.state.phase).toBe('success');
+        expect(h.batches).toHaveLength(1);
+    });
+
+    it('drops a batch that lands after a reset rather than resurrecting the run', async () => {
+        let land: ((tx: WaitableTransaction) => void) | undefined;
+        const h = batchHarness({
+            depositBatch: (): Promise<WaitableTransaction> =>
+                new Promise<WaitableTransaction>((resolve) => {
+                    land = resolve;
+                }),
+        });
+        const { running } = await toAuthorise(h);
+        h.flow.authoriseTransfer();
+        await until(() => land !== undefined, 'the batch submitting');
+
+        h.flow.reset();
+        land?.({ wait: (): Promise<unknown> => Promise.resolve({}) });
+        await running;
+
+        expect(h.flow.state.phase).toBe('idle');
+        expect(h.phases).not.toContain('success');
+        expect(h.phases).not.toContain('request-confirm');
+    });
+
+    it('maps a BatchRevertedError to reverted, naming the contract error', async () => {
+        const thrown = new BatchRevertedError('ClearingIsPending');
+        const h = batchHarness({
+            depositBatch: (): Promise<WaitableTransaction> =>
+                Promise.reject(thrown),
+        });
+        await runAuthorising(h);
+
+        expect(h.flow.state.failure).toEqual({
+            step: 'request',
+            reason: 'reverted',
+            revertError: 'ClearingIsPending',
+            error: thrown,
+        });
+        expect(thrown).toBeInstanceOf(Error);
+        expect(thrown.name).toBe('BatchRevertedError');
+    });
+
+    it('maps a BatchRevertedError raised while waiting for the receipt the same way', async () => {
+        const h = batchHarness({
+            depositBatch: (): Promise<WaitableTransaction> =>
+                Promise.resolve({
+                    wait: (): Promise<unknown> =>
+                        Promise.reject(new BatchRevertedError('')),
+                }),
+        });
+        await runAuthorising(h);
+
+        expect(h.flow.state.failure).toMatchObject({
+            step: 'request',
+            reason: 'reverted',
+            revertError: '',
+        });
+    });
+
+    it('reports any other batch failure as failed, never as a cancellation', async () => {
+        const thrown = new Error('batch submission unavailable');
+        const h = batchHarness({
+            depositBatch: (): Promise<WaitableTransaction> =>
+                Promise.reject(thrown),
+        });
+        await runAuthorising(h);
+
+        expect(h.flow.state.failure).toEqual({
+            step: 'request',
+            reason: 'failed',
+            error: thrown,
+        });
+    });
+
+    it('reports a wallet rejection of the batch as a cancel', async () => {
+        const h = batchHarness({
+            depositBatch: (): Promise<WaitableTransaction> =>
+                Promise.reject(rejection()),
+        });
+        await runAuthorising(h);
+
+        expect(h.flow.state.failure).toEqual({
+            step: 'request',
+            reason: 'cancelled',
+        });
+    });
+
+    it('still decodes a protocol revert the batch port throws as a plain error', async () => {
+        const h = batchHarness({
+            depositBatch: (): Promise<WaitableTransaction> =>
+                Promise.reject(
+                    revertWith(MANAGER.getSighash('LendingPoolIsStopped')),
+                ),
+        });
+        await runAuthorising(h);
+
+        expect(h.flow.state.failure).toMatchObject({
+            step: 'request',
+            reason: 'reverted',
+            revertError: 'LendingPoolIsStopped',
+        });
+    });
+
+    it('reports a KYC failure on the batch path as failed, with nothing sent', async () => {
+        const thrown = new Error('Declined');
+        const h = batchHarness({
+            getKycSignature: (): Promise<KycSignature> =>
+                Promise.reject(thrown),
+        });
+        await runAuthorising(h);
+
+        expect(h.flow.state.failure).toEqual({
+            step: 'request',
+            reason: 'failed',
+            error: thrown,
+        });
+        expect(h.batches).toHaveLength(0);
+    });
+
+    it('fails rather than rejects when the KYC signature cannot be encoded', async () => {
+        const h = batchHarness({
+            getKycSignature: (): Promise<KycSignature> =>
+                Promise.resolve({ signature: 'not-hex', blockExpiration: 1 }),
+        });
+        await expect(runAuthorising(h)).resolves.toBeUndefined();
+
+        expect(h.flow.state.failure?.step).toBe('request');
+        expect(h.flow.state.failure?.reason).toBe('failed');
+        expect(h.batches).toHaveLength(0);
+    });
+
+    it('counts a batched run as three steps from the first state, and never enters approve', async () => {
+        const h = batchHarness();
+        await runAuthorising(h);
+
+        expect(h.phases).not.toContain('approve');
+        // Every published state after idle is a three-step badge.
+        expect(
+            h.states.filter((s) => s.phase !== 'idle').map((s) => s.stepTotal),
+        ).toEqual(
+            h.states.filter((s) => s.phase !== 'idle').map(() => 3),
+        );
+        expect(
+            h.states.find((s) => s.phase === 'generating-sign'),
+        ).toEqual({ phase: 'generating-sign', stepIndex: 1, stepTotal: 3 });
+        expect(
+            h.states.find((s) => s.phase === 'awaiting-authorise'),
+        ).toEqual({ phase: 'awaiting-authorise', stepIndex: 3, stepTotal: 3 });
+        expect(h.flow.state.stepIndex).toBe(3);
+        expect(h.flow.state.approvalRequired).toBe(false);
+    });
+
+    it('keeps the two-transaction path when no depositBatch port is supplied', async () => {
+        const h = makeHarness(
+            {
+                readAllowance: (): Promise<BigNumber> =>
+                    Promise.resolve(BigNumber.from(0)),
+            },
+            { stableAsset: B_STABLE },
+        );
+        await runAccepting(h);
+
+        expect(h.flow.state.phase).toBe('success');
+        expect(h.flow.state.batched).toBe(false);
+        expect(h.flow.state.approvalRequired).toBe(true);
+        expect(h.approveCalls).toHaveLength(1);
+        expect(h.depositCalls).toHaveLength(1);
+        expect(h.phases).not.toContain('awaiting-authorise');
+    });
+
+    it('sends one plain deposit, not a batch, when the allowance already covers the amount', async () => {
+        const h = batchHarness({
+            readAllowance: (): Promise<BigNumber> =>
+                Promise.resolve(constants.MaxUint256),
+        });
+        await runAccepting(h, BATCH_INPUT);
+
+        expect(h.flow.state.phase).toBe('success');
+        expect(h.flow.state.batched).toBe(false);
+        expect(h.flow.state.stepTotal).toBe(3);
+        expect(h.batches).toHaveLength(0);
+        expect(h.approveCalls).toHaveLength(0);
+        expect(h.depositCalls).toHaveLength(1);
+        expect(h.phases).not.toContain('awaiting-authorise');
+    });
+
+    it('never batches without a known stable token — it falls back rather than guess', async () => {
+        const h = batchHarness({}, {});
+        await runAccepting(h, BATCH_INPUT);
+
+        expect(h.flow.state.phase).toBe('success');
+        expect(h.flow.state.batched).toBe(false);
+        expect(h.batches).toHaveLength(0);
+        expect(h.approveCalls).toHaveLength(1);
+        expect(h.depositCalls).toHaveLength(1);
+    });
+
+    it('batches when the allowance read fails, since an approval is then assumed', async () => {
+        const h = batchHarness({
+            readAllowance: (): Promise<BigNumber> =>
+                Promise.reject(new Error('rpc down')),
+        });
+        await runAuthorising(h);
+
+        expect(h.flow.state.batched).toBe(true);
+        expect(h.batches).toHaveLength(1);
+    });
+
+    it('calls a depositBatch method with its own `this`', async () => {
+        const h = batchHarness();
+        // A consumer whose submitter is a class instance: the port is a
+        // method that reads its own state.
+        const ports = {
+            ...h.ports,
+            sent: 0,
+            depositBatch(this: { sent: number }): Promise<WaitableTransaction> {
+                this.sent += 1;
+                return Promise.resolve({
+                    wait: (): Promise<unknown> => Promise.resolve({}),
+                });
+            },
+        };
+        const flow = new DepositFlow(ports, { stableAsset: B_STABLE });
+        const running = flow.start(BATCH_INPUT);
+        await until(
+            () => flow.state.phase === 'awaiting-accept',
+            'awaiting-accept',
+        );
+        await flow.acceptContract();
+        await until(
+            () => flow.state.phase === 'awaiting-authorise',
+            'awaiting-authorise',
+        );
+        flow.authoriseTransfer();
+        await running;
+
+        expect(flow.state.phase).toBe('success');
+        expect(ports.sent).toBe(1);
     });
 });

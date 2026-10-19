@@ -355,19 +355,20 @@ the money path, so one of them being subtly wrong was not a hypothetical cost.
 
 ### The deposit pipeline
 
-| Phase              | Step       | What is happening                            |
-| ------------------ | ---------- | -------------------------------------------- |
-| `idle`             | —          | Nothing started, or `reset()` was called     |
-| `generating-sign`  | `generate` | Lender signs the auth message                |
-| `generating-fetch` | `generate` | `POST /contract/generate`                    |
-| `awaiting-accept`  | `confirm`  | Agreement on screen; the run is PARKED       |
-| `accepting-sign`   | `confirm`  | Lender signs the agreement                   |
-| `approve`          | `approve`  | Exact-amount ERC-20 approve, and its receipt |
-| `request-sign`     | `request`  | KYC signature, then the deposit call         |
-| `request-confirm`  | `request`  | Waiting for the receipt                      |
-| `success`          | `request`  | Terminal                                     |
-| `declined`         | `confirm`  | Terminal — the lender backed out             |
-| `error`            | (failing)  | Terminal — read `state.failure`              |
+| Phase                | Step       | What is happening                                   |
+| -------------------- | ---------- | --------------------------------------------------- |
+| `idle`               | —          | Nothing started, or `reset()` was called            |
+| `generating-sign`    | `generate` | Lender signs the auth message                       |
+| `generating-fetch`   | `generate` | `POST /contract/generate`                           |
+| `awaiting-accept`    | `confirm`  | Agreement on screen; the run is PARKED              |
+| `accepting-sign`     | `confirm`  | Lender signs the agreement                          |
+| `approve`            | `approve`  | Exact-amount ERC-20 approve, and its receipt        |
+| `awaiting-authorise` | `request`  | Batch path only; the run is PARKED                  |
+| `request-sign`       | `request`  | KYC signature, then the deposit call (or the batch) |
+| `request-confirm`    | `request`  | Waiting for the receipt                             |
+| `success`            | `request`  | Terminal                                            |
+| `declined`           | `confirm`  | Terminal — the lender backed out                    |
+| `error`              | (failing)  | Terminal — read `state.failure`                     |
 
 The order is reproduced from the web pipeline, and each position is
 load-bearing:
@@ -389,6 +390,56 @@ load-bearing:
   the idling happens — the lender has just spent as long as they wanted
   reading. An expired agreement fails with `contract-expired` instead of being
   broadcast as a transaction that cannot succeed.
+
+### The atomic batch path (2.8.0)
+
+A consumer that can submit several calls as one atomic transaction supplies the
+optional `depositBatch(calls: BatchCall[])` port (`BatchCall = { to, data }`).
+The APP knows how to send a batch; the SDK owns the order, the encoding and the
+codes. The path is chosen at the allowance pre-check:
+
+- **batch iff `approvalRequired && ports.depositBatch && stableAsset`** — a
+  short (or unreadable) allowance, the port, and a known token. Otherwise the
+  run is byte-for-byte the two-transaction pipeline: `approve` then `deposit`,
+  or `deposit` alone when the allowance covers it.
+- `stableAsset` is `DepositFlowOptions.stableAsset`, which
+  `kasu.flows.deposit()` fills from the chain config's `stableAsset.address`.
+  Without one the flow does NOT batch — it never guesses a token.
+
+The SDK encodes both calls itself, from the same `input.amount`:
+
+0. `stableAsset.approve(spender, amount)` — EXACT, never `MaxUint256`;
+1. `spender.requestDepositWithKyc(pool, tranche, amount, '0x',
+   fixedTermConfigId, depositData, { blockExpiration, signature })` — exactly
+   what the default `deposit` port sends, value 0.
+
+On this path neither the `approve` nor the `deposit` port is called.
+
+Order after the accept and the TTL check: PARK on `awaiting-authorise` until
+`authoriseTransfer()` (or `declineTransfer()` → `error`, `{ step: 'request',
+reason: 'cancelled' }`) → re-check the TTL → `request-sign` (KYC signature,
+then `depositBatch`) → `request-confirm` (`wait()`) → `success`.
+
+- **Why the park.** The batch path has no wallet prompt per call, so the flow
+  parks for an explicit authorisation before any money moves. Call
+  `authoriseTransfer()` only from the lender's own action. The park has
+  `awaiting-accept`'s mechanics: `reset()` unparks it at once, the run token
+  drops the abandoned run's late results, and authorise/decline are no-ops
+  when nothing is parked (a double tap cannot submit twice).
+- **The TTL is checked again after it**, because the lender can idle there too.
+- **The KYC signature is fetched only AFTER the authorisation.** It carries a
+  block expiration of its own; an authorisation left open must not spend it.
+- **Badge.** `state.batched` is set at the allowance pre-check, so it is right
+  from the first state. A batched run never enters `approve`, and
+  `approvalRequired` is `false` on it — the approval rides inside the request
+  step — so `stepTotal` is 3 and every existing badge consumer counts it right
+  without reading `batched`.
+- **Failures.** A port that KNOWS the batch reverts throws the exported
+  `BatchRevertedError(revertError)` → `{ step: 'request', reason: 'reverted',
+  revertError, error }` (`''` when it reverts for a reason nobody named).
+  Anything else goes through the request step's existing classification — a
+  wallet rejection is `cancelled`, a decodable revert is `reverted`, everything
+  else `failed` — so a non-wallet throw is never a cancellation.
 
 ### Failure codes
 
@@ -478,20 +529,22 @@ by the user", "cancelled by the wallet".
 
 ### Ports
 
-| Port               | Default                        | Who owns it                    |
-| ------------------ | ------------------------------ | ------------------------------ |
-| `signMessage`      | none                           | The app's wallet               |
-| `generateContract` | none                           | The app's proxy or the service |
-| `getKycSignature`  | none                           | The app's own backend          |
-| `buildKycParams`   | `kasu.deposits.buildKycParams` | SDK                            |
-| `readAllowance`    | ERC-20 `allowance`             | SDK                            |
-| `approve`          | ERC-20 `approve`               | SDK                            |
-| `deposit`          | `kasu.deposits.deposit`        | SDK                            |
-| `now`              | `Date.now`                     | SDK (injected for tests)       |
+| Port               | Default                        | Who owns it                      |
+| ------------------ | ------------------------------ | -------------------------------- |
+| `signMessage`      | none                           | The app's wallet                 |
+| `generateContract` | none                           | The app's proxy or the service   |
+| `getKycSignature`  | none                           | The app's own backend            |
+| `buildKycParams`   | `kasu.deposits.buildKycParams` | SDK                              |
+| `readAllowance`    | ERC-20 `allowance`             | SDK                              |
+| `approve`          | ERC-20 `approve`               | SDK                              |
+| `deposit`          | `kasu.deposits.deposit`        | SDK                              |
+| `depositBatch`     | none — optional                | The app's atomic-batch submitter |
+| `now`              | `Date.now`                     | SDK (injected for tests)         |
 
 The three with no default all reach the application's own backend or wallet.
 They will never gain one: this is a public package, and a URL or a key does not
-belong in it.
+belong in it. `depositBatch` has no default for the same reason, and is
+optional: leaving it out is the two-transaction pipeline.
 
 Each default is applied PER KEY with `??`, never by spreading the overrides
 over them. `{ ...defaults, ...ports }` lets an explicitly `undefined` value
@@ -500,6 +553,9 @@ delete the default it was meant to keep, and
 consumer writes a conditional override — kasu-ui writes precisely that. The
 symptom was `ports.approve is not a function`, and, more quietly,
 `readAllowance: undefined` forcing an approval on every run.
+
+`stableAsset` (`DepositFlowOptions`) is filled the same way, from the chain
+config's `stableAsset.address`, and with the same per-key `??`.
 
 `spender` is NOT an input the consumer supplies. `kasu.flows.deposit()`
 defaults it to this chain's `LendingPoolManager` — the only contract the
@@ -541,6 +597,9 @@ await flow.start({
 });
 // …the run parks on `awaiting-accept`; the UI shows `flow.state.contract`
 await flow.acceptContract(); // or flow.declineContract()
+// Batch path only (`depositBatch` supplied, allowance short): the run parks
+// again on `awaiting-authorise` until the lender confirms the transfer.
+flow.authoriseTransfer(); // or flow.declineTransfer()
 ```
 
 `reset()` is safe mid-flight AND immediate: it abandons the run, drops its
