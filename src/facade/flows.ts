@@ -75,6 +75,12 @@ export class FlowsFacade {
          * contract.
          */
         private readonly _spender: string,
+        /**
+         * This chain's stable token address — the target of the batch path's
+         * approve. `undefined` for a hand-built config without `stableAsset`,
+         * in which case a run never batches: it does not guess a token.
+         */
+        private readonly _stableAsset?: string,
     ) {}
 
     /**
@@ -88,6 +94,10 @@ export class FlowsFacade {
      * delete the default it was meant to keep, and
      * `approve: sponsoredGas ? sponsoredApprove : undefined` is exactly how a
      * consumer writes a conditional override.
+     *
+     * `depositBatch` has NO default: how several calls become one atomic
+     * transaction is the application's business. Supplying it lets a run
+     * whose allowance is short approve and deposit in one batch.
      */
     deposit(
         ports: DepositFlowPortOverrides,
@@ -122,6 +132,7 @@ export class FlowsFacade {
                     ports.deposit ??
                     ((params): Promise<WaitableTransaction> =>
                         this._deposits.deposit(params)),
+                depositBatch: ports.depositBatch,
                 now: ports.now,
             },
             {
@@ -129,6 +140,7 @@ export class FlowsFacade {
                 // Per key here too, for the same reason the ports are: an
                 // explicit `spender: undefined` must not delete the default.
                 spender: opts?.spender ?? this._spender,
+                stableAsset: opts?.stableAsset ?? this._stableAsset,
             },
         );
     }

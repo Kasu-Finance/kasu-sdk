@@ -11,6 +11,7 @@ import { BigNumber, constants, providers, utils } from 'ethers';
 import { GenerateContractResponse } from '../domain/loan-contract';
 import { DepositFlow, WithdrawFlow } from '../flows';
 import type {
+    BatchCall,
     DepositFlowInput,
     GenerateContractRequest,
     KycSignature,
@@ -348,6 +349,101 @@ describe('FlowsFacade', () => {
         const failure = flow.state.failure;
         const error = failure && 'error' in failure ? failure.error : undefined;
         expect((error as Error).message).toBe(READ_ONLY_MESSAGE);
+    });
+
+    describe('the batch path', () => {
+        const BATCH_INPUT: DepositFlowInput = {
+            ...INPUT,
+            poolId: '0xabcdef0000000000000000000000000000000002',
+            trancheId: '0xabcdef0000000000000000000000000000000003',
+            // The facade's default spender: this chain's LendingPoolManager.
+            spender: undefined,
+        };
+
+        /** Start, accept, authorise, finish. */
+        async function runAuthorising(flow: DepositFlow): Promise<void> {
+            const running = flow.start(BATCH_INPUT);
+            for (let i = 0; i < 500; i += 1) {
+                if (flow.state.phase === 'awaiting-accept') break;
+                await new Promise((resolve) => setImmediate(resolve));
+            }
+            await flow.acceptContract();
+            for (let i = 0; i < 500; i += 1) {
+                if (flow.state.phase === 'awaiting-authorise') break;
+                await new Promise((resolve) => setImmediate(resolve));
+            }
+            flow.authoriseTransfer();
+            await running;
+        }
+
+        it('defaults the batch’s token to this chain’s stable asset and its spender to the LendingPoolManager', async () => {
+            const kasu = readOnly();
+            const sent: BatchCall[][] = [];
+            const flow = kasu.flows.deposit({
+                ...appPorts(),
+                readAllowance: (): Promise<BigNumber> =>
+                    Promise.resolve(BigNumber.from(0)),
+                depositBatch: (
+                    calls: BatchCall[],
+                ): Promise<WaitableTransaction> => {
+                    sent.push(calls);
+                    return Promise.resolve(waitable());
+                },
+            });
+            await runAuthorising(flow);
+
+            expect(flow.state.phase).toBe('success');
+            expect(flow.state.batched).toBe(true);
+            expect(sent).toHaveLength(1);
+            const [approve, request] = sent[0];
+            expect(approve.to).toBe(kasu.chainConfig.stableAsset.address);
+            expect(request.to).toBe(
+                kasu.chainConfig.contracts.LendingPoolManager,
+            );
+        });
+
+        it('keeps the stable-asset default when the option is explicitly undefined', async () => {
+            const kasu = readOnly();
+            const sent: BatchCall[][] = [];
+            const flow = kasu.flows.deposit(
+                {
+                    ...appPorts(),
+                    readAllowance: (): Promise<BigNumber> =>
+                        Promise.resolve(BigNumber.from(0)),
+                    depositBatch: (
+                        calls: BatchCall[],
+                    ): Promise<WaitableTransaction> => {
+                        sent.push(calls);
+                        return Promise.resolve(waitable());
+                    },
+                },
+                { stableAsset: undefined },
+            );
+            await runAuthorising(flow);
+
+            expect(sent[0]?.[0].to).toBe(kasu.chainConfig.stableAsset.address);
+        });
+
+        it('passes no batch port when the consumer supplies none — the two-transaction path', async () => {
+            const kasu = readOnly();
+            let approved = 0;
+            const flow = kasu.flows.deposit({
+                ...appPorts(),
+                readAllowance: (): Promise<BigNumber> =>
+                    Promise.resolve(BigNumber.from(0)),
+                approve: (): Promise<WaitableTransaction> => {
+                    approved += 1;
+                    return Promise.resolve(waitable());
+                },
+                deposit: (): Promise<WaitableTransaction> =>
+                    Promise.resolve(waitable()),
+            });
+            await runAccepting(flow, BATCH_INPUT);
+
+            expect(flow.state.phase).toBe('success');
+            expect(flow.state.batched).toBe(false);
+            expect(approved).toBe(1);
+        });
     });
 
     it('exposes the same read-only refusal the deposits facade uses', () => {

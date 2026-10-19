@@ -98,6 +98,7 @@ export class Kasu {
             () => erc20Of(chainConfig, signerOrProvider),
             isReadOnly,
             chainConfig.contracts.LendingPoolManager,
+            stableAssetOf(chainConfig)?.address,
         );
     }
 

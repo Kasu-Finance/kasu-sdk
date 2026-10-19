@@ -15,6 +15,7 @@ export { FlowStore } from './observable';
 export type { WaitableTransaction } from './observable';
 
 export {
+    BatchRevertedError,
     CONTRACT_TTL_MS,
     DepositFlow,
     INVALID_ACCEPTANCE_SIGNATURE_MESSAGE,
@@ -22,6 +23,7 @@ export {
     NO_SPENDER_MESSAGE,
 } from './deposit-flow';
 export type {
+    BatchCall,
     ContractMessageRequest,
     DepositFailure,
     DepositFlowInput,
