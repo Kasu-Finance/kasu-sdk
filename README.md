@@ -119,6 +119,7 @@ You can also pass a whole `ChainConfigEntry` instead of a chain key.
 | `kasu.deposits`   | `deposit()`, `withdraw()`, `withdrawMax()`, `buildKycParams()`, `isClearingPending()`                                   | Submit transactions             |
 | `kasu.portfolio`  | `getPositions()`, `getTransactionHistory()`, `getRequestStates()`                                                       | Lender balances, yield, history |
 | `kasu.flows`      | `deposit(ports)`, `withdraw(ports?)`                                                                                    | Headless transaction pipelines  |
+| `kasu.calls`      | `requestWithdrawal(params)`, `cancelDepositRequest(poolId, dNftId)`, `cancelWithdrawalRequest(poolId, wNftId)`, `withdrawAtExpiry(poolId, lockId)` | Encoded calls for a sponsored relay (read, then encode — never sends) |
 
 On the instance itself: `kasu.connect(signer)`, `kasu.isReadOnly`,
 `kasu.provider`, `kasu.chainConfig`, `kasu.isLiteDeployment`, and
@@ -431,7 +432,56 @@ const checked = kasu.flows.withdraw({
 ```
 
 `'max'` is a code you pass, not a balance you read: it routes to the all-shares
-call, which resolves the balance on chain at execution.
+request, whose share count the SDK reads (`balanceOf`) at submission instead of
+converting an asset figure — so no dust is stranded.
+
+### Sponsored withdraw and cancel (2.10.0)
+
+`kasu.calls` encodes the single `LendingPoolManager` calls a gas-sponsoring
+relay carries. Each returns `{ kind, call }`: post `kind` and `[call]` exactly
+as given — the relay judges the call by its kind, so never map one yourself.
+
+```ts
+import { submitSponsoredCall } from '@kasufinance/kasu-sdk';
+
+const ports = {
+    post: ({ kind, call }) => postToMyRelay({ kind, calls: [call] }), // → { transactionId }
+    getStatus: (id) => readMyRelayStatus(id), // normalised BatchStatusRead
+    getReceipt: (hash) => provider.waitForTransaction(hash, 1, 120_000),
+    now: Date.now,
+    sleep: (ms) => new Promise((r) => setTimeout(r, ms)),
+};
+
+// Withdraw: the flow encodes the call (shares from convertToShares, or the
+// whole balanceOf for 'max') and submits it through your port.
+const flow = kasu.flows.withdraw({
+    submitCall: (call) =>
+        submitSponsoredCall({ call, expect: { sender: lender } }, ports),
+});
+flow.state.sponsored; // true, from the first state
+await flow.start({ poolId, trancheId, amount: 'max', userAddress: lender });
+
+// Cancel: encode, then submit the same way.
+const cancel = kasu.calls.cancelDepositRequest(poolId, dNftId);
+const submission = await submitSponsoredCall(
+    { call: cancel, expect: { sender: lender } },
+    ports,
+);
+await submission.wait(); // resolves only when the lender's operation executed
+```
+
+- `submitSponsoredCall` is `submitBatch` for one call: the same polling policy
+  and outcome table, with `proveUserOperationInReceipt` as the proof — the
+  lender's own operation, from the EntryPoint, with `success` set. A reverted
+  operation is `BatchRevertedError`; anything unproven is `BatchPendingError`.
+- On the sponsored path a withdrawal's failure can also be `{ reason:
+  'reverted', revertError }` and `{ reason: 'pending' | 'already-submitted' }`.
+  Any throw from `submitCall` or `wait()` the SDK does not recognise is
+  `pending` — it may have left, so never tell the lender to try again. A
+  throw while encoding (a share read, an empty position) is `failed`: nothing
+  was sent.
+- `cancelDeadline(requestState, nextEpochStart, nowSeconds)` is the "cancel
+  until" instant for a pending request (the next cycle close), or `null`.
 
 ## Low-level `KasuSdk`
 
