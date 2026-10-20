@@ -95,11 +95,12 @@ export interface DepositBatchExpectation {
     /** The run's amount, in BASE units — approved and deposited, exactly. */
     amount: BigNumberish;
     /**
-     * The run's fixed-term config (`'0'` = variable). Optional for parity with
-     * a consumer that does not track it; supply it, because a batch that
-     * locks the deposit into another term is a different deposit.
+     * The run's fixed-term config (`'0'` = variable). REQUIRED: a batch that
+     * locks the deposit into another term — or unlocks a fixed-term run into
+     * variable — is a different deposit, and `DepositFlow` always carries the
+     * value, so there is no consumer that genuinely lacks it.
      */
-    fixedTermConfigId?: BigNumberish;
+    fixedTermConfigId: BigNumberish;
 }
 
 export interface ValidatedDepositBatch {
@@ -194,9 +195,10 @@ function decodeCanonical(
  * 1. `spender.requestDepositWithKyc(poolId, trancheId, A, '0x', fixedTermConfigId, …)`;
  *
  * with `A` the run's own amount in BOTH — never more, never unlimited (house
- * rule: exact-amount approvals) — each call the canonical ABI encoding of its
- * arguments, and no swap data. The deposit data and KYC signature are not
- * pinned here: they are signatures the contract and the backend verify.
+ * rule: exact-amount approvals) — the run's own fixed-term config, each call
+ * the canonical ABI encoding of its arguments, and no swap data. The deposit
+ * data and KYC signature are not pinned here: they are signatures the
+ * contract and the backend verify.
  *
  * This is the client's half; a relaying backend checks the same shape again.
  */
@@ -246,7 +248,6 @@ export function validateDepositBatchCalls(
     if (!sameAddress(tranche, expected.trancheId)) mismatch('deposit-tranche');
     if (swapData !== '0x') mismatch('swap-data');
     if (
-        expected.fixedTermConfigId !== undefined &&
         !sameAmount(
             fixedTermConfigId,
             BigNumber.from(expected.fixedTermConfigId),
@@ -318,6 +319,13 @@ export type DepositProof =
               | 'malformed-receipt';
       };
 
+/** A log's first topic, lowercased; `undefined` for a log without a topic array. */
+function topicOf(log: ReceiptLog): string | undefined {
+    return Array.isArray(log.topics as unknown)
+        ? log.topics[0]?.toLowerCase()
+        : undefined;
+}
+
 function parse(
     iface: utils.Interface,
     log: ReceiptLog,
@@ -366,10 +374,6 @@ export function proveDepositInReceipt(
     const wantedHash = expected.userOperationHash?.toLowerCase() ?? null;
     const fromEntryPoint = (log: ReceiptLog): boolean =>
         sameAddress(log.address, entryPoint);
-    const topicOf = (log: ReceiptLog): string | undefined =>
-        Array.isArray(log.topics as unknown)
-            ? log.topics[0]?.toLowerCase()
-            : undefined;
 
     let opIndex = -1;
     let success = false;
@@ -445,9 +449,9 @@ function revertErrorIn(
 ): string {
     for (const log of window) {
         if (!fromEntryPoint(log)) continue;
-        if (log.topics[0]?.toLowerCase() !== USER_OPERATION_REVERT_REASON) {
-            continue;
-        }
+        // Through the same guard as the main loop: a malformed log beside the
+        // revert reason must not turn a DEFINITIVE revert into "pending".
+        if (topicOf(log) !== USER_OPERATION_REVERT_REASON) continue;
         const decoded = parse(ENTRY_POINT_EVENTS, log);
         if (decoded?.name !== 'UserOperationRevertReason') continue;
         if (!sameAddress(decoded.args.sender, lender)) continue;

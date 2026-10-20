@@ -57,6 +57,11 @@ export type BatchSubmissionOutcome = 'failed' | 'pending' | 'already-submitted';
  * The message is fixed and names no party: the wallet-error classifier reads a
  * thrown error's text for a USER rejection, and a relay outage worded "…wallet
  * refused…" must never reach the lender as something they did.
+ *
+ * `outcome` has NO default. `failed` is the one outcome that invites a second
+ * deposit, so a port author has to spell it out — a `throw new
+ * BatchSubmissionError(code)` written in a catch block after the POST left
+ * must not quietly become "try again".
  */
 export class BatchSubmissionError extends Error {
     readonly code: string;
@@ -64,7 +69,7 @@ export class BatchSubmissionError extends Error {
 
     constructor(
         code: string,
-        outcome: BatchSubmissionOutcome = 'failed',
+        outcome: BatchSubmissionOutcome,
         options?: { cause?: unknown },
     ) {
         super(`Batch submission ${outcome} (${code})`);

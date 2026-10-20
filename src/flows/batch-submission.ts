@@ -164,7 +164,7 @@ function resolvePolicy(
  * | polling runs out of time                             | `BatchPendingError('status_timeout')`    |
  * | receipt unreadable                                   | `BatchPendingError('receipt_unavailable')` |
  * | receipt: user operation reverted                     | `BatchRevertedError(revertError)`        |
- * | receipt: this deposit not shown                      | `BatchPendingError('deposit_unproven')`  |
+ * | receipt: this deposit not shown                      | `BatchPendingError('deposit_unproven:<reason>')` |
  * | receipt: this lender's deposit, tranche and amount   | resolves `ProvenBatch`                   |
  *
  * Nothing on this path ever produces a `failed` outcome: by the time a batch
@@ -284,8 +284,13 @@ async function settle<R extends ReceiptLike>(
     }
     if (proof.kind === 'reverted')
         throw new BatchRevertedError(proof.revertError);
-    if (proof.kind === 'unproven')
-        throw new BatchPendingError('deposit_unproven');
+    if (proof.kind === 'unproven') {
+        // The proof's reason rides in the code: "no-user-operation" (the hash
+        // is not this lender's operation at all) and "no-deposit-requested"
+        // (the operation ran and shows no deposit) are the two things an
+        // operator reading the alert needs to tell apart first.
+        throw new BatchPendingError(`deposit_unproven:${proof.reason}`);
+    }
     return { proof, receipt, txHash: mined.txHash };
 }
 

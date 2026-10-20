@@ -269,9 +269,11 @@ they were duplicated across the applications, and the copies drifted.
    belongs to each application, where the design system and the visitor's
    language are.
 
-   Exactly two kinds of string are exempt. `getTrancheDisplayName` (below) is
-   here precisely so it CANNOT drift. And `loan-contract.ts` builds **protocol
-   strings** — see below.
+   Exactly three kinds of string are exempt. `getTrancheDisplayName` (below) is
+   here precisely so it CANNOT drift. `loan-contract.ts` builds **protocol
+   strings** — see below. And `partners.ts` holds each partner's `region`,
+   because the word a lender signs in the loan-agreement message must be the
+   word every surface shows — a protocol string in all but name.
 2. **Pure.** No network, no clock, no environment. Anything with I/O goes in
    `src/facade/` — `fetchUnusedPoolIds` is the example.
 

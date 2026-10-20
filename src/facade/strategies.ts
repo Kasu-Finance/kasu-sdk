@@ -70,6 +70,12 @@ export class StrategiesFacade {
      * Matched on the chain pool id, then on its metadata id, case-
      * insensitively. The record is returned as the service maps it; its
      * numeric fields are CMS-authored, so read them defensively.
+     *
+     * The service filters `otherKASUPools` through the CURRENT chain's
+     * subgraph with the CMS record's (Base-keyed) ids, so on an XDC
+     * deployment every profile lists no pools and this resolves `null` —
+     * the same answer kasu-ui's own lookup gives there today. The metadata
+     * candidate becomes live once the service resolves the mapping.
      */
     async getOriginator(
         poolId: string,
@@ -168,13 +174,12 @@ export class StrategiesFacade {
     calculateDepositLimits(tranche: StrategyTranche): DepositLimits {
         const raw = tranche._raw;
         const min =
-            parseFloat(raw.minimumDeposit) < 1
-                ? '1'
-                : raw.minimumDeposit;
+            parseFloat(raw.minimumDeposit) < 1 ? '1' : raw.minimumDeposit;
 
-        const max = parseFloat(raw.maximumDeposit) > parseFloat(raw.poolCapacity)
-            ? raw.poolCapacity
-            : raw.maximumDeposit;
+        const max =
+            parseFloat(raw.maximumDeposit) > parseFloat(raw.poolCapacity)
+                ? raw.poolCapacity
+                : raw.maximumDeposit;
 
         return {
             min,

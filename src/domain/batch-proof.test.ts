@@ -124,24 +124,28 @@ describe('validateDepositBatchCalls', () => {
         ).not.toThrow();
     });
 
-    it('does not require fixedTermConfigId, but pins it when given', () => {
-        const calls = [
+    it('pins fixedTermConfigId both ways: another lock, or a lock on a variable run', () => {
+        const locked = [
             approveCall(),
             depositCall(AMOUNT, { fixedTermConfigId: 2 }),
         ];
-        const { fixedTermConfigId: _omit, ...withoutTerm } = EXPECTED_BATCH;
         expect(() =>
-            validateDepositBatchCalls(calls, withoutTerm),
-        ).not.toThrow();
-        expect(() =>
-            validateDepositBatchCalls(calls, {
+            validateDepositBatchCalls(locked, {
                 ...EXPECTED_BATCH,
                 fixedTermConfigId: 2,
             }),
         ).not.toThrow();
-        expect(() => validateDepositBatchCalls(calls, EXPECTED_BATCH)).toThrow(
+        // A variable-rate run ('0') must not sign a batch that locks it…
+        expect(() => validateDepositBatchCalls(locked, EXPECTED_BATCH)).toThrow(
             /fixed-term-config/,
         );
+        // …and a fixed-term run must not sign a batch that unlocks it.
+        expect(() =>
+            validateDepositBatchCalls([approveCall(), depositCall()], {
+                ...EXPECTED_BATCH,
+                fixedTermConfigId: '2',
+            }),
+        ).toThrow(/fixed-term-config/);
     });
 
     const approveData = approveCall().data;
@@ -457,6 +461,32 @@ describe('proveDepositInReceipt', () => {
             EXPECTED,
         );
         expect(proof).toEqual({ kind: 'reverted', revertError: '' });
+    });
+
+    it('a malformed log beside the revert reason does not turn a revert into unproven', () => {
+        const proof = proveDepositInReceipt(
+            receiptOf([
+                beforeExecutionLog(),
+                // An EntryPoint log with no topic array at all.
+                {
+                    address: ENTRY_POINT_V07,
+                    topics: undefined as unknown as string[],
+                    data: '0x',
+                },
+                revertReasonLog(
+                    protocolRevert(
+                        'error ClearingIsPending()',
+                        'ClearingIsPending',
+                    ),
+                ),
+                userOperationEventLog({ success: false }),
+            ]),
+            EXPECTED,
+        );
+        expect(proof).toEqual({
+            kind: 'reverted',
+            revertError: 'ClearingIsPending',
+        });
     });
 
     it('names the protocol error from UserOperationRevertReason when it decodes', () => {

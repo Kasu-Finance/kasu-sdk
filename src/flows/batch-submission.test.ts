@@ -407,7 +407,14 @@ describe('submitBatch — wait', () => {
             );
             const thrown = await outcomeOf(submission.wait());
             expect(thrown).toBeInstanceOf(BatchPendingError);
-            expect((thrown as BatchPendingError).code).toBe('deposit_unproven');
+            // The code carries the proof's own reason, so an operator can
+            // tell "the hash was not our operation" from "our operation ran
+            // and shows no deposit".
+            expect((thrown as BatchPendingError).code).toBe(
+                expect_.lender === TRANCHE
+                    ? 'deposit_unproven:no-user-operation'
+                    : 'deposit_unproven:no-deposit-requested',
+            );
         }
     });
 
@@ -539,7 +546,9 @@ describe('batch errors', () => {
             true,
         );
         expect(
-            isDefinitivelyNotSubmitted(new BatchSubmissionError('no_session')),
+            isDefinitivelyNotSubmitted(
+                new BatchSubmissionError('no_session', 'failed'),
+            ),
         ).toBe(true);
         expect(isDefinitivelyNotSubmitted(new BatchPendingError('x'))).toBe(
             false,

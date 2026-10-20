@@ -48,8 +48,12 @@ sponsored-batch submission that an atomic deposit needs.
   `{ poolLossRate, firstLossCapital }` (each `number | null`; an unauthored
   CMS value is `null`, never `0`) and
   **`kasu.strategies.getOriginator(poolId)`** → the originator's
-  `PoolDelegateProfileAndHistory`. Both resolve a pool through the chain's
-  `poolMetadataMapping`.
+  `PoolDelegateProfileAndHistory`. `getRiskPerformance` resolves a pool
+  through the chain's `poolMetadataMapping`; `getOriginator` matches the ids
+  `DataService.getPoolDelegateProfileAndHistory` lists, which that service
+  filters through the CURRENT chain's subgraph, so on the XDC deployments
+  (whose CMS records are keyed by Base ids) it resolves `null` until the
+  service applies the mapping.
 
 ### Changed
 
