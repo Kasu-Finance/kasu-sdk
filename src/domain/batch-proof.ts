@@ -368,54 +368,19 @@ export function proveDepositInReceipt(
     if (!Array.isArray(receipt.logs as unknown)) {
         return { kind: 'unproven', reason: 'malformed-receipt' };
     }
-    const logs: readonly ReceiptLog[] = receipt.logs;
-    const entryPoint = expected.entryPoint ?? ENTRY_POINT_V07;
     const amount = BigNumber.from(expected.amount);
-    const wantedHash = expected.userOperationHash?.toLowerCase() ?? null;
-    const fromEntryPoint = (log: ReceiptLog): boolean =>
-        sameAddress(log.address, entryPoint);
+    const op = locateUserOperation(receipt.logs, {
+        sender: expected.lender,
+        userOperationHash: expected.userOperationHash,
+        entryPoint: expected.entryPoint,
+    });
+    if (op === null) return { kind: 'unproven', reason: 'no-user-operation' };
 
-    let opIndex = -1;
-    let success = false;
-    for (let i = 0; i < logs.length; i += 1) {
-        const log = logs[i];
-        if (!fromEntryPoint(log) || topicOf(log) !== USER_OPERATION_EVENT) {
-            continue;
-        }
-        const decoded = parse(ENTRY_POINT_EVENTS, log);
-        if (decoded?.name !== 'UserOperationEvent') continue;
-        const userOpHash = String(decoded.args.userOpHash).toLowerCase();
-        if (wantedHash !== null && userOpHash !== wantedHash) continue;
-        if (!sameAddress(decoded.args.sender, expected.lender)) continue;
-        opIndex = i;
-        success = decoded.args.success === true;
-        break;
-    }
-    if (opIndex < 0) return { kind: 'unproven', reason: 'no-user-operation' };
-
-    // Our operation's execution window.
-    let windowStart = 0;
-    for (let i = opIndex - 1; i >= 0; i -= 1) {
-        const log = logs[i];
-        const topic = topicOf(log);
-        if (
-            fromEntryPoint(log) &&
-            (topic === USER_OPERATION_EVENT || topic === BEFORE_EXECUTION)
-        ) {
-            windowStart = i + 1;
-            break;
-        }
-    }
-    const window = logs.slice(windowStart, opIndex);
-
-    if (!success) {
-        return {
-            kind: 'reverted',
-            revertError: revertErrorIn(window, expected.lender, fromEntryPoint),
-        };
+    if (!op.success) {
+        return { kind: 'reverted', revertError: op.revertError() };
     }
 
-    for (const log of window) {
+    for (const log of op.window) {
         if (topicOf(log) !== DEPOSIT_REQUESTED) continue;
         if (
             expected.pendingPool !== undefined &&
@@ -435,6 +400,124 @@ export function proveDepositInReceipt(
         };
     }
     return { kind: 'unproven', reason: 'no-deposit-requested' };
+}
+
+export interface UserOperationProofExpectation {
+    /** The account that sent the operation — the lender's own wallet. */
+    sender: string;
+    /**
+     * The user operation hash, when the submitter knows it. With it, only
+     * THAT operation counts; without it, the sender's first operation in the
+     * bundle does.
+     */
+    userOperationHash?: string | null;
+    /** Defaults to `ENTRY_POINT_V07`. */
+    entryPoint?: string;
+}
+
+export type UserOperationProof =
+    /** The sender's operation ran and SUCCEEDED: every call in it executed. */
+    | { kind: 'executed'; blockNumber: number }
+    /**
+     * The operation ran and reverted — the account rolled its calls back.
+     * `revertError` is the protocol error it named, or `''`.
+     */
+    | { kind: 'reverted'; revertError: string }
+    /** The receipt does not show the operation. NEVER a success, never a failure. */
+    | { kind: 'unproven'; reason: 'no-user-operation' | 'malformed-receipt' };
+
+/**
+ * Did THIS receipt execute the sender's user operation? — PURE. The
+ * single-call sibling of `proveDepositInReceipt`, for a sponsored
+ * `requestWithdrawal`, a cancel or a fixed-term withdrawal: the same
+ * EntryPoint `UserOperationEvent` from the same contract, for the same
+ * sender (and hash, when known), read the same way — the `handleOps`
+ * transaction's own `status` decides NOTHING, because it is a success even
+ * when the operation inside it reverted.
+ *
+ * `executed` needs the operation's `success` flag. A single-call operation
+ * that succeeded executed its one call; there is no event to match beyond
+ * that, so pass the `userOperationHash` whenever the submitter reports one —
+ * without it, the sender's FIRST operation in the bundle is the one read.
+ */
+export function proveUserOperationInReceipt(
+    receipt: ReceiptLike,
+    expected: UserOperationProofExpectation,
+): UserOperationProof {
+    if (!Array.isArray(receipt.logs as unknown)) {
+        return { kind: 'unproven', reason: 'malformed-receipt' };
+    }
+    const op = locateUserOperation(receipt.logs, expected);
+    if (op === null) return { kind: 'unproven', reason: 'no-user-operation' };
+    if (!op.success) {
+        return { kind: 'reverted', revertError: op.revertError() };
+    }
+    return { kind: 'executed', blockNumber: receipt.blockNumber };
+}
+
+/**
+ * The sender's user operation in a `handleOps` receipt — its `success` flag
+ * and its execution window — or `null` when the receipt does not show one.
+ *
+ *  - The `UserOperationEvent` must be emitted BY the EntryPoint, with
+ *    `sender` = the expected sender and, when one is known, `userOpHash` =
+ *    the expected hash. The first such event wins.
+ *  - The window is the logs after the previous operation's event (or
+ *    `BeforeExecution`, which precedes the first) and before ours: what our
+ *    operation's calls emitted, and nothing another operation in the same
+ *    bundle did.
+ */
+function locateUserOperation(
+    logs: readonly ReceiptLog[],
+    expected: UserOperationProofExpectation,
+): {
+    success: boolean;
+    window: readonly ReceiptLog[];
+    revertError: () => string;
+} | null {
+    const entryPoint = expected.entryPoint ?? ENTRY_POINT_V07;
+    const wantedHash = expected.userOperationHash?.toLowerCase() ?? null;
+    const fromEntryPoint = (log: ReceiptLog): boolean =>
+        sameAddress(log.address, entryPoint);
+
+    let opIndex = -1;
+    let success = false;
+    for (let i = 0; i < logs.length; i += 1) {
+        const log = logs[i];
+        if (!fromEntryPoint(log) || topicOf(log) !== USER_OPERATION_EVENT) {
+            continue;
+        }
+        const decoded = parse(ENTRY_POINT_EVENTS, log);
+        if (decoded?.name !== 'UserOperationEvent') continue;
+        const userOpHash = String(decoded.args.userOpHash).toLowerCase();
+        if (wantedHash !== null && userOpHash !== wantedHash) continue;
+        if (!sameAddress(decoded.args.sender, expected.sender)) continue;
+        opIndex = i;
+        success = decoded.args.success === true;
+        break;
+    }
+    if (opIndex < 0) return null;
+
+    // Our operation's execution window.
+    let windowStart = 0;
+    for (let i = opIndex - 1; i >= 0; i -= 1) {
+        const log = logs[i];
+        const topic = topicOf(log);
+        if (
+            fromEntryPoint(log) &&
+            (topic === USER_OPERATION_EVENT || topic === BEFORE_EXECUTION)
+        ) {
+            windowStart = i + 1;
+            break;
+        }
+    }
+    const window = logs.slice(windowStart, opIndex);
+    return {
+        success,
+        window,
+        revertError: (): string =>
+            revertErrorIn(window, expected.sender, fromEntryPoint),
+    };
 }
 
 /**

@@ -4,6 +4,8 @@ import {
     UserRequestEvent,
 } from '../services/UserLending/types';
 
+import { deriveCycleDates } from './settlement';
+
 /**
  * The lending-request view model, as CODES.
  *
@@ -237,6 +239,41 @@ export function lastEventTimestamp(
  */
 export function isCycleClosed(request: Pick<UserRequest, 'canCancel'>): boolean {
     return !request.canCancel;
+}
+
+/**
+ * Until when can THIS request still be cancelled? — unix seconds, or `null`
+ * when it cannot be cancelled at all, or when no epoch boundary is loaded.
+ *
+ * The answer is the next cycle close (`deriveCycleDates(...).close`): the
+ * clearing window opens there, and the contract refuses a cancel while the
+ * pool's clearing is pending (`CannotCancelRequestIfClearingIsPending`).
+ * Inside a window whose clearing already ENDED, a still-cancellable request is
+ * queued for the next cycle, so its deadline is next week's close — which is
+ * exactly what `deriveCycleDates` rolls forward to.
+ *
+ * `null` unless the request is BOTH:
+ *
+ * - `canCancel` — the SDK's per-pool signal (see `isCycleClosed`);
+ * - live: `statusCode` `pending`, or `partial` (a partly-filled withdrawal
+ *   whose remainder is back in the queue — a resolved partial has
+ *   `canCancel: false`). A cancelled, forced, reallocated, rejected or complete
+ *   request has nothing left to cancel, whatever `canCancel` says.
+ *
+ * `canCancel` is read ONCE, when the request was fetched. A request held
+ * across a cycle boundary (`nextCycleBoundary`) must be refetched before this
+ * is shown again — the deadline is a hint, the contract is the gate.
+ */
+export function cancelDeadline(
+    request: Pick<RequestState, 'canCancel' | 'statusCode'>,
+    nextEpochStart: number | undefined,
+    nowSeconds: number,
+): number | null {
+    if (!request.canCancel) return null;
+    if (request.statusCode !== 'pending' && request.statusCode !== 'partial') {
+        return null;
+    }
+    return deriveCycleDates(nextEpochStart, nowSeconds)?.close ?? null;
 }
 
 const isCancelled = (events: UserRequestEvent[]): boolean =>
