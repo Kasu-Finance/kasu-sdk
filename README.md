@@ -294,7 +294,9 @@ depositBatch: (calls) => {
         stableAsset, spender, poolId, trancheId, amount, fixedTermConfigId,
     });
     return submitBatch(
-        { calls, expect: { lender, tranche, amount } },
+        // `pendingPool` is the strategy's pending pool (`ILendingPool.pendingPool()`):
+        // with it, only THAT contract's `DepositRequested` can prove the deposit.
+        { calls, expect: { lender, tranche, amount, pendingPool } },
         {
             post: (calls) => postToMyRelay(calls), // → { transactionId }
             getStatus: (id) => readMyRelayStatus(id), // normalised BatchStatusRead
@@ -313,7 +315,8 @@ depositBatch: (calls) => {
   lender it may still be processing — never "try again".
 - `wait()` resolves only when `proveDepositInReceipt` finds THIS lender's
   `DepositRequested` for the expected tranche AND amount inside their own user
-  operation. A handleOps receipt's `status` decides nothing.
+  operation — and, when `pendingPool` is given, emitted by that contract. A
+  handleOps receipt's `status` decides nothing.
 - Polling: first read at once, then 3 s ×1.5 to a 10 s ceiling, for 10 minutes
   (`DEFAULT_BATCH_POLLING_POLICY`; pass a partial policy to override).
 - `checkBatchOutcome(transactionId, expect, ports)` is the one-read check for an

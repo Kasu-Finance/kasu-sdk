@@ -145,7 +145,9 @@ function resolvePolicy(
  * depositBatch: (calls) => {
  *     const { tranche, amount } = validateDepositBatchCalls(calls, expected);
  *     return submitBatch(
- *         { calls, expect: { lender, tranche, amount } },
+ *         // `pendingPool`: the strategy's pending pool, so only ITS
+ *         // `DepositRequested` can prove the deposit.
+ *         { calls, expect: { lender, tranche, amount, pendingPool } },
  *         { post, getStatus, getReceipt, now: Date.now, sleep },
  *     );
  * },

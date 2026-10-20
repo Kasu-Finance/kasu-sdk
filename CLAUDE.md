@@ -458,9 +458,19 @@ then `depositBatch`) → `request-confirm` (`wait()`) → `success`.
 - **Failures.** A port that KNOWS the batch reverts throws the exported
   `BatchRevertedError(revertError)` → `{ step: 'request', reason: 'reverted',
   revertError, error }` (`''` when it reverts for a reason nobody named).
+  A `BatchSubmissionError` (or `BatchPendingError`) is read at its word, BEFORE
+  the revert decoder: `pending` → `{ reason: 'pending' }`, `already-submitted`
+  → `{ reason: 'already-submitted' }`, `failed` → `{ reason: 'failed' }`.
   Anything else goes through the request step's existing classification — a
   wallet rejection is `cancelled`, a decodable revert is `reverted`, everything
   else `failed` — so a non-wallet throw is never a cancellation.
+- **Submitting through a relay.** `submitBatch` (`flows/batch-submission.ts`)
+  is the body of a `depositBatch` port for a submitter that is asked for its
+  status later: it owns the polling policy, the receipt proof
+  (`proveDepositInReceipt`) and the outcome taxonomy, and it never reports an
+  ambiguous result as `failed`. Pin the batch with `validateDepositBatchCalls`
+  before the lender signs it, and pass the strategy's `pendingPool` in the
+  proof expectation so only THAT contract's `DepositRequested` counts.
 
 ### Failure codes
 
@@ -475,12 +485,26 @@ type DepositFailure =
           revertError: string;
           error: unknown;
       }
-    | { step: 'request'; reason: 'contract-expired' };
+    | { step: 'request'; reason: 'contract-expired' }
+    | {
+          step: 'request';
+          reason: 'pending' | 'already-submitted'; // batch path only — NOT failures
+          error: unknown;
+      };
 ```
 
 `cancelled` is `isUserRejected` — the lender changed their mind, and telling
 them something broke would be a lie. Everything else is `failed` and carries
 the original error for a crash reporter.
+
+`pending` and `already-submitted` (2.9.0) are produced only on the batch path,
+from a `BatchSubmissionError` whose outcome is not `failed`. Neither is a
+failure: `pending` means the batch was, or may have been, accepted and nothing
+proves whether it deposited — rendering it as a failure invites a second
+deposit — and `already-submitted` means an earlier submission was proven, so
+this one was refused. A consumer whose copy table falls through to its generic
+"failed" sentence must add both codes before it supplies a `depositBatch`
+port that throws these errors.
 
 A revert on the request step is read for WHAT reverted, not just THAT it would.
 Until 2.7.1 every `UNPREDICTABLE_GAS_LIMIT` was `insufficient-balance`, and
