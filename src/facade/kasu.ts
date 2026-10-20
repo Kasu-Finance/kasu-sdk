@@ -74,6 +74,10 @@ export class Kasu {
         this.strategies = new StrategiesFacade(
             sdk.DataService,
             sdk.UserLending,
+            normaliseMapping(
+                configOverrides.poolMetadataMapping ??
+                    chainConfig.poolMetadataMapping,
+            ),
         );
 
         // Derived ONCE and handed to every facade that needs it. Each of them
@@ -325,4 +329,15 @@ function resolveChainConfig(
         return CHAIN_CONFIGS[chain];
     }
     return chain;
+}
+
+/** Lowercase both sides, so a lookup by any casing of a pool id matches. */
+function normaliseMapping(
+    mapping: Record<string, string> | undefined,
+): Record<string, string> {
+    const out: Record<string, string> = {};
+    for (const [from, to] of Object.entries(mapping ?? {})) {
+        out[from.toLowerCase()] = to.toLowerCase();
+    }
+    return out;
 }

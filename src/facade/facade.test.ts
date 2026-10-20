@@ -5,6 +5,10 @@
  */
 import { DataService } from '../services/DataService/data-service';
 import { NO_DIRECTUS_URL_MESSAGE } from '../services/DataService/directus-client';
+import {
+    PoolDelegateProfileAndHistory,
+    RiskManagement,
+} from '../services/DataService/types';
 import { Portfolio } from '../services/Portfolio/portfolio';
 import { UserRequestStatus } from '../services/UserLending/subgraph-types';
 import { UserRequest } from '../services/UserLending/types';
@@ -246,6 +250,188 @@ describe('StrategiesFacade.calculateDepositLimits()', () => {
 
         const limits = facade.calculateDepositLimits(tranche);
         expect(limits.max).toBe('5000');
+    });
+});
+
+// ---------------------------------------------------------------------------
+// StrategiesFacade.getRiskPerformance() / getOriginator()
+// ---------------------------------------------------------------------------
+
+describe('StrategiesFacade risk and originator accessors', () => {
+    const BASE_POOL = '0x00000000000000000000000000000000000000aa';
+    const XDC_POOL = '0x00000000000000000000000000000000000000BB';
+    const OTHER_POOL = '0x00000000000000000000000000000000000000cc';
+
+    function riskRecord(
+        poolIdFK: string,
+        riskPerformance: Record<string, unknown>,
+    ): RiskManagement {
+        return {
+            id: `risk-${poolIdFK}`,
+            poolIdFK,
+            items: [],
+            riskPerformance,
+        } as unknown as RiskManagement;
+    }
+
+    function delegate(
+        id: string,
+        poolIds: (string | number)[],
+    ): PoolDelegateProfileAndHistory {
+        return {
+            id,
+            delegateLendingHistory: 9,
+            assetClasses: 'Receivables',
+            otherKASUPools: poolIds.map((pid) => ({
+                id: pid as string,
+                name: 'Strategy',
+                isActive: true,
+                isOversubscribed: false,
+            })),
+            totalLoanFundsOriginated: 1,
+            totalLoansOriginated: 1,
+            loansUnderManagement: 1,
+            historicLossRate: 0.001,
+        };
+    }
+
+    function facadeWith(
+        data: Partial<
+            Pick<
+                DataService,
+                'getRiskManagement' | 'getPoolDelegateProfileAndHistory'
+            >
+        >,
+        mapping: Record<string, string> = {},
+    ): StrategiesFacade {
+        return new StrategiesFacade(
+            data as unknown as DataService,
+            null as never,
+            mapping,
+        );
+    }
+
+    it("reads a pool's loss rate and first-loss capital", async () => {
+        const facade = facadeWith({
+            getRiskManagement: jest
+                .fn()
+                .mockResolvedValue([
+                    riskRecord(OTHER_POOL, {
+                        poolLossRate: 0.5,
+                        firstLossCapital: 1,
+                    }),
+                    riskRecord(BASE_POOL, {
+                        poolLossRate: 0.0012,
+                        firstLossCapital: 250000,
+                    }),
+                ]),
+        });
+        await expect(
+            facade.getRiskPerformance(
+                BASE_POOL.toUpperCase().replace('0X', '0x'),
+            ),
+        ).resolves.toEqual({
+            poolLossRate: 0.0012,
+            firstLossCapital: 250000,
+        });
+    });
+
+    it('resolves an XDC pool through the metadata mapping', async () => {
+        const facade = facadeWith(
+            {
+                getRiskManagement: jest
+                    .fn()
+                    .mockResolvedValue([
+                        riskRecord(BASE_POOL, {
+                            poolLossRate: 0.01,
+                            firstLossCapital: 5,
+                        }),
+                    ]),
+            },
+            { [XDC_POOL.toLowerCase()]: BASE_POOL },
+        );
+        await expect(facade.getRiskPerformance(XDC_POOL)).resolves.toEqual({
+            poolLossRate: 0.01,
+            firstLossCapital: 5,
+        });
+    });
+
+    it('never turns an unauthored or malformed figure into a confident 0', async () => {
+        const cases: [unknown, number | null][] = [
+            ['', null],
+            ['   ', null],
+            [null, null],
+            [undefined, null],
+            ['abc', null],
+            [Number.NaN, null],
+            [Number.POSITIVE_INFINITY, null],
+            ['0.004', 0.004],
+            [0, 0],
+        ];
+        for (const [raw, expected] of cases) {
+            const facade = facadeWith({
+                getRiskManagement: jest
+                    .fn()
+                    .mockResolvedValue([
+                        riskRecord(BASE_POOL, {
+                            poolLossRate: raw,
+                            firstLossCapital: raw,
+                        }),
+                    ]),
+            });
+            await expect(facade.getRiskPerformance(BASE_POOL)).resolves.toEqual(
+                {
+                    poolLossRate: expected,
+                    firstLossCapital: expected,
+                },
+            );
+        }
+    });
+
+    it('returns null for a pool with no risk record', async () => {
+        const facade = facadeWith({
+            getRiskManagement: jest
+                .fn()
+                .mockResolvedValue([riskRecord(OTHER_POOL, {})]),
+        });
+        await expect(facade.getRiskPerformance(BASE_POOL)).resolves.toBeNull();
+    });
+
+    it('finds the originator whose record lists the pool, case-insensitively', async () => {
+        const apx = delegate('apx', [
+            BASE_POOL.toUpperCase().replace('0X', '0x'),
+        ]);
+        const facade = facadeWith({
+            getPoolDelegateProfileAndHistory: jest
+                .fn()
+                .mockResolvedValue([delegate('other', [OTHER_POOL]), apx]),
+        });
+        await expect(facade.getOriginator(BASE_POOL)).resolves.toBe(apx);
+    });
+
+    it('falls back to the metadata id, and tolerates numeric ids', async () => {
+        const viaMapping = delegate('apx', [BASE_POOL]);
+        const facade = facadeWith(
+            {
+                getPoolDelegateProfileAndHistory: jest
+                    .fn()
+                    .mockResolvedValue([delegate('n', [7]), viaMapping]),
+            },
+            { [XDC_POOL.toLowerCase()]: BASE_POOL },
+        );
+        await expect(facade.getOriginator(XDC_POOL)).resolves.toBe(viaMapping);
+        await expect(facade.getOriginator('7')).resolves.toMatchObject({
+            id: 'n',
+        });
+    });
+
+    it('returns null when no originator lists the pool', async () => {
+        const facade = facadeWith({
+            getPoolDelegateProfileAndHistory: jest
+                .fn()
+                .mockResolvedValue([delegate('other', [OTHER_POOL])]),
+        });
+        await expect(facade.getOriginator(BASE_POOL)).resolves.toBeNull();
     });
 });
 

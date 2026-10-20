@@ -224,3 +224,15 @@ export interface UserPositions {
 // ---------------------------------------------------------------------------
 
 export type PlatformStats = LendingTotals;
+
+/**
+ * A strategy's risk figures, from its CMS risk-management record
+ * (`kasu.strategies.getRiskPerformance`). Each is `null` when unauthored or
+ * not a finite number — render "—", never `0`.
+ */
+export interface StrategyRiskPerformance {
+    /** Realised loss rate, a 0..1 fraction. */
+    poolLossRate: number | null;
+    /** First-loss capital, exactly as the CMS record authors it. */
+    firstLossCapital: number | null;
+}
