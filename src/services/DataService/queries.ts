@@ -53,6 +53,7 @@ export const getPoolOverviewQuery = (ids?: string[]): string => gql`
                         fixedTermDepositStatus
                         fixedTermDepositAllowlist{
                             id
+                            isAllowlisted
                             user{
                                 id
                             }

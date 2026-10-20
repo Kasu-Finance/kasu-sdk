@@ -38,6 +38,22 @@ export {
 export type { AuMinimumInput } from './au-minimum';
 
 export {
+    DepositBatchMismatchError,
+    ENTRY_POINT_V07,
+    proveDepositInReceipt,
+    validateDepositBatchCalls,
+} from './batch-proof';
+export type {
+    DepositBatchCall,
+    DepositBatchExpectation,
+    DepositProof,
+    DepositProofExpectation,
+    ReceiptLike,
+    ReceiptLog,
+    ValidatedDepositBatch,
+} from './batch-proof';
+
+export {
     ceilToCents,
     floorToCents,
     isBelowMinimumCapacity,
@@ -50,9 +66,21 @@ export {
 export type { BoundShortcuts, DepositBounds } from './deposit-bounds';
 
 export {
+    availableFixedTermConfigs,
+    DAYS_PER_EPOCH,
+    DAYS_PER_MONTH,
+    isFixedTermConfigId,
+    lockDurationDays,
+    lockDurationMonths,
+    MIN_DAYS_FOR_MONTHS,
+} from './fixed-term';
+export type { FixedTermConfig } from './fixed-term';
+
+export {
     APXIUM,
     getCreditOriginator,
     getInstitutionalLender,
+    getStrategyRegion,
     INVOICEMATE,
     RIXON_CAPITAL,
 } from './partners';
@@ -141,3 +169,13 @@ export {
     isUserRejected,
 } from './wallet-errors';
 export type { WalletFailure } from './wallet-errors';
+
+export {
+    accruedInterest,
+    dailyInterest,
+    projectedAnnualEarnings,
+    SECONDS_PER_WEEK,
+    weeklyInterest,
+    weightedAverageApy,
+} from './yields';
+export type { InterestSlice, PoolAccrual } from './yields';

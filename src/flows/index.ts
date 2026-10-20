@@ -10,12 +10,34 @@
  * Every application drove its own copy of the deposit pipeline before this, and
  * the copies had already started to differ.
  */
+export {
+    BatchPendingError,
+    BatchRevertedError,
+    batchOutcomeOf,
+    BatchSubmissionError,
+    isDefinitivelyNotSubmitted,
+} from './batch-errors';
+export type { BatchSubmissionOutcome } from './batch-errors';
+
+export {
+    checkBatchOutcome,
+    DEFAULT_BATCH_POLLING_POLICY,
+    submitBatch,
+} from './batch-submission';
+export type {
+    BatchPollingPolicy,
+    BatchStatusRead,
+    BatchSubmission,
+    BatchSubmissionPorts,
+    ProvenBatch,
+    SubmitBatchCall,
+} from './batch-submission';
+
 export { Flow } from './flow';
 export { FlowStore } from './observable';
 export type { WaitableTransaction } from './observable';
 
 export {
-    BatchRevertedError,
     CONTRACT_TTL_MS,
     DepositFlow,
     INVALID_ACCEPTANCE_SIGNATURE_MESSAGE,

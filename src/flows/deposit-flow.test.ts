@@ -20,6 +20,11 @@ import {
 import { DepositParams, KycParams } from '../facade/types';
 
 import {
+    BatchPendingError,
+    BatchSubmissionError,
+    isDefinitivelyNotSubmitted,
+} from './batch-errors';
+import {
     BatchCall,
     BatchRevertedError,
     CONTRACT_TTL_MS,
@@ -2016,6 +2021,72 @@ describe('DepositFlow — the atomic batch path', () => {
         ).toEqual({ phase: 'awaiting-authorise', stepIndex: 3, stepTotal: 3 });
         expect(h.flow.state.stepIndex).toBe(3);
         expect(h.flow.state.approvalRequired).toBe(false);
+    });
+
+    it('reports a PENDING submission as pending — never failed, never a revert', async () => {
+        // The cause carries a protocol revert's bytes AND a gas-estimate code:
+        // read through the request classifier, this would become `reverted`
+        // ("nothing deposited, try again") on a batch that may have landed.
+        const thrown = new BatchPendingError('status_timeout', {
+            cause: revertWith(MANAGER.getSighash('ClearingIsPending')),
+        });
+        for (const where of ['submit', 'wait'] as const) {
+            const h = batchHarness({
+                depositBatch: (): Promise<WaitableTransaction> =>
+                    where === 'submit'
+                        ? Promise.reject(thrown)
+                        : Promise.resolve({
+                              wait: (): Promise<unknown> =>
+                                  Promise.reject(thrown),
+                          }),
+            });
+            await runAuthorising(h);
+
+            expect(h.flow.state.phase).toBe('error');
+            expect(h.flow.state.failure).toEqual({
+                step: 'request',
+                reason: 'pending',
+                error: thrown,
+            });
+            expect(isDefinitivelyNotSubmitted(thrown)).toBe(false);
+        }
+    });
+
+    it('reports an already-submitted refusal as such, not as a failure', async () => {
+        const thrown = new BatchSubmissionError(
+            'previous_deposit_proven',
+            'already-submitted',
+        );
+        const h = batchHarness({
+            depositBatch: (): Promise<WaitableTransaction> =>
+                Promise.reject(thrown),
+        });
+        await runAuthorising(h);
+
+        expect(h.flow.state.failure).toEqual({
+            step: 'request',
+            reason: 'already-submitted',
+            error: thrown,
+        });
+    });
+
+    it('reports a definitive `failed` submission as failed, without reading its cause', async () => {
+        const thrown = new BatchSubmissionError('no_session', 'failed', {
+            cause: rejection(),
+        });
+        const h = batchHarness({
+            depositBatch: (): Promise<WaitableTransaction> =>
+                Promise.reject(thrown),
+        });
+        await runAuthorising(h);
+
+        // Not `cancelled`: the cause is not consulted, and the lender did
+        // not do this.
+        expect(h.flow.state.failure).toEqual({
+            step: 'request',
+            reason: 'failed',
+            error: thrown,
+        });
     });
 
     it('keeps the two-transaction path when no depositBatch port is supplied', async () => {

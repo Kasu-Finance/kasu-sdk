@@ -16,6 +16,7 @@ import {
 } from '../domain/wallet-errors';
 import { DepositParams, KycParams } from '../facade/types';
 
+import { BatchRevertedError, BatchSubmissionError } from './batch-errors';
 import { Flow } from './flow';
 import { WaitableTransaction } from './observable';
 
@@ -167,7 +168,19 @@ export type DepositFailure =
           revertError: string;
           error: unknown;
       }
-    | { step: 'request'; reason: 'contract-expired' };
+    | { step: 'request'; reason: 'contract-expired' }
+    | {
+          step: 'request';
+          /**
+           * Batch path only — a `BatchSubmissionError` whose outcome is not
+           * `failed`. `pending`: the batch was, or may have been, accepted and
+           * nothing proves whether it deposited — NEVER render it as a
+           * failure, which invites a second deposit. `already-submitted`: an
+           * earlier submission was proven, so this one was refused.
+           */
+          reason: 'pending' | 'already-submitted';
+          error: unknown;
+      };
 
 // ---------------------------------------------------------------------------
 // Ports
@@ -184,38 +197,9 @@ export interface BatchCall {
     data: string;
 }
 
-/**
- * What a `depositBatch` port throws when it KNOWS the batch reverted — from a
- * simulation before sending, or from the submitter refusing to broadcast a
- * batch that would revert. The run ends `{ step: 'request', reason:
- * 'reverted', revertError }`.
- *
- * `revertError` is the custom error the contract named (`'ClearingIsPending'`,
- * `'UserNotKycd'`, …), exactly as the ABI declares it. Pass `''` when the
- * batch is known to revert but not why: the consumer then renders its generic
- * `reverted` copy, which is what an unknown name gets anyway.
- *
- * Any OTHER throw from the port is read the way a direct deposit's is — a
- * wallet rejection is `cancelled`, a decodable revert is `reverted`, and
- * everything else is `failed` with the error kept. A port that cannot tell is
- * better off throwing what it has than guessing a name.
- */
-export class BatchRevertedError extends Error {
-    readonly revertError: string;
-
-    constructor(revertError: string, message?: string) {
-        super(
-            message ??
-                `DepositFlow: the batch reverted${
-                    revertError ? ` with ${revertError}` : ''
-                }`,
-        );
-        this.name = 'BatchRevertedError';
-        this.revertError = revertError;
-        // Keeps `instanceof` honest under a down-levelled build.
-        Object.setPrototypeOf(this, BatchRevertedError.prototype);
-    }
-}
+// `BatchRevertedError` lives in `./batch-errors` beside the submission
+// errors, and is re-exported here so every existing import keeps working.
+export { BatchRevertedError };
 
 /** What the KYC signing service hands back. */
 export interface KycSignature {
@@ -604,6 +588,16 @@ function classifyRequest(err: unknown): DepositFailure {
  * deposit's throw is, so a non-wallet error can never become `cancelled`.
  */
 function classifyBatch(err: unknown): DepositFailure {
+    // A submission outcome is read FIRST and taken at its word. It must never
+    // reach the revert-data walk below: that walk follows `cause`, and an
+    // ambiguous outcome whose cause happens to carry revert bytes would read
+    // as `reverted` or `insufficient-balance` — "nothing was deposited, try
+    // again" — on a batch that may have moved the money.
+    if (err instanceof BatchSubmissionError) {
+        return err.outcome === 'failed'
+            ? { step: 'request', reason: 'failed', error: err }
+            : { step: 'request', reason: err.outcome, error: err };
+    }
     if (err instanceof BatchRevertedError) {
         return {
             step: 'request',

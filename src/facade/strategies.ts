@@ -1,6 +1,9 @@
 import { selectVisiblePools } from '../domain/pools';
 import { DataService } from '../services/DataService/data-service';
-import { PoolOverview } from '../services/DataService/types';
+import {
+    PoolDelegateProfileAndHistory,
+    PoolOverview,
+} from '../services/DataService/types';
 import { UserLending } from '../services/UserLending/user-lending';
 
 import {
@@ -8,6 +11,7 @@ import {
     FixedTermOption,
     PlatformStats,
     Strategy,
+    StrategyRiskPerformance,
     StrategyTranche,
 } from './types';
 
@@ -20,7 +24,81 @@ export class StrategiesFacade {
     constructor(
         private _dataService: DataService,
         private _userLending: UserLending,
+        /**
+         * Chain pool id → the pool id its CMS record is keyed by (XDC pools
+         * share their Base counterpart's editorial record). Lowercase keys.
+         */
+        private _poolMetadataMapping: Record<string, string> = {},
     ) {}
+
+    /**
+     * The pool's loss rate and first-loss capital, from its CMS
+     * risk-management record. `null` when the pool has no record.
+     *
+     * Each figure is a NUMBER or `null` — never a guess. The CMS returns
+     * "numeric" fields as a number, a numeric string, an empty string or
+     * null, and an empty string must not become a confident `0`: anything that
+     * is not a finite number reads as `null` (render "—"). `poolLossRate` is a
+     * 0..1 fraction.
+     *
+     * Requires `directusUrl`; without it the call rejects with
+     * `NO_DIRECTUS_URL_MESSAGE`, like every CMS-only read.
+     */
+    async getRiskPerformance(
+        poolId: string,
+    ): Promise<StrategyRiskPerformance | null> {
+        const metadataId = this._metadataIdOf(poolId);
+        const records = await this._dataService.getRiskManagement();
+        const record = records.find(
+            (r) => String(r.poolIdFK).toLowerCase() === metadataId,
+        );
+        if (!record) return null;
+        const performance = record.riskPerformance as
+            | Partial<Record<'poolLossRate' | 'firstLossCapital', unknown>>
+            | null
+            | undefined;
+        return {
+            poolLossRate: finiteOrNull(performance?.poolLossRate),
+            firstLossCapital: finiteOrNull(performance?.firstLossCapital),
+        };
+    }
+
+    /**
+     * The credit originator's profile and lending history for a pool — the
+     * CMS record whose `otherKASUPools` lists it. `null` when none does.
+     *
+     * Matched on the chain pool id, then on its metadata id, case-
+     * insensitively. The record is returned as the service maps it; its
+     * numeric fields are CMS-authored, so read them defensively.
+     *
+     * The service filters `otherKASUPools` through the CURRENT chain's
+     * subgraph with the CMS record's (Base-keyed) ids, so on an XDC
+     * deployment every profile lists no pools and this resolves `null` —
+     * the same answer kasu-ui's own lookup gives there today. The metadata
+     * candidate becomes live once the service resolves the mapping.
+     */
+    async getOriginator(
+        poolId: string,
+    ): Promise<PoolDelegateProfileAndHistory | null> {
+        const candidates = new Set([
+            poolId.toLowerCase(),
+            this._metadataIdOf(poolId),
+        ]);
+        const profiles =
+            await this._dataService.getPoolDelegateProfileAndHistory();
+        return (
+            profiles.find((profile) =>
+                profile.otherKASUPools.some((pool) =>
+                    candidates.has(String(pool.id).toLowerCase()),
+                ),
+            ) ?? null
+        );
+    }
+
+    private _metadataIdOf(poolId: string): string {
+        const lower = poolId.toLowerCase();
+        return (this._poolMetadataMapping[lower] ?? lower).toLowerCase();
+    }
 
     /**
      * Fetch all active lending strategies.
@@ -96,13 +174,12 @@ export class StrategiesFacade {
     calculateDepositLimits(tranche: StrategyTranche): DepositLimits {
         const raw = tranche._raw;
         const min =
-            parseFloat(raw.minimumDeposit) < 1
-                ? '1'
-                : raw.minimumDeposit;
+            parseFloat(raw.minimumDeposit) < 1 ? '1' : raw.minimumDeposit;
 
-        const max = parseFloat(raw.maximumDeposit) > parseFloat(raw.poolCapacity)
-            ? raw.poolCapacity
-            : raw.maximumDeposit;
+        const max =
+            parseFloat(raw.maximumDeposit) > parseFloat(raw.poolCapacity)
+                ? raw.poolCapacity
+                : raw.maximumDeposit;
 
         return {
             min,
@@ -152,4 +229,18 @@ export class StrategiesFacade {
             _raw: pool,
         };
     }
+}
+
+/**
+ * A CMS "numeric" field as a finite number, or `null`. An empty or blank
+ * string is UNAUTHORED, not zero.
+ */
+function finiteOrNull(value: unknown): number | null {
+    if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+    if (typeof value === 'string') {
+        if (value.trim() === '') return null;
+        const numeric = Number(value);
+        return Number.isFinite(numeric) ? numeric : null;
+    }
+    return null;
 }

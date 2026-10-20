@@ -115,7 +115,7 @@ You can also pass a whole `ChainConfigEntry` instead of a chain key.
 
 | Facade            | Methods                                                                                                                 | Purpose                         |
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
-| `kasu.strategies` | `getAll()`, `getVisible()`, `getById()`, `getPlatformStats()`, `getPerformanceFeePercent()`, `calculateDepositLimits()` | Browse pools, APY, capacity     |
+| `kasu.strategies` | `getAll()`, `getVisible()`, `getById()`, `getPlatformStats()`, `getPerformanceFeePercent()`, `calculateDepositLimits()`, `getRiskPerformance(poolId)`, `getOriginator(poolId)` | Browse pools, APY, capacity, risk, originator |
 | `kasu.deposits`   | `deposit()`, `withdraw()`, `withdrawMax()`, `buildKycParams()`, `isClearingPending()`                                   | Submit transactions             |
 | `kasu.portfolio`  | `getPositions()`, `getTransactionHistory()`, `getRequestStates()`                                                       | Lender balances, yield, history |
 | `kasu.flows`      | `deposit(ports)`, `withdraw(ports?)`                                                                                    | Headless transaction pipelines  |
@@ -142,7 +142,10 @@ application formats them in its own design system and language.
 | Tranches             | `trancheHasCapacity`, `poolAllTranchesFull`, `derivePoolStatus`, `trancheRiskRank`, `compareTrancheSeniority`, `pickDefaultTrancheId`, `trancheApyBounds`, `netTrancheApyBounds`, `MIN_TRANCHE_CAPACITY` |
 | Deposit bounds       | `resolveDepositBounds`, `resolveBoundShortcuts`, `isBelowMinimumCapacity`, `parseTrancheBound`, `floorToCents`, `ceilToCents`                                                                            |
 | Pools                | `selectVisiblePools`, `poolMaxApy`, `pickHighestYieldTranche`, `maxNetRateCeiling`                                                                                                                       |
-| Partners             | `getCreditOriginator`, `getInstitutionalLender`, `APXIUM`, `INVOICEMATE`, `RIXON_CAPITAL`                                                                                                                |
+| Partners             | `getCreditOriginator`, `getInstitutionalLender`, `getStrategyRegion`, `APXIUM`, `INVOICEMATE`, `RIXON_CAPITAL` (each with a `region`)                                                                  |
+| Fixed term           | `availableFixedTermConfigs`, `isFixedTermConfigId`, `lockDurationDays`, `lockDurationMonths`, `DAYS_PER_EPOCH`, `DAYS_PER_MONTH`, `MIN_DAYS_FOR_MONTHS`                                               |
+| Yields               | `weeklyInterest`, `dailyInterest`, `accruedInterest`, `projectedAnnualEarnings`, `weightedAverageApy`, `SECONDS_PER_WEEK` — NET of the performance fee                                               |
+| Batch proof          | `validateDepositBatchCalls`, `proveDepositInReceipt`, `DepositBatchMismatchError`, `ENTRY_POINT_V07`                                                                                                   |
 | Tranche display name | `getTrancheDisplayName`, `UPPER_MEZZANINE`                                                                                                                                                               |
 | Requests             | `deriveRequestState`, `submissionEvents`, `countSubmissions`, `firstSubmissionTimestamp`, `isCycleClosed`                                                                                                |
 | Settlement           | `computeSettlementWindow`, `nextCycleBoundary`, `deriveCycleDates`, `CLEARING_WINDOW_SECONDS`                                                                                                            |
@@ -264,9 +267,60 @@ flow.authoriseTransfer(); // the lender's explicit go-ahead
 - `state.batched` is `true` from the first state of a batched run. It never
   enters `approve`, so it counts as a three-step run (`stepTotal` 3).
 - Throw `BatchRevertedError(revertError)` when the batch is known to revert →
-  `{ step: 'request', reason: 'reverted', revertError }`. Any other throw is
-  read like a direct deposit's: a wallet rejection is `cancelled`, everything
-  else `failed`.
+  `{ step: 'request', reason: 'reverted', revertError }`. Throw a
+  `BatchSubmissionError` (or `BatchPendingError`) to report a submission
+  outcome: `pending` → `{ reason: 'pending' }`, `already-submitted` →
+  `{ reason: 'already-submitted' }`, `failed` → `{ reason: 'failed' }` — read
+  at its word, never through the revert decoder. Any other throw is read like a
+  direct deposit's: a wallet rejection is `cancelled`, everything else
+  `failed`.
+
+### Submitting a sponsored batch: `submitBatch` (2.9.0)
+
+For a submitter that relays the batch and is asked for its status later (a
+sponsored-gas relay, for one), `submitBatch` owns the polling policy, the
+receipt proof and the outcome taxonomy. Your ports do the I/O; the SDK decides
+what each answer means:
+
+```ts
+import {
+    submitBatch,
+    validateDepositBatchCalls,
+} from '@kasufinance/kasu-sdk';
+
+depositBatch: (calls) => {
+    // Before signing: the batch is exactly this run's deposit, or it throws.
+    const { tranche, amount } = validateDepositBatchCalls(calls, {
+        stableAsset, spender, poolId, trancheId, amount, fixedTermConfigId,
+    });
+    return submitBatch(
+        // `pendingPool` is the strategy's pending pool (`ILendingPool.pendingPool()`):
+        // with it, only THAT contract's `DepositRequested` can prove the deposit.
+        { calls, expect: { lender, tranche, amount, pendingPool } },
+        {
+            post: (calls) => postToMyRelay(calls), // → { transactionId }
+            getStatus: (id) => readMyRelayStatus(id), // normalised BatchStatusRead
+            getReceipt: (hash) => provider.waitForTransaction(hash, 1, 120_000),
+            now: Date.now,
+            sleep: (ms) => new Promise((r) => setTimeout(r, ms)),
+        },
+    );
+},
+```
+
+- **An ambiguous result is never reported as failed.** Once the batch has been
+  posted only a revert proves nothing was deposited; a timeout, an unreadable
+  receipt, an unknown status or an unrecognised `post` error is a
+  `BatchPendingError`, and the run ends `{ reason: 'pending' }`. Tell the
+  lender it may still be processing — never "try again".
+- `wait()` resolves only when `proveDepositInReceipt` finds THIS lender's
+  `DepositRequested` for the expected tranche AND amount inside their own user
+  operation — and, when `pendingPool` is given, emitted by that contract. A
+  handleOps receipt's `status` decides nothing.
+- Polling: first read at once, then 3 s ×1.5 to a 10 s ceiling, for 10 minutes
+  (`DEFAULT_BATCH_POLLING_POLICY`; pass a partial policy to override).
+- `checkBatchOutcome(transactionId, expect, ports)` is the one-read check for an
+  app's guard against lending twice after a `pending` run.
 
 **Phases** — `idle`, `generating-sign`, `generating-fetch`, `awaiting-accept`,
 `accepting-sign`, `approve`, `awaiting-authorise` (batch path only),
@@ -290,7 +344,12 @@ type DepositFailure =
           revertError: string; // e.g. 'ClearingIsPending'
           error: unknown;
       }
-    | { step: 'request'; reason: 'contract-expired' }; // the 5-minute TTL
+    | { step: 'request'; reason: 'contract-expired' } // the 5-minute TTL
+    | {
+          step: 'request';
+          reason: 'pending' | 'already-submitted'; // batch path only — NOT failures
+          error: unknown;
+      };
 ```
 
 A wallet rejection is `cancelled`, not a failure: the lender changed their

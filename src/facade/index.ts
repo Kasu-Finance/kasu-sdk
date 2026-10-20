@@ -35,4 +35,5 @@ export type {
     KycParams,
     UserPositions,
     PlatformStats,
+    StrategyRiskPerformance,
 } from './types';

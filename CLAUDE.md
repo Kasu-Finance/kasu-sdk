@@ -62,10 +62,15 @@ src/
 │   ├── loan-contract.ts # Backend-verified protocol strings + depositData
 │   ├── wallet-errors.ts # User-rejection / gas-revert predicates
 │   ├── revert-errors.ts # Revert data → the custom error the contract named
-│   └── au-minimum.ts    # AU cumulative-lending minimum (numeric half)
+│   ├── au-minimum.ts    # AU cumulative-lending minimum (numeric half)
+│   ├── fixed-term.ts    # Allowlist-aware fixed-term configs, lock arithmetic
+│   ├── yields.ts        # Net weekly/daily/accrued interest, annual projection
+│   └── batch-proof.ts   # Deposit-batch pinning + receipt proof (money path)
 ├── flows/               # Headless money-path state machines — ports in, codes out
 │   ├── deposit-flow.ts  # The KYC-gated deposit pipeline
 │   ├── withdraw-flow.ts # The withdrawal pipeline
+│   ├── batch-submission.ts # submitBatch: poll, prove, outcome taxonomy
+│   ├── batch-errors.ts  # BatchRevertedError, BatchSubmissionError, BatchPendingError
 │   ├── flow.ts          # Flow<S, I>: the run lifecycle both share
 │   └── observable.ts    # FlowStore: subscribe, patch, abandon a run
 ├── facade/              # High-level integrator API (Kasu, chain configs, I/O)
@@ -264,9 +269,11 @@ they were duplicated across the applications, and the copies drifted.
    belongs to each application, where the design system and the visitor's
    language are.
 
-   Exactly two kinds of string are exempt. `getTrancheDisplayName` (below) is
-   here precisely so it CANNOT drift. And `loan-contract.ts` builds **protocol
-   strings** — see below.
+   Exactly three kinds of string are exempt. `getTrancheDisplayName` (below) is
+   here precisely so it CANNOT drift. `loan-contract.ts` builds **protocol
+   strings** — see below. And `partners.ts` holds each partner's `region`,
+   because the word a lender signs in the loan-agreement message must be the
+   word every surface shows — a protocol string in all but name.
 2. **Pure.** No network, no clock, no environment. Anything with I/O goes in
    `src/facade/` — `fetchUnusedPoolIds` is the example.
 
@@ -284,6 +291,22 @@ they were duplicated across the applications, and the copies drifted.
 | `wallet-errors.ts`        | `isUserRejected`, `isUnpredictableGas`, `classifyWalletFailure`                   |
 | `revert-errors.ts`        | `extractRevertData`, `decodeRevert` — revert bytes → the ABI's error name          |
 | `au-minimum.ts`           | AU cumulative-lending minimum — thresholds, minor-unit maths, exemption test      |
+| `fixed-term.ts`           | Fixed-term configs a wallet may select (allowlist-aware), lock days / months     |
+| `yields.ts`               | Weekly / daily / per-pool accrued interest NET of the fee, annual projection      |
+| `batch-proof.ts`          | Pin a deposit batch to its run; prove a deposit in a handleOps receipt           |
+
+`partners.ts` also owns each partner's `region` and `getStrategyRegion` — the
+word a lender SIGNS in the loan-agreement message. It must equal what every app
+shows for the strategy (`'Global'` for PayFi, `'Australia'` for Apxium), so
+never state a region from a constant.
+
+`batch-proof.ts` and `flows/batch-submission.ts` are money-path code. The proof
+reports `deposited` only when the receipt shows THIS lender's `DepositRequested`
+for the expected tranche AND amount inside their own user operation, and
+`submitBatch` never reports an ambiguous result as `failed`: after the post,
+only a revert is definitive, everything else is `BatchPendingError`, which
+`DepositFlow` surfaces as `reason: 'pending'` without consulting the revert
+decoder.
 
 `requests.ts` publishes the reallocation destination as a RAW tranche name
 (`reallocationTargetTrancheName`), like `trancheName` — rename both at the view
@@ -437,9 +460,19 @@ then `depositBatch`) → `request-confirm` (`wait()`) → `success`.
 - **Failures.** A port that KNOWS the batch reverts throws the exported
   `BatchRevertedError(revertError)` → `{ step: 'request', reason: 'reverted',
   revertError, error }` (`''` when it reverts for a reason nobody named).
+  A `BatchSubmissionError` (or `BatchPendingError`) is read at its word, BEFORE
+  the revert decoder: `pending` → `{ reason: 'pending' }`, `already-submitted`
+  → `{ reason: 'already-submitted' }`, `failed` → `{ reason: 'failed' }`.
   Anything else goes through the request step's existing classification — a
   wallet rejection is `cancelled`, a decodable revert is `reverted`, everything
   else `failed` — so a non-wallet throw is never a cancellation.
+- **Submitting through a relay.** `submitBatch` (`flows/batch-submission.ts`)
+  is the body of a `depositBatch` port for a submitter that is asked for its
+  status later: it owns the polling policy, the receipt proof
+  (`proveDepositInReceipt`) and the outcome taxonomy, and it never reports an
+  ambiguous result as `failed`. Pin the batch with `validateDepositBatchCalls`
+  before the lender signs it, and pass the strategy's `pendingPool` in the
+  proof expectation so only THAT contract's `DepositRequested` counts.
 
 ### Failure codes
 
@@ -454,12 +487,26 @@ type DepositFailure =
           revertError: string;
           error: unknown;
       }
-    | { step: 'request'; reason: 'contract-expired' };
+    | { step: 'request'; reason: 'contract-expired' }
+    | {
+          step: 'request';
+          reason: 'pending' | 'already-submitted'; // batch path only — NOT failures
+          error: unknown;
+      };
 ```
 
 `cancelled` is `isUserRejected` — the lender changed their mind, and telling
 them something broke would be a lie. Everything else is `failed` and carries
 the original error for a crash reporter.
+
+`pending` and `already-submitted` (2.9.0) are produced only on the batch path,
+from a `BatchSubmissionError` whose outcome is not `failed`. Neither is a
+failure: `pending` means the batch was, or may have been, accepted and nothing
+proves whether it deposited — rendering it as a failure invites a second
+deposit — and `already-submitted` means an earlier submission was proven, so
+this one was refused. A consumer whose copy table falls through to its generic
+"failed" sentence must add both codes before it supplies a `depositBatch`
+port that throws these errors.
 
 A revert on the request step is read for WHAT reverted, not just THAT it would.
 Until 2.7.1 every `UNPREDICTABLE_GAS_LIMIT` was `insufficient-balance`, and
