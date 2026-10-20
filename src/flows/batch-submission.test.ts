@@ -5,6 +5,11 @@ import {
     ReceiptLike,
     ReceiptLog,
 } from '../domain/batch-proof';
+import {
+    encodeCancelDepositCall,
+    encodeRequestWithdrawalCall,
+    SponsoredCall,
+} from '../domain/sponsored-calls';
 
 import {
     batchOutcomeOf,
@@ -18,7 +23,9 @@ import {
     BatchSubmissionPorts,
     checkBatchOutcome,
     DEFAULT_BATCH_POLLING_POLICY,
+    SponsoredCallSubmissionPorts,
     submitBatch,
+    submitSponsoredCall,
 } from './batch-submission';
 
 // Ported from kasu-ui (one-tx lend) `deposit-relay/__tests__/relay-client.test.ts`
@@ -572,5 +579,219 @@ describe('batch errors', () => {
                 /user|wallet|reject|cancel|declin/i,
             );
         }
+    });
+});
+
+// ---------------------------------------------------------------------------
+// submitSponsoredCall — one call, the same post / poll / outcome table
+// ---------------------------------------------------------------------------
+
+describe('submitSponsoredCall', () => {
+    const LPM = '0x0000000000000000000000000000000000000004';
+    const POOL = '0x0000000000000000000000000000000000000005';
+    const CALL: SponsoredCall = encodeCancelDepositCall(LPM, POOL, 42);
+    const CALL_EXPECT = { sender: LENDER };
+
+    function callHarness(
+        statuses: (BatchStatusRead | Error)[],
+        overrides: Partial<SponsoredCallSubmissionPorts> = {},
+    ): Omit<ReturnType<typeof harness>, 'ports'> & {
+        ports: SponsoredCallSubmissionPorts;
+    } {
+        const h = harness(statuses);
+        // An executed single call: our operation succeeded, no deposit event.
+        h.getReceipt.mockResolvedValue(receipt({ deposit: false }));
+        return {
+            ...h,
+            ports: { ...h.ports, ...overrides } as SponsoredCallSubmissionPorts,
+        };
+    }
+
+    it('posts the call WITH its kind, then proves the operation executed', async () => {
+        const { ports, post, getReceipt } = callHarness([AGAIN, MINED]);
+        const submission = await submitSponsoredCall(
+            { call: CALL, expect: CALL_EXPECT },
+            ports,
+        );
+        expect(post).toHaveBeenCalledTimes(1);
+        expect(post).toHaveBeenCalledWith(CALL);
+        expect(submission.transactionId).toBe(TX_ID);
+        const executed = await submission.wait();
+        expect(executed.proof).toEqual({ kind: 'executed', blockNumber: 123 });
+        expect(executed.txHash).toBe(TX_HASH);
+        expect(getReceipt).toHaveBeenCalledWith(TX_HASH);
+    });
+
+    it('memoises wait(): a second call does not poll again', async () => {
+        const { ports, statusReads } = callHarness([MINED]);
+        const submission = await submitSponsoredCall(
+            { call: CALL, expect: CALL_EXPECT },
+            ports,
+        );
+        await submission.wait();
+        await submission.wait();
+        expect(statusReads()).toBe(1);
+    });
+
+    it('a REVERTED operation is a BatchRevertedError — a revert stays a revert', async () => {
+        const { ports, getReceipt } = callHarness([MINED]);
+        getReceipt.mockResolvedValue(
+            receipt({ success: false, deposit: false }),
+        );
+        const submission = await submitSponsoredCall(
+            { call: CALL, expect: CALL_EXPECT },
+            ports,
+        );
+        const err = await outcomeOf(submission.wait());
+        expect(err).toBeInstanceOf(BatchRevertedError);
+        expect(isDefinitivelyNotSubmitted(err)).toBe(true);
+    });
+
+    it('a vendor "reverted" status is a BatchRevertedError', async () => {
+        const { ports } = callHarness([{ kind: 'reverted' }]);
+        const submission = await submitSponsoredCall(
+            { call: CALL, expect: CALL_EXPECT },
+            ports,
+        );
+        expect(await outcomeOf(submission.wait())).toBeInstanceOf(
+            BatchRevertedError,
+        );
+    });
+
+    it.each([
+        [
+            'an unknown status',
+            [{ kind: 'unknown', code: 'vendor_failed' } as BatchStatusRead],
+            'vendor_failed',
+        ],
+        ['a status that never mines', [AGAIN], 'status_timeout'],
+    ])('%s is PENDING, never failed', async (_label, statuses, code) => {
+        const { ports } = callHarness(statuses);
+        const submission = await submitSponsoredCall(
+            { call: CALL, expect: CALL_EXPECT },
+            ports,
+        );
+        const err = await outcomeOf(submission.wait());
+        expect(err).toBeInstanceOf(BatchPendingError);
+        expect((err as BatchPendingError).code).toBe(code);
+        expect(batchOutcomeOf(err)).toBe('pending');
+    });
+
+    it('an unreadable receipt is PENDING (receipt_unavailable)', async () => {
+        const { ports, getReceipt } = callHarness([MINED]);
+        getReceipt.mockRejectedValue(new Error('timeout'));
+        const submission = await submitSponsoredCall(
+            { call: CALL, expect: CALL_EXPECT },
+            ports,
+        );
+        const err = await outcomeOf(submission.wait());
+        expect((err as BatchPendingError).code).toBe('receipt_unavailable');
+    });
+
+    it('a receipt that does not show THIS sender’s operation is PENDING (call_unproven:no-user-operation)', async () => {
+        const { ports } = callHarness([MINED]);
+        const submission = await submitSponsoredCall(
+            {
+                call: CALL,
+                expect: {
+                    sender: '0x0000000000000000000000000000000000000002',
+                },
+            },
+            ports,
+        );
+        const err = await outcomeOf(submission.wait());
+        expect(err).toBeInstanceOf(BatchPendingError);
+        expect((err as BatchPendingError).code).toBe(
+            'call_unproven:no-user-operation',
+        );
+    });
+
+    it('an unrecognised post throw — even one worded as a user rejection — is PENDING', async () => {
+        const rejected = Object.assign(new Error('User rejected the request'), {
+            code: 4001,
+        });
+        const { ports } = callHarness([MINED], {
+            post: jest.fn().mockRejectedValue(rejected),
+        });
+        const err = await outcomeOf(
+            submitSponsoredCall({ call: CALL, expect: CALL_EXPECT }, ports),
+        );
+        expect(err).toBeInstanceOf(BatchPendingError);
+        expect((err as BatchPendingError).code).toBe('post_unknown');
+    });
+
+    it('passes a port’s own BatchSubmissionError and BatchRevertedError through at their word', async () => {
+        for (const thrown of [
+            new BatchSubmissionError('relay_disabled', 'failed'),
+            new BatchSubmissionError('already', 'already-submitted'),
+            new BatchRevertedError('ClearingIsPending'),
+        ]) {
+            const { ports } = callHarness([MINED], {
+                post: jest.fn().mockRejectedValue(thrown),
+            });
+            expect(
+                await outcomeOf(
+                    submitSponsoredCall(
+                        { call: CALL, expect: CALL_EXPECT },
+                        ports,
+                    ),
+                ),
+            ).toBe(thrown);
+        }
+    });
+
+    it('an accepted answer without a transaction id is PENDING (malformed_answer)', async () => {
+        const { ports } = callHarness([MINED], {
+            post: jest.fn().mockResolvedValue({}),
+        });
+        const err = await outcomeOf(
+            submitSponsoredCall({ call: CALL, expect: CALL_EXPECT }, ports),
+        );
+        expect((err as BatchPendingError).code).toBe('malformed_answer');
+    });
+
+    it('refuses — FAILED, nothing posted — a call whose kind, keys or selector do not match', async () => {
+        const withdrawal = encodeRequestWithdrawalCall(LPM, POOL, TRANCHE, 1);
+        const mismatched: unknown[] = [
+            { kind: 'withdrawal', call: CALL.call }, // a cancel's data
+            { kind: 'transfer', call: CALL.call }, // not an SDK kind
+            { kind: 'deposit', call: CALL.call },
+            { kind: CALL.kind, call: { ...CALL.call, value: 0 } },
+            { kind: CALL.kind, call: { to: 'lpm', data: CALL.call.data } },
+            { kind: CALL.kind, call: { to: LPM, data: '0xzz' } },
+            { kind: CALL.kind, call: withdrawal.call },
+            null,
+        ];
+        for (const call of mismatched) {
+            const { ports, post } = callHarness([MINED]);
+            const err = await outcomeOf(
+                submitSponsoredCall(
+                    { call: call as SponsoredCall, expect: CALL_EXPECT },
+                    ports,
+                ),
+            );
+            expect(err).toBeInstanceOf(BatchSubmissionError);
+            expect((err as BatchSubmissionError).code).toBe('call_mismatch');
+            expect(batchOutcomeOf(err)).toBe('failed');
+            expect(post).not.toHaveBeenCalled();
+        }
+    });
+
+    it('uses the deposit path’s polling policy: first read at once, 3 s ×1.5 to 10 s', async () => {
+        const { ports, sleeps } = callHarness([
+            AGAIN,
+            AGAIN,
+            AGAIN,
+            AGAIN,
+            AGAIN,
+            MINED,
+        ]);
+        const submission = await submitSponsoredCall(
+            { call: CALL, expect: CALL_EXPECT },
+            ports,
+        );
+        await submission.wait();
+        expect(sleeps).toEqual([3000, 4500, 6750, 10000, 10000]);
+        expect(DEFAULT_BATCH_POLLING_POLICY.timeoutMs).toBe(600_000);
     });
 });
