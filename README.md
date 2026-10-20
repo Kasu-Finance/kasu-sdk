@@ -100,13 +100,14 @@ a read-only `Kasu.create({ chain: 'plume' })` throws — pass your own provider 
 read its history.
 
 Every entry lives in `CHAIN_CONFIGS`, including contract addresses, subgraph
-URLs, the stable asset and public RPC defaults:
+URLs, the stable asset, public RPC defaults and the block explorer:
 
 ```ts
-import { CHAIN_CONFIGS } from '@kasufinance/kasu-sdk';
+import { CHAIN_CONFIGS, explorerTxUrl } from '@kasufinance/kasu-sdk';
 
 CHAIN_CONFIGS.base.stableAsset; // { address, symbol, name, decimals, currencyCode }
 CHAIN_CONFIGS.xdc.rpcUrls; // starting preference only — override with your own
+explorerTxUrl(CHAIN_CONFIGS.base, txHash); // https://basescan.org/tx/0x… — throws on a malformed hash
 ```
 
 You can also pass a whole `ChainConfigEntry` instead of a chain key.

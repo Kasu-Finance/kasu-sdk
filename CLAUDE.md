@@ -66,7 +66,8 @@ src/
 │   ├── fixed-term.ts    # Allowlist-aware fixed-term configs, lock arithmetic
 │   ├── yields.ts        # Net weekly/daily/accrued interest, annual projection
 │   ├── batch-proof.ts   # Deposit-batch pinning + receipt proofs (money path)
-│   └── sponsored-calls.ts # Single-call LPM encoders + relay kinds/selectors
+│   ├── sponsored-calls.ts # Single-call LPM encoders + relay kinds/selectors
+│   └── explorer-urls.ts # Validated block-explorer tx / address links
 ├── flows/               # Headless money-path state machines — ports in, codes out
 │   ├── deposit-flow.ts  # The KYC-gated deposit pipeline
 │   ├── withdraw-flow.ts # The withdrawal pipeline
@@ -235,6 +236,10 @@ const kasu = Kasu.create({
   override with their own and their own failover. Never `rpc.xdc.org` or
   `erpc.xdc.org`: they answer OPTIONS without `access-control-allow-origin`, so
   browser calls hang on preflight.
+- `blockExplorerUrl` — the explorer origin, `https://`, no trailing slash.
+  Never concatenate paths onto it: `explorerTxUrl` / `explorerAddressUrl`
+  (`domain/explorer-urls.ts`) validate the hash or address first and throw on
+  anything else.
 - `retired` — true for a wound-down deployment. It has no default RPC, so a
   read-only `Kasu.create` on it throws.
 
@@ -296,6 +301,7 @@ they were duplicated across the applications, and the copies drifted.
 | `yields.ts`               | Weekly / daily / per-pool accrued interest NET of the fee, annual projection      |
 | `batch-proof.ts`          | Pin a deposit batch to its run; prove a deposit (or one executed operation) in a handleOps receipt |
 | `sponsored-calls.ts`      | Encode the single-call LPM requests a sponsored relay carries, with their `kind` |
+| `explorer-urls.ts`        | `explorerTxUrl` / `explorerAddressUrl` — explorer links from a validated hash or address only |
 
 `partners.ts` also owns each partner's `region` and `getStrategyRegion` — the
 word a lender SIGNS in the loan-agreement message. It must equal what every app

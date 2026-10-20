@@ -68,6 +68,9 @@ export {
 } from './deposit-bounds';
 export type { BoundShortcuts, DepositBounds } from './deposit-bounds';
 
+export { explorerAddressUrl, explorerTxUrl } from './explorer-urls';
+export type { ExplorerConfig } from './explorer-urls';
+
 export {
     availableFixedTermConfigs,
     DAYS_PER_EPOCH,

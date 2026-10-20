@@ -67,6 +67,13 @@ export interface ChainConfigEntry {
      */
     rpcUrls: string[];
     /**
+     * Origin of the chain's block explorer, `https://…` with NO trailing
+     * slash (`https://basescan.org`). Never append a path to it by hand: build
+     * links with `explorerTxUrl` / `explorerAddressUrl`, which validate the
+     * hash or address first, so no app turns an unchecked string into a URL.
+     */
+    blockExplorerUrl: string;
+    /**
      * True for a wound-down deployment kept only as frozen history. It has no
      * default RPC, so a read-only `Kasu.create` on it throws.
      */

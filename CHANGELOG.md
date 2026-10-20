@@ -49,6 +49,17 @@ and a `WithdrawFlow` that can submit through one.
   live `partial`) request, else `null`.
 - `UserLending.getWithdrawalSharesForAssets(tranche, amount)` and
   `getWithdrawalSharesMax(tranche, user)`.
+- **`ChainConfigEntry.blockExplorerUrl`** — the chain's explorer origin,
+  `https://` with no trailing slash: `https://basescan.org` (Base),
+  `https://xdcscan.com` (both XDC deployments), `https://explorer.plume.org`
+  (retired Plume).
+- **`domain/explorer-urls`** — `explorerTxUrl(config, txHash)` and
+  `explorerAddressUrl(config, address)` build `<base>/tx/<hash>` and
+  `<base>/address/<address>` only from an exact 32-byte hash
+  (`/^0x[0-9a-fA-F]{64}$/`) or a valid 20-byte address (checksum enforced when
+  mixed-case), over an `https://` base; anything else throws. Type
+  `ExplorerConfig`. Apps should link through these instead of concatenating
+  strings.
 
 ### Changed
 
@@ -60,6 +71,10 @@ and a `WithdrawFlow` that can submit through one.
   rejection thrown by `submitCall` itself is `cancelled` (nothing was posted);
   a run abandoned while `submitCall` is in flight never calls `wait()`.
 - `WithdrawState` has a required `sponsored` field.
+- `ChainConfigEntry` has a required `blockExplorerUrl` field. A custom entry
+  built by hand (rather than spread from `CHAIN_CONFIGS`) must add it to
+  type-check; at runtime nothing but the explorer helpers reads it, and they
+  throw a clear error when it is missing. `configOverrides` is unaffected.
 - `FlowsFacade` takes an optional sixth constructor argument (the
   `CallsFacade`); `Kasu` passes it.
 - `proveDepositInReceipt` and `proveUserOperationInReceipt`: without a
