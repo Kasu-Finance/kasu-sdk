@@ -6,6 +6,7 @@ import type { IERC20MetadataAbi } from '../contracts';
 import { KasuSdk } from '../kasu-sdk';
 import { SdkConfig, SdkConfigOptions } from '../sdk-config';
 
+import { CallsFacade } from './calls';
 import { CHAIN_CONFIGS } from './chain-configs';
 import { DepositsFacade } from './deposits';
 import { FlowsFacade } from './flows';
@@ -21,8 +22,8 @@ import { PortfolioFacade } from './user-portfolio';
 /**
  * High-level entry point for external integrators.
  *
- * Provides four domain facades — `strategies`, `deposits`, `portfolio`,
- * `flows` — and exposes the underlying `KasuSdk` services via `.services` for
+ * Provides five domain facades — `strategies`, `deposits`, `portfolio`,
+ * `flows`, `calls` — and exposes the underlying `KasuSdk` services via `.services` for
  * power-users.
  *
  * ```ts
@@ -49,6 +50,11 @@ export class Kasu {
     public readonly portfolio: PortfolioFacade;
     /** Headless deposit / withdraw state machines. */
     public readonly flows: FlowsFacade;
+    /**
+     * Encoded `LendingPoolManager` calls for a sponsored relay — withdraw,
+     * cancel, withdraw at expiry. Read, then encode; never sends.
+     */
+    public readonly calls: CallsFacade;
 
     private readonly _sdk: KasuSdk;
     private readonly _chainConfig: ChainConfigEntry;
@@ -97,12 +103,20 @@ export class Kasu {
             sdk.Portfolio,
         );
 
+        // The same `LendingPoolManager` the deposit flow approves and calls:
+        // the chain config's, which is what a relay allow-lists `to` against.
+        this.calls = new CallsFacade(
+            sdk.UserLending,
+            chainConfig.contracts.LendingPoolManager,
+        );
+
         this.flows = new FlowsFacade(
             this.deposits,
             () => erc20Of(chainConfig, signerOrProvider),
             isReadOnly,
             chainConfig.contracts.LendingPoolManager,
             stableAssetOf(chainConfig)?.address,
+            this.calls,
         );
     }
 
