@@ -151,7 +151,7 @@ describe('kasu.calls.requestWithdrawal', () => {
         ).rejects.toMatchObject({ code: 'zero-shares' });
     });
 
-    it('refuses a non-positive amount, or a malformed lender / tranche, without reading the chain', async () => {
+    it('refuses a non-positive amount, or a malformed lender / pool / tranche, without reading the chain', async () => {
         const provider = new StubProvider();
         const calls = kasuOn(provider).calls;
         for (const [params, code] of [
@@ -159,6 +159,7 @@ describe('kasu.calls.requestWithdrawal', () => {
             [{ amount: BigNumber.from(-1) }, 'non-positive-amount'],
             [{ amount: 10 as unknown as BigNumber }, 'non-positive-amount'],
             [{ userAddress: '0xuser' }, 'user'],
+            [{ poolId: '0xpool' }, 'pool'],
             [{ trancheId: '0xtranche' }, 'tranche'],
         ] as const) {
             const base: RequestWithdrawalCallParams = {

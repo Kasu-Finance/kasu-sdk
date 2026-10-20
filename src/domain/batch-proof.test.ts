@@ -821,13 +821,54 @@ describe('proveUserOperationInReceipt — one sponsored call', () => {
         expect(proof.kind).toBe('reverted');
     });
 
-    it('without a hash, reads the sender’s FIRST operation', () => {
+    it('without a hash, reads the sender’s ONLY operation', () => {
         expect(
             proveUserOperationInReceipt(
                 receiptOf([
                     beforeExecutionLog(),
                     userOperationEventLog({
                         success: true,
+                        hash: OTHER_OP_HASH,
+                    }),
+                ]),
+                { sender: LENDER },
+            ).kind,
+        ).toBe('executed');
+    });
+
+    it('without a hash, TWO operations of the sender are ambiguous — never the first one’s verdict', () => {
+        // One succeeded, one reverted: reading the first would call a
+        // reverted withdrawal "executed" (or an executed one "reverted").
+        for (const order of [
+            [true, false],
+            [false, true],
+        ]) {
+            const receipt = receiptOf([
+                beforeExecutionLog(),
+                userOperationEventLog({
+                    success: order[0],
+                    hash: OTHER_OP_HASH,
+                }),
+                userOperationEventLog({ success: order[1] }),
+            ]);
+            expect(
+                proveUserOperationInReceipt(receipt, { sender: LENDER }),
+            ).toEqual({ kind: 'unproven', reason: 'ambiguous-operation' });
+            // With the hash, THAT one is read, whatever came before it.
+            expect(proveUserOperationInReceipt(receipt, SENDER).kind).toBe(
+                order[1] ? 'executed' : 'reverted',
+            );
+        }
+        // Another sender's operations never make ours ambiguous.
+        expect(
+            proveUserOperationInReceipt(
+                receiptOf([
+                    beforeExecutionLog(),
+                    userOperationEventLog({ success: true, sender: OTHER }),
+                    userOperationEventLog({ success: true }),
+                    userOperationEventLog({
+                        success: false,
+                        sender: OTHER,
                         hash: OTHER_OP_HASH,
                     }),
                 ]),
@@ -847,5 +888,28 @@ describe('proveUserOperationInReceipt — one sponsored call', () => {
             kind: 'unproven',
             reason: 'no-user-operation',
         });
+    });
+});
+
+describe('proveDepositInReceipt — two operations of the lender, no hash', () => {
+    it('is ambiguous — never the first one’s revert, which would invite a second deposit', () => {
+        // Our deposit is the SECOND operation and succeeded; the first, an
+        // unrelated one of the same lender, reverted. Reading the first would
+        // report `reverted` for a deposit that landed.
+        const receipt = receiptOf([
+            beforeExecutionLog(),
+            userOperationEventLog({ success: false, hash: OTHER_OP_HASH }),
+            approvalLog(),
+            depositRequestedLog(),
+            userOperationEventLog({ success: true }),
+        ]);
+        expect(
+            proveDepositInReceipt(receipt, {
+                ...EXPECTED,
+                userOperationHash: null,
+            }),
+        ).toEqual({ kind: 'unproven', reason: 'ambiguous-operation' });
+        // With the hash, it is the proven deposit it always was.
+        expect(proveDepositInReceipt(receipt, EXPECTED).kind).toBe('deposited');
     });
 });

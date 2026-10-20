@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers';
 
 import { SponsoredCall } from '../domain/sponsored-calls';
-import { classifyWalletFailure } from '../domain/wallet-errors';
+import { classifyWalletFailure, isUserRejected } from '../domain/wallet-errors';
 import { KycParams } from '../facade/types';
 
 import { BatchRevertedError, BatchSubmissionError } from './batch-errors';
@@ -42,11 +42,17 @@ import { WaitableTransaction } from './observable';
  *
  * A submitted call's outcome is read with the batch path's taxonomy, and at
  * its word: `BatchRevertedError` → `reverted`; `BatchSubmissionError` → its
- * own outcome (`failed`, `pending`, `already-submitted`); ANY other throw from
- * `submitCall` or `wait()` → `pending`. The SDK cannot know whether an
- * unrecognised error left before or after the call was accepted, and calling
- * that `failed` invites a second withdrawal request. `submitSponsoredCall` is
- * the port body that already speaks this.
+ * own outcome (`failed`, `pending`, `already-submitted`); a WALLET rejection
+ * (`isUserRejected`) thrown by `submitCall` itself → `cancelled`, exactly as a
+ * raw `depositBatch` throw is read — the lender declined to sign, nothing was
+ * posted; ANY other throw from `submitCall`, and every throw from `wait()`
+ * that is not one of the typed errors, → `pending`. The SDK cannot know
+ * whether an unrecognised error left before or after the call was accepted,
+ * and calling that `failed` invites a second withdrawal request.
+ * `submitSponsoredCall` is the port body that already speaks this; note that
+ * a rejection raised INSIDE its `post` is wrapped as `pending` (the 2.9.0
+ * rule for `post`), so sign in `submitCall` before calling it when the app
+ * wants `cancelled`.
  */
 
 // ---------------------------------------------------------------------------
@@ -105,9 +111,7 @@ export interface WithdrawPorts {
      * Build the Nexera KYC params for the pre-check. Defaults to
      * `kasu.deposits.buildKycParams`, exactly as the deposit flow's does.
      */
-    buildKycParams?(
-        userAddress: `0x${string}`,
-    ): KycParams | Promise<KycParams>;
+    buildKycParams?(userAddress: `0x${string}`): KycParams | Promise<KycParams>;
     /**
      * Exchange those params for a signature at the consumer's own backend, and
      * so verify the lender's KYC BEFORE the wallet is opened — a lapsed one
@@ -141,8 +145,10 @@ export interface WithdrawPorts {
      * the polling and the receipt proof.
      *
      * Throw `BatchRevertedError` for a known revert and
-     * `BatchSubmissionError(code, 'failed')` ONLY when nothing was sent; any
-     * other throw — here or from `wait()` — is read as `pending`.
+     * `BatchSubmissionError(code, 'failed')` ONLY when nothing was sent. A
+     * wallet rejection thrown here (the lender declined to sign the call,
+     * `isUserRejected`) is `cancelled`; any other throw — here or from
+     * `wait()` — is read as `pending`.
      */
     submitCall?(call: SponsoredCall): Promise<WaitableTransaction>;
     /**
@@ -210,12 +216,19 @@ export const NOT_A_WITHDRAWAL_CALL_MESSAGE =
     'WithdrawFlow: encodeWithdrawal returned a call that is not a withdrawal';
 
 /**
- * A `submitCall` rejection, read with the batch path's taxonomy. A submission
- * outcome is taken at its word FIRST — never through the wallet classifier,
- * which would read a relay's "request rejected" as the lender's own doing —
- * and anything unrecognised is `pending`: it may have left.
+ * A `submitCall` / `wait()` rejection, read with the batch path's taxonomy. A
+ * submission outcome is taken at its word FIRST — never through the wallet
+ * classifier, which would read a relay's "request rejected" as the lender's
+ * own doing. Then, from `submitCall` only, a wallet rejection is `cancelled`:
+ * the lender declined to sign and nothing was posted — the same reading a raw
+ * `depositBatch` throw gets. From `wait()` the call has already left, so a
+ * rejection-worded error there is as ambiguous as any other. Everything
+ * unrecognised is `pending`: it may have left.
  */
-function classifySponsored(err: unknown): WithdrawFailure {
+function classifySponsored(
+    err: unknown,
+    from: 'submit' | 'wait',
+): WithdrawFailure {
     if (err instanceof BatchSubmissionError) {
         return err.outcome === 'failed'
             ? { step: 'request', reason: 'failed', error: err }
@@ -228,6 +241,9 @@ function classifySponsored(err: unknown): WithdrawFailure {
             revertError: err.revertError,
             error: err,
         };
+    }
+    if (from === 'submit' && isUserRejected(err)) {
+        return { step: 'request', reason: 'cancelled' };
     }
     return { step: 'request', reason: 'pending', error: err };
 }
@@ -353,7 +369,9 @@ export class WithdrawFlow extends Flow<WithdrawState, WithdrawFlowInput> {
                 amount: input.amount,
                 userAddress: input.userAddress,
             });
-            if ((call as Partial<SponsoredCall> | null)?.kind !== 'withdrawal') {
+            if (
+                (call as Partial<SponsoredCall> | null)?.kind !== 'withdrawal'
+            ) {
                 throw new Error(NOT_A_WITHDRAWAL_CALL_MESSAGE);
             }
         } catch (err) {
@@ -368,13 +386,28 @@ export class WithdrawFlow extends Flow<WithdrawState, WithdrawFlowInput> {
         }
         if (!this._store.isCurrent(token)) return;
 
+        let tx: WaitableTransaction;
         try {
-            const tx = await ports.submitCall(call);
-            this._store.patch({ phase: 'request-confirm' }, token);
+            tx = await ports.submitCall(call);
+        } catch (err) {
+            this._store.patch(
+                { phase: 'error', failure: classifySponsored(err, 'submit') },
+                token,
+            );
+            return;
+        }
+        // The call has left. A run abandoned meanwhile stops HERE, without
+        // `wait()`: nothing it could learn would be published, and a sponsored
+        // `wait()` is minutes of polling against the submitter, not a cheap
+        // receipt read. The submission itself cannot be taken back.
+        if (!this._store.isCurrent(token)) return;
+        this._store.patch({ phase: 'request-confirm' }, token);
+
+        try {
             await tx.wait();
         } catch (err) {
             this._store.patch(
-                { phase: 'error', failure: classifySponsored(err) },
+                { phase: 'error', failure: classifySponsored(err, 'wait') },
                 token,
             );
             return;

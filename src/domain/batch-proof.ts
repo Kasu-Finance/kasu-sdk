@@ -288,8 +288,8 @@ export interface DepositProofExpectation {
     amount: BigNumberish;
     /**
      * The user operation hash, when the submitter knows it. With it, only
-     * THAT operation counts; without it, the lender's first operation in the
-     * bundle does.
+     * THAT operation counts; without it, the lender's ONLY operation in the
+     * bundle does — two of them without a hash is `ambiguous-operation`.
      */
     userOperationHash?: string | null;
     /** Defaults to `ENTRY_POINT_V07`. */
@@ -315,6 +315,7 @@ export type DepositProof =
           kind: 'unproven';
           reason:
               | 'no-user-operation'
+              | 'ambiguous-operation'
               | 'no-deposit-requested'
               | 'malformed-receipt';
       };
@@ -375,6 +376,9 @@ export function proveDepositInReceipt(
         entryPoint: expected.entryPoint,
     });
     if (op === null) return { kind: 'unproven', reason: 'no-user-operation' };
+    if (op === 'ambiguous') {
+        return { kind: 'unproven', reason: 'ambiguous-operation' };
+    }
 
     if (!op.success) {
         return { kind: 'reverted', revertError: op.revertError() };
@@ -407,8 +411,8 @@ export interface UserOperationProofExpectation {
     sender: string;
     /**
      * The user operation hash, when the submitter knows it. With it, only
-     * THAT operation counts; without it, the sender's first operation in the
-     * bundle does.
+     * THAT operation counts; without it, the sender's ONLY operation in the
+     * bundle does — two of them without a hash is `ambiguous-operation`.
      */
     userOperationHash?: string | null;
     /** Defaults to `ENTRY_POINT_V07`. */
@@ -423,8 +427,18 @@ export type UserOperationProof =
      * `revertError` is the protocol error it named, or `''`.
      */
     | { kind: 'reverted'; revertError: string }
-    /** The receipt does not show the operation. NEVER a success, never a failure. */
-    | { kind: 'unproven'; reason: 'no-user-operation' | 'malformed-receipt' };
+    /**
+     * The receipt does not show the operation — or, with no hash to go by,
+     * shows TWO of the sender's and cannot tell which is ours. NEVER a
+     * success, never a failure.
+     */
+    | {
+          kind: 'unproven';
+          reason:
+              | 'no-user-operation'
+              | 'ambiguous-operation'
+              | 'malformed-receipt';
+      };
 
 /**
  * Did THIS receipt execute the sender's user operation? — PURE. The
@@ -438,7 +452,10 @@ export type UserOperationProof =
  * `executed` needs the operation's `success` flag. A single-call operation
  * that succeeded executed its one call; there is no event to match beyond
  * that, so pass the `userOperationHash` whenever the submitter reports one —
- * without it, the sender's FIRST operation in the bundle is the one read.
+ * without it, the sender's ONLY operation in the bundle is the one read, and a
+ * bundle holding two of theirs is `ambiguous-operation` (pending), never the
+ * first one's verdict: with one succeeded and one reverted, "executed" would
+ * tell the lender their request is queued when it is not.
  */
 export function proveUserOperationInReceipt(
     receipt: ReceiptLike,
@@ -449,6 +466,9 @@ export function proveUserOperationInReceipt(
     }
     const op = locateUserOperation(receipt.logs, expected);
     if (op === null) return { kind: 'unproven', reason: 'no-user-operation' };
+    if (op === 'ambiguous') {
+        return { kind: 'unproven', reason: 'ambiguous-operation' };
+    }
     if (!op.success) {
         return { kind: 'reverted', revertError: op.revertError() };
     }
@@ -457,11 +477,15 @@ export function proveUserOperationInReceipt(
 
 /**
  * The sender's user operation in a `handleOps` receipt — its `success` flag
- * and its execution window — or `null` when the receipt does not show one.
+ * and its execution window — `null` when the receipt does not show one, or
+ * `'ambiguous'` when no hash was given and it shows more than one of theirs.
  *
  *  - The `UserOperationEvent` must be emitted BY the EntryPoint, with
  *    `sender` = the expected sender and, when one is known, `userOpHash` =
- *    the expected hash. The first such event wins.
+ *    the expected hash. Without a hash the sender must have exactly ONE
+ *    operation in the bundle: a bundler may pack two of theirs (sequential
+ *    nonces, or parallel nonce keys), and reading the first would attribute
+ *    the other one's verdict to this call.
  *  - The window is the logs after the previous operation's event (or
  *    `BeforeExecution`, which precedes the first) and before ours: what our
  *    operation's calls emitted, and nothing another operation in the same
@@ -470,11 +494,14 @@ export function proveUserOperationInReceipt(
 function locateUserOperation(
     logs: readonly ReceiptLog[],
     expected: UserOperationProofExpectation,
-): {
-    success: boolean;
-    window: readonly ReceiptLog[];
-    revertError: () => string;
-} | null {
+):
+    | {
+          success: boolean;
+          window: readonly ReceiptLog[];
+          revertError: () => string;
+      }
+    | null
+    | 'ambiguous' {
     const entryPoint = expected.entryPoint ?? ENTRY_POINT_V07;
     const wantedHash = expected.userOperationHash?.toLowerCase() ?? null;
     const fromEntryPoint = (log: ReceiptLog): boolean =>
@@ -492,9 +519,13 @@ function locateUserOperation(
         const userOpHash = String(decoded.args.userOpHash).toLowerCase();
         if (wantedHash !== null && userOpHash !== wantedHash) continue;
         if (!sameAddress(decoded.args.sender, expected.sender)) continue;
+        // A second operation of this sender, and no hash to tell them apart.
+        if (opIndex >= 0) return 'ambiguous';
         opIndex = i;
         success = decoded.args.success === true;
-        break;
+        // A hash names exactly one operation; without one, keep scanning so
+        // a second operation of the sender is noticed.
+        if (wantedHash !== null) break;
     }
     if (opIndex < 0) return null;
 

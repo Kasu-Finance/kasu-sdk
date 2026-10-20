@@ -66,6 +66,9 @@ export class CallsFacade {
         if (typeof userAddress !== 'string' || !ADDRESS_RE.test(userAddress)) {
             throw new SponsoredCallInputError('user');
         }
+        if (typeof poolId !== 'string' || !ADDRESS_RE.test(poolId)) {
+            throw new SponsoredCallInputError('pool');
+        }
         if (typeof trancheId !== 'string' || !ADDRESS_RE.test(trancheId)) {
             throw new SponsoredCallInputError('tranche');
         }

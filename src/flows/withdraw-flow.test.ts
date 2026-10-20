@@ -31,7 +31,9 @@ const TRANCHE = '0xtranche';
 const AMOUNT = BigNumber.from('10077107');
 
 function rejection(): Error {
-    return Object.assign(new Error('User rejected the request'), { code: 4001 });
+    return Object.assign(new Error('User rejected the request'), {
+        code: 4001,
+    });
 }
 
 const KYC_PARAMS: KycParams = {
@@ -240,8 +242,7 @@ describe('WithdrawFlow', () => {
         const failure = h.flow.state.failure;
         expect(failure?.step).toBe('kyc');
         expect(failure?.reason).toBe('failed');
-        const error =
-            failure && 'error' in failure ? failure.error : undefined;
+        const error = failure && 'error' in failure ? failure.error : undefined;
         expect((error as Error).message).toBe(NO_KYC_PARAMS_MESSAGE);
         expect(h.withdrawCalls).toHaveLength(0);
     });
@@ -356,7 +357,8 @@ describe('WithdrawFlow', () => {
         const h = makeHarness({
             withdraw: (params): Promise<WaitableTransaction> => {
                 calls += 1;
-                if (calls === 1) return new Promise<WaitableTransaction>(() => undefined);
+                if (calls === 1)
+                    return new Promise<WaitableTransaction>(() => undefined);
                 return Promise.resolve({
                     wait: (): Promise<unknown> => Promise.resolve(params),
                 });
@@ -471,7 +473,8 @@ describe('WithdrawFlow — sponsored path', () => {
                 submitted.push(call);
                 if (o.submit) return o.submit();
                 return Promise.resolve({
-                    wait: o.wait ?? ((): Promise<unknown> => Promise.resolve({})),
+                    wait:
+                        o.wait ?? ((): Promise<unknown> => Promise.resolve({})),
                 });
             },
             ...o.ports,
@@ -563,7 +566,7 @@ describe('WithdrawFlow — sponsored path', () => {
                 reason: 'failed',
             });
             expect(
-                ((h.flow.state.failure as { error: Error }).error).message,
+                (h.flow.state.failure as { error: Error }).error.message,
             ).toBe(NOT_A_WITHDRAWAL_CALL_MESSAGE);
             expect(h.submitted).toHaveLength(0);
         });
@@ -572,13 +575,16 @@ describe('WithdrawFlow — sponsored path', () => {
             const h = sponsored({ noEncoder: true });
             await h.flow.start(SINPUT);
             expect(
-                ((h.flow.state.failure as { error: Error }).error).message,
+                (h.flow.state.failure as { error: Error }).error.message,
             ).toBe(NO_WITHDRAWAL_ENCODER_MESSAGE);
             expect(h.submitted).toHaveLength(0);
         });
 
         it('a port’s own BatchSubmissionError(…, "failed") is failed', async () => {
-            const refused = new BatchSubmissionError('relay_disabled', 'failed');
+            const refused = new BatchSubmissionError(
+                'relay_disabled',
+                'failed',
+            );
             const h = sponsored({ submit: () => Promise.reject(refused) });
             await h.flow.start(SINPUT);
             expect(h.flow.state.failure).toEqual({
@@ -642,6 +648,42 @@ describe('WithdrawFlow — sponsored path', () => {
                 reason: 'already-submitted',
                 error: already,
             });
+        });
+    });
+
+    describe('a wallet rejection in submitCall — the lender declined to sign', () => {
+        it('is cancelled, as a raw depositBatch rejection is: nothing was posted', async () => {
+            const h = sponsored({ submit: () => Promise.reject(rejection()) });
+            await h.flow.start(SINPUT);
+            expect(h.flow.state.phase).toBe('error');
+            expect(h.flow.state.failure).toEqual({
+                step: 'request',
+                reason: 'cancelled',
+            });
+        });
+
+        it('but a bare "declined" / "request rejected" from the port is NOT one — it is pending', async () => {
+            for (const text of [
+                'declined',
+                'request rejected: rate limit exceeded',
+            ]) {
+                const h = sponsored({
+                    submit: () => Promise.reject(new Error(text)),
+                });
+                await h.flow.start(SINPUT);
+                expect(h.flow.state.failure).toMatchObject({
+                    reason: 'pending',
+                });
+            }
+        });
+
+        it('a typed outcome wins over rejection wording: BatchPendingError stays pending', async () => {
+            const pending = new BatchPendingError('post_unknown', {
+                cause: rejection(),
+            });
+            const h = sponsored({ submit: () => Promise.reject(pending) });
+            await h.flow.start(SINPUT);
+            expect(h.flow.state.failure).toMatchObject({ reason: 'pending' });
         });
     });
 
@@ -747,6 +789,27 @@ describe('WithdrawFlow — sponsored path', () => {
             expect(h.submitted).toHaveLength(2);
         });
 
+        it('during submitCall: once the call has left, an abandoned run never calls wait() — no polling for a view that is gone', async () => {
+            const accepted = deferred<WaitableTransaction>();
+            let waited = 0;
+            const h = sponsored({ submit: () => accepted.promise });
+            const run = h.flow.start(SINPUT);
+            await until(() => h.submitted.length === 1, 'submit');
+            h.flow.reset();
+            const published = h.states.length;
+            accepted.resolve({
+                wait: (): Promise<unknown> => {
+                    waited += 1;
+                    return Promise.resolve({});
+                },
+            });
+            await run;
+
+            expect(waited).toBe(0);
+            expect(h.states).toHaveLength(published);
+            expect(h.flow.state).toEqual(IDLE);
+        });
+
         it('during request-confirm: neither a late success nor a late failure drives a view that was left', async () => {
             for (const settle of ['resolve', 'reject'] as const) {
                 const receipt = deferred<unknown>();
@@ -759,7 +822,8 @@ describe('WithdrawFlow — sponsored path', () => {
                 h.flow.reset();
                 const published = h.states.length;
                 if (settle === 'resolve') receipt.resolve({});
-                else receipt.reject(new BatchRevertedError('ClearingIsPending'));
+                else
+                    receipt.reject(new BatchRevertedError('ClearingIsPending'));
                 await run;
 
                 expect(h.flow.state).toEqual(IDLE);

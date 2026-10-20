@@ -56,10 +56,17 @@ and a `WithdrawFlow` that can submit through one.
   revertError; error }` and `{ step: 'request'; reason: 'pending' |
   'already-submitted'; error }`, produced only on the sponsored path. A
   consumer that supplies `submitCall` should add the three codes to its copy
-  table; `pending` and `already-submitted` are not failures.
+  table; `pending` and `already-submitted` are not failures. A wallet
+  rejection thrown by `submitCall` itself is `cancelled` (nothing was posted);
+  a run abandoned while `submitCall` is in flight never calls `wait()`.
 - `WithdrawState` has a required `sponsored` field.
 - `FlowsFacade` takes an optional sixth constructor argument (the
   `CallsFacade`); `Kasu` passes it.
+- `proveDepositInReceipt` and `proveUserOperationInReceipt`: without a
+  `userOperationHash`, a receipt holding TWO of the sender's operations is
+  `unproven` with the new reason `ambiguous-operation` (→ pending), instead of
+  the first operation's verdict. With a hash nothing changes. Pass the hash
+  whenever the submitter reports one.
 
 ## 2.9.0
 

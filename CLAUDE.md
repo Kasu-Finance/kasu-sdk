@@ -553,10 +553,13 @@ is a plain `classifyWalletFailure` — so there is no wrong diagnosis there to
 correct. Its SPONSORED path (2.10.0, `submitCall` supplied) adds `reverted`,
 `pending` and `already-submitted` to `WithdrawFailure`, produced only there,
 read with the batch taxonomy: `BatchRevertedError` → `reverted`,
-`BatchSubmissionError` → its own outcome, and ANY other throw from
+`BatchSubmissionError` → its own outcome, a wallet rejection thrown by
+`submitCall` itself → `cancelled` (the lender declined to sign; nothing was
+posted — the raw `depositBatch` reading), and ANY other throw from
 `submitCall` or `wait()` → `pending` (it may have left; `failed` would invite
-a second request). A throw while ENCODING is `failed` — nothing was sent — and
-a run abandoned during the encode never reaches `submitCall`.
+a second request). A throw while ENCODING is `failed` — nothing was sent — a
+run abandoned during the encode never reaches `submitCall`, and one abandoned
+while `submitCall` is in flight never calls `wait()`.
 
 ### Both signatures are validated in the flow
 

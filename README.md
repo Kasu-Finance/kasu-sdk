@@ -476,10 +476,11 @@ await submission.wait(); // resolves only when the lender's operation executed
   operation is `BatchRevertedError`; anything unproven is `BatchPendingError`.
 - On the sponsored path a withdrawal's failure can also be `{ reason:
   'reverted', revertError }` and `{ reason: 'pending' | 'already-submitted' }`.
-  Any throw from `submitCall` or `wait()` the SDK does not recognise is
-  `pending` — it may have left, so never tell the lender to try again. A
-  throw while encoding (a share read, an empty position) is `failed`: nothing
-  was sent.
+  A wallet rejection thrown by `submitCall` (the lender declined to sign) is
+  `cancelled`. Any other throw from `submitCall` or `wait()` the SDK does not
+  recognise is `pending` — it may have left, so never tell the lender to try
+  again. A throw while encoding (a share read, an empty position) is `failed`:
+  nothing was sent.
 - `cancelDeadline(requestState, nextEpochStart, nowSeconds)` is the "cancel
   until" instant for a pending request (the next cycle close), or `null`.
 
