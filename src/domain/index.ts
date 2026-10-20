@@ -38,6 +38,22 @@ export {
 export type { AuMinimumInput } from './au-minimum';
 
 export {
+    DepositBatchMismatchError,
+    ENTRY_POINT_V07,
+    proveDepositInReceipt,
+    validateDepositBatchCalls,
+} from './batch-proof';
+export type {
+    DepositBatchCall,
+    DepositBatchExpectation,
+    DepositProof,
+    DepositProofExpectation,
+    ReceiptLike,
+    ReceiptLog,
+    ValidatedDepositBatch,
+} from './batch-proof';
+
+export {
     ceilToCents,
     floorToCents,
     isBelowMinimumCapacity,
