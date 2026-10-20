@@ -62,10 +62,15 @@ src/
 │   ├── loan-contract.ts # Backend-verified protocol strings + depositData
 │   ├── wallet-errors.ts # User-rejection / gas-revert predicates
 │   ├── revert-errors.ts # Revert data → the custom error the contract named
-│   └── au-minimum.ts    # AU cumulative-lending minimum (numeric half)
+│   ├── au-minimum.ts    # AU cumulative-lending minimum (numeric half)
+│   ├── fixed-term.ts    # Allowlist-aware fixed-term configs, lock arithmetic
+│   ├── yields.ts        # Net weekly/daily/accrued interest, annual projection
+│   └── batch-proof.ts   # Deposit-batch pinning + receipt proof (money path)
 ├── flows/               # Headless money-path state machines — ports in, codes out
 │   ├── deposit-flow.ts  # The KYC-gated deposit pipeline
 │   ├── withdraw-flow.ts # The withdrawal pipeline
+│   ├── batch-submission.ts # submitBatch: poll, prove, outcome taxonomy
+│   ├── batch-errors.ts  # BatchRevertedError, BatchSubmissionError, BatchPendingError
 │   ├── flow.ts          # Flow<S, I>: the run lifecycle both share
 │   └── observable.ts    # FlowStore: subscribe, patch, abandon a run
 ├── facade/              # High-level integrator API (Kasu, chain configs, I/O)
@@ -284,6 +289,22 @@ they were duplicated across the applications, and the copies drifted.
 | `wallet-errors.ts`        | `isUserRejected`, `isUnpredictableGas`, `classifyWalletFailure`                   |
 | `revert-errors.ts`        | `extractRevertData`, `decodeRevert` — revert bytes → the ABI's error name          |
 | `au-minimum.ts`           | AU cumulative-lending minimum — thresholds, minor-unit maths, exemption test      |
+| `fixed-term.ts`           | Fixed-term configs a wallet may select (allowlist-aware), lock days / months     |
+| `yields.ts`               | Weekly / daily / per-pool accrued interest NET of the fee, annual projection      |
+| `batch-proof.ts`          | Pin a deposit batch to its run; prove a deposit in a handleOps receipt           |
+
+`partners.ts` also owns each partner's `region` and `getStrategyRegion` — the
+word a lender SIGNS in the loan-agreement message. It must equal what every app
+shows for the strategy (`'Global'` for PayFi, `'Australia'` for Apxium), so
+never state a region from a constant.
+
+`batch-proof.ts` and `flows/batch-submission.ts` are money-path code. The proof
+reports `deposited` only when the receipt shows THIS lender's `DepositRequested`
+for the expected tranche AND amount inside their own user operation, and
+`submitBatch` never reports an ambiguous result as `failed`: after the post,
+only a revert is definitive, everything else is `BatchPendingError`, which
+`DepositFlow` surfaces as `reason: 'pending'` without consulting the revert
+decoder.
 
 `requests.ts` publishes the reallocation destination as a RAW tranche name
 (`reallocationTargetTrancheName`), like `trancheName` — rename both at the view
