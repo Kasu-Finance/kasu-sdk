@@ -6,6 +6,8 @@ export { StrategiesFacade } from './strategies';
 export { DepositsFacade } from './deposits';
 export { PortfolioFacade } from './user-portfolio';
 export { FlowsFacade } from './flows';
+export { CallsFacade } from './calls';
+export type { RequestWithdrawalCallParams } from './calls';
 export type {
     DepositFlowPortOverrides,
     WithdrawFlowPortOverrides,

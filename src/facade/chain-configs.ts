@@ -59,6 +59,7 @@ export const CHAIN_CONFIGS: Record<'base' | 'xdc' | 'xdc-usdc' | 'plume', ChainC
             'https://base-rpc.publicnode.com',
             'https://mainnet.base.org',
         ],
+        blockExplorerUrl: 'https://basescan.org',
     },
 
     xdc: {
@@ -99,6 +100,7 @@ export const CHAIN_CONFIGS: Record<'base' | 'xdc' | 'xdc-usdc' | 'plume', ChainC
             currencyCode: 'AUD',
         },
         rpcUrls: XDC_RPC_URLS,
+        blockExplorerUrl: 'https://xdcscan.com',
     },
 
     'xdc-usdc': {
@@ -132,6 +134,7 @@ export const CHAIN_CONFIGS: Record<'base' | 'xdc' | 'xdc-usdc' | 'plume', ChainC
             currencyCode: 'USD',
         },
         rpcUrls: XDC_RPC_URLS,
+        blockExplorerUrl: 'https://xdcscan.com',
     },
 
     plume: {
@@ -174,6 +177,8 @@ export const CHAIN_CONFIGS: Record<'base' | 'xdc' | 'xdc-usdc' | 'plume', ChainC
         // pointing at an endpoint nobody maintains. Pass your own
         // `signerOrProvider` to read the frozen history.
         rpcUrls: [],
+        // The explorer still serves the frozen history.
+        blockExplorerUrl: 'https://explorer.plume.org',
         retired: true,
     },
 };

@@ -41,6 +41,7 @@ export {
     DepositBatchMismatchError,
     ENTRY_POINT_V07,
     proveDepositInReceipt,
+    proveUserOperationInReceipt,
     validateDepositBatchCalls,
 } from './batch-proof';
 export type {
@@ -50,6 +51,8 @@ export type {
     DepositProofExpectation,
     ReceiptLike,
     ReceiptLog,
+    UserOperationProof,
+    UserOperationProofExpectation,
     ValidatedDepositBatch,
 } from './batch-proof';
 
@@ -64,6 +67,9 @@ export {
     resolveDepositBounds,
 } from './deposit-bounds';
 export type { BoundShortcuts, DepositBounds } from './deposit-bounds';
+
+export { explorerAddressUrl, explorerTxUrl } from './explorer-urls';
+export type { ExplorerConfig } from './explorer-urls';
 
 export {
     availableFixedTermConfigs,
@@ -116,6 +122,7 @@ export {
 export type { BestTranche } from './pools';
 
 export {
+    cancelDeadline,
     countSubmissions,
     deriveRequestState,
     firstSubmissionTimestamp,
@@ -143,6 +150,17 @@ export type {
     SettlementWindowInput,
     SettlementWindowState,
 } from './settlement';
+
+export {
+    encodeCancelDepositCall,
+    encodeCancelWithdrawalCall,
+    encodeRequestWithdrawalCall,
+    encodeWithdrawAtExpiryCall,
+    SPONSORED_CALL_KINDS,
+    SPONSORED_CALL_SELECTORS,
+    SponsoredCallInputError,
+} from './sponsored-calls';
+export type { SponsoredCall, SponsoredCallKind } from './sponsored-calls';
 
 export { getTrancheDisplayName, UPPER_MEZZANINE } from './tranche-display-name';
 

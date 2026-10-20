@@ -278,17 +278,50 @@ export class UserLending {
         );
     }
 
-    async requestWithdrawalInAsset(
-        lendingPool: string,
+    /**
+     * The tranche shares a withdrawal of `assetAmount` requests — the
+     * tranche's own `convertToShares`, read now. `requestWithdrawalInAsset`
+     * and the sponsored `kasu.calls.requestWithdrawal` both use this, so the
+     * two paths cannot convert differently.
+     */
+    async getWithdrawalSharesForAssets(
         tranche: string,
         assetAmount: BigNumberish,
-    ): Promise<ContractTransaction> {
+    ): Promise<BigNumber> {
         const trancheContract: ILendingPoolTrancheAbi =
             ILendingPoolTrancheAbi__factory.connect(
                 tranche,
                 this._signerOrProvider,
             );
-        const shareAmount = await trancheContract.convertToShares(assetAmount);
+        return await trancheContract.convertToShares(assetAmount);
+    }
+
+    /**
+     * Every tranche share `user` holds — what a max withdrawal requests
+     * (`balanceOf(user)` on the tranche, read now). Shared by
+     * `requestWithdrawalMax` and the sponsored `kasu.calls.requestWithdrawal`.
+     */
+    async getWithdrawalSharesMax(
+        tranche: string,
+        user: string,
+    ): Promise<BigNumber> {
+        const trancheContract: ILendingPoolTrancheAbi =
+            ILendingPoolTrancheAbi__factory.connect(
+                tranche,
+                this._signerOrProvider,
+            );
+        return await trancheContract['balanceOf(address)'](user);
+    }
+
+    async requestWithdrawalInAsset(
+        lendingPool: string,
+        tranche: string,
+        assetAmount: BigNumberish,
+    ): Promise<ContractTransaction> {
+        const shareAmount = await this.getWithdrawalSharesForAssets(
+            tranche,
+            assetAmount,
+        );
 
         return await this._lendingPoolManagerAbi.requestWithdrawal(
             lendingPool,
@@ -311,12 +344,7 @@ export class UserLending {
         tranche: string,
         user: string,
     ): Promise<ContractTransaction> {
-        const trancheContract: ILendingPoolTrancheAbi =
-            ILendingPoolTrancheAbi__factory.connect(
-                tranche,
-                this._signerOrProvider,
-            );
-        const userShares = await trancheContract['balanceOf(address)'](user);
+        const userShares = await this.getWithdrawalSharesMax(tranche, user);
 
         return await this._lendingPoolManagerAbi.requestWithdrawal(
             lendingPool,

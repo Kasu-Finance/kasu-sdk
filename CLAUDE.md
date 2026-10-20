@@ -65,11 +65,13 @@ src/
 │   ├── au-minimum.ts    # AU cumulative-lending minimum (numeric half)
 │   ├── fixed-term.ts    # Allowlist-aware fixed-term configs, lock arithmetic
 │   ├── yields.ts        # Net weekly/daily/accrued interest, annual projection
-│   └── batch-proof.ts   # Deposit-batch pinning + receipt proof (money path)
+│   ├── batch-proof.ts   # Deposit-batch pinning + receipt proofs (money path)
+│   ├── sponsored-calls.ts # Single-call LPM encoders + relay kinds/selectors
+│   └── explorer-urls.ts # Validated block-explorer tx / address links
 ├── flows/               # Headless money-path state machines — ports in, codes out
 │   ├── deposit-flow.ts  # The KYC-gated deposit pipeline
 │   ├── withdraw-flow.ts # The withdrawal pipeline
-│   ├── batch-submission.ts # submitBatch: poll, prove, outcome taxonomy
+│   ├── batch-submission.ts # submitBatch / submitSponsoredCall: poll, prove, outcome taxonomy
 │   ├── batch-errors.ts  # BatchRevertedError, BatchSubmissionError, BatchPendingError
 │   ├── flow.ts          # Flow<S, I>: the run lifecycle both share
 │   └── observable.ts    # FlowStore: subscribe, patch, abandon a run
@@ -234,6 +236,10 @@ const kasu = Kasu.create({
   override with their own and their own failover. Never `rpc.xdc.org` or
   `erpc.xdc.org`: they answer OPTIONS without `access-control-allow-origin`, so
   browser calls hang on preflight.
+- `blockExplorerUrl` — the explorer origin, `https://`, no trailing slash.
+  Never concatenate paths onto it: `explorerTxUrl` / `explorerAddressUrl`
+  (`domain/explorer-urls.ts`) validate the hash or address first and throw on
+  anything else.
 - `retired` — true for a wound-down deployment. It has no default RPC, so a
   read-only `Kasu.create` on it throws.
 
@@ -293,7 +299,9 @@ they were duplicated across the applications, and the copies drifted.
 | `au-minimum.ts`           | AU cumulative-lending minimum — thresholds, minor-unit maths, exemption test      |
 | `fixed-term.ts`           | Fixed-term configs a wallet may select (allowlist-aware), lock days / months     |
 | `yields.ts`               | Weekly / daily / per-pool accrued interest NET of the fee, annual projection      |
-| `batch-proof.ts`          | Pin a deposit batch to its run; prove a deposit in a handleOps receipt           |
+| `batch-proof.ts`          | Pin a deposit batch to its run; prove a deposit (or one executed operation) in a handleOps receipt |
+| `sponsored-calls.ts`      | Encode the single-call LPM requests a sponsored relay carries, with their `kind` |
+| `explorer-urls.ts`        | `explorerTxUrl` / `explorerAddressUrl` — explorer links from a validated hash or address only |
 
 `partners.ts` also owns each partner's `region` and `getStrategyRegion` — the
 word a lender SIGNS in the loan-agreement message. It must equal what every app
@@ -307,6 +315,20 @@ for the expected tranche AND amount inside their own user operation, and
 only a revert is definitive, everything else is `BatchPendingError`, which
 `DepositFlow` surfaces as `reason: 'pending'` without consulting the revert
 decoder.
+
+`sponsored-calls.ts` encodes `requestWithdrawal`, `cancelDepositRequest`,
+`cancelWithdrawalRequest` and `requestFixedTermDepositWithdrawal` as `{ kind,
+call: { to, data } }`, where `kind` is the relay's name for the shape
+(`withdrawal`, `cancel_deposit`, `cancel_withdrawal`, `withdraw_at_expiry`).
+kasu-backend's relay decodes each call against ONE function's ABI and refuses
+anything that does not re-encode byte for byte, so `sponsored-calls.test.ts`
+restates that validator with the relay's own signatures and pinned selectors
+— change either side and it goes red. `SPONSORED_CALL_SELECTORS` is derived
+from the generated ABI, never typed in. `transfer` (P2P Send) is deliberately
+NOT here: it is not a protocol call, and its recipient rules live in the relay.
+`kasu.calls` (facade) is the read-then-encode half: it converts an asset
+amount or `'max'` to shares through the same `UserLending` helpers the direct
+withdrawal path uses, and targets the chain config's `LendingPoolManager`.
 
 `requests.ts` publishes the reallocation destination as a RAW tranche name
 (`reallocationTargetTrancheName`), like `trancheName` — rename both at the view
@@ -532,10 +554,18 @@ reason was named for.
 upgrade can add an error, and a consumer should render `reverted` with generic
 copy and special-case only the names it has words for.
 
-`WithdrawFlow` is deliberately NOT changed. It has no `insufficient-balance` —
-its request step is a plain `classifyWalletFailure` — so there is no wrong
-diagnosis there to correct, and adding a code to `WithdrawFailure` that nothing
-produces would be a widened type with no behaviour behind it.
+`WithdrawFlow`'s DIRECT path has no `insufficient-balance` — its request step
+is a plain `classifyWalletFailure` — so there is no wrong diagnosis there to
+correct. Its SPONSORED path (2.10.0, `submitCall` supplied) adds `reverted`,
+`pending` and `already-submitted` to `WithdrawFailure`, produced only there,
+read with the batch taxonomy: `BatchRevertedError` → `reverted`,
+`BatchSubmissionError` → its own outcome, a wallet rejection thrown by
+`submitCall` itself → `cancelled` (the lender declined to sign; nothing was
+posted — the raw `depositBatch` reading), and ANY other throw from
+`submitCall` or `wait()` → `pending` (it may have left; `failed` would invite
+a second request). A throw while ENCODING is `failed` — nothing was sent — a
+run abandoned during the encode never reaches `submitCall`, and one abandoned
+while `submitCall` is in flight never calls `wait()`.
 
 ### Both signatures are validated in the flow
 
@@ -610,6 +640,14 @@ default deposit port calls — and `DepositFlowInput.spender` overrides it only
 for a consumer that replaced the `deposit` port. A wrong spender leaves an
 approval granted to the wrong contract and then reverts, diagnosed as
 `insufficient-balance`.
+
+`WithdrawPorts.submitCall` (no default) turns the sponsored path on: the flow
+encodes the one `requestWithdrawal` call through `encodeWithdrawal` (defaulted
+by `kasu.flows.withdraw()` to `kasu.calls.requestWithdrawal`) and hands it to
+the port; `withdraw` / `withdrawMax` are not called. `state.sponsored` is fixed
+at construction. `submitSponsoredCall` is the port body: `submitBatch`'s post,
+polling and outcome table, with `proveUserOperationInReceipt` (the sender's
+operation succeeded) as the proof.
 
 `WithdrawPorts` mirrors the pair: `buildKycParams` (SDK default) plus
 `getKycSignature` (no default). Supplying `getKycSignature` is what turns the

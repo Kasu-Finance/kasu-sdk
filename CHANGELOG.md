@@ -3,6 +3,86 @@
 All notable changes to `@kasufinance/kasu-sdk`. Versions follow semantic
 versioning; earlier releases are described in their commit messages.
 
+## 2.10.0
+
+Sponsored withdraw and cancel: the single `LendingPoolManager` calls a
+gas-sponsoring relay carries, encoded by the SDK with the relay's own `kind`,
+and a `WithdrawFlow` that can submit through one.
+
+### Added
+
+- **`kasu.calls`** (`CallsFacade`) — read, then encode, never send. Each
+  method returns `{ kind, call: { to, data } }`, `to` being this chain's
+  `LendingPoolManager`:
+  `requestWithdrawal({ poolId, trancheId, amount: BigNumber | 'max',
+  userAddress })` (`withdrawal`; shares from the tranche's `convertToShares`,
+  or the lender's whole `balanceOf` for `'max'` — the same helpers
+  `UserLending.requestWithdrawalInAsset` / `requestWithdrawalMax` now use),
+  `cancelDepositRequest(poolId, dNftId)` (`cancel_deposit`),
+  `cancelWithdrawalRequest(poolId, wNftId)` (`cancel_withdrawal`),
+  `withdrawAtExpiry(poolId, fixedTermDepositId)` (`withdraw_at_expiry`). A
+  zero-share withdrawal, a non-positive amount or a malformed address is
+  refused with `SponsoredCallInputError` before anything is sent.
+- **`domain/sponsored-calls`** — the pure encoders behind it
+  (`encodeRequestWithdrawalCall`, `encodeCancelDepositCall`,
+  `encodeCancelWithdrawalCall`, `encodeWithdrawAtExpiryCall`),
+  `SPONSORED_CALL_KINDS`, `SPONSORED_CALL_SELECTORS` (derived from the ABI),
+  types `SponsoredCall`, `SponsoredCallKind`.
+- **`WithdrawPorts.submitCall?(call)`** and **`encodeWithdrawal?`** — supplying
+  `submitCall` turns on the sponsored path: the flow encodes the withdrawal
+  (`kasu.flows.withdraw()` defaults the encoder to `kasu.calls`) and submits it
+  through the port; `withdraw` / `withdrawMax` are not called. Without it,
+  nothing changes. **`WithdrawState.sponsored`**, fixed at construction.
+  `NO_WITHDRAWAL_ENCODER_MESSAGE`, `NOT_A_WITHDRAWAL_CALL_MESSAGE`.
+- **`submitSponsoredCall(input, ports, policy?)`** — `submitBatch` for one
+  call: same polling policy and outcome table; `post` receives the call with
+  its kind; `wait()` resolves only on a proven executed operation. A call
+  whose kind, keys or selector do not match is refused
+  (`BatchSubmissionError('call_mismatch', 'failed')`) before posting. Types
+  `SponsoredCallSubmissionPorts`, `SponsoredCallSubmission`, `ExecutedCall`.
+- **`proveUserOperationInReceipt(receipt, { sender, userOperationHash?,
+  entryPoint? })`** → `executed | reverted | unproven` — the single-call
+  sibling of `proveDepositInReceipt`, sharing its operation lookup. Types
+  `UserOperationProof`, `UserOperationProofExpectation`.
+- **`cancelDeadline(request, nextEpochStart, nowSeconds)`** in
+  `domain/requests` — the next cycle close for a cancellable `pending` (or
+  live `partial`) request, else `null`.
+- `UserLending.getWithdrawalSharesForAssets(tranche, amount)` and
+  `getWithdrawalSharesMax(tranche, user)`.
+- **`ChainConfigEntry.blockExplorerUrl`** — the chain's explorer origin,
+  `https://` with no trailing slash: `https://basescan.org` (Base),
+  `https://xdcscan.com` (both XDC deployments), `https://explorer.plume.org`
+  (retired Plume).
+- **`domain/explorer-urls`** — `explorerTxUrl(config, txHash)` and
+  `explorerAddressUrl(config, address)` build `<base>/tx/<hash>` and
+  `<base>/address/<address>` only from an exact 32-byte hash
+  (`/^0x[0-9a-fA-F]{64}$/`) or a valid 20-byte address (checksum enforced when
+  mixed-case), over an `https://` base; anything else throws. Type
+  `ExplorerConfig`. Apps should link through these instead of concatenating
+  strings.
+
+### Changed
+
+- `WithdrawFailure` gains `{ step: 'request'; reason: 'reverted';
+  revertError; error }` and `{ step: 'request'; reason: 'pending' |
+  'already-submitted'; error }`, produced only on the sponsored path. A
+  consumer that supplies `submitCall` should add the three codes to its copy
+  table; `pending` and `already-submitted` are not failures. A wallet
+  rejection thrown by `submitCall` itself is `cancelled` (nothing was posted);
+  a run abandoned while `submitCall` is in flight never calls `wait()`.
+- `WithdrawState` has a required `sponsored` field.
+- `ChainConfigEntry` has a required `blockExplorerUrl` field. A custom entry
+  built by hand (rather than spread from `CHAIN_CONFIGS`) must add it to
+  type-check; at runtime nothing but the explorer helpers reads it, and they
+  throw a clear error when it is missing. `configOverrides` is unaffected.
+- `FlowsFacade` takes an optional sixth constructor argument (the
+  `CallsFacade`); `Kasu` passes it.
+- `proveDepositInReceipt` and `proveUserOperationInReceipt`: without a
+  `userOperationHash`, a receipt holding TWO of the sender's operations is
+  `unproven` with the new reason `ambiguous-operation` (→ pending), instead of
+  the first operation's verdict. With a hash nothing changes. Pass the hash
+  whenever the submitter reports one.
+
 ## 2.9.0
 
 The lend happy path and the strategy page for every consumer: rules that each

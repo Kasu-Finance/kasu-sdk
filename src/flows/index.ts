@@ -23,13 +23,17 @@ export {
     checkBatchOutcome,
     DEFAULT_BATCH_POLLING_POLICY,
     submitBatch,
+    submitSponsoredCall,
 } from './batch-submission';
 export type {
     BatchPollingPolicy,
     BatchStatusRead,
     BatchSubmission,
     BatchSubmissionPorts,
+    ExecutedCall,
     ProvenBatch,
+    SponsoredCallSubmission,
+    SponsoredCallSubmissionPorts,
     SubmitBatchCall,
 } from './batch-submission';
 
@@ -60,7 +64,12 @@ export type {
     LoanAgreementRequest,
 } from './deposit-flow';
 
-export { NO_KYC_PARAMS_MESSAGE, WithdrawFlow } from './withdraw-flow';
+export {
+    NO_KYC_PARAMS_MESSAGE,
+    NO_WITHDRAWAL_ENCODER_MESSAGE,
+    NOT_A_WITHDRAWAL_CALL_MESSAGE,
+    WithdrawFlow,
+} from './withdraw-flow';
 export type {
     WithdrawFailure,
     WithdrawFlowInput,

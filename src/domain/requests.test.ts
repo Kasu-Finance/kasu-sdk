@@ -5,13 +5,16 @@ import {
 } from '../services/UserLending/types';
 
 import {
+    cancelDeadline,
     countSubmissions,
     deriveRequestState,
     firstSubmissionTimestamp,
     isCycleClosed,
     lastEventTimestamp,
+    RequestStatusCode,
     submissionEvents,
 } from './requests';
+import { CLEARING_WINDOW_SECONDS, deriveCycleDates } from './settlement';
 
 /**
  * Ported from kasu-ui `src/features/portfolio/lib/derive-transaction-view.test.ts`.
@@ -827,5 +830,79 @@ describe('lastEventTimestamp', () => {
                 0,
             ),
         ).toBe(100);
+    });
+});
+
+describe('cancelDeadline', () => {
+    const WEEK = 7 * 24 * 60 * 60;
+    /** A Thursday 06:00 UTC epoch end. */
+    const EPOCH_END = 1_760_594_400;
+    const CLOSE = EPOCH_END - CLEARING_WINDOW_SECONDS;
+    const live = (
+        statusCode: RequestStatusCode = 'pending',
+    ): { canCancel: boolean; statusCode: RequestStatusCode } => ({
+        canCancel: true,
+        statusCode,
+    });
+
+    it('is the cycle close for a cancellable pending request before the window', () => {
+        expect(cancelDeadline(live(), EPOCH_END, CLOSE - 3600)).toBe(CLOSE);
+        // …the very value the submitted sheet's cycle close shows.
+        expect(cancelDeadline(live(), EPOCH_END, CLOSE - 3600)).toBe(
+            deriveCycleDates(EPOCH_END, CLOSE - 3600)?.close,
+        );
+    });
+
+    it('rolls to NEXT week’s close inside a window whose clearing has ended (still cancellable)', () => {
+        expect(cancelDeadline(live(), EPOCH_END, CLOSE + 60)).toBe(
+            CLOSE + WEEK,
+        );
+        // Exactly at the close the window has opened: next week's.
+        expect(cancelDeadline(live(), EPOCH_END, CLOSE)).toBe(CLOSE + WEEK);
+    });
+
+    it('covers a partly-filled withdrawal whose remainder is back in the queue', () => {
+        expect(cancelDeadline(live('partial'), EPOCH_END, CLOSE - 1)).toBe(
+            CLOSE,
+        );
+    });
+
+    it('is null when the request cannot be cancelled — the pool is clearing, or it is processed', () => {
+        expect(
+            cancelDeadline(
+                { canCancel: false, statusCode: 'pending' },
+                EPOCH_END,
+                CLOSE - 3600,
+            ),
+        ).toBeNull();
+    });
+
+    it('is null for every resolved status, whatever canCancel says', () => {
+        for (const statusCode of [
+            'cancelled',
+            'forced',
+            'reallocated',
+            'rejected',
+            'complete',
+        ] as const) {
+            expect(
+                cancelDeadline(live(statusCode), EPOCH_END, CLOSE - 3600),
+            ).toBeNull();
+        }
+    });
+
+    it('is null with no epoch boundary loaded, or a stale one — omit, never stub', () => {
+        expect(cancelDeadline(live(), undefined, CLOSE)).toBeNull();
+        expect(cancelDeadline(live(), 0, CLOSE)).toBeNull();
+        expect(cancelDeadline(live(), EPOCH_END, EPOCH_END)).toBeNull();
+        expect(cancelDeadline(live(), EPOCH_END, EPOCH_END + 1)).toBeNull();
+    });
+
+    it('reads the request’s own fields: a full RequestState works as input', () => {
+        const state = deriveRequestState(
+            makeRequest({ canCancel: true, status: REQUESTED }),
+        );
+        expect(state.statusCode).toBe('pending');
+        expect(cancelDeadline(state, EPOCH_END, CLOSE - 1)).toBe(CLOSE);
     });
 });

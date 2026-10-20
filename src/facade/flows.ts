@@ -10,6 +10,7 @@ import {
     WithdrawPorts,
 } from '../flows';
 
+import { CallsFacade } from './calls';
 import { DepositsFacade } from './deposits';
 import { READ_ONLY_MESSAGE } from './read-only';
 import { KycParams } from './types';
@@ -30,8 +31,9 @@ export type DepositFlowPortOverrides = Pick<
     Partial<DepositPorts>;
 
 /**
- * Every withdraw port has an SDK default except `getKycSignature`, which has
- * no default at all and which turns the KYC pre-check on by being supplied.
+ * Every withdraw port has an SDK default except `getKycSignature` and
+ * `submitCall`, which have no default at all: supplying `getKycSignature`
+ * turns the KYC pre-check on, supplying `submitCall` the sponsored path.
  */
 export type WithdrawFlowPortOverrides = Partial<WithdrawPorts>;
 
@@ -81,6 +83,13 @@ export class FlowsFacade {
          * in which case a run never batches: it does not guess a token.
          */
         private readonly _stableAsset?: string,
+        /**
+         * This instance's call encoders — the sponsored withdraw path's
+         * default `encodeWithdrawal`. Optional so a hand-built facade keeps
+         * constructing; without it a sponsored run fails (`failed`, nothing
+         * sent) unless the consumer passes `encodeWithdrawal` itself.
+         */
+        private readonly _calls?: CallsFacade,
     ) {}
 
     /**
@@ -148,6 +157,9 @@ export class FlowsFacade {
     /**
      * A withdrawal pipeline. Both write ports and `buildKycParams` default to
      * this instance; supplying `getKycSignature` turns the KYC pre-check on.
+     * Supplying `submitCall` turns the sponsored path on, and its encoder
+     * defaults to `kasu.calls.requestWithdrawal` on this instance — which
+     * reads, never writes, so it works on a read-only instance too.
      * Defaults are applied per key, for the reason `deposit()` gives.
      */
     withdraw(ports: WithdrawFlowPortOverrides = {}): WithdrawFlow {
@@ -173,7 +185,16 @@ export class FlowsFacade {
                     userAddress: string,
                 ): Promise<WaitableTransaction> =>
                     this._deposits.withdrawMax(poolId, trancheId, userAddress)),
+            submitCall: ports.submitCall,
+            encodeWithdrawal: ports.encodeWithdrawal ?? this._defaultEncoder(),
         });
+    }
+
+    /** `kasu.calls.requestWithdrawal`, when this facade was given the encoders. */
+    private _defaultEncoder(): WithdrawPorts['encodeWithdrawal'] {
+        const calls = this._calls;
+        if (!calls) return undefined;
+        return (params) => calls.requestWithdrawal(params);
     }
 
     private _assertWritable(): void {

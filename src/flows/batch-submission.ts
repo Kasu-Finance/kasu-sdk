@@ -2,8 +2,16 @@ import {
     DepositProof,
     DepositProofExpectation,
     proveDepositInReceipt,
+    proveUserOperationInReceipt,
     ReceiptLike,
+    UserOperationProof,
+    UserOperationProofExpectation,
 } from '../domain/batch-proof';
+import {
+    SPONSORED_CALL_KINDS,
+    SPONSORED_CALL_SELECTORS,
+    SponsoredCall,
+} from '../domain/sponsored-calls';
 
 import {
     BatchPendingError,
@@ -180,20 +188,7 @@ export async function submitBatch<R extends ReceiptLike = ReceiptLike>(
     policy?: Partial<BatchPollingPolicy>,
 ): Promise<BatchSubmission<R>> {
     const resolved = resolvePolicy(policy);
-
-    let accepted: { transactionId: string };
-    try {
-        accepted = await ports.post(input.calls);
-    } catch (err) {
-        if (err instanceof BatchRevertedError) throw err;
-        if (err instanceof BatchSubmissionError) throw err;
-        throw new BatchPendingError('post_unknown', { cause: err });
-    }
-    const transactionId = (accepted as { transactionId?: unknown } | null)
-        ?.transactionId;
-    if (typeof transactionId !== 'string' || transactionId === '') {
-        throw new BatchPendingError('malformed_answer');
-    }
+    const transactionId = await postOnce(() => ports.post(input.calls));
 
     let settled: Promise<ProvenBatch<R>> | null = null;
     return {
@@ -205,8 +200,32 @@ export async function submitBatch<R extends ReceiptLike = ReceiptLike>(
     };
 }
 
+/**
+ * The post, and what its answer means: the transaction id, or the error the
+ * outcome table names. Shared by both submitters, so the two cannot come to
+ * disagree about which throws are ambiguous.
+ */
+async function postOnce(
+    post: () => Promise<{ transactionId: string }>,
+): Promise<string> {
+    let accepted: { transactionId: string };
+    try {
+        accepted = await post();
+    } catch (err) {
+        if (err instanceof BatchRevertedError) throw err;
+        if (err instanceof BatchSubmissionError) throw err;
+        throw new BatchPendingError('post_unknown', { cause: err });
+    }
+    const transactionId = (accepted as { transactionId?: unknown } | null)
+        ?.transactionId;
+    if (typeof transactionId !== 'string' || transactionId === '') {
+        throw new BatchPendingError('malformed_answer');
+    }
+    return transactionId;
+}
+
 async function readStatus<R extends ReceiptLike>(
-    ports: BatchSubmissionPorts<R>,
+    ports: Pick<BatchSubmissionPorts<R>, 'getStatus'>,
     transactionId: string,
 ): Promise<BatchStatusRead> {
     try {
@@ -219,7 +238,7 @@ async function readStatus<R extends ReceiptLike>(
 /** Poll until a mined hash, or a typed reason there will not be one. */
 async function waitForMined<R extends ReceiptLike>(
     transactionId: string,
-    ports: BatchSubmissionPorts<R>,
+    ports: Pick<BatchSubmissionPorts<R>, 'getStatus' | 'now' | 'sleep'>,
     policy: BatchPollingPolicy,
 ): Promise<{ txHash: string; userOperationHash: string | null }> {
     const deadline = ports.now() + policy.timeoutMs;
@@ -259,22 +278,34 @@ async function waitForMined<R extends ReceiptLike>(
     }
 }
 
+/** Poll to a mined hash and read its receipt; a receipt read that throws is PENDING. */
+async function minedReceipt<R extends ReceiptLike>(
+    transactionId: string,
+    ports: BatchSubmissionPorts<R> | SponsoredCallSubmissionPorts<R>,
+    policy: BatchPollingPolicy,
+): Promise<{ receipt: R; txHash: string; userOperationHash: string | null }> {
+    const mined = await waitForMined(transactionId, ports, policy);
+    try {
+        return {
+            receipt: await ports.getReceipt(mined.txHash),
+            txHash: mined.txHash,
+            userOperationHash: mined.userOperationHash,
+        };
+    } catch (err) {
+        throw new BatchPendingError('receipt_unavailable', { cause: err });
+    }
+}
+
 async function settle<R extends ReceiptLike>(
     transactionId: string,
     expect: Omit<DepositProofExpectation, 'userOperationHash'>,
     ports: BatchSubmissionPorts<R>,
     policy: BatchPollingPolicy,
 ): Promise<ProvenBatch<R>> {
-    const mined = await waitForMined(transactionId, ports, policy);
-    let receipt: R;
-    try {
-        receipt = await ports.getReceipt(mined.txHash);
-    } catch (err) {
-        throw new BatchPendingError('receipt_unavailable', { cause: err });
-    }
+    const mined = await minedReceipt(transactionId, ports, policy);
     let proof: DepositProof;
     try {
-        proof = proveDepositInReceipt(receipt, {
+        proof = proveDepositInReceipt(mined.receipt, {
             ...expect,
             userOperationHash: mined.userOperationHash,
         });
@@ -291,7 +322,7 @@ async function settle<R extends ReceiptLike>(
         // operator reading the alert needs to tell apart first.
         throw new BatchPendingError(`deposit_unproven:${proof.reason}`);
     }
-    return { proof, receipt, txHash: mined.txHash };
+    return { proof, receipt: mined.receipt, txHash: mined.txHash };
 }
 
 /**
@@ -333,4 +364,148 @@ export async function checkBatchOutcome<R extends ReceiptLike = ReceiptLike>(
     } catch {
         return 'unknown';
     }
+}
+
+// ---------------------------------------------------------------------------
+// One sponsored call — withdraw, cancel, withdraw at expiry
+// ---------------------------------------------------------------------------
+
+/**
+ * `BatchSubmissionPorts` for ONE sponsored call: the same status, receipt and
+ * clock ports — a relay client written for the deposit batch serves both —
+ * with a `post` that receives the call together with its relay `kind`, so the
+ * app never maps one from the other.
+ */
+export interface SponsoredCallSubmissionPorts<
+    R extends ReceiptLike = ReceiptLike,
+> extends Omit<BatchSubmissionPorts<R>, 'post'> {
+    /**
+     * Hand the call to the submitter (`kind` and `[call]` in the relay's
+     * body); resolve with its transaction id once it is ACCEPTED. The same
+     * throw rules as `BatchSubmissionPorts.post`: `BatchRevertedError` when
+     * it is known to revert, `BatchSubmissionError(code, 'failed')` ONLY when
+     * nothing was sent, anything else is read as PENDING.
+     */
+    post(call: SponsoredCall): Promise<{ transactionId: string }>;
+}
+
+/** An executed call: the `executed` proof and the receipt it was read from. */
+export interface ExecutedCall<R extends ReceiptLike = ReceiptLike> {
+    proof: Extract<UserOperationProof, { kind: 'executed' }>;
+    receipt: R;
+    txHash: string;
+}
+
+/** What `submitSponsoredCall` resolves with once the call is accepted. */
+export interface SponsoredCallSubmission<R extends ReceiptLike = ReceiptLike>
+    extends WaitableTransaction {
+    transactionId: string;
+    /**
+     * Polls to a mined receipt and proves the sender's operation EXECUTED.
+     * Rejects with `BatchRevertedError` when it definitively did not, and
+     * with `BatchPendingError` for everything else.
+     */
+    wait(): Promise<ExecutedCall<R>>;
+}
+
+/**
+ * `submitBatch` for ONE sponsored `LendingPoolManager` call — the body of a
+ * `WithdrawFlow` `submitCall` port, and of an app's cancel or
+ * withdraw-at-expiry action. Same post, same polling policy, same outcome
+ * table; the proof is `proveUserOperationInReceipt` (the sender's operation
+ * succeeded) instead of the deposit proof, and an unproven receipt is
+ * `call_unproven:<reason>`.
+ *
+ * ```ts
+ * submitCall: (call) =>
+ *     submitSponsoredCall(
+ *         { call, expect: { sender: lender } },
+ *         { post: (c) => postToMyRelay(c.kind, [c.call]), getStatus, getReceipt, now, sleep },
+ *     ),
+ * ```
+ *
+ * The call is checked against its kind before anything is posted — a known
+ * kind, exactly `{ to, data }`, and `data` opening with that kind's selector —
+ * and a mismatch is `BatchSubmissionError('call_mismatch', 'failed')`: nothing
+ * was sent. Build calls with `kasu.calls`, and this never fires.
+ *
+ * As on the deposit path, nothing after the post ever produces `failed`.
+ */
+export async function submitSponsoredCall<R extends ReceiptLike = ReceiptLike>(
+    input: {
+        call: SponsoredCall;
+        /** Whose operation must have executed — see `proveUserOperationInReceipt`. */
+        expect: Omit<UserOperationProofExpectation, 'userOperationHash'>;
+    },
+    ports: SponsoredCallSubmissionPorts<R>,
+    policy?: Partial<BatchPollingPolicy>,
+): Promise<SponsoredCallSubmission<R>> {
+    const resolved = resolvePolicy(policy);
+    if (!isWellFormedSponsoredCall(input.call)) {
+        throw new BatchSubmissionError('call_mismatch', 'failed');
+    }
+    const transactionId = await postOnce(() => ports.post(input.call));
+
+    let settled: Promise<ExecutedCall<R>> | null = null;
+    return {
+        transactionId,
+        wait: (): Promise<ExecutedCall<R>> =>
+            (settled ??= settleCall(
+                transactionId,
+                input.expect,
+                ports,
+                resolved,
+            )),
+    };
+}
+
+function isWellFormedSponsoredCall(value: unknown): value is SponsoredCall {
+    if (value === null || typeof value !== 'object') return false;
+    const { kind, call } = value as { kind?: unknown; call?: unknown };
+    if (
+        typeof kind !== 'string' ||
+        !(SPONSORED_CALL_KINDS as readonly string[]).includes(kind)
+    ) {
+        return false;
+    }
+    if (call === null || typeof call !== 'object') return false;
+    const keys = Object.keys(call);
+    if (keys.length !== 2 || !keys.includes('to') || !keys.includes('data')) {
+        return false;
+    }
+    const { to, data } = call as { to: unknown; data: unknown };
+    return (
+        typeof to === 'string' &&
+        /^0x[0-9a-fA-F]{40}$/.test(to) &&
+        typeof data === 'string' &&
+        /^0x(?:[0-9a-fA-F]{2})*$/.test(data) &&
+        data
+            .toLowerCase()
+            .startsWith(SPONSORED_CALL_SELECTORS[kind as SponsoredCall['kind']])
+    );
+}
+
+async function settleCall<R extends ReceiptLike>(
+    transactionId: string,
+    expect: Omit<UserOperationProofExpectation, 'userOperationHash'>,
+    ports: SponsoredCallSubmissionPorts<R>,
+    policy: BatchPollingPolicy,
+): Promise<ExecutedCall<R>> {
+    const mined = await minedReceipt(transactionId, ports, policy);
+    let proof: UserOperationProof;
+    try {
+        proof = proveUserOperationInReceipt(mined.receipt, {
+            ...expect,
+            userOperationHash: mined.userOperationHash,
+        });
+    } catch (err) {
+        throw new BatchPendingError('call_unproven', { cause: err });
+    }
+    if (proof.kind === 'reverted') {
+        throw new BatchRevertedError(proof.revertError);
+    }
+    if (proof.kind === 'unproven') {
+        throw new BatchPendingError(`call_unproven:${proof.reason}`);
+    }
+    return { proof, receipt: mined.receipt, txHash: mined.txHash };
 }
