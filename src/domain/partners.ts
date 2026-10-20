@@ -7,19 +7,36 @@
 export interface StrategyPartner {
     name: string;
     url: string;
+    /**
+     * The region of the strategies this partner takes part in, as every Kasu
+     * surface names it. For a credit originator it is THE strategy's region —
+     * `getStrategyRegion` reads it from here — and it is the word that goes
+     * into the wallet-signed loan-agreement message, so it must never be
+     * stated from anywhere else.
+     *
+     * Apxium originates in Australia. InvoiceMate (PayFi) funds cross-border
+     * payment corridors no single jurisdiction names, so its region is a
+     * SCOPE — `'Global'` — rather than a country: naming one would be a claim
+     * about where its End Borrowers sit. Rixon Capital is the senior lender in
+     * Apxium's Australian strategies.
+     */
+    region: string;
 }
 
 export const APXIUM: StrategyPartner = {
     name: 'Apxium',
     url: 'https://www.apxium.com/',
+    region: 'Australia',
 };
 export const INVOICEMATE: StrategyPartner = {
     name: 'InvoiceMate',
     url: 'https://invoicemate.net/',
+    region: 'Global',
 };
 export const RIXON_CAPITAL: StrategyPartner = {
     name: 'Rixon Capital',
     url: 'https://rixon.capital/',
+    region: 'Australia',
 };
 
 /**
@@ -63,4 +80,22 @@ export function getInstitutionalLender(
     originator: StrategyPartner,
 ): StrategyPartner | null {
     return originator.name === APXIUM.name ? RIXON_CAPITAL : null;
+}
+
+/**
+ * The strategy's region — `'Australia'` for the Apxium family, `'Global'` for
+ * PayFi — derived from its credit originator, exactly as every surface that
+ * states a region must derive it.
+ *
+ * LOAD-BEARING ON THE MONEY PATH: this is the `region` a lender's wallet signs
+ * in the loan-agreement message (`buildLoanAgreementSignMessage`). The backend
+ * rebuilds that message from whatever region the client sends and treats it
+ * as display-only, so nothing but this function keeps the signed word equal to
+ * the word on screen. Never state a region from a constant — that is how a
+ * PayFi lender came to pick "Global · Junior" and sign "Australia".
+ *
+ * Replace the inference with a per-pool field (in the SDK) when one ships.
+ */
+export function getStrategyRegion(pool: PoolNameSignal): string {
+    return getCreditOriginator(pool).region;
 }
