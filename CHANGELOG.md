@@ -3,6 +3,26 @@
 All notable changes to `@kasufinance/kasu-sdk`. Versions follow semantic
 versioning; earlier releases are described in their commit messages.
 
+## 2.10.1
+
+A bug-fix release. No API change.
+
+### Fixed
+
+- **A matured fixed-term lock was counted twice in the portfolio summary.**
+  `getPortfolioLendingData` subtracts only the LOCKED loans from a tranche's
+  balance, so a matured lock's principal stays inside `investedAmount`; the
+  summary fold (`Portfolio.calculateYieldMetrics`, which
+  `getPortfolioSummary` and `kasu.portfolio.getPositions().summary` run) then
+  added every `fixedLoans[]` entry on top, matured ones included. A lender
+  with a matured lock saw `current.totalLendingPoolInvestments`,
+  `weekly.yieldEarnings` / `daily.yieldEarnings` and the
+  `current.weightedAverageApy` weighting overstated by that lock's value. The
+  summary now equals the sum, over positions, of the variable residual plus
+  each LIVE lock, each counted once. A matured lock's lifetime yield is earned
+  and still counts in `lifetime.yieldEarnings`. Live locks and positions
+  without locks are unchanged.
+
 ## 2.10.0
 
 Sponsored withdraw and cancel: the single `LendingPoolManager` calls a

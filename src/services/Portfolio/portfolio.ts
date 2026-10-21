@@ -113,6 +113,20 @@ export class Portfolio {
                     investedAmount * parseFloat(tranche.interestRate);
 
                 for (const fixedDeposits of tranche.fixedLoans) {
+                    // A matured lock's principal is already inside
+                    // `investedAmount`: getPortfolioLendingData subtracts only
+                    // the LOCKED loans from the tranche balance. Its lifetime
+                    // yield is earned and stays counted (the tranche's own
+                    // lifetime had every lock's yield taken out), but its
+                    // amount must not be added to the investment, weekly or
+                    // APY sums a second time.
+                    if (!fixedDeposits.isLocked) {
+                        totalYieldEarned += parseFloat(
+                            fixedDeposits.yieldEarnings.lifetime,
+                        );
+                        continue;
+                    }
+
                     const ftdConfig = tranche.fixedTermConfig.find(
                         (ftd) => ftd.configId === fixedDeposits.configId,
                     );
