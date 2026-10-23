@@ -215,7 +215,9 @@ export class StrategiesFacade {
         return {
             id: pool.id,
             name: pool.poolName,
+            subheading: nonEmptyOrUndefined(pool.subheading),
             description: pool.description,
+            liteDescription: nonEmptyOrUndefined(pool.liteDescription),
             isActive: pool.isActive,
             apy: pool.apy,
             tvl: pool.totalValueLocked,
@@ -229,6 +231,17 @@ export class StrategiesFacade {
             _raw: pool,
         };
     }
+}
+
+/**
+ * A CMS text field as a string, or `undefined` when it is absent, not a
+ * string, or empty (blank included) — the CMS stores an emptied field as `''`, and an empty
+ * subheading must read as "none", not render an empty line.
+ */
+function nonEmptyOrUndefined(value: unknown): string | undefined {
+    return typeof value === 'string' && value.trim().length > 0
+        ? value
+        : undefined;
 }
 
 /**

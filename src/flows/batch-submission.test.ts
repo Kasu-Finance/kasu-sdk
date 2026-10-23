@@ -8,6 +8,7 @@ import {
 import {
     encodeCancelDepositCall,
     encodeRequestWithdrawalCall,
+    encodeStableTransfer,
     SponsoredCall,
 } from '../domain/sponsored-calls';
 
@@ -22,6 +23,7 @@ import {
     BatchStatusRead,
     BatchSubmissionPorts,
     checkBatchOutcome,
+    checkSponsoredCallOutcome,
     DEFAULT_BATCH_POLLING_POLICY,
     SponsoredCallSubmissionPorts,
     submitBatch,
@@ -535,6 +537,87 @@ describe('checkBatchOutcome', () => {
             'unknown',
         );
     });
+
+    it('unknown — and no receipt read — for a "mined" read with an empty hash', async () => {
+        const getReceipt = jest.fn().mockResolvedValue(receipt());
+        const h = harness([{ kind: 'mined', txHash: '' }], { getReceipt });
+        expect(await checkBatchOutcome(TX_ID, EXPECT, h.ports)).toBe('unknown');
+        expect(getReceipt).not.toHaveBeenCalled();
+    });
+});
+
+describe('checkSponsoredCallOutcome', () => {
+    const SENDER = { sender: LENDER };
+    /** An executed single call: the sender's operation, no deposit event. */
+    const callReceipt = (success = true): ReceiptLike =>
+        receipt({ success, deposit: false });
+
+    it('executed when mined and the sender’s operation succeeded', async () => {
+        const { ports } = harness([MINED], {
+            getReceipt: jest.fn().mockResolvedValue(callReceipt()),
+        });
+        await expect(
+            checkSponsoredCallOutcome(TX_ID, SENDER, ports),
+        ).resolves.toBe('executed');
+    });
+
+    it('not-executed on a vendor revert or a reverted operation', async () => {
+        expect(
+            await checkSponsoredCallOutcome(
+                TX_ID,
+                SENDER,
+                harness([{ kind: 'reverted' }]).ports,
+            ),
+        ).toBe('not-executed');
+        const reverted = harness([MINED], {
+            getReceipt: jest.fn().mockResolvedValue(callReceipt(false)),
+        });
+        expect(
+            await checkSponsoredCallOutcome(TX_ID, SENDER, reverted.ports),
+        ).toBe('not-executed');
+    });
+
+    it('unknown for everything else — one read, no polling', async () => {
+        for (const read of [
+            AGAIN,
+            { kind: 'unknown', code: 'x' } as const,
+            new Error('down'),
+        ]) {
+            const h = harness([read]);
+            expect(
+                await checkSponsoredCallOutcome(TX_ID, SENDER, h.ports),
+            ).toBe('unknown');
+            expect(h.statusReads()).toBe(1);
+        }
+        const unreadable = harness([MINED], {
+            getReceipt: jest.fn().mockRejectedValue(new Error('timeout')),
+        });
+        expect(
+            await checkSponsoredCallOutcome(TX_ID, SENDER, unreadable.ports),
+        ).toBe('unknown');
+    });
+
+    it('unknown — and no receipt read — for a "mined" read with an empty hash', async () => {
+        const getReceipt = jest.fn().mockResolvedValue(callReceipt());
+        const h = harness([{ kind: 'mined', txHash: '' }], { getReceipt });
+        expect(await checkSponsoredCallOutcome(TX_ID, SENDER, h.ports)).toBe(
+            'unknown',
+        );
+        expect(getReceipt).not.toHaveBeenCalled();
+    });
+
+    it('unknown — never executed — when the receipt holds another sender’s operation', async () => {
+        const { ports } = harness([MINED], {
+            getReceipt: jest.fn().mockResolvedValue(callReceipt()),
+        });
+        expect(
+            await checkSponsoredCallOutcome(
+                TX_ID,
+                { sender: '0x0000000000000000000000000000000000000009' },
+                ports,
+            ),
+        ).toBe('unknown');
+    });
 });
 
 describe('batch errors', () => {
@@ -754,7 +837,7 @@ describe('submitSponsoredCall', () => {
         const withdrawal = encodeRequestWithdrawalCall(LPM, POOL, TRANCHE, 1);
         const mismatched: unknown[] = [
             { kind: 'withdrawal', call: CALL.call }, // a cancel's data
-            { kind: 'transfer', call: CALL.call }, // not an SDK kind
+            { kind: 'transfer', call: CALL.call }, // a cancel's data
             { kind: 'deposit', call: CALL.call },
             { kind: CALL.kind, call: { ...CALL.call, value: 0 } },
             { kind: CALL.kind, call: { to: 'lpm', data: CALL.call.data } },
@@ -775,6 +858,43 @@ describe('submitSponsoredCall', () => {
             expect(batchOutcomeOf(err)).toBe('failed');
             expect(post).not.toHaveBeenCalled();
         }
+    });
+
+    it('carries a transfer: an SDK-encoded transfer passes the pre-check, is posted with its kind, and proves executed', async () => {
+        const transfer = encodeStableTransfer({
+            stableAsset: '0x0000000000000000000000000000000000000007',
+            to: '0x2222222222222222222222222222222222222222',
+            amount: 2_500_000,
+        });
+        const { ports, post } = callHarness([MINED]);
+        const submission = await submitSponsoredCall(
+            { call: transfer, expect: CALL_EXPECT },
+            ports,
+        );
+        expect(post).toHaveBeenCalledWith(transfer);
+        expect(transfer.kind).toBe('transfer');
+        const executed = await submission.wait();
+        expect(executed.proof.kind).toBe('executed');
+    });
+
+    it('refuses a transfer whose data is not a transfer — call_mismatch, nothing posted', async () => {
+        const transfer = encodeStableTransfer({
+            stableAsset: '0x0000000000000000000000000000000000000007',
+            to: '0x2222222222222222222222222222222222222222',
+            amount: 1,
+        });
+        const { ports, post } = callHarness([MINED]);
+        const err = await outcomeOf(
+            submitSponsoredCall(
+                {
+                    call: { kind: 'cancel_deposit', call: transfer.call },
+                    expect: CALL_EXPECT,
+                },
+                ports,
+            ),
+        );
+        expect((err as BatchSubmissionError).code).toBe('call_mismatch');
+        expect(post).not.toHaveBeenCalled();
     });
 
     it('uses the deposit path’s polling policy: first read at once, 3 s ×1.5 to 10 s', async () => {

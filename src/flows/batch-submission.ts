@@ -349,7 +349,12 @@ export async function checkBatchOutcome<R extends ReceiptLike = ReceiptLike>(
         return 'unknown';
     }
     if (read.kind === 'reverted') return 'not-deposited';
-    if (read.kind !== 'mined' || typeof read.txHash !== 'string') {
+    // An empty hash is not an answer — `waitForMined` reads it the same way.
+    if (
+        read.kind !== 'mined' ||
+        typeof read.txHash !== 'string' ||
+        read.txHash === ''
+    ) {
         return 'unknown';
     }
     try {
@@ -367,8 +372,59 @@ export async function checkBatchOutcome<R extends ReceiptLike = ReceiptLike>(
 }
 
 // ---------------------------------------------------------------------------
-// One sponsored call — withdraw, cancel, withdraw at expiry
+// One sponsored call — withdraw, cancel, withdraw at expiry, transfer
 // ---------------------------------------------------------------------------
+
+/**
+ * `checkBatchOutcome` for ONE sponsored call — ONE status read, no polling —
+ * for an app's guard against sending the same request twice (a P2P transfer
+ * whose earlier submission ended PENDING, say):
+ *
+ * - `executed` — mined, and the receipt proves the sender's operation
+ *   succeeded (`proveUserOperationInReceipt`);
+ * - `not-executed` — definitively reverted (vendor status or the operation's
+ *   own flag);
+ * - `unknown` — anything else, including a read or receipt that failed, or a
+ *   receipt that does not show the sender's operation.
+ *
+ * Only `not-executed` may let a new attempt proceed unprompted; `executed`
+ * means the earlier one landed and the user should be told.
+ */
+export async function checkSponsoredCallOutcome<
+    R extends ReceiptLike = ReceiptLike,
+>(
+    transactionId: string,
+    expect: Omit<UserOperationProofExpectation, 'userOperationHash'>,
+    ports: Pick<BatchSubmissionPorts<R>, 'getStatus' | 'getReceipt'>,
+): Promise<'executed' | 'not-executed' | 'unknown'> {
+    let read: BatchStatusRead;
+    try {
+        read = await ports.getStatus(transactionId);
+    } catch {
+        return 'unknown';
+    }
+    if (read.kind === 'reverted') return 'not-executed';
+    // An empty hash is not an answer — `waitForMined` reads it the same way.
+    if (
+        read.kind !== 'mined' ||
+        typeof read.txHash !== 'string' ||
+        read.txHash === ''
+    ) {
+        return 'unknown';
+    }
+    try {
+        const receipt = await ports.getReceipt(read.txHash);
+        const proof = proveUserOperationInReceipt(receipt, {
+            ...expect,
+            userOperationHash: read.userOperationHash ?? null,
+        });
+        if (proof.kind === 'executed') return 'executed';
+        if (proof.kind === 'reverted') return 'not-executed';
+        return 'unknown';
+    } catch {
+        return 'unknown';
+    }
+}
 
 /**
  * `BatchSubmissionPorts` for ONE sponsored call: the same status, receipt and
@@ -409,9 +465,9 @@ export interface SponsoredCallSubmission<R extends ReceiptLike = ReceiptLike>
 }
 
 /**
- * `submitBatch` for ONE sponsored `LendingPoolManager` call — the body of a
- * `WithdrawFlow` `submitCall` port, and of an app's cancel or
- * withdraw-at-expiry action. Same post, same polling policy, same outcome
+ * `submitBatch` for ONE sponsored call — the body of a `WithdrawFlow`
+ * `submitCall` port, of an app's cancel or withdraw-at-expiry action, and of
+ * a P2P transfer (`encodeStableTransfer`). Same post, same polling policy, same outcome
  * table; the proof is `proveUserOperationInReceipt` (the sender's operation
  * succeeded) instead of the deposit proof, and an unproven receipt is
  * `call_unproven:<reason>`.
@@ -427,7 +483,8 @@ export interface SponsoredCallSubmission<R extends ReceiptLike = ReceiptLike>
  * The call is checked against its kind before anything is posted — a known
  * kind, exactly `{ to, data }`, and `data` opening with that kind's selector —
  * and a mismatch is `BatchSubmissionError('call_mismatch', 'failed')`: nothing
- * was sent. Build calls with `kasu.calls`, and this never fires.
+ * was sent. Build calls with `kasu.calls` (or `encodeStableTransfer`), and
+ * this never fires.
  *
  * As on the deposit path, nothing after the post ever produces `failed`.
  */

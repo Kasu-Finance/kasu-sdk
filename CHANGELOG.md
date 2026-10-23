@@ -3,6 +3,58 @@
 All notable changes to `@kasufinance/kasu-sdk`. Versions follow semantic
 versioning; earlier releases are described in their commit messages.
 
+## 2.10.3
+
+Sponsored P2P transfer: the stable asset's own `transfer` as a sponsored-call
+kind, so a relay client sends it through `submitSponsoredCall` like the
+withdraw and cancel calls. Plus the strategy's CMS subheading and short
+description as typed `Strategy` fields.
+
+### Added
+
+- **`'transfer'` in `SPONSORED_CALL_KINDS`**, with its selector
+  (`0xa9059cbb`) in `SPONSORED_CALL_SELECTORS`, derived from the generated
+  `IERC20Metadata` ABI and never typed in. `submitSponsoredCall` accepts a
+  transfer call and proves it with `proveUserOperationInReceipt`, like every
+  other single call.
+- **`encodeStableTransfer({ stableAsset, to, amount })`** → `{ kind:
+  'transfer', call: { to: stableAsset, data } }`. Pure. It refuses a malformed
+  stable asset or recipient (a mixed-case recipient whose EIP-55 checksum does
+  not match included), the zero address as the recipient, and an amount
+  that is zero, negative, fractional or above uint256
+  (`SponsoredCallInputError`: `stable-asset`, `recipient`, `zero-recipient`,
+  `amount`, `zero-amount`). The recipient POLICY is not restated here: the
+  sender's own account, the stable asset, the `LendingPoolManager`, the
+  precompile range, an address with contract code, an unverified sender and
+  the daily caps are all the relay's refusals.
+
+- **`checkSponsoredCallOutcome(transactionId, { sender }, ports)`** —
+  `checkBatchOutcome` for one sponsored call: ONE status read, no polling,
+  answering `executed` (mined, and the receipt proves the sender's operation
+  succeeded), `not-executed` (definitively reverted) or `unknown` (anything
+  else, a failed read included). For an app's guard against submitting the
+  same call twice after a run that ended pending — only `not-executed` may let
+  a new attempt proceed unprompted.
+
+- **`Strategy.subheading?: string` and `Strategy.liteDescription?: string`**
+  — the CMS subheading and short description, until now reachable only on
+  `_raw`. Mapped from the same `PoolOverview` fields `_raw` carries; an
+  absent, empty or blank value is `undefined`, never `''` (the service maps a
+  missing `liteDescription` to `''`).
+
+### Changed
+
+- `SponsoredCallKind` gains `'transfer'`. A consumer with an exhaustive
+  `switch` over it must add a case.
+
+### Fixed
+
+- `checkBatchOutcome` (and the new `checkSponsoredCallOutcome`) answer
+  `unknown` for a `mined` status read with an EMPTY `txHash`, without reading
+  a receipt — as `submitBatch`'s own polling already did. Before, the guard
+  asked the port for the receipt of `''`, and a port that answered with any
+  receipt could turn a non-answer into `deposited`.
+
 ## 2.10.2
 
 A bug-fix release. No API change.

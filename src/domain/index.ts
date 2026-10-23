@@ -155,6 +155,7 @@ export {
     encodeCancelDepositCall,
     encodeCancelWithdrawalCall,
     encodeRequestWithdrawalCall,
+    encodeStableTransfer,
     encodeWithdrawAtExpiryCall,
     SPONSORED_CALL_KINDS,
     SPONSORED_CALL_SELECTORS,
