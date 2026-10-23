@@ -45,7 +45,9 @@ before every push, stopping at the first failing step and naming it:
 4. `test:unit`
 5. `rollup-build`
 
-`SKIP_PREPUSH=1 git push` skips it with a loud warning; CI is still the gate.
+It checks the working tree, not the pushed commits, and a push that only
+deletes refs checks nothing. `SKIP_PREPUSH=1 git push` skips it with a loud
+warning; CI is still the gate.
 
 The `prepare` script (`node .githooks/install.cjs`) installs the hook by
 setting `core.hooksPath`. It only does so when the package folder is the top
