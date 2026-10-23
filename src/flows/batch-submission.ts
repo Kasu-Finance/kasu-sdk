@@ -367,7 +367,7 @@ export async function checkBatchOutcome<R extends ReceiptLike = ReceiptLike>(
 }
 
 // ---------------------------------------------------------------------------
-// One sponsored call — withdraw, cancel, withdraw at expiry
+// One sponsored call — withdraw, cancel, withdraw at expiry, transfer
 // ---------------------------------------------------------------------------
 
 /**
@@ -455,9 +455,9 @@ export interface SponsoredCallSubmission<R extends ReceiptLike = ReceiptLike>
 }
 
 /**
- * `submitBatch` for ONE sponsored `LendingPoolManager` call — the body of a
- * `WithdrawFlow` `submitCall` port, and of an app's cancel or
- * withdraw-at-expiry action. Same post, same polling policy, same outcome
+ * `submitBatch` for ONE sponsored call — the body of a `WithdrawFlow`
+ * `submitCall` port, of an app's cancel or withdraw-at-expiry action, and of
+ * a P2P transfer (`encodeStableTransfer`). Same post, same polling policy, same outcome
  * table; the proof is `proveUserOperationInReceipt` (the sender's operation
  * succeeded) instead of the deposit proof, and an unproven receipt is
  * `call_unproven:<reason>`.
@@ -473,7 +473,8 @@ export interface SponsoredCallSubmission<R extends ReceiptLike = ReceiptLike>
  * The call is checked against its kind before anything is posted — a known
  * kind, exactly `{ to, data }`, and `data` opening with that kind's selector —
  * and a mismatch is `BatchSubmissionError('call_mismatch', 'failed')`: nothing
- * was sent. Build calls with `kasu.calls`, and this never fires.
+ * was sent. Build calls with `kasu.calls` (or `encodeStableTransfer`), and
+ * this never fires.
  *
  * As on the deposit path, nothing after the post ever produces `failed`.
  */
