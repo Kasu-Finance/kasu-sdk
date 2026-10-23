@@ -206,6 +206,29 @@ const NON_CANONICAL: [string, () => DepositBatchCall[], RegExp][] = [
     ],
 ];
 
+/** Refused, as a `DepositBatchMismatchError` whose `code` matches. */
+function expectRefused(calls: DepositBatchCall[], code: RegExp): void {
+    let thrown: unknown;
+    try {
+        validateDepositBatchCalls(calls, EXPECTED_BATCH);
+    } catch (err) {
+        thrown = err;
+    }
+    expect(thrown).toBeInstanceOf(DepositBatchMismatchError);
+    expect((thrown as DepositBatchMismatchError).code).toMatch(code);
+}
+
+/**
+ * What ethers v5's deep copy of a fragment keeps under the ES-module build:
+ * its own DATA properties, and no methods. (The CommonJS copy also carries
+ * the prototype methods, as own properties, because `for…in` walked them.)
+ */
+function methodlessCopy(value: object): Record<string, unknown> {
+    return Object.fromEntries(
+        Object.entries(value).filter(([, v]) => typeof v !== 'function'),
+    );
+}
+
 describe('validateDepositBatchCalls', () => {
     it('accepts exact-amount approve(LPM, A) + requestDepositWithKyc(pool, tranche, A, 0x) and returns the tranche', () => {
         const validated = validateDepositBatchCalls(
@@ -235,8 +258,11 @@ describe('validateDepositBatchCalls', () => {
         // no `format()`; in the CommonJS `lib` jest runs, ES5 prototype
         // methods are enumerable and the copy happens to keep them. This
         // reproduces the ES-module copy on the CommonJS build, so the suite
-        // sees what a browser sees. (2.10.0/2.10.1 refused EVERY batch there
-        // as `approve-call`.)
+        // sees what a browser sees. (2.10.0/2.10.1 re-encoded
+        // `parsed.functionFragment` and refused EVERY batch there as
+        // `approve-call`.) The validator no longer goes through
+        // `parseTransaction` at all; this block keeps a reintroduction of it
+        // honest about the ES-module shape.
         let spy: jest.SpyInstance | undefined;
         beforeEach(() => {
             // eslint-disable-next-line @typescript-eslint/unbound-method -- re-bound with `.call(this, …)` below
@@ -248,16 +274,12 @@ describe('validateDepositBatchCalls', () => {
                     tx: { data: string; value?: BigNumberish },
                 ) {
                     const parsed = original.call(this, tx);
-                    // The ES-module copy: the fragment's own DATA fields
-                    // only. (The CommonJS copy also carries the prototype
-                    // methods, as own properties, because `for…in` walked
-                    // them.)
-                    const methodless = Object.fromEntries(
-                        Object.entries(parsed.functionFragment).filter(
-                            ([, value]) => typeof value !== 'function',
+                    return {
+                        ...parsed,
+                        functionFragment: methodlessCopy(
+                            parsed.functionFragment,
                         ),
-                    );
-                    return { ...parsed, functionFragment: methodless } as never;
+                    } as never;
                 });
         });
         afterEach(() => {
@@ -318,12 +340,7 @@ describe('validateDepositBatchCalls', () => {
         });
 
         it.each(NON_CANONICAL)('still refuses %s', (_label, calls, code) => {
-            expect(() =>
-                validateDepositBatchCalls(calls(), EXPECTED_BATCH),
-            ).toThrow(DepositBatchMismatchError);
-            expect(() =>
-                validateDepositBatchCalls(calls(), EXPECTED_BATCH),
-            ).toThrow(code);
+            expectRefused(calls(), code);
         });
     });
 
@@ -502,12 +519,7 @@ describe('validateDepositBatchCalls', () => {
     });
 
     it.each(NON_CANONICAL)('refuses %s', (_label, calls, code) => {
-        expect(() =>
-            validateDepositBatchCalls(calls(), EXPECTED_BATCH),
-        ).toThrow(DepositBatchMismatchError);
-        expect(() =>
-            validateDepositBatchCalls(calls(), EXPECTED_BATCH),
-        ).toThrow(code);
+        expectRefused(calls(), code);
     });
 
     it('the offset and padding fixtures decode to the canonical arguments', () => {
@@ -1172,12 +1184,10 @@ describe('the receipt proofs under the ES-module ethers build', () => {
                 log: { topics: string[]; data: string },
             ) {
                 const parsed = original.call(this, log);
-                const methodless = Object.fromEntries(
-                    Object.entries(parsed.eventFragment).filter(
-                        ([, value]) => typeof value !== 'function',
-                    ),
-                );
-                return { ...parsed, eventFragment: methodless } as never;
+                return {
+                    ...parsed,
+                    eventFragment: methodlessCopy(parsed.eventFragment),
+                } as never;
             });
     });
     afterEach(() => {
@@ -1203,6 +1213,8 @@ describe('the receipt proofs under the ES-module ethers build', () => {
         ];
         const proof = proveDepositInReceipt(receiptOf(logs), EXPECTED);
         expect(proof.kind).toBe('deposited');
+        // The SDK's own interfaces went through the simulated copy.
+        expect(spy).toHaveBeenCalled();
         expect(
             proveDepositInReceipt(receiptOf(logs), {
                 ...EXPECTED,
