@@ -300,7 +300,7 @@ they were duplicated across the applications, and the copies drifted.
 | `fixed-term.ts`           | Fixed-term configs a wallet may select (allowlist-aware), lock days / months     |
 | `yields.ts`               | Weekly / daily / per-pool accrued interest NET of the fee, annual projection      |
 | `batch-proof.ts`          | Pin a deposit batch to its run; prove a deposit (or one executed operation) in a handleOps receipt |
-| `sponsored-calls.ts`      | Encode the single-call LPM requests a sponsored relay carries, with their `kind` |
+| `sponsored-calls.ts`      | Encode the single calls a sponsored relay carries (LPM requests, stable `transfer`), with their `kind` |
 | `explorer-urls.ts`        | `explorerTxUrl` / `explorerAddressUrl` — explorer links from a validated hash or address only |
 
 `partners.ts` also owns each partner's `region` and `getStrategyRegion` — the
@@ -324,8 +324,11 @@ kasu-backend's relay decodes each call against ONE function's ABI and refuses
 anything that does not re-encode byte for byte, so `sponsored-calls.test.ts`
 restates that validator with the relay's own signatures and pinned selectors
 — change either side and it goes red. `SPONSORED_CALL_SELECTORS` is derived
-from the generated ABI, never typed in. `transfer` (P2P Send) is deliberately
-NOT here: it is not a protocol call, and its recipient rules live in the relay.
+from the generated ABI, never typed in. `transfer` (P2P Send, 2.10.3) is the
+one kind NOT to the manager: `encodeStableTransfer` targets the chain's stable
+asset and checks only the shape (non-zero recipient, amount > 0). Its
+recipient POLICY — not the sender, not the token or the LPM, no contract code,
+a verified sender, daily caps — lives in the relay and is not restated here.
 `kasu.calls` (facade) is the read-then-encode half: it converts an asset
 amount or `'max'` to shares through the same `UserLending` helpers the direct
 withdrawal path uses, and targets the chain config's `LendingPoolManager`.

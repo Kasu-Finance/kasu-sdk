@@ -8,6 +8,7 @@ import {
 import {
     encodeCancelDepositCall,
     encodeRequestWithdrawalCall,
+    encodeStableTransfer,
     SponsoredCall,
 } from '../domain/sponsored-calls';
 
@@ -754,7 +755,7 @@ describe('submitSponsoredCall', () => {
         const withdrawal = encodeRequestWithdrawalCall(LPM, POOL, TRANCHE, 1);
         const mismatched: unknown[] = [
             { kind: 'withdrawal', call: CALL.call }, // a cancel's data
-            { kind: 'transfer', call: CALL.call }, // not an SDK kind
+            { kind: 'transfer', call: CALL.call }, // a cancel's data
             { kind: 'deposit', call: CALL.call },
             { kind: CALL.kind, call: { ...CALL.call, value: 0 } },
             { kind: CALL.kind, call: { to: 'lpm', data: CALL.call.data } },
@@ -775,6 +776,43 @@ describe('submitSponsoredCall', () => {
             expect(batchOutcomeOf(err)).toBe('failed');
             expect(post).not.toHaveBeenCalled();
         }
+    });
+
+    it('carries a transfer: an SDK-encoded transfer passes the pre-check, is posted with its kind, and proves executed', async () => {
+        const transfer = encodeStableTransfer({
+            stableAsset: '0x0000000000000000000000000000000000000007',
+            to: '0x2222222222222222222222222222222222222222',
+            amount: 2_500_000,
+        });
+        const { ports, post } = callHarness([MINED]);
+        const submission = await submitSponsoredCall(
+            { call: transfer, expect: CALL_EXPECT },
+            ports,
+        );
+        expect(post).toHaveBeenCalledWith(transfer);
+        expect(transfer.kind).toBe('transfer');
+        const executed = await submission.wait();
+        expect(executed.proof.kind).toBe('executed');
+    });
+
+    it('refuses a transfer whose data is not a transfer — call_mismatch, nothing posted', async () => {
+        const transfer = encodeStableTransfer({
+            stableAsset: '0x0000000000000000000000000000000000000007',
+            to: '0x2222222222222222222222222222222222222222',
+            amount: 1,
+        });
+        const { ports, post } = callHarness([MINED]);
+        const err = await outcomeOf(
+            submitSponsoredCall(
+                {
+                    call: { kind: 'cancel_deposit', call: transfer.call },
+                    expect: CALL_EXPECT,
+                },
+                ports,
+            ),
+        );
+        expect((err as BatchSubmissionError).code).toBe('call_mismatch');
+        expect(post).not.toHaveBeenCalled();
     });
 
     it('uses the deposit path’s polling policy: first read at once, 3 s ×1.5 to 10 s', async () => {

@@ -3,6 +3,34 @@
 All notable changes to `@kasufinance/kasu-sdk`. Versions follow semantic
 versioning; earlier releases are described in their commit messages.
 
+## 2.10.3
+
+Sponsored P2P transfer: the stable asset's own `transfer` as a sponsored-call
+kind, so a relay client sends it through `submitSponsoredCall` like the
+withdraw and cancel calls.
+
+### Added
+
+- **`'transfer'` in `SPONSORED_CALL_KINDS`**, with its selector
+  (`0xa9059cbb`) in `SPONSORED_CALL_SELECTORS`, derived from the generated
+  `IERC20Metadata` ABI and never typed in. `submitSponsoredCall` accepts a
+  transfer call and proves it with `proveUserOperationInReceipt`, like every
+  other single call.
+- **`encodeStableTransfer({ stableAsset, to, amount })`** → `{ kind:
+  'transfer', call: { to: stableAsset, data } }`. Pure. It refuses a malformed
+  stable asset or recipient, the zero address as the recipient, and an amount
+  that is zero, negative, fractional or above uint256
+  (`SponsoredCallInputError`: `stable-asset`, `recipient`, `zero-recipient`,
+  `amount`, `zero-amount`). The recipient POLICY is not restated here: the
+  sender's own account, the stable asset, the `LendingPoolManager`, the
+  precompile range, an address with contract code, an unverified sender and
+  the daily caps are all the relay's refusals.
+
+### Changed
+
+- `SponsoredCallKind` gains `'transfer'`. A consumer with an exhaustive
+  `switch` over it must add a case.
+
 ## 2.10.2
 
 A bug-fix release. No API change.

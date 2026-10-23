@@ -1,11 +1,13 @@
 import { BigNumber, BigNumberish, constants, utils } from 'ethers';
 
+import { IERC20MetadataAbi__factory } from '../contracts/factories/IERC20MetadataAbi__factory';
 import { ILendingPoolManagerAbi__factory } from '../contracts/factories/ILendingPoolManagerAbi__factory';
 
 /**
- * The single-call `LendingPoolManager` requests a sponsored relay may carry,
- * encoded by the SDK so no application hand-builds calldata or hand-maps the
- * relay's `kind` for them.
+ * The single-call requests a sponsored relay may carry — the four
+ * `LendingPoolManager` requests, plus the stable asset's own `transfer` (P2P
+ * Send) — encoded by the SDK so no application hand-builds calldata or
+ * hand-maps the relay's `kind` for them.
  *
  * Every function here is PURE: addresses and ids in, `{ kind, call }` out.
  * Reading the chain (the shares a withdrawal is for) is the facade's job —
@@ -34,6 +36,11 @@ export const SPONSORED_CALL_KINDS = [
     'cancel_withdrawal',
     /** `LendingPoolManager.requestFixedTermDepositWithdrawal(pool, lockId)`. */
     'withdraw_at_expiry',
+    /**
+     * `stableAsset.transfer(to, amount)` — P2P Send, to the chain's stable
+     * asset rather than the manager. See {@link encodeStableTransfer}.
+     */
+    'transfer',
 ] as const;
 
 export type SponsoredCallKind = (typeof SPONSORED_CALL_KINDS)[number];
@@ -56,18 +63,26 @@ export interface SponsoredCall {
 const LENDING_POOL_MANAGER: utils.Interface =
     ILendingPoolManagerAbi__factory.createInterface();
 
-/** The `LendingPoolManager` function behind each kind. */
-const FUNCTION_OF: Readonly<Record<SponsoredCallKind, string>> = Object.freeze({
-    withdrawal: 'requestWithdrawal',
-    cancel_deposit: 'cancelDepositRequest',
-    cancel_withdrawal: 'cancelWithdrawalRequest',
-    withdraw_at_expiry: 'requestFixedTermDepositWithdrawal',
-});
+/** The generated ERC-20 interface — the `transfer` kind's one function. */
+const ERC20: utils.Interface = IERC20MetadataAbi__factory.createInterface();
+
+/** The kinds whose call goes to the `LendingPoolManager`. */
+type LendingPoolManagerKind = Exclude<SponsoredCallKind, 'transfer'>;
+
+/** The `LendingPoolManager` function behind each manager kind. */
+const FUNCTION_OF: Readonly<Record<LendingPoolManagerKind, string>> =
+    Object.freeze({
+        withdrawal: 'requestWithdrawal',
+        cancel_deposit: 'cancelDepositRequest',
+        cancel_withdrawal: 'cancelWithdrawalRequest',
+        withdraw_at_expiry: 'requestFixedTermDepositWithdrawal',
+    });
 
 /**
  * The 4-byte selector of each kind's function, DERIVED from the generated
- * `ILendingPoolManager` ABI — never typed in by hand, so an ABI change moves
- * it and the cross-check spec against the relay's own pins goes red.
+ * ABIs (`ILendingPoolManager`, and `IERC20Metadata` for `transfer`) — never
+ * typed in by hand, so an ABI change moves it and the cross-check spec
+ * against the relay's own pins goes red.
  */
 export const SPONSORED_CALL_SELECTORS: Readonly<
     Record<SponsoredCallKind, string>
@@ -80,6 +95,7 @@ export const SPONSORED_CALL_SELECTORS: Readonly<
     withdraw_at_expiry: LENDING_POOL_MANAGER.getSighash(
         FUNCTION_OF.withdraw_at_expiry,
     ),
+    transfer: ERC20.getSighash('transfer'),
 });
 
 /**
@@ -122,7 +138,7 @@ function toUint256(value: BigNumberish, code: string): BigNumber {
 }
 
 function encode(
-    kind: SponsoredCallKind,
+    kind: LendingPoolManagerKind,
     lendingPoolManager: string,
     args: readonly unknown[],
 ): SponsoredCall {
@@ -210,4 +226,45 @@ export function encodeWithdrawAtExpiryCall(
         poolId,
         toUint256(fixedTermDepositId, 'lock-id'),
     ]);
+}
+
+/**
+ * `stableAsset.transfer(to, amount)` — `transfer`: P2P Send of the chain's
+ * stable asset from the sender's own account (`msg.sender`) to `to`.
+ *
+ * `amount` is in the token's BASE units (6 decimals for USDC), and must be
+ * greater than zero. `to` must be a well-formed, non-zero address. That is
+ * ALL this encoder judges, because it is all a pure function can know.
+ *
+ * The recipient POLICY is the relay's job and is deliberately not restated
+ * here: it refuses the sender's own account, the stable asset, the
+ * `LendingPoolManager`, the precompile range, any address with contract code
+ * (read on chain at submission), a sender our identity store does not hold
+ * as verified, and anything over the sender's daily count and amount caps.
+ * A call this encoder accepts can therefore still be refused — the app maps
+ * the relay's refusal codes to its own words.
+ *
+ * Pass `stableAsset` from the chain config (`CHAIN_CONFIGS[chain].stableAsset
+ * .address`) — the relay compares `to` against its own configured token and
+ * refuses any other contract.
+ */
+export function encodeStableTransfer(input: {
+    stableAsset: string;
+    to: string;
+    amount: BigNumberish;
+}): SponsoredCall {
+    assertAddress(input.stableAsset, 'stable-asset');
+    assertAddress(input.to, 'recipient');
+    if (BigNumber.from(input.to).isZero()) {
+        throw new SponsoredCallInputError('zero-recipient');
+    }
+    const amount = toUint256(input.amount, 'amount');
+    if (amount.isZero()) throw new SponsoredCallInputError('zero-amount');
+    return {
+        kind: 'transfer',
+        call: {
+            to: input.stableAsset,
+            data: ERC20.encodeFunctionData('transfer', [input.to, amount]),
+        },
+    };
 }
