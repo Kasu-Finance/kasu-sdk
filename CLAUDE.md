@@ -36,6 +36,31 @@ npm run test:live    # Opt-in: the specs that reach real subgraphs and RPCs
 npm run lint         # Fix lint issues
 ```
 
+**Pre-push hook.** `.githooks/pre-push` runs CI's quality-checks locally
+before every push, stopping at the first failing step and naming it:
+1. the lockfile check (`npm ci --dry-run --ignore-scripts`, which fails when
+   `package.json` and `package-lock.json` disagree)
+2. `build-tc`
+3. `build`
+4. `test:unit`
+5. `rollup-build`
+
+It checks the working tree, not the pushed commits, and a push that only
+deletes refs checks nothing. `SKIP_PREPUSH=1 git push` skips it with a loud
+warning; CI is still the gate.
+
+The `prepare` script (`node .githooks/install.cjs`) installs the hook by
+setting `core.hooksPath`. It only does so when the package folder is the top
+level of its own git checkout. In every other case it exits 0 without touching
+any repository:
+- no git binary
+- no `.git`
+- a copy vendored inside someone else's repository
+
+`prepare` also runs on `npm pack` / `npm publish` and on git installs, so it
+must never fail. `.githooks/` is outside `files`, so it never ships in the
+tarball.
+
 `dependencies` holds only what the package needs at runtime — `@directus/sdk`,
 `axios`, `ethers`, `graphql-request`. Everything else is a devDependency; a
 build/lint/test tool must never land in `dependencies`, because every consumer
