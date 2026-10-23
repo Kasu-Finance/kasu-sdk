@@ -349,7 +349,12 @@ export async function checkBatchOutcome<R extends ReceiptLike = ReceiptLike>(
         return 'unknown';
     }
     if (read.kind === 'reverted') return 'not-deposited';
-    if (read.kind !== 'mined' || typeof read.txHash !== 'string') {
+    // An empty hash is not an answer — `waitForMined` reads it the same way.
+    if (
+        read.kind !== 'mined' ||
+        typeof read.txHash !== 'string' ||
+        read.txHash === ''
+    ) {
         return 'unknown';
     }
     try {
@@ -399,7 +404,12 @@ export async function checkSponsoredCallOutcome<
         return 'unknown';
     }
     if (read.kind === 'reverted') return 'not-executed';
-    if (read.kind !== 'mined' || typeof read.txHash !== 'string') {
+    // An empty hash is not an answer — `waitForMined` reads it the same way.
+    if (
+        read.kind !== 'mined' ||
+        typeof read.txHash !== 'string' ||
+        read.txHash === ''
+    ) {
         return 'unknown';
     }
     try {

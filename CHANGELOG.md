@@ -47,6 +47,14 @@ description as typed `Strategy` fields.
 - `SponsoredCallKind` gains `'transfer'`. A consumer with an exhaustive
   `switch` over it must add a case.
 
+### Fixed
+
+- `checkBatchOutcome` (and the new `checkSponsoredCallOutcome`) answer
+  `unknown` for a `mined` status read with an EMPTY `txHash`, without reading
+  a receipt — as `submitBatch`'s own polling already did. Before, the guard
+  asked the port for the receipt of `''`, and a port that answered with any
+  receipt could turn a non-answer into `deposited`.
+
 ## 2.10.2
 
 A bug-fix release. No API change.

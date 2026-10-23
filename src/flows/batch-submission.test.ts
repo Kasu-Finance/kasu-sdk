@@ -537,6 +537,13 @@ describe('checkBatchOutcome', () => {
             'unknown',
         );
     });
+
+    it('unknown — and no receipt read — for a "mined" read with an empty hash', async () => {
+        const getReceipt = jest.fn().mockResolvedValue(receipt());
+        const h = harness([{ kind: 'mined', txHash: '' }], { getReceipt });
+        expect(await checkBatchOutcome(TX_ID, EXPECT, h.ports)).toBe('unknown');
+        expect(getReceipt).not.toHaveBeenCalled();
+    });
 });
 
 describe('checkSponsoredCallOutcome', () => {
@@ -588,6 +595,15 @@ describe('checkSponsoredCallOutcome', () => {
         expect(
             await checkSponsoredCallOutcome(TX_ID, SENDER, unreadable.ports),
         ).toBe('unknown');
+    });
+
+    it('unknown — and no receipt read — for a "mined" read with an empty hash', async () => {
+        const getReceipt = jest.fn().mockResolvedValue(callReceipt());
+        const h = harness([{ kind: 'mined', txHash: '' }], { getReceipt });
+        expect(await checkSponsoredCallOutcome(TX_ID, SENDER, h.ports)).toBe(
+            'unknown',
+        );
+        expect(getReceipt).not.toHaveBeenCalled();
     });
 
     it('unknown — never executed — when the receipt holds another sender’s operation', async () => {
