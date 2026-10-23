@@ -48,6 +48,7 @@
         "build-tc": "typechain --target ethers-v5 --out-dir src/contracts './abis/*.json'",
         "build": "eslint . && tsc --build --force tsconfig.json",
         "prepublishOnly": "npm run build && npm run rollup-build",
+        "prepare": "node .githooks/install.cjs",
         "build:watch": "npx tsc -b --force --watch",
         "rollup-build": "rollup -c",
         "lint": "eslint . --fix"

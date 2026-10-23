@@ -558,6 +558,14 @@ network problem cannot fail a pull request that did not touch the network.
 CI runs `build-tc`, `build`, `test:unit` and `rollup-build` on every pull
 request.
 
+`npm ci` also installs a **pre-push hook** (`.githooks/pre-push`) that runs the
+same steps locally before every `git push`: first a lockfile check
+(`npm ci --dry-run`, which fails when `package.json` and `package-lock.json`
+disagree), then `build-tc`, `build`, `test:unit` and `rollup-build`. It stops at
+the first failing step and names it. It checks the working tree, not the pushed
+commits, so commit first. `SKIP_PREPUSH=1 git push` skips it with a warning; CI
+is still the gate.
+
 ## Versioning & publishing
 
 The package follows semantic versioning. The published runtime entry is the
