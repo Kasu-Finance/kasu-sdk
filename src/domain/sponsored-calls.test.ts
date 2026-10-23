@@ -523,6 +523,24 @@ describe('sponsored-call encoders — what they refuse', () => {
         expect(refusal(transfer(STABLE, '0x12'))).toBe('recipient');
         expect(refusal(transfer(STABLE, 'account'))).toBe('recipient');
         expect(refusal(transfer(STABLE, `${RECIPIENT} `))).toBe('recipient');
+        // A mixed-case address whose EIP-55 checksum does not match is a
+        // mistyped one: refused with the encoder's own code, not the ABI
+        // coder's raw error. All-lower and all-upper carry no checksum.
+        const checksummed = utils.getAddress(
+            '0xabcdef0000000000000000000000000000000001',
+        );
+        expect(checksummed).toBe('0xaBCdEf0000000000000000000000000000000001');
+        // The second hex digit's case flipped: still mixed-case, checksum wrong.
+        const mistyped = '0xABCdEf0000000000000000000000000000000001';
+        expect(() => utils.getAddress(mistyped)).toThrow(/checksum/);
+        expect(refusal(transfer(STABLE, mistyped))).toBe('recipient');
+        expect(() => transfer(STABLE, checksummed)()).not.toThrow();
+        expect(() =>
+            transfer(STABLE, checksummed.toLowerCase())(),
+        ).not.toThrow();
+        expect(() =>
+            transfer(STABLE, `0x${checksummed.slice(2).toUpperCase()}`)(),
+        ).not.toThrow();
         expect(refusal(transfer(STABLE, constants.AddressZero))).toBe(
             'zero-recipient',
         );

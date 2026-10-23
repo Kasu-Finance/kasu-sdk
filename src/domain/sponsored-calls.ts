@@ -233,7 +233,8 @@ export function encodeWithdrawAtExpiryCall(
  * stable asset from the sender's own account (`msg.sender`) to `to`.
  *
  * `amount` is in the token's BASE units (6 decimals for USDC), and must be
- * greater than zero. `to` must be a well-formed, non-zero address. That is
+ * greater than zero. `to` must be a well-formed, non-zero address (a
+ * mixed-case one with a valid EIP-55 checksum). That is
  * ALL this encoder judges, because it is all a pure function can know.
  *
  * The recipient POLICY is the relay's job and is deliberately not restated
@@ -255,6 +256,14 @@ export function encodeStableTransfer(input: {
 }): SponsoredCall {
     assertAddress(input.stableAsset, 'stable-asset');
     assertAddress(input.to, 'recipient');
+    // A mixed-case recipient carries an EIP-55 checksum, and one that does not
+    // match is a mistyped address: refuse it as `recipient` here rather than
+    // let the ABI coder throw its own error at the encode below.
+    try {
+        utils.getAddress(input.to);
+    } catch {
+        throw new SponsoredCallInputError('recipient');
+    }
     if (BigNumber.from(input.to).isZero()) {
         throw new SponsoredCallInputError('zero-recipient');
     }

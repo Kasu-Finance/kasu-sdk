@@ -19,7 +19,8 @@ description as typed `Strategy` fields.
   other single call.
 - **`encodeStableTransfer({ stableAsset, to, amount })`** → `{ kind:
   'transfer', call: { to: stableAsset, data } }`. Pure. It refuses a malformed
-  stable asset or recipient, the zero address as the recipient, and an amount
+  stable asset or recipient (a mixed-case recipient whose EIP-55 checksum does
+  not match included), the zero address as the recipient, and an amount
   that is zero, negative, fractional or above uint256
   (`SponsoredCallInputError`: `stable-asset`, `recipient`, `zero-recipient`,
   `amount`, `zero-amount`). The recipient POLICY is not restated here: the
