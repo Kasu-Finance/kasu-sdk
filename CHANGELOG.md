@@ -3,6 +3,25 @@
 All notable changes to `@kasufinance/kasu-sdk`. Versions follow semantic
 versioning; earlier releases are described in their commit messages.
 
+## 2.10.2
+
+A bug-fix release. No API change.
+
+### Fixed
+
+- **`validateDepositBatchCalls` refused every batch in a browser, as
+  `approve-call`.** Its canonical-encoding check re-encoded each call from
+  `parsed.functionFragment`. ethers v5's `TransactionDescription` deep-copies
+  that fragment into a plain object; under the CommonJS build (Node, jest) the
+  copy still carries `format()` because ES5 prototype methods are enumerable,
+  but under the ES-module build a bundler resolves (`lib.esm`) it carries no
+  methods, so re-encoding threw and the call was reported as not an `approve`.
+  The check now re-encodes against the interface's own fragment, looked up by
+  the selector. What it accepts and refuses is unchanged: exactly the
+  exact-amount approve plus the matching `requestDepositWithKyc`, canonical
+  bytes, no value. The suite now also runs the validator against the
+  ES-module copy.
+
 ## 2.10.1
 
 A bug-fix release. No API change.

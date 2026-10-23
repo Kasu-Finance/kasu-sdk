@@ -171,8 +171,17 @@ function decodeCanonical(
     if (parsed.name !== name) return mismatch(code);
     let canonical: string;
     try {
+        // Re-encode against the interface's OWN fragment, looked up by the
+        // selector — never `parsed.functionFragment`. ethers v5's
+        // `TransactionDescription` deep-copies its fields, and a fragment
+        // whose `inputs` array is not frozen comes out as a plain object.
+        // Under the CommonJS build (Node, jest) that copy still carries
+        // `format()`, because ES5 prototype methods are enumerable; under the
+        // ES-module build a browser bundler resolves (`lib.esm`, real
+        // classes) it carries no methods at all, so re-encoding it threw and
+        // EVERY batch was refused as `approve-call` in the browser.
         canonical = iface.encodeFunctionData(
-            parsed.functionFragment,
+            iface.getFunction(parsed.sighash),
             parsed.args,
         );
     } catch {

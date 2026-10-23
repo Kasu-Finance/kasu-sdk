@@ -1,4 +1,4 @@
-import { BigNumber, constants, utils } from 'ethers';
+import { BigNumber, BigNumberish, constants, utils } from 'ethers';
 
 import { IERC20MetadataAbi__factory } from '../contracts/factories/IERC20MetadataAbi__factory';
 import { ILendingPoolManagerAbi__factory } from '../contracts/factories/ILendingPoolManagerAbi__factory';
@@ -109,6 +109,98 @@ describe('validateDepositBatchCalls', () => {
         expect(() =>
             validateDepositBatchCalls(calls, EXPECTED_BATCH),
         ).not.toThrow();
+    });
+
+    describe('under the ES-module ethers build a browser bundler resolves', () => {
+        // ethers v5's `TransactionDescription` deep-copies every field, and a
+        // `FunctionFragment` (its `inputs` array is not frozen) comes out as a
+        // PLAIN object of its own enumerable properties. In `lib.esm`
+        // (Turbopack, webpack, Vite — anything honouring `module`) the
+        // prototype methods are non-enumerable class methods, so the copy has
+        // no `format()`; in the CommonJS `lib` jest runs, ES5 prototype
+        // methods are enumerable and the copy happens to keep them. This
+        // reproduces the ES-module copy on the CommonJS build, so the suite
+        // sees what a browser sees. (2.10.0/2.10.1 refused EVERY batch there
+        // as `approve-call`.)
+        let spy: jest.SpyInstance | undefined;
+        beforeEach(() => {
+            // eslint-disable-next-line @typescript-eslint/unbound-method -- re-bound with `.call(this, …)` below
+            const original = utils.Interface.prototype.parseTransaction;
+            spy = jest
+                .spyOn(utils.Interface.prototype, 'parseTransaction')
+                .mockImplementation(function (
+                    this: utils.Interface,
+                    tx: { data: string; value?: BigNumberish },
+                ) {
+                    const parsed = original.call(this, tx);
+                    // The ES-module copy: the fragment's own DATA fields
+                    // only. (The CommonJS copy also carries the prototype
+                    // methods, as own properties, because `for…in` walked
+                    // them.)
+                    const methodless = Object.fromEntries(
+                        Object.entries(parsed.functionFragment).filter(
+                            ([, value]) => typeof value !== 'function',
+                        ),
+                    );
+                    return { ...parsed, functionFragment: methodless } as never;
+                });
+        });
+        afterEach(() => {
+            spy?.mockRestore();
+        });
+
+        it('the simulated copy really has no fragment methods', () => {
+            const parsed = ERC20.parseTransaction({ data: approveCall().data });
+            expect(
+                (parsed.functionFragment as { format?: unknown }).format,
+            ).toBeUndefined();
+        });
+
+        it('accepts the canonical batch', () => {
+            const validated = validateDepositBatchCalls(
+                [approveCall(), depositCall()],
+                EXPECTED_BATCH,
+            );
+            expect(validated.tranche.toLowerCase()).toBe(TRANCHE);
+            expect(validated.amount.eq(AMOUNT)).toBe(true);
+        });
+
+        it('still refuses every deviation it refuses on CommonJS', () => {
+            const padded = (call: DepositBatchCall): DepositBatchCall => ({
+                ...call,
+                data: `${call.data}00`,
+            });
+            expect(() =>
+                validateDepositBatchCalls(
+                    [padded(approveCall()), depositCall()],
+                    EXPECTED_BATCH,
+                ),
+            ).toThrow(/non-canonical-encoding/);
+            expect(() =>
+                validateDepositBatchCalls(
+                    [approveCall(), padded(depositCall())],
+                    EXPECTED_BATCH,
+                ),
+            ).toThrow(/non-canonical-encoding/);
+            expect(() =>
+                validateDepositBatchCalls(
+                    [approveCall(constants.MaxUint256), depositCall()],
+                    EXPECTED_BATCH,
+                ),
+            ).toThrow(/approve-amount/);
+            expect(() =>
+                validateDepositBatchCalls(
+                    [approveCall(AMOUNT, OTHER), depositCall()],
+                    EXPECTED_BATCH,
+                ),
+            ).toThrow(/approve-spender/);
+            expect(() =>
+                validateDepositBatchCalls(
+                    [depositCall(), approveCall()],
+                    EXPECTED_BATCH,
+                ),
+            ).toThrow(DepositBatchMismatchError);
+        });
     });
 
     it('compares addresses case-insensitively', () => {
