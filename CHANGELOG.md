@@ -7,7 +7,8 @@ versioning; earlier releases are described in their commit messages.
 
 Sponsored P2P transfer: the stable asset's own `transfer` as a sponsored-call
 kind, so a relay client sends it through `submitSponsoredCall` like the
-withdraw and cancel calls.
+withdraw and cancel calls. Plus the strategy's CMS subheading and short
+description as typed `Strategy` fields.
 
 ### Added
 
@@ -33,6 +34,12 @@ withdraw and cancel calls.
   else, a failed read included). For an app's guard against submitting the
   same call twice after a run that ended pending — only `not-executed` may let
   a new attempt proceed unprompted.
+
+- **`Strategy.subheading?: string` and `Strategy.liteDescription?: string`**
+  — the CMS subheading and short description, until now reachable only on
+  `_raw`. Mapped from the same `PoolOverview` fields `_raw` carries; an
+  absent, empty or blank value is `undefined`, never `''` (the service maps a
+  missing `liteDescription` to `''`).
 
 ### Changed
 

@@ -1,7 +1,11 @@
 import { BigNumberish, BytesLike } from 'ethers';
 
 import { ContractAddresses, SdkConfigOptions } from '../sdk-config';
-import { LendingTotals, PoolOverview, TrancheData } from '../services/DataService/types';
+import {
+    LendingTotals,
+    PoolOverview,
+    TrancheData,
+} from '../services/DataService/types';
 import {
     PortfolioLendingPool,
     PortfolioSummary,
@@ -106,7 +110,17 @@ export interface KasuOptions {
 export interface Strategy {
     id: string;
     name: string;
+    /**
+     * The CMS subheading (the borrower type shown under the name). Absent when
+     * the record has none, or an empty one.
+     */
+    subheading?: string;
     description: string;
+    /**
+     * The CMS short description (`liteDescription`) for compact surfaces.
+     * Absent when the record has none, or an empty one.
+     */
+    liteDescription?: string;
     isActive: boolean;
     /** Weighted-average APY across tranches (decimal, e.g. 0.08 = 8 %). */
     apy: number;

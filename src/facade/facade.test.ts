@@ -7,6 +7,7 @@ import { DataService } from '../services/DataService/data-service';
 import { NO_DIRECTUS_URL_MESSAGE } from '../services/DataService/directus-client';
 import {
     PoolDelegateProfileAndHistory,
+    PoolOverview,
     RiskManagement,
 } from '../services/DataService/types';
 import { Portfolio } from '../services/Portfolio/portfolio';
@@ -18,6 +19,7 @@ import { CHAIN_CONFIGS } from './chain-configs';
 import { DepositsFacade } from './deposits';
 import { Kasu } from './kasu';
 import { StrategiesFacade } from './strategies';
+import { Strategy } from './types';
 import { PortfolioFacade } from './user-portfolio';
 
 // ---------------------------------------------------------------------------
@@ -89,7 +91,9 @@ describe('CHAIN_CONFIGS', () => {
 describe('Kasu.create()', () => {
     // Mock provider — enough to construct the SDK without network calls
     const mockProvider = {
-        getNetwork: jest.fn().mockResolvedValue({ chainId: 8453, name: 'base' }),
+        getNetwork: jest
+            .fn()
+            .mockResolvedValue({ chainId: 8453, name: 'base' }),
         call: jest.fn(),
         estimateGas: jest.fn(),
         getBlockNumber: jest.fn(),
@@ -194,6 +198,76 @@ describe('Kasu.create()', () => {
         expect(kasu.services.UserLending).toBeDefined();
         expect(kasu.services.Locking).toBeDefined();
         expect(kasu.services.Portfolio).toBeDefined();
+    });
+});
+
+// ---------------------------------------------------------------------------
+// StrategiesFacade — the CMS text fields on Strategy
+// ---------------------------------------------------------------------------
+
+describe('StrategiesFacade — subheading and liteDescription', () => {
+    function pool(over: Record<string, unknown>): PoolOverview {
+        return {
+            id: '0x0000000000000000000000000000000000000005',
+            poolName: 'Pool',
+            description: 'Long description',
+            liteDescription: '',
+            isActive: true,
+            apy: 0.1,
+            totalValueLocked: { total: '0', offchain: '0' },
+            poolCapacity: '0',
+            poolCapacityPercentage: '0',
+            tranches: [],
+            assetClass: 'Receivables',
+            poolApyStructure: 'Variable',
+            thumbnailImageUrl: '',
+            bannerImageUrl: '',
+            ...over,
+        } as unknown as PoolOverview;
+    }
+
+    async function strategyOf(
+        over: Record<string, unknown>,
+    ): Promise<Strategy> {
+        const facade = new StrategiesFacade(
+            {
+                getPoolOverview: jest.fn().mockResolvedValue([pool(over)]),
+            } as unknown as DataService,
+            {
+                getCurrentEpoch: jest.fn().mockResolvedValue('1'),
+            } as unknown as UserLending,
+        );
+        const [strategy] = await facade.getAll();
+        return strategy;
+    }
+
+    it('exposes both when the CMS record has them, from the same source as `_raw`', async () => {
+        const strategy = await strategyOf({
+            subheading: 'Tax receivables',
+            liteDescription: 'Short description',
+        });
+        expect(strategy.subheading).toBe('Tax receivables');
+        expect(strategy.liteDescription).toBe('Short description');
+        expect(strategy.subheading).toBe(strategy._raw.subheading);
+        expect(strategy.liteDescription).toBe(strategy._raw.liteDescription);
+    });
+
+    it('leaves both undefined when absent', async () => {
+        const strategy = await strategyOf({ liteDescription: undefined });
+        expect(strategy.subheading).toBeUndefined();
+        expect(strategy.liteDescription).toBeUndefined();
+        expect('subheading' in strategy._raw).toBe(false);
+    });
+
+    it('normalises an empty or blank string to undefined (the service maps a missing liteDescription to "")', async () => {
+        for (const empty of ['', '   ']) {
+            const strategy = await strategyOf({
+                subheading: empty,
+                liteDescription: empty,
+            });
+            expect(strategy.subheading).toBeUndefined();
+            expect(strategy.liteDescription).toBeUndefined();
+        }
     });
 });
 
@@ -313,18 +387,16 @@ describe('StrategiesFacade risk and originator accessors', () => {
 
     it("reads a pool's loss rate and first-loss capital", async () => {
         const facade = facadeWith({
-            getRiskManagement: jest
-                .fn()
-                .mockResolvedValue([
-                    riskRecord(OTHER_POOL, {
-                        poolLossRate: 0.5,
-                        firstLossCapital: 1,
-                    }),
-                    riskRecord(BASE_POOL, {
-                        poolLossRate: 0.0012,
-                        firstLossCapital: 250000,
-                    }),
-                ]),
+            getRiskManagement: jest.fn().mockResolvedValue([
+                riskRecord(OTHER_POOL, {
+                    poolLossRate: 0.5,
+                    firstLossCapital: 1,
+                }),
+                riskRecord(BASE_POOL, {
+                    poolLossRate: 0.0012,
+                    firstLossCapital: 250000,
+                }),
+            ]),
         });
         await expect(
             facade.getRiskPerformance(
@@ -339,14 +411,12 @@ describe('StrategiesFacade risk and originator accessors', () => {
     it('resolves an XDC pool through the metadata mapping', async () => {
         const facade = facadeWith(
             {
-                getRiskManagement: jest
-                    .fn()
-                    .mockResolvedValue([
-                        riskRecord(BASE_POOL, {
-                            poolLossRate: 0.01,
-                            firstLossCapital: 5,
-                        }),
-                    ]),
+                getRiskManagement: jest.fn().mockResolvedValue([
+                    riskRecord(BASE_POOL, {
+                        poolLossRate: 0.01,
+                        firstLossCapital: 5,
+                    }),
+                ]),
             },
             { [XDC_POOL.toLowerCase()]: BASE_POOL },
         );
@@ -370,14 +440,12 @@ describe('StrategiesFacade risk and originator accessors', () => {
         ];
         for (const [raw, expected] of cases) {
             const facade = facadeWith({
-                getRiskManagement: jest
-                    .fn()
-                    .mockResolvedValue([
-                        riskRecord(BASE_POOL, {
-                            poolLossRate: raw,
-                            firstLossCapital: raw,
-                        }),
-                    ]),
+                getRiskManagement: jest.fn().mockResolvedValue([
+                    riskRecord(BASE_POOL, {
+                        poolLossRate: raw,
+                        firstLossCapital: raw,
+                    }),
+                ]),
             });
             await expect(facade.getRiskPerformance(BASE_POOL)).resolves.toEqual(
                 {
@@ -519,7 +587,7 @@ function makeTranche(raw: {
         name: 'Test Tranche',
         apy: 0.08,
         minApy: 0.06,
-        maxApy: 0.10,
+        maxApy: 0.1,
         minimumDeposit: raw.minimumDeposit,
         maximumDeposit: raw.maximumDeposit,
         availableCapacity: raw.poolCapacity,
@@ -536,12 +604,15 @@ function makeTranche(raw: {
     } as never;
 }
 
-
 function makeUserRequest(overrides: Partial<UserRequest> = {}): UserRequest {
     return {
         id: 'req-1',
         userId: '0xuser',
-        lendingPool: { id: '0xpool', name: 'Pool', tranches: [{ orderId: '0' }] },
+        lendingPool: {
+            id: '0xpool',
+            name: 'Pool',
+            tranches: [{ orderId: '0' }],
+        },
         requestType: 'Deposit',
         trancheId: '0xtranche',
         trancheName: 'Senior',
