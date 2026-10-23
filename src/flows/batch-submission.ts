@@ -371,6 +371,52 @@ export async function checkBatchOutcome<R extends ReceiptLike = ReceiptLike>(
 // ---------------------------------------------------------------------------
 
 /**
+ * `checkBatchOutcome` for ONE sponsored call — ONE status read, no polling —
+ * for an app's guard against sending the same request twice (a P2P transfer
+ * whose earlier submission ended PENDING, say):
+ *
+ * - `executed` — mined, and the receipt proves the sender's operation
+ *   succeeded (`proveUserOperationInReceipt`);
+ * - `not-executed` — definitively reverted (vendor status or the operation's
+ *   own flag);
+ * - `unknown` — anything else, including a read or receipt that failed, or a
+ *   receipt that does not show the sender's operation.
+ *
+ * Only `not-executed` may let a new attempt proceed unprompted; `executed`
+ * means the earlier one landed and the user should be told.
+ */
+export async function checkSponsoredCallOutcome<
+    R extends ReceiptLike = ReceiptLike,
+>(
+    transactionId: string,
+    expect: Omit<UserOperationProofExpectation, 'userOperationHash'>,
+    ports: Pick<BatchSubmissionPorts<R>, 'getStatus' | 'getReceipt'>,
+): Promise<'executed' | 'not-executed' | 'unknown'> {
+    let read: BatchStatusRead;
+    try {
+        read = await ports.getStatus(transactionId);
+    } catch {
+        return 'unknown';
+    }
+    if (read.kind === 'reverted') return 'not-executed';
+    if (read.kind !== 'mined' || typeof read.txHash !== 'string') {
+        return 'unknown';
+    }
+    try {
+        const receipt = await ports.getReceipt(read.txHash);
+        const proof = proveUserOperationInReceipt(receipt, {
+            ...expect,
+            userOperationHash: read.userOperationHash ?? null,
+        });
+        if (proof.kind === 'executed') return 'executed';
+        if (proof.kind === 'reverted') return 'not-executed';
+        return 'unknown';
+    } catch {
+        return 'unknown';
+    }
+}
+
+/**
  * `BatchSubmissionPorts` for ONE sponsored call: the same status, receipt and
  * clock ports — a relay client written for the deposit batch serves both —
  * with a `post` that receives the call together with its relay `kind`, so the

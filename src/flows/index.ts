@@ -21,6 +21,7 @@ export type { BatchSubmissionOutcome } from './batch-errors';
 
 export {
     checkBatchOutcome,
+    checkSponsoredCallOutcome,
     DEFAULT_BATCH_POLLING_POLICY,
     submitBatch,
     submitSponsoredCall,

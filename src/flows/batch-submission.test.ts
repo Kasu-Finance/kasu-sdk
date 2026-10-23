@@ -23,6 +23,7 @@ import {
     BatchStatusRead,
     BatchSubmissionPorts,
     checkBatchOutcome,
+    checkSponsoredCallOutcome,
     DEFAULT_BATCH_POLLING_POLICY,
     SponsoredCallSubmissionPorts,
     submitBatch,
@@ -535,6 +536,71 @@ describe('checkBatchOutcome', () => {
         expect(await checkBatchOutcome(TX_ID, EXPECT, unproven.ports)).toBe(
             'unknown',
         );
+    });
+});
+
+describe('checkSponsoredCallOutcome', () => {
+    const SENDER = { sender: LENDER };
+    /** An executed single call: the sender's operation, no deposit event. */
+    const callReceipt = (success = true): ReceiptLike =>
+        receipt({ success, deposit: false });
+
+    it('executed when mined and the sender’s operation succeeded', async () => {
+        const { ports } = harness([MINED], {
+            getReceipt: jest.fn().mockResolvedValue(callReceipt()),
+        });
+        await expect(
+            checkSponsoredCallOutcome(TX_ID, SENDER, ports),
+        ).resolves.toBe('executed');
+    });
+
+    it('not-executed on a vendor revert or a reverted operation', async () => {
+        expect(
+            await checkSponsoredCallOutcome(
+                TX_ID,
+                SENDER,
+                harness([{ kind: 'reverted' }]).ports,
+            ),
+        ).toBe('not-executed');
+        const reverted = harness([MINED], {
+            getReceipt: jest.fn().mockResolvedValue(callReceipt(false)),
+        });
+        expect(
+            await checkSponsoredCallOutcome(TX_ID, SENDER, reverted.ports),
+        ).toBe('not-executed');
+    });
+
+    it('unknown for everything else — one read, no polling', async () => {
+        for (const read of [
+            AGAIN,
+            { kind: 'unknown', code: 'x' } as const,
+            new Error('down'),
+        ]) {
+            const h = harness([read]);
+            expect(
+                await checkSponsoredCallOutcome(TX_ID, SENDER, h.ports),
+            ).toBe('unknown');
+            expect(h.statusReads()).toBe(1);
+        }
+        const unreadable = harness([MINED], {
+            getReceipt: jest.fn().mockRejectedValue(new Error('timeout')),
+        });
+        expect(
+            await checkSponsoredCallOutcome(TX_ID, SENDER, unreadable.ports),
+        ).toBe('unknown');
+    });
+
+    it('unknown — never executed — when the receipt holds another sender’s operation', async () => {
+        const { ports } = harness([MINED], {
+            getReceipt: jest.fn().mockResolvedValue(callReceipt()),
+        });
+        expect(
+            await checkSponsoredCallOutcome(
+                TX_ID,
+                { sender: '0x0000000000000000000000000000000000000009' },
+                ports,
+            ),
+        ).toBe('unknown');
     });
 });
 

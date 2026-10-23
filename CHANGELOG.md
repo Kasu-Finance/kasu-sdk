@@ -26,6 +26,14 @@ withdraw and cancel calls.
   precompile range, an address with contract code, an unverified sender and
   the daily caps are all the relay's refusals.
 
+- **`checkSponsoredCallOutcome(transactionId, { sender }, ports)`** —
+  `checkBatchOutcome` for one sponsored call: ONE status read, no polling,
+  answering `executed` (mined, and the receipt proves the sender's operation
+  succeeded), `not-executed` (definitively reverted) or `unknown` (anything
+  else, a failed read included). For an app's guard against submitting the
+  same call twice after a run that ended pending — only `not-executed` may let
+  a new attempt proceed unprompted.
+
 ### Changed
 
 - `SponsoredCallKind` gains `'transfer'`. A consumer with an exhaustive
