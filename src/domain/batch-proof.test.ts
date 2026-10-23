@@ -158,32 +158,47 @@ function dirtyBytesPadding(call: DepositBatchCall): DepositBatchCall {
 const NON_CANONICAL: [string, () => DepositBatchCall[], RegExp][] = [
     [
         'dirty high bits in the approval spender word',
-        () => [dirtyHighByte(approveCall(), 0), depositCall()],
+        (): DepositBatchCall[] => [
+            dirtyHighByte(approveCall(), 0),
+            depositCall(),
+        ],
         /approve-call|non-canonical-encoding/,
     ],
     [
         'dirty high bits in the deposit pool word',
-        () => [approveCall(), dirtyHighByte(depositCall(), 0)],
+        (): DepositBatchCall[] => [
+            approveCall(),
+            dirtyHighByte(depositCall(), 0),
+        ],
         /deposit-call|non-canonical-encoding/,
     ],
     [
         'dirty high bits in the deposit tranche word',
-        () => [approveCall(), dirtyHighByte(depositCall(), 1)],
+        (): DepositBatchCall[] => [
+            approveCall(),
+            dirtyHighByte(depositCall(), 1),
+        ],
         /deposit-call|non-canonical-encoding/,
     ],
     [
         'non-minimal offsets in the deposit',
-        () => [approveCall(), nonMinimalOffsets(depositCall())],
+        (): DepositBatchCall[] => [
+            approveCall(),
+            nonMinimalOffsets(depositCall()),
+        ],
         /non-canonical-encoding/,
     ],
     [
         'dirty padding after the deposit data bytes',
-        () => [approveCall(), dirtyBytesPadding(depositCall())],
+        (): DepositBatchCall[] => [
+            approveCall(),
+            dirtyBytesPadding(depositCall()),
+        ],
         /non-canonical-encoding/,
     ],
     [
         'trailing bytes after a valid deposit',
-        () => [
+        (): DepositBatchCall[] => [
             approveCall(),
             { ...depositCall(), data: `${depositCall().data}00` },
         ],
