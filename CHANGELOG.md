@@ -19,8 +19,10 @@ A bug-fix release. No API change.
   The check now re-encodes against the interface's own fragment, looked up by
   the selector. What it accepts and refuses is unchanged: exactly the
   exact-amount approve plus the matching `requestDepositWithKyc`, canonical
-  bytes, no value. The suite now also runs the validator against the
-  ES-module copy.
+  bytes, no value. The suite now also runs the validator, and both receipt
+  proofs, against the ES-module copy, and pins more non-canonical encodings
+  the validator refuses: non-minimal offsets, dirty `bytes` padding, dirty
+  high bits in an address word and trailing bytes on the deposit.
 
 ## 2.10.1
 
