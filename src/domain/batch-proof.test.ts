@@ -1,4 +1,4 @@
-import { BigNumber, constants, utils } from 'ethers';
+import { BigNumber, BigNumberish, constants, utils } from 'ethers';
 
 import { IERC20MetadataAbi__factory } from '../contracts/factories/IERC20MetadataAbi__factory';
 import { ILendingPoolManagerAbi__factory } from '../contracts/factories/ILendingPoolManagerAbi__factory';
@@ -91,6 +91,144 @@ const EXPECTED_BATCH = {
     fixedTermConfigId: 0,
 };
 
+// ---------------------------------------------------------------------------
+// Non-canonical encodings: bytes that DECODE to the run's deposit but are not
+// the bytes the SDK produced. Each is built from a canonical call, so the
+// only difference is the one the label names.
+// ---------------------------------------------------------------------------
+
+/** The 32-byte words after the selector, as 64-char hex strings. */
+function wordsOf(data: string): string[] {
+    return data.slice(10).match(/.{64}/g) ?? [];
+}
+
+function joinWords(data: string, words: string[]): string {
+    return `${data.slice(0, 10)}${words.join('')}`;
+}
+
+/** Set the high (first) byte of word `index` — an address word's dirty bits. */
+function dirtyHighByte(
+    call: DepositBatchCall,
+    index: number,
+): DepositBatchCall {
+    const words = wordsOf(call.data);
+    words[index] = `01${words[index].slice(2)}`;
+    return { ...call, data: joinWords(call.data, words) };
+}
+
+/**
+ * `requestDepositWithKyc`'s head is seven words; words 3, 5 and 6 are the
+ * offsets of `swapData`, `depositData` and the KYC tuple. Push every offset
+ * one word further and put a junk word in the gap: the decoder follows the
+ * offsets and reads the very same arguments.
+ */
+function nonMinimalOffsets(call: DepositBatchCall): DepositBatchCall {
+    const words = wordsOf(call.data);
+    for (const i of [3, 5, 6]) {
+        words[i] = utils
+            .hexZeroPad(
+                BigNumber.from(`0x${words[i]}`).add(32).toHexString(),
+                32,
+            )
+            .slice(2);
+    }
+    words.splice(7, 0, 'ee'.repeat(32));
+    return { ...call, data: joinWords(call.data, words) };
+}
+
+/**
+ * A non-zero byte in the right padding of `depositData` (`0x1234`, so the
+ * last 30 bytes of its data word are padding the decoder never reads).
+ */
+function dirtyBytesPadding(call: DepositBatchCall): DepositBatchCall {
+    const words = wordsOf(call.data);
+    const dataWord = BigNumber.from(`0x${words[5]}`).toNumber() / 32 + 1;
+    words[dataWord] = `${words[dataWord].slice(0, 62)}ff`;
+    return { ...call, data: joinWords(call.data, words) };
+}
+
+/**
+ * Every one of these is refused. A dirty address word is refused by ethers'
+ * own decoder (`approve-call` / `deposit-call`) before the canonical check
+ * sees it; either code is a refusal, and the canonical check would still
+ * catch it if a future decoder were lenient. The offset and padding cases
+ * decode cleanly, so ONLY the canonical re-encode stands between them and a
+ * signature.
+ */
+const NON_CANONICAL: [string, () => DepositBatchCall[], RegExp][] = [
+    [
+        'dirty high bits in the approval spender word',
+        (): DepositBatchCall[] => [
+            dirtyHighByte(approveCall(), 0),
+            depositCall(),
+        ],
+        /approve-call|non-canonical-encoding/,
+    ],
+    [
+        'dirty high bits in the deposit pool word',
+        (): DepositBatchCall[] => [
+            approveCall(),
+            dirtyHighByte(depositCall(), 0),
+        ],
+        /deposit-call|non-canonical-encoding/,
+    ],
+    [
+        'dirty high bits in the deposit tranche word',
+        (): DepositBatchCall[] => [
+            approveCall(),
+            dirtyHighByte(depositCall(), 1),
+        ],
+        /deposit-call|non-canonical-encoding/,
+    ],
+    [
+        'non-minimal offsets in the deposit',
+        (): DepositBatchCall[] => [
+            approveCall(),
+            nonMinimalOffsets(depositCall()),
+        ],
+        /non-canonical-encoding/,
+    ],
+    [
+        'dirty padding after the deposit data bytes',
+        (): DepositBatchCall[] => [
+            approveCall(),
+            dirtyBytesPadding(depositCall()),
+        ],
+        /non-canonical-encoding/,
+    ],
+    [
+        'trailing bytes after a valid deposit',
+        (): DepositBatchCall[] => [
+            approveCall(),
+            { ...depositCall(), data: `${depositCall().data}00` },
+        ],
+        /non-canonical-encoding/,
+    ],
+];
+
+/** Refused, as a `DepositBatchMismatchError` whose `code` matches. */
+function expectRefused(calls: DepositBatchCall[], code: RegExp): void {
+    let thrown: unknown;
+    try {
+        validateDepositBatchCalls(calls, EXPECTED_BATCH);
+    } catch (err) {
+        thrown = err;
+    }
+    expect(thrown).toBeInstanceOf(DepositBatchMismatchError);
+    expect((thrown as DepositBatchMismatchError).code).toMatch(code);
+}
+
+/**
+ * What ethers v5's deep copy of a fragment keeps under the ES-module build:
+ * its own DATA properties, and no methods. (The CommonJS copy also carries
+ * the prototype methods, as own properties, because `for…in` walked them.)
+ */
+function methodlessCopy(value: object): Record<string, unknown> {
+    return Object.fromEntries(
+        Object.entries(value).filter(([, v]) => typeof v !== 'function'),
+    );
+}
+
 describe('validateDepositBatchCalls', () => {
     it('accepts exact-amount approve(LPM, A) + requestDepositWithKyc(pool, tranche, A, 0x) and returns the tranche', () => {
         const validated = validateDepositBatchCalls(
@@ -109,6 +247,101 @@ describe('validateDepositBatchCalls', () => {
         expect(() =>
             validateDepositBatchCalls(calls, EXPECTED_BATCH),
         ).not.toThrow();
+    });
+
+    describe('under the ES-module ethers build a browser bundler resolves', () => {
+        // ethers v5's `TransactionDescription` deep-copies every field, and a
+        // `FunctionFragment` (its `inputs` array is not frozen) comes out as a
+        // PLAIN object of its own enumerable properties. In `lib.esm`
+        // (Turbopack, webpack, Vite — anything honouring `module`) the
+        // prototype methods are non-enumerable class methods, so the copy has
+        // no `format()`; in the CommonJS `lib` jest runs, ES5 prototype
+        // methods are enumerable and the copy happens to keep them. This
+        // reproduces the ES-module copy on the CommonJS build, so the suite
+        // sees what a browser sees. (2.10.0/2.10.1 re-encoded
+        // `parsed.functionFragment` and refused EVERY batch there as
+        // `approve-call`.) The validator no longer goes through
+        // `parseTransaction` at all; this block keeps a reintroduction of it
+        // honest about the ES-module shape.
+        let spy: jest.SpyInstance | undefined;
+        beforeEach(() => {
+            // eslint-disable-next-line @typescript-eslint/unbound-method -- re-bound with `.call(this, …)` below
+            const original = utils.Interface.prototype.parseTransaction;
+            spy = jest
+                .spyOn(utils.Interface.prototype, 'parseTransaction')
+                .mockImplementation(function (
+                    this: utils.Interface,
+                    tx: { data: string; value?: BigNumberish },
+                ) {
+                    const parsed = original.call(this, tx);
+                    return {
+                        ...parsed,
+                        functionFragment: methodlessCopy(
+                            parsed.functionFragment,
+                        ),
+                    } as never;
+                });
+        });
+        afterEach(() => {
+            spy?.mockRestore();
+        });
+
+        it('the simulated copy really has no fragment methods', () => {
+            const parsed = ERC20.parseTransaction({ data: approveCall().data });
+            expect(
+                (parsed.functionFragment as { format?: unknown }).format,
+            ).toBeUndefined();
+        });
+
+        it('accepts the canonical batch', () => {
+            const validated = validateDepositBatchCalls(
+                [approveCall(), depositCall()],
+                EXPECTED_BATCH,
+            );
+            expect(validated.tranche.toLowerCase()).toBe(TRANCHE);
+            expect(validated.amount.eq(AMOUNT)).toBe(true);
+        });
+
+        it('still refuses every deviation it refuses on CommonJS', () => {
+            const padded = (call: DepositBatchCall): DepositBatchCall => ({
+                ...call,
+                data: `${call.data}00`,
+            });
+            expect(() =>
+                validateDepositBatchCalls(
+                    [padded(approveCall()), depositCall()],
+                    EXPECTED_BATCH,
+                ),
+            ).toThrow(/non-canonical-encoding/);
+            expect(() =>
+                validateDepositBatchCalls(
+                    [approveCall(), padded(depositCall())],
+                    EXPECTED_BATCH,
+                ),
+            ).toThrow(/non-canonical-encoding/);
+            expect(() =>
+                validateDepositBatchCalls(
+                    [approveCall(constants.MaxUint256), depositCall()],
+                    EXPECTED_BATCH,
+                ),
+            ).toThrow(/approve-amount/);
+            expect(() =>
+                validateDepositBatchCalls(
+                    [approveCall(AMOUNT, OTHER), depositCall()],
+                    EXPECTED_BATCH,
+                ),
+            ).toThrow(/approve-spender/);
+            expect(() =>
+                validateDepositBatchCalls(
+                    [depositCall(), approveCall()],
+                    EXPECTED_BATCH,
+                ),
+            ).toThrow(DepositBatchMismatchError);
+        });
+
+        it.each(NON_CANONICAL)('still refuses %s', (_label, calls, code) => {
+            expectRefused(calls(), code);
+        });
     });
 
     it('compares addresses case-insensitively', () => {
@@ -283,6 +516,26 @@ describe('validateDepositBatchCalls', () => {
         expect(() => validateDepositBatchCalls(calls, EXPECTED_BATCH)).toThrow(
             code,
         );
+    });
+
+    it.each(NON_CANONICAL)('refuses %s', (_label, calls, code) => {
+        expectRefused(calls(), code);
+    });
+
+    it('the offset and padding fixtures decode to the canonical arguments', () => {
+        // Without this, a fixture that broke decoding would pass as a
+        // "non-canonical" refusal for the wrong reason.
+        const canonical = LPM_IFACE.decodeFunctionData(
+            'requestDepositWithKyc',
+            depositCall().data,
+        );
+        for (const mutate of [nonMinimalOffsets, dirtyBytesPadding]) {
+            const decoded = LPM_IFACE.decodeFunctionData(
+                'requestDepositWithKyc',
+                mutate(depositCall()).data,
+            );
+            expect(decoded).toEqual(canonical);
+        }
     });
 
     it('refuses a non-positive run amount outright', () => {
@@ -911,5 +1164,83 @@ describe('proveDepositInReceipt — two operations of the lender, no hash', () =
         ).toEqual({ kind: 'unproven', reason: 'ambiguous-operation' });
         // With the hash, it is the proven deposit it always was.
         expect(proveDepositInReceipt(receipt, EXPECTED).kind).toBe('deposited');
+    });
+});
+
+describe('the receipt proofs under the ES-module ethers build', () => {
+    // `parseLog` returns a `LogDescription`, deep-copied like a
+    // `TransactionDescription`: in `lib.esm` its `eventFragment` comes out
+    // with no methods. The proofs read only `name` and `args`, which survive
+    // the copy — this pins that, so a later read of the fragment cannot
+    // break them in the browser alone.
+    let spy: jest.SpyInstance | undefined;
+    beforeEach(() => {
+        // eslint-disable-next-line @typescript-eslint/unbound-method -- re-bound with `.call(this, …)` below
+        const original = utils.Interface.prototype.parseLog;
+        spy = jest
+            .spyOn(utils.Interface.prototype, 'parseLog')
+            .mockImplementation(function (
+                this: utils.Interface,
+                log: { topics: string[]; data: string },
+            ) {
+                const parsed = original.call(this, log);
+                return {
+                    ...parsed,
+                    eventFragment: methodlessCopy(parsed.eventFragment),
+                } as never;
+            });
+    });
+    afterEach(() => {
+        spy?.mockRestore();
+    });
+
+    it('the simulated copy really has no fragment methods', () => {
+        const log = depositRequestedLog();
+        const parsed = PENDING.parseLog({
+            topics: [...log.topics],
+            data: log.data,
+        });
+        expect(
+            (parsed.eventFragment as { format?: unknown }).format,
+        ).toBeUndefined();
+    });
+
+    it('still proves a deposit, and still refuses another amount', () => {
+        const logs = [
+            beforeExecutionLog(),
+            depositRequestedLog(),
+            userOperationEventLog({ success: true }),
+        ];
+        const proof = proveDepositInReceipt(receiptOf(logs), EXPECTED);
+        expect(proof.kind).toBe('deposited');
+        // The SDK's own interfaces went through the simulated copy.
+        expect(spy).toHaveBeenCalled();
+        expect(
+            proveDepositInReceipt(receiptOf(logs), {
+                ...EXPECTED,
+                amount: AMOUNT.add(1),
+            }),
+        ).toEqual({ kind: 'unproven', reason: 'no-deposit-requested' });
+    });
+
+    it('still reads a single operation, and its revert', () => {
+        expect(
+            proveUserOperationInReceipt(
+                receiptOf([
+                    beforeExecutionLog(),
+                    userOperationEventLog({ success: true }),
+                ]),
+                { sender: LENDER, userOperationHash: USER_OP_HASH },
+            ),
+        ).toEqual({ kind: 'executed', blockNumber: 123 });
+        expect(
+            proveUserOperationInReceipt(
+                receiptOf([
+                    beforeExecutionLog(),
+                    userOperationEventLog({ success: false }),
+                ]),
+                { sender: LENDER, userOperationHash: USER_OP_HASH },
+            ).kind,
+        ).toBe('reverted');
     });
 });
