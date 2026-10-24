@@ -121,6 +121,19 @@ export interface Strategy {
      * Absent when the record has none, or an empty one.
      */
     liteDescription?: string;
+    /**
+     * The strategy's short blurb as ONE line of plain text, for cards and
+     * compact surfaces: `liteDescription` when it is usable, else the first
+     * paragraph of `description`, with inline markdown markers stripped and
+     * every run of whitespace collapsed to one space. The `"Not Available"`
+     * placeholder, an empty or blank value, and a missing one all count as
+     * absent. `undefined` when neither field yields a blurb; the SDK never
+     * substitutes a sentence of its own. See `pickShortDescription`.
+     *
+     * Not sanitised: HTML tags and link syntax pass through unchanged. Render
+     * it as text, never as HTML or markdown.
+     */
+    summary?: string;
     isActive: boolean;
     /** Weighted-average APY across tranches (decimal, e.g. 0.08 = 8 %). */
     apy: number;

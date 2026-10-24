@@ -82,6 +82,7 @@ src/
 │   ├── pools.ts         # Visible-pool selection, best tranche, rate ceiling
 │   ├── partners.ts      # Credit originator / institutional lender
 │   ├── tranche-display-name.ts  # The one display-only rename
+│   ├── strategy-summary.ts # pickShortDescription: the CMS short blurb as plain text
 │   ├── requests.ts      # Lending-request view model as codes
 │   ├── settlement.ts    # Clearing window, cycle dates
 │   ├── loan-contract.ts # Backend-verified protocol strings + depositData
@@ -305,6 +306,14 @@ they were duplicated across the applications, and the copies drifted.
    strings** — see below. And `partners.ts` holds each partner's `region`,
    because the word a lender signs in the loan-agreement message must be the
    word every surface shows — a protocol string in all but name.
+
+   `pickShortDescription` (`strategy-summary.ts`) returns a string but
+   authors none. It selects and cleans editorial the CMS already holds
+   (`liteDescription`, else the first paragraph of `description`; the
+   `"Not Available"` placeholder and blanks count as missing; markdown markers
+   stripped, one line), and an absent blurb is `undefined` — never a sentence
+   of its own. The facade exposes it as `Strategy.summary`. It was lifted from
+   kasu-ui, and its spec pins kasu-ui's output for every live CMS shape.
 2. **Pure.** No network, no clock, no environment. Anything with I/O goes in
    `src/facade/` — `fetchUnusedPoolIds` is the example.
 
@@ -316,6 +325,7 @@ they were duplicated across the applications, and the copies drifted.
 | `pools.ts`                | Visible-pool selection and sort, best tranche, max net rate ceiling               |
 | `partners.ts`             | Credit originator and institutional lender, inferred from the pool name           |
 | `tranche-display-name.ts` | The Senior → "Upper Mezzanine" rename                                             |
+| `strategy-summary.ts`     | `pickShortDescription` — the CMS short blurb as one line of plain text (`Strategy.summary`) |
 | `requests.ts`             | Lending-request view model as codes: status, kind, amounts, bundle, cycle         |
 | `settlement.ts`           | Clearing-window phase and boundary, cycle close/outcome dates                     |
 | `loan-contract.ts`        | `depositData` bytes, the signed-message builders, the contract payload types      |

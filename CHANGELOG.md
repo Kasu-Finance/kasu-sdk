@@ -3,6 +3,39 @@
 All notable changes to `@kasufinance/kasu-sdk`. Versions follow semantic
 versioning; earlier releases are described in their commit messages.
 
+## 2.11.0
+
+A strategy's short blurb as one shared rule, so every app shows the same
+line instead of each re-deriving it from the CMS fields. Additive only: no
+field is renamed, removed or changed.
+
+This release carries `summary` alone. The portfolio additions planned for
+2.11 (typed portfolio read, `derivePositions`, per-pool latest clearing,
+`positionSlices`, `pendingPoolAddress`, `batchOnly`) move to the next minor.
+
+### Added
+
+- **`Strategy.summary?: string`** — the strategy's short blurb as ONE line of
+  plain text: `liteDescription` when it is usable, else the first paragraph
+  of `description`. Inline markdown markers (`**`, `__`, `*`, `_`, backticks)
+  are stripped and every run of whitespace becomes one space. The
+  `"Not Available"` placeholder (the whole trimmed value, any case), an empty
+  or blank value and a missing one all count as absent. `undefined` when
+  neither field yields a blurb; the SDK never substitutes a sentence of its
+  own. `liteDescription` and `description` keep their raw CMS values. It is
+  not sanitised: HTML tags and link syntax pass through unchanged, so render
+  it as text, never as HTML or markdown.
+- **`pickShortDescription(source)`** (domain) — the pure function behind it,
+  for consumers holding a raw `PoolOverview`. It takes any
+  `{ liteDescription?, description? }` (`ShortDescriptionSource`) and reads a
+  non-string field as missing.
+
+Lifted from kasu-ui's function of the same name and pinned to its output for
+every live CMS row on base, xdc and xdc-usdc. It differs only on inputs no
+live row has: the cleaned text is trimmed (a CRLF paragraph no longer ends
+in a space), and a value that is nothing but markdown markers counts as
+missing, so the result is never a blank string.
+
 ## 2.10.3
 
 Sponsored P2P transfer: the stable asset's own `transfer` as a sponsored-call
