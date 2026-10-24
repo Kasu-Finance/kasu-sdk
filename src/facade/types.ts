@@ -129,6 +129,9 @@ export interface Strategy {
      * placeholder, an empty or blank value, and a missing one all count as
      * absent. `undefined` when neither field yields a blurb; the SDK never
      * substitutes a sentence of its own. See `pickShortDescription`.
+     *
+     * Not sanitised: HTML tags and link syntax pass through unchanged. Render
+     * it as text, never as HTML or markdown.
      */
     summary?: string;
     isActive: boolean;

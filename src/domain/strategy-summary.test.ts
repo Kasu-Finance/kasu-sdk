@@ -177,6 +177,23 @@ describe('pickShortDescription', () => {
         ).toBe('Fallback.');
     });
 
+    it('is not sanitised: HTML and link syntax pass through, so it must be rendered as text', () => {
+        expect(
+            pickShortDescription({
+                liteDescription: '<script>alert(1)</script>',
+            }),
+        ).toBe('<script>alert(1)</script>');
+        expect(
+            pickShortDescription({
+                liteDescription: '[a](javascript:alert(1)) &lt;b&gt;',
+            }),
+        ).toBe('[a](javascript:alert(1)) &lt;b&gt;');
+        // Removing markers can join fragments into a tag the input never spelled.
+        expect(pickShortDescription({ liteDescription: '<scr**i**pt>' })).toBe(
+            '<script>',
+        );
+    });
+
     it('returns one line: no newline survives, and no run of spaces', () => {
         for (const row of [...LIVE_SHAPES, ...EDGES]) {
             const summary = pickShortDescription(row);

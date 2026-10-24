@@ -19,6 +19,11 @@
  *     stripped (bold, then italic, then inline code).
  *   - AND HARD NEWLINES. Every run of whitespace becomes one space, so a
  *     paragraph break inside the value is not a gap in a one-line slot.
+ *   - NOT SANITISED. "Plain text" means text to render AS text. HTML tags,
+ *     entities and link syntax (`<script>`, `&lt;`, `[a](javascript:…)`) pass
+ *     through unchanged, and removing markers can join fragments into a tag
+ *     (`<scr**i**pt>` becomes `<script>`). Render it as a text node, never as
+ *     HTML or markdown.
  *
  * Two refinements over the kasu-ui original, neither reachable by any live
  * row: the cleaned text is trimmed (a CRLF value no longer ends in a space),

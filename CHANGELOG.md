@@ -22,7 +22,9 @@ This release carries `summary` alone. The portfolio additions planned for
   `"Not Available"` placeholder (the whole trimmed value, any case), an empty
   or blank value and a missing one all count as absent. `undefined` when
   neither field yields a blurb; the SDK never substitutes a sentence of its
-  own. `liteDescription` and `description` keep their raw CMS values.
+  own. `liteDescription` and `description` keep their raw CMS values. It is
+  not sanitised: HTML tags and link syntax pass through unchanged, so render
+  it as text, never as HTML or markdown.
 - **`pickShortDescription(source)`** (domain) — the pure function behind it,
   for consumers holding a raw `PoolOverview`. It takes any
   `{ liteDescription?, description? }` (`ShortDescriptionSource`) and reads a

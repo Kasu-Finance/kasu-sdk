@@ -175,7 +175,9 @@ Three rules worth knowing:
   with inline markdown markers stripped and whitespace collapsed to one line.
   The `"Not Available"` placeholder and a blank value count as missing, and an
   absent blurb is `undefined`: what to show instead is the app's decision.
-  `liteDescription` and `description` stay the raw CMS values.
+  `liteDescription` and `description` stay the raw CMS values. It is NOT
+  sanitised: HTML tags and link syntax pass through unchanged, so render it
+  as text, never as HTML or markdown.
 - **The tranche rename is display-only.** `getTrancheDisplayName` maps the
   `Senior` tranche to "Upper Mezzanine" on Apxium strategies, because the true
   senior position is held by an institutional lender. Call it at the view
