@@ -1,4 +1,5 @@
 import { selectVisiblePools } from '../domain/pools';
+import { pickShortDescription } from '../domain/strategy-summary';
 import { DataService } from '../services/DataService/data-service';
 import {
     PoolDelegateProfileAndHistory,
@@ -218,6 +219,7 @@ export class StrategiesFacade {
             subheading: nonEmptyOrUndefined(pool.subheading),
             description: pool.description,
             liteDescription: nonEmptyOrUndefined(pool.liteDescription),
+            summary: pickShortDescription(pool),
             isActive: pool.isActive,
             apy: pool.apy,
             tvl: pool.totalValueLocked,

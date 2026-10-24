@@ -16,6 +16,10 @@
  *    reconstructs byte-for-byte to verify a lender's signature. Those are not
  *    copy: nobody may reword them, in any language, without a matching backend
  *    change, which is exactly why they belong in one place.
+ *
+ *    `pickShortDescription` returns a string but AUTHORS none: it selects and
+ *    cleans editorial the CMS already holds, and an absent blurb is
+ *    `undefined`, never a sentence of its own.
  * 2. **Pure.** No network, no clock, no environment. Anything with I/O belongs
  *    in `facade/` (see `fetchUnusedPoolIds`).
  */
@@ -162,6 +166,9 @@ export {
     SponsoredCallInputError,
 } from './sponsored-calls';
 export type { SponsoredCall, SponsoredCallKind } from './sponsored-calls';
+
+export { pickShortDescription } from './strategy-summary';
+export type { ShortDescriptionSource } from './strategy-summary';
 
 export { getTrancheDisplayName, UPPER_MEZZANINE } from './tranche-display-name';
 

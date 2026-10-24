@@ -149,6 +149,7 @@ application formats them in its own design system and language.
 | Yields               | `weeklyInterest`, `dailyInterest`, `accruedInterest`, `projectedAnnualEarnings`, `weightedAverageApy`, `SECONDS_PER_WEEK` — NET of the performance fee                                               |
 | Batch proof          | `validateDepositBatchCalls`, `proveDepositInReceipt`, `DepositBatchMismatchError`, `ENTRY_POINT_V07`                                                                                                   |
 | Tranche display name | `getTrancheDisplayName`, `UPPER_MEZZANINE`                                                                                                                                                               |
+| Strategy summary     | `pickShortDescription` — the CMS short blurb as one line of plain text, or `undefined` (also on every `Strategy` as `summary`)                                                                            |
 | Requests             | `deriveRequestState`, `submissionEvents`, `countSubmissions`, `firstSubmissionTimestamp`, `isCycleClosed`                                                                                                |
 | Settlement           | `computeSettlementWindow`, `nextCycleBoundary`, `deriveCycleDates`, `CLEARING_WINDOW_SECONDS`                                                                                                            |
 | Loan contract        | `encodeDepositData`, `buildContractVersionType`, `buildLoanAgreementSignMessage`, `buildLegacyContractRequestMessage`, `buildFullNameRequestMessage`, `formatSignTimestampUtc`, `parseFormattedMessage`, `asContractType` |
@@ -169,6 +170,12 @@ Three rules worth knowing:
   wrong number when an input is out of domain. Render that as "no rate", never
   as zero, and never substitute a fee of `0` for one you have not loaded — a
   fee-less rate overstates what a lender earns.
+- **`Strategy.summary` is CMS editorial, cleaned, never authored.** It is
+  `liteDescription` when usable, else the first paragraph of `description`,
+  with inline markdown markers stripped and whitespace collapsed to one line.
+  The `"Not Available"` placeholder and a blank value count as missing, and an
+  absent blurb is `undefined`: what to show instead is the app's decision.
+  `liteDescription` and `description` stay the raw CMS values.
 - **The tranche rename is display-only.** `getTrancheDisplayName` maps the
   `Senior` tranche to "Upper Mezzanine" on Apxium strategies, because the true
   senior position is held by an institutional lender. Call it at the view

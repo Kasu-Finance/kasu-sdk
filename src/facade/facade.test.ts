@@ -271,6 +271,77 @@ describe('StrategiesFacade — subheading and liteDescription', () => {
     });
 });
 
+describe('StrategiesFacade — summary', () => {
+    function pool(over: Record<string, unknown>): PoolOverview {
+        return {
+            id: '0x0000000000000000000000000000000000000006',
+            poolName: 'Pool',
+            description: '',
+            liteDescription: '',
+            isActive: true,
+            apy: 0.1,
+            totalValueLocked: { total: '0', offchain: '0' },
+            poolCapacity: '0',
+            poolCapacityPercentage: '0',
+            tranches: [],
+            assetClass: 'Receivables',
+            poolApyStructure: 'Variable',
+            thumbnailImageUrl: '',
+            bannerImageUrl: '',
+            ...over,
+        } as unknown as PoolOverview;
+    }
+
+    async function strategyOf(
+        over: Record<string, unknown>,
+    ): Promise<Strategy> {
+        const facade = new StrategiesFacade(
+            {
+                getPoolOverview: jest.fn().mockResolvedValue([pool(over)]),
+            } as unknown as DataService,
+            {
+                getCurrentEpoch: jest.fn().mockResolvedValue('1'),
+            } as unknown as UserLending,
+        );
+        const [strategy] = await facade.getAll();
+        return strategy;
+    }
+
+    it('is liteDescription as one line of plain text', async () => {
+        const strategy = await strategyOf({
+            liteDescription: '**Lead.**\n\nMore text.',
+            description: 'Profile.\n\nSecond.',
+        });
+        expect(strategy.summary).toBe('Lead. More text.');
+        // The raw fields are untouched.
+        expect(strategy.liteDescription).toBe('**Lead.**\n\nMore text.');
+        expect(strategy._raw.liteDescription).toBe('**Lead.**\n\nMore text.');
+    });
+
+    it('falls back to the first paragraph of description for the "Not Available" placeholder', async () => {
+        const strategy = await strategyOf({
+            liteDescription: 'Not Available',
+            description: 'Profile.\n\nSecond.',
+        });
+        expect(strategy.summary).toBe('Profile.');
+        // liteDescription stays the raw CMS value; only summary reads the placeholder.
+        expect(strategy.liteDescription).toBe('Not Available');
+    });
+
+    it('is undefined for a pool with no CMS record', async () => {
+        const strategy = await strategyOf({});
+        expect(strategy.summary).toBeUndefined();
+    });
+
+    it('is undefined, never "", when both fields are blank', async () => {
+        const strategy = await strategyOf({
+            liteDescription: '  ',
+            description: '\n\n',
+        });
+        expect(strategy.summary).toBeUndefined();
+    });
+});
+
 // ---------------------------------------------------------------------------
 // StrategiesFacade.calculateDepositLimits()
 // ---------------------------------------------------------------------------
