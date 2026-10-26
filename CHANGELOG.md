@@ -3,6 +3,55 @@
 All notable changes to `@kasufinance/kasu-sdk`. Versions follow semantic
 versioning; earlier releases are described in their commit messages.
 
+## 2.12.0
+
+A lender's settled interest per cycle — the data behind an earnings chart —
+from one per-epoch formula that the portfolio's last-cycle figures now share,
+so the newest bar of a history and "earned last cycle" cannot disagree.
+
+### Added
+
+- **`kasu.portfolio.getYieldHistory(userAddress, { fromEpoch?, count? })`**
+  (and `Portfolio.getYieldHistory`) → `YieldHistoryEntry[]`, one per pool,
+  tranche and settled epoch in which the lender held shares:
+  `{ epochId, epochEnd, poolId, trancheId, grossYield, netYield }`.
+  `epochEnd` is unix SECONDS (the next epoch's start). `netYield` is what the
+  close credited the lender: the subgraph's `InterestApplied` amount is
+  already net of the performance fee, so it is used as is, and `grossYield`
+  is derived from it with the CURRENT fee (`net / (1 − fee / 100)`; `NaN`
+  when the fee is unknown). Only settled epochs (`< currentEpoch`); with no
+  options, all of them; `count` alone = the newest `count`. A new lender, and
+  a deployment whose subgraph lacks the entities, get `[]`; any other failure
+  throws. Cost: one positions request, then one request per 1 000-row page of
+  the longest series (normally two subgraph round trips), plus three parallel
+  `SystemVariables` reads.
+- **`aggregateYieldHistory(entries, { poolId?, trancheId? })`** (domain) →
+  one `{ epochId, epochEnd, grossYield, netYield }` per epoch, ascending: all
+  strategies, or one.
+- **`epochTrancheYield(input)`** (domain) — the one per-epoch formula
+  (share-weighted interest, the fixed-term locks' split and top-ups), and
+  **`grossYieldFromNet(net, feePercent)`**, the inverse of the identity
+  `weeklyInterest` applies.
+
+### Fixed
+
+- `PortfolioLendingPool.totalYieldEarningsLastEpoch` is now THAT pool's
+  figure. It was a running total over every pool before it in the list, and
+  it counted a fixed-term lock's share of the base interest twice.
+- A lock's last-epoch top-up no longer includes a top-up applied at a
+  clearing that has run but whose epoch has not rolled over yet: it reads the
+  lock's shares as of the last settled epoch (new `lockSharesAtLastEpoch`
+  selection in `lendingPortfolioQuery`), not its current shares.
+- A last-epoch figure with a zero share denominator is `0`, not `NaN`.
+
+One edge stays as it was. When a pool has no interest recorded for the last
+settled epoch (a late or stopped clearing), the last-epoch figures still show
+the newest interest the tranche has, weighted by the share snapshots as of
+the last settled epoch; the history dates that interest to its own epoch.
+Compare a pool's last-epoch figure with its NEWEST history entry, not with
+the entry for `currentEpoch − 1`: the two are equal unless the lender's or
+the tranche's shares changed after that epoch.
+
 ## 2.11.0
 
 A strategy's short blurb as one shared rule, so every app shows the same
