@@ -118,7 +118,7 @@ You can also pass a whole `ChainConfigEntry` instead of a chain key.
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
 | `kasu.strategies` | `getAll()`, `getVisible()`, `getById()`, `getPlatformStats()`, `getPerformanceFeePercent()`, `calculateDepositLimits()`, `getRiskPerformance(poolId)`, `getOriginator(poolId)` | Browse pools, APY, capacity, risk, originator |
 | `kasu.deposits`   | `deposit()`, `withdraw()`, `withdrawMax()`, `buildKycParams()`, `isClearingPending()`                                   | Submit transactions             |
-| `kasu.portfolio`  | `getPositions()`, `getYieldHistory()`, `getTransactionHistory()`, `getRequestStates()`                                  | Lender balances, yield, per-cycle earnings, history |
+| `kasu.portfolio`  | `getPositions()`, `getYieldHistory()`, `getTransactionHistory()`, `getRequestStates()`                                  | Lender balances, yield, per-cycle earnings (net, in the chain's own stable token), history |
 | `kasu.flows`      | `deposit(ports)`, `withdraw(ports?)`                                                                                    | Headless transaction pipelines  |
 | `kasu.calls`      | `requestWithdrawal(params)`, `cancelDepositRequest(poolId, dNftId)`, `cancelWithdrawalRequest(poolId, wNftId)`, `withdrawAtExpiry(poolId, lockId)` | Encoded calls for a sponsored relay (read, then encode — never sends) |
 
@@ -131,6 +131,16 @@ not yet published, for `configOverrides.UNUSED_LENDING_POOL_IDS`. It may
 return an empty list; pass it straight through. `SdkConfig` normalises an empty
 exclusion list to `['']`, because the subgraph reads `id_not_in: []` as "match
 nothing" and would otherwise hide every pool.
+
+`kasu.portfolio.getYieldHistory(user, { fromEpoch?, count? })` returns one
+`{ epochId, epochEnd, poolId, trancheId, netYield }` per settled cycle the
+lender held shares in; `aggregateYieldHistory(entries, { poolId? })` turns it
+into chart bars. `netYield` is NET of the performance fee and in the
+deployment's own stable token (AUDD on XDC AUDD — convert before showing USD);
+`epochEnd` is unix seconds. For a fixed-term lock holder the bars can sum to
+slightly more than lifetime interest (up to about 0.2 %, top-ups are valued at
+today's share price), so show "earned to date" from the lifetime figure, not
+from the sum of the bars.
 
 ## Domain helpers
 

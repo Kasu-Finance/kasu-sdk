@@ -3,7 +3,6 @@ import { gql } from 'graphql-request';
 import {
     EpochLockShares,
     epochTrancheYield,
-    grossYieldFromNet,
     YieldHistoryEntry,
 } from '../../domain/yield-history';
 
@@ -39,10 +38,13 @@ export const YIELD_HISTORY_PAGE_SIZE = 1000;
  */
 export const YIELD_HISTORY_MAX_PAGES = 100;
 
-export function resolveYieldHistoryWindow(
+/**
+ * Throws `RangeError` on a malformed `fromEpoch` / `count`. `getYieldHistory`
+ * calls it BEFORE any network read.
+ */
+export function validateYieldHistoryOptions(
     options: YieldHistoryOptions,
-    currentEpoch: number,
-): YieldHistoryWindow | null {
+): void {
     const { fromEpoch, count } = options;
     if (
         fromEpoch !== undefined &&
@@ -57,6 +59,14 @@ export function resolveYieldHistoryWindow(
             `getYieldHistory: count must be a positive integer, got ${String(count)}`,
         );
     }
+}
+
+export function resolveYieldHistoryWindow(
+    options: YieldHistoryOptions,
+    currentEpoch: number,
+): YieldHistoryWindow | null {
+    validateYieldHistoryOptions(options);
+    const { fromEpoch, count } = options;
 
     const newest = currentEpoch - 1;
     if (newest < 0) return null;
@@ -78,36 +88,39 @@ export function resolveYieldHistoryWindow(
 // ---------------------------------------------------------------------------
 
 /**
- * Round trip 1: the lender's tranche positions and fixed-term locks, plus the
- * performance fee. Same pool exclusion as `lendingPortfolioQuery`.
+ * Round trip 1: the lender's tranche positions and fixed-term locks. Same
+ * pool exclusion and the same nested-list size (`$first`) as
+ * `lendingPortfolioQuery`, so both read the same lock set.
  */
 export const yieldHistoryPositionsQuery = gql`
-    query YieldHistoryPositions($userAddress: ID!, $unusedPools: [String!]!) {
+    query YieldHistoryPositions(
+        $userAddress: ID!
+        $unusedPools: [String!]!
+        $first: Int!
+    ) {
         user(id: $userAddress) {
             lendingPoolUserDetails(
-                first: 1000
+                first: $first
                 where: { lendingPool_not_in: $unusedPools }
             ) {
                 lendingPool {
                     id
                 }
-                lendingPoolTrancheUserDetails(first: 1000) {
+                lendingPoolTrancheUserDetails(first: $first) {
                     id
                     tranche {
                         id
                         balance
                         shares
                     }
-                    userLendingPoolTrancheFixedTermDepositLocks(first: 1000) {
+                    userLendingPoolTrancheFixedTermDepositLocks(first: $first) {
                         id
                         epochLockStart
                         epochLockEnd
+                        initialTrancheShares
                     }
                 }
             }
-        }
-        systemVariables(id: "SYSTEM_VARIABLES") {
-            performanceFee
         }
     }
 `;
@@ -136,9 +149,10 @@ export const yieldHistoryPageQuery = gql`
         $withTrancheShares: Boolean!
         $withUserShares: Boolean!
         $withLockShares: Boolean!
+        $first: Int!
     ) {
         interest: lendingPoolTrancheEpochInterests(
-            first: 1000
+            first: $first
             orderBy: id
             orderDirection: asc
             where: {
@@ -156,7 +170,7 @@ export const yieldHistoryPageQuery = gql`
             }
         }
         trancheShares: lendingPoolTrancheShareUpdates(
-            first: 1000
+            first: $first
             orderBy: id
             orderDirection: asc
             where: {
@@ -174,7 +188,7 @@ export const yieldHistoryPageQuery = gql`
             }
         }
         userShares: lendingPoolTrancheUserEpochSharesUpdates(
-            first: 1000
+            first: $first
             orderBy: id
             orderDirection: asc
             where: {
@@ -192,7 +206,7 @@ export const yieldHistoryPageQuery = gql`
             }
         }
         lockShares: userLendingPoolTrancheFtdLockShareUpdates(
-            first: 1000
+            first: $first
             orderBy: id
             orderDirection: asc
             where: {
@@ -223,11 +237,11 @@ export interface YieldHistoryPositionsResult {
                     id: string;
                     epochLockStart: string;
                     epochLockEnd: string;
+                    initialTrancheShares: string;
                 }[];
             }[];
         }[];
     } | null;
-    systemVariables: { performanceFee: string } | null;
 }
 
 /** One share snapshot: the value from `epochId` on, until the next one. */
@@ -343,6 +357,7 @@ export async function fetchYieldHistorySeries(
             locks: ids.locks,
             fromEpoch: String(window.fromEpoch),
             toEpoch: String(window.toEpoch),
+            first: YIELD_HISTORY_PAGE_SIZE,
         };
         for (const { key, flag, cursor } of series) {
             variables[flag] = open[key];
@@ -423,10 +438,6 @@ export function buildYieldHistory(
     const user = read.positions.user;
     if (!user) return [];
 
-    const fee = read.positions.systemVariables
-        ? parseFloat(read.positions.systemVariables.performanceFee)
-        : null;
-
     const interestByTranche = groupBy(
         read.interest,
         (row) => row.lendingPoolTranche.id,
@@ -473,13 +484,18 @@ export function buildYieldHistory(
                                     parseFloat(lock.epochLockStart) < epoch &&
                                     parseFloat(lock.epochLockEnd) >= epoch &&
                                     userSnapshot !== undefined,
+                                // No snapshot yet = the lock's opening
+                                // shares: a lock made after clearing E
+                                // starts at E but its first update is
+                                // tagged E + 1, and reading that gap as 0
+                                // would book its principal as a top-up.
                                 sharesAtEpoch: parseFloat(
                                     sharesAsOf(lockUpdates, epoch)?.shares ??
-                                        '0',
+                                        lock.initialTrancheShares,
                                 ),
                                 sharesBeforeEpoch: parseFloat(
                                     sharesAsOf(lockUpdates, epoch - 1)
-                                        ?.shares ?? '0',
+                                        ?.shares ?? lock.initialTrancheShares,
                                 ),
                             };
                         },
@@ -507,7 +523,6 @@ export function buildYieldHistory(
                         (epoch + 1) * clock.epochDuration,
                     poolId: pool.lendingPool.id,
                     trancheId,
-                    grossYield: grossYieldFromNet(total, fee),
                     netYield: total,
                 });
             }
@@ -524,9 +539,8 @@ export function buildYieldHistory(
 
 /**
  * A GraphQL VALIDATION error naming an entity, field or argument this
- * deployment's subgraph does not have — the only failure `getYieldHistory`
- * turns into `[]`. A network error, a timeout or an indexing error still
- * throws, so a consumer can tell "no history here" from "history unavailable".
+ * deployment's subgraph does not have. A network error, a timeout or an
+ * indexing error is not one.
  */
 export function isMissingEntityError(error: unknown): boolean {
     if (typeof error !== 'object' || error === null) return false;
@@ -542,4 +556,19 @@ export function isMissingEntityError(error: unknown): boolean {
             )
         );
     });
+}
+
+/**
+ * The only failure `getYieldHistory` turns into `[]`: a missing-schema error
+ * on a LITE deployment, whose subgraph may predate the entities. On a full
+ * deployment the entities are part of the schema, so the same error means a
+ * broken query or subgraph and THROWS — an empty chart there would hide it.
+ * Everything else (network, timeout, indexing) throws on every deployment, so
+ * a consumer can tell "no history here" from "history unavailable".
+ */
+export function isEmptyHistoryError(
+    error: unknown,
+    liteDeployment: boolean,
+): boolean {
+    return liteDeployment && isMissingEntityError(error);
 }

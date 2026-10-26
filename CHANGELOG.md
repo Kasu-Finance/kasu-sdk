@@ -7,31 +7,43 @@ versioning; earlier releases are described in their commit messages.
 
 A lender's settled interest per cycle — the data behind an earnings chart —
 from one per-epoch formula that the portfolio's last-cycle figures now share,
-so the newest bar of a history and "earned last cycle" cannot disagree.
+so a strategy's newest bar and its last-cycle figure cannot disagree.
 
 ### Added
 
 - **`kasu.portfolio.getYieldHistory(userAddress, { fromEpoch?, count? })`**
   (and `Portfolio.getYieldHistory`) → `YieldHistoryEntry[]`, one per pool,
   tranche and settled epoch in which the lender held shares:
-  `{ epochId, epochEnd, poolId, trancheId, grossYield, netYield }`.
-  `epochEnd` is unix SECONDS (the next epoch's start). `netYield` is what the
-  close credited the lender: the subgraph's `InterestApplied` amount is
-  already net of the performance fee, so it is used as is, and `grossYield`
-  is derived from it with the CURRENT fee (`net / (1 − fee / 100)`; `NaN`
-  when the fee is unknown). Only settled epochs (`< currentEpoch`); with no
-  options, all of them; `count` alone = the newest `count`. A new lender, and
-  a deployment whose subgraph lacks the entities, get `[]`; any other failure
-  throws. Cost: one positions request, then one request per 1 000-row page of
-  the longest series (normally two subgraph round trips), plus three parallel
-  `SystemVariables` reads.
+  `{ epochId, epochEnd, poolId, trancheId, netYield }`.
+  - `netYield` is what the close credited the lender, AFTER the performance
+    fee: the subgraph's `InterestApplied` amount is already net, so it is
+    used as is. Units: display units of the deployment's OWN stable token
+    (USDC on Base and XDC USDC, AUDD on XDC AUDD) — convert before
+    formatting as USD. There is no gross: the subgraph keeps only today's
+    fee, so a historical gross would be a guess.
+  - `epochEnd` is unix SECONDS (the next epoch's start).
+  - Only settled epochs (`< currentEpoch`); with no options, all of them;
+    `count` alone = the newest `count`. A malformed option throws
+    `RangeError` before any network read.
+  - `[]` for a new lender, and on a LITE deployment whose subgraph lacks the
+    entities. On a full deployment that schema error throws, like every
+    network or indexing failure.
+  - Cost: one positions request, then one request per 1 000-row page of the
+    longest series (normally two subgraph round trips), plus three parallel
+    `SystemVariables` reads.
+  - A pool's `totalYieldEarningsLastEpoch` equals its bar for the epoch of
+    its most recently APPLIED interest — older than the last cycle for a pool
+    that has not cleared since. A lender who held nothing at that epoch has
+    no bar there and a figure of 0.
+  - For a fixed-term lock holder the bars can sum to slightly MORE than
+    lifetime interest (up to about 0.2 %): each top-up is valued at today's
+    tranche share price. Show "earned to date" from the lifetime figure,
+    never from the sum of the bars.
 - **`aggregateYieldHistory(entries, { poolId?, trancheId? })`** (domain) →
-  one `{ epochId, epochEnd, grossYield, netYield }` per epoch, ascending: all
+  one `{ epochId, epochEnd, netYield }` per epoch, ascending: all
   strategies, or one.
 - **`epochTrancheYield(input)`** (domain) — the one per-epoch formula
-  (share-weighted interest, the fixed-term locks' split and top-ups), and
-  **`grossYieldFromNet(net, feePercent)`**, the inverse of the identity
-  `weeklyInterest` applies.
+  (share-weighted interest, the fixed-term locks' split and top-ups).
 
 ### Fixed
 
@@ -41,16 +53,21 @@ so the newest bar of a history and "earned last cycle" cannot disagree.
 - A lock's last-epoch top-up no longer includes a top-up applied at a
   clearing that has run but whose epoch has not rolled over yet: it reads the
   lock's shares as of the last settled epoch (new `lockSharesAtLastEpoch`
-  selection in `lendingPortfolioQuery`), not its current shares.
-- A last-epoch figure with a zero share denominator is `0`, not `NaN`.
+  selection in `lendingPortfolioQuery`), never its current shares.
+- A lock made after a clearing (its first share snapshot tagged one epoch
+  after its start) no longer books its whole principal as a top-up: a
+  missing snapshot reads the lock's `initialTrancheShares`.
+- `lendingPortfolioQuery` sizes every nested list with `$first` (1 000, the
+  same constant as the history), instead of the subgraph's default of 100.
+- Last-epoch money strings go through `precisionToString`, which now prints
+  anything below a millionth of a token as `'0'` (no `1e-7`, no tiny negative
+  remainder). A zero share denominator gives `0`, not `NaN`.
 
 One edge stays as it was. When a pool has no interest recorded for the last
-settled epoch (a late or stopped clearing), the last-epoch figures still show
-the newest interest the tranche has, weighted by the share snapshots as of
-the last settled epoch; the history dates that interest to its own epoch.
-Compare a pool's last-epoch figure with its NEWEST history entry, not with
-the entry for `currentEpoch − 1`: the two are equal unless the lender's or
-the tranche's shares changed after that epoch.
+settled epoch (a late or stopped clearing), the last-epoch figures show the
+newest interest the tranche has, weighted by the share snapshots as of the
+last settled epoch; the history dates that interest to its own epoch. The
+two are equal unless the lender's or the tranche's shares changed after it.
 
 ## 2.11.0
 

@@ -4,10 +4,8 @@ import {
     aggregateYieldHistory,
     epochTrancheYield,
     EpochTrancheYieldInput,
-    grossYieldFromNet,
     YieldHistoryEntry,
 } from './yield-history';
-import { weeklyInterest } from './yields';
 
 const POOL_A = '0x000000000000000000000000000000000000a001';
 const POOL_B = '0x000000000000000000000000000000000000b001';
@@ -132,45 +130,6 @@ describe('epochTrancheYield', () => {
     });
 });
 
-describe('grossYieldFromNet', () => {
-    it('inverts the fee identity weeklyInterest applies: net = gross × (1 − fee)', () => {
-        fc.assert(
-            fc.property(
-                fc.double({ min: 0, max: 1e6, noNaN: true }),
-                fc.double({ min: 0, max: 99.9, noNaN: true }),
-                (net, fee) => {
-                    const gross = grossYieldFromNet(net, fee);
-                    expect(gross * (1 - fee / 100)).toBeCloseTo(net, 6);
-                    // The forward direction is the existing net figure's
-                    // own formula, applied to the gross as one slice.
-                    expect(
-                        weeklyInterest([{ balance: gross, epochRate: 1 }], fee),
-                    ).toBeCloseTo(net, 6);
-                },
-            ),
-        );
-    });
-
-    it('takes the fee as a percentage: 10 means ten percent', () => {
-        expect(grossYieldFromNet(9, 10)).toBeCloseTo(10, 12);
-        expect(grossYieldFromNet(5, 0)).toBe(5);
-    });
-
-    it.each([
-        ['an unknown', null],
-        ['a NaN', NaN],
-        ['a negative', -1],
-        ['an above-100', 101],
-        ['an exactly-100', 100],
-    ])('fails closed on %s fee', (_label, fee) => {
-        expect(grossYieldFromNet(10, fee)).toBeNaN();
-    });
-
-    it('fails closed on a non-finite net', () => {
-        expect(grossYieldFromNet(Infinity, 10)).toBeNaN();
-    });
-});
-
 function entry(
     epochId: number,
     poolId: string,
@@ -182,7 +141,6 @@ function entry(
         epochEnd: 1_000_000_000 + (epochId + 1) * 604_800,
         poolId,
         trancheId,
-        grossYield: netYield / 0.9,
         netYield,
     };
 }
@@ -201,7 +159,6 @@ describe('aggregateYieldHistory', () => {
         expect(points.map((p) => p.epochId)).toEqual([8, 9]);
         expect(points[0]?.netYield).toBeCloseTo(24, 12);
         expect(points[1]?.netYield).toBeCloseTo(34, 12);
-        expect(points[1]?.grossYield).toBeCloseTo(34 / 0.9, 10);
         expect(points[1]?.epochEnd).toBe(1_000_000_000 + 10 * 604_800);
     });
 
@@ -227,13 +184,15 @@ describe('aggregateYieldHistory', () => {
         expect(aggregateYieldHistory(entries, { poolId: '0x00' })).toEqual([]);
     });
 
-    it('carries an unknown gross through instead of a partial sum', () => {
-        const points = aggregateYieldHistory([
+    it('carries net only: no gross on a point', () => {
+        const [point] = aggregateYieldHistory([
             entry(9, POOL_A, TRANCHE_A1, 1),
-            { ...entry(9, POOL_B, TRANCHE_B1, 1), grossYield: NaN },
         ]);
-        expect(points[0]?.netYield).toBe(2);
-        expect(points[0]?.grossYield).toBeNaN();
+        expect(Object.keys(point).sort()).toEqual([
+            'epochEnd',
+            'epochId',
+            'netYield',
+        ]);
     });
 
     it('does not mutate its input', () => {

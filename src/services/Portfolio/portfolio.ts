@@ -50,8 +50,10 @@ import {
 import {
     buildYieldHistory,
     fetchYieldHistorySeries,
-    isMissingEntityError,
+    isEmptyHistoryError,
     resolveYieldHistoryWindow,
+    validateYieldHistoryOptions,
+    YIELD_HISTORY_PAGE_SIZE,
     YieldHistoryOptions,
     yieldHistoryPageQuery,
     YieldHistoryPageResult,
@@ -459,6 +461,7 @@ export class Portfolio {
                         epochId: parseFloat(currentEpoch),
                         lastEpochId: previousEpoch.toNumber(),
                         unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
+                        first: YIELD_HISTORY_PAGE_SIZE,
                     },
                 ),
                 this._userLendingService.getPortfolioUserTrancheBalances(
@@ -619,16 +622,22 @@ export class Portfolio {
                             parseFloat(fixedTermDeposit.epochLockEnd) >=
                                 lastEpoch &&
                             userHasLastEpochShares,
+                        // No snapshot = the lock's opening shares, exactly
+                        // as `getYieldHistory` reads it: a lock made after
+                        // clearing E starts at E with its first update
+                        // tagged E + 1. Never the CURRENT shares, which
+                        // would carry a top-up from a clearing that ran
+                        // after the last settled epoch.
                         sharesAtEpoch: parseFloat(
-                            fixedTermDeposit.lockSharesAtLastEpoch === undefined
-                                ? fixedTermDeposit.trancheShares
-                                : (fixedTermDeposit.lockSharesAtLastEpoch[0]
-                                      ?.shares ?? '0'),
+                            fixedTermDeposit.lockSharesAtLastEpoch?.[0]
+                                ?.shares ??
+                                fixedTermDeposit.initialTrancheShares,
                         ),
                         sharesBeforeEpoch: parseFloat(
                             fixedTermDeposit
                                 .userLendingPoolTrancheFixedTermDepositLockShareUpdate?.[0]
-                                ?.shares ?? '0',
+                                ?.shares ??
+                                fixedTermDeposit.initialTrancheShares,
                         ),
                     })),
                 });
@@ -711,7 +720,10 @@ export class Portfolio {
                                 fixedTermDeposit.isWithdrawalRequested,
                             startTime: parseInt(fixedTermDeposit.createdOn),
                             yieldEarnings: {
-                                lastEpoch: lastEpochYieldEarned.toString(),
+                                lastEpoch:
+                                    this.precisionToString(
+                                        lastEpochYieldEarned,
+                                    ),
                                 lifetime:
                                     this.precisionToString(lifetimeYieldEarned),
                             },
@@ -727,7 +739,9 @@ export class Portfolio {
                     ...tranche,
                     investedAmount: userTrancheBalance,
                     yieldEarnings: {
-                        lastEpoch: lastEpochYield.variable.toString(),
+                        lastEpoch: this.precisionToString(
+                            lastEpochYield.variable,
+                        ),
                         lifetime: this.precisionToString(totalLifetimeFtdYield), // passing in total FTD yield to be subtracted by total trache lifetime later down
                     },
                     fixedLoans,
@@ -737,8 +751,9 @@ export class Portfolio {
 
             portfolioLendingPoolsPromise.push({
                 ...poolOverview,
-                totalYieldEarningsLastEpoch:
-                    poolYieldEarnedLastEpoch.toString(),
+                totalYieldEarningsLastEpoch: this.precisionToString(
+                    poolYieldEarnedLastEpoch,
+                ),
                 totalInvestedAmount: userPoolBalance.balance.toString(),
                 totalYieldEarningsLifetime:
                     userPoolBalance.yieldEarned.toString(),
@@ -794,11 +809,14 @@ export class Portfolio {
 
     /**
      * The lender's settled yield per cycle (epoch), per pool and tranche —
-     * what the chain credited at each close, NET of the performance fee, with
-     * the gross derived from it (`domain/yield-history.ts`). Each entry runs
-     * the same `epochTrancheYield` as `getPortfolioLendingData`'s last-epoch
-     * figures, so the newest entry of a tranche equals that tranche's
-     * `yieldEarnings.lastEpoch` plus its locks' `yieldEarnings.lastEpoch`.
+     * what the chain credited at each close, NET of the performance fee
+     * (`domain/yield-history.ts`), in the deployment's own stable token. Each
+     * entry runs the same `epochTrancheYield` as `getPortfolioLendingData`'s
+     * last-epoch figures: a tranche's `yieldEarnings.lastEpoch` plus its
+     * locks' equals its entry for the epoch of the tranche's most recently
+     * APPLIED interest (older than the last cycle for a pool that has not
+     * cleared since; no entry, and a figure of 0, when the lender held
+     * nothing at that epoch).
      *
      * Sum entries with `aggregateYieldHistory` (all strategies, or one with
      * `{ poolId }`). Only epochs in which the lender held shares appear — a
@@ -810,15 +828,19 @@ export class Portfolio {
      * (1000 rows a page) — normally two subgraph round trips in all, never one
      * per epoch.
      *
-     * A subgraph that lacks the entities (a validation error naming them)
-     * yields `[]`; any other failure throws.
+     * On a LITE deployment, a subgraph that lacks the entities (a validation
+     * error naming them) yields `[]`; on a full deployment that error throws,
+     * like every other failure (`isEmptyHistoryError`).
      *
-     * @throws RangeError on a malformed `fromEpoch` / `count`.
+     * @throws RangeError on a malformed `fromEpoch` / `count`, before any
+     * network read.
      */
     async getYieldHistory(
         userAddress: string,
         options: YieldHistoryOptions = {},
     ): Promise<YieldHistoryEntry[]> {
+        validateYieldHistoryOptions(options);
+
         try {
             const [currentEpoch, epochZeroStart, epochDuration, positions] =
                 await Promise.all([
@@ -831,6 +853,7 @@ export class Portfolio {
                             userAddress: userAddress.toLowerCase(),
                             unusedPools:
                                 this._kasuConfig.UNUSED_LENDING_POOL_IDS,
+                            first: YIELD_HISTORY_PAGE_SIZE,
                         },
                     ),
                 ]);
@@ -870,12 +893,20 @@ export class Portfolio {
                 epochDuration: epochDuration.toNumber(),
             });
         } catch (error) {
-            if (isMissingEntityError(error)) return [];
+            if (isEmptyHistoryError(error, this._isLiteDeployment)) return [];
             throw error;
         }
     }
 
+    /**
+     * A money figure as a plain decimal string. Below a millionth of a token
+     * (the stable asset's own precision) is float noise, never money, so it
+     * is `'0'` — not `'1e-7'`, which `parseUnits` rejects, nor `'-3e-12'`. A
+     * small negative remainder (above −0.0001) is `'0'` as well.
+     */
     precisionToString(val: number): string {
+        if (Math.abs(val) < 1e-6) return '0';
+
         if (val < 0 && val > -0.0001) {
             return '0';
         }

@@ -188,11 +188,7 @@ export {
 } from './wallet-errors';
 export type { WalletFailure } from './wallet-errors';
 
-export {
-    aggregateYieldHistory,
-    epochTrancheYield,
-    grossYieldFromNet,
-} from './yield-history';
+export { aggregateYieldHistory, epochTrancheYield } from './yield-history';
 export type {
     EpochLockShares,
     EpochTrancheYield,

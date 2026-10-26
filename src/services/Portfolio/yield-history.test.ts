@@ -13,6 +13,7 @@ import { lendingPortfolioQuery } from './queries';
 import { LendingPortfolioQueryResult, PortfolioLendingPool } from './types';
 import {
     fetchYieldHistorySeries,
+    isEmptyHistoryError,
     isMissingEntityError,
     resolveYieldHistoryWindow,
     YIELD_HISTORY_PAGE_SIZE,
@@ -42,7 +43,6 @@ const LOCK_A1 = `${POOL_A}-1`;
 const CURRENT_EPOCH = 10;
 const EPOCH_ZERO_START = 1_000_000_000;
 const EPOCH_DURATION = 604_800;
-const FEE_PERCENT = '10';
 
 interface Update {
     epochId: number;
@@ -61,13 +61,13 @@ interface TrancheState {
         id: string;
         epochLockStart: number;
         epochLockEnd: number;
+        initialShares: number;
         updates: Update[];
     };
 }
 
 interface ChainState {
     tranches: TrancheState[];
-    performanceFee: string | null;
 }
 
 /**
@@ -79,7 +79,6 @@ interface ChainState {
  */
 function baseState(): ChainState {
     return {
-        performanceFee: FEE_PERCENT,
         tranches: [
             {
                 id: TRANCHE_A1,
@@ -101,6 +100,7 @@ function baseState(): ChainState {
                     id: LOCK_A1,
                     epochLockStart: 6,
                     epochLockEnd: 20,
+                    initialShares: 400,
                     updates: [
                         { epochId: 6, shares: 400 },
                         { epochId: 8, shares: 410 },
@@ -201,9 +201,13 @@ function lendingPortfolioResponse(
                                   {
                                       isLocked: true,
                                       unlockAmount: null,
-                                      initialAmount: '400',
+                                      initialAmount: String(
+                                          t.lock.initialShares,
+                                      ),
                                       lockId: '1',
-                                      initialTrancheShares: '400',
+                                      initialTrancheShares: String(
+                                          t.lock.initialShares,
+                                      ),
                                       isWithdrawalRequested: false,
                                       createdOn: '1000000000',
                                       epochLockStart: String(
@@ -282,25 +286,28 @@ function positionsResponse(state: ChainState): YieldHistoryPositionsResult {
                                           t.lock.epochLockStart,
                                       ),
                                       epochLockEnd: String(t.lock.epochLockEnd),
+                                      initialTrancheShares: String(
+                                          t.lock.initialShares,
+                                      ),
                                   },
                               ]
                             : [],
                     })),
             })),
         },
-        systemVariables:
-            state.performanceFee === null
-                ? null
-                : { performanceFee: state.performanceFee },
     };
 }
 
-/** `first: 1000, orderBy: id asc, where: { id_gt: cursor, … }` */
-function page<T extends { id: string }>(all: T[], cursor: string): T[] {
+/** `first: $first, orderBy: id asc, where: { id_gt: cursor, … }` */
+function page<T extends { id: string }>(
+    all: T[],
+    cursor: string,
+    first: number,
+): T[] {
     return all
         .filter((r) => r.id > cursor)
         .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
-        .slice(0, YIELD_HISTORY_PAGE_SIZE);
+        .slice(0, first);
 }
 
 /** `yieldHistoryPageQuery`, emulated from its filters and `@include` flags. */
@@ -330,6 +337,7 @@ function pageResponse(
                 .filter((r) => Number(r.epochId) >= from)
                 .filter((r) => Number(r.epochId) <= to),
             v.interestCursor as string,
+            Number(v.first),
         );
     }
     if (v.withTrancheShares) {
@@ -344,6 +352,7 @@ function pageResponse(
                 )
                 .filter((r) => Number(r.epochId) <= to),
             v.trancheSharesCursor as string,
+            Number(v.first),
         );
     }
     if (v.withUserShares) {
@@ -358,6 +367,7 @@ function pageResponse(
                 )
                 .filter((r) => Number(r.epochId) <= to),
             v.userSharesCursor as string,
+            Number(v.first),
         );
     }
     if (v.withLockShares) {
@@ -375,6 +385,7 @@ function pageResponse(
                 )
                 .filter((r) => Number(r.epochId) <= to),
             v.lockSharesCursor as string,
+            Number(v.first),
         );
     }
     return result;
@@ -388,18 +399,21 @@ type GraphRequest = jest.Mock<
 interface Harness {
     portfolio: Portfolio;
     request: GraphRequest;
+    contractReads: jest.Mock;
     poolOverviews: PoolOverview[];
 }
 
 function harness(
     state: ChainState,
     graph?: (document: string, variables: Record<string, unknown>) => unknown,
+    deployment: 'full' | 'lite' = 'full',
 ): Harness {
-    const chain = CHAIN_CONFIGS.base;
+    const chain = CHAIN_CONFIGS[deployment === 'lite' ? 'xdc' : 'base'];
     const config = new SdkConfig({
         subgraphUrl: 'https://example.invalid/subgraph',
         contracts: chain.contracts,
         UNUSED_LENDING_POOL_IDS: [''],
+        isLiteDeployment: deployment === 'lite',
     });
     const portfolio = new Portfolio(
         config,
@@ -408,6 +422,10 @@ function harness(
 
     const request: GraphRequest = jest.fn(
         (document: string, variables: Record<string, unknown>) => {
+            // Every query sizes its lists with the one page-size constant.
+            if (variables.first !== YIELD_HISTORY_PAGE_SIZE) {
+                return Promise.reject(new Error('missing $first'));
+            }
             if (graph) return Promise.resolve(graph(document, variables));
             if (document === lendingPortfolioQuery) {
                 return Promise.resolve(
@@ -430,14 +448,22 @@ function harness(
         _userLendingService: Record<string, unknown>;
     };
     internals._graph = { request };
+    const contractReads = jest.fn();
     internals._systemVariablesAbi = {
-        currentEpochNumber: () =>
-            Promise.resolve(BigNumber.from(CURRENT_EPOCH)),
-        epochStartTimestamp: (epoch: number) =>
-            Promise.resolve(
+        currentEpochNumber: (): Promise<BigNumber> => {
+            contractReads('currentEpochNumber');
+            return Promise.resolve(BigNumber.from(CURRENT_EPOCH));
+        },
+        epochStartTimestamp: (epoch: number): Promise<BigNumber> => {
+            contractReads('epochStartTimestamp');
+            return Promise.resolve(
                 BigNumber.from(EPOCH_ZERO_START + epoch * EPOCH_DURATION),
-            ),
-        epochDuration: () => Promise.resolve(BigNumber.from(EPOCH_DURATION)),
+            );
+        },
+        epochDuration: (): Promise<BigNumber> => {
+            contractReads('epochDuration');
+            return Promise.resolve(BigNumber.from(EPOCH_DURATION));
+        },
     };
     internals._userLendingService.getPortfolioUserTrancheBalances = (): Promise<
         Map<
@@ -480,7 +506,7 @@ function harness(
             }) as unknown as PoolOverview,
     );
 
-    return { portfolio, request, poolOverviews };
+    return { portfolio, request, contractReads, poolOverviews };
 }
 
 function trancheLastEpoch(
@@ -574,6 +600,42 @@ describe('getYieldHistory — parity with the last-epoch figures', () => {
     });
 });
 
+describe('getYieldHistory — a lock made after a clearing', () => {
+    /**
+     * A manual lock made after clearing 8 has `epochLockStart` 8, but its
+     * first share update is tagged 9. At epoch 9 it is active (8 < 9), and NO
+     * snapshot exists before 9: the "shares before" must be the lock's
+     * opening shares, or its whole principal is booked as a top-up.
+     */
+    function lateLockState(): ChainState {
+        const state = baseState();
+        const a1 = state.tranches[0];
+        if (!a1.lock) throw new Error('fixture');
+        a1.lock = {
+            id: LOCK_A1,
+            epochLockStart: 8,
+            epochLockEnd: 20,
+            initialShares: 400,
+            updates: [{ epochId: 9, shares: 400 }],
+        };
+        return state;
+    }
+
+    it('books no top-up, in the history AND in the last-epoch figures', async () => {
+        const { history, pool } = await bothReads(lateLockState());
+        // A1 @ 9: base 130 × 1500 / 12000 = 16.25, top-up 0 (400 − 400).
+        // Without the fallback both would add 400 × 13000 / 12500 = 416.
+        const a1 = history.filter((e) => e.trancheId === TRANCHE_A1).at(-1);
+        expect(a1?.epochId).toBe(9);
+        expect(a1?.netYield).toBeCloseTo(16.25, 10);
+        expect(trancheLastEpoch(pool(POOL_A), TRANCHE_A1)).toBeCloseTo(
+            16.25,
+            10,
+        );
+        expect(a1?.netYield).toBe(trancheLastEpoch(pool(POOL_A), TRANCHE_A1));
+    });
+});
+
 describe('getYieldHistory — entries', () => {
     it('lists only epochs in which the lender held shares', async () => {
         const { history } = await bothReads(baseState());
@@ -595,23 +657,18 @@ describe('getYieldHistory — entries', () => {
         }
     });
 
-    it('net = gross × (1 − fee), with the fee as a percentage', async () => {
+    it('carries the net figure only — no gross on an entry', async () => {
         const { history } = await bothReads(baseState());
         expect(history.length).toBeGreaterThan(0);
         for (const e of history) {
-            expect(e.grossYield * (1 - 10 / 100)).toBeCloseTo(e.netYield, 10);
-            expect(e.grossYield).toBeGreaterThan(e.netYield);
-        }
-    });
-
-    it('keeps the net and leaves the gross unknown when the fee is', async () => {
-        const state = { ...baseState(), performanceFee: null };
-        const { portfolio } = harness(state);
-        const history = await portfolio.getYieldHistory(USER);
-        expect(history.length).toBeGreaterThan(0);
-        for (const e of history) {
+            expect(Object.keys(e).sort()).toEqual([
+                'epochEnd',
+                'epochId',
+                'netYield',
+                'poolId',
+                'trancheId',
+            ]);
             expect(Number.isFinite(e.netYield)).toBe(true);
-            expect(e.grossYield).toBeNaN();
         }
     });
 
@@ -634,9 +691,7 @@ describe('getYieldHistory — entries', () => {
 
     it('is empty for a lender the subgraph does not know', async () => {
         const { portfolio } = harness(baseState(), (document) =>
-            document === yieldHistoryPositionsQuery
-                ? { user: null, systemVariables: { performanceFee: '10' } }
-                : {},
+            document === yieldHistoryPositionsQuery ? { user: null } : {},
         );
         await expect(portfolio.getYieldHistory(USER)).resolves.toEqual([]);
     });
@@ -685,8 +740,8 @@ describe('getYieldHistory — window', () => {
         ).resolves.toEqual([]);
     });
 
-    it('refuses a malformed window', async () => {
-        const { portfolio } = harness(baseState());
+    it('refuses a malformed window before any network read', async () => {
+        const { portfolio, request, contractReads } = harness(baseState());
         await expect(
             portfolio.getYieldHistory(USER, { count: 0 }),
         ).rejects.toThrow(RangeError);
@@ -696,6 +751,8 @@ describe('getYieldHistory — window', () => {
         await expect(
             portfolio.getYieldHistory(USER, { count: 1.5 }),
         ).rejects.toThrow(RangeError);
+        expect(request).not.toHaveBeenCalled();
+        expect(contractReads).not.toHaveBeenCalled();
     });
 });
 
@@ -720,45 +777,90 @@ describe('getYieldHistory — deployments without the entities', () => {
             response: { errors: [{ message }], status: 200 },
         });
 
-    it.each([
+    const MISSING = [
         'Type `Query` has no field `lendingPoolTrancheEpochInterests`',
         'Cannot query field "userLendingPoolTrancheFtdLockShareUpdates" on type "Query".',
         'Unknown argument "epochId_lte" on field "Query.lendingPoolTrancheShareUpdates"',
-    ])('returns [] on a validation error: %s', async (message) => {
-        const { portfolio } = harness(baseState(), () => {
-            throw missing(message);
-        });
-        await expect(portfolio.getYieldHistory(USER)).resolves.toEqual([]);
-    });
+    ];
 
-    it('returns [] when only the page query is missing the entities', async () => {
+    it.each(MISSING)(
+        'Lite: returns [] on a validation error: %s',
+        async (message) => {
+            const { portfolio } = harness(
+                baseState(),
+                () => {
+                    throw missing(message);
+                },
+                'lite',
+            );
+            await expect(portfolio.getYieldHistory(USER)).resolves.toEqual([]);
+        },
+    );
+
+    it.each(MISSING)(
+        'full deployment: THROWS on the same validation error: %s',
+        async (message) => {
+            const { portfolio } = harness(baseState(), () => {
+                throw missing(message);
+            });
+            await expect(portfolio.getYieldHistory(USER)).rejects.toThrow(
+                message,
+            );
+        },
+    );
+
+    it('Lite: returns [] when only the page query is missing the entities; full throws', async () => {
         const state = baseState();
-        const { portfolio } = harness(state, (document) => {
+        const graph = (document: string): unknown => {
             if (document === yieldHistoryPositionsQuery) {
                 return positionsResponse(state);
             }
             throw missing(
                 'Type `Query` has no field `lendingPoolTrancheUserEpochSharesUpdates`',
             );
-        });
-        await expect(portfolio.getYieldHistory(USER)).resolves.toEqual([]);
+        };
+        await expect(
+            harness(state, graph, 'lite').portfolio.getYieldHistory(USER),
+        ).resolves.toEqual([]);
+        await expect(
+            harness(state, graph).portfolio.getYieldHistory(USER),
+        ).rejects.toThrow('has no field');
     });
 
-    it('still throws on a network or indexing failure', async () => {
-        const { portfolio } = harness(baseState(), () => {
-            throw new Error('fetch failed');
-        });
+    it('isEmptyHistoryError is the Lite gate over isMissingEntityError', () => {
+        const error = missing('Type `Query` has no field `x`');
+        expect(isEmptyHistoryError(error, true)).toBe(true);
+        expect(isEmptyHistoryError(error, false)).toBe(false);
+        expect(isEmptyHistoryError(new Error('fetch failed'), true)).toBe(
+            false,
+        );
+    });
+
+    it('still throws on a network or indexing failure, even on Lite', async () => {
+        const { portfolio } = harness(
+            baseState(),
+            () => {
+                throw new Error('fetch failed');
+            },
+            'lite',
+        );
         await expect(portfolio.getYieldHistory(USER)).rejects.toThrow(
             'fetch failed',
         );
 
-        const indexing = harness(baseState(), () => {
-            throw Object.assign(new Error('indexing'), {
-                response: {
-                    errors: [{ message: 'indexing_error: subgraph failed' }],
-                },
-            });
-        });
+        const indexing = harness(
+            baseState(),
+            () => {
+                throw Object.assign(new Error('indexing'), {
+                    response: {
+                        errors: [
+                            { message: 'indexing_error: subgraph failed' },
+                        ],
+                    },
+                });
+            },
+            'lite',
+        );
         await expect(indexing.portfolio.getYieldHistory(USER)).rejects.toThrow(
             'indexing',
         );
@@ -857,7 +959,6 @@ describe('getYieldHistory — bounded round trips', () => {
             document === yieldHistoryPositionsQuery
                 ? {
                       user: { lendingPoolUserDetails: [] },
-                      systemVariables: { performanceFee: '10' },
                   }
                 : {},
         );

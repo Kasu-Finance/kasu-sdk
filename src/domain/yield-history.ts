@@ -3,22 +3,18 @@
  * per pool and tranche, and the one formula that turns a tranche's credited
  * interest into one lender's share of it.
  *
- * **The subgraph's interest is already NET.** `LendingPool._applyTrancheInterest`
+ * **The figures are NET, and only net.** `LendingPool._applyTrancheInterest`
  * takes the performance fee off first and emits `InterestApplied` with the
  * lender side only (`interest × (1 − performanceFee)`); a fixed-term top-up
  * (`_applyFixedRateInterests`) is net of the fee the same way. So the figure
- * this module computes from those records IS the net yield, and the gross is
- * DERIVED from it through the same identity the forward-looking figures in
- * `yields.ts` use (`net = gross × (1 − feePercent / 100)`), never the other way
- * round: taking the fee off a figure the chain had already taken it off would
- * under-report what the lender earned.
+ * this module computes from those records IS what the lender was credited —
+ * never take the fee off it again. No gross is offered: the subgraph keeps
+ * only TODAY's fee, so a historical gross would be a guess.
  *
- * Units: amounts and shares are display units of the deployment's stable asset
- * and of tranche shares, as the subgraph's BigDecimals; `feePercent` is a
- * PERCENTAGE IN 0..100.
+ * Units: amounts are display units of the DEPLOYMENT'S OWN stable token (USDC
+ * on Base and XDC USDC, AUDD on XDC AUDD) — never converted to USD here;
+ * shares are display units of tranche shares, as the subgraph's BigDecimals.
  */
-
-import { isUsableFeePercent } from './yields';
 
 /** One fixed-term lock inside a tranche position, at one epoch. */
 export interface EpochLockShares {
@@ -112,46 +108,34 @@ export function epochTrancheYield(
     return { total, variable, locks };
 }
 
-/**
- * The gross figure behind a NET one: `net / (1 − feePercent / 100)`, the
- * inverse of the identity `weeklyInterest` applies.
- *
- * FAILS CLOSED with `NaN` — an unknown, non-finite or out-of-domain fee, a
- * 100 % fee (no gross recoverable from a zero net), or a non-finite net.
- */
-export function grossYieldFromNet(
-    netYield: number,
-    feePercent: number | null,
-): number {
-    if (!Number.isFinite(netYield)) return NaN;
-    if (!isUsableFeePercent(feePercent) || feePercent === 100) return NaN;
-    return netYield / (1 - feePercent / 100);
-}
-
 /** One lender's settled yield in one tranche at one epoch. */
 export interface YieldHistoryEntry {
-    /** The epoch (cycle) number. */
+    /** The epoch (cycle) number, in the chain's numbering. */
     epochId: number;
-    /** When the epoch ended — the next epoch's start — in unix SECONDS. */
+    /**
+     * When the epoch ended — the next epoch's start — in unix SECONDS (not
+     * milliseconds).
+     */
     epochEnd: number;
     /** Lowercased lending pool address. */
     poolId: string;
     /** Lowercased tranche address. */
     trancheId: string;
     /**
-     * Before the performance fee, derived from `netYield` with the CURRENT fee
-     * (the subgraph keeps no fee history). `NaN` when the fee is unknown.
+     * What the close credited the lender in this tranche, AFTER the
+     * performance fee, in display units of the deployment's own stable token
+     * (AUDD on XDC AUDD — convert before formatting it as USD).
      */
-    grossYield: number;
-    /** What the chain credited the lender, after the fee. */
     netYield: number;
 }
 
 /** One epoch's yield summed over the entries an aggregation kept. */
 export interface YieldHistoryPoint {
+    /** The epoch (cycle) number. */
     epochId: number;
+    /** The epoch's end, in unix SECONDS. */
     epochEnd: number;
-    grossYield: number;
+    /** Net yield summed, in the deployment's own stable token. */
     netYield: number;
 }
 
@@ -168,8 +152,12 @@ export interface YieldHistoryFilter {
  * strategy (a strategy page's bars).
  *
  * An epoch appears only if a kept entry has it — there is no zero padding, so
- * an empty input (a new lender) is an empty output. A `NaN` gross in any kept
- * entry makes that epoch's gross `NaN`: a partial gross is a wrong number.
+ * an empty input (a new lender) is an empty output.
+ *
+ * For a fixed-term lock holder the bars can sum to slightly MORE than the
+ * lender's lifetime interest (up to about 0.2 %): each top-up is valued at the
+ * tranche's CURRENT share price, which has grown since. Show "earned to date"
+ * from the lifetime figure, never from this sum.
  */
 export function aggregateYieldHistory(
     entries: readonly YieldHistoryEntry[],
@@ -192,14 +180,12 @@ export function aggregateYieldHistory(
 
         const point = byEpoch.get(entry.epochId);
         if (point) {
-            point.grossYield += entry.grossYield;
             point.netYield += entry.netYield;
             continue;
         }
         byEpoch.set(entry.epochId, {
             epochId: entry.epochId,
             epochEnd: entry.epochEnd,
-            grossYield: entry.grossYield,
             netYield: entry.netYield,
         });
     }
