@@ -67,9 +67,11 @@ export const lendingPortfolioQuery = gql`
         $epochId: BigInt!
         $lastEpochId: BigInt!
         $unusedPools: [String!]!
+        $first: Int!
     ) {
         user(id: $userAddress) {
             lendingPoolUserDetails(
+                first: $first
                 where: { lendingPool_not_in: $unusedPools }
             ) {
                 id
@@ -77,11 +79,11 @@ export const lendingPortfolioQuery = gql`
                     id
                     name
                     balance
-                    tranches {
+                    tranches(first: $first) {
                         shares
                     }
                 }
-                lendingPoolTrancheUserDetails {
+                lendingPoolTrancheUserDetails(first: $first) {
                     shares
                     lendingPoolTrancheUserEpochSharesUpdates(
                         orderDirection: desc
@@ -91,7 +93,7 @@ export const lendingPortfolioQuery = gql`
                     ) {
                         shares
                     }
-                    userLendingPoolTrancheFixedTermDepositLocks {
+                    userLendingPoolTrancheFixedTermDepositLocks(first: $first) {
                         isLocked
                         unlockAmount
                         initialAmount
@@ -112,6 +114,14 @@ export const lendingPortfolioQuery = gql`
                             orderDirection: desc
                             first: 1
                             where: { epochId_lt: $lastEpochId }
+                        ) {
+                            shares
+                        }
+                        lockSharesAtLastEpoch: userLendingPoolTrancheFixedTermDepositLockShareUpdate(
+                            orderBy: shareUpdatesIndex
+                            orderDirection: desc
+                            first: 1
+                            where: { epochId_lt: $epochId }
                         ) {
                             shares
                         }
@@ -141,6 +151,7 @@ export const lendingPortfolioQuery = gql`
             }
         }
         userRequests(
+            first: $first
             where: {
                 user: $userAddress
                 userRequestEvents_: {
@@ -156,6 +167,7 @@ export const lendingPortfolioQuery = gql`
             }
             fixedTermConfigId
             userRequestEvents(
+                first: $first
                 where: { type_in: [DepositInitiated, DepositIncreased] }
             ) {
                 id

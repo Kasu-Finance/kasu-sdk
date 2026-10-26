@@ -10,6 +10,10 @@ import {
     ISystemVariablesAbi__factory,
     IUserLoyaltyRewardsAbi__factory,
 } from '../../contracts';
+import {
+    epochTrancheYield,
+    YieldHistoryEntry,
+} from '../../domain/yield-history';
 import { SdkConfig } from '../../sdk-config';
 import { isLiteDeployment } from '../../utils/deployment-mode';
 import { DataService } from '../DataService/data-service';
@@ -43,6 +47,19 @@ import {
     PortfolioTrancheDepositDetails,
     UserLendingPoolTrancheFixedTermDepositLock,
 } from './types';
+import {
+    buildYieldHistory,
+    fetchYieldHistorySeries,
+    isEmptyHistoryError,
+    resolveYieldHistoryWindow,
+    validateYieldHistoryOptions,
+    YIELD_HISTORY_PAGE_SIZE,
+    YieldHistoryOptions,
+    yieldHistoryPageQuery,
+    YieldHistoryPageResult,
+    yieldHistoryPositionsQuery,
+    YieldHistoryPositionsResult,
+} from './yield-history';
 
 export class Portfolio {
     private _lockingService: KSULocking;
@@ -235,9 +252,7 @@ export class Portfolio {
                 ecosystemFeeRate;
         }
 
-        return (
-            (totalWeeklyEcosystemFees * userRKsuAmount) / totalRKsuAmount
-        );
+        return (totalWeeklyEcosystemFees * userRKsuAmount) / totalRKsuAmount;
     }
 
     /**
@@ -250,8 +265,12 @@ export class Portfolio {
         userDepositAmounts: [BigNumber, BigNumber];
         ksuEpochPrice: { price: BigNumber; decimals: number };
     }): Promise<number> {
-        const { userAddress, userRksuAmount, userDepositAmounts, ksuEpochPrice } =
-            params;
+        const {
+            userAddress,
+            userRksuAmount,
+            userDepositAmounts,
+            ksuEpochPrice,
+        } = params;
 
         const totalUserDeposits = userDepositAmounts[0].add(
             userDepositAmounts[1],
@@ -259,10 +278,11 @@ export class Portfolio {
 
         if (totalUserDeposits.isZero()) return 0;
 
-        const rKSUtoStableRatio = await this._lockingService.getRKSUvsStableRatio(
-            userRksuAmount,
-            userAddress,
-        );
+        const rKSUtoStableRatio =
+            await this._lockingService.getRKSUvsStableRatio(
+                userRksuAmount,
+                userAddress,
+            );
         const { loyaltyLevel } =
             this._lockingService.getLoyaltyLevelAndApyBonusFromRatio(
                 rKSUtoStableRatio,
@@ -374,13 +394,14 @@ export class Portfolio {
             userRksuAmount,
         });
 
-        const weeklyKsuBonusRewards =
-            await this.calculateWeeklyKsuBonusRewards({
+        const weeklyKsuBonusRewards = await this.calculateWeeklyKsuBonusRewards(
+            {
                 userAddress,
                 userRksuAmount,
                 userDepositAmounts,
                 ksuEpochPrice,
-            });
+            },
+        );
 
         return {
             current: {
@@ -440,6 +461,7 @@ export class Portfolio {
                         epochId: parseFloat(currentEpoch),
                         lastEpochId: previousEpoch.toNumber(),
                         unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
+                        first: YIELD_HISTORY_PAGE_SIZE,
                     },
                 ),
                 this._userLendingService.getPortfolioUserTrancheBalances(
@@ -505,7 +527,6 @@ export class Portfolio {
         }
 
         let totalInvestments = BigNumber.from(0);
-        let totalYieldEarnedLastEpoch = 0;
 
         for (const poolOverview of poolOverviews) {
             const userPoolBalance = userPoolBalances.find(
@@ -521,6 +542,8 @@ export class Portfolio {
                     yieldEarned: number;
                 };
             })[] = [];
+
+            let poolYieldEarnedLastEpoch = 0;
 
             const lendingPoolUserDetails =
                 lastEpochData.user.lendingPoolUserDetails.find(
@@ -558,35 +581,66 @@ export class Portfolio {
                     });
                     continue;
                 }
-                const lastEpochTotalYield = parseFloat(
-                    lastEpochUserTrancheDetails.tranche
-                        .lendingPoolTrancheEpochInterest?.[0]
-                        ?.epochInterestAmount ?? '0',
-                );
+                const lastEpoch = previousEpoch.toNumber();
 
-                const lastEpochUserShares = parseFloat(
+                const userHasLastEpochShares = Boolean(
                     lastEpochUserTrancheDetails
-                        .lendingPoolTrancheUserEpochSharesUpdates?.[0]
-                        ?.shares ?? '0',
+                        .lendingPoolTrancheUserEpochSharesUpdates?.length,
                 );
 
-                const lastEpochTotalShares = parseFloat(
-                    lastEpochUserTrancheDetails.tranche
-                        .lendingPoolTrancheShareUpdates?.[0]?.shares ?? '0',
-                );
+                const fixedTermDeposits =
+                    lastEpochUserTrancheDetails.userLendingPoolTrancheFixedTermDepositLocks;
 
-                const currentTotalAmount = parseFloat(
-                    lastEpochUserTrancheDetails.tranche.balance,
-                );
-                const currentTotalShares = parseFloat(
-                    lastEpochUserTrancheDetails.tranche.shares,
-                );
-
-                const lastEpochTotalBaseYield =
-                    lastEpochTotalShares === 0
-                        ? 0
-                        : (lastEpochTotalYield * lastEpochUserShares) /
-                          lastEpochTotalShares;
+                // The one per-epoch formula `getYieldHistory` runs too, with
+                // the same share selection — so the last bar of a history
+                // equals these figures.
+                const lastEpochYield = epochTrancheYield({
+                    epochInterest: parseFloat(
+                        lastEpochUserTrancheDetails.tranche
+                            .lendingPoolTrancheEpochInterest?.[0]
+                            ?.epochInterestAmount ?? '0',
+                    ),
+                    userShares: parseFloat(
+                        lastEpochUserTrancheDetails
+                            .lendingPoolTrancheUserEpochSharesUpdates?.[0]
+                            ?.shares ?? '0',
+                    ),
+                    trancheShares: parseFloat(
+                        lastEpochUserTrancheDetails.tranche
+                            .lendingPoolTrancheShareUpdates?.[0]?.shares ?? '0',
+                    ),
+                    trancheBalanceNow: parseFloat(
+                        lastEpochUserTrancheDetails.tranche.balance,
+                    ),
+                    trancheSharesNow: parseFloat(
+                        lastEpochUserTrancheDetails.tranche.shares,
+                    ),
+                    locks: fixedTermDeposits.map((fixedTermDeposit) => ({
+                        active:
+                            parseFloat(fixedTermDeposit.epochLockStart) <
+                                lastEpoch &&
+                            parseFloat(fixedTermDeposit.epochLockEnd) >=
+                                lastEpoch &&
+                            userHasLastEpochShares,
+                        // No snapshot = the lock's opening shares, exactly
+                        // as `getYieldHistory` reads it: a lock made after
+                        // clearing E starts at E with its first update
+                        // tagged E + 1. Never the CURRENT shares, which
+                        // would carry a top-up from a clearing that ran
+                        // after the last settled epoch.
+                        sharesAtEpoch: parseFloat(
+                            fixedTermDeposit.lockSharesAtLastEpoch?.[0]
+                                ?.shares ??
+                                fixedTermDeposit.initialTrancheShares,
+                        ),
+                        sharesBeforeEpoch: parseFloat(
+                            fixedTermDeposit
+                                .userLendingPoolTrancheFixedTermDepositLockShareUpdate?.[0]
+                                ?.shares ??
+                                fixedTermDeposit.initialTrancheShares,
+                        ),
+                    })),
+                });
 
                 const userTrancheBalance = {
                     balance: '0',
@@ -609,129 +663,85 @@ export class Portfolio {
 
                 let totalLifetimeFtdYield = 0;
 
-                let lastEpochVariableBaseYield = lastEpochTotalBaseYield;
-
                 const fixedLoans: PortfolioTranche['fixedLoans'] =
-                    lastEpochUserTrancheDetails.userLendingPoolTrancheFixedTermDepositLocks.map(
-                        (fixedTermDeposit) => {
-                            const fixedLoanDepositDetails =
-                                userRequest?.[
-                                    fixedTermDeposit
-                                        .lendingPoolTrancheFixedTermConfig
-                                        .configId
-                                ] ?? [];
+                    fixedTermDeposits.map((fixedTermDeposit, lockIndex) => {
+                        const fixedLoanDepositDetails =
+                            userRequest?.[
+                                fixedTermDeposit
+                                    .lendingPoolTrancheFixedTermConfig.configId
+                            ] ?? [];
 
-                            let lastEpochYieldEarned = 0;
-                            let lifetimeYieldEarned = 0;
+                        const lastEpochYieldEarned =
+                            lastEpochYield.locks[lockIndex] ?? 0;
 
-                            if (
-                                parseFloat(fixedTermDeposit.epochLockStart) <
-                                    previousEpoch.toNumber() &&
-                                parseFloat(fixedTermDeposit.epochLockEnd) >=
-                                    previousEpoch.toNumber() &&
-                                Boolean(
-                                    lastEpochUserTrancheDetails
-                                        .lendingPoolTrancheUserEpochSharesUpdates
-                                        ?.length,
-                                )
-                            ) {
-                                const currentEpochFtdShares = parseFloat(
+                        const lifetimeYieldEarned =
+                            this.calculateFixedTermDepositEarnings(
+                                fixedTermDeposit,
+                                lastEpochUserTrancheDetails.tranche.balance,
+                                lastEpochUserTrancheDetails.tranche.shares,
+                            );
+
+                        totalLifetimeFtdYield += lifetimeYieldEarned;
+
+                        const lockDuration =
+                            parseFloat(
+                                fixedTermDeposit
+                                    .lendingPoolTrancheFixedTermConfig
+                                    .epochLockDuration,
+                            ) * SECONDS_PER_EPOCH;
+
+                        return {
+                            lockId: fixedTermDeposit.lockId,
+                            configId:
+                                fixedTermDeposit
+                                    .lendingPoolTrancheFixedTermConfig.configId,
+                            epochLockDuration:
+                                fixedTermDeposit
+                                    .lendingPoolTrancheFixedTermConfig
+                                    .epochLockDuration,
+                            epochLockEnd: fixedTermDeposit.epochLockEnd,
+                            epochInterestRate:
+                                fixedTermDeposit
+                                    .lendingPoolTrancheFixedTermConfig
+                                    .epochInterestRate,
+                            epochLockStart: fixedTermDeposit.epochLockStart,
+                            amount: this._userLendingService
+                                .convertSharesToAssets(
                                     fixedTermDeposit.trancheShares,
-                                );
-
-                                const lastEpochFtdShares = parseFloat(
-                                    fixedTermDeposit
-                                        .userLendingPoolTrancheFixedTermDepositLockShareUpdate?.[0]
-                                        ?.shares ?? '0',
-                                );
-
-                                const additionalFtdYield =
-                                    ((currentEpochFtdShares -
-                                        lastEpochFtdShares) *
-                                        currentTotalAmount) /
-                                    currentTotalShares;
-
-                                const lastEpochFtdBaseYield =
-                                    (lastEpochTotalBaseYield *
-                                        lastEpochFtdShares) /
-                                    lastEpochUserShares;
-
-                                lastEpochVariableBaseYield -=
-                                    lastEpochFtdBaseYield;
-
-                                lastEpochYieldEarned =
-                                    lastEpochFtdBaseYield + additionalFtdYield;
-                            }
-
-                            lifetimeYieldEarned =
-                                this.calculateFixedTermDepositEarnings(
-                                    fixedTermDeposit,
                                     lastEpochUserTrancheDetails.tranche.balance,
                                     lastEpochUserTrancheDetails.tranche.shares,
-                                );
+                                )
+                                .toString(),
+                            endTime:
+                                parseInt(fixedTermDeposit.createdOn) +
+                                lockDuration,
+                            isLocked: fixedTermDeposit.isLocked,
+                            isWithdrawalRequested:
+                                fixedTermDeposit.isWithdrawalRequested,
+                            startTime: parseInt(fixedTermDeposit.createdOn),
+                            yieldEarnings: {
+                                lastEpoch:
+                                    this.precisionToString(
+                                        lastEpochYieldEarned,
+                                    ),
+                                lifetime:
+                                    this.precisionToString(lifetimeYieldEarned),
+                            },
+                            depositDetails: fixedLoanDepositDetails,
+                        };
+                    });
 
-                            totalLifetimeFtdYield += lifetimeYieldEarned;
-
-                            totalYieldEarnedLastEpoch += lastEpochYieldEarned;
-
-                            const lockDuration =
-                                parseFloat(
-                                    fixedTermDeposit
-                                        .lendingPoolTrancheFixedTermConfig
-                                        .epochLockDuration,
-                                ) * SECONDS_PER_EPOCH;
-
-                            return {
-                                lockId: fixedTermDeposit.lockId,
-                                configId:
-                                    fixedTermDeposit
-                                        .lendingPoolTrancheFixedTermConfig
-                                        .configId,
-                                epochLockDuration:
-                                    fixedTermDeposit
-                                        .lendingPoolTrancheFixedTermConfig
-                                        .epochLockDuration,
-                                epochLockEnd: fixedTermDeposit.epochLockEnd,
-                                epochInterestRate:
-                                    fixedTermDeposit
-                                        .lendingPoolTrancheFixedTermConfig
-                                        .epochInterestRate,
-                                epochLockStart: fixedTermDeposit.epochLockStart,
-                                amount: this._userLendingService
-                                    .convertSharesToAssets(
-                                        fixedTermDeposit.trancheShares,
-                                        lastEpochUserTrancheDetails.tranche
-                                            .balance,
-                                        lastEpochUserTrancheDetails.tranche
-                                            .shares,
-                                    )
-                                    .toString(),
-                                endTime:
-                                    parseInt(fixedTermDeposit.createdOn) +
-                                    lockDuration,
-                                isLocked: fixedTermDeposit.isLocked,
-                                isWithdrawalRequested:
-                                    fixedTermDeposit.isWithdrawalRequested,
-                                startTime: parseInt(fixedTermDeposit.createdOn),
-                                yieldEarnings: {
-                                    lastEpoch: lastEpochYieldEarned.toString(),
-                                    lifetime:
-                                        this.precisionToString(
-                                            lifetimeYieldEarned,
-                                        ),
-                                },
-                                depositDetails: fixedLoanDepositDetails,
-                            };
-                        },
-                    );
-
-                totalYieldEarnedLastEpoch += lastEpochTotalBaseYield;
+                // This POOL's last-epoch total: the tranche totals summed, the
+                // locks counted once (inside `total`).
+                poolYieldEarnedLastEpoch += lastEpochYield.total;
 
                 tranches.push({
                     ...tranche,
                     investedAmount: userTrancheBalance,
                     yieldEarnings: {
-                        lastEpoch: lastEpochVariableBaseYield.toString(),
+                        lastEpoch: this.precisionToString(
+                            lastEpochYield.variable,
+                        ),
                         lifetime: this.precisionToString(totalLifetimeFtdYield), // passing in total FTD yield to be subtracted by total trache lifetime later down
                     },
                     fixedLoans,
@@ -741,8 +751,9 @@ export class Portfolio {
 
             portfolioLendingPoolsPromise.push({
                 ...poolOverview,
-                totalYieldEarningsLastEpoch:
-                    totalYieldEarnedLastEpoch.toString(),
+                totalYieldEarningsLastEpoch: this.precisionToString(
+                    poolYieldEarnedLastEpoch,
+                ),
                 totalInvestedAmount: userPoolBalance.balance.toString(),
                 totalYieldEarningsLifetime:
                     userPoolBalance.yieldEarned.toString(),
@@ -796,7 +807,106 @@ export class Portfolio {
         );
     }
 
+    /**
+     * The lender's settled yield per cycle (epoch), per pool and tranche —
+     * what the chain credited at each close, NET of the performance fee
+     * (`domain/yield-history.ts`), in the deployment's own stable token. Each
+     * entry runs the same `epochTrancheYield` as `getPortfolioLendingData`'s
+     * last-epoch figures: a tranche's `yieldEarnings.lastEpoch` plus its
+     * locks' equals its entry for the epoch of the tranche's most recently
+     * APPLIED interest (older than the last cycle for a pool that has not
+     * cleared since; no entry, and a figure of 0, when the lender held
+     * nothing at that epoch).
+     *
+     * Sum entries with `aggregateYieldHistory` (all strategies, or one with
+     * `{ poolId }`). Only epochs in which the lender held shares appear — a
+     * new lender gets `[]`. Pools in `UNUSED_LENDING_POOL_IDS` are left out,
+     * as in `lendingPortfolioQuery`; Directus enablement is NOT applied.
+     *
+     * Cost: three parallel `SystemVariables` reads and the positions query in
+     * one round, then one subgraph request per page of the longest series
+     * (1000 rows a page) — normally two subgraph round trips in all, never one
+     * per epoch.
+     *
+     * On a LITE deployment, a subgraph that lacks the entities (a validation
+     * error naming them) yields `[]`; on a full deployment that error throws,
+     * like every other failure (`isEmptyHistoryError`).
+     *
+     * @throws RangeError on a malformed `fromEpoch` / `count`, before any
+     * network read.
+     */
+    async getYieldHistory(
+        userAddress: string,
+        options: YieldHistoryOptions = {},
+    ): Promise<YieldHistoryEntry[]> {
+        validateYieldHistoryOptions(options);
+
+        try {
+            const [currentEpoch, epochZeroStart, epochDuration, positions] =
+                await Promise.all([
+                    this._systemVariablesAbi.currentEpochNumber(),
+                    this._systemVariablesAbi.epochStartTimestamp(0),
+                    this._systemVariablesAbi.epochDuration(),
+                    this._graph.request<YieldHistoryPositionsResult>(
+                        yieldHistoryPositionsQuery,
+                        {
+                            userAddress: userAddress.toLowerCase(),
+                            unusedPools:
+                                this._kasuConfig.UNUSED_LENDING_POOL_IDS,
+                            first: YIELD_HISTORY_PAGE_SIZE,
+                        },
+                    ),
+                ]);
+
+            const window = resolveYieldHistoryWindow(
+                options,
+                currentEpoch.toNumber(),
+            );
+            if (!window || !positions.user) return [];
+
+            const userTranches: string[] = [];
+            const tranches = new Set<string>();
+            const locks: string[] = [];
+            for (const pool of positions.user.lendingPoolUserDetails) {
+                for (const position of pool.lendingPoolTrancheUserDetails) {
+                    userTranches.push(position.id);
+                    tranches.add(position.tranche.id);
+                    for (const lock of position.userLendingPoolTrancheFixedTermDepositLocks) {
+                        locks.push(lock.id);
+                    }
+                }
+            }
+            if (userTranches.length === 0) return [];
+
+            const { rows } = await fetchYieldHistorySeries(
+                (variables) =>
+                    this._graph.request<YieldHistoryPageResult>(
+                        yieldHistoryPageQuery,
+                        variables,
+                    ),
+                { tranches: [...tranches], userTranches, locks },
+                window,
+            );
+
+            return buildYieldHistory({ positions, ...rows }, window, {
+                epochZeroStart: epochZeroStart.toNumber(),
+                epochDuration: epochDuration.toNumber(),
+            });
+        } catch (error) {
+            if (isEmptyHistoryError(error, this._isLiteDeployment)) return [];
+            throw error;
+        }
+    }
+
+    /**
+     * A money figure as a plain decimal string. Below a millionth of a token
+     * (the stable asset's own precision) is float noise, never money, so it
+     * is `'0'` — not `'1e-7'`, which `parseUnits` rejects, nor `'-3e-12'`. A
+     * small negative remainder (above −0.0001) is `'0'` as well.
+     */
     precisionToString(val: number): string {
+        if (Math.abs(val) < 1e-6) return '0';
+
         if (val < 0 && val > -0.0001) {
             return '0';
         }

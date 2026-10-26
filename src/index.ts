@@ -42,6 +42,8 @@ export type {
     PortfolioTrancheDepositDetails,
 } from './services/Portfolio/types';
 
+export type { YieldHistoryOptions } from './services/Portfolio/yield-history';
+
 export type {
     UserLock,
     UserBonusData,

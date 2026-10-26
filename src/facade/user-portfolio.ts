@@ -1,8 +1,10 @@
 import { Provider } from '@ethersproject/providers';
 
 import { deriveRequestState, RequestState } from '../domain/requests';
+import { YieldHistoryEntry } from '../domain/yield-history';
 import { DataService } from '../services/DataService/data-service';
 import { Portfolio } from '../services/Portfolio/portfolio';
+import { YieldHistoryOptions } from '../services/Portfolio/yield-history';
 import { UserRequest } from '../services/UserLending/types';
 import { UserLending } from '../services/UserLending/user-lending';
 
@@ -39,9 +41,8 @@ export class PortfolioFacade {
     ): Promise<UserPositions> {
         const currentEpoch = await this._userLending.getCurrentEpoch();
 
-        const poolOverviews = await this._dataService.getPoolOverview(
-            currentEpoch,
-        );
+        const poolOverviews =
+            await this._dataService.getPoolOverview(currentEpoch);
 
         const pools = await this._portfolio.getPortfolioLendingData(
             userAddress,
@@ -57,6 +58,42 @@ export class PortfolioFacade {
         );
 
         return { pools, summary };
+    }
+
+    /**
+     * The lender's settled yield per cycle, per pool and tranche: what each
+     * close credited them, NET of the performance fee (the chain credits it
+     * net), in display units of the deployment's own stable token (AUDD on
+     * XDC AUDD). `epochEnd` is unix seconds. Net only — no gross is offered.
+     *
+     * Validates `options` before any read (`RangeError` on a malformed one).
+     *
+     * ```ts
+     * const entries = await kasu.portfolio.getYieldHistory('0xUser...', { count: 52 });
+     * const allStrategies = aggregateYieldHistory(entries);
+     * const oneStrategy = aggregateYieldHistory(entries, { poolId });
+     * ```
+     *
+     * `getPositions`' `totalYieldEarningsLastEpoch` for a pool equals that
+     * pool's bar for the epoch of its most recently APPLIED interest — which
+     * is older than the last cycle for a pool that has not cleared since (the
+     * bar carries that older `epochId`). A lender who held nothing at that
+     * epoch has no bar there and a figure of 0; their newest bar is from
+     * when they last held shares.
+     *
+     * For a fixed-term lock holder the bars can sum to slightly more than the
+     * lifetime interest (up to about 0.2 %), because each top-up is valued at
+     * today's share price — show "earned to date" from the lifetime figure,
+     * never from the sum of the bars.
+     *
+     * `[]` for a lender with no history, and on a LITE deployment whose
+     * subgraph lacks the entities; on a full deployment that error throws.
+     */
+    async getYieldHistory(
+        userAddress: string,
+        options?: YieldHistoryOptions,
+    ): Promise<YieldHistoryEntry[]> {
+        return await this._portfolio.getYieldHistory(userAddress, options);
     }
 
     /**
