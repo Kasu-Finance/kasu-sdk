@@ -91,6 +91,7 @@ src/
 │   ├── au-minimum.ts    # AU cumulative-lending minimum (numeric half)
 │   ├── fixed-term.ts    # Allowlist-aware fixed-term configs, lock arithmetic
 │   ├── yields.ts        # Net weekly/daily/accrued interest, annual projection
+│   ├── yield-history.ts # Settled per-epoch yield: the one formula, gross from net, aggregation
 │   ├── batch-proof.ts   # Deposit-batch pinning + receipt proofs (money path)
 │   ├── sponsored-calls.ts # Single-call LPM encoders + relay kinds/selectors
 │   └── explorer-urls.ts # Validated block-explorer tx / address links
@@ -334,9 +335,21 @@ they were duplicated across the applications, and the copies drifted.
 | `au-minimum.ts`           | AU cumulative-lending minimum — thresholds, minor-unit maths, exemption test      |
 | `fixed-term.ts`           | Fixed-term configs a wallet may select (allowlist-aware), lock days / months     |
 | `yields.ts`               | Weekly / daily / per-pool accrued interest NET of the fee, annual projection      |
+| `yield-history.ts`        | `epochTrancheYield` (the per-epoch formula), `grossYieldFromNet`, `aggregateYieldHistory` |
 | `batch-proof.ts`          | Pin a deposit batch to its run; prove a deposit (or one executed operation) in a handleOps receipt |
 | `sponsored-calls.ts`      | Encode the single calls a sponsored relay carries (LPM requests, stable `transfer`), with their `kind` |
 | `explorer-urls.ts`        | `explorerTxUrl` / `explorerAddressUrl` — explorer links from a validated hash or address only |
+
+`yield-history.ts` holds the ONE per-epoch yield formula. Both
+`Portfolio.getPortfolioLendingData` (its last-epoch figures) and
+`Portfolio.getYieldHistory` (every settled epoch) call `epochTrancheYield`
+with the same share selection — the snapshot with the highest
+`shareUpdatesIndex` among those with `epochId ≤ E` — and a spec pins the
+newest history entry to the last-epoch figure through a subgraph emulator.
+The subgraph's `epochInterestAmount` (`InterestApplied`) is ALREADY net of the
+performance fee, as is a fixed-term top-up, so the history's `netYield` is
+the computed figure and `grossYield` is derived from it; never take the fee
+off it again.
 
 `partners.ts` also owns each partner's `region` and `getStrategyRegion` — the
 word a lender SIGNS in the loan-agreement message. It must equal what every app

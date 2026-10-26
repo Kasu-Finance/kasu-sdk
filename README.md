@@ -118,7 +118,7 @@ You can also pass a whole `ChainConfigEntry` instead of a chain key.
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
 | `kasu.strategies` | `getAll()`, `getVisible()`, `getById()`, `getPlatformStats()`, `getPerformanceFeePercent()`, `calculateDepositLimits()`, `getRiskPerformance(poolId)`, `getOriginator(poolId)` | Browse pools, APY, capacity, risk, originator |
 | `kasu.deposits`   | `deposit()`, `withdraw()`, `withdrawMax()`, `buildKycParams()`, `isClearingPending()`                                   | Submit transactions             |
-| `kasu.portfolio`  | `getPositions()`, `getTransactionHistory()`, `getRequestStates()`                                                       | Lender balances, yield, history |
+| `kasu.portfolio`  | `getPositions()`, `getYieldHistory()`, `getTransactionHistory()`, `getRequestStates()`                                  | Lender balances, yield, per-cycle earnings, history |
 | `kasu.flows`      | `deposit(ports)`, `withdraw(ports?)`                                                                                    | Headless transaction pipelines  |
 | `kasu.calls`      | `requestWithdrawal(params)`, `cancelDepositRequest(poolId, dNftId)`, `cancelWithdrawalRequest(poolId, wNftId)`, `withdrawAtExpiry(poolId, lockId)` | Encoded calls for a sponsored relay (read, then encode — never sends) |
 

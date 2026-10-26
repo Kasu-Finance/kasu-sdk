@@ -134,11 +134,7 @@ export {
     lastEventTimestamp,
     submissionEvents,
 } from './requests';
-export type {
-    RequestKind,
-    RequestState,
-    RequestStatusCode,
-} from './requests';
+export type { RequestKind, RequestState, RequestStatusCode } from './requests';
 
 export { decodeRevert, extractRevertData } from './revert-errors';
 export type { DecodedRevert, RevertFamily } from './revert-errors';
@@ -183,11 +179,7 @@ export {
     trancheHasCapacity,
     trancheRiskRank,
 } from './tranches';
-export type {
-    ApyBounds,
-    PoolStatus,
-    TrancheCapacitySignal,
-} from './tranches';
+export type { ApyBounds, PoolStatus, TrancheCapacitySignal } from './tranches';
 
 export {
     classifyWalletFailure,
@@ -195,6 +187,20 @@ export {
     isUserRejected,
 } from './wallet-errors';
 export type { WalletFailure } from './wallet-errors';
+
+export {
+    aggregateYieldHistory,
+    epochTrancheYield,
+    grossYieldFromNet,
+} from './yield-history';
+export type {
+    EpochLockShares,
+    EpochTrancheYield,
+    EpochTrancheYieldInput,
+    YieldHistoryEntry,
+    YieldHistoryFilter,
+    YieldHistoryPoint,
+} from './yield-history';
 
 export {
     accruedInterest,

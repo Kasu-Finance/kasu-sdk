@@ -45,7 +45,14 @@ export interface PoolAccrual {
     clearingTimestamp: number;
 }
 
-function isUsableFeePercent(feePercent: number | null): feePercent is number {
+/**
+ * A performance fee the yield maths may use: finite and within 0..100 (a
+ * PERCENTAGE, see `netEffectiveApy`). Shared with `yield-history.ts`, so the
+ * two directions of the one fee identity reject the same inputs.
+ */
+export function isUsableFeePercent(
+    feePercent: number | null,
+): feePercent is number {
     return (
         feePercent !== null &&
         Number.isFinite(feePercent) &&

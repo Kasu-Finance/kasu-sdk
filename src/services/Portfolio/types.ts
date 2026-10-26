@@ -110,6 +110,16 @@ export interface UserLendingPoolTrancheFixedTermDepositLock {
               shares: string;
           }[]
         | undefined;
+    /**
+     * The lock's shares as of the last settled epoch (`epochId < currentEpoch`),
+     * the `sharesAtEpoch` of `epochTrancheYield`. Present in
+     * `lendingPortfolioQuery` responses only.
+     */
+    lockSharesAtLastEpoch?:
+        | {
+              shares: string;
+          }[]
+        | undefined;
 }
 
 export interface LastEpochQueryResult {

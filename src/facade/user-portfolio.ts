@@ -1,8 +1,10 @@
 import { Provider } from '@ethersproject/providers';
 
 import { deriveRequestState, RequestState } from '../domain/requests';
+import { YieldHistoryEntry } from '../domain/yield-history';
 import { DataService } from '../services/DataService/data-service';
 import { Portfolio } from '../services/Portfolio/portfolio';
+import { YieldHistoryOptions } from '../services/Portfolio/yield-history';
 import { UserRequest } from '../services/UserLending/types';
 import { UserLending } from '../services/UserLending/user-lending';
 
@@ -39,9 +41,8 @@ export class PortfolioFacade {
     ): Promise<UserPositions> {
         const currentEpoch = await this._userLending.getCurrentEpoch();
 
-        const poolOverviews = await this._dataService.getPoolOverview(
-            currentEpoch,
-        );
+        const poolOverviews =
+            await this._dataService.getPoolOverview(currentEpoch);
 
         const pools = await this._portfolio.getPortfolioLendingData(
             userAddress,
@@ -57,6 +58,28 @@ export class PortfolioFacade {
         );
 
         return { pools, summary };
+    }
+
+    /**
+     * The lender's settled yield per cycle, per pool and tranche: what each
+     * close credited them, NET of the performance fee (the chain credits it
+     * net), plus the gross derived from it with the current fee.
+     *
+     * ```ts
+     * const entries = await kasu.portfolio.getYieldHistory('0xUser...', { count: 52 });
+     * const allStrategies = aggregateYieldHistory(entries);
+     * const oneStrategy = aggregateYieldHistory(entries, { poolId });
+     * ```
+     *
+     * The newest entry of a tranche equals the last-epoch figures
+     * `getPositions` reports for it. `[]` for a lender with no history, and on
+     * a deployment whose subgraph lacks the entities.
+     */
+    async getYieldHistory(
+        userAddress: string,
+        options?: YieldHistoryOptions,
+    ): Promise<YieldHistoryEntry[]> {
+        return await this._portfolio.getYieldHistory(userAddress, options);
     }
 
     /**

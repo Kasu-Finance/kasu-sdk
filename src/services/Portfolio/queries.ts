@@ -115,6 +115,14 @@ export const lendingPortfolioQuery = gql`
                         ) {
                             shares
                         }
+                        lockSharesAtLastEpoch: userLendingPoolTrancheFixedTermDepositLockShareUpdate(
+                            orderBy: shareUpdatesIndex
+                            orderDirection: desc
+                            first: 1
+                            where: { epochId_lt: $epochId }
+                        ) {
+                            shares
+                        }
                     }
                     tranche {
                         id
