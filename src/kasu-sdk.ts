@@ -9,6 +9,15 @@ import { Portfolio } from './services/Portfolio/portfolio';
 import { Swapper } from './services/Swapper/swapper';
 import { UserLending } from './services/UserLending/user-lending';
 
+/** Optional providers beyond the main signer-or-provider. */
+export interface KasuSdkOptions {
+    /**
+     * A provider that SERVES PAST STATE (an archive RPC), for
+     * `DataService.getPoolTvlHistory`. Wins over `SdkConfig.historyRpcUrls`.
+     */
+    historyProvider?: Provider;
+}
+
 export class KasuSdk {
     private readonly _graphClient: GraphQLClient;
     public readonly Locking: KSULocking;
@@ -16,11 +25,19 @@ export class KasuSdk {
     public readonly UserLending: UserLending;
     public readonly Portfolio: Portfolio;
     public readonly Swapper: Swapper;
-    constructor(config: SdkConfig, signerOrProvider: Provider | Signer) {
+    constructor(
+        config: SdkConfig,
+        signerOrProvider: Provider | Signer,
+        options: KasuSdkOptions = {},
+    ) {
         this._graphClient = new GraphQLClient(config.subgraphUrl);
         this.Locking = new KSULocking(config, signerOrProvider);
         this.UserLending = new UserLending(config, signerOrProvider);
-        this.DataService = new DataService(config, signerOrProvider);
+        this.DataService = new DataService(
+            config,
+            signerOrProvider,
+            options.historyProvider,
+        );
         this.Portfolio = new Portfolio(config, signerOrProvider);
         this.Swapper = new Swapper();
     }

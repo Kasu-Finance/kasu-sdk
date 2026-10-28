@@ -3,6 +3,90 @@
 All notable changes to `@kasufinance/kasu-sdk`. Versions follow semantic
 versioning; earlier releases are described in their commit messages.
 
+## 2.13.0
+
+A strategy's TVL over time — the data behind a TVL chart — from the same
+definition as the figure above it, so the chart's last point equals the
+header whenever both reads succeed.
+
+### Added
+
+- **`kasu.strategies.getPoolTvlHistory(poolId, { fromEpoch?, count?,
+  timeoutMs?, signal? })`** (and `DataService.getPoolTvlHistory`) →
+  `PoolTvlHistoryEntry[]` `{ epochId, timestamp, tvl, kind }`, ascending in
+  time.
+  - One `kind: 'clearing'` point per finished clearing, read at the block
+    it finished in (`LendingPoolClearing.endBlockNumber`), then ONE
+    `kind: 'current'` point carrying the current epoch: the subgraph's
+    latest balance plus `externalTVLOfPool` at `latest` on the history
+    provider. It equals today's `totalValueLocked.total`
+    (`strategy.tvl.total`) when both calls' reads succeed;
+    `getPoolOverview` still falls back to an off-chain 0 when its own read
+    fails (unchanged), the history throws.
+  - `tvl` = on-chain `lendingPool.balance` (subgraph time-travel,
+    `block: { number }`) + off-chain `ExternalTVL.externalTVLOfPool` at the
+    same block. Units: display units of the deployment's OWN stable token
+    (USDC on Base and XDC USDC, AUDD on XDC AUDD) — convert before
+    formatting as USD.
+  - `timestamp` is unix SECONDS: the block time the clearing finished; the
+    subgraph's latest block for the `current` point.
+  - Ordered by block, then epoch: plot by `timestamp`. Epoch numbers can
+    jump (a pool that stopped clearing; XDC AUDD's first clearing is
+    numbered 1, a week before epoch 88), and clearings that ran in one block
+    share a timestamp and a `tvl`. A pool that has not cleared for a while
+    ends at its last clearing, then the `current` point.
+  - Window by epoch: `count` = the newest `count` epochs up to the current
+    one (only the newest `count` clearings are read); `fromEpoch` = from
+    that epoch on. A window that stops before the current epoch has no
+    `current` point. A malformed option (`RangeError` / `TypeError`) or pool
+    id (`TypeError`) throws before any network read.
+  - `timeoutMs` (default 30 000 ms) and `signal` bound the whole call:
+    `PoolTvlHistoryTimeoutError` / `PoolTvlHistoryAbortedError`, the
+    subgraph requests are aborted and no new read starts.
+  - The off-chain part is 0 before the `ExternalTVL` contract existed,
+    decided by `getCode`, never by catching a revert — and only if the same
+    provider shows the pool's own code at those blocks; a pruned provider
+    is `PastStateUnavailableError`. Any other failed past-state read throws
+    after three attempts over every history RPC.
+  - Final blocks (64+ below the subgraph head) are cached per SDK instance,
+    keyed by contract or subgraph, pool and block: a second call reads only
+    the new clearings and the latest figure.
+  - `[]` for a pool the subgraph does not know, and on a LITE deployment
+    whose subgraph lacks the entities. On a full deployment that schema
+    error throws, like every network, indexing or past-state failure.
+  - Cost (uncached): one subgraph request for the clearings (per
+    thousand), one per hundred distinct clearing blocks (three for a pool
+    with ~120 epochs), a `currentEpochNumber` read, and on the history RPCs
+    one `externalTVLOfPool` per distinct block plus the latest and one to
+    about log2(n) `getCode` reads, at most eight in flight.
+- **History RPCs** — the off-chain TVL at old blocks needs RPCs that serve
+  PAST state; a pruned node refuses it (and ethers v5 reports the refusal
+  as a "call exception"). `ChainConfigEntry.historyRpcUrls` (Base
+  `mainnet.base.org`, `base.drpc.org`, `1rpc.io/base`; both XDC
+  deployments `rpc.primenumbers.xyz`, `rpc.ankr.com/xdc`), tried in order
+  with a 10 s per-call timeout; `SdkConfigOptions.historyRpcUrls` and
+  `chainId`; `KasuOptions.historyProvider` (wins; kept across `connect`)
+  and the optional third `KasuSdk` argument `{ historyProvider }`. The
+  public defaults are rate-limited: partners should pass their own archive
+  provider. Without any, `getPoolTvlHistory` throws
+  `NO_HISTORY_PROVIDER_MESSAGE` on a deployment that has an `ExternalTVL`
+  contract.
+- **`poolTvl(onChain, offChain)`** (domain) — the one TVL definition;
+  `getPoolOverview` now computes `totalValueLocked.total` with it.
+- Errors: `PoolTvlHistoryTimeoutError`, `PoolTvlHistoryAbortedError`,
+  `PastStateUnavailableError`.
+
+### Changed
+
+- `isMissingEntityError` / `isEmptyHistoryError` moved to
+  `services/shared.ts` so both histories share the Lite-vs-full rule; they
+  are still exported from `services/Portfolio/yield-history.ts`.
+
+### Planned
+
+- The remaining single-formula portfolio work, previously planned for
+  2.13, moves to 2.14.
+
 ## 2.12.0
 
 A lender's settled interest per cycle — the data behind an earnings chart —

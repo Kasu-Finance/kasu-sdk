@@ -16,6 +16,29 @@ const XDC_RPC_URLS: string[] = [
 ];
 
 /**
+ * XDC RPCs that serve PAST state, for `getPoolTvlHistory` (each verified
+ * with `externalTVLOfPool` at old blocks, CORS `*`), in fallback order. Not
+ * `rpc.xdcrpc.com`, which refuses older blocks, and never `rpc.xdc.org` /
+ * `erpc.xdc.org`. Public and rate-limited.
+ */
+const XDC_HISTORY_RPC_URLS: string[] = [
+    'https://rpc.primenumbers.xyz/',
+    'https://rpc.ankr.com/xdc',
+];
+
+/**
+ * Base RPCs that serve PAST state, in fallback order (each verified with
+ * `externalTVLOfPool` at old blocks; all answer CORS). Not
+ * `base-rpc.publicnode.com`, the default read RPC, which refuses old state.
+ * Public and rate-limited.
+ */
+const BASE_HISTORY_RPC_URLS: string[] = [
+    'https://mainnet.base.org',
+    'https://base.drpc.org',
+    'https://1rpc.io/base',
+];
+
+/**
  * Built-in chain configurations for Kasu-supported networks.
  *
  * Usage:
@@ -59,6 +82,7 @@ export const CHAIN_CONFIGS: Record<'base' | 'xdc' | 'xdc-usdc' | 'plume', ChainC
             'https://base-rpc.publicnode.com',
             'https://mainnet.base.org',
         ],
+        historyRpcUrls: BASE_HISTORY_RPC_URLS,
         blockExplorerUrl: 'https://basescan.org',
     },
 
@@ -100,6 +124,7 @@ export const CHAIN_CONFIGS: Record<'base' | 'xdc' | 'xdc-usdc' | 'plume', ChainC
             currencyCode: 'AUD',
         },
         rpcUrls: XDC_RPC_URLS,
+        historyRpcUrls: XDC_HISTORY_RPC_URLS,
         blockExplorerUrl: 'https://xdcscan.com',
     },
 
@@ -134,6 +159,7 @@ export const CHAIN_CONFIGS: Record<'base' | 'xdc' | 'xdc-usdc' | 'plume', ChainC
             currencyCode: 'USD',
         },
         rpcUrls: XDC_RPC_URLS,
+        historyRpcUrls: XDC_HISTORY_RPC_URLS,
         blockExplorerUrl: 'https://xdcscan.com',
     },
 

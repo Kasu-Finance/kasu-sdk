@@ -50,6 +50,22 @@ export interface SdkConfigOptions {
      * @default 6
      */
     stableAssetDecimals?: number;
+    /**
+     * RPC URLs that SERVE PAST STATE (archive nodes), tried IN ORDER on
+     * failure, used only by `DataService.getPoolTvlHistory` to read the
+     * off-chain TVL at old blocks. A pruned node refuses those reads (some
+     * answer as if the call reverted), so these are never the default read
+     * RPC. An explicit `historyProvider` passed to `KasuSdk` / `Kasu.create`
+     * wins over them. The public defaults are rate-limited: an integrator
+     * should pass its own archive provider.
+     * @default [] — none
+     */
+    historyRpcUrls?: string[];
+    /**
+     * The chain id the history providers are pinned to (no `eth_chainId`
+     * round trip). `Kasu.create` sets it from the chain config.
+     */
+    chainId?: number;
 }
 
 export class SdkConfig {
@@ -61,6 +77,10 @@ export class SdkConfig {
     isLiteDeployment: boolean;
     poolMetadataMapping: Record<string, string>;
     stableAssetDecimals: number;
+    /** See `SdkConfigOptions.historyRpcUrls`. `[]` when none. */
+    historyRpcUrls: string[];
+    /** See `SdkConfigOptions.chainId`. */
+    chainId: number | undefined;
 
     constructor(options: SdkConfigOptions) {
         this.subgraphUrl = options.subgraphUrl;
@@ -77,5 +97,7 @@ export class SdkConfig {
         this.isLiteDeployment = options.isLiteDeployment ?? false;
         this.poolMetadataMapping = options.poolMetadataMapping ?? {};
         this.stableAssetDecimals = options.stableAssetDecimals ?? 6;
+        this.historyRpcUrls = [...(options.historyRpcUrls ?? [])];
+        this.chainId = options.chainId;
     }
 }

@@ -65,17 +65,21 @@ export class Kasu {
      * of pools than the read-only one it came from.
      */
     private readonly _configOverrides: Partial<SdkConfigOptions>;
+    /** The caller's own history provider, kept so `connect` keeps it too. */
+    private readonly _historyProvider: Provider | undefined;
 
     private constructor(
         sdk: KasuSdk,
         chainConfig: ChainConfigEntry,
         signerOrProvider: Provider | Signer,
         configOverrides: Partial<SdkConfigOptions>,
+        historyProvider: Provider | undefined,
     ) {
         this._sdk = sdk;
         this._chainConfig = chainConfig;
         this._signerOrProvider = signerOrProvider;
         this._configOverrides = configOverrides;
+        this._historyProvider = historyProvider;
 
         this.strategies = new StrategiesFacade(
             sdk.DataService,
@@ -168,6 +172,9 @@ export class Kasu {
             stableAssetDecimals:
                 overrides.stableAssetDecimals ??
                 stableAssetOf(chainConfig)?.decimals,
+            historyRpcUrls:
+                overrides.historyRpcUrls ?? chainConfig.historyRpcUrls,
+            chainId: overrides.chainId ?? chainConfig.chainId,
         });
 
         const signerOrProvider =
@@ -179,8 +186,18 @@ export class Kasu {
                     : chainConfig.name,
             );
 
-        const sdk = new KasuSdk(sdkConfig, signerOrProvider);
-        return new Kasu(sdk, chainConfig, signerOrProvider, overrides);
+        // An explicit history provider wins; otherwise DataService builds
+        // them from `historyRpcUrls`, pinned to `chainId` (the one place).
+        const sdk = new KasuSdk(sdkConfig, signerOrProvider, {
+            historyProvider: options.historyProvider,
+        });
+        return new Kasu(
+            sdk,
+            chainConfig,
+            signerOrProvider,
+            overrides,
+            options.historyProvider,
+        );
     }
 
     /**
@@ -201,6 +218,7 @@ export class Kasu {
             chain: this._chainConfig,
             signerOrProvider: signer,
             configOverrides: this._configOverrides,
+            historyProvider: this._historyProvider,
         });
     }
 

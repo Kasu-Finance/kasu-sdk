@@ -71,6 +71,16 @@ export interface ChainConfigEntry {
      */
     rpcUrls: string[];
     /**
+     * RPCs that SERVE PAST STATE (archive nodes), tried IN ORDER on failure,
+     * used only by `getPoolTvlHistory` to read the off-chain TVL at old
+     * blocks. Pruned nodes refuse those reads — some answer as if the call
+     * reverted — so these are never `rpcUrls[0]` by assumption. Public and
+     * RATE-LIMITED: an integrator should pass its own archive
+     * `KasuOptions.historyProvider`, which wins over them. Absent on a
+     * retired deployment.
+     */
+    historyRpcUrls?: string[];
+    /**
      * Origin of the chain's block explorer, `https://…` with NO trailing
      * slash (`https://basescan.org`). Never append a path to it by hand: build
      * links with `explorerTxUrl` / `explorerAddressUrl`, which validate the
@@ -101,6 +111,16 @@ export interface KasuOptions {
         | import('@ethersproject/providers').Provider;
     /** Override any default config value. */
     configOverrides?: Partial<SdkConfigOptions>;
+    /**
+     * A provider that SERVES PAST STATE (an archive RPC), for
+     * `kasu.strategies.getPoolTvlHistory`. OPTIONAL: without one, the SDK
+     * builds one `StaticJsonRpcProvider` per
+     * `configOverrides.historyRpcUrls ?? chainConfig.historyRpcUrls` entry
+     * (tried in order, 10 s per call). The built-in URLs are public and
+     * rate-limited, so pass your own archive provider in production. Kept
+     * across `connect(signer)`.
+     */
+    historyProvider?: import('@ethersproject/providers').Provider;
 }
 
 // ---------------------------------------------------------------------------

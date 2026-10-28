@@ -2,6 +2,7 @@
 // Core SDK class (low-level service access)
 // ---------------------------------------------------------------------------
 export { KasuSdk } from './kasu-sdk';
+export type { KasuSdkOptions } from './kasu-sdk';
 
 // ---------------------------------------------------------------------------
 // Re-export config types
@@ -43,6 +44,14 @@ export type {
 } from './services/Portfolio/types';
 
 export type { YieldHistoryOptions } from './services/Portfolio/yield-history';
+
+export type { PoolTvlHistoryOptions } from './services/DataService/tvl-history';
+export {
+    PastStateUnavailableError,
+    PoolTvlHistoryAbortedError,
+    PoolTvlHistoryTimeoutError,
+} from './services/DataService/tvl-history';
+export { NO_HISTORY_PROVIDER_MESSAGE } from './services/DataService/data-service';
 
 export type {
     UserLock,

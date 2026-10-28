@@ -188,6 +188,9 @@ export {
 } from './wallet-errors';
 export type { WalletFailure } from './wallet-errors';
 
+export { poolTvl } from './pool-tvl';
+export type { PoolTvlHistoryEntry } from './pool-tvl';
+
 export { aggregateYieldHistory, epochTrancheYield } from './yield-history';
 export type {
     EpochLockShares,
