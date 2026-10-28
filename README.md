@@ -116,7 +116,7 @@ You can also pass a whole `ChainConfigEntry` instead of a chain key.
 
 | Facade            | Methods                                                                                                                 | Purpose                         |
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
-| `kasu.strategies` | `getAll()`, `getVisible()`, `getById()`, `getPlatformStats()`, `getPerformanceFeePercent()`, `calculateDepositLimits()`, `getRiskPerformance(poolId)`, `getOriginator(poolId)` | Browse pools, APY, capacity, risk, originator |
+| `kasu.strategies` | `getAll()`, `getVisible()`, `getById()`, `getPlatformStats()`, `getPerformanceFeePercent()`, `calculateDepositLimits()`, `getRiskPerformance(poolId)`, `getOriginator(poolId)`, `getPoolTvlHistory(poolId)` | Browse pools, APY, capacity, risk, originator, TVL history |
 | `kasu.deposits`   | `deposit()`, `withdraw()`, `withdrawMax()`, `buildKycParams()`, `isClearingPending()`                                   | Submit transactions             |
 | `kasu.portfolio`  | `getPositions()`, `getYieldHistory()`, `getTransactionHistory()`, `getRequestStates()`                                  | Lender balances, yield, per-cycle earnings (net, in the chain's own stable token), history |
 | `kasu.flows`      | `deposit(ports)`, `withdraw(ports?)`                                                                                    | Headless transaction pipelines  |
@@ -141,6 +141,20 @@ deployment's own stable token (AUDD on XDC AUDD — convert before showing USD);
 slightly more than lifetime interest (up to about 0.2 %, top-ups are valued at
 today's share price), so show "earned to date" from the lifetime figure, not
 from the sum of the bars.
+
+`kasu.strategies.getPoolTvlHistory(poolId, { fromEpoch?, count? })` returns
+the strategy's TVL (total lent by everyone) as `{ epochId, timestamp, tvl,
+kind }[]`, ascending in time: one `kind: 'clearing'` point per finished
+clearing, read at the block it finished in, then one `kind: 'current'` point
+that equals `strategy.tvl.total` — so a chart's last point always matches its
+header. `tvl` is in the deployment's own stable token (AUDD on XDC AUDD —
+convert before showing USD) and is on-chain plus off-chain TVL, the same
+`poolTvl` sum `tvl.total` uses; `timestamp` is unix seconds. Plot by
+`timestamp`, not `epochId`: epoch numbers can jump, and clearings run in one
+block share a point in time. The off-chain part at old blocks needs an RPC
+that serves PAST state: built-in chains carry one (`historyRpcUrl`), and
+`Kasu.create({ historyProvider })` or `configOverrides.historyRpcUrl` replaces
+it. A failed past-state read throws; it never becomes 0.
 
 ## Domain helpers
 

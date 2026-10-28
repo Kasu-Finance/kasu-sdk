@@ -16,6 +16,13 @@ const XDC_RPC_URLS: string[] = [
 ];
 
 /**
+ * XDC RPC that serves PAST state, for `getPoolTvlHistory` (verified with
+ * `externalTVLOfPool` at old blocks). Not `rpc.xdcrpc.com`, which refuses
+ * older blocks, and never `rpc.xdc.org` / `erpc.xdc.org`.
+ */
+const XDC_HISTORY_RPC_URL = 'https://rpc.primenumbers.xyz/';
+
+/**
  * Built-in chain configurations for Kasu-supported networks.
  *
  * Usage:
@@ -59,6 +66,7 @@ export const CHAIN_CONFIGS: Record<'base' | 'xdc' | 'xdc-usdc' | 'plume', ChainC
             'https://base-rpc.publicnode.com',
             'https://mainnet.base.org',
         ],
+        historyRpcUrl: 'https://mainnet.base.org',
         blockExplorerUrl: 'https://basescan.org',
     },
 
@@ -100,6 +108,7 @@ export const CHAIN_CONFIGS: Record<'base' | 'xdc' | 'xdc-usdc' | 'plume', ChainC
             currencyCode: 'AUD',
         },
         rpcUrls: XDC_RPC_URLS,
+        historyRpcUrl: XDC_HISTORY_RPC_URL,
         blockExplorerUrl: 'https://xdcscan.com',
     },
 
@@ -134,6 +143,7 @@ export const CHAIN_CONFIGS: Record<'base' | 'xdc' | 'xdc-usdc' | 'plume', ChainC
             currencyCode: 'USD',
         },
         rpcUrls: XDC_RPC_URLS,
+        historyRpcUrl: XDC_HISTORY_RPC_URL,
         blockExplorerUrl: 'https://xdcscan.com',
     },
 

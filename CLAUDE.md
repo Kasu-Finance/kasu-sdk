@@ -92,6 +92,7 @@ src/
 │   ├── fixed-term.ts    # Allowlist-aware fixed-term configs, lock arithmetic
 │   ├── yields.ts        # Net weekly/daily/accrued interest, annual projection
 │   ├── yield-history.ts # Settled per-epoch NET yield: the one formula, aggregation
+│   ├── pool-tvl.ts      # poolTvl: the one TVL definition; the TVL history entry
 │   ├── batch-proof.ts   # Deposit-batch pinning + receipt proofs (money path)
 │   ├── sponsored-calls.ts # Single-call LPM encoders + relay kinds/selectors
 │   └── explorer-urls.ts # Validated block-explorer tx / address links
@@ -216,6 +217,7 @@ export interface SdkConfigOptions {
     isLiteDeployment?: boolean; // default: false
     poolMetadataMapping?: Record<string, string>;
     stableAssetDecimals?: number; // default: 6
+    historyRpcUrl?: string; // past-state RPC for getPoolTvlHistory; default ''
 }
 ```
 
@@ -267,6 +269,12 @@ const kasu = Kasu.create({
   Never concatenate paths onto it: `explorerTxUrl` / `explorerAddressUrl`
   (`domain/explorer-urls.ts`) validate the hash or address first and throw on
   anything else.
+- `historyRpcUrl` — an RPC that SERVES PAST STATE, used only by
+  `getPoolTvlHistory` for `ExternalTVL.externalTVLOfPool` at old blocks
+  (Base `mainnet.base.org`, XDC `rpc.primenumbers.xyz`). It is never
+  `rpcUrls[0]` by assumption: `base-rpc.publicnode.com` refuses old state,
+  and ethers v5 reports that refusal as a "call exception". `Kasu.create({
+  historyProvider })` wins over it, and `connect` keeps it.
 - `retired` — true for a wound-down deployment. It has no default RPC, so a
   read-only `Kasu.create` on it throws.
 
@@ -336,6 +344,7 @@ they were duplicated across the applications, and the copies drifted.
 | `fixed-term.ts`           | Fixed-term configs a wallet may select (allowlist-aware), lock days / months     |
 | `yields.ts`               | Weekly / daily / per-pool accrued interest NET of the fee, annual projection      |
 | `yield-history.ts`        | `epochTrancheYield` (the per-epoch formula), `aggregateYieldHistory` — net only   |
+| `pool-tvl.ts`             | `poolTvl` — THE TVL definition (on-chain + off-chain), `PoolTvlHistoryEntry`      |
 | `batch-proof.ts`          | Pin a deposit batch to its run; prove a deposit (or one executed operation) in a handleOps receipt |
 | `sponsored-calls.ts`      | Encode the single calls a sponsored relay carries (LPM requests, stable `transfer`), with their `kind` |
 | `explorer-urls.ts`        | `explorerTxUrl` / `explorerAddressUrl` — explorer links from a validated hash or address only |
@@ -352,6 +361,22 @@ the computed figure; never take the fee off it again. There is deliberately
 no gross: the subgraph keeps only today's fee. A lock whose first snapshot is
 tagged after its start epoch reads its `initialTrancheShares` for the missing
 snapshot, in both paths. Missing-schema errors become `[]` only on Lite.
+
+`pool-tvl.ts` holds the ONE TVL definition: `poolTvl(onChain, offChain)`, the
+subgraph's `lendingPool.balance` plus `ExternalTVL.externalTVLOfPool`, both in
+display units of the deployment's stable token. `getPoolOverview`
+(`totalValueLocked.total`) and `getPoolTvlHistory` (every point) call it.
+The history (`services/DataService/tvl-history.ts`) reads the balance with
+subgraph time-travel (`block: { number: endBlockNumber }`, one alias per
+DISTINCT block, a hundred per request) and the off-chain amount at the same
+block through the history provider, at most eight reads in flight, each
+retried twice with back-off. Before the `ExternalTVL` contract existed the
+off-chain part is 0, decided by `getCode` (a binary search over the clearing
+blocks) — never by catching a revert. Every other failed read throws. The
+series ends with a `current` point read now, so it equals
+`totalValueLocked.total`. Points are ordered by block: XDC AUDD's first
+clearing is numbered 1, a week before epoch 88. Missing-schema errors become
+`[]` only on Lite (`isEmptyHistoryError`, now in `services/shared.ts`).
 
 `partners.ts` also owns each partner's `region` and `getStrategyRegion` — the
 word a lender SIGNS in the loan-agreement message. It must equal what every app

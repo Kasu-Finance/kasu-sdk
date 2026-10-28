@@ -1,6 +1,8 @@
+import { PoolTvlHistoryEntry } from '../domain/pool-tvl';
 import { selectVisiblePools } from '../domain/pools';
 import { pickShortDescription } from '../domain/strategy-summary';
 import { DataService } from '../services/DataService/data-service';
+import { PoolTvlHistoryOptions } from '../services/DataService/tvl-history';
 import {
     PoolDelegateProfileAndHistory,
     PoolOverview,
@@ -147,6 +149,28 @@ export class StrategiesFacade {
      */
     async getPerformanceFeePercent(): Promise<number> {
         return await this._dataService.getPerformanceFee();
+    }
+
+    /**
+     * The strategy's TVL (total lent by everyone) at every cycle boundary,
+     * then as of now — the data behind a TVL chart. Ascending in time; the
+     * last point (`kind: 'current'`) equals `strategy.tvl.total`.
+     *
+     * `tvl` is in display units of the deployment's OWN stable token (USDC on
+     * Base and XDC USDC, AUDD on XDC AUDD); `timestamp` is unix SECONDS.
+     * `{ count }` = the newest `count` epochs, `{ fromEpoch }` = from that
+     * epoch on; a malformed option throws `RangeError` before any network
+     * read. See `DataService.getPoolTvlHistory` for the reads and the cost.
+     *
+     * ```ts
+     * const points = await kasu.strategies.getPoolTvlHistory(poolId, { count: 52 });
+     * ```
+     */
+    async getPoolTvlHistory(
+        poolId: string,
+        options: PoolTvlHistoryOptions = {},
+    ): Promise<PoolTvlHistoryEntry[]> {
+        return await this._dataService.getPoolTvlHistory(poolId, options);
     }
 
     /**

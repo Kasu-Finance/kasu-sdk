@@ -50,6 +50,15 @@ export interface SdkConfigOptions {
      * @default 6
      */
     stableAssetDecimals?: number;
+    /**
+     * An RPC URL that SERVES PAST STATE (an archive node), used only by
+     * `DataService.getPoolTvlHistory` to read the off-chain TVL at old
+     * blocks. A pruned node refuses those reads (some answer as if the call
+     * reverted), so this is never the default read RPC. An explicit
+     * `historyProvider` passed to `KasuSdk` / `Kasu.create` wins over it.
+     * @default '' — none
+     */
+    historyRpcUrl?: string;
 }
 
 export class SdkConfig {
@@ -61,6 +70,8 @@ export class SdkConfig {
     isLiteDeployment: boolean;
     poolMetadataMapping: Record<string, string>;
     stableAssetDecimals: number;
+    /** See `SdkConfigOptions.historyRpcUrl`. `''` when none. */
+    historyRpcUrl: string;
 
     constructor(options: SdkConfigOptions) {
         this.subgraphUrl = options.subgraphUrl;
@@ -77,5 +88,6 @@ export class SdkConfig {
         this.isLiteDeployment = options.isLiteDeployment ?? false;
         this.poolMetadataMapping = options.poolMetadataMapping ?? {};
         this.stableAssetDecimals = options.stableAssetDecimals ?? 6;
+        this.historyRpcUrl = options.historyRpcUrl ?? '';
     }
 }
