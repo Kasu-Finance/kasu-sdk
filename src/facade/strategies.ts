@@ -154,13 +154,15 @@ export class StrategiesFacade {
     /**
      * The strategy's TVL (total lent by everyone) at every cycle boundary,
      * then as of now — the data behind a TVL chart. Ascending in time; the
-     * last point (`kind: 'current'`) equals `strategy.tvl.total`.
+     * last point (`kind: 'current'`) equals `strategy.tvl.total` when both
+     * calls' reads succeed (see `PoolTvlHistoryEntry`).
      *
      * `tvl` is in display units of the deployment's OWN stable token (USDC on
      * Base and XDC USDC, AUDD on XDC AUDD); `timestamp` is unix SECONDS.
      * `{ count }` = the newest `count` epochs, `{ fromEpoch }` = from that
-     * epoch on; a malformed option throws `RangeError` before any network
-     * read. See `DataService.getPoolTvlHistory` for the reads and the cost.
+     * epoch on; `timeoutMs` (default 30 s) and `signal` bound the call. A
+     * malformed option throws before any network read. See
+     * `DataService.getPoolTvlHistory` for the reads, the cost and the errors.
      *
      * ```ts
      * const points = await kasu.strategies.getPoolTvlHistory(poolId, { count: 52 });

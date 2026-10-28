@@ -46,6 +46,11 @@ export type {
 export type { YieldHistoryOptions } from './services/Portfolio/yield-history';
 
 export type { PoolTvlHistoryOptions } from './services/DataService/tvl-history';
+export {
+    PastStateUnavailableError,
+    PoolTvlHistoryAbortedError,
+    PoolTvlHistoryTimeoutError,
+} from './services/DataService/tvl-history';
 export { NO_HISTORY_PROVIDER_MESSAGE } from './services/DataService/data-service';
 
 export type {

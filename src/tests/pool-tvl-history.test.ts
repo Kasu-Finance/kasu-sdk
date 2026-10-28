@@ -3,7 +3,7 @@
  * history RPCs. OPT-IN — it runs only under `LIVE_TESTS=1`
  * (`npm run test:live`), so a network problem can never fail a pull request.
  *
- * It discovers the pools through `getVisible()` rather than naming any, and
+ * It discovers the pools through `getAll()` rather than naming any, and
  * checks the one property that matters to a chart: the last point equals the
  * strategy's own `tvl.total`, and the series is ascending in time.
  */
@@ -16,7 +16,7 @@ const CHAINS: SupportedChain[] = ['base', 'xdc', 'xdc-usdc'];
 
 (live ? describe : describe.skip)('live network — pool TVL history', () => {
     it.each(CHAINS)(
-        '%s: every visible strategy ends at its current TVL',
+        '%s: every strategy ends at its current TVL',
         async (chain) => {
             const kasu = Kasu.create({ chain });
             const strategies = await kasu.strategies.getAll();

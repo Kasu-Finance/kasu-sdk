@@ -49,14 +49,22 @@ import {
 } from './subgraph-types';
 import {
     buildPoolTvlHistory,
+    Cancellation,
+    ClearingsScope,
+    createOffChainTvlReader,
     distinctBlocks,
     fetchOffChainTvlAtBlocks,
     fetchPoolBalancesAtBlocks,
     fetchPoolClearings,
+    GraphRequest,
     OffChainTvlReader,
+    PastBlockCache,
     PoolTvlHistoryOptions,
     resolvePoolTvlHistoryWindow,
-    retryingReader,
+    runCancellable,
+    TVL_HISTORY_CACHE_DEPTH,
+    TVL_HISTORY_DEFAULT_TIMEOUT_MS,
+    TVL_HISTORY_RPC_TIMEOUT_MS,
     validatePoolTvlHistoryOptions,
 } from './tvl-history';
 import {
@@ -75,7 +83,7 @@ import {
 
 /** Thrown by `getPoolTvlHistory` when no provider that serves past state is configured. */
 export const NO_HISTORY_PROVIDER_MESSAGE =
-    'getPoolTvlHistory: no history provider; pass historyProvider or set historyRpcUrl to an RPC that serves past state';
+    'getPoolTvlHistory: no history provider; pass historyProvider or set historyRpcUrls to RPCs that serve past state';
 
 export class DataService {
     private readonly _graph: GraphQLClient;
@@ -83,15 +91,18 @@ export class DataService {
     private readonly _systemVariablesAbi: ISystemVariablesAbi;
     private readonly _directus: KasuDirectusClient;
     private _directusPoolOverview: PoolOverviewDirectus[] | undefined;
-    private _historyProvider: Provider | undefined;
-    private readonly _readProvider: Provider | undefined;
+    private readonly _explicitHistoryProvider: Provider | undefined;
+    private _builtHistoryProviders: Provider[] | undefined;
+    /** Immutable past-block reads, kept for the life of this instance. */
+    private readonly _tvlHistoryCache = new PastBlockCache();
 
     /**
      * @param historyProvider - a provider that SERVES PAST STATE (an archive
      * RPC), used only by `getPoolTvlHistory` for the off-chain TVL at old
-     * blocks. Without one, `SdkConfig.historyRpcUrl` is used; with neither,
-     * that one call throws `NO_HISTORY_PROVIDER_MESSAGE`. Never the default
-     * provider: a pruned node refuses old blocks.
+     * blocks. Without one, providers are built on `SdkConfig.historyRpcUrls`
+     * (tried in order); with neither, that one call throws
+     * `NO_HISTORY_PROVIDER_MESSAGE`. Never the default provider: a pruned
+     * node refuses old blocks.
      */
     constructor(
         private _kasuConfig: SdkConfig,
@@ -107,10 +118,7 @@ export class DataService {
             signerOrProvider,
         );
         this._graph = new GraphQLClient(_kasuConfig.subgraphUrl);
-        this._historyProvider = historyProvider;
-        this._readProvider = Signer.isSigner(signerOrProvider)
-            ? signerOrProvider.provider
-            : signerOrProvider;
+        this._explicitHistoryProvider = historyProvider;
 
         this._directus = createDirectusClient(_kasuConfig.directusUrl);
     }
@@ -240,36 +248,47 @@ export class DataService {
      *
      * One `clearing` point per FINISHED clearing, read at the block it
      * finished in (`LendingPoolClearing.endBlockNumber`), then one `current`
-     * point at the latest block. Every point is `poolTvl(onChain, offChain)`,
-     * the definition `getPoolOverview` uses for `totalValueLocked.total`:
+     * point. Every point is `poolTvl(onChain, offChain)`, the definition
+     * `getPoolOverview` uses for `totalValueLocked.total`:
      *
      * - on-chain: `lendingPool.balance` from the subgraph, read with
      *   time-travel queries (`block: { number }`);
      * - off-chain: `ExternalTVL.externalTVLOfPool(pool)` at the same block,
-     *   through the HISTORY provider (see the constructor). 0 before the
-     *   contract was deployed (decided by `getCode`); any failed read throws.
+     *   through the HISTORY providers (see the constructor). 0 before the
+     *   contract was deployed (decided by `getCode`, and only if the same
+     *   provider shows the pool's own code there); any failed read throws.
      *
-     * So the last point always equals today's `totalValueLocked.total`.
+     * The `current` point mixes two sources: the subgraph's latest balance
+     * (and its latest block time) and `externalTVLOfPool` at `latest` on the
+     * history provider. `getPoolOverview` reads the same two, the off-chain
+     * one on the default provider, so the last point equals
+     * `totalValueLocked.total` when both reads succeed. They can differ when
+     * `getPoolOverview`'s off-chain read FAILS — it then falls back to 0 —
+     * or when the figure moves between the two calls.
      *
      * Units: `tvl` in display units of the deployment's own stable token
      * (USDC on Base and XDC USDC, AUDD on XDC AUDD); `timestamp` in unix
      * seconds. Ascending in time. See `PoolTvlHistoryEntry`.
      *
      * Cost: one subgraph request for the clearings (per thousand), one per
-     * hundred distinct clearing blocks, a `currentEpochNumber` read; then, on
-     * the history provider, one `externalTVLOfPool` per distinct block plus
-     * the latest, and one to about log2(n) `getCode`s — at most
-     * `TVL_HISTORY_RPC_CONCURRENCY` in flight.
+     * hundred distinct uncached clearing blocks, a `currentEpochNumber` read;
+     * then, on the history providers, one `externalTVLOfPool` per distinct
+     * uncached block plus the latest, and one to about log2(n) `getCode`s —
+     * at most `TVL_HISTORY_RPC_CONCURRENCY` in flight. Final blocks are
+     * cached on this instance, so a second call reads only what is new.
+     * `timeoutMs` (default 30 s) bounds the whole call.
      *
      * `[]` for a pool the subgraph does not know, for a window with no epoch
      * in it, and on a LITE deployment whose subgraph lacks the entities. On a
      * full deployment that schema error throws, like every network, indexing
      * or past-state failure.
      *
-     * @throws RangeError on a malformed `fromEpoch` / `count`, TypeError on a
-     * pool id that is not an address, and `NO_HISTORY_PROVIDER_MESSAGE` when
-     * the deployment has an `ExternalTVL` contract but no history provider —
-     * all before any network read.
+     * @throws RangeError / TypeError on a malformed option or a pool id that
+     * is not an address, and `NO_HISTORY_PROVIDER_MESSAGE` when the
+     * deployment has an `ExternalTVL` contract but no history provider — all
+     * before any network read. `PoolTvlHistoryTimeoutError` /
+     * `PoolTvlHistoryAbortedError` on the deadline or the signal,
+     * `PastStateUnavailableError` from a pruned history provider.
      */
     async getPoolTvlHistory(
         poolId: string,
@@ -282,23 +301,68 @@ export class DataService {
             );
         }
         const pool = poolId.toLowerCase();
-        const reader = this._offChainTvlReader(pool);
-        const graph = <T>(
+        const externalTvl = this._externalTvlAddress();
+        const rpcs = externalTvl ? this._historyRpcs() : [];
+        if (externalTvl && rpcs.length === 0) {
+            throw new Error(NO_HISTORY_PROVIDER_MESSAGE);
+        }
+
+        return await runCancellable(
+            options.timeoutMs ?? TVL_HISTORY_DEFAULT_TIMEOUT_MS,
+            options.signal,
+            (cancellation) =>
+                this._readPoolTvlHistory(
+                    pool,
+                    options,
+                    externalTvl
+                        ? this._createOffChainTvlReader({
+                              externalTvl,
+                              pool,
+                              rpcs,
+                              cancellation,
+                          })
+                        : null,
+                    externalTvl ?? '',
+                    cancellation,
+                ),
+        );
+    }
+
+    private async _readPoolTvlHistory(
+        pool: string,
+        options: PoolTvlHistoryOptions,
+        reader: OffChainTvlReader | null,
+        externalTvl: string,
+        cancellation: Cancellation,
+    ): Promise<PoolTvlHistoryEntry[]> {
+        const graph: GraphRequest = <T>(
             document: string,
             variables: Record<string, unknown>,
-        ): Promise<T> => this._graph.request<T>(document, variables);
+            signal?: AbortSignal,
+        ): Promise<T> =>
+            this._graph.request<T>({ document, variables, signal });
+        const scope: ClearingsScope =
+            options.fromEpoch === undefined && options.count !== undefined
+                ? { kind: 'newest', count: options.count }
+                : { kind: 'from', fromEpoch: options.fromEpoch ?? 0 };
 
         try {
             const [currentEpochNumber, { clearings, snapshot }] =
                 await Promise.all([
                     this._systemVariablesAbi.currentEpochNumber(),
-                    fetchPoolClearings(graph, pool, options.fromEpoch ?? 0),
+                    fetchPoolClearings(graph, pool, scope, cancellation),
                 ]);
             const currentEpoch = currentEpochNumber.toNumber();
 
             const window = resolvePoolTvlHistoryWindow(options, currentEpoch);
             const poolNow = snapshot.pool;
             if (!window || !poolNow) return [];
+            const head = snapshot.meta?.block;
+            if (!head || typeof head.timestamp !== 'number') {
+                throw new Error(
+                    'getPoolTvlHistory: the subgraph returned no latest block time',
+                );
+            }
 
             const inWindow = clearings.filter(
                 (c) =>
@@ -307,24 +371,27 @@ export class DataService {
             );
             const blocks = distinctBlocks(inWindow);
             const withCurrent = window.toEpoch >= currentEpoch;
+            const cacheable = (block: number): boolean =>
+                block <= head.number - TVL_HISTORY_CACHE_DEPTH;
 
-            const [{ balances }, offChainRead, currentTime] =
-                await Promise.all([
-                    fetchPoolBalancesAtBlocks(graph, pool, blocks),
-                    reader
-                        ? fetchOffChainTvlAtBlocks(reader, blocks, {
-                              withLatest: withCurrent,
-                          })
-                        : {
-                              offChain: new Map(
-                                  blocks.map((b) => [b, BigNumber.from(0)]),
-                              ),
-                              latest: null,
-                          },
-                    withCurrent
-                        ? this._latestBlockTime(snapshot.meta)
-                        : Promise.resolve(0),
-                ]);
+            const [balances, offChainRead] = await Promise.all([
+                this._balancesAtBlocks(graph, pool, blocks, cacheable, cancellation),
+                reader
+                    ? fetchOffChainTvlAtBlocks(reader, blocks, {
+                          withLatest: withCurrent,
+                          cancellation,
+                          cache: this._tvlHistoryCache,
+                          cacheKey: (kind, block) =>
+                              `${kind}|${externalTvl}|${pool}|${String(block)}`,
+                          cacheable,
+                      })
+                    : {
+                          offChain: new Map(
+                              blocks.map((b) => [b, BigNumber.from(0)]),
+                          ),
+                          latest: null,
+                      },
+            ]);
 
             return buildPoolTvlHistory({
                 clearings: inWindow,
@@ -333,7 +400,7 @@ export class DataService {
                 current: withCurrent
                     ? {
                           epochId: currentEpoch,
-                          timestamp: currentTime,
+                          timestamp: head.timestamp,
                           balance: poolNow.balance,
                           offChain: offChainRead.latest ?? BigNumber.from(0),
                       }
@@ -348,61 +415,74 @@ export class DataService {
         }
     }
 
-    /**
-     * The past-state reads of `ExternalTVL` for one pool, on the history
-     * provider. `null` when the deployment has no `ExternalTVL` contract —
-     * `getPoolOverview` reads its off-chain TVL as 0 there too.
-     */
-    private _offChainTvlReader(poolId: string): OffChainTvlReader | null {
+    /** The pool's balance at each block: cached final blocks, then one batch. */
+    private async _balancesAtBlocks(
+        graph: GraphRequest,
+        pool: string,
+        blocks: readonly number[],
+        cacheable: (block: number) => boolean,
+        cancellation: Cancellation,
+    ): Promise<Map<number, string>> {
+        const key = (block: number): string =>
+            `balance|${this._kasuConfig.subgraphUrl}|${pool}|${String(block)}`;
+        const balances = new Map<number, string>();
+        const missing: number[] = [];
+        for (const block of blocks) {
+            const hit = cacheable(block)
+                ? this._tvlHistoryCache.get<string>(key(block))
+                : undefined;
+            if (hit === undefined) missing.push(block);
+            else balances.set(block, hit);
+        }
+        if (missing.length > 0) {
+            const read = await fetchPoolBalancesAtBlocks(
+                graph,
+                pool,
+                missing,
+                cancellation,
+            );
+            for (const [block, balance] of read.balances) {
+                balances.set(block, balance);
+                if (cacheable(block)) this._tvlHistoryCache.set(key(block), balance);
+            }
+        }
+        return balances;
+    }
+
+    /** `null` when the deployment has no `ExternalTVL` contract. */
+    private _externalTvlAddress(): string | null {
         const address = this._kasuConfig.contracts.ExternalTVL;
         if (!address || /^0x0{40}$/i.test(address)) return null;
-
-        const provider = this._resolveHistoryProvider();
-        if (!provider) throw new Error(NO_HISTORY_PROVIDER_MESSAGE);
-
-        const contract = KasuPoolExternalTVLAbi__factory.connect(
-            address,
-            provider,
-        );
-        return retryingReader({
-            readAt: (block) =>
-                contract.externalTVLOfPool(poolId, { blockTag: block }),
-            hasCodeAt: async (block) =>
-                (await provider.getCode(address, block)) !== '0x',
-        });
+        return address.toLowerCase();
     }
 
-    private _resolveHistoryProvider(): Provider | undefined {
-        if (!this._historyProvider && this._kasuConfig.historyRpcUrl) {
+    /** Seam for tests: the real reader over the history RPCs. */
+    private _createOffChainTvlReader(
+        args: Parameters<typeof createOffChainTvlReader>[0],
+    ): OffChainTvlReader {
+        return createOffChainTvlReader(args);
+    }
+
+    /**
+     * The history RPCs, in fallback order: the explicit provider, else ONE
+     * provider per `historyRpcUrls` entry — built here and nowhere else,
+     * pinned to `SdkConfig.chainId` when known, each with a per-call timeout.
+     * Built once per instance.
+     */
+    private _historyRpcs(): Provider[] {
+        if (this._explicitHistoryProvider) return [this._explicitHistoryProvider];
+        if (!this._builtHistoryProviders) {
             // Through the `ethers` namespace, so the consumer's own build
             // (Node or browser) is used — see `defaultProvider` in the facade.
-            this._historyProvider = new providers.StaticJsonRpcProvider(
-                this._kasuConfig.historyRpcUrl,
+            this._builtHistoryProviders = this._kasuConfig.historyRpcUrls.map(
+                (url) =>
+                    new providers.StaticJsonRpcProvider(
+                        { url, timeout: TVL_HISTORY_RPC_TIMEOUT_MS },
+                        this._kasuConfig.chainId,
+                    ),
             );
         }
-        return this._historyProvider;
-    }
-
-    /** Unix seconds of the subgraph's latest indexed block. */
-    private async _latestBlockTime(
-        meta:
-            | { block: { number: number; timestamp: number | null } }
-            | null
-            | undefined,
-    ): Promise<number> {
-        if (!meta) {
-            throw new Error('getPoolTvlHistory: the subgraph returned no _meta block');
-        }
-        if (typeof meta.block.timestamp === 'number') {
-            return meta.block.timestamp;
-        }
-        const provider = this._resolveHistoryProvider() ?? this._readProvider;
-        if (!provider) {
-            throw new Error(
-                'getPoolTvlHistory: the subgraph gave no block time and no provider is available to read it',
-            );
-        }
-        return (await provider.getBlock(meta.block.number)).timestamp;
+        return this._builtHistoryProviders;
     }
 
     async getPoolOverview(

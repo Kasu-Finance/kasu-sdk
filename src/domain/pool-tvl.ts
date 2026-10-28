@@ -27,10 +27,12 @@ export function poolTvl(onChainBalance: string, offChainTvl: string): number {
  * - `kind: 'clearing'` — the TVL as it stood at the end of the block in which
  *   that epoch's clearing finished (`LendingPoolClearing.endBlockNumber`):
  *   accepted deposits and withdrawals and the applied interest included.
- * - `kind: 'current'` — the closing "as of now" point: the same figure read at
- *   the subgraph's latest indexed block. It equals today's
- *   `PoolOverview.totalValueLocked.total`, so a chart's last point always
- *   equals the header above it.
+ * - `kind: 'current'` — the closing "as of now" point, from two sources: the
+ *   subgraph's latest balance (and its latest block time) and
+ *   `externalTVLOfPool` at `latest` on the history provider. It equals
+ *   today's `PoolOverview.totalValueLocked.total` when both that call's reads
+ *   and these succeed; `getPoolOverview` falls back to an off-chain 0 when its
+ *   own read fails, and the figure can move between the two calls.
  */
 export interface PoolTvlHistoryEntry {
     /**

@@ -172,8 +172,9 @@ export class Kasu {
             stableAssetDecimals:
                 overrides.stableAssetDecimals ??
                 stableAssetOf(chainConfig)?.decimals,
-            historyRpcUrl:
-                overrides.historyRpcUrl ?? chainConfig.historyRpcUrl,
+            historyRpcUrls:
+                overrides.historyRpcUrls ?? chainConfig.historyRpcUrls,
+            chainId: overrides.chainId ?? chainConfig.chainId,
         });
 
         const signerOrProvider =
@@ -185,19 +186,10 @@ export class Kasu {
                     : chainConfig.name,
             );
 
-        // An explicit provider wins; otherwise one on the configured history
-        // RPC, pinned to the chain id like the default read provider.
-        const historyProvider =
-            options.historyProvider ??
-            (sdkConfig.historyRpcUrl
-                ? new providers.StaticJsonRpcProvider(
-                      sdkConfig.historyRpcUrl,
-                      chainConfig.chainId,
-                  )
-                : undefined);
-
+        // An explicit history provider wins; otherwise DataService builds
+        // them from `historyRpcUrls`, pinned to `chainId` (the one place).
         const sdk = new KasuSdk(sdkConfig, signerOrProvider, {
-            historyProvider,
+            historyProvider: options.historyProvider,
         });
         return new Kasu(
             sdk,

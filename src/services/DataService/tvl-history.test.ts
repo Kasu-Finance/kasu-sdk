@@ -1,5 +1,7 @@
 import { BigNumber, providers, Wallet } from 'ethers';
+import { Interface } from 'ethers/lib/utils';
 
+import { KasuPoolExternalTVLAbi__factory } from '../../contracts';
 import { poolTvl, PoolTvlHistoryEntry } from '../../domain/pool-tvl';
 import { CHAIN_CONFIGS } from '../../facade/chain-configs';
 import { Kasu } from '../../facade/kasu';
@@ -7,16 +9,23 @@ import { SdkConfig } from '../../sdk-config';
 
 import { DataService, NO_HISTORY_PROVIDER_MESSAGE } from './data-service';
 import {
+    Cancellation,
+    createOffChainTvlReader,
     fetchPoolBalancesAtBlocks,
     firstBlockWithCode,
+    HistoryRpc,
     mapWithConcurrency,
-    OffChainTvlReader,
+    PastStateUnavailableError,
     poolBalancesAtBlocksQuery,
+    PoolTvlHistoryAbortedError,
+    PoolTvlHistoryTimeoutError,
     poolTvlClearingsQuery,
     resolvePoolTvlHistoryWindow,
-    retryingReader,
+    runCancellable,
     TVL_HISTORY_BLOCKS_PER_REQUEST,
+    TVL_HISTORY_RPC_ATTEMPTS,
     TVL_HISTORY_RPC_CONCURRENCY,
+    TVL_HISTORY_RPC_TIMEOUT_MS,
 } from './tvl-history';
 
 // ---------------------------------------------------------------------------
@@ -142,12 +151,116 @@ function stepAt<T>(steps: [number, T][], block: number): T | undefined {
     return found;
 }
 
+/** A cancellation that never fires, for the helpers called directly. */
+const NEVER_CANCELLED: Cancellation = {
+    signal: new AbortController().signal,
+    throwIfCancelled: () => undefined,
+};
+
+const EXTERNAL_TVL = CHAIN_CONFIGS.base.contracts.ExternalTVL.toLowerCase();
+const TVL_ABI = new Interface(KasuPoolExternalTVLAbi__factory.abi);
+
+interface FakeRpcOptions {
+    /** A pruned node: every getCode below this block answers '0x'. */
+    prunedBelow?: number;
+    /** getCode for the ExternalTVL contract rejects. */
+    failGetCode?: boolean;
+    /** Each call waits this long (ms). */
+    delayMs?: number;
+}
+
+/**
+ * A history RPC answering per block from the synthetic chain, as a node
+ * does: `eth_call` to an address without code returns '0x'.
+ */
+class FakeHistoryRpc implements HistoryRpc {
+    calls: { to: string; pool: string; blockTag: number | 'latest' }[] = [];
+    codes: { address: string; blockTag: number }[] = [];
+    inFlight = 0;
+    peak = 0;
+    callOverride?: (block: number | 'latest') => Promise<BigNumber>;
+
+    constructor(
+        private readonly state: ChainState,
+        private readonly options: FakeRpcOptions = {},
+    ) {}
+
+    async call(
+        transaction: { to: string; data: string },
+        blockTag: number | 'latest',
+    ): Promise<string> {
+        const [pool] = TVL_ABI.decodeFunctionData(
+            'externalTVLOfPool',
+            transaction.data,
+        ) as unknown as [string];
+        this.calls.push({
+            to: transaction.to.toLowerCase(),
+            pool: pool.toLowerCase(),
+            blockTag,
+        });
+        this.inFlight += 1;
+        this.peak = Math.max(this.peak, this.inFlight);
+        try {
+            await new Promise((resolve) =>
+                setTimeout(resolve, this.options.delayMs ?? 1),
+            );
+            if (this.callOverride) {
+                return TVL_ABI.encodeFunctionResult('externalTVLOfPool', [
+                    await this.callOverride(blockTag),
+                ]);
+            }
+            if (
+                transaction.to.toLowerCase() !== EXTERNAL_TVL ||
+                (blockTag !== 'latest' &&
+                    blockTag < this.state.externalDeployedAt)
+            ) {
+                return '0x';
+            }
+            const id = pool.toLowerCase();
+            const value =
+                blockTag === 'latest'
+                    ? this.state.offChainNow[id]
+                    : (stepAt(this.state.offChainSteps[id] ?? [], blockTag) ??
+                      0);
+            return TVL_ABI.encodeFunctionResult('externalTVLOfPool', [
+                BigNumber.from(value),
+            ]);
+        } finally {
+            this.inFlight -= 1;
+        }
+    }
+
+    getCode(address: string, blockTag: number): Promise<string> {
+        const lower = address.toLowerCase();
+        this.codes.push({ address: lower, blockTag });
+        if (
+            this.options.prunedBelow !== undefined &&
+            blockTag < this.options.prunedBelow
+        ) {
+            return Promise.resolve('0x');
+        }
+        if (lower === EXTERNAL_TVL) {
+            if (this.options.failGetCode) {
+                return Promise.reject(new Error('getCode: upstream exhausted'));
+            }
+            return Promise.resolve(
+                blockTag >= this.state.externalDeployedAt ? '0x6080' : '0x',
+            );
+        }
+        // A pool contract: deployed long before any clearing.
+        return Promise.resolve('0x6080');
+    }
+}
+
 interface Harness {
     service: DataService;
     graph: jest.Mock;
     reads: { readAt: (number | 'latest')[]; hasCodeAt: number[] };
     maxInFlight: () => number;
     currentEpochReads: jest.Mock;
+    rpc: FakeHistoryRpc;
+    sleeps: number[];
+    signals: (AbortSignal | undefined)[];
 }
 
 type GraphOverride = (
@@ -161,10 +274,12 @@ function harness(
         lite = false,
         graphOverride,
         readAtOverride,
+        rpcOptions = {},
     }: {
         lite?: boolean;
         graphOverride?: GraphOverride;
         readAtOverride?: (block: number | 'latest') => Promise<BigNumber>;
+        rpcOptions?: FakeRpcOptions;
     } = {},
 ): Harness {
     const config = new SdkConfig({
@@ -193,11 +308,15 @@ function harness(
             }
             if (document === poolTvlClearingsQuery) {
                 const pool = poolOf(variables.poolId);
-                const from = Number(variables.fromEpoch);
+                const gte = Number(variables.epochGte);
+                const lt = Number(variables.epochLt);
                 const first = Number(variables.first);
+                const desc = variables.direction === 'desc';
                 const clearings = (pool?.clearings ?? [])
-                    .filter((c) => c.epochId >= from)
-                    .sort((a, b) => a.epochId - b.epochId)
+                    .filter((c) => c.epochId >= gte && c.epochId < lt)
+                    .sort((a, b) =>
+                        desc ? b.epochId - a.epochId : a.epochId - b.epochId,
+                    )
                     .slice(0, first)
                     .map((c) => ({
                         epochId: String(c.epochId),
@@ -285,60 +404,81 @@ function harness(
         },
     );
 
-    const reads = {
-        readAt: [] as (number | 'latest')[],
-        hasCodeAt: [] as number[],
-    };
-    let inFlight = 0;
-    let peak = 0;
-    const offChainAt = (poolId: string, block: number | 'latest'): BigNumber =>
-        BigNumber.from(
-            block === 'latest'
-                ? state.offChainNow[poolId]
-                : (stepAt(state.offChainSteps[poolId] ?? [], block) ?? 0),
-        );
+    const rpc = new FakeHistoryRpc(state, rpcOptions);
+    if (readAtOverride) rpc.callOverride = readAtOverride;
+    const sleeps: number[] = [];
 
     const internals = service as unknown as {
         _graph: unknown;
         _systemVariablesAbi: unknown;
         _externalTvlAbi: unknown;
-        _offChainTvlReader: (poolId: string) => OffChainTvlReader | null;
+        _explicitHistoryProvider: unknown;
+        _createOffChainTvlReader: (
+            args: Parameters<typeof createOffChainTvlReader>[0],
+        ) => ReturnType<typeof createOffChainTvlReader>;
     };
-    internals._graph = { request: graph };
+    internals._graph = {
+        // The history passes one options object (with a signal); the
+        // pool overview passes (document, variables).
+        request: (
+            o:
+                | string
+                | {
+                      document: string;
+                      variables: Record<string, unknown>;
+                      signal?: AbortSignal;
+                  },
+            variables?: Record<string, unknown>,
+        ): Promise<unknown> => {
+            if (typeof o === 'string') {
+                return graph(o, variables ?? {}) as Promise<unknown>;
+            }
+            signals.push(o.signal);
+            return graph(o.document, o.variables) as Promise<unknown>;
+        },
+    };
+    const signals: (AbortSignal | undefined)[] = [];
     const currentEpochReads = jest.fn(() =>
         Promise.resolve(BigNumber.from(state.currentEpoch)),
     );
     internals._systemVariablesAbi = { currentEpochNumber: currentEpochReads };
     internals._externalTvlAbi = {
         externalTVLOfPool: (poolId: string) =>
-            Promise.resolve(offChainAt(poolId, 'latest')),
+            Promise.resolve(BigNumber.from(state.offChainNow[poolId])),
     };
-    internals._offChainTvlReader = (poolId: string): OffChainTvlReader => ({
-        readAt: async (block: number | 'latest'): Promise<BigNumber> => {
-            reads.readAt.push(block);
-            inFlight += 1;
-            peak = Math.max(peak, inFlight);
-            await new Promise((resolve) => setTimeout(resolve, 1));
-            inFlight -= 1;
-            if (readAtOverride) return readAtOverride(block);
-            if (block !== 'latest' && block < state.externalDeployedAt) {
-                // What a real node does before the contract existed —
-                // the history must never get here.
-                throw new Error('call revert exception; data="0x"');
-            }
-            return offChainAt(poolId, block);
+    // The REAL reader over a fake history RPC; only the back-off sleep is
+    // replaced, so a retry costs no wall-clock time.
+    internals._explicitHistoryProvider = rpc;
+    internals._createOffChainTvlReader = (
+        args,
+    ): ReturnType<typeof createOffChainTvlReader> =>
+        createOffChainTvlReader({
+            ...args,
+            sleep: (ms) => {
+                sleeps.push(ms);
+                return Promise.resolve();
+            },
+        });
+
+    const reads = {
+        get readAt(): (number | 'latest')[] {
+            return rpc.calls.map((c) => c.blockTag);
         },
-        hasCodeAt: (block: number): Promise<boolean> => {
-            reads.hasCodeAt.push(block);
-            return Promise.resolve(block >= state.externalDeployedAt);
+        get hasCodeAt(): number[] {
+            return rpc.codes
+                .filter((c) => c.address === EXTERNAL_TVL)
+                .map((c) => c.blockTag);
         },
-    });
+    };
 
     return {
         service,
         graph,
         reads,
-        maxInFlight: () => peak,
+        rpc,
+        sleeps,
+        signals,
+        maxInFlight: () => rpc.peak,
         currentEpochReads,
     };
 }
@@ -771,7 +911,7 @@ describe('getPoolTvlHistory — bounded reads', () => {
         expect(pages).toHaveLength(2);
         expect(pages[0][1].withSnapshot).toBe(true);
         expect(pages[1][1].withSnapshot).toBe(false);
-        expect(pages[1][1].fromEpoch).toBe(String(5 + 1_000));
+        expect(pages[1][1].epochGte).toBe(String(5 + 1_000));
     });
 });
 
@@ -826,35 +966,52 @@ describe('getPoolTvlHistory — history provider', () => {
         expect(history.at(-1)?.tvl).toBe(1_250_000.5);
     });
 
-    it('built-in chains ship a past-state RPC, never rpc.xdc.org', () => {
-        expect(CHAIN_CONFIGS.base.historyRpcUrl).toBe(
+    it('built-in chains ship past-state RPCs, never rpc.xdc.org nor the default read RPC', () => {
+        expect(CHAIN_CONFIGS.base.historyRpcUrls).toEqual([
             'https://mainnet.base.org',
-        );
-        expect(CHAIN_CONFIGS.xdc.historyRpcUrl).toBe(
+            'https://base.drpc.org',
+            'https://1rpc.io/base',
+        ]);
+        expect(CHAIN_CONFIGS.xdc.historyRpcUrls).toEqual([
             'https://rpc.primenumbers.xyz/',
-        );
-        expect(CHAIN_CONFIGS['xdc-usdc'].historyRpcUrl).toBe(
-            'https://rpc.primenumbers.xyz/',
+            'https://rpc.ankr.com/xdc',
+        ]);
+        expect(CHAIN_CONFIGS['xdc-usdc'].historyRpcUrls).toEqual(
+            CHAIN_CONFIGS.xdc.historyRpcUrls,
         );
         for (const entry of Object.values(CHAIN_CONFIGS)) {
-            expect(entry.historyRpcUrl ?? '').not.toMatch(
-                /(^|\/\/|\.)e?rpc\.xdc\.org/,
-            );
-            // The default read RPC refuses past state on Base; never reuse it.
-            if (entry.historyRpcUrl) {
-                expect(entry.historyRpcUrl).not.toBe(entry.rpcUrls[0]);
+            for (const url of entry.historyRpcUrls ?? []) {
+                expect(url).not.toMatch(/(^|\/\/|\.)e?rpc\.xdc\.org/);
+                // Base's default read RPC refuses past state.
+                if (entry === CHAIN_CONFIGS.base) {
+                    expect(url).not.toBe(entry.rpcUrls[0]);
+                }
             }
         }
     });
 
-    it('Kasu.create builds the history provider from the chain config', () => {
-        const kasu = Kasu.create({ chain: 'base' });
-        const history = (
-            kasu.services.DataService as unknown as {
-                _historyProvider: providers.StaticJsonRpcProvider;
+    const built = (k: Kasu): providers.StaticJsonRpcProvider[] =>
+        (
+            k.services.DataService as unknown as {
+                _historyRpcs: () => providers.StaticJsonRpcProvider[];
             }
-        )._historyProvider;
-        expect(history.connection.url).toBe('https://mainnet.base.org');
+        )._historyRpcs();
+
+    it('builds ONE provider per history URL, in order, pinned to the chain id, with a per-call timeout', () => {
+        const kasu = Kasu.create({ chain: 'base' });
+        const list = built(kasu);
+        expect(list.map((p) => p.connection.url)).toEqual(
+            CHAIN_CONFIGS.base.historyRpcUrls,
+        );
+        for (const p of list) {
+            expect(p.connection.timeout).toBe(TVL_HISTORY_RPC_TIMEOUT_MS);
+            expect(
+                (p as unknown as { _network?: { chainId: number } })._network
+                    ?.chainId,
+            ).toBe(8453);
+        }
+        // Built once per instance.
+        expect(built(kasu)[0]).toBe(list[0]);
     });
 
     it('an explicit historyProvider wins and survives connect()', () => {
@@ -863,31 +1020,28 @@ describe('getPoolTvlHistory — history provider', () => {
             8453,
         );
         const kasu = Kasu.create({ chain: 'base', historyProvider: mine });
-        const of = (k: Kasu): unknown =>
-            (k.services.DataService as unknown as { _historyProvider: unknown })
-                ._historyProvider;
-        expect(of(kasu)).toBe(mine);
+        expect(built(kasu)).toEqual([mine]);
         const signed = kasu.connect(
             Wallet.createRandom().connect(kasu.provider),
         );
-        expect(of(signed)).toBe(mine);
+        expect(built(signed)).toEqual([mine]);
     });
 
-    it('configOverrides.historyRpcUrl replaces the chain default', () => {
+    it('configOverrides.historyRpcUrls replaces the chain default', () => {
         const kasu = Kasu.create({
             chain: 'xdc',
             configOverrides: {
-                historyRpcUrl: 'https://example.invalid/xdc-archive',
+                historyRpcUrls: ['https://example.invalid/xdc-archive'],
             },
         });
-        const history = (
-            kasu.services.DataService as unknown as {
-                _historyProvider: providers.StaticJsonRpcProvider;
-            }
-        )._historyProvider;
-        expect(history.connection.url).toBe(
+        const list = built(kasu);
+        expect(list.map((p) => p.connection.url)).toEqual([
             'https://example.invalid/xdc-archive',
-        );
+        ]);
+        expect(
+            (list[0] as unknown as { _network?: { chainId: number } })._network
+                ?.chainId,
+        ).toBe(50);
     });
 });
 
@@ -912,6 +1066,7 @@ describe('tvl-history helpers', () => {
                 >[0],
                 POOL_A,
                 [100],
+                NEVER_CANCELLED,
             ),
         ).rejects.toThrow('no state for the pool at block 100');
     });
@@ -957,29 +1112,272 @@ describe('tvl-history helpers', () => {
             ),
         ).rejects.toThrow('boom');
     });
+});
 
-    it('retryingReader retries with back-off, then rethrows — never a value', async () => {
-        const sleeps: number[] = [];
-        let calls = 0;
-        const flaky = retryingReader(
-            {
-                readAt: () => {
-                    calls += 1;
-                    return calls < 3
-                        ? Promise.reject(new Error('429'))
-                        : Promise.resolve(BigNumber.from(7));
-                },
-                hasCodeAt: () => Promise.reject(new Error('down')),
-            },
-            {
-                sleep: (ms) => {
-                    sleeps.push(ms);
-                    return Promise.resolve();
-                },
-            },
+describe('the real history reader (createOffChainTvlReader)', () => {
+    it('every externalTVLOfPool call and every getCode carries the block it is for', async () => {
+        const { service, rpc } = harness(chain());
+        await service.getPoolTvlHistory(POOL_A);
+        // Deployed at 250: the clearing blocks with code are 300 and 400.
+        expect(rpc.calls.map((c) => c.blockTag).sort()).toEqual(
+            [300, 400, 'latest'].sort(),
         );
-        await expect(flaky.readAt(1)).resolves.toEqual(BigNumber.from(7));
-        expect(sleeps).toEqual([500, 1_000]);
-        await expect(flaky.hasCodeAt(1)).rejects.toThrow('down');
+        for (const call of rpc.calls) {
+            expect(call.to).toBe(EXTERNAL_TVL);
+            expect(call.pool).toBe(POOL_A);
+        }
+        const codeBlocks = rpc.codes.map((c) => c.blockTag);
+        expect(codeBlocks.length).toBeGreaterThan(0);
+        for (const block of codeBlocks) {
+            expect([100, 200, 300, 400]).toContain(block);
+        }
+        // The pruned-node check asks for the POOL's code at the no-code blocks.
+        expect(
+            rpc.codes
+                .filter((c) => c.address === POOL_A)
+                .map((c) => c.blockTag),
+        ).toEqual([100, 200]);
+    });
+
+    it('a getCode error throws — it is never read as "no contract"', async () => {
+        const { service, rpc } = harness(chain(), {
+            rpcOptions: { failGetCode: true },
+        });
+        await expect(service.getPoolTvlHistory(POOL_A)).rejects.toThrow(
+            'getCode: upstream exhausted',
+        );
+        expect(rpc.calls).toEqual([]);
+    });
+
+    it('retries with back-off, then throws the last error', async () => {
+        const { service, rpc, sleeps } = harness(chain(), {
+            readAtOverride: () =>
+                Promise.reject(new Error('429 Too Many Requests')),
+        });
+        await expect(service.getPoolTvlHistory(POOL_XDC)).rejects.toThrow(
+            '429 Too Many Requests',
+        );
+        const perBlock = rpc.calls.filter((c) => c.blockTag === 500);
+        expect(perBlock).toHaveLength(TVL_HISTORY_RPC_ATTEMPTS);
+        // Back-off doubles per attempt (reads run concurrently, so the
+        // sleeps of different blocks interleave).
+        expect(new Set(sleeps)).toEqual(new Set([500, 1_000]));
+    });
+
+    it('a retry that succeeds yields the value', async () => {
+        let failures = 2;
+        const { service } = harness(chain(), {
+            readAtOverride: (block) =>
+                block === 'latest' && failures-- > 0
+                    ? Promise.reject(new Error('transient'))
+                    : Promise.resolve(BigNumber.from(1_000_000)),
+        });
+        const history = await service.getPoolTvlHistory(POOL_STALLED);
+        expect(history.at(-1)?.tvl).toBe(1_522_520.916665 + 1);
+    });
+
+    it('falls back through the history RPCs in order', async () => {
+        const state = chain();
+        const downCall = jest.fn(() =>
+            Promise.reject(new Error('first is down')),
+        );
+        const down: HistoryRpc = {
+            call: downCall,
+            getCode: jest.fn(() => Promise.reject(new Error('first is down'))),
+        };
+        const up = new FakeHistoryRpc(state);
+        const reader = createOffChainTvlReader({
+            externalTvl: EXTERNAL_TVL,
+            pool: POOL_XDC,
+            rpcs: [down, up],
+            cancellation: NEVER_CANCELLED,
+            sleep: () => Promise.resolve(),
+        });
+        await expect(reader.readAt(600)).resolves.toEqual(
+            BigNumber.from(1_500_000_000_000),
+        );
+        await expect(reader.hasCodeAt(600)).resolves.toBe(true);
+        expect(downCall).toHaveBeenCalledTimes(1);
+        expect(up.calls.map((c) => c.blockTag)).toEqual([600]);
+    });
+
+    it('a call answered with "0x" (no contract) is an error, not 0', async () => {
+        const reader = createOffChainTvlReader({
+            externalTvl: EXTERNAL_TVL,
+            pool: POOL_XDC,
+            rpcs: [new FakeHistoryRpc(chain())],
+            cancellation: NEVER_CANCELLED,
+            sleep: () => Promise.resolve(),
+        });
+        await expect(reader.readAt(100)).rejects.toThrow();
+    });
+});
+
+describe('getPoolTvlHistory — a pruned history provider', () => {
+    it('throws PastStateUnavailableError instead of zeroing the off-chain TVL', async () => {
+        // A node that answers every old getCode with "0x": the ExternalTVL
+        // search would conclude "not deployed yet" for the old blocks.
+        const { service } = harness(chain(), {
+            rpcOptions: { prunedBelow: 350 },
+        });
+        await expect(service.getPoolTvlHistory(POOL_A)).rejects.toBeInstanceOf(
+            PastStateUnavailableError,
+        );
+    });
+
+    it('believes "not deployed" only when the pool has code there', async () => {
+        const { service, rpc } = harness(chain());
+        await expect(service.getPoolTvlHistory(POOL_A)).resolves.toHaveLength(
+            6,
+        );
+        expect(rpc.codes.some((c) => c.address === POOL_A)).toBe(true);
+    });
+});
+
+describe('getPoolTvlHistory — time limit and abort', () => {
+    it('rejects with PoolTvlHistoryTimeoutError and starts nothing after', async () => {
+        const { service, rpc } = harness(chain(), {
+            rpcOptions: { delayMs: 40 },
+        });
+        const started = Date.now();
+        await expect(
+            service.getPoolTvlHistory(POOL_A, { timeoutMs: 20 }),
+        ).rejects.toBeInstanceOf(PoolTvlHistoryTimeoutError);
+        expect(Date.now() - started).toBeLessThan(200);
+        const sent = rpc.calls.length + rpc.codes.length;
+        await new Promise((resolve) => setTimeout(resolve, 150));
+        // In-flight calls may finish; none may START after the deadline.
+        expect(rpc.calls.length + rpc.codes.length).toBe(sent);
+    });
+
+    it('aborts the in-flight subgraph requests through their signal', async () => {
+        const { service, signals } = harness(chain(), {
+            rpcOptions: { delayMs: 40 },
+        });
+        await expect(
+            service.getPoolTvlHistory(POOL_A, { timeoutMs: 20 }),
+        ).rejects.toBeInstanceOf(PoolTvlHistoryTimeoutError);
+        expect(signals.length).toBeGreaterThan(0);
+        for (const signal of signals) expect(signal?.aborted).toBe(true);
+    });
+
+    it('rejects with PoolTvlHistoryAbortedError when the signal fires', async () => {
+        const { service } = harness(chain(), { rpcOptions: { delayMs: 40 } });
+        const controller = new AbortController();
+        const pending = service.getPoolTvlHistory(POOL_A, {
+            signal: controller.signal,
+        });
+        setTimeout(() => {
+            controller.abort();
+        }, 10);
+        await expect(pending).rejects.toBeInstanceOf(
+            PoolTvlHistoryAbortedError,
+        );
+    });
+
+    it('an already-aborted signal rejects before any network read', async () => {
+        const { service, graph, rpc, currentEpochReads } = harness(chain());
+        const controller = new AbortController();
+        controller.abort();
+        await expect(
+            service.getPoolTvlHistory(POOL_A, { signal: controller.signal }),
+        ).rejects.toBeInstanceOf(PoolTvlHistoryAbortedError);
+        expect(graph).not.toHaveBeenCalled();
+        expect(currentEpochReads).not.toHaveBeenCalled();
+        expect(rpc.calls).toEqual([]);
+    });
+
+    it.each([
+        [{ timeoutMs: 0 }],
+        [{ timeoutMs: -5 }],
+        [{ timeoutMs: Number.NaN }],
+    ])('refuses %j before any network read', async (options) => {
+        const { service, graph } = harness(chain());
+        await expect(
+            service.getPoolTvlHistory(POOL_A, options),
+        ).rejects.toThrow(RangeError);
+        expect(graph).not.toHaveBeenCalled();
+    });
+
+    it('runCancellable clears its timer once the work settles', async () => {
+        jest.useFakeTimers();
+        try {
+            await expect(
+                runCancellable(1_000, undefined, () => Promise.resolve(7)),
+            ).resolves.toBe(7);
+            expect(jest.getTimerCount()).toBe(0);
+        } finally {
+            jest.useRealTimers();
+        }
+    });
+});
+
+describe('getPoolTvlHistory — reuse of past-block reads', () => {
+    it('a second call reads only what is not final yet', async () => {
+        const { service, graph, rpc } = harness(chain());
+        const first = await service.getPoolTvlHistory(POOL_A);
+        const graphCalls = graph.mock.calls.length;
+        const rpcCalls = rpc.calls.length;
+        const codeCalls = rpc.codes.length;
+
+        const second = await service.getPoolTvlHistory(POOL_A);
+        expect(second).toEqual(first);
+        const travel = (graph.mock.calls as [string][])
+            .slice(graphCalls)
+            .filter(([d]) => d.startsWith('query PoolTvlAtBlocks'));
+        expect(travel).toEqual([]);
+        // Only the moving "latest" read goes out again.
+        expect(rpc.calls.slice(rpcCalls).map((c) => c.blockTag)).toEqual([
+            'latest',
+        ]);
+        expect(rpc.codes.length).toBe(codeCalls);
+    });
+
+    it('never caches blocks near the head', async () => {
+        const state = chain();
+        state.latestBlock = 420; // block 400 is only 20 below the head
+        const { service, rpc } = harness(state);
+        await service.getPoolTvlHistory(POOL_A);
+        const before = rpc.calls.length;
+        await service.getPoolTvlHistory(POOL_A);
+        expect(
+            rpc.calls
+                .slice(before)
+                .map((c) => c.blockTag)
+                .sort(),
+        ).toEqual([400, 'latest'].sort());
+    });
+
+    it('keys the cache by pool: another pool reads its own blocks', async () => {
+        const { service, rpc } = harness(chain());
+        await service.getPoolTvlHistory(POOL_XDC);
+        const before = rpc.calls.length;
+        await service.getPoolTvlHistory(POOL_A);
+        expect(rpc.calls.slice(before).every((c) => c.pool === POOL_A)).toBe(
+            true,
+        );
+        expect(rpc.calls.length).toBeGreaterThan(before + 1);
+    });
+});
+
+describe('getPoolTvlHistory — a count window reads only the newest clearings', () => {
+    it('asks for the newest N, descending, in one page', async () => {
+        const { service, graph } = harness(chain());
+        const history = await service.getPoolTvlHistory(POOL_A, { count: 2 });
+        expect(history.map((p) => p.epochId)).toEqual([5, 6, 6]);
+        const pages = (
+            graph.mock.calls as [string, Record<string, unknown>][]
+        ).filter(([d]) => d === poolTvlClearingsQuery);
+        expect(pages).toHaveLength(1);
+        expect(pages[0][1]).toMatchObject({ direction: 'desc', first: 2 });
+    });
+
+    it('the subgraph without a latest block time is an error, not a guess', async () => {
+        const state = chain();
+        state.latestTime = null;
+        const { service } = harness(state);
+        await expect(service.getPoolTvlHistory(POOL_A)).rejects.toThrow(
+            'no latest block time',
+        );
     });
 });

@@ -13,7 +13,7 @@ import { UserLending } from './services/UserLending/user-lending';
 export interface KasuSdkOptions {
     /**
      * A provider that SERVES PAST STATE (an archive RPC), for
-     * `DataService.getPoolTvlHistory`. Wins over `SdkConfig.historyRpcUrl`.
+     * `DataService.getPoolTvlHistory`. Wins over `SdkConfig.historyRpcUrls`.
      */
     historyProvider?: Provider;
 }

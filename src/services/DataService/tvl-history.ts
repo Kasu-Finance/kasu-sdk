@@ -1,13 +1,15 @@
 import { BigNumber } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits, Interface } from 'ethers/lib/utils';
 import { gql } from 'graphql-request';
 
+import { KasuPoolExternalTVLAbi__factory } from '../../contracts';
 import { poolTvl, PoolTvlHistoryEntry } from '../../domain/pool-tvl';
 
 /**
- * Which part of a pool's TVL history to return. Epochs are counted in the
- * chain's numbering (`SystemVariables.currentEpochNumber`), and the newest
- * epoch is the CURRENT one, which the closing `current` point carries.
+ * Which part of a pool's TVL history to return, and how long to wait for it.
+ * Epochs are counted in the chain's numbering
+ * (`SystemVariables.currentEpochNumber`), and the newest epoch is the
+ * CURRENT one, which the closing `current` point carries.
  *
  * - neither field: every clearing, then the `current` point;
  * - `count` only: the newest `count` epochs, up to and including the current
@@ -22,6 +24,17 @@ export interface PoolTvlHistoryOptions {
     fromEpoch?: number;
     /** How many epochs. A positive integer. */
     count?: number;
+    /**
+     * The whole call's time limit, in MILLISECONDS. On expiry it rejects with
+     * `PoolTvlHistoryTimeoutError` and starts no further request.
+     * @default 30_000
+     */
+    timeoutMs?: number;
+    /**
+     * Abandons the call: it rejects with `PoolTvlHistoryAbortedError` and
+     * starts no further request. Already aborted = rejected before any read.
+     */
+    signal?: AbortSignal;
 }
 
 /** The resolved, inclusive epoch range; `null` when it is empty. */
@@ -48,14 +61,66 @@ export const TVL_HISTORY_BLOCKS_PER_REQUEST = 100;
 /** At most this many past-state RPC reads are in flight at once. */
 export const TVL_HISTORY_RPC_CONCURRENCY = 8;
 
+/** Attempts per past-state RPC read (each over every history RPC in turn). */
+export const TVL_HISTORY_RPC_ATTEMPTS = 3;
+
+/** Back-off before the second attempt; doubled for each one after. */
+export const TVL_HISTORY_RPC_RETRY_DELAY_MS = 500;
+
+/** Per-call timeout of the history providers the SDK builds itself. */
+export const TVL_HISTORY_RPC_TIMEOUT_MS = 10_000;
+
+/** Default `timeoutMs` of a whole `getPoolTvlHistory` call. */
+export const TVL_HISTORY_DEFAULT_TIMEOUT_MS = 30_000;
+
 /**
- * Throws `RangeError` on a malformed `fromEpoch` / `count`.
- * `getPoolTvlHistory` calls it BEFORE any network read.
+ * Blocks at least this far below the subgraph's head are treated as final
+ * and their reads are cached; nearer ones are read again every time.
+ */
+export const TVL_HISTORY_CACHE_DEPTH = 64;
+
+/** Entries per SDK instance before the cache starts again from empty. */
+export const TVL_HISTORY_CACHE_LIMIT = 20_000;
+
+/** `getPoolTvlHistory` took longer than its `timeoutMs`. */
+export class PoolTvlHistoryTimeoutError extends Error {
+    constructor(public readonly timeoutMs: number) {
+        super(`getPoolTvlHistory: timed out after ${String(timeoutMs)} ms`);
+        this.name = 'PoolTvlHistoryTimeoutError';
+    }
+}
+
+/** `getPoolTvlHistory` was abandoned through its `signal`. */
+export class PoolTvlHistoryAbortedError extends Error {
+    constructor() {
+        super('getPoolTvlHistory: aborted');
+        this.name = 'PoolTvlHistoryAbortedError';
+    }
+}
+
+/**
+ * A history provider answered a past block as if nothing were deployed — no
+ * code even for the pool, which cleared in that very block. A pruned node
+ * does that; trusting it would draw the off-chain TVL as 0.
+ */
+export class PastStateUnavailableError extends Error {
+    constructor(public readonly block: number) {
+        super(
+            `getPoolTvlHistory: history provider does not serve past state (no code for the pool at block ${String(block)}, where it cleared)`,
+        );
+        this.name = 'PastStateUnavailableError';
+    }
+}
+
+/**
+ * Throws `RangeError` / `TypeError` on a malformed option.
+ * `getPoolTvlHistory` calls it ONCE, BEFORE any network read;
+ * `resolvePoolTvlHistoryWindow` assumes it has run.
  */
 export function validatePoolTvlHistoryOptions(
     options: PoolTvlHistoryOptions,
 ): void {
-    const { fromEpoch, count } = options;
+    const { fromEpoch, count, timeoutMs, signal } = options;
     if (
         fromEpoch !== undefined &&
         (!Number.isSafeInteger(fromEpoch) || fromEpoch < 0)
@@ -69,13 +134,30 @@ export function validatePoolTvlHistoryOptions(
             `getPoolTvlHistory: count must be a positive integer, got ${String(count)}`,
         );
     }
+    if (
+        timeoutMs !== undefined &&
+        (typeof timeoutMs !== 'number' ||
+            !Number.isFinite(timeoutMs) ||
+            timeoutMs <= 0)
+    ) {
+        throw new RangeError(
+            `getPoolTvlHistory: timeoutMs must be a positive number, got ${String(timeoutMs)}`,
+        );
+    }
+    if (
+        signal !== undefined &&
+        (typeof signal !== 'object' ||
+            typeof (signal as { aborted?: unknown }).aborted !== 'boolean')
+    ) {
+        throw new TypeError('getPoolTvlHistory: signal must be an AbortSignal');
+    }
 }
 
+/** The epoch window. Options must already have passed validation. */
 export function resolvePoolTvlHistoryWindow(
-    options: PoolTvlHistoryOptions,
+    options: Pick<PoolTvlHistoryOptions, 'fromEpoch' | 'count'>,
     currentEpoch: number,
 ): PoolTvlHistoryWindow | null {
-    validatePoolTvlHistoryOptions(options);
     const { fromEpoch, count } = options;
 
     let from: number;
@@ -93,33 +175,104 @@ export function resolvePoolTvlHistoryWindow(
 }
 
 // ---------------------------------------------------------------------------
+// Cancellation: one deadline and one optional signal for the whole call
+// ---------------------------------------------------------------------------
+
+/** What every stage checks before it starts more work. */
+export interface Cancellation {
+    /** Aborted with the call; hand it to `fetch`-based clients. */
+    readonly signal: AbortSignal;
+    /** Throws the typed reason once the call is timed out or aborted. */
+    throwIfCancelled(): void;
+}
+
+/**
+ * Runs `work` under a deadline and an optional caller signal. Whichever comes
+ * first rejects the returned promise with its typed error at once, aborts
+ * `cancellation.signal` (cancelling in-flight subgraph requests) and makes
+ * every later `throwIfCancelled()` throw, so no new read starts. An RPC call
+ * already sent cannot be recalled; its answer is dropped.
+ */
+export async function runCancellable<T>(
+    timeoutMs: number,
+    external: AbortSignal | undefined,
+    work: (cancellation: Cancellation) => Promise<T>,
+): Promise<T> {
+    if (external?.aborted) throw new PoolTvlHistoryAbortedError();
+
+    const controller = new AbortController();
+    let reason: Error | undefined;
+    let rejectCancelled: (error: Error) => void = () => undefined;
+    const cancelled = new Promise<never>((_, reject) => {
+        rejectCancelled = reject;
+    });
+    const cancel = (error: Error): void => {
+        if (reason) return;
+        reason = error;
+        controller.abort();
+        rejectCancelled(error);
+    };
+
+    const timer = setTimeout(() => {
+        cancel(new PoolTvlHistoryTimeoutError(timeoutMs));
+    }, timeoutMs);
+    const onAbort = (): void => {
+        cancel(new PoolTvlHistoryAbortedError());
+    };
+    external?.addEventListener('abort', onAbort);
+
+    const cancellation: Cancellation = {
+        signal: controller.signal,
+        throwIfCancelled: () => {
+            if (reason) throw reason;
+        },
+    };
+
+    try {
+        const running = work(cancellation);
+        // The losing side must never surface as an unhandled rejection.
+        running.catch(() => undefined);
+        return await Promise.race([running, cancelled]);
+    } finally {
+        clearTimeout(timer);
+        external?.removeEventListener('abort', onAbort);
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Subgraph reads
 // ---------------------------------------------------------------------------
 
+/** Above any epoch number: "no upper bound" for the clearings query. */
+const NO_EPOCH_BOUND = '1000000000000';
+
 /**
- * Round trip 1 (and, for a pool with more than a thousand clearings, the
- * next pages): the pool's FINISHED clearings in epoch order, plus — on the
- * first page only — its balance now and the subgraph's latest block.
+ * The pool's FINISHED clearings, plus — on the first page only — its balance
+ * now and the subgraph's latest block.
  *
- * `$fromEpoch` is the pagination cursor (the last epoch read + 1) and starts
- * at the window's lower bound, which is known before the current epoch is.
+ * Two modes over one document: ascending from `$epochGte` (a `fromEpoch`
+ * window, or everything), or descending below `$epochLt` (the newest N, for
+ * a `count`-only window, so it never pages through the whole history).
  */
 export const poolTvlClearingsQuery = gql`
     query PoolTvlClearings(
         $poolId: ID!
         $pool: String!
-        $fromEpoch: BigInt!
+        $epochGte: BigInt!
+        $epochLt: BigInt!
+        $direction: OrderDirection!
         $first: Int!
         $withSnapshot: Boolean!
     ) {
         clearings: lendingPoolClearings(
             first: $first
             orderBy: epochId
-            orderDirection: asc
+            orderDirection: $direction
             where: {
                 lendingPool: $pool
                 isFinished: true
-                epochId_gte: $fromEpoch
+                epochId_gte: $epochGte
+                epochId_lt: $epochLt
             }
         ) {
             epochId
@@ -144,10 +297,13 @@ export interface ClearingRow {
     endTimestamp: string;
 }
 
-export interface PoolTvlClearingsResult {
-    clearings: ClearingRow[];
+export interface PoolTvlSnapshot {
     pool?: { balance: string } | null;
     meta?: { block: { number: number; timestamp: number | null } } | null;
+}
+
+export interface PoolTvlClearingsResult extends PoolTvlSnapshot {
+    clearings: ClearingRow[];
 }
 
 /** The time-travel alias for one block: `b<block>`. */
@@ -178,9 +334,11 @@ export type PoolBalancesAtBlocksResult = Record<
     { balance: string } | null
 >;
 
-type GraphRequest = <T>(
+/** One subgraph request; `signal` cancels it. */
+export type GraphRequest = <T>(
     document: string,
     variables: Record<string, unknown>,
+    signal?: AbortSignal,
 ) => Promise<T>;
 
 /** A clearing row parsed and checked. */
@@ -211,40 +369,56 @@ function parseClearing(row: ClearingRow): Clearing {
     return clearing;
 }
 
+/** Which clearings to read: ascending from an epoch, or the newest N. */
+export type ClearingsScope =
+    | { kind: 'from'; fromEpoch: number }
+    | { kind: 'newest'; count: number };
+
 /**
- * Every finished clearing from `fromEpoch` on, and the snapshot from the first
- * page. Normally ONE request.
+ * The scope's finished clearings, ascending by epoch, and the snapshot from
+ * the first page. Normally ONE request.
  */
 export async function fetchPoolClearings(
     request: GraphRequest,
     poolId: string,
-    fromEpoch: number,
+    scope: ClearingsScope,
+    cancellation: Cancellation,
 ): Promise<{
     clearings: Clearing[];
-    snapshot: Pick<PoolTvlClearingsResult, 'pool' | 'meta'>;
+    snapshot: PoolTvlSnapshot;
     requests: number;
 }> {
     const clearings: Clearing[] = [];
-    let snapshot: Pick<PoolTvlClearingsResult, 'pool' | 'meta'> = {};
-    let cursor = fromEpoch;
+    let snapshot: PoolTvlSnapshot = {};
+    let gte = scope.kind === 'from' ? scope.fromEpoch : 0;
+    let lt: number | undefined;
     let requests = 0;
 
     for (;;) {
+        cancellation.throwIfCancelled();
         if (requests >= TVL_HISTORY_MAX_PAGES) {
             throw new Error(
                 `getPoolTvlHistory: more than ${String(TVL_HISTORY_MAX_PAGES)} pages of clearings for one pool`,
             );
         }
         const first = requests === 0;
+        const remaining =
+            scope.kind === 'newest'
+                ? scope.count - clearings.length
+                : TVL_HISTORY_PAGE_SIZE;
+        const pageSize = Math.min(TVL_HISTORY_PAGE_SIZE, remaining);
         const page = await request<PoolTvlClearingsResult>(
             poolTvlClearingsQuery,
             {
                 poolId,
                 pool: poolId,
-                fromEpoch: String(cursor),
-                first: TVL_HISTORY_PAGE_SIZE,
+                epochGte: String(gte),
+                epochLt: lt === undefined ? NO_EPOCH_BOUND : String(lt),
+                direction: scope.kind === 'newest' ? 'desc' : 'asc',
+                first: pageSize,
                 withSnapshot: first,
             },
+            cancellation.signal,
         );
         requests += 1;
         if (first) snapshot = { pool: page.pool, meta: page.meta };
@@ -252,15 +426,26 @@ export async function fetchPoolClearings(
         const rows = page.clearings.map(parseClearing);
         clearings.push(...rows);
         const last = rows.at(-1);
-        if (rows.length < TVL_HISTORY_PAGE_SIZE || last === undefined) break;
-        if (last.epochId < cursor) {
-            throw new Error(
-                'getPoolTvlHistory: the clearings cursor did not advance',
-            );
+        if (rows.length < pageSize || last === undefined) break;
+        if (scope.kind === 'newest') {
+            if (clearings.length >= scope.count) break;
+            if (lt !== undefined && last.epochId >= lt) {
+                throw new Error(
+                    'getPoolTvlHistory: the clearings cursor did not advance',
+                );
+            }
+            lt = last.epochId;
+        } else {
+            if (last.epochId < gte) {
+                throw new Error(
+                    'getPoolTvlHistory: the clearings cursor did not advance',
+                );
+            }
+            gte = last.epochId + 1;
         }
-        cursor = last.epochId + 1;
     }
 
+    clearings.sort((a, b) => a.epochId - b.epochId);
     return { clearings, snapshot, requests };
 }
 
@@ -274,17 +459,20 @@ export async function fetchPoolBalancesAtBlocks(
     request: GraphRequest,
     poolId: string,
     blocks: readonly number[],
+    cancellation: Cancellation,
 ): Promise<{ balances: Map<number, string>; requests: number }> {
     const chunks: number[][] = [];
     for (let i = 0; i < blocks.length; i += TVL_HISTORY_BLOCKS_PER_REQUEST) {
         chunks.push(blocks.slice(i, i + TVL_HISTORY_BLOCKS_PER_REQUEST));
     }
 
+    cancellation.throwIfCancelled();
     const pages = await Promise.all(
         chunks.map((chunk) =>
             request<PoolBalancesAtBlocksResult>(
                 poolBalancesAtBlocksQuery(chunk),
                 { poolId },
+                cancellation.signal,
             ).then((page) => ({ chunk, page })),
         ),
     );
@@ -309,55 +497,108 @@ export async function fetchPoolBalancesAtBlocks(
 // ---------------------------------------------------------------------------
 
 /**
- * The past-state reads of the pool's `ExternalTVL` contract, bound to a
- * provider that SERVES past state. Both reject on any failure; neither may
- * turn an error into a value.
+ * What a history provider must answer: an `eth_call` and an `eth_getCode`
+ * at a block. Any ethers v5 `Provider` is one.
+ */
+export interface HistoryRpc {
+    call(
+        transaction: { to: string; data: string },
+        blockTag: number | 'latest',
+    ): Promise<string>;
+    getCode(address: string, blockTag: number): Promise<string>;
+}
+
+/**
+ * The past-state reads behind the off-chain TVL. Every method rejects on any
+ * failure; none may turn an error into a value.
  */
 export interface OffChainTvlReader {
     /** `externalTVLOfPool(pool)` at `block`, in the stable token's BASE units. */
     readAt(block: number | 'latest'): Promise<BigNumber>;
     /** Whether the `ExternalTVL` contract has code at `block`. */
     hasCodeAt(block: number): Promise<boolean>;
+    /** Whether the POOL contract has code at `block` (the pruned-node check). */
+    poolHasCodeAt(block: number): Promise<boolean>;
 }
 
-/** Attempts per past-state RPC read before the history throws. */
-export const TVL_HISTORY_RPC_ATTEMPTS = 3;
+const EXTERNAL_TVL_INTERFACE: Interface = new Interface(
+    KasuPoolExternalTVLAbi__factory.abi,
+);
 
-/** Back-off before the second attempt; doubled for each one after. */
-export const TVL_HISTORY_RPC_RETRY_DELAY_MS = 500;
+function hasCode(code: unknown): boolean {
+    if (typeof code !== 'string' || !/^0x[0-9a-fA-F]*$/.test(code)) {
+        throw new Error(
+            `getPoolTvlHistory: getCode returned ${String(code)}, not hex`,
+        );
+    }
+    return code !== '0x';
+}
 
 /**
- * `reader` with every read retried — public RPCs shed load with transient
- * errors, and ethers v5 reports some of them as a "call exception". A retry
- * changes nothing about the outcome rule: after the last attempt the error
- * propagates, it never becomes a value.
+ * The real reader: each read goes to the history RPCs IN ORDER until one
+ * answers, and the whole chain is retried `attempts` times with back-off.
+ * After the last attempt the last error propagates — never a value. Each
+ * attempt first checks the cancellation, so a timed-out call stops here.
  */
-export function retryingReader(
-    reader: OffChainTvlReader,
-    {
-        attempts = TVL_HISTORY_RPC_ATTEMPTS,
-        delayMs = TVL_HISTORY_RPC_RETRY_DELAY_MS,
-        sleep = (ms: number): Promise<void> =>
-            new Promise((resolve) => setTimeout(resolve, ms)),
-    }: {
-        attempts?: number;
-        delayMs?: number;
-        sleep?: (ms: number) => Promise<void>;
-    } = {},
-): OffChainTvlReader {
-    const retry = async <T>(read: () => Promise<T>): Promise<T> => {
-        for (let attempt = 1; ; attempt++) {
-            try {
-                return await read();
-            } catch (error) {
-                if (attempt >= attempts) throw error;
+export function createOffChainTvlReader({
+    externalTvl,
+    pool,
+    rpcs,
+    cancellation,
+    attempts = TVL_HISTORY_RPC_ATTEMPTS,
+    delayMs = TVL_HISTORY_RPC_RETRY_DELAY_MS,
+    sleep = (ms: number): Promise<void> =>
+        new Promise((resolve) => setTimeout(resolve, ms)),
+}: {
+    externalTvl: string;
+    pool: string;
+    rpcs: readonly HistoryRpc[];
+    cancellation: Cancellation;
+    attempts?: number;
+    delayMs?: number;
+    sleep?: (ms: number) => Promise<void>;
+}): OffChainTvlReader {
+    if (rpcs.length === 0) {
+        throw new Error('getPoolTvlHistory: no history RPC to read from');
+    }
+    const data = EXTERNAL_TVL_INTERFACE.encodeFunctionData(
+        'externalTVLOfPool',
+        [pool],
+    );
+
+    const read = async <T>(op: (rpc: HistoryRpc) => Promise<T>): Promise<T> => {
+        let lastError: unknown;
+        for (let attempt = 1; attempt <= attempts; attempt++) {
+            for (const rpc of rpcs) {
+                cancellation.throwIfCancelled();
+                try {
+                    return await op(rpc);
+                } catch (error) {
+                    lastError = error;
+                }
+            }
+            if (attempt < attempts) {
                 await sleep(delayMs * 2 ** (attempt - 1));
             }
         }
+        cancellation.throwIfCancelled();
+        throw lastError;
     };
+
     return {
-        readAt: (block) => retry(() => reader.readAt(block)),
-        hasCodeAt: (block) => retry(() => reader.hasCodeAt(block)),
+        readAt: (block) =>
+            read(async (rpc) => {
+                const result = await rpc.call({ to: externalTvl, data }, block);
+                const [value] = EXTERNAL_TVL_INTERFACE.decodeFunctionResult(
+                    'externalTVLOfPool',
+                    result,
+                ) as unknown as [BigNumber];
+                return value;
+            }),
+        hasCodeAt: (block) =>
+            read(async (rpc) => hasCode(await rpc.getCode(externalTvl, block))),
+        poolHasCodeAt: (block) =>
+            read(async (rpc) => hasCode(await rpc.getCode(pool, block))),
     };
 }
 
@@ -386,11 +627,15 @@ export async function firstBlockWithCode(
     return hi;
 }
 
-/** `fn` over `items`, at most `limit` in flight; rejects on the first failure. */
+/**
+ * `fn` over `items`, at most `limit` in flight; rejects on the first failure
+ * and starts nothing after it (or after `beforeEach` throws).
+ */
 export async function mapWithConcurrency<T, R>(
     items: readonly T[],
     limit: number,
     fn: (item: T) => Promise<R>,
+    beforeEach: () => void = (): void => undefined,
 ): Promise<R[]> {
     const results = new Array<R>(items.length);
     let next = 0;
@@ -399,6 +644,7 @@ export async function mapWithConcurrency<T, R>(
         while (!failed && next < items.length) {
             const index = next++;
             try {
+                beforeEach();
                 results[index] = await fn(items[index]);
             } catch (error) {
                 failed = true;
@@ -413,28 +659,95 @@ export async function mapWithConcurrency<T, R>(
 }
 
 /**
+ * Immutable past-block reads, per SDK instance. Keys carry the contract (or
+ * subgraph), the pool and the block, so two deployments never collide.
+ */
+export class PastBlockCache {
+    private readonly _entries = new Map<string, unknown>();
+
+    get<T>(key: string): T | undefined {
+        return this._entries.get(key) as T | undefined;
+    }
+
+    set(key: string, value: unknown): void {
+        if (this._entries.size >= TVL_HISTORY_CACHE_LIMIT) {
+            this._entries.clear();
+        }
+        this._entries.set(key, value);
+    }
+
+    get size(): number {
+        return this._entries.size;
+    }
+}
+
+/**
  * The off-chain TVL (BASE units) at each block, and — with `withLatest` — at
- * the latest block, all inside ONE bounded pool of reads. Before the contract
- * existed there was nothing to record, so those blocks are 0 — decided by
- * `getCode`, never by catching a revert: an RPC that refuses past state can
- * surface that refusal as a "call exception", and reading it as 0 would draw
- * a confident, wrong chart. Every other read must succeed or the whole
- * history throws.
+ * the latest block, all inside ONE bounded pool of reads.
+ *
+ * Before the contract existed there was nothing to record, so those blocks
+ * are 0 — decided by `getCode`, never by catching a revert: an RPC that
+ * refuses past state can surface that refusal as a "call exception". And a
+ * "no code" answer is believed only if the same provider DOES show code for
+ * the pool at the oldest and newest such block (it cleared there); otherwise
+ * `PastStateUnavailableError`. Every other failed read throws.
+ *
+ * `cached` blocks (final, below the head) are answered from `cache` and
+ * stored there after a successful read.
  */
 export async function fetchOffChainTvlAtBlocks(
     reader: OffChainTvlReader,
     blocks: readonly number[],
-    { withLatest = false }: { withLatest?: boolean } = {},
+    {
+        withLatest = false,
+        cancellation,
+        cache,
+        cacheKey,
+        cacheable = (): boolean => false,
+    }: {
+        withLatest?: boolean;
+        cancellation: Cancellation;
+        cache?: PastBlockCache;
+        cacheKey?: (kind: 'tvl' | 'code' | 'pool', block: number) => string;
+        cacheable?: (block: number) => boolean;
+    },
 ): Promise<{
     offChain: Map<number, BigNumber>;
     latest: BigNumber | null;
     rpcReads: number;
 }> {
-    let codeReads = 0;
-    const deployedFrom = await firstBlockWithCode(blocks, (block) => {
-        codeReads += 1;
-        return reader.hasCodeAt(block);
-    });
+    let rpcReads = 0;
+    const cached = <T>(
+        kind: 'tvl' | 'code' | 'pool',
+        block: number,
+        load: () => Promise<T>,
+    ): Promise<T> => {
+        const key =
+            cache && cacheKey && cacheable(block)
+                ? cacheKey(kind, block)
+                : undefined;
+        const hit = key === undefined ? undefined : cache?.get<T>(key);
+        if (hit !== undefined) return Promise.resolve(hit);
+        cancellation.throwIfCancelled();
+        rpcReads += 1;
+        return load().then((value) => {
+            if (key !== undefined) cache?.set(key, value);
+            return value;
+        });
+    };
+
+    const deployedFrom = await firstBlockWithCode(blocks, (block) =>
+        cached('code', block, () => reader.hasCodeAt(block)),
+    );
+
+    if (deployedFrom > 0) {
+        for (const block of new Set([blocks[0], blocks[deployedFrom - 1]])) {
+            const poolDeployed = await cached('pool', block, () =>
+                reader.poolHasCodeAt(block),
+            );
+            if (!poolDeployed) throw new PastStateUnavailableError(block);
+        }
+    }
 
     const offChain = new Map<number, BigNumber>();
     for (const block of blocks.slice(0, deployedFrom)) {
@@ -445,7 +758,17 @@ export async function fetchOffChainTvlAtBlocks(
     const values = await mapWithConcurrency(
         targets,
         TVL_HISTORY_RPC_CONCURRENCY,
-        (block) => reader.readAt(block),
+        (block) => {
+            if (block !== 'latest') {
+                return cached('tvl', block, () => reader.readAt(block));
+            }
+            // Never cached: "latest" moves.
+            rpcReads += 1;
+            return reader.readAt('latest');
+        },
+        () => {
+            cancellation.throwIfCancelled();
+        },
     );
 
     let latest: BigNumber | null = null;
@@ -454,7 +777,7 @@ export async function fetchOffChainTvlAtBlocks(
         else offChain.set(block, values[i]);
     });
 
-    return { offChain, latest, rpcReads: targets.length + codeReads };
+    return { offChain, latest, rpcReads };
 }
 
 // ---------------------------------------------------------------------------
