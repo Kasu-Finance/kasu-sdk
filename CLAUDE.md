@@ -217,7 +217,8 @@ export interface SdkConfigOptions {
     isLiteDeployment?: boolean; // default: false
     poolMetadataMapping?: Record<string, string>;
     stableAssetDecimals?: number; // default: 6
-    historyRpcUrl?: string; // past-state RPC for getPoolTvlHistory; default ''
+    historyRpcUrls?: string[]; // past-state RPCs for getPoolTvlHistory, in fallback order; default []
+    chainId?: number; // pins the history providers; Kasu.create sets it
 }
 ```
 
@@ -269,12 +270,16 @@ const kasu = Kasu.create({
   Never concatenate paths onto it: `explorerTxUrl` / `explorerAddressUrl`
   (`domain/explorer-urls.ts`) validate the hash or address first and throw on
   anything else.
-- `historyRpcUrl` — an RPC that SERVES PAST STATE, used only by
-  `getPoolTvlHistory` for `ExternalTVL.externalTVLOfPool` at old blocks
-  (Base `mainnet.base.org`, XDC `rpc.primenumbers.xyz`). It is never
-  `rpcUrls[0]` by assumption: `base-rpc.publicnode.com` refuses old state,
-  and ethers v5 reports that refusal as a "call exception". `Kasu.create({
-  historyProvider })` wins over it, and `connect` keeps it.
+- `historyRpcUrls` — RPCs that SERVE PAST STATE, tried in order, used only
+  by `getPoolTvlHistory` for `ExternalTVL.externalTVLOfPool` at old blocks
+  (Base `mainnet.base.org`, `base.drpc.org`, `1rpc.io/base`; XDC
+  `rpc.primenumbers.xyz`, `rpc.ankr.com/xdc` — each verified at an old
+  block). Never `rpcUrls[0]` by assumption: `base-rpc.publicnode.com`
+  refuses old state, and ethers v5 reports that refusal as a "call
+  exception". They are public and rate-limited; partners pass their own
+  `Kasu.create({ historyProvider })`, which wins and `connect` keeps.
+  `DataService` builds the providers — the one place — with a 10 s per-call
+  timeout, pinned to `SdkConfig.chainId`.
 - `retired` — true for a wound-down deployment. It has no default RPC, so a
   read-only `Kasu.create` on it throws.
 
@@ -369,14 +374,26 @@ display units of the deployment's stable token. `getPoolOverview`
 The history (`services/DataService/tvl-history.ts`) reads the balance with
 subgraph time-travel (`block: { number: endBlockNumber }`, one alias per
 DISTINCT block, a hundred per request) and the off-chain amount at the same
-block through the history provider, at most eight reads in flight, each
-retried twice with back-off. Before the `ExternalTVL` contract existed the
-off-chain part is 0, decided by `getCode` (a binary search over the clearing
-blocks) — never by catching a revert. Every other failed read throws. The
-series ends with a `current` point read now, so it equals
-`totalValueLocked.total`. Points are ordered by block: XDC AUDD's first
-clearing is numbered 1, a week before epoch 88. Missing-schema errors become
-`[]` only on Lite (`isEmptyHistoryError`, now in `services/shared.ts`).
+block through the history RPCs (`createOffChainTvlReader`: raw
+`eth_call` / `eth_getCode` with the block as `blockTag`, each RPC in order,
+three attempts with back-off), at most eight reads in flight. Before the
+`ExternalTVL` contract existed the off-chain part is 0, decided by `getCode`
+(a binary search over the clearing blocks) — never by catching a revert —
+and believed only if the same RPC shows the POOL's code at those blocks;
+otherwise `PastStateUnavailableError` (a pruned node). Every other failed
+read throws. Reads of blocks 64+ below the subgraph head are cached per
+`DataService` (`PastBlockCache`, keyed by contract or subgraph, pool and
+block). `timeoutMs` (default 30 s) and `signal` run the whole call under
+`runCancellable`: on either, it rejects with `PoolTvlHistoryTimeoutError` /
+`PoolTvlHistoryAbortedError`, aborts the subgraph requests and starts no new
+read. A `count`-only window reads the newest N clearings (descending), not
+the whole history. The series ends with a `current` point — subgraph latest
+balance plus `externalTVLOfPool` at `latest` — which equals
+`totalValueLocked.total` when both calls' reads succeed (`getPoolOverview`
+still falls back to an off-chain 0 on a failed read). Points are ordered by
+block: XDC AUDD's first clearing is numbered 1, a week before epoch 88.
+Missing-schema errors become `[]` only on Lite (`isEmptyHistoryError`, now in
+`services/shared.ts`).
 
 `partners.ts` also owns each partner's `region` and `getStrategyRegion` — the
 word a lender SIGNS in the loan-agreement message. It must equal what every app
