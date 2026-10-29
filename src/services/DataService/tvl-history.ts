@@ -37,6 +37,22 @@ export interface PoolTvlHistoryOptions {
     signal?: AbortSignal;
 }
 
+/**
+ * `getPoolTvlHistoryWindow`'s answer: the same entries `getPoolTvlHistory`
+ * returns, and whether the window may have cut older history off. Pass it to
+ * `combineTvlHistories` as a leg (`{ ...result, usdRate }`).
+ */
+export interface PoolTvlHistoryResult {
+    entries: PoolTvlHistoryEntry[];
+    /**
+     * `true` when the pool may have cleared BEFORE the first point — the
+     * series starts where the window does, not where the pool did. `false`
+     * only when the read proves there is nothing older. See
+     * `isPoolTvlHistoryTruncated` for the rule per window.
+     */
+    truncated: boolean;
+}
+
 /** The resolved, inclusive epoch range; `null` when it is empty. */
 export interface PoolTvlHistoryWindow {
     fromEpoch: number;
@@ -447,6 +463,36 @@ export async function fetchPoolClearings(
 
     clearings.sort((a, b) => a.epochId - b.epochId);
     return { clearings, snapshot, requests };
+}
+
+/**
+ * Pure: whether a read may have cut older clearings off, from what
+ * `fetchPoolClearings` fetched (BEFORE the window filter) and the window.
+ *
+ * - `count` only (`newest`): the fetch asks for the newest `count` clearings
+ *   across ALL epochs, then keeps those in the window. Truncated when one of
+ *   them fell before the window (older history is certain), or when all
+ *   `count` came back (the page was full, so older may exist). Not truncated
+ *   only when fewer than `count` came back and none was before the window:
+ *   the fetch then holds every clearing the pool has. Counting the clearings
+ *   left in the window would be wrong — the current epoch has no finished
+ *   clearing until it clears, so a pool that clears every epoch shows
+ *   `count − 1` of them most of the week.
+ * - `fromEpoch` given (`from`): the fetch reads only from `fromEpoch` on and
+ *   never sees an older clearing. Truncated whenever `fromEpoch > 0` (older
+ *   history MAY exist; the read did not look), so `false` only for a read of
+ *   the pool's whole history.
+ */
+export function isPoolTvlHistoryTruncated(
+    scope: ClearingsScope,
+    fetched: readonly Clearing[],
+    window: PoolTvlHistoryWindow,
+): boolean {
+    if (scope.kind === 'from') return scope.fromEpoch > 0;
+    return (
+        fetched.length >= scope.count ||
+        fetched.some((clearing) => clearing.epochId < window.fromEpoch)
+    );
 }
 
 /**

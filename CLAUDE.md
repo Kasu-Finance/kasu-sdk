@@ -404,9 +404,13 @@ one chain with another's address. `combineTvlHistories` (`pool-tvl.ts`) is a
 step merge by timestamp — each leg's latest point at or before every clearing
 time on any leg, times the caller's `usdRate`, a leg 0 before its first point
 — ending in one `current` point at the latest leg's current time. A leg marked
-`truncated` (cut by its `count` window) moves the start to the latest
-truncated leg's first point instead, since its earlier value is unknown, not
-0. It drops `epochId` (the chains clear at different times), takes no FX of
+`truncated` moves the start to the latest truncated leg's first point
+instead, since its earlier value is unknown, not 0. The flag comes ONLY from
+`getPoolTvlHistoryWindow` (`isPoolTvlHistoryTruncated`, from the clearings
+fetched before the window filter): a `count` window is epochs and the current
+epoch has no finished clearing until it clears, so counting the returned
+points misjudges it most of the week. `getPoolTvlHistory` is that read's
+`entries`. It drops `epochId` (the chains clear at different times), takes no FX of
 its own, and validates every leg and entry first with index loops (sparse
 holes, empty legs and bad rates all throw `TvlHistoryInputError`), so it never
 returns `NaN` and never passes one chain's figure off as the total.

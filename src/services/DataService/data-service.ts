@@ -57,9 +57,11 @@ import {
     fetchPoolBalancesAtBlocks,
     fetchPoolClearings,
     GraphRequest,
+    isPoolTvlHistoryTruncated,
     OffChainTvlReader,
     PastBlockCache,
     PoolTvlHistoryOptions,
+    PoolTvlHistoryResult,
     resolvePoolTvlHistoryWindow,
     runCancellable,
     TVL_HISTORY_CACHE_DEPTH,
@@ -294,6 +296,24 @@ export class DataService {
         poolId: string,
         options: PoolTvlHistoryOptions = {},
     ): Promise<PoolTvlHistoryEntry[]> {
+        return (await this.getPoolTvlHistoryWindow(poolId, options)).entries;
+    }
+
+    /**
+     * `getPoolTvlHistory`'s read — the same options, the same reads, the same
+     * errors, the same `entries` — plus `truncated`: whether the window may
+     * have cut older history off (see `isPoolTvlHistoryTruncated`). That is
+     * what `combineTvlHistories` needs to start a strategy's series where
+     * every leg's value is known. Only this read can tell: the clearings
+     * left in the window do not say whether the fetch was cut.
+     *
+     * `{ entries: [], truncated: false }` wherever `getPoolTvlHistory`
+     * returns `[]`.
+     */
+    async getPoolTvlHistoryWindow(
+        poolId: string,
+        options: PoolTvlHistoryOptions = {},
+    ): Promise<PoolTvlHistoryResult> {
         validatePoolTvlHistoryOptions(options);
         if (!isAddress(poolId)) {
             throw new TypeError(
@@ -334,7 +354,8 @@ export class DataService {
         reader: OffChainTvlReader | null,
         externalTvl: string,
         cancellation: Cancellation,
-    ): Promise<PoolTvlHistoryEntry[]> {
+    ): Promise<PoolTvlHistoryResult> {
+        const nothing: PoolTvlHistoryResult = { entries: [], truncated: false };
         const graph: GraphRequest = <T>(
             document: string,
             variables: Record<string, unknown>,
@@ -356,7 +377,7 @@ export class DataService {
 
             const window = resolvePoolTvlHistoryWindow(options, currentEpoch);
             const poolNow = snapshot.pool;
-            if (!window || !poolNow) return [];
+            if (!window || !poolNow) return nothing;
             const head = snapshot.meta?.block;
             if (!head || typeof head.timestamp !== 'number') {
                 throw new Error(
@@ -393,7 +414,7 @@ export class DataService {
                       },
             ]);
 
-            return buildPoolTvlHistory({
+            const entries = buildPoolTvlHistory({
                 clearings: inWindow,
                 balances,
                 offChain: offChainRead.offChain,
@@ -407,9 +428,13 @@ export class DataService {
                     : null,
                 decimals: this._kasuConfig.stableAssetDecimals,
             });
+            return {
+                entries,
+                truncated: isPoolTvlHistoryTruncated(scope, clearings, window),
+            };
         } catch (error) {
             if (isEmptyHistoryError(error, this._kasuConfig.isLiteDeployment)) {
-                return [];
+                return nothing;
             }
             throw error;
         }

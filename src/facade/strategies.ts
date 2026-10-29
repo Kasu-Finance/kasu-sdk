@@ -2,7 +2,10 @@ import { PoolTvlHistoryEntry } from '../domain/pool-tvl';
 import { selectVisiblePools } from '../domain/pools';
 import { pickShortDescription } from '../domain/strategy-summary';
 import { DataService } from '../services/DataService/data-service';
-import { PoolTvlHistoryOptions } from '../services/DataService/tvl-history';
+import {
+    PoolTvlHistoryOptions,
+    PoolTvlHistoryResult,
+} from '../services/DataService/tvl-history';
 import {
     PoolDelegateProfileAndHistory,
     PoolOverview,
@@ -173,6 +176,28 @@ export class StrategiesFacade {
         options: PoolTvlHistoryOptions = {},
     ): Promise<PoolTvlHistoryEntry[]> {
         return await this._dataService.getPoolTvlHistory(poolId, options);
+    }
+
+    /**
+     * `getPoolTvlHistory` plus `truncated` — whether the window may have cut
+     * older history off — from the SAME read (one fetch, not two). Pass the
+     * result to `combineTvlHistories` as a leg with its `usdRate`; the flag
+     * lets the merged series start where every leg's value is known. Only
+     * the SDK can set it right: a `count` window is epochs, and the current
+     * epoch has no finished clearing until it clears, so counting the points
+     * that came back misjudges it most of the week. Same options and errors
+     * as `getPoolTvlHistory`.
+     *
+     * ```ts
+     * const leg = await kasu.strategies.getPoolTvlHistoryWindow(poolId, { count: 52 });
+     * // { entries: PoolTvlHistoryEntry[], truncated: boolean }
+     * ```
+     */
+    async getPoolTvlHistoryWindow(
+        poolId: string,
+        options: PoolTvlHistoryOptions = {},
+    ): Promise<PoolTvlHistoryResult> {
+        return await this._dataService.getPoolTvlHistoryWindow(poolId, options);
     }
 
     /**

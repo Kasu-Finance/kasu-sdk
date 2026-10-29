@@ -116,7 +116,7 @@ You can also pass a whole `ChainConfigEntry` instead of a chain key.
 
 | Facade            | Methods                                                                                                                 | Purpose                         |
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
-| `kasu.strategies` | `getAll()`, `getVisible()`, `getById()`, `getPlatformStats()`, `getPerformanceFeePercent()`, `calculateDepositLimits()`, `getRiskPerformance(poolId)`, `getOriginator(poolId)`, `getPoolTvlHistory(poolId)` | Browse pools, APY, capacity, risk, originator, TVL history |
+| `kasu.strategies` | `getAll()`, `getVisible()`, `getById()`, `getPlatformStats()`, `getPerformanceFeePercent()`, `calculateDepositLimits()`, `getRiskPerformance(poolId)`, `getOriginator(poolId)`, `getPoolTvlHistory(poolId)`, `getPoolTvlHistoryWindow(poolId)` | Browse pools, APY, capacity, risk, originator, TVL history |
 | `kasu.deposits`   | `deposit()`, `withdraw()`, `withdrawMax()`, `buildKycParams()`, `isClearingPending()`                                   | Submit transactions             |
 | `kasu.portfolio`  | `getPositions()`, `getYieldHistory()`, `getTransactionHistory()`, `getRequestStates()`                                  | Lender balances, yield, per-cycle earnings (net, in the chain's own stable token), history |
 | `kasu.flows`      | `deposit(ports)`, `withdraw(ports?)`                                                                                    | Headless transaction pipelines  |
@@ -175,7 +175,6 @@ rates you pass. The SDK fetches no exchange rate:
 ```ts
 import { CHAIN_CONFIGS, combineTvlHistories, strategyDeployments } from '@kasufinance/kasu-sdk';
 
-const COUNT = 52;
 // Your rates, keyed by ISO-4217 code — never a guess. No rate, no total.
 const usdPer: Record<string, number> = { USD: 1, AUD: audToUsd };
 
@@ -183,15 +182,11 @@ const legs = strategyDeployments(strategy.id, 'base');
 // [{ chain: 'base', poolId: '0x…' }, { chain: 'xdc', poolId: '0x…' }]
 
 const histories = await Promise.all(
-    legs.map(async ({ chain, poolId }) => {
-        const entries = await sdks[chain].strategies.getPoolTvlHistory(poolId, { count: COUNT });
-        return {
-            entries,
-            usdRate: usdPer[CHAIN_CONFIGS[chain].stableAsset.currencyCode],
-            // As many clearings as asked for: older history may exist.
-            truncated: entries.filter((e) => e.kind === 'clearing').length >= COUNT,
-        };
-    }),
+    legs.map(async ({ chain, poolId }) => ({
+        // { entries, truncated } — one read; `truncated` says older history may exist
+        ...(await sdks[chain].strategies.getPoolTvlHistoryWindow(poolId, { count: 52 })),
+        usdRate: usdPer[CHAIN_CONFIGS[chain].stableAsset.currencyCode],
+    })),
 );
 const points = combineTvlHistories(histories); // { timestamp, tvlUsd, kind }[]
 ```
@@ -202,9 +197,12 @@ from either side of the mapping; an unmapped id is a strategy of one on its
 own chain, and an id the mapping places on another deployment throws
 `StrategyDeploymentInputError`. `combineTvlHistories` is a step merge by time:
 at every clearing on any leg, each leg's latest point, times its rate, summed;
-a leg counts 0 before its first point. A leg marked `truncated` was cut by its
-window, so the series starts where the latest truncated leg starts rather
-than drawing a false step up. It ends with one `current` point, the sum of
+a leg counts 0 before its first point. A leg that
+`getPoolTvlHistoryWindow` reports as `truncated` may hold older history, so
+the series starts where the latest truncated leg starts rather than drawing a
+false step up. Take the flag from that method, never from counting points: a
+`count` window is epochs, and the current epoch has no finished clearing
+until it clears. It ends with one `current` point, the sum of
 the legs' current values. A missing rate, an empty leg or a bad entry throws
 `TvlHistoryInputError`, so the series never holds `NaN` and never passes off
 one chain's figure as the total.

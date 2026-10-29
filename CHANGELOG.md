@@ -27,17 +27,32 @@ a strategy lives, and how to add two chains' histories, for itself.
     `wrong-chain`) for a malformed id, a missing or unknown chain, or an id
     the mapping places on another deployment — an XDC id passed as Base
     would otherwise read Base with an XDC address and quietly find nothing.
+- **`kasu.strategies.getPoolTvlHistoryWindow(poolId, options)`** (and
+  `DataService.getPoolTvlHistoryWindow`) → `PoolTvlHistoryResult`
+  `{ entries, truncated }`: the same read, options and errors as
+  `getPoolTvlHistory` — which now returns this call's `entries`, unchanged —
+  plus whether the window may have cut older history off.
+  - `count` only: `truncated` when a fetched clearing fell before the window
+    (older history certain) or all `count` came back (older may exist);
+    `false` only when fewer came back and none was before the window — the
+    pool started inside it. Counting the points that came back cannot tell:
+    a `count` window is epochs, and the current epoch has no finished
+    clearing until it clears.
+  - `fromEpoch` given: the read never looks before `fromEpoch`, so
+    `truncated` is `fromEpoch > 0` (older MAY exist); `false` for the whole
+    history.
+  - `{ entries: [], truncated: false }` wherever `getPoolTvlHistory`
+    returns `[]`.
 - **`combineTvlHistories(legs)`** (domain, pure) →
   `StrategyTvlHistoryEntry[]` `{ timestamp, tvlUsd, kind }`. Each leg
-  (`TvlHistoryLeg`) is one deployment's `getPoolTvlHistory`, its `usdRate`
-  and an optional `truncated` flag.
+  (`TvlHistoryLeg`) is one deployment's `getPoolTvlHistoryWindow` result
+  (`{ entries, truncated }`) plus its `usdRate`.
   - A step merge by time: at every distinct clearing time on any leg, the
     sum over legs of each one's latest point at or before then, times its
     rate. Points that share a timestamp are one point, so timestamps are
     strictly ascending.
-  - `truncated: true` — set it when the leg came back with as many
-    clearings as the `count` asked for, so older history may exist. The
-    series then starts at the LATEST first timestamp among the truncated
+  - `truncated: true` (from `getPoolTvlHistoryWindow`) — older history may
+    exist before the leg's first point. The series then starts at the LATEST first timestamp among the truncated
     legs, and that first point is every leg's true step value at that time;
     without the flag, two windows cut at offset clearing times would draw a
     false step up at the start. A leg that is not truncated counts 0 before

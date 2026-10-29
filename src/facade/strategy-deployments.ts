@@ -136,9 +136,9 @@ export function resolveStrategyDeployments(
  * only (PayFi, on Base).
  *
  * `chain` is the deployment `poolId` was read on — required, because an
- * address alone does not say which chain it belongs to. From either side of a mapping the answer is the same
- * set: Tax Pay's Base id on `'base'` and its XDC id on `'xdc'` both return
- * both pools. An id the mapping does not know is a strategy of one on its
+ * address alone does not say which chain it belongs to. From either side of
+ * a mapping the answer is the same set: Tax Pay's Base id on `'base'` and
+ * its XDC id on `'xdc'` both return both pools. An id the mapping does not know is a strategy of one on its
  * own chain. Ids are compared case-insensitively and returned lowercase.
  *
  * Throws `StrategyDeploymentInputError` for a malformed id, an unknown chain,

@@ -67,9 +67,10 @@ export interface PoolTvlHistoryEntry {
 
 /**
  * One deployment's share of a strategy's history, for `combineTvlHistories`:
- * that pool's `getPoolTvlHistory` as it came back, and what one unit of the
- * deployment's stable token is worth in USD (`1` for USDC; today's AUD→USD
- * for AUDD). The SDK fetches no exchange rate: the caller passes it.
+ * that pool's `getPoolTvlHistoryWindow` result (`{ entries, truncated }`) as
+ * it came back, and what one unit of the deployment's stable token is worth
+ * in USD (`1` for USDC; today's AUD→USD for AUDD). The SDK fetches no
+ * exchange rate: the caller passes it.
  */
 export interface TvlHistoryLeg {
     /** At least one point: a real pool always returns its `current` point. */
@@ -77,11 +78,13 @@ export interface TvlHistoryLeg {
     /** USD per unit of the leg's stable token. Finite and above 0. */
     usdRate: number;
     /**
-     * Set it when the leg came back with as many clearings as the `count`
-     * you asked for: older history may exist, so the leg's first point is
-     * where the WINDOW starts, not where the pool did. Leave it unset for a
-     * leg that holds the pool's whole history (one that started lending
-     * later, say), which then counts 0 before its first point.
+     * Whether the read may have cut older history off: the leg's first point
+     * is then where the WINDOW starts, not where the pool did. Take it from
+     * `getPoolTvlHistoryWindow`, which alone can tell — never work it out
+     * from the entries (a `count` window is epochs, and the current epoch
+     * has no finished clearing until it clears). Absent or `false`: the leg
+     * holds the pool's whole history (one that started lending later, say)
+     * and counts 0 before its first point.
      */
     truncated?: boolean;
 }
@@ -241,13 +244,11 @@ function validateLeg(leg: unknown, legIndex: number): TvlHistoryLeg {
  * result never holds `NaN` or `Infinity`. The inputs are not modified.
  *
  * ```ts
- * const COUNT = 52; // the `count` each leg was fetched with
- * const leg = (entries: PoolTvlHistoryEntry[], usdRate: number) => ({
- *     entries,
- *     usdRate,
- *     truncated: entries.filter((e) => e.kind === 'clearing').length >= COUNT,
- * });
- * const points = combineTvlHistories([leg(base, 1), leg(xdc, audToUsd)]);
+ * const window = { count: 52 };
+ * const points = combineTvlHistories([
+ *     { ...(await base.strategies.getPoolTvlHistoryWindow(basePool, window)), usdRate: 1 },
+ *     { ...(await xdc.strategies.getPoolTvlHistoryWindow(xdcPool, window)), usdRate: audToUsd },
+ * ]);
  * ```
  */
 export function combineTvlHistories(
