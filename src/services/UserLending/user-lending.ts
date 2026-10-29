@@ -8,13 +8,7 @@ import {
     ethers,
     Signer,
 } from 'ethers';
-import {
-    defaultAbiCoder,
-    formatEther,
-    formatUnits,
-    parseEther,
-    parseUnits,
-} from 'ethers/lib/utils';
+import { defaultAbiCoder, formatUnits, parseUnits } from 'ethers/lib/utils';
 import { GraphQLClient } from 'graphql-request';
 
 import {
@@ -552,13 +546,7 @@ export class UserLending {
                         : 'Withdrawal',
                 trancheName: trancheName,
                 trancheId: userRequest.tranche.id,
-                requestedAmount: parseUnits(userRequest.tranche.shares).isZero()
-                    ? userRequest.amountRequested
-                    : this.convertSharesToAssets(
-                          userRequest.amountRequested,
-                          userRequest.tranche.balance,
-                          userRequest.tranche.shares,
-                      ).toString(),
+                requestedAmount: this.requestedAmountInAssets(userRequest),
                 acceptedAmount: userRequest.amountAccepted,
                 rejectedAmount: userRequest.amountRejected,
                 status: userRequest.status,
@@ -606,15 +594,16 @@ export class UserLending {
             const trancheID =
                 userFTD.lendingPoolTrancheFixedTermConfig.lendingPoolTranche.id.toLowerCase();
 
-            const totalSupply = userFTD.lendingPool.tranches.reduce(
-                (total, cur) => total.add(parseEther(cur.shares)),
-                BigNumber.from(0),
-            );
+            // The lock holds shares of ONE tranche, so they are worth that
+            // tranche's share price — not the pool's average across tranches,
+            // which differs whenever the tranches have earned differently.
+            const lockTranche =
+                userFTD.lendingPoolTrancheFixedTermConfig.lendingPoolTranche;
 
             const amount = this.convertSharesToAssets(
                 userFTD.trancheShares,
-                userFTD.lendingPool.balance,
-                formatEther(totalSupply),
+                lockTranche.balance,
+                lockTranche.shares,
             );
 
             const item = trancheMap.get(trancheID) ?? [];
@@ -645,29 +634,25 @@ export class UserLending {
 
         const currentEpochFtdAmounts = new Map<string, string[]>();
 
+        // Deposit requests only (the query filters on type): a deposit's
+        // `amountRequested` is already an ASSET amount, so it is summed as it
+        // is — never put through a share price. Summed, not assigned: a
+        // cancelled request and its replacement share a tranche and a config
+        // in one epoch, and the cancelled one's 0 must not overwrite the live
+        // amount.
         for (const userRequest of currentEpochFtdAmountRes.userRequests) {
             const ftdID = parseFloat(userRequest.fixedTermConfigId);
+            if (!Number.isInteger(ftdID) || ftdID < 0) continue;
 
-            const item = currentEpochFtdAmounts.get(userRequest.tranche.id);
+            const ftdAmounts = [
+                ...(currentEpochFtdAmounts.get(userRequest.tranche.id) ?? []),
+            ];
 
-            const amountRequested = this.convertSharesToAssets(
-                userRequest.amountRequested,
-                userRequest.tranche.balance,
-                userRequest.tranche.shares,
+            ftdAmounts[ftdID] = formatUnits(
+                parseUnits(ftdAmounts[ftdID] ?? '0').add(
+                    parseUnits(userRequest.amountRequested),
+                ),
             );
-
-            if (item) {
-                const clonedItem = [...item];
-
-                clonedItem[ftdID] = amountRequested;
-
-                currentEpochFtdAmounts.set(userRequest.tranche.id, clonedItem);
-
-                continue;
-            }
-            const ftdAmounts: string[] = [];
-
-            ftdAmounts[ftdID] = amountRequested;
 
             currentEpochFtdAmounts.set(userRequest.tranche.id, ftdAmounts);
         }
@@ -706,6 +691,31 @@ export class UserLending {
         }
 
         return amountMap;
+    }
+
+    /**
+     * A request's outstanding amount in ASSETS (the deployment's stable token).
+     *
+     * The subgraph's `UserRequest.amountRequested` is denominated by request
+     * type. A DEPOSIT request holds assets: the deposit NFT's `assetAmount`,
+     * top-ups added, accepted and rejected amounts taken off. A WITHDRAWAL
+     * request holds tranche SHARES: the withdrawal NFT's `sharesAmount`,
+     * accepted shares taken off. So only a withdrawal is converted, at the
+     * tranche's current share price; a deposit passes through unchanged —
+     * pricing it as shares overstated it by the share price.
+     */
+    private requestedAmountInAssets(
+        userRequest: UserRequestsSubgraph['userRequests'][number],
+    ): string {
+        if (userRequest.type === 'DepositRequest') {
+            return userRequest.amountRequested;
+        }
+
+        return this.convertSharesToAssets(
+            userRequest.amountRequested,
+            userRequest.tranche.balance,
+            userRequest.tranche.shares,
+        );
     }
 
     convertSharesToAssets(

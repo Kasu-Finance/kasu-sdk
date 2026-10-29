@@ -82,10 +82,11 @@ export interface RequestState {
     statusCode: RequestStatusCode;
     kind: RequestKind;
     /**
-     * The amount originally asked for, always positive. A cancelled request
-     * has its on-request `requestedAmount` zeroed by the subgraph, so the
-     * original is recovered from the `Initiated` event (see
-     * `initiatedAmount`).
+     * `UserRequest.requestedAmount`, in assets: the amount still OUTSTANDING,
+     * which the subgraph reduces as parts are accepted or rejected (0 once a
+     * request is fully resolved). A cancelled request has it zeroed by the
+     * subgraph, so for a cancellation the original is recovered from the
+     * `Initiated` event (see `initiatedAmount`).
      */
     requestedAmount: number;
     /**
