@@ -51,9 +51,11 @@ a strategy lives, and how to add two chains' histories, for itself.
   (`{ entries, opening }`) plus its `usdRate`.
   - A step merge by time: at every distinct clearing time on any leg, the
     sum over legs of each one's latest point at or before then, times its
-    rate. Before its first entry a leg counts its `opening` — what it held
-    just before the window — or 0 when it has none (a genuine late start,
-    like Tax Pay on XDC). Points that share a timestamp are one point, so
+    rate. A leg's `opening` — what it held just before the window — is one
+    more step: it counts from its own timestamp until the leg's first
+    entry, and the leg is 0 before it, never carried back. Without one the
+    leg is 0 before its first entry (a genuine late start, like Tax Pay on
+    XDC). Points that share a timestamp are one point, so
     timestamps are strictly ascending.
   - The series starts at the earliest first entry of any leg and drops
     nothing; the opening is a value, never a point. Without it, two windows

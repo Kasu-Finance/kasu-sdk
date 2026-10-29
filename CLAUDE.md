@@ -403,9 +403,10 @@ mapping places on ANOTHER deployment throws `wrong-chain` rather than reading
 one chain with another's address. `combineTvlHistories` (`pool-tvl.ts`) is a
 step merge by timestamp — each leg's latest point at or before every clearing
 time on any leg, times the caller's `usdRate` — ending in one `current` point
-at the latest leg's current time. Before its first entry a leg counts its
-`opening`, or 0 without one; nothing is ever clipped, and the opening is never
-drawn. The opening comes from `getPoolTvlHistoryWindow`: the newest finished
+at the latest leg's current time. A leg's `opening` is one more step — from
+its own timestamp to the first entry, 0 before it, never carried back — and
+without one the leg is 0 before its first entry; nothing is ever clipped, and
+the opening is never drawn. The opening comes from `getPoolTvlHistoryWindow`: the newest finished
 clearing before the window (`pickOpeningClearing`, newest by BLOCK, at or
 before the first in-window block — XDC AUDD's epoch-1 clearing finished just
 before epoch 88), read at its own block through the same batch and cache as

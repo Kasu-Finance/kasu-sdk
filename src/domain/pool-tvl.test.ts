@@ -323,6 +323,47 @@ describe('combineTvlHistories — the opening value', () => {
         });
     });
 
+    it('counts the opening only from its own timestamp, 0 before it', () => {
+        // Base starts at 100, long before XDC's opening at 800: XDC counts 0
+        // at 100, its opening at 1000 (after 800), then its own entries.
+        const early: TvlHistoryLeg = {
+            usdRate: 1,
+            entries: [
+                clearing(1, 100, 10),
+                clearing(2, 1000, 20),
+                current(3, 2500, 30),
+            ],
+        };
+        const xdc: TvlHistoryLeg = {
+            usdRate: 1,
+            opening: clearing(0, 800, 40),
+            entries: [clearing(1, 1500, 60), current(2, 2500, 70)],
+        };
+        expect(combineTvlHistories([early, xdc])).toEqual([
+            { timestamp: 100, tvlUsd: 10, kind: 'clearing' },
+            { timestamp: 1000, tvlUsd: 60, kind: 'clearing' },
+            { timestamp: 1500, tvlUsd: 80, kind: 'clearing' },
+            { timestamp: 2500, tvlUsd: 100, kind: 'current' },
+        ]);
+    });
+
+    it('counts the opening at exactly its own timestamp', () => {
+        const a: TvlHistoryLeg = {
+            usdRate: 1,
+            entries: [clearing(1, 800, 1), current(2, 2000, 1)],
+        };
+        const b: TvlHistoryLeg = {
+            usdRate: 1,
+            opening: clearing(0, 800, 5),
+            entries: [clearing(1, 1500, 6), current(2, 2000, 6)],
+        };
+        expect(combineTvlHistories([a, b])[0]).toEqual({
+            timestamp: 800,
+            tvlUsd: 6,
+            kind: 'clearing',
+        });
+    });
+
     it('never draws the opening as a point', () => {
         const combined = combineTvlHistories([base]);
         expect(combined[0].timestamp).toBe(1000);
@@ -605,14 +646,16 @@ describe('combineTvlHistories — properties', () => {
         );
 
     /**
-     * The definition, evaluated directly: each leg's latest entry ≤ t, else
-     * its opening, else 0.
+     * The definition, evaluated directly: each leg's latest point ≤ t, its
+     * opening counted as one more point, else 0.
      */
     const reference = (legs: TvlHistoryLeg[], t: number): number => {
         let sum = 0;
         for (const leg of legs) {
-            const upTo = leg.entries.filter((entry) => entry.timestamp <= t);
-            const latest = upTo.at(-1) ?? leg.opening ?? undefined;
+            const points = leg.opening
+                ? [leg.opening, ...leg.entries]
+                : [...leg.entries];
+            const latest = points.filter((p) => p.timestamp <= t).at(-1);
             sum += (latest?.tvl ?? 0) * leg.usdRate;
         }
         return sum;

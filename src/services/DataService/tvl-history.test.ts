@@ -1500,8 +1500,10 @@ describe('getPoolTvlHistoryWindow — opening', () => {
         for (const epochId of range(CURRENT - COUNT + 1, 87)) {
             expect(kept.has(T0 + epochId * WEEK)).toBe(true);
         }
+        // Base's epoch 87 is earlier than XDC's opening: XDC counts 0 there,
+        // not a value carried back before it existed.
         const atEpoch87 = combined.find((p) => p.timestamp === T0 + 87 * WEEK);
-        expect(atEpoch87?.tvlUsd).toBe(870 + 10 * 0.5);
+        expect(atEpoch87?.tvlUsd).toBe(870);
     });
 
     it('fromEpoch: the newest clearing numbered below it, from one extra request', async () => {

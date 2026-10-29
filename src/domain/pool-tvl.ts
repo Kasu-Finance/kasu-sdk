@@ -78,11 +78,13 @@ export interface TvlHistoryLeg {
     /** USD per unit of the leg's stable token. Finite and above 0. */
     usdRate: number;
     /**
-     * The leg's value BEFORE its first entry: the newest clearing before the
-     * window, as `getPoolTvlHistoryWindow` read it at its own block. A
-     * `'clearing'` point no later than the first entry; it is never drawn.
-     * `null` or absent: the pool has no clearing before the window (it
-     * started lending later, say) and counts 0 before its first entry.
+     * The leg's step BEFORE its first entry: the newest clearing before the
+     * window, as `getPoolTvlHistoryWindow` read it at its own block. It
+     * counts from its own `timestamp` on, and the leg is 0 before that — no
+     * value is carried back to a time before it existed. A `'clearing'`
+     * point no later than the first entry; it is never drawn. `null` or
+     * absent: the pool has no clearing before the window (it started lending
+     * later, say) and counts 0 before its first entry.
      */
     opening?: PoolTvlHistoryEntry | null;
 }
@@ -236,8 +238,10 @@ function validateLeg(leg: unknown, legIndex: number): TvlHistoryLeg {
  *
  * A step merge by time. At every distinct timestamp where any leg has a
  * clearing, the value is the sum over legs of that leg's latest point at or
- * before then, times its `usdRate`. Before its first entry a leg counts its
- * `opening` — what it held just before the window — or 0 without one.
+ * before then, times its `usdRate`. A leg's `opening` — what it held just
+ * before the window — is one more step: it counts from its own timestamp
+ * until the leg's first entry, and the leg is 0 before it (or throughout,
+ * before its first entry, without one).
  * Points that share a timestamp — clearings run in one block, or two chains
  * clearing in the same second — are one output point. The series ends with
  * one `current` point at the latest of the legs' `current` timestamps, equal
@@ -312,8 +316,15 @@ export function combineTvlHistories(
                 cursor += 1;
             }
             cursors[index] = cursor;
+            // Before the first entry, the opening is the step — from its
+            // own time on, never earlier.
+            const opening = leg.opening;
             const value =
-                cursor >= 0 ? leg.entries[cursor].tvl : (leg.opening?.tvl ?? 0);
+                cursor >= 0
+                    ? leg.entries[cursor].tvl
+                    : opening && opening.timestamp <= t
+                      ? opening.tvl
+                      : 0;
             sum += value * leg.usdRate;
         });
         if (!Number.isFinite(sum)) throw new TvlHistoryInputError('overflow');
