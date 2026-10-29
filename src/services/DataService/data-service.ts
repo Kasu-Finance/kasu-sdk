@@ -53,13 +53,18 @@ import {
     ClearingsScope,
     createOffChainTvlReader,
     distinctBlocks,
+    fetchClearingBefore,
+    fetchClearingBeforeBlock,
     fetchOffChainTvlAtBlocks,
     fetchPoolBalancesAtBlocks,
     fetchPoolClearings,
     GraphRequest,
+    needsClearingBeforeBlock,
     OffChainTvlReader,
     PastBlockCache,
+    pickOpeningClearing,
     PoolTvlHistoryOptions,
+    PoolTvlHistoryResult,
     resolvePoolTvlHistoryWindow,
     runCancellable,
     TVL_HISTORY_CACHE_DEPTH,
@@ -294,6 +299,47 @@ export class DataService {
         poolId: string,
         options: PoolTvlHistoryOptions = {},
     ): Promise<PoolTvlHistoryEntry[]> {
+        return (await this._poolTvlHistory(poolId, options, false)).entries;
+    }
+
+    /**
+     * `getPoolTvlHistory` — the same options, errors and `entries` — plus
+     * `opening`: the pool's value just before the window, so a strategy
+     * summed across deployments (`combineTvlHistories`) knows what each leg
+     * held before its first point instead of counting it 0.
+     *
+     * `opening` is the newest finished clearing STRICTLY before the window's
+     * first block (by `pickOpeningClearing`), read at its own block exactly
+     * like every other point and through the same past-block cache; `null`
+     * when the pool has no clearing before the window. Extra cost over
+     * `getPoolTvlHistory`:
+     *
+     * - `count` only: one more clearing row in the same request (`count + 1`,
+     *   which always reaches past the window when older history exists);
+     * - `fromEpoch` above 0: one more one-row subgraph request, in parallel
+     *   with the clearings;
+     * - only when every left-out clearing finished in the window's first
+     *   block (a catch-up block that closed several epochs at once): one
+     *   more one-row request by block (`fetchClearingBeforeBlock`), after
+     *   the clearings — the common case never makes it;
+     * - either way, the opening's block in the same batched time-travel read
+     *   and one more `externalTVLOfPool` read (cached once final).
+     *
+     * `{ entries: [], opening: null }` wherever `getPoolTvlHistory` returns
+     * `[]`.
+     */
+    async getPoolTvlHistoryWindow(
+        poolId: string,
+        options: PoolTvlHistoryOptions = {},
+    ): Promise<PoolTvlHistoryResult> {
+        return await this._poolTvlHistory(poolId, options, true);
+    }
+
+    private async _poolTvlHistory(
+        poolId: string,
+        options: PoolTvlHistoryOptions,
+        withOpening: boolean,
+    ): Promise<PoolTvlHistoryResult> {
         validatePoolTvlHistoryOptions(options);
         if (!isAddress(poolId)) {
             throw new TypeError(
@@ -324,6 +370,7 @@ export class DataService {
                         : null,
                     externalTvl ?? '',
                     cancellation,
+                    withOpening,
                 ),
         );
     }
@@ -334,7 +381,9 @@ export class DataService {
         reader: OffChainTvlReader | null,
         externalTvl: string,
         cancellation: Cancellation,
-    ): Promise<PoolTvlHistoryEntry[]> {
+        withOpening: boolean,
+    ): Promise<PoolTvlHistoryResult> {
+        const nothing: PoolTvlHistoryResult = { entries: [], opening: null };
         const graph: GraphRequest = <T>(
             document: string,
             variables: Record<string, unknown>,
@@ -343,20 +392,32 @@ export class DataService {
             this._graph.request<T>({ document, variables, signal });
         const scope: ClearingsScope =
             options.fromEpoch === undefined && options.count !== undefined
-                ? { kind: 'newest', count: options.count }
+                ? {
+                      kind: 'newest',
+                      // One past the window: the opening, when there is one.
+                      count: options.count + (withOpening ? 1 : 0),
+                  }
                 : { kind: 'from', fromEpoch: options.fromEpoch ?? 0 };
 
         try {
-            const [currentEpochNumber, { clearings, snapshot }] =
+            const [currentEpochNumber, { clearings, snapshot }, before] =
                 await Promise.all([
                     this._systemVariablesAbi.currentEpochNumber(),
                     fetchPoolClearings(graph, pool, scope, cancellation),
+                    withOpening && scope.kind === 'from' && scope.fromEpoch > 0
+                        ? fetchClearingBefore(
+                              graph,
+                              pool,
+                              scope.fromEpoch,
+                              cancellation,
+                          )
+                        : Promise.resolve(null),
                 ]);
             const currentEpoch = currentEpochNumber.toNumber();
 
             const window = resolvePoolTvlHistoryWindow(options, currentEpoch);
             const poolNow = snapshot.pool;
-            if (!window || !poolNow) return [];
+            if (!window || !poolNow) return nothing;
             const head = snapshot.meta?.block;
             if (!head || typeof head.timestamp !== 'number') {
                 throw new Error(
@@ -369,7 +430,30 @@ export class DataService {
                     c.epochId >= window.fromEpoch &&
                     c.epochId <= window.toEpoch,
             );
-            const blocks = distinctBlocks(inWindow);
+            // Clearings the window left out, older by epoch: the extra row of
+            // a count fetch, or the one-row read below `fromEpoch`.
+            const older =
+                scope.kind === 'newest'
+                    ? clearings.filter((c) => c.epochId < window.fromEpoch)
+                    : before === null
+                      ? []
+                      : [before];
+            let opening = withOpening
+                ? pickOpeningClearing(older, inWindow)
+                : null;
+            // The left-out clearings all sat in the first in-window block (a
+            // catch-up block): ask for the newest one before it, by block.
+            if (withOpening && needsClearingBeforeBlock(older, opening)) {
+                opening = await fetchClearingBeforeBlock(
+                    graph,
+                    pool,
+                    Math.min(...inWindow.map((c) => c.block)),
+                    cancellation,
+                );
+            }
+            const blocks = distinctBlocks(
+                opening ? [...inWindow, opening] : inWindow,
+            );
             const withCurrent = window.toEpoch >= currentEpoch;
             const cacheable = (block: number): boolean =>
                 block <= head.number - TVL_HISTORY_CACHE_DEPTH;
@@ -393,7 +477,7 @@ export class DataService {
                       },
             ]);
 
-            return buildPoolTvlHistory({
+            const entries = buildPoolTvlHistory({
                 clearings: inWindow,
                 balances,
                 offChain: offChainRead.offChain,
@@ -407,9 +491,21 @@ export class DataService {
                     : null,
                 decimals: this._kasuConfig.stableAssetDecimals,
             });
+            // The same function as every other point, so the opening cannot
+            // be computed another way.
+            const [openingEntry] = opening
+                ? buildPoolTvlHistory({
+                      clearings: [opening],
+                      balances,
+                      offChain: offChainRead.offChain,
+                      current: null,
+                      decimals: this._kasuConfig.stableAssetDecimals,
+                  })
+                : [null];
+            return { entries, opening: openingEntry };
         } catch (error) {
             if (isEmptyHistoryError(error, this._kasuConfig.isLiteDeployment)) {
-                return [];
+                return nothing;
             }
             throw error;
         }

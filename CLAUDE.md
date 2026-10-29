@@ -92,7 +92,7 @@ src/
 │   ├── fixed-term.ts    # Allowlist-aware fixed-term configs, lock arithmetic
 │   ├── yields.ts        # Net weekly/daily/accrued interest, annual projection
 │   ├── yield-history.ts # Settled per-epoch NET yield: the one formula, aggregation
-│   ├── pool-tvl.ts      # poolTvl: the one TVL definition; the TVL history entry
+│   ├── pool-tvl.ts      # poolTvl: the one TVL definition; the TVL history entry; combineTvlHistories
 │   ├── batch-proof.ts   # Deposit-batch pinning + receipt proofs (money path)
 │   ├── sponsored-calls.ts # Single-call LPM encoders + relay kinds/selectors
 │   └── explorer-urls.ts # Validated block-explorer tx / address links
@@ -349,7 +349,7 @@ they were duplicated across the applications, and the copies drifted.
 | `fixed-term.ts`           | Fixed-term configs a wallet may select (allowlist-aware), lock days / months     |
 | `yields.ts`               | Weekly / daily / per-pool accrued interest NET of the fee, annual projection      |
 | `yield-history.ts`        | `epochTrancheYield` (the per-epoch formula), `aggregateYieldHistory` — net only   |
-| `pool-tvl.ts`             | `poolTvl` — THE TVL definition (on-chain + off-chain), `PoolTvlHistoryEntry`      |
+| `pool-tvl.ts`             | `poolTvl` — THE TVL definition (on-chain + off-chain), `PoolTvlHistoryEntry`, `combineTvlHistories` |
 | `batch-proof.ts`          | Pin a deposit batch to its run; prove a deposit (or one executed operation) in a handleOps receipt |
 | `sponsored-calls.ts`      | Encode the single calls a sponsored relay carries (LPM requests, stable `transfer`), with their `kind` |
 | `explorer-urls.ts`        | `explorerTxUrl` / `explorerAddressUrl` — explorer links from a validated hash or address only |
@@ -394,6 +394,36 @@ still falls back to an off-chain 0 on a failed read). Points are ordered by
 block: XDC AUDD's first clearing is numbered 1, a week before epoch 88.
 Missing-schema errors become `[]` only on Lite (`isEmptyHistoryError`, now in
 `services/shared.ts`).
+
+A strategy's history across deployments is two pure halves. `strategyDeployments`
+(`facade/strategy-deployments.ts`, beside the `CHAIN_CONFIGS` it reads) names
+the pools from `poolMetadataMapping`: Base is canonical and never has a
+mapping, an unmapped id is a strategy of one on its own chain, and an id the
+mapping places on ANOTHER deployment throws `wrong-chain` rather than reading
+one chain with another's address. `combineTvlHistories` (`pool-tvl.ts`) is a
+step merge by timestamp — each leg's latest point at or before every clearing
+time on any leg, times the caller's `usdRate` — ending in one `current` point
+at the latest leg's current time. A leg's `opening` is one more step — from
+its own timestamp to the first entry, 0 before it, never carried back — and
+without one the leg is 0 before its first entry; nothing is ever clipped, and
+the opening is never drawn. The opening comes from
+`getPoolTvlHistoryWindow`: the newest finished clearing before the window
+(`pickOpeningClearing`, newest by BLOCK, STRICTLY before the first in-window
+block — XDC AUDD's epoch-1 clearing finished just before epoch 88, and a
+catch-up block that closed several epochs at once
+holds the first entry's value, not the prior one), read at its own block
+through the same batch and cache as every point. A `count` window fetches
+`count + 1` clearings to find it; a `fromEpoch` window makes one extra
+one-row request (`fetchClearingBefore`). Only when every left-out clearing
+sits in that catch-up block does one more one-row request by block follow
+(`fetchClearingBeforeBlock`, `endBlockNumber_lt`).
+`getPoolTvlHistory` is the same read without the opening, at its old cost.
+`combineTvlHistories` drops `epochId` (the chains clear at different times),
+takes no FX of its own, and validates every leg, entry and opening first with
+index loops (sparse holes, empty legs, a bad opening and bad rates all throw
+`TvlHistoryInputError`), so it never
+returns `NaN` and never passes one chain's figure off as the total.
+`strategyDeployments` takes `chain` as a REQUIRED argument.
 
 `partners.ts` also owns each partner's `region` and `getStrategyRegion` — the
 word a lender SIGNS in the loan-agreement message. It must equal what every app

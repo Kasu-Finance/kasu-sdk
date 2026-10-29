@@ -3,6 +3,84 @@
 All notable changes to `@kasufinance/kasu-sdk`. Versions follow semantic
 versioning; earlier releases are described in their commit messages.
 
+## 2.14.0
+
+A strategy's TVL across its deployments. A strategy can run on more than
+one deployment — Tax Pay lends on Base (USDC) and on XDC (AUDD) — and its
+total lent is the sum of its pools. Until now each app worked out where else
+a strategy lives, and how to add two chains' histories, for itself.
+
+### Added
+
+- **`strategyDeployments(poolId, chain)`** (facade, pure) →
+  `StrategyDeployment[]` `{ chain, poolId }`: every deployment the strategy
+  has a pool on, canonical (Base) first, from the chain configs'
+  `poolMetadataMapping`. The same rules as kasu-ui's counterpart lookup.
+  - `chain` is REQUIRED: the deployment `poolId` was read on, because an
+    address alone does not say which chain it belongs to. Either side of a
+    mapping gives the same set: Tax Pay's Base id on `'base'` and its XDC id
+    on `'xdc'` both return both pools.
+  - An id the mapping does not know is a strategy of one on its own chain
+    (PayFi on Base; every XDC USDC pool).
+  - Ids are compared case-insensitively and returned lowercase.
+  - Throws `StrategyDeploymentInputError` (`code`: `pool-id`, `chain`,
+    `wrong-chain`) for a malformed id, a missing or unknown chain, or an id
+    the mapping places on another deployment — an XDC id passed as Base
+    would otherwise read Base with an XDC address and quietly find nothing.
+- **`kasu.strategies.getPoolTvlHistoryWindow(poolId, options)`** (and
+  `DataService.getPoolTvlHistoryWindow`) → `PoolTvlHistoryResult`
+  `{ entries, opening }`: the same options and errors as
+  `getPoolTvlHistory` — which returns the same `entries`, at its old cost —
+  plus `opening`, the pool's value just before the window.
+  - `opening` is the newest finished clearing before the window (the same
+    rule that leaves clearings out of `entries`; newest by block, so XDC
+    AUDD's epoch-1 clearing, finished just before epoch 88, is found by
+    when it happened) in a block STRICTLY before the window's first one —
+    a catch-up block that closed several epochs at once holds the first
+    entry's own value, not the one before it — read at its own `endBlockNumber` exactly like every
+    other point — subgraph balance plus `externalTVLOfPool` — through the
+    same batched time-travel read and past-block cache. `null` when the
+    pool has no clearing before the window.
+  - Extra cost over `getPoolTvlHistory`: for a `count` window one more
+    clearing row in the same request (`count + 1`); for `fromEpoch` above 0
+    one more one-row subgraph request, in parallel; only when every
+    left-out clearing sits in the window's first (catch-up) block, one more
+    one-row request by block after the clearings — the common case never
+    makes it; either way one more block in the time-travel batch and one
+    more `externalTVLOfPool` read.
+  - `{ entries: [], opening: null }` wherever `getPoolTvlHistory` returns
+    `[]`.
+- **`combineTvlHistories(legs)`** (domain, pure) →
+  `StrategyTvlHistoryEntry[]` `{ timestamp, tvlUsd, kind }`. Each leg
+  (`TvlHistoryLeg`) is one deployment's `getPoolTvlHistoryWindow` result
+  (`{ entries, opening }`) plus its `usdRate`.
+  - A step merge by time: at every distinct clearing time on any leg, the
+    sum over legs of each one's latest point at or before then, times its
+    rate. A leg's `opening` — what it held just before the window — is one
+    more step: it counts from its own timestamp until the leg's first
+    entry, and the leg is 0 before it, never carried back. Without one the
+    leg is 0 before its first entry (a genuine late start, like Tax Pay on
+    XDC). Points that share a timestamp are one point, so
+    timestamps are strictly ascending.
+  - The series starts at the earliest first entry of any leg and drops
+    nothing; the opening is a value, never a point. Without it, two windows
+    cut at offset clearing times would count the later-starting leg 0 at
+    the left edge and draw a false step up.
+  - The series ends with one `current` point at the latest of the legs'
+    `current` times, equal to the sum of their `current` values. Every leg
+    ends in a `current` point, or none does.
+  - No `epochId`: the chains clear at different blocks and times, so a
+    merged point belongs to no single epoch. Plot by `timestamp`.
+  - No exchange rate inside the SDK: the caller passes each leg's
+    `usdRate` (`1` for USDC; pick by `stableAsset.currencyCode`).
+  - Every leg and entry is validated first, holes in sparse arrays
+    included. Bad input throws `TvlHistoryInputError` (`code`, plus the
+    `leg` and `entry` position), so the result never holds `NaN` or
+    `Infinity`. An opening must be a `'clearing'` point at or before the
+    leg's first entry (`opening`). An empty leg is refused (`empty-leg`) rather than counted as
+    0: a real pool always returns at least its `current` point, and a leg
+    you do not have must not turn the total into one chain's figure.
+
 ## 2.13.1
 
 Request amounts are now in the right unit, and the request view model reads

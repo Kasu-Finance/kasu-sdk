@@ -116,7 +116,7 @@ You can also pass a whole `ChainConfigEntry` instead of a chain key.
 
 | Facade            | Methods                                                                                                                 | Purpose                         |
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
-| `kasu.strategies` | `getAll()`, `getVisible()`, `getById()`, `getPlatformStats()`, `getPerformanceFeePercent()`, `calculateDepositLimits()`, `getRiskPerformance(poolId)`, `getOriginator(poolId)`, `getPoolTvlHistory(poolId)` | Browse pools, APY, capacity, risk, originator, TVL history |
+| `kasu.strategies` | `getAll()`, `getVisible()`, `getById()`, `getPlatformStats()`, `getPerformanceFeePercent()`, `calculateDepositLimits()`, `getRiskPerformance(poolId)`, `getOriginator(poolId)`, `getPoolTvlHistory(poolId)`, `getPoolTvlHistoryWindow(poolId)` | Browse pools, APY, capacity, risk, originator, TVL history |
 | `kasu.deposits`   | `deposit()`, `withdraw()`, `withdrawMax()`, `buildKycParams()`, `isClearingPending()`                                   | Submit transactions             |
 | `kasu.portfolio`  | `getPositions()`, `getYieldHistory()`, `getTransactionHistory()`, `getRequestStates()`                                  | Lender balances, yield, per-cycle earnings (net, in the chain's own stable token), history |
 | `kasu.flows`      | `deposit(ports)`, `withdraw(ports?)`                                                                                    | Headless transaction pipelines  |
@@ -167,6 +167,44 @@ instance, so a second call reads only what is new. `timeoutMs` (default
 30 s) and `signal` bound the call and reject with
 `PoolTvlHistoryTimeoutError` / `PoolTvlHistoryAbortedError`.
 
+A strategy can run on more than one deployment (Tax Pay lends on Base and on
+XDC AUDD), and its total lent is the sum of its pools. `strategyDeployments`
+names the pools and `combineTvlHistories` adds their histories in USD at the
+rates you pass. The SDK fetches no exchange rate:
+
+```ts
+import { CHAIN_CONFIGS, combineTvlHistories, strategyDeployments } from '@kasufinance/kasu-sdk';
+
+// Your rates, keyed by ISO-4217 code — never a guess. No rate, no total.
+const usdPer: Record<string, number> = { USD: 1, AUD: audToUsd };
+
+const legs = strategyDeployments(strategy.id, 'base');
+// [{ chain: 'base', poolId: '0x…' }, { chain: 'xdc', poolId: '0x…' }]
+
+const histories = await Promise.all(
+    legs.map(async ({ chain, poolId }) => ({
+        // { entries, opening } — `opening`: what the pool held just before the window
+        ...(await sdks[chain].strategies.getPoolTvlHistoryWindow(poolId, { count: 52 })),
+        usdRate: usdPer[CHAIN_CONFIGS[chain].stableAsset.currencyCode],
+    })),
+);
+const points = combineTvlHistories(histories); // { timestamp, tvlUsd, kind }[]
+```
+
+`strategyDeployments(poolId, chain)` takes the deployment the id was read on
+(required: an address alone does not name its chain) and returns the same set
+from either side of the mapping; an unmapped id is a strategy of one on its
+own chain, and an id the mapping places on another deployment throws
+`StrategyDeploymentInputError`. `combineTvlHistories` is a step merge by time:
+at every clearing on any leg, each leg's latest point, times its rate, summed;
+a leg's `opening` (the clearing just before its window, read like every
+other point) is one more step, from its own time until the first entry, and
+a pool that started inside the window has none and counts 0 until then, so
+windows cut at different times on each chain draw no false step. It ends with one `current` point, the sum of
+the legs' current values. A missing rate, an empty leg or a bad entry throws
+`TvlHistoryInputError`, so the series never holds `NaN` and never passes off
+one chain's figure as the total.
+
 ## Domain helpers
 
 Pure functions shared by every Kasu frontend. They return **numbers and codes,
@@ -189,6 +227,7 @@ application formats them in its own design system and language.
 | Settlement           | `computeSettlementWindow`, `nextCycleBoundary`, `deriveCycleDates`, `CLEARING_WINDOW_SECONDS`                                                                                                            |
 | Loan contract        | `encodeDepositData`, `buildContractVersionType`, `buildLoanAgreementSignMessage`, `buildLegacyContractRequestMessage`, `buildFullNameRequestMessage`, `formatSignTimestampUtc`, `parseFormattedMessage`, `asContractType` |
 | Wallet errors        | `isUserRejected`, `isUnpredictableGas`, `classifyWalletFailure`                                                                                                                                          |
+| Pool TVL             | `poolTvl`, `combineTvlHistories`, `TvlHistoryInputError` — one strategy's history summed across deployments, in USD at the caller's rates |
 | Revert errors        | `decodeRevert`, `extractRevertData` — the bytes a reverted call came back with, read as the custom error the contract named                                                                              |
 | AU minimum           | `auMinimumRemaining`, `isAustralianKyc`, `auThresholdFor`, `isAuMinimumExempt`, `parseMinorUnits`, `AU_ALPHA3`, `AU_MIN_CUMULATIVE_BY_STABLE`                                                            |
 

@@ -37,6 +37,22 @@ export interface PoolTvlHistoryOptions {
     signal?: AbortSignal;
 }
 
+/**
+ * `getPoolTvlHistoryWindow`'s answer: the same entries `getPoolTvlHistory`
+ * returns, and the pool's value just before them. Pass it to
+ * `combineTvlHistories` as a leg (`{ ...result, usdRate }`).
+ */
+export interface PoolTvlHistoryResult {
+    entries: PoolTvlHistoryEntry[];
+    /**
+     * The newest finished clearing BEFORE the window, in a block strictly
+     * before the first entry's, read at its own block like every other point
+     * (`kind: 'clearing'`). `null` when the pool has no clearing before the
+     * window — its whole history is in `entries`. See `pickOpeningClearing`.
+     */
+    opening: PoolTvlHistoryEntry | null;
+}
+
 /** The resolved, inclusive epoch range; `null` when it is empty. */
 export interface PoolTvlHistoryWindow {
     fromEpoch: number;
@@ -447,6 +463,121 @@ export async function fetchPoolClearings(
 
     clearings.sort((a, b) => a.epochId - b.epochId);
     return { clearings, snapshot, requests };
+}
+
+/**
+ * Pure: the opening clearing — the newest of `before` (finished clearings the
+ * window left out, older by epoch) that finished STRICTLY before the first
+ * in-window clearing's block. Newest by block, then epoch, so a clearing
+ * numbered out of order (XDC AUDD's epoch 1, a week before epoch 88) is
+ * placed by when it happened. A clearing in the first in-window block itself
+ * (a catch-up block that finished several epochs at once) is not an opening:
+ * it holds the first entry's own value, not the one before it. `null` when
+ * there is none — see `needsClearingBeforeBlock`.
+ */
+export function pickOpeningClearing(
+    before: readonly Clearing[],
+    inWindow: readonly Clearing[],
+): Clearing | null {
+    const firstBlock = Math.min(...inWindow.map((c) => c.block));
+    let opening: Clearing | null = null;
+    for (const clearing of before) {
+        if (clearing.block >= firstBlock) continue;
+        if (
+            opening === null ||
+            clearing.block > opening.block ||
+            (clearing.block === opening.block &&
+                clearing.epochId > opening.epochId)
+        ) {
+            opening = clearing;
+        }
+    }
+    return opening;
+}
+
+/**
+ * Pure: whether the opening needs `fetchClearingBefore`'s by-block read.
+ * Only when the window left clearings out but every one of them finished in
+ * or after the first in-window block — the extra rows sat in a catch-up
+ * block — so an older one, if any, was not fetched. Otherwise the opening
+ * (or its absence) is already known and nothing more is read.
+ */
+export function needsClearingBeforeBlock(
+    before: readonly Clearing[],
+    opening: Clearing | null,
+): boolean {
+    return opening === null && before.length > 0;
+}
+
+/**
+ * The newest finished clearing in a block below `blockLt`, by block: the
+ * opening when every clearing the window left out shares its first block.
+ * ONE extra request for one row, no snapshot. Clearings that share that
+ * older block share its time and balance, so which one comes back does not
+ * change the value.
+ */
+export const poolTvlClearingBeforeBlockQuery = gql`
+    query PoolTvlClearingBeforeBlock($pool: String!, $blockLt: BigInt!) {
+        clearings: lendingPoolClearings(
+            first: 1
+            orderBy: endBlockNumber
+            orderDirection: desc
+            where: {
+                lendingPool: $pool
+                isFinished: true
+                endBlockNumber_lt: $blockLt
+            }
+        ) {
+            epochId
+            endBlockNumber
+            endTimestamp
+        }
+    }
+`;
+
+export async function fetchClearingBeforeBlock(
+    request: GraphRequest,
+    poolId: string,
+    blockLt: number,
+    cancellation: Cancellation,
+): Promise<Clearing | null> {
+    cancellation.throwIfCancelled();
+    const page = await request<{ clearings: ClearingRow[] }>(
+        poolTvlClearingBeforeBlockQuery,
+        { pool: poolId, blockLt: String(blockLt) },
+        cancellation.signal,
+    );
+    const row = page.clearings.at(0);
+    return row === undefined ? null : parseClearing(row);
+}
+
+/**
+ * The newest finished clearing numbered below `beforeEpoch`: the opening
+ * candidate of a `fromEpoch` window, whose own fetch never reads that far
+ * back. ONE extra request for one row, no snapshot.
+ */
+export async function fetchClearingBefore(
+    request: GraphRequest,
+    poolId: string,
+    beforeEpoch: number,
+    cancellation: Cancellation,
+): Promise<Clearing | null> {
+    cancellation.throwIfCancelled();
+    const page = await request<PoolTvlClearingsResult>(
+        poolTvlClearingsQuery,
+        {
+            poolId,
+            pool: poolId,
+            epochGte: '0',
+            epochLt: String(beforeEpoch),
+            direction: 'desc',
+            first: 1,
+            withSnapshot: false,
+        },
+        cancellation.signal,
+    );
+    const row = page.clearings.at(0);
+    return row === undefined ? null : parseClearing(row);
 }
 
 /**

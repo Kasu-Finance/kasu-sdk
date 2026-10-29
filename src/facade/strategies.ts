@@ -2,7 +2,10 @@ import { PoolTvlHistoryEntry } from '../domain/pool-tvl';
 import { selectVisiblePools } from '../domain/pools';
 import { pickShortDescription } from '../domain/strategy-summary';
 import { DataService } from '../services/DataService/data-service';
-import { PoolTvlHistoryOptions } from '../services/DataService/tvl-history';
+import {
+    PoolTvlHistoryOptions,
+    PoolTvlHistoryResult,
+} from '../services/DataService/tvl-history';
 import {
     PoolDelegateProfileAndHistory,
     PoolOverview,
@@ -173,6 +176,28 @@ export class StrategiesFacade {
         options: PoolTvlHistoryOptions = {},
     ): Promise<PoolTvlHistoryEntry[]> {
         return await this._dataService.getPoolTvlHistory(poolId, options);
+    }
+
+    /**
+     * `getPoolTvlHistory` plus `opening` — the newest clearing before the
+     * window, read at its own block like every other point, or `null` when
+     * the pool has none — from the same read. Pass the result to
+     * `combineTvlHistories` as a leg with its `usdRate`: the opening is what
+     * the leg held before its first point, so a window cut at a different
+     * time on another chain does not count it 0. Same options and errors as
+     * `getPoolTvlHistory`; the extra cost is one clearing row (or, for
+     * `fromEpoch`, one small request) and one block.
+     *
+     * ```ts
+     * const leg = await kasu.strategies.getPoolTvlHistoryWindow(poolId, { count: 52 });
+     * // { entries: PoolTvlHistoryEntry[], opening: PoolTvlHistoryEntry | null }
+     * ```
+     */
+    async getPoolTvlHistoryWindow(
+        poolId: string,
+        options: PoolTvlHistoryOptions = {},
+    ): Promise<PoolTvlHistoryResult> {
+        return await this._dataService.getPoolTvlHistoryWindow(poolId, options);
     }
 
     /**
