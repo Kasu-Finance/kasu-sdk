@@ -269,22 +269,45 @@ describe('deriveRequestState — every branch of the derivation', () => {
         expect(state.amount).toBe(-100);
     });
 
-    it('withdrawal partly filled with a LIVE remainder → partial while the cycle is open', () => {
+    // `requestedAmount` is what is still QUEUED — the subgraph takes each
+    // accepted part off it — so a 1000 withdrawal with 700 paid arrives as
+    // requested 300, accepted 700. Whether more was paid than is left must
+    // not change the code.
+    it('withdrawal partly filled, LIVE remainder, paid < queued → partial while the cycle is open', () => {
         // Realistic shape: the sticky raw status reads Processing, canCancel
         // marks the new cycle open — the request returns to the queue with a
-        // live Cancel.
+        // live Cancel. 1000 asked: 300 paid, 700 still queued.
         const state = deriveRequestState(
             makeRequest({
                 requestType: 'Withdrawal',
                 status: PROCESSING,
                 canCancel: true,
-                acceptedAmount: '60',
+                requestedAmount: '700',
+                acceptedAmount: '300',
             }),
         );
         expect(state.statusCode).toBe('partial');
         expect(state.kind).toBe('outflow');
-        expect(state.amount).toBe(-60);
+        expect(state.amount).toBe(-300);
+        expect(state.requestedAmount).toBe(700);
         expect(state.cycleClosed).toBe(false);
+    });
+
+    it('withdrawal partly filled, LIVE remainder, paid > queued → partial (not pending)', () => {
+        // 1000 asked: 700 paid, 300 still queued.
+        const state = deriveRequestState(
+            makeRequest({
+                requestType: 'Withdrawal',
+                status: PROCESSING,
+                canCancel: true,
+                requestedAmount: '300',
+                acceptedAmount: '700',
+            }),
+        );
+        expect(state.statusCode).toBe('partial');
+        expect(state.kind).toBe('outflow');
+        expect(state.amount).toBe(-700);
+        expect(state.requestedAmount).toBe(300);
     });
 
     it('withdrawal partly filled, pool CLEARING → pending with the cycle closed (locked remainder)', () => {
@@ -293,24 +316,29 @@ describe('deriveRequestState — every branch of the derivation', () => {
                 requestType: 'Withdrawal',
                 status: PROCESSING,
                 canCancel: false,
+                requestedAmount: '40',
                 acceptedAmount: '60',
             }),
         );
         expect(state.statusCode).toBe('pending');
         expect(state.cycleClosed).toBe(true);
-        expect(state.amount).toBe(-100);
+        // The figure is the remainder still queued.
+        expect(state.amount).toBe(-40);
     });
 
-    it('withdrawal partly filled, TERMINAL → partial', () => {
+    it('withdrawal resolved → complete: a resolved withdrawal has nothing left queued', () => {
+        // The subgraph marks a withdrawal Processed only once its queued
+        // shares reach 0 (a cancel with a remainder is the cancelled branch).
         const state = deriveRequestState(
             makeRequest({
                 requestType: 'Withdrawal',
                 status: PROCESSED,
                 canCancel: false,
+                requestedAmount: '0',
                 acceptedAmount: '60',
             }),
         );
-        expect(state.statusCode).toBe('partial');
+        expect(state.statusCode).toBe('complete');
         expect(state.amount).toBe(-60);
     });
 
@@ -356,7 +384,34 @@ describe('deriveRequestState — every branch of the derivation', () => {
 });
 
 describe('deriveRequestState — the cancelled-amount recovery', () => {
-    it('recovers a zeroed requestedAmount from the Initiated event', () => {
+    it('recovers a cancelled deposit WITH a top-up from the Cancelled event', () => {
+        // 1000 asked, a 500 top-up, then cancelled: the Cancelled event carries
+        // all 1500 that was outstanding; the Initiated event only the 1000.
+        const state = deriveRequestState(
+            makeRequest({
+                requestedAmount: '0',
+                events: [
+                    event({ requestType: 'Initiated', assetAmount: '1000' }),
+                    event({
+                        requestType: 'Increased',
+                        assetAmount: '500',
+                        index: 1,
+                    }),
+                    event({
+                        requestType: 'Cancelled',
+                        assetAmount: '1500',
+                        index: 2,
+                    }),
+                ],
+            }),
+        );
+        expect(state.statusCode).toBe('cancelled');
+        expect(state.requestedAmount).toBe(1500);
+        expect(state.initiatedAmount).toBe(1000);
+        expect(state.amount).toBe(0);
+    });
+
+    it('recovers a zeroed requestedAmount from the Initiated event when the Cancelled event has no figure', () => {
         const state = deriveRequestState(
             makeRequest({
                 requestedAmount: '0',
@@ -660,6 +715,7 @@ describe('deriveRequestState — the reported figures', () => {
     it('carries the rejected figure through, parsed the same way as the rest', () => {
         const state = deriveRequestState(
             makeRequest({
+                requestedAmount: '0',
                 status: PROCESSED,
                 canCancel: false,
                 acceptedAmount: '60',
@@ -669,10 +725,6 @@ describe('deriveRequestState — the reported figures', () => {
         expect(state.statusCode).toBe('partial');
         expect(state.acceptedAmount).toBe(60);
         expect(state.rejectedAmount).toBe(40);
-        // The three add up: what was asked for, what was taken, what was not.
-        expect((state.acceptedAmount ?? 0) + state.rejectedAmount).toBe(
-            state.requestedAmount,
-        );
     });
 
     it('reads an absent or unparseable rejected figure as 0, never as null', () => {

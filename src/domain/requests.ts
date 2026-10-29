@@ -82,10 +82,13 @@ export interface RequestState {
     statusCode: RequestStatusCode;
     kind: RequestKind;
     /**
-     * The amount originally asked for, always positive. A cancelled request
-     * has its on-request `requestedAmount` zeroed by the subgraph, so the
-     * original is recovered from the `Initiated` event (see
-     * `initiatedAmount`).
+     * `UserRequest.requestedAmount`, in assets: the amount still OUTSTANDING,
+     * which the subgraph reduces as parts are accepted or rejected (0 once a
+     * request is fully resolved). A cancelled request has it zeroed by the
+     * subgraph, so for a cancellation it is the `Cancelled` event's amount —
+     * what was outstanding when cancelled, top-ups included — falling back to
+     * the `Initiated` event (see `initiatedAmount`) only when that event
+     * carries none.
      */
     requestedAmount: number;
     /**
@@ -287,16 +290,24 @@ const initiatedEvent = (
 ): UserRequestEvent | undefined =>
     events.find((e) => e.requestType === 'Initiated');
 
-/**
- * Subgraph behaviour: when a request is cancelled, the on-request
- * `requestedAmount` field is reset to 0 (the lender's effective balance is
- * restored). The original amount survives on the `Initiated` event's
- * `assetAmount`. Recover from there so cancelled rows still carry the amount
- * the lender originally asked for.
- */
+/** `assetAmount` of the `Initiated` event, or 0 when there is none. */
 const initiatedAmountOf = (events: UserRequestEvent[]): number => {
     const initiated = initiatedEvent(events);
     return initiated ? Number(initiated.assetAmount || '0') : 0;
+};
+
+/**
+ * Subgraph behaviour: when a request is cancelled, the on-request
+ * `requestedAmount` field is reset to 0 (the lender's effective balance is
+ * restored). The amount cancelled survives on the `Cancelled` event's
+ * `assetAmount` — everything still outstanding at the cancel, top-ups
+ * included. Only when that event carries no figure does this fall back to the
+ * `Initiated` event, which holds the FIRST submission alone and so misses
+ * every top-up.
+ */
+const cancelledAmountOf = (events: UserRequestEvent[]): number => {
+    const cancelledEvent = events.find((e) => e.requestType === 'Cancelled');
+    return num(cancelledEvent?.assetAmount) || initiatedAmountOf(events);
 };
 
 /**
@@ -332,17 +343,15 @@ const numOrNull = (str: string | null | undefined): number | null => {
  * Convert a `UserRequest` into a `RequestState`. Pure — no clock, no network,
  * no copy.
  *
- * BRANCH ORDER (this IS the behaviour; it reproduces kasu-ui's
- * `deriveTransactionView` check for check):
+ * BRANCH ORDER (this IS the behaviour):
  *
  *   1. a `Cancelled` event                      → `cancelled`, neutral, 0
  *   2. a withdrawal with a `Forced` event       → `forced`, outflow, −accepted
  *   3. a reallocated deposit                    → `reallocated`, inflow, +accepted
- *   4. a withdrawal partly filled with a LIVE
- *      remainder (cycle still open)             → `partial`, outflow, −accepted
+ *   4. a withdrawal partly filled (paid > 0) with
+ *      a LIVE remainder (queued > 0, cycle open) → `partial`, outflow, −accepted
  *   5. resolved (`status === 'Processed'`):
- *        withdrawal, partly filled              → `partial`, outflow, −accepted
- *        withdrawal, fully filled               → `complete`, outflow, −accepted
+ *        withdrawal (nothing left queued)       → `complete`, outflow, −accepted
  *        deposit, nothing accepted              → `rejected`, neutral, 0
  *        deposit, part rejected                 → `partial`, inflow, +accepted
  *        deposit, fully accepted                → `complete`, inflow, +accepted
@@ -369,10 +378,10 @@ export function deriveRequestState(request: UserRequest): RequestState {
     const isWithdrawal = request.requestType === 'Withdrawal';
     const cancelled = isCancelled(request.events);
     // Cancelled requests have `requestedAmount` zeroed on the request itself;
-    // pull the original value from the Initiated event so the row still
-    // carries "100 cancelled" instead of "0 cancelled".
+    // take the amount from the Cancelled event so the row still carries
+    // "1500 cancelled" (1000 + a 500 top-up) instead of "0 cancelled".
     const requested = cancelled
-        ? num(request.requestedAmount) || initiatedAmountOf(request.events)
+        ? num(request.requestedAmount) || cancelledAmountOf(request.events)
         : num(request.requestedAmount);
     const accepted = num(request.acceptedAmount);
     const rejected = num(request.rejectedAmount);
@@ -441,11 +450,14 @@ export function deriveRequestState(request: UserRequest): RequestState {
 
     // 4. Withdrawal partly filled with a LIVE remainder: the request returns
     // to the queue with a live Cancel. Checked BEFORE the resolved branch and
-    // via `isCycleClosed`, never via the sticky raw status.
+    // via `isCycleClosed`, never via the sticky raw status. `requested` is
+    // what is still OUTSTANDING, so "partly filled" is "something paid AND
+    // something still queued" — never a comparison of the two, which would
+    // turn on whether more was paid than is left.
     if (
         isWithdrawal &&
         accepted > 0 &&
-        accepted < requested &&
+        requested > 0 &&
         !isCycleClosed(request)
     ) {
         return {
@@ -458,13 +470,15 @@ export function deriveRequestState(request: UserRequest): RequestState {
 
     // 5. Resolved — a rejection IS a resolution.
     if (request.status === UserRequestStatus.PROCESSED) {
+        // A withdrawal is resolved only once nothing is left queued — a
+        // partly filled one returns to the queue (branch 4), and one cancelled
+        // with a remainder is branch 1 — so a resolved withdrawal is complete.
         if (isWithdrawal) {
-            const partly = accepted < requested;
             return {
                 ...base,
                 kind: 'outflow',
                 amount: -accepted,
-                statusCode: partly ? 'partial' : 'complete',
+                statusCode: 'complete',
             };
         }
 

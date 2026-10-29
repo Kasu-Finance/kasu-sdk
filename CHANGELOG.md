@@ -3,6 +3,56 @@
 All notable changes to `@kasufinance/kasu-sdk`. Versions follow semantic
 versioning; earlier releases are described in their commit messages.
 
+## 2.13.1
+
+Request amounts are now in the right unit, and the request view model reads
+them for what they are. The subgraph holds a deposit request's
+`amountRequested` in ASSETS and a withdrawal request's in tranche SHARES; only
+the shares may be priced. Either way it is the amount still OUTSTANDING: each
+accepted or rejected part is taken off it.
+
+### Fixed
+
+- **`UserLending.getUserRequests` — `requestedAmount` of a DEPOSIT request.**
+  Deposit request amounts were overstated by the tranche share price: the
+  asset amount was priced as if it were shares, so a pending 1,000 deposit in
+  a tranche at 1.15 assets per share read 1,150. It is now the amount the
+  lender asked for, top-ups included. Visible wherever a deposit is still
+  outstanding (pending or partly processed); a settled deposit's figure is 0
+  either way. The same correction reaches `RequestState.requestedAmount` and
+  `RequestState.amount` for pending deposits (`deriveRequestState`,
+  `kasu.portfolio.getTransactionHistory`). Withdrawal requests, accepted and
+  rejected amounts and event amounts are unchanged — they were already in
+  assets.
+- **`UserLending.getCurrentEpochFtdAmount`.** Fixed-term deposit amounts for
+  the current epoch were overstated by the tranche share price in the same
+  way; they are now asset amounts. The query now reads deposit requests only,
+  and the amounts for one tranche and fixed-term config are summed, so a
+  cancelled request no longer overwrites its replacement with 0.
+- **`UserLending.getCurrentFtdBalance`.** Locked fixed-term shares were
+  priced at the pool's AVERAGE share price across its tranches; they are now
+  priced at their own tranche's share price. The figure was understated for a
+  tranche above the pool average and overstated for one below it. Its
+  current-epoch sibling, `getCurrentEpochFtdAmount`, now leaves out a config
+  whose total is 0 instead of returning the string `'0.0'`.
+- **`deriveRequestState` — status of a partly paid withdrawal.**
+  `requestedAmount` is what is still queued, not what was first asked for. A
+  withdrawal with part paid and the rest still queued in an open cycle read
+  `pending` whenever more had been paid than was left (1000 asked, 700 paid,
+  300 queued); it now reads `partial`, whichever part is larger. A resolved
+  withdrawal has nothing left queued, so it is always `complete`.
+- **`deriveRequestState` — amount of a cancelled request with a top-up.** A
+  cancelled request's `requestedAmount` was rebuilt from its first submission
+  alone, so top-ups were missed (1000 plus a 500 top-up, cancelled, read
+  1000). It now reads the amount on the cancellation itself — everything
+  outstanding when it was cancelled — and falls back to the first submission
+  only when that figure is missing.
+- **Unknown request types fail closed.** `getUserRequests` no longer prices a
+  request type it does not know as shares. Rows of an unknown request type
+  are skipped rather than failing the whole list; each skip is logged with
+  `console.error` (`UNKNOWN_REQUEST_TYPE_MESSAGE`), naming only the type and
+  the request id.
+
 ## 2.13.0
 
 A strategy's TVL over time — the data behind a TVL chart — from the same

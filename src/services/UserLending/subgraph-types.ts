@@ -77,8 +77,6 @@ export interface CurrentEpochFtdAmountSubgraph {
         amountRequested: string;
         tranche: {
             id: string;
-            balance: string;
-            shares: string;
         };
     }[];
 }
@@ -161,13 +159,9 @@ export interface CurrentFtdBalanceSubgraph {
             configId: string;
             lendingPoolTranche: {
                 id: string;
-            };
-        };
-        lendingPool: {
-            balance: string;
-            tranches: {
+                balance: string;
                 shares: string;
-            }[];
+            };
         };
     }[];
 }

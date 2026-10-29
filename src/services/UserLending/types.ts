@@ -39,8 +39,18 @@ export interface UserRequest {
     requestType: 'Deposit' | 'Withdrawal';
     trancheId: string;
     trancheName: string;
+    /**
+     * The amount still OUTSTANDING on the request, in assets (the
+     * deployment's stable token, display units) — not the amount first asked
+     * for: the subgraph takes accepted and rejected amounts off it, and a
+     * cancellation zeroes it. A deposit's figure is the asset amount as the
+     * subgraph holds it (top-ups included); a withdrawal's is its remaining
+     * tranche shares at the tranche's current share price.
+     */
     requestedAmount: string;
+    /** Assets accepted so far — deposited, or paid out for a withdrawal. */
     acceptedAmount: string;
+    /** Assets rejected and returned — deposits only; 0 for a withdrawal. */
     rejectedAmount: string;
     timestamp: EpochTimeStamp;
     status: UserRequestStatus;

@@ -160,14 +160,13 @@ export const currentEpochFtdAmountQuery = gql`
                 user: $userId
                 lendingPool_in: $poolIds
                 epochId: $currentEpoch
+                type: DepositRequest
             }
         ) {
             fixedTermConfigId
             amountRequested
             tranche {
                 id
-                balance
-                shares
             }
         }
     }
@@ -183,11 +182,7 @@ export const currentFtdBalanceQuery = gql`
                 configId
                 lendingPoolTranche {
                     id
-                }
-            }
-            lendingPool {
-                balance
-                tranches {
+                    balance
                     shares
                 }
             }
