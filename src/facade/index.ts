@@ -19,6 +19,16 @@ export { READ_ONLY_MESSAGE } from './read-only';
 // Chain configurations
 export { CHAIN_CONFIGS } from './chain-configs';
 
+// Strategy ↔ deployment resolution (pure, over CHAIN_CONFIGS)
+export {
+    StrategyDeploymentInputError,
+    strategyDeployments,
+} from './strategy-deployments';
+export type {
+    StrategyDeployment,
+    StrategyDeploymentInputErrorCode,
+} from './strategy-deployments';
+
 // Directus-backed helpers (I/O — not part of `domain/`)
 export { fetchUnusedPoolIds } from './unused-pool-ids';
 

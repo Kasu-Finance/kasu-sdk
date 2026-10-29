@@ -167,6 +167,35 @@ instance, so a second call reads only what is new. `timeoutMs` (default
 30 s) and `signal` bound the call and reject with
 `PoolTvlHistoryTimeoutError` / `PoolTvlHistoryAbortedError`.
 
+A strategy can run on more than one deployment (Tax Pay lends on Base and on
+XDC AUDD), and its total lent is the sum of its pools. `strategyDeployments`
+names the pools and `combineTvlHistories` adds their histories in USD at the
+rates you pass. The SDK fetches no exchange rate:
+
+```ts
+import { combineTvlHistories, Kasu, strategyDeployments } from '@kasufinance/kasu-sdk';
+
+const legs = strategyDeployments(strategy.id);
+// [{ chain: 'base', poolId: '0x…' }, { chain: 'xdc', poolId: '0x…' }]
+
+const histories = await Promise.all(
+    legs.map(async ({ chain, poolId }) => ({
+        entries: await sdks[chain].strategies.getPoolTvlHistory(poolId, { count: 52 }),
+        usdRate: chain === 'xdc' ? audToUsd : 1, // your rate, never a guess
+    })),
+);
+const points = combineTvlHistories(histories); // { timestamp, tvlUsd, kind }[]
+```
+
+`strategyDeployments(poolId, chain = 'base')` takes the deployment the id was
+read on and returns the same set from either side of the mapping; an unmapped
+id is a strategy of one on its own chain, and an id the mapping places on
+another deployment throws `StrategyDeploymentInputError`. `combineTvlHistories`
+is a step merge by time: at every clearing on any leg, each leg's latest
+point, times its rate, summed; a leg counts 0 before its first point. It ends
+with one `current` point, the sum of the legs' current values. Bad rates or
+entries throw `TvlHistoryInputError`, so the series never holds `NaN`.
+
 ## Domain helpers
 
 Pure functions shared by every Kasu frontend. They return **numbers and codes,
@@ -189,6 +218,7 @@ application formats them in its own design system and language.
 | Settlement           | `computeSettlementWindow`, `nextCycleBoundary`, `deriveCycleDates`, `CLEARING_WINDOW_SECONDS`                                                                                                            |
 | Loan contract        | `encodeDepositData`, `buildContractVersionType`, `buildLoanAgreementSignMessage`, `buildLegacyContractRequestMessage`, `buildFullNameRequestMessage`, `formatSignTimestampUtc`, `parseFormattedMessage`, `asContractType` |
 | Wallet errors        | `isUserRejected`, `isUnpredictableGas`, `classifyWalletFailure`                                                                                                                                          |
+| Pool TVL             | `poolTvl`, `combineTvlHistories`, `TvlHistoryInputError` — one strategy's history summed across deployments, in USD at the caller's rates |
 | Revert errors        | `decodeRevert`, `extractRevertData` — the bytes a reverted call came back with, read as the custom error the contract named                                                                              |
 | AU minimum           | `auMinimumRemaining`, `isAustralianKyc`, `auThresholdFor`, `isAuMinimumExempt`, `parseMinorUnits`, `AU_ALPHA3`, `AU_MIN_CUMULATIVE_BY_STABLE`                                                            |
 

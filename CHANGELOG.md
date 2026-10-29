@@ -3,6 +3,47 @@
 All notable changes to `@kasufinance/kasu-sdk`. Versions follow semantic
 versioning; earlier releases are described in their commit messages.
 
+## 2.14.0
+
+A strategy's TVL across its deployments. A strategy can run on more than
+one deployment — Tax Pay lends on Base (USDC) and on XDC (AUDD) — and its
+total lent is the sum of its pools. Until now each app worked out where else
+a strategy lives, and how to add two chains' histories, for itself.
+
+### Added
+
+- **`strategyDeployments(poolId, chain = 'base')`** (facade, pure) →
+  `StrategyDeployment[]` `{ chain, poolId }`: every deployment the strategy
+  has a pool on, canonical (Base) first, from the chain configs'
+  `poolMetadataMapping`. The same rules as kasu-ui's counterpart lookup.
+  - `chain` is the deployment `poolId` was read on. Either side of a
+    mapping gives the same set: Tax Pay's Base id on `'base'` and its XDC id
+    on `'xdc'` both return both pools.
+  - An id the mapping does not know is a strategy of one on its own chain
+    (PayFi on Base; every XDC USDC pool).
+  - Ids are compared case-insensitively and returned lowercase.
+  - Throws `StrategyDeploymentInputError` (`code`: `pool-id`, `chain`,
+    `wrong-chain`) for a malformed id, an unknown chain, or an id the
+    mapping places on another deployment — an XDC id passed as Base would
+    otherwise read Base with an XDC address and quietly find nothing.
+- **`combineTvlHistories(legs)`** (domain, pure) →
+  `StrategyTvlHistoryEntry[]` `{ timestamp, tvlUsd, kind }`. Each leg is one
+  deployment's `getPoolTvlHistory` and its `usdRate`.
+  - A step merge by time: at every distinct clearing time on any leg, the
+    sum over legs of each one's latest point at or before then, times its
+    rate. A leg counts 0 before its first point. Points that share a
+    timestamp are one point, so timestamps are strictly ascending.
+  - The series ends with one `current` point at the latest of the legs'
+    `current` times, equal to the sum of their `current` values. Every leg
+    ends in a `current` point, or none does. A leg with no entries counts 0.
+  - No `epochId`: the chains clear at different blocks and times, so a
+    merged point belongs to no single epoch. Plot by `timestamp`.
+  - No exchange rate inside the SDK: the caller passes each leg's
+    `usdRate` (`1` for USDC).
+  - Every rate and entry is validated first. Bad input throws
+    `TvlHistoryInputError` (`code`, plus the `leg` and `entry` position), so
+    the result never holds `NaN` or `Infinity`.
+
 ## 2.13.1
 
 Request amounts are now in the right unit, and the request view model reads
