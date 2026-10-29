@@ -9,9 +9,9 @@ import {
     currentFtdBalanceQuery,
     userRequestsQuery,
 } from './queries';
-import { UserRequestStatus, UserRequestsSubgraph } from './subgraph-types';
+import { UserRequestsSubgraph, UserRequestStatus } from './subgraph-types';
 import { UserRequest } from './types';
-import { UserLending } from './user-lending';
+import { UNKNOWN_REQUEST_TYPE_MESSAGE, UserLending } from './user-lending';
 
 // ---------------------------------------------------------------------------
 // Request amounts and their UNITS.
@@ -325,6 +325,19 @@ describe('UserLending.getUserRequests — request amounts in assets', () => {
     });
 });
 
+describe('UserLending.getUserRequests — an unknown request type fails closed', () => {
+    it('throws rather than pricing an unknown type as shares or as assets', async () => {
+        const unknown = {
+            ...DEPOSIT_WITH_TOP_UP,
+            type: 'TransferRequest' as unknown as SubgraphRequest['type'],
+        };
+
+        await expect(userRequests(unknown)).rejects.toThrow(
+            `${UNKNOWN_REQUEST_TYPE_MESSAGE}: TransferRequest`,
+        );
+    });
+});
+
 describe('UserLending.getCurrentEpochFtdAmount — deposit amounts are assets', () => {
     it('asks the subgraph for deposit requests only', () => {
         expect(currentEpochFtdAmountQuery).toMatch(/type:\s*DepositRequest/);
@@ -357,6 +370,40 @@ describe('UserLending.getCurrentEpochFtdAmount — deposit amounts are assets', 
         expect(junior[2]).toBe('2000.0');
         expect(junior[1]).toBe('750.0');
         expect(junior[0]).toBeUndefined();
+    });
+
+    it('leaves out a slot whose total is zero, and a tranche with no other', async () => {
+        const OTHER_TRANCHE = '0x000000000000000000000000000000000000a013';
+        const { lending } = harness((document) => {
+            if (document !== currentEpochFtdAmountQuery) {
+                throw new Error('unexpected query');
+            }
+            const tranche = { id: TRANCHE_JUNIOR, ...JUNIOR };
+            return {
+                userRequests: [
+                    { fixedTermConfigId: '2', amountRequested: '2000', tranche },
+                    // Cancelled outright: nothing left on config 1.
+                    { fixedTermConfigId: '1', amountRequested: '0', tranche },
+                    // A tranche whose only request was cancelled.
+                    {
+                        fixedTermConfigId: '1',
+                        amountRequested: '0',
+                        tranche: { id: OTHER_TRANCHE, ...JUNIOR },
+                    },
+                ],
+            };
+        });
+
+        const amounts = await lending.getCurrentEpochFtdAmount(
+            [POOL],
+            USER,
+            '10',
+        );
+
+        // Never the truthy string '0.0'.
+        expect(amounts.get(TRANCHE_JUNIOR)?.[1]).toBeUndefined();
+        expect(amounts.get(TRANCHE_JUNIOR)?.[2]).toBe('2000.0');
+        expect(amounts.has(OTHER_TRANCHE)).toBe(false);
     });
 });
 

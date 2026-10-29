@@ -64,6 +64,10 @@ import {
     UserTrancheBalance,
 } from './types';
 
+/** Thrown when the subgraph reports a request type with no known unit. */
+export const UNKNOWN_REQUEST_TYPE_MESSAGE =
+    'UserLending: unknown request type, its amount unit is unknown';
+
 export class UserLending {
     private readonly _graph: GraphQLClient;
 
@@ -632,29 +636,43 @@ export class UserLending {
                 currentEpoch: parseFloat(currentEpoch),
             });
 
-        const currentEpochFtdAmounts = new Map<string, string[]>();
-
         // Deposit requests only (the query filters on type): a deposit's
         // `amountRequested` is already an ASSET amount, so it is summed as it
         // is — never put through a share price. Summed, not assigned: a
         // cancelled request and its replacement share a tranche and a config
         // in one epoch, and the cancelled one's 0 must not overwrite the live
         // amount.
+        const totals = new Map<string, Map<number, BigNumber>>();
+
         for (const userRequest of currentEpochFtdAmountRes.userRequests) {
             const ftdID = parseFloat(userRequest.fixedTermConfigId);
             if (!Number.isInteger(ftdID) || ftdID < 0) continue;
 
-            const ftdAmounts = [
-                ...(currentEpochFtdAmounts.get(userRequest.tranche.id) ?? []),
-            ];
-
-            ftdAmounts[ftdID] = formatUnits(
-                parseUnits(ftdAmounts[ftdID] ?? '0').add(
+            const perConfig =
+                totals.get(userRequest.tranche.id) ??
+                new Map<number, BigNumber>();
+            perConfig.set(
+                ftdID,
+                (perConfig.get(ftdID) ?? BigNumber.from(0)).add(
                     parseUnits(userRequest.amountRequested),
                 ),
             );
+            totals.set(userRequest.tranche.id, perConfig);
+        }
 
-            currentEpochFtdAmounts.set(userRequest.tranche.id, ftdAmounts);
+        // A slot whose total is zero is left out — `'0.0'` is a truthy
+        // string, and a caller testing the slot would read it as an amount.
+        // A tranche with no non-zero slot is left out entirely.
+        const currentEpochFtdAmounts = new Map<string, string[]>();
+
+        for (const [trancheId, perConfig] of totals) {
+            const ftdAmounts: string[] = [];
+            for (const [ftdID, total] of perConfig) {
+                if (total.gt(0)) ftdAmounts[ftdID] = formatUnits(total);
+            }
+            if (ftdAmounts.length) {
+                currentEpochFtdAmounts.set(trancheId, ftdAmounts);
+            }
         }
 
         return currentEpochFtdAmounts;
@@ -707,15 +725,24 @@ export class UserLending {
     private requestedAmountInAssets(
         userRequest: UserRequestsSubgraph['userRequests'][number],
     ): string {
-        if (userRequest.type === 'DepositRequest') {
-            return userRequest.amountRequested;
+        switch (userRequest.type) {
+            case 'DepositRequest':
+                return userRequest.amountRequested;
+            case 'WithdrawalRequest':
+                return this.convertSharesToAssets(
+                    userRequest.amountRequested,
+                    userRequest.tranche.balance,
+                    userRequest.tranche.shares,
+                );
+            default: {
+                // Fail closed: a type this SDK does not know has no known
+                // unit, and pricing it either way would print a wrong figure.
+                const unknownType: string = userRequest.type;
+                throw new Error(
+                    `${UNKNOWN_REQUEST_TYPE_MESSAGE}: ${unknownType}`,
+                );
+            }
         }
-
-        return this.convertSharesToAssets(
-            userRequest.amountRequested,
-            userRequest.tranche.balance,
-            userRequest.tranche.shares,
-        );
     }
 
     convertSharesToAssets(
