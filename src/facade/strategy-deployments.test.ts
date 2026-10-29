@@ -52,16 +52,10 @@ describe('CHAIN_CONFIGS — poolMetadataMapping', () => {
 
 describe('strategyDeployments', () => {
     it('finds the XDC counterpart of a canonical Base id', () => {
-        expect(strategyDeployments(TAX_PAY_BASE)).toEqual([
+        expect(strategyDeployments(TAX_PAY_BASE, 'base')).toEqual([
             { chain: 'base', poolId: TAX_PAY_BASE },
             { chain: 'xdc', poolId: TAX_PAY_XDC },
         ]);
-    });
-
-    it('defaults the chain to Base', () => {
-        expect(strategyDeployments(TAX_PAY_BASE)).toEqual(
-            strategyDeployments(TAX_PAY_BASE, 'base'),
-        );
     });
 
     it('resolves the same set from the XDC side', () => {
@@ -77,14 +71,14 @@ describe('strategyDeployments', () => {
                 { chain: 'base', poolId: canonical },
                 { chain: 'xdc', poolId: local },
             ];
-            expect(strategyDeployments(canonical)).toEqual(expected);
+            expect(strategyDeployments(canonical, 'base')).toEqual(expected);
             expect(strategyDeployments(local, 'xdc')).toEqual(expected);
         }
     });
 
     it('compares case-insensitively, trims, and returns lowercase', () => {
         const shouted = `  ${TAX_PAY_BASE.toUpperCase().replace('0X', '0x')} `;
-        expect(strategyDeployments(shouted)).toEqual([
+        expect(strategyDeployments(shouted, 'base')).toEqual([
             { chain: 'base', poolId: TAX_PAY_BASE },
             { chain: 'xdc', poolId: TAX_PAY_XDC },
         ]);
@@ -97,7 +91,7 @@ describe('strategyDeployments', () => {
     });
 
     it('keeps a Base id with no counterpart a strategy of one (PayFi)', () => {
-        expect(strategyDeployments(BASE_ONLY)).toEqual([
+        expect(strategyDeployments(BASE_ONLY, 'base')).toEqual([
             { chain: 'base', poolId: BASE_ONLY },
         ]);
     });
@@ -115,7 +109,7 @@ describe('strategyDeployments', () => {
     });
 
     it('refuses an XDC chain-local id passed as Base', () => {
-        expect(refusal(() => strategyDeployments(TAX_PAY_XDC))).toBe(
+        expect(refusal(() => strategyDeployments(TAX_PAY_XDC, 'base'))).toBe(
             'wrong-chain',
         );
         expect(
@@ -141,12 +135,12 @@ describe('strategyDeployments', () => {
         ['a number', 42],
         ['undefined', undefined],
     ])('refuses a malformed pool id (%s)', (_label, id) => {
-        expect(refusal(() => strategyDeployments(id as string))).toBe(
+        expect(refusal(() => strategyDeployments(id as string, 'base'))).toBe(
             'pool-id',
         );
     });
 
-    it.each([['mainnet'], ['toString'], ['__proto__'], ['']])(
+    it.each([['mainnet'], ['toString'], ['__proto__'], [''], [undefined]])(
         'refuses an unknown chain (%s)',
         (chain) => {
             expect(
@@ -158,9 +152,9 @@ describe('strategyDeployments', () => {
     );
 
     it('returns a fresh array each call', () => {
-        const first = strategyDeployments(TAX_PAY_BASE);
+        const first = strategyDeployments(TAX_PAY_BASE, 'base');
         first.pop();
-        expect(strategyDeployments(TAX_PAY_BASE)).toHaveLength(2);
+        expect(strategyDeployments(TAX_PAY_BASE, 'base')).toHaveLength(2);
     });
 });
 

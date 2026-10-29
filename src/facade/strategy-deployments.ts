@@ -135,8 +135,8 @@ export function resolveStrategyDeployments(
  * `combineTvlHistories`. One entry for a strategy that lives on one chain
  * only (PayFi, on Base).
  *
- * `chain` is the deployment `poolId` was read on (default Base, where every
- * canonical id lives). From either side of a mapping the answer is the same
+ * `chain` is the deployment `poolId` was read on — required, because an
+ * address alone does not say which chain it belongs to. From either side of a mapping the answer is the same
  * set: Tax Pay's Base id on `'base'` and its XDC id on `'xdc'` both return
  * both pools. An id the mapping does not know is a strategy of one on its
  * own chain. Ids are compared case-insensitively and returned lowercase.
@@ -145,13 +145,13 @@ export function resolveStrategyDeployments(
  * or an id the mapping places on another deployment (`'wrong-chain'`).
  *
  * ```ts
- * strategyDeployments(strategy.id);
+ * strategyDeployments(strategy.id, 'base');
  * // [{ chain: 'base', poolId: '0x…' }, { chain: 'xdc', poolId: '0x…' }]
  * ```
  */
 export function strategyDeployments(
     poolId: string,
-    chain: SupportedChain = CANONICAL_CHAIN,
+    chain: SupportedChain,
 ): StrategyDeployment[] {
     return resolveStrategyDeployments(CHAIN_CONFIGS, poolId, chain);
 }

@@ -72,9 +72,18 @@ export interface PoolTvlHistoryEntry {
  * for AUDD). The SDK fetches no exchange rate: the caller passes it.
  */
 export interface TvlHistoryLeg {
+    /** At least one point: a real pool always returns its `current` point. */
     entries: readonly PoolTvlHistoryEntry[];
     /** USD per unit of the leg's stable token. Finite and above 0. */
     usdRate: number;
+    /**
+     * Set it when the leg came back with as many clearings as the `count`
+     * you asked for: older history may exist, so the leg's first point is
+     * where the WINDOW starts, not where the pool did. Leave it unset for a
+     * leg that holds the pool's whole history (one that started lending
+     * later, say), which then counts 0 before its first point.
+     */
+    truncated?: boolean;
 }
 
 /**
@@ -95,11 +104,13 @@ export interface StrategyTvlHistoryEntry {
 /**
  * What `combineTvlHistories` refuses, as a code:
  *
- * - `legs` — not a non-empty array;
+ * - `legs` — not a non-empty array (or one with holes);
  * - `leg` — a leg that is not an object;
  * - `usd-rate` — a rate that is not a finite number above 0;
+ * - `truncated` — a `truncated` that is neither a boolean nor absent;
  * - `entries` — a leg's `entries` is not an array;
- * - `entry` — an entry that is not an object;
+ * - `empty-leg` — a leg with no entries: pass only the legs you have;
+ * - `entry` — an entry that is not an object (or a hole);
  * - `timestamp` / `tvl` — not a finite number at or above 0;
  * - `kind` — neither `'clearing'` nor `'current'`;
  * - `order` — timestamps going backwards within a leg;
@@ -111,7 +122,9 @@ export type TvlHistoryInputErrorCode =
     | 'legs'
     | 'leg'
     | 'usd-rate'
+    | 'truncated'
     | 'entries'
+    | 'empty-leg'
     | 'entry'
     | 'timestamp'
     | 'tvl'
@@ -148,12 +161,16 @@ function isNonNegativeFinite(value: unknown): value is number {
     return typeof value === 'number' && Number.isFinite(value) && value >= 0;
 }
 
-/** Throws unless the leg is well formed; returns whether it ends in `current`. */
-function validateLeg(leg: unknown, legIndex: number): boolean {
+/**
+ * Throws unless the leg is well formed. Index loops, not `forEach`: a hole in
+ * a sparse array is skipped by the array methods and would surface later as
+ * a raw `TypeError` instead of a refusal.
+ */
+function validateLeg(leg: unknown, legIndex: number): TvlHistoryLeg {
     if (typeof leg !== 'object' || leg === null) {
         throw new TvlHistoryInputError('leg', legIndex);
     }
-    const { entries, usdRate } = leg as Partial<TvlHistoryLeg>;
+    const { entries, usdRate, truncated } = leg as Partial<TvlHistoryLeg>;
     if (
         typeof usdRate !== 'number' ||
         !Number.isFinite(usdRate) ||
@@ -161,11 +178,19 @@ function validateLeg(leg: unknown, legIndex: number): boolean {
     ) {
         throw new TvlHistoryInputError('usd-rate', legIndex);
     }
-    if (!Array.isArray(entries)) {
+    if (truncated !== undefined && typeof truncated !== 'boolean') {
+        throw new TvlHistoryInputError('truncated', legIndex);
+    }
+    if (!Array.isArray(entries as unknown)) {
         throw new TvlHistoryInputError('entries', legIndex);
     }
+    const list = entries as readonly unknown[];
+    if (list.length === 0) {
+        throw new TvlHistoryInputError('empty-leg', legIndex);
+    }
     let previous = -Infinity;
-    entries.forEach((entry: unknown, index) => {
+    for (let index = 0; index < list.length; index += 1) {
+        const entry = list[index];
         if (typeof entry !== 'object' || entry === null) {
             throw new TvlHistoryInputError('entry', legIndex, index);
         }
@@ -179,16 +204,15 @@ function validateLeg(leg: unknown, legIndex: number): boolean {
         if (kind !== 'clearing' && kind !== 'current') {
             throw new TvlHistoryInputError('kind', legIndex, index);
         }
-        if (kind === 'current' && index !== entries.length - 1) {
+        if (kind === 'current' && index !== list.length - 1) {
             throw new TvlHistoryInputError('current', legIndex, index);
         }
         if (timestamp < previous) {
             throw new TvlHistoryInputError('order', legIndex, index);
         }
         previous = timestamp;
-    });
-    const last = entries[entries.length - 1] as PoolTvlHistoryEntry | undefined;
-    return last?.kind === 'current';
+    }
+    return leg as TvlHistoryLeg;
 }
 
 /**
@@ -203,68 +227,82 @@ function validateLeg(leg: unknown, legIndex: number): boolean {
  * Points that share a timestamp — clearings run in one block, or two chains
  * clearing in the same second — are one output point. The series ends with
  * one `current` point at the latest of the legs' `current` timestamps, equal
- * to the sum of their `current` values. The window is the union of the legs'
- * windows: each leg is already the newest N clearings of its own chain.
+ * to the sum of their `current` values. Every leg must end in a `current`
+ * point, or none may.
  *
- * Every leg must end in a `current` point, or none may. A leg with no entries
- * (a pool the subgraph does not know) counts 0 throughout and takes no part
- * in that rule; with only such legs the result is `[]`.
+ * The window is the union of the legs' windows, cut where a `truncated` leg
+ * starts: before its first point that leg's real value is unknown, not 0, so
+ * the series begins at the LATEST first timestamp among the truncated legs.
+ * That first point is still every leg's step value at that time. A leg that
+ * is not truncated counts 0 before its first point (a genuine late start).
  *
- * Every rate and entry is validated first: a bad input throws
- * `TvlHistoryInputError` (its `code` says why), so the result never holds
- * `NaN` or `Infinity`. The inputs are not modified.
+ * Every leg and entry is validated first: a bad input — an empty leg
+ * included — throws `TvlHistoryInputError` (its `code` says why), so the
+ * result never holds `NaN` or `Infinity`. The inputs are not modified.
  *
  * ```ts
- * const points = combineTvlHistories([
- *     { entries: baseHistory, usdRate: 1 },
- *     { entries: xdcHistory, usdRate: audToUsd },
- * ]);
+ * const COUNT = 52; // the `count` each leg was fetched with
+ * const leg = (entries: PoolTvlHistoryEntry[], usdRate: number) => ({
+ *     entries,
+ *     usdRate,
+ *     truncated: entries.filter((e) => e.kind === 'clearing').length >= COUNT,
+ * });
+ * const points = combineTvlHistories([leg(base, 1), leg(xdc, audToUsd)]);
  * ```
  */
 export function combineTvlHistories(
     legs: readonly TvlHistoryLeg[],
 ): StrategyTvlHistoryEntry[] {
-    // `Array.isArray` narrows a readonly array to `any[]`; test it as unknown.
     if (!Array.isArray(legs as unknown) || legs.length === 0) {
         throw new TvlHistoryInputError('legs');
     }
-    const endsInCurrent = legs.map((leg, index) => validateLeg(leg, index));
-    const first = legs.findIndex((leg) => leg.entries.length > 0);
-    if (first === -1) return [];
-    const withCurrent = endsInCurrent[first];
-    const odd = legs.findIndex(
-        (leg, index) =>
-            leg.entries.length > 0 && endsInCurrent[index] !== withCurrent,
+    const valid: TvlHistoryLeg[] = [];
+    for (let index = 0; index < legs.length; index += 1) {
+        valid.push(validateLeg(legs[index], index));
+    }
+    const endsInCurrent = valid.map(
+        (leg) => leg.entries[leg.entries.length - 1].kind === 'current',
     );
+    const odd = endsInCurrent.findIndex((ends) => ends !== endsInCurrent[0]);
     if (odd !== -1) throw new TvlHistoryInputError('current', odd);
-    const filled = legs.filter((leg) => leg.entries.length > 0);
 
-    const finalTimestamp = withCurrent
+    const finalTimestamp = endsInCurrent[0]
         ? Math.max(
-              ...filled.map(
+              ...valid.map(
                   (leg) => leg.entries[leg.entries.length - 1].timestamp,
               ),
           )
         : undefined;
+    const truncatedStarts = valid
+        .filter((leg) => leg.truncated === true)
+        .map((leg) => leg.entries[0].timestamp);
+    const start =
+        truncatedStarts.length > 0 ? Math.max(...truncatedStarts) : -Infinity;
     const clearingTimes = [
         ...new Set(
-            filled.flatMap((leg) =>
+            valid.flatMap((leg) =>
                 leg.entries
                     .filter((entry) => entry.kind === 'clearing')
                     .map((entry) => entry.timestamp),
             ),
         ),
     ]
-        .filter((t) => finalTimestamp === undefined || t < finalTimestamp)
+        .filter(
+            (t) =>
+                t >= start &&
+                (finalTimestamp === undefined || t < finalTimestamp),
+        )
         .sort((a, b) => a - b);
 
     // One cursor per leg: the times ascend, so each leg is walked once. A
     // leg's `current` point is a step like any other, which keeps a chain
     // whose subgraph lags behind the other's last clearing at its own latest.
-    const cursors = filled.map(() => -1);
+    // Points before `start` still move the cursors, so the first kept point
+    // is every leg's true step value.
+    const cursors = valid.map(() => -1);
     const sumAt = (t: number): number => {
         let sum = 0;
-        filled.forEach((leg, index) => {
+        valid.forEach((leg, index) => {
             let cursor = cursors[index];
             while (
                 cursor + 1 < leg.entries.length &&

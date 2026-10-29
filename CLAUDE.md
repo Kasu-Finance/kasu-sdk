@@ -403,10 +403,14 @@ mapping places on ANOTHER deployment throws `wrong-chain` rather than reading
 one chain with another's address. `combineTvlHistories` (`pool-tvl.ts`) is a
 step merge by timestamp — each leg's latest point at or before every clearing
 time on any leg, times the caller's `usdRate`, a leg 0 before its first point
-— ending in one `current` point at the latest leg's current time. It drops
-`epochId` (the chains clear at different times), takes no FX of its own, and
-validates every rate and entry first (`TvlHistoryInputError`), so it never
-returns `NaN`.
+— ending in one `current` point at the latest leg's current time. A leg marked
+`truncated` (cut by its `count` window) moves the start to the latest
+truncated leg's first point instead, since its earlier value is unknown, not
+0. It drops `epochId` (the chains clear at different times), takes no FX of
+its own, and validates every leg and entry first with index loops (sparse
+holes, empty legs and bad rates all throw `TvlHistoryInputError`), so it never
+returns `NaN` and never passes one chain's figure off as the total.
+`strategyDeployments` takes `chain` as a REQUIRED argument.
 
 `partners.ts` also owns each partner's `region` and `getStrategyRegion` — the
 word a lender SIGNS in the loan-agreement message. It must equal what every app

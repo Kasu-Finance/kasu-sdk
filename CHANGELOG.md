@@ -12,37 +12,49 @@ a strategy lives, and how to add two chains' histories, for itself.
 
 ### Added
 
-- **`strategyDeployments(poolId, chain = 'base')`** (facade, pure) →
+- **`strategyDeployments(poolId, chain)`** (facade, pure) →
   `StrategyDeployment[]` `{ chain, poolId }`: every deployment the strategy
   has a pool on, canonical (Base) first, from the chain configs'
   `poolMetadataMapping`. The same rules as kasu-ui's counterpart lookup.
-  - `chain` is the deployment `poolId` was read on. Either side of a
+  - `chain` is REQUIRED: the deployment `poolId` was read on, because an
+    address alone does not say which chain it belongs to. Either side of a
     mapping gives the same set: Tax Pay's Base id on `'base'` and its XDC id
     on `'xdc'` both return both pools.
   - An id the mapping does not know is a strategy of one on its own chain
     (PayFi on Base; every XDC USDC pool).
   - Ids are compared case-insensitively and returned lowercase.
   - Throws `StrategyDeploymentInputError` (`code`: `pool-id`, `chain`,
-    `wrong-chain`) for a malformed id, an unknown chain, or an id the
-    mapping places on another deployment — an XDC id passed as Base would
-    otherwise read Base with an XDC address and quietly find nothing.
+    `wrong-chain`) for a malformed id, a missing or unknown chain, or an id
+    the mapping places on another deployment — an XDC id passed as Base
+    would otherwise read Base with an XDC address and quietly find nothing.
 - **`combineTvlHistories(legs)`** (domain, pure) →
-  `StrategyTvlHistoryEntry[]` `{ timestamp, tvlUsd, kind }`. Each leg is one
-  deployment's `getPoolTvlHistory` and its `usdRate`.
+  `StrategyTvlHistoryEntry[]` `{ timestamp, tvlUsd, kind }`. Each leg
+  (`TvlHistoryLeg`) is one deployment's `getPoolTvlHistory`, its `usdRate`
+  and an optional `truncated` flag.
   - A step merge by time: at every distinct clearing time on any leg, the
     sum over legs of each one's latest point at or before then, times its
-    rate. A leg counts 0 before its first point. Points that share a
-    timestamp are one point, so timestamps are strictly ascending.
+    rate. Points that share a timestamp are one point, so timestamps are
+    strictly ascending.
+  - `truncated: true` — set it when the leg came back with as many
+    clearings as the `count` asked for, so older history may exist. The
+    series then starts at the LATEST first timestamp among the truncated
+    legs, and that first point is every leg's true step value at that time;
+    without the flag, two windows cut at offset clearing times would draw a
+    false step up at the start. A leg that is not truncated counts 0 before
+    its first point (a genuine late start, like Tax Pay on XDC).
   - The series ends with one `current` point at the latest of the legs'
     `current` times, equal to the sum of their `current` values. Every leg
-    ends in a `current` point, or none does. A leg with no entries counts 0.
+    ends in a `current` point, or none does.
   - No `epochId`: the chains clear at different blocks and times, so a
     merged point belongs to no single epoch. Plot by `timestamp`.
   - No exchange rate inside the SDK: the caller passes each leg's
-    `usdRate` (`1` for USDC).
-  - Every rate and entry is validated first. Bad input throws
-    `TvlHistoryInputError` (`code`, plus the `leg` and `entry` position), so
-    the result never holds `NaN` or `Infinity`.
+    `usdRate` (`1` for USDC; pick by `stableAsset.currencyCode`).
+  - Every leg and entry is validated first, holes in sparse arrays
+    included. Bad input throws `TvlHistoryInputError` (`code`, plus the
+    `leg` and `entry` position), so the result never holds `NaN` or
+    `Infinity`. An empty leg is refused (`empty-leg`) rather than counted as
+    0: a real pool always returns at least its `current` point, and a leg
+    you do not have must not turn the total into one chain's figure.
 
 ## 2.13.1
 

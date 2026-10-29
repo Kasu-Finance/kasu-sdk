@@ -173,28 +173,41 @@ names the pools and `combineTvlHistories` adds their histories in USD at the
 rates you pass. The SDK fetches no exchange rate:
 
 ```ts
-import { combineTvlHistories, Kasu, strategyDeployments } from '@kasufinance/kasu-sdk';
+import { CHAIN_CONFIGS, combineTvlHistories, strategyDeployments } from '@kasufinance/kasu-sdk';
 
-const legs = strategyDeployments(strategy.id);
+const COUNT = 52;
+// Your rates, keyed by ISO-4217 code — never a guess. No rate, no total.
+const usdPer: Record<string, number> = { USD: 1, AUD: audToUsd };
+
+const legs = strategyDeployments(strategy.id, 'base');
 // [{ chain: 'base', poolId: '0x…' }, { chain: 'xdc', poolId: '0x…' }]
 
 const histories = await Promise.all(
-    legs.map(async ({ chain, poolId }) => ({
-        entries: await sdks[chain].strategies.getPoolTvlHistory(poolId, { count: 52 }),
-        usdRate: chain === 'xdc' ? audToUsd : 1, // your rate, never a guess
-    })),
+    legs.map(async ({ chain, poolId }) => {
+        const entries = await sdks[chain].strategies.getPoolTvlHistory(poolId, { count: COUNT });
+        return {
+            entries,
+            usdRate: usdPer[CHAIN_CONFIGS[chain].stableAsset.currencyCode],
+            // As many clearings as asked for: older history may exist.
+            truncated: entries.filter((e) => e.kind === 'clearing').length >= COUNT,
+        };
+    }),
 );
 const points = combineTvlHistories(histories); // { timestamp, tvlUsd, kind }[]
 ```
 
-`strategyDeployments(poolId, chain = 'base')` takes the deployment the id was
-read on and returns the same set from either side of the mapping; an unmapped
-id is a strategy of one on its own chain, and an id the mapping places on
-another deployment throws `StrategyDeploymentInputError`. `combineTvlHistories`
-is a step merge by time: at every clearing on any leg, each leg's latest
-point, times its rate, summed; a leg counts 0 before its first point. It ends
-with one `current` point, the sum of the legs' current values. Bad rates or
-entries throw `TvlHistoryInputError`, so the series never holds `NaN`.
+`strategyDeployments(poolId, chain)` takes the deployment the id was read on
+(required: an address alone does not name its chain) and returns the same set
+from either side of the mapping; an unmapped id is a strategy of one on its
+own chain, and an id the mapping places on another deployment throws
+`StrategyDeploymentInputError`. `combineTvlHistories` is a step merge by time:
+at every clearing on any leg, each leg's latest point, times its rate, summed;
+a leg counts 0 before its first point. A leg marked `truncated` was cut by its
+window, so the series starts where the latest truncated leg starts rather
+than drawing a false step up. It ends with one `current` point, the sum of
+the legs' current values. A missing rate, an empty leg or a bad entry throws
+`TvlHistoryInputError`, so the series never holds `NaN` and never passes off
+one chain's figure as the total.
 
 ## Domain helpers
 
