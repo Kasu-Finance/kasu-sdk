@@ -325,16 +325,39 @@ describe('UserLending.getUserRequests — request amounts in assets', () => {
     });
 });
 
-describe('UserLending.getUserRequests — an unknown request type fails closed', () => {
-    it('throws rather than pricing an unknown type as shares or as assets', async () => {
+describe('UserLending.getUserRequests — an unknown request type is skipped', () => {
+    it('skips that one row, keeps the others and never prices it', async () => {
         const unknown = {
             ...DEPOSIT_WITH_TOP_UP,
-            type: 'TransferRequest' as unknown as SubgraphRequest['type'],
+            id: `${POOL}-9`,
+            nftId: '9',
+            type: 'DepositLockRequest' as unknown as SubgraphRequest['type'],
         };
+        const logged = jest
+            .spyOn(console, 'error')
+            .mockImplementation(() => undefined);
 
-        await expect(userRequests(unknown)).rejects.toThrow(
-            `${UNKNOWN_REQUEST_TYPE_MESSAGE}: TransferRequest`,
-        );
+        try {
+            const rows = await userRequests(
+                DEPOSIT_WITH_TOP_UP,
+                unknown,
+                PARTIAL_WITHDRAWAL,
+            );
+
+            expect(rows.map((r) => [r.id, r.requestedAmount])).toEqual([
+                [`${POOL}-1`, '1500'],
+                [`${POOL}-2`, '300.0'],
+            ]);
+            expect(logged).toHaveBeenCalledTimes(1);
+            const message = String(logged.mock.calls[0][0]);
+            expect(message).toContain(UNKNOWN_REQUEST_TYPE_MESSAGE);
+            expect(message).toContain('DepositLockRequest');
+            expect(message).toContain(`${POOL}-9`);
+            // The type and the request id only — never the lender.
+            expect(message.toLowerCase()).not.toContain(USER.toLowerCase());
+        } finally {
+            logged.mockRestore();
+        }
     });
 });
 

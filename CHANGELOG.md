@@ -47,9 +47,11 @@ accepted or rejected part is taken off it.
   1000). It now reads the amount on the cancellation itself — everything
   outstanding when it was cancelled — and falls back to the first submission
   only when that figure is missing.
-- **Unknown request types fail closed.** `getUserRequests` throws for a
-  request type it does not know (`UNKNOWN_REQUEST_TYPE_MESSAGE`) instead of
-  pricing its amount as shares.
+- **Unknown request types fail closed.** `getUserRequests` no longer prices a
+  request type it does not know as shares. Rows of an unknown request type
+  are skipped rather than failing the whole list; each skip is logged with
+  `console.error` (`UNKNOWN_REQUEST_TYPE_MESSAGE`), naming only the type and
+  the request id.
 
 ## 2.13.0
 

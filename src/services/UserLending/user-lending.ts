@@ -68,6 +68,16 @@ import {
 export const UNKNOWN_REQUEST_TYPE_MESSAGE =
     'UserLending: unknown request type, its amount unit is unknown';
 
+const KNOWN_REQUEST_TYPES: readonly string[] = [
+    'DepositRequest',
+    'WithdrawalRequest',
+];
+
+const isKnownRequestType = (
+    type: unknown,
+): type is UserRequestsSubgraph['userRequests'][number]['type'] =>
+    typeof type === 'string' && KNOWN_REQUEST_TYPES.includes(type);
+
 export class UserLending {
     private readonly _graph: GraphQLClient;
 
@@ -404,6 +414,17 @@ export class UserLending {
         const retn: UserRequest[] = [];
 
         for (const userRequest of subgraphResult.userRequests) {
+            // A request type this SDK does not know has no known amount unit
+            // (the schema also declares types no live deployment emits yet).
+            // Skip that ONE row before anything is priced or read on chain,
+            // rather than failing — and blanking — the lender's whole list.
+            if (!isKnownRequestType(userRequest.type)) {
+                console.error(
+                    `${UNKNOWN_REQUEST_TYPE_MESSAGE}: ${String(userRequest.type)} (request ${userRequest.id}); row skipped`,
+                );
+                continue;
+            }
+
             const directusPool = directusResult.find(
                 ({ id }) => id === userRequest.lendingPool.id,
             );
