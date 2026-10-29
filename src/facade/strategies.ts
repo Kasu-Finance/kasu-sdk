@@ -179,18 +179,18 @@ export class StrategiesFacade {
     }
 
     /**
-     * `getPoolTvlHistory` plus `truncated` — whether the window may have cut
-     * older history off — from the SAME read (one fetch, not two). Pass the
-     * result to `combineTvlHistories` as a leg with its `usdRate`; the flag
-     * lets the merged series start where every leg's value is known. Only
-     * the SDK can set it right: a `count` window is epochs, and the current
-     * epoch has no finished clearing until it clears, so counting the points
-     * that came back misjudges it most of the week. Same options and errors
-     * as `getPoolTvlHistory`.
+     * `getPoolTvlHistory` plus `opening` — the newest clearing before the
+     * window, read at its own block like every other point, or `null` when
+     * the pool has none — from the same read. Pass the result to
+     * `combineTvlHistories` as a leg with its `usdRate`: the opening is what
+     * the leg held before its first point, so a window cut at a different
+     * time on another chain does not count it 0. Same options and errors as
+     * `getPoolTvlHistory`; the extra cost is one clearing row (or, for
+     * `fromEpoch`, one small request) and one block.
      *
      * ```ts
      * const leg = await kasu.strategies.getPoolTvlHistoryWindow(poolId, { count: 52 });
-     * // { entries: PoolTvlHistoryEntry[], truncated: boolean }
+     * // { entries: PoolTvlHistoryEntry[], opening: PoolTvlHistoryEntry | null }
      * ```
      */
     async getPoolTvlHistoryWindow(

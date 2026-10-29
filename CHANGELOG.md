@@ -29,34 +29,36 @@ a strategy lives, and how to add two chains' histories, for itself.
     would otherwise read Base with an XDC address and quietly find nothing.
 - **`kasu.strategies.getPoolTvlHistoryWindow(poolId, options)`** (and
   `DataService.getPoolTvlHistoryWindow`) → `PoolTvlHistoryResult`
-  `{ entries, truncated }`: the same read, options and errors as
-  `getPoolTvlHistory` — which now returns this call's `entries`, unchanged —
-  plus whether the window may have cut older history off.
-  - `count` only: `truncated` when a fetched clearing fell before the window
-    (older history certain) or all `count` came back (older may exist);
-    `false` only when fewer came back and none was before the window — the
-    pool started inside it. Counting the points that came back cannot tell:
-    a `count` window is epochs, and the current epoch has no finished
-    clearing until it clears.
-  - `fromEpoch` given: the read never looks before `fromEpoch`, so
-    `truncated` is `fromEpoch > 0` (older MAY exist); `false` for the whole
-    history.
-  - `{ entries: [], truncated: false }` wherever `getPoolTvlHistory`
-    returns `[]`.
+  `{ entries, opening }`: the same options and errors as
+  `getPoolTvlHistory` — which returns the same `entries`, at its old cost —
+  plus `opening`, the pool's value just before the window.
+  - `opening` is the newest finished clearing before the window (the same
+    rule that leaves clearings out of `entries`; newest by block, so XDC
+    AUDD's epoch-1 clearing, finished just before epoch 88, is found by
+    when it happened), read at its own `endBlockNumber` exactly like every
+    other point — subgraph balance plus `externalTVLOfPool` — through the
+    same batched time-travel read and past-block cache. `null` when the
+    pool has no clearing before the window.
+  - Extra cost over `getPoolTvlHistory`: for a `count` window one more
+    clearing row in the same request (`count + 1`); for `fromEpoch` above 0
+    one more one-row subgraph request, in parallel; either way one more
+    block in the time-travel batch and one more `externalTVLOfPool` read.
+  - `{ entries: [], opening: null }` wherever `getPoolTvlHistory` returns
+    `[]`.
 - **`combineTvlHistories(legs)`** (domain, pure) →
   `StrategyTvlHistoryEntry[]` `{ timestamp, tvlUsd, kind }`. Each leg
   (`TvlHistoryLeg`) is one deployment's `getPoolTvlHistoryWindow` result
-  (`{ entries, truncated }`) plus its `usdRate`.
+  (`{ entries, opening }`) plus its `usdRate`.
   - A step merge by time: at every distinct clearing time on any leg, the
     sum over legs of each one's latest point at or before then, times its
-    rate. Points that share a timestamp are one point, so timestamps are
-    strictly ascending.
-  - `truncated: true` (from `getPoolTvlHistoryWindow`) — older history may
-    exist before the leg's first point. The series then starts at the LATEST first timestamp among the truncated
-    legs, and that first point is every leg's true step value at that time;
-    without the flag, two windows cut at offset clearing times would draw a
-    false step up at the start. A leg that is not truncated counts 0 before
-    its first point (a genuine late start, like Tax Pay on XDC).
+    rate. Before its first entry a leg counts its `opening` — what it held
+    just before the window — or 0 when it has none (a genuine late start,
+    like Tax Pay on XDC). Points that share a timestamp are one point, so
+    timestamps are strictly ascending.
+  - The series starts at the earliest first entry of any leg and drops
+    nothing; the opening is a value, never a point. Without it, two windows
+    cut at offset clearing times would count the later-starting leg 0 at
+    the left edge and draw a false step up.
   - The series ends with one `current` point at the latest of the legs'
     `current` times, equal to the sum of their `current` values. Every leg
     ends in a `current` point, or none does.
@@ -67,7 +69,8 @@ a strategy lives, and how to add two chains' histories, for itself.
   - Every leg and entry is validated first, holes in sparse arrays
     included. Bad input throws `TvlHistoryInputError` (`code`, plus the
     `leg` and `entry` position), so the result never holds `NaN` or
-    `Infinity`. An empty leg is refused (`empty-leg`) rather than counted as
+    `Infinity`. An opening must be a `'clearing'` point at or before the
+    leg's first entry (`opening`). An empty leg is refused (`empty-leg`) rather than counted as
     0: a real pool always returns at least its `current` point, and a leg
     you do not have must not turn the total into one chain's figure.
 

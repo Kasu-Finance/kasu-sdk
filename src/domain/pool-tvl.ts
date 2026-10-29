@@ -67,10 +67,10 @@ export interface PoolTvlHistoryEntry {
 
 /**
  * One deployment's share of a strategy's history, for `combineTvlHistories`:
- * that pool's `getPoolTvlHistoryWindow` result (`{ entries, truncated }`) as
- * it came back, and what one unit of the deployment's stable token is worth
- * in USD (`1` for USDC; today's AUD→USD for AUDD). The SDK fetches no
- * exchange rate: the caller passes it.
+ * that pool's `getPoolTvlHistoryWindow` result (`{ entries, opening }`) as it
+ * came back, and what one unit of the deployment's stable token is worth in
+ * USD (`1` for USDC; today's AUD→USD for AUDD). The SDK fetches no exchange
+ * rate: the caller passes it.
  */
 export interface TvlHistoryLeg {
     /** At least one point: a real pool always returns its `current` point. */
@@ -78,15 +78,13 @@ export interface TvlHistoryLeg {
     /** USD per unit of the leg's stable token. Finite and above 0. */
     usdRate: number;
     /**
-     * Whether the read may have cut older history off: the leg's first point
-     * is then where the WINDOW starts, not where the pool did. Take it from
-     * `getPoolTvlHistoryWindow`, which alone can tell — never work it out
-     * from the entries (a `count` window is epochs, and the current epoch
-     * has no finished clearing until it clears). Absent or `false`: the leg
-     * holds the pool's whole history (one that started lending later, say)
-     * and counts 0 before its first point.
+     * The leg's value BEFORE its first entry: the newest clearing before the
+     * window, as `getPoolTvlHistoryWindow` read it at its own block. A
+     * `'clearing'` point no later than the first entry; it is never drawn.
+     * `null` or absent: the pool has no clearing before the window (it
+     * started lending later, say) and counts 0 before its first entry.
      */
-    truncated?: boolean;
+    opening?: PoolTvlHistoryEntry | null;
 }
 
 /**
@@ -110,7 +108,8 @@ export interface StrategyTvlHistoryEntry {
  * - `legs` — not a non-empty array (or one with holes);
  * - `leg` — a leg that is not an object;
  * - `usd-rate` — a rate that is not a finite number above 0;
- * - `truncated` — a `truncated` that is neither a boolean nor absent;
+ * - `opening` — an opening that is not a well-formed `'clearing'` point at
+ *   or before the leg's first entry (or `null`, or absent);
  * - `entries` — a leg's `entries` is not an array;
  * - `empty-leg` — a leg with no entries: pass only the legs you have;
  * - `entry` — an entry that is not an object (or a hole);
@@ -125,7 +124,7 @@ export type TvlHistoryInputErrorCode =
     | 'legs'
     | 'leg'
     | 'usd-rate'
-    | 'truncated'
+    | 'opening'
     | 'entries'
     | 'empty-leg'
     | 'entry'
@@ -173,16 +172,13 @@ function validateLeg(leg: unknown, legIndex: number): TvlHistoryLeg {
     if (typeof leg !== 'object' || leg === null) {
         throw new TvlHistoryInputError('leg', legIndex);
     }
-    const { entries, usdRate, truncated } = leg as Partial<TvlHistoryLeg>;
+    const { entries, usdRate, opening } = leg as Partial<TvlHistoryLeg>;
     if (
         typeof usdRate !== 'number' ||
         !Number.isFinite(usdRate) ||
         usdRate <= 0
     ) {
         throw new TvlHistoryInputError('usd-rate', legIndex);
-    }
-    if (truncated !== undefined && typeof truncated !== 'boolean') {
-        throw new TvlHistoryInputError('truncated', legIndex);
     }
     if (!Array.isArray(entries as unknown)) {
         throw new TvlHistoryInputError('entries', legIndex);
@@ -215,6 +211,20 @@ function validateLeg(leg: unknown, legIndex: number): TvlHistoryLeg {
         }
         previous = timestamp;
     }
+    if (opening !== undefined && opening !== null) {
+        const first = list[0] as PoolTvlHistoryEntry;
+        const { timestamp, tvl, kind } = (
+            typeof opening === 'object' ? opening : {}
+        ) as Partial<PoolTvlHistoryEntry>;
+        if (
+            !isNonNegativeFinite(timestamp) ||
+            !isNonNegativeFinite(tvl) ||
+            kind !== 'clearing' ||
+            timestamp > first.timestamp
+        ) {
+            throw new TvlHistoryInputError('opening', legIndex);
+        }
+    }
     return leg as TvlHistoryLeg;
 }
 
@@ -226,18 +236,19 @@ function validateLeg(leg: unknown, legIndex: number): TvlHistoryLeg {
  *
  * A step merge by time. At every distinct timestamp where any leg has a
  * clearing, the value is the sum over legs of that leg's latest point at or
- * before then, times its `usdRate`; a leg counts 0 before its first point.
+ * before then, times its `usdRate`. Before its first entry a leg counts its
+ * `opening` — what it held just before the window — or 0 without one.
  * Points that share a timestamp — clearings run in one block, or two chains
  * clearing in the same second — are one output point. The series ends with
  * one `current` point at the latest of the legs' `current` timestamps, equal
  * to the sum of their `current` values. Every leg must end in a `current`
  * point, or none may.
  *
- * The window is the union of the legs' windows, cut where a `truncated` leg
- * starts: before its first point that leg's real value is unknown, not 0, so
- * the series begins at the LATEST first timestamp among the truncated legs.
- * That first point is still every leg's step value at that time. A leg that
- * is not truncated counts 0 before its first point (a genuine late start).
+ * The window is the union of the legs' windows: the series starts at the
+ * earliest first entry of any leg. An `opening` is a value, never a point.
+ * Without it, two windows cut at offset clearing times would count the
+ * later-starting leg 0 at the left edge and draw a false step up; with it,
+ * only a genuine late start (`opening: null`) counts 0.
  *
  * Every leg and entry is validated first: a bad input — an empty leg
  * included — throws `TvlHistoryInputError` (its `code` says why), so the
@@ -274,11 +285,6 @@ export function combineTvlHistories(
               ),
           )
         : undefined;
-    const truncatedStarts = valid
-        .filter((leg) => leg.truncated === true)
-        .map((leg) => leg.entries[0].timestamp);
-    const start =
-        truncatedStarts.length > 0 ? Math.max(...truncatedStarts) : -Infinity;
     const clearingTimes = [
         ...new Set(
             valid.flatMap((leg) =>
@@ -288,18 +294,12 @@ export function combineTvlHistories(
             ),
         ),
     ]
-        .filter(
-            (t) =>
-                t >= start &&
-                (finalTimestamp === undefined || t < finalTimestamp),
-        )
+        .filter((t) => finalTimestamp === undefined || t < finalTimestamp)
         .sort((a, b) => a - b);
 
     // One cursor per leg: the times ascend, so each leg is walked once. A
     // leg's `current` point is a step like any other, which keeps a chain
     // whose subgraph lags behind the other's last clearing at its own latest.
-    // Points before `start` still move the cursors, so the first kept point
-    // is every leg's true step value.
     const cursors = valid.map(() => -1);
     const sumAt = (t: number): number => {
         let sum = 0;
@@ -312,7 +312,9 @@ export function combineTvlHistories(
                 cursor += 1;
             }
             cursors[index] = cursor;
-            if (cursor >= 0) sum += leg.entries[cursor].tvl * leg.usdRate;
+            const value =
+                cursor >= 0 ? leg.entries[cursor].tvl : (leg.opening?.tvl ?? 0);
+            sum += value * leg.usdRate;
         });
         if (!Number.isFinite(sum)) throw new TvlHistoryInputError('overflow');
         return sum;

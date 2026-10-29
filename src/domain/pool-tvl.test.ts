@@ -267,30 +267,32 @@ describe('combineTvlHistories — two deployments', () => {
     });
 });
 
-describe('combineTvlHistories — truncated windows', () => {
-    // Both legs came back with as many clearings as the `count` asked for
-    // (2 here). XDC already held 50 before its first windowed point at 900.
-    const base = (truncated?: boolean): TvlHistoryLeg => ({
+describe('combineTvlHistories — the opening value', () => {
+    // Both legs cut to their last two clearings. XDC already held 50 before
+    // its first windowed point at 900: that clearing is its opening.
+    const base: TvlHistoryLeg = {
         usdRate: 1,
-        truncated,
+        opening: clearing(0, 50, 100),
         entries: [
             clearing(1, 1000, 100),
             clearing(2, 2000, 100),
             current(3, 2500, 100),
         ],
-    });
-    const xdc = (truncated?: boolean): TvlHistoryLeg => ({
-        usdRate: 1,
-        truncated,
-        entries: [
-            clearing(1, 900, 50),
-            clearing(2, 1900, 50),
-            current(3, 2500, 50),
-        ],
-    });
+    };
+    const xdcEntries = [
+        clearing(1, 900, 50),
+        clearing(2, 1900, 50),
+        current(3, 2500, 50),
+    ];
 
-    it('starts at the latest first point among the truncated legs', () => {
-        expect(combineTvlHistories([base(true), xdc(true)])).toEqual([
+    it('counts a leg at its opening before its first entry', () => {
+        const xdc: TvlHistoryLeg = {
+            usdRate: 1,
+            opening: clearing(0, 1, 50),
+            entries: xdcEntries,
+        };
+        expect(combineTvlHistories([base, xdc])).toEqual([
+            { timestamp: 900, tvlUsd: 150, kind: 'clearing' },
             { timestamp: 1000, tvlUsd: 150, kind: 'clearing' },
             { timestamp: 1900, tvlUsd: 150, kind: 'clearing' },
             { timestamp: 2000, tvlUsd: 150, kind: 'clearing' },
@@ -298,55 +300,43 @@ describe('combineTvlHistories — truncated windows', () => {
         ]);
     });
 
-    it('without the flag, reads the later start as a genuine late start', () => {
-        // The bug the flag exists for: 50 at 900, then a false step to 150.
-        expect(combineTvlHistories([base(), xdc()]).slice(0, 2)).toEqual([
+    it('counts 0 before the first entry without an opening (a genuine late start)', () => {
+        const baseLate: TvlHistoryLeg = { ...base, opening: null };
+        const xdc: TvlHistoryLeg = { usdRate: 1, entries: xdcEntries };
+        expect(combineTvlHistories([baseLate, xdc]).slice(0, 2)).toEqual([
             { timestamp: 900, tvlUsd: 50, kind: 'clearing' },
             { timestamp: 1000, tvlUsd: 150, kind: 'clearing' },
         ]);
     });
 
-    it('keeps a leg that is not truncated at 0 before its first point', () => {
-        // Base was cut by the window; XDC started lending later (Tax Pay on
-        // XDC from epoch 92) and holds its whole history.
-        const lateXdc: TvlHistoryLeg = {
+    it('converts the opening at the leg’s rate', () => {
+        const xdc: TvlHistoryLeg = {
             usdRate: AUD_USD,
-            entries: [clearing(92, 1500, 10), current(93, 2500, 20)],
+            opening: clearing(0, 800, 40),
+            entries: [clearing(1, 1500, 60), current(2, 2500, 70)],
         };
-        expect(combineTvlHistories([base(true), lateXdc])).toEqual([
-            { timestamp: 1000, tvlUsd: 100, kind: 'clearing' },
-            { timestamp: 1500, tvlUsd: 100 + 10 * AUD_USD, kind: 'clearing' },
-            { timestamp: 2000, tvlUsd: 100 + 10 * AUD_USD, kind: 'clearing' },
-            { timestamp: 2500, tvlUsd: 100 + 20 * AUD_USD, kind: 'current' },
-        ]);
+        const [first] = combineTvlHistories([base, xdc]);
+        expect(first).toEqual({
+            timestamp: 1000,
+            tvlUsd: 100 + 40 * AUD_USD,
+            kind: 'clearing',
+        });
     });
 
-    it('opens on every leg’s true step value at the cut', () => {
-        // The truncated leg starts at 1500; the other leg's earlier points
-        // still set its value there.
-        const cut: TvlHistoryLeg = {
-            usdRate: 1,
-            truncated: true,
-            entries: [clearing(2, 1500, 7), current(3, 2500, 8)],
-        };
-        const whole: TvlHistoryLeg = {
-            usdRate: 1,
-            entries: [
-                clearing(1, 100, 1),
-                clearing(2, 1200, 30),
-                current(3, 2400, 40),
-            ],
-        };
-        expect(combineTvlHistories([whole, cut])).toEqual([
-            { timestamp: 1500, tvlUsd: 37, kind: 'clearing' },
-            { timestamp: 2500, tvlUsd: 48, kind: 'current' },
-        ]);
+    it('never draws the opening as a point', () => {
+        const combined = combineTvlHistories([base]);
+        expect(combined[0].timestamp).toBe(1000);
+        expect(combined.map((p) => p.timestamp)).not.toContain(50);
     });
 
-    it('treats truncated: false as not truncated', () => {
-        expect(combineTvlHistories([base(false), xdc(false)])).toEqual(
-            combineTvlHistories([base(), xdc()]),
-        );
+    it('accepts an opening in the same block as the first entry', () => {
+        // A catch-up block: the clearing before the window shares it.
+        const leg: TvlHistoryLeg = {
+            usdRate: 1,
+            opening: clearing(3, 1000, 100),
+            entries: [clearing(4, 1000, 100), current(5, 2000, 110)],
+        };
+        expect(combineTvlHistories([leg])).toHaveLength(2);
     });
 });
 
@@ -506,14 +496,37 @@ describe('combineTvlHistories — refused input', () => {
         expect(error.leg).toBe(1);
     });
 
-    it.each([['yes'], [1], [null]])(
-        'refuses a truncated flag that is not a boolean (%s)',
-        (truncated) => {
-            expect(codeOf([{ entries: good(), usdRate: 1, truncated }])).toBe(
-                'truncated',
-            );
-        },
-    );
+    it.each<[string, unknown]>([
+        ['not an object', 5],
+        ['NaN tvl', clearing(80, at(80), NaN)],
+        ['negative tvl', clearing(80, at(80), -1)],
+        ['infinite timestamp', clearing(80, Infinity, 1)],
+        ['a current point', current(80, at(80), 1)],
+        ['an unknown kind', { ...clearing(80, at(80), 1), kind: 'x' }],
+        ['newer than the first entry', clearing(95, at(95), 1)],
+    ])('refuses an opening that is %s, naming the leg', (_label, opening) => {
+        const error = refusal(() =>
+            combineTvlHistories([
+                { entries: good(), usdRate: 1 },
+                {
+                    entries: good(),
+                    usdRate: 1,
+                    opening: opening as PoolTvlHistoryEntry,
+                },
+            ]),
+        );
+        expect(error.code).toBe('opening');
+        expect(error.leg).toBe(1);
+    });
+
+    it('accepts a null or absent opening', () => {
+        expect(() =>
+            combineTvlHistories([
+                { entries: good(), usdRate: 1, opening: null },
+                { entries: good(), usdRate: 1 },
+            ]),
+        ).not.toThrow();
+    });
 
     it('refuses a sum too large to be finite', () => {
         expect(
@@ -551,13 +564,19 @@ describe('combineTvlHistories — properties', () => {
                     }),
                     { minLength: 1, maxLength: 12 },
                 ),
-                truncated: fc.option(fc.boolean(), { nil: undefined }),
+                opening: fc.option(
+                    fc.record({
+                        lead: fc.integer({ min: 0, max: WEEK }),
+                        tvl: fc.double({ min: 0, max: 1e9, noNaN: true }),
+                    }),
+                    { nil: undefined },
+                ),
                 closing: fc.record({
                     gap: fc.integer({ min: 0, max: WEEK }),
                     tvl: fc.double({ min: 0, max: 1e9, noNaN: true }),
                 }),
             })
-            .map(({ usdRate, start, steps, closing, truncated }) => {
+            .map(({ usdRate, start, steps, closing, opening }) => {
                 let t = start;
                 const entries: PoolTvlHistoryEntry[] = steps.map(
                     (step, index) => {
@@ -570,7 +589,13 @@ describe('combineTvlHistories — properties', () => {
                         current(entries.length, t + closing.gap, closing.tvl),
                     );
                 }
-                return { usdRate, entries, truncated };
+                return {
+                    usdRate,
+                    entries,
+                    opening: opening
+                        ? clearing(-1, start - opening.lead, opening.tvl)
+                        : undefined,
+                };
             });
 
     const legsArb = fc
@@ -579,13 +604,16 @@ describe('combineTvlHistories — properties', () => {
             fc.array(legArb(withCurrent), { minLength: 1, maxLength: 4 }),
         );
 
-    /** The definition, evaluated directly: each leg's latest point ≤ t. */
+    /**
+     * The definition, evaluated directly: each leg's latest entry ≤ t, else
+     * its opening, else 0.
+     */
     const reference = (legs: TvlHistoryLeg[], t: number): number => {
         let sum = 0;
         for (const leg of legs) {
             const upTo = leg.entries.filter((entry) => entry.timestamp <= t);
-            const latest = upTo.at(-1);
-            if (latest) sum += latest.tvl * leg.usdRate;
+            const latest = upTo.at(-1) ?? leg.opening ?? undefined;
+            sum += (latest?.tvl ?? 0) * leg.usdRate;
         }
         return sum;
     };
@@ -594,16 +622,13 @@ describe('combineTvlHistories — properties', () => {
         fc.assert(
             fc.property(legsArb, (legs) => {
                 const combined = combineTvlHistories(legs);
-                const cut = Math.max(
-                    -Infinity,
-                    ...legs
-                        .filter((leg) => leg.truncated === true)
-                        .map((leg) => leg.entries[0].timestamp),
+                const start = Math.min(
+                    ...legs.map((leg) => leg.entries[0].timestamp),
                 );
                 combined.forEach((point, index) => {
                     expect(Number.isFinite(point.tvlUsd)).toBe(true);
                     expect(point.tvlUsd).toBeGreaterThanOrEqual(0);
-                    expect(point.timestamp).toBeGreaterThanOrEqual(cut);
+                    expect(point.timestamp).toBeGreaterThanOrEqual(start);
                     if (index > 0) {
                         expect(point.timestamp).toBeGreaterThan(
                             combined[index - 1].timestamp,
@@ -614,11 +639,7 @@ describe('combineTvlHistories — properties', () => {
                 const clearingTimes = new Set(
                     legs.flatMap((leg) =>
                         leg.entries
-                            .filter(
-                                (entry) =>
-                                    entry.kind === 'clearing' &&
-                                    entry.timestamp >= cut,
-                            )
+                            .filter((entry) => entry.kind === 'clearing')
                             .map((entry) => entry.timestamp),
                     ),
                 );
@@ -634,7 +655,7 @@ describe('combineTvlHistories — properties', () => {
                     );
                     expect(last.kind).toBe('current');
                     expect(last.timestamp).toBe(closing);
-                    // Every clearing time from the cut to the close is a point.
+                    // Every clearing time before the close is a point.
                     const before = [...clearingTimes].filter(
                         (t) => t < closing,
                     );

@@ -183,7 +183,7 @@ const legs = strategyDeployments(strategy.id, 'base');
 
 const histories = await Promise.all(
     legs.map(async ({ chain, poolId }) => ({
-        // { entries, truncated } — one read; `truncated` says older history may exist
+        // { entries, opening } — `opening`: what the pool held just before the window
         ...(await sdks[chain].strategies.getPoolTvlHistoryWindow(poolId, { count: 52 })),
         usdRate: usdPer[CHAIN_CONFIGS[chain].stableAsset.currencyCode],
     })),
@@ -197,12 +197,10 @@ from either side of the mapping; an unmapped id is a strategy of one on its
 own chain, and an id the mapping places on another deployment throws
 `StrategyDeploymentInputError`. `combineTvlHistories` is a step merge by time:
 at every clearing on any leg, each leg's latest point, times its rate, summed;
-a leg counts 0 before its first point. A leg that
-`getPoolTvlHistoryWindow` reports as `truncated` may hold older history, so
-the series starts where the latest truncated leg starts rather than drawing a
-false step up. Take the flag from that method, never from counting points: a
-`count` window is epochs, and the current epoch has no finished clearing
-until it clears. It ends with one `current` point, the sum of
+before its first entry a leg counts its `opening` (the clearing just before
+its window, read like every other point), or 0 when the pool started inside
+the window, so windows cut at different times on each chain draw no false
+step. It ends with one `current` point, the sum of
 the legs' current values. A missing rate, an empty leg or a bad entry throws
 `TvlHistoryInputError`, so the series never holds `NaN` and never passes off
 one chain's figure as the total.

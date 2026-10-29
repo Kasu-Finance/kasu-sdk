@@ -16,14 +16,13 @@ import { DataService, NO_HISTORY_PROVIDER_MESSAGE } from './data-service';
 import {
     Cancellation,
     Clearing,
-    ClearingsScope,
     createOffChainTvlReader,
     fetchPoolBalancesAtBlocks,
     firstBlockWithCode,
     HistoryRpc,
-    isPoolTvlHistoryTruncated,
     mapWithConcurrency,
     PastStateUnavailableError,
+    pickOpeningClearing,
     poolBalancesAtBlocksQuery,
     PoolTvlHistoryAbortedError,
     PoolTvlHistoryOptions,
@@ -1392,23 +1391,35 @@ describe('getPoolTvlHistory — a count window reads only the newest clearings',
     });
 });
 
-describe('getPoolTvlHistoryWindow — truncated', () => {
+describe('getPoolTvlHistoryWindow — opening', () => {
     const CURRENT = 120;
     const COUNT = 52;
+    const blockOf = (epochId: number): number => 1_000 + epochId * 10;
 
-    /** POOL_A clearing exactly these epochs, one block and week apart. */
-    function poolClearing(epochs: number[]): ChainState {
+    /**
+     * POOL_A clearing exactly these epochs, one block and week apart, holding
+     * `epochId × 10` from each clearing on (so a point names its block).
+     */
+    function poolClearing(
+        epochs: number[],
+        placed: Partial<
+            Record<number, { block: number; timestamp: number }>
+        > = {},
+    ): ChainState {
         const state = chain();
         state.currentEpoch = CURRENT;
-        state.latestBlock = 1_000 + (CURRENT + 1) * 10;
+        state.latestBlock = blockOf(CURRENT + 1);
         state.latestTime = T0 + CURRENT * WEEK + 2 * 24 * 3_600;
         state.externalDeployedAt = 0;
         state.pools[0].clearings = epochs.map((epochId) => ({
             epochId,
-            block: 1_000 + epochId * 10,
-            timestamp: T0 + epochId * WEEK,
+            block: placed[epochId]?.block ?? blockOf(epochId),
+            timestamp: placed[epochId]?.timestamp ?? T0 + epochId * WEEK,
         }));
-        state.pools[0].balanceSteps = [[1_000, '100']];
+        state.pools[0].balanceSteps = state.pools[0].clearings
+            .map((c): [number, string] => [c.block, String(c.epochId * 10)])
+            .sort((x, y) => x[0] - y[0]);
+        state.pools[0].balanceNow = '999';
         state.offChainSteps[POOL_A] = [[0, 0]];
         return state;
     }
@@ -1419,75 +1430,167 @@ describe('getPoolTvlHistoryWindow — truncated', () => {
         options: PoolTvlHistoryOptions = { count: COUNT },
     ): Promise<PoolTvlHistoryResult> =>
         harness(state).service.getPoolTvlHistoryWindow(POOL_A, options);
+    const pointAt = (epochId: number): PoolTvlHistoryEntry => ({
+        epochId,
+        timestamp: T0 + epochId * WEEK,
+        tvl: epochId * 10,
+        kind: 'clearing',
+    });
+    const clearingRequests = (graph: jest.Mock): Record<string, unknown>[] =>
+        (graph.mock.calls as [string, Record<string, unknown>][])
+            .filter(([d]) => d === poolTvlClearingsQuery)
+            .map(([, variables]) => variables);
 
-    it('long history, current epoch not yet cleared: truncated', async () => {
-        // The window holds 51 clearings for count 52 — counting the points
-        // would call it whole. The fetch saw epoch 68, before the window.
-        const { entries, truncated } = await read(
+    it('long history, current epoch not yet cleared: the clearing just before the window', async () => {
+        const { entries, opening } = await read(
             poolClearing(range(1, CURRENT - 1)),
         );
-        expect(clearingPoints(entries)).toHaveLength(COUNT - 1);
         expect(entries[0].epochId).toBe(CURRENT - COUNT + 1);
-        expect(truncated).toBe(true);
+        expect(opening).toEqual(pointAt(CURRENT - COUNT));
     });
 
-    it('long history, just after the current epoch cleared: truncated', async () => {
-        const { entries, truncated } = await read(
+    it('long history, just after the current epoch cleared: the same opening', async () => {
+        const { entries, opening } = await read(
             poolClearing(range(1, CURRENT)),
         );
         expect(clearingPoints(entries)).toHaveLength(COUNT);
-        expect(truncated).toBe(true);
+        expect(opening).toEqual(pointAt(CURRENT - COUNT));
     });
 
-    it('a young pool that started inside the window: not truncated', async () => {
-        const { entries, truncated } = await read(
+    it('a young pool that started inside the window has none', async () => {
+        const { entries, opening } = await read(
             poolClearing(range(100, CURRENT - 1)),
         );
         expect(entries[0].epochId).toBe(100);
-        expect(truncated).toBe(false);
+        expect(opening).toBeNull();
     });
 
-    it('long history with a skipped clearing inside the window: truncated', async () => {
+    it('a skipped clearing inside the window does not move it', async () => {
         const epochs = range(1, CURRENT - 1).filter((e) => e !== 90);
-        const { entries, truncated } = await read(poolClearing(epochs));
-        expect(clearingPoints(entries)).toHaveLength(COUNT - 2);
-        expect(truncated).toBe(true);
+        const { opening } = await read(poolClearing(epochs));
+        expect(opening).toEqual(pointAt(CURRENT - COUNT));
     });
 
-    it('fromEpoch: truncated unless the read is the whole history', async () => {
-        const state = poolClearing(range(1, CURRENT - 1));
-        await expect(read(state, {})).resolves.toMatchObject({
-            truncated: false,
+    it('a mislabelled first clearing becomes the opening; the other chain keeps its whole window', async () => {
+        // XDC AUDD's shape: its first clearing is numbered 1 but finished a
+        // few days before epoch 88, holding a few units, then 88 onwards.
+        const mislabelled = {
+            block: blockOf(88) - 5,
+            timestamp: T0 + 88 * WEEK - 3 * 24 * 3_600,
+        };
+        const xdc = await read(
+            poolClearing([1, ...range(88, CURRENT - 1)], { 1: mislabelled }),
+        );
+        expect(xdc.entries[0].epochId).toBe(88);
+        expect(xdc.opening).toEqual({
+            epochId: 1,
+            timestamp: mislabelled.timestamp,
+            tvl: 10,
+            kind: 'clearing',
         });
-        await expect(read(state, { fromEpoch: 0 })).resolves.toMatchObject({
-            truncated: false,
-        });
-        await expect(read(state, { fromEpoch: 100 })).resolves.toMatchObject({
-            truncated: true,
-        });
+
+        const base = await read(poolClearing(range(1, CURRENT - 1)));
+        const combined = combineTvlHistories([
+            { ...base, usdRate: 1 },
+            { ...xdc, usdRate: 0.5 },
+        ]);
+        // Base epochs 69–87 stay on the chart; nothing is clipped.
+        expect(combined[0].timestamp).toBe(base.entries[0].timestamp);
+        const kept = new Set(combined.map((p) => p.timestamp));
+        for (const epochId of range(CURRENT - COUNT + 1, 87)) {
+            expect(kept.has(T0 + epochId * WEEK)).toBe(true);
+        }
+        const atEpoch87 = combined.find((p) => p.timestamp === T0 + 87 * WEEK);
+        expect(atEpoch87?.tvlUsd).toBe(870 + 10 * 0.5);
     });
 
-    it('is the same single read as getPoolTvlHistory', async () => {
+    it('fromEpoch: the newest clearing numbered below it, from one extra request', async () => {
+        const h = harness(poolClearing(range(1, CURRENT - 1)));
+        const { entries, opening } = await h.service.getPoolTvlHistoryWindow(
+            POOL_A,
+            { fromEpoch: 100 },
+        );
+        expect(entries[0].epochId).toBe(100);
+        expect(opening).toEqual(pointAt(99));
+        const requests = clearingRequests(h.graph);
+        expect(requests).toHaveLength(2);
+        expect(requests).toContainEqual(
+            expect.objectContaining({
+                epochLt: '100',
+                direction: 'desc',
+                first: 1,
+                withSnapshot: false,
+            }),
+        );
+    });
+
+    it('fromEpoch: none when nothing cleared below it', async () => {
+        const { opening } = await read(poolClearing(range(100, CURRENT - 1)), {
+            fromEpoch: 100,
+        });
+        expect(opening).toBeNull();
+    });
+
+    it('the whole history (or fromEpoch 0) has none and makes no extra request', async () => {
+        for (const options of [{}, { fromEpoch: 0 }]) {
+            const h = harness(poolClearing(range(1, CURRENT - 1)));
+            const { opening } = await h.service.getPoolTvlHistoryWindow(
+                POOL_A,
+                options,
+            );
+            expect(opening).toBeNull();
+            expect(clearingRequests(h.graph)).toHaveLength(1);
+        }
+    });
+
+    it('costs one more clearing row and one more block, in the same requests', async () => {
         const state = poolClearing(range(1, CURRENT - 1));
-        const a = harness(state);
-        const b = harness(state);
-        const { entries } = await a.service.getPoolTvlHistoryWindow(POOL_A, {
+        const plain = harness(state);
+        const windowed = harness(state);
+        const history = await plain.service.getPoolTvlHistory(POOL_A, {
             count: COUNT,
         });
-        const history = await b.service.getPoolTvlHistory(POOL_A, {
+        const result = await windowed.service.getPoolTvlHistoryWindow(POOL_A, {
             count: COUNT,
         });
-        expect(entries).toEqual(history);
-        expect(a.graph.mock.calls.length).toBe(b.graph.mock.calls.length);
-        expect(a.reads.readAt).toEqual(b.reads.readAt);
+        expect(result.entries).toEqual(history);
+        expect(clearingRequests(plain.graph)).toEqual([
+            expect.objectContaining({ first: COUNT }),
+        ]);
+        expect(clearingRequests(windowed.graph)).toEqual([
+            expect.objectContaining({ first: COUNT + 1 }),
+        ]);
+        // Same number of subgraph requests: the opening's block rides in the
+        // same batched time-travel read.
+        expect(windowed.graph.mock.calls.length).toBe(
+            plain.graph.mock.calls.length,
+        );
+        const pastReads = (h: Harness): (number | 'latest')[] =>
+            h.reads.readAt.filter((b) => b !== 'latest');
+        expect(pastReads(windowed).sort()).toEqual(
+            [...pastReads(plain), blockOf(CURRENT - COUNT)].sort(),
+        );
     });
 
-    it('an unknown pool is empty and not truncated', async () => {
+    it('reads the opening through the past-block cache', async () => {
+        const { service, rpc } = harness(poolClearing(range(1, CURRENT - 1)));
+        await service.getPoolTvlHistoryWindow(POOL_A, { count: COUNT });
+        const before = rpc.calls.length;
+        const again = await service.getPoolTvlHistoryWindow(POOL_A, {
+            count: COUNT,
+        });
+        expect(again.opening).toEqual(pointAt(CURRENT - COUNT));
+        expect(rpc.calls.slice(before).map((c) => c.blockTag)).not.toContain(
+            blockOf(CURRENT - COUNT),
+        );
+    });
+
+    it('an unknown pool is empty with no opening', async () => {
         await expect(
             harness(chain()).service.getPoolTvlHistoryWindow(UNKNOWN_POOL, {
                 count: COUNT,
             }),
-        ).resolves.toEqual({ entries: [], truncated: false });
+        ).resolves.toEqual({ entries: [], opening: null });
     });
 
     it('validates like getPoolTvlHistory, before any network read', async () => {
@@ -1502,7 +1605,6 @@ describe('getPoolTvlHistoryWindow — truncated', () => {
     });
 
     it('kasu.strategies passes it through, ready to be a leg', async () => {
-        // A long Base-like history and a young pool, both cut to 52 epochs.
         const old = new StrategiesFacade(
             harness(poolClearing(range(1, CURRENT - 1))).service,
             null as never,
@@ -1525,9 +1627,11 @@ describe('getPoolTvlHistoryWindow — truncated', () => {
                 usdRate: 0.5,
             },
         ];
-        expect(legs.map((leg) => leg.truncated)).toEqual([true, false]);
+        expect(legs.map((leg) => leg.opening?.epochId ?? null)).toEqual([
+            CURRENT - COUNT,
+            null,
+        ]);
         const combined = combineTvlHistories(legs);
-        // Starts at the truncated leg's first point; the young leg is 0 then.
         expect(combined[0]).toEqual({
             timestamp: legs[0].entries[0].timestamp,
             tvlUsd: legs[0].entries[0].tvl,
@@ -1537,44 +1641,36 @@ describe('getPoolTvlHistoryWindow — truncated', () => {
     });
 });
 
-describe('isPoolTvlHistoryTruncated', () => {
-    const clearings = (epochs: number[]): Clearing[] =>
-        epochs.map((epochId) => ({
-            epochId,
-            block: epochId,
-            timestamp: epochId,
-        }));
-    const window = { fromEpoch: 69, toEpoch: 120 };
-    const newest = { kind: 'newest' as const, count: 52 };
-
-    it('count scope: a full page may hide older history', () => {
-        const full = clearings(Array.from({ length: 52 }, (_, i) => 69 + i));
-        expect(isPoolTvlHistoryTruncated(newest, full, window)).toBe(true);
+describe('pickOpeningClearing', () => {
+    const c = (epochId: number, block: number): Clearing => ({
+        epochId,
+        block,
+        timestamp: block,
     });
 
-    it('count scope: a fetched clearing before the window proves older history', () => {
+    it('takes the newest by block, then by epoch', () => {
         expect(
-            isPoolTvlHistoryTruncated(newest, clearings([68, 70]), window),
-        ).toBe(true);
+            pickOpeningClearing([c(5, 50), c(1, 80), c(6, 60)], [c(10, 100)]),
+        ).toEqual(c(1, 80));
+        expect(pickOpeningClearing([c(3, 70), c(4, 70)], [c(5, 100)])).toEqual(
+            c(4, 70),
+        );
     });
 
-    it('count scope: a short page inside the window is the whole history', () => {
-        expect(
-            isPoolTvlHistoryTruncated(newest, clearings([100, 101]), window),
-        ).toBe(false);
-        expect(isPoolTvlHistoryTruncated(newest, [], window)).toBe(false);
+    it('allows the first in-window block itself (a catch-up block)', () => {
+        expect(pickOpeningClearing([c(3, 100)], [c(4, 100)])).toEqual(
+            c(3, 100),
+        );
     });
 
-    it('from scope: truncated exactly when fromEpoch > 0', () => {
-        const from = (fromEpoch: number): ClearingsScope => ({
-            kind: 'from' as const,
-            fromEpoch,
-        });
-        expect(
-            isPoolTvlHistoryTruncated(from(0), clearings([1, 2]), window),
-        ).toBe(false);
-        expect(
-            isPoolTvlHistoryTruncated(from(69), clearings([69]), window),
-        ).toBe(true);
+    it('skips a clearing that finished after the first in-window one', () => {
+        expect(pickOpeningClearing([c(2, 150), c(1, 90)], [c(9, 100)])).toEqual(
+            c(1, 90),
+        );
+    });
+
+    it('is null when nothing came before; any older one when the window has no clearing', () => {
+        expect(pickOpeningClearing([], [c(9, 100)])).toBeNull();
+        expect(pickOpeningClearing([c(2, 20)], [])).toEqual(c(2, 20));
     });
 });

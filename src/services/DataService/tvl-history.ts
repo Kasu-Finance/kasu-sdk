@@ -39,18 +39,18 @@ export interface PoolTvlHistoryOptions {
 
 /**
  * `getPoolTvlHistoryWindow`'s answer: the same entries `getPoolTvlHistory`
- * returns, and whether the window may have cut older history off. Pass it to
+ * returns, and the pool's value just before them. Pass it to
  * `combineTvlHistories` as a leg (`{ ...result, usdRate }`).
  */
 export interface PoolTvlHistoryResult {
     entries: PoolTvlHistoryEntry[];
     /**
-     * `true` when the pool may have cleared BEFORE the first point — the
-     * series starts where the window does, not where the pool did. `false`
-     * only when the read proves there is nothing older. See
-     * `isPoolTvlHistoryTruncated` for the rule per window.
+     * The newest finished clearing BEFORE the window, read at its own block
+     * like every other point (`kind: 'clearing'`), at or before the first
+     * entry. `null` when the pool has no clearing before the window — its
+     * whole history is in `entries`. See `pickOpeningClearing`.
      */
-    truncated: boolean;
+    opening: PoolTvlHistoryEntry | null;
 }
 
 /** The resolved, inclusive epoch range; `null` when it is empty. */
@@ -466,33 +466,59 @@ export async function fetchPoolClearings(
 }
 
 /**
- * Pure: whether a read may have cut older clearings off, from what
- * `fetchPoolClearings` fetched (BEFORE the window filter) and the window.
- *
- * - `count` only (`newest`): the fetch asks for the newest `count` clearings
- *   across ALL epochs, then keeps those in the window. Truncated when one of
- *   them fell before the window (older history is certain), or when all
- *   `count` came back (the page was full, so older may exist). Not truncated
- *   only when fewer than `count` came back and none was before the window:
- *   the fetch then holds every clearing the pool has. Counting the clearings
- *   left in the window would be wrong — the current epoch has no finished
- *   clearing until it clears, so a pool that clears every epoch shows
- *   `count − 1` of them most of the week.
- * - `fromEpoch` given (`from`): the fetch reads only from `fromEpoch` on and
- *   never sees an older clearing. Truncated whenever `fromEpoch > 0` (older
- *   history MAY exist; the read did not look), so `false` only for a read of
- *   the pool's whole history.
+ * Pure: the opening clearing — the newest of `before` (finished clearings the
+ * window left out, older by epoch) that finished at or before the first
+ * in-window clearing's block. Newest by block, then epoch, so a clearing
+ * numbered out of order (XDC AUDD's epoch 1, a week before epoch 88) is
+ * placed by when it happened. `null` when there is none.
  */
-export function isPoolTvlHistoryTruncated(
-    scope: ClearingsScope,
-    fetched: readonly Clearing[],
-    window: PoolTvlHistoryWindow,
-): boolean {
-    if (scope.kind === 'from') return scope.fromEpoch > 0;
-    return (
-        fetched.length >= scope.count ||
-        fetched.some((clearing) => clearing.epochId < window.fromEpoch)
+export function pickOpeningClearing(
+    before: readonly Clearing[],
+    inWindow: readonly Clearing[],
+): Clearing | null {
+    const firstBlock = Math.min(...inWindow.map((c) => c.block));
+    let opening: Clearing | null = null;
+    for (const clearing of before) {
+        if (clearing.block > firstBlock) continue;
+        if (
+            opening === null ||
+            clearing.block > opening.block ||
+            (clearing.block === opening.block &&
+                clearing.epochId > opening.epochId)
+        ) {
+            opening = clearing;
+        }
+    }
+    return opening;
+}
+
+/**
+ * The newest finished clearing numbered below `beforeEpoch`: the opening
+ * candidate of a `fromEpoch` window, whose own fetch never reads that far
+ * back. ONE extra request for one row, no snapshot.
+ */
+export async function fetchClearingBefore(
+    request: GraphRequest,
+    poolId: string,
+    beforeEpoch: number,
+    cancellation: Cancellation,
+): Promise<Clearing | null> {
+    cancellation.throwIfCancelled();
+    const page = await request<PoolTvlClearingsResult>(
+        poolTvlClearingsQuery,
+        {
+            poolId,
+            pool: poolId,
+            epochGte: '0',
+            epochLt: String(beforeEpoch),
+            direction: 'desc',
+            first: 1,
+            withSnapshot: false,
+        },
+        cancellation.signal,
     );
+    const row = page.clearings.at(0);
+    return row === undefined ? null : parseClearing(row);
 }
 
 /**

@@ -402,17 +402,20 @@ mapping, an unmapped id is a strategy of one on its own chain, and an id the
 mapping places on ANOTHER deployment throws `wrong-chain` rather than reading
 one chain with another's address. `combineTvlHistories` (`pool-tvl.ts`) is a
 step merge by timestamp — each leg's latest point at or before every clearing
-time on any leg, times the caller's `usdRate`, a leg 0 before its first point
-— ending in one `current` point at the latest leg's current time. A leg marked
-`truncated` moves the start to the latest truncated leg's first point
-instead, since its earlier value is unknown, not 0. The flag comes ONLY from
-`getPoolTvlHistoryWindow` (`isPoolTvlHistoryTruncated`, from the clearings
-fetched before the window filter): a `count` window is epochs and the current
-epoch has no finished clearing until it clears, so counting the returned
-points misjudges it most of the week. `getPoolTvlHistory` is that read's
-`entries`. It drops `epochId` (the chains clear at different times), takes no FX of
-its own, and validates every leg and entry first with index loops (sparse
-holes, empty legs and bad rates all throw `TvlHistoryInputError`), so it never
+time on any leg, times the caller's `usdRate` — ending in one `current` point
+at the latest leg's current time. Before its first entry a leg counts its
+`opening`, or 0 without one; nothing is ever clipped, and the opening is never
+drawn. The opening comes from `getPoolTvlHistoryWindow`: the newest finished
+clearing before the window (`pickOpeningClearing`, newest by BLOCK, at or
+before the first in-window block — XDC AUDD's epoch-1 clearing finished just
+before epoch 88), read at its own block through the same batch and cache as
+every point. A `count` window fetches `count + 1` clearings to find it; a
+`fromEpoch` window makes one extra one-row request (`fetchClearingBefore`).
+`getPoolTvlHistory` is the same read without the opening, at its old cost.
+`combineTvlHistories` drops `epochId` (the chains clear at different times),
+takes no FX of its own, and validates every leg, entry and opening first with
+index loops (sparse holes, empty legs, a bad opening and bad rates all throw
+`TvlHistoryInputError`), so it never
 returns `NaN` and never passes one chain's figure off as the total.
 `strategyDeployments` takes `chain` as a REQUIRED argument.
 
