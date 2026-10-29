@@ -54,10 +54,12 @@ import {
     createOffChainTvlReader,
     distinctBlocks,
     fetchClearingBefore,
+    fetchClearingBeforeBlock,
     fetchOffChainTvlAtBlocks,
     fetchPoolBalancesAtBlocks,
     fetchPoolClearings,
     GraphRequest,
+    needsClearingBeforeBlock,
     OffChainTvlReader,
     PastBlockCache,
     pickOpeningClearing,
@@ -306,15 +308,20 @@ export class DataService {
      * summed across deployments (`combineTvlHistories`) knows what each leg
      * held before its first point instead of counting it 0.
      *
-     * `opening` is the newest finished clearing before the window (by
-     * `pickOpeningClearing`), read at its own block exactly like every other
-     * point and through the same past-block cache; `null` when the pool has
-     * no clearing before the window. Extra cost over `getPoolTvlHistory`:
+     * `opening` is the newest finished clearing STRICTLY before the window's
+     * first block (by `pickOpeningClearing`), read at its own block exactly
+     * like every other point and through the same past-block cache; `null`
+     * when the pool has no clearing before the window. Extra cost over
+     * `getPoolTvlHistory`:
      *
      * - `count` only: one more clearing row in the same request (`count + 1`,
      *   which always reaches past the window when older history exists);
      * - `fromEpoch` above 0: one more one-row subgraph request, in parallel
      *   with the clearings;
+     * - only when every left-out clearing finished in the window's first
+     *   block (a catch-up block that closed several epochs at once): one
+     *   more one-row request by block (`fetchClearingBeforeBlock`), after
+     *   the clearings — the common case never makes it;
      * - either way, the opening's block in the same batched time-travel read
      *   and one more `externalTVLOfPool` read (cached once final).
      *
@@ -431,9 +438,19 @@ export class DataService {
                     : before === null
                       ? []
                       : [before];
-            const opening = withOpening
+            let opening = withOpening
                 ? pickOpeningClearing(older, inWindow)
                 : null;
+            // The left-out clearings all sat in the first in-window block (a
+            // catch-up block): ask for the newest one before it, by block.
+            if (withOpening && needsClearingBeforeBlock(older, opening)) {
+                opening = await fetchClearingBeforeBlock(
+                    graph,
+                    pool,
+                    Math.min(...inWindow.map((c) => c.block)),
+                    cancellation,
+                );
+            }
             const blocks = distinctBlocks(
                 opening ? [...inWindow, opening] : inWindow,
             );

@@ -45,10 +45,10 @@ export interface PoolTvlHistoryOptions {
 export interface PoolTvlHistoryResult {
     entries: PoolTvlHistoryEntry[];
     /**
-     * The newest finished clearing BEFORE the window, read at its own block
-     * like every other point (`kind: 'clearing'`), at or before the first
-     * entry. `null` when the pool has no clearing before the window — its
-     * whole history is in `entries`. See `pickOpeningClearing`.
+     * The newest finished clearing BEFORE the window, in a block strictly
+     * before the first entry's, read at its own block like every other point
+     * (`kind: 'clearing'`). `null` when the pool has no clearing before the
+     * window — its whole history is in `entries`. See `pickOpeningClearing`.
      */
     opening: PoolTvlHistoryEntry | null;
 }
@@ -467,10 +467,13 @@ export async function fetchPoolClearings(
 
 /**
  * Pure: the opening clearing — the newest of `before` (finished clearings the
- * window left out, older by epoch) that finished at or before the first
+ * window left out, older by epoch) that finished STRICTLY before the first
  * in-window clearing's block. Newest by block, then epoch, so a clearing
  * numbered out of order (XDC AUDD's epoch 1, a week before epoch 88) is
- * placed by when it happened. `null` when there is none.
+ * placed by when it happened. A clearing in the first in-window block itself
+ * (a catch-up block that finished several epochs at once) is not an opening:
+ * it holds the first entry's own value, not the one before it. `null` when
+ * there is none — see `needsClearingBeforeBlock`.
  */
 export function pickOpeningClearing(
     before: readonly Clearing[],
@@ -479,7 +482,7 @@ export function pickOpeningClearing(
     const firstBlock = Math.min(...inWindow.map((c) => c.block));
     let opening: Clearing | null = null;
     for (const clearing of before) {
-        if (clearing.block > firstBlock) continue;
+        if (clearing.block >= firstBlock) continue;
         if (
             opening === null ||
             clearing.block > opening.block ||
@@ -490,6 +493,62 @@ export function pickOpeningClearing(
         }
     }
     return opening;
+}
+
+/**
+ * Pure: whether the opening needs `fetchClearingBefore`'s by-block read.
+ * Only when the window left clearings out but every one of them finished in
+ * or after the first in-window block — the extra rows sat in a catch-up
+ * block — so an older one, if any, was not fetched. Otherwise the opening
+ * (or its absence) is already known and nothing more is read.
+ */
+export function needsClearingBeforeBlock(
+    before: readonly Clearing[],
+    opening: Clearing | null,
+): boolean {
+    return opening === null && before.length > 0;
+}
+
+/**
+ * The newest finished clearing in a block below `blockLt`, by block: the
+ * opening when every clearing the window left out shares its first block.
+ * ONE extra request for one row, no snapshot. Clearings that share that
+ * older block share its time and balance, so which one comes back does not
+ * change the value.
+ */
+export const poolTvlClearingBeforeBlockQuery = gql`
+    query PoolTvlClearingBeforeBlock($pool: String!, $blockLt: BigInt!) {
+        clearings: lendingPoolClearings(
+            first: 1
+            orderBy: endBlockNumber
+            orderDirection: desc
+            where: {
+                lendingPool: $pool
+                isFinished: true
+                endBlockNumber_lt: $blockLt
+            }
+        ) {
+            epochId
+            endBlockNumber
+            endTimestamp
+        }
+    }
+`;
+
+export async function fetchClearingBeforeBlock(
+    request: GraphRequest,
+    poolId: string,
+    blockLt: number,
+    cancellation: Cancellation,
+): Promise<Clearing | null> {
+    cancellation.throwIfCancelled();
+    const page = await request<{ clearings: ClearingRow[] }>(
+        poolTvlClearingBeforeBlockQuery,
+        { pool: poolId, blockLt: String(blockLt) },
+        cancellation.signal,
+    );
+    const row = page.clearings.at(0);
+    return row === undefined ? null : parseClearing(row);
 }
 
 /**

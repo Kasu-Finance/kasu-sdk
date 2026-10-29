@@ -406,12 +406,17 @@ time on any leg, times the caller's `usdRate` — ending in one `current` point
 at the latest leg's current time. A leg's `opening` is one more step — from
 its own timestamp to the first entry, 0 before it, never carried back — and
 without one the leg is 0 before its first entry; nothing is ever clipped, and
-the opening is never drawn. The opening comes from `getPoolTvlHistoryWindow`: the newest finished
-clearing before the window (`pickOpeningClearing`, newest by BLOCK, at or
-before the first in-window block — XDC AUDD's epoch-1 clearing finished just
-before epoch 88), read at its own block through the same batch and cache as
-every point. A `count` window fetches `count + 1` clearings to find it; a
-`fromEpoch` window makes one extra one-row request (`fetchClearingBefore`).
+the opening is never drawn. The opening comes from
+`getPoolTvlHistoryWindow`: the newest finished clearing before the window
+(`pickOpeningClearing`, newest by BLOCK, STRICTLY before the first in-window
+block — XDC AUDD's epoch-1 clearing finished just before epoch 88, and a
+catch-up block that closed several epochs at once
+holds the first entry's value, not the prior one), read at its own block
+through the same batch and cache as every point. A `count` window fetches
+`count + 1` clearings to find it; a `fromEpoch` window makes one extra
+one-row request (`fetchClearingBefore`). Only when every left-out clearing
+sits in that catch-up block does one more one-row request by block follow
+(`fetchClearingBeforeBlock`, `endBlockNumber_lt`).
 `getPoolTvlHistory` is the same read without the opening, at its old cost.
 `combineTvlHistories` drops `epochId` (the chains clear at different times),
 takes no FX of its own, and validates every leg, entry and opening first with

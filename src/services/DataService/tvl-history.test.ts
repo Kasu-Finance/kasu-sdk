@@ -21,6 +21,7 @@ import {
     firstBlockWithCode,
     HistoryRpc,
     mapWithConcurrency,
+    needsClearingBeforeBlock,
     PastStateUnavailableError,
     pickOpeningClearing,
     poolBalancesAtBlocksQuery,
@@ -28,6 +29,7 @@ import {
     PoolTvlHistoryOptions,
     PoolTvlHistoryResult,
     PoolTvlHistoryTimeoutError,
+    poolTvlClearingBeforeBlockQuery,
     poolTvlClearingsQuery,
     resolvePoolTvlHistoryWindow,
     runCancellable,
@@ -345,6 +347,21 @@ function harness(
                               },
                           }
                         : {}),
+                });
+            }
+            if (document === poolTvlClearingBeforeBlockQuery) {
+                const pool = poolOf(variables.pool);
+                const lt = Number(variables.blockLt);
+                const newest = (pool?.clearings ?? [])
+                    .filter((c) => c.block < lt)
+                    .sort((a, b) => b.block - a.block)
+                    .slice(0, 1);
+                return Promise.resolve({
+                    clearings: newest.map((c) => ({
+                        epochId: String(c.epochId),
+                        endBlockNumber: String(c.block),
+                        endTimestamp: String(c.timestamp),
+                    })),
                 });
             }
             if (document.startsWith('query PoolTvlAtBlocks')) {
@@ -1471,6 +1488,84 @@ describe('getPoolTvlHistoryWindow — opening', () => {
         expect(opening).toEqual(pointAt(CURRENT - COUNT));
     });
 
+    describe('a catch-up block at the window start', () => {
+        // One block finished epochs 25–29 at once (a pool catching up);
+        // epoch 24 finished a week earlier in its own block.
+        const catchUp = { block: blockOf(29), timestamp: T0 + 29 * WEEK };
+        const placed = Object.fromEntries(
+            range(25, 29).map((e) => [e, catchUp]),
+        );
+        const state = (): ChainState =>
+            poolClearing(range(1, CURRENT - 1), placed);
+        const beforeBlockRequests = (graph: jest.Mock): unknown[] =>
+            (graph.mock.calls as [string, unknown][]).filter(
+                ([d]) => d === poolTvlClearingBeforeBlockQuery,
+            );
+
+        it('fromEpoch inside the group: the opening is the clearing before the block', async () => {
+            const h = harness(state());
+            const { entries, opening } =
+                await h.service.getPoolTvlHistoryWindow(POOL_A, {
+                    fromEpoch: 27,
+                    count: 3,
+                });
+            expect(entries.map((p) => p.epochId)).toEqual([27, 28, 29]);
+            expect(opening).toEqual(pointAt(24));
+            expect(beforeBlockRequests(h.graph)).toHaveLength(1);
+        });
+
+        it('a count window starting inside the group: the same', async () => {
+            // Window [27, 120]: the extra row (epoch 26) sits in the block.
+            const h = harness(state());
+            const { entries, opening } =
+                await h.service.getPoolTvlHistoryWindow(POOL_A, {
+                    count: CURRENT - 27 + 1,
+                });
+            expect(entries[0].epochId).toBe(27);
+            expect(opening).toEqual(pointAt(24));
+            expect(beforeBlockRequests(h.graph)).toHaveLength(1);
+        });
+
+        it('a window that starts after the group needs no extra request', async () => {
+            const h = harness(state());
+            const { opening } = await h.service.getPoolTvlHistoryWindow(
+                POOL_A,
+                {
+                    fromEpoch: 31,
+                },
+            );
+            expect(opening).toEqual(pointAt(30));
+            expect(beforeBlockRequests(h.graph)).toHaveLength(0);
+        });
+
+        it('combines with the real prior value, not 0', async () => {
+            const leg = await harness(state()).service.getPoolTvlHistoryWindow(
+                POOL_A,
+                { fromEpoch: 27, count: 3 },
+            );
+            const point = (timestamp: number): PoolTvlHistoryEntry => ({
+                epochId: 0,
+                timestamp,
+                tvl: 1,
+                kind: 'clearing',
+            });
+            const other = {
+                usdRate: 1,
+                entries: [point(T0 + 28 * WEEK), point(T0 + 30 * WEEK)],
+            };
+            const combined = combineTvlHistories([
+                { ...leg, usdRate: 1 },
+                other,
+            ]);
+            // At epoch 28's time the catch-up block lies ahead: epoch 24's 240.
+            expect(combined[0]).toEqual({
+                timestamp: T0 + 28 * WEEK,
+                tvlUsd: 240 + 1,
+                kind: 'clearing',
+            });
+        });
+    });
+
     it('a mislabelled first clearing becomes the opening; the other chain keeps its whole window', async () => {
         // XDC AUDD's shape: its first clearing is numbered 1 but finished a
         // few days before epoch 88, holding a few units, then 88 onwards.
@@ -1659,9 +1754,11 @@ describe('pickOpeningClearing', () => {
         );
     });
 
-    it('allows the first in-window block itself (a catch-up block)', () => {
-        expect(pickOpeningClearing([c(3, 100)], [c(4, 100)])).toEqual(
-            c(3, 100),
+    it('refuses the first in-window block itself (a catch-up block)', () => {
+        // That clearing holds the first entry's own value, not the one before.
+        expect(pickOpeningClearing([c(3, 100)], [c(4, 100)])).toBeNull();
+        expect(pickOpeningClearing([c(2, 90), c(3, 100)], [c(4, 100)])).toEqual(
+            c(2, 90),
         );
     });
 
@@ -1674,5 +1771,19 @@ describe('pickOpeningClearing', () => {
     it('is null when nothing came before; any older one when the window has no clearing', () => {
         expect(pickOpeningClearing([], [c(9, 100)])).toBeNull();
         expect(pickOpeningClearing([c(2, 20)], [])).toEqual(c(2, 20));
+    });
+});
+
+describe('needsClearingBeforeBlock', () => {
+    const c = (epochId: number, block: number): Clearing => ({
+        epochId,
+        block,
+        timestamp: block,
+    });
+
+    it('only when clearings were left out and none could be the opening', () => {
+        expect(needsClearingBeforeBlock([c(3, 100)], null)).toBe(true);
+        expect(needsClearingBeforeBlock([c(2, 90)], c(2, 90))).toBe(false);
+        expect(needsClearingBeforeBlock([], null)).toBe(false);
     });
 });

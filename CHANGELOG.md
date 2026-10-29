@@ -35,14 +35,19 @@ a strategy lives, and how to add two chains' histories, for itself.
   - `opening` is the newest finished clearing before the window (the same
     rule that leaves clearings out of `entries`; newest by block, so XDC
     AUDD's epoch-1 clearing, finished just before epoch 88, is found by
-    when it happened), read at its own `endBlockNumber` exactly like every
+    when it happened) in a block STRICTLY before the window's first one —
+    a catch-up block that closed several epochs at once holds the first
+    entry's own value, not the one before it — read at its own `endBlockNumber` exactly like every
     other point — subgraph balance plus `externalTVLOfPool` — through the
     same batched time-travel read and past-block cache. `null` when the
     pool has no clearing before the window.
   - Extra cost over `getPoolTvlHistory`: for a `count` window one more
     clearing row in the same request (`count + 1`); for `fromEpoch` above 0
-    one more one-row subgraph request, in parallel; either way one more
-    block in the time-travel batch and one more `externalTVLOfPool` read.
+    one more one-row subgraph request, in parallel; only when every
+    left-out clearing sits in the window's first (catch-up) block, one more
+    one-row request by block after the clearings — the common case never
+    makes it; either way one more block in the time-travel batch and one
+    more `externalTVLOfPool` read.
   - `{ entries: [], opening: null }` wherever `getPoolTvlHistory` returns
     `[]`.
 - **`combineTvlHistories(legs)`** (domain, pure) →
