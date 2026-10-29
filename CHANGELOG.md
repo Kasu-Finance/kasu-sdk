@@ -5,9 +5,11 @@ versioning; earlier releases are described in their commit messages.
 
 ## 2.13.1
 
-Request amounts are now in the right unit. The subgraph holds a deposit
-request's `amountRequested` in ASSETS and a withdrawal request's in tranche
-SHARES; only the shares may be priced.
+Request amounts are now in the right unit, and the request view model reads
+them for what they are. The subgraph holds a deposit request's
+`amountRequested` in ASSETS and a withdrawal request's in tranche SHARES; only
+the shares may be priced. Either way it is the amount still OUTSTANDING: each
+accepted or rejected part is taken off it.
 
 ### Fixed
 
@@ -30,7 +32,24 @@ SHARES; only the shares may be priced.
 - **`UserLending.getCurrentFtdBalance`.** Locked fixed-term shares were
   priced at the pool's AVERAGE share price across its tranches; they are now
   priced at their own tranche's share price. The figure was understated for a
-  tranche above the pool average and overstated for one below it.
+  tranche above the pool average and overstated for one below it. Its
+  current-epoch sibling, `getCurrentEpochFtdAmount`, now leaves out a config
+  whose total is 0 instead of returning the string `'0.0'`.
+- **`deriveRequestState` — status of a partly paid withdrawal.**
+  `requestedAmount` is what is still queued, not what was first asked for. A
+  withdrawal with part paid and the rest still queued in an open cycle read
+  `pending` whenever more had been paid than was left (1000 asked, 700 paid,
+  300 queued); it now reads `partial`, whichever part is larger. A resolved
+  withdrawal has nothing left queued, so it is always `complete`.
+- **`deriveRequestState` — amount of a cancelled request with a top-up.** A
+  cancelled request's `requestedAmount` was rebuilt from its first submission
+  alone, so top-ups were missed (1000 plus a 500 top-up, cancelled, read
+  1000). It now reads the amount on the cancellation itself — everything
+  outstanding when it was cancelled — and falls back to the first submission
+  only when that figure is missing.
+- **Unknown request types fail closed.** `getUserRequests` throws for a
+  request type it does not know (`UNKNOWN_REQUEST_TYPE_MESSAGE`) instead of
+  pricing its amount as shares.
 
 ## 2.13.0
 
