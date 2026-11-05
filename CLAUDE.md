@@ -475,6 +475,13 @@ not because they are copy, but because nothing may be allowed to drift. Any
 change to one is a coordinated change with kasu-backend, landing in both repos
 at once. They are never translated and never tidied.
 
+`buildLegacyContractRequestMessage` (and `format: 'legacy'` on the deposit
+flow) is DEPRECATED: only the retired kasu-fe-next app (retired 2026-11-05) and
+kasu-mobile builds from before 2026-09-06 signed it. It stays, unchanged, until
+the next major version removes it — coordinated with kasu-backend dropping its
+legacy `/contract/generate` fallback. `/contract/resolve` never used it:
+resolve has its own message, which the backend rebuilds and verifies.
+
 ### The `feePercent` units rule
 
 `DataService.getPerformanceFee()` and
@@ -1028,7 +1035,7 @@ published by accident. Check with `npm pack --dry-run` after any change to
 | Repository       | Relationship                              |
 | ---------------- | ----------------------------------------- |
 | `kasu-ui`        | Primary consumer (production lender app)  |
-| `kasu-fe-next`   | Legacy consumer (frozen, bugfixes only)   |
+| `kasu-fe-next`   | Former consumer — retired 2026-11-05      |
 | `kasu-app-admin` | Consumer — reinstalls after every publish |
 | `kasu-mobile`    | Consumer — reinstalls after every publish |
 | `kasu-contracts` | Source of ABIs and contract logic         |

@@ -225,7 +225,7 @@ application formats them in its own design system and language.
 | Strategy summary     | `pickShortDescription` — the CMS short blurb as one line of plain text, or `undefined` (also on every `Strategy` as `summary`)                                                                            |
 | Requests             | `deriveRequestState`, `submissionEvents`, `countSubmissions`, `firstSubmissionTimestamp`, `isCycleClosed`                                                                                                |
 | Settlement           | `computeSettlementWindow`, `nextCycleBoundary`, `deriveCycleDates`, `CLEARING_WINDOW_SECONDS`                                                                                                            |
-| Loan contract        | `encodeDepositData`, `buildContractVersionType`, `buildLoanAgreementSignMessage`, `buildLegacyContractRequestMessage`, `buildFullNameRequestMessage`, `formatSignTimestampUtc`, `parseFormattedMessage`, `asContractType` |
+| Loan contract        | `encodeDepositData`, `buildContractVersionType`, `buildLoanAgreementSignMessage`, `buildLegacyContractRequestMessage` (deprecated), `buildFullNameRequestMessage`, `formatSignTimestampUtc`, `parseFormattedMessage`, `asContractType` |
 | Wallet errors        | `isUserRejected`, `isUnpredictableGas`, `classifyWalletFailure`                                                                                                                                          |
 | Pool TVL             | `poolTvl`, `combineTvlHistories`, `TvlHistoryInputError` — one strategy's history summed across deployments, in USD at the caller's rates |
 | Revert errors        | `decodeRevert`, `extractRevertData` — the bytes a reverted call came back with, read as the custom error the contract named                                                                              |
@@ -662,8 +662,8 @@ tag workflow only verifies that a pushed `vX.Y.Z` tag matches `package.json`.
 ## Support
 
 - Issues: <https://github.com/Kasu-Finance/kasu-sdk/issues>
-- Developer documentation: <https://devdocs.kasu.finance>
-- Product documentation: <https://docs.kasu.finance>
+- Developer documentation: <https://kasu.finance/docs/developers>
+- Product documentation: <https://kasu.finance/docs/user>
 
 ## License
 
