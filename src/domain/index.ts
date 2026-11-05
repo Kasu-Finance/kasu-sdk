@@ -19,7 +19,10 @@
  *
  *    `pickShortDescription` returns a string but AUTHORS none: it selects and
  *    cleans editorial the CMS already holds, and an absent blurb is
- *    `undefined`, never a sentence of its own.
+ *    `undefined`, never a sentence of its own. The Details-screen parsers in
+ *    `strategy-details.ts` (`splitBusinessTypes`, `parseFacility`,
+ *    `groupRiskManagementItems`, …) are the same kind: they split and trim
+ *    CMS text, and an unauthored field is `undefined`.
  * 2. **Pure.** No network, no clock, no environment. Anything with I/O belongs
  *    in `facade/` (see `fetchUnusedPoolIds`).
  */
@@ -165,6 +168,27 @@ export type { SponsoredCall, SponsoredCallKind } from './sponsored-calls';
 
 export { pickShortDescription } from './strategy-summary';
 export type { ShortDescriptionSource } from './strategy-summary';
+
+export {
+    groupRiskManagementItems,
+    parseFacility,
+    readCmsStartDate,
+    RISK_GROUP_ORDER,
+    securityStructureOf,
+    splitBusinessTypes,
+    splitNumberedClauses,
+    strategyTotalsUsd,
+} from './strategy-details';
+export type {
+    CmsStartDateOptions,
+    CmsTwoLineValue,
+    RiskManagementItemSource,
+    StrategyFacility,
+    StrategyRiskGroup,
+    StrategyRiskItem,
+    StrategyTotalsLeg,
+    StrategyTotalsUsd,
+} from './strategy-details';
 
 export { getTrancheDisplayName, UPPER_MEZZANINE } from './tranche-display-name';
 

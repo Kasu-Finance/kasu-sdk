@@ -1,5 +1,6 @@
 import { BigNumberish, BytesLike } from 'ethers';
 
+import { CmsTwoLineValue, StrategyFacility } from '../domain/strategy-details';
 import { ContractAddresses, SdkConfigOptions } from '../sdk-config';
 import {
     LendingTotals,
@@ -175,8 +176,90 @@ export interface Strategy {
     thumbnailUrl: string;
     /** Banner image URL (empty string when Directus unavailable). */
     bannerUrl: string;
+    /**
+     * The strategy's own lending history, as kasu-ui's Details tab states it
+     * beside Total Active Lending (`tvl.total`). Each figure is absent when
+     * unauthored or unreadable — omit its row, never print a stub.
+     *
+     * Always set by `getAll` / `getVisible` / `getById` (both figures inside
+     * may still be absent). Optional in the type only so that a `Strategy`
+     * built by hand against an earlier version still compiles.
+     */
+    strategyHistory?: StrategyHistory;
+    /**
+     * Who the credit originator lends to, and on what facility. Absent when
+     * the CMS authors neither.
+     */
+    endBorrowers?: StrategyEndBorrowers;
+    /**
+     * The CMS security tags (`security`), trimmed, blanks dropped. Absent when
+     * none are authored.
+     *
+     * kasu-ui shows these, under "Security Structure over End Borrowers", ONLY
+     * when `getRiskManagementGroups` resolves `null` — they are the fallback
+     * for a pool with no risk-management items, not a section of their own.
+     */
+    securityStructure?: string[];
     /** Raw `PoolOverview` for power-users who need all fields. */
     _raw: PoolOverview;
+}
+
+/** `Strategy.strategyHistory`. */
+export interface StrategyHistory {
+    /**
+     * The date this strategy started lending (CMS `operatingSince`), as
+     * `YYYY-MM-DD`. Absent when unauthored, not an ISO date, before 2000 or
+     * in the future (see `readCmsStartDate`). Render it as elapsed time
+     * ("Strategy Lending History").
+     */
+    since?: string;
+    /**
+     * Interest earned by this pool's lenders since inception (the subgraph's
+     * `totalUserInterestAmount`, `PoolOverview.yieldEarned`), in display
+     * units of the deployment's OWN stable token — like `tvl.total`. For the
+     * strategy-wide figure across deployments in USD, see
+     * `strategyTotalsUsd`. Absent when the value is not a finite number.
+     */
+    lenderInterestEarned?: number;
+}
+
+/** `Strategy.endBorrowers`: at least one of the two is present. */
+export interface StrategyEndBorrowers {
+    /**
+     * Business Types (CMS `industryExposure`): the value and its supporting
+     * clause. Absent when unauthored. See `splitBusinessTypes`.
+     */
+    businessTypes?: CmsTwoLineValue;
+    /**
+     * Facility Type (CMS `loanStructure`): the label, its clause, and whether
+     * it revolves. Absent when unauthored. See `parseFacility`.
+     */
+    facility?: StrategyFacility;
+}
+
+/**
+ * The credit originator's ENTIRE lending history — every loan it has made,
+ * not only this strategy's — from its CMS profile
+ * (`kasu.strategies.getOriginatorHistory`). Each figure is absent when
+ * unauthored or not a valid value; omit its tile, never print a stub.
+ *
+ * The money figures are editorial and already in USD, on every deployment:
+ * never convert them by the deployment's FX rate, and never sum them across
+ * a strategy's deployments.
+ */
+export interface OriginatorHistory {
+    /**
+     * The date the originator started lending (CMS
+     * `delegateLendingHistory`), as `YYYY-MM-DD`. Render it as elapsed time
+     * ("Entire Lending History").
+     */
+    since?: string;
+    /** Total loan funds originated, USD (CMS `totalLoanFundsOriginated`). */
+    totalOriginated?: number;
+    /** Loans outstanding, USD (CMS `loansUnderManagement` on the profile). */
+    loansOutstanding?: number;
+    /** Historic loss rate, a 0..1 fraction (CMS `historicLossRate`). */
+    lossRate?: number;
 }
 
 export interface StrategyTranche {

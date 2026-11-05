@@ -116,7 +116,7 @@ You can also pass a whole `ChainConfigEntry` instead of a chain key.
 
 | Facade            | Methods                                                                                                                 | Purpose                         |
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
-| `kasu.strategies` | `getAll()`, `getVisible()`, `getById()`, `getPlatformStats()`, `getPerformanceFeePercent()`, `calculateDepositLimits()`, `getRiskPerformance(poolId)`, `getOriginator(poolId)`, `getPoolTvlHistory(poolId)`, `getPoolTvlHistoryWindow(poolId)` | Browse pools, APY, capacity, risk, originator, TVL history |
+| `kasu.strategies` | `getAll()`, `getVisible()`, `getById()`, `getPlatformStats()`, `getPerformanceFeePercent()`, `calculateDepositLimits()`, `getRiskPerformance(poolId)`, `getOriginator(poolId)`, `getOriginatorHistory(poolId)`, `getRiskManagementGroups(poolId)`, `getPoolTvlHistory(poolId)`, `getPoolTvlHistoryWindow(poolId)` | Browse pools, APY, capacity, risk, originator, TVL history |
 | `kasu.deposits`   | `deposit()`, `withdraw()`, `withdrawMax()`, `buildKycParams()`, `isClearingPending()`                                   | Submit transactions             |
 | `kasu.portfolio`  | `getPositions()`, `getYieldHistory()`, `getTransactionHistory()`, `getRequestStates()`                                  | Lender balances, yield, per-cycle earnings (net, in the chain's own stable token), history |
 | `kasu.flows`      | `deposit(ports)`, `withdraw(ports?)`                                                                                    | Headless transaction pipelines  |
@@ -223,6 +223,7 @@ application formats them in its own design system and language.
 | Batch proof          | `validateDepositBatchCalls`, `proveDepositInReceipt`, `DepositBatchMismatchError`, `ENTRY_POINT_V07`                                                                                                   |
 | Tranche display name | `getTrancheDisplayName`, `UPPER_MEZZANINE`                                                                                                                                                               |
 | Strategy summary     | `pickShortDescription` — the CMS short blurb as one line of plain text, or `undefined` (also on every `Strategy` as `summary`)                                                                            |
+| Strategy details     | `readCmsStartDate`, `splitBusinessTypes`, `parseFacility`, `splitNumberedClauses`, `groupRiskManagementItems`, `RISK_GROUP_ORDER`, `securityStructureOf`, `strategyTotalsUsd` — the Details-screen fields as kasu-ui reads them (also on `Strategy` and the two strategy getters above) |
 | Requests             | `deriveRequestState`, `submissionEvents`, `countSubmissions`, `firstSubmissionTimestamp`, `isCycleClosed`                                                                                                |
 | Settlement           | `computeSettlementWindow`, `nextCycleBoundary`, `deriveCycleDates`, `CLEARING_WINDOW_SECONDS`                                                                                                            |
 | Loan contract        | `encodeDepositData`, `buildContractVersionType`, `buildLoanAgreementSignMessage`, `buildLegacyContractRequestMessage` (deprecated), `buildFullNameRequestMessage`, `formatSignTimestampUtc`, `parseFormattedMessage`, `asContractType` |
@@ -252,6 +253,17 @@ Three rules worth knowing:
   `liteDescription` and `description` stay the raw CMS values. It is NOT
   sanitised: HTML tags and link syntax pass through unchanged, so render it
   as text, never as HTML or markdown.
+- **The Details-screen fields omit, never stub.** `Strategy.strategyHistory`,
+  `Strategy.endBorrowers`, `Strategy.securityStructure`,
+  `getOriginatorHistory` and `getRiskManagementGroups` carry only what the CMS
+  actually authors: an empty, blank or malformed value is an absent key (or
+  `null` for a whole section), never a `0`, a dash or a sentence of the
+  SDK's own. A start date is `YYYY-MM-DD` and must be a real date from 2000
+  up to today. The originator's money figures are editorial USD on every
+  deployment — never FX-convert them; a strategy's own Total Active Lending
+  and Lender Interest Earned across its deployments go through
+  `strategyTotalsUsd`, which withholds the total (`null`) rather than sum a
+  leg without a rate.
 - **The tranche rename is display-only.** `getTrancheDisplayName` maps the
   `Senior` tranche to "Upper Mezzanine" on Apxium strategies, because the true
   senior position is held by an institutional lender. Call it at the view

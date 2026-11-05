@@ -1,5 +1,14 @@
 import { PoolTvlHistoryEntry } from '../domain/pool-tvl';
 import { selectVisiblePools } from '../domain/pools';
+import {
+    finiteOrUndefined,
+    groupRiskManagementItems,
+    parseFacility,
+    readCmsStartDate,
+    securityStructureOf,
+    splitBusinessTypes,
+    StrategyRiskGroup,
+} from '../domain/strategy-details';
 import { pickShortDescription } from '../domain/strategy-summary';
 import { DataService } from '../services/DataService/data-service';
 import {
@@ -15,8 +24,11 @@ import { UserLending } from '../services/UserLending/user-lending';
 import {
     DepositLimits,
     FixedTermOption,
+    OriginatorHistory,
     PlatformStats,
     Strategy,
+    StrategyEndBorrowers,
+    StrategyHistory,
     StrategyRiskPerformance,
     StrategyTranche,
 } from './types';
@@ -35,6 +47,11 @@ export class StrategiesFacade {
          * share their Base counterpart's editorial record). Lowercase keys.
          */
         private _poolMetadataMapping: Record<string, string> = {},
+        /**
+         * The clock the CMS start dates are checked against (a date after it
+         * is refused). Injected for tests; the current time otherwise.
+         */
+        private _now: () => Date = (): Date => new Date(),
     ) {}
 
     /**
@@ -99,6 +116,76 @@ export class StrategiesFacade {
                 ),
             ) ?? null
         );
+    }
+
+    /**
+     * The credit originator's ENTIRE lending history for a pool — since when,
+     * total originated, loans outstanding, loss rate — read from the profile
+     * `getOriginator` finds, each figure validated. `null` when no profile
+     * lists the pool, or the profile authors none of the four.
+     *
+     * kasu-ui's Details tab shows these as its Credit Originator strip, and
+     * hides the strip when there is no profile. The money figures are
+     * editorial USD on every deployment: never FX-convert them. An XDC pool
+     * resolves `null` today, as it does in kasu-ui (see `getOriginator`).
+     *
+     * Requires `directusUrl`, like every CMS-only read.
+     */
+    async getOriginatorHistory(
+        poolId: string,
+    ): Promise<OriginatorHistory | null> {
+        const profile = await this.getOriginator(poolId);
+        if (!profile) return null;
+        const history: OriginatorHistory = {};
+        const since = readCmsStartDate(
+            profile.delegateLendingHistory,
+            this._now(),
+            { unixSeconds: true },
+        );
+        if (since !== undefined) history.since = since;
+        const totalOriginated = finiteOrUndefined(
+            profile.totalLoanFundsOriginated,
+        );
+        if (totalOriginated !== undefined) {
+            history.totalOriginated = totalOriginated;
+        }
+        const loansOutstanding = finiteOrUndefined(
+            profile.loansUnderManagement,
+        );
+        if (loansOutstanding !== undefined) {
+            history.loansOutstanding = loansOutstanding;
+        }
+        const lossRate = finiteOrUndefined(profile.historicLossRate);
+        if (lossRate !== undefined) history.lossRate = lossRate;
+        return Object.keys(history).length > 0 ? history : null;
+    }
+
+    /**
+     * The pool's Risk Management groups, from its CMS risk-management record:
+     * each group with its items (name, the pool's description of it split
+     * into lines, the shared tooltip), the groups in `RISK_GROUP_ORDER`
+     * (Security & Recourse, Structural Controls, Financial Covenants,
+     * Reporting Covenants, Key Eligibility Criteria, then any other in CMS
+     * order). See `groupRiskManagementItems`.
+     *
+     * `null` when the pool has no record, or the record has no usable item —
+     * then kasu-ui falls back to `Strategy.securityStructure`. XDC pools
+     * resolve through the metadata mapping to their Base record, like
+     * `getRiskPerformance`.
+     *
+     * Requires `directusUrl`, like every CMS-only read.
+     */
+    async getRiskManagementGroups(
+        poolId: string,
+    ): Promise<StrategyRiskGroup[] | null> {
+        const metadataId = this._metadataIdOf(poolId);
+        const records = await this._dataService.getRiskManagement();
+        const record = records.find(
+            (r) => String(r.poolIdFK).toLowerCase() === metadataId,
+        );
+        if (!record || !Array.isArray(record.items)) return null;
+        const groups = groupRiskManagementItems(record.items);
+        return groups.length > 0 ? groups : null;
     }
 
     private _metadataIdOf(poolId: string): string {
@@ -281,9 +368,35 @@ export class StrategiesFacade {
             apyStructure: pool.poolApyStructure,
             thumbnailUrl: pool.thumbnailImageUrl,
             bannerUrl: pool.bannerImageUrl,
+            strategyHistory: strategyHistoryOf(pool, this._now()),
+            endBorrowers: endBorrowersOf(pool),
+            securityStructure: securityStructureOf(pool.security),
             _raw: pool,
         };
     }
+}
+
+/** `Strategy.strategyHistory`: an absent figure is an absent key. */
+function strategyHistoryOf(pool: PoolOverview, now: Date): StrategyHistory {
+    const history: StrategyHistory = {};
+    const since = readCmsStartDate(pool.operatingSince, now);
+    if (since !== undefined) history.since = since;
+    const lenderInterestEarned = finiteOrUndefined(pool.yieldEarned);
+    if (lenderInterestEarned !== undefined) {
+        history.lenderInterestEarned = lenderInterestEarned;
+    }
+    return history;
+}
+
+/** Business Types and Facility Type, or `undefined` when neither is authored. */
+function endBorrowersOf(pool: PoolOverview): StrategyEndBorrowers | undefined {
+    const businessTypes = splitBusinessTypes(pool.industryExposure);
+    const facility = parseFacility(pool.loanStructure);
+    if (!businessTypes && !facility) return undefined;
+    return {
+        ...(businessTypes ? { businessTypes } : {}),
+        ...(facility ? { facility } : {}),
+    };
 }
 
 /**

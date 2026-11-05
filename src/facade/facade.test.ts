@@ -575,6 +575,396 @@ describe('StrategiesFacade risk and originator accessors', () => {
 });
 
 // ---------------------------------------------------------------------------
+// StrategiesFacade — the Details-screen fields (2.15.0)
+// ---------------------------------------------------------------------------
+
+describe('StrategiesFacade details fields', () => {
+    const NOW = new Date('2026-11-05T12:00:00Z');
+    const BASE_POOL = '0x00000000000000000000000000000000000000aa';
+    const XDC_POOL = '0x00000000000000000000000000000000000000BB';
+    const OTHER_POOL = '0x00000000000000000000000000000000000000cc';
+
+    // A pool as `getPoolOverview` maps it — the CMS fields the Details tab
+    // reads, in their live shapes. `over` replaces any of them.
+    function pool(over: Record<string, unknown> = {}): PoolOverview {
+        return {
+            id: BASE_POOL,
+            poolName: 'Taxation Funding (Tax Pay)',
+            description: '',
+            liteDescription: '',
+            isActive: true,
+            apy: 0.1,
+            totalValueLocked: { total: '2567901.5', offchain: '0' },
+            yieldEarned: '514912.25',
+            poolCapacity: '0',
+            poolCapacityPercentage: '0',
+            tranches: [],
+            assetClass: 'Tax Receivables',
+            poolApyStructure: 'Variable',
+            thumbnailImageUrl: '',
+            bannerImageUrl: '',
+            operatingSince: '2024-06-01',
+            industryExposure:
+                'SMEs & Large Businesses (Diversified industries – exclusions for high risk industries apply)',
+            loanStructure:
+                'Revolving Instalment Facility\n12-24 months instalment loan, subject to annual review',
+            security: ['Guarantee & Indemnity', ' Director Guarantee(s) ', ''],
+            ...over,
+        } as unknown as PoolOverview;
+    }
+
+    async function strategyOf(
+        over: Record<string, unknown> = {},
+    ): Promise<Strategy> {
+        const facade = new StrategiesFacade(
+            {
+                getPoolOverview: jest.fn().mockResolvedValue([pool(over)]),
+            } as unknown as DataService,
+            {
+                getCurrentEpoch: jest.fn().mockResolvedValue('1'),
+            } as unknown as UserLending,
+            {},
+            () => NOW,
+        );
+        const [strategy] = await facade.getAll();
+        return strategy;
+    }
+
+    describe('on Strategy', () => {
+        it('maps every field from the pool overview', async () => {
+            const strategy = await strategyOf();
+            expect(strategy.strategyHistory).toEqual({
+                since: '2024-06-01',
+                lenderInterestEarned: 514912.25,
+            });
+            expect(strategy.endBorrowers).toEqual({
+                businessTypes: {
+                    primary: 'SMEs & Large Businesses',
+                    detail: 'Diversified industries – exclusions for high risk industries apply',
+                },
+                facility: {
+                    label: 'Revolving Instalment Facility',
+                    detail: '12-24 months instalment loan, subject to annual review',
+                    revolving: true,
+                },
+            });
+            expect(strategy.securityStructure).toEqual([
+                'Guarantee & Indemnity',
+                'Director Guarantee(s)',
+            ]);
+            // The raw CMS values stay untouched.
+            expect(strategy._raw.loanStructure).toBe(
+                'Revolving Instalment Facility\n12-24 months instalment loan, subject to annual review',
+            );
+        });
+
+        it('omits every field a pool with no CMS record lacks', async () => {
+            // `getPoolOverview` maps a pool with no CMS record to '' / [] /
+            // undefined; the subgraph still has its interest.
+            const strategy = await strategyOf({
+                operatingSince: undefined,
+                industryExposure: '',
+                loanStructure: '',
+                security: [],
+            });
+            expect(strategy.strategyHistory).toEqual({
+                lenderInterestEarned: 514912.25,
+            });
+            expect(strategy.strategyHistory).not.toHaveProperty('since');
+            expect(strategy.endBorrowers).toBeUndefined();
+            expect(strategy.securityStructure).toBeUndefined();
+        });
+
+        it('never stubs an unreadable value', async () => {
+            const strategy = await strategyOf({
+                operatingSince: 'Jun 2024',
+                yieldEarned: '',
+                industryExposure: '   ',
+                loanStructure: null,
+                security: null,
+            });
+            expect(strategy.strategyHistory).toEqual({});
+            expect(strategy.endBorrowers).toBeUndefined();
+            expect(strategy.securityStructure).toBeUndefined();
+        });
+
+        it('refuses a start date after the clock', async () => {
+            const strategy = await strategyOf({ operatingSince: '2026-11-06' });
+            expect(strategy.strategyHistory?.since).toBeUndefined();
+        });
+
+        it('keeps a genuine zero of interest', async () => {
+            const strategy = await strategyOf({ yieldEarned: '0' });
+            expect(strategy.strategyHistory?.lenderInterestEarned).toBe(0);
+        });
+
+        it('carries End Borrowers when only one of the two is authored', async () => {
+            const onlyFacility = await strategyOf({
+                industryExposure: '',
+                loanStructure: 'Revolving',
+            });
+            expect(onlyFacility.endBorrowers).toEqual({
+                facility: { label: 'Revolving', revolving: true },
+            });
+            const onlyTypes = await strategyOf({
+                industryExposure: 'Accounting Firms',
+                loanStructure: '',
+            });
+            expect(onlyTypes.endBorrowers).toEqual({
+                businessTypes: { primary: 'Accounting Firms' },
+            });
+        });
+    });
+
+    function delegate(
+        poolIds: string[],
+        fields: Record<string, unknown>,
+    ): PoolDelegateProfileAndHistory {
+        return {
+            id: 'apx',
+            assetClasses: 'Receivables',
+            otherKASUPools: poolIds.map((id) => ({
+                id,
+                name: 'Strategy',
+                isActive: true,
+                isOversubscribed: false,
+            })),
+            totalLoansOriginated: 1,
+            ...fields,
+        } as unknown as PoolDelegateProfileAndHistory;
+    }
+
+    function facadeWith(
+        data: Partial<
+            Pick<
+                DataService,
+                'getRiskManagement' | 'getPoolDelegateProfileAndHistory'
+            >
+        >,
+        mapping: Record<string, string> = {},
+    ): StrategiesFacade {
+        return new StrategiesFacade(
+            data as unknown as DataService,
+            null as never,
+            mapping,
+            () => NOW,
+        );
+    }
+
+    describe('getOriginatorHistory', () => {
+        it('reads the four figures in their live shapes', async () => {
+            // Live: the start date is an ISO datetime, the loss rate a
+            // numeric string, the money figures numbers.
+            const facade = facadeWith({
+                getPoolDelegateProfileAndHistory: jest.fn().mockResolvedValue([
+                    delegate([OTHER_POOL], { totalLoanFundsOriginated: 9 }),
+                    delegate([BASE_POOL], {
+                        delegateLendingHistory: '2016-12-13T00:00:00.000Z',
+                        totalLoanFundsOriginated: 50446371,
+                        loansUnderManagement: 10030000,
+                        historicLossRate: '0.00200',
+                    }),
+                ]),
+            });
+            await expect(
+                facade.getOriginatorHistory(BASE_POOL),
+            ).resolves.toEqual({
+                since: '2016-12-13',
+                totalOriginated: 50446371,
+                loansOutstanding: 10030000,
+                lossRate: 0.002,
+            });
+        });
+
+        it('keeps a genuine 0.00000 loss rate as 0', async () => {
+            const facade = facadeWith({
+                getPoolDelegateProfileAndHistory: jest
+                    .fn()
+                    .mockResolvedValue([
+                        delegate([BASE_POOL], { historicLossRate: '0.00000' }),
+                    ]),
+            });
+            await expect(
+                facade.getOriginatorHistory(BASE_POOL),
+            ).resolves.toEqual({ lossRate: 0 });
+        });
+
+        it('omits each unauthored or malformed figure', async () => {
+            const facade = facadeWith({
+                getPoolDelegateProfileAndHistory: jest.fn().mockResolvedValue([
+                    delegate([BASE_POOL], {
+                        delegateLendingHistory: 'since 2016',
+                        totalLoanFundsOriginated: '',
+                        loansUnderManagement: null,
+                        historicLossRate: '4.5',
+                    }),
+                ]),
+            });
+            await expect(
+                facade.getOriginatorHistory(BASE_POOL),
+            ).resolves.toEqual({ lossRate: 4.5 });
+        });
+
+        it('reads a numeric start date as unix seconds, as kasu-ui does', async () => {
+            const facade = facadeWith({
+                getPoolDelegateProfileAndHistory: jest
+                    .fn()
+                    .mockResolvedValue([
+                        delegate([BASE_POOL], {
+                            delegateLendingHistory: 1481587200,
+                        }),
+                    ]),
+            });
+            await expect(
+                facade.getOriginatorHistory(BASE_POOL),
+            ).resolves.toEqual({ since: '2016-12-13' });
+        });
+
+        it('is null when the profile authors none of the four', async () => {
+            const facade = facadeWith({
+                getPoolDelegateProfileAndHistory: jest.fn().mockResolvedValue([
+                    delegate([BASE_POOL], {
+                        delegateLendingHistory: null,
+                        totalLoanFundsOriginated: '',
+                        loansUnderManagement: '  ',
+                        historicLossRate: undefined,
+                    }),
+                ]),
+            });
+            await expect(
+                facade.getOriginatorHistory(BASE_POOL),
+            ).resolves.toBeNull();
+        });
+
+        it('is null when no profile lists the pool', async () => {
+            const facade = facadeWith({
+                getPoolDelegateProfileAndHistory: jest
+                    .fn()
+                    .mockResolvedValue([
+                        delegate([OTHER_POOL], { historicLossRate: 0 }),
+                    ]),
+            });
+            await expect(
+                facade.getOriginatorHistory(BASE_POOL),
+            ).resolves.toBeNull();
+        });
+    });
+
+    describe('getRiskManagementGroups', () => {
+        function record(poolIdFK: string, items: unknown): RiskManagement {
+            return {
+                id: `risk-${poolIdFK}`,
+                poolIdFK,
+                items,
+                riskPerformance: {},
+            } as unknown as RiskManagement;
+        }
+
+        const ITEMS = [
+            {
+                name: 'Debt Ratio',
+                group: 'Financial Covenants',
+                description: 'must be below 1',
+                tooltip: '',
+            },
+            {
+                name: 'Guarantee & Indemnity',
+                group: 'Security & Recourse',
+                description: '',
+                tooltip: 'A promise to repay.',
+            },
+            {
+                name: 'Loan funds drawn directly to the tax authority',
+                group: 'Structural Controls',
+                description: '',
+                tooltip: '',
+            },
+        ];
+
+        it("groups the pool's items in the canonical order", async () => {
+            const facade = facadeWith({
+                getRiskManagement: jest
+                    .fn()
+                    .mockResolvedValue([
+                        record(OTHER_POOL, [{ name: 'x', group: 'Other' }]),
+                        record(BASE_POOL, ITEMS),
+                    ]),
+            });
+            await expect(
+                facade.getRiskManagementGroups(BASE_POOL),
+            ).resolves.toEqual([
+                {
+                    group: 'Security & Recourse',
+                    items: [
+                        {
+                            name: 'Guarantee & Indemnity',
+                            clauses: [],
+                            tooltip: 'A promise to repay.',
+                        },
+                    ],
+                },
+                {
+                    group: 'Structural Controls',
+                    items: [
+                        {
+                            name: 'Loan funds drawn directly to the tax authority',
+                            clauses: [],
+                        },
+                    ],
+                },
+                {
+                    group: 'Financial Covenants',
+                    items: [
+                        {
+                            name: 'Debt Ratio',
+                            description: 'must be below 1',
+                            clauses: ['must be below 1'],
+                        },
+                    ],
+                },
+            ]);
+        });
+
+        it('resolves an XDC pool through the metadata mapping', async () => {
+            const facade = facadeWith(
+                {
+                    getRiskManagement: jest
+                        .fn()
+                        .mockResolvedValue([record(BASE_POOL, ITEMS)]),
+                },
+                { [XDC_POOL.toLowerCase()]: BASE_POOL },
+            );
+            const groups = await facade.getRiskManagementGroups(XDC_POOL);
+            expect(groups?.map((g) => g.group)).toEqual([
+                'Security & Recourse',
+                'Structural Controls',
+                'Financial Covenants',
+            ]);
+        });
+
+        it('is null with no record, no items, or no usable item', async () => {
+            for (const records of [
+                [record(OTHER_POOL, ITEMS)],
+                [record(BASE_POOL, [])],
+                [record(BASE_POOL, undefined)],
+                [
+                    record(BASE_POOL, [
+                        { name: '', group: 'Security & Recourse' },
+                    ]),
+                ],
+            ]) {
+                const facade = facadeWith({
+                    getRiskManagement: jest.fn().mockResolvedValue(records),
+                });
+                await expect(
+                    facade.getRiskManagementGroups(BASE_POOL),
+                ).resolves.toBeNull();
+            }
+        });
+    });
+});
+
+// ---------------------------------------------------------------------------
 // PortfolioFacade.getRequestStates()
 // ---------------------------------------------------------------------------
 

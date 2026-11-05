@@ -3,7 +3,55 @@
 All notable changes to `@kasufinance/kasu-sdk`. Versions follow semantic
 versioning; earlier releases are described in their commit messages.
 
-## Unreleased
+## 2.15.0
+
+The fields a strategy's Details screen shows, read the way kasu-ui's Details
+tab reads them, so every app states the same thing. kasu-ui read them from
+the CMS itself and parsed them in its own components; those parsers move
+here. Additive only: nothing is renamed, removed or changed.
+
+### Added
+
+- **`Strategy.strategyHistory`** `{ since?, lenderInterestEarned? }` —
+  `since` is the CMS `operatingSince` as `YYYY-MM-DD` (rendered as
+  "Strategy Lending History"); `lenderInterestEarned` is the pool's
+  `yieldEarned` as a number, in the deployment's own stable token, like
+  `tvl.total`. Always set by `getAll` / `getVisible` / `getById`; optional in
+  the type only so hand-built `Strategy` objects still compile.
+- **`Strategy.endBorrowers`** `{ businessTypes?, facility? }` — Business
+  Types (CMS `industryExposure`) as `{ primary, detail? }`, split on the first
+  newline else the first parenthesised segment; Facility Type (CMS
+  `loanStructure`) as `{ label, detail?, revolving }`, split on the first
+  newline. `revolving` reads the label only and is false for a negated
+  "Non-Revolving". Absent when neither is authored.
+- **`Strategy.securityStructure`** — the CMS `security` tags, trimmed,
+  blanks dropped: kasu-ui's fallback list when a pool has no risk-management
+  items.
+- **`kasu.strategies.getOriginatorHistory(poolId)`** →
+  `OriginatorHistory | null` `{ since?, totalOriginated?, loansOutstanding?,
+  lossRate? }` — the credit originator's ENTIRE lending history from the
+  profile `getOriginator` finds (CMS `delegateLendingHistory`,
+  `totalLoanFundsOriginated`, `loansUnderManagement`, `historicLossRate`).
+  Money is editorial USD on every deployment; `lossRate` is a 0..1 fraction.
+  `null` when no profile lists the pool or it authors none of the four.
+- **`kasu.strategies.getRiskManagementGroups(poolId)`** →
+  `StrategyRiskGroup[] | null` — the pool's risk-management items grouped,
+  the groups in `RISK_GROUP_ORDER` (Security & Recourse, Structural Controls,
+  Financial Covenants, Reporting Covenants, Key Eligibility Criteria, then any
+  other in CMS order), each item `{ name, description?, clauses, tooltip? }`.
+  XDC pools resolve to their Base record through the metadata mapping. `null`
+  when there is no record or no usable item.
+- **Domain (pure):** `readCmsStartDate` (ISO date only, a real calendar
+  date, 2000 to `now`; optional unix seconds), `splitBusinessTypes`,
+  `parseFacility`, `splitNumberedClauses` (an unauthored description is `[]`,
+  never a dash), `groupRiskManagementItems`, `RISK_GROUP_ORDER`,
+  `securityStructureOf`, and `strategyTotalsUsd` — Total Active Lending and
+  Lender Interest Earned summed across a strategy's deployments in USD at each
+  leg's own rate, WITHHELD (`null`) when any leg has no usable rate.
+
+Every field follows one rule: an empty, blank or malformed CMS value is an
+absent key (or `null` for a whole section), never a `0`, a dash or a
+sentence of the SDK's own.
 
 ### Deprecated
 
