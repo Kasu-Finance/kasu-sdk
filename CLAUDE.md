@@ -83,6 +83,7 @@ src/
 │   ├── partners.ts      # Credit originator / institutional lender
 │   ├── tranche-display-name.ts  # The one display-only rename
 │   ├── strategy-summary.ts # pickShortDescription: the CMS short blurb as plain text
+│   ├── strategy-details.ts # Details-screen CMS fields: start dates, End Borrowers, risk groups, USD totals
 │   ├── requests.ts      # Lending-request view model as codes
 │   ├── settlement.ts    # Clearing window, cycle dates
 │   ├── loan-contract.ts # Backend-verified protocol strings + depositData
@@ -328,6 +329,12 @@ they were duplicated across the applications, and the copies drifted.
    stripped, one line), and an absent blurb is `undefined` — never a sentence
    of its own. The facade exposes it as `Strategy.summary`. It was lifted from
    kasu-ui, and its spec pins kasu-ui's output for every live CMS shape.
+
+   `strategy-details.ts` is the same kind: the Details-screen parsers
+   (`splitBusinessTypes`, `parseFacility`, `splitNumberedClauses`,
+   `groupRiskManagementItems`, `securityStructureOf`) split and trim CMS text
+   and author none; an unauthored field is `undefined`. `readCmsStartDate`
+   takes `now` from its caller, so the module stays clock-free.
 2. **Pure.** No network, no clock, no environment. Anything with I/O goes in
    `src/facade/` — `fetchUnusedPoolIds` is the example.
 
@@ -340,6 +347,7 @@ they were duplicated across the applications, and the copies drifted.
 | `partners.ts`             | Credit originator and institutional lender, inferred from the pool name           |
 | `tranche-display-name.ts` | The Senior → "Upper Mezzanine" rename                                             |
 | `strategy-summary.ts`     | `pickShortDescription` — the CMS short blurb as one line of plain text (`Strategy.summary`) |
+| `strategy-details.ts`     | Details-screen CMS fields as kasu-ui reads them: `readCmsStartDate`, `splitBusinessTypes`, `parseFacility`, `groupRiskManagementItems` (+ `RISK_GROUP_ORDER`), `securityStructureOf`, `strategyTotalsUsd` (sum over loaded legs + `isPartial` / `missingDeployments`; `null` when a leg lacks a rate) |
 | `requests.ts`             | Lending-request view model as codes: status, kind, amounts, bundle, cycle         |
 | `settlement.ts`           | Clearing-window phase and boundary, cycle close/outcome dates                     |
 | `loan-contract.ts`        | `depositData` bytes, the signed-message builders, the contract payload types      |

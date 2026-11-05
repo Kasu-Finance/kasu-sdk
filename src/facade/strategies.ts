@@ -1,5 +1,14 @@
 import { PoolTvlHistoryEntry } from '../domain/pool-tvl';
 import { selectVisiblePools } from '../domain/pools';
+import {
+    finiteOrUndefined,
+    groupRiskManagementItems,
+    parseFacility,
+    readCmsStartDate,
+    securityStructureOf,
+    splitBusinessTypes,
+    StrategyRiskGroup,
+} from '../domain/strategy-details';
 import { pickShortDescription } from '../domain/strategy-summary';
 import { DataService } from '../services/DataService/data-service';
 import {
@@ -15,8 +24,11 @@ import { UserLending } from '../services/UserLending/user-lending';
 import {
     DepositLimits,
     FixedTermOption,
+    OriginatorHistory,
     PlatformStats,
     Strategy,
+    StrategyEndBorrowers,
+    StrategyHistory,
     StrategyRiskPerformance,
     StrategyTranche,
 } from './types';
@@ -35,7 +47,64 @@ export class StrategiesFacade {
          * share their Base counterpart's editorial record). Lowercase keys.
          */
         private _poolMetadataMapping: Record<string, string> = {},
+        /**
+         * The clock the CMS start dates are checked against (a date after it
+         * is refused). Injected for tests; the current time otherwise.
+         */
+        private _now: () => Date = (): Date => new Date(),
+        /**
+         * Milliseconds on a clock that only moves forward, for the shared
+         * CMS reads' 30-second lifetime — separate from `_now`, so a pinned
+         * date clock cannot keep a read alive for ever. Injected for tests;
+         * `Date.now` otherwise.
+         */
+        private _memoClockMs: () => number = (): number => Date.now(),
     ) {}
+
+    /**
+     * Short-lived, per-instance memo of the two CMS-wide reads the pool
+     * getters share, so a Details screen asking for the loss rate, the risk
+     * groups and the originator together reads each collection once. Keyed
+     * by read; holds the in-flight promise, so concurrent callers share it.
+     * A REJECTED read is dropped at once, never served again — the next call
+     * retries.
+     */
+    private _cmsReads = new Map<
+        string,
+        { promise: Promise<unknown>; expiresAt: number }
+    >();
+
+    private _memoCmsRead<T>(key: string, read: () => Promise<T>): Promise<T> {
+        const nowMs = this._memoClockMs();
+        const cached = this._cmsReads.get(key);
+        if (cached && cached.expiresAt > nowMs) {
+            return cached.promise as Promise<T>;
+        }
+        const promise = read();
+        const entry = { promise, expiresAt: nowMs + CMS_READ_TTL_MS };
+        this._cmsReads.set(key, entry);
+        promise.catch(() => {
+            // Only our own entry: a newer read may have replaced it.
+            if (this._cmsReads.get(key) === entry) this._cmsReads.delete(key);
+        });
+        return promise;
+    }
+
+    private _riskManagementRecords(): ReturnType<
+        DataService['getRiskManagement']
+    > {
+        return this._memoCmsRead('riskManagement', () =>
+            this._dataService.getRiskManagement(),
+        );
+    }
+
+    private _originatorProfiles(): ReturnType<
+        DataService['getPoolDelegateProfileAndHistory']
+    > {
+        return this._memoCmsRead('originatorProfiles', () =>
+            this._dataService.getPoolDelegateProfileAndHistory(),
+        );
+    }
 
     /**
      * The pool's loss rate and first-loss capital, from its CMS
@@ -48,13 +117,15 @@ export class StrategiesFacade {
      * 0..1 fraction.
      *
      * Requires `directusUrl`; without it the call rejects with
-     * `NO_DIRECTUS_URL_MESSAGE`, like every CMS-only read.
+     * `NO_DIRECTUS_URL_MESSAGE`, like every CMS-only read. Shares its CMS
+     * read with `getRiskManagementGroups` for 30 seconds per instance; a
+     * failed read is never reused.
      */
     async getRiskPerformance(
         poolId: string,
     ): Promise<StrategyRiskPerformance | null> {
         const metadataId = this._metadataIdOf(poolId);
-        const records = await this._dataService.getRiskManagement();
+        const records = await this._riskManagementRecords();
         const record = records.find(
             (r) => String(r.poolIdFK).toLowerCase() === metadataId,
         );
@@ -82,6 +153,10 @@ export class StrategiesFacade {
      * deployment every profile lists no pools and this resolves `null` —
      * the same answer kasu-ui's own lookup gives there today. The metadata
      * candidate becomes live once the service resolves the mapping.
+     *
+     * Shares its reads with `getOriginatorHistory` for 30 seconds per
+     * instance; a failed read is never reused. Each call returns its own
+     * copy of the profile, so mutating it changes nothing shared.
      */
     async getOriginator(
         poolId: string,
@@ -90,15 +165,102 @@ export class StrategiesFacade {
             poolId.toLowerCase(),
             this._metadataIdOf(poolId),
         ]);
-        const profiles =
-            await this._dataService.getPoolDelegateProfileAndHistory();
-        return (
-            profiles.find((profile) =>
-                profile.otherKASUPools.some((pool) =>
-                    candidates.has(String(pool.id).toLowerCase()),
-                ),
-            ) ?? null
+        const profiles = await this._originatorProfiles();
+        const profile = profiles.find((candidate) =>
+            candidate.otherKASUPools.some((pool) =>
+                candidates.has(String(pool.id).toLowerCase()),
+            ),
         );
+        // A copy: the profiles are shared between calls (see
+        // `_memoCmsRead`), so a caller sorting or editing its result must
+        // not change what the next call returns.
+        return profile
+            ? {
+                  ...profile,
+                  otherKASUPools: profile.otherKASUPools.map((pool) => ({
+                      ...pool,
+                  })),
+              }
+            : null;
+    }
+
+    /**
+     * The credit originator's ENTIRE lending history for a pool — since when,
+     * total originated, loans outstanding, loss rate — read from the profile
+     * `getOriginator` finds, each figure validated. `null` when no profile
+     * lists the pool, or the profile authors none of the four.
+     *
+     * kasu-ui's Details tab shows these as its Credit Originator strip, and
+     * hides the strip when there is no profile. The money figures are
+     * editorial USD on every deployment: never FX-convert them. An XDC pool
+     * resolves `null` today, as it does in kasu-ui (see `getOriginator`).
+     *
+     * Requires `directusUrl`, like every CMS-only read; rejects when the
+     * read fails. Shares its reads with `getOriginator` for 30 seconds per
+     * instance; a failed read is never reused.
+     */
+    async getOriginatorHistory(
+        poolId: string,
+    ): Promise<OriginatorHistory | null> {
+        const profile = await this.getOriginator(poolId);
+        if (!profile) return null;
+        const history: OriginatorHistory = {};
+        const since = readCmsStartDate(
+            profile.delegateLendingHistory,
+            this._now(),
+            { unixSeconds: true },
+        );
+        if (since !== undefined) history.since = since;
+        const totalOriginated = finiteOrUndefined(
+            profile.totalLoanFundsOriginated,
+        );
+        if (totalOriginated !== undefined) {
+            history.totalOriginated = totalOriginated;
+        }
+        const loansOutstanding = finiteOrUndefined(
+            profile.loansUnderManagement,
+        );
+        if (loansOutstanding !== undefined) {
+            history.loansOutstanding = loansOutstanding;
+        }
+        const lossRate = finiteOrUndefined(profile.historicLossRate);
+        if (lossRate !== undefined) history.lossRate = lossRate;
+        return Object.keys(history).length > 0 ? history : null;
+    }
+
+    /**
+     * The pool's Risk Management groups, from its CMS risk-management record:
+     * each group with its items (name, the pool's description of it split
+     * into lines, the shared tooltip), the groups in `RISK_GROUP_ORDER`
+     * (Security & Recourse, Structural Controls, Financial Covenants,
+     * Reporting Covenants, Key Eligibility Criteria, then any other in CMS
+     * order). See `groupRiskManagementItems`.
+     *
+     * `null` when the pool has no record, or the record has no usable item —
+     * then kasu-ui falls back to `Strategy.securityStructure`. XDC pools
+     * resolve through the metadata mapping to their Base record, like
+     * `getRiskPerformance`.
+     *
+     * REJECTS when the CMS read fails (an outage, or no `directusUrl` —
+     * `NO_DIRECTUS_URL_MESSAGE`), so a failure stays visible rather than
+     * reading as "no items". For what to SHOW, treat a rejection like `null`:
+     * fall back to `Strategy.securityStructure`, which arrives with the
+     * strategy and needs no second read.
+     *
+     * Shares its CMS read with `getRiskPerformance` for 30 seconds per
+     * instance; a failed read is never reused.
+     */
+    async getRiskManagementGroups(
+        poolId: string,
+    ): Promise<StrategyRiskGroup[] | null> {
+        const metadataId = this._metadataIdOf(poolId);
+        const records = await this._riskManagementRecords();
+        const record = records.find(
+            (r) => String(r.poolIdFK).toLowerCase() === metadataId,
+        );
+        if (!record || !Array.isArray(record.items)) return null;
+        const groups = groupRiskManagementItems(record.items);
+        return groups.length > 0 ? groups : null;
     }
 
     private _metadataIdOf(poolId: string): string {
@@ -281,9 +443,42 @@ export class StrategiesFacade {
             apyStructure: pool.poolApyStructure,
             thumbnailUrl: pool.thumbnailImageUrl,
             bannerUrl: pool.bannerImageUrl,
+            strategyHistory: strategyHistoryOf(pool, this._now()),
+            endBorrowers: endBorrowersOf(pool),
+            securityStructure: securityStructureOf(pool.security),
             _raw: pool,
         };
     }
+}
+
+/**
+ * How long a CMS-wide read is shared between the pool getters. Long enough
+ * for one screen's worth of calls, short enough that a CMS edit shows on the
+ * next visit; apps cache further on their own terms.
+ */
+const CMS_READ_TTL_MS = 30_000;
+
+/** `Strategy.strategyHistory`: an absent figure is an absent key. */
+function strategyHistoryOf(pool: PoolOverview, now: Date): StrategyHistory {
+    const history: StrategyHistory = {};
+    const since = readCmsStartDate(pool.operatingSince, now);
+    if (since !== undefined) history.since = since;
+    const lenderInterestEarned = finiteOrUndefined(pool.yieldEarned);
+    if (lenderInterestEarned !== undefined) {
+        history.lenderInterestEarned = lenderInterestEarned;
+    }
+    return history;
+}
+
+/** Business Types and Facility Type, or `undefined` when neither is authored. */
+function endBorrowersOf(pool: PoolOverview): StrategyEndBorrowers | undefined {
+    const businessTypes = splitBusinessTypes(pool.industryExposure);
+    const facility = parseFacility(pool.loanStructure);
+    if (!businessTypes && !facility) return undefined;
+    return {
+        ...(businessTypes ? { businessTypes } : {}),
+        ...(facility ? { facility } : {}),
+    };
 }
 
 /**

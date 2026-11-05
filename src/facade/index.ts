@@ -48,4 +48,7 @@ export type {
     UserPositions,
     PlatformStats,
     StrategyRiskPerformance,
+    StrategyHistory,
+    StrategyEndBorrowers,
+    OriginatorHistory,
 } from './types';
