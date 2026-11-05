@@ -223,7 +223,7 @@ application formats them in its own design system and language.
 | Batch proof          | `validateDepositBatchCalls`, `proveDepositInReceipt`, `DepositBatchMismatchError`, `ENTRY_POINT_V07`                                                                                                   |
 | Tranche display name | `getTrancheDisplayName`, `UPPER_MEZZANINE`                                                                                                                                                               |
 | Strategy summary     | `pickShortDescription` — the CMS short blurb as one line of plain text, or `undefined` (also on every `Strategy` as `summary`)                                                                            |
-| Strategy details     | `readCmsStartDate`, `splitBusinessTypes`, `parseFacility`, `splitNumberedClauses`, `groupRiskManagementItems`, `RISK_GROUP_ORDER`, `securityStructureOf`, `strategyTotalsUsd` — the Details-screen fields as kasu-ui reads them (also on `Strategy` and the two strategy getters above) |
+| Strategy details     | `readCmsStartDate`, `splitBusinessTypes`, `parseFacility`, `splitNumberedClauses`, `groupRiskManagementItems`, `RISK_GROUP_ORDER`, `securityStructureOf`, `strategyTotalsUsd`, `StrategyTotalsInputError` — the Details-screen fields as kasu-ui reads them (also on `Strategy` and the two strategy getters above) |
 | Requests             | `deriveRequestState`, `submissionEvents`, `countSubmissions`, `firstSubmissionTimestamp`, `isCycleClosed`                                                                                                |
 | Settlement           | `computeSettlementWindow`, `nextCycleBoundary`, `deriveCycleDates`, `CLEARING_WINDOW_SECONDS`                                                                                                            |
 | Loan contract        | `encodeDepositData`, `buildContractVersionType`, `buildLoanAgreementSignMessage`, `buildLegacyContractRequestMessage` (deprecated), `buildFullNameRequestMessage`, `formatSignTimestampUtc`, `parseFormattedMessage`, `asContractType` |
@@ -260,10 +260,22 @@ Rules worth knowing:
   `null` for a whole section), never a `0`, a dash or a sentence of the
   SDK's own. A start date is `YYYY-MM-DD` and must be a real date from 2000
   up to today. The originator's money figures are editorial USD on every
-  deployment — never FX-convert them; a strategy's own Total Active Lending
-  and Lender Interest Earned across its deployments go through
-  `strategyTotalsUsd`, which withholds the total (`null`) rather than sum a
-  leg without a rate.
+  deployment — never FX-convert them. A risk item's `description` is present
+  exactly when its `clauses` are non-empty.
+- **A failed CMS read rejects; it is not "no data".** `getOriginatorHistory`
+  and `getRiskManagementGroups` reject on a CMS outage (or no
+  `directusUrl`). For what to SHOW, treat a rejected `getRiskManagementGroups`
+  like `null`: fall back to `Strategy.securityStructure`. The pool getters
+  share their CMS reads per instance for 30 seconds (`getRiskPerformance` with
+  `getRiskManagementGroups`, `getOriginator` with `getOriginatorHistory`), so
+  a Details screen reads each collection once; a failed read is never reused.
+- **`strategyTotalsUsd(legs, expectedDeployments)` states its coverage.** It
+  sums a strategy's Total Active Lending and Lender Interest Earned in USD
+  over the legs the caller loaded, each at its own rate. It is `null`
+  (withheld) when there are no legs or any loaded leg lacks a usable rate;
+  otherwise `isPartial` / `missingDeployments` name every expected deployment
+  the sum does not cover. Only `isPartial: false` is the whole strategy. A
+  duplicated or unexpected leg throws `StrategyTotalsInputError`.
 - **The tranche rename is display-only.** `getTrancheDisplayName` maps the
   `Senior` tranche to "Upper Mezzanine" on Apxium strategies, because the true
   senior position is held by an institutional lender. Call it at the view

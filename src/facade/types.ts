@@ -198,6 +198,8 @@ export interface Strategy {
      * kasu-ui shows these, under "Security Structure over End Borrowers", ONLY
      * when `getRiskManagementGroups` resolves `null` — they are the fallback
      * for a pool with no risk-management items, not a section of their own.
+     * Treat a REJECTED `getRiskManagementGroups` (a CMS outage) the same way
+     * for display: show these, and report the failure as you see fit.
      */
     securityStructure?: string[];
     /** Raw `PoolOverview` for power-users who need all fields. */

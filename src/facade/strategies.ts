@@ -55,6 +55,51 @@ export class StrategiesFacade {
     ) {}
 
     /**
+     * Short-lived, per-instance memo of the two CMS-wide reads the pool
+     * getters share, so a Details screen asking for the loss rate, the risk
+     * groups and the originator together reads each collection once. Keyed
+     * by read; holds the in-flight promise, so concurrent callers share it.
+     * A REJECTED read is dropped at once, never served again — the next call
+     * retries.
+     */
+    private _cmsReads = new Map<
+        string,
+        { promise: Promise<unknown>; expiresAt: number }
+    >();
+
+    private _memoCmsRead<T>(key: string, read: () => Promise<T>): Promise<T> {
+        const nowMs = this._now().getTime();
+        const cached = this._cmsReads.get(key);
+        if (cached && cached.expiresAt > nowMs) {
+            return cached.promise as Promise<T>;
+        }
+        const promise = read();
+        const entry = { promise, expiresAt: nowMs + CMS_READ_TTL_MS };
+        this._cmsReads.set(key, entry);
+        promise.catch(() => {
+            // Only our own entry: a newer read may have replaced it.
+            if (this._cmsReads.get(key) === entry) this._cmsReads.delete(key);
+        });
+        return promise;
+    }
+
+    private _riskManagementRecords(): ReturnType<
+        DataService['getRiskManagement']
+    > {
+        return this._memoCmsRead('riskManagement', () =>
+            this._dataService.getRiskManagement(),
+        );
+    }
+
+    private _originatorProfiles(): ReturnType<
+        DataService['getPoolDelegateProfileAndHistory']
+    > {
+        return this._memoCmsRead('originatorProfiles', () =>
+            this._dataService.getPoolDelegateProfileAndHistory(),
+        );
+    }
+
+    /**
      * The pool's loss rate and first-loss capital, from its CMS
      * risk-management record. `null` when the pool has no record.
      *
@@ -65,13 +110,15 @@ export class StrategiesFacade {
      * 0..1 fraction.
      *
      * Requires `directusUrl`; without it the call rejects with
-     * `NO_DIRECTUS_URL_MESSAGE`, like every CMS-only read.
+     * `NO_DIRECTUS_URL_MESSAGE`, like every CMS-only read. Shares its CMS
+     * read with `getRiskManagementGroups` for 30 seconds per instance; a
+     * failed read is never reused.
      */
     async getRiskPerformance(
         poolId: string,
     ): Promise<StrategyRiskPerformance | null> {
         const metadataId = this._metadataIdOf(poolId);
-        const records = await this._dataService.getRiskManagement();
+        const records = await this._riskManagementRecords();
         const record = records.find(
             (r) => String(r.poolIdFK).toLowerCase() === metadataId,
         );
@@ -99,6 +146,9 @@ export class StrategiesFacade {
      * deployment every profile lists no pools and this resolves `null` —
      * the same answer kasu-ui's own lookup gives there today. The metadata
      * candidate becomes live once the service resolves the mapping.
+     *
+     * Shares its reads with `getOriginatorHistory` for 30 seconds per
+     * instance; a failed read is never reused.
      */
     async getOriginator(
         poolId: string,
@@ -107,8 +157,7 @@ export class StrategiesFacade {
             poolId.toLowerCase(),
             this._metadataIdOf(poolId),
         ]);
-        const profiles =
-            await this._dataService.getPoolDelegateProfileAndHistory();
+        const profiles = await this._originatorProfiles();
         return (
             profiles.find((profile) =>
                 profile.otherKASUPools.some((pool) =>
@@ -129,7 +178,9 @@ export class StrategiesFacade {
      * editorial USD on every deployment: never FX-convert them. An XDC pool
      * resolves `null` today, as it does in kasu-ui (see `getOriginator`).
      *
-     * Requires `directusUrl`, like every CMS-only read.
+     * Requires `directusUrl`, like every CMS-only read; rejects when the
+     * read fails. Shares its reads with `getOriginator` for 30 seconds per
+     * instance; a failed read is never reused.
      */
     async getOriginatorHistory(
         poolId: string,
@@ -173,13 +224,20 @@ export class StrategiesFacade {
      * resolve through the metadata mapping to their Base record, like
      * `getRiskPerformance`.
      *
-     * Requires `directusUrl`, like every CMS-only read.
+     * REJECTS when the CMS read fails (an outage, or no `directusUrl` —
+     * `NO_DIRECTUS_URL_MESSAGE`), so a failure stays visible rather than
+     * reading as "no items". For what to SHOW, treat a rejection like `null`:
+     * fall back to `Strategy.securityStructure`, which arrives with the
+     * strategy and needs no second read.
+     *
+     * Shares its CMS read with `getRiskPerformance` for 30 seconds per
+     * instance; a failed read is never reused.
      */
     async getRiskManagementGroups(
         poolId: string,
     ): Promise<StrategyRiskGroup[] | null> {
         const metadataId = this._metadataIdOf(poolId);
-        const records = await this._dataService.getRiskManagement();
+        const records = await this._riskManagementRecords();
         const record = records.find(
             (r) => String(r.poolIdFK).toLowerCase() === metadataId,
         );
@@ -375,6 +433,13 @@ export class StrategiesFacade {
         };
     }
 }
+
+/**
+ * How long a CMS-wide read is shared between the pool getters. Long enough
+ * for one screen's worth of calls, short enough that a CMS edit shows on the
+ * next visit; apps cache further on their own terms.
+ */
+const CMS_READ_TTL_MS = 30_000;
 
 /** `Strategy.strategyHistory`: an absent figure is an absent key. */
 function strategyHistoryOf(pool: PoolOverview, now: Date): StrategyHistory {

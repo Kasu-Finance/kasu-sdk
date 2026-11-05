@@ -39,15 +39,29 @@ here. Additive only: nothing is renamed, removed or changed.
   the groups in `RISK_GROUP_ORDER` (Security & Recourse, Structural Controls,
   Financial Covenants, Reporting Covenants, Key Eligibility Criteria, then any
   other in CMS order), each item `{ name, description?, clauses, tooltip? }`.
-  XDC pools resolve to their Base record through the metadata mapping. `null`
-  when there is no record or no usable item.
+  An item's `description` (zero-width characters stripped, trimmed) is
+  present exactly when its `clauses` are non-empty, so a `"—"` or
+  zero-width-only description is absent. XDC pools resolve to their Base
+  record through the metadata mapping. `null` when there is no record or no
+  usable item; REJECTS on a CMS failure, which consumers should treat like
+  `null` for display (fall back to `Strategy.securityStructure`).
+- **Shared CMS reads.** The pool getters share their CMS reads per facade
+  instance for 30 seconds: `getRiskPerformance` with
+  `getRiskManagementGroups` (3 collections), `getOriginator` with
+  `getOriginatorHistory` (2 collections and a subgraph query). Concurrent
+  calls share one in-flight read; a failed read is dropped at once and never
+  reused.
 - **Domain (pure):** `readCmsStartDate` (ISO date only, a real calendar
   date, 2000 to `now`; optional unix seconds), `splitBusinessTypes`,
   `parseFacility`, `splitNumberedClauses` (an unauthored description is `[]`,
   never a dash), `groupRiskManagementItems`, `RISK_GROUP_ORDER`,
-  `securityStructureOf`, and `strategyTotalsUsd` — Total Active Lending and
-  Lender Interest Earned summed across a strategy's deployments in USD at each
-  leg's own rate, WITHHELD (`null`) when any leg has no usable rate.
+  `securityStructureOf`, and `strategyTotalsUsd(legs, expectedDeployments)`
+  — Total Active Lending and Lender Interest Earned summed over the loaded
+  legs in USD, each at its own rate. WITHHELD (`null`) when there are no
+  legs or any loaded leg has no usable rate; otherwise `isPartial` and
+  `missingDeployments` name the expected deployments the sum does not cover,
+  so a deployment that failed to load never passes for the whole strategy.
+  Throws `StrategyTotalsInputError` (`duplicate-leg`, `unexpected-leg`).
 
 Every field follows one rule: an empty, blank or malformed CMS value is an
 absent key (or `null` for a whole section), never a `0`, a dash or a

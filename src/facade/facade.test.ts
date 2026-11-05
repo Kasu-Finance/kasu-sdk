@@ -789,7 +789,7 @@ describe('StrategiesFacade details fields', () => {
             ).resolves.toEqual({ lossRate: 0 });
         });
 
-        it('omits each unauthored or malformed figure', async () => {
+        it('omits each unauthored or malformed figure; a numeric loss rate passes unchecked for range, as in kasu-ui', async () => {
             const facade = facadeWith({
                 getPoolDelegateProfileAndHistory: jest.fn().mockResolvedValue([
                     delegate([BASE_POOL], {
@@ -807,13 +807,11 @@ describe('StrategiesFacade details fields', () => {
 
         it('reads a numeric start date as unix seconds, as kasu-ui does', async () => {
             const facade = facadeWith({
-                getPoolDelegateProfileAndHistory: jest
-                    .fn()
-                    .mockResolvedValue([
-                        delegate([BASE_POOL], {
-                            delegateLendingHistory: 1481587200,
-                        }),
-                    ]),
+                getPoolDelegateProfileAndHistory: jest.fn().mockResolvedValue([
+                    delegate([BASE_POOL], {
+                        delegateLendingHistory: 1481587200,
+                    }),
+                ]),
             });
             await expect(
                 facade.getOriginatorHistory(BASE_POOL),
@@ -850,37 +848,37 @@ describe('StrategiesFacade details fields', () => {
         });
     });
 
+    function record(poolIdFK: string, items: unknown): RiskManagement {
+        return {
+            id: `risk-${poolIdFK}`,
+            poolIdFK,
+            items,
+            riskPerformance: {},
+        } as unknown as RiskManagement;
+    }
+
+    const ITEMS = [
+        {
+            name: 'Debt Ratio',
+            group: 'Financial Covenants',
+            description: 'must be below 1',
+            tooltip: '',
+        },
+        {
+            name: 'Guarantee & Indemnity',
+            group: 'Security & Recourse',
+            description: '',
+            tooltip: 'A promise to repay.',
+        },
+        {
+            name: 'Loan funds drawn directly to the tax authority',
+            group: 'Structural Controls',
+            description: '',
+            tooltip: '',
+        },
+    ];
+
     describe('getRiskManagementGroups', () => {
-        function record(poolIdFK: string, items: unknown): RiskManagement {
-            return {
-                id: `risk-${poolIdFK}`,
-                poolIdFK,
-                items,
-                riskPerformance: {},
-            } as unknown as RiskManagement;
-        }
-
-        const ITEMS = [
-            {
-                name: 'Debt Ratio',
-                group: 'Financial Covenants',
-                description: 'must be below 1',
-                tooltip: '',
-            },
-            {
-                name: 'Guarantee & Indemnity',
-                group: 'Security & Recourse',
-                description: '',
-                tooltip: 'A promise to repay.',
-            },
-            {
-                name: 'Loan funds drawn directly to the tax authority',
-                group: 'Structural Controls',
-                description: '',
-                tooltip: '',
-            },
-        ];
-
         it("groups the pool's items in the canonical order", async () => {
             const facade = facadeWith({
                 getRiskManagement: jest
@@ -960,6 +958,123 @@ describe('StrategiesFacade details fields', () => {
                     facade.getRiskManagementGroups(BASE_POOL),
                 ).resolves.toBeNull();
             }
+        });
+
+        it('rejects on a CMS failure rather than reading it as "no items"', async () => {
+            const facade = facadeWith({
+                getRiskManagement: jest
+                    .fn()
+                    .mockRejectedValue(new Error('cms down')),
+            });
+            await expect(
+                facade.getRiskManagementGroups(BASE_POOL),
+            ).rejects.toThrow('cms down');
+        });
+    });
+
+    describe('shared CMS reads', () => {
+        function clockedFacade(
+            data: Partial<
+                Pick<
+                    DataService,
+                    'getRiskManagement' | 'getPoolDelegateProfileAndHistory'
+                >
+            >,
+        ): { facade: StrategiesFacade; advance: (ms: number) => void } {
+            let nowMs = NOW.getTime();
+            const facade = new StrategiesFacade(
+                data as unknown as DataService,
+                null as never,
+                {},
+                () => new Date(nowMs),
+            );
+            return {
+                facade,
+                advance: (ms: number): void => {
+                    nowMs += ms;
+                },
+            };
+        }
+
+        it('reads risk management once for the loss rate and the groups', async () => {
+            const getRiskManagement = jest
+                .fn()
+                .mockResolvedValue([record(BASE_POOL, ITEMS)]);
+            const { facade } = clockedFacade({ getRiskManagement });
+            const [performance, groups] = await Promise.all([
+                facade.getRiskPerformance(BASE_POOL),
+                facade.getRiskManagementGroups(BASE_POOL),
+            ]);
+            expect(performance).not.toBeNull();
+            expect(groups).not.toBeNull();
+            await facade.getRiskManagementGroups(BASE_POOL);
+            expect(getRiskManagement).toHaveBeenCalledTimes(1);
+        });
+
+        it('reads the originator profiles once for the profile and its history', async () => {
+            const getPoolDelegateProfileAndHistory = jest
+                .fn()
+                .mockResolvedValue([
+                    delegate([BASE_POOL], { historicLossRate: 0 }),
+                ]);
+            const { facade } = clockedFacade({
+                getPoolDelegateProfileAndHistory,
+            });
+            await Promise.all([
+                facade.getOriginator(BASE_POOL),
+                facade.getOriginatorHistory(BASE_POOL),
+            ]);
+            await facade.getOriginatorHistory(BASE_POOL);
+            expect(getPoolDelegateProfileAndHistory).toHaveBeenCalledTimes(1);
+        });
+
+        it('reads again once the 30 seconds are up', async () => {
+            const getRiskManagement = jest
+                .fn()
+                .mockResolvedValue([record(BASE_POOL, ITEMS)]);
+            const { facade, advance } = clockedFacade({ getRiskManagement });
+            await facade.getRiskManagementGroups(BASE_POOL);
+            advance(29_999);
+            await facade.getRiskManagementGroups(BASE_POOL);
+            expect(getRiskManagement).toHaveBeenCalledTimes(1);
+            advance(1);
+            await facade.getRiskManagementGroups(BASE_POOL);
+            expect(getRiskManagement).toHaveBeenCalledTimes(2);
+        });
+
+        it('never reuses a failed read', async () => {
+            const getRiskManagement = jest
+                .fn()
+                .mockRejectedValueOnce(new Error('cms down'))
+                .mockResolvedValue([record(BASE_POOL, ITEMS)]);
+            const { facade } = clockedFacade({ getRiskManagement });
+            await expect(
+                facade.getRiskManagementGroups(BASE_POOL),
+            ).rejects.toThrow('cms down');
+            await expect(
+                facade.getRiskManagementGroups(BASE_POOL),
+            ).resolves.not.toBeNull();
+            expect(getRiskManagement).toHaveBeenCalledTimes(2);
+        });
+
+        it('keeps the two collections apart, and each instance its own', async () => {
+            const getRiskManagement = jest.fn().mockResolvedValue([]);
+            const getPoolDelegateProfileAndHistory = jest
+                .fn()
+                .mockResolvedValue([]);
+            const one = clockedFacade({
+                getRiskManagement,
+                getPoolDelegateProfileAndHistory,
+            }).facade;
+            const two = clockedFacade({
+                getRiskManagement,
+                getPoolDelegateProfileAndHistory,
+            }).facade;
+            await one.getRiskManagementGroups(BASE_POOL);
+            await one.getOriginatorHistory(BASE_POOL);
+            await two.getRiskManagementGroups(BASE_POOL);
+            expect(getRiskManagement).toHaveBeenCalledTimes(2);
+            expect(getPoolDelegateProfileAndHistory).toHaveBeenCalledTimes(1);
         });
     });
 });

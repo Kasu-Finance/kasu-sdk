@@ -245,10 +245,7 @@ const EMPTY_DESCRIPTION = '—';
  * description is NO lines (`[]`), never a dash.
  */
 export function splitNumberedClauses(description: unknown): string[] {
-    const raw =
-        typeof description === 'string'
-            ? description.replace(ZERO_WIDTH, '').trim()
-            : '';
+    const raw = cleanDescription(description);
     if (!raw) return [];
     const clauses = HAS_ENUMERATION.test(raw)
         ? raw
@@ -258,6 +255,13 @@ export function splitNumberedClauses(description: unknown): string[] {
         : [raw];
     const lines = clauses.length > 0 ? clauses : [raw];
     return lines.filter((line) => line !== EMPTY_DESCRIPTION);
+}
+
+/** A description with zero-width characters stripped, trimmed; `''` when not a string. */
+function cleanDescription(description: unknown): string {
+    return typeof description === 'string'
+        ? description.replace(ZERO_WIDTH, '').trim()
+        : '';
 }
 
 /** One risk-management item as the CMS row carries it. */
@@ -272,7 +276,12 @@ export interface RiskManagementItemSource {
 export interface StrategyRiskItem {
     /** The item's name (`'Guarantee & Indemnity'`) — never empty. */
     name: string;
-    /** The pool's own description of it, trimmed. Absent when unauthored. */
+    /**
+     * The pool's own description of it — zero-width characters stripped,
+     * trimmed. Present exactly when `clauses` is non-empty: a description
+     * that yields no line (`''`, `'—'`, zero-width characters alone) is
+     * absent.
+     */
     description?: string;
     /** `description` as the lines beneath the name; `[]` when unauthored. */
     clauses: string[];
@@ -305,12 +314,17 @@ export function groupRiskManagementItems(
         const name = trimmedOrUndefined(source.name);
         const group = trimmedOrUndefined(source.group);
         if (!name || !group) continue;
-        const description = trimmedOrUndefined(source.description);
+        const clauses = splitNumberedClauses(source.description);
+        // The same cleaned text the clauses come from, and only when they
+        // say something: a description of "—" or of zero-width characters
+        // alone is unauthored, so it is absent here too, never a stray dash.
+        const description =
+            clauses.length > 0 ? cleanDescription(source.description) : '';
         const tooltip = trimmedOrUndefined(source.tooltip);
         const item: StrategyRiskItem = {
             name,
             ...(description ? { description } : {}),
-            clauses: splitNumberedClauses(source.description),
+            clauses,
             ...(tooltip ? { tooltip } : {}),
         };
         const existing = groups.get(group);
@@ -375,6 +389,12 @@ export function finiteOrUndefined(value: unknown): number | undefined {
 
 /** One deployment's pool of a strategy, for `strategyTotalsUsd`. */
 export interface StrategyTotalsLeg {
+    /**
+     * Which deployment this leg is — the same key the caller lists in
+     * `expectedDeployments` (e.g. `StrategyDeployment.chain`: `'base'`,
+     * `'xdc'`). Compared exactly.
+     */
+    deployment: string;
     /** The pool's TVL (`Strategy.tvl.total`), in its own stable token. */
     totalActiveLending: string | number;
     /**
@@ -390,33 +410,96 @@ export interface StrategyTotalsLeg {
     usdRate: number | undefined;
 }
 
-/** A strategy's two money figures, summed over its deployments, in USD. */
+/** A strategy's two money figures, summed over the legs given, in USD. */
 export interface StrategyTotalsUsd {
     totalActiveLendingUsd: number;
     lenderInterestEarnedUsd: number;
+    /**
+     * `true` when some expected deployment has no leg — it failed to load,
+     * or has not loaded yet — so both figures cover only `legs`, NOT the
+     * whole strategy. A caller stating them as the strategy-wide figure must
+     * say so (kasu-ui adds a partial-regions note) or fall back.
+     */
+    isPartial: boolean;
+    /**
+     * The expected deployments with no leg, in `expectedDeployments` order.
+     * Empty exactly when `isPartial` is `false`.
+     */
+    missingDeployments: string[];
+}
+
+export type StrategyTotalsInputErrorCode = 'duplicate-leg' | 'unexpected-leg';
+
+/**
+ * A leg `strategyTotalsUsd` cannot place: two legs for one deployment
+ * (`duplicate-leg`, which would double-count it), or a leg for a deployment
+ * not in `expectedDeployments` (`unexpected-leg`, a pool of some other
+ * strategy). Thrown, because both are caller bugs, not data states.
+ */
+export class StrategyTotalsInputError extends Error {
+    constructor(
+        readonly code: StrategyTotalsInputErrorCode,
+        readonly deployment: string,
+    ) {
+        super(
+            code === 'duplicate-leg'
+                ? `strategyTotalsUsd: two legs for deployment "${deployment}"`
+                : `strategyTotalsUsd: leg for deployment "${deployment}" is not in expectedDeployments`,
+        );
+        this.name = 'StrategyTotalsInputError';
+    }
 }
 
 /**
- * Total Active Lending and Lender Interest Earned for a strategy across
- * every deployment it lends on (`strategyDeployments`), in USD: each leg's
- * native amount times that leg's own `usdRate`, summed. Tax Pay lends on
- * Base (USDC) and XDC (AUDD); 2,567,901 AUDD is not US$2,567,901.
+ * Total Active Lending and Lender Interest Earned for a strategy across the
+ * deployments it lends on, in USD: each leg's native amount times that leg's
+ * own `usdRate`, summed. Tax Pay lends on Base (USDC) and XDC (AUDD);
+ * 2,567,901 AUDD is not US$2,567,901.
  *
- * `null` — WITHHELD, not partial — when there are no legs or any leg's rate
- * is missing or unusable (not a finite number above 0): a strategy total
- * silently missing a leg would understate the headline, so the caller shows
- * the held pool's own figure or nothing, never a total built on a guessed
- * rate. An amount that is absent or malformed contributes nothing (a real
- * `0` is still `0`).
+ * `expectedDeployments` is every deployment the strategy has a pool on —
+ * `strategyDeployments(poolId, chain).map((d) => d.chain)` — and `legs` the
+ * ones whose pool the caller actually loaded. What is guaranteed:
+ *
+ *   - **`null` — WITHHELD** when there are no legs, or ANY leg's rate is
+ *     missing or unusable (not a finite number above 0). The total is never
+ *     built on a guessed rate, and never silently drops a loaded leg; the
+ *     caller shows the held pool's own figure, or nothing.
+ *   - **Otherwise the sum over `legs`**, with `isPartial` /
+ *     `missingDeployments` stating exactly which expected deployments it
+ *     does NOT cover. `isPartial: false` is the only case in which the
+ *     figures are the whole strategy.
+ *   - An amount that is absent or malformed contributes nothing (a real `0`
+ *     is still `0`).
+ *   - Throws `StrategyTotalsInputError` for a duplicated leg or one not in
+ *     `expectedDeployments`, before summing anything.
  *
  * Only these two figures are summed. The CMS-authored ones — every
  * originator figure, `operatingSince`, the loss rates — are shared by a
  * strategy's pools and already strategy-wide: summing them double-counts.
+ *
+ * Mirrors the money half of kasu-ui's `aggregateStrategyPools` and its
+ * withhold gate.
  */
 export function strategyTotalsUsd(
     legs: readonly StrategyTotalsLeg[],
+    expectedDeployments: readonly string[],
 ): StrategyTotalsUsd | null {
+    const expected = new Set(expectedDeployments);
+    const seen = new Set<string>();
+    for (const leg of legs) {
+        if (seen.has(leg.deployment)) {
+            throw new StrategyTotalsInputError('duplicate-leg', leg.deployment);
+        }
+        if (!expected.has(leg.deployment)) {
+            throw new StrategyTotalsInputError(
+                'unexpected-leg',
+                leg.deployment,
+            );
+        }
+        seen.add(leg.deployment);
+    }
     if (legs.length === 0) return null;
+
     let totalActiveLendingUsd = 0;
     let lenderInterestEarnedUsd = 0;
     for (const leg of legs) {
@@ -429,7 +512,13 @@ export function strategyTotalsUsd(
         lenderInterestEarnedUsd +=
             (finiteOrUndefined(leg.lenderInterestEarned) ?? 0) * rate;
     }
-    return { totalActiveLendingUsd, lenderInterestEarnedUsd };
+    const missingDeployments = [...expected].filter((d) => !seen.has(d));
+    return {
+        totalActiveLendingUsd,
+        lenderInterestEarnedUsd,
+        isPartial: missingDeployments.length > 0,
+        missingDeployments,
+    };
 }
 
 function trimmedOrUndefined(value: unknown): string | undefined {

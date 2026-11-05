@@ -7,6 +7,7 @@ import {
     securityStructureOf,
     splitBusinessTypes,
     splitNumberedClauses,
+    StrategyTotalsInputError,
     strategyTotalsUsd,
 } from './strategy-details';
 
@@ -333,6 +334,39 @@ describe('groupRiskManagementItems', () => {
         });
     });
 
+    it('omits a description that yields no line, and cleans the one it keeps', () => {
+        const zwsp = String.fromCharCode(0x200b);
+        const [group] = groupRiskManagementItems([
+            { name: 'Dash', group: 'Structural Controls', description: '—' },
+            {
+                name: 'Dash padded',
+                group: 'Structural Controls',
+                description: '  —  ',
+            },
+            {
+                name: 'Zero-width',
+                group: 'Structural Controls',
+                description: `${zwsp}${zwsp}`,
+            },
+            { name: 'Blank', group: 'Structural Controls', description: ' ' },
+            {
+                name: 'Kept',
+                group: 'Structural Controls',
+                description: `${zwsp} two years ${zwsp}`,
+            },
+        ]);
+        expect(group.items).toEqual([
+            { name: 'Dash', clauses: [] },
+            { name: 'Dash padded', clauses: [] },
+            { name: 'Zero-width', clauses: [] },
+            { name: 'Blank', clauses: [] },
+            { name: 'Kept', description: 'two years', clauses: ['two years'] },
+        ]);
+        for (const item of group.items) {
+            expect('description' in item).toBe(item.clauses.length > 0);
+        }
+    });
+
     it('matches group names trimmed and case-insensitively for the order', () => {
         const groups = groupRiskManagementItems([
             { name: 'B', group: 'Other' },
@@ -425,39 +459,90 @@ describe('finiteOrUndefined', () => {
 });
 
 describe('strategyTotalsUsd', () => {
-    it('sums each leg at its own rate', () => {
+    const BOTH = ['base', 'xdc'];
+
+    it('sums each leg at its own rate, and says it covers the whole strategy', () => {
         expect(
-            strategyTotalsUsd([
-                {
-                    totalActiveLending: '1000000',
-                    lenderInterestEarned: 50000,
-                    usdRate: 1,
-                },
-                {
-                    totalActiveLending: 2000000,
-                    lenderInterestEarned: '10000',
-                    usdRate: 0.65,
-                },
-            ]),
+            strategyTotalsUsd(
+                [
+                    {
+                        deployment: 'base',
+                        totalActiveLending: '1000000',
+                        lenderInterestEarned: 50000,
+                        usdRate: 1,
+                    },
+                    {
+                        deployment: 'xdc',
+                        totalActiveLending: 2000000,
+                        lenderInterestEarned: '10000',
+                        usdRate: 0.65,
+                    },
+                ],
+                BOTH,
+            ),
         ).toEqual({
             totalActiveLendingUsd: 1000000 + 2000000 * 0.65,
             lenderInterestEarnedUsd: 50000 + 10000 * 0.65,
+            isPartial: false,
+            missingDeployments: [],
         });
     });
 
     it('is the single pool converted, for a strategy of one', () => {
         expect(
-            strategyTotalsUsd([
-                {
-                    totalActiveLending: '200',
-                    lenderInterestEarned: 4,
-                    usdRate: 0.5,
-                },
-            ]),
-        ).toEqual({ totalActiveLendingUsd: 100, lenderInterestEarnedUsd: 2 });
+            strategyTotalsUsd(
+                [
+                    {
+                        deployment: 'xdc',
+                        totalActiveLending: '200',
+                        lenderInterestEarned: 4,
+                        usdRate: 0.5,
+                    },
+                ],
+                ['xdc'],
+            ),
+        ).toEqual({
+            totalActiveLendingUsd: 100,
+            lenderInterestEarnedUsd: 2,
+            isPartial: false,
+            missingDeployments: [],
+        });
     });
 
-    it('withholds the total when any leg has no usable rate', () => {
+    it('flags a deployment that did not load, and names it', () => {
+        expect(
+            strategyTotalsUsd(
+                [
+                    {
+                        deployment: 'base',
+                        totalActiveLending: '10',
+                        lenderInterestEarned: 1,
+                        usdRate: 1,
+                    },
+                ],
+                BOTH,
+            ),
+        ).toEqual({
+            totalActiveLendingUsd: 10,
+            lenderInterestEarnedUsd: 1,
+            isPartial: true,
+            missingDeployments: ['xdc'],
+        });
+        expect(
+            strategyTotalsUsd(
+                [
+                    {
+                        deployment: 'xdc-usdc',
+                        totalActiveLending: '1',
+                        usdRate: 1,
+                    },
+                ],
+                ['base', 'xdc', 'xdc-usdc'],
+            )?.missingDeployments,
+        ).toEqual(['base', 'xdc']);
+    });
+
+    it('withholds the total when any loaded leg has no usable rate', () => {
         for (const usdRate of [
             undefined,
             0,
@@ -466,46 +551,87 @@ describe('strategyTotalsUsd', () => {
             Number.POSITIVE_INFINITY,
         ]) {
             expect(
-                strategyTotalsUsd([
-                    {
-                        totalActiveLending: '1',
-                        lenderInterestEarned: 1,
-                        usdRate: 1,
-                    },
-                    {
-                        totalActiveLending: '1',
-                        lenderInterestEarned: 1,
-                        usdRate,
-                    },
-                ]),
+                strategyTotalsUsd(
+                    [
+                        {
+                            deployment: 'base',
+                            totalActiveLending: '1',
+                            lenderInterestEarned: 1,
+                            usdRate: 1,
+                        },
+                        {
+                            deployment: 'xdc',
+                            totalActiveLending: '1',
+                            lenderInterestEarned: 1,
+                            usdRate,
+                        },
+                    ],
+                    BOTH,
+                ),
             ).toBeNull();
         }
     });
 
-    it('is null with no legs', () => {
-        expect(strategyTotalsUsd([])).toBeNull();
+    it('is null with no legs, whatever was expected', () => {
+        expect(strategyTotalsUsd([], BOTH)).toBeNull();
+        expect(strategyTotalsUsd([], [])).toBeNull();
+    });
+
+    it('throws for a duplicated leg or one not expected, before summing', () => {
+        const leg = {
+            deployment: 'base',
+            totalActiveLending: '1',
+            usdRate: undefined,
+        };
+        const thrown = (run: () => unknown): StrategyTotalsInputError => {
+            try {
+                run();
+            } catch (error) {
+                expect(error).toBeInstanceOf(StrategyTotalsInputError);
+                return error as StrategyTotalsInputError;
+            }
+            throw new Error('expected strategyTotalsUsd to throw');
+        };
+        const duplicate = thrown(() => strategyTotalsUsd([leg, leg], BOTH));
+        expect(duplicate.code).toBe('duplicate-leg');
+        expect(duplicate.deployment).toBe('base');
+        expect(duplicate.name).toBe('StrategyTotalsInputError');
+        const unexpected = thrown(() => strategyTotalsUsd([leg], ['xdc']));
+        expect(unexpected.code).toBe('unexpected-leg');
+        expect(unexpected.deployment).toBe('base');
     });
 
     it('counts an absent or malformed amount as nothing, a real 0 as 0', () => {
         expect(
-            strategyTotalsUsd([
-                { totalActiveLending: '', usdRate: 1 },
-                {
-                    totalActiveLending: 'abc',
-                    lenderInterestEarned: 'x',
-                    usdRate: 1,
-                },
-                {
-                    totalActiveLending: '0',
-                    lenderInterestEarned: 0,
-                    usdRate: 1,
-                },
-                {
-                    totalActiveLending: '5',
-                    lenderInterestEarned: 3,
-                    usdRate: 1,
-                },
-            ]),
-        ).toEqual({ totalActiveLendingUsd: 5, lenderInterestEarnedUsd: 3 });
+            strategyTotalsUsd(
+                [
+                    { deployment: 'a', totalActiveLending: '', usdRate: 1 },
+                    {
+                        deployment: 'b',
+                        totalActiveLending: 'abc',
+                        lenderInterestEarned: 'x',
+                        usdRate: 1,
+                    },
+                    {
+                        deployment: 'c',
+                        totalActiveLending: '0',
+                        lenderInterestEarned: 0,
+                        usdRate: 1,
+                    },
+                    {
+                        deployment: 'd',
+                        totalActiveLending: '5',
+                        lenderInterestEarned: 3,
+                        usdRate: 1,
+                    },
+                ],
+                ['a', 'b', 'c', 'd'],
+            ),
+        ).toEqual({
+            totalActiveLendingUsd: 5,
+            lenderInterestEarnedUsd: 3,
+            isPartial: false,
+            missingDeployments: [],
+        });
     });
 });

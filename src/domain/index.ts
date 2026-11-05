@@ -177,6 +177,7 @@ export {
     securityStructureOf,
     splitBusinessTypes,
     splitNumberedClauses,
+    StrategyTotalsInputError,
     strategyTotalsUsd,
 } from './strategy-details';
 export type {
@@ -186,6 +187,7 @@ export type {
     StrategyFacility,
     StrategyRiskGroup,
     StrategyRiskItem,
+    StrategyTotalsInputErrorCode,
     StrategyTotalsLeg,
     StrategyTotalsUsd,
 } from './strategy-details';

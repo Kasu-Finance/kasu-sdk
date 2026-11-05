@@ -347,7 +347,7 @@ they were duplicated across the applications, and the copies drifted.
 | `partners.ts`             | Credit originator and institutional lender, inferred from the pool name           |
 | `tranche-display-name.ts` | The Senior → "Upper Mezzanine" rename                                             |
 | `strategy-summary.ts`     | `pickShortDescription` — the CMS short blurb as one line of plain text (`Strategy.summary`) |
-| `strategy-details.ts`     | Details-screen CMS fields as kasu-ui reads them: `readCmsStartDate`, `splitBusinessTypes`, `parseFacility`, `groupRiskManagementItems` (+ `RISK_GROUP_ORDER`), `securityStructureOf`, `strategyTotalsUsd` |
+| `strategy-details.ts`     | Details-screen CMS fields as kasu-ui reads them: `readCmsStartDate`, `splitBusinessTypes`, `parseFacility`, `groupRiskManagementItems` (+ `RISK_GROUP_ORDER`), `securityStructureOf`, `strategyTotalsUsd` (sum over loaded legs + `isPartial` / `missingDeployments`; `null` when a leg lacks a rate) |
 | `requests.ts`             | Lending-request view model as codes: status, kind, amounts, bundle, cycle         |
 | `settlement.ts`           | Clearing-window phase and boundary, cycle close/outcome dates                     |
 | `loan-contract.ts`        | `depositData` bytes, the signed-message builders, the contract payload types      |
