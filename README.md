@@ -232,7 +232,7 @@ application formats them in its own design system and language.
 | Revert errors        | `decodeRevert`, `extractRevertData` — the bytes a reverted call came back with, read as the custom error the contract named                                                                              |
 | AU minimum           | `auMinimumRemaining`, `isAustralianKyc`, `auThresholdFor`, `isAuMinimumExempt`, `parseMinorUnits`, `AU_ALPHA3`, `AU_MIN_CUMULATIVE_BY_STABLE`                                                            |
 
-Three rules worth knowing:
+Rules worth knowing:
 
 - **Protocol strings are the exception to "never copy".** The messages
   `loan-contract` builds are reconstructed byte-for-byte by the Kasu backend to
