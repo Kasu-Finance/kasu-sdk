@@ -231,19 +231,30 @@ export function buildLoanAgreementSignMessage(p: {
 }
 
 /**
- * The legacy `/contract/generate` and `/contract/resolve` message.
+ * The legacy `/contract/generate` message.
  *
  * ⚠️ BYTE-EXACT PROTOCOL STRING. kasu-backend rebuilds it as
  * `` `I request contract content for ${address} at ${timestamp}.` `` from the
  * `address` and `timestamp` fields of the request body — so the string signed
  * and the body sent must agree exactly, INCLUDING the address casing. This
  * builder lowercases, and the request body must carry the same lowercased
- * address; that is what both apps signing this format do today.
+ * address.
  *
  * The backend takes this path whenever the four human-readable display fields
- * are absent, and documents it as permanent until the legacy app is
- * decommissioned. `/contract/resolve` has no other format — every consumer
- * signs this one to retrieve an existing agreement.
+ * are absent. Only the retired kasu-fe-next app (retired 2026-11-05) and
+ * kasu-mobile builds from before 2026-09-06 signed it; every current consumer
+ * signs `buildLoanAgreementSignMessage`. The backend keeps accepting it until
+ * no such mobile build is left in use.
+ *
+ * It is NOT the `/contract/resolve` message. Resolve has a message of its own
+ * (`Requesting contract content for {address}/{id} at {timestamp}.`), which
+ * kasu-backend rebuilds and verifies, so it does not depend on this format.
+ *
+ * @deprecated Sign the human-readable loan-agreement message
+ *   (`buildLoanAgreementSignMessage`, `contractMessage.format:
+ *   'loan-agreement'`) instead. Only the retired kasu-fe-next app and
+ *   pre-2026-09-06 kasu-mobile builds used this format; it will be removed in
+ *   the next major version.
  *
  * @param timestampMs ms-epoch, and the same value sent as the body's
  *   `timestamp`.

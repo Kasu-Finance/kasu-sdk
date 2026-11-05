@@ -45,8 +45,9 @@ import { WaitableTransaction } from './observable';
  *    lender is not in. A failed read assumes an approve IS needed: the safe
  *    default is a redundant approval, never a reverted deposit.
  * 2. **`generating-sign`** — the lender signs the auth message
- *    (`buildLoanAgreementSignMessage`, or the legacy builder). kasu-backend
- *    reconstructs that string byte-for-byte to verify the signature.
+ *    (`buildLoanAgreementSignMessage`, or the deprecated legacy builder).
+ *    kasu-backend reconstructs that string byte-for-byte to verify the
+ *    signature.
  * 3. **`generating-fetch`** — the agreements service returns the contract.
  * 4. **`awaiting-accept`** — the run PARKS on a promise the consumer settles
  *    with `acceptContract()` or `declineContract()`. This is the only point at
@@ -266,10 +267,19 @@ export interface LoanAgreementRequest {
 
 /**
  * The legacy `I request contract content for {address} at {timestamp}.`
- * format, which kasu-backend still accepts and `/contract/resolve` has no
- * alternative to.
+ * format, which kasu-backend still accepts on `/contract/generate`. It is not
+ * the `/contract/resolve` message: resolve has its own, which the backend
+ * rebuilds and verifies.
+ *
+ * @deprecated Use `{ format: 'loan-agreement', … }` (`LoanAgreementRequest`).
+ *   Only the retired kasu-fe-next app (retired 2026-11-05) and kasu-mobile
+ *   builds from before 2026-09-06 used `format: 'legacy'`; it will be removed
+ *   in the next major version. Behaviour is unchanged until then.
  */
 export interface LegacyContractRequest {
+    /**
+     * @deprecated Use `'loan-agreement'`. Removed in the next major version.
+     */
     format: 'legacy';
 }
 
@@ -378,7 +388,11 @@ export interface DepositFlowInput {
      * contract and then a revert diagnosed as `insufficient-balance`.
      */
     spender?: string;
-    /** Which signed-message format to use, and its fields. */
+    /**
+     * Which signed-message format to use, and its fields. Pass
+     * `format: 'loan-agreement'`; `format: 'legacy'` is deprecated and will be
+     * removed in the next major version.
+     */
     contractMessage: ContractMessageRequest;
     /**
      * The deposit in DISPLAY units, for the generate request only.

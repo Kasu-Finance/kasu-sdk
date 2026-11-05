@@ -3,6 +3,26 @@
 All notable changes to `@kasufinance/kasu-sdk`. Versions follow semantic
 versioning; earlier releases are described in their commit messages.
 
+## Unreleased
+
+### Deprecated
+
+- **`contractMessage: { format: 'legacy' }`** on the deposit flow
+  (`LegacyContractRequest`) and **`buildLegacyContractRequestMessage`** are
+  marked `@deprecated`. Only the retired kasu-fe-next app (retired
+  2026-11-05) and kasu-mobile builds from before 2026-09-06 signed the legacy
+  `/contract/generate` message; every current consumer signs the
+  human-readable loan-agreement message (`format: 'loan-agreement'`). Both
+  will be removed in the next major version. No behaviour change.
+
+### Documentation
+
+- The legacy builder's docblock no longer claims `/contract/resolve` has no
+  other format: resolve has its own message, which the backend rebuilds and
+  verifies, so it never depended on the legacy one.
+- README support links point at the current docs:
+  `kasu.finance/docs/developers` and `kasu.finance/docs/user`.
+
 ## 2.14.0
 
 A strategy's TVL across its deployments. A strategy can run on more than
