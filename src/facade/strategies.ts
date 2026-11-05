@@ -52,6 +52,13 @@ export class StrategiesFacade {
          * is refused). Injected for tests; the current time otherwise.
          */
         private _now: () => Date = (): Date => new Date(),
+        /**
+         * Milliseconds on a clock that only moves forward, for the shared
+         * CMS reads' 30-second lifetime — separate from `_now`, so a pinned
+         * date clock cannot keep a read alive for ever. Injected for tests;
+         * `Date.now` otherwise.
+         */
+        private _memoClockMs: () => number = (): number => Date.now(),
     ) {}
 
     /**
@@ -68,7 +75,7 @@ export class StrategiesFacade {
     >();
 
     private _memoCmsRead<T>(key: string, read: () => Promise<T>): Promise<T> {
-        const nowMs = this._now().getTime();
+        const nowMs = this._memoClockMs();
         const cached = this._cmsReads.get(key);
         if (cached && cached.expiresAt > nowMs) {
             return cached.promise as Promise<T>;
@@ -148,7 +155,8 @@ export class StrategiesFacade {
      * candidate becomes live once the service resolves the mapping.
      *
      * Shares its reads with `getOriginatorHistory` for 30 seconds per
-     * instance; a failed read is never reused.
+     * instance; a failed read is never reused. Each call returns its own
+     * copy of the profile, so mutating it changes nothing shared.
      */
     async getOriginator(
         poolId: string,
@@ -158,13 +166,22 @@ export class StrategiesFacade {
             this._metadataIdOf(poolId),
         ]);
         const profiles = await this._originatorProfiles();
-        return (
-            profiles.find((profile) =>
-                profile.otherKASUPools.some((pool) =>
-                    candidates.has(String(pool.id).toLowerCase()),
-                ),
-            ) ?? null
+        const profile = profiles.find((candidate) =>
+            candidate.otherKASUPools.some((pool) =>
+                candidates.has(String(pool.id).toLowerCase()),
+            ),
         );
+        // A copy: the profiles are shared between calls (see
+        // `_memoCmsRead`), so a caller sorting or editing its result must
+        // not change what the next call returns.
+        return profile
+            ? {
+                  ...profile,
+                  otherKASUPools: profile.otherKASUPools.map((pool) => ({
+                      ...pool,
+                  })),
+              }
+            : null;
     }
 
     /**

@@ -545,7 +545,7 @@ describe('StrategiesFacade risk and originator accessors', () => {
                 .fn()
                 .mockResolvedValue([delegate('other', [OTHER_POOL]), apx]),
         });
-        await expect(facade.getOriginator(BASE_POOL)).resolves.toBe(apx);
+        await expect(facade.getOriginator(BASE_POOL)).resolves.toEqual(apx);
     });
 
     it('falls back to the metadata id, and tolerates numeric ids', async () => {
@@ -558,7 +558,9 @@ describe('StrategiesFacade risk and originator accessors', () => {
             },
             { [XDC_POOL.toLowerCase()]: BASE_POOL },
         );
-        await expect(facade.getOriginator(XDC_POOL)).resolves.toBe(viaMapping);
+        await expect(facade.getOriginator(XDC_POOL)).resolves.toEqual(
+            viaMapping,
+        );
         await expect(facade.getOriginator('7')).resolves.toMatchObject({
             id: 'n',
         });
@@ -981,12 +983,15 @@ describe('StrategiesFacade details fields', () => {
                 >
             >,
         ): { facade: StrategiesFacade; advance: (ms: number) => void } {
-            let nowMs = NOW.getTime();
+            // The date clock stays pinned; only the memo clock moves — the
+            // memo must not depend on the date clock.
+            let nowMs = 1_000_000;
             const facade = new StrategiesFacade(
                 data as unknown as DataService,
                 null as never,
                 {},
-                () => new Date(nowMs),
+                () => NOW,
+                () => nowMs,
             );
             return {
                 facade,
@@ -1040,6 +1045,65 @@ describe('StrategiesFacade details fields', () => {
             advance(1);
             await facade.getRiskManagementGroups(BASE_POOL);
             expect(getRiskManagement).toHaveBeenCalledTimes(2);
+        });
+
+        it('hands each caller its own copy of a shared originator profile', async () => {
+            const getPoolDelegateProfileAndHistory = jest
+                .fn()
+                .mockResolvedValue([
+                    delegate([OTHER_POOL, BASE_POOL], { historicLossRate: 0 }),
+                ]);
+            const { facade } = clockedFacade({
+                getPoolDelegateProfileAndHistory,
+            });
+            const first = await facade.getOriginator(BASE_POOL);
+            if (!first) throw new Error('expected a profile');
+            first.otherKASUPools.reverse();
+            first.otherKASUPools[0].name = 'changed';
+            first.otherKASUPools.push({
+                id: '0xdead',
+                name: 'x',
+                isActive: true,
+                isOversubscribed: false,
+            });
+            first.historicLossRate = 0.9;
+            const second = await facade.getOriginator(BASE_POOL);
+            if (!second) throw new Error('expected a profile');
+            expect(second.otherKASUPools.map((p) => p.id)).toEqual([
+                OTHER_POOL,
+                BASE_POOL,
+            ]);
+            expect(second.otherKASUPools.map((p) => p.name)).toEqual([
+                'Strategy',
+                'Strategy',
+            ]);
+            expect(second.historicLossRate).toBe(0);
+            await expect(
+                facade.getOriginatorHistory(BASE_POOL),
+            ).resolves.toEqual({ lossRate: 0 });
+            expect(getPoolDelegateProfileAndHistory).toHaveBeenCalledTimes(1);
+        });
+
+        it('expires on its own clock, even when the date clock is pinned', async () => {
+            const getRiskManagement = jest
+                .fn()
+                .mockResolvedValue([record(BASE_POOL, ITEMS)]);
+            // The default memo clock is real time; the date clock is pinned.
+            const facade = new StrategiesFacade(
+                { getRiskManagement } as unknown as DataService,
+                null as never,
+                {},
+                () => NOW,
+            );
+            const spy = jest.spyOn(Date, 'now').mockReturnValue(5_000_000);
+            try {
+                await facade.getRiskManagementGroups(BASE_POOL);
+                spy.mockReturnValue(5_000_000 + 30_000);
+                await facade.getRiskManagementGroups(BASE_POOL);
+                expect(getRiskManagement).toHaveBeenCalledTimes(2);
+            } finally {
+                spy.mockRestore();
+            }
         });
 
         it('never reuses a failed read', async () => {

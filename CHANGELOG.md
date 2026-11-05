@@ -50,7 +50,9 @@ here. Additive only: nothing is renamed, removed or changed.
   `getRiskManagementGroups` (3 collections), `getOriginator` with
   `getOriginatorHistory` (2 collections and a subgraph query). Concurrent
   calls share one in-flight read; a failed read is dropped at once and never
-  reused.
+  reused. The lifetime runs on its own clock (`Date.now`), not the date
+  clock the start-date checks use. `getOriginator` returns its own copy of
+  the profile on every call, so a caller mutating it changes nothing shared.
 - **Domain (pure):** `readCmsStartDate` (ISO date only, a real calendar
   date, 2000 to `now`; optional unix seconds), `splitBusinessTypes`,
   `parseFacility`, `splitNumberedClauses` (an unauthored description is `[]`,
