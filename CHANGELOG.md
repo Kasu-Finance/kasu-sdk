@@ -6,68 +6,89 @@ versioning; earlier releases are described in their commit messages.
 ## 2.15.1
 
 Each cycle's interest is now paired with the shares it was actually applied
-to. No public API is added, renamed or removed; some figures change (below).
+to, and `getPositions` checks the subgraph against the chain at the same
+block. Nothing is renamed or removed. A few optional fields are added
+(`ledgerMismatch`, `investedAmountFloored`, two `UserLending` reads), and some
+figures change (below).
 
 ### Fixed
 
-- **A withdrawal accepted between clearings** (the pool manager's
-  `forceAcceptWithdrawalRequest`) left the tranche BEFORE the next clearing
-  applied its interest, but the subgraph tags the lender's update with the
-  following epoch and writes no tranche snapshot. `getYieldHistory` and
-  `getPositions`' last-epoch figures paired that interest with the
-  pre-withdrawal share counts: every other holder of the tranche was
-  credited too little that cycle (by the withdrawn fraction — 24 % in one
-  Base tranche), and the withdrawer was credited interest on shares already
-  gone. Shares are now taken as in force when the clearing APPLIED the
-  interest (a clearing applies interest first, then accepts requests): an
-  update counts when it is tagged at or before the epoch, or written before
-  that clearing began, and the tranche total is the snapshot in force less
-  the withdrawals accepted between clearings since it. Both paths use the
-  same two functions, `sharesAtInterest` and `trancheSharesAtInterest`.
+- **A withdrawal accepted between clearings.** The pool manager's
+  `forceAcceptWithdrawalRequest` takes the shares out of the tranche BEFORE
+  the next clearing applies its interest. The subgraph, though, tags the
+  lender's update with the following epoch and writes no tranche snapshot.
+  So `getYieldHistory` and `getPositions`' last-epoch figures paired that
+  interest with the pre-withdrawal share counts. Every other holder of the
+  tranche was credited too little that cycle, by the withdrawn fraction
+  (24 % in one Base tranche). The withdrawer was credited interest on shares
+  already gone.
+  - A clearing applies interest first, then accepts requests. A lender
+    update now counts for epoch E when it is tagged at or before E, or was
+    written before clearing E began.
+  - The tranche total is rebuilt from the one snapshot whose place is
+    certain: the first one tagged E, written when clearing E − 1 ended.
+    Every share exit tagged E before clearing E began is taken off it, both
+    accepted and immediate withdrawals. This needs no ordering inside a
+    block.
+  - Both paths run the same `positionEpochYield`.
 - **`getPositions` between an epoch boundary and the next clearing.** Its
   last-epoch figures paired the newest interest with the snapshots tagged up
-  to the CURRENT epoch minus one — which then include what that interest's
-  own clearing accepted afterwards, and drop the lock top-up (it compared
-  the wrong pair of lock snapshots). They now pair by the interest's epoch,
-  as `getYieldHistory` does, so the two agree in that window too.
+  to the CURRENT epoch minus one. Those include what that interest's own
+  clearing accepted afterwards, and the comparison dropped the lock top-up.
+  The figures are now paired by the interest's epoch, as in the history:
+  - from the last six epochs' snapshots;
+  - for a pool that stopped clearing, from a history read of just that
+    position.
 - **A lock-share change no clearing's top-up can make is no longer yield.**
   A lock whose recorded shares were set to zero at a clearing (its shares
   stayed in the fixed-term contract) was booked as a negative "top-up" of
   every share, valued at today's price. A top-up is now credited only within
-  `MAX_TOP_UP_SHARE_FRACTION` (5 %) of the lock's shares; real top-ups are a
-  fraction of a percent.
-- **A negative ledger share count is no longer a negative yield.** The
-  subgraph counts a lender's shares as accepted deposits minus accepted
-  withdrawals; shares moved to a wallet any other way make that wallet's
-  count go negative as it withdraws. `epochTrancheYield` books nothing on a
-  share count at or below zero.
-- **`getPositions` never shows a negative balance.** Where a pool's ledger
-  balances do not add up to the chain's `LendingPool.userBalance` (or one is
-  negative), the tranche balances are read from the chain
-  (`LendingPoolTranche.userActiveAssets`, one call per tranche — none for a
-  pool that agrees) and the tranche's ledger lifetime moves by the same
-  difference; `investedAmount` is floored at 0.
+  `MAX_TOP_UP_SHARE_FRACTION` (5 %) of the lock's shares.
+- **A negative ledger share count is no longer a negative yield.**
+  `epochTrancheYield` books nothing on a share count at or below zero.
+- **Ledger and chain are compared at the same block.**
+  - The subgraph counts a lender's shares as a ledger of accepted deposits
+    and withdrawals. It does not follow shares moved between wallets any
+    other way.
+  - `getPositions` now reads the chain (`LendingPool.userBalance`) at the
+    block the subgraph answered at (`_meta`). Normal indexing lag after a
+    clearing is therefore never mistaken for a fault. If the node cannot
+    serve that block, it reads `latest` and compares nothing.
+  - Where the two disagree, or a ledger balance is negative, the tranche
+    balances come from the chain at that block (`userActiveAssets`), and the
+    pool carries `ledgerMismatch`.
+  - `ledger-exceeds-chain` withholds the pool's last-cycle figures (0), and
+    `getYieldHistory` leaves the pool out.
+  - `investedAmount` is floored at 0, with `investedAmountFloored` set.
+  - Only the listed pools the lender has a ledger in are read on chain.
+- **No truncated reads.** The portfolio query filters clearings and share
+  exits by the listed pools and tranches. It refuses any list that comes
+  back at the page size instead of pricing from it.
 
 ### Changed figures
 
 - `getYieldHistory` entries and `getPositions`' `totalYieldEarningsLastEpoch`
-  / `yieldEarnings.lastEpoch` for the cycle after a between-clearings
+  / `yieldEarnings.lastEpoch` change for the cycle after a between-clearings
   withdrawal: higher for the tranche's other holders, lower (often no entry)
-  for the withdrawer.
+  for the withdrawer. They also change between an epoch boundary and its
+  clearing.
 - A wallet that received or sent shares outside a deposit or withdrawal:
-  `investedAmount` is what the chain holds, and its history has no negative
-  entries. Its LIFETIME figures remain ledger figures (the moved principal is
-  not interest the ledger can tell apart), and a sending wallet's history
-  keeps crediting the shares the ledger still gives it.
+  - `investedAmount` is what the chain holds.
+  - The pool carries `ledgerMismatch`, and there are no negative entries.
+  - A sending wallet's pool has no history and a withheld last cycle.
+  - Lifetime figures stay ledger figures.
 
 ### Cost
 
-- `getYieldHistory`: the same request count; the page query also reads the
-  window's clearings and accepted withdrawals.
-- `getPositions`: the same request count; the portfolio query reads the
-  share snapshots of the last six epochs, those epochs' clearings and
-  accepted withdrawals. Chain reads only for a pool whose ledger and chain
-  disagree.
+- **`getPositions`:**
+  - The portfolio subgraph query, then one chain call per pool the lender is
+    in. Previously these ran side by side, with a second subgraph query and
+    a chain call for every listed pool.
+  - Per-tranche chain calls happen only for a pool that disagrees.
+  - One extra history request happens only for a pool that stopped clearing.
+- **`getYieldHistory`:** the same subgraph requests (the page query also
+  reads clearings and share exits), plus one chain call per pool, in
+  parallel with the page fetch.
 
 ## 2.15.0
 

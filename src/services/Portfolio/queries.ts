@@ -64,15 +64,18 @@ export const lastEpochQuery = gql`
 /**
  * The portfolio read. Its last-epoch figures pair each tranche's newest
  * interest (epoch E) with the shares in force when clearing E applied it —
- * the same selection `getYieldHistory` makes (`sharesAtInterest`,
- * `trancheSharesAtInterest`). For that it reads, per lender and tranche, the
- * newest share snapshot tagged before `$recentEpoch` and EVERY snapshot tagged
- * from it on (with their times), and, across the pools, the clearings and the
- * accepted withdrawals of those recent epochs. `$recentEpoch` is six epochs
- * back (`RECENT_PAIRING_EPOCHS`), so a pool that cleared in any of them is
- * paired by time; an older newest interest (a pool that stopped clearing)
- * falls back to the epoch tag. Lock snapshots are read the same way from one epoch further back
- * (`$lockRecentEpoch`), since a top-up compares E with E − 1.
+ * the selection `getYieldHistory` makes (`positionEpochYield`). For that it
+ * reads, per lender and tranche, the newest share snapshot tagged before
+ * `$recentEpoch` and EVERY snapshot tagged from it on (with their times), and,
+ * for the listed pools (`$poolIds`) and tranches (`$trancheIds`), the
+ * clearings and share exits of those recent epochs. `$recentEpoch` is six
+ * epochs back (`RECENT_PAIRING_EPOCHS`); a newest interest older than that (a
+ * pool that stopped clearing) is priced from a history read of its own. Lock
+ * snapshots are read the same way from one epoch further back
+ * (`$lockRecentEpoch`), since a top-up compares E with E − 1. Every list read
+ * with `$first` must come back SHORT of it — a full one is refused, never
+ * used truncated. `_meta` is the block the answer describes: the chain is
+ * read at that same block.
  */
 export const lendingPortfolioQuery = gql`
     query LastEpochQuery(
@@ -82,14 +85,23 @@ export const lendingPortfolioQuery = gql`
         $recentEpoch: BigInt!
         $lockRecentEpoch: BigInt!
         $unusedPools: [String!]!
+        $poolIds: [String!]!
+        $trancheIds: [String!]!
         $first: Int!
     ) {
+        _meta {
+            block {
+                number
+            }
+        }
         user(id: $userAddress) {
             lendingPoolUserDetails(
                 first: $first
                 where: { lendingPool_not_in: $unusedPools }
             ) {
                 id
+                totalAcceptedDeposits
+                totalAcceptedWithdrawnAmount
                 lendingPool {
                     id
                     name
@@ -99,7 +111,10 @@ export const lendingPortfolioQuery = gql`
                     }
                 }
                 lendingPoolTrancheUserDetails(first: $first) {
+                    id
                     shares
+                    totalAcceptedDeposits
+                    totalAcceptedWithdrawnAmount
                     lendingPoolTrancheUserEpochSharesUpdates(
                         orderDirection: desc
                         orderBy: shareUpdatesIndex
@@ -123,6 +138,7 @@ export const lendingPortfolioQuery = gql`
                         timestamp
                     }
                     userLendingPoolTrancheFixedTermDepositLocks(first: $first) {
+                        id
                         isLocked
                         unlockAmount
                         initialAmount
@@ -216,8 +232,10 @@ export const lendingPortfolioQuery = gql`
         }
         lendingPoolClearings(
             first: $first
+            orderBy: id
+            orderDirection: asc
             where: {
-                lendingPool_not_in: $unusedPools
+                lendingPool_in: $poolIds
                 epochId_gte: $recentEpoch
                 epochId_lt: $epochId
             }
@@ -231,13 +249,17 @@ export const lendingPortfolioQuery = gql`
         }
         recentWithdrawalsAccepted: userRequestEvents(
             first: $first
+            orderBy: id
+            orderDirection: asc
             where: {
-                type: WithdrawalAccepted
+                type_in: [WithdrawalAccepted, ImmediateWithdrawalExecuted]
+                tranche_in: $trancheIds
                 epochId_gte: $recentEpoch
                 epochId_lt: $epochId
             }
         ) {
             id
+            type
             epochId
             createdOn
             sharesAmount

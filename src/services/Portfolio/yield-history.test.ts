@@ -60,6 +60,8 @@ interface Update {
 
 /** A withdrawal the pool manager accepted (any lender), as the subgraph records it. */
 interface Withdrawal {
+    /** Default `WithdrawalAccepted`. */
+    type?: 'WithdrawalAccepted' | 'ImmediateWithdrawalExecuted';
     trancheId: string;
     /** The pool's clearing epoch when it was accepted. */
     epochId: number;
@@ -82,10 +84,14 @@ interface TrancheState {
         initialShares: number | string;
         updates: Update[];
     };
-    /** The chain's `userActiveAssets` for the lender, display units. Default 1000. */
+    /**
+     * The chain's `userActiveAssets` for the lender AT THE SUBGRAPH'S BLOCK,
+     * display units. Default: the ledger's balance (last share update × the
+     * share price now) — chain and ledger agree.
+     */
     activeAssets?: string;
-    /** The subgraph ledger's balance for the lender, display units. Default 1000. */
-    ledgerBalance?: string;
+    /** The same at `latest`, when the chain has moved past the subgraph. Default `activeAssets`. */
+    latestActiveAssets?: string;
 }
 
 interface ChainState {
@@ -98,7 +104,16 @@ interface ChainState {
      */
     clearings?: Record<string, Record<number, number>>;
     withdrawals?: Withdrawal[];
+    /** The pinned chain read fails (the node cannot serve the subgraph's block). */
+    pinnedReadFails?: boolean;
 }
+
+/** The block every emulated subgraph answer describes. */
+const SUBGRAPH_BLOCK = 50_000_000;
+
+/** The ledger's balance of the lender in a tranche, display units. */
+const ledgerBalanceOf = (t: TrancheState): number =>
+    (Number(t.userUpdates.at(-1)?.shares ?? 0) * t.balanceNow) / t.sharesNow;
 
 /** The default clearing time of an epoch: an hour before it ends. */
 const clearingAt = (epoch: number): number =>
@@ -243,6 +258,7 @@ function taggedFrom(
 
 function withdrawalRows(state: ChainState): {
     id: string;
+    type: 'WithdrawalAccepted' | 'ImmediateWithdrawalExecuted';
     epochId: string;
     createdOn: string;
     sharesAmount: string;
@@ -250,6 +266,7 @@ function withdrawalRows(state: ChainState): {
 }[] {
     return (state.withdrawals ?? []).map((w, index) => ({
         id: `w-${String(index).padStart(4, '0')}`,
+        type: w.type ?? 'WithdrawalAccepted',
         epochId: String(w.epochId),
         createdOn: String(w.createdOn),
         sharesAmount: w.shares,
@@ -294,20 +311,27 @@ function lendingPortfolioResponse(
     epochId: number,
     recentEpoch: number,
     lockRecentEpoch: number,
+    poolIds: string[],
+    trancheIds: string[],
 ): LendingPortfolioQueryResult {
     const lastEpochId = epochId - 1;
     const recent = (epoch: string): boolean =>
         Number(epoch) >= recentEpoch && Number(epoch) < epochId;
     return {
-        lendingPoolClearings: clearingRows(state).filter((c) =>
-            recent(c.epochId),
+        _meta: { block: { number: SUBGRAPH_BLOCK } },
+        lendingPoolClearings: clearingRows(state).filter(
+            (c) => recent(c.epochId) && poolIds.includes(c.lendingPool.id),
         ),
-        recentWithdrawalsAccepted: withdrawalRows(state).filter((w) =>
-            recent(w.epochId),
+        recentWithdrawalsAccepted: withdrawalRows(state).filter(
+            (w) => recent(w.epochId) && trancheIds.includes(w.tranche.id),
         ),
         user: {
             lendingPoolUserDetails: pools(state).map((poolId) => ({
                 id: `${poolId}-${USER}`,
+                // A lender who has withdrawn 10 over time: a pool with no
+                // balance left still has a lifetime, so it stays listed.
+                totalAcceptedDeposits: '0',
+                totalAcceptedWithdrawnAmount: '10',
                 lendingPool: {
                     id: poolId,
                     name: 'Synthetic',
@@ -323,6 +347,7 @@ function lendingPortfolioResponse(
                 lendingPoolTrancheUserDetails: state.tranches
                     .filter((t) => t.poolId === poolId)
                     .map((t) => ({
+                        id: positionId(t),
                         shares: String(t.userUpdates.at(-1)?.shares ?? 0),
                         lendingPoolTrancheUserEpochSharesUpdates:
                             newestTaggedBefore(
@@ -338,6 +363,7 @@ function lendingPortfolioResponse(
                         userLendingPoolTrancheFixedTermDepositLocks: t.lock
                             ? [
                                   {
+                                      id: t.lock.id,
                                       isLocked: true,
                                       unlockAmount: null,
                                       initialAmount: String(
@@ -421,6 +447,7 @@ function lendingPortfolioResponse(
 
 function positionsResponse(state: ChainState): YieldHistoryPositionsResult {
     return {
+        _meta: { block: { number: SUBGRAPH_BLOCK } },
         user: {
             lendingPoolUserDetails: pools(state).map((poolId) => ({
                 lendingPool: { id: poolId },
@@ -428,6 +455,7 @@ function positionsResponse(state: ChainState): YieldHistoryPositionsResult {
                     .filter((t) => t.poolId === poolId)
                     .map((t) => ({
                         id: positionId(t),
+                        shares: String(t.userUpdates.at(-1)?.shares ?? 0),
                         tranche: {
                             id: t.id,
                             balance: String(t.balanceNow),
@@ -521,7 +549,9 @@ function pageResponse(
                     })),
                 )
                 .filter(
-                    (r) => Number(r.epochId) <= Number(v.userSharesToEpoch),
+                    (r) =>
+                        Number(r.epochId) <=
+                        Number(v.userSharesToEpoch ?? v.toEpoch),
                 ),
             v.userSharesCursor as string,
             Number(v.first),
@@ -574,12 +604,19 @@ type GraphRequest = jest.Mock<
     [string, Record<string, unknown>]
 >;
 
+type ChainRead = jest.Mock<
+    Promise<BigNumber[]>,
+    [string, readonly string[], unknown, number | undefined]
+>;
+
 interface Harness {
     portfolio: Portfolio;
     request: GraphRequest;
     contractReads: jest.Mock;
     /** `UserLending.getUserTrancheActiveAssets` — the per-tranche chain reads. */
-    activeAssetReads: jest.Mock;
+    activeAssetReads: ChainRead;
+    /** `UserLending.getUserPoolBalancesAt` — the per-pool chain reads. */
+    poolBalanceReads: ChainRead;
     poolOverviews: PoolOverview[];
 }
 
@@ -614,6 +651,8 @@ function harness(
                         Number(variables.epochId),
                         Number(variables.recentEpoch),
                         Number(variables.lockRecentEpoch),
+                        variables.poolIds as string[],
+                        variables.trancheIds as string[],
                     ),
                 );
             }
@@ -650,51 +689,57 @@ function harness(
             return Promise.resolve(BigNumber.from(EPOCH_DURATION));
         },
     };
-    internals._userLendingService.getPortfolioUserTrancheBalances = (): Promise<
-        Map<
-            string,
-            { trancheId: string; userBalance: string; yieldEarned: number }[]
-        >
-    > =>
-        Promise.resolve(
-            new Map(
-                pools(state).map((poolId) => [
-                    poolId,
-                    state.tranches
-                        .filter((t) => t.poolId === poolId)
-                        .map((t) => ({
-                            trancheId: t.id,
-                            userBalance: t.ledgerBalance ?? '1000',
-                            yieldEarned: 10,
-                        })),
-                ]),
-            ),
-        );
     // The chain: `LendingPool.userBalance` is the sum of the tranches'
-    // `userActiveAssets` (6-decimal base units).
-    const activeAssets = (t: TrancheState): BigNumber =>
-        parseUnits(t.activeAssets ?? '1000', 6);
-    internals._userLendingService.getUserPoolBalance = (): Promise<
-        { poolId: string; balance: BigNumber; yieldEarned: number }[]
-    > =>
-        Promise.resolve(
-            pools(state).map((poolId) => ({
-                poolId,
-                balance: state.tranches
-                    .filter((t) => t.poolId === poolId)
-                    .reduce(
-                        (sum, t) => sum.add(activeAssets(t)),
-                        BigNumber.from(0),
-                    ),
-                yieldEarned: 10,
-            })),
+    // `userActiveAssets` (6-decimal base units), at the subgraph's block or at
+    // `latest` (`blockTag` undefined).
+    const activeAssets = (
+        t: TrancheState,
+        blockTag: number | undefined,
+    ): BigNumber => {
+        if (blockTag !== undefined && state.pinnedReadFails) {
+            throw new Error('missing trie node');
+        }
+        const pinned = t.activeAssets ?? ledgerBalanceOf(t).toFixed(6);
+        return parseUnits(
+            blockTag === undefined ? (t.latestActiveAssets ?? pinned) : pinned,
+            6,
         );
-    const activeAssetReads = jest.fn(
-        (_user: string, trancheIds: readonly string[]): Promise<BigNumber[]> =>
+    };
+    const poolBalanceReads: ChainRead = jest.fn(
+        (
+            _user: string,
+            poolIds: readonly string[],
+            _provider: unknown,
+            blockTag: number | undefined,
+        ): Promise<BigNumber[]> => {
+            try {
+                return Promise.resolve(
+                    poolIds.map((poolId) =>
+                        state.tranches
+                            .filter((t) => t.poolId === poolId)
+                            .reduce(
+                                (sum, t) => sum.add(activeAssets(t, blockTag)),
+                                BigNumber.from(0),
+                            ),
+                    ),
+                );
+            } catch (error) {
+                return Promise.reject(error as Error);
+            }
+        },
+    );
+    internals._userLendingService.getUserPoolBalancesAt = poolBalanceReads;
+    const activeAssetReads: ChainRead = jest.fn(
+        (
+            _user: string,
+            trancheIds: readonly string[],
+            _provider: unknown,
+            blockTag: number | undefined,
+        ): Promise<BigNumber[]> =>
             Promise.resolve(
                 trancheIds.map((id) => {
                     const t = state.tranches.find((x) => x.id === id);
-                    return t ? activeAssets(t) : BigNumber.from(0);
+                    return t ? activeAssets(t, blockTag) : BigNumber.from(0);
                 }),
             ),
     );
@@ -715,6 +760,7 @@ function harness(
         request,
         contractReads,
         activeAssetReads,
+        poolBalanceReads,
         poolOverviews,
     };
 }
@@ -1326,6 +1372,17 @@ function zeroedLockState(): ChainState {
     return {
         currentEpoch: 81,
         clearings: { [POOL_C]: { 79: 1765937461, 80: 1766548897 } },
+        // An immediate withdrawal between clearings 79 and 80: the snapshot
+        // it wrote (1 653 014.92) is clearing 79's (1 942 647.09) less it.
+        withdrawals: [
+            {
+                type: 'ImmediateWithdrawalExecuted',
+                trancheId: TRANCHE_C2,
+                epochId: 80,
+                createdOn: 1766009997,
+                shares: '289632.168339431523576185',
+            },
+        ],
         tranches: [
             {
                 id: TRANCHE_C2,
@@ -1419,10 +1476,8 @@ function movedSharesState(side: 'received' | 'sent'): ChainState {
                               },
                           ]
                         : [{ epochId: 90, shares: '30879.286450293085026822' }],
-                ledgerBalance:
-                    side === 'received'
-                        ? '-37411.053085795351083519'
-                        : '37411.053085795351083519',
+                // The ledger: −30 017.29 / +30 879.29 shares at today's
+                // price (−37 411.05 for the receiver); the chain holds 0.
                 activeAssets: '0',
             },
         ],
@@ -1521,6 +1576,30 @@ describe('getYieldHistory — interest paired with the shares it was applied to'
         ).toBeCloseTo(base, 10);
     });
 
+    it('a pool that stopped clearing is priced by its interest epoch too, like the history', async () => {
+        // Epoch 20: every newest interest (9) is older than the recent window.
+        const state = baseState();
+        state.currentEpoch = 20;
+        const { history, pool } = await bothReads(state);
+        for (const [poolId, trancheId] of [
+            [POOL_A, TRANCHE_A1],
+            [POOL_A, TRANCHE_A2],
+            [POOL_B, TRANCHE_B1],
+        ] as const) {
+            const newest = history
+                .filter((e) => e.trancheId === trancheId)
+                .at(-1);
+            expect(newest?.epochId).toBe(9);
+            expect(newest?.netYield).toBe(
+                trancheLastEpoch(pool(poolId), trancheId),
+            );
+        }
+        expect(trancheLastEpoch(pool(POOL_A), TRANCHE_A1)).toBeCloseTo(
+            16.25 + 11.44,
+            10,
+        );
+    });
+
     it('shares received from another wallet book no negative yield', async () => {
         const { history, lending } = await bothReads(
             movedSharesState('received'),
@@ -1543,11 +1622,18 @@ describe('getPortfolioLendingData — balances the chain backs', () => {
         // The ledger says −37 411.05; the chain says 0.
         expect(only(lending).tranches[0].investedAmount).toBe('0.0');
         expect(activeAssetReads).toHaveBeenCalledTimes(1);
+        // Read at the block the subgraph answered at, never at `latest`.
         expect(activeAssetReads).toHaveBeenCalledWith(
             USER,
             [TRANCHE_C1],
             undefined,
+            SUBGRAPH_BLOCK,
         );
+        expect(only(lending).ledgerMismatch).toEqual({
+            kind: 'chain-exceeds-ledger',
+            ledgerBalance: expect.stringMatching(/^-37411\.05/) as string,
+            chainBalance: '0',
+        });
     });
 
     it('a wallet that sent its shares away shows what the chain holds, not the ledger', async () => {
@@ -1557,7 +1643,141 @@ describe('getPortfolioLendingData — balances the chain backs', () => {
             poolOverviews,
             '103',
         );
-        expect(only(lending).tranches[0].investedAmount).toBe('0.0');
+        const pool = only(lending);
+        expect(pool.tranches[0].investedAmount).toBe('0.0');
+        // The ledger credits shares the wallet does not hold: flagged, and
+        // its last-cycle figures withheld rather than self-contradicting.
+        expect(pool.ledgerMismatch?.kind).toBe('ledger-exceeds-chain');
+        expect(pool.totalYieldEarningsLastEpoch).toBe('0');
+        expect(pool.tranches[0].yieldEarnings.lastEpoch).toBe('0');
+    });
+
+    it('…and its history leaves that pool out', async () => {
+        const { portfolio } = harness(movedSharesState('sent'));
+        await expect(portfolio.getYieldHistory(USER)).resolves.toEqual([]);
+        // The same ledger, held on chain: the history is there.
+        const held = movedSharesState('sent');
+        held.tranches[0].activeAssets = undefined;
+        const { portfolio: holding } = harness(held);
+        expect(
+            (await holding.getYieldHistory(USER)).map((e) => e.epochId),
+        ).toEqual([99, 100, 101, 102]);
+    });
+
+    it('a subgraph behind the chain is NOT a mismatch: the chain is read at the subgraph block', async () => {
+        // Right after a clearing the chain has moved on (interest, accepted
+        // deposits) and the subgraph has not caught up. At `latest` the two
+        // disagree; at the subgraph's block they agree.
+        const state = baseState();
+        for (const t of state.tranches) t.latestActiveAssets = '99999.5';
+        const { portfolio, poolOverviews, activeAssetReads, poolBalanceReads } =
+            harness(state);
+        const lending = await portfolio.getPortfolioLendingData(
+            USER,
+            poolOverviews,
+            String(CURRENT_EPOCH),
+        );
+        expect(activeAssetReads).not.toHaveBeenCalled();
+        for (const call of poolBalanceReads.mock.calls) {
+            expect(call[3]).toBe(SUBGRAPH_BLOCK);
+        }
+        for (const pool of lending) {
+            expect(pool.ledgerMismatch).toBeUndefined();
+            for (const tranche of pool.tranches) {
+                // The ledger's balance, and no principal booked as yield.
+                expect(tranche.yieldEarnings.lifetime).not.toMatch(/^9999/);
+            }
+        }
+        const a1 = lending
+            .find((p) => p.id === POOL_A)
+            ?.tranches.find((t) => t.id === TRANCHE_A1);
+        // 1600 shares × 13000 / 12500, less the 430-share lock at the same price.
+        expect(parseFloat(a1?.investedAmount ?? '')).toBeCloseTo(
+            1664 - 447.2,
+            6,
+        );
+    });
+
+    it('when the node cannot serve the subgraph block, reads latest and compares nothing', async () => {
+        const state = baseState();
+        state.pinnedReadFails = true;
+        for (const t of state.tranches) t.latestActiveAssets = '99999.5';
+        const { portfolio, poolOverviews, activeAssetReads, poolBalanceReads } =
+            harness(state);
+        const lending = await portfolio.getPortfolioLendingData(
+            USER,
+            poolOverviews,
+            String(CURRENT_EPOCH),
+        );
+        expect(poolBalanceReads.mock.calls.map((call) => call[3])).toEqual([
+            SUBGRAPH_BLOCK,
+            undefined,
+        ]);
+        expect(activeAssetReads).not.toHaveBeenCalled();
+        for (const pool of lending) expect(pool.ledgerMismatch).toBeUndefined();
+    });
+
+    it('reads on chain only the listed pools the lender has a ledger in', async () => {
+        const { portfolio, poolOverviews, poolBalanceReads, activeAssetReads } =
+            harness(baseState());
+        const listed = poolOverviews.filter(({ id }) => id === POOL_A);
+        const lending = await portfolio.getPortfolioLendingData(
+            USER,
+            listed,
+            String(CURRENT_EPOCH),
+        );
+        expect(lending.map(({ id }) => id)).toEqual([POOL_A]);
+        expect(poolBalanceReads).toHaveBeenCalledTimes(1);
+        expect(poolBalanceReads.mock.calls[0]?.[1]).toEqual([POOL_A]);
+        expect(activeAssetReads).not.toHaveBeenCalled();
+    });
+
+    it('flags a balance raised to 0 (locked amount above what the chain holds)', async () => {
+        const state = baseState();
+        // The lock is 430 shares (447.2); the chain holds 100 in the tranche.
+        state.tranches[0].activeAssets = '100';
+        const { portfolio, poolOverviews } = harness(state);
+        const lending = await portfolio.getPortfolioLendingData(
+            USER,
+            poolOverviews,
+            String(CURRENT_EPOCH),
+        );
+        const a1 = lending
+            .find((p) => p.id === POOL_A)
+            ?.tranches.find((t) => t.id === TRANCHE_A1);
+        expect(a1?.investedAmount).toBe('0.0');
+        expect(a1?.investedAmountFloored).toBe(true);
+        expect(lending.find((p) => p.id === POOL_A)?.ledgerMismatch?.kind).toBe(
+            'ledger-exceeds-chain',
+        );
+        // An ordinary tranche carries no flag.
+        expect(
+            lending
+                .find((p) => p.id === POOL_B)
+                ?.tranches.find((t) => t.id === TRANCHE_B1)
+                ?.investedAmountFloored,
+        ).toBeUndefined();
+    });
+
+    it('refuses a list that came back full rather than price from a truncated read', async () => {
+        const state = baseState();
+        state.withdrawals = Array.from(
+            { length: YIELD_HISTORY_PAGE_SIZE },
+            () => ({
+                trancheId: TRANCHE_A1,
+                epochId: 9,
+                createdOn: clearingAt(9) + 10,
+                shares: '1',
+            }),
+        );
+        const { portfolio, poolOverviews } = harness(state);
+        await expect(
+            portfolio.getPortfolioLendingData(
+                USER,
+                poolOverviews,
+                String(CURRENT_EPOCH),
+            ),
+        ).rejects.toThrow('recentWithdrawalsAccepted reached 1000 rows');
     });
 
     it('takes the chain balance, and moves the ledger yield with it, when the two disagree', async () => {
@@ -1571,9 +1791,10 @@ describe('getPortfolioLendingData — balances the chain backs', () => {
         );
         const tranche = only(lending).tranches[0];
         expect(tranche.investedAmount).toBe('1250.5');
-        // The ledger's 10 moves by the same difference as the balance.
+        // The ledger's lifetime (its −37 411.05 balance, no deposits) moves
+        // by the same difference as the balance: to the chain's 1250.5.
         expect(parseFloat(tranche.yieldEarnings.lifetime)).toBeCloseTo(
-            10 + 1250.5 - Number('-37411.053085795351083519'),
+            1250.5,
             6,
         );
     });
@@ -1647,5 +1868,36 @@ describe('sharesAtInterest / trancheSharesAtInterest', () => {
         expect(sharesAtInterest(updates, 123, 1792648817)?.shares).toBe(
             '211.8',
         );
+    });
+
+    it('takes an immediate withdrawal and an accepted one in the same second off once each', () => {
+        // Clearing 122 ended (snapshot tagged 123); then, in one block, an
+        // immediate withdrawal (its own snapshot) and an accepted one. The
+        // order inside the block does not matter: both are taken off the
+        // clearing's snapshot.
+        const at = 1792116301;
+        const tranche = rows('x', [
+            { epochId: 123, shares: '1000', timestamp: 1791946585 },
+            { epochId: 123, shares: '900', timestamp: at },
+        ]);
+        expect(
+            trancheSharesAtInterest(
+                tranche,
+                [
+                    {
+                        epochId: '123',
+                        createdOn: String(at),
+                        sharesAmount: '100',
+                    },
+                    {
+                        epochId: '123',
+                        createdOn: String(at),
+                        sharesAmount: '50',
+                    },
+                ],
+                123,
+                1792648817,
+            ),
+        ).toBe(850);
     });
 });

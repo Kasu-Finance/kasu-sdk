@@ -53,6 +53,12 @@ export interface PortfolioTrancheDepositDetails {
 }
 export interface PortfolioTranche extends TrancheData {
     investedAmount: string;
+    /**
+     * Set when `investedAmount` was raised to 0: the locked amount exceeded
+     * the tranche balance, which only a position the subgraph ledger cannot
+     * describe produces (see `PortfolioLendingPool.ledgerMismatch`).
+     */
+    investedAmountFloored?: true;
     yieldEarnings: {
         lastEpoch: string;
         lifetime: string;
@@ -77,8 +83,29 @@ export interface PortfolioTranche extends TrancheData {
         depositDetails: PortfolioTrancheDepositDetails[];
     }[];
 }
+/**
+ * The subgraph ledger and the chain disagreed about the lender's balance in
+ * a pool AT THE SAME BLOCK — shares moved to or from the wallet outside a
+ * deposit or withdrawal, or a lock whose recorded shares were lost. Balances
+ * then come from the chain; display units of the stable token.
+ */
+export interface LedgerMismatch {
+    /**
+     * `ledger-exceeds-chain`: the ledger credits shares the wallet does not
+     * hold — the pool's last-cycle figures are withheld (0), and
+     * `getYieldHistory` leaves the pool out. `chain-exceeds-ledger`: the
+     * wallet holds shares the ledger never credited — its figures cover only
+     * the ledger's shares.
+     */
+    kind: 'ledger-exceeds-chain' | 'chain-exceeds-ledger';
+    ledgerBalance: string;
+    chainBalance: string;
+}
+
 export interface PortfolioLendingPool extends Omit<PoolOverview, 'tranches'> {
     totalInvestedAmount: string;
+    /** Present only when ledger and chain disagree (see `LedgerMismatch`). */
+    ledgerMismatch?: LedgerMismatch;
     totalYieldEarningsLastEpoch: string;
     totalYieldEarningsLifetime: string;
     isActive: boolean;
@@ -97,6 +124,8 @@ export interface LockShareSnapshot {
 }
 
 export interface UserLendingPoolTrancheFixedTermDepositLock {
+    /** `{lendingPool}-{lockId}`; read by `lendingPortfolioQuery`. */
+    id?: string;
     isLocked: boolean;
     lockId: string;
     createdOn: string;
@@ -193,9 +222,13 @@ export interface PortfolioShareSnapshot {
 }
 
 export interface LendingPortfolioQueryResult {
+    /** The block the subgraph answered at. */
+    _meta?: { block: { number: number } };
     user: {
         lendingPoolUserDetails: {
             id: string;
+            totalAcceptedDeposits: string;
+            totalAcceptedWithdrawnAmount: string;
             lendingPool: {
                 id: string;
                 name: string;
@@ -211,6 +244,7 @@ export interface LendingPortfolioQueryResult {
                 }[];
             };
             lendingPoolTrancheUserDetails: {
+                id: string;
                 shares: string;
                 userLendingPoolTrancheFixedTermDepositLocks: UserLendingPoolTrancheFixedTermDepositLock[];
                 /** The newest snapshot tagged before `$recentEpoch`. */
@@ -250,9 +284,10 @@ export interface LendingPortfolioQueryResult {
         startTimestamp: string;
         lendingPool: { id: string };
     }[];
-    /** Every withdrawal accepted (any lender) in those epochs. */
+    /** Every share exit (any lender) in the listed tranches, those epochs. */
     recentWithdrawalsAccepted: {
         id: string;
+        type: 'WithdrawalAccepted' | 'ImmediateWithdrawalExecuted';
         epochId: string;
         createdOn: string;
         sharesAmount: string | null;

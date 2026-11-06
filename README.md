@@ -148,11 +148,15 @@ withdrawal the pool manager accepted between clearings is out of the next
 cycle's figures, and the newest bar equals `getPositions`' last-epoch figure.
 
 The subgraph counts a lender's shares as a ledger of accepted deposits and
-withdrawals. Shares moved to or from a wallet any other way are not on it:
-`getPositions` then reads that wallet's tranche balances from the chain (so a
-balance is never negative), its history books nothing while its ledger count
-is negative, and its lifetime figures stay ledger figures that include the
-moved principal.
+withdrawals. Shares moved to or from a wallet any other way are not on it.
+`getPositions` compares the ledger with the chain AT THE BLOCK THE SUBGRAPH
+ANSWERED AT (so indexing lag is never a fault). Where they disagree it reads
+the tranche balances from the chain, so a balance is never negative, and
+sets `ledgerMismatch` on the pool. `ledger-exceeds-chain` (the wallet sent
+shares away) withholds the pool's last-cycle figures and leaves the pool out
+of `getYieldHistory`. An `investedAmount` raised to 0 carries
+`investedAmountFloored`. Lifetime figures stay ledger figures, which include
+the moved principal.
 
 `kasu.strategies.getPoolTvlHistory(poolId, { fromEpoch?, count?, timeoutMs?,
 signal? })` returns the strategy's TVL (total lent by everyone) as

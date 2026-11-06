@@ -887,13 +887,36 @@ export class UserLending {
         user: string,
         trancheIds: readonly string[],
         provider?: Provider,
+        blockTag?: number,
     ): Promise<BigNumber[]> {
         return await Promise.all(
             trancheIds.map((trancheId) =>
                 ILendingPoolTrancheAbi__factory.connect(
                     trancheId,
                     provider ?? this._signerOrProvider,
-                ).userActiveAssets(user),
+                ).userActiveAssets(user, { blockTag: blockTag ?? 'latest' }),
+            ),
+        );
+    }
+
+    /**
+     * The lender's balance in each pool (`LendingPool.userBalance`, the sum
+     * of its tranches' active assets), in the order of `poolIds`, in the
+     * stable token's base units, at `blockTag` (default `latest`). One call
+     * per pool.
+     */
+    async getUserPoolBalancesAt(
+        user: string,
+        poolIds: readonly string[],
+        provider?: Provider,
+        blockTag?: number,
+    ): Promise<BigNumber[]> {
+        return await Promise.all(
+            poolIds.map((poolId) =>
+                ILendingPoolAbi__factory.connect(
+                    poolId,
+                    provider ?? this._signerOrProvider,
+                ).userBalance(user, { blockTag: blockTag ?? 'latest' }),
             ),
         );
     }
