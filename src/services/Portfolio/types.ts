@@ -106,6 +106,13 @@ export interface PortfolioLendingPool extends Omit<PoolOverview, 'tranches'> {
     totalInvestedAmount: string;
     /** Present only when ledger and chain disagree (see `LedgerMismatch`). */
     ledgerMismatch?: LedgerMismatch;
+    /**
+     * `false` only when the chain could not be read at the subgraph's block
+     * (the node had pruned it, or not reached it) and `latest` was read
+     * instead: the balances are the chain's now, and ledger and chain were
+     * NOT compared, so no `ledgerMismatch` can be reported. Absent otherwise.
+     */
+    chainPinned?: false;
     totalYieldEarningsLastEpoch: string;
     totalYieldEarningsLifetime: string;
     isActive: boolean;

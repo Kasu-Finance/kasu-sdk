@@ -104,8 +104,8 @@ interface ChainState {
      */
     clearings?: Record<string, Record<number, number>>;
     withdrawals?: Withdrawal[];
-    /** The pinned chain read fails (the node cannot serve the subgraph's block). */
-    pinnedReadFails?: boolean;
+    /** The pinned chain read fails with this message. */
+    pinnedReadError?: string;
 }
 
 /** The block every emulated subgraph answer describes. */
@@ -696,8 +696,8 @@ function harness(
         t: TrancheState,
         blockTag: number | undefined,
     ): BigNumber => {
-        if (blockTag !== undefined && state.pinnedReadFails) {
-            throw new Error('missing trie node');
+        if (blockTag !== undefined && state.pinnedReadError !== undefined) {
+            throw new Error(state.pinnedReadError);
         }
         const pinned = t.activeAssets ?? ledgerBalanceOf(t).toFixed(6);
         return parseUnits(
@@ -1718,7 +1718,7 @@ describe('getPortfolioLendingData — balances the chain backs', () => {
 
     it('when the node cannot serve the subgraph block, reads latest and compares nothing', async () => {
         const state = baseState();
-        state.pinnedReadFails = true;
+        state.pinnedReadError = 'missing trie node';
         for (const t of state.tranches) t.latestActiveAssets = '99999.5';
         const { portfolio, poolOverviews, activeAssetReads, poolBalanceReads } =
             harness(state);
@@ -1732,8 +1732,50 @@ describe('getPortfolioLendingData — balances the chain backs', () => {
             undefined,
         ]);
         expect(activeAssetReads).not.toHaveBeenCalled();
-        for (const pool of lending) expect(pool.ledgerMismatch).toBeUndefined();
+        for (const pool of lending) {
+            expect(pool.ledgerMismatch).toBeUndefined();
+            // …and says so.
+            expect(pool.chainPinned).toBe(false);
+        }
     });
+
+    it('a pinned read marks nothing', async () => {
+        const { portfolio, poolOverviews } = harness(baseState());
+        const lending = await portfolio.getPortfolioLendingData(
+            USER,
+            poolOverviews,
+            String(CURRENT_EPOCH),
+        );
+        for (const pool of lending) expect(pool.chainPinned).toBeUndefined();
+    });
+
+    it.each([
+        '429 Too Many Requests',
+        'request timeout',
+        'could not detect network (event="noNetwork")',
+    ])(
+        'any other chain failure (%s) is thrown, never read unpinned — positions and history',
+        async (message) => {
+            const state = baseState();
+            state.pinnedReadError = message;
+            const { portfolio, poolOverviews, poolBalanceReads } =
+                harness(state);
+            await expect(
+                portfolio.getPortfolioLendingData(
+                    USER,
+                    poolOverviews,
+                    String(CURRENT_EPOCH),
+                ),
+            ).rejects.toThrow(message);
+            await expect(portfolio.getYieldHistory(USER)).rejects.toThrow(
+                message,
+            );
+            // Never retried at `latest`.
+            for (const call of poolBalanceReads.mock.calls) {
+                expect(call[3]).toBe(SUBGRAPH_BLOCK);
+            }
+        },
+    );
 
     it('reads on chain only the listed pools the lender has a ledger in', async () => {
         const { portfolio, poolOverviews, poolBalanceReads, activeAssetReads } =

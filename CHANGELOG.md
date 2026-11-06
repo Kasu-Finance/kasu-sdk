@@ -12,7 +12,8 @@ block. Nothing is renamed or removed; some figures change (below).
 ### Added
 
 - `PortfolioLendingPool.ledgerMismatch?` `{ kind, ledgerBalance,
-  chainBalance }` and `PortfolioTranche.investedAmountFloored?` (see Fixed).
+  chainBalance }`, `PortfolioLendingPool.chainPinned?: false` and
+  `PortfolioTranche.investedAmountFloored?` (see Fixed).
 - `UserLending.getUserPoolBalancesAt(user, poolIds, provider?, blockTag?)` and
   an optional `blockTag` on `UserLending.getUserTrancheActiveAssets`.
 
@@ -57,8 +58,11 @@ block. Nothing is renamed or removed; some figures change (below).
     other way.
   - `getPositions` now reads the chain (`LendingPool.userBalance`) at the
     block the subgraph answered at (`_meta`). Normal indexing lag after a
-    clearing is therefore never mistaken for a fault. If the node cannot
-    serve that block, it reads `latest` and compares nothing.
+    clearing is therefore never mistaken for a fault. Only if the node says
+    it cannot serve that block (pruned, or not reached yet) does it read
+    `latest`. It then compares nothing and marks the pools
+    `chainPinned: false`. Any other RPC failure (a rate limit, a timeout, a
+    network error) is thrown.
   - Where the two disagree, or a ledger balance is negative, the tranche
     balances come from the chain at that block (`userActiveAssets`), and the
     pool carries `ledgerMismatch`.
@@ -95,6 +99,11 @@ block. Nothing is renamed or removed; some figures change (below).
 - **`getYieldHistory`:** the same subgraph requests (the page query also
   reads clearings and share exits), plus one chain call per pool, in
   parallel with the page fetch.
+  - **It now needs a working RPC.** It makes one `LendingPool.userBalance`
+    read per pool, and it THROWS if that read fails. Before, it read only
+    `SystemVariables` from the chain.
+  - Only a node that cannot serve the subgraph's block falls back to
+    `latest`. Then no pool is left out.
 
 ## 2.15.0
 

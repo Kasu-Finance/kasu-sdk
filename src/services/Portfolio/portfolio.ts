@@ -40,6 +40,7 @@ import {
     LockingSummarySubgraphResult,
     SystemVariables,
 } from '../Locking/types';
+import { isBlockUnavailableError } from '../shared';
 import { UserLending } from '../UserLending/user-lending';
 
 import { lendingPortfolioQuery } from './queries';
@@ -870,6 +871,9 @@ export class Portfolio {
                 totalInvestedAmount: pool.chainBalance.toString(),
                 totalYieldEarningsLifetime: pool.lifetime.toString(),
                 ...(pool.mismatch ? { ledgerMismatch: pool.mismatch } : {}),
+                ...(chain.blockTag === undefined
+                    ? { chainPinned: false as const }
+                    : {}),
                 tranches,
             });
         }
@@ -951,7 +955,9 @@ export class Portfolio {
      * per epoch — alongside one `LendingPool.userBalance` call per pool at
      * the subgraph's block. A pool whose ledger credits more than the wallet
      * holds at that block (shares moved away outside a withdrawal) is left
-     * out; if the node cannot serve that block, nothing is.
+     * out; if the node says it cannot serve that block, `latest` is read
+     * and nothing is. Any other failure of those reads (a rate limit, a
+     * network error) THROWS: the history needs a working RPC.
      *
      * On a LITE deployment, a subgraph that lacks the entities (a validation
      * error naming them) yields `[]`; on a full deployment that error throws,
@@ -1071,10 +1077,14 @@ export class Portfolio {
      * describe the same state: after every clearing the subgraph runs a few
      * blocks behind, and a `latest` read would then disagree with an
      * honest ledger (interest moved every balance, deposits were accepted)
-     * and book that difference as a ledger fault. If the node cannot serve
-     * that block (pruned, or behind the subgraph), it falls back to `latest`
-     * and says so (`blockTag: undefined`): unpinned figures are then never
-     * compared with the ledger.
+     * and book that difference as a ledger fault.
+     *
+     * Only when the node says it cannot serve that block (pruned, or behind
+     * the subgraph: `isBlockUnavailableError`) does it fall back to `latest`,
+     * and it says so (`blockTag: undefined`): unpinned figures are never
+     * compared with the ledger, and `getPortfolioLendingData` marks the pools
+     * `chainPinned: false`. Any other failure — a rate limit, a timeout, a
+     * network error — is thrown, never turned into an unpinned read.
      */
     private async readChainAt<T>(
         block: number | undefined,
@@ -1083,8 +1093,8 @@ export class Portfolio {
         if (block !== undefined) {
             try {
                 return { values: await read(block), blockTag: block };
-            } catch {
-                // Fall through to `latest`, unpinned.
+            } catch (error) {
+                if (!isBlockUnavailableError(error)) throw error;
             }
         }
         return { values: await read(undefined), blockTag: undefined };
