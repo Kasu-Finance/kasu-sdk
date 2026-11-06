@@ -89,6 +89,13 @@ export interface LendingPortfolioData {
     lendingPools: PortfolioLendingPool[];
 }
 
+/** A lock share snapshot as the portfolio query reads it. */
+export interface LockShareSnapshot {
+    epochId: string;
+    shareUpdatesIndex: number;
+    shares: string;
+}
+
 export interface UserLendingPoolTrancheFixedTermDepositLock {
     isLocked: boolean;
     lockId: string;
@@ -120,6 +127,13 @@ export interface UserLendingPoolTrancheFixedTermDepositLock {
               shares: string;
           }[]
         | undefined;
+    /**
+     * The newest lock snapshot tagged before `$lockRecentEpoch`, and every one
+     * tagged from it on: the candidates `getPortfolioLendingData` pairs a
+     * recent interest's epoch with. `lendingPortfolioQuery` responses only.
+     */
+    lockSharesBase?: LockShareSnapshot[] | undefined;
+    lockSharesRecent?: LockShareSnapshot[] | undefined;
 }
 
 export interface LastEpochQueryResult {

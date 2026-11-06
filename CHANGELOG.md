@@ -24,6 +24,12 @@ to. No public API is added, renamed or removed; some figures change (below).
   that clearing began, and the tranche total is the snapshot in force less
   the withdrawals accepted between clearings since it. Both paths use the
   same two functions, `sharesAtInterest` and `trancheSharesAtInterest`.
+- **`getPositions` between an epoch boundary and the next clearing.** Its
+  last-epoch figures paired the newest interest with the snapshots tagged up
+  to the CURRENT epoch minus one — which then include what that interest's
+  own clearing accepted afterwards, and drop the lock top-up (it compared
+  the wrong pair of lock snapshots). They now pair by the interest's epoch,
+  as `getYieldHistory` does, so the two agree in that window too.
 - **A lock-share change no clearing's top-up can make is no longer yield.**
   A lock whose recorded shares were set to zero at a clearing (its shares
   stayed in the fixed-term contract) was booked as a negative "top-up" of
@@ -59,7 +65,7 @@ to. No public API is added, renamed or removed; some figures change (below).
 - `getYieldHistory`: the same request count; the page query also reads the
   window's clearings and accepted withdrawals.
 - `getPositions`: the same request count; the portfolio query reads the
-  share snapshots of the last two epochs, those epochs' clearings and
+  share snapshots of the last six epochs, those epochs' clearings and
   accepted withdrawals. Chain reads only for a pool whose ledger and chain
   disagree.
 

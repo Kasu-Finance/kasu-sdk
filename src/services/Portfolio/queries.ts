@@ -68,10 +68,11 @@ export const lastEpochQuery = gql`
  * `trancheSharesAtInterest`). For that it reads, per lender and tranche, the
  * newest share snapshot tagged before `$recentEpoch` and EVERY snapshot tagged
  * from it on (with their times), and, across the pools, the clearings and the
- * accepted withdrawals of those recent epochs. `$recentEpoch` is two epochs
- * back, so a pool that cleared the last or the one before is paired by time;
- * an older newest interest (a pool that stopped clearing) falls back to the
- * epoch tag.
+ * accepted withdrawals of those recent epochs. `$recentEpoch` is six epochs
+ * back (`RECENT_PAIRING_EPOCHS`), so a pool that cleared in any of them is
+ * paired by time; an older newest interest (a pool that stopped clearing)
+ * falls back to the epoch tag. Lock snapshots are read the same way from one epoch further back
+ * (`$lockRecentEpoch`), since a top-up compares E with E − 1.
  */
 export const lendingPortfolioQuery = gql`
     query LastEpochQuery(
@@ -79,6 +80,7 @@ export const lendingPortfolioQuery = gql`
         $epochId: BigInt!
         $lastEpochId: BigInt!
         $recentEpoch: BigInt!
+        $lockRecentEpoch: BigInt!
         $unusedPools: [String!]!
         $first: Int!
     ) {
@@ -150,6 +152,26 @@ export const lendingPortfolioQuery = gql`
                             first: 1
                             where: { epochId_lt: $epochId }
                         ) {
+                            shares
+                        }
+                        lockSharesBase: userLendingPoolTrancheFixedTermDepositLockShareUpdate(
+                            orderBy: shareUpdatesIndex
+                            orderDirection: desc
+                            first: 1
+                            where: { epochId_lt: $lockRecentEpoch }
+                        ) {
+                            epochId
+                            shareUpdatesIndex
+                            shares
+                        }
+                        lockSharesRecent: userLendingPoolTrancheFixedTermDepositLockShareUpdate(
+                            orderBy: shareUpdatesIndex
+                            orderDirection: desc
+                            first: $first
+                            where: { epochId_gte: $lockRecentEpoch }
+                        ) {
+                            epochId
+                            shareUpdatesIndex
                             shares
                         }
                     }

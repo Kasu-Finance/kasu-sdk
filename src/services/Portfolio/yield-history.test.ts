@@ -293,6 +293,7 @@ function lendingPortfolioResponse(
     state: ChainState,
     epochId: number,
     recentEpoch: number,
+    lockRecentEpoch: number,
 ): LendingPortfolioQueryResult {
     const lastEpochId = epochId - 1;
     const recent = (epoch: string): boolean =>
@@ -370,6 +371,16 @@ function lendingPortfolioResponse(
                                           'l',
                                           t.lock.updates,
                                           epochId,
+                                      ),
+                                      lockSharesBase: newestTaggedBefore(
+                                          'l',
+                                          t.lock.updates,
+                                          lockRecentEpoch,
+                                      ),
+                                      lockSharesRecent: taggedFrom(
+                                          'l',
+                                          t.lock.updates,
+                                          lockRecentEpoch,
                                       ),
                                   },
                               ]
@@ -602,6 +613,7 @@ function harness(
                         state,
                         Number(variables.epochId),
                         Number(variables.recentEpoch),
+                        Number(variables.lockRecentEpoch),
                     ),
                 );
             }
@@ -795,6 +807,50 @@ describe('getYieldHistory — parity with the last-epoch figures', () => {
         expect(
             parseFloat(pool(POOL_B).totalYieldEarningsLastEpoch),
         ).toBeCloseTo(5, 12);
+    });
+});
+
+describe('getYieldHistory — between an epoch boundary and its clearing', () => {
+    /**
+     * Epoch 11 has begun but clearing 10 has not run: the newest interest is
+     * still 9's, while the subgraph already holds clearing 9's post-interest
+     * snapshots (tagged 10). Pairing by the CURRENT epoch reads those — the
+     * lock's 430 instead of 421 as "at", 421 instead of 410 as "before".
+     */
+    function boundaryState(): ChainState {
+        const state = baseState();
+        state.currentEpoch = 11;
+        state.clearings = Object.fromEntries(
+            pools(state).map((poolId) => [
+                poolId,
+                Object.fromEntries(
+                    Array.from({ length: 10 }, (_, e) => [e, clearingAt(e)]),
+                ),
+            ]),
+        );
+        return state;
+    }
+
+    it('the last-epoch figures still equal the newest history bar, lock top-up included', async () => {
+        const { history, pool } = await bothReads(boundaryState());
+        for (const [poolId, trancheId] of [
+            [POOL_A, TRANCHE_A1],
+            [POOL_A, TRANCHE_A2],
+            [POOL_B, TRANCHE_B1],
+        ] as const) {
+            const newest = history
+                .filter((e) => e.trancheId === trancheId)
+                .at(-1);
+            expect(newest?.epochId).toBe(9);
+            expect(newest?.netYield).toBe(
+                trancheLastEpoch(pool(poolId), trancheId),
+            );
+        }
+        // A1 @ 9: base 16.25 + the lock's 11-share top-up × 13000 / 12500.
+        expect(trancheLastEpoch(pool(POOL_A), TRANCHE_A1)).toBeCloseTo(
+            16.25 + 11.44,
+            10,
+        );
     });
 });
 

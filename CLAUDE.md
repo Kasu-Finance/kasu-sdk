@@ -375,11 +375,13 @@ second test exists for a withdrawal the pool manager accepts BETWEEN
 clearings (`forceAcceptWithdrawalRequest`): the subgraph tags it `E + 1` and
 writes no tranche snapshot, so the tranche total is the snapshot in force
 less the `WithdrawalAccepted` events of epoch E after it and before the
-clearing. Lock snapshots are still paired by tag (their tags are right).
-Without a clearing start the tag alone pairs. `getPortfolioLendingData` reads
-the base snapshot tagged before `currentEpoch − 2` plus every later one, so
-its candidates are complete for a newest interest in the last two epochs; an
-older one (a pool that stopped clearing) pairs by tag up to the last epoch.
+clearing. Lock snapshots are still paired by tag (their tags are right) —
+by the INTEREST's epoch E and E − 1, never by the current epoch. Without a
+clearing start the tag alone pairs. `getPortfolioLendingData` reads the base
+snapshot tagged before `currentEpoch − 6` (`RECENT_PAIRING_EPOCHS`) plus every
+later one, so its candidates are complete for a newest interest in the last
+six epochs; an older one (a pool that stopped clearing) pairs by tag up to
+the last epoch, as before.
 A spec pins the newest history entry to the last-epoch figure through a
 subgraph emulator, with real Base shapes for the between-clearings
 withdrawal, a zeroed lock and a moved position.

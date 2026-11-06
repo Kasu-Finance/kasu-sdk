@@ -62,6 +62,7 @@ import {
     fetchYieldHistorySeries,
     isEmptyHistoryError,
     resolveYieldHistoryWindow,
+    sharesAsOf,
     sharesAtInterest,
     trancheSharesAtInterest,
     validateYieldHistoryOptions,
@@ -76,10 +77,12 @@ import {
 /**
  * How many epochs back the portfolio read pairs a tranche's newest interest
  * with the shares in force at its clearing (`lendingPortfolioQuery`): the last
- * settled epoch and the one before it, so a clearing that ran late is paired
- * too. An older newest interest is paired by the epoch tag.
+ * six settled epochs, so a pool whose clearings run late or lag a few weeks
+ * behind the others (Base has one) is paired too. An older newest interest —
+ * a pool that stopped clearing — is paired by the epoch tag. The extra rows
+ * are a few per lender and tranche.
  */
-const RECENT_PAIRING_EPOCHS = 2;
+const RECENT_PAIRING_EPOCHS = 6;
 
 /**
  * The ledger (subgraph) and the chain agree on a pool balance within a cent,
@@ -492,6 +495,7 @@ export class Portfolio {
                         epochId: parseFloat(currentEpoch),
                         lastEpochId: previousEpoch.toNumber(),
                         recentEpoch,
+                        lockRecentEpoch: Math.max(0, recentEpoch - 1),
                         unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
                         first: YIELD_HISTORY_PAGE_SIZE,
                     },
@@ -700,31 +704,49 @@ export class Portfolio {
                     trancheSharesNow: parseFloat(
                         lastEpochUserTrancheDetails.tranche.shares,
                     ),
-                    locks: fixedTermDeposits.map((fixedTermDeposit) => ({
-                        active:
-                            parseFloat(fixedTermDeposit.epochLockStart) <
-                                lastEpoch &&
-                            parseFloat(fixedTermDeposit.epochLockEnd) >=
-                                lastEpoch &&
-                            userHasLastEpochShares,
-                        // No snapshot = the lock's opening shares, exactly
-                        // as `getYieldHistory` reads it: a lock made after
-                        // clearing E starts at E with its first update
-                        // tagged E + 1. Never the CURRENT shares, which
-                        // would carry a top-up from a clearing that ran
-                        // after the last settled epoch.
-                        sharesAtEpoch: parseFloat(
-                            fixedTermDeposit.lockSharesAtLastEpoch?.[0]
-                                ?.shares ??
-                                fixedTermDeposit.initialTrancheShares,
-                        ),
-                        sharesBeforeEpoch: parseFloat(
-                            fixedTermDeposit
-                                .userLendingPoolTrancheFixedTermDepositLockShareUpdate?.[0]
-                                ?.shares ??
-                                fixedTermDeposit.initialTrancheShares,
-                        ),
-                    })),
+                    locks: fixedTermDeposits.map((fixedTermDeposit) => {
+                        // Paired by time: the lock's snapshots as of E and
+                        // E − 1 (its tags are right), from the candidates.
+                        // By tag: the last epoch and the one before.
+                        const lockUpdates =
+                            clearingStart === undefined
+                                ? undefined
+                                : [
+                                      ...(fixedTermDeposit.lockSharesBase ??
+                                          []),
+                                      ...(fixedTermDeposit.lockSharesRecent ??
+                                          []),
+                                  ];
+                        const atEpoch = lockUpdates
+                            ? sharesAsOf(lockUpdates, pairingEpoch)
+                            : fixedTermDeposit.lockSharesAtLastEpoch?.[0];
+                        const beforeEpoch = lockUpdates
+                            ? sharesAsOf(lockUpdates, pairingEpoch - 1)
+                            : fixedTermDeposit
+                                  .userLendingPoolTrancheFixedTermDepositLockShareUpdate?.[0];
+                        return {
+                            active:
+                                parseFloat(fixedTermDeposit.epochLockStart) <
+                                    pairingEpoch &&
+                                parseFloat(fixedTermDeposit.epochLockEnd) >=
+                                    pairingEpoch &&
+                                userHasLastEpochShares,
+                            // No snapshot = the lock's opening shares,
+                            // exactly as `getYieldHistory` reads it: a lock
+                            // made after clearing E starts at E with its
+                            // first update tagged E + 1. Never the CURRENT
+                            // shares, which would carry a top-up from a
+                            // clearing that ran after the epoch.
+                            sharesAtEpoch: parseFloat(
+                                atEpoch?.shares ??
+                                    fixedTermDeposit.initialTrancheShares,
+                            ),
+                            sharesBeforeEpoch: parseFloat(
+                                beforeEpoch?.shares ??
+                                    fixedTermDeposit.initialTrancheShares,
+                            ),
+                        };
+                    }),
                 });
 
                 const userTrancheBalance = {

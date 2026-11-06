@@ -512,11 +512,10 @@ export async function fetchYieldHistorySeries(
  * `lendingPortfolioQuery` selects with `orderBy: shareUpdatesIndex, desc,
  * first: 1, where: { epochId_lt: epoch + 1 }`. `undefined` when none.
  */
-export function sharesAsOf(
-    updates: readonly ShareUpdateRow[],
-    epoch: number,
-): ShareUpdateRow | undefined {
-    let found: ShareUpdateRow | undefined;
+export function sharesAsOf<
+    T extends Pick<ShareUpdateRow, 'epochId' | 'shareUpdatesIndex' | 'shares'>,
+>(updates: readonly T[], epoch: number): T | undefined {
+    let found: T | undefined;
     for (const update of updates) {
         if (Number(update.epochId) > epoch) continue;
         if (!found || update.shareUpdatesIndex > found.shareUpdatesIndex) {
