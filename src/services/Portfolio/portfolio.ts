@@ -1,6 +1,11 @@
 import { Provider } from '@ethersproject/providers';
 import { BigNumber, Signer } from 'ethers';
-import { formatEther, parseEther, parseUnits } from 'ethers/lib/utils';
+import {
+    formatEther,
+    formatUnits,
+    parseEther,
+    parseUnits,
+} from 'ethers/lib/utils';
 import { GraphQLClient } from 'graphql-request';
 
 import {
@@ -11,7 +16,7 @@ import {
     IUserLoyaltyRewardsAbi__factory,
 } from '../../contracts';
 import {
-    epochTrancheYield,
+    EpochTrancheYield,
     YieldHistoryEntry,
 } from '../../domain/yield-history';
 import { SdkConfig } from '../../sdk-config';
@@ -35,10 +40,12 @@ import {
     LockingSummarySubgraphResult,
     SystemVariables,
 } from '../Locking/types';
+import { isBlockUnavailableError } from '../shared';
 import { UserLending } from '../UserLending/user-lending';
 
 import { lendingPortfolioQuery } from './queries';
 import {
+    LedgerMismatch,
     LendingPortfolioQueryResult,
     PortfolioLendingPool,
     PortfolioRewards,
@@ -49,8 +56,11 @@ import {
 } from './types';
 import {
     buildYieldHistory,
+    clearingStarts,
     fetchYieldHistorySeries,
     isEmptyHistoryError,
+    positionEpochYield,
+    positionSeriesFrom,
     resolveYieldHistoryWindow,
     validateYieldHistoryOptions,
     YIELD_HISTORY_PAGE_SIZE,
@@ -60,6 +70,74 @@ import {
     yieldHistoryPositionsQuery,
     YieldHistoryPositionsResult,
 } from './yield-history';
+
+/**
+ * How many epochs back the portfolio read pairs a tranche's newest interest
+ * with the shares in force at its clearing (`lendingPortfolioQuery`): the last
+ * six settled epochs, so a pool whose clearings run late or lag a few weeks
+ * behind the others (Base has one) is paired too. A pool whose newest
+ * interest is older (pools clear independently; some only when the
+ * originator repays) is priced from a history read of its own, at that
+ * epoch. The extra rows are a few per lender and tranche.
+ */
+const RECENT_PAIRING_EPOCHS = 6;
+
+/**
+ * The ledger (subgraph) and the chain agree on a balance AT THE SAME BLOCK
+ * within a cent, or a millionth of it — the rounding of two share-price
+ * conversions.
+ */
+const BALANCE_RECONCILE_TOLERANCE = 0.01;
+const BALANCE_RECONCILE_RELATIVE = 1e-6;
+
+function ledgerAgrees(ledger: number, chain: number): boolean {
+    return (
+        Math.abs(ledger - chain) <=
+        Math.max(
+            BALANCE_RECONCILE_TOLERANCE,
+            Math.abs(chain) * BALANCE_RECONCILE_RELATIVE,
+        )
+    );
+}
+
+/**
+ * A list read with `first: $first` that comes back FULL may have been cut:
+ * refuse it rather than price from a truncated read.
+ */
+function refuseTruncated(data: LendingPortfolioQueryResult): void {
+    const full = (rows: readonly unknown[] | undefined): boolean =>
+        (rows?.length ?? 0) >= YIELD_HISTORY_PAGE_SIZE;
+    const lists: [string, boolean][] = [
+        ['lendingPoolClearings', full(data.lendingPoolClearings)],
+        ['recentWithdrawalsAccepted', full(data.recentWithdrawalsAccepted)],
+    ];
+    for (const pool of data.user?.lendingPoolUserDetails ?? []) {
+        for (const position of pool.lendingPoolTrancheUserDetails) {
+            lists.push(
+                [
+                    'recentUserShareUpdates',
+                    full(position.recentUserShareUpdates),
+                ],
+                [
+                    'recentTrancheShareUpdates',
+                    full(position.tranche.recentTrancheShareUpdates),
+                ],
+                ...position.userLendingPoolTrancheFixedTermDepositLocks.map(
+                    (lock): [string, boolean] => [
+                        'lockSharesRecent',
+                        full(lock.lockSharesRecent),
+                    ],
+                ),
+            );
+        }
+    }
+    const cut = lists.find(([, isFull]) => isFull);
+    if (cut) {
+        throw new Error(
+            `getPortfolioLendingData: ${cut[0]} reached ${String(YIELD_HISTORY_PAGE_SIZE)} rows; refusing a possibly truncated read`,
+        );
+    }
+}
 
 export class Portfolio {
     private _lockingService: KSULocking;
@@ -451,30 +529,94 @@ export class Portfolio {
         const previousEpoch = BigNumber.from(currentEpoch).sub(
             BigNumber.from(1),
         );
+        const recentEpoch = Math.max(
+            0,
+            previousEpoch.toNumber() - (RECENT_PAIRING_EPOCHS - 1),
+        );
 
-        const [lastEpochData, portfolioUserTrancheBalances, userPoolBalances] =
-            await Promise.all([
-                this._graph.request<LendingPortfolioQueryResult>(
-                    lendingPortfolioQuery,
-                    {
-                        userAddress: userAddress.toLowerCase(),
-                        epochId: parseFloat(currentEpoch),
-                        lastEpochId: previousEpoch.toNumber(),
-                        unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
-                        first: YIELD_HISTORY_PAGE_SIZE,
-                    },
-                ),
-                this._userLendingService.getPortfolioUserTrancheBalances(
-                    userAddress,
-                ),
-                this._userLendingService.getUserPoolBalance(
-                    userAddress,
-                    poolOverviews.map(({ id }) => id),
-                    provider,
-                ),
-            ]);
+        const unused = new Set(
+            this._kasuConfig.UNUSED_LENDING_POOL_IDS.map((id) =>
+                id.toLowerCase(),
+            ),
+        );
+        const listedPools = poolOverviews.filter(
+            ({ id }) => !unused.has(id.toLowerCase()),
+        );
+
+        const lastEpochData =
+            await this._graph.request<LendingPortfolioQueryResult>(
+                lendingPortfolioQuery,
+                {
+                    userAddress: userAddress.toLowerCase(),
+                    epochId: parseFloat(currentEpoch),
+                    lastEpochId: previousEpoch.toNumber(),
+                    recentEpoch,
+                    lockRecentEpoch: Math.max(0, recentEpoch - 1),
+                    unusedPools: this._kasuConfig.UNUSED_LENDING_POOL_IDS,
+                    poolIds: listedPools.map(({ id }) => id.toLowerCase()),
+                    trancheIds: listedPools.flatMap(({ tranches }) =>
+                        tranches.map(({ id }) => id.toLowerCase()),
+                    ),
+                    first: YIELD_HISTORY_PAGE_SIZE,
+                },
+            );
 
         if (!lastEpochData.user) return [];
+        refuseTruncated(lastEpochData);
+
+        // The pools the lender has a ledger in AND that are listed: the only
+        // ones read on chain, and the only ones reported.
+        const userPools = listedPools.flatMap((overview) => {
+            const details = lastEpochData.user?.lendingPoolUserDetails.find(
+                ({ lendingPool }) =>
+                    lendingPool.id.toLowerCase() === overview.id.toLowerCase(),
+            );
+            return details ? [{ overview, details }] : [];
+        });
+
+        const recentStarts = clearingStarts(lastEpochData.lendingPoolClearings);
+        const recentExits = new Map<
+            string,
+            LendingPortfolioQueryResult['recentWithdrawalsAccepted']
+        >();
+        for (const exit of lastEpochData.recentWithdrawalsAccepted) {
+            const list = recentExits.get(exit.tranche.id) ?? [];
+            list.push(exit);
+            recentExits.set(exit.tranche.id, list);
+        }
+
+        const [chain, staleYields] = await Promise.all([
+            this.readChainAt(lastEpochData._meta?.block.number, (blockTag) =>
+                this._userLendingService.getUserPoolBalancesAt(
+                    userAddress,
+                    userPools.map(({ overview }) => overview.id),
+                    provider,
+                    blockTag,
+                ),
+            ),
+            this.staleLastEpochYields(
+                userPools.flatMap(({ overview, details }) =>
+                    details.lendingPoolTrancheUserDetails.map((position) => ({
+                        poolId: overview.id,
+                        position,
+                    })),
+                ),
+                recentEpoch,
+            ),
+        ]);
+
+        const reconciled = await Promise.all(
+            userPools.map(({ overview, details }, index) =>
+                this.reconcilePool(
+                    userAddress,
+                    overview,
+                    details,
+                    chain.values[index] ?? BigNumber.from(0),
+                    chain.blockTag,
+                    provider,
+                ),
+            ),
+        );
 
         const userRequestsMap = new Map<
             string,
@@ -526,16 +668,12 @@ export class Portfolio {
             }
         }
 
-        let totalInvestments = BigNumber.from(0);
+        for (const [
+            poolIndex,
+            { overview: poolOverview, details },
+        ] of userPools.entries()) {
+            const pool = reconciled[poolIndex];
 
-        for (const poolOverview of poolOverviews) {
-            const userPoolBalance = userPoolBalances.find(
-                ({ poolId }) => poolId === poolOverview.id,
-            );
-            if (!userPoolBalance) {
-                continue;
-            }
-            totalInvestments = userPoolBalance.balance.add(totalInvestments);
             const tranches: (Omit<PortfolioTranche, 'investedAmount'> & {
                 investedAmount: {
                     balance: string;
@@ -545,19 +683,13 @@ export class Portfolio {
 
             let poolYieldEarnedLastEpoch = 0;
 
-            const lendingPoolUserDetails =
-                lastEpochData.user.lendingPoolUserDetails.find(
-                    ({ lendingPool }) => lendingPool.id === poolOverview.id,
-                );
-
-            if (!lendingPoolUserDetails) continue;
-
-            const portfolioUserTrancheBalance =
-                portfolioUserTrancheBalances.get(poolOverview.id);
+            // A ledger crediting shares the wallet does not hold earns
+            // nothing we can vouch for: its last-cycle figures are withheld.
+            const withheld = pool.mismatch?.kind === 'ledger-exceeds-chain';
 
             for (const tranche of poolOverview.tranches) {
                 const lastEpochUserTrancheDetails =
-                    lendingPoolUserDetails.lendingPoolTrancheUserDetails.find(
+                    details.lendingPoolTrancheUserDetails.find(
                         (lendingPool) => lendingPool.tranche.id === tranche.id,
                     );
 
@@ -581,85 +713,82 @@ export class Portfolio {
                     });
                     continue;
                 }
-                const lastEpoch = previousEpoch.toNumber();
 
-                const userHasLastEpochShares = Boolean(
-                    lastEpochUserTrancheDetails
-                        .lendingPoolTrancheUserEpochSharesUpdates?.length,
-                );
+                // The tranche's newest interest (epoch E), priced with the
+                // shares in force when clearing E applied it — the one
+                // selection `getYieldHistory` makes (`positionEpochYield`).
+                // Inside the recent window the candidates below are complete.
+                // An older E (a pool that clears rarely — some only when the
+                // originator repays) is priced from a history read of its own,
+                // and is 0 for a lender who has left the tranche.
+                const newestInterest =
+                    lastEpochUserTrancheDetails.tranche
+                        .lendingPoolTrancheEpochInterest?.[0];
+                const interestEpoch =
+                    newestInterest?.epochId === undefined
+                        ? undefined
+                        : Number(newestInterest.epochId);
 
                 const fixedTermDeposits =
                     lastEpochUserTrancheDetails.userLendingPoolTrancheFixedTermDepositLocks;
 
-                // The one per-epoch formula `getYieldHistory` runs too, with
-                // the same share selection — so the last bar of a history
-                // equals these figures.
-                const lastEpochYield = epochTrancheYield({
-                    epochInterest: parseFloat(
-                        lastEpochUserTrancheDetails.tranche
-                            .lendingPoolTrancheEpochInterest?.[0]
-                            ?.epochInterestAmount ?? '0',
-                    ),
-                    userShares: parseFloat(
-                        lastEpochUserTrancheDetails
-                            .lendingPoolTrancheUserEpochSharesUpdates?.[0]
-                            ?.shares ?? '0',
-                    ),
-                    trancheShares: parseFloat(
-                        lastEpochUserTrancheDetails.tranche
-                            .lendingPoolTrancheShareUpdates?.[0]?.shares ?? '0',
-                    ),
-                    trancheBalanceNow: parseFloat(
-                        lastEpochUserTrancheDetails.tranche.balance,
-                    ),
-                    trancheSharesNow: parseFloat(
-                        lastEpochUserTrancheDetails.tranche.shares,
-                    ),
-                    locks: fixedTermDeposits.map((fixedTermDeposit) => ({
-                        active:
-                            parseFloat(fixedTermDeposit.epochLockStart) <
-                                lastEpoch &&
-                            parseFloat(fixedTermDeposit.epochLockEnd) >=
-                                lastEpoch &&
-                            userHasLastEpochShares,
-                        // No snapshot = the lock's opening shares, exactly
-                        // as `getYieldHistory` reads it: a lock made after
-                        // clearing E starts at E with its first update
-                        // tagged E + 1. Never the CURRENT shares, which
-                        // would carry a top-up from a clearing that ran
-                        // after the last settled epoch.
-                        sharesAtEpoch: parseFloat(
-                            fixedTermDeposit.lockSharesAtLastEpoch?.[0]
-                                ?.shares ??
-                                fixedTermDeposit.initialTrancheShares,
-                        ),
-                        sharesBeforeEpoch: parseFloat(
-                            fixedTermDeposit
-                                .userLendingPoolTrancheFixedTermDepositLockShareUpdate?.[0]
-                                ?.shares ??
-                                fixedTermDeposit.initialTrancheShares,
-                        ),
-                    })),
-                });
-
-                const userTrancheBalance = {
-                    balance: '0',
-                    yieldEarned: 0,
+                const noYield: EpochTrancheYield = {
+                    total: 0,
+                    variable: 0,
+                    locks: fixedTermDeposits.map(() => 0),
                 };
-
-                if (portfolioUserTrancheBalance) {
-                    const portfolioUserTranche =
-                        portfolioUserTrancheBalance.find(
-                            ({ trancheId }) => trancheId === tranche.id,
-                        );
-
-                    if (portfolioUserTranche) {
-                        userTrancheBalance.balance =
-                            portfolioUserTranche.userBalance;
-                        userTrancheBalance.yieldEarned =
-                            portfolioUserTranche.yieldEarned;
-                    }
+                let lastEpochYield = noYield;
+                if (
+                    interestEpoch !== undefined &&
+                    interestEpoch < recentEpoch &&
+                    !withheld
+                ) {
+                    lastEpochYield =
+                        staleYields.get(lastEpochUserTrancheDetails.id) ??
+                        noYield;
+                } else if (interestEpoch !== undefined && !withheld) {
+                    lastEpochYield = positionEpochYield(
+                        {
+                            trancheBalanceNow: parseFloat(
+                                lastEpochUserTrancheDetails.tranche.balance,
+                            ),
+                            trancheSharesNow: parseFloat(
+                                lastEpochUserTrancheDetails.tranche.shares,
+                            ),
+                            userUpdates: [
+                                ...(lastEpochUserTrancheDetails.lendingPoolTrancheUserEpochSharesUpdates ??
+                                    []),
+                                ...(lastEpochUserTrancheDetails.recentUserShareUpdates ??
+                                    []),
+                            ],
+                            trancheUpdates: [
+                                ...(lastEpochUserTrancheDetails.tranche
+                                    .lendingPoolTrancheShareUpdates ?? []),
+                                ...(lastEpochUserTrancheDetails.tranche
+                                    .recentTrancheShareUpdates ?? []),
+                            ],
+                            exits: recentExits.get(tranche.id) ?? [],
+                            locks: fixedTermDeposits.map((lock) => ({
+                                ...lock,
+                                updates: [
+                                    ...(lock.lockSharesBase ?? []),
+                                    ...(lock.lockSharesRecent ?? []),
+                                ],
+                            })),
+                        },
+                        interestEpoch,
+                        parseFloat(newestInterest?.epochInterestAmount ?? '0'),
+                        recentStarts
+                            .get(poolOverview.id.toLowerCase())
+                            ?.get(interestEpoch),
+                    ).yield;
                 }
+
+                const ledger = pool.tranches.get(tranche.id);
+                const userTrancheBalance = {
+                    balance: ledger?.balance ?? '0',
+                    yieldEarned: ledger?.yieldEarned ?? 0,
+                };
 
                 let totalLifetimeFtdYield = 0;
 
@@ -754,9 +883,12 @@ export class Portfolio {
                 totalYieldEarningsLastEpoch: this.precisionToString(
                     poolYieldEarnedLastEpoch,
                 ),
-                totalInvestedAmount: userPoolBalance.balance.toString(),
-                totalYieldEarningsLifetime:
-                    userPoolBalance.yieldEarned.toString(),
+                totalInvestedAmount: pool.chainBalance.toString(),
+                totalYieldEarningsLifetime: pool.lifetime.toString(),
+                ...(pool.mismatch ? { ledgerMismatch: pool.mismatch } : {}),
+                ...(chain.blockTag === undefined
+                    ? { chainPinned: false as const }
+                    : {}),
                 tranches,
             });
         }
@@ -782,13 +914,22 @@ export class Portfolio {
                         tranche.yieldEarnings.lifetime,
                     ).toFixed(6);
 
+                    // Never negative: a variable balance below the locked
+                    // amount is a ledger the chain does not back (the pool
+                    // carries `ledgerMismatch`), not money owed — flagged.
+                    const variableBalance = parseEther(
+                        trancheBalance.balance,
+                    ).sub(lockedAmount);
+                    const floored = variableBalance.isNegative();
+
                     return {
                         ...tranche,
                         investedAmount: formatEther(
-                            parseEther(trancheBalance.balance).sub(
-                                lockedAmount,
-                            ),
+                            floored ? BigNumber.from(0) : variableBalance,
                         ),
+                        ...(floored
+                            ? { investedAmountFloored: true as const }
+                            : {}),
                         yieldEarnings: {
                             ...tranche.yieldEarnings,
                             lifetime: this.precisionToString(
@@ -826,7 +967,12 @@ export class Portfolio {
      * Cost: three parallel `SystemVariables` reads and the positions query in
      * one round, then one subgraph request per page of the longest series
      * (1000 rows a page) — normally two subgraph round trips in all, never one
-     * per epoch.
+     * per epoch — alongside one `LendingPool.userBalance` call per pool at
+     * the subgraph's block. A pool whose ledger credits more than the wallet
+     * holds at that block (shares moved away outside a withdrawal) is left
+     * out; if the node says it cannot serve that block, `latest` is read
+     * and nothing is. Any other failure of those reads (a rate limit, a
+     * network error) THROWS: the history needs a working RPC.
      *
      * On a LITE deployment, a subgraph that lacks the entities (a validation
      * error naming them) yields `[]`; on a full deployment that error throws,
@@ -867,7 +1013,9 @@ export class Portfolio {
             const userTranches: string[] = [];
             const tranches = new Set<string>();
             const locks: string[] = [];
+            const pools: string[] = [];
             for (const pool of positions.user.lendingPoolUserDetails) {
+                pools.push(pool.lendingPool.id);
                 for (const position of pool.lendingPoolTrancheUserDetails) {
                     userTranches.push(position.id);
                     tranches.add(position.tranche.id);
@@ -878,24 +1026,309 @@ export class Portfolio {
             }
             if (userTranches.length === 0) return [];
 
-            const { rows } = await fetchYieldHistorySeries(
-                (variables) =>
-                    this._graph.request<YieldHistoryPageResult>(
-                        yieldHistoryPageQuery,
-                        variables,
+            const [{ rows }, chain] = await Promise.all([
+                fetchYieldHistorySeries(
+                    (variables) =>
+                        this._graph.request<YieldHistoryPageResult>(
+                            yieldHistoryPageQuery,
+                            variables,
+                        ),
+                    { pools, tranches: [...tranches], userTranches, locks },
+                    window,
+                ),
+                this.readChainAt(positions._meta?.block.number, (blockTag) =>
+                    this._userLendingService.getUserPoolBalancesAt(
+                        userAddress,
+                        pools,
+                        undefined,
+                        blockTag,
                     ),
-                { tranches: [...tranches], userTranches, locks },
-                window,
-            );
+                ),
+            ]);
+
+            // A pool whose ledger credits shares the wallet does not hold at
+            // the same block (shares moved away outside a withdrawal) has no
+            // history we can vouch for: it is left out. Unpinned, nothing is.
+            const decimals = this._kasuConfig.stableAssetDecimals;
+            const withheld = new Set<string>();
+            if (chain.blockTag !== undefined) {
+                positions.user.lendingPoolUserDetails.forEach((pool, index) => {
+                    const ledger = pool.lendingPoolTrancheUserDetails.reduce(
+                        (sum, position) =>
+                            sum +
+                            parseFloat(
+                                this._userLendingService.convertSharesToAssets(
+                                    position.shares ?? '0',
+                                    position.tranche.balance,
+                                    position.tranche.shares,
+                                ),
+                            ),
+                        0,
+                    );
+                    const held = parseFloat(
+                        formatUnits(
+                            chain.values[index] ?? BigNumber.from(0),
+                            decimals,
+                        ),
+                    );
+                    if (ledger > held && !ledgerAgrees(ledger, held)) {
+                        withheld.add(pool.lendingPool.id.toLowerCase());
+                    }
+                });
+            }
 
             return buildYieldHistory({ positions, ...rows }, window, {
                 epochZeroStart: epochZeroStart.toNumber(),
                 epochDuration: epochDuration.toNumber(),
-            });
+            }).filter((entry) => !withheld.has(entry.poolId.toLowerCase()));
         } catch (error) {
             if (isEmptyHistoryError(error, this._isLiteDeployment)) return [];
             throw error;
         }
+    }
+
+    /**
+     * Read the chain at the subgraph's block, so the chain and the ledger
+     * describe the same state: after every clearing the subgraph runs a few
+     * blocks behind, and a `latest` read would then disagree with an
+     * honest ledger (interest moved every balance, deposits were accepted)
+     * and book that difference as a ledger fault.
+     *
+     * Only when the node says it cannot serve that block (pruned, or behind
+     * the subgraph: `isBlockUnavailableError`) does it fall back to `latest`,
+     * and it says so (`blockTag: undefined`): unpinned figures are never
+     * compared with the ledger, and `getPortfolioLendingData` marks the pools
+     * `chainPinned: false`. Any other failure — a rate limit, a timeout, a
+     * network error — is thrown, never turned into an unpinned read.
+     */
+    private async readChainAt<T>(
+        block: number | undefined,
+        read: (blockTag: number | undefined) => Promise<T>,
+    ): Promise<{ values: T; blockTag: number | undefined }> {
+        if (block !== undefined) {
+            try {
+                return { values: await read(block), blockTag: block };
+            } catch (error) {
+                if (!isBlockUnavailableError(error)) throw error;
+            }
+        }
+        return { values: await read(undefined), blockTag: undefined };
+    }
+
+    /**
+     * One pool's balances: the ledger's (the subgraph counts a lender's
+     * shares as accepted deposits − accepted withdrawals ± top-ups) checked
+     * against the chain's `LendingPool.userBalance` at the SAME block.
+     *
+     * The ledger does not follow shares that move between wallets any other
+     * way (an administrative move of a position is the case seen on chain):
+     * the receiving wallet goes negative as it withdraws, the sending one
+     * keeps shares it no longer holds. Where the two disagree at that block —
+     * or any ledger balance is negative — the tranche balances are read from
+     * the chain at that block (`userActiveAssets`, one call per tranche), the
+     * tranche's ledger `yieldEarned` moves by the same difference, and the
+     * pool carries `ledgerMismatch`. Unpinned (the node could not serve the
+     * block), only a negative ledger balance is corrected. A pool that agrees
+     * — every ordinary lender — costs nothing extra.
+     *
+     * Lifetime figures stay ledger figures: they cannot tell moved principal
+     * from interest.
+     */
+    private async reconcilePool(
+        userAddress: string,
+        overview: PoolOverview,
+        details: NonNullable<
+            LendingPortfolioQueryResult['user']
+        >['lendingPoolUserDetails'][number],
+        chainBalance: BigNumber,
+        blockTag: number | undefined,
+        provider?: Provider,
+    ): Promise<{
+        chainBalance: BigNumber;
+        lifetime: number;
+        tranches: Map<string, { balance: string; yieldEarned: number }>;
+        mismatch?: LedgerMismatch;
+    }> {
+        const decimals = this._kasuConfig.stableAssetDecimals;
+        const chainTotal = parseFloat(formatUnits(chainBalance, decimals));
+        const lifetime =
+            chainTotal -
+            parseFloat(details.totalAcceptedDeposits) +
+            parseFloat(details.totalAcceptedWithdrawnAmount);
+
+        const tranches = new Map<
+            string,
+            { balance: string; yieldEarned: number }
+        >();
+        for (const position of details.lendingPoolTrancheUserDetails) {
+            const balance = this._userLendingService.convertSharesToAssets(
+                position.shares,
+                position.tranche.balance,
+                position.tranche.shares,
+            );
+            tranches.set(position.tranche.id, {
+                balance,
+                yieldEarned:
+                    parseFloat(balance) -
+                    parseFloat(position.totalAcceptedDeposits) +
+                    parseFloat(position.totalAcceptedWithdrawnAmount),
+            });
+        }
+
+        const ledgerTotal = [...tranches.values()].reduce(
+            (sum, { balance }) => sum + parseFloat(balance),
+            0,
+        );
+        const negative = [...tranches.values()].some(
+            ({ balance }) => parseFloat(balance) < 0,
+        );
+        const disagrees =
+            blockTag !== undefined && !ledgerAgrees(ledgerTotal, chainTotal);
+        if (!negative && !disagrees) {
+            return { chainBalance, lifetime, tranches };
+        }
+
+        const trancheIds = [
+            ...new Set([
+                ...overview.tranches.map(({ id }) => id),
+                ...tranches.keys(),
+            ]),
+        ];
+        const onChain =
+            await this._userLendingService.getUserTrancheActiveAssets(
+                userAddress,
+                trancheIds,
+                provider,
+                blockTag,
+            );
+
+        let phantom = false;
+        const reconciled = new Map<
+            string,
+            { balance: string; yieldEarned: number }
+        >();
+        for (const [index, trancheId] of trancheIds.entries()) {
+            const fromLedger = tranches.get(trancheId);
+            const ledgerBalance = parseFloat(fromLedger?.balance ?? '0');
+            const balance = formatUnits(
+                onChain[index] ?? BigNumber.from(0),
+                decimals,
+            );
+            if (
+                blockTag !== undefined &&
+                ledgerBalance > parseFloat(balance) &&
+                !ledgerAgrees(ledgerBalance, parseFloat(balance))
+            ) {
+                phantom = true;
+            }
+            reconciled.set(trancheId, {
+                balance,
+                yieldEarned:
+                    (fromLedger?.yieldEarned ?? 0) +
+                    parseFloat(balance) -
+                    ledgerBalance,
+            });
+        }
+
+        return {
+            chainBalance,
+            lifetime,
+            tranches: reconciled,
+            mismatch: {
+                kind: phantom ? 'ledger-exceeds-chain' : 'chain-exceeds-ledger',
+                ledgerBalance: String(ledgerTotal),
+                chainBalance: String(chainTotal),
+            },
+        };
+    }
+
+    /**
+     * The last-epoch figures of positions whose newest interest is OLDER than
+     * the recent window. Pools clear independently, and some clear only when
+     * the originator repays, so a pool's last cycle can be weeks back: it is
+     * priced at THAT epoch, from a history read of just those positions over
+     * just those epochs, through the same `positionEpochYield` — so it equals
+     * the history's newest bar.
+     *
+     * A lender who has since left the tranche (no ledger shares now) gets no
+     * figure: an old pool's last cycle is not theirs to show. Costs nothing
+     * when no position qualifies.
+     */
+    private async staleLastEpochYields(
+        positions: {
+            poolId: string;
+            position: NonNullable<
+                LendingPortfolioQueryResult['user']
+            >['lendingPoolUserDetails'][number]['lendingPoolTrancheUserDetails'][number];
+        }[],
+        recentEpoch: number,
+    ): Promise<Map<string, EpochTrancheYield>> {
+        const stale = positions.flatMap(({ poolId, position }) => {
+            const interest =
+                position.tranche.lendingPoolTrancheEpochInterest?.[0];
+            if (interest?.epochId === undefined) return [];
+            if (!(parseFloat(position.shares) > 0)) return [];
+            const epoch = Number(interest.epochId);
+            return epoch < recentEpoch
+                ? [{ poolId, position, epoch, interest }]
+                : [];
+        });
+        const yields = new Map<string, EpochTrancheYield>();
+        if (stale.length === 0) return yields;
+
+        const lockId = (
+            poolId: string,
+            lock: { id?: string; lockId: string },
+        ): string => lock.id ?? `${poolId.toLowerCase()}-${lock.lockId}`;
+
+        const { rows } = await fetchYieldHistorySeries(
+            (variables) =>
+                this._graph.request<YieldHistoryPageResult>(
+                    yieldHistoryPageQuery,
+                    variables,
+                ),
+            {
+                pools: [...new Set(stale.map(({ poolId }) => poolId))].map(
+                    (id) => id.toLowerCase(),
+                ),
+                tranches: [
+                    ...new Set(
+                        stale.map(({ position }) => position.tranche.id),
+                    ),
+                ],
+                userTranches: stale.map(({ position }) => position.id),
+                locks: stale.flatMap(({ poolId, position }) =>
+                    position.userLendingPoolTrancheFixedTermDepositLocks.map(
+                        (lock) => lockId(poolId, lock),
+                    ),
+                ),
+            },
+            {
+                fromEpoch: Math.min(...stale.map(({ epoch }) => epoch)),
+                toEpoch: Math.max(...stale.map(({ epoch }) => epoch)),
+            },
+        );
+        const starts = clearingStarts(rows.clearings);
+
+        for (const { poolId, position, epoch, interest } of stale) {
+            const series = positionSeriesFrom(rows, {
+                ...position,
+                userLendingPoolTrancheFixedTermDepositLocks:
+                    position.userLendingPoolTrancheFixedTermDepositLocks.map(
+                        (lock) => ({ ...lock, id: lockId(poolId, lock) }),
+                    ),
+            });
+            yields.set(
+                position.id,
+                positionEpochYield(
+                    series,
+                    epoch,
+                    parseFloat(interest.epochInterestAmount),
+                    starts.get(poolId.toLowerCase())?.get(epoch),
+                ).yield,
+            );
+        }
+        return yields;
     }
 
     /**

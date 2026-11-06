@@ -362,12 +362,52 @@ they were duplicated across the applications, and the copies drifted.
 | `sponsored-calls.ts`      | Encode the single calls a sponsored relay carries (LPM requests, stable `transfer`), with their `kind` |
 | `explorer-urls.ts`        | `explorerTxUrl` / `explorerAddressUrl` — explorer links from a validated hash or address only |
 
-`yield-history.ts` holds the ONE per-epoch yield formula. Both
-`Portfolio.getPortfolioLendingData` (its last-epoch figures) and
-`Portfolio.getYieldHistory` (every settled epoch) call `epochTrancheYield`
-with the same share selection — the snapshot with the highest
-`shareUpdatesIndex` among those with `epochId ≤ E` — and a spec pins the
-newest history entry to the last-epoch figure through a subgraph emulator.
+`yield-history.ts` holds the ONE per-epoch yield formula, and
+`services/Portfolio/yield-history.ts` the ONE per-position selection,
+`positionEpochYield`. Both `Portfolio.getPortfolioLendingData` (its
+last-epoch figures) and `Portfolio.getYieldHistory` (every settled epoch)
+run it. It prices with the shares IN FORCE WHEN CLEARING E APPLIED E's
+INTEREST. A clearing applies interest first (`ClearingCoordinator.doClearing`),
+then accepts requests, and the subgraph tags everything a clearing writes
+`E + 1`.
+- **Lender:** a snapshot counts when it is tagged `≤ E` OR was written
+  before clearing E's `startTimestamp` (`sharesAtInterest`). The second test
+  exists for a withdrawal the pool manager accepts BETWEEN clearings
+  (`forceAcceptWithdrawalRequest`), which the subgraph tags `E + 1`.
+- **Tranche:** the FIRST snapshot tagged E (written when clearing E − 1
+  ended) less every share exit tagged E before clearing E began
+  (`WithdrawalAccepted` and `ImmediateWithdrawalExecuted`,
+  `trancheSharesAtInterest`). The subgraph writes no snapshot for a
+  between-clearings acceptance, and this needs no ordering within a block.
+- **Locks:** paired by tag at E and E − 1. Their tags are right.
+- **No clearing start:** the tag alone pairs.
+
+`getPortfolioLendingData` reads the base snapshot tagged before
+`currentEpoch − 6` (`RECENT_PAIRING_EPOCHS`) plus every later one. Its
+candidates are therefore complete for a newest interest in the last six
+epochs. Pools clear independently (some only when the originator repays),
+so an older one is still that pool's last cycle: it is priced at its own
+epoch from a history read of just that position (`staleLastEpochYields`), and
+equals the newest history bar. A lender with no ledger shares left in the
+tranche gets 0 there. A list read with
+`first: $first` that comes back full is refused (`refuseTruncated`). A spec
+pins the newest history entry to the last-epoch figure through a subgraph
+emulator, with real Base shapes: the between-clearings withdrawal, an
+immediate withdrawal, a zeroed lock and a moved position.
+
+The subgraph's per-lender shares are a LEDGER (accepted deposits − accepted
+withdrawals ± top-ups). It does not follow shares moved between wallets any
+other way.
+- `epochTrancheYield` books nothing on a share count `≤ 0`, and no top-up
+  outside `MAX_TOP_UP_SHARE_FRACTION` of a lock's shares (a share movement
+  is never yield).
+- `getPortfolioLendingData` reads the chain AT THE SUBGRAPH'S `_meta` BLOCK
+  (`readChainAt`; `latest` and no comparison if the node cannot serve it),
+  so indexing lag is never a mismatch.
+- Where ledger and chain disagree, `reconcilePool` takes tranche balances
+  from the chain and sets `ledgerMismatch`. `ledger-exceeds-chain` withholds
+  the last-cycle figures, and `getYieldHistory` drops that pool.
+
 The subgraph's `epochInterestAmount` (`InterestApplied`) is ALREADY net of the
 performance fee, as is a fixed-term top-up, so the history's `netYield` is
 the computed figure; never take the fee off it again. There is deliberately

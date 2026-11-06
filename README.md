@@ -142,6 +142,22 @@ slightly more than lifetime interest (up to about 0.2 %, top-ups are valued at
 today's share price), so show "earned to date" from the lifetime figure, not
 from the sum of the bars.
 
+Each cycle's interest is paired with the shares in force when that cycle's
+clearing applied it — before the clearing accepted any request — so a
+withdrawal the pool manager accepted between clearings is out of the next
+cycle's figures, and the newest bar equals `getPositions`' last-epoch figure.
+
+The subgraph counts a lender's shares as a ledger of accepted deposits and
+withdrawals. Shares moved to or from a wallet any other way are not on it.
+`getPositions` compares the ledger with the chain AT THE BLOCK THE SUBGRAPH
+ANSWERED AT (so indexing lag is never a fault). Where they disagree it reads
+the tranche balances from the chain, so a balance is never negative, and
+sets `ledgerMismatch` on the pool. `ledger-exceeds-chain` (the wallet sent
+shares away) withholds the pool's last-cycle figures and leaves the pool out
+of `getYieldHistory`. An `investedAmount` raised to 0 carries
+`investedAmountFloored`. Lifetime figures stay ledger figures, which include
+the moved principal.
+
 `kasu.strategies.getPoolTvlHistory(poolId, { fromEpoch?, count?, timeoutMs?,
 signal? })` returns the strategy's TVL (total lent by everyone) as
 `{ epochId, timestamp, tvl, kind }[]`, ascending in time: one

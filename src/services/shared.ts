@@ -46,3 +46,51 @@ export function isEmptyHistoryError(
 ): boolean {
     return liteDeployment && isMissingEntityError(error);
 }
+
+/**
+ * What node implementations and RPC providers answer when they cannot serve
+ * state at a requested block: pruned history, or a block they have not seen
+ * yet. Matched on the error's text, lowercased.
+ */
+const BLOCK_UNAVAILABLE_PATTERNS = [
+    'missing trie node',
+    'header not found',
+    'unknown block',
+    'block not found',
+    'pruned',
+    'historical state',
+    'state is not available',
+    'state not available',
+    'missing state',
+    'state unavailable',
+    'state histories',
+    'block number out of range',
+    'beyond current head',
+    'is in the future',
+] as const;
+
+function errorTexts(error: unknown, depth = 0): string[] {
+    if (depth > 4 || error === null || error === undefined) return [];
+    if (typeof error === 'string') return [error];
+    if (typeof error !== 'object') return [];
+    const record = error as Record<string, unknown>;
+    return [
+        'message',
+        'reason',
+        'body',
+        'error',
+        'data',
+        'serverError',
+    ].flatMap((key) => errorTexts(record[key], depth + 1));
+}
+
+/**
+ * True when a failed RPC read says the node cannot serve state at the block
+ * asked for (pruned, or not reached yet) — and ONLY then. A rate limit, a
+ * timeout, a refused connection or a revert is not this, and must surface as
+ * the error it is.
+ */
+export function isBlockUnavailableError(error: unknown): boolean {
+    const text = errorTexts(error).join(' ').toLowerCase();
+    return BLOCK_UNAVAILABLE_PATTERNS.some((pattern) => text.includes(pattern));
+}

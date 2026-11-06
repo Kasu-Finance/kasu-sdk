@@ -61,20 +61,47 @@ export const lastEpochQuery = gql`
     }
 `;
 
+/**
+ * The portfolio read. Its last-epoch figures pair each tranche's newest
+ * interest (epoch E) with the shares in force when clearing E applied it —
+ * the selection `getYieldHistory` makes (`positionEpochYield`). For that it
+ * reads, per lender and tranche, the newest share snapshot tagged before
+ * `$recentEpoch` and EVERY snapshot tagged from it on (with their times), and,
+ * for the listed pools (`$poolIds`) and tranches (`$trancheIds`), the
+ * clearings and share exits of those recent epochs. `$recentEpoch` is six
+ * epochs back (`RECENT_PAIRING_EPOCHS`); a newest interest older than that (a
+ * pool that clears rarely) is priced from a history read of its own. Lock
+ * snapshots are read the same way from one epoch further back
+ * (`$lockRecentEpoch`), since a top-up compares E with E − 1. Every list read
+ * with `$first` must come back SHORT of it — a full one is refused, never
+ * used truncated. `_meta` is the block the answer describes: the chain is
+ * read at that same block.
+ */
 export const lendingPortfolioQuery = gql`
     query LastEpochQuery(
         $userAddress: ID!
         $epochId: BigInt!
         $lastEpochId: BigInt!
+        $recentEpoch: BigInt!
+        $lockRecentEpoch: BigInt!
         $unusedPools: [String!]!
+        $poolIds: [String!]!
+        $trancheIds: [String!]!
         $first: Int!
     ) {
+        _meta {
+            block {
+                number
+            }
+        }
         user(id: $userAddress) {
             lendingPoolUserDetails(
                 first: $first
                 where: { lendingPool_not_in: $unusedPools }
             ) {
                 id
+                totalAcceptedDeposits
+                totalAcceptedWithdrawnAmount
                 lendingPool {
                     id
                     name
@@ -84,16 +111,34 @@ export const lendingPortfolioQuery = gql`
                     }
                 }
                 lendingPoolTrancheUserDetails(first: $first) {
+                    id
                     shares
+                    totalAcceptedDeposits
+                    totalAcceptedWithdrawnAmount
                     lendingPoolTrancheUserEpochSharesUpdates(
                         orderDirection: desc
                         orderBy: shareUpdatesIndex
-                        where: { epochId_lt: $epochId }
+                        where: { epochId_lt: $recentEpoch }
                         first: 1
                     ) {
+                        epochId
+                        shareUpdatesIndex
                         shares
+                        timestamp
+                    }
+                    recentUserShareUpdates: lendingPoolTrancheUserEpochSharesUpdates(
+                        orderDirection: desc
+                        orderBy: shareUpdatesIndex
+                        where: { epochId_gte: $recentEpoch }
+                        first: $first
+                    ) {
+                        epochId
+                        shareUpdatesIndex
+                        shares
+                        timestamp
                     }
                     userLendingPoolTrancheFixedTermDepositLocks(first: $first) {
+                        id
                         isLocked
                         unlockAmount
                         initialAmount
@@ -125,6 +170,26 @@ export const lendingPortfolioQuery = gql`
                         ) {
                             shares
                         }
+                        lockSharesBase: userLendingPoolTrancheFixedTermDepositLockShareUpdate(
+                            orderBy: shareUpdatesIndex
+                            orderDirection: desc
+                            first: 1
+                            where: { epochId_lt: $lockRecentEpoch }
+                        ) {
+                            epochId
+                            shareUpdatesIndex
+                            shares
+                        }
+                        lockSharesRecent: userLendingPoolTrancheFixedTermDepositLockShareUpdate(
+                            orderBy: shareUpdatesIndex
+                            orderDirection: desc
+                            first: $first
+                            where: { epochId_gte: $lockRecentEpoch }
+                        ) {
+                            epochId
+                            shareUpdatesIndex
+                            shares
+                        }
                     }
                     tranche {
                         id
@@ -134,9 +199,23 @@ export const lendingPortfolioQuery = gql`
                             first: 1
                             orderBy: shareUpdatesIndex
                             orderDirection: desc
-                            where: { epochId_lt: $epochId }
+                            where: { epochId_lt: $recentEpoch }
                         ) {
+                            epochId
+                            shareUpdatesIndex
                             shares
+                            timestamp
+                        }
+                        recentTrancheShareUpdates: lendingPoolTrancheShareUpdates(
+                            first: $first
+                            orderBy: shareUpdatesIndex
+                            orderDirection: desc
+                            where: { epochId_gte: $recentEpoch }
+                        ) {
+                            epochId
+                            shareUpdatesIndex
+                            shares
+                            timestamp
                         }
                         lendingPoolTrancheEpochInterest(
                             first: 1
@@ -144,10 +223,48 @@ export const lendingPortfolioQuery = gql`
                             orderDirection: desc
                             where: { epochId_lt: $epochId }
                         ) {
+                            epochId
                             epochInterestAmount
                         }
                     }
                 }
+            }
+        }
+        lendingPoolClearings(
+            first: $first
+            orderBy: id
+            orderDirection: asc
+            where: {
+                lendingPool_in: $poolIds
+                epochId_gte: $recentEpoch
+                epochId_lt: $epochId
+            }
+        ) {
+            id
+            epochId
+            startTimestamp
+            lendingPool {
+                id
+            }
+        }
+        recentWithdrawalsAccepted: userRequestEvents(
+            first: $first
+            orderBy: id
+            orderDirection: asc
+            where: {
+                type_in: [WithdrawalAccepted, ImmediateWithdrawalExecuted]
+                tranche_in: $trancheIds
+                epochId_gte: $recentEpoch
+                epochId_lt: $epochId
+            }
+        ) {
+            id
+            type
+            epochId
+            createdOn
+            sharesAmount
+            tranche {
+                id
             }
         }
         userRequests(

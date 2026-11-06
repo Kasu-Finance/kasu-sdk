@@ -875,6 +875,52 @@ export class UserLending {
         );
     }
 
+    /**
+     * The lender's ACTIVE assets in each tranche, read from the chain
+     * (`LendingPoolTranche.userActiveAssets`), in the order of `trancheIds`,
+     * in the stable token's base units. Active shares are the ones the lender
+     * owns in the tranche — fixed-term-locked and withdrawal-pending shares
+     * included — whatever path brought them there; `LendingPool.userBalance`
+     * is their sum. One call per tranche.
+     */
+    async getUserTrancheActiveAssets(
+        user: string,
+        trancheIds: readonly string[],
+        provider?: Provider,
+        blockTag?: number,
+    ): Promise<BigNumber[]> {
+        return await Promise.all(
+            trancheIds.map((trancheId) =>
+                ILendingPoolTrancheAbi__factory.connect(
+                    trancheId,
+                    provider ?? this._signerOrProvider,
+                ).userActiveAssets(user, { blockTag: blockTag ?? 'latest' }),
+            ),
+        );
+    }
+
+    /**
+     * The lender's balance in each pool (`LendingPool.userBalance`, the sum
+     * of its tranches' active assets), in the order of `poolIds`, in the
+     * stable token's base units, at `blockTag` (default `latest`). One call
+     * per pool.
+     */
+    async getUserPoolBalancesAt(
+        user: string,
+        poolIds: readonly string[],
+        provider?: Provider,
+        blockTag?: number,
+    ): Promise<BigNumber[]> {
+        return await Promise.all(
+            poolIds.map((poolId) =>
+                ILendingPoolAbi__factory.connect(
+                    poolId,
+                    provider ?? this._signerOrProvider,
+                ).userBalance(user, { blockTag: blockTag ?? 'latest' }),
+            ),
+        );
+    }
+
     async getPortfolioUserTrancheBalances(
         user: string,
     ): Promise<PortfolioUserTrancheBalance> {

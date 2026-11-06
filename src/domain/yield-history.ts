@@ -16,6 +16,35 @@
  * shares are display units of tranche shares, as the subgraph's BigDecimals.
  */
 
+/**
+ * The largest change of a lock's shares, as a fraction of its shares before
+ * the epoch, that one clearing's fixed-term top-up can make. The top-up is
+ * the fixed rate's difference from the variable one on one week's balance
+ * (`LendingPool._applyFixedRateInterests`) — a fraction of a percent at any
+ * real rate — so 5 % is far above every genuine top-up and far below any
+ * accounting fault. A lock-share change outside it is NOT interest: it is
+ * left out of the yield (a share movement is never booked as yield). The one
+ * seen on chain is a lock whose recorded shares were set to zero at a
+ * clearing while its shares stayed in the fixed-term contract.
+ */
+export const MAX_TOP_UP_SHARE_FRACTION = 0.05;
+
+/**
+ * True when `sharesBefore → sharesAt` is a change one clearing's fixed-term
+ * top-up can make (`MAX_TOP_UP_SHARE_FRACTION`). A lock with no shares
+ * before has no top-up at all.
+ */
+export function isPlausibleTopUp(
+    sharesBefore: number,
+    sharesAt: number,
+): boolean {
+    if (!(sharesBefore > 0)) return sharesAt === sharesBefore;
+    return (
+        Math.abs(sharesAt - sharesBefore) <=
+        sharesBefore * MAX_TOP_UP_SHARE_FRACTION
+    );
+}
+
 /** One fixed-term lock inside a tranche position, at one epoch. */
 export interface EpochLockShares {
     /**
@@ -72,31 +101,38 @@ export interface EpochTrancheYield {
  * ```
  *
  * A zero denominator contributes 0 (a tranche or a lender with no shares
- * earned nothing at that close), never `NaN`.
+ * earned nothing at that close), never `NaN`. So does a NEGATIVE share count:
+ * the subgraph's per-lender shares are a ledger of accepted deposits and
+ * withdrawals, and a wallet whose shares arrived some other way (moved to it
+ * from another wallet) withdraws more than the ledger ever credited it. That
+ * position is not one the ledger can describe, and its negative count is not
+ * a negative yield. A lock-share change no top-up can make
+ * (`isPlausibleTopUp`) contributes no top-up.
  */
 export function epochTrancheYield(
     input: EpochTrancheYieldInput,
 ): EpochTrancheYield {
     const base =
-        input.trancheShares === 0
-            ? 0
-            : (input.epochInterest * input.userShares) / input.trancheShares;
+        input.trancheShares > 0 && input.userShares > 0
+            ? (input.epochInterest * input.userShares) / input.trancheShares
+            : 0;
 
     let variable = base;
     const locks = input.locks.map((lock) => {
         if (!lock.active) return 0;
 
         const topUp =
-            input.trancheSharesNow === 0
-                ? 0
-                : ((lock.sharesAtEpoch - lock.sharesBeforeEpoch) *
+            input.trancheSharesNow > 0 &&
+            isPlausibleTopUp(lock.sharesBeforeEpoch, lock.sharesAtEpoch)
+                ? ((lock.sharesAtEpoch - lock.sharesBeforeEpoch) *
                       input.trancheBalanceNow) /
-                  input.trancheSharesNow;
+                  input.trancheSharesNow
+                : 0;
 
         const lockBase =
-            input.userShares === 0
-                ? 0
-                : (base * lock.sharesBeforeEpoch) / input.userShares;
+            input.userShares > 0
+                ? (base * lock.sharesBeforeEpoch) / input.userShares
+                : 0;
 
         variable -= lockBase;
 
