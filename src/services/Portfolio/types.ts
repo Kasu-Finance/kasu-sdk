@@ -169,6 +169,15 @@ export interface LastEpochQueryResult {
     } | null;
 }
 
+/** A tranche or lender share snapshot as the portfolio query reads it. */
+export interface PortfolioShareSnapshot {
+    epochId: string;
+    shareUpdatesIndex: number;
+    shares: string;
+    /** Unix seconds. */
+    timestamp: string;
+}
+
 export interface LendingPortfolioQueryResult {
     user: {
         lendingPoolUserDetails: {
@@ -190,24 +199,29 @@ export interface LendingPortfolioQueryResult {
             lendingPoolTrancheUserDetails: {
                 shares: string;
                 userLendingPoolTrancheFixedTermDepositLocks: UserLendingPoolTrancheFixedTermDepositLock[];
+                /** The newest snapshot tagged before `$recentEpoch`. */
                 lendingPoolTrancheUserEpochSharesUpdates:
-                    | {
-                          shares: string;
-                      }[]
+                    | PortfolioShareSnapshot[]
                     | undefined;
+                /** Every snapshot tagged `$recentEpoch` or later. */
+                recentUserShareUpdates: PortfolioShareSnapshot[] | undefined;
                 totalAcceptedDeposits: string;
                 totalAcceptedWithdrawnAmount: string;
                 tranche: {
                     id: string;
                     shares: string;
                     balance: string;
+                    /** The newest snapshot tagged before `$recentEpoch`. */
                     lendingPoolTrancheShareUpdates:
-                        | {
-                              shares: string;
-                          }[]
+                        | PortfolioShareSnapshot[]
+                        | undefined;
+                    /** Every snapshot tagged `$recentEpoch` or later. */
+                    recentTrancheShareUpdates:
+                        | PortfolioShareSnapshot[]
                         | undefined;
                     lendingPoolTrancheEpochInterest:
                         | {
+                              epochId: string;
                               epochInterestAmount: string;
                           }[]
                         | undefined;
@@ -215,6 +229,21 @@ export interface LendingPortfolioQueryResult {
             }[];
         }[];
     } | null;
+    /** The clearings of `$recentEpoch` up to the last settled epoch. */
+    lendingPoolClearings: {
+        id: string;
+        epochId: string;
+        startTimestamp: string;
+        lendingPool: { id: string };
+    }[];
+    /** Every withdrawal accepted (any lender) in those epochs. */
+    recentWithdrawalsAccepted: {
+        id: string;
+        epochId: string;
+        createdOn: string;
+        sharesAmount: string | null;
+        tranche: { id: string };
+    }[];
     userRequests: {
         createdOn: string;
         amountAccepted: string;

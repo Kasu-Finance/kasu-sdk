@@ -3,6 +3,66 @@
 All notable changes to `@kasufinance/kasu-sdk`. Versions follow semantic
 versioning; earlier releases are described in their commit messages.
 
+## 2.15.1
+
+Each cycle's interest is now paired with the shares it was actually applied
+to. No public API is added, renamed or removed; some figures change (below).
+
+### Fixed
+
+- **A withdrawal accepted between clearings** (the pool manager's
+  `forceAcceptWithdrawalRequest`) left the tranche BEFORE the next clearing
+  applied its interest, but the subgraph tags the lender's update with the
+  following epoch and writes no tranche snapshot. `getYieldHistory` and
+  `getPositions`' last-epoch figures paired that interest with the
+  pre-withdrawal share counts: every other holder of the tranche was
+  credited too little that cycle (by the withdrawn fraction — 24 % in one
+  Base tranche), and the withdrawer was credited interest on shares already
+  gone. Shares are now taken as in force when the clearing APPLIED the
+  interest (a clearing applies interest first, then accepts requests): an
+  update counts when it is tagged at or before the epoch, or written before
+  that clearing began, and the tranche total is the snapshot in force less
+  the withdrawals accepted between clearings since it. Both paths use the
+  same two functions, `sharesAtInterest` and `trancheSharesAtInterest`.
+- **A lock-share change no clearing's top-up can make is no longer yield.**
+  A lock whose recorded shares were set to zero at a clearing (its shares
+  stayed in the fixed-term contract) was booked as a negative "top-up" of
+  every share, valued at today's price. A top-up is now credited only within
+  `MAX_TOP_UP_SHARE_FRACTION` (5 %) of the lock's shares; real top-ups are a
+  fraction of a percent.
+- **A negative ledger share count is no longer a negative yield.** The
+  subgraph counts a lender's shares as accepted deposits minus accepted
+  withdrawals; shares moved to a wallet any other way make that wallet's
+  count go negative as it withdraws. `epochTrancheYield` books nothing on a
+  share count at or below zero.
+- **`getPositions` never shows a negative balance.** Where a pool's ledger
+  balances do not add up to the chain's `LendingPool.userBalance` (or one is
+  negative), the tranche balances are read from the chain
+  (`LendingPoolTranche.userActiveAssets`, one call per tranche — none for a
+  pool that agrees) and the tranche's ledger lifetime moves by the same
+  difference; `investedAmount` is floored at 0.
+
+### Changed figures
+
+- `getYieldHistory` entries and `getPositions`' `totalYieldEarningsLastEpoch`
+  / `yieldEarnings.lastEpoch` for the cycle after a between-clearings
+  withdrawal: higher for the tranche's other holders, lower (often no entry)
+  for the withdrawer.
+- A wallet that received or sent shares outside a deposit or withdrawal:
+  `investedAmount` is what the chain holds, and its history has no negative
+  entries. Its LIFETIME figures remain ledger figures (the moved principal is
+  not interest the ledger can tell apart), and a sending wallet's history
+  keeps crediting the shares the ledger still gives it.
+
+### Cost
+
+- `getYieldHistory`: the same request count; the page query also reads the
+  window's clearings and accepted withdrawals.
+- `getPositions`: the same request count; the portfolio query reads the
+  share snapshots of the last two epochs, those epochs' clearings and
+  accepted withdrawals. Chain reads only for a pool whose ledger and chain
+  disagree.
+
 ## 2.15.0
 
 The fields a strategy's Details screen shows, read the way kasu-ui's Details

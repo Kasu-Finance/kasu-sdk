@@ -126,29 +126,42 @@ export const yieldHistoryPositionsQuery = gql`
 `;
 
 /**
- * Round trip 2 onwards: the four per-epoch series, one page of each per
+ * Round trip 2 onwards: the six per-epoch series, one page of each per
  * request, cursor-paginated by `id`. A series that is exhausted is skipped with
  * `@include`, so a history costs as many requests as its LONGEST series has
  * pages — normally one — never one per epoch.
  *
  * Share snapshots are read up to the window's end with no lower bound: the
- * value AS OF the first epoch may come from an update long before it.
+ * value AS OF the first epoch may come from an update long before it. Each
+ * carries its `timestamp`, and the window's clearings their start, because a
+ * cycle's interest is paired with the shares in force when the clearing
+ * APPLIED it (`sharesAtInterest`), which the epoch tag alone gets wrong for a
+ * withdrawal accepted between clearings — so the lender's updates are read one
+ * tag past the window (`$userSharesToEpoch`), where the subgraph puts it.
+ * Those withdrawals are read too: the subgraph writes no tranche snapshot for
+ * them (`trancheSharesAtInterest`).
  */
 export const yieldHistoryPageQuery = gql`
     query YieldHistoryPage(
+        $pools: [String!]!
         $tranches: [String!]!
         $userTranches: [String!]!
         $locks: [String!]!
         $fromEpoch: BigInt!
         $toEpoch: BigInt!
+        $userSharesToEpoch: BigInt!
         $interestCursor: ID!
         $trancheSharesCursor: ID!
         $userSharesCursor: ID!
         $lockSharesCursor: ID!
+        $clearingsCursor: ID!
+        $withdrawalsCursor: ID!
         $withInterest: Boolean!
         $withTrancheShares: Boolean!
         $withUserShares: Boolean!
         $withLockShares: Boolean!
+        $withClearings: Boolean!
+        $withWithdrawals: Boolean!
         $first: Int!
     ) {
         interest: lendingPoolTrancheEpochInterests(
@@ -183,6 +196,7 @@ export const yieldHistoryPageQuery = gql`
             epochId
             shareUpdatesIndex
             shares
+            timestamp
             lendingPoolTranche {
                 id
             }
@@ -194,13 +208,14 @@ export const yieldHistoryPageQuery = gql`
             where: {
                 id_gt: $userSharesCursor
                 lendingPoolTrancheUserDetails_in: $userTranches
-                epochId_lte: $toEpoch
+                epochId_lte: $userSharesToEpoch
             }
         ) @include(if: $withUserShares) {
             id
             epochId
             shareUpdatesIndex
             shares
+            timestamp
             lendingPoolTrancheUserDetails {
                 id
             }
@@ -220,6 +235,44 @@ export const yieldHistoryPageQuery = gql`
             shareUpdatesIndex
             shares
             userLendingPoolTrancheFixedTermDepositLock {
+                id
+            }
+        }
+        clearings: lendingPoolClearings(
+            first: $first
+            orderBy: id
+            orderDirection: asc
+            where: {
+                id_gt: $clearingsCursor
+                lendingPool_in: $pools
+                epochId_gte: $fromEpoch
+                epochId_lte: $toEpoch
+            }
+        ) @include(if: $withClearings) {
+            id
+            epochId
+            startTimestamp
+            lendingPool {
+                id
+            }
+        }
+        withdrawals: userRequestEvents(
+            first: $first
+            orderBy: id
+            orderDirection: asc
+            where: {
+                id_gt: $withdrawalsCursor
+                type: WithdrawalAccepted
+                tranche_in: $tranches
+                epochId_gte: $fromEpoch
+                epochId_lte: $toEpoch
+            }
+        ) @include(if: $withWithdrawals) {
+            id
+            epochId
+            createdOn
+            sharesAmount
+            tranche {
                 id
             }
         }
@@ -252,6 +305,18 @@ export interface ShareUpdateRow {
     shares: string;
 }
 
+/** A tranche or lender share snapshot, with the block time it was written at. */
+export interface TimedShareUpdateRow extends ShareUpdateRow {
+    /** Unix seconds. */
+    timestamp: string;
+}
+
+/** What the share selection reads from a snapshot — no entity id needed. */
+export type TimedShareSnapshot = Pick<
+    TimedShareUpdateRow,
+    'epochId' | 'shareUpdatesIndex' | 'shares' | 'timestamp'
+>;
+
 export interface InterestRow {
     id: string;
     epochId: string;
@@ -259,28 +324,56 @@ export interface InterestRow {
     lendingPoolTranche: { id: string };
 }
 
+/** A pool's clearing for one epoch: its first transaction applied the interest. */
+export interface ClearingRow {
+    id: string;
+    epochId: string;
+    /** Unix seconds of the clearing's first transaction. */
+    startTimestamp: string;
+    lendingPool: { id: string };
+}
+
+/** One accepted withdrawal (any lender) in a tranche. */
+export interface WithdrawalAcceptedRow {
+    id: string;
+    /** The pool's clearing epoch when it was accepted (`epochClearingId`). */
+    epochId: string;
+    /** Unix seconds. */
+    createdOn: string;
+    sharesAmount: string | null;
+    tranche: { id: string };
+}
+
 export interface YieldHistoryPageResult {
     interest?: InterestRow[];
-    trancheShares?: (ShareUpdateRow & { lendingPoolTranche: { id: string } })[];
-    userShares?: (ShareUpdateRow & {
+    trancheShares?: (TimedShareUpdateRow & {
+        lendingPoolTranche: { id: string };
+    })[];
+    userShares?: (TimedShareUpdateRow & {
         lendingPoolTrancheUserDetails: { id: string };
     })[];
     lockShares?: (ShareUpdateRow & {
         userLendingPoolTrancheFixedTermDepositLock: { id: string };
     })[];
+    clearings?: ClearingRow[];
+    withdrawals?: WithdrawalAcceptedRow[];
 }
 
 /** Everything `buildYieldHistory` reads, keyed by the subgraph's entity ids. */
 export interface YieldHistoryRead {
     positions: YieldHistoryPositionsResult;
     interest: InterestRow[];
-    trancheShares: (ShareUpdateRow & { lendingPoolTranche: { id: string } })[];
-    userShares: (ShareUpdateRow & {
+    trancheShares: (TimedShareUpdateRow & {
+        lendingPoolTranche: { id: string };
+    })[];
+    userShares: (TimedShareUpdateRow & {
         lendingPoolTrancheUserDetails: { id: string };
     })[];
     lockShares: (ShareUpdateRow & {
         userLendingPoolTrancheFixedTermDepositLock: { id: string };
     })[];
+    clearings: ClearingRow[];
+    withdrawals: WithdrawalAcceptedRow[];
 }
 
 /** The chain's epoch clock: epoch E ends at `epochZeroStart + (E + 1) × duration`. */
@@ -294,12 +387,17 @@ type PageRequest = (
 ) => Promise<YieldHistoryPageResult>;
 
 /**
- * Fetch the four series for the window, paginating each by `id` until a short
+ * Fetch the six series for the window, paginating each by `id` until a short
  * page. Returns the rows and how many requests it took.
  */
 export async function fetchYieldHistorySeries(
     request: PageRequest,
-    ids: { tranches: string[]; userTranches: string[]; locks: string[] },
+    ids: {
+        pools: string[];
+        tranches: string[];
+        userTranches: string[];
+        locks: string[];
+    },
     window: YieldHistoryWindow,
 ): Promise<{
     rows: Omit<YieldHistoryRead, 'positions'>;
@@ -310,6 +408,8 @@ export async function fetchYieldHistorySeries(
         trancheShares: [],
         userShares: [],
         lockShares: [],
+        clearings: [],
+        withdrawals: [],
     };
     const series = [
         { key: 'interest', flag: 'withInterest', cursor: 'interestCursor' },
@@ -328,6 +428,16 @@ export async function fetchYieldHistorySeries(
             flag: 'withLockShares',
             cursor: 'lockSharesCursor',
         },
+        {
+            key: 'clearings',
+            flag: 'withClearings',
+            cursor: 'clearingsCursor',
+        },
+        {
+            key: 'withdrawals',
+            flag: 'withWithdrawals',
+            cursor: 'withdrawalsCursor',
+        },
     ] as const;
 
     const cursors: Record<(typeof series)[number]['key'], string> = {
@@ -335,12 +445,16 @@ export async function fetchYieldHistorySeries(
         trancheShares: '',
         userShares: '',
         lockShares: '',
+        clearings: '',
+        withdrawals: '',
     };
     const open: Record<(typeof series)[number]['key'], boolean> = {
         interest: ids.tranches.length > 0,
         trancheShares: ids.tranches.length > 0,
         userShares: ids.userTranches.length > 0,
         lockShares: ids.locks.length > 0,
+        clearings: ids.pools.length > 0,
+        withdrawals: ids.tranches.length > 0,
     };
 
     let requests = 0;
@@ -352,11 +466,15 @@ export async function fetchYieldHistorySeries(
         }
 
         const variables: Record<string, unknown> = {
+            pools: ids.pools,
             tranches: ids.tranches,
             userTranches: ids.userTranches,
             locks: ids.locks,
             fromEpoch: String(window.fromEpoch),
             toEpoch: String(window.toEpoch),
+            // One tag further for the lender: a withdrawal accepted between
+            // clearings is tagged with the epoch AFTER the one it counts in.
+            userSharesToEpoch: String(window.toEpoch + 1),
             first: YIELD_HISTORY_PAGE_SIZE,
         };
         for (const { key, flag, cursor } of series) {
@@ -408,6 +526,102 @@ export function sharesAsOf(
     return found;
 }
 
+/**
+ * The snapshot in force when the clearing of `epoch` APPLIED that epoch's
+ * interest — the shares the interest was actually spread over.
+ *
+ * A clearing applies interest FIRST (`ClearingCoordinator.doClearing`: the
+ * `applyInterests` call before steps 1–5), then accepts deposits and
+ * withdrawals. So an update is in force for epoch E's interest when it is
+ * tagged `≤ E` (the subgraph tags every update written during clearing E, or
+ * after it, `E + 1` or later), OR when it was written before clearing E began
+ * (`timestamp < clearingStart`). The second test is the one that matters: a
+ * withdrawal the pool manager accepts BETWEEN clearings
+ * (`forceAcceptWithdrawalRequest`) is tagged `E + 1` by the subgraph, as if a
+ * clearing had accepted it, yet the shares were gone before clearing E.
+ *
+ * Without a clearing start (none recorded) it is `sharesAsOf` — the tag alone.
+ */
+export function sharesAtInterest<T extends TimedShareSnapshot>(
+    updates: readonly T[],
+    epoch: number,
+    clearingStart: number | undefined,
+): T | undefined {
+    let found: T | undefined;
+    for (const update of updates) {
+        const inForce =
+            Number(update.epochId) <= epoch ||
+            (clearingStart !== undefined &&
+                Number(update.timestamp) < clearingStart);
+        if (!inForce) continue;
+        if (!found || update.shareUpdatesIndex > found.shareUpdatesIndex) {
+            found = update;
+        }
+    }
+    return found;
+}
+
+/**
+ * The tranche's total shares when the clearing of `epoch` applied its
+ * interest: the snapshot in force (`sharesAtInterest`) LESS every withdrawal
+ * accepted between clearings after it and before the clearing began. The
+ * subgraph writes a tranche snapshot at the end of each clearing and at an
+ * immediate withdrawal, but none when a withdrawal is accepted between
+ * clearings, so without this the interest is spread over shares that had
+ * already left, and every holder's figure is low by the withdrawn fraction.
+ *
+ * Such a withdrawal is tagged with the clearing epoch it waited for (`epoch`),
+ * like the ones clearing `epoch` itself accepts — those come at or after its
+ * start, so the time test keeps them out. One in the snapshot's own second
+ * counts as after it: the snapshot is the previous clearing's end, and the
+ * manager can accept a withdrawal in the same block once that clearing ended
+ * (the previous clearing's own acceptances carry the previous epoch). Without
+ * a clearing start it is the snapshot alone.
+ */
+export function trancheSharesAtInterest(
+    snapshots: readonly TimedShareSnapshot[],
+    withdrawals: readonly Pick<
+        WithdrawalAcceptedRow,
+        'epochId' | 'createdOn' | 'sharesAmount'
+    >[],
+    epoch: number,
+    clearingStart: number | undefined,
+): number {
+    const snapshot = sharesAtInterest(snapshots, epoch, clearingStart);
+    let shares = parseFloat(snapshot?.shares ?? '0');
+    if (clearingStart === undefined) return shares;
+
+    const after = snapshot ? Number(snapshot.timestamp) : -Infinity;
+    for (const withdrawal of withdrawals) {
+        const at = Number(withdrawal.createdOn);
+        if (
+            Number(withdrawal.epochId) === epoch &&
+            at >= after &&
+            at < clearingStart
+        ) {
+            shares -= parseFloat(withdrawal.sharesAmount ?? '0');
+        }
+    }
+    return shares;
+}
+
+/** `pool → epoch → clearing start`, from the clearing rows. */
+export function clearingStarts(
+    clearings: readonly ClearingRow[],
+): Map<string, Map<number, number>> {
+    const starts = new Map<string, Map<number, number>>();
+    for (const clearing of clearings) {
+        const start = Number(clearing.startTimestamp);
+        // A clearing not yet started carries 0: no start to pair by.
+        if (!(start > 0)) continue;
+        const pool = clearing.lendingPool.id.toLowerCase();
+        const byEpoch = starts.get(pool) ?? new Map<number, number>();
+        byEpoch.set(Number(clearing.epochId), start);
+        starts.set(pool, byEpoch);
+    }
+    return starts;
+}
+
 function groupBy<T>(
     rows: readonly T[],
     key: (row: T) => string,
@@ -426,7 +640,8 @@ function groupBy<T>(
  * Pure: the fetched series → one entry per pool, tranche and settled epoch in
  * which the lender held shares (or a lock earned a top-up). Each entry runs the
  * same `epochTrancheYield` as the portfolio's last-epoch figure, with the same
- * share selection, so the newest entry equals that figure.
+ * share selection (`sharesAtInterest`, `trancheSharesAtInterest`), so the
+ * newest entry equals that figure.
  *
  * Sorted by `epochId`, then `poolId`, then `trancheId`.
  */
@@ -454,14 +669,22 @@ export function buildYieldHistory(
         read.lockShares,
         (row) => row.userLendingPoolTrancheFixedTermDepositLock.id,
     );
+    const withdrawalsByTranche = groupBy(
+        read.withdrawals,
+        (row) => row.tranche.id,
+    );
+    const starts = clearingStarts(read.clearings);
 
     const entries: YieldHistoryEntry[] = [];
 
     for (const pool of user.lendingPoolUserDetails) {
+        const poolStarts = starts.get(pool.lendingPool.id.toLowerCase());
         for (const position of pool.lendingPoolTrancheUserDetails) {
             const trancheId = position.tranche.id;
             const trancheUpdates = trancheSharesByTranche.get(trancheId) ?? [];
             const userUpdates = userSharesByPosition.get(position.id) ?? [];
+            const trancheWithdrawals =
+                withdrawalsByTranche.get(trancheId) ?? [];
             const trancheBalanceNow = parseFloat(position.tranche.balance);
             const trancheSharesNow = parseFloat(position.tranche.shares);
 
@@ -470,8 +693,13 @@ export function buildYieldHistory(
                 if (epoch < window.fromEpoch || epoch > window.toEpoch) {
                     continue;
                 }
+                const clearingStart = poolStarts?.get(epoch);
 
-                const userSnapshot = sharesAsOf(userUpdates, epoch);
+                const userSnapshot = sharesAtInterest(
+                    userUpdates,
+                    epoch,
+                    clearingStart,
+                );
                 const userShares = parseFloat(userSnapshot?.shares ?? '0');
 
                 const locks: EpochLockShares[] =
@@ -504,8 +732,11 @@ export function buildYieldHistory(
                 const { total } = epochTrancheYield({
                     epochInterest: parseFloat(record.epochInterestAmount),
                     userShares,
-                    trancheShares: parseFloat(
-                        sharesAsOf(trancheUpdates, epoch)?.shares ?? '0',
+                    trancheShares: trancheSharesAtInterest(
+                        trancheUpdates,
+                        trancheWithdrawals,
+                        epoch,
+                        clearingStart,
                     ),
                     trancheBalanceNow,
                     trancheSharesNow,

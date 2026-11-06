@@ -365,9 +365,32 @@ they were duplicated across the applications, and the copies drifted.
 `yield-history.ts` holds the ONE per-epoch yield formula. Both
 `Portfolio.getPortfolioLendingData` (its last-epoch figures) and
 `Portfolio.getYieldHistory` (every settled epoch) call `epochTrancheYield`
-with the same share selection — the snapshot with the highest
-`shareUpdatesIndex` among those with `epochId ≤ E` — and a spec pins the
-newest history entry to the last-epoch figure through a subgraph emulator.
+with the same share selection — `sharesAtInterest` /
+`trancheSharesAtInterest` in `services/Portfolio/yield-history.ts`: the
+shares IN FORCE WHEN CLEARING E APPLIED E's INTEREST. A clearing applies
+interest first (`ClearingCoordinator.doClearing`), then accepts requests, and
+the subgraph tags everything a clearing writes `E + 1`; so a snapshot counts
+when it is tagged `≤ E` OR written before clearing E's `startTimestamp`. The
+second test exists for a withdrawal the pool manager accepts BETWEEN
+clearings (`forceAcceptWithdrawalRequest`): the subgraph tags it `E + 1` and
+writes no tranche snapshot, so the tranche total is the snapshot in force
+less the `WithdrawalAccepted` events of epoch E after it and before the
+clearing. Lock snapshots are still paired by tag (their tags are right).
+Without a clearing start the tag alone pairs. `getPortfolioLendingData` reads
+the base snapshot tagged before `currentEpoch − 2` plus every later one, so
+its candidates are complete for a newest interest in the last two epochs; an
+older one (a pool that stopped clearing) pairs by tag up to the last epoch.
+A spec pins the newest history entry to the last-epoch figure through a
+subgraph emulator, with real Base shapes for the between-clearings
+withdrawal, a zeroed lock and a moved position.
+
+The subgraph's per-lender shares are a LEDGER (accepted deposits − accepted
+withdrawals ± top-ups); it does not follow shares moved between wallets any
+other way. `epochTrancheYield` books nothing on a share count `≤ 0`, books
+no top-up outside `MAX_TOP_UP_SHARE_FRACTION` of a lock's shares (a share
+movement is never yield), and `getPortfolioLendingData` reads tranche
+balances from the chain (`userActiveAssets`) for a pool whose ledger does not
+add up to `LendingPool.userBalance`.
 The subgraph's `epochInterestAmount` (`InterestApplied`) is ALREADY net of the
 performance fee, as is a fixed-term top-up, so the history's `netYield` is
 the computed figure; never take the fee off it again. There is deliberately

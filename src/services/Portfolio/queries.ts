@@ -61,11 +61,24 @@ export const lastEpochQuery = gql`
     }
 `;
 
+/**
+ * The portfolio read. Its last-epoch figures pair each tranche's newest
+ * interest (epoch E) with the shares in force when clearing E applied it —
+ * the same selection `getYieldHistory` makes (`sharesAtInterest`,
+ * `trancheSharesAtInterest`). For that it reads, per lender and tranche, the
+ * newest share snapshot tagged before `$recentEpoch` and EVERY snapshot tagged
+ * from it on (with their times), and, across the pools, the clearings and the
+ * accepted withdrawals of those recent epochs. `$recentEpoch` is two epochs
+ * back, so a pool that cleared the last or the one before is paired by time;
+ * an older newest interest (a pool that stopped clearing) falls back to the
+ * epoch tag.
+ */
 export const lendingPortfolioQuery = gql`
     query LastEpochQuery(
         $userAddress: ID!
         $epochId: BigInt!
         $lastEpochId: BigInt!
+        $recentEpoch: BigInt!
         $unusedPools: [String!]!
         $first: Int!
     ) {
@@ -88,10 +101,24 @@ export const lendingPortfolioQuery = gql`
                     lendingPoolTrancheUserEpochSharesUpdates(
                         orderDirection: desc
                         orderBy: shareUpdatesIndex
-                        where: { epochId_lt: $epochId }
+                        where: { epochId_lt: $recentEpoch }
                         first: 1
                     ) {
+                        epochId
+                        shareUpdatesIndex
                         shares
+                        timestamp
+                    }
+                    recentUserShareUpdates: lendingPoolTrancheUserEpochSharesUpdates(
+                        orderDirection: desc
+                        orderBy: shareUpdatesIndex
+                        where: { epochId_gte: $recentEpoch }
+                        first: $first
+                    ) {
+                        epochId
+                        shareUpdatesIndex
+                        shares
+                        timestamp
                     }
                     userLendingPoolTrancheFixedTermDepositLocks(first: $first) {
                         isLocked
@@ -134,9 +161,23 @@ export const lendingPortfolioQuery = gql`
                             first: 1
                             orderBy: shareUpdatesIndex
                             orderDirection: desc
-                            where: { epochId_lt: $epochId }
+                            where: { epochId_lt: $recentEpoch }
                         ) {
+                            epochId
+                            shareUpdatesIndex
                             shares
+                            timestamp
+                        }
+                        recentTrancheShareUpdates: lendingPoolTrancheShareUpdates(
+                            first: $first
+                            orderBy: shareUpdatesIndex
+                            orderDirection: desc
+                            where: { epochId_gte: $recentEpoch }
+                        ) {
+                            epochId
+                            shareUpdatesIndex
+                            shares
+                            timestamp
                         }
                         lendingPoolTrancheEpochInterest(
                             first: 1
@@ -144,10 +185,42 @@ export const lendingPortfolioQuery = gql`
                             orderDirection: desc
                             where: { epochId_lt: $epochId }
                         ) {
+                            epochId
                             epochInterestAmount
                         }
                     }
                 }
+            }
+        }
+        lendingPoolClearings(
+            first: $first
+            where: {
+                lendingPool_not_in: $unusedPools
+                epochId_gte: $recentEpoch
+                epochId_lt: $epochId
+            }
+        ) {
+            id
+            epochId
+            startTimestamp
+            lendingPool {
+                id
+            }
+        }
+        recentWithdrawalsAccepted: userRequestEvents(
+            first: $first
+            where: {
+                type: WithdrawalAccepted
+                epochId_gte: $recentEpoch
+                epochId_lt: $epochId
+            }
+        ) {
+            id
+            epochId
+            createdOn
+            sharesAmount
+            tranche {
+                id
             }
         }
         userRequests(

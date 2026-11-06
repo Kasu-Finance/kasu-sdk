@@ -1,4 +1,5 @@
 import { BigNumber, providers } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils';
 
 import {
     aggregateYieldHistory,
@@ -16,6 +17,8 @@ import {
     isEmptyHistoryError,
     isMissingEntityError,
     resolveYieldHistoryWindow,
+    sharesAtInterest,
+    trancheSharesAtInterest,
     YIELD_HISTORY_PAGE_SIZE,
     yieldHistoryPageQuery,
     YieldHistoryPageResult,
@@ -46,7 +49,22 @@ const EPOCH_DURATION = 604_800;
 
 interface Update {
     epochId: number;
-    shares: number;
+    shares: number | string;
+    /**
+     * When the subgraph wrote it. Default: during the clearing BEFORE its
+     * tag — an update tagged E is written by clearing E − 1, the subgraph's
+     * own rule for everything a clearing writes.
+     */
+    timestamp?: number;
+}
+
+/** A withdrawal the pool manager accepted (any lender), as the subgraph records it. */
+interface Withdrawal {
+    trancheId: string;
+    /** The pool's clearing epoch when it was accepted. */
+    epochId: number;
+    createdOn: number;
+    shares: string;
 }
 
 interface TrancheState {
@@ -54,20 +72,60 @@ interface TrancheState {
     poolId: string;
     balanceNow: number;
     sharesNow: number;
-    interest: Record<number, number>;
+    interest: Record<number, number | string>;
     trancheUpdates: Update[];
     userUpdates: Update[];
     lock?: {
         id: string;
         epochLockStart: number;
         epochLockEnd: number;
-        initialShares: number;
+        initialShares: number | string;
         updates: Update[];
     };
+    /** The chain's `userActiveAssets` for the lender, display units. Default 1000. */
+    activeAssets?: string;
+    /** The subgraph ledger's balance for the lender, display units. Default 1000. */
+    ledgerBalance?: string;
 }
 
 interface ChainState {
     tranches: TrancheState[];
+    /** Default `CURRENT_EPOCH`. */
+    currentEpoch?: number;
+    /**
+     * Clearing starts per pool and epoch. Default: every pool cleared every
+     * epoch before the current one, at `clearingAt(epoch)`.
+     */
+    clearings?: Record<string, Record<number, number>>;
+    withdrawals?: Withdrawal[];
+}
+
+/** The default clearing time of an epoch: an hour before it ends. */
+const clearingAt = (epoch: number): number =>
+    EPOCH_ZERO_START + (epoch + 1) * EPOCH_DURATION - 3_600;
+
+const currentOf = (state: ChainState): number =>
+    state.currentEpoch ?? CURRENT_EPOCH;
+
+function clearingsOf(
+    state: ChainState,
+): { poolId: string; epochId: number; start: number }[] {
+    if (state.clearings) {
+        return Object.entries(state.clearings).flatMap(([poolId, epochs]) =>
+            Object.entries(epochs).map(([epoch, start]) => ({
+                poolId,
+                epochId: Number(epoch),
+                start,
+            })),
+        );
+    }
+    return pools(state).flatMap((poolId) =>
+        Array.from({ length: currentOf(state) }, (_, epochId) => ({
+            poolId,
+            epochId,
+            start: clearingAt(epochId),
+        })),
+    );
 }
 
 /**
@@ -138,6 +196,7 @@ interface Row {
     epochId: string;
     shareUpdatesIndex: number;
     shares: string;
+    timestamp: string;
 }
 
 const rows = (prefix: string, updates: Update[]): Row[] =>
@@ -146,7 +205,71 @@ const rows = (prefix: string, updates: Update[]): Row[] =>
         epochId: String(u.epochId),
         shareUpdatesIndex: index,
         shares: String(u.shares),
+        timestamp: String(u.timestamp ?? clearingAt(u.epochId - 1)),
     }));
+
+/** A share snapshot as the portfolio query selects it. */
+const snapshot = ({
+    epochId,
+    shareUpdatesIndex,
+    shares,
+    timestamp,
+}: Row): Omit<Row, 'id'> => ({ epochId, shareUpdatesIndex, shares, timestamp });
+
+/** `orderBy: shareUpdatesIndex, desc, first: 1, where: { epochId_lt: bound }`, full rows */
+function newestTaggedBefore(
+    prefix: string,
+    updates: Update[],
+    bound: number,
+): Omit<Row, 'id'>[] {
+    return rows(prefix, updates)
+        .filter((r) => Number(r.epochId) < bound)
+        .sort((a, b) => b.shareUpdatesIndex - a.shareUpdatesIndex)
+        .slice(0, 1)
+        .map(snapshot);
+}
+
+/** `orderBy: shareUpdatesIndex, desc, where: { epochId_gte: bound }` */
+function taggedFrom(
+    prefix: string,
+    updates: Update[],
+    bound: number,
+): Omit<Row, 'id'>[] {
+    return rows(prefix, updates)
+        .filter((r) => Number(r.epochId) >= bound)
+        .sort((a, b) => b.shareUpdatesIndex - a.shareUpdatesIndex)
+        .map(snapshot);
+}
+
+function withdrawalRows(state: ChainState): {
+    id: string;
+    epochId: string;
+    createdOn: string;
+    sharesAmount: string;
+    tranche: { id: string };
+}[] {
+    return (state.withdrawals ?? []).map((w, index) => ({
+        id: `w-${String(index).padStart(4, '0')}`,
+        epochId: String(w.epochId),
+        createdOn: String(w.createdOn),
+        sharesAmount: w.shares,
+        tranche: { id: w.trancheId },
+    }));
+}
+
+function clearingRows(state: ChainState): {
+    id: string;
+    epochId: string;
+    startTimestamp: string;
+    lendingPool: { id: string };
+}[] {
+    return clearingsOf(state).map((c) => ({
+        id: `${c.poolId}-${String(c.epochId).padStart(4, '0')}`,
+        epochId: String(c.epochId),
+        startTimestamp: String(c.start),
+        lendingPool: { id: c.poolId },
+    }));
+}
 
 /** `orderBy: shareUpdatesIndex, desc, first: 1, where: { epochId_lt: bound }` */
 function latestBefore(
@@ -169,9 +292,18 @@ function pools(state: ChainState): string[] {
 function lendingPortfolioResponse(
     state: ChainState,
     epochId: number,
+    recentEpoch: number,
 ): LendingPortfolioQueryResult {
     const lastEpochId = epochId - 1;
+    const recent = (epoch: string): boolean =>
+        Number(epoch) >= recentEpoch && Number(epoch) < epochId;
     return {
+        lendingPoolClearings: clearingRows(state).filter((c) =>
+            recent(c.epochId),
+        ),
+        recentWithdrawalsAccepted: withdrawalRows(state).filter((w) =>
+            recent(w.epochId),
+        ),
         user: {
             lendingPoolUserDetails: pools(state).map((poolId) => ({
                 id: `${poolId}-${USER}`,
@@ -191,10 +323,16 @@ function lendingPortfolioResponse(
                     .filter((t) => t.poolId === poolId)
                     .map((t) => ({
                         shares: String(t.userUpdates.at(-1)?.shares ?? 0),
-                        lendingPoolTrancheUserEpochSharesUpdates: latestBefore(
-                            'u',
+                        lendingPoolTrancheUserEpochSharesUpdates:
+                            newestTaggedBefore(
+                                positionId(t),
+                                t.userUpdates,
+                                recentEpoch,
+                            ),
+                        recentUserShareUpdates: taggedFrom(
+                            positionId(t),
                             t.userUpdates,
-                            epochId,
+                            recentEpoch,
                         ),
                         userLendingPoolTrancheFixedTermDepositLocks: t.lock
                             ? [
@@ -242,10 +380,15 @@ function lendingPortfolioResponse(
                             id: t.id,
                             shares: String(t.sharesNow),
                             balance: String(t.balanceNow),
-                            lendingPoolTrancheShareUpdates: latestBefore(
-                                't',
+                            lendingPoolTrancheShareUpdates: newestTaggedBefore(
+                                t.id,
                                 t.trancheUpdates,
-                                epochId,
+                                recentEpoch,
+                            ),
+                            recentTrancheShareUpdates: taggedFrom(
+                                t.id,
+                                t.trancheUpdates,
+                                recentEpoch,
                             ),
                             lendingPoolTrancheEpochInterest: Object.entries(
                                 t.interest,
@@ -253,7 +396,8 @@ function lendingPortfolioResponse(
                                 .filter(([e]) => Number(e) < epochId)
                                 .sort(([a], [b]) => Number(b) - Number(a))
                                 .slice(0, 1)
-                                .map(([, amount]) => ({
+                                .map(([e, amount]) => ({
+                                    epochId: e,
                                     epochInterestAmount: String(amount),
                                 })),
                         },
@@ -365,8 +509,31 @@ function pageResponse(
                         lendingPoolTrancheUserDetails: { id: positionId(t) },
                     })),
                 )
-                .filter((r) => Number(r.epochId) <= to),
+                .filter(
+                    (r) => Number(r.epochId) <= Number(v.userSharesToEpoch),
+                ),
             v.userSharesCursor as string,
+            Number(v.first),
+        );
+    }
+    if (v.withClearings) {
+        const poolIds = v.pools as string[];
+        result.clearings = page(
+            clearingRows(state)
+                .filter((c) => poolIds.includes(c.lendingPool.id))
+                .filter((c) => Number(c.epochId) >= from)
+                .filter((c) => Number(c.epochId) <= to),
+            v.clearingsCursor as string,
+            Number(v.first),
+        );
+    }
+    if (v.withWithdrawals) {
+        result.withdrawals = page(
+            withdrawalRows(state)
+                .filter((w) => tranches.includes(w.tranche.id))
+                .filter((w) => Number(w.epochId) >= from)
+                .filter((w) => Number(w.epochId) <= to),
+            v.withdrawalsCursor as string,
             Number(v.first),
         );
     }
@@ -400,6 +567,8 @@ interface Harness {
     portfolio: Portfolio;
     request: GraphRequest;
     contractReads: jest.Mock;
+    /** `UserLending.getUserTrancheActiveAssets` — the per-tranche chain reads. */
+    activeAssetReads: jest.Mock;
     poolOverviews: PoolOverview[];
 }
 
@@ -429,7 +598,11 @@ function harness(
             if (graph) return Promise.resolve(graph(document, variables));
             if (document === lendingPortfolioQuery) {
                 return Promise.resolve(
-                    lendingPortfolioResponse(state, Number(variables.epochId)),
+                    lendingPortfolioResponse(
+                        state,
+                        Number(variables.epochId),
+                        Number(variables.recentEpoch),
+                    ),
                 );
             }
             if (document === yieldHistoryPositionsQuery) {
@@ -452,7 +625,7 @@ function harness(
     internals._systemVariablesAbi = {
         currentEpochNumber: (): Promise<BigNumber> => {
             contractReads('currentEpochNumber');
-            return Promise.resolve(BigNumber.from(CURRENT_EPOCH));
+            return Promise.resolve(BigNumber.from(currentOf(state)));
         },
         epochStartTimestamp: (epoch: number): Promise<BigNumber> => {
             contractReads('epochStartTimestamp');
@@ -479,22 +652,41 @@ function harness(
                         .filter((t) => t.poolId === poolId)
                         .map((t) => ({
                             trancheId: t.id,
-                            userBalance: '1000',
+                            userBalance: t.ledgerBalance ?? '1000',
                             yieldEarned: 10,
                         })),
                 ]),
             ),
         );
+    // The chain: `LendingPool.userBalance` is the sum of the tranches'
+    // `userActiveAssets` (6-decimal base units).
+    const activeAssets = (t: TrancheState): BigNumber =>
+        parseUnits(t.activeAssets ?? '1000', 6);
     internals._userLendingService.getUserPoolBalance = (): Promise<
         { poolId: string; balance: BigNumber; yieldEarned: number }[]
     > =>
         Promise.resolve(
             pools(state).map((poolId) => ({
                 poolId,
-                balance: BigNumber.from(1_000_000),
+                balance: state.tranches
+                    .filter((t) => t.poolId === poolId)
+                    .reduce(
+                        (sum, t) => sum.add(activeAssets(t)),
+                        BigNumber.from(0),
+                    ),
                 yieldEarned: 10,
             })),
         );
+    const activeAssetReads = jest.fn(
+        (_user: string, trancheIds: readonly string[]): Promise<BigNumber[]> =>
+            Promise.resolve(
+                trancheIds.map((id) => {
+                    const t = state.tranches.find((x) => x.id === id);
+                    return t ? activeAssets(t) : BigNumber.from(0);
+                }),
+            ),
+    );
+    internals._userLendingService.getUserTrancheActiveAssets = activeAssetReads;
 
     const poolOverviews = pools(state).map(
         (poolId) =>
@@ -506,7 +698,13 @@ function harness(
             }) as unknown as PoolOverview,
     );
 
-    return { portfolio, request, contractReads, poolOverviews };
+    return {
+        portfolio,
+        request,
+        contractReads,
+        activeAssetReads,
+        poolOverviews,
+    };
 }
 
 function trancheLastEpoch(
@@ -531,7 +729,7 @@ async function bothReads(state: ChainState): Promise<{
         portfolio.getPortfolioLendingData(
             USER,
             poolOverviews,
-            String(CURRENT_EPOCH),
+            String(currentOf(state)),
         ),
         portfolio.getYieldHistory(USER),
     ]);
@@ -948,7 +1146,12 @@ describe('getYieldHistory — bounded round trips', () => {
                     Promise.resolve({
                         interest: v.withInterest ? full : undefined,
                     }),
-                { tranches: [TRANCHE_A1], userTranches: [], locks: [] },
+                {
+                    pools: [POOL_A],
+                    tranches: [TRANCHE_A1],
+                    userTranches: [],
+                    locks: [],
+                },
                 { fromEpoch: 0, toEpoch: 9 },
             ),
         ).rejects.toThrow('did not advance');
@@ -964,5 +1167,429 @@ describe('getYieldHistory — bounded round trips', () => {
         );
         await expect(portfolio.getYieldHistory(USER)).resolves.toEqual([]);
         expect(request).toHaveBeenCalledTimes(1);
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Pairing each cycle's interest with the shares it was applied to.
+//
+// The shapes below are real Base subgraph rows (share counts, interest,
+// block times), with every address replaced by a synthetic one.
+// ---------------------------------------------------------------------------
+
+const POOL_C = '0x000000000000000000000000000000000000c001';
+const TRANCHE_C1 = '0x000000000000000000000000000000000000c011';
+const TRANCHE_C2 = '0x000000000000000000000000000000000000c012';
+
+/**
+ * A withdrawal of 73 752.12 shares the pool manager accepted BETWEEN
+ * clearings 122 and 123 (`forceAcceptWithdrawalRequest`). The subgraph tags
+ * the withdrawer's update 124 — as if clearing 123 had accepted it — and
+ * writes no tranche snapshot, so the tranche reads 306 598.81 shares until
+ * clearing 123 ends. Clearing 123 applied 740.18 of interest to what was
+ * left: 232 846.69 shares, exactly the snapshot it wrote at its end.
+ */
+function offClearingWithdrawalState(
+    lender: 'holder' | 'withdrawer',
+): ChainState {
+    return {
+        currentEpoch: 124,
+        clearings: {
+            [POOL_C]: { 121: 1791345715, 122: 1791946585, 123: 1792648817 },
+        },
+        withdrawals: [
+            {
+                trancheId: TRANCHE_C1,
+                epochId: 123,
+                createdOn: 1792116301,
+                shares: '73752.115424943068426361',
+            },
+        ],
+        tranches: [
+            {
+                id: TRANCHE_C1,
+                poolId: POOL_C,
+                balanceNow: 250494.450139,
+                sharesNow: Number('200987.76929789310479339'),
+                interest: { 122: '972.128436', 123: '740.176373' },
+                trancheUpdates: [
+                    {
+                        epochId: 122,
+                        shares: '306598.81009980747452684',
+                        timestamp: 1791345715,
+                    },
+                    {
+                        epochId: 123,
+                        shares: '306598.81009980747452684',
+                        timestamp: 1791946585,
+                    },
+                    {
+                        epochId: 124,
+                        shares: '232846.694674864406100479',
+                        timestamp: 1792648817,
+                    },
+                ],
+                userUpdates:
+                    lender === 'holder'
+                        ? [
+                              {
+                                  epochId: 117,
+                                  shares: '92.543439747524617315',
+                                  timestamp: 1788325749,
+                              },
+                              {
+                                  epochId: 118,
+                                  shares: '211.807088222242248242',
+                                  timestamp: 1789018541,
+                              },
+                          ]
+                        : [
+                              {
+                                  epochId: 97,
+                                  shares: '73752.115424943068426361',
+                                  timestamp: 1776037813,
+                              },
+                              {
+                                  epochId: 124,
+                                  shares: '0',
+                                  timestamp: 1792116301,
+                              },
+                          ],
+            },
+        ],
+    };
+}
+
+/**
+ * A fixed-term lock of 431.00 shares whose recorded shares were set to 0 at
+ * clearing 80 (no withdrawal, no top-up event moving them) while the shares
+ * stayed in the fixed-term contract. Read as a top-up, that is −431 shares of
+ * "yield" — −553 at today's price, for a 500 deposit.
+ */
+function zeroedLockState(): ChainState {
+    return {
+        currentEpoch: 81,
+        clearings: { [POOL_C]: { 79: 1765937461, 80: 1766548897 } },
+        tranches: [
+            {
+                id: TRANCHE_C2,
+                poolId: POOL_C,
+                balanceNow: 2631644.85667,
+                sharesNow: Number('2049088.940978179611446023'),
+                interest: { 79: '3871.057382', 80: '4339.402805' },
+                trancheUpdates: [
+                    {
+                        epochId: 79,
+                        shares: '1477944.280878656768618317',
+                        timestamp: 1765433155,
+                    },
+                    {
+                        epochId: 80,
+                        shares: '1942647.088035513996278627',
+                        timestamp: 1765937461,
+                    },
+                    {
+                        epochId: 80,
+                        shares: '1653014.919696082472702442',
+                        timestamp: 1766009997,
+                    },
+                    {
+                        epochId: 81,
+                        shares: '1784374.252504025714212697',
+                        timestamp: 1766548897,
+                    },
+                ],
+                userUpdates: [
+                    {
+                        epochId: 80,
+                        shares: '431.000250505106433893',
+                        timestamp: 1765937461,
+                    },
+                    { epochId: 81, shares: '0', timestamp: 1766548897 },
+                ],
+                lock: {
+                    id: `${POOL_C}-1`,
+                    epochLockStart: 79,
+                    epochLockEnd: 92,
+                    initialShares: '431.000250505106433893',
+                    updates: [
+                        {
+                            epochId: 79,
+                            shares: '431.000250505106433893',
+                            timestamp: 1765937461,
+                        },
+                        { epochId: 80, shares: '0', timestamp: 1766548897 },
+                    ],
+                },
+            },
+        ],
+    };
+}
+
+/**
+ * Shares moved between wallets outside a deposit or withdrawal. The
+ * subgraph ledger does not follow the move: the receiving wallet's ledger
+ * goes NEGATIVE as it withdraws (−861.998, then −30 017.29 shares), and the
+ * sending wallet keeps the shares on the ledger. The chain holds neither.
+ */
+function movedSharesState(side: 'received' | 'sent'): ChainState {
+    return {
+        currentEpoch: 103,
+        tranches: [
+            {
+                id: TRANCHE_C1,
+                poolId: POOL_C,
+                balanceNow: 250494.450139,
+                sharesNow: Number('200987.76929789310479339'),
+                interest: {
+                    99: '972.1',
+                    100: '968.4',
+                    101: '960.2',
+                    102: '958.8',
+                },
+                trancheUpdates: [{ epochId: 95, shares: '306598.81' }],
+                userUpdates:
+                    side === 'received'
+                        ? [
+                              {
+                                  epochId: 99,
+                                  shares: '-861.998232423727442722',
+                                  timestamp: 1777253435,
+                              },
+                              {
+                                  epochId: 101,
+                                  shares: '-30017.2882178693575841',
+                                  timestamp: 1778119317,
+                              },
+                          ]
+                        : [{ epochId: 90, shares: '30879.286450293085026822' }],
+                ledgerBalance:
+                    side === 'received'
+                        ? '-37411.053085795351083519'
+                        : '37411.053085795351083519',
+                activeAssets: '0',
+            },
+        ],
+    };
+}
+
+function only(lending: PortfolioLendingPool[]): PortfolioLendingPool {
+    expect(lending).toHaveLength(1);
+    return lending[0];
+}
+
+describe('getYieldHistory — interest paired with the shares it was applied to', () => {
+    it('a withdrawal accepted between clearings leaves the tranche before the next interest', async () => {
+        const { history, lending } = await bothReads(
+            offClearingWithdrawalState('holder'),
+        );
+        // 122: the withdrawal had not happened — 306 598.81 shares.
+        // 123: it had — 232 846.69. The epoch tag alone reads 306 598.81 at
+        // 123 too, and books 0.5113 instead of 0.6733.
+        const byEpoch = new Map(history.map((e) => [e.epochId, e.netYield]));
+        expect(byEpoch.get(122)).toBeCloseTo(
+            (972.128436 * Number('211.807088222242248242')) /
+                Number('306598.81009980747452684'),
+            10,
+        );
+        expect(byEpoch.get(123)).toBeCloseTo(
+            (740.176373 * Number('211.807088222242248242')) /
+                Number('232846.694674864406100479'),
+            10,
+        );
+        expect(byEpoch.get(123)).toBeCloseTo(0.6733, 4);
+        // getPositions' last-epoch figure ("Earned last cycle") is the same.
+        expect(
+            parseFloat(only(lending).totalYieldEarningsLastEpoch),
+        ).toBeCloseTo(byEpoch.get(123) ?? NaN, 10);
+    });
+
+    it('the withdrawer earns nothing at the clearing after the withdrawal', async () => {
+        const { history, lending } = await bothReads(
+            offClearingWithdrawalState('withdrawer'),
+        );
+        expect(history.map((e) => e.epochId)).toEqual([122]);
+        expect(history[0]?.netYield).toBeCloseTo(
+            (972.128436 * Number('73752.115424943068426361')) /
+                Number('306598.81009980747452684'),
+            8,
+        );
+        // Not 740.18 × 73 752 / 306 599 = 178.05 for shares already gone.
+        expect(only(lending).totalYieldEarningsLastEpoch).toBe('0');
+    });
+
+    it('every share of the tranche is credited once: holder + withdrawer = the shares in force', async () => {
+        const holder = await bothReads(offClearingWithdrawalState('holder'));
+        const withdrawer = await bothReads(
+            offClearingWithdrawalState('withdrawer'),
+        );
+        const at = (h: YieldHistoryEntry[], e: number): number =>
+            h.find((x) => x.epochId === e)?.netYield ?? 0;
+        // At 123 the withdrawer's shares are gone, so their part of the
+        // interest is 0 and nobody's figure carries them.
+        expect(at(withdrawer.history, 123)).toBe(0);
+        expect(
+            at(holder.history, 123) / Number('211.807088222242248242'),
+        ).toBeCloseTo(740.176373 / Number('232846.694674864406100479'), 12);
+    });
+
+    it('without a recorded clearing start, pairs by the epoch tag as before', async () => {
+        const state = offClearingWithdrawalState('holder');
+        state.clearings = { [POOL_C]: { 121: 1791345715, 122: 1791946585 } };
+        const { history } = await bothReads(state);
+        expect(history.find((e) => e.epochId === 123)?.netYield).toBeCloseTo(
+            (740.176373 * Number('211.807088222242248242')) /
+                Number('306598.81009980747452684'),
+            10,
+        );
+    });
+
+    it('a lock whose shares were zeroed books no negative yield, in the history AND the last-epoch figures', async () => {
+        const { history, lending } = await bothReads(zeroedLockState());
+        const base =
+            (4339.402805 * Number('431.000250505106433893')) /
+            Number('1653014.919696082472702442');
+        // 79: the lender's shares arrived AT clearing 79, after its interest.
+        // 80: the base interest only — never −431 shares × today's price.
+        // 81 onwards: no shares, no entry.
+        expect(history.map((e) => e.epochId)).toEqual([80]);
+        expect(history[0]?.netYield).toBeCloseTo(base, 10);
+        for (const e of history) expect(e.netYield).toBeGreaterThan(0);
+
+        const tranche = only(lending).tranches[0];
+        expect(
+            parseFloat(only(lending).totalYieldEarningsLastEpoch),
+        ).toBeCloseTo(base, 10);
+        expect(
+            parseFloat(tranche.fixedLoans[0].yieldEarnings.lastEpoch),
+        ).toBeCloseTo(base, 10);
+    });
+
+    it('shares received from another wallet book no negative yield', async () => {
+        const { history, lending } = await bothReads(
+            movedSharesState('received'),
+        );
+        expect(history).toEqual([]);
+        expect(only(lending).totalYieldEarningsLastEpoch).toBe('0');
+    });
+});
+
+describe('getPortfolioLendingData — balances the chain backs', () => {
+    it('a wallet that received shares never shows a negative balance', async () => {
+        const { portfolio, poolOverviews, activeAssetReads } = harness(
+            movedSharesState('received'),
+        );
+        const lending = await portfolio.getPortfolioLendingData(
+            USER,
+            poolOverviews,
+            '103',
+        );
+        // The ledger says −37 411.05; the chain says 0.
+        expect(only(lending).tranches[0].investedAmount).toBe('0.0');
+        expect(activeAssetReads).toHaveBeenCalledTimes(1);
+        expect(activeAssetReads).toHaveBeenCalledWith(
+            USER,
+            [TRANCHE_C1],
+            undefined,
+        );
+    });
+
+    it('a wallet that sent its shares away shows what the chain holds, not the ledger', async () => {
+        const { portfolio, poolOverviews } = harness(movedSharesState('sent'));
+        const lending = await portfolio.getPortfolioLendingData(
+            USER,
+            poolOverviews,
+            '103',
+        );
+        expect(only(lending).tranches[0].investedAmount).toBe('0.0');
+    });
+
+    it('takes the chain balance, and moves the ledger yield with it, when the two disagree', async () => {
+        const state = movedSharesState('received');
+        state.tranches[0].activeAssets = '1250.5';
+        const { portfolio, poolOverviews } = harness(state);
+        const lending = await portfolio.getPortfolioLendingData(
+            USER,
+            poolOverviews,
+            '103',
+        );
+        const tranche = only(lending).tranches[0];
+        expect(tranche.investedAmount).toBe('1250.5');
+        // The ledger's 10 moves by the same difference as the balance.
+        expect(parseFloat(tranche.yieldEarnings.lifetime)).toBeCloseTo(
+            10 + 1250.5 - Number('-37411.053085795351083519'),
+            6,
+        );
+    });
+
+    it('costs no chain read when the ledger and the chain agree', async () => {
+        const { portfolio, poolOverviews, activeAssetReads } =
+            harness(baseState());
+        await portfolio.getPortfolioLendingData(
+            USER,
+            poolOverviews,
+            String(CURRENT_EPOCH),
+        );
+        expect(activeAssetReads).not.toHaveBeenCalled();
+    });
+});
+
+describe('sharesAtInterest / trancheSharesAtInterest', () => {
+    const tranche = offClearingWithdrawalState('holder').tranches[0];
+    const snapshots = rows(TRANCHE_C1, tranche.trancheUpdates);
+    const withdrawal = {
+        epochId: '123',
+        createdOn: '1792116301',
+        sharesAmount: '73752.115424943068426361',
+    };
+
+    it('takes the withdrawal accepted between clearings off the snapshot', () => {
+        expect(
+            trancheSharesAtInterest(snapshots, [withdrawal], 123, 1792648817),
+        ).toBeCloseTo(Number('232846.694674864406100479'), 9);
+    });
+
+    it('leaves out a withdrawal the clearing itself accepted (at or after its start)', () => {
+        expect(
+            trancheSharesAtInterest(
+                snapshots,
+                [{ ...withdrawal, createdOn: '1792648817' }],
+                123,
+                1792648817,
+            ),
+        ).toBeCloseTo(Number('306598.81009980747452684'), 9);
+    });
+
+    it('leaves out a withdrawal of another epoch', () => {
+        expect(
+            trancheSharesAtInterest(
+                snapshots,
+                [{ ...withdrawal, epochId: '122' }],
+                123,
+                1792648817,
+            ),
+        ).toBeCloseTo(Number('306598.81009980747452684'), 9);
+    });
+
+    it('a lender update tagged after the epoch but written before its clearing is in force', () => {
+        const updates = rows('w', [
+            { epochId: 97, shares: '73752.1', timestamp: 1776037813 },
+            { epochId: 124, shares: '0', timestamp: 1792116301 },
+        ]);
+        expect(sharesAtInterest(updates, 123, 1792648817)?.shares).toBe('0');
+        // By the tag alone it would still be the 73 752.1.
+        expect(sharesAtInterest(updates, 123, undefined)?.shares).toBe(
+            '73752.1',
+        );
+    });
+
+    it('an update written AT the clearing (its own acceptances) is not', () => {
+        const updates = rows('d', [
+            { epochId: 118, shares: '211.8', timestamp: 1789018541 },
+            { epochId: 124, shares: '370.7', timestamp: 1792648817 },
+        ]);
+        expect(sharesAtInterest(updates, 123, 1792648817)?.shares).toBe(
+            '211.8',
+        );
     });
 });
