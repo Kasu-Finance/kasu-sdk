@@ -59,7 +59,6 @@ import {
     fetchYieldHistorySeries,
     isEmptyHistoryError,
     positionEpochYield,
-    positionSeriesFrom,
     resolveYieldHistoryWindow,
     validateYieldHistoryOptions,
     YIELD_HISTORY_PAGE_SIZE,
@@ -74,9 +73,10 @@ import {
  * How many epochs back the portfolio read pairs a tranche's newest interest
  * with the shares in force at its clearing (`lendingPortfolioQuery`): the last
  * six settled epochs, so a pool whose clearings run late or lag a few weeks
- * behind the others (Base has one) is paired too. An older newest interest —
- * a pool that stopped clearing — is paired by the epoch tag. The extra rows
- * are a few per lender and tranche.
+ * behind the others (Base has one) is paired too. A pool whose newest
+ * interest is older — it stopped clearing — has no last cycle: its last-epoch
+ * figures are 0 (`getYieldHistory` still shows its bars). The extra rows are
+ * a few per lender and tranche.
  */
 const RECENT_PAIRING_EPOCHS = 6;
 
@@ -583,25 +583,16 @@ export class Portfolio {
             recentExits.set(exit.tranche.id, list);
         }
 
-        const [chain, staleYields] = await Promise.all([
-            this.readChainAt(lastEpochData._meta?.block.number, (blockTag) =>
+        const chain = await this.readChainAt(
+            lastEpochData._meta?.block.number,
+            (blockTag) =>
                 this._userLendingService.getUserPoolBalancesAt(
                     userAddress,
                     userPools.map(({ overview }) => overview.id),
                     provider,
                     blockTag,
                 ),
-            ),
-            this.staleLastEpochYields(
-                userPools.flatMap(({ overview, details }) =>
-                    details.lendingPoolTrancheUserDetails.map((position) => ({
-                        poolId: overview.id,
-                        position,
-                    })),
-                ),
-                recentEpoch,
-            ),
-        ]);
+        );
 
         const reconciled = await Promise.all(
             userPools.map(({ overview, details }, index) =>
@@ -715,8 +706,9 @@ export class Portfolio {
                 // The tranche's newest interest (epoch E), priced with the
                 // shares in force when clearing E applied it — the one
                 // selection `getYieldHistory` makes (`positionEpochYield`).
-                // Inside the recent window the candidates below are complete;
-                // an older E was priced from a history read of its own.
+                // Inside the recent window the candidates below are complete.
+                // An older E is not the last cycle any more (the pool stopped
+                // clearing): the figure is 0, and the history keeps its bars.
                 const newestInterest =
                     lastEpochUserTrancheDetails.tranche
                         .lendingPoolTrancheEpochInterest?.[0];
@@ -734,55 +726,46 @@ export class Portfolio {
                     locks: fixedTermDeposits.map(() => 0),
                 };
                 let lastEpochYield = noYield;
-                if (interestEpoch !== undefined && !withheld) {
-                    lastEpochYield =
-                        interestEpoch >= recentEpoch
-                            ? positionEpochYield(
-                                  {
-                                      trancheBalanceNow: parseFloat(
-                                          lastEpochUserTrancheDetails.tranche
-                                              .balance,
-                                      ),
-                                      trancheSharesNow: parseFloat(
-                                          lastEpochUserTrancheDetails.tranche
-                                              .shares,
-                                      ),
-                                      userUpdates: [
-                                          ...(lastEpochUserTrancheDetails.lendingPoolTrancheUserEpochSharesUpdates ??
-                                              []),
-                                          ...(lastEpochUserTrancheDetails.recentUserShareUpdates ??
-                                              []),
-                                      ],
-                                      trancheUpdates: [
-                                          ...(lastEpochUserTrancheDetails
-                                              .tranche
-                                              .lendingPoolTrancheShareUpdates ??
-                                              []),
-                                          ...(lastEpochUserTrancheDetails
-                                              .tranche
-                                              .recentTrancheShareUpdates ?? []),
-                                      ],
-                                      exits: recentExits.get(tranche.id) ?? [],
-                                      locks: fixedTermDeposits.map((lock) => ({
-                                          ...lock,
-                                          updates: [
-                                              ...(lock.lockSharesBase ?? []),
-                                              ...(lock.lockSharesRecent ?? []),
-                                          ],
-                                      })),
-                                  },
-                                  interestEpoch,
-                                  parseFloat(
-                                      newestInterest?.epochInterestAmount ??
-                                          '0',
-                                  ),
-                                  recentStarts
-                                      .get(poolOverview.id.toLowerCase())
-                                      ?.get(interestEpoch),
-                              ).yield
-                            : (staleYields.get(
-                                  lastEpochUserTrancheDetails.id,
-                              ) ?? noYield);
+                if (
+                    interestEpoch !== undefined &&
+                    interestEpoch >= recentEpoch &&
+                    !withheld
+                ) {
+                    lastEpochYield = positionEpochYield(
+                        {
+                            trancheBalanceNow: parseFloat(
+                                lastEpochUserTrancheDetails.tranche.balance,
+                            ),
+                            trancheSharesNow: parseFloat(
+                                lastEpochUserTrancheDetails.tranche.shares,
+                            ),
+                            userUpdates: [
+                                ...(lastEpochUserTrancheDetails.lendingPoolTrancheUserEpochSharesUpdates ??
+                                    []),
+                                ...(lastEpochUserTrancheDetails.recentUserShareUpdates ??
+                                    []),
+                            ],
+                            trancheUpdates: [
+                                ...(lastEpochUserTrancheDetails.tranche
+                                    .lendingPoolTrancheShareUpdates ?? []),
+                                ...(lastEpochUserTrancheDetails.tranche
+                                    .recentTrancheShareUpdates ?? []),
+                            ],
+                            exits: recentExits.get(tranche.id) ?? [],
+                            locks: fixedTermDeposits.map((lock) => ({
+                                ...lock,
+                                updates: [
+                                    ...(lock.lockSharesBase ?? []),
+                                    ...(lock.lockSharesRecent ?? []),
+                                ],
+                            })),
+                        },
+                        interestEpoch,
+                        parseFloat(newestInterest?.epochInterestAmount ?? '0'),
+                        recentStarts
+                            .get(poolOverview.id.toLowerCase())
+                            ?.get(interestEpoch),
+                    ).yield;
                 }
 
                 const ledger = pool.tranches.get(tranche.id);
@@ -1232,88 +1215,6 @@ export class Portfolio {
                 chainBalance: String(chainTotal),
             },
         };
-    }
-
-    /**
-     * The last-epoch figures of positions whose newest interest is OLDER than
-     * the recent window (a pool that stopped clearing): priced from a history
-     * read of just those positions over just those epochs, through the same
-     * `positionEpochYield`. Costs nothing when there is none.
-     */
-    private async staleLastEpochYields(
-        positions: {
-            poolId: string;
-            position: NonNullable<
-                LendingPortfolioQueryResult['user']
-            >['lendingPoolUserDetails'][number]['lendingPoolTrancheUserDetails'][number];
-        }[],
-        recentEpoch: number,
-    ): Promise<Map<string, EpochTrancheYield>> {
-        const stale = positions.flatMap(({ poolId, position }) => {
-            const interest =
-                position.tranche.lendingPoolTrancheEpochInterest?.[0];
-            if (interest?.epochId === undefined) return [];
-            const epoch = Number(interest.epochId);
-            return epoch < recentEpoch
-                ? [{ poolId, position, epoch, interest }]
-                : [];
-        });
-        const yields = new Map<string, EpochTrancheYield>();
-        if (stale.length === 0) return yields;
-
-        const lockId = (
-            poolId: string,
-            lock: { id?: string; lockId: string },
-        ): string => lock.id ?? `${poolId.toLowerCase()}-${lock.lockId}`;
-
-        const { rows } = await fetchYieldHistorySeries(
-            (variables) =>
-                this._graph.request<YieldHistoryPageResult>(
-                    yieldHistoryPageQuery,
-                    variables,
-                ),
-            {
-                pools: [...new Set(stale.map(({ poolId }) => poolId))].map(
-                    (id) => id.toLowerCase(),
-                ),
-                tranches: [
-                    ...new Set(
-                        stale.map(({ position }) => position.tranche.id),
-                    ),
-                ],
-                userTranches: stale.map(({ position }) => position.id),
-                locks: stale.flatMap(({ poolId, position }) =>
-                    position.userLendingPoolTrancheFixedTermDepositLocks.map(
-                        (lock) => lockId(poolId, lock),
-                    ),
-                ),
-            },
-            {
-                fromEpoch: Math.min(...stale.map(({ epoch }) => epoch)),
-                toEpoch: Math.max(...stale.map(({ epoch }) => epoch)),
-            },
-        );
-        const starts = clearingStarts(rows.clearings);
-
-        for (const { poolId, position, epoch, interest } of stale) {
-            const series = positionSeriesFrom(rows, {
-                ...position,
-                userLendingPoolTrancheFixedTermDepositLocks:
-                    position.userLendingPoolTrancheFixedTermDepositLocks.map(
-                        (lock) => ({ ...lock, id: lockId(poolId, lock) }),
-                    ),
-            });
-            yields.set(
-                position.id,
-                positionEpochYield(
-                    series,
-                    epoch,
-                    parseFloat(interest.epochInterestAmount),
-                    starts.get(poolId.toLowerCase())?.get(epoch),
-                ).yield,
-            );
-        }
-        return yields;
     }
 
     /**

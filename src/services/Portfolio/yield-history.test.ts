@@ -1576,10 +1576,28 @@ describe('getYieldHistory — interest paired with the shares it was applied to'
         ).toBeCloseTo(base, 10);
     });
 
-    it('a pool that stopped clearing is priced by its interest epoch too, like the history', async () => {
-        // Epoch 20: every newest interest (9) is older than the recent window.
+    it('a pool that stopped clearing has no last cycle: 0, while the history keeps its bars', async () => {
+        // Epoch 20: every newest interest (9) is older than the six-epoch
+        // window — the pools stopped clearing.
         const state = baseState();
         state.currentEpoch = 20;
+        const { history, pool, lending } = await bothReads(state);
+        expect([...new Set(history.map((e) => e.epochId))]).toEqual([7, 8, 9]);
+        for (const [poolId, trancheId] of [
+            [POOL_A, TRANCHE_A1],
+            [POOL_A, TRANCHE_A2],
+            [POOL_B, TRANCHE_B1],
+        ] as const) {
+            expect(trancheLastEpoch(pool(poolId), trancheId)).toBe(0);
+        }
+        for (const p of lending)
+            expect(p.totalYieldEarningsLastEpoch).toBe('0');
+    });
+
+    it('a pool inside the window is still priced by its interest epoch (a clearing six epochs late)', async () => {
+        // Epoch 15: the newest interest (9) is exactly at the window's edge.
+        const state = baseState();
+        state.currentEpoch = 15;
         const { history, pool } = await bothReads(state);
         for (const [poolId, trancheId] of [
             [POOL_A, TRANCHE_A1],
