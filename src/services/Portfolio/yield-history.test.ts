@@ -777,6 +777,28 @@ function trancheLastEpoch(
     );
 }
 
+async function bothReadsWithRequests(state: ChainState): Promise<{
+    history: YieldHistoryEntry[];
+    pool: (id: string) => PortfolioLendingPool;
+    harnessRequest: GraphRequest;
+}> {
+    const { portfolio, poolOverviews, request } = harness(state);
+    const [lending, history] = await Promise.all([
+        portfolio.getPortfolioLendingData(
+            USER,
+            poolOverviews,
+            String(currentOf(state)),
+        ),
+        portfolio.getYieldHistory(USER),
+    ]);
+    const pool = (id: string): PortfolioLendingPool => {
+        const found = lending.find((p) => p.id === id);
+        if (!found) throw new Error(`no pool ${id}`);
+        return found;
+    };
+    return { history, pool, harnessRequest: request };
+}
+
 async function bothReads(state: ChainState): Promise<{
     lending: PortfolioLendingPool[];
     history: YieldHistoryEntry[];
@@ -1576,22 +1598,53 @@ describe('getYieldHistory — interest paired with the shares it was applied to'
         ).toBeCloseTo(base, 10);
     });
 
-    it('a pool that stopped clearing has no last cycle: 0, while the history keeps its bars', async () => {
+    it("a pool that last cleared long ago shows THAT cycle's figure, equal to the newest history bar", async () => {
         // Epoch 20: every newest interest (9) is older than the six-epoch
-        // window — the pools stopped clearing.
+        // window — pools clear independently, some only on repayment.
         const state = baseState();
         state.currentEpoch = 20;
-        const { history, pool, lending } = await bothReads(state);
-        expect([...new Set(history.map((e) => e.epochId))]).toEqual([7, 8, 9]);
+        const { history, pool, harnessRequest } =
+            await bothReadsWithRequests(state);
         for (const [poolId, trancheId] of [
             [POOL_A, TRANCHE_A1],
             [POOL_A, TRANCHE_A2],
             [POOL_B, TRANCHE_B1],
         ] as const) {
-            expect(trancheLastEpoch(pool(poolId), trancheId)).toBe(0);
+            const newest = history
+                .filter((e) => e.trancheId === trancheId)
+                .at(-1);
+            expect(newest?.epochId).toBe(9);
+            expect(newest?.netYield).toBe(
+                trancheLastEpoch(pool(poolId), trancheId),
+            );
         }
-        for (const p of lending)
-            expect(p.totalYieldEarningsLastEpoch).toBe('0');
+        expect(trancheLastEpoch(pool(POOL_A), TRANCHE_A1)).toBeCloseTo(
+            16.25 + 11.44,
+            10,
+        );
+        // One history read for the stale positions, besides the history's own.
+        expect(
+            harnessRequest.mock.calls.filter(
+                ([document]) => document === yieldHistoryPageQuery,
+            ),
+        ).toHaveLength(2);
+    });
+
+    it('a lender who has left a pool that last cleared long ago shows 0 there', async () => {
+        const state = baseState();
+        state.currentEpoch = 20;
+        // B1's lender withdrew everything after clearing 9 (tagged 11).
+        state.tranches[2].userUpdates.push({ epochId: 11, shares: 0 });
+        const { history, pool } = await bothReads(state);
+        // The history keeps the cycle they did earn …
+        expect(
+            history.filter((e) => e.trancheId === TRANCHE_B1).at(-1)?.epochId,
+        ).toBe(9);
+        // … but it is not their last cycle any more.
+        expect(trancheLastEpoch(pool(POOL_B), TRANCHE_B1)).toBe(0);
+        expect(pool(POOL_B).totalYieldEarningsLastEpoch).toBe('0');
+        // The holder next door is unaffected.
+        expect(trancheLastEpoch(pool(POOL_A), TRANCHE_A2)).toBeCloseTo(2, 12);
     });
 
     it('a pool inside the window is still priced by its interest epoch (a clearing six epochs late)', async () => {

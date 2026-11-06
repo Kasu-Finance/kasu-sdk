@@ -710,6 +710,47 @@ export function positionEpochYield(
     };
 }
 
+/** One lender's tranche position, as the positions and portfolio queries read it. */
+export interface PositionRef {
+    id: string;
+    tranche: { id: string; balance: string; shares: string };
+    userLendingPoolTrancheFixedTermDepositLocks: {
+        id?: string;
+        epochLockStart: string;
+        epochLockEnd: string;
+        initialTrancheShares: string;
+    }[];
+}
+
+/** A position's `PositionSeries` out of the fetched history series. */
+export function positionSeriesFrom(
+    rows: Omit<YieldHistoryRead, 'positions'>,
+    position: PositionRef,
+): PositionSeries {
+    const trancheId = position.tranche.id;
+    return {
+        trancheBalanceNow: parseFloat(position.tranche.balance),
+        trancheSharesNow: parseFloat(position.tranche.shares),
+        userUpdates: rows.userShares.filter(
+            (row) => row.lendingPoolTrancheUserDetails.id === position.id,
+        ),
+        trancheUpdates: rows.trancheShares.filter(
+            (row) => row.lendingPoolTranche.id === trancheId,
+        ),
+        exits: rows.withdrawals.filter((row) => row.tranche.id === trancheId),
+        locks: position.userLendingPoolTrancheFixedTermDepositLocks.map(
+            (lock) => ({
+                ...lock,
+                updates: rows.lockShares.filter(
+                    (row) =>
+                        row.userLendingPoolTrancheFixedTermDepositLock.id ===
+                        lock.id,
+                ),
+            }),
+        ),
+    };
+}
+
 /** `pool → epoch → clearing start`, from the clearing rows. */
 export function clearingStarts(
     clearings: readonly ClearingRow[],

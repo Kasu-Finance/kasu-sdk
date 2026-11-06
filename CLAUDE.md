@@ -385,9 +385,11 @@ then accepts requests, and the subgraph tags everything a clearing writes
 `getPortfolioLendingData` reads the base snapshot tagged before
 `currentEpoch − 6` (`RECENT_PAIRING_EPOCHS`) plus every later one. Its
 candidates are therefore complete for a newest interest in the last six
-epochs. An older one (a pool that stopped clearing) is not the last cycle any
-more: the last-epoch figures are 0, while the history keeps its bars. A list
-read with
+epochs. Pools clear independently (some only when the originator repays),
+so an older one is still that pool's last cycle: it is priced at its own
+epoch from a history read of just that position (`staleLastEpochYields`), and
+equals the newest history bar. A lender with no ledger shares left in the
+tranche gets 0 there. A list read with
 `first: $first` that comes back full is refused (`refuseTruncated`). A spec
 pins the newest history entry to the last-epoch figure through a subgraph
 emulator, with real Base shapes: the between-clearings withdrawal, an

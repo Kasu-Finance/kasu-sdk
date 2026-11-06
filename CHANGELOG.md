@@ -42,9 +42,13 @@ block. Nothing is renamed or removed; some figures change (below).
   to the CURRENT epoch minus one. Those include what that interest's own
   clearing accepted afterwards, and the comparison dropped the lock top-up.
   The figures are now paired by the interest's epoch, as in the history,
-  from the last six epochs' snapshots. A pool whose newest interest is older
-  than that (it stopped clearing) has no last cycle: its last-epoch figures
-  are 0, and `getYieldHistory` still shows its bars.
+  from the last six epochs' snapshots.
+- **A pool whose last cycle is older than six epochs.** Pools clear
+  independently, and some clear only when the originator repays. Such a
+  pool's last-cycle figure was paired by the CURRENT epoch. It is now priced
+  at that pool's own newest interest epoch, from a history read of just that
+  position, and equals the history's newest bar. A lender who has left the
+  tranche (no ledger shares now) shows 0 there.
 - **A lock-share change no clearing's top-up can make is no longer yield.**
   A lock whose recorded shares were set to zero at a clearing (its shares
   stayed in the fixed-term contract) was booked as a negative "top-up" of
@@ -81,8 +85,9 @@ block. Nothing is renamed or removed; some figures change (below).
   withdrawal: higher for the tranche's other holders, lower (often no entry)
   for the withdrawer. They also change between an epoch boundary and its
   clearing.
-- A pool that has not cleared within the last six epochs reports 0 as its
-  last-cycle figures (it has no last cycle); its history bars are unchanged.
+- A pool whose last cycle is older than six epochs shows its own last
+  cycle's interest, matching the newest history bar. A lender who has left
+  that tranche shows 0.
 - A wallet that received or sent shares outside a deposit or withdrawal:
   - `investedAmount` is what the chain holds.
   - The pool carries `ledgerMismatch`, and there are no negative entries.
@@ -96,6 +101,8 @@ block. Nothing is renamed or removed; some figures change (below).
     in. Previously these ran side by side, with a second subgraph query and
     a chain call for every listed pool.
   - Per-tranche chain calls happen only for a pool that disagrees.
+  - One extra history request happens only when a pool the lender still
+    holds last cleared more than six epochs ago.
 - **`getYieldHistory`:** the same subgraph requests (the page query also
   reads clearings and share exits), plus one chain call per pool, in
   parallel with the page fetch.

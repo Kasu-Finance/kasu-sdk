@@ -70,7 +70,7 @@ export const lastEpochQuery = gql`
  * for the listed pools (`$poolIds`) and tranches (`$trancheIds`), the
  * clearings and share exits of those recent epochs. `$recentEpoch` is six
  * epochs back (`RECENT_PAIRING_EPOCHS`); a newest interest older than that (a
- * pool that stopped clearing) has no last cycle: its figures are 0. Lock
+ * pool that clears rarely) is priced from a history read of its own. Lock
  * snapshots are read the same way from one epoch further back
  * (`$lockRecentEpoch`), since a top-up compares E with E − 1. Every list read
  * with `$first` must come back SHORT of it — a full one is refused, never
