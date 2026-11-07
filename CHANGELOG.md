@@ -5,21 +5,36 @@ versioning; earlier releases are described in their commit messages.
 
 ## 2.17.0
 
-Lifetime interest now accrues from the END of each pool's last cleared epoch,
-with no upper cap, so the ticking figure no longer freezes when a clearing is
-late. Additive only: nothing is renamed, removed or changed in behaviour.
+Lifetime interest no longer freezes when a clearing is late: the accrual has
+no upper cap, and each pool accrues from its last clearing's start, or from
+the end of the epoch it cleared when that clearing ran late. Additive only:
+nothing is renamed, removed or changed in behaviour.
 
 ### Added
 
+- **`accrualStartTimestamp(initialEpochStart, lastClearedEpoch,
+  clearingStartedAt): number`** — `min(clearingStartedAt,
+  epochEndTimestamp(initialEpochStart, lastClearedEpoch))`, the
+  `accruesFrom` of an `EpochAccrual`.
+  - On time (the clearing started before its epoch ended), it is the
+    clearing's start. Clearing applies the epoch's interest first and only
+    then accepts requests, so a deposit accepted at that clearing starts at
+    0 and is never charged for time before it.
+  - Late, it is the epoch's end, so a catch-up keeps the time it did not
+    credit.
+  - `lastClearedEpoch` is the newest epoch whose clearing has STARTED (a
+    `LendingPoolClearing` exists): `doClearing` mints the interest in its
+    first transaction, while `nextLendingPoolClearingEpoch` only advances
+    when the clearing ends.
+  - `NaN` when `epochEndTimestamp` is `NaN` or `clearingStartedAt` is not a
+    finite positive number.
 - **`accruedInterestSince(accruals: readonly EpochAccrual[], nowSeconds):
-  number`** — `Σ weekly × (now − accruesFrom) / 604 800`, no upper bound.
-  A term with a non-finite `weeklyInterest` or `accruesFrom`, or whose
-  `accruesFrom` is more than one epoch ahead of `now` (inconsistent data),
-  contributes nothing; a non-finite `nowSeconds` accrues 0. A term may be
-  negative: an on-time clearing runs in the last 48 h of its epoch, before
-  the epoch ends.
-- **`EpochAccrual`** `{ weeklyInterest, accruesFrom }` — `accruesFrom` is unix
-  seconds, the end of the pool's last cleared epoch.
+  number`** — `Σ weekly × max(now − accruesFrom, 0) / 604 800`, no upper
+  cap, never negative. A term with a non-finite or negative
+  `weeklyInterest`, a non-finite `accruesFrom` or an overflowing elapsed
+  time contributes nothing; a non-finite `nowSeconds` accrues 0.
+- **`EpochAccrual`** `{ weeklyInterest, accruesFrom }` — `accruesFrom` in
+  unix seconds, from `accrualStartTimestamp`.
 - **`epochEndTimestamp(initialEpochStart, epoch): number`** —
   `initialEpochStart + (epoch + 1) × 604 800`; `NaN` for a non-integer,
   non-finite or negative epoch, an initial start that is not a positive
@@ -29,28 +44,41 @@ late. Additive only: nothing is renamed, removed or changed in behaviour.
   initialisation, so it is safe to cache for the life of an app. Works on
   Full and Lite deployments.
 
+### What a clearing does to `settled + accrued`
+
+At a constant balance (`W` = one epoch, `t` = the clearing's start):
+
+- A late clearing after a late one: exactly continuous. One epoch is
+  credited and the anchor moves by exactly one epoch.
+- The FIRST late catch-up after an on-time clearing: dips once, by
+  `weekly × (epochEnd − t) / W`. That is at most 48 h, so at most 2/7 of one
+  weekly.
+- An on-time clearing after a late one: rises by
+  `weekly × (epochEnd − t) / W`, at most 2/7 of one weekly.
+- An on-time clearing after an on-time one, `gap` apart: moves by
+  `weekly × (W − gap) / W`, at most 2/7 of one weekly either way. It dips
+  when the two clearings are more than a week apart.
+
+A deposit or top-up accepted at an on-time clearing starts at 0, so it never
+dips the total. Over a long gap the estimate reads slightly low: it uses
+today's balance and rate, while the chain compounds weekly at each epoch's
+own rate.
+
 ### Deprecated
 
 - **`accruedInterest` and `PoolAccrual`.** Unchanged in behaviour; use
-  `accruedInterestSince`. They anchor each pool on its last clearing
-  TRANSACTION and cap it at one epoch, on the premise that a late clearing
-  credits only one week. It does not:
+  `accruedInterestSince` with `accrualStartTimestamp`. They cap each pool at
+  one epoch from its last clearing transaction, on the premise that a late
+  clearing credits only one week. It does not:
   - `ClearingCoordinator` requires clearing "once per epoch for each lending
-    pool", "in order": `doClearing` reverts unless the target epoch is the
+    pool", "in order". `doClearing` reverts unless the target epoch is the
     pool's `nextLendingPoolClearingEpoch`, and it calls
     `LendingPool.applyInterests(targetEpoch)` on every clearing, late or not.
     Every missed epoch is credited when the clearings catch up.
   - On Base, the Payment Finance pool cleared epochs 117, 118 and 119 in the
     same minute: three weeks credited at once.
   - Capped, the figure froze once every pool was more than a week past its
-    last clearing. Anchored on the transaction, a catch-up would also make it
-    dip, because elapsed resets to 0 while only one week is credited.
-
-  Anchored on the epoch's end, clearing epoch N credits one epoch's interest
-  and moves the anchor by exactly one epoch, so `settled + accrued` is
-  unchanged by any clearing, on time or weeks late. Over a long gap the
-  estimate reads slightly low: it uses today's balance and rate, while the
-  chain compounds weekly at each epoch's own rate.
+    last clearing.
 
 ## 2.16.0
 

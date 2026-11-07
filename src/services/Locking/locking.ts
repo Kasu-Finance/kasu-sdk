@@ -630,7 +630,8 @@ export class KSULocking {
      * `SystemVariables.epochStartTimestamp(0)`. The contract writes this once,
      * at initialisation, so it never changes for a deployment and may be cached
      * for the life of the app. Every epoch boundary follows from it —
-     * `epochEndTimestamp(initial, epoch)` in the domain layer.
+     * `epochEndTimestamp(initial, epoch)` and `accrualStartTimestamp` in the
+     * domain layer.
      *
      * Available on every deployment, Full and Lite. A failed read rejects; the
      * caller validates the value (a positive integer) before using it.

@@ -233,6 +233,7 @@ export type {
 } from './yield-history';
 
 export {
+    accrualStartTimestamp,
     accruedInterest,
     accruedInterestSince,
     dailyInterest,
