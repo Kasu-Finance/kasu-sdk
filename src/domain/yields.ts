@@ -37,12 +37,33 @@ export interface InterestSlice {
     epochRate: number;
 }
 
-/** One pool's contribution to the current cycle's accrual. */
+/**
+ * One pool's contribution to the current cycle's accrual, anchored on its
+ * last clearing TRANSACTION.
+ *
+ * @deprecated Use {@link EpochAccrual} with {@link accruedInterestSince}. A
+ * clearing transaction's timestamp is the wrong anchor: see `accruedInterest`.
+ */
 export interface PoolAccrual {
     /** That pool's projected net interest for one epoch (`weeklyInterest`). */
     weeklyInterest: number;
     /** Unix SECONDS at which THAT pool last cleared a cycle. */
     clearingTimestamp: number;
+}
+
+/**
+ * One pool's contribution to the unpaid interest, anchored on the EPOCH its
+ * last clearing credited — the input of {@link accruedInterestSince}.
+ */
+export interface EpochAccrual {
+    /** That pool's projected net interest for one epoch (`weeklyInterest`). */
+    weeklyInterest: number;
+    /**
+     * Unix SECONDS from which the pool's unpaid interest accrues: the END of
+     * its last cleared epoch
+     * (`epochEndTimestamp(initialEpochStart, lastClearedEpoch)`).
+     */
+    accruesFrom: number;
 }
 
 function isUsableFeePercent(feePercent: number | null): feePercent is number {
@@ -102,28 +123,39 @@ export function dailyInterest(weekly: number | null): number | null {
 }
 
 /**
- * Interest accrued since each pool's OWN last cycle close — the moving part
- * of lifetime interest (lifetime = settled on chain + this).
+ * Interest accrued since each pool's OWN last clearing transaction, capped at
+ * one epoch per pool.
  *
  * ```
  * accrued = Σ_pool  weekly_pool × clamp(now − clearing_pool, 0, 604 800) / 604 800
  * ```
  *
- * **Per pool, because pools clear independently.** One shared anchor accrues
- * a stale pool's share from a close it never had, and when another pool
- * clears it drops the total by the stale pool's whole weekly share. Anchored
- * per pool, the total is monotonic across any single pool's clearing: that
- * pool swaps its accrued share for a capitalised one, and no other term moves.
+ * Per pool, because pools clear independently: one shared anchor accrues a
+ * stale pool's share from a close it never had, and when another pool clears
+ * it drops the total by the stale pool's whole weekly share.
  *
- * **The one-epoch cap is load-bearing.** Clearings are not exactly weekly,
- * and `weeklyInterest` is per EPOCH, so extrapolating past seven days would
- * promise interest the close will not credit; a late clearing under-reports
- * instead. The low clamp makes a close ahead of the local clock zero, never
- * negative.
+ * **The one-epoch cap rested on a wrong premise.** It assumed a late
+ * clearing credits only one epoch, so accruing past seven days would promise
+ * interest no close pays. The contracts say otherwise. `ClearingCoordinator`
+ * states that clearing "must be executed once per epoch for each lending
+ * pool" and that "clearing epochs must be executed in order"; `doClearing`
+ * reverts unless the target epoch is the pool's `nextLendingPoolClearingEpoch`,
+ * and it calls `LendingPool.applyInterests(targetEpoch)` on every clearing,
+ * late or not ("if clearing for the epoch is executed only after the clearing
+ * period, only yield will be applied"). Every missed epoch's interest is
+ * therefore credited when the clearings catch up — on Base, one pool cleared
+ * epochs 117, 118 and 119 in the same minute, three weeks credited at once.
+ * Capped, the figure freezes as soon as a clearing is a week late; anchored
+ * on the transaction, it also DIPS on a catch-up (elapsed resets to zero
+ * while only one week is credited per clearing).
  *
+ * The low clamp makes a close ahead of the local clock zero, never negative.
  * A non-finite term contributes nothing; a non-finite `nowSeconds` accrues
- * nothing. Callers fail closed upstream by not offering an accrual for a pool
- * whose weekly interest or anchor is unknown.
+ * nothing.
+ *
+ * @deprecated Use {@link accruedInterestSince}, anchored on the end of each
+ * pool's last cleared epoch and uncapped. Kept, behaviour-identical, for
+ * existing callers.
  */
 export function accruedInterest(
     accruals: readonly PoolAccrual[],
@@ -139,6 +171,98 @@ export function accruedInterest(
             Math.max(nowSeconds - clearingTimestamp, 0),
             SECONDS_PER_WEEK,
         );
+        accrued += (weekly * elapsed) / SECONDS_PER_WEEK;
+    }
+    return accrued;
+}
+
+/**
+ * Unix SECONDS at which `epoch` ENDS — the start of the next one:
+ *
+ * ```
+ * epochEnd(e) = initialEpochStart + (e + 1) × 604 800
+ * ```
+ *
+ * `SystemVariables.epochStartTimestamp(e)` is `initial + e × EPOCH_DURATION`,
+ * and the initial start is written once, at initialisation, so the end of any
+ * epoch follows from `epochStartTimestamp(0)` with no further read.
+ *
+ * FAILS CLOSED with `NaN`: a non-integer, non-finite or negative epoch, an
+ * initial start that is not a positive integer, or a result past
+ * `Number.MAX_SAFE_INTEGER`.
+ *
+ * @param initialEpochStart unix seconds, `epochStartTimestamp(0)`.
+ * @param epoch the epoch number, 0-based.
+ */
+export function epochEndTimestamp(
+    initialEpochStart: number,
+    epoch: number,
+): number {
+    if (!Number.isSafeInteger(initialEpochStart) || initialEpochStart <= 0) {
+        return NaN;
+    }
+    if (!Number.isSafeInteger(epoch) || epoch < 0) return NaN;
+    const end = initialEpochStart + (epoch + 1) * SECONDS_PER_WEEK;
+    return Number.isSafeInteger(end) ? end : NaN;
+}
+
+/**
+ * Interest accrued and not yet credited — the moving part of lifetime
+ * interest (lifetime = settled on chain + this).
+ *
+ * ```
+ * accrued = Σ_pool  weekly_pool × (now − accruesFrom_pool) / 604 800      (no upper cap)
+ * ```
+ *
+ * where `accruesFrom` is the END of the pool's last cleared epoch
+ * ({@link epochEndTimestamp}).
+ *
+ * **Why that anchor.** Clearing must run once per epoch for each pool, in
+ * order (`ClearingCoordinator.doClearing` reverts unless the target epoch is
+ * the pool's `nextLendingPoolClearingEpoch`), and every clearing — on time or
+ * late — starts with `LendingPool.applyInterests(targetEpoch)`. So clearing
+ * epoch N credits exactly ONE epoch's interest and moves this anchor forward
+ * by exactly ONE epoch, and `settled + accrued` is unchanged by it: no jump,
+ * no dip, whether the clearing ran inside its window or weeks later as a
+ * catch-up (on Base, one pool cleared epochs 117, 118 and 119 in the same
+ * minute). Missed epochs keep accruing until they are cleared, because they
+ * WILL be credited — hence no cap.
+ *
+ * **Per pool, because pools clear independently.** One shared anchor accrues
+ * a stale pool's share from a close it never had.
+ *
+ * **The elapsed term can be NEGATIVE.** An on-time clearing runs in the last
+ * 48 h of its epoch, before the epoch ends: for up to two days the pool's
+ * interest has been credited slightly ahead of time, so its term is below
+ * zero and the total sits just under the freshly settled base, still
+ * continuous and rising. A term is allowed down to `−604 800` seconds; an
+ * anchor further ahead than one epoch is inconsistent data (a clock or a
+ * read is wrong) and that term contributes NOTHING. Do not feed such data:
+ * at that boundary the term steps from 0 to `−weekly`.
+ *
+ * **Accepted approximation.** `weekly` is today's balance at today's epoch
+ * rate. Over a multi-week gap the chain compounds weekly and may apply other
+ * epochs' rates, so a long uncapped accrual reads slightly LOW. It is a
+ * ticking estimate, not a ledger.
+ *
+ * A term with a non-finite `weeklyInterest` or `accruesFrom` contributes
+ * nothing; a non-finite `nowSeconds` accrues nothing. Callers fail closed
+ * upstream by not offering a term for a pool whose weekly interest or anchor
+ * is unknown, and by offering none for a pool that has stopped (it will never
+ * clear again).
+ */
+export function accruedInterestSince(
+    accruals: readonly EpochAccrual[],
+    nowSeconds: number,
+): number {
+    if (!Number.isFinite(nowSeconds)) return 0;
+    let accrued = 0;
+    for (const { weeklyInterest: weekly, accruesFrom } of accruals) {
+        if (!Number.isFinite(weekly) || !Number.isFinite(accruesFrom)) {
+            continue;
+        }
+        const elapsed = nowSeconds - accruesFrom;
+        if (elapsed < -SECONDS_PER_WEEK) continue;
         accrued += (weekly * elapsed) / SECONDS_PER_WEEK;
     }
     return accrued;

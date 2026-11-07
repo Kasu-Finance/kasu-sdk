@@ -3,6 +3,55 @@
 All notable changes to `@kasufinance/kasu-sdk`. Versions follow semantic
 versioning; earlier releases are described in their commit messages.
 
+## 2.17.0
+
+Lifetime interest now accrues from the END of each pool's last cleared epoch,
+with no upper cap, so the ticking figure no longer freezes when a clearing is
+late. Additive only: nothing is renamed, removed or changed in behaviour.
+
+### Added
+
+- **`accruedInterestSince(accruals: readonly EpochAccrual[], nowSeconds):
+  number`** — `Σ weekly × (now − accruesFrom) / 604 800`, no upper bound.
+  A term with a non-finite `weeklyInterest` or `accruesFrom`, or whose
+  `accruesFrom` is more than one epoch ahead of `now` (inconsistent data),
+  contributes nothing; a non-finite `nowSeconds` accrues 0. A term may be
+  negative: an on-time clearing runs in the last 48 h of its epoch, before
+  the epoch ends.
+- **`EpochAccrual`** `{ weeklyInterest, accruesFrom }` — `accruesFrom` is unix
+  seconds, the end of the pool's last cleared epoch.
+- **`epochEndTimestamp(initialEpochStart, epoch): number`** —
+  `initialEpochStart + (epoch + 1) × 604 800`; `NaN` for a non-integer,
+  non-finite or negative epoch, an initial start that is not a positive
+  integer, or a result past the safe-integer range.
+- **`Locking.getInitialEpochStartTimestamp(): Promise<number>`** —
+  `SystemVariables.epochStartTimestamp(0)` in unix seconds. Written once at
+  initialisation, so it is safe to cache for the life of an app. Works on
+  Full and Lite deployments.
+
+### Deprecated
+
+- **`accruedInterest` and `PoolAccrual`.** Unchanged in behaviour; use
+  `accruedInterestSince`. They anchor each pool on its last clearing
+  TRANSACTION and cap it at one epoch, on the premise that a late clearing
+  credits only one week. It does not:
+  - `ClearingCoordinator` requires clearing "once per epoch for each lending
+    pool", "in order": `doClearing` reverts unless the target epoch is the
+    pool's `nextLendingPoolClearingEpoch`, and it calls
+    `LendingPool.applyInterests(targetEpoch)` on every clearing, late or not.
+    Every missed epoch is credited when the clearings catch up.
+  - On Base, the Payment Finance pool cleared epochs 117, 118 and 119 in the
+    same minute: three weeks credited at once.
+  - Capped, the figure froze once every pool was more than a week past its
+    last clearing. Anchored on the transaction, a catch-up would also make it
+    dip, because elapsed resets to 0 while only one week is credited.
+
+  Anchored on the epoch's end, clearing epoch N credits one epoch's interest
+  and moves the anchor by exactly one epoch, so `settled + accrued` is
+  unchanged by any clearing, on time or weeks late. Over a long gap the
+  estimate reads slightly low: it uses today's balance and rate, while the
+  chain compounds weekly at each epoch's own rate.
+
 ## 2.16.0
 
 Each cycle's interest is now paired with the shares it was actually applied

@@ -355,7 +355,7 @@ they were duplicated across the applications, and the copies drifted.
 | `revert-errors.ts`        | `extractRevertData`, `decodeRevert` — revert bytes → the ABI's error name          |
 | `au-minimum.ts`           | AU cumulative-lending minimum — thresholds, minor-unit maths, exemption test      |
 | `fixed-term.ts`           | Fixed-term configs a wallet may select (allowlist-aware), lock days / months     |
-| `yields.ts`               | Weekly / daily / per-pool accrued interest NET of the fee, annual projection      |
+| `yields.ts`               | Weekly / daily interest NET of the fee, annual projection; `accruedInterestSince` (uncapped, from `epochEndTimestamp` of each pool's last cleared epoch — clearing N credits one epoch and moves the anchor one epoch, so no jump or dip on a late catch-up); `accruedInterest` deprecated |
 | `yield-history.ts`        | `epochTrancheYield` (the per-epoch formula), `aggregateYieldHistory` — net only   |
 | `pool-tvl.ts`             | `poolTvl` — THE TVL definition (on-chain + off-chain), `PoolTvlHistoryEntry`, `combineTvlHistories` |
 | `batch-proof.ts`          | Pin a deposit batch to its run; prove a deposit (or one executed operation) in a handleOps receipt |

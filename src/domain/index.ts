@@ -234,10 +234,12 @@ export type {
 
 export {
     accruedInterest,
+    accruedInterestSince,
     dailyInterest,
+    epochEndTimestamp,
     projectedAnnualEarnings,
     SECONDS_PER_WEEK,
     weeklyInterest,
     weightedAverageApy,
 } from './yields';
-export type { InterestSlice, PoolAccrual } from './yields';
+export type { EpochAccrual, InterestSlice, PoolAccrual } from './yields';
