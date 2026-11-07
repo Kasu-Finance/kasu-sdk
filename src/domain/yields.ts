@@ -152,7 +152,7 @@ export function dailyInterest(weekly: number | null): number | null {
  * late or not ("if clearing for the epoch is executed only after the clearing
  * period, only yield will be applied"). Every missed epoch's interest is
  * therefore credited when the clearings catch up — on Base, one pool cleared
- * epochs 117, 118 and 119 in the same minute, three weeks credited at once.
+ * epochs 116 to 119 in the same block, four weeks credited at once.
  * Capped, the figure freezes as soon as a clearing is a week late; anchored
  * on the transaction, it also DIPS on a catch-up (elapsed resets to zero
  * while only one week is credited per clearing).
@@ -294,7 +294,7 @@ export function epochAccrual(input: {
  * pool's `nextLendingPoolClearingEpoch`), and every clearing, on time or
  * late, starts with `LendingPool.applyInterests(targetEpoch)`. A missed epoch
  * is therefore credited when the clearings catch up (on Base, one pool
- * cleared epochs 117, 118 and 119 in the same minute), and it keeps accruing
+ * cleared epochs 116 to 119 in the same block), and it keeps accruing
  * until then. The figure never freezes for longer than the hold.
  *
  * **Why the hold.** Without it an on-time anchor accrues past one epoch

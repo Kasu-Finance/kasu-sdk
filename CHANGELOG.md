@@ -82,8 +82,8 @@ own rate.
     pool's `nextLendingPoolClearingEpoch`, and it calls
     `LendingPool.applyInterests(targetEpoch)` on every clearing, late or not.
     Every missed epoch is credited when the clearings catch up.
-  - On Base, the Payment Finance pool cleared epochs 117, 118 and 119 in the
-    same minute: three weeks credited at once.
+  - On Base, the Payment Finance pool cleared epochs 116 to 119 in the
+    same block: four weeks credited at once.
   - Capped, the figure froze once every pool was more than a week past its
     last clearing.
 
