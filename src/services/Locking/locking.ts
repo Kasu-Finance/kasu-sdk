@@ -625,6 +625,23 @@ export class KSULocking {
         ).toNumber();
     }
 
+    /**
+     * Unix SECONDS at which epoch 0 started:
+     * `SystemVariables.epochStartTimestamp(0)`. The contract writes this once,
+     * at initialisation, so it never changes for a deployment and may be cached
+     * for the life of the app. Every epoch boundary follows from it —
+     * `epochEndTimestamp(initial, epoch)` and `epochAccrual` in the domain
+     * layer.
+     *
+     * Available on every deployment, Full and Lite. A failed read rejects; the
+     * caller validates the value (a positive integer) before using it.
+     */
+    async getInitialEpochStartTimestamp(): Promise<number> {
+        return (
+            await this._systemVariablesAbi.epochStartTimestamp(0)
+        ).toNumber();
+    }
+
     async getNextClearingPeriodDate(): Promise<EpochTimeStamp> {
         const nextEpochDate = await this.getNextEpochDate();
 

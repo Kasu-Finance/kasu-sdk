@@ -355,7 +355,7 @@ they were duplicated across the applications, and the copies drifted.
 | `revert-errors.ts`        | `extractRevertData`, `decodeRevert` — revert bytes → the ABI's error name          |
 | `au-minimum.ts`           | AU cumulative-lending minimum — thresholds, minor-unit maths, exemption test      |
 | `fixed-term.ts`           | Fixed-term configs a wallet may select (allowlist-aware), lock days / months     |
-| `yields.ts`               | Weekly / daily / per-pool accrued interest NET of the fee, annual projection      |
+| `yields.ts`               | Weekly / daily interest NET of the fee, annual projection; `epochAccrual` builds each pool's term (`accruesFrom` = min(last clearing start, `epochEndTimestamp` of that epoch), `epochEnd`); `accruedInterestSince` accrues one epoch from `accruesFrom`, holds until `epochEnd + W`, then runs on, capped per pool at `MAX_ACCRUAL_EPOCHS` (4) × weekly (owner ruling 2026-11-07: a pool can stop being cleared without being flagged stopped). Never negative; at a constant balance it never steps down at a clearing (on time after on time = the deprecated `accruedInterest`; late catch-ups continuous; on time after late steps up ≤ 2/7 of a weekly; at the cap a catch-up steps up ≤ one weekly per epoch cleared); a deposit accepted on time starts at 0. `accruedInterest` deprecated |
 | `yield-history.ts`        | `epochTrancheYield` (the per-epoch formula), `aggregateYieldHistory` — net only   |
 | `pool-tvl.ts`             | `poolTvl` — THE TVL definition (on-chain + off-chain), `PoolTvlHistoryEntry`, `combineTvlHistories` |
 | `batch-proof.ts`          | Pin a deposit batch to its run; prove a deposit (or one executed operation) in a handleOps receipt |
