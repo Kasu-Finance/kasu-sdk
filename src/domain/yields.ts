@@ -53,24 +53,25 @@ export interface PoolAccrual {
 
 /**
  * One pool's contribution to the unpaid interest — the input of
- * {@link accruedInterestSince}.
+ * {@link accruedInterestSince}. Build it with {@link epochAccrual}, which
+ * validates every field and derives the two timestamps; do not assemble one
+ * by hand.
  */
 export interface EpochAccrual {
     /** That pool's projected net interest for one epoch (`weeklyInterest`). */
     weeklyInterest: number;
     /**
-     * Unix SECONDS from which the pool's unpaid interest accrues —
-     * `accrualStartTimestamp(initialEpochStart, lastClearedEpoch,
-     * clearingStartedAt)`: the earlier of the moment the pool's last clearing
-     * STARTED and the end of the epoch it cleared.
-     *
-     * "Last cleared epoch" is the newest epoch whose clearing has STARTED (the
-     * subgraph has a `LendingPoolClearing` for it), not the newest that has
-     * finished. `ClearingCoordinator.doClearing` mints the epoch's interest in
-     * its FIRST transaction (`applyInterests`), while
-     * `nextLendingPoolClearingEpoch` only advances when the clearing ENDS.
+     * Unix SECONDS from which the pool's unpaid interest accrues: the earlier
+     * of the moment its last clearing STARTED and `epochEnd`. Never after
+     * `epochEnd`.
      */
     accruesFrom: number;
+    /**
+     * Unix SECONDS at which the pool's last cleared epoch ENDS
+     * (`epochEndTimestamp(initialEpochStart, lastClearedEpoch)`). The accrual
+     * holds from `accruesFrom + 604 800` until `epochEnd + 604 800`.
+     */
+    epochEnd: number;
 }
 
 function isUsableFeePercent(feePercent: number | null): feePercent is number {
@@ -160,10 +161,9 @@ export function dailyInterest(weekly: number | null): number | null {
  * A non-finite term contributes nothing; a non-finite `nowSeconds` accrues
  * nothing.
  *
- * @deprecated Use {@link accruedInterestSince} with
- * {@link accrualStartTimestamp}: the same transaction anchor for an on-time
- * clearing, the epoch end for a late one, and no cap. Kept,
- * behaviour-identical, for existing callers.
+ * @deprecated Use {@link accruedInterestSince} with {@link epochAccrual}:
+ * identical while clearings run on time, and it keeps accruing, without a
+ * cap, when they run late. Kept, behaviour-identical, for existing callers.
  */
 export function accruedInterest(
     accruals: readonly PoolAccrual[],
@@ -215,98 +215,120 @@ export function epochEndTimestamp(
 }
 
 /**
- * Unix SECONDS from which a pool's unpaid interest accrues — the
- * `accruesFrom` of its {@link EpochAccrual}:
+ * Builds one pool's {@link EpochAccrual} from what the chain and the subgraph
+ * say about its last clearing:
  *
  * ```
- * accrualStart = min(clearingStartedAt, epochEnd(lastClearedEpoch))
+ * epochEnd    = epochEndTimestamp(initialEpochStart, lastClearedEpoch)
+ * accruesFrom = min(clearingStartedAt, epochEnd)
  * ```
  *
  * - **On time** (the clearing started inside its window, before its epoch
- *   ended): the clearing's start. A deposit that clearing accepted therefore
- *   starts accruing at 0. Clearing applies the epoch's interest first and
- *   only then accepts requests, so today's balance — which includes that
- *   deposit — must not be charged for any time before the clearing.
- * - **Late** (it started after its epoch ended): the epoch's end. A late
- *   clearing accepts no requests and credits exactly one epoch, so anchoring
- *   on the epoch end keeps the time it did not credit: consecutive late
- *   catch-ups keep `settled + accrued` continuous.
+ *   ended): `accruesFrom` is the clearing's start. Clearing applies the
+ *   epoch's interest first and only then accepts requests, so today's
+ *   balance — which includes a deposit that clearing accepted — is never
+ *   charged for time before it: a new lender starts at exactly 0.
+ * - **Late** (it started at or after its epoch end): `accruesFrom` is the
+ *   epoch end. A late clearing accepts no requests and credits exactly one
+ *   epoch, so the time it did not credit is kept.
  *
- * `lastClearedEpoch` is the newest epoch whose clearing has STARTED (a
- * `LendingPoolClearing` exists for it), and `clearingStartedAt` that
- * clearing's `startTimestamp`. `ClearingCoordinator.doClearing` mints the
- * epoch's interest in its first transaction (`applyInterests`);
- * `nextLendingPoolClearingEpoch` only advances when the clearing ends, so it
- * is the wrong source.
+ * `lastClearedEpoch` is the newest epoch whose clearing has STARTED (the
+ * subgraph has a `LendingPoolClearing` for it), not the newest that has
+ * finished, and `clearingStartedAt` is that clearing's `startTimestamp`.
+ * `ClearingCoordinator.doClearing` mints the epoch's interest in its FIRST
+ * transaction (`applyInterests`), while `nextLendingPoolClearingEpoch` only
+ * advances when the clearing ENDS, so it is the wrong source.
  *
- * FAILS CLOSED with `NaN`: whatever {@link epochEndTimestamp} rejects, or a
- * `clearingStartedAt` that is not a finite positive number.
+ * FAILS CLOSED with `null`: whatever {@link epochEndTimestamp} rejects, a
+ * `clearingStartedAt` that is not a finite positive number, or a
+ * `weeklyInterest` that is not finite or is negative. The caller then offers
+ * no term for that pool.
  *
- * @param initialEpochStart unix seconds, `epochStartTimestamp(0)`.
- * @param lastClearedEpoch the newest epoch whose clearing has started.
- * @param clearingStartedAt unix seconds, that clearing's start.
+ * @param input.weeklyInterest the pool's net interest for one epoch.
+ * @param input.initialEpochStart unix seconds, `epochStartTimestamp(0)`.
+ * @param input.lastClearedEpoch the newest epoch whose clearing has started.
+ * @param input.clearingStartedAt unix seconds, that clearing's start.
  */
-export function accrualStartTimestamp(
-    initialEpochStart: number,
-    lastClearedEpoch: number,
-    clearingStartedAt: number,
-): number {
-    const epochEnd = epochEndTimestamp(initialEpochStart, lastClearedEpoch);
-    if (Number.isNaN(epochEnd)) return NaN;
+export function epochAccrual(input: {
+    weeklyInterest: number;
+    initialEpochStart: number;
+    lastClearedEpoch: number;
+    clearingStartedAt: number;
+}): EpochAccrual | null {
+    const { weeklyInterest: weekly, clearingStartedAt } = input;
+    if (!Number.isFinite(weekly) || weekly < 0) return null;
     if (!Number.isFinite(clearingStartedAt) || clearingStartedAt <= 0) {
-        return NaN;
+        return null;
     }
-    return Math.min(clearingStartedAt, epochEnd);
+    const epochEnd = epochEndTimestamp(
+        input.initialEpochStart,
+        input.lastClearedEpoch,
+    );
+    if (Number.isNaN(epochEnd)) return null;
+    return {
+        weeklyInterest: weekly,
+        accruesFrom: Math.min(clearingStartedAt, epochEnd),
+        epochEnd,
+    };
 }
 
 /**
  * Interest accrued and not yet credited — the moving part of lifetime
- * interest (lifetime = settled on chain + this).
+ * interest (lifetime = settled on chain + this). Per term, with
+ * `W` = 604 800 s:
  *
  * ```
- * accrued = Σ_pool  weekly_pool × max(now − accruesFrom_pool, 0) / 604 800      (no upper cap)
+ * accrued = weekly × ( min(max(now − accruesFrom, 0), W)
+ *                    + max(now − (epochEnd + W), 0) ) / W
  * ```
  *
- * where `accruesFrom` is {@link accrualStartTimestamp}.
+ * Read along the clock, for one pool:
+ * 1. from `accruesFrom`, one epoch of interest accrues linearly;
+ * 2. it then HOLDS from `accruesFrom + W` until `epochEnd + W`, the end of
+ *    the next epoch — at most 48 h after an on-time clearing (its clearing
+ *    window), no time at all after a late one (`accruesFrom == epochEnd`);
+ * 3. then it resumes, with no upper cap.
  *
- * **No upper cap.** Clearing must run once per epoch for each pool, in order
+ * **Why no cap.** Clearing must run once per epoch for each pool, in order
  * (`ClearingCoordinator.doClearing` reverts unless the target epoch is the
- * pool's `nextLendingPoolClearingEpoch`), and every clearing, on time or late,
- * starts with `LendingPool.applyInterests(targetEpoch)`. So a missed epoch is
- * credited when the clearings catch up (on Base, one pool cleared epochs 117,
- * 118 and 119 in the same minute), and it keeps accruing until then. The
- * figure never freezes.
+ * pool's `nextLendingPoolClearingEpoch`), and every clearing, on time or
+ * late, starts with `LendingPool.applyInterests(targetEpoch)`. A missed epoch
+ * is therefore credited when the clearings catch up (on Base, one pool
+ * cleared epochs 117, 118 and 119 in the same minute), and it keeps accruing
+ * until then. The figure never freezes for longer than the hold.
  *
- * **Never negative.** Each term is clamped at 0, so an anchor ahead of the
- * local clock contributes nothing.
+ * **Why the hold.** Without it an on-time anchor accrues past one epoch
+ * while the next on-time clearing — which credits exactly one — is still to
+ * come, and the total steps DOWN when it lands. With it, at a constant
+ * balance, `settled + accrued` never steps down at a clearing (`t` = the
+ * NEW clearing's start, `E` = the end of the epoch it clears):
+ * - on time after on time: identical to the deprecated `accruedInterest`
+ *   at every instant. With `gap` = `t` − the previous clearing's start, it
+ *   steps UP by `weekly × (W − gap) / W` when `gap < W` (at most 2/7 of one
+ *   weekly, as before), and not at all when `gap ≥ W`;
+ * - late after on time, and late after late: exactly continuous;
+ * - on time after late: steps UP by `weekly × (E − t) / W`, at most 2/7 of
+ *   one weekly.
+ * A deposit or top-up accepted at an on-time clearing starts at 0, so it
+ * never dips the total either.
+ *
+ * **Never negative**, and non-decreasing in `now`. A term is skipped — it
+ * contributes nothing — when `weeklyInterest` is not finite or is negative,
+ * when `accruesFrom` or `epochEnd` is not finite, when `accruesFrom >
+ * epochEnd` (inconsistent: the anchor is never after the epoch end), or when
+ * an elapsed time overflows. A non-finite `nowSeconds` accrues nothing.
  *
  * **Per pool, because pools clear independently.** One shared anchor accrues
  * a stale pool's share from a close it never had.
- *
- * **What a clearing does to `settled + accrued`** (balance unchanged across
- * it; `W` = 604 800 s, `t` = the clearing's start):
- * - late after late: exactly continuous — one epoch credited, the anchor
- *   moves by exactly one epoch;
- * - the FIRST late catch-up after an on-time clearing at `t`: DIPS once by
- *   `weekly × (epochEnd − t) / W` — at most 48 h, so at most 2/7 of one
- *   weekly — because the on-time anchor started before its epoch ended;
- * - an on-time clearing after a late one: rises by
- *   `weekly × (epochEnd − t) / W`, at most 2/7 of one weekly;
- * - on time after on time, `gap` apart: moves by `weekly × (W − gap) / W`.
- *   Clearing windows are a week apart and 48 h long, so `|W − gap| ≤ 48 h`:
- *   a rise when the clearings are closer than a week, a dip of at most 2/7 of
- *   one weekly when they are further apart.
  *
  * **Accepted approximation.** `weekly` is today's balance at today's epoch
  * rate. Over a multi-week gap the chain compounds weekly and may apply other
  * epochs' rates, so a long uncapped accrual reads slightly LOW. It is a
  * ticking estimate, not a ledger.
  *
- * A term with a non-finite or negative `weeklyInterest`, a non-finite
- * `accruesFrom`, or an elapsed time that overflows contributes nothing; a
- * non-finite `nowSeconds` accrues nothing. Callers fail closed upstream by not offering a term for a pool
- * whose weekly interest or anchor is unknown, and by offering none for a pool
- * that has stopped (it will never clear again).
+ * Callers fail closed upstream: no term for a pool whose weekly interest or
+ * clearing is unknown (`epochAccrual` returns `null`), and none for a pool
+ * that has stopped — it will never clear again.
  */
 export function accruedInterestSince(
     accruals: readonly EpochAccrual[],
@@ -314,11 +336,20 @@ export function accruedInterestSince(
 ): number {
     if (!Number.isFinite(nowSeconds)) return 0;
     let accrued = 0;
-    for (const { weeklyInterest: weekly, accruesFrom } of accruals) {
+    for (const { weeklyInterest: weekly, accruesFrom, epochEnd } of accruals) {
         if (!Number.isFinite(weekly) || weekly < 0) continue;
-        if (!Number.isFinite(accruesFrom)) continue;
-        const elapsed = Math.max(nowSeconds - accruesFrom, 0);
-        if (!Number.isFinite(elapsed)) continue;
+        if (!Number.isFinite(accruesFrom) || !Number.isFinite(epochEnd)) {
+            continue;
+        }
+        if (accruesFrom > epochEnd) continue;
+        const sinceAnchor = nowSeconds - accruesFrom;
+        const sinceHoldEnd = nowSeconds - (epochEnd + SECONDS_PER_WEEK);
+        if (!Number.isFinite(sinceAnchor) || !Number.isFinite(sinceHoldEnd)) {
+            continue;
+        }
+        const elapsed =
+            Math.min(Math.max(sinceAnchor, 0), SECONDS_PER_WEEK) +
+            Math.max(sinceHoldEnd, 0);
         accrued += (weekly * elapsed) / SECONDS_PER_WEEK;
     }
     return accrued;

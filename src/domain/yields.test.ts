@@ -2,10 +2,10 @@ import fc from 'fast-check';
 
 import { apyToEpochRate, netEffectiveApy } from './rates';
 import {
-    accrualStartTimestamp,
     accruedInterest,
     accruedInterestSince,
     dailyInterest,
+    epochAccrual,
     EpochAccrual,
     epochEndTimestamp,
     InterestSlice,
@@ -621,57 +621,113 @@ describe('epochEndTimestamp', () => {
     });
 });
 
-describe('accrualStartTimestamp', () => {
-    // Base, read on chain and from the subgraph: epochStartTimestamp(0); the
-    // ends of epochs 123 and 124; and the two clearings' startTimestamp —
-    // epoch 123's 17 s AFTER its epoch ended (late), epoch 124's on
-    // Wed 28 Oct 2026 03:53:23 UTC, inside its window (on time).
-    const BASE_INITIAL = 1_717_653_600;
-    const END_123 = 1_792_648_800;
-    const END_124 = 1_793_253_600;
-    const E123_CLEARING_START = 1_792_648_817;
-    const E124_CLEARING_START = 1_793_159_603;
+// Base, read on chain and from the subgraph: epochStartTimestamp(0); the ends
+// of epochs 123 and 124; and the two clearings' startTimestamp — epoch 123's
+// 17 s AFTER its epoch ended (late), epoch 124's on Wed 28 Oct 2026
+// 03:53:23 UTC, inside its window (on time).
+const BASE_INITIAL = 1_717_653_600;
+const END_123 = 1_792_648_800;
+const END_124 = 1_793_253_600;
+const E123_CLEARING_START = 1_792_648_817;
+const E124_CLEARING_START = 1_793_159_603;
 
-    it('is the clearing’s own start for an on-time clearing', () => {
+describe('epochAccrual', () => {
+    it('anchors an on-time clearing at its own start', () => {
         expect(
-            accrualStartTimestamp(BASE_INITIAL, 124, E124_CLEARING_START),
-        ).toBe(E124_CLEARING_START);
+            epochAccrual({
+                weeklyInterest: 140,
+                initialEpochStart: BASE_INITIAL,
+                lastClearedEpoch: 124,
+                clearingStartedAt: E124_CLEARING_START,
+            }),
+        ).toEqual({
+            weeklyInterest: 140,
+            accruesFrom: E124_CLEARING_START,
+            epochEnd: END_124,
+        });
     });
 
-    it('is the epoch end for a late clearing, however late', () => {
+    it('anchors a late clearing at its epoch end, however late', () => {
         expect(
-            accrualStartTimestamp(BASE_INITIAL, 123, E123_CLEARING_START),
-        ).toBe(END_123);
-        expect(
-            accrualStartTimestamp(BASE_INITIAL, 124, END_124 + 10 * 86_400),
-        ).toBe(END_124);
-        expect(accrualStartTimestamp(BASE_INITIAL, 124, END_124)).toBe(END_124);
-    });
-
-    it('returns NaN for an epoch or initial start epochEndTimestamp rejects', () => {
-        for (const [initial, epoch] of [
-            [BASE_INITIAL, -1],
-            [BASE_INITIAL, 1.5],
-            [BASE_INITIAL, Number.NaN],
-            [0, 124],
-            [-1, 124],
-            [Number.POSITIVE_INFINITY, 124],
-        ]) {
+            epochAccrual({
+                weeklyInterest: 140,
+                initialEpochStart: BASE_INITIAL,
+                lastClearedEpoch: 123,
+                clearingStartedAt: E123_CLEARING_START,
+            }),
+        ).toEqual({
+            weeklyInterest: 140,
+            accruesFrom: END_123,
+            epochEnd: END_123,
+        });
+        for (const startedAt of [END_124, END_124 + 10 * 86_400]) {
             expect(
-                accrualStartTimestamp(initial, epoch, E124_CLEARING_START),
-            ).toBeNaN();
+                epochAccrual({
+                    weeklyInterest: 140,
+                    initialEpochStart: BASE_INITIAL,
+                    lastClearedEpoch: 124,
+                    clearingStartedAt: startedAt,
+                }),
+            ).toEqual({
+                weeklyInterest: 140,
+                accruesFrom: END_124,
+                epochEnd: END_124,
+            });
         }
     });
 
-    it('returns NaN for a clearing start that is not a finite positive number', () => {
-        for (const start of [
+    it('accepts a genuine zero weekly figure', () => {
+        expect(
+            epochAccrual({
+                weeklyInterest: 0,
+                initialEpochStart: BASE_INITIAL,
+                lastClearedEpoch: 124,
+                clearingStartedAt: E124_CLEARING_START,
+            })?.weeklyInterest,
+        ).toBe(0);
+    });
+
+    const valid = {
+        weeklyInterest: 140,
+        initialEpochStart: BASE_INITIAL,
+        lastClearedEpoch: 124,
+        clearingStartedAt: E124_CLEARING_START,
+    };
+
+    it('is null for an epoch or initial start epochEndTimestamp rejects', () => {
+        for (const lastClearedEpoch of [-1, 1.5, Number.NaN]) {
+            expect(epochAccrual({ ...valid, lastClearedEpoch })).toBeNull();
+        }
+        for (const initialEpochStart of [
+            0,
+            -1,
+            1.5,
+            Number.POSITIVE_INFINITY,
+        ]) {
+            expect(epochAccrual({ ...valid, initialEpochStart })).toBeNull();
+        }
+    });
+
+    it('is null for a clearing start that is not a finite positive number', () => {
+        for (const clearingStartedAt of [
             0,
             -1,
             Number.NaN,
             Number.POSITIVE_INFINITY,
             Number.NEGATIVE_INFINITY,
         ]) {
-            expect(accrualStartTimestamp(BASE_INITIAL, 124, start)).toBeNaN();
+            expect(epochAccrual({ ...valid, clearingStartedAt })).toBeNull();
+        }
+    });
+
+    it('is null for a weekly figure that is not finite or is negative', () => {
+        for (const weeklyInterest of [
+            -1,
+            Number.NaN,
+            Number.POSITIVE_INFINITY,
+            Number.NEGATIVE_INFINITY,
+        ]) {
+            expect(epochAccrual({ ...valid, weeklyInterest })).toBeNull();
         }
     });
 });
@@ -680,57 +736,55 @@ describe('accruedInterestSince', () => {
     const W = SECONDS_PER_WEEK;
     const DAY = 86_400;
     const HOURS_48 = 2 * DAY;
-    const BASE_INITIAL = 1_717_653_600;
-    /** The end of Base epoch 124 (Thu 29 Oct 2026 06:00 UTC). */
-    const END_124 = 1_793_253_600;
-    /** Base epoch 124's clearing start, on time (Wed 28 Oct 03:53:23 UTC). */
-    const E124_CLEARING_START = 1_793_159_603;
     const WEEKLY = 140;
     const BASE = 1000;
+    const end = (epoch: number): number =>
+        epochEndTimestamp(BASE_INITIAL, epoch);
 
-    const one = (accruesFrom: number, weekly = WEEKLY): EpochAccrual[] => [
-        { weeklyInterest: weekly, accruesFrom },
-    ];
+    /** A validated term; a fixture the builder rejects is a broken test. */
+    const term = (
+        epoch: number,
+        clearingStartedAt: number,
+        weekly = WEEKLY,
+    ): EpochAccrual => {
+        const built = epochAccrual({
+            weeklyInterest: weekly,
+            initialEpochStart: BASE_INITIAL,
+            lastClearedEpoch: epoch,
+            clearingStartedAt,
+        });
+        if (built === null) throw new Error('invalid fixture');
+        return built;
+    };
+    const acc = (t: EpochAccrual, now: number): number =>
+        accruedInterestSince([t], now);
 
     /** |a − b| within a relative float tolerance. */
+    const tol = (...xs: number[]): number =>
+        1e-9 * Math.max(1, ...xs.map(Math.abs));
     const expectClose = (a: number, b: number): void => {
-        expect(Math.abs(a - b)).toBeLessThanOrEqual(
-            1e-9 * Math.max(1, Math.abs(a), Math.abs(b)),
-        );
+        expect(Math.abs(a - b)).toBeLessThanOrEqual(tol(a, b));
     };
 
-    it('accrues from the on-time epoch-124 clearing at 7 Nov 14:00 UTC', () => {
-        // 2026-11-07 14:00 UTC; epoch 125's clearing never ran.
+    it('is 4/3 of an epoch at 7 Nov 14:00 UTC after the on-time epoch-124 clearing', () => {
+        // 2026-11-07 14:00 UTC; epoch 125's clearing never ran. One epoch from
+        // Wed 28 Oct 03:53, held until Thu 5 Nov 06:00, then 56 h more.
         const now = 1_794_060_000;
-        const from = accrualStartTimestamp(
-            BASE_INITIAL,
-            124,
-            E124_CLEARING_START,
-        );
-        expect(from).toBe(E124_CLEARING_START);
-        expect(accruedInterestSince(one(from), now)).toBeCloseTo(
-            (WEEKLY * (now - E124_CLEARING_START)) / W,
+        expect(acc(term(124, E124_CLEARING_START), now)).toBeCloseTo(
+            (WEEKLY * 4) / 3,
             10,
         );
-        // ≈ 1.49 epochs, and past one: no cap.
-        expect(accruedInterestSince(one(from), now)).toBeGreaterThan(WEEKLY);
     });
 
     it('accrues exactly three epochs, uncapped, three weeks after a late anchor', () => {
-        const from = accrualStartTimestamp(BASE_INITIAL, 124, END_124 + DAY);
-        expect(from).toBe(END_124);
-        expect(accruedInterestSince(one(from), END_124 + 3 * W)).toBe(
-            3 * WEEKLY,
-        );
+        expect(acc(term(124, END_124 + DAY), END_124 + 3 * W)).toBe(3 * WEEKLY);
     });
 
     it('keeps ticking where the capped figure froze', () => {
-        const at = (now: number): number =>
-            accruedInterestSince(one(E124_CLEARING_START), now);
-        expect(at(END_124 + 10 * DAY + 1) - at(END_124 + 10 * DAY)).toBeCloseTo(
-            WEEKLY / W,
-            12,
-        );
+        const t = term(124, E124_CLEARING_START);
+        expect(
+            acc(t, END_124 + 10 * DAY + 1) - acc(t, END_124 + 10 * DAY),
+        ).toBeCloseTo(WEEKLY / W, 12);
         const capped = (now: number): number =>
             accruedInterest(
                 [
@@ -745,13 +799,31 @@ describe('accruedInterestSince', () => {
         expect(capped(END_124 + 10 * DAY + 1)).toBe(WEEKLY);
     });
 
+    it('holds after an on-time anchor until the next epoch ends — at most 48 h', () => {
+        const t = term(124, E124_CLEARING_START);
+        const holdStart = E124_CLEARING_START + W;
+        const holdEnd = END_124 + W;
+        expect(holdEnd - holdStart).toBe(END_124 - E124_CLEARING_START);
+        expect(holdEnd - holdStart).toBeLessThanOrEqual(HOURS_48);
+        expect(acc(t, holdStart - 1)).toBeLessThan(WEEKLY);
+        expect(acc(t, holdStart)).toBe(WEEKLY);
+        expect(acc(t, holdStart + DAY)).toBe(WEEKLY);
+        expect(acc(t, holdEnd)).toBe(WEEKLY);
+        expect(acc(t, holdEnd + 1)).toBeGreaterThan(WEEKLY);
+    });
+
+    it('never holds after a late anchor', () => {
+        const t = term(124, END_124 + DAY);
+        expect(t.accruesFrom).toBe(t.epochEnd);
+        const at = END_124 + W;
+        expect(acc(t, at - 1)).toBeLessThan(acc(t, at));
+        expect(acc(t, at)).toBeLessThan(acc(t, at + 1));
+    });
+
     it('accrues each pool from ITS OWN anchor', () => {
         expect(
             accruedInterestSince(
-                [
-                    { weeklyInterest: 70, accruesFrom: END_124 - 2 * W },
-                    { weeklyInterest: 140, accruesFrom: END_124 },
-                ],
+                [term(122, end(122), 70), term(124, END_124, 140)],
                 END_124 + 3 * DAY,
             ),
         ).toBeCloseTo(70 * (2 + 3 / 7) + 140 * (3 / 7), 10);
@@ -759,77 +831,64 @@ describe('accruedInterestSince', () => {
 
     it('starts a deposit accepted at an on-time clearing at exactly 0, never below', () => {
         // A first-time lender: $500k accepted at the epoch-124 clearing, which
-        // applied that epoch's interest BEFORE accepting it. Their weekly is
-        // today's balance × rate; they have no settled interest yet.
+        // applied that epoch's interest BEFORE accepting it.
         const weeklyNew = 500_000 * 0.00285 * 0.9;
-        const from = accrualStartTimestamp(
-            BASE_INITIAL,
-            124,
-            E124_CLEARING_START,
-        );
-        const accrued = (now: number): number =>
-            accruedInterestSince(one(from, weeklyNew), now);
-        expect(accrued(E124_CLEARING_START)).toBe(0);
+        const t = term(124, E124_CLEARING_START, weeklyNew);
+        expect(acc(t, E124_CLEARING_START)).toBe(0);
         for (const now of [
             E124_CLEARING_START + 1,
             E124_CLEARING_START + DAY,
             END_124,
         ]) {
-            expect(accrued(now)).toBeGreaterThan(0);
-            expect(accrued(now)).toBeCloseTo(
+            expect(acc(t, now)).toBeCloseTo(
                 (weeklyNew * (now - E124_CLEARING_START)) / W,
                 10,
             );
+            expect(acc(t, now)).toBeGreaterThan(0);
         }
-        // Anchored on the epoch end instead, the same lender would read
-        // negative until Thursday 06:00 — the case this anchor exists for.
-        expect((weeklyNew * (E124_CLEARING_START - END_124)) / W).toBeLessThan(
-            -100,
-        );
     });
 
     it('a top-up at an on-time clearing does not dip the total', () => {
-        // Previous on-time clearing exactly one epoch earlier; the clearing
+        // Epoch 123 cleared on time a week earlier; epoch 124's clearing
         // credits `weekly` at the OLD balance, then accepts a top-up.
-        const weeklyAfterTopUp = 3 * WEEKLY;
         const before =
-            BASE +
-            accruedInterestSince(
-                one(E124_CLEARING_START - W),
-                E124_CLEARING_START,
-            );
+            BASE + acc(term(123, E124_CLEARING_START - W), E124_CLEARING_START);
         const after =
             BASE +
             WEEKLY +
-            accruedInterestSince(
-                one(E124_CLEARING_START, weeklyAfterTopUp),
+            acc(
+                term(124, E124_CLEARING_START, 3 * WEEKLY),
                 E124_CLEARING_START,
             );
+        expect(before).toBe(BASE + WEEKLY);
         expect(after).toBe(BASE + WEEKLY);
-        expectClose(after, before);
     });
 
     it('an anchor ahead of the local clock contributes 0, never a negative', () => {
-        expect(accruedInterestSince(one(END_124), END_124 - DAY)).toBe(0);
-        expect(accruedInterestSince(one(END_124), END_124 - 100 * W)).toBe(0);
+        const t = term(124, E124_CLEARING_START);
+        expect(acc(t, E124_CLEARING_START - DAY)).toBe(0);
+        expect(acc(t, E124_CLEARING_START - 100 * W)).toBe(0);
     });
 
-    it('drops a non-finite or negative term rather than poisoning the sum', () => {
+    it('skips a term that is inconsistent, non-finite or negative', () => {
+        const good = {
+            weeklyInterest: WEEKLY,
+            accruesFrom: END_124,
+            epochEnd: END_124,
+        };
         expect(
             accruedInterestSince(
                 [
-                    { weeklyInterest: Number.NaN, accruesFrom: END_124 },
-                    {
-                        weeklyInterest: Number.POSITIVE_INFINITY,
-                        accruesFrom: END_124,
-                    },
-                    { weeklyInterest: -WEEKLY, accruesFrom: END_124 },
-                    { weeklyInterest: WEEKLY, accruesFrom: Number.NaN },
-                    {
-                        weeklyInterest: WEEKLY,
-                        accruesFrom: Number.NEGATIVE_INFINITY,
-                    },
-                    { weeklyInterest: WEEKLY, accruesFrom: END_124 },
+                    { ...good, weeklyInterest: Number.NaN },
+                    { ...good, weeklyInterest: Number.POSITIVE_INFINITY },
+                    { ...good, weeklyInterest: -WEEKLY },
+                    { ...good, accruesFrom: Number.NaN },
+                    { ...good, accruesFrom: Number.NEGATIVE_INFINITY },
+                    { ...good, epochEnd: Number.NaN },
+                    { ...good, epochEnd: Number.POSITIVE_INFINITY },
+                    // The anchor is never after the epoch end.
+                    { ...good, accruesFrom: END_124 + 1 },
+                    good,
                 ],
                 END_124 + DAY,
             ),
@@ -837,34 +896,15 @@ describe('accruedInterestSince', () => {
     });
 
     it('accrues nothing at a non-finite now, or with no terms', () => {
+        const t = term(124, E124_CLEARING_START);
         for (const now of [
             Number.NaN,
             Number.POSITIVE_INFINITY,
             Number.NEGATIVE_INFINITY,
         ]) {
-            expect(accruedInterestSince(one(END_124), now)).toBe(0);
+            expect(acc(t, now)).toBe(0);
         }
         expect(accruedInterestSince([], END_124 + DAY)).toBe(0);
-    });
-
-    it('property: never negative, for any input', () => {
-        fc.assert(
-            fc.property(
-                fc.array(
-                    fc.record({
-                        weeklyInterest: fc.double(),
-                        accruesFrom: fc.double(),
-                    }),
-                    { maxLength: 10 },
-                ),
-                fc.double(),
-                (accruals, now) => {
-                    const accrued = accruedInterestSince(accruals, now);
-                    expect(Number.isNaN(accrued)).toBe(false);
-                    expect(accrued).toBeGreaterThanOrEqual(0);
-                },
-            ),
-        );
     });
 
     const weeklyArb = fc.double({
@@ -880,6 +920,132 @@ describe('accruedInterestSince', () => {
         noDefaultInfinity: true,
     });
     const epochArb = fc.integer({ min: 0, max: 300 });
+    const inWindowArb = fc.integer({ min: 1, max: HOURS_48 });
+
+    it('property: never negative and never NaN, for any input', () => {
+        fc.assert(
+            fc.property(
+                fc.array(
+                    fc.record({
+                        weeklyInterest: fc.double(),
+                        accruesFrom: fc.double(),
+                        epochEnd: fc.double(),
+                    }),
+                    { maxLength: 10 },
+                ),
+                fc.double(),
+                (accruals, now) => {
+                    const accrued = accruedInterestSince(accruals, now);
+                    expect(Number.isNaN(accrued)).toBe(false);
+                    expect(accrued).toBeGreaterThanOrEqual(0);
+                },
+            ),
+        );
+    });
+
+    it('property: on time after on time is the deprecated function, at every instant', () => {
+        fc.assert(
+            fc.property(
+                weeklyArb,
+                settledArb,
+                epochArb,
+                inWindowArb,
+                inWindowArb,
+                fc.array(fc.double({ min: 0, max: 1, noNaN: true }), {
+                    minLength: 1,
+                    maxLength: 12,
+                }),
+                (weekly, settled, n, delta1, delta2, fractions) => {
+                    // Epoch n clears δ1 before its end, epoch n+1 δ2 before
+                    // its end: 120–216 h apart.
+                    const t1 = end(n) - delta1;
+                    const t2 = end(n + 1) - delta2;
+                    const gap = t2 - t1;
+                    expect(gap).toBeGreaterThan(120 * 3600);
+                    expect(gap).toBeLessThan(216 * 3600);
+                    // Up to the end of epoch n+2, by which the next clearing
+                    // must have run.
+                    const until = end(n + 1) + W;
+                    for (const f of fractions) {
+                        const now = Math.min(t1 + f * (until - t1), until - 1);
+                        const [base, anchor, epoch] =
+                            now < t2
+                                ? [settled, t1, n]
+                                : [settled + weekly, t2, n + 1];
+                        const ours =
+                            base + acc(term(epoch, anchor, weekly), now);
+                        const old =
+                            base +
+                            accruedInterest(
+                                [
+                                    {
+                                        weeklyInterest: weekly,
+                                        clearingTimestamp: anchor,
+                                    },
+                                ],
+                                now,
+                            );
+                        expectClose(ours, old);
+                    }
+                },
+            ),
+        );
+    });
+
+    it('property: on time after on time steps up by weekly × (W − gap) / W when gap < W, else not at all', () => {
+        fc.assert(
+            fc.property(
+                weeklyArb,
+                epochArb,
+                inWindowArb,
+                inWindowArb,
+                (weekly, n, delta1, delta2) => {
+                    const t1 = end(n) - delta1;
+                    const t2 = end(n + 1) - delta2;
+                    const before = acc(term(n, t1, weekly), t2);
+                    const after = weekly + acc(term(n + 1, t2, weekly), t2);
+                    const gap = t2 - t1;
+                    const step = after - before;
+                    const expected = (weekly * Math.max(W - gap, 0)) / W;
+                    expect(Math.abs(step - expected)).toBeLessThanOrEqual(
+                        tol(after),
+                    );
+                    expect(step).toBeLessThanOrEqual(
+                        (weekly * 2) / 7 + tol(after),
+                    );
+                },
+            ),
+        );
+    });
+
+    it('property: the first late catch-up after an on-time clearing is exactly continuous', () => {
+        fc.assert(
+            fc.property(
+                weeklyArb,
+                settledArb,
+                epochArb,
+                inWindowArb,
+                fc.integer({ min: 0, max: 30 * W }),
+                fc.integer({ min: 0, max: 30 * W }),
+                (weekly, settled, n, delta, lateness, afterwards) => {
+                    const onTime = term(n, end(n) - delta, weekly);
+                    const catchUpAt = end(n + 1) + lateness;
+                    const late = term(n + 1, catchUpAt, weekly);
+                    for (const now of [catchUpAt, catchUpAt + afterwards]) {
+                        // Before: a full epoch (the hold), then now − E(n+1).
+                        // After: one epoch settled, then now − E(n+1).
+                        const before = settled + acc(onTime, now);
+                        const after = settled + weekly + acc(late, now);
+                        expectClose(after, before);
+                        expectClose(
+                            acc(onTime, now),
+                            (weekly * (W + now - end(n + 1))) / W,
+                        );
+                    }
+                },
+            ),
+        );
+    });
 
     it('property: consecutive late catch-ups keep settled + accrued continuous', () => {
         fc.assert(
@@ -892,117 +1058,86 @@ describe('accruedInterestSince', () => {
                 fc.integer({ min: 0, max: 30 * W }),
                 fc.integer({ min: 0, max: 30 * W }),
                 (weekly, settled, n, lateness, k, catchUpDelay, afterwards) => {
-                    // Epoch n cleared late; epochs n+1 … n+k are then cleared
-                    // late too, each crediting one epoch at the same balance.
-                    const from = accrualStartTimestamp(
-                        BASE_INITIAL,
-                        n,
-                        epochEndTimestamp(BASE_INITIAL, n) + lateness,
-                    );
+                    const from = term(n, end(n) + lateness, weekly);
                     const catchUpAt =
-                        epochEndTimestamp(BASE_INITIAL, n + k) + catchUpDelay;
-                    const fromAfter = accrualStartTimestamp(
-                        BASE_INITIAL,
-                        n + k,
-                        catchUpAt,
-                    );
-                    const now = Math.max(catchUpAt, from) + afterwards;
-                    const before =
-                        settled + accruedInterestSince(one(from, weekly), now);
-                    const after =
-                        settled +
-                        k * weekly +
-                        accruedInterestSince(one(fromAfter, weekly), now);
-                    expectClose(after, before);
-                },
-            ),
-        );
-    });
-
-    it('property: the first late catch-up after an on-time clearing dips once, by weekly × δ / W ≤ 2/7 weekly', () => {
-        fc.assert(
-            fc.property(
-                weeklyArb,
-                settledArb,
-                epochArb,
-                fc.integer({ min: 1, max: HOURS_48 }),
-                fc.integer({ min: 0, max: 30 * W }),
-                fc.integer({ min: 0, max: 30 * W }),
-                (weekly, settled, n, delta, catchUpDelay, afterwards) => {
-                    // Epoch n cleared on time, δ before its end; epoch n+1
-                    // is then cleared late.
-                    const onTimeAt = epochEndTimestamp(BASE_INITIAL, n) - delta;
-                    const from = accrualStartTimestamp(
-                        BASE_INITIAL,
-                        n,
-                        onTimeAt,
-                    );
-                    expect(from).toBe(onTimeAt);
-                    const catchUpAt =
-                        epochEndTimestamp(BASE_INITIAL, n + 1) + catchUpDelay;
-                    const fromAfter = accrualStartTimestamp(
-                        BASE_INITIAL,
-                        n + 1,
-                        catchUpAt,
-                    );
+                        Math.max(end(n + k), end(n) + lateness) + catchUpDelay;
+                    const to = term(n + k, catchUpAt, weekly);
                     const now = catchUpAt + afterwards;
-                    const before =
-                        settled + accruedInterestSince(one(from, weekly), now);
-                    const after =
-                        settled +
-                        weekly +
-                        accruedInterestSince(one(fromAfter, weekly), now);
-                    const tolerance = 1e-9 * Math.max(1, before);
-                    expect(
-                        Math.abs(before - after - (weekly * delta) / W),
-                    ).toBeLessThanOrEqual(tolerance);
-                    expect(before - after).toBeLessThanOrEqual(
-                        (weekly * 2) / 7 + tolerance,
+                    expectClose(
+                        settled + k * weekly + acc(to, now),
+                        settled + acc(from, now),
                     );
                 },
             ),
         );
     });
 
-    it('property: an on-time clearing moves the total by at most 2/7 of one weekly', () => {
+    it('property: on time after late steps up by weekly × (E − t) / W ≤ 2/7 weekly', () => {
+        fc.assert(
+            fc.property(
+                weeklyArb,
+                epochArb,
+                fc.integer({ min: 0, max: W - HOURS_48 }),
+                inWindowArb,
+                (weekly, n, lateness, delta) => {
+                    const late = term(n, end(n) + lateness, weekly);
+                    const t = end(n + 1) - delta;
+                    const onTime = term(n + 1, t, weekly);
+                    const step = weekly + acc(onTime, t) - acc(late, t);
+                    expect(
+                        Math.abs(step - (weekly * (end(n + 1) - t)) / W),
+                    ).toBeLessThanOrEqual(tol(weekly));
+                    expect(step).toBeGreaterThan(0);
+                    expect(step).toBeLessThanOrEqual(
+                        (weekly * 2) / 7 + tol(weekly),
+                    );
+                },
+            ),
+        );
+    });
+
+    it('property: along any sequence of clearings it never steps down, and steps up by ≤ 2/7 weekly', () => {
         fc.assert(
             fc.property(
                 weeklyArb,
                 settledArb,
                 epochArb,
-                // The previous clearing (of epoch n), on time or late.
-                fc.integer({ min: -HOURS_48 + 1, max: W - 1 }),
-                fc.integer({ min: 1, max: HOURS_48 }),
-                (weekly, settled, n, previousOffset, delta) => {
-                    const from = accrualStartTimestamp(
-                        BASE_INITIAL,
-                        n,
-                        epochEndTimestamp(BASE_INITIAL, n) + previousOffset,
-                    );
-                    // Epoch n+1 cleared on time, δ before its end. A late
-                    // previous clearing can only precede it if it ran first.
-                    const onTimeAt =
-                        epochEndTimestamp(BASE_INITIAL, n + 1) - delta;
-                    fc.pre(
-                        epochEndTimestamp(BASE_INITIAL, n) + previousOffset <=
-                            onTimeAt,
-                    );
-                    const fromAfter = accrualStartTimestamp(
-                        BASE_INITIAL,
-                        n + 1,
-                        onTimeAt,
-                    );
-                    expect(fromAfter).toBe(onTimeAt);
-                    const before =
-                        settled +
-                        accruedInterestSince(one(from, weekly), onTimeAt);
-                    const after =
-                        settled +
-                        weekly +
-                        accruedInterestSince(one(fromAfter, weekly), onTimeAt);
-                    expect(Math.abs(after - before)).toBeLessThanOrEqual(
-                        (weekly * 2) / 7 + 1e-9 * Math.max(1, before),
-                    );
+                fc.array(
+                    fc.record({
+                        late: fc.boolean(),
+                        delta: inWindowArb,
+                        lateness: fc.integer({ min: 0, max: 3 * W }),
+                    }),
+                    { minLength: 2, maxLength: 8 },
+                ),
+                (weekly, settled, n, clearings) => {
+                    let previous: EpochAccrual | null = null;
+                    let previousAt = Number.NEGATIVE_INFINITY;
+                    let base = settled;
+                    for (let i = 0; i < clearings.length; i++) {
+                        const c = clearings[i];
+                        const epochEnd = end(n + i);
+                        // In order: a clearing cannot start before the
+                        // previous one, which may push it past its epoch end.
+                        const at = Math.max(
+                            c.late ? epochEnd + c.lateness : epochEnd - c.delta,
+                            previousAt,
+                        );
+                        const next = term(n + i, at, weekly);
+                        if (previous !== null) {
+                            const before = base + acc(previous, at);
+                            base += weekly;
+                            const after = base + acc(next, at);
+                            expect(after).toBeGreaterThanOrEqual(
+                                before - tol(before),
+                            );
+                            expect(after - before).toBeLessThanOrEqual(
+                                (weekly * 2) / 7 + tol(before),
+                            );
+                        }
+                        previous = next;
+                        previousAt = at;
+                    }
                 },
             ),
         );
@@ -1011,7 +1146,6 @@ describe('accruedInterestSince', () => {
     it('property: never goes backwards in time', () => {
         fc.assert(
             fc.property(
-                fc.integer({ min: END_124 - 200 * W, max: END_124 + 200 * W }),
                 fc.array(
                     fc.record({
                         weeklyInterest: fc.double({
@@ -1020,22 +1154,28 @@ describe('accruedInterestSince', () => {
                             noNaN: true,
                             noDefaultInfinity: true,
                         }),
-                        lead: fc.integer({ min: -60 * W, max: 60 * W }),
+                        epochEnd: fc.integer({
+                            min: END_124 - 200 * W,
+                            max: END_124 + 200 * W,
+                        }),
+                        lag: fc.integer({ min: 0, max: 10 * W }),
                     }),
                     { maxLength: 10 },
                 ),
+                fc.integer({ min: END_124 - 210 * W, max: END_124 + 210 * W }),
                 fc.integer({ min: 0, max: 60 * W }),
-                (t1, terms, d) => {
+                (terms, t1, d) => {
                     const accruals = terms.map(
-                        ({ weeklyInterest: weekly, lead }) => ({
+                        ({ weeklyInterest: weekly, epochEnd, lag }) => ({
                             weeklyInterest: weekly,
-                            accruesFrom: t1 + lead,
+                            accruesFrom: epochEnd - lag,
+                            epochEnd,
                         }),
                     );
                     const atEarlier = accruedInterestSince(accruals, t1);
                     const atLater = accruedInterestSince(accruals, t1 + d);
                     expect(atLater).toBeGreaterThanOrEqual(
-                        atEarlier - 1e-9 * Math.max(1, atEarlier),
+                        atEarlier - tol(atEarlier),
                     );
                 },
             ),

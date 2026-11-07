@@ -233,10 +233,10 @@ export type {
 } from './yield-history';
 
 export {
-    accrualStartTimestamp,
     accruedInterest,
     accruedInterestSince,
     dailyInterest,
+    epochAccrual,
     epochEndTimestamp,
     projectedAnnualEarnings,
     SECONDS_PER_WEEK,
