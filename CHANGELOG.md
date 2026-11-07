@@ -8,8 +8,9 @@ versioning; earlier releases are described in their commit messages.
 Lifetime interest no longer freezes when a clearing is late, and it never
 steps down at a clearing. Each pool accrues one epoch from its last
 clearing's start, or from its epoch's end when that clearing ran late. It
-holds until the next epoch ends, then keeps accruing with no cap. Additive
-only: nothing is renamed, removed or changed in behaviour.
+holds until the next epoch ends, then keeps accruing, capped at four
+epochs of the pool's weekly figure (owner ruling 2026-11-07). Additive only:
+nothing is renamed, removed or changed in behaviour.
 
 ### Added
 
@@ -32,16 +33,24 @@ only: nothing is renamed, removed or changed in behaviour.
     is negative.
 - **`accruedInterestSince(accruals: readonly EpochAccrual[], nowSeconds):
   number`** — per term, `weekly × (min(max(now − accruesFrom, 0), W) +
-  max(now − (epochEnd + W), 0)) / W`, with `W` = 604 800 s.
+  max(now − (epochEnd + W), 0)) / W`, capped at `MAX_ACCRUAL_EPOCHS ×
+  weekly`, with `W` = 604 800 s.
   - One epoch accrues from the anchor.
   - It then holds until `epochEnd + W`, the end of the next epoch: at most
     48 h after an on-time clearing, and no time at all after a late one.
-  - It then resumes, with no upper cap.
+  - It then resumes, up to `MAX_ACCRUAL_EPOCHS` (4) epochs of the pool's
+    weekly figure, and stays there until the pool is cleared again.
   - It is never negative and never decreases over time.
   - A term contributes nothing when its `weeklyInterest` is not finite or
     is negative, when `accruesFrom` or `epochEnd` is not finite, when
     `accruesFrom > epochEnd`, or when an elapsed time overflows. A
     non-finite `nowSeconds` accrues 0.
+- **`MAX_ACCRUAL_EPOCHS = 4`** — the most unpaid interest one pool shows,
+  in epochs of its weekly figure (owner ruling 2026-11-07). A pool can stop
+  being cleared without being flagged `isStopped`: on Base, one pool is more
+  than six epochs behind and another more than a hundred. Uncapped, the
+  figure would keep growing by interest that may never be credited. Four
+  epochs covers any ordinary late clearing. Not configurable.
 - **`EpochAccrual`** `{ weeklyInterest, accruesFrom, epochEnd }` — unix
   seconds; build it with `epochAccrual`.
 - **`epochEndTimestamp(initialEpochStart, epoch): number`** —
@@ -65,6 +74,15 @@ At a constant balance, the figure never steps down at a clearing. Below,
 - **Late after on time, and late after late:** exactly continuous.
 - **On time after late:** steps up by `weekly × (E − t) / W`, at most 2/7 of
   one weekly.
+
+All of the above holds while a pool's term is below the cap, where the cap
+changes nothing. At the cap, before a catch-up the pool shows `4 × weekly`;
+after it, one more weekly is settled and the new term shows
+`min(elapsed′, 4 × weekly)`. So `after = min(elapsed′ + weekly, 5 × weekly) ≥
+before`: it steps up only, by at most one weekly per epoch cleared, until the
+pool is back under the cap. A pool 6.34 epochs behind that catches up four
+epochs in one block steps +1, +1, +0.34 and then +0 weeklies. The figure is
+never above `settled + 4 × weekly` per pool.
 
 A deposit or top-up accepted at an on-time clearing starts at 0, so it never
 dips the total. Over a long gap the estimate reads slightly low: it uses

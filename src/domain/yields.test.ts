@@ -9,6 +9,7 @@ import {
     EpochAccrual,
     epochEndTimestamp,
     InterestSlice,
+    MAX_ACCRUAL_EPOCHS,
     projectedAnnualEarnings,
     SECONDS_PER_WEEK,
     weeklyInterest,
@@ -776,8 +777,65 @@ describe('accruedInterestSince', () => {
         );
     });
 
-    it('accrues exactly three epochs, uncapped, three weeks after a late anchor', () => {
+    it('accrues exactly three epochs, below the cap, three weeks after a late anchor', () => {
         expect(acc(term(124, END_124 + DAY), END_124 + 3 * W)).toBe(3 * WEEKLY);
+    });
+
+    it('caps one pool at four epochs of its weekly figure', () => {
+        expect(MAX_ACCRUAL_EPOCHS).toBe(4);
+        const t = term(124, END_124 + DAY);
+        expect(acc(t, END_124 + 3.5 * W)).toBeCloseTo(3.5 * WEEKLY, 10);
+        expect(acc(t, END_124 + 4 * W)).toBe(4 * WEEKLY);
+        expect(acc(t, END_124 + 4 * W + 1)).toBe(4 * WEEKLY);
+        expect(acc(t, END_124 + 124 * W)).toBe(4 * WEEKLY);
+    });
+
+    it('shows exactly four epochs for a pool 6.34 epochs behind its last clearing', () => {
+        // A pool that keeps lending but is no longer cleared, and is not
+        // flagged stopped: without the cap it would show 6.34 epochs unpaid.
+        expect(acc(term(124, END_124 + DAY), END_124 + 6.34 * W)).toBe(
+            4 * WEEKLY,
+        );
+        // On-time anchors hit the same ceiling.
+        expect(acc(term(124, E124_CLEARING_START), END_124 + 6.34 * W)).toBe(
+            4 * WEEKLY,
+        );
+    });
+
+    it('caps each pool on its own, not the sum', () => {
+        const capped = term(100, end(100) + DAY, 10);
+        const fresh = term(124, END_124 + DAY, WEEKLY);
+        const now = END_124 + W;
+        expect(accruedInterestSince([capped, fresh], now)).toBeCloseTo(
+            4 * 10 + WEEKLY,
+            10,
+        );
+    });
+
+    it('at the cap, a catch-up steps up by at most one weekly per epoch cleared, never down', () => {
+        // Last cleared late at epoch n; 6.34 epochs later the clearings of
+        // n+1 … n+6 all run at the same instant, in order (the way one pool
+        // caught up epochs 116 to 119 in a single block).
+        const n = 116;
+        const at = end(n) + 6.34 * W;
+        let previous = term(n, end(n) + DAY);
+        let base = BASE;
+        const steps: number[] = [];
+        for (let j = 1; j <= 6; j++) {
+            const before = base + acc(previous, at);
+            base += WEEKLY;
+            const next = term(n + j, at);
+            const after = base + acc(next, at);
+            steps.push((after - before) / WEEKLY);
+            expect(after).toBeLessThanOrEqual(
+                base + MAX_ACCRUAL_EPOCHS * WEEKLY + tol(after),
+            );
+            previous = next;
+        }
+        const expected = [1, 1, 0.34, 0, 0, 0];
+        steps.forEach((step, i) => {
+            expect(Math.abs(step - expected[i])).toBeLessThanOrEqual(1e-9);
+        });
     });
 
     it('keeps ticking where the capped figure froze', () => {
@@ -1025,8 +1083,10 @@ describe('accruedInterestSince', () => {
                 settledArb,
                 epochArb,
                 inWindowArb,
-                fc.integer({ min: 0, max: 30 * W }),
-                fc.integer({ min: 0, max: 30 * W }),
+                // Below the cap: now − E(n+1) ≤ 3 epochs, so the on-time
+                // term (a full epoch plus that) stays within four.
+                fc.integer({ min: 0, max: 2 * W }),
+                fc.integer({ min: 0, max: W }),
                 (weekly, settled, n, delta, lateness, afterwards) => {
                     const onTime = term(n, end(n) - delta, weekly);
                     const catchUpAt = end(n + 1) + lateness;
@@ -1053,10 +1113,11 @@ describe('accruedInterestSince', () => {
                 weeklyArb,
                 settledArb,
                 epochArb,
-                fc.integer({ min: 0, max: 30 * W }),
-                fc.integer({ min: 1, max: 20 }),
-                fc.integer({ min: 0, max: 30 * W }),
-                fc.integer({ min: 0, max: 30 * W }),
+                // Below the cap: now − E(n) ≤ 4 epochs.
+                fc.integer({ min: 0, max: W }),
+                fc.integer({ min: 1, max: 3 }),
+                fc.integer({ min: 0, max: W / 2 }),
+                fc.integer({ min: 0, max: W / 2 }),
                 (weekly, settled, n, lateness, k, catchUpDelay, afterwards) => {
                     const from = term(n, end(n) + lateness, weekly);
                     const catchUpAt =
@@ -1096,7 +1157,7 @@ describe('accruedInterestSince', () => {
         );
     });
 
-    it('property: along any sequence of clearings it never steps down, and steps up by ≤ 2/7 weekly', () => {
+    it('property: along any sequence of clearings, gaps past four epochs included, it never steps down, steps up by ≤ 2/7 weekly below the cap and ≤ one weekly at it, and never exceeds settled + 4 weekly', () => {
         fc.assert(
             fc.property(
                 weeklyArb,
@@ -1106,7 +1167,7 @@ describe('accruedInterestSince', () => {
                     fc.record({
                         late: fc.boolean(),
                         delta: inWindowArb,
-                        lateness: fc.integer({ min: 0, max: 3 * W }),
+                        lateness: fc.integer({ min: 0, max: 10 * W }),
                     }),
                     { minLength: 2, maxLength: 8 },
                 ),
@@ -1124,16 +1185,29 @@ describe('accruedInterestSince', () => {
                             previousAt,
                         );
                         const next = term(n + i, at, weekly);
+                        const ceiling = MAX_ACCRUAL_EPOCHS * weekly;
+                        expect(acc(next, at)).toBeLessThanOrEqual(
+                            ceiling + tol(ceiling),
+                        );
                         if (previous !== null) {
-                            const before = base + acc(previous, at);
+                            const held = acc(previous, at);
+                            expect(held).toBeLessThanOrEqual(
+                                ceiling + tol(ceiling),
+                            );
+                            const before = base + held;
                             base += weekly;
                             const after = base + acc(next, at);
                             expect(after).toBeGreaterThanOrEqual(
                                 before - tol(before),
                             );
                             expect(after - before).toBeLessThanOrEqual(
-                                (weekly * 2) / 7 + tol(before),
+                                weekly + tol(before),
                             );
+                            if (held < ceiling - tol(ceiling)) {
+                                expect(after - before).toBeLessThanOrEqual(
+                                    (weekly * 2) / 7 + tol(before),
+                                );
+                            }
                         }
                         previous = next;
                         previousAt = at;

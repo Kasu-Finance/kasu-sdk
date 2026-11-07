@@ -238,6 +238,7 @@ export {
     dailyInterest,
     epochAccrual,
     epochEndTimestamp,
+    MAX_ACCRUAL_EPOCHS,
     projectedAnnualEarnings,
     SECONDS_PER_WEEK,
     weeklyInterest,
