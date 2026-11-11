@@ -78,7 +78,9 @@ export class LoyaltyFacade {
      * (the price the contract's own level read uses); `KSULocking.balanceOf`
      * (rKSU) and `userTotalDeposits` (KASU locked);
      * `UserManager.userTotalPendingAndActiveDepositedAmountForCurrentEpoch`
-     * and `userLoyaltyLevel`; `UserLoyaltyRewards.loyaltyEpochRewardRates` for
+     * (the lent amount the level counts now), `userTotalPendingAndActiveDepositedAmount`
+     * (pending up to the NEXT epoch — the requirements use the larger) and
+     * `userLoyaltyLevel`; `UserLoyaltyRewards.loyaltyEpochRewardRates` for
      * levels 0..10. The level is computed from those inputs exactly as
      * `UserManager._userLoyaltyLevel` does and checked against
      * `userLoyaltyLevel`; a disagreement throws `LoyaltyLevelMismatchError`
@@ -87,7 +89,12 @@ export class LoyaltyFacade {
      * The level counts LOCKED KASU (rKSU), never KASU held in a wallet:
      * buying KASU alone does not change it. `levels[n].additionalKsu` is the
      * extra KASU to lock at full weight (the 720-day lock, 1 rKSU per KSU) to
-     * reach level n at today's lent amount and price.
+     * reach level n at `requirementLentUsd` and today's price — a MINIMUM:
+     * interest, new deposits and price moves raise it before the next
+     * clearing records the level, and buying costs fees, so pre-fill with
+     * headroom and net off KASU already held unlocked. For a lock with another
+     * rKSU multiplier, `ksuToLockFor(additional rKSU, multiplier)` gives the
+     * exact amount (never a float division — `_lock` floors what it mints).
      *
      * ```ts
      * const status = await kasu.loyalty.getStatus(address);
@@ -166,6 +173,13 @@ export class LoyaltyFacade {
                     address,
                 ]),
             },
+            {
+                target: contracts.UserManager,
+                callData: userManager.encodeFunctionData(
+                    'userTotalPendingAndActiveDepositedAmount',
+                    [address],
+                ),
+            },
             ...rateLevels.map((level) => ({
                 target: contracts.UserLoyaltyRewards,
                 callData: rewards.encodeFunctionData(
@@ -214,10 +228,14 @@ export class LoyaltyFacade {
             'userLoyaltyLevel',
             data[6],
         ) as unknown as [BigNumber, number];
+        const [, pendingLentNextEpoch] = userManager.decodeFunctionResult(
+            'userTotalPendingAndActiveDepositedAmount',
+            data[7],
+        ) as unknown as [BigNumber, BigNumber];
         const epochRewardRates = rateLevels.map((level) => {
             const [rate] = rewards.decodeFunctionResult(
                 'loyaltyEpochRewardRates',
-                data[7 + level],
+                data[8 + level],
             ) as unknown as [BigNumber];
             return big(rate);
         });
@@ -229,6 +247,7 @@ export class LoyaltyFacade {
             lockedKsu: big(lockedKsu),
             activeLent: big(activeLent),
             pendingLent: big(pendingLent),
+            pendingLentNextEpoch: big(pendingLentNextEpoch),
             epochRewardRates,
             stableDecimals: this._config.stableAssetDecimals,
         };

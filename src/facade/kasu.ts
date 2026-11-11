@@ -128,6 +128,7 @@ export class Kasu {
             isLiteDeployment: sdkConfig.isLiteDeployment,
             contracts: sdkConfig.contracts,
             stableAssetDecimals: sdkConfig.stableAssetDecimals,
+            multicall3Address: chainConfig.multicall3Address,
         });
 
         this.flows = new FlowsFacade(

@@ -84,6 +84,7 @@ export {
     formatExactDecimal,
     KSU_DECIMALS,
     KSU_PRICE_DECIMALS,
+    ksuToLockFor,
     LOYALTY_FULL_PERCENT,
     LOYALTY_RATE_DECIMALS,
     loyaltyLevelOf,

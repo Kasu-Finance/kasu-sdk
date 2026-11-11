@@ -362,7 +362,7 @@ they were duplicated across the applications, and the copies drifted.
 | `batch-proof.ts`          | Pin a deposit batch to its run; prove a deposit (or one executed operation) in a handleOps receipt |
 | `sponsored-calls.ts`      | Encode the single calls a sponsored relay carries (LPM requests, stable `transfer`), with their `kind` |
 | `explorer-urls.ts`        | `explorerTxUrl` / `explorerAddressUrl` — explorer links from a validated hash or address only |
-| `loyalty.ts`              | `UserManager._userLoyaltyLevel` restated in `bigint` (`loyaltyLevelOf`, `loyaltyRatioBps`, `rKsuValue` — both floor divisions of `_rKSUInUSDC` as one by 1e30), and its inverse rounded UP (`requiredLockedValue` = ceil(T × lent / 10 000), `requiredRksuFor` = ceil(V × 1e30 / price); 0 for T = 0, 1 wei with nothing lent, `null` at price 0); `buildLoyaltyStatus` → the `kasu.loyalty.getStatus` shape. Exact decimal strings, never floats |
+| `loyalty.ts`              | `UserManager._userLoyaltyLevel` restated in `bigint` (`loyaltyLevelOf`, `loyaltyRatioBps`, `rKsuValue` — both floor divisions of `_rKSUInUSDC` as one by 1e30), and its inverse rounded UP (`requiredLockedValue` = ceil(T × lent / 10 000), `requiredRksuFor` = ceil(V × 1e30 / price); 0 for T = 0, 1 wei with nothing lent, `null` at price 0; `ksuToLockFor` = ceil(rKSU × 10 000 / multiplier), because `_lock` floors what it mints); `buildLoyaltyStatus` → the `kasu.loyalty.getStatus` shape. Exact decimal strings, never floats |
 
 `yield-history.ts` holds the ONE per-epoch yield formula, and
 `services/Portfolio/yield-history.ts` the ONE per-position selection,
@@ -512,7 +512,8 @@ withdrawal path uses, and targets the chain config's `LendingPoolManager`.
 `MAX_ADDITIONAL_LOYALTY_LEVELS` = 10 thresholds), so no threshold or bonus is
 a constant here. `kasu.loyalty.getStatus` (`facade/loyalty.ts`) reads them,
 the price (`ksuEpochTokenPriceFresh`, the one the contract's own level read
-uses), rKSU, KASU locked, the lent total and `userLoyaltyLevel` in ONE
+uses), rKSU, KASU locked, the lent total (current epoch, and next epoch for
+`requirementLentUsd`, the basis of every requirement) and `userLoyaltyLevel` in ONE
 Multicall3 `aggregate3` (canonical address, `allowFailure: false`, rates for
 levels 0..10) — one block, one round trip, and no `getBlockNumber`-then-
 `blockTag` race on a load-balanced public RPC. It recomputes the level and
@@ -520,7 +521,9 @@ throws `LoyaltyLevelMismatchError` when it disagrees with the contract.
 `Locking.getLoyaltySchedule()` reads the same two lists for the older
 float path (`getUserLocks`, `Portfolio.calculateWeeklyKsuBonusRewards`).
 The level counts rKSU (LOCKED KASU × the lock period's multiplier), never a
-wallet balance; `additionalKsu` is at full weight (the 720-day lock). Lite
+wallet balance; `additionalKsu` is at full weight (the 720-day lock) and an
+exact MINIMUM — apps add headroom. `buildLoyaltyStatus` refuses a stable that
+is not 6 decimals (`_rKSUInUSDC` hard-codes 1e12). Lite
 returns `{ supported: false, reason: 'lite-deployment' }`.
 
 `requests.ts` publishes the reallocation destination as a RAW tranche name
@@ -737,6 +740,9 @@ not a shortfall — `LendingPoolIsStopped`, `ClearingIsPending`, `InvalidTranche
 `UserNotKycd`, `UserBlocked`, `UserNotInAllowList` (`ILendingPoolManagerAbi`)
 and `BlockExpired` (`IKasuAllowListAbi`). The consequence was a fully funded
 lender being told to top up while their pool was simply mid-clearing.
+(`ClearingIsPending` is DECLARED in that ABI, but no contract on the deposit
+path checks it today: a deposit during clearing is accepted and waits for a
+later clearing — see `isClearingPending`. The decoder keeps it for safety.)
 
 `domain/revert-errors.ts` decodes the revert data off the error — providers
 nest it differently (`error.data`, `error.error.data`,

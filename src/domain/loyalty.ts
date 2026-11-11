@@ -75,28 +75,54 @@ export interface LoyaltyChainState {
     lockedKsu: bigint;
     /** `UserManager.userTotalPendingAndActiveDepositedAmountForCurrentEpoch(user)`, stable base units. */
     activeLent: bigint;
-    /** Same call, second value. */
+    /** Same call, second value: pending deposits tagged up to the current epoch. */
     pendingLent: bigint;
+    /**
+     * `UserManager.userTotalPendingAndActiveDepositedAmount(user)`, second
+     * value: pending deposits tagged up to the NEXT epoch — a superset that
+     * includes requests made during the clearing window, which the next
+     * clearing will count.
+     */
+    pendingLentNextEpoch: bigint;
     /**
      * `UserLoyaltyRewards.loyaltyEpochRewardRates(level)` for level 0 up to at
      * least `thresholdsBps.length`; 18-decimal fraction per epoch.
      */
     epochRewardRates: readonly bigint[];
-    /** Decimals of the deployment's stable token (6 on every deployment). */
+    /**
+     * Decimals of the deployment's stable token. Must be 6: `_rKSUInUSDC`
+     * hard-codes the 1e12 between rKSU and a 6-decimal stable.
+     */
     stableDecimals: number;
 }
 
-/** One level and what reaching it takes, at the current lent amount and price. */
+/**
+ * One level and what reaching it takes, at `requirementLentUsd` and today's
+ * price.
+ *
+ * Every figure is an exact MINIMUM, not a safe amount to buy: interest
+ * accruing on the lent amount, a new deposit and a KSU price move all raise
+ * it before the level is next recorded at clearing, and buying costs fees and
+ * slippage. Add headroom, and count KASU the lender already holds unlocked.
+ */
 export interface LoyaltyLevelRequirement {
     level: number;
     /** The threshold in FULL_PERCENT units (100 = 1 %); `0` for level 0. */
     thresholdBps: number;
-    /** True when the user's current state meets this level. */
+    /**
+     * True when the lender's state NOW meets this level — `n ≤ level`, the
+     * contract's own reading. A reached level can still show an
+     * `additionalKsu` above 0 when a deposit waiting for the next clearing
+     * raises the bar.
+     */
     reached: boolean;
     /**
      * The smallest locked value, in the stable token, the contract counts as
-     * meeting the threshold: `ceil(threshold × lent / 10_000)`. `'0'` when
-     * nothing is lent (any rKSU then reaches every level).
+     * meeting the threshold: `ceil(threshold × lent / 10_000)` with
+     * `lent = requirementLentUsd`. `'0'` when nothing is lent — the contract
+     * then gives ANY rKSU every level, so `additionalLockedValueUsd` is `'0'`
+     * while `reached` can be false and `additionalKsu` is 1 wei
+     * (`'0.000000000000000001'`): the lender needs to lock anything at all.
      */
     requiredLockedValueUsd: string;
     /** `max(required − current locked value, 0)`. */
@@ -110,13 +136,17 @@ export interface LoyaltyLevelRequirement {
     requiredRksu: string | null;
     /**
      * How much more KASU must be LOCKED to reach the level: `max(requiredRksu
-     * − rKSU, 0)`, `'0'` when already reached, `null` when unreachable.
+     * − rKSU, 0)` — `'0'` when the current rKSU already covers it, `null`
+     * when it cannot be reached.
      *
-     * Counted at full locking weight — the 720-day lock mints 1 rKSU per KSU.
-     * A shorter lock mints less (30 d 5 %, 180 d 25 %, 360 d 50 % on Base),
-     * so it needs proportionally more KASU, and a lock bonus (when the bonus
-     * pool has funds) adds to what is locked. Buying KASU without locking it
-     * changes nothing.
+     * Counted at full locking weight — a lock whose rKSU multiplier is
+     * 100 % (the 720-day lock on Base) mints 1 rKSU per KASU, exactly. A
+     * shorter lock mints less (30 d 5 %, 180 d 25 %, 360 d 50 % on Base) and
+     * `_lock` floors what it mints, so never divide this by a percentage:
+     * `ksuToLockFor(additionalRksu, multiplier)` gives the exact amount for
+     * another lock. A lock bonus (when the bonus pool has funds) only adds
+     * to what is minted, so the amount is enough with or without one.
+     * Buying KASU without locking it changes nothing.
      */
     additionalKsu: string | null;
 }
@@ -166,8 +196,19 @@ export interface LoyaltyStatusSupported {
     lockedValueUsd: string;
     /** `ksuEpochTokenPriceFresh` — the price the level uses. */
     ksuPriceUsd: string;
-    /** Lent in the deployment's stable token (USDC on Base). */
+    /**
+     * Lent in the deployment's stable token (USDC on Base), as the level
+     * counts it now: active plus pending deposits tagged up to this epoch.
+     */
     lentUsd: { active: string; pending: string; total: string };
+    /**
+     * The lent amount `levels[]` requirements are computed at: the larger of
+     * `lentUsd.total` and active plus pending deposits tagged up to the NEXT
+     * epoch (requests made during the clearing window, which the next
+     * clearing counts). So a requirement is never below what the next
+     * clearing will ask for on today's deposits.
+     */
+    requirementLentUsd: string;
     bonusRatePerLevel: LoyaltyBonusRate[];
     /** Every level, 0 to `levelCount − 1`. */
     levels: LoyaltyLevelRequirement[];
@@ -274,6 +315,26 @@ export function requiredRksuFor(
     return ceilDiv(value * RKSU_VALUE_DIVISOR, ksuPrice);
 }
 
+/**
+ * The smallest KASU amount whose lock mints at least `rKsu`, for a lock
+ * period with rKSU multiplier `rKsuMultiplierBps` (FULL_PERCENT units,
+ * `KSULocking.lockDetails(period).rKSUMultiplier`; 10 000 = 1 rKSU per KASU).
+ *
+ * `_lock` mints `floor((amount + bonus) × multiplier / 10_000)`, so
+ * `floor(a × m / 10_000) ≥ R  ⇔  a ≥ ceil(R × 10_000 / m)`. The bonus is
+ * left out: it is capped by what the bonus pool holds and only ever adds, so
+ * the result is enough with or without it. `null` for a multiplier of 0 (a
+ * lock that mints nothing). Both in 18-decimal base units.
+ */
+export function ksuToLockFor(
+    rKsu: bigint,
+    rKsuMultiplierBps: bigint,
+): bigint | null {
+    if (rKsu <= ZERO) return ZERO;
+    if (rKsuMultiplierBps <= ZERO) return null;
+    return ceilDiv(rKsu * FULL_PERCENT, rKsuMultiplierBps);
+}
+
 /** An 18-decimal epoch rate × `EPOCHS_IN_YEAR`, in percent, exact. */
 export function annualPctOfEpochRate(epochRate: bigint): string {
     // rate / 1e18 × 52.17857 × 100  =  rate × 5_217_857 / 10^(18 + 5 − 2)
@@ -312,10 +373,16 @@ export function buildLoyaltyStatus(
         lockedKsu,
         activeLent,
         pendingLent,
+        pendingLentNextEpoch,
         epochRewardRates,
         stableDecimals,
     } = state;
 
+    if (stableDecimals !== 6) {
+        throw new RangeError(
+            `loyalty: the contract values rKSU for a 6-decimal stable, not ${String(stableDecimals)}`,
+        );
+    }
     if (thresholdsBps.length > MAX_ADDITIONAL_LOYALTY_LEVELS) {
         throw new RangeError(
             `loyalty: ${String(thresholdsBps.length)} thresholds, the contract allows ${String(MAX_ADDITIONAL_LOYALTY_LEVELS)}`,
@@ -332,7 +399,14 @@ export function buildLoyaltyStatus(
     if (epochRewardRates.length < thresholdsBps.length + 1) {
         throw new RangeError('loyalty: a reward rate is missing for a level');
     }
-    for (const amount of [ksuPrice, rKsu, lockedKsu, activeLent, pendingLent]) {
+    for (const amount of [
+        ksuPrice,
+        rKsu,
+        lockedKsu,
+        activeLent,
+        pendingLent,
+        pendingLentNextEpoch,
+    ]) {
         if (amount < ZERO) throw new RangeError('loyalty: negative amount');
     }
     for (const rate of epochRewardRates) {
@@ -340,6 +414,8 @@ export function buildLoyaltyStatus(
     }
 
     const lent = activeLent + pendingLent;
+    const nextLent = activeLent + pendingLentNextEpoch;
+    const requirementLent = nextLent > lent ? nextLent : lent;
     const value = rKsuValue(rKsu, ksuPrice);
     const ratio = loyaltyRatioBps(rKsu, ksuPrice, lent);
     const level = loyaltyLevelOf(rKsu, ksuPrice, lent, thresholdsBps);
@@ -349,15 +425,21 @@ export function buildLoyaltyStatus(
     const levels: LoyaltyLevelRequirement[] = thresholdsWithBase.map(
         (threshold, n) => {
             const reached = n <= level;
-            const requiredValue = requiredLockedValue(threshold, lent);
-            const requiredRksu = requiredRksuFor(threshold, lent, ksuPrice);
-            const additionalRksu = reached
-                ? ZERO
-                : requiredRksu === null
-                  ? null
-                  : requiredRksu > rKsu
-                    ? requiredRksu - rKsu
-                    : ZERO;
+            const requiredValue = requiredLockedValue(
+                threshold,
+                requirementLent,
+            );
+            const requiredRksu = requiredRksuFor(
+                threshold,
+                requirementLent,
+                ksuPrice,
+            );
+            const additionalRksu =
+                requiredRksu === null
+                    ? null
+                    : requiredRksu > rKsu
+                      ? requiredRksu - rKsu
+                      : ZERO;
             return {
                 level: n,
                 thresholdBps: toSafeNumber(threshold, 'threshold'),
@@ -395,6 +477,7 @@ export function buildLoyaltyStatus(
             pending: stable(pendingLent),
             total: stable(lent),
         },
+        requirementLentUsd: stable(requirementLent),
         bonusRatePerLevel: thresholdsWithBase.map((_, n) => ({
             level: n,
             epochRate: formatExactDecimal(

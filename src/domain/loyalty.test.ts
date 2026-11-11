@@ -4,6 +4,7 @@ import {
     annualPctOfEpochRate,
     buildLoyaltyStatus,
     formatExactDecimal,
+    ksuToLockFor,
     LoyaltyChainState,
     loyaltyLevelOf,
     loyaltyRatioBps,
@@ -30,6 +31,7 @@ function state(over: Partial<LoyaltyChainState> = {}): LoyaltyChainState {
         lockedKsu: B(0),
         activeLent: USDC(10_000),
         pendingLent: B(0),
+        pendingLentNextEpoch: B(0),
         epochRewardRates: BASE_RATES,
         stableDecimals: 6,
         ...over,
@@ -241,8 +243,44 @@ describe('what a level takes', () => {
     });
 });
 
+describe('ksuToLockFor', () => {
+    it('at full weight it is the rKSU itself; shorter locks need more, rounded up', () => {
+        expect(ksuToLockFor(KSU(50), B(10_000))).toBe(KSU(50));
+        expect(ksuToLockFor(KSU(50), B(5_000))).toBe(KSU(100));
+        expect(ksuToLockFor(KSU(50), B(500))).toBe(KSU(1_000));
+        // 1 wei of rKSU at 5 %: floor(a × 500 / 10 000) ≥ 1 needs a = 20.
+        expect(ksuToLockFor(B(1), B(500))).toBe(B(20));
+        // 7 wei at 30 %: ceil(70 000 / 3 000) = 24 (23 mints only 6).
+        expect(ksuToLockFor(B(7), B(3_000))).toBe(B(24));
+    });
+
+    it('nothing needed is 0; a multiplier of 0 can never mint (null)', () => {
+        expect(ksuToLockFor(B(0), B(500))).toBe(B(0));
+        expect(ksuToLockFor(B(0), B(0))).toBe(B(0));
+        expect(ksuToLockFor(B(1), B(0))).toBeNull();
+    });
+
+    it("is the smallest amount whose lock mints enough under _lock's floor (property)", () => {
+        fc.assert(
+            fc.property(
+                fc.bigInt({ min: B(1), max: KSU(10_000_000) }),
+                fc.bigInt({ min: B(1), max: B(20_000) }),
+                (rKsu, multiplier) => {
+                    const minted = (amount: bigint): bigint =>
+                        (amount * multiplier) / B(10_000);
+                    const amount = ksuToLockFor(rKsu, multiplier);
+                    if (amount === null) throw new Error('unexpected null');
+                    expect(minted(amount) >= rKsu).toBe(true);
+                    expect(minted(amount - B(1)) < rKsu).toBe(true);
+                },
+            ),
+            { numRuns: 2000 },
+        );
+    });
+});
+
 describe('annualPctOfEpochRate', () => {
-    it('the Base rates are the 0.1 % and 0.2 % they were seeded as, exactly', () => {
+    it('the Base rates are the 0.1 % and 0.2 % they were seeded as (≈, to 1e-14 %)', () => {
         expect(annualPctOfEpochRate(B(0))).toBe('0');
         expect(annualPctOfEpochRate(BASE_RATES[1])).toBe(
             '0.099999999999996823624',
@@ -271,6 +309,7 @@ describe('buildLoyaltyStatus', () => {
             lockedValueUsd: '0',
             ksuPriceUsd: '2',
             lentUsd: { active: '10000', pending: '0', total: '10000' },
+            requirementLentUsd: '10000',
             bonusRatePerLevel: [
                 { level: 0, epochRate: '0', annualPct: '0' },
                 {
@@ -459,11 +498,62 @@ describe('buildLoyaltyStatus', () => {
         ).toThrow('out of range');
     });
 
-    it('lent amounts use the deployment decimals', () => {
+    it('lent amounts use the deployment decimals; only 6 matches the contract', () => {
         const status = buildLoyaltyStatus(
             state({ activeLent: B(1_234_567), stableDecimals: 6 }),
             META,
         );
         expect(status.lentUsd.total).toBe('1.234567');
+        expect(() =>
+            buildLoyaltyStatus(state({ stableDecimals: 18 }), META),
+        ).toThrow('6-decimal');
+    });
+
+    it("requirements use the next clearing's lent amount when it is larger", () => {
+        // $10,000 active, $2,000 requested in the clearing window (tagged next
+        // epoch): the level counts $10,000 now, the next clearing $12,000.
+        const status = buildLoyaltyStatus(
+            state({
+                rKsu: KSU(55),
+                pendingLentNextEpoch: USDC(2_000),
+            }),
+            META,
+        );
+        expect(status.level).toBe(1);
+        expect(status.ratioBps).toBe(110);
+        expect(status.lentUsd.total).toBe('10000');
+        expect(status.requirementLentUsd).toBe('12000');
+        // Level 1 is reached now, but $12,000 × 1 % = $120 = 60 rKSU at 2.0:
+        // 5 more to keep it at the next clearing.
+        expect(status.levels[1]).toMatchObject({
+            reached: true,
+            requiredLockedValueUsd: '120',
+            additionalLockedValueUsd: '10',
+            requiredRksu: '60',
+            additionalKsu: '5',
+        });
+        expect(status.levels[2]).toMatchObject({
+            reached: false,
+            requiredRksu: '300',
+            additionalKsu: '245',
+        });
+    });
+
+    it('nothing lent now but a deposit waiting: the requirement is real, not 1 wei', () => {
+        const status = buildLoyaltyStatus(
+            state({ activeLent: B(0), pendingLentNextEpoch: USDC(1_000) }),
+            META,
+        );
+        expect(status.ratioBps).toBeNull();
+        expect(status.level).toBe(0);
+        expect(status.levels[1].additionalKsu).toBe('5');
+    });
+
+    it('a smaller next-epoch figure never lowers the requirement', () => {
+        const status = buildLoyaltyStatus(
+            state({ pendingLent: USDC(500), pendingLentNextEpoch: B(0) }),
+            META,
+        );
+        expect(status.requirementLentUsd).toBe('10500');
     });
 });

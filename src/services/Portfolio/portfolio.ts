@@ -369,10 +369,8 @@ export class Portfolio {
                 schedule,
             );
 
-        const loyaltyRewardRate =
-            await this._userLoyaltyRewardsAbi.loyaltyEpochRewardRates(
-                loyaltyLevel,
-            );
+        // The schedule already holds every level's rate.
+        const loyaltyRewardRate = schedule.epochRewardRates[loyaltyLevel];
 
         if (loyaltyRewardRate.isZero() || ksuEpochPrice.price.isZero()) {
             return 0;

@@ -17,6 +17,7 @@ import {
     IUserManagerAbi,
     IUserManagerAbi__factory,
 } from '../../contracts';
+import { MAX_ADDITIONAL_LOYALTY_LEVELS } from '../../domain/loyalty';
 import { epochRateToApy, EPOCHS_IN_YEAR } from '../../domain/rates';
 import { SdkConfig } from '../../sdk-config';
 import {
@@ -289,12 +290,11 @@ export class KSULocking {
             return [];
         }
 
-        const [result, schedule] = await Promise.all([
-            this._graph.request<GQLUserLocks>(userLocksQuery, {
-                userAddress: userAddress.toLowerCase(),
-            }),
-            this.getLoyaltySchedule(),
-        ]);
+        const result = await this._graph.request<GQLUserLocks>(userLocksQuery, {
+            userAddress: userAddress.toLowerCase(),
+        });
+        if (result.userLocks.length === 0) return [];
+        const schedule = await this.getLoyaltySchedule();
         const resultPromises = result.userLocks.map(async (userLock) => {
             const [, id] = userLock.id.split('-');
             const rKSUtoStableRatio = await this.getRKSUvsStableRatio(
@@ -391,26 +391,36 @@ export class KSULocking {
      * `SystemVariables.loyaltyThresholds()` and
      * `UserLoyaltyRewards.loyaltyEpochRewardRates(level)` for every level.
      * Both are admin-settable, so nothing here is hard-coded. Lite has no
-     * levels: `{ thresholdsBps: [], apyBonuses: [0] }`.
+     * levels: `{ thresholdsBps: [], apyBonuses: [0], epochRewardRates: [0] }`.
      *
      * For one lender's full status (level, requirements, one block), use
      * `kasu.loyalty.getStatus`.
      */
     async getLoyaltySchedule(): Promise<LoyaltySchedule> {
         if (this._isLiteDeployment) {
-            return { thresholdsBps: [], apyBonuses: [0] };
+            return {
+                thresholdsBps: [],
+                apyBonuses: [0],
+                epochRewardRates: [BigNumber.from(0)],
+            };
         }
-        const thresholds = await this._systemVariablesAbi.loyaltyThresholds();
-        const rates = await Promise.all(
-            Array.from({ length: thresholds.length + 1 }, (_, level) =>
-                this._userLoyaltyRewardsAbi.loyaltyEpochRewardRates(level),
+        // Every rate the contract allows (levels 0..10) in the same round
+        // as the thresholds, so a threshold change cannot land between them.
+        const [thresholds, ...rates] = await Promise.all([
+            this._systemVariablesAbi.loyaltyThresholds(),
+            ...Array.from(
+                { length: MAX_ADDITIONAL_LOYALTY_LEVELS + 1 },
+                (_, level) =>
+                    this._userLoyaltyRewardsAbi.loyaltyEpochRewardRates(level),
             ),
-        );
+        ]);
+        const levelRates = rates.slice(0, thresholds.length + 1);
         return {
             thresholdsBps: thresholds.map((t) => t.toNumber()),
-            apyBonuses: rates.map(
+            apyBonuses: levelRates.map(
                 (rate) => parseFloat(formatUnits(rate, 18)) * EPOCHS_IN_YEAR,
             ),
+            epochRewardRates: levelRates,
         };
     }
 
@@ -436,8 +446,20 @@ export class KSULocking {
         if (this._isLiteDeployment) {
             return { loyaltyLevel: 0, apyBonus: 0 };
         }
+        // Before 2.18.0 this took the ratio alone; a plain-JS caller still
+        // passing one argument gets this, not a TypeError deep inside.
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (!schedule?.thresholdsBps) {
+            throw new Error(
+                'getLoyaltyLevelAndApyBonusFromRatio: pass the schedule from getLoyaltySchedule() (thresholds are read from chain since 2.18.0)',
+            );
+        }
 
-        const ratioBps = rKSUtoStableRatio * 10_000;
+        // NaN is `getRKSUvsStableRatio` with nothing lent and nothing locked:
+        // the contract's ratio is 0 then, which still meets a threshold of 0.
+        const ratioBps = Number.isNaN(rKSUtoStableRatio)
+            ? 0
+            : rKSUtoStableRatio * 10_000;
         let loyaltyLevel = 0;
         for (const threshold of schedule.thresholdsBps) {
             if (ratioBps >= threshold) loyaltyLevel++;

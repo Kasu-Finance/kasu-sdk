@@ -116,12 +116,17 @@ export class DepositsFacade {
      * epoch's clearing has not ended.
      *
      * Deposits and withdrawals are NOT paused while it is: a request made
-     * during clearing is accepted and joins the next epoch's clearing. What
-     * the contracts refuse while it is pending is cancelling a request
-     * (`CannotCancelRequestIfClearingIsPending`), and the pool manager's
+     * then is accepted and waits for a later clearing — inside the clearing
+     * window it is tagged for the next epoch's; while a late clearing is
+     * pending outside the window, for the current epoch's. What the
+     * contracts refuse while it is pending is cancelling a request
+     * (`CannotCancelRequestIfClearingIsPending`, the pool manager's
+     * `forceCancelWithdrawalRequest` included), and the pool manager's
      * operations: accepting a withdrawal between clearings
      * (`CannotProcessRequestIfClearingIsPending`), repayments, loss reports,
-     * fixed-term ends and pool settings (`ClearingIsPending`).
+     * forced immediate withdrawals, stopping the pool, pool settings such as
+     * the desired draw amount, and ending or manually locking a fixed-term
+     * deposit (`ClearingIsPending`).
      */
     async isClearingPending(poolId: string): Promise<boolean> {
         return await this._userLending.isClearingPending(poolId);

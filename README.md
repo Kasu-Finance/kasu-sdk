@@ -147,16 +147,23 @@ if (status.supported) {
 | `thresholdsBps` | On-chain thresholds, 100 = 1 % |
 | `ratioBps` | Locked value / lent, floored like the contract; `null` when nothing is lent |
 | `lockedKsu` | KASU locked, including any lock bonus |
-| `rKsu` | The locking weight the level counts (KASU × the lock period's multiplier) |
+| `rKsu` | The locking weight the level counts — each lock mints `floor((KASU + bonus) × multiplier / 10 000)` |
 | `lockedValueUsd`, `ksuPriceUsd` | `rKsu × price`; the price the contract uses (`ksuEpochTokenPriceFresh`) |
-| `lentUsd` | `{ active, pending, total }` in the deployment's stable token |
+| `lentUsd` | `{ active, pending, total }` in the deployment's stable token, as the level counts it now |
+| `requirementLentUsd` | The lent amount `levels[]` uses: the larger of `lentUsd.total` and active + pending tagged for the NEXT epoch (requests made in the clearing window) |
 | `bonusRatePerLevel[]` | `{ level, epochRate, annualPct }` — each level's KSU bonus (`annualPct` = epoch rate × `EPOCHS_IN_YEAR`, in percent) |
-| `levels[]` | `{ level, thresholdBps, reached, requiredLockedValueUsd, additionalLockedValueUsd, requiredRksu, additionalKsu }` at today's lent amount and price |
+| `levels[]` | `{ level, thresholdBps, reached, requiredLockedValueUsd, additionalLockedValueUsd, requiredRksu, additionalKsu }` at `requirementLentUsd` and today's price; `reached` is the level now, so a reached level can still need more to keep it at the next clearing |
 
-The level counts LOCKED KASU, never KASU held in a wallet: buying KASU does not
-change it until it is locked. `additionalKsu` is counted at full locking
-weight (the 720-day lock mints 1 rKSU per KASU); a shorter lock needs
-proportionally more, and a lock bonus adds to what is locked. With nothing
+Every requirement is an exact MINIMUM, not a safe amount to buy: interest
+accruing on the lent amount, a new deposit and a KSU price move all raise it
+before the next clearing records the level, and buying costs fees and
+slippage. Pre-fill with headroom, and net off KASU the lender already holds
+unlocked. The level counts LOCKED KASU, never KASU held in a wallet: buying
+KASU does not change it until it is locked. `additionalKsu` is counted at full locking
+weight (a 100 % multiplier — the 720-day lock — mints 1 rKSU per KASU). For
+another lock, `ksuToLockFor(additionalRksu, rKSUMultiplier)` gives the exact
+amount (`_lock` floors what it mints, so never divide by a percentage in
+floats); a lock bonus only adds to what is minted. With nothing
 lent, any locked KASU is the top level (so a level needs `0.000000000000000001`);
 at a KSU price of 0 a level above 0 is unreachable while something is lent
 (`requiredRksu` and `additionalKsu` are `null`). If the SDK's level ever
@@ -288,7 +295,7 @@ application formats them in its own design system and language.
 | Wallet errors        | `isUserRejected`, `isUnpredictableGas`, `classifyWalletFailure`                                                                                                                                          |
 | Pool TVL             | `poolTvl`, `combineTvlHistories`, `TvlHistoryInputError` — one strategy's history summed across deployments, in USD at the caller's rates |
 | Revert errors        | `decodeRevert`, `extractRevertData` — the bytes a reverted call came back with, read as the custom error the contract named                                                                              |
-| Loyalty              | `buildLoyaltyStatus`, `loyaltyLevelOf`, `loyaltyRatioBps`, `rKsuValue`, `requiredLockedValue`, `requiredRksuFor`, `annualPctOfEpochRate`, `formatExactDecimal`, `MAX_ADDITIONAL_LOYALTY_LEVELS`, `LOYALTY_FULL_PERCENT` — the contract's level rule in integers, and what each level takes (`kasu.loyalty.getStatus` reads the chain) |
+| Loyalty              | `buildLoyaltyStatus`, `loyaltyLevelOf`, `loyaltyRatioBps`, `rKsuValue`, `requiredLockedValue`, `requiredRksuFor`, `annualPctOfEpochRate`, `ksuToLockFor`, `formatExactDecimal`, `MAX_ADDITIONAL_LOYALTY_LEVELS`, `LOYALTY_FULL_PERCENT` — the contract's level rule in integers, and what each level takes (`kasu.loyalty.getStatus` reads the chain) |
 | AU minimum           | `auMinimumRemaining`, `isAustralianKyc`, `auThresholdFor`, `isAuMinimumExempt`, `parseMinorUnits`, `AU_ALPHA3`, `AU_MIN_CUMULATIVE_BY_STABLE`                                                            |
 
 Rules worth knowing:
@@ -697,7 +704,7 @@ rather than throwing at random:
 | ----------------------------------------------- | --------------------- | ------------------------------------ |
 | `Locking.lockKSUTokens()`                       | Works normally        | Throws                               |
 | `Locking.getUserTotalLockedAmount()`            | Returns locked amount | Returns `'0'`                        |
-| `Locking.getLoyaltySchedule()`                  | On-chain thresholds and bonus rates | Returns no thresholds, 0% bonus |
+| `Locking.getLoyaltySchedule()`                  | On-chain thresholds and bonus rates (annual and per epoch) | Returns no thresholds, 0% bonus |
 | `Locking.getLoyaltyLevelAndApyBonusFromRatio()` | Level under the schedule passed | Returns level 0, 0% bonus       |
 | `kasu.loyalty.getStatus()`                      | Level and requirements | Returns `{ supported: false, reason: 'lite-deployment' }` |
 | `Locking.getKasuEpochTokenPrice()`              | Returns the price     | Returns `{ price: 0, decimals: 18 }` |

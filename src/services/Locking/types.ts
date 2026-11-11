@@ -30,6 +30,8 @@ export interface LoyaltySchedule {
     thresholdsBps: number[];
     /** Per level (index = level), the annual KSU bonus as a fraction (`0.001` = 0.1 %). */
     apyBonuses: number[];
+    /** Per level, `loyaltyEpochRewardRates(level)` as read (1e18 = 100 % an epoch). */
+    epochRewardRates: BigNumber[];
 }
 
 export interface UserLock {

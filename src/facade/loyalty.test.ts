@@ -36,6 +36,8 @@ interface ChainState {
     lockedKsu: BigNumber;
     active: BigNumber;
     pending: BigNumber;
+    /** Pending up to the next epoch; defaults to `pending`. */
+    pendingNext?: BigNumber;
     epoch: number;
     chainLevel: number;
     rates: BigNumber[];
@@ -126,6 +128,12 @@ function fakeProvider(
                     chain.pending,
                 ]);
             }
+            if (fn.name === 'userTotalPendingAndActiveDepositedAmount') {
+                return (um as utils.Interface).encodeFunctionResult(fn, [
+                    chain.active,
+                    chain.pendingNext ?? chain.pending,
+                ]);
+            }
             if (fn.name === 'userLoyaltyLevel') {
                 return (um as utils.Interface).encodeFunctionResult(fn, [
                     chain.epoch,
@@ -188,8 +196,8 @@ describe('LoyaltyFacade.getStatus', () => {
 
         expect(seen).toHaveLength(1);
         expect(seen[0].to.toLowerCase()).toBe(MULTICALL3_ADDRESS.toLowerCase());
-        // block, thresholds, price, rKSU, locked, lent, level, 11 rates.
-        expect(seen[0].calls).toHaveLength(18);
+        // block, thresholds, price, rKSU, locked, lent, level, next lent, 11 rates.
+        expect(seen[0].calls).toHaveLength(19);
         expect(seen[0].calls.every((c) => !c.allowFailure)).toBe(true);
 
         expect(status.supported).toBe(true);

@@ -42,12 +42,17 @@ function locking(
 const BASE_RATES = ['0', '19164956034632', '38329912069265'];
 
 describe('KSULocking.getLoyaltySchedule', () => {
-    it('reads the thresholds and one rate per level from chain', async () => {
+    it("reads the thresholds and every level's rate in one round", async () => {
         const { service, rateReads } = locking('base', [100, 500], BASE_RATES);
         const schedule = await service.getLoyaltySchedule();
 
         expect(schedule.thresholdsBps).toEqual([100, 500]);
-        expect(rateReads.mock.calls.map((call) => call[0])).toEqual([0, 1, 2]);
+        // Levels 0..10, every level the contract allows, then trimmed.
+        expect(rateReads.mock.calls.map((call) => call[0])).toEqual([
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+        ]);
+        expect(schedule.apyBonuses).toHaveLength(3);
+        expect(schedule.epochRewardRates.map(String)).toEqual(BASE_RATES);
         expect(schedule.apyBonuses[0]).toBe(0);
         expect(schedule.apyBonuses[1]).toBeCloseTo(0.001, 12);
         expect(schedule.apyBonuses[2]).toBeCloseTo(0.002, 12);
@@ -64,22 +69,27 @@ describe('KSULocking.getLoyaltySchedule', () => {
         );
         const schedule = await service.getLoyaltySchedule();
         expect(schedule.thresholdsBps).toEqual([100, 500, 1_000]);
-        expect(rateReads).toHaveBeenCalledTimes(4);
+        expect(rateReads).toHaveBeenCalledTimes(11);
         expect(schedule.apyBonuses).toHaveLength(4);
+        expect(schedule.apyBonuses[3]).toBeGreaterThan(0);
     });
 
     it('Lite: no levels, no reads', async () => {
         const { service, rateReads } = locking('xdc', [100], BASE_RATES);
-        await expect(service.getLoyaltySchedule()).resolves.toEqual({
-            thresholdsBps: [],
-            apyBonuses: [0],
-        });
+        const schedule = await service.getLoyaltySchedule();
+        expect(schedule.thresholdsBps).toEqual([]);
+        expect(schedule.apyBonuses).toEqual([0]);
+        expect(schedule.epochRewardRates.map(String)).toEqual(['0']);
         expect(rateReads).not.toHaveBeenCalled();
     });
 });
 
 describe('KSULocking.getLoyaltyLevelAndApyBonusFromRatio', () => {
-    const today = { thresholdsBps: [100, 500], apyBonuses: [0, 0.001, 0.002] };
+    const today = {
+        thresholdsBps: [100, 500],
+        apyBonuses: [0, 0.001, 0.002],
+        epochRewardRates: [],
+    };
 
     it.each([
         [0, 0, 0],
@@ -101,6 +111,7 @@ describe('KSULocking.getLoyaltyLevelAndApyBonusFromRatio', () => {
             service.getLoyaltyLevelAndApyBonusFromRatio(0.2, {
                 thresholdsBps: [100, 500, 1_000],
                 apyBonuses: [0, 0.001, 0.002, 0.003],
+                epochRewardRates: [],
             }),
         ).toEqual({ loyaltyLevel: 3, apyBonus: 0.003 });
         // …and nothing is assumed when the thresholds move.
@@ -108,8 +119,32 @@ describe('KSULocking.getLoyaltyLevelAndApyBonusFromRatio', () => {
             service.getLoyaltyLevelAndApyBonusFromRatio(0.02, {
                 thresholdsBps: [300],
                 apyBonuses: [0, 0.01],
+                epochRewardRates: [],
             }),
         ).toEqual({ loyaltyLevel: 0, apyBonus: 0 });
+    });
+
+    it('NaN (nothing lent, nothing locked) is a ratio of 0, as on chain', () => {
+        const { service } = locking('base', [], []);
+        expect(service.getLoyaltyLevelAndApyBonusFromRatio(NaN, today)).toEqual(
+            { loyaltyLevel: 0, apyBonus: 0 },
+        );
+        // A threshold of 0 is met by a ratio of 0.
+        expect(
+            service.getLoyaltyLevelAndApyBonusFromRatio(NaN, {
+                thresholdsBps: [0, 500],
+                apyBonuses: [0, 0.001, 0.002],
+                epochRewardRates: [],
+            }),
+        ).toEqual({ loyaltyLevel: 1, apyBonus: 0.001 });
+    });
+
+    it('a caller still passing the ratio alone gets a clear error', () => {
+        const { service } = locking('base', [], []);
+        const legacy = service.getLoyaltyLevelAndApyBonusFromRatio.bind(
+            service,
+        ) as unknown as (ratio: number) => unknown;
+        expect(() => legacy(0.02)).toThrow('getLoyaltySchedule');
     });
 
     it('Lite: level 0, no bonus', () => {
