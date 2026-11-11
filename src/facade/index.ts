@@ -7,6 +7,12 @@ export { DepositsFacade } from './deposits';
 export { PortfolioFacade } from './user-portfolio';
 export { FlowsFacade } from './flows';
 export { CallsFacade } from './calls';
+export {
+    LoyaltyFacade,
+    LoyaltyLevelMismatchError,
+    MULTICALL3_ADDRESS,
+} from './loyalty';
+export type { LoyaltyFacadeConfig } from './loyalty';
 export type { RequestWithdrawalCallParams } from './calls';
 export type {
     DepositFlowPortOverrides,

@@ -110,8 +110,18 @@ export class DepositsFacade {
     }
 
     /**
-     * Check whether the pool is currently in a clearing period
-     * (deposits/withdrawals are temporarily paused).
+     * Check whether the pool's clearing is pending
+     * (`ClearingCoordinator.isLendingPoolClearingPending`): the previous
+     * epoch's clearing has not ended, or it is clearing time and this
+     * epoch's clearing has not ended.
+     *
+     * Deposits and withdrawals are NOT paused while it is: a request made
+     * during clearing is accepted and joins the next epoch's clearing. What
+     * the contracts refuse while it is pending is cancelling a request
+     * (`CannotCancelRequestIfClearingIsPending`), and the pool manager's
+     * operations: accepting a withdrawal between clearings
+     * (`CannotProcessRequestIfClearingIsPending`), repayments, loss reports,
+     * fixed-term ends and pool settings (`ClearingIsPending`).
      */
     async isClearingPending(poolId: string): Promise<boolean> {
         return await this._userLending.isClearingPending(poolId);

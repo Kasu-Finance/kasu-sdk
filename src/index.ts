@@ -61,6 +61,7 @@ export type {
     UserBonusData,
     LockPeriod,
     GQLGetLockingPeriods,
+    LoyaltySchedule,
     SystemVariables,
 } from './services/Locking/types';
 

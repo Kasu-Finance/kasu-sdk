@@ -17,7 +17,7 @@ import {
     IUserManagerAbi,
     IUserManagerAbi__factory,
 } from '../../contracts';
-import { epochRateToApy } from '../../domain/rates';
+import { epochRateToApy, EPOCHS_IN_YEAR } from '../../domain/rates';
 import { SdkConfig } from '../../sdk-config';
 import {
     getAllTrancheConfigurationsQuery,
@@ -49,6 +49,7 @@ import {
     LockingSummarySubgraphResult,
     LockPeriod,
     LockPeriodInterface,
+    LoyaltySchedule,
     RSVDeadlineValue,
     SystemVariables,
     totalUserLoyaltyRewards,
@@ -66,7 +67,6 @@ export class KSULocking {
     private readonly _ksuPriceAbi: IKsuPriceAbi;
     private readonly _userLoyaltyRewardsAbi: IUserLoyaltyRewardsAbi;
     private readonly _isLiteDeployment: boolean;
-    private readonly apyBonuses: number[] = [0, 0.001, 0.002];
 
     constructor(
         private _kasuConfig: SdkConfig,
@@ -289,17 +289,22 @@ export class KSULocking {
             return [];
         }
 
-        const result: GQLUserLocks = await this._graph.request(userLocksQuery, {
-            userAddress: userAddress.toLowerCase(),
-        });
+        const [result, schedule] = await Promise.all([
+            this._graph.request<GQLUserLocks>(userLocksQuery, {
+                userAddress: userAddress.toLowerCase(),
+            }),
+            this.getLoyaltySchedule(),
+        ]);
         const resultPromises = result.userLocks.map(async (userLock) => {
             const [, id] = userLock.id.split('-');
             const rKSUtoStableRatio = await this.getRKSUvsStableRatio(
                 userLock.rKSUAmount,
                 userAddress,
             );
-            const loyaltyStatus =
-                this.getLoyaltyLevelAndApyBonusFromRatio(rKSUtoStableRatio);
+            const loyaltyStatus = this.getLoyaltyLevelAndApyBonusFromRatio(
+                rKSUtoStableRatio,
+                schedule,
+            );
             return {
                 id: BigNumber.from(id),
                 lockedAmount: userLock.ksuAmount,
@@ -381,7 +386,49 @@ export class KSULocking {
         };
     }
 
-    getLoyaltyLevelAndApyBonusFromRatio(rKSUtoStableRatio: number): {
+    /**
+     * The loyalty thresholds and each level's KSU bonus, read from chain:
+     * `SystemVariables.loyaltyThresholds()` and
+     * `UserLoyaltyRewards.loyaltyEpochRewardRates(level)` for every level.
+     * Both are admin-settable, so nothing here is hard-coded. Lite has no
+     * levels: `{ thresholdsBps: [], apyBonuses: [0] }`.
+     *
+     * For one lender's full status (level, requirements, one block), use
+     * `kasu.loyalty.getStatus`.
+     */
+    async getLoyaltySchedule(): Promise<LoyaltySchedule> {
+        if (this._isLiteDeployment) {
+            return { thresholdsBps: [], apyBonuses: [0] };
+        }
+        const thresholds = await this._systemVariablesAbi.loyaltyThresholds();
+        const rates = await Promise.all(
+            Array.from({ length: thresholds.length + 1 }, (_, level) =>
+                this._userLoyaltyRewardsAbi.loyaltyEpochRewardRates(level),
+            ),
+        );
+        return {
+            thresholdsBps: thresholds.map((t) => t.toNumber()),
+            apyBonuses: rates.map(
+                (rate) => parseFloat(formatUnits(rate, 18)) * EPOCHS_IN_YEAR,
+            ),
+        };
+    }
+
+    /**
+     * The level a ratio reaches under `schedule` (from `getLoyaltySchedule`):
+     * how many thresholds it meets, in order, stopping at the first miss —
+     * `UserManager._userLoyaltyLevel`'s rule — and that level's annual KSU
+     * bonus as a fraction (`0.001` = 0.1 %).
+     *
+     * @param rKSUtoStableRatio a 0..1 fraction (`getRKSUvsStableRatio`).
+     * A float ratio can land either side of a threshold the contract decides
+     * in integers; for a level to show a lender, use `kasu.loyalty.getStatus`,
+     * which computes it exactly and checks it against the contract.
+     */
+    getLoyaltyLevelAndApyBonusFromRatio(
+        rKSUtoStableRatio: number,
+        schedule: LoyaltySchedule,
+    ): {
         loyaltyLevel: number;
         apyBonus: number;
     } {
@@ -390,12 +437,16 @@ export class KSULocking {
             return { loyaltyLevel: 0, apyBonus: 0 };
         }
 
-        if (rKSUtoStableRatio < 0.01) {
-            return { loyaltyLevel: 0, apyBonus: this.apyBonuses[0] };
-        } else if (rKSUtoStableRatio < 0.05) {
-            return { loyaltyLevel: 1, apyBonus: this.apyBonuses[1] };
+        const ratioBps = rKSUtoStableRatio * 10_000;
+        let loyaltyLevel = 0;
+        for (const threshold of schedule.thresholdsBps) {
+            if (ratioBps >= threshold) loyaltyLevel++;
+            else break;
         }
-        return { loyaltyLevel: 2, apyBonus: this.apyBonuses[2] };
+        return {
+            loyaltyLevel,
+            apyBonus: schedule.apyBonuses[loyaltyLevel] ?? 0,
+        };
     }
 
     async getRKSUvsStableRatio(
@@ -410,8 +461,10 @@ export class KSULocking {
             await this._userManagerAbi.userTotalPendingAndActiveDepositedAmountForCurrentEpoch(
                 userAddress,
             );
+        // The price the contract's own level read uses: the epoch snapshot,
+        // or the spot price while the snapshot is stale.
         const ksuPrice: BigNumber =
-            await this._systemVariablesAbi.ksuEpochTokenPrice();
+            await this._systemVariablesAbi.ksuEpochTokenPriceFresh();
         const rKSUAmountBignumber: BigNumber = ethers.utils.parseUnits(
             rKSUAmount,
             18,

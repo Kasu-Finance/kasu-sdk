@@ -121,6 +121,48 @@ You can also pass a whole `ChainConfigEntry` instead of a chain key.
 | `kasu.portfolio`  | `getPositions()`, `getYieldHistory()`, `getTransactionHistory()`, `getRequestStates()`                                  | Lender balances, yield, per-cycle earnings (net, in the chain's own stable token), history |
 | `kasu.flows`      | `deposit(ports)`, `withdraw(ports?)`                                                                                    | Headless transaction pipelines  |
 | `kasu.calls`      | `requestWithdrawal(params)`, `cancelDepositRequest(poolId, dNftId)`, `cancelWithdrawalRequest(poolId, wNftId)`, `withdrawAtExpiry(poolId, lockId)` | Encoded calls for a sponsored relay (read, then encode — never sends) |
+| `kasu.loyalty`    | `getStatus(user)`                                                                                                       | Loyalty level, every level's threshold and what reaching it takes, from chain at one block (Base; Lite says `supported: false`) |
+
+`kasu.loyalty.getStatus(user)` reads the lender's loyalty level in ONE
+Multicall3 call, so every figure is from the same block (`blockNumber`). The
+level is `UserManager._userLoyaltyLevel`'s rule, recomputed and checked
+against the contract: locked value (rKSU × KSU price) over lent (active +
+pending), against the on-chain `loyaltyThresholds` — nothing hard-coded, so a
+third threshold is a fourth level. Every amount is an exact decimal string
+(computed with integers; requirements rounded UP to the smallest amount the
+contract accepts):
+
+```ts
+const status = await kasu.loyalty.getStatus(address);
+if (status.supported) {
+    status.level; // 0..levelCount-1, the level the contract computes now
+    status.levels[2].additionalKsu; // KASU still to LOCK for level 2, or null
+}
+```
+
+| Field | Meaning |
+| ----- | ------- |
+| `blockNumber`, `epoch` | The block every figure is from, and the epoch then |
+| `level`, `levelCount` | The current level; `thresholdsBps.length + 1` |
+| `thresholdsBps` | On-chain thresholds, 100 = 1 % |
+| `ratioBps` | Locked value / lent, floored like the contract; `null` when nothing is lent |
+| `lockedKsu` | KASU locked, including any lock bonus |
+| `rKsu` | The locking weight the level counts (KASU × the lock period's multiplier) |
+| `lockedValueUsd`, `ksuPriceUsd` | `rKsu × price`; the price the contract uses (`ksuEpochTokenPriceFresh`) |
+| `lentUsd` | `{ active, pending, total }` in the deployment's stable token |
+| `bonusRatePerLevel[]` | `{ level, epochRate, annualPct }` — each level's KSU bonus (`annualPct` = epoch rate × `EPOCHS_IN_YEAR`, in percent) |
+| `levels[]` | `{ level, thresholdBps, reached, requiredLockedValueUsd, additionalLockedValueUsd, requiredRksu, additionalKsu }` at today's lent amount and price |
+
+The level counts LOCKED KASU, never KASU held in a wallet: buying KASU does not
+change it until it is locked. `additionalKsu` is counted at full locking
+weight (the 720-day lock mints 1 rKSU per KASU); a shorter lock needs
+proportionally more, and a lock bonus adds to what is locked. With nothing
+lent, any locked KASU is the top level (so a level needs `0.000000000000000001`);
+at a KSU price of 0 a level above 0 is unreachable while something is lent
+(`requiredRksu` and `additionalKsu` are `null`). If the SDK's level ever
+disagrees with `UserManager.userLoyaltyLevel` at the same block, it throws
+`LoyaltyLevelMismatchError` rather than show requirements the contract would
+not honour.
 
 On the instance itself: `kasu.connect(signer)`, `kasu.isReadOnly`,
 `kasu.provider`, `kasu.chainConfig`, `kasu.isLiteDeployment`, and
@@ -246,6 +288,7 @@ application formats them in its own design system and language.
 | Wallet errors        | `isUserRejected`, `isUnpredictableGas`, `classifyWalletFailure`                                                                                                                                          |
 | Pool TVL             | `poolTvl`, `combineTvlHistories`, `TvlHistoryInputError` — one strategy's history summed across deployments, in USD at the caller's rates |
 | Revert errors        | `decodeRevert`, `extractRevertData` — the bytes a reverted call came back with, read as the custom error the contract named                                                                              |
+| Loyalty              | `buildLoyaltyStatus`, `loyaltyLevelOf`, `loyaltyRatioBps`, `rKsuValue`, `requiredLockedValue`, `requiredRksuFor`, `annualPctOfEpochRate`, `formatExactDecimal`, `MAX_ADDITIONAL_LOYALTY_LEVELS`, `LOYALTY_FULL_PERCENT` — the contract's level rule in integers, and what each level takes (`kasu.loyalty.getStatus` reads the chain) |
 | AU minimum           | `auMinimumRemaining`, `isAustralianKyc`, `auThresholdFor`, `isAuMinimumExempt`, `parseMinorUnits`, `AU_ALPHA3`, `AU_MIN_CUMULATIVE_BY_STABLE`                                                            |
 
 Rules worth knowing:
@@ -654,7 +697,9 @@ rather than throwing at random:
 | ----------------------------------------------- | --------------------- | ------------------------------------ |
 | `Locking.lockKSUTokens()`                       | Works normally        | Throws                               |
 | `Locking.getUserTotalLockedAmount()`            | Returns locked amount | Returns `'0'`                        |
-| `Locking.getLoyaltyLevelAndApyBonusFromRatio()` | Calculates the level  | Returns level 0, 0% bonus            |
+| `Locking.getLoyaltySchedule()`                  | On-chain thresholds and bonus rates | Returns no thresholds, 0% bonus |
+| `Locking.getLoyaltyLevelAndApyBonusFromRatio()` | Level under the schedule passed | Returns level 0, 0% bonus       |
+| `kasu.loyalty.getStatus()`                      | Level and requirements | Returns `{ supported: false, reason: 'lite-deployment' }` |
 | `Locking.getKasuEpochTokenPrice()`              | Returns the price     | Returns `{ price: 0, decimals: 18 }` |
 | `Portfolio.getUserNfts()`                       | Returns NFT ids       | Returns `[]`                         |
 | `Portfolio.getPortfolioRewards()`               | Returns rewards       | Returns zeros                        |

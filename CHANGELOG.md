@@ -3,6 +3,88 @@
 All notable changes to `@kasufinance/kasu-sdk`. Versions follow semantic
 versioning; earlier releases are described in their commit messages.
 
+## 2.18.0
+
+A loyalty status reader for the mobile Rewards tab: the lender's level, every
+level's threshold and bonus, and how much more KASU must be locked to reach
+each level — all from chain, at one block. The SDK no longer hard-codes the
+1 % / 5 % thresholds or the 0.1 % / 0.2 % bonuses anywhere.
+
+### Added
+
+- **`kasu.loyalty.getStatus(user): Promise<LoyaltyStatus>`** (`LoyaltyFacade`).
+  - One Multicall3 `aggregate3` (`MULTICALL3_ADDRESS`, `allowFailure: false`)
+    reads `SystemVariables.loyaltyThresholds` and `ksuEpochTokenPriceFresh`,
+    `KSULocking.balanceOf` (rKSU) and `userTotalDeposits` (KASU locked),
+    `UserManager.userTotalPendingAndActiveDepositedAmountForCurrentEpoch` and
+    `userLoyaltyLevel`, and `UserLoyaltyRewards.loyaltyEpochRewardRates` for
+    levels 0..10, plus the block number — every figure is from one block.
+  - The level is recomputed with `UserManager._userLoyaltyLevel`'s rule and
+    must equal `userLoyaltyLevel`; otherwise `LoyaltyLevelMismatchError`.
+  - Lite deployments (XDC) return `{ supported: false, reason:
+    'lite-deployment' }` without a network call. An invalid address throws.
+  - Shape (`LoyaltyStatusSupported`): `blockNumber`, `epoch`, `level`,
+    `levelCount`, `thresholdsBps`, `ratioBps` (`null` when nothing is lent),
+    `lockedKsu`, `rKsu`, `lockedValueUsd`, `ksuPriceUsd`, `lentUsd { active,
+    pending, total }`, `bonusRatePerLevel[] { level, epochRate, annualPct }`,
+    `levels[] { level, thresholdBps, reached, requiredLockedValueUsd,
+    additionalLockedValueUsd, requiredRksu, additionalKsu }`. Amounts are
+    exact decimal strings.
+  - `levels[n].additionalKsu` is the KASU still to LOCK for level n at today's
+    lent amount and price, at full locking weight (the 720-day lock: 1 rKSU
+    per KASU), rounded up to the wei; `'0'` once reached, `null` when the
+    price is 0 and something is lent. Buying KASU alone changes nothing.
+- **Domain `loyalty.ts`** (pure, `bigint`): `loyaltyLevelOf`,
+  `loyaltyRatioBps`, `rKsuValue`, `requiredLockedValue` (ceil(T × lent /
+  10 000)), `requiredRksuFor` (ceil(V × 1e30 / price); 0 for a 0 threshold,
+  1 wei with nothing lent, `null` at price 0), `annualPctOfEpochRate`,
+  `formatExactDecimal`, `buildLoyaltyStatus`, `MAX_ADDITIONAL_LOYALTY_LEVELS`,
+  `LOYALTY_FULL_PERCENT`, `KSU_DECIMALS`, `KSU_PRICE_DECIMALS`,
+  `LOYALTY_RATE_DECIMALS`, and the status types.
+- **`Locking.getLoyaltySchedule(): Promise<LoyaltySchedule>`** — the on-chain
+  thresholds and each level's annual KSU bonus (`{ thresholdsBps,
+  apyBonuses }`). Lite: `{ thresholdsBps: [], apyBonuses: [0] }`.
+- `ksuEpochTokenPriceFresh` in the `ISystemVariables` ABI.
+
+### Changed
+
+- **`Locking.getLoyaltyLevelAndApyBonusFromRatio(ratio, schedule)`** now takes
+  the schedule (from `getLoyaltySchedule`). The 1 % / 5 % thresholds and the
+  `[0, 0.001, 0.002]` bonuses it used to hard-code are gone; it counts the
+  thresholds met in order, as the contract does, so a third threshold is a
+  third level. TYPE-LEVEL BREAK for a direct caller of this one method (no
+  Kasu application calls it); `getUserLocks` and
+  `Portfolio.calculateWeeklyKsuBonusRewards` read the schedule themselves.
+- `Locking.getRKSUvsStableRatio` prices with `ksuEpochTokenPriceFresh` — the
+  price the contract's level uses (the epoch snapshot, or spot while it is
+  stale) — instead of the raw snapshot.
+
+### Fixed
+
+- The `kasu.deposits.isClearingPending` doc no longer says deposits and
+  withdrawals are paused during clearing. They are not: a request made then
+  joins the next epoch's clearing. The contracts refuse cancelling a request
+  and the pool manager's operations while clearing is pending.
+
+### Tests
+
+- `domain/loyalty.test.ts`: a line-for-line transcription of
+  `_userLoyaltyLevel` (both floor divisions kept) checks `loyaltyLevelOf`;
+  a 2 000-run property test checks, for any ascending thresholds, rKSU,
+  price (0 included) and lent amounts, that a level is reached exactly when
+  rKSU ≥ `requiredRksuFor`, that the requirement reaches it and one wei less
+  does not; edge cases (no deposit, zero price, no thresholds, a 0
+  threshold, three thresholds, out-of-order or too many thresholds); the
+  Base rates annualise to their seeded 0.1 % / 0.2 %.
+- `facade/loyalty.test.ts`: a fake provider decodes the `aggregate3` — one
+  call, 18 inner calls, none allowed to fail, the right user — and answers
+  from a chain state; the mismatch error; Lite without a network call.
+- `services/Locking/loyalty-schedule.test.ts`: the schedule reads, and the
+  level from a schedule (Base today and a third threshold).
+- `src/tests/loyalty-status.test.ts` (live, opt-in): Base lenders from
+  `UserManager.allUsers()` match the contract at the status block; XDC is
+  not supported.
+
 ## 2.17.0
 
 Lifetime interest no longer freezes when a clearing is late, and it never

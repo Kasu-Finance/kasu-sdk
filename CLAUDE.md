@@ -96,7 +96,8 @@ src/
 │   ├── pool-tvl.ts      # poolTvl: the one TVL definition; the TVL history entry; combineTvlHistories
 │   ├── batch-proof.ts   # Deposit-batch pinning + receipt proofs (money path)
 │   ├── sponsored-calls.ts # Single-call LPM encoders + relay kinds/selectors
-│   └── explorer-urls.ts # Validated block-explorer tx / address links
+│   ├── explorer-urls.ts # Validated block-explorer tx / address links
+│   └── loyalty.ts       # The contract's loyalty-level rule in integers; what each level takes
 ├── flows/               # Headless money-path state machines — ports in, codes out
 │   ├── deposit-flow.ts  # The KYC-gated deposit pipeline
 │   ├── withdraw-flow.ts # The withdrawal pipeline
@@ -361,6 +362,7 @@ they were duplicated across the applications, and the copies drifted.
 | `batch-proof.ts`          | Pin a deposit batch to its run; prove a deposit (or one executed operation) in a handleOps receipt |
 | `sponsored-calls.ts`      | Encode the single calls a sponsored relay carries (LPM requests, stable `transfer`), with their `kind` |
 | `explorer-urls.ts`        | `explorerTxUrl` / `explorerAddressUrl` — explorer links from a validated hash or address only |
+| `loyalty.ts`              | `UserManager._userLoyaltyLevel` restated in `bigint` (`loyaltyLevelOf`, `loyaltyRatioBps`, `rKsuValue` — both floor divisions of `_rKSUInUSDC` as one by 1e30), and its inverse rounded UP (`requiredLockedValue` = ceil(T × lent / 10 000), `requiredRksuFor` = ceil(V × 1e30 / price); 0 for T = 0, 1 wei with nothing lent, `null` at price 0); `buildLoyaltyStatus` → the `kasu.loyalty.getStatus` shape. Exact decimal strings, never floats |
 
 `yield-history.ts` holds the ONE per-epoch yield formula, and
 `services/Portfolio/yield-history.ts` the ONE per-position selection,
@@ -502,6 +504,24 @@ a verified sender, daily caps — lives in the relay and is not restated here.
 `kasu.calls` (facade) is the read-then-encode half: it converts an asset
 amount or `'max'` to shares through the same `UserLending` helpers the direct
 withdrawal path uses, and targets the chain config's `LendingPoolManager`.
+
+### Loyalty levels are read, never assumed
+
+`SystemVariables.loyaltyThresholds()` and
+`UserLoyaltyRewards.loyaltyEpochRewardRates(level)` are admin-settable (up to
+`MAX_ADDITIONAL_LOYALTY_LEVELS` = 10 thresholds), so no threshold or bonus is
+a constant here. `kasu.loyalty.getStatus` (`facade/loyalty.ts`) reads them,
+the price (`ksuEpochTokenPriceFresh`, the one the contract's own level read
+uses), rKSU, KASU locked, the lent total and `userLoyaltyLevel` in ONE
+Multicall3 `aggregate3` (canonical address, `allowFailure: false`, rates for
+levels 0..10) — one block, one round trip, and no `getBlockNumber`-then-
+`blockTag` race on a load-balanced public RPC. It recomputes the level and
+throws `LoyaltyLevelMismatchError` when it disagrees with the contract.
+`Locking.getLoyaltySchedule()` reads the same two lists for the older
+float path (`getUserLocks`, `Portfolio.calculateWeeklyKsuBonusRewards`).
+The level counts rKSU (LOCKED KASU × the lock period's multiplier), never a
+wallet balance; `additionalKsu` is at full weight (the 720-day lock). Lite
+returns `{ supported: false, reason: 'lite-deployment' }`.
 
 `requests.ts` publishes the reallocation destination as a RAW tranche name
 (`reallocationTargetTrancheName`), like `trancheName` — rename both at the view
@@ -946,7 +966,8 @@ async lockTokens(amount: BigNumber): Promise<TransactionResponse> {
 | `unlockKSU()` | Throws error |
 | `getUserLocks()` | Returns `[]` |
 | `getUserTotalLockedAmount()` | Returns `'0'` |
-| `getLoyaltyLevelAndApyBonusFromRatio()` | Returns `{ loyaltyLevel: 0, apyBonus: 0 }` |
+| `getLoyaltySchedule()` | Returns `{ thresholdsBps: [], apyBonuses: [0] }` |
+| `getLoyaltyLevelAndApyBonusFromRatio(ratio, schedule)` | Returns `{ loyaltyLevel: 0, apyBonus: 0 }` |
 | `getClaimableRewards()` | Returns `BigNumber.from(0)` |
 | `getAvailableKsuBonus()` | Returns `'0'` |
 | `getKasuEpochTokenPrice()` | Returns `{ price: 0, decimals: 18 }` |
