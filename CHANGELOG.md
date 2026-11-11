@@ -84,7 +84,9 @@ each level — all from chain, at one block. The SDK no longer hard-codes the
 
 - The `kasu.deposits.isClearingPending` doc no longer says deposits and
   withdrawals are paused during clearing. They are not: a request made then
-  joins the next epoch's clearing. The contracts refuse cancelling a request
+  is accepted and waits for a later clearing — tagged for the next epoch
+  inside the clearing window, for the current epoch while a late clearing is
+  pending outside it. The contracts refuse cancelling a request
   and the pool manager's operations (accepting or force-cancelling a
   withdrawal, repayments, loss reports, forced immediate withdrawals,
   stopping, settings, fixed-term end and manual lock) while clearing is
@@ -99,9 +101,14 @@ each level — all from chain, at one block. The SDK no longer hard-codes the
   rKSU ≥ `requiredRksuFor`, that the requirement reaches it and one wei less
   does not; edge cases (no deposit, zero price, no thresholds, a 0
   threshold, three thresholds, out-of-order or too many thresholds); the
+  A second 2 000-run property builds the full status with requests tagged
+  for the next epoch and checks that locking `additionalKsu` reaches each
+  level on today's figures AND the next clearing's, and one wei less misses
+  (mutation-checked: dropping the next-epoch basis or rounding the rKSU
+  requirement down each fail 3 tests).
   Base rates annualise to ≈ their seeded 0.1 % / 0.2 % (0.0999999999999968… %, 0.1999999999999988…: the seeding truncated).
 - `facade/loyalty.test.ts`: a fake provider decodes the `aggregate3` — one
-  call, 18 inner calls, none allowed to fail, the right user — and answers
+  call, 19 inner calls, none allowed to fail, the right user — and answers
   from a chain state; the mismatch error; Lite without a network call.
 - `services/Locking/loyalty-schedule.test.ts`: the schedule reads, and the
   level from a schedule (Base today and a third threshold).

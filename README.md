@@ -164,9 +164,11 @@ weight (a 100 % multiplier — the 720-day lock — mints 1 rKSU per KASU). For
 another lock, `ksuToLockFor(additionalRksu, rKSUMultiplier)` gives the exact
 amount (`_lock` floors what it mints, so never divide by a percentage in
 floats); a lock bonus only adds to what is minted. With nothing
-lent, any locked KASU is the top level (so a level needs `0.000000000000000001`);
-at a KSU price of 0 a level above 0 is unreachable while something is lent
-(`requiredRksu` and `additionalKsu` are `null`). If the SDK's level ever
+lent and nothing pending for the next epoch, any locked KASU is the top level
+(so a level needs `0.000000000000000001`); at a KSU price of 0 a level above 0
+is unreachable — or, if reached now, cannot be kept at the next clearing —
+while something is lent or pending (`requiredRksu` and `additionalKsu` are
+`null`). If the SDK's level ever
 disagrees with `UserManager.userLoyaltyLevel` at the same block, it throws
 `LoyaltyLevelMismatchError` rather than show requirements the contract would
 not honour.

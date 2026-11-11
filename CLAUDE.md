@@ -972,7 +972,7 @@ async lockTokens(amount: BigNumber): Promise<TransactionResponse> {
 | `unlockKSU()` | Throws error |
 | `getUserLocks()` | Returns `[]` |
 | `getUserTotalLockedAmount()` | Returns `'0'` |
-| `getLoyaltySchedule()` | Returns `{ thresholdsBps: [], apyBonuses: [0] }` |
+| `getLoyaltySchedule()` | Returns `{ thresholdsBps: [], apyBonuses: [0], epochRewardRates: [0] }` |
 | `getLoyaltyLevelAndApyBonusFromRatio(ratio, schedule)` | Returns `{ loyaltyLevel: 0, apyBonus: 0 }` |
 | `getClaimableRewards()` | Returns `BigNumber.from(0)` |
 | `getAvailableKsuBonus()` | Returns `'0'` |

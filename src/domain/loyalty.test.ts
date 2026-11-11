@@ -241,6 +241,95 @@ describe('what a level takes', () => {
             { numRuns: 2000 },
         );
     });
+
+    it('buildLoyaltyStatus: locking additionalKsu reaches each level now AND at the next clearing, and one wei less misses (property)', () => {
+        const units = (decimal: string): bigint => {
+            const [whole, frac = ''] = decimal.split('.');
+            return B(whole + frac.padEnd(18, '0'));
+        };
+        const big = (max: bigint): fc.Arbitrary<bigint> =>
+            fc.bigInt({ min: B(0), max });
+        fc.assert(
+            fc.property(
+                fc
+                    .array(fc.integer({ min: 0, max: 20_000 }), {
+                        maxLength: MAX_ADDITIONAL_LOYALTY_LEVELS,
+                    })
+                    .map((xs) => xs.sort((a, b) => a - b).map(B)),
+                big(KSU(1_000_000)),
+                fc.oneof(
+                    big(B(1000) * E18),
+                    fc.constant(B(0)),
+                    fc.constant(PRICE_2),
+                ),
+                big(USDC(10_000_000)),
+                big(USDC(1_000_000)),
+                // Requests tagged for the next epoch, on top of `pending`.
+                fc.oneof(big(USDC(1_000_000)), fc.constant(B(0))),
+                (thresholds, rKsu, price, active, pending, extra) => {
+                    const pendingNext = pending + extra;
+                    const status = buildLoyaltyStatus(
+                        state({
+                            thresholdsBps: thresholds,
+                            epochRewardRates: Array.from(
+                                { length: thresholds.length + 1 },
+                                () => B(0),
+                            ),
+                            ksuPrice: price,
+                            rKsu,
+                            activeLent: active,
+                            pendingLent: pending,
+                            pendingLentNextEpoch: pendingNext,
+                        }),
+                        META,
+                    );
+                    expect(status.level).toBe(
+                        contractLevel(rKsu, price, active, pending, thresholds),
+                    );
+                    for (const entry of status.levels) {
+                        if (entry.level === 0 || entry.additionalKsu === null) {
+                            continue;
+                        }
+                        const prefix = thresholds.slice(0, entry.level);
+                        const after = rKsu + units(entry.additionalKsu);
+                        // Reaches it on today's figures and on the next
+                        // clearing's (the larger lent amount).
+                        expect(
+                            contractLevel(
+                                after,
+                                price,
+                                active,
+                                pending,
+                                prefix,
+                            ),
+                        ).toBe(entry.level);
+                        expect(
+                            contractLevel(
+                                after,
+                                price,
+                                active,
+                                pendingNext,
+                                prefix,
+                            ),
+                        ).toBe(entry.level);
+                        // Minimal at the requirement basis.
+                        if (after > rKsu) {
+                            expect(
+                                contractLevel(
+                                    after - B(1),
+                                    price,
+                                    active,
+                                    pendingNext,
+                                    prefix,
+                                ),
+                            ).toBeLessThan(entry.level);
+                        }
+                    }
+                },
+            ),
+            { numRuns: 2000 },
+        );
+    });
 });
 
 describe('ksuToLockFor', () => {

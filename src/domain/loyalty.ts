@@ -137,7 +137,8 @@ export interface LoyaltyLevelRequirement {
     /**
      * How much more KASU must be LOCKED to reach the level: `max(requiredRksu
      * − rKSU, 0)` — `'0'` when the current rKSU already covers it, `null`
-     * when it cannot be reached.
+     * when it cannot be reached, or (for a level reached now) kept at the
+     * next clearing — a KSU price of 0 with something lent or pending.
      *
      * Counted at full locking weight — a lock whose rKSU multiplier is
      * 100 % (the 720-day lock on Base) mints 1 rKSU per KASU, exactly. A

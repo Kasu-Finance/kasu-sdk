@@ -404,8 +404,9 @@ export class KSULocking {
                 epochRewardRates: [BigNumber.from(0)],
             };
         }
-        // Every rate the contract allows (levels 0..10) in the same round
-        // as the thresholds, so a threshold change cannot land between them.
+        // Every rate the contract allows (levels 0..10), read concurrently
+        // with the thresholds (separate calls, so not one block — use
+        // `kasu.loyalty.getStatus` for that), then trimmed to their length.
         const [thresholds, ...rates] = await Promise.all([
             this._systemVariablesAbi.loyaltyThresholds(),
             ...Array.from(
