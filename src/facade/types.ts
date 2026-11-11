@@ -93,6 +93,12 @@ export interface ChainConfigEntry {
      * default RPC, so a read-only `Kasu.create` on it throws.
      */
     retired?: boolean;
+    /**
+     * Multicall3 on this chain, for `kasu.loyalty.getStatus`. Defaults to the
+     * canonical `MULTICALL3_ADDRESS`; set it only on a custom chain where
+     * Multicall3 lives elsewhere.
+     */
+    multicall3Address?: string;
 }
 
 /** Options passed to `Kasu.create()`. */

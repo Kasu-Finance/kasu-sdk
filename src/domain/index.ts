@@ -79,6 +79,31 @@ export { explorerAddressUrl, explorerTxUrl } from './explorer-urls';
 export type { ExplorerConfig } from './explorer-urls';
 
 export {
+    annualPctOfEpochRate,
+    buildLoyaltyStatus,
+    formatExactDecimal,
+    KSU_DECIMALS,
+    KSU_PRICE_DECIMALS,
+    ksuToLockFor,
+    LOYALTY_FULL_PERCENT,
+    LOYALTY_RATE_DECIMALS,
+    loyaltyLevelOf,
+    loyaltyRatioBps,
+    MAX_ADDITIONAL_LOYALTY_LEVELS,
+    requiredLockedValue,
+    requiredRksuFor,
+    rKsuValue,
+} from './loyalty';
+export type {
+    LoyaltyBonusRate,
+    LoyaltyChainState,
+    LoyaltyLevelRequirement,
+    LoyaltyStatus,
+    LoyaltyStatusSupported,
+    LoyaltyStatusUnsupported,
+} from './loyalty';
+
+export {
     availableFixedTermConfigs,
     DAYS_PER_EPOCH,
     DAYS_PER_MONTH,

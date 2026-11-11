@@ -10,6 +10,7 @@ import { CallsFacade } from './calls';
 import { CHAIN_CONFIGS } from './chain-configs';
 import { DepositsFacade } from './deposits';
 import { FlowsFacade } from './flows';
+import { LoyaltyFacade } from './loyalty';
 import { StrategiesFacade } from './strategies';
 import {
     ChainConfigEntry,
@@ -22,8 +23,8 @@ import { PortfolioFacade } from './user-portfolio';
 /**
  * High-level entry point for external integrators.
  *
- * Provides five domain facades — `strategies`, `deposits`, `portfolio`,
- * `flows`, `calls` — and exposes the underlying `KasuSdk` services via `.services` for
+ * Provides six domain facades — `strategies`, `deposits`, `portfolio`,
+ * `flows`, `calls`, `loyalty` — and exposes the underlying `KasuSdk` services via `.services` for
  * power-users.
  *
  * ```ts
@@ -55,6 +56,11 @@ export class Kasu {
      * cancel, withdraw at expiry. Read, then encode; never sends.
      */
     public readonly calls: CallsFacade;
+    /**
+     * Loyalty level, every level's threshold and what reaching it takes,
+     * read from chain at one block. Base only; Lite says `supported: false`.
+     */
+    public readonly loyalty: LoyaltyFacade;
 
     private readonly _sdk: KasuSdk;
     private readonly _chainConfig: ChainConfigEntry;
@@ -74,6 +80,7 @@ export class Kasu {
         signerOrProvider: Provider | Signer,
         configOverrides: Partial<SdkConfigOptions>,
         historyProvider: Provider | undefined,
+        sdkConfig: SdkConfig,
     ) {
         this._sdk = sdk;
         this._chainConfig = chainConfig;
@@ -113,6 +120,16 @@ export class Kasu {
             sdk.UserLending,
             chainConfig.contracts.LendingPoolManager,
         );
+
+        // Read at the moment of the call, through whatever this instance
+        // holds — the signer's own provider after `connect`.
+        this.loyalty = new LoyaltyFacade({
+            provider: (): Provider => this.provider,
+            isLiteDeployment: sdkConfig.isLiteDeployment,
+            contracts: sdkConfig.contracts,
+            stableAssetDecimals: sdkConfig.stableAssetDecimals,
+            multicall3Address: chainConfig.multicall3Address,
+        });
 
         this.flows = new FlowsFacade(
             this.deposits,
@@ -197,6 +214,7 @@ export class Kasu {
             signerOrProvider,
             overrides,
             options.historyProvider,
+            sdkConfig,
         );
     }
 
@@ -286,9 +304,7 @@ export class Kasu {
 // take the field as possibly absent and fall back: the stable-asset decimals to
 // `SdkConfig`'s own default of 6, the RPC list to empty — which makes a
 // read-only `create` throw the same clear message a retired chain does.
-function stableAssetOf(
-    chainConfig: ChainConfigEntry,
-): StableAsset | undefined {
+function stableAssetOf(chainConfig: ChainConfigEntry): StableAsset | undefined {
     return (chainConfig as { stableAsset?: StableAsset }).stableAsset;
 }
 

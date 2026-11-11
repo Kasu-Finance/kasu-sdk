@@ -21,6 +21,19 @@ export interface LockPeriod {
     id: string;
 }
 
+/**
+ * The loyalty thresholds and per-level KSU bonus, as read from chain by
+ * `Locking.getLoyaltySchedule()`.
+ */
+export interface LoyaltySchedule {
+    /** `SystemVariables.loyaltyThresholds()`, FULL_PERCENT units (100 = 1 %). */
+    thresholdsBps: number[];
+    /** Per level (index = level), the annual KSU bonus as a fraction (`0.001` = 0.1 %). */
+    apyBonuses: number[];
+    /** Per level, `loyaltyEpochRewardRates(level)` as read (1e18 = 100 % an epoch). */
+    epochRewardRates: BigNumber[];
+}
+
 export interface UserLock {
     id: BigNumber;
     lockedAmount: string;

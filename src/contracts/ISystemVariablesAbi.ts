@@ -44,6 +44,7 @@ export interface ISystemVariablesAbiInterface extends utils.Interface {
     "feeRates()": FunctionFragment;
     "isClearingTime()": FunctionFragment;
     "ksuEpochTokenPrice()": FunctionFragment;
+    "ksuEpochTokenPriceFresh()": FunctionFragment;
     "loyaltyLevelsCount()": FunctionFragment;
     "loyaltyThresholds()": FunctionFragment;
     "maxTrancheCountPerLendingPool()": FunctionFragment;
@@ -76,6 +77,7 @@ export interface ISystemVariablesAbiInterface extends utils.Interface {
       | "feeRates"
       | "isClearingTime"
       | "ksuEpochTokenPrice"
+      | "ksuEpochTokenPriceFresh"
       | "loyaltyLevelsCount"
       | "loyaltyThresholds"
       | "maxTrancheCountPerLendingPool"
@@ -128,6 +130,10 @@ export interface ISystemVariablesAbiInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "ksuEpochTokenPrice",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "ksuEpochTokenPriceFresh",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -238,6 +244,10 @@ export interface ISystemVariablesAbiInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "ksuEpochTokenPrice",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "ksuEpochTokenPriceFresh",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -408,6 +418,8 @@ export interface ISystemVariablesAbi extends BaseContract {
 
     ksuEpochTokenPrice(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    ksuEpochTokenPriceFresh(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     loyaltyLevelsCount(overrides?: CallOverrides): Promise<[number]>;
 
     loyaltyThresholds(
@@ -512,6 +524,8 @@ export interface ISystemVariablesAbi extends BaseContract {
 
   ksuEpochTokenPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
+  ksuEpochTokenPriceFresh(overrides?: CallOverrides): Promise<BigNumber>;
+
   loyaltyLevelsCount(overrides?: CallOverrides): Promise<number>;
 
   loyaltyThresholds(overrides?: CallOverrides): Promise<BigNumber[]>;
@@ -609,6 +623,8 @@ export interface ISystemVariablesAbi extends BaseContract {
     isClearingTime(overrides?: CallOverrides): Promise<boolean>;
 
     ksuEpochTokenPrice(overrides?: CallOverrides): Promise<BigNumber>;
+
+    ksuEpochTokenPriceFresh(overrides?: CallOverrides): Promise<BigNumber>;
 
     loyaltyLevelsCount(overrides?: CallOverrides): Promise<number>;
 
@@ -722,6 +738,8 @@ export interface ISystemVariablesAbi extends BaseContract {
 
     ksuEpochTokenPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
+    ksuEpochTokenPriceFresh(overrides?: CallOverrides): Promise<BigNumber>;
+
     loyaltyLevelsCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     loyaltyThresholds(overrides?: CallOverrides): Promise<BigNumber>;
@@ -823,6 +841,10 @@ export interface ISystemVariablesAbi extends BaseContract {
     isClearingTime(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     ksuEpochTokenPrice(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    ksuEpochTokenPriceFresh(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

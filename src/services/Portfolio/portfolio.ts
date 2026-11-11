@@ -356,20 +356,21 @@ export class Portfolio {
 
         if (totalUserDeposits.isZero()) return 0;
 
-        const rKSUtoStableRatio =
-            await this._lockingService.getRKSUvsStableRatio(
+        const [rKSUtoStableRatio, schedule] = await Promise.all([
+            this._lockingService.getRKSUvsStableRatio(
                 userRksuAmount,
                 userAddress,
-            );
+            ),
+            this._lockingService.getLoyaltySchedule(),
+        ]);
         const { loyaltyLevel } =
             this._lockingService.getLoyaltyLevelAndApyBonusFromRatio(
                 rKSUtoStableRatio,
+                schedule,
             );
 
-        const loyaltyRewardRate =
-            await this._userLoyaltyRewardsAbi.loyaltyEpochRewardRates(
-                loyaltyLevel,
-            );
+        // The schedule already holds every level's rate.
+        const loyaltyRewardRate = schedule.epochRewardRates[loyaltyLevel];
 
         if (loyaltyRewardRate.isZero() || ksuEpochPrice.price.isZero()) {
             return 0;
